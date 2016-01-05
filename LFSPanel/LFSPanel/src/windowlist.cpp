@@ -307,7 +307,7 @@ void updateWindowMenu(void)
 			win=mainwind->rootWindow;
 			while(win!=None)
 				win=doTreeWalk(win,false);
-			windowMenu->LFSTK_updateMenus(windowList,windowListCnt-1);
+			windowMenu->LFSTK_updateMenus(windowList,windowListCnt);
 		}
 }
 

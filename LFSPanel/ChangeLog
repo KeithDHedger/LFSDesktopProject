@@ -1,4 +1,5 @@
 0.1.0
+Fixed missing last window on global window list.
 Fixed showing hidden windows in main window list.
 Fixed minor graphical bug.
 Synched versions to "0.1.0".
