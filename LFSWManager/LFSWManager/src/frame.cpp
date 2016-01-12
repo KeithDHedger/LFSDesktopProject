@@ -389,7 +389,6 @@ void repaint(struct frame *f)
 	int					txtwidth;
 	char				*txt;
 
-printf("1111111111111111\n");
 	if(f==NULL)
 		return;
 	if (f->client==NULL)
@@ -555,48 +554,22 @@ printf("1111111111111111\n");
 					XFillRectangle(dpy,f->window,gc,title3x,0,titlewidth,theme.partsHeight[TITLE3ACTIVE+partoffset]);
 
 					titleblock=f->width-theme.partsWidth[TITLE2ACTIVE+partoffset]-theme.partsWidth[TOPLEFTACTIVE+partoffset]-theme.partsWidth[TITLE4ACTIVE+partoffset]-lastbuttonx;
-								printf(">>>>>>>>>>>>>>>>\n");
-
-//			if (f->client->netwmname != NULL)
-//				printf("gotr netwname\n");
-//			else if (f->client->wmname != NULL)
-//				printf("got wmname\n");
-//
-//								printf("in-->%s\n",f->client->netwmname);
-//printf("in-->%s\n",f->client->wmname);
 
 					txt=getMaxString(font,f->client,titleblock);
 					if(txt!=NULL)
 						{
-							printf("+++++++++++%s++++++++++++\n",txt);
-					txtwidth=fttextwidth_utf8(font,txt);
-					titleblockcentre=(titleblock/2)+theme.partsWidth[TOPLEFTACTIVE+partoffset]+theme.partsWidth[TITLE2ACTIVE+partoffset];
+							txtwidth=fttextwidth_utf8(font,txt);
+							titleblockcentre=(titleblock/2)+theme.partsWidth[TOPLEFTACTIVE+partoffset]+theme.partsWidth[TITLE2ACTIVE+partoffset];
 
-							printf("-------------%s----------------\n",txt);
-								printf("<<<<<<<<<<<<<<<<<<<<<\n");
-//					if(txt!=NULL)
-//						{
 							if(partoffset==0)
 								usecolour=fhighlight;
 							else
 								usecolour=fnormal;
 
-/*
-			if (f->client->netwmname != NULL)
-				ftdrawstring_utf8(f->window,font,usecolour,4,(frameTop/2)+((font->ascent-2)/2),f->client->netwmname);
-			else if (f->client->wmname != NULL)
-				ftdrawstring(f->window,font,usecolour,4,(frameTop/2)+((font->ascent-2)/2),f->client->wmname);
-
-*/
 							if (f->client->netwmname != NULL)
-							{
 								ftdrawstring_utf8(f->window,font,usecolour,titleblockcentre-(txtwidth/2),(theme.titleBarHeight/2)+((font->ascent-2)/2)+theme.titleOffset,txt);
-								}
 							else if (f->client->wmname != NULL)
-							{
-							printf(">>>>>>>>>>>>%s<<<<<<<<<<\n",txt);
 								ftdrawstring(f->window,font,usecolour,titleblockcentre-(txtwidth/2),(theme.titleBarHeight/2)+((font->ascent-2)/2)+theme.titleOffset,txt);
-							}
 							free(txt);
 						}
 
@@ -702,8 +675,6 @@ printf("1111111111111111\n");
 			XFillRectangle(dpy,f->window,mainGC,1,frameTop-1,frameLeft-1,1);
 			XFillRectangle(dpy,f->window,mainGC,f->width-frameRight,frameTop-1,frameRight-1,1);
 		}
-printf("22222222222222222\n");
-
 }
 
 void fupdate(struct frame *f)
