@@ -62,6 +62,8 @@
 #include "atoms.h"
 #include "appmenu.h"
 
+#include "config.h"
+
 #include "deleven.xbm"
 #include "delodd.xbm"
 #include "maxeven.xbm"
@@ -179,7 +181,7 @@ int waitevent(void)
 
 void usage(FILE *f)
 {
-	fprintf(f,"%s\nUsage: %s [[ OPT ] ... [ OPT ]] [ DISPLAY ]\n"
+	fprintf(f,"%s Version %s\nUsage: %s [[ OPT ] ... [ OPT ]] [ DISPLAY ]\n"
 	        "-n	number		Number of desktops\n"
 	        "-t	font		Title font\n"
 	        "-B	colour		Active fill colour\n"
@@ -192,7 +194,7 @@ void usage(FILE *f)
 			"-T	theme		Name of installed theme to use\n"
 			"-x	command		Set terminal command ( default xterm -e )\n"
 			"-w	outfile		After setting prefs from default, prefsfile and command line write out a prefsfile and quit ( MUST be last option ).\n"
-	        ,PACKAGE_STRING,progname);
+	        ,progname,VERSION,progname);
 }
 
 const char	*themePartNames[]=

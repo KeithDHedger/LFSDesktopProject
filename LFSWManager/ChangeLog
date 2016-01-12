@@ -1,4 +1,6 @@
 0.1.1
+Fixed crash on window title = NULL.
+Tweaked usage print out.
 Fixed window title x position correctly centering when using theme.
 Added title y offset from theme.rc if exists.
 Fixed window not getting focus when poped to front.
