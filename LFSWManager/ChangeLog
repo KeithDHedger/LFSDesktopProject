@@ -1,4 +1,5 @@
 0.1.1
+Fixed crash on unmanaged windows.
 Fixed crash on window title = NULL.
 Tweaked usage print out.
 Fixed window title x position correctly centering when using theme.

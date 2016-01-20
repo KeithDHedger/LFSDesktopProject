@@ -310,7 +310,7 @@ void reloadwindowstate(struct client *c)
 			if((states[i]==NET_WM_STATE_MAXIMIZED_HORZ) || (states[i]==NET_WM_STATE_MAXIMIZED_VERT))
 				{
 					unmax=false;
-					if(c->frame->isMaximized==false)
+					if( (c->frame!=NULL) && (c->frame->isMaximized==false) )
 						maximizeWindow(c,666);
 					handled=true;
 				}
@@ -383,7 +383,6 @@ void ewmh_manage(struct client *c)
 	CHECKPOINT
 	Window	w=c->window;
 	int		vcnt=3;
-
 	addclient(w);
 
 	// Remove properties that other window managers may have set.

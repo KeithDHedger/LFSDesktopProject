@@ -652,7 +652,6 @@ void repaint(struct frame *f)
 					frame=inactiveFrame;
 					usecolour=fnormal;
 				}
-
 			XSetForeground(dpy,mainGC,framefill);
 			XFillRectangle(dpy,f->window,mainGC,x,1,f->width-2,frameTop);
 //title  string

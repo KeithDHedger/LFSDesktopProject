@@ -1819,6 +1819,7 @@ void unmanageall(void)
 int namewidth(struct font *font,struct client *c)
 {
 	CHECKPOINT
+
 	if (c->netwmname != NULL)
 		return fttextwidth_utf8(font,c->netwmname);
 	else if (c->wmname != NULL)
