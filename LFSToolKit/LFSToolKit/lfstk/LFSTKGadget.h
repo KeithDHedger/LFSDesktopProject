@@ -25,7 +25,7 @@
 #include <X11/Xlib.h>
 #include <Imlib2.h>
 
-#include "LFSTKWindow.h"
+//#include "LFSTKWindow.h"
 
 enum bevelType {BEVELIN=0,BEVELOUT,BEVELNONE};
 enum indicatorType {CHECK=0,RADIO,PICTURE,DISCLOSURE,NOINDICATOR};
@@ -51,6 +51,7 @@ class LFSTK_gadgetClass
 		virtual bool mouseExit(XButtonEvent *e);
 		virtual bool mouseEnter(XButtonEvent *e);
 		virtual bool keyRelease(XKeyEvent *e);
+		virtual bool clientMessage(XEvent *e);
 		virtual bool gotFocus(XEvent *e);
 		virtual bool lostFocus(XEvent *e);
 

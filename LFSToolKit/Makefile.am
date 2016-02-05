@@ -1,6 +1,9 @@
 
 SUBDIRS = LFSToolKit/app
 
+#include LFSToolKit/headers
+#include_HEADERS = $(APIHEADERS)
+
 .PHONY: docs
 
 docs:

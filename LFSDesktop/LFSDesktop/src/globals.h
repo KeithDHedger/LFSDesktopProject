@@ -28,10 +28,10 @@
 #define RESERVED 2
 #define MAXBUFFER 512
 
-#include <LFSTKGlobals.h>
-#include <LFSTKWindow.h>
-#include <LFSTKButton.h>
-#include "LFSTKLineEdit.h"
+#include <lfstk/LFSTKGlobals.h>
+//#include <LFSTKWindow.h>
+//#include <LFSTKButton.h>
+//#include "LFSTKLineEdit.h"
 
 enum {CACHEFOLDER,DISKFOLDER};
 enum {HOMEDATA=0,ROOTDATA};

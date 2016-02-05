@@ -95,7 +95,7 @@ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-DIST_COMMON = $(srcdir)/Makefile.am $(include_HEADERS) \
+DIST_COMMON = $(srcdir)/Makefile.am $(lfstoolkit_include_HEADERS) \
 	$(am__DIST_COMMON)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
@@ -129,14 +129,15 @@ am__uninstall_files_from_dir = { \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pixfilesdir)" \
-	"$(DESTDIR)$(includedir)"
+	"$(DESTDIR)$(lfstoolkit_includedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 liblfstoolkit_la_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
-am__objects_1 = ../src/LFSTKButton.lo ../src/LFSTKGadget.lo \
-	../src/LFSTKImage.lo ../src/LFSTKLabel.lo ../src/LFSTKLib.lo \
-	../src/LFSTKLineEdit.lo ../src/LFSTKMenuButton.lo \
-	../src/LFSTKToggleButton.lo ../src/LFSTKWindow.lo
+am__objects_1 = ../lfstk/LFSTKButton.lo ../lfstk/LFSTKGadget.lo \
+	../lfstk/LFSTKImage.lo ../lfstk/LFSTKLabel.lo \
+	../lfstk/LFSTKLib.lo ../lfstk/LFSTKLineEdit.lo \
+	../lfstk/LFSTKMenuButton.lo ../lfstk/LFSTKToggleButton.lo \
+	../lfstk/LFSTKWindow.lo
 am_liblfstoolkit_la_OBJECTS = $(am__objects_1)
 liblfstoolkit_la_OBJECTS = $(am_liblfstoolkit_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -185,7 +186,7 @@ am__can_run_installinfo = \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
 DATA = $(pixfiles_DATA)
-HEADERS = $(include_HEADERS)
+HEADERS = $(lfstoolkit_include_HEADERS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 # Read a list of newline-separated strings from the standard input,
 # and print each of them once, without duplicates.  Input order is
@@ -205,9 +206,8 @@ am__define_uniq_tagged_files = \
   done | $(am__uniquify_input)`
 ETAGS = etags
 CTAGS = ctags
-am__DIST_COMMON = $(srcdir)/../flagsandlibs $(srcdir)/../headers \
-	$(srcdir)/../sources $(srcdir)/Makefile.in \
-	$(top_srcdir)/depcomp
+am__DIST_COMMON = $(srcdir)/../flagsandlibs $(srcdir)/../sources \
+	$(srcdir)/Makefile.in $(top_srcdir)/depcomp
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -351,9 +351,10 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = subdir-objects
-AM_CXXFLAGS = -Wl,--version-script=../src/exportmap
+AM_CXXFLAGS = -Wl,--version-script=../lfstk/exportmap
 AM_LDFLAGS = -version-info $(LFSTOOLKIT_LIBTOOL_VERSION)
 AM_CPPFLAGS = -I$(top_srcdir) \
+				-I.. \
 				$(X11_CFLAGS) \
 				$(XFT_CFLAGS) \
 				$(XINERAMA_CFLAGS) \
@@ -364,18 +365,23 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 				-DSYSCONFDIR=\""${sysconfdir}/${PACKAGE}"\" \
 				-DLIBDIR=\""${libdir}/${PACKAGE}"\"
 
-COMMONSRC = ../src/LFSTKButton.cpp ../src/LFSTKGadget.cpp ../src/LFSTKImage.cpp ../src/LFSTKLabel.cpp ../src/LFSTKLib.cpp ../src/LFSTKLineEdit.cpp ../src/LFSTKMenuButton.cpp ../src/LFSTKToggleButton.cpp ../src/LFSTKWindow.cpp
-APIHEADERS = ../src/LFSTKButton.h ../src/LFSTKGadget.h ../src/LFSTKGlobals.h ../src/LFSTKImage.h ../src/LFSTKLabel.h ../src/LFSTKLib.h ../src/LFSTKLineEdit.h ../src/LFSTKMenuButton.h ../src/LFSTKToggleButton.h ../src/LFSTKWindow.h
-include_HEADERS = $(APIHEADERS)
+COMMONSRC = ../lfstk/LFSTKButton.cpp ../lfstk/LFSTKGadget.cpp ../lfstk/LFSTKImage.cpp ../lfstk/LFSTKLabel.cpp ../lfstk/LFSTKLib.cpp ../lfstk/LFSTKLineEdit.cpp ../lfstk/LFSTKMenuButton.cpp ../lfstk/LFSTKToggleButton.cpp ../lfstk/LFSTKWindow.cpp
 lib_LTLIBRARIES = liblfstoolkit.la
 liblfstoolkit_la_SOURCES = $(COMMONSRC)
+
+#lfstoolkit_includedir = $(includedir)/src
+#lfstoolkit_include_HEADERS = $(APIHEADERS)
+#include ../headers
+#include_HEADERS = $(APIHEADERS)
 pixfilesdir = ${prefix}/share/pixmaps
 pixfiles_DATA = ../resources/pixmaps/*
+lfstoolkit_includedir = $(includedir)/lfstk
+lfstoolkit_include_HEADERS = ../lfstk/LFSTK*.h
 all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .cpp .lo .o .obj
-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/../flagsandlibs $(srcdir)/../sources $(srcdir)/../headers $(am__configure_deps)
+$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/../flagsandlibs $(srcdir)/../sources $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -395,7 +401,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe);; \
 	esac;
-$(srcdir)/../flagsandlibs $(srcdir)/../sources $(srcdir)/../headers $(am__empty):
+$(srcdir)/../flagsandlibs $(srcdir)/../sources $(am__empty):
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
@@ -440,51 +446,51 @@ clean-libLTLIBRARIES:
 	  echo rm -f $${locs}; \
 	  rm -f $${locs}; \
 	}
-../src/$(am__dirstamp):
-	@$(MKDIR_P) ../src
-	@: > ../src/$(am__dirstamp)
-../src/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) ../src/$(DEPDIR)
-	@: > ../src/$(DEPDIR)/$(am__dirstamp)
-../src/LFSTKButton.lo: ../src/$(am__dirstamp) \
-	../src/$(DEPDIR)/$(am__dirstamp)
-../src/LFSTKGadget.lo: ../src/$(am__dirstamp) \
-	../src/$(DEPDIR)/$(am__dirstamp)
-../src/LFSTKImage.lo: ../src/$(am__dirstamp) \
-	../src/$(DEPDIR)/$(am__dirstamp)
-../src/LFSTKLabel.lo: ../src/$(am__dirstamp) \
-	../src/$(DEPDIR)/$(am__dirstamp)
-../src/LFSTKLib.lo: ../src/$(am__dirstamp) \
-	../src/$(DEPDIR)/$(am__dirstamp)
-../src/LFSTKLineEdit.lo: ../src/$(am__dirstamp) \
-	../src/$(DEPDIR)/$(am__dirstamp)
-../src/LFSTKMenuButton.lo: ../src/$(am__dirstamp) \
-	../src/$(DEPDIR)/$(am__dirstamp)
-../src/LFSTKToggleButton.lo: ../src/$(am__dirstamp) \
-	../src/$(DEPDIR)/$(am__dirstamp)
-../src/LFSTKWindow.lo: ../src/$(am__dirstamp) \
-	../src/$(DEPDIR)/$(am__dirstamp)
+../lfstk/$(am__dirstamp):
+	@$(MKDIR_P) ../lfstk
+	@: > ../lfstk/$(am__dirstamp)
+../lfstk/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ../lfstk/$(DEPDIR)
+	@: > ../lfstk/$(DEPDIR)/$(am__dirstamp)
+../lfstk/LFSTKButton.lo: ../lfstk/$(am__dirstamp) \
+	../lfstk/$(DEPDIR)/$(am__dirstamp)
+../lfstk/LFSTKGadget.lo: ../lfstk/$(am__dirstamp) \
+	../lfstk/$(DEPDIR)/$(am__dirstamp)
+../lfstk/LFSTKImage.lo: ../lfstk/$(am__dirstamp) \
+	../lfstk/$(DEPDIR)/$(am__dirstamp)
+../lfstk/LFSTKLabel.lo: ../lfstk/$(am__dirstamp) \
+	../lfstk/$(DEPDIR)/$(am__dirstamp)
+../lfstk/LFSTKLib.lo: ../lfstk/$(am__dirstamp) \
+	../lfstk/$(DEPDIR)/$(am__dirstamp)
+../lfstk/LFSTKLineEdit.lo: ../lfstk/$(am__dirstamp) \
+	../lfstk/$(DEPDIR)/$(am__dirstamp)
+../lfstk/LFSTKMenuButton.lo: ../lfstk/$(am__dirstamp) \
+	../lfstk/$(DEPDIR)/$(am__dirstamp)
+../lfstk/LFSTKToggleButton.lo: ../lfstk/$(am__dirstamp) \
+	../lfstk/$(DEPDIR)/$(am__dirstamp)
+../lfstk/LFSTKWindow.lo: ../lfstk/$(am__dirstamp) \
+	../lfstk/$(DEPDIR)/$(am__dirstamp)
 
 liblfstoolkit.la: $(liblfstoolkit_la_OBJECTS) $(liblfstoolkit_la_DEPENDENCIES) $(EXTRA_liblfstoolkit_la_DEPENDENCIES) 
 	$(AM_V_CXXLD)$(CXXLINK) -rpath $(libdir) $(liblfstoolkit_la_OBJECTS) $(liblfstoolkit_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
-	-rm -f ../src/*.$(OBJEXT)
-	-rm -f ../src/*.lo
+	-rm -f ../lfstk/*.$(OBJEXT)
+	-rm -f ../lfstk/*.lo
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/LFSTKButton.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/LFSTKGadget.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/LFSTKImage.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/LFSTKLabel.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/LFSTKLib.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/LFSTKLineEdit.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/LFSTKMenuButton.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/LFSTKToggleButton.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/LFSTKWindow.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKButton.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKGadget.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKImage.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKLabel.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKLib.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKLineEdit.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKMenuButton.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKToggleButton.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKWindow.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -515,7 +521,7 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
-	-rm -rf ../src/.libs ../src/_libs
+	-rm -rf ../lfstk/.libs ../lfstk/_libs
 install-pixfilesDATA: $(pixfiles_DATA)
 	@$(NORMAL_INSTALL)
 	@list='$(pixfiles_DATA)'; test -n "$(pixfilesdir)" || list=; \
@@ -537,27 +543,27 @@ uninstall-pixfilesDATA:
 	@list='$(pixfiles_DATA)'; test -n "$(pixfilesdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	dir='$(DESTDIR)$(pixfilesdir)'; $(am__uninstall_files_from_dir)
-install-includeHEADERS: $(include_HEADERS)
+install-lfstoolkit_includeHEADERS: $(lfstoolkit_include_HEADERS)
 	@$(NORMAL_INSTALL)
-	@list='$(include_HEADERS)'; test -n "$(includedir)" || list=; \
+	@list='$(lfstoolkit_include_HEADERS)'; test -n "$(lfstoolkit_includedir)" || list=; \
 	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(includedir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(includedir)" || exit 1; \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(lfstoolkit_includedir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(lfstoolkit_includedir)" || exit 1; \
 	fi; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  echo "$$d$$p"; \
 	done | $(am__base_list) | \
 	while read files; do \
-	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(includedir)'"; \
-	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(includedir)" || exit $$?; \
+	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(lfstoolkit_includedir)'"; \
+	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(lfstoolkit_includedir)" || exit $$?; \
 	done
 
-uninstall-includeHEADERS:
+uninstall-lfstoolkit_includeHEADERS:
 	@$(NORMAL_UNINSTALL)
-	@list='$(include_HEADERS)'; test -n "$(includedir)" || list=; \
+	@list='$(lfstoolkit_include_HEADERS)'; test -n "$(lfstoolkit_includedir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	dir='$(DESTDIR)$(includedir)'; $(am__uninstall_files_from_dir)
+	dir='$(DESTDIR)$(lfstoolkit_includedir)'; $(am__uninstall_files_from_dir)
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -645,7 +651,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(LTLIBRARIES) $(DATA) $(HEADERS)
 installdirs:
-	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pixfilesdir)" "$(DESTDIR)$(includedir)"; do \
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pixfilesdir)" "$(DESTDIR)$(lfstoolkit_includedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -674,8 +680,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
-	-rm -f ../src/$(DEPDIR)/$(am__dirstamp)
-	-rm -f ../src/$(am__dirstamp)
+	-rm -f ../lfstk/$(DEPDIR)/$(am__dirstamp)
+	-rm -f ../lfstk/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -686,7 +692,7 @@ clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ../src/$(DEPDIR)
+	-rm -rf ../lfstk/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -703,7 +709,8 @@ info: info-am
 
 info-am:
 
-install-data-am: install-includeHEADERS install-pixfilesDATA
+install-data-am: install-lfstoolkit_includeHEADERS \
+	install-pixfilesDATA
 
 install-dvi: install-dvi-am
 
@@ -732,7 +739,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ../src/$(DEPDIR)
+	-rm -rf ../lfstk/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -749,8 +756,8 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-includeHEADERS uninstall-libLTLIBRARIES \
-	uninstall-pixfilesDATA
+uninstall-am: uninstall-lfstoolkit_includeHEADERS \
+	uninstall-libLTLIBRARIES uninstall-pixfilesDATA
 
 .MAKE: install-am install-strip
 
@@ -760,15 +767,16 @@ uninstall-am: uninstall-includeHEADERS uninstall-libLTLIBRARIES \
 	distclean-libtool distclean-tags distdir dvi dvi-am html \
 	html-am info info-am install install-am install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am \
-	install-includeHEADERS install-info install-info-am \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-lfstoolkit_includeHEADERS \
 	install-libLTLIBRARIES install-man install-pdf install-pdf-am \
 	install-pixfilesDATA install-ps install-ps-am install-strip \
 	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-am uninstall uninstall-am uninstall-includeHEADERS \
-	uninstall-libLTLIBRARIES uninstall-pixfilesDATA
+	tags tags-am uninstall uninstall-am \
+	uninstall-lfstoolkit_includeHEADERS uninstall-libLTLIBRARIES \
+	uninstall-pixfilesDATA
 
 .PRECIOUS: Makefile
 

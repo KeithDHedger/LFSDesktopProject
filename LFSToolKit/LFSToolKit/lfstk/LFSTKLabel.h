@@ -1,8 +1,8 @@
 /*
  *
- * ©K. D. Hedger. Thu  5 Nov 16:40:40 GMT 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Fri 28 Aug 19:16:54 BST 2015 kdhedger68713@gmail.com
 
- * This file (LFSTKImage.h) is part of LFSToolKit.
+ * This file (LFSTKLabel.h) is part of LFSToolKit.
 
  * LFSToolKit is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,25 +18,24 @@
  * along with LFSToolKit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _LFSTKIMAGE_
-#define _LFSTKIMAGE_
 
-#include "LFSTKGadget.h"
+#ifndef _LFSTKLABEL_
+#define _LFSTKLABEL_
+
+//#include "LFSTKGadget.h"
 
 /**
  *
- * \brief Image edit class for LFSToolKit.
- *
- * Basic Image gadget.
+ * \brief Label class for LFSToolKit gadgets.
  *
  */
-class LFSTK_imageClass  : public  LFSTK_gadgetClass
+class LFSTK_labelClass : public LFSTK_gadgetClass
 {
 	public:
-		LFSTK_imageClass();
-		~LFSTK_imageClass();
-		LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* imagepath,int x,int y,int w,int gravity);
+		LFSTK_labelClass();
+		~LFSTK_labelClass();
 
+		LFSTK_labelClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity);
 		bool mouseUp(XButtonEvent *e) {return(true);};
 		bool mouseDown(XButtonEvent *e) {return(true);};
 		bool mouseExit(XButtonEvent *e) {return(true);};

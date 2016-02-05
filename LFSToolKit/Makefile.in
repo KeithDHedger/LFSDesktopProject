@@ -821,6 +821,9 @@ uninstall-am:
 .PRECIOUS: Makefile
 
 
+#include LFSToolKit/headers
+#include_HEADERS = $(APIHEADERS)
+
 .PHONY: docs
 
 docs:

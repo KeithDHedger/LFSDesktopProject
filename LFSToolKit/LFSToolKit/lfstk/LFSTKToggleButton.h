@@ -22,7 +22,7 @@
 #ifndef _LFSTKTOGGLEBUTTON_
 #define _LFSTKTOGGLEBUTTON_
 
-#include "LFSTKGadget.h"
+//#include "LFSTKGadget.h"
 
 enum drawStyle {TOGGLECHECK=0,TOGGLERADIO,TOGGLENORMAL};
 

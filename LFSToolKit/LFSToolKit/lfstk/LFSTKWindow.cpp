@@ -28,7 +28,8 @@
 
 #include <string.h>
 
-#include "LFSTKWindow.h"
+//#include "LFSTKWindow.h"
+#include "LFSTKGlobals.h"
 
 #define _NET_WM_STATE_REMOVE	0
 #define _NET_WM_STATE_ADD		1
@@ -65,6 +66,13 @@ void LFSTK_windowClass::initWindow(bool loadvars)
 	this->loadGlobalColours();
 	this->isActive=true;
 	this->useTile=false;
+
+
+//Announce XDND support
+//	Atom XdndAware=XInternAtom(this->display,"XdndAware",true);
+//	Atom version=5;
+//	XChangeProperty(this->display,this->window,XdndAware,XA_ATOM,32,PropModeReplace,(unsigned char*)&version,1);
+
 }
 /**
  * Reload colours from prefs.

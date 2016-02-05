@@ -1,1 +1,1 @@
-COMMONSRC = ../src/LFSTKButton.cpp ../src/LFSTKGadget.cpp ../src/LFSTKImage.cpp ../src/LFSTKLabel.cpp ../src/LFSTKLib.cpp ../src/LFSTKLineEdit.cpp ../src/LFSTKMenuButton.cpp ../src/LFSTKToggleButton.cpp ../src/LFSTKWindow.cpp
+COMMONSRC = ../lfstk/LFSTKButton.cpp ../lfstk/LFSTKGadget.cpp ../lfstk/LFSTKImage.cpp ../lfstk/LFSTKLabel.cpp ../lfstk/LFSTKLib.cpp ../lfstk/LFSTKLineEdit.cpp ../lfstk/LFSTKMenuButton.cpp ../lfstk/LFSTKToggleButton.cpp ../lfstk/LFSTKWindow.cpp

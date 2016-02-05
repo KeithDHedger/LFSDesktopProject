@@ -26,7 +26,7 @@
 
 #include <X11/Xatom.h>
 
-#include "LFSTKGadget.h"
+//#include "LFSTKGadget.h"
 
 /**
  *
@@ -53,6 +53,7 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		bool keyRelease(XKeyEvent *e);
 		bool lostFocus(XEvent *e);
 		bool gotFocus(XEvent *e);
+		bool clientMessage(XEvent *e);
 		void LFSTK_setFocus(void);
 
 	private:
@@ -63,6 +64,18 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		Atom XA_COMPOUND_TEXT;
 		Atom XA_UTF8_STRING;
 		Atom XA_TARGETS;
+
+//Atoms for Xdnd
+		Atom XDNDENTER;
+		Atom XDNDPOSITION;
+		Atom XDNDSTATUS;
+		Atom XDNDTYPELIST;
+		Atom XDNDACTIONCOPY;
+		Atom XDNDDROP;
+		Atom XDNDLEAVE;
+		Atom XDNDFINISHED;
+		Atom XDNDSELECTION;
+		Atom XDNDPROXY;
 
 		std::string	buffer;
 		unsigned	cursorPos;

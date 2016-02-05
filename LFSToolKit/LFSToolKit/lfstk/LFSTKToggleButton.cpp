@@ -18,7 +18,8 @@
  * along with LFSToolKit.  If not, see <http://www.gnu.org/licenses/>.
  */
  
-#include "LFSTKToggleButton.h"
+//#include "LFSTKToggleButton.h"
+#include "LFSTKGlobals.h"
 
 LFSTK_toggleButtonClass::~LFSTK_toggleButtonClass()
 {

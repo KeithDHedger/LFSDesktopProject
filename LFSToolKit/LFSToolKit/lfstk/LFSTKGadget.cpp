@@ -21,7 +21,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#include "LFSTKGadget.h"
+//#include "LFSTKGadget.h"
+#include "LFSTKGlobals.h"
 
 LFSTK_gadgetClass::~LFSTK_gadgetClass()
 {
@@ -365,6 +366,16 @@ void LFSTK_gadgetClass::LFSTK_resizeWindow(int w,int h)
 * \return Return true if event fully handeled or false to pass it on.
 */
 bool LFSTK_gadgetClass::keyRelease(XKeyEvent *e)
+{
+	return(true);
+}
+
+/**
+* Client Message callback.
+* \param e XEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
+bool LFSTK_gadgetClass::clientMessage(XEvent *e)
 {
 	return(true);
 }

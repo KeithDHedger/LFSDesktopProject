@@ -1,8 +1,9 @@
 
-AM_CXXFLAGS = -Wl,--version-script=../src/exportmap
+AM_CXXFLAGS = -Wl,--version-script=../lfstk/exportmap
 AM_LDFLAGS = -version-info $(LFSTOOLKIT_LIBTOOL_VERSION)
 
 AM_CPPFLAGS =	-I$(top_srcdir) \
+				-I.. \
 				$(X11_CFLAGS) \
 				$(XFT_CFLAGS) \
 				$(XINERAMA_CFLAGS) \

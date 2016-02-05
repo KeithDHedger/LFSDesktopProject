@@ -76,4 +76,14 @@ struct colourStruct
 	XftColor	xftcol;
 };
 
+#include <lfstk/LFSTKLib.h>
+#include <lfstk/LFSTKWindow.h>
+#include <lfstk/LFSTKGadget.h>
+#include <lfstk/LFSTKLabel.h>
+#include <lfstk/LFSTKImage.h>
+#include <lfstk/LFSTKButton.h>
+#include <lfstk/LFSTKMenuButton.h>
+#include <lfstk/LFSTKLineEdit.h>
+#include <lfstk/LFSTKToggleButton.h>
+
 #endif

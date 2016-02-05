@@ -22,7 +22,7 @@
 #ifndef _LFSTKMENUBUTTON_
 #define _LFSTKMENUBUTTON_
 
-#include "LFSTKButton.h"
+//#include "LFSTKButton.h"
 
 /**
  *

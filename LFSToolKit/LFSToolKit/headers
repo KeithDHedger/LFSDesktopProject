@@ -1,1 +1,0 @@
-APIHEADERS = ../src/LFSTKButton.h ../src/LFSTKGadget.h ../src/LFSTKGlobals.h ../src/LFSTKImage.h ../src/LFSTKLabel.h ../src/LFSTKLib.h ../src/LFSTKLineEdit.h ../src/LFSTKMenuButton.h ../src/LFSTKToggleButton.h ../src/LFSTKWindow.h

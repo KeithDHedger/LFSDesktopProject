@@ -21,7 +21,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#include "LFSTKLineEdit.h"
+//#include "LFSTKLineEdit.h"
+#include "LFSTKGlobals.h"
 
 LFSTK_lineEditClass::~LFSTK_lineEditClass()
 {
@@ -54,7 +55,8 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 
 	this->window=XCreateWindow(this->display,this->parent,x+pad,y+pad,w-(pad*2),h-(pad*2),0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWBitGravity,&wa);
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|FocusChangeMask|KeyReleaseMask);
-
+	//XSelectInput(this->display,this->window,0);
+//xxxxxxxxxxxxxxx
 	this->listen.function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->listen.pointer=this;
 	this->listen.type=LINEEDITGADGET;
@@ -67,10 +69,27 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 
 	this->buffer=label;
 
-	XA_CLIPBOARD=XInternAtom(this->display,"CLIPBOARD",True);
+	XA_CLIPBOARD=XInternAtom(this->display,"CLIPBOARD",true);
 	XA_COMPOUND_TEXT=XInternAtom(this->display,"COMPOUND_TEXT",true);
 	XA_UTF8_STRING=XInternAtom(this->display,"UTF8_STRING",true);
-	XA_TARGETS=XInternAtom(this->display,"TARGETS",True);
+	XA_TARGETS=XInternAtom(this->display,"TARGETS",true);
+	//Atoms for Xdnd
+	XDNDENTER=XInternAtom(this->display,"XdndEnter",false);
+	XDNDPOSITION=XInternAtom(this->display,"XdndPosition",false);
+	XDNDSTATUS=XInternAtom(this->display,"XdndStatus",false);
+	XDNDTYPELIST=XInternAtom(this->display,"XdndTypeList",false);
+	XDNDACTIONCOPY=XInternAtom(this->display,"XdndActionCopy",false);
+	XDNDDROP=XInternAtom(this->display,"XdndDrop",false);
+	XDNDLEAVE=XInternAtom(this->display,"XdndLeave",false);
+	XDNDFINISHED=XInternAtom(this->display,"XdndFinished",false);
+	XDNDSELECTION=XInternAtom(this->display,"XdndSelection",false);
+	XDNDPROXY=XInternAtom(this->display,"XdndProxy",false);
+
+//Announce XDND support
+	Atom XdndAware=XInternAtom(this->display,"XdndAware",false);
+	Atom version=5;
+	XChangeProperty(this->display,this->wc->window,XdndAware,XA_ATOM,32,PropModeReplace,(unsigned char*)&version,1);
+
 }
 
 /**
@@ -106,6 +125,17 @@ void LFSTK_lineEditClass::LFSTK_setFocus(void)
 	XSetInputFocus(this->display,this->window,RevertToParent,CurrentTime);
 	this->isFocused=true;
 	this->LFSTK_clearWindow();
+}
+
+/**
+* Configure Message callback.
+* \param e XButtonEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
+bool LFSTK_lineEditClass::clientMessage(XEvent *e)
+{
+printf("confmes from line edit\n");
+	return(true);
 }
 
 /**

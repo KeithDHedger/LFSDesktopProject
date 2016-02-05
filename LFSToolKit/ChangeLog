@@ -1,3 +1,8 @@
+0.1.1
+Includes now grouped into include/lfstk.
+All includes now added from one global file.
+Started to add d&d.
+
 0.1.0
 Synched versions to "0.1.0".
 Commited to github.

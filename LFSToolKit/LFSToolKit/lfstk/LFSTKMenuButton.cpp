@@ -20,7 +20,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#include "LFSTKMenuButton.h"
+//#include "LFSTKMenuButton.h"
+#include "LFSTKGlobals.h"
 
 void LFSTK_menuButtonClass::initMenuButton(void)
 {

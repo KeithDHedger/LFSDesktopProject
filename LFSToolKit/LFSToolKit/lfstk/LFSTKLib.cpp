@@ -25,7 +25,9 @@
 #include <ftw.h>
 #include <fnmatch.h>
 
-#include "LFSTKGadget.h"
+//#include "LFSTKGadget.h"
+//#include "LFSTKLib.h"
+#include "LFSTKGlobals.h"
 
 enum {DEFNORMAL,DEFPRELIE,DEFACTIVE,DEFINACTIVE,DEFFONTNORMAL,DEFFONTPRELIE,DEFFONTACTIVE,DEFFONTINACTIVE};
 
@@ -527,7 +529,8 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 //				printf("resize\n");
 				break;
 			case ClientMessage:
-//				printf("ClientMessage\n");
+				//printf("ClientMessage from lib\n");
+				retval=gadget->clientMessage(e);
 				break;
 				
 		}

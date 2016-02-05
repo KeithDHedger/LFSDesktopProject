@@ -20,7 +20,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#include "LFSTKButton.h"
+//#include "LFSTKButton.h"
+#include "LFSTKGlobals.h"
 
 LFSTK_buttonClass::~LFSTK_buttonClass()
 {

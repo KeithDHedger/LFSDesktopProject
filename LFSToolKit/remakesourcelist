@@ -1,9 +1,13 @@
 #|/bin/bash
 
 shopt -s nullglob
-cd "LFSToolKit/src"
-csrclst=$(echo "../src/*.c" "../src/*.cpp")
-echo COMMONSRC = $csrclst > ../sources
+pushd "LFSToolKit/src"
+	csrclst=$(echo "../lfstk/*.c" "../lfstk/*.cpp")
+	echo COMMONSRC = $csrclst > ../sources
+popd
 
-headerlst=$(echo "../src/LFSTK*.h")
-echo APIHEADERS = $headerlst > ../headers
+#pushd LFSToolKit
+##headerlst=$(echo "../src/LFSTK*.h")
+#	headerlst=$(echo "src/LFSTK*.h")
+#	echo APIHEADERS = $headerlst > headers
+#popd

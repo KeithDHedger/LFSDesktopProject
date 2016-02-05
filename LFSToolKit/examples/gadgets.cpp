@@ -12,15 +12,22 @@ exit $retval
 
 #include <stdio.h>
 #include <unistd.h>
+#include <iostream>
+#include <cstdio>
+#include <climits>
+#include <cstring>
+using namespace std;
+#include <map>
 
-#include <LFSTKWindow.h>
-#include <LFSTKButton.h>
-#include "LFSTKMenuButton.h"
-#include "LFSTKLineEdit.h"
-#include "LFSTKLabel.h"
-#include "LFSTKToggleButton.h"
-#include "LFSTKImage.h"
-#include "LFSTKLib.h"
+//#include <LFSTKWindow.h>
+//#include <LFSTKButton.h>
+//#include "LFSTKMenuButton.h"
+//#include "LFSTKLineEdit.h"
+//#include "LFSTKLabel.h"
+//#include "LFSTKToggleButton.h"
+//#include "LFSTKImage.h"
+//#include "LFSTKLib.h"
+#include "LFSTKGlobals.h"
 
 #define WIDTH			400
 #define HITE			600
@@ -82,6 +89,16 @@ bool menuCB(void *p,void* ud)
 	printf("Selected Menu Label:%s\n",menuitem->label);
 	return(true);
 }
+
+//Convert an atom name in to a std::string
+string GetAtomName(Display* disp, Atom a)
+{
+	if(a == None)
+		return "None";
+	else
+		return XGetAtomName(disp, a);
+}
+
 
 int main(int argc, char **argv)
 {
@@ -246,7 +263,27 @@ int main(int argc, char **argv)
 //	iconButton->LFSTK_setTile(wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),-1);
 //	mb->LFSTK_setTile(wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),-1);
 //	mbwithsubs->LFSTK_setTile(wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),-1);
+
+	//Atoms for Xdnd
+	Atom XdndEnter = XInternAtom(wc->display, "XdndEnter", False);
+	Atom XdndPosition = XInternAtom(wc->display, "XdndPosition", False);
+	Atom XdndStatus = XInternAtom(wc->display, "XdndStatus", False);
+	Atom XdndTypeList = XInternAtom(wc->display, "XdndTypeList", False);
+	Atom XdndActionCopy = XInternAtom(wc->display, "XdndActionCopy", False);
+	Atom XdndDrop = XInternAtom(wc->display, "XdndDrop", False);
+	Atom XdndLeave = XInternAtom(wc->display, "XdndLeave", False);
+	Atom XdndFinished = XInternAtom(wc->display, "XdndFinished", False);
+	Atom XdndSelection = XInternAtom(wc->display, "XdndSelection", False);
+	Atom XdndProxy = XInternAtom(wc->display, "XdndProxy", False);
+	Atom XA_TARGETS = XInternAtom(wc->display, "TARGETS", False);
+	Atom sel = XInternAtom(wc->display, "PRIMARY", 0);
+	
+	
+	map<string, int> myDataTypes;
+if(myDataTypes.empty())
+		myDataTypes["STRING"] = 1;	
 	wc->LFSTK_showWindow();
+	int xdnd_version=3;
 
 	mainLoop=true;
 	while(mainLoop==true)
@@ -285,8 +322,91 @@ int main(int argc, char **argv)
 						break;
 
 					case ClientMessage:
+						{
+						// XTranslateCoordinates
+						printf("Main loop client message\n");
+						cerr << "A ClientMessage has arrived:\n";
+						cerr << "Type = " << GetAtomName(wc->display, event.xclient.message_type) << " (" << event.xclient.format << ")\n";
+
+if(event.xclient.message_type == XdndPosition)
+			{
+				cerr << hex << "Source window = 0x" << event.xclient.data.l[0] << dec << endl;
+				cerr << "Position: x=" << (event.xclient.data.l[2]  >> 16) << " y=" << (event.xclient.data.l[2] &0xffff)  << endl;
+				cerr << "Timestamp = " << event.xclient.data.l[3] << " (Version >= 1 only)\n";
+				
+				Atom action=XdndActionCopy;
+				if(xdnd_version >= 2)
+					action = event.xclient.data.l[4];
+
+				cerr << "Action = " << GetAtomName(wc->display, action) << " (Version >= 2 only)\n";
+				
+
+				//Xdnd: reply with an XDND status message
+				XClientMessageEvent m;
+				memset(&m, sizeof(m), 0);
+				m.type = ClientMessage;
+				m.display = event.xclient.display;
+				m.window = event.xclient.data.l[0];
+				m.message_type = XdndStatus;
+				m.format=32;
+				m.data.l[0] = wc->window;
+				m.data.l[1] =1;// (to_be_requested != None);
+				//printf(">>>>>%i<<<<<\n",(to_be_requested != None));
+				m.data.l[2] = 0; //Specify an empty rectangle
+				m.data.l[3] = 0;
+				m.data.l[4] = XdndActionCopy; //We only accept copying anyway.
+
+				XSendEvent(wc->display, event.xclient.data.l[0], False, NoEventMask, (XEvent*)&m);
+				XFlush(wc->display);
+			}
+
+if(event.xclient.message_type == XdndDrop)
+			{
+//				if(to_be_requested == None)
+				{
+					//It's sending anyway, despite instructions to the contrary.
+					//So reply that we're not interested.
+					XClientMessageEvent m;
+					memset(&m, sizeof(m), 0);
+					m.type = ClientMessage;
+					m.display = event.xclient.display;
+					m.window = event.xclient.data.l[0];
+					m.message_type = XdndFinished;
+					m.format=32;
+					m.data.l[0] =wc->window;
+					m.data.l[1] = 0;
+					m.data.l[2] = None; //Failed.
+					XSendEvent(wc->display, event.xclient.data.l[0], False, NoEventMask, (XEvent*)&m);
+				}
+				}
+#if 0
+//Xdnd: reply with an XDND status message
+//Atom XdndActionCopy = XInternAtom(wc->display, "XdndActionCopy", False);
+//Atom XdndStatus = XInternAtom(wc->display, "XdndStatus", False);
+				XClientMessageEvent m;
+				memset(&m, sizeof(m), 0);
+				m.type = ClientMessage;
+				m.display = event.xclient.display;
+				m.window = event.xclient.data.l[0];
+				m.message_type = XdndStatus;
+				m.format=32;
+				m.data.l[0] = wc->window;
+				m.data.l[1] = 0;//(to_be_requested != None);
+				m.data.l[2] = 0; //Specify an empty rectangle
+				m.data.l[3] = 0;
+				m.data.l[4] = XdndActionCopy; //We only accept copying anyway.
+//
+				XSendEvent(wc->display, event.xclient.data.l[0], False, NoEventMask, (XEvent*)&m);
+				XFlush(wc->display);
+
+#endif					
+						
+						//cerr << "Type = " << GetAtomName(disp, e.xclient.message_type) << " (" << e.xclient.format << ")\n";
+
 						if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
 							mainLoop=false;
+						}
+						break;
 				}
 		}
 
