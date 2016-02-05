@@ -104,7 +104,8 @@ void mountDisk(int what)
 									}
 								else
 									{
-										command=oneLiner("xdg-open \"%s\" &",deskIconsArray[foundDiskNumber].mountpoint);
+										asprintf(&command,"xdg-open \"%s\" &",deskIconsArray[foundDiskNumber].mountpoint);
+										system(command);
 									}
 							}
 						free(command);
