@@ -20,14 +20,11 @@
 
 
 #include <X11/extensions/shape.h>
-
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <libudev.h>
 
 #include "config.h"
-
 #include "prefs.h"
 #include "files.h"
 #include "disks.h"

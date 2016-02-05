@@ -42,12 +42,7 @@
 #include <limits.h>
 #include <poll.h>
 
-//#include <LFSTKWindow.h>
-//#include <LFSTKButton.h>
-//#include "LFSTKLineEdit.h"
-
 #include "config.h"
-
 #include "globals.h"
 #include "prefs.h"
 #include "files.h"

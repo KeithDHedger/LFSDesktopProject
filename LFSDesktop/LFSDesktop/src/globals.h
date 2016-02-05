@@ -29,9 +29,6 @@
 #define MAXBUFFER 512
 
 #include <lfstk/LFSTKGlobals.h>
-//#include <LFSTKWindow.h>
-//#include <LFSTKButton.h>
-//#include "LFSTKLineEdit.h"
 
 enum {CACHEFOLDER,DISKFOLDER};
 enum {HOMEDATA=0,ROOTDATA};
