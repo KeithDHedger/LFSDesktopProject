@@ -21,9 +21,10 @@
 #ifndef _APPMENU_
 #define _APPMENU_
 
-#include <LFSTKWindow.h>
-#include <LFSTKButton.h>
-#include <LFSTKMenuButton.h>
+//#include <LFSTKWindow.h>
+//#include <LFSTKButton.h>
+//#include <LFSTKMenuButton.h>
+#include <lfstk/LFSTKGlobals.h>
 
 //#include "globals.h"
 

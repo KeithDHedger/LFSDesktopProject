@@ -23,12 +23,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <LFSTKWindow.h>
-#include <LFSTKButton.h>
-#include <LFSTKMenuButton.h>
-#include <LFSTKLineEdit.h>
-#include <LFSTKLabel.h>
-#include <LFSTKLib.h>
+//#include <LFSTKWindow.h>
+//#include <LFSTKButton.h>
+//#include <LFSTKMenuButton.h>
+//#include <LFSTKLineEdit.h>
+//#include <LFSTKLabel.h>
+//#include <LFSTKLib.h>
+#include <lfstk/LFSTKGlobals.h>
 
 enum {EXIT=0,APPLY,NEWGROUP,UPDATEGROUP,NOMOREBUTTONS};
 enum {WALLPAPER=0,TOOLKIT,DESKTOP,WMANAGER,PANELPREFS,NOMORELAUNCHERS};

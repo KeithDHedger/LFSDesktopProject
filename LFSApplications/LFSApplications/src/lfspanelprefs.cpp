@@ -22,12 +22,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <LFSTKWindow.h>
-#include <LFSTKButton.h>
-#include <LFSTKMenuButton.h>
-#include <LFSTKLineEdit.h>
-#include <LFSTKLabel.h>
-#include <LFSTKLib.h>
+//#include <LFSTKWindow.h>
+//#include <LFSTKButton.h>
+//#include <LFSTKMenuButton.h>
+//#include <LFSTKLineEdit.h>
+//#include <LFSTKLabel.h>
+//#include <LFSTKLib.h>
+#include <lfstk/LFSTKGlobals.h>
 
 #define BIG col2-col1+bwidth
 #define MAXPANELS 20

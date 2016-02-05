@@ -21,10 +21,11 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include <LFSTKWindow.h>
-#include <LFSTKButton.h>
-#include "LFSTKLabel.h"
-#include "LFSTKImage.h"
+//#include <LFSTKWindow.h>
+//#include <LFSTKButton.h>
+//#include "LFSTKLabel.h"
+//#include "LFSTKImage.h"
+#include <lfstk/LFSTKGlobals.h>
 
 #define		WINWIDTH 352
 #define		WINHITE 240

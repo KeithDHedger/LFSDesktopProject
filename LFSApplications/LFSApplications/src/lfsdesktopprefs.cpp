@@ -22,13 +22,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <LFSTKWindow.h>
-#include <LFSTKButton.h>
-#include <LFSTKMenuButton.h>
-#include <LFSTKLineEdit.h>
-#include <LFSTKLabel.h>
-#include <LFSTKToggleButton.h>
-#include <LFSTKLib.h>
+//#include <LFSTKWindow.h>
+//#include <LFSTKButton.h>
+//#include <LFSTKMenuButton.h>
+//#include <LFSTKLineEdit.h>
+//#include <LFSTKLabel.h>
+//#include <LFSTKToggleButton.h>
+//#include <LFSTKLib.h>
+#include <lfstk/LFSTKGlobals.h>
 
 enum {ICONTHEME=0,ICONSIZE,GRIDSIZE,GRIDBORDER,REFRESHRATE,FORECOLOUR,BACKCOLOUR,ALPHA,TERMCOMMAND,FONTFACE,IGNORES,NUMPREFS};
 enum {EXIT=0,APPLY,PRINT,NOMOREBUTTONS};

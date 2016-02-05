@@ -18,7 +18,8 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-#include <LFSTKWindow.h>
+#include <lfstk/LFSTKGlobals.h>
+
 
 #include "config.h"
 /*

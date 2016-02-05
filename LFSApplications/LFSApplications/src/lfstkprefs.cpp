@@ -22,13 +22,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <LFSTKWindow.h>
-#include <LFSTKButton.h>
-#include <LFSTKMenuButton.h>
-#include <LFSTKLineEdit.h>
-#include <LFSTKLabel.h>
-#include <LFSTKToggleButton.h>
-#include <LFSTKLib.h>
+#include <lfstk/LFSTKGlobals.h>
+
+//#include <LFSTKWindow.h>
+//#include <LFSTKButton.h>
+//#include <LFSTKMenuButton.h>
+//#include <LFSTKLineEdit.h>
+//#include <LFSTKLabel.h>
+//#include <LFSTKToggleButton.h>
+//#include <LFSTKLib.h>
 
 enum {EXIT=0,APPLY,PRINT,NOMOREGBS};
 enum {NORMAL=0,PRELIGHT,ACTIVE,INACTIVE,MENUNORMAL,MENUPRELIGHT,MENUACTIVE,MENUINACTIVE,NOMOREBUTTONS};

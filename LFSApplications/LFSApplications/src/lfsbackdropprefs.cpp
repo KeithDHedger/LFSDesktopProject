@@ -22,13 +22,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <LFSTKWindow.h>
-#include <LFSTKButton.h>
-#include <LFSTKMenuButton.h>
-#include <LFSTKLineEdit.h>
-#include <LFSTKToggleButton.h>
-#include <LFSTKLabel.h>
-#include <LFSTKLib.h>
+//#include <LFSTKWindow.h>
+//#include <LFSTKButton.h>
+//#include <LFSTKMenuButton.h>
+//#include <LFSTKLineEdit.h>
+//#include <LFSTKToggleButton.h>
+//#include <LFSTKLabel.h>
+//#include <LFSTKLib.h>
+#include <lfstk/LFSTKGlobals.h>
 
 enum labels {BACKDROP=0,MAINCOLOUR,MONITORBACKDROP,LSPACER,NOMORELABELS};
 enum {EXIT=0,PRINT,APPLY,NOMOREGUIS};
