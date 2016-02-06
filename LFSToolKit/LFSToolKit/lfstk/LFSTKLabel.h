@@ -22,8 +22,6 @@
 #ifndef _LFSTKLABEL_
 #define _LFSTKLABEL_
 
-//#include "LFSTKGadget.h"
-
 /**
  *
  * \brief Label class for LFSToolKit gadgets.

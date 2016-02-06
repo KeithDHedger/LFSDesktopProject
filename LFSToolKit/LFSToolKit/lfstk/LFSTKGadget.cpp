@@ -21,7 +21,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-//#include "LFSTKGadget.h"
 #include "LFSTKGlobals.h"
 
 LFSTK_gadgetClass::~LFSTK_gadgetClass()
@@ -158,6 +157,7 @@ void LFSTK_gadgetClass::initGadget(void)
 	this->useImage=false;
 	this->image=NULL;
 	this->scaledImage=NULL;
+	this->wc->LFSTK_addGadget(this);
 }
 
 /**

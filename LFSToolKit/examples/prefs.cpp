@@ -1,7 +1,7 @@
 #if 0
 
 #©keithhedger Mon 20 Jul 14:09:10 BST 2015 kdhedger68713@gmail.com
-g++ -Wall "$0" -I../LFSToolKit/src -L../LFSToolKit/app/.libs -llfstoolkit -lXm $(pkg-config --cflags --libs xt xext ice sm x11 xft) -lXm -lXaw3d -lXt -lXext -lICE -lSM -lX11||exit 1
+g++ -Wall "$0" -I../LFSToolKit -L../LFSToolKit/app/.libs -llfstoolkit -lXm $(pkg-config --cflags --libs xt xext ice sm x11 xft) -lXm -lXaw3d -lXt -lXext -lICE -lSM -lX11||exit 1
 LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./a.out "$@"
 retval=$?
 rm ./a.out
@@ -12,11 +12,7 @@ exit $retval
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <LFSTKWindow.h>
-#include <LFSTKButton.h>
-#include "LFSTKMenuButton.h"
-#include "LFSTKLineEdit.h"
-#include "LFSTKLib.h"
+#include "lfstk/LFSTKGlobals.h"
 
 enum {EXIT=0,APPLY,SAVE,FONTLABEL,FONTBOX,MENUFONTLABEL,MENUFONTBOX,THEMELABEL,THEMEBOX,WNORMAL,EWNORMAL,
 
@@ -69,7 +65,7 @@ bool callback(void *p,void* ud)
 					}
 				wc->globalLib->LFSTK_setGlobalString(-1,TYPEFONT,(char*)(static_cast<LFSTK_lineEditClass*>(bc[FONTBOX])->LFSTK_getBuffer()->c_str()));
 				wc->globalLib->LFSTK_setGlobalString(-1,TYPEMENUITEMFONT,(char*)(static_cast<LFSTK_lineEditClass*>(bc[MENUFONTBOX])->LFSTK_getBuffer()->c_str()));
-				wc->globalLib->LFSTK_setGlobalString(-1,TYPETHEME,(char*)(static_cast<LFSTK_lineEditClass*>(bc[THEMEBOX])->LFSTK_getBuffer()->c_str()));
+				//wc->globalLib->LFSTK_setGlobalString(-1,TYPETHEME,(char*)(static_cast<LFSTK_lineEditClass*>(bc[THEMEBOX])->LFSTK_getBuffer()->c_str()));
 
 				
 				for(int j=FONTLABEL;j<BNORMAL;j+=2)
@@ -258,7 +254,7 @@ int main(int argc, char **argv)
 	static_cast<LFSTK_buttonClass*>(bc[THEMELABEL])->LFSTK_setStyle(BEVELNONE);
 
 	sx+=spacing;
-	bc[THEMEBOX]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(-1,TYPETHEME),sx,sy-1,(bwidth*2)+spacing+20,24,NorthWestGravity);
+	//bc[THEMEBOX]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(-1,TYPETHEME),sx,sy-1,(bwidth*2)+spacing+20,24,NorthWestGravity);
 
 	printf("Current Settings:\n\n");
 	callback(NULL,(void*)APPLY);
@@ -302,8 +298,5 @@ int main(int argc, char **argv)
 		}
 
 	delete wc;
-	for(int j=0;j<NOMORE;j++)
-		if(bc[j]!=NULL)
-			delete bc[j];
 	return 0;
 }

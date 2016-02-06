@@ -201,9 +201,6 @@ void doCustomIcon(bool useicon)
 					deskIconsArray[foundDiskNumber].customicon=true;
 				}
 
-			delete bc;
-			delete bc1;
-			delete le;
 			delete mainwind;
 		}
 	else

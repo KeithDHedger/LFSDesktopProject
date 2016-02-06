@@ -316,7 +316,6 @@ int main(int argc, char **argv)
 					case Expose:
 						wc->LFSTK_setActive(true);
 						wc->LFSTK_clearWindow();
-						//wc->LFSTK_sendMessage("_NET_ACTIVE_WINDOW",0,0,0,0,0);
 						break;
 					case ConfigureNotify:
 						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
@@ -327,24 +326,5 @@ int main(int argc, char **argv)
 		}
 
 	delete wc;
-
-	for(int j=NORMAL;j<NOMOREBUTTONS;j++)
-		if(normalbuttons[j]!=NULL)
-			delete normalbuttons[j];
-
-	for(int j=ENORMAL;j<NOMOREBUTTONEDITS;j++)
-		if(normaledits[j]!=NULL)
-			delete normaledits[j];
-
-	for(int j=LNORMBUTTONS;j<NOMORELABELS;j++)
-		if(labels[j]!=NULL)
-			delete labels[j];
-
-	for(int j=EXIT;j<NOMOREGBS;j++)
-		if(guibuttons[j]!=NULL)
-			delete guibuttons[j];
-
-	delete autocolour;
-
 	return(0);
 }

@@ -24,10 +24,6 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-//#include "LFSTKLib.h"
-//#include "LFSTKGadget.h"
-//#include "LFSTKGlobals.h"
-
 struct	monitorStruct
 {
 	int		x;
@@ -36,13 +32,13 @@ struct	monitorStruct
 	int		h;
 };
 
-//struct	gadgetList;
-struct	gadgetList
-{
+//typedef struct	gadgetList;
+//typedef class	LFSTK_gadgetClass;
+//{
 //	gadgetList			*prev;
 //	gadgetList			*next;
 //	LFSTK_gadgetClass	*gadget;
-};
+//};
 
 /**
  *
@@ -96,6 +92,13 @@ class LFSTK_windowClass
 
 		void LFSTK_setTile(const char *path,int size);
 
+//gadget management
+		void LFSTK_addGadget(LFSTK_gadgetClass *addgadget);
+		void LFSTK_freeAllGadgets(void);
+		LFSTK_gadgetClass* LFSTK_findGadget(LFSTK_gadgetClass *gadget);
+		int LFSTK_gadgetCount(void);
+		gadgetList* LFSTK_gadgetList(void);
+
 		Display			*display;
 		Window			window;
 		GC				gc;
@@ -131,6 +134,7 @@ class LFSTK_windowClass
 		bool			isSticky;
 		int				monitorCount;
 		monitorStruct	*monitors;
+		gadgetList		*gadgets;
 		
 };
 

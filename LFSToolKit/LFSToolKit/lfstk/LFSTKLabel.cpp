@@ -18,7 +18,6 @@
  * along with LFSToolKit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-//#include "LFSTKLabel.h"
 #include "LFSTKGlobals.h"
 
 LFSTK_labelClass::~LFSTK_labelClass()

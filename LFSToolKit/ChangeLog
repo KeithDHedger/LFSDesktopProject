@@ -1,4 +1,5 @@
 0.1.1
+Gadgets now destroyed with window.
 Includes now grouped into include/lfstk.
 All includes now added from one global file.
 Started to add d&d.

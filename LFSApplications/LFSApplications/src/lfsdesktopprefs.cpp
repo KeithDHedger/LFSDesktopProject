@@ -235,21 +235,10 @@ int main(int argc, char **argv)
 				}
 		}
 
-	delete showExt;
-
-	for(int j=0;j<NOMOREBUTTONS;j++)
-		if(guibc[j]!=NULL)
-			delete guibc[j];
-
-	for(int j=ICONTHEME;j<NUMPREFS;j++)
-		if(le[j]!=NULL)
-			delete le[j];
-
 	for(int j=ICONTHEME;j<NUMPREFS;j++)
 		if(prefs[j]!=NULL)
 			free(prefs[j]);
 
-	delete spacer;
 	delete wc;
 	free(env);
 	return(0);

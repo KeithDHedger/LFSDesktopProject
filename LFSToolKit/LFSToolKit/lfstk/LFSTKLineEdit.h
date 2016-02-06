@@ -26,8 +26,6 @@
 
 #include <X11/Xatom.h>
 
-//#include "LFSTKGadget.h"
-
 /**
  *
  * \brief Line edit class for LFSToolKit.

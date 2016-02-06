@@ -72,8 +72,6 @@ void freeData(void)
 					if(mainMenus[j].entry[k].name!=NULL)
 						free(mainMenus[j].entry[k].name);
 				}
-			if(bc[j]!=NULL)
-				delete bc[j];
 		}
 	delete wc;
 	delete twc;

@@ -107,10 +107,6 @@ int main(int argc, char **argv)
 				}
 		}
 
-	for(int j=LNAME;j<LNOMORELABELS;j++)
-		delete labels[j];
-	delete icon;
-	delete quit;
 	delete wc;
 	return 0;
 }

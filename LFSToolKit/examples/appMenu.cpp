@@ -1,7 +1,7 @@
 #if 0
 
 #©keithhedger Mon 20 Jul 14:09:10 BST 2015 kdhedger68713@gmail.com
-g++ "$0"  -O3 -I../LFSToolKit/src -L../LFSToolKit/app/.libs -llfstoolkit -lXm $(pkg-config --cflags --libs xt xext ice sm x11 xft) -lXm -lXaw3d -lXt -lXext -lICE -lSM -lX11||exit 1
+g++ "$0"  -O3 -I../LFSToolKit -L../LFSToolKit/app/.libs -llfstoolkit -lXm $(pkg-config --cflags --libs xt xext ice sm x11 xft) -lXm -lXaw3d -lXt -lXext -lICE -lSM -lX11||exit 1
 LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./a.out "$@"
 retval=$?
 rm ./a.out
@@ -32,9 +32,7 @@ exit $retval
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <LFSTKWindow.h>
-#include <LFSTKButton.h>
-#include <LFSTKMenuButton.h>
+#include "lfstk/LFSTKGlobals.h"
 
 #define BUFFERSIZE 2048
 #define MAXCATS 14
@@ -74,8 +72,6 @@ void freeData(void)
 					if(mainMenus[j].entry[k].name!=NULL)
 						free(mainMenus[j].entry[k].name);
 				}
-			if(bc[j]!=NULL)
-				delete bc[j];
 		}
 }
 

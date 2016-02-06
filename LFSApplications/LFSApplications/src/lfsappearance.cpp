@@ -369,14 +369,10 @@ int main(int argc, char **argv)
 		}
 
 	wc->LFSTK_hideWindow();
-	for(int j=0;j<NOMOREBUTTONS;j++)
-		if(guibc[j]!=NULL)
-			delete guibc[j];
 	for(int j=0;j<maxGroups;j++)
 		if(groups[j].label!=NULL)
 			free((char*)groups[j].label);
 
-	delete spacer;
 	delete wc;
 	return(0);
 }

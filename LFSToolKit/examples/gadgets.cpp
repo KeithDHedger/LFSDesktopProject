@@ -2,7 +2,7 @@
 
 #©keithhedger Fri 7 Aug 15:57:52 BST 2015 kdhedger68713@gmail.com
 
-g++ "$0" -O3 -I../LFSToolKit/src -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2||exit 1
+g++ "$0" -O3 -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2||exit 1
 LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./a.out "$@"
 retval=$?
 rm ./a.out
@@ -19,15 +19,7 @@ exit $retval
 using namespace std;
 #include <map>
 
-//#include <LFSTKWindow.h>
-//#include <LFSTKButton.h>
-//#include "LFSTKMenuButton.h"
-//#include "LFSTKLineEdit.h"
-//#include "LFSTKLabel.h"
-//#include "LFSTKToggleButton.h"
-//#include "LFSTKImage.h"
-//#include "LFSTKLib.h"
-#include "LFSTKGlobals.h"
+#include "lfstk/LFSTKGlobals.h"
 
 #define WIDTH			400
 #define HITE			600
@@ -150,7 +142,7 @@ int main(int argc, char **argv)
 	wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"system-lock-screen.png",&mainMenus[0].icon[0],&mainMenus[0].icon[1],iconSize);
 	mainMenus[1].useIcon=false;
 	mainMenus[1].useImage=true;
-	mainMenus[1].image=imlib_load_image_immediately_without_cache("system-lock-screen.png");
+	mainMenus[1].image=imlib_load_image_immediately_without_cache("./system-lock-screen.png");
 	mainMenus[1].imageWidth=iconSize;
 	mainMenus[1].imageHeight=iconSize;
 	//wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"./ROOTKKEdit.png",&mainMenus[2].icon[0],&mainMenus[2].icon[1],48);
@@ -188,7 +180,7 @@ int main(int argc, char **argv)
 
 	subMenus[j].useIcon=false;
 	subMenus[j].useImage=true;
-	subMenus[j].image=imlib_load_image_immediately_without_cache("system-lock-screen.png");
+	subMenus[j].image=imlib_load_image_immediately_without_cache("./system-lock-screen.png");
 	subMenus[j].imageWidth=iconSize;
 	subMenus[j].imageHeight=iconSize;
 
@@ -232,13 +224,21 @@ int main(int argc, char **argv)
 //image button
 	imageButton=new LFSTK_buttonClass(wc,"",BORDER,sy,68,64+4,NorthWestGravity);
 	imageButton->LFSTK_setCallBack(NULL,buttonCB,(void*)iconButton->LFSTK_getLabel());
-	imageButton->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",IMAGESIZE,IMAGESIZE);
+//	imageButton->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",IMAGESIZE,IMAGESIZE);
 	imageButton->LFSTK_setImageFromPath("/usr/share/pixmaps/AspellGUI.png",IMAGESIZE,IMAGESIZE);
 	sy+=64;
 
 	sy+=16;
 	//image=new LFSTK_imageClass(wc,"/usr/share/pixmaps/LFSTux.png",BORDER,sy,IMAGESIZE,NorthWestGravity);
-	image=new LFSTK_imageClass(wc,"/usr/lib64/firefox-36.0.1/browser/icons/mozicon128.png",BORDER,sy,IMAGESIZE,NorthWestGravity);
+//	image=new LFSTK_imageClass(wc,"/usr/share/pixmaps/AspellGUI.png",BORDER,sy,IMAGESIZE,NorthWestGravity);
+//	sy+=64;
+	//image=new LFSTK_imageClass(wc,"/usr/lib64/firefox-36.0.1/browser/icons/mozicon128.png",BORDER,sy,IMAGESIZE,NorthWestGravity);
+//	imageButton=new LFSTK_buttonClass(wc,"",BORDER,sy,68,64+4,NorthWestGravity);
+//	imageButton->LFSTK_setCallBack(NULL,buttonCB,(void*)iconButton->LFSTK_getLabel());
+//	imageButton->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",IMAGESIZE,IMAGESIZE);
+	image=new LFSTK_imageClass(wc,"/usr/share/pixmaps/AspellGUI.png",BORDER,sy,IMAGESIZE,NorthWestGravity);
+	sy+=16;
+//	imageButton=new LFSTK_buttonClass(wc,"image button",BORDER,sy,68,64+4,NorthWestGravity);
 
 	sy+=IMAGESIZE;
 	sy+=12;
@@ -285,6 +285,7 @@ if(myDataTypes.empty())
 	wc->LFSTK_showWindow();
 	int xdnd_version=3;
 
+	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	mainLoop=true;
 	while(mainLoop==true)
 		{
@@ -323,6 +324,7 @@ if(myDataTypes.empty())
 
 					case ClientMessage:
 						{
+#if 0
 						// XTranslateCoordinates
 						printf("Main loop client message\n");
 						cerr << "A ClientMessage has arrived:\n";
@@ -399,10 +401,10 @@ if(event.xclient.message_type == XdndDrop)
 				XSendEvent(wc->display, event.xclient.data.l[0], False, NoEventMask, (XEvent*)&m);
 				XFlush(wc->display);
 
+#endif
 #endif					
 						
 						//cerr << "Type = " << GetAtomName(disp, e.xclient.message_type) << " (" << e.xclient.format << ")\n";
-
 						if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
 							mainLoop=false;
 						}
@@ -410,10 +412,6 @@ if(event.xclient.message_type == XdndDrop)
 				}
 		}
 
-	delete bc;
-	delete tb;
-	delete tbnormal;
-	delete mb;
 	delete wc;
 	return 0;
 }

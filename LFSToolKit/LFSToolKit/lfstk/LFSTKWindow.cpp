@@ -28,7 +28,6 @@
 
 #include <string.h>
 
-//#include "LFSTKWindow.h"
 #include "LFSTKGlobals.h"
 
 #define _NET_WM_STATE_REMOVE	0
@@ -43,6 +42,94 @@ struct Hints
 	long            inputMode;
 	unsigned long   status;
 };
+
+struct	gadgetList
+{
+	gadgetList			*prev;
+	gadgetList			*next;
+	LFSTK_gadgetClass	*gadget;
+};
+
+/**
+ * \param gadget Gadget to add to list.
+ */
+
+void LFSTK_windowClass::LFSTK_addGadget(LFSTK_gadgetClass *addgadget)
+{
+	gadgetList	*gadg=new gadgetList;
+	gadgetList	*oldgadg=this->gadgets;
+
+	if(this->gadgets==NULL)
+		{
+			gadg->prev=NULL;
+			gadg->next=NULL;
+		}
+	else
+		{
+			gadg->next=oldgadg;
+			gadg->prev=NULL;
+		}
+	gadg->gadget=addgadget;
+	this->gadgets=gadg;
+}
+
+/**
+ * \param gadget Gadget to free.
+ * \note gadget is deleted and removed from list.
+ */
+void LFSTK_windowClass::LFSTK_freeAllGadgets(void)
+{
+	gadgetList	*gl;
+	gadgetList	*lastgl;
+
+	if(this->gadgets!=NULL)
+		{
+		gl=this->gadgets;
+		while(gl!=NULL)
+			{
+				delete gl->gadget;
+				lastgl=gl;
+				gl=gl->next;
+				delete lastgl;
+			}
+		}
+	this->gadgets=NULL;
+}
+
+/**
+ * \param gadget Gadget to find.
+ * \return found gadget or NULL.
+ */
+LFSTK_gadgetClass* LFSTK_windowClass::LFSTK_findGadget(LFSTK_gadgetClass *gadget)
+{
+	return(NULL);
+}
+
+/**
+ * \return number of gadgets in list.
+ */
+int LFSTK_windowClass::LFSTK_gadgetCount(void)
+{
+	int cnt=0;
+
+	gadgetList	*gl=this->gadgets;
+	if(gadgets!=NULL)
+		while(gl!=NULL)
+			{
+				cnt++;
+				gl=gl->next;
+			}
+	return(cnt);
+}
+
+/**
+ * \return gadget list.
+ * \note list belongs to window, don't free.
+ */
+gadgetList* LFSTK_windowClass::LFSTK_gadgetList(void)
+{
+	return(this->gadgets);
+}
 
 /**
  * Set default colours.
@@ -66,7 +153,7 @@ void LFSTK_windowClass::initWindow(bool loadvars)
 	this->loadGlobalColours();
 	this->isActive=true;
 	this->useTile=false;
-
+	this->gadgets=NULL;
 
 //Announce XDND support
 //	Atom XdndAware=XInternAtom(this->display,"XdndAware",true);
@@ -92,6 +179,7 @@ void LFSTK_windowClass::LFSTK_reloadGlobals(void)
 
 LFSTK_windowClass::~LFSTK_windowClass()
 {
+	this->LFSTK_hideWindow();
 	if(this->fontString!=NULL)
 		free(this->fontString);
 
@@ -109,6 +197,7 @@ LFSTK_windowClass::~LFSTK_windowClass()
 	delete this->globalLib;
 	free(this->monitors);
 
+	this->LFSTK_freeAllGadgets();
 	XFreeGC(this->display,this->gc);
 	XDeleteContext(this->display,this->window,this->listeners);
 	XDestroyWindow(this->display,this->window);

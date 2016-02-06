@@ -76,6 +76,9 @@ struct colourStruct
 	XftColor	xftcol;
 };
 
+struct	gadgetList;
+class	LFSTK_gadgetClass;
+
 #include <lfstk/LFSTKLib.h>
 #include <lfstk/LFSTKWindow.h>
 #include <lfstk/LFSTKGadget.h>

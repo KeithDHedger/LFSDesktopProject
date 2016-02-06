@@ -21,8 +21,6 @@
 #ifndef _LFSTKIMAGE_
 #define _LFSTKIMAGE_
 
-//#include "LFSTKGadget.h"
-
 /**
  *
  * \brief Image edit class for LFSToolKit.

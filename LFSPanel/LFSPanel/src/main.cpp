@@ -351,20 +351,6 @@ int main(int argc,char **argv)
 
 	free(env);
 	free(terminalCommand);
-	if(appButton!=NULL)
-		delete appButton;
-	if(logoutButton!=NULL)
-		delete logoutButton;
-	if(clockButton!=NULL)
-		delete clockButton;
-	if(diskButton!=NULL)
-		delete diskButton;
-	if(cpuButton!=NULL)
-		delete cpuButton;
-	if(windowMenu!=NULL)
-		delete windowMenu;
-	if(windowDeskMenu!=NULL)
-		delete windowDeskMenu;
 
 	if(desktopTheme!=NULL)
 		free(desktopTheme);
@@ -373,7 +359,6 @@ int main(int argc,char **argv)
 	while(ll!=NULL)
 		{
 			freell=ll;
-			delete ll->bc;
 			if(ll->icon!=NULL)
 				free(ll->icon);
 			if(ll->entry.name!=NULL)

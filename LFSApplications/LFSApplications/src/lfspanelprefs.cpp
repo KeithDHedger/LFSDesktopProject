@@ -541,23 +541,7 @@ int main(int argc, char **argv)
 		}
 
 	wc->LFSTK_hideWindow();
-	for(int j=0;j<NOMOREBUTTONS;j++)
-		if(guibc[j]!=NULL)
-			delete guibc[j];
-
-	delete currentPanel;
-	delete panelSelect;
-
-	for(int j=0;j<MAXLABELS;j++)
-		if(labels[j]!=NULL)
-			delete labels[j];
-
-	for(int j=0;j<OPTIONSCNT;j++)
-		if(panelOptionsEdit[j]!=NULL)
-			delete panelOptionsEdit[j];
 
 	delete wc;
-	return(0);
-
 	return(0);
 }

@@ -18,7 +18,6 @@
  * along with LFSToolKit.  If not, see <http://www.gnu.org/licenses/>.
  */
  
-//#include "LFSTKImage.h"
 #include "LFSTKGlobals.h"
 
 LFSTK_imageClass::~LFSTK_imageClass()
@@ -79,7 +78,7 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* imagepath,int x,int y,int w,int gravity)
 {
 	XSetWindowAttributes	wa;
-	this->LFSTK_setCommon(parentwc,NULL,x,y,w,w,gravity);
+	this->LFSTK_setCommon(parentwc,imagepath,x,y,w,w,gravity);
 
 	wa.win_gravity=gravity;
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);

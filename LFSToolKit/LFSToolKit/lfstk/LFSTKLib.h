@@ -21,10 +21,6 @@
 #ifndef _LFSTK_LIB_
 #define _LFSTK_LIB_
 
-
-//#include "LFSTKGlobals.h"
-//#include "LFSTKGadget.h"
-
 #include <Imlib2.h>
 
 #define	MAXVARS 100

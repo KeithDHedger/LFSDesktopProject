@@ -25,8 +25,6 @@
 #include <ftw.h>
 #include <fnmatch.h>
 
-//#include "LFSTKGadget.h"
-//#include "LFSTKLib.h"
 #include "LFSTKGlobals.h"
 
 enum {DEFNORMAL,DEFPRELIE,DEFACTIVE,DEFINACTIVE,DEFFONTNORMAL,DEFFONTPRELIE,DEFFONTACTIVE,DEFFONTINACTIVE};

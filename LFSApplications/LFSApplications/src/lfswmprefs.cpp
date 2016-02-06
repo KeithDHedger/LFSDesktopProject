@@ -319,9 +319,6 @@ int main(int argc, char **argv)
 		}
 
 	delete wc;
-	for(int j=0; j<NOMOREBUTTONS; j++)
-		if(bc[j]!=NULL)
-			delete bc[j];
 	return 0;
 
 }

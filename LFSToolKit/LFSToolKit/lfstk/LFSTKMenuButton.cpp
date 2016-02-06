@@ -20,7 +20,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-//#include "LFSTKMenuButton.h"
 #include "LFSTKGlobals.h"
 
 void LFSTK_menuButtonClass::initMenuButton(void)
@@ -37,15 +36,6 @@ void LFSTK_menuButtonClass::initMenuButton(void)
 
 LFSTK_menuButtonClass::~LFSTK_menuButtonClass()
 {
-	if(this->builtMenu==true)
-		{
-			for(int j=0;j<this->menuCount;j++)
-				{
-					if(this->menus[j].bc!=NULL)
-						delete this->menus[j].bc;
-					this->menus[j].bc=NULL;
-				}
-		}
 	delete subwc;
 }
 
@@ -346,15 +336,6 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,const c
 */
 void LFSTK_menuButtonClass::LFSTK_updateMenus(menuItemStruct* menus,int cnt)
 {
-	if(this->builtMenu==true)
-		{
-			for(int j=0;j<this->menuCount;j++)
-				{
-					if(this->menus[j].bc!=NULL)
-						delete this->menus[j].bc;
-					this->menus[j].bc=NULL;
-				}
-		}
 	this->builtMenu=false;
 	this->menus=menus;
 	this->menuCount=cnt;

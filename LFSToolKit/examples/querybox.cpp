@@ -2,7 +2,7 @@
 
 #©keithhedger Fri 7 Aug 15:57:52 BST 2015 kdhedger68713@gmail.com
 
-g++ -g -O0 "$0" -I../LFSToolKit/src -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft) -llfstoolkit||exit 1
+g++ -g -O0 "$0" -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft) -llfstoolkit||exit 1
 LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./a.out "$@"
 retval=$?
 #rm ./a.out
@@ -13,12 +13,7 @@ exit $retval
 #include <stdio.h>
 #include <unistd.h>
 
-#include <LFSTKWindow.h>
-#include <LFSTKButton.h>
-#include "LFSTKMenuButton.h"
-#include "LFSTKLineEdit.h"
-#include "LFSTKLabel.h"
-#include "LFSTKToggleButton.h"
+#include "lfstk/LFSTKGlobals.h"
 
 bool				mainloop=true;
 int					width=300;
@@ -131,9 +126,6 @@ label->LFSTK_setLabelAutoColour(true);
 				}
 		}
 
-	delete bc;
-	delete sticky;
-	delete le;
 	delete mainwind;
 	return 0;
 	

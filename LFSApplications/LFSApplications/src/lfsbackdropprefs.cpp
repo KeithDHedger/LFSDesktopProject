@@ -388,21 +388,6 @@ int main(int argc, char **argv)
 		}
 
 	wc->LFSTK_hideWindow();
-	for(int j=EXIT;j<NOMOREGUIS;j++)
-		delete guiButtons[j];
-
-	delete backdropPath;
-	delete multi;
-	delete mainMode;
-	delete mainModeEdit;
-	delete monitorMode;
-	delete monitorModeEdit;
-	delete monitorBackdropPath;
-	delete mainColourEdit;
-	delete monitorNumber;
-
-	for(int j=BACKDROP;j<NOMORELABELS;j++)
-		delete labels[j];
 
 	for(int j=0;j<wc->LFSTK_getMonitorCount();j++)
 		{

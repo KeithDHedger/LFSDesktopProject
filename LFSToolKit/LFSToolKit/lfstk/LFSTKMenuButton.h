@@ -22,8 +22,6 @@
 #ifndef _LFSTKMENUBUTTON_
 #define _LFSTKMENUBUTTON_
 
-//#include "LFSTKButton.h"
-
 /**
  *
  * Menu structure for menuItemClass.

@@ -2,7 +2,7 @@
 
 #©keithhedger Fri 7 Aug 15:57:52 BST 2015 kdhedger68713@gmail.com
 
-g++ "$0" -O3 -I../LFSToolKit/src -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft ) -llfstoolkit -lImlib2||exit 1
+g++ "$0" -O3 -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft ) -llfstoolkit -lImlib2||exit 1
 LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./a.out "$@"
 retval=$?
 rm ./a.out
@@ -16,7 +16,7 @@ exit $retval
 //#include <LFSTKWindow.h>
 //#include <LFSTKButton.h>
 //#include "LFSTKLabel.h"
-#include "LFSTKGlobals.h"
+#include "lfstk/LFSTKGlobals.h"
 
 #define		WINWIDTH 352
 #define		WINHITE 240
@@ -72,6 +72,7 @@ int main(int argc, char **argv)
 	labels[LDESCRIPTION]->LFSTK_setFontString("sans-serif:size=12");
 
 	wc->LFSTK_showWindow();
+	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 
 	mainLoop=true;
 	while(mainLoop==true)
@@ -99,10 +100,6 @@ int main(int argc, char **argv)
 				}
 		}
 
-	for(int j=LNAME;j<LNOMORELABELS;j++)
-		delete labels[j];
-	delete icon;
-	delete quit;
 	delete wc;
 	return 0;
 }
