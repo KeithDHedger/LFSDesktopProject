@@ -22,9 +22,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-//#include <LFSTKWindow.h>
-//#include <LFSTKButton.h>
-//#include <LFSTKMenuButton.h>
 #include <lfstk/LFSTKGlobals.h>
 
 #define BUFFERSIZE 2048

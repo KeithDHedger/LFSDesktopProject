@@ -1,4 +1,5 @@
 0.1.1
+Code clean
 Updated for new lib version.
 Fixed crash on unmanaged windows.
 Fixed crash on window title = NULL.

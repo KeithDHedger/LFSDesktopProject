@@ -24,10 +24,6 @@
 #include <ftw.h>
 #include <fnmatch.h>
 
-//#include <lfstk/LFSTKGlobals.h>
-//#include <LFSTKButton.h>
-//#include <LFSTKMenuButton.h>
-
 #include "appmenu.h"
 
 const char				*myCats[]= {"Settings","Utility","Development","Education","Graphics","Network","AudioVideo","Office","Shell","Game","System",NULL};
