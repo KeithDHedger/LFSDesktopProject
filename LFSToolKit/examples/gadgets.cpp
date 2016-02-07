@@ -33,7 +33,7 @@ using namespace std;
 #define IMAGESIZE		64
 
 #define MAXMAINMENUS	8
-#define MAXSUBMENUS		30
+#define MAXSUBMENUS		10
 
 LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass		*label=NULL;
@@ -82,16 +82,6 @@ bool menuCB(void *p,void* ud)
 	return(true);
 }
 
-//Convert an atom name in to a std::string
-string GetAtomName(Display* disp, Atom a)
-{
-	if(a == None)
-		return "None";
-	else
-		return XGetAtomName(disp, a);
-}
-
-
 int main(int argc, char **argv)
 {
 	XEvent	event;
@@ -106,8 +96,6 @@ int main(int argc, char **argv)
 //button
 	bc=new LFSTK_buttonClass(wc,"Button",BORDER,sy,BWIDTH,BHITE,NorthWestGravity);
 	bc->LFSTK_setCallBack(NULL,buttonCB,(void*)bc->LFSTK_getLabel());
-	//bc->LFSTK_setStyle(BEVELIN);
-	//bc->LFSTK_setActive(true);
 	sy+=YSPACING;
 
 //check button	
@@ -123,7 +111,7 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //menu button
-	wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"/usr/share/icons/gnome/48x48/devices/computer.png",&ic[0],&ic[1],iconSize);
+	wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"./computer.png",&ic[0],&ic[1],iconSize);
 	mainMenus=new menuItemStruct[MAXMAINMENUS];
 
 	for(int j=0;j<MAXMAINMENUS;j++)
@@ -145,7 +133,6 @@ int main(int argc, char **argv)
 	mainMenus[1].image=imlib_load_image_immediately_without_cache("./system-lock-screen.png");
 	mainMenus[1].imageWidth=iconSize;
 	mainMenus[1].imageHeight=iconSize;
-	//wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"./ROOTKKEdit.png",&mainMenus[2].icon[0],&mainMenus[2].icon[1],48);
 
 	mb=new LFSTK_menuButtonClass(wc,"Main Menu",BORDER,sy,BWIDTH,BHITE,BGRAV);
 	mb->LFSTK_setIconFromPath("./BookMark.png");
@@ -169,7 +156,9 @@ int main(int argc, char **argv)
 	subMenus=new menuItemStruct[MAXSUBMENUS];
 	for(int j=0;j<MAXSUBMENUS;j++)
 		{
-			subMenus[j].label=subMenuNames[0];
+			char *smname;
+			asprintf(&smname,"Sub Menu %i",j);
+			subMenus[j].label=smname;
 			subMenus[j].userData=NULL;
 			subMenus[j].bc=NULL;
 			subMenus[j].subMenus=NULL;
@@ -177,18 +166,13 @@ int main(int argc, char **argv)
 			subMenus[j].icon[0]=ic[0];
 			subMenus[j].icon[1]=ic[1];
 			subMenus[j].iconSize=iconSize;
-
-	subMenus[j].useIcon=false;
-	subMenus[j].useImage=true;
-	subMenus[j].image=imlib_load_image_immediately_without_cache("./system-lock-screen.png");
-	subMenus[j].imageWidth=iconSize;
-	subMenus[j].imageHeight=iconSize;
-
-
-
-
+			subMenus[j].useIcon=false;
+			subMenus[j].useImage=true;
+			subMenus[j].image=imlib_load_image_immediately_without_cache("./system-lock-screen.png");
+			subMenus[j].imageWidth=iconSize;
+			subMenus[j].imageHeight=iconSize;
 		}
-	wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"/usr/share/icons/gnome/48x48/devices/audio-speakers.png",&subMenus[2].icon[0],&subMenus[2].icon[1],16);
+//	wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"./audio-speakers.png",&subMenus[2].icon[0],&subMenus[2].icon[1],16);
 //add sub menus
 	mainMenusWithSubs[3].subMenus=subMenus;
 	mainMenusWithSubs[3].subMenuCnt=MAXSUBMENUS;
@@ -217,28 +201,19 @@ int main(int argc, char **argv)
 //icon button
 	iconButton=new LFSTK_buttonClass(wc,"",BORDER,sy,68,64+4,NorthWestGravity);
 	iconButton->LFSTK_setCallBack(NULL,buttonCB,(void*)iconButton->LFSTK_getLabel());
-	iconButton->LFSTK_setIconFromPath("/usr/share/pixmaps/LFSTux.png",64);
+	iconButton->LFSTK_setIconFromPath("../LFSToolKit/resources/pixmaps/LFSTux.png",64);
 	sy+=64;
 	sy+=12;
 
 //image button
 	imageButton=new LFSTK_buttonClass(wc,"",BORDER,sy,68,64+4,NorthWestGravity);
 	imageButton->LFSTK_setCallBack(NULL,buttonCB,(void*)iconButton->LFSTK_getLabel());
-//	imageButton->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",IMAGESIZE,IMAGESIZE);
-	imageButton->LFSTK_setImageFromPath("/usr/share/pixmaps/AspellGUI.png",IMAGESIZE,IMAGESIZE);
+	imageButton->LFSTK_setImageFromPath("./AspellGUI.png",IMAGESIZE,IMAGESIZE);
 	sy+=64;
 
 	sy+=16;
-	//image=new LFSTK_imageClass(wc,"/usr/share/pixmaps/LFSTux.png",BORDER,sy,IMAGESIZE,NorthWestGravity);
-//	image=new LFSTK_imageClass(wc,"/usr/share/pixmaps/AspellGUI.png",BORDER,sy,IMAGESIZE,NorthWestGravity);
-//	sy+=64;
-	//image=new LFSTK_imageClass(wc,"/usr/lib64/firefox-36.0.1/browser/icons/mozicon128.png",BORDER,sy,IMAGESIZE,NorthWestGravity);
-//	imageButton=new LFSTK_buttonClass(wc,"",BORDER,sy,68,64+4,NorthWestGravity);
-//	imageButton->LFSTK_setCallBack(NULL,buttonCB,(void*)iconButton->LFSTK_getLabel());
-//	imageButton->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",IMAGESIZE,IMAGESIZE);
-	image=new LFSTK_imageClass(wc,"/usr/share/pixmaps/AspellGUI.png",BORDER,sy,IMAGESIZE,NorthWestGravity);
+	image=new LFSTK_imageClass(wc,"./AspellGUI.png",BORDER,sy,IMAGESIZE,NorthWestGravity);
 	sy+=16;
-//	imageButton=new LFSTK_buttonClass(wc,"image button",BORDER,sy,68,64+4,NorthWestGravity);
 
 	sy+=IMAGESIZE;
 	sy+=12;
@@ -248,42 +223,8 @@ int main(int argc, char **argv)
 	
 	quit=new LFSTK_buttonClass(wc,"Quit",BX,HITE-BHITE-BORDER,BWIDTH,BHITE,SouthGravity);
 	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
-
-	//wc->LFSTK_setTile("/home/keithhedger/.themes/OldBrownWood/gtk-2.0/bc.png",-1);
-//	wc->LFSTK_setTile(wc->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
-//	iconButton->LFSTK_setTile(wc->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
-//	iconButton->LFSTK_setTile("/home/keithhedger/.themes/OldBrownWood/gtk-2.0/buttons/button1.png",-1);
-//	quit->LFSTK_setTile("/home/keithhedger/.themes/OldBrownWood/gtk-2.0/buttons/button1.png",-1);
-//	mbwithsubs->LFSTK_setTile("/home/keithhedger/.themes/OldBrownWood/gtk-2.0/menus/menufill.png",-1);
-//	label->LFSTK_setTile("/home/keithhedger/.themes/OldBrownWood/gtk-2.0/bc.png",-1);
-	//mb->LFSTK_setTile(wc->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
-//	mb->LFSTK_setTile("/home/keithhedger/.themes/OldBrownWood/gtk-2.0/buttons/button1.png",-1);
-
-//	label->LFSTK_setTile(wc->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
-//	iconButton->LFSTK_setTile(wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),-1);
-//	mb->LFSTK_setTile(wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),-1);
-//	mbwithsubs->LFSTK_setTile(wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),-1);
-
-	//Atoms for Xdnd
-	Atom XdndEnter = XInternAtom(wc->display, "XdndEnter", False);
-	Atom XdndPosition = XInternAtom(wc->display, "XdndPosition", False);
-	Atom XdndStatus = XInternAtom(wc->display, "XdndStatus", False);
-	Atom XdndTypeList = XInternAtom(wc->display, "XdndTypeList", False);
-	Atom XdndActionCopy = XInternAtom(wc->display, "XdndActionCopy", False);
-	Atom XdndDrop = XInternAtom(wc->display, "XdndDrop", False);
-	Atom XdndLeave = XInternAtom(wc->display, "XdndLeave", False);
-	Atom XdndFinished = XInternAtom(wc->display, "XdndFinished", False);
-	Atom XdndSelection = XInternAtom(wc->display, "XdndSelection", False);
-	Atom XdndProxy = XInternAtom(wc->display, "XdndProxy", False);
-	Atom XA_TARGETS = XInternAtom(wc->display, "TARGETS", False);
-	Atom sel = XInternAtom(wc->display, "PRIMARY", 0);
 	
-	
-	map<string, int> myDataTypes;
-if(myDataTypes.empty())
-		myDataTypes["STRING"] = 1;	
 	wc->LFSTK_showWindow();
-	int xdnd_version=3;
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	mainLoop=true;
@@ -300,22 +241,6 @@ if(myDataTypes.empty())
 						break;
 					case Expose:
 						wc->LFSTK_clearWindow();
-//						XSetFillStyle(this->display,this->gc,FillSolid);
-//			XSetClipMask(this->display,this->gc,None);
-//			XSetForeground(this->display,this->gc,this->colourNames[state].pixel);
-//			XFillRectangle(this->display,this->window,this->gc,g->x,g->y,g->w,g->h);
-//						imagebutton->externalUpdate=false;
-//						imagebutton->LFSTK_clearWindow();
-//						imagebutton->externalUpdate=true;
-//						imlib_context_set_display(wc->display);
-//						imlib_context_set_visual(wc->visual);
-//						imlib_context_set_colormap(wc->cm);
-//
-//						imlib_context_set_drawable(imagebutton->window);
-//						imlib_context_set_image(data);
-//						imlib_context_set_blend(1);
-//
-//						imlib_render_image_on_drawable_at_size(2,2,64,64); 
 						break;
 
 					case ConfigureNotify:
@@ -324,87 +249,6 @@ if(myDataTypes.empty())
 
 					case ClientMessage:
 						{
-#if 0
-						// XTranslateCoordinates
-						printf("Main loop client message\n");
-						cerr << "A ClientMessage has arrived:\n";
-						cerr << "Type = " << GetAtomName(wc->display, event.xclient.message_type) << " (" << event.xclient.format << ")\n";
-
-if(event.xclient.message_type == XdndPosition)
-			{
-				cerr << hex << "Source window = 0x" << event.xclient.data.l[0] << dec << endl;
-				cerr << "Position: x=" << (event.xclient.data.l[2]  >> 16) << " y=" << (event.xclient.data.l[2] &0xffff)  << endl;
-				cerr << "Timestamp = " << event.xclient.data.l[3] << " (Version >= 1 only)\n";
-				
-				Atom action=XdndActionCopy;
-				if(xdnd_version >= 2)
-					action = event.xclient.data.l[4];
-
-				cerr << "Action = " << GetAtomName(wc->display, action) << " (Version >= 2 only)\n";
-				
-
-				//Xdnd: reply with an XDND status message
-				XClientMessageEvent m;
-				memset(&m, sizeof(m), 0);
-				m.type = ClientMessage;
-				m.display = event.xclient.display;
-				m.window = event.xclient.data.l[0];
-				m.message_type = XdndStatus;
-				m.format=32;
-				m.data.l[0] = wc->window;
-				m.data.l[1] =1;// (to_be_requested != None);
-				//printf(">>>>>%i<<<<<\n",(to_be_requested != None));
-				m.data.l[2] = 0; //Specify an empty rectangle
-				m.data.l[3] = 0;
-				m.data.l[4] = XdndActionCopy; //We only accept copying anyway.
-
-				XSendEvent(wc->display, event.xclient.data.l[0], False, NoEventMask, (XEvent*)&m);
-				XFlush(wc->display);
-			}
-
-if(event.xclient.message_type == XdndDrop)
-			{
-//				if(to_be_requested == None)
-				{
-					//It's sending anyway, despite instructions to the contrary.
-					//So reply that we're not interested.
-					XClientMessageEvent m;
-					memset(&m, sizeof(m), 0);
-					m.type = ClientMessage;
-					m.display = event.xclient.display;
-					m.window = event.xclient.data.l[0];
-					m.message_type = XdndFinished;
-					m.format=32;
-					m.data.l[0] =wc->window;
-					m.data.l[1] = 0;
-					m.data.l[2] = None; //Failed.
-					XSendEvent(wc->display, event.xclient.data.l[0], False, NoEventMask, (XEvent*)&m);
-				}
-				}
-#if 0
-//Xdnd: reply with an XDND status message
-//Atom XdndActionCopy = XInternAtom(wc->display, "XdndActionCopy", False);
-//Atom XdndStatus = XInternAtom(wc->display, "XdndStatus", False);
-				XClientMessageEvent m;
-				memset(&m, sizeof(m), 0);
-				m.type = ClientMessage;
-				m.display = event.xclient.display;
-				m.window = event.xclient.data.l[0];
-				m.message_type = XdndStatus;
-				m.format=32;
-				m.data.l[0] = wc->window;
-				m.data.l[1] = 0;//(to_be_requested != None);
-				m.data.l[2] = 0; //Specify an empty rectangle
-				m.data.l[3] = 0;
-				m.data.l[4] = XdndActionCopy; //We only accept copying anyway.
-//
-				XSendEvent(wc->display, event.xclient.data.l[0], False, NoEventMask, (XEvent*)&m);
-				XFlush(wc->display);
-
-#endif
-#endif					
-						
-						//cerr << "Type = " << GetAtomName(disp, e.xclient.message_type) << " (" << e.xclient.format << ")\n";
 						if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
 							mainLoop=false;
 						}
