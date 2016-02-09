@@ -1,9 +1,6 @@
 
 SUBDIRS = LFSToolKit/app
 
-#include LFSToolKit/headers
-#include_HEADERS = $(APIHEADERS)
-
 .PHONY: docs
 
 docs:
@@ -24,4 +21,4 @@ remake:
 
 purge:
 	rm $(DESTDIR)${libdir}/liblfstoolkit.*||true
-	rm $(DESTDIR)${includedir}/LFS*.h||true
+	rm -r $(DESTDIR)${includedir}/lfstk||true

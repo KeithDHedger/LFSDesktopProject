@@ -69,7 +69,8 @@ extern bool shapeset;
 //dialogs
 extern LFSTK_windowClass	*diskWindow;
 extern LFSTK_windowClass	*fileWindow;
-
+extern LFSTK_windowClass	*iconChooser;
+extern LFSTK_lineEditClass *iconChooserEdit;
 
 //save/load file
 extern args		globalFileData[];

@@ -54,8 +54,7 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 
 	this->window=XCreateWindow(this->display,this->parent,x+pad,y+pad,w-(pad*2),h-(pad*2),0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWBitGravity,&wa);
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|FocusChangeMask|KeyReleaseMask);
-	//XSelectInput(this->display,this->window,0);
-//xxxxxxxxxxxxxxx
+
 	this->listen.function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->listen.pointer=this;
 	this->listen.type=LINEEDITGADGET;
@@ -68,27 +67,8 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 
 	this->buffer=label;
 
-	XA_CLIPBOARD=XInternAtom(this->display,"CLIPBOARD",true);
-	XA_COMPOUND_TEXT=XInternAtom(this->display,"COMPOUND_TEXT",true);
-	XA_UTF8_STRING=XInternAtom(this->display,"UTF8_STRING",true);
-	XA_TARGETS=XInternAtom(this->display,"TARGETS",true);
-	//Atoms for Xdnd
-	XDNDENTER=XInternAtom(this->display,"XdndEnter",false);
-	XDNDPOSITION=XInternAtom(this->display,"XdndPosition",false);
-	XDNDSTATUS=XInternAtom(this->display,"XdndStatus",false);
-	XDNDTYPELIST=XInternAtom(this->display,"XdndTypeList",false);
-	XDNDACTIONCOPY=XInternAtom(this->display,"XdndActionCopy",false);
-	XDNDDROP=XInternAtom(this->display,"XdndDrop",false);
-	XDNDLEAVE=XInternAtom(this->display,"XdndLeave",false);
-	XDNDFINISHED=XInternAtom(this->display,"XdndFinished",false);
-	XDNDSELECTION=XInternAtom(this->display,"XdndSelection",false);
-	XDNDPROXY=XInternAtom(this->display,"XdndProxy",false);
-
-//Announce XDND support
-	Atom XdndAware=XInternAtom(this->display,"XdndAware",false);
-	Atom version=5;
-	XChangeProperty(this->display,this->wc->window,XdndAware,XA_ATOM,32,PropModeReplace,(unsigned char*)&version,1);
-
+	this->wc->LFSTK_initDnD();
+	this->gadgetAcceptsDnD=true;
 }
 
 /**
@@ -287,10 +267,10 @@ void LFSTK_lineEditClass::getClip(void)
 	bool			run=true;
 	XEvent			event;
 
-	selectionOwner=XGetSelectionOwner(this->display,XA_CLIPBOARD);
+	selectionOwner=XGetSelectionOwner(this->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD));
 	if (selectionOwner!=None)
 		{
-			XConvertSelection(this->display,XA_CLIPBOARD,XA_UTF8_STRING,XA_CLIPBOARD,this->window,CurrentTime);
+			XConvertSelection(this->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->wc->LFSTK_getDnDAtom(XA_UTF8_STRING),this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->window,CurrentTime);
 			XFlush(this->display);
 
 			while (run==true)
@@ -305,7 +285,7 @@ void LFSTK_lineEditClass::getClip(void)
 						}
 				}
 
-			XGetWindowProperty(this->display,this->window,XA_CLIPBOARD,0,0,False,AnyPropertyType,&type,&format,&len,&bytesLeft,&data);
+			XGetWindowProperty(this->display,this->window,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),0,0,False,AnyPropertyType,&type,&format,&len,&bytesLeft,&data);
 			if(data!=NULL)
 				{
 					XFree(data);
@@ -314,7 +294,7 @@ void LFSTK_lineEditClass::getClip(void)
 
 			if(bytesLeft>0)
 				{
-					result=XGetWindowProperty(this->display,this->window,XA_CLIPBOARD,0,bytesLeft,False,AnyPropertyType,&type,&format,&len,&dummy,&data);
+					result=XGetWindowProperty(this->display,this->window,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),0,bytesLeft,False,AnyPropertyType,&type,&format,&len,&dummy,&data);
 					if (result==Success)
 						{
 							this->buffer.insert(this->cursorPos,(char*)data);
@@ -322,7 +302,7 @@ void LFSTK_lineEditClass::getClip(void)
 							XFree(data);
 						}
 				}
-			XDeleteProperty(this->display,this->window,XA_CLIPBOARD);
+			XDeleteProperty(this->display,this->window,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD));
 		}
 }
 
@@ -395,5 +375,34 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 		}
 	this->LFSTK_clearWindow();
 	return(true);
+}
+
+/**
+* Drop data.
+* \param data Data drooped on gadget as string.
+*/
+void LFSTK_lineEditClass::LFSTK_dropData(propertyStruct* data)
+{
+	int	endl;
+
+	if(strcasecmp(data->mimeType,"text/plain")==0)
+		this->LFSTK_setBuffer((const char*)data->data);
+
+	if(strcasecmp(data->mimeType,"text/uri-list")==0)
+		{
+			char	*d;
+			char	*ret;
+			asprintf(&d,"%s",(const char*)data->data);
+			endl=strlen(d)-1;
+			while ((endl >= 0) && (isspace(d[endl])) )
+				{
+					d[endl]=0;
+					endl--;
+				}
+			ret=this->wc->globalLib->LFSTK_oneLiner("echo -n \"%s\"|sed 's|^file://||;s|%%20| |g'",d);
+			this->LFSTK_setBuffer(ret);
+			free(ret);
+			free(d);
+		}
 }
 

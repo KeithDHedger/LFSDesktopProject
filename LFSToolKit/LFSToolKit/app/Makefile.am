@@ -6,11 +6,6 @@ include ../sources
 lib_LTLIBRARIES = liblfstoolkit.la
 liblfstoolkit_la_SOURCES = $(COMMONSRC)
 
-#lfstoolkit_includedir = $(includedir)/src
-#lfstoolkit_include_HEADERS = $(APIHEADERS)
-#include ../headers
-#include_HEADERS = $(APIHEADERS)
-
 pixfilesdir = ${prefix}/share/pixmaps
 pixfiles_DATA = ../resources/pixmaps/*
 

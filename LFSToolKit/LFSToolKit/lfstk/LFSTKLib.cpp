@@ -526,10 +526,10 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				//XCheckTypedWindowEvent
 //				printf("resize\n");
 				break;
-			case ClientMessage:
-				//printf("ClientMessage from lib\n");
-				retval=gadget->clientMessage(e);
-				break;
+//			case ClientMessage:
+//				//printf("ClientMessage from lib\n");
+//				retval=gadget->clientMessage(e);
+//				break;
 				
 		}
 //	printf("%i\n",ud);
@@ -704,6 +704,9 @@ char* LFSTK_lib::LFSTK_oneLiner(const char* fmt,...)
 								break;
 							case 'i':
 								sprintf(subbuffer,"%i",va_arg(ap,int));
+								break;
+							case '%':
+								sprintf(subbuffer,"%%");
 								break;
 							default:
 								sprintf(subbuffer,"%c",fmt[0]);

@@ -22,6 +22,8 @@
 #define _LFSTKGLOBALS_
 
 #include <X11/Xft/Xft.h>
+#include <iostream>
+#include <map>
 
 #define DEFAULTFONT "sans:size=10"
 #define DISCLOSURESIZE 6

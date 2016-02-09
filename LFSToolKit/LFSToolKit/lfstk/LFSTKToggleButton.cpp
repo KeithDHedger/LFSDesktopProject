@@ -70,8 +70,6 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 */
 void LFSTK_toggleButtonClass::drawButton(gadgetState state)
 {
-	int boxsize;
-	int	boxy;
 	bevelType bv;
 	geometryStruct	*g=new geometryStruct;
 

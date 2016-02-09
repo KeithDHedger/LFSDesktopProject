@@ -13,9 +13,6 @@ exit $retval
 #include <stdio.h>
 #include <unistd.h>
 
-//#include <LFSTKWindow.h>
-//#include <LFSTKButton.h>
-//#include "LFSTKLabel.h"
 #include "lfstk/LFSTKGlobals.h"
 
 #define		WINWIDTH 352

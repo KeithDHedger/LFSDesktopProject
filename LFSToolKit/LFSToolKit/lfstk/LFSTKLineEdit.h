@@ -54,26 +54,10 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		bool clientMessage(XEvent *e);
 		void LFSTK_setFocus(void);
 
+		void LFSTK_dropData(propertyStruct* data);
 	private:
 		void drawLabel(void);
 		void getClip(void);
-
-		Atom XA_CLIPBOARD;
-		Atom XA_COMPOUND_TEXT;
-		Atom XA_UTF8_STRING;
-		Atom XA_TARGETS;
-
-//Atoms for Xdnd
-		Atom XDNDENTER;
-		Atom XDNDPOSITION;
-		Atom XDNDSTATUS;
-		Atom XDNDTYPELIST;
-		Atom XDNDACTIONCOPY;
-		Atom XDNDDROP;
-		Atom XDNDLEAVE;
-		Atom XDNDFINISHED;
-		Atom XDNDSELECTION;
-		Atom XDNDPROXY;
 
 		std::string	buffer;
 		unsigned	cursorPos;

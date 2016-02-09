@@ -89,7 +89,6 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	int						maxiconsize=0;
 
 	geometryStruct	geom={0,0,this->w,this->h};
-	bevelType		bv=BEVELIN;
 
 	if(this->isActive==false)
 		{
@@ -271,8 +270,6 @@ bool LFSTK_menuButtonClass::mouseExit(XButtonEvent *e)
 bool LFSTK_menuButtonClass::mouseEnter(XButtonEvent *e)
 {
 	geometryStruct	g={0,0,this->w,this->h};
-	bevelType		bv=BEVELIN;
-
 
 	if(this->isActive==false)
 		{

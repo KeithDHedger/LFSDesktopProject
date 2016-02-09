@@ -158,6 +158,7 @@ void LFSTK_gadgetClass::initGadget(void)
 	this->image=NULL;
 	this->scaledImage=NULL;
 	this->wc->LFSTK_addGadget(this);
+	this->gadgetAcceptsDnD=false;
 }
 
 /**
@@ -337,8 +338,6 @@ bool LFSTK_gadgetClass::mouseExit(XButtonEvent *e)
 bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 {
 	geometryStruct	g={0,0,this->w,this->h};
-	bevelType		bv=BEVELIN;
-
 
 	if(this->isActive==false)
 		{
@@ -378,6 +377,15 @@ bool LFSTK_gadgetClass::keyRelease(XKeyEvent *e)
 bool LFSTK_gadgetClass::clientMessage(XEvent *e)
 {
 	return(true);
+}
+
+/**
+* Drop data.
+* \param data Data drooped on gadget as string.
+*/
+void LFSTK_gadgetClass::LFSTK_dropData(propertyStruct* data)
+{
+	return;
 }
 
 /**
@@ -606,7 +614,6 @@ void LFSTK_gadgetClass::drawBox(geometryStruct* g,gadgetState state,bevelType be
 {
 	int tlcolour;
 	int brcolour;
-	int fillcolour;
 
 	switch(bevel)
 		{
@@ -623,8 +630,6 @@ void LFSTK_gadgetClass::drawBox(geometryStruct* g,gadgetState state,bevelType be
 				brcolour=this->colourNames[state].pixel;
 				break;
 		}
-
-	fillcolour=this->colourNames[state].pixel;
 
 	if(this->useTile==true)
 		{

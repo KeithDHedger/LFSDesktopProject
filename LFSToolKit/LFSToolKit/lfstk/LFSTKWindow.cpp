@@ -84,14 +84,14 @@ void LFSTK_windowClass::LFSTK_freeAllGadgets(void)
 
 	if(this->gadgets!=NULL)
 		{
-		gl=this->gadgets;
-		while(gl!=NULL)
-			{
-				delete gl->gadget;
-				lastgl=gl;
-				gl=gl->next;
-				delete lastgl;
-			}
+			gl=this->gadgets;
+			while(gl!=NULL)
+				{
+					delete gl->gadget;
+					lastgl=gl;
+					gl=gl->next;
+					delete lastgl;
+				}
 		}
 	this->gadgets=NULL;
 }
@@ -100,8 +100,20 @@ void LFSTK_windowClass::LFSTK_freeAllGadgets(void)
  * \param gadget Gadget to find.
  * \return found gadget or NULL.
  */
-LFSTK_gadgetClass* LFSTK_windowClass::LFSTK_findGadget(LFSTK_gadgetClass *gadget)
+LFSTK_gadgetClass* LFSTK_windowClass::LFSTK_findGadgetByPos(int x, int y)
 {
+	gadgetList	*walklist=this->gadgets;
+	geometryStruct *geom;
+
+	if(walklist==NULL)
+		return(NULL);
+	while(walklist!=NULL)
+		{
+			geom=walklist->gadget->LFSTK_getGeom();
+			if((x>geom->x) && (x<geom->x+geom->w) && (y>geom->y) && (y<geom->y+geom->h) && (walklist->gadget->gadgetAcceptsDnD==true) )
+				return(walklist->gadget);
+			walklist=walklist->next;
+		}
 	return(NULL);
 }
 
@@ -137,8 +149,6 @@ gadgetList* LFSTK_windowClass::LFSTK_gadgetList(void)
  */
 void LFSTK_windowClass::initWindow(bool loadvars)
 {
-	char	*env;
-
 	this->fontColourNames[NORMALCOLOUR]=strdup("white");
 	this->fontColourNames[PRELIGHTCOLOUR]=strdup("black");
 	this->fontColourNames[ACTIVECOLOUR]=strdup("white");
@@ -154,13 +164,8 @@ void LFSTK_windowClass::initWindow(bool loadvars)
 	this->isActive=true;
 	this->useTile=false;
 	this->gadgets=NULL;
-
-//Announce XDND support
-//	Atom XdndAware=XInternAtom(this->display,"XdndAware",true);
-//	Atom version=5;
-//	XChangeProperty(this->display,this->window,XdndAware,XA_ATOM,32,PropModeReplace,(unsigned char*)&version,1);
-
 }
+
 /**
  * Reload colours from prefs.
  * \note to be fixed!
@@ -183,11 +188,11 @@ LFSTK_windowClass::~LFSTK_windowClass()
 	if(this->fontString!=NULL)
 		free(this->fontString);
 
-	for(int j=0;j<MAXCOLOURS;j++)
+	for(int j=0; j<MAXCOLOURS; j++)
 		if(this->fontColourNames[j]!=NULL)
 			free(this->fontColourNames[j]);
 
-	for(int j=0;j<MAXCOLOURS;j++)
+	for(int j=0; j<MAXCOLOURS; j++)
 		if(this->windowColourNames[j].name!=NULL)
 			free(this->windowColourNames[j].name);
 
@@ -211,11 +216,11 @@ LFSTK_windowClass::LFSTK_windowClass()
 
 void LFSTK_windowClass::loadGlobalColours(void)
 {
-	for(int j=0;j<MAXCOLOURS;j++)
+	for(int j=0; j<MAXCOLOURS; j++)
 		this->LFSTK_setWindowColourName(j,this->globalLib->LFSTK_getGlobalString(j,TYPEWINDOW));
 
 	this->LFSTK_setFontString(this->globalLib->LFSTK_getGlobalString(-1,TYPEFONT));
-	for(int j=0;j<MAXCOLOURS;j++)
+	for(int j=0; j<MAXCOLOURS; j++)
 		this->LFSTK_setFontColourName(j,this->globalLib->LFSTK_getGlobalString(j,TYPEFONTCOLOUR));
 	this->autoLabelColour=this->globalLib->LFSTK_getAutoLabelColour();
 }
@@ -254,7 +259,7 @@ void LFSTK_windowClass::LFSTK_clearWindow(void)
 			else
 				XSetForeground(this->display,this->gc,this->windowColourNames[INACTIVECOLOUR].pixel);
 			XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
-	}
+		}
 }
 
 /**
@@ -302,7 +307,6 @@ void LFSTK_windowClass::LFSTK_moveWindow(int x,int y,bool tellx)
 		XMoveWindow(this->display,this->window,x,y);
 	this->LFSTK_clearWindow();
 }
-
 
 /**
 * Get child gadget listner.
@@ -440,7 +444,7 @@ void LFSTK_windowClass::LFSTK_setSticky(bool set)
 	else
 		xclient.data.l[0] =_NET_WM_STATE_REMOVE;
 	xclient.data.l[1] =xa1;
-	xclient.data.l[2] = 0;
+	xclient.data.l[2]=0;
 	XSendEvent(this->display,this->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
 	this->isSticky=set;
 }
@@ -484,7 +488,7 @@ void LFSTK_windowClass::LFSTK_setKeepAbove(bool set)
 	else
 		xclient.data.l[0] =_NET_WM_STATE_REMOVE;
 	xclient.data.l[1] =xa1;
-	xclient.data.l[2] = 0;
+	xclient.data.l[2]=0;
 	XSendEvent(this->display,this->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
 }
 
@@ -524,7 +528,7 @@ void LFSTK_windowClass::loadMonitorData(void)
 					this->monitors=(monitorStruct*)calloc(sizeof(monitorStruct),cnt);
 					this->monitorCount=cnt;
 
-					for (int j=0;j<cnt;j++)
+					for (int j=0; j<cnt; j++)
 						{
 							monitors[j].x=p[j].x_org;
 							monitors[j].y=p[j].y_org;
@@ -534,7 +538,7 @@ void LFSTK_windowClass::loadMonitorData(void)
 				}
 			XFree(p);
 		}
-}	
+}
 
 /**
 * Get number of monitors.
@@ -573,14 +577,13 @@ int LFSTK_windowClass::LFSTK_windowOnMonitor(void)
 	if(thisy<0)
 		thisy=0;
 
-	for(int j=0;j<this->monitorCount;j++)
+	for(int j=0; j<this->monitorCount; j++)
 		{
 			if((thisx>=monitors[j].x) && (thisx<(monitors[j].x+monitors[j].w)) && (thisy>=monitors[j].y) && (thisy<(monitors[j].y+monitors[j].h)))
 				return(j);
 		}
 	return(-1);
 }
-
 
 /**
 * Main window constructor.
@@ -610,6 +613,7 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 	this->h=h;
 	this->fontString=NULL;
 	this->isActive=false;
+	this->acceptDnd=false;
 
 	this->screen=DefaultScreen(this->display);
 	this->visual=DefaultVisual(this->display,this->screen);
@@ -631,17 +635,6 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 	xa_prop[1]=XInternAtom(this->display,"_NET_WM_STATE_ABOVE",False);
 	xa_prop[2]=XInternAtom(this->display,"_NET_WM_ACTION_CHANGE_DESKTOP",False);
 
-//	xa_prop[3]=XInternAtom(this->display,"_NET_WM_ACTION_CLOSE",False);
-//	xa_prop[4]=XInternAtom(this->display,"_NET_WM_ACTION_BELOW",False);
-//	xa_prop[5]=XInternAtom(this->display," _NET_WM_ACTION_FULLSCREEN",False);
-//	xa_prop[6]=XInternAtom(this->display,"_NET_WM_ACTION_MOVE",False);
-//	xa_prop[7]=XInternAtom(this->display,"_NET_WM_ACTION_RESIZE",False);
-//	xa_prop[8]=XInternAtom(this->display,"_NET_WM_ACTION_MAXIMIZE_HORZ",False);
-//	xa_prop[9]=XInternAtom(this->display,"_NET_WM_ACTION_MAXIMIZE_VERT",False);
-//	xa_prop[10]=XInternAtom(this->display,"_NET_WM_ACTION_SHADE",False);
-//	xa_prop[11]=XInternAtom(this->display,"_NET_WM_ACTION_MINIMIZE",False);
-//	xa_prop[12]=XInternAtom(this->display,"_NET_WM_ACTION_STICK",False);
-//	xa_prop[13]=XInternAtom(this->display,"_NET_WM_STATE_HIDDEN",False);
 	if(xa!=None)
 		XChangeProperty(this->display,this->window,xa,XA_ATOM,32,PropModeAppend,(unsigned char *)&xa_prop,3);
 
@@ -747,3 +740,281 @@ void LFSTK_windowClass::LFSTK_sendMessage(const char *msg,unsigned long data0,un
 	XSendEvent(this->display,this->rootWindow,False,mask,&event);
 }
 
+/**
+ * Init drag and drop system.
+ * \note Set when lined edit class is created.
+ */
+void LFSTK_windowClass::LFSTK_initDnD(void)
+{
+//Announce XDND support
+	Atom XdndAware=XInternAtom(this->display,"XdndAware",true);
+	Atom version=5;
+	XChangeProperty(this->display,this->window,XdndAware,XA_ATOM,32,PropModeReplace,(unsigned char*)&version,1);
+
+	dNdAtoms[XDNDENTER]=XInternAtom(this->display,"XdndEnter",false);
+	dNdAtoms[XDNDPOSITION]=XInternAtom(this->display,"XdndPosition",false);
+	dNdAtoms[XDNDSTATUS]=XInternAtom(this->display,"XdndStatus",false);
+	dNdAtoms[XDNDTYPELIST]=XInternAtom(this->display,"XdndTypeList",false);
+	dNdAtoms[XDNDACTIONCOPY]=XInternAtom(this->display,"XdndActionCopy",false);
+	dNdAtoms[XDNDDROP]=XInternAtom(this->display,"XdndDrop",false);
+	dNdAtoms[XDNDLEAVE]=XInternAtom(this->display,"XdndLeave",false);
+	dNdAtoms[XDNDFINISHED]=XInternAtom(this->display,"XdndFinished",false);
+	dNdAtoms[XDNDSELECTION]=XInternAtom(this->display,"XdndSelection",false);
+	dNdAtoms[XDNDPROXY]=XInternAtom(this->display,"XdndProxy",false);
+	dNdAtoms[XA_CLIPBOARD]=XInternAtom(this->display,"CLIPBOARD",false);
+	dNdAtoms[XA_COMPOUND_TEXT]=XInternAtom(this->display,"COMPOUND_TEXT",false);
+	dNdAtoms[XA_UTF8_STRING]=XInternAtom(this->display,"UTF8_STRING",false);
+	dNdAtoms[XA_TARGETS]=XInternAtom(this->display,"TARGETS",false);
+	dNdAtoms[PRIMARY]=XInternAtom(this->display,"PRIMARY",false);
+
+	this->acceptDnd=true;
+	this->toBeRequested=None;
+	this->sourceWindow=None;
+	this->xDnDVersion=0;
+	this->dropGadget=NULL;
+
+	this->dNdTypes["text/plain"]=1;
+	this->dNdTypes["text/uri-list"]=2;
+}
+
+/**
+ * Get DnD atom.
+ * \param atomnum Requested atom.
+ */
+Atom LFSTK_windowClass::LFSTK_getDnDAtom(int atomnum)
+{
+	return(this->dNdAtoms[atomnum]);
+}
+
+//This fetches all the data from a property
+propertyStruct* LFSTK_windowClass::readProperty(Window src,Atom property)
+{
+	Atom			actual_type;
+	int				actual_format;
+	unsigned long	nitems;
+	unsigned long	bytes_after;
+	unsigned char	*ret=0;
+	propertyStruct	*props=new propertyStruct;
+
+	int read_bytes=1024;
+
+	//Keep trying to read the property until there are no bytes unread.
+	do
+		{
+			if(ret!=0)
+				XFree(ret);
+			XGetWindowProperty(this->display,src,property,0,read_bytes,False,AnyPropertyType,&actual_type,&actual_format, &nitems,&bytes_after,&ret);
+
+			read_bytes *= 2;
+		}
+	while(bytes_after!=0);
+
+	props->data=ret;
+	props->format=actual_format;
+	props->nitems=nitems;
+	props->type=actual_type;
+	props->mimeType=NULL;
+	return props;
+}
+
+//Convert an atom name in to a std::string
+std::string LFSTK_windowClass::getAtomName(Atom a)
+{
+	if(a == None)
+		return "None";
+	else
+		return XGetAtomName(this->display,a);
+}
+
+// This function takes a list of targets which can be converted to (atom_list, nitems)
+// and a list of acceptable targets with prioritees (dNdTypes). It returns the highest
+// entry in dNdTypes which is also in atom_list: ie it finds the best match.
+Atom LFSTK_windowClass::pickTargetFromList(Atom* atom_list,int nitems)
+{
+	Atom to_be_requested=None;
+	//This is higger than the maximum priority.
+	int priority=INT_MAX;
+
+	for(int i=0; i < nitems; i++)
+		{
+			std::string atom_name=this->getAtomName(atom_list[i]);
+			//See if this data type is allowed and of higher priority (closer to zero) than the present one.
+			if(this->dNdTypes.find(atom_name)!= this->dNdTypes.end())
+				if(priority > this->dNdTypes[atom_name])
+					{
+						priority=this->dNdTypes[atom_name];
+						to_be_requested=atom_list[i];
+					}
+		}
+	return to_be_requested;
+}
+
+// Finds the best target given a local copy of a property.
+Atom LFSTK_windowClass::pickTargetFromTargets(propertyStruct* p)
+{
+	//The list of targets is a list of atoms, so it should have type XA_ATOM but it may have the type TARGETS instead.
+	if((p->type!=XA_ATOM && p->type!=this->dNdAtoms[XA_TARGETS]) || p->format!=32)
+		{
+			//This would be really broken. Targets have to be an atom list and applications should support this. Nevertheless,
+			//some seem broken (MATLAB 7, for instance), so ask for STRING next instead as the lowest common denominator
+			if(this->dNdTypes.count("STRING"))
+				return(XA_STRING);
+			else
+				return None;
+		}
+	else
+		{
+			Atom *atom_list=(Atom*)p->data;
+			return pickTargetFromList(atom_list,p->nitems);
+		}
+}
+
+// Finds the best target given up to three atoms provided (any can be None).
+// Useful for part of the Xdnd protocol.
+Atom LFSTK_windowClass::pickTargetFromAtoms(Atom t1, Atom t2, Atom t3)
+{
+	Atom atoms[3];
+	int  n=0;
+
+	if(t1!=None)
+		atoms[n++]=t1;
+
+	if(t2!=None)
+		atoms[n++]=t2;
+
+	if(t3!=None)
+		atoms[n++]=t3;
+
+	return this->pickTargetFromList(atoms, n);
+}
+
+/**
+ * Handle a dNd event.
+ * \param event The event.
+ * \note Only for line edit class gadgets for now.
+ */
+void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
+{
+	if(event->type == ClientMessage)
+		{
+			if(event->xclient.message_type==this->dNdAtoms[XDNDENTER])
+				{
+					this->xDnDVersion=(event->xclient.data.l[1] >> 24);
+					//more than three
+					Window source=event->xclient.data.l[0];
+					if(event->xclient.data.l[1] & 1)
+						{
+							//Fetch the list of possible conversions
+							propertyStruct *props=this->readProperty(source,this->dNdAtoms[XDNDTYPELIST]);
+							this->toBeRequested=this->pickTargetFromTargets(props);
+							XFree(props->data);
+						}
+					else
+						{
+							//Use the available list
+							this->toBeRequested=pickTargetFromAtoms(event->xclient.data.l[2],event->xclient.data.l[3],event->xclient.data.l[4]);
+						}
+				}
+
+			if(event->xclient.message_type == dNdAtoms[XDNDPOSITION])
+				{
+					//Xdnd: reply with an XDND status message
+					this->dropGadget=this->LFSTK_findGadgetByPos(event->xclient.data.l[2] >> 16,event->xclient.data.l[2] & 0xffff);
+
+					XClientMessageEvent m;
+					memset(&m, sizeof(m), 0);
+					m.type=ClientMessage;
+					m.display=event->xclient.display;
+					m.window=event->xclient.data.l[0];
+					m.message_type=dNdAtoms[XDNDSTATUS];
+					m.format=32;
+					m.data.l[0]=this->window;
+					m.data.l[1]=(this->toBeRequested!=None);
+					m.data.l[2]=0; //Specify an empty rectangle
+					m.data.l[3]=0;
+					m.data.l[4]=dNdAtoms[XDNDACTIONCOPY]; //We only accept copying anyway.
+
+					XSendEvent(this->display,event->xclient.data.l[0], False, NoEventMask, (XEvent*)&m);
+					XFlush(this->display);
+				}
+
+			if(event->xclient.message_type == dNdAtoms[XDNDDROP])
+				{
+					if(this->toBeRequested == None)
+						{
+							//printf("not interested\n");
+							//It's sending anyway, despite instructions to the contrary.
+							//So reply that we're not interested.
+							XClientMessageEvent m;
+							memset(&m, sizeof(m), 0);
+							m.type=ClientMessage;
+							m.display=event->xclient.display;
+							m.window=event->xclient.data.l[0];
+							m.message_type=dNdAtoms[XDNDFINISHED];
+							m.format=32;
+							m.data.l[0]=this->window;//drop_window;
+							m.data.l[1]=0;
+							m.data.l[2]=None; //Failed.
+							XSendEvent(this->display,event->xclient.data.l[0], False, NoEventMask, (XEvent*)&m);
+						}
+					else
+						{
+							this->sourceWindow=event->xclient.data.l[0];
+							if(this->xDnDVersion >= 1)
+								XConvertSelection(this->display, dNdAtoms[XDNDSELECTION],this->toBeRequested,dNdAtoms[PRIMARY],this->window, event->xclient.data.l[2]);
+							else
+								XConvertSelection(this->display, dNdAtoms[XDNDSELECTION],this->toBeRequested,dNdAtoms[PRIMARY],this->window, CurrentTime);
+						}
+				}
+		}
+	if(event->type == SelectionNotify)
+		{
+			Atom target=event->xselection.target;
+
+			if(event->xselection.property == None)
+				{
+					return;
+				}
+			else
+				{
+					propertyStruct *myprops=this->readProperty(this->window,dNdAtoms[PRIMARY]);
+
+					myprops->mimeType=XGetAtomName(this->display,target);
+					//If we're being given a list of targets (possible conversions)
+					if(target == dNdAtoms[XA_TARGETS])
+						{
+							this->toBeRequested=this->pickTargetFromTargets(myprops);
+
+							if(this->toBeRequested == None)
+								return;
+							else //Request the data type we are able to select
+								XConvertSelection(this->display,dNdAtoms[XDNDSELECTION],this->toBeRequested,dNdAtoms[XDNDSELECTION],this->window, CurrentTime);
+						}
+					else if(target==this->toBeRequested)
+						{
+							if(this->dropGadget!=NULL)
+								this->dropGadget->LFSTK_dropData(myprops);
+
+							//Reply OK.
+							XClientMessageEvent m;
+							memset(&m, sizeof(m), 0);
+							m.type=ClientMessage;
+							m.display=this->display;
+							m.window=this->sourceWindow;
+							m.message_type=dNdAtoms[XDNDFINISHED];
+							m.format=32;
+							m.data.l[0]=this->window;//w;
+							m.data.l[1]=1;
+							m.data.l[2]=dNdAtoms[XDNDACTIONCOPY]; //We only ever copy.
+
+							XSendEvent(this->display,this->sourceWindow, False, NoEventMask, (XEvent*)&m);
+							XSync(this->display, False);
+						}
+					else
+						return;
+
+					XFree(myprops->data);
+					XFree(myprops->mimeType);
+				}
+		}
+}

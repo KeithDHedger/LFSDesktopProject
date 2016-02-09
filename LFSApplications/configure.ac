@@ -1,5 +1,3 @@
-#
-#
 AC_INIT([LFSApplications],[0.1.1],[PROJ],[LFSApplications])
 
 AC_CONFIG_HEADER([config.h])

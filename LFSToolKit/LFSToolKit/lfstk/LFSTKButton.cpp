@@ -38,8 +38,6 @@ LFSTK_buttonClass::LFSTK_buttonClass()
 bool LFSTK_buttonClass::mouseDown(XButtonEvent *e)
 {
 	geometryStruct	g={0,0,this->w,this->h};
-	bevelType		bv=BEVELIN;
-
 
 	if(this->isActive==false)
 		{
@@ -109,8 +107,6 @@ bool LFSTK_buttonClass::mouseExit(XButtonEvent *e)
 bool LFSTK_buttonClass::mouseEnter(XButtonEvent *e)
 {
 	geometryStruct	g={0,0,this->w,this->h};
-	bevelType		bv=BEVELIN;
-
 
 	if(this->isActive==false)
 		{

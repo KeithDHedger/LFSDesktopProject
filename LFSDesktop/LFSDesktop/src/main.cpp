@@ -136,72 +136,58 @@ bool setIconCallback(void *p,void* ud)
 void doCustomIcon(bool useicon)
 {
 	XEvent				event;
-	LFSTK_buttonClass	*bc,*bc1;
 	bool				firstrun=true;
-	LFSTK_windowClass	*mainwind;
-	LFSTK_lineEditClass	*le;
 	bool				retfromlib=true;
-
 	if(useicon==true)
 		{
-			mainwind=new LFSTK_windowClass(0,0,width,hite,"Enter Path To Icon",false);
-
-			le=new LFSTK_lineEditClass(mainwind,"",0,0,width,24,NorthWestGravity);
-			XMapWindow(mainwind->display,le->LFSTK_getWindow());
-
-			bc=new LFSTK_buttonClass(mainwind,"Apply",4,24+4+4,75,24,SouthWestGravity);
-			bc->LFSTK_setCallBack(NULL,setIconCallback,(void*)1);
-			XMapWindow(mainwind->display,bc->LFSTK_getWindow());
-
-			bc1=new LFSTK_buttonClass(mainwind,"Cancel",width-4-75,24+4+4,75,24,SouthEastGravity);
-			bc1->LFSTK_setCallBack(NULL,setIconCallback,(void*)2);
-			XMapWindow(mainwind->display,bc1->LFSTK_getWindow());
-
-			XMapWindow(mainwind->display,mainwind->window);
-			mainwind->LFSTK_setKeepAbove(true);
+			iconChooser->LFSTK_showWindow();
+			iconChooser->LFSTK_setKeepAbove(true);
 
 			while(retfromlib==true)
 				{
-					listener *l=mainwind->LFSTK_getListener(event.xany.window);
+					listener *l=iconChooser->LFSTK_getListener(event.xany.window);
 					if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
 						retfromlib=l->function(l->pointer,&event,l->type);
 
-					XNextEvent(mainwind->display,&event);
+					XNextEvent(iconChooser->display,&event);
 					switch(event.type)
 						{
 							case LeaveNotify:
 								break;
 							case Expose:
-								mainwind->LFSTK_clearWindow();
+								iconChooser->LFSTK_clearWindow();
 								if(firstrun==true)
 									{
 										firstrun=false;
-										le->LFSTK_setFocus();
+										iconChooserEdit->LFSTK_setFocus();
 									}
 								break;
 
 							case ConfigureNotify:
-								mainwind->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
-								mainwind->LFSTK_clearWindow();
-								le->LFSTK_resizeWindow(event.xconfigurerequest.width,24);
-								le->LFSTK_clearWindow();
+								iconChooser->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
+								iconChooser->LFSTK_clearWindow();
+								iconChooserEdit->LFSTK_resizeWindow(event.xconfigurerequest.width,24);
+								iconChooserEdit->LFSTK_clearWindow();
 								break;
 
 							case ClientMessage:
-								if (event.xclient.message_type == XInternAtom(mainwind->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(mainwind->display, "WM_DELETE_WINDOW", 1))
+							case SelectionNotify:
+								if (event.xclient.message_type == XInternAtom(iconChooser->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(iconChooser->display, "WM_DELETE_WINDOW", 1))
 									retfromlib=false;
+								if(iconChooser->acceptDnd==true)
+									iconChooser->LFSTK_handleDnD(&event);
 						}
 				}
 
 			if(retVal==0)
 				{
-					deskIconsArray[foundDiskNumber].icon=strdup(le->LFSTK_getBuffer()->c_str());
+					deskIconsArray[foundDiskNumber].icon=strdup(iconChooserEdit->LFSTK_getBuffer()->c_str());
 					fileCustomIcon=deskIconsArray[foundDiskNumber].icon;
 					fileGotCustomIcon=true;
 					deskIconsArray[foundDiskNumber].customicon=true;
 				}
 
-			delete mainwind;
+			iconChooser->LFSTK_hideWindow();
 		}
 	else
 		{
@@ -303,7 +289,6 @@ void doPopUp(int x,int y)
 		wc=diskWindow;
 	else
 		wc=fileWindow;
-
 	wc->LFSTK_moveWindow(x-10,y-10,true);
 	wc->LFSTK_showWindow(true);
 	wc->LFSTK_clearWindow();
@@ -654,6 +639,27 @@ int main(int argc,char **argv)
 	fileWindow->LFSTK_resizeWindow(maxwid,sy,true);
 	fileWindow->LFSTK_showWindow(true);
 	fileWindow->LFSTK_hideWindow();
+
+//icon chooser
+	iconChooser=new LFSTK_windowClass(0,0,width,hite,"Enter Path To Icon",false);
+	LFSTK_buttonClass	*bc;
+	//LFSTK_lineEditClass	*le;
+
+	iconChooserEdit=new LFSTK_lineEditClass(iconChooser,"",0,0,width,24,NorthWestGravity);
+//	XMapWindow(iconChooser->display,le->LFSTK_getWindow());
+
+	bc=new LFSTK_buttonClass(iconChooser,"Apply",4,24+4+4,75,24,SouthWestGravity);
+	bc->LFSTK_setCallBack(NULL,setIconCallback,(void*)1);
+//	XMapWindow(iconChooser->display,bc->LFSTK_getWindow());
+
+	bc=new LFSTK_buttonClass(iconChooser,"Cancel",width-4-75,24+4+4,75,24,SouthEastGravity);
+	bc->LFSTK_setCallBack(NULL,setIconCallback,(void*)2);
+//	XMapWindow(iconChooser->display,bc->LFSTK_getWindow());
+//	fileWindow->LFSTK_showWindow(true);
+//	fileWindow->LFSTK_hideWindow();
+
+//			XMapWindow(mainwind->display,mainwind->window);
+//			mainwind->LFSTK_setKeepAbove(true);
 
 	sfc=cairo_xlib_surface_create(display,drawOnThis,visual,displayWidth,displayHeight);
 	cairo_xlib_surface_set_size(sfc,displayWidth,displayHeight);

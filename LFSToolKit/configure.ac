@@ -1,5 +1,3 @@
-#
-#
 
 m4_define([LFSTOOLKIT_MAJ_N],[0])
 m4_define([LFSTOOLKIT_MIN_N],[1])

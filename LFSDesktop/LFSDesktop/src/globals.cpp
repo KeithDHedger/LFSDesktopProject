@@ -51,6 +51,8 @@ int			yCnt;
 //dialogs
 LFSTK_windowClass	*diskWindow=NULL;
 LFSTK_windowClass	*fileWindow=NULL;
+LFSTK_windowClass	*iconChooser=NULL;
+LFSTK_lineEditClass *iconChooserEdit=NULL;
 
 args		globalFileData[]=
 {

@@ -43,7 +43,7 @@ LFSTK_buttonClass		*guiButtons[NOMOREGUIS]={NULL,};
 LFSTK_labelClass		*labels[NOMORELABELS]={NULL,};
 LFSTK_menuButtonClass	*monitorNumber=NULL;
 
-bool					mainLoop=true;
+bool					mainloop=true;
 int						bwidth=100;
 int						bigbwidth=128;
 int						spacing=bwidth+10;
@@ -133,7 +133,7 @@ bool callback(void *p,void* ud)
 				setVars();
 				wc->globalLib->LFSTK_saveVarsToFile("-",prefs);
 				printf("\n");
-				mainLoop=false;
+				mainloop=false;
 				return(false);
 				break;
 
@@ -357,8 +357,8 @@ int main(int argc, char **argv)
 
 	XFlush(wc->display);
 
-	mainLoop=true;
-	while(mainLoop==true)
+	mainloop=true;
+	while(mainloop==true)
 		{
 			listener *l=wc->LFSTK_getListener(event.xany.window);
 
@@ -375,6 +375,14 @@ int main(int argc, char **argv)
 					case ConfigureNotify:
 						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
 						break;
+					case ClientMessage:
+					case SelectionNotify:
+						if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
+							mainloop=false;
+						if(wc->acceptDnd==true)
+							{
+								wc->LFSTK_handleDnD(&event);
+							}
 					default:
 						break;
 				}

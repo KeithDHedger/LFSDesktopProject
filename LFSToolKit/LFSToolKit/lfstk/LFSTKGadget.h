@@ -41,17 +41,22 @@ class LFSTK_gadgetClass
 		LFSTK_gadgetClass();
 		virtual ~LFSTK_gadgetClass();
 
+//window events
 		virtual void LFSTK_clearWindow(void);
 		virtual void LFSTK_resizeWindow(int w,int h);
+		virtual bool clientMessage(XEvent *e);
+		virtual bool gotFocus(XEvent *e);
+		virtual bool lostFocus(XEvent *e);
 
+//mouse events
 		virtual bool mouseUp(XButtonEvent *e);
 		virtual bool mouseDown(XButtonEvent *e);
 		virtual bool mouseExit(XButtonEvent *e);
 		virtual bool mouseEnter(XButtonEvent *e);
 		virtual bool keyRelease(XKeyEvent *e);
-		virtual bool clientMessage(XEvent *e);
-		virtual bool gotFocus(XEvent *e);
-		virtual bool lostFocus(XEvent *e);
+
+//DnD routines
+		virtual void LFSTK_dropData(propertyStruct* data);
 
 		Window LFSTK_getWindow(void);
 		void LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned int w,unsigned int h,int gravity);
@@ -93,6 +98,7 @@ class LFSTK_gadgetClass
 		Window				rootWindow;		
 		Colormap			cm;
 
+		bool				gadgetAcceptsDnD;
 	private:
 		void initGadget(void);
 		Imlib_Image			scaledImage;

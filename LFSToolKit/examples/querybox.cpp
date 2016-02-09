@@ -67,13 +67,13 @@ int main(int argc, char **argv)
 
 	bool				firstrun=true;
 
-	mainwind=new LFSTK_windowClass(0,0,width,hite,"Query Box",false);
+	mainwind=new LFSTK_windowClass(0,0,width,hite+24,"Query Box",false);
 
-	//mainwind->LFSTK_setWindowColourName(NORMALCOLOUR,"grey90");
 	label=new LFSTK_labelClass(mainwind,"Window is normal",0,0,width,24,NorthWestGravity);
-	//label->LFSTK_setFontColourName(NORMALCOLOUR,"dark grey");
-label->LFSTK_setLabelAutoColour(true);
+	label->LFSTK_setLabelAutoColour(true);
 
+	le=new LFSTK_lineEditClass(mainwind,"Hello World",0,sy,width,24,NorthWestGravity);
+	sy+=24;
 	le=new LFSTK_lineEditClass(mainwind,"Hello World",0,sy,width,24,NorthWestGravity);
 
 	bc=new LFSTK_buttonClass(mainwind,"OK",4,24+4+4+sy,75,24,SouthWestGravity);
@@ -81,7 +81,6 @@ label->LFSTK_setLabelAutoColour(true);
 
 	sticky=new LFSTK_toggleButtonClass(mainwind,"Stick",width-4-75,24+4+4+sy,75,24,SouthEastGravity);
 	sticky->LFSTK_setCallBack(NULL,callback,(void*)2);
-	//sticky->LFSTK_setToggleStyle(TOGGLENORMAL);
 	sticky->LFSTK_setToggleStyle(TOGGLECHECK);
 	sticky->LFSTK_setValue(true);
 	sticky->LFSTK_setActive(true);
@@ -90,7 +89,6 @@ label->LFSTK_setLabelAutoColour(true);
 
 	mainwind->LFSTK_setKeepAbove(toggle);
 	mainwind->LFSTK_setSticky(toggle);
-
 	mainloop=true;
 	while(mainloop==true)
 		{
@@ -121,8 +119,14 @@ label->LFSTK_setLabelAutoColour(true);
 						break;
 
 					case ClientMessage:
+					case SelectionNotify:
 						if (event.xclient.message_type == XInternAtom(mainwind->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(mainwind->display, "WM_DELETE_WINDOW", 1))
 							mainloop=false;
+						if(mainwind->acceptDnd==true)
+							{
+								mainwind->LFSTK_handleDnD(&event);
+							}
+						break;
 				}
 		}
 

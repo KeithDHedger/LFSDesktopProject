@@ -368,11 +368,6 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 COMMONSRC = ../lfstk/LFSTKButton.cpp ../lfstk/LFSTKGadget.cpp ../lfstk/LFSTKImage.cpp ../lfstk/LFSTKLabel.cpp ../lfstk/LFSTKLib.cpp ../lfstk/LFSTKLineEdit.cpp ../lfstk/LFSTKMenuButton.cpp ../lfstk/LFSTKToggleButton.cpp ../lfstk/LFSTKWindow.cpp
 lib_LTLIBRARIES = liblfstoolkit.la
 liblfstoolkit_la_SOURCES = $(COMMONSRC)
-
-#lfstoolkit_includedir = $(includedir)/src
-#lfstoolkit_include_HEADERS = $(APIHEADERS)
-#include ../headers
-#include_HEADERS = $(APIHEADERS)
 pixfilesdir = ${prefix}/share/pixmaps
 pixfiles_DATA = ../resources/pixmaps/*
 lfstoolkit_includedir = $(includedir)/lfstk

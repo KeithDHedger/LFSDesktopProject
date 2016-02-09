@@ -23,22 +23,27 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+//#include <map>
 
 struct	monitorStruct
 {
-	int		x;
-	int		y;
-	int		w;
-	int		h;
+	int				x;
+	int				y;
+	int				w;
+	int				h;
 };
 
-//typedef struct	gadgetList;
-//typedef class	LFSTK_gadgetClass;
-//{
-//	gadgetList			*prev;
-//	gadgetList			*next;
-//	LFSTK_gadgetClass	*gadget;
-//};
+struct propertyStruct
+{
+	unsigned char	*data;
+	int				format;
+	int				nitems;
+	Atom			type;
+	char			*mimeType;
+};
+
+
+enum {XDNDENTER=0,XDNDPOSITION,XDNDSTATUS,XDNDTYPELIST,XDNDACTIONCOPY,XDNDDROP,XDNDLEAVE,XDNDFINISHED,XDNDSELECTION,XDNDPROXY,XA_CLIPBOARD,XA_COMPOUND_TEXT,XA_UTF8_STRING,XA_TARGETS,PRIMARY,DNDATOMCOUNT};
 
 /**
  *
@@ -49,6 +54,13 @@ struct	monitorStruct
  * \note The main window class MUST be passed to child widgets.
  *
  */
+
+//#include <map>
+//#include <iostream>
+//#include <cstdio>
+//#include <climits>
+//#include <cstring>
+//using namespace std;
 
 class LFSTK_windowClass
 {
@@ -95,9 +107,14 @@ class LFSTK_windowClass
 //gadget management
 		void LFSTK_addGadget(LFSTK_gadgetClass *addgadget);
 		void LFSTK_freeAllGadgets(void);
-		LFSTK_gadgetClass* LFSTK_findGadget(LFSTK_gadgetClass *gadget);
+		LFSTK_gadgetClass* LFSTK_findGadgetByPos(int x, int y);
 		int LFSTK_gadgetCount(void);
 		gadgetList* LFSTK_gadgetList(void);
+
+//dnd
+		void LFSTK_initDnD(void);
+		Atom LFSTK_getDnDAtom(int atomnum);
+		void LFSTK_handleDnD(XEvent *event);
 
 		Display			*display;
 		Window			window;
@@ -122,11 +139,22 @@ class LFSTK_windowClass
 		int				y;
 		Pixmap			tile[2];
 		bool			useTile;
+		bool			acceptDnd;
 
 	private:
+//window routines
 		void initWindow(bool loadvars);
 		void loadGlobalColours(void);
 		void loadMonitorData(void);
+
+//dnd routines
+		propertyStruct* readProperty(Window src,Atom property);
+		std::string getAtomName(Atom a);
+		Atom pickTargetFromList(Atom* atom_list,int nitems);
+		Atom pickTargetFromTargets(propertyStruct* p);
+		Atom pickTargetFromAtoms(Atom t1, Atom t2, Atom t3);
+
+
 		int				w;
 		int				h;
 		char			*windowName;
@@ -135,7 +163,14 @@ class LFSTK_windowClass
 		int				monitorCount;
 		monitorStruct	*monitors;
 		gadgetList		*gadgets;
-		
+
+//Atoms etc for Xdnd
+		Atom			dNdAtoms[DNDATOMCOUNT];
+		std::map<std::string,int> dNdTypes;
+		Atom			toBeRequested;
+		Window			sourceWindow;
+		int				xDnDVersion;
+		LFSTK_gadgetClass *dropGadget;
 };
 
 #endif
