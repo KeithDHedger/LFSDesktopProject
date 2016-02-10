@@ -1,4 +1,6 @@
 0.1.1
+Popup list now hidden when custom icon dialog shown.
+Fixed crash when right clicking desktop icon after using custom icon dialog.
 Moved include files.
 Updated manpage.
 Corrected label foreground/bcakground colour bug.

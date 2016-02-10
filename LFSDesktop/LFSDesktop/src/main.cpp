@@ -255,6 +255,9 @@ bool pushedButtonCB(void *p,void* ud)
 {
 	long	what=(long)ud;
 
+	diskWindow->LFSTK_hideWindow();
+	fileWindow->LFSTK_hideWindow();
+
 	switch(what)
 		{
 			case BUTTONOPEN:
@@ -540,7 +543,6 @@ int main(int argc,char **argv)
 	display=XOpenDisplay(NULL);
 	if(display==NULL)
 		exit(1);
-
 
 	XSynchronize(display,true);
 	screen=DefaultScreen(display);
