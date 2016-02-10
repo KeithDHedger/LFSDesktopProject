@@ -45,6 +45,7 @@ LFSTK_lineEditClass::LFSTK_lineEditClass()
 LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity)
 {
 	XSetWindowAttributes	wa;
+	mappedListener			*ml=new mappedListener;
 
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 	this->isFocused=false;
@@ -55,10 +56,10 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	this->window=XCreateWindow(this->display,this->parent,x+pad,y+pad,w-(pad*2),h-(pad*2),0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWBitGravity,&wa);
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|FocusChangeMask|KeyReleaseMask);
 
-	this->listen.function=&LFSTK_lib::LFSTK_gadgetEvent;
-	this->listen.pointer=this;
-	this->listen.type=LINEEDITGADGET;
-	this->wc->LFSTK_setListener(this->window,this->getListen());
+	ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
+	ml->gadget=this;
+	ml->type=LINEEDITGADGET;
+	this->wc->LFSTK_addMappedListener(this->window,ml);
 
 	if(strlen(label)>0)
 		this->cursorPos=strlen(label);

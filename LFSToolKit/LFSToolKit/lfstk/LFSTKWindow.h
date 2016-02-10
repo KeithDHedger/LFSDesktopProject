@@ -23,7 +23,6 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-//#include <map>
 
 struct	monitorStruct
 {
@@ -77,9 +76,6 @@ class LFSTK_windowClass
 		void LFSTK_resizeWindow(int w,int h,bool tellx=true);
 		void LFSTK_moveWindow(int x,int y,bool tellx=true);
 
-		void LFSTK_setListener(Window w,listener *l);
-		listener *LFSTK_getListener(Window w);
-
 		void LFSTK_setFontString(const char *s);
 		void LFSTK_setFontColourName(int p,const char *colour);
 		void LFSTK_setWindowColourName(int p,const char* colour);
@@ -110,7 +106,9 @@ class LFSTK_windowClass
 		LFSTK_gadgetClass* LFSTK_findGadgetByPos(int x, int y);
 		int LFSTK_gadgetCount(void);
 		gadgetList* LFSTK_gadgetList(void);
-
+		mappedListener* LFSTK_getMappedListener(int window);
+		void LFSTK_addMappedListener(int mapwindow,mappedListener* ml);
+		
 //dnd
 		void LFSTK_initDnD(void);
 		Atom LFSTK_getDnDAtom(int atomnum);
@@ -123,7 +121,6 @@ class LFSTK_windowClass
 		Visual			*visual;
 		Window			rootWindow;		
 		Colormap		cm;
-		XContext		listeners;
 		XftDraw 		*draw;
 
 		char			*fontString;
@@ -154,7 +151,6 @@ class LFSTK_windowClass
 		Atom pickTargetFromTargets(propertyStruct* p);
 		Atom pickTargetFromAtoms(Atom t1, Atom t2, Atom t3);
 
-
 		int				w;
 		int				h;
 		char			*windowName;
@@ -163,6 +159,7 @@ class LFSTK_windowClass
 		int				monitorCount;
 		monitorStruct	*monitors;
 		gadgetList		*gadgets;
+		std::map<int,mappedListener*> gadgetMap;
 
 //Atoms etc for Xdnd
 		Atom			dNdAtoms[DNDATOMCOUNT];

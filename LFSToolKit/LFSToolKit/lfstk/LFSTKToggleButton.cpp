@@ -42,6 +42,7 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass()
 LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity)
 {
 	XSetWindowAttributes	wa;
+	mappedListener			*ml=new mappedListener;
 
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 
@@ -49,11 +50,11 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
-	this->listen.function=&LFSTK_lib::LFSTK_gadgetEvent;
-	this->listen.pointer=this;
-	this->listen.type=TOGGLEGADGET;
+	ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
+	ml->gadget=this;
+	ml->type=TOGGLEGADGET;
+	this->wc->LFSTK_addMappedListener(this->window,ml);
 
-	this->wc->LFSTK_setListener(this->window,this->getListen());
 	this->boxStyle=TOGGLECHECK;
 
 	this->toggleState=false;

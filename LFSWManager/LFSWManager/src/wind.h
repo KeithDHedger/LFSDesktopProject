@@ -82,6 +82,13 @@ struct extents
 //	void (*function)(void *,XEvent *);
 //	void *pointer;
 //};
+struct listener
+{
+	bool		(*function)(void *,XEvent *,int);
+	void		*pointer;
+	int			type;
+};
+
 
 struct bitmap
 {

@@ -145,9 +145,9 @@ void doCustomIcon(bool useicon)
 
 			while(retfromlib==true)
 				{
-					listener *l=iconChooser->LFSTK_getListener(event.xany.window);
-					if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
-						retfromlib=l->function(l->pointer,&event,l->type);
+					mappedListener *ml=iconChooser->LFSTK_getMappedListener(event.xany.window);
+					if(ml!=NULL)
+						retfromlib=ml->function(ml->gadget,&event,ml->type);
 
 					XNextEvent(iconChooser->display,&event);
 					switch(event.type)
@@ -298,10 +298,9 @@ void doPopUp(int x,int y)
 
 	while(popupLoop==true)
 		{
-			listener *l=wc->LFSTK_getListener(event.xany.window);
-
-			if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
-				l->function(l->pointer,&event,l->type);
+			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
+			if(ml!=NULL)
+				ml->function(ml->gadget,&event,ml->type);
 
 			XNextEvent(wc->display,&event);
 			switch(event.type)

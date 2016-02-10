@@ -374,10 +374,9 @@ int main(int argc, char **argv)
 	mainloop=true;
 	while(mainloop==true)
 		{
-			listener *l=wc->LFSTK_getListener(event.xany.window);
-
-			if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
-				l->function(l->pointer,&event,l->type);
+			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
+			if(ml!=NULL)
+				ml->function(ml->gadget,&event,ml->type);
 
 			XNextEvent(wc->display,&event);
 			switch(event.type)

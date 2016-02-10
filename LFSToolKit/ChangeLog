@@ -10,6 +10,7 @@ Synched versions to "0.1.0".
 Commited to github.
 
 0.0.10
+New more efficient listener functions for all classes.
 Windows now getting focus on show.
 Main window does not now lose focus when selecting menu.
 Menu buttons now use image instead of icons.

@@ -78,17 +78,17 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* imagepath,int x,int y,int w,int gravity)
 {
 	XSetWindowAttributes	wa;
+	mappedListener			*ml=new mappedListener;
 	this->LFSTK_setCommon(parentwc,imagepath,x,y,w,w,gravity);
 
 	wa.win_gravity=gravity;
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
-	this->listen.function=&LFSTK_lib::LFSTK_gadgetEvent;
-	this->listen.pointer=this;
-	this->listen.type=IMAGEGADGET;
-
-	this->wc->LFSTK_setListener(this->window,this->getListen());
+	ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
+	ml->gadget=this;
+	ml->type=IMAGEGADGET;
+	this->wc->LFSTK_addMappedListener(this->window,ml);
 
 	this->LFSTK_setImageFromPath(imagepath,w,h);
 }

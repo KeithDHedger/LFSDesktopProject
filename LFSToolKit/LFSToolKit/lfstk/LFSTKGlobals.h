@@ -57,13 +57,6 @@ struct fontStruct
 	XftFont		*data;
 };
 
-struct listener
-{
-	bool		(*function)(void *,XEvent *,int);
-	void		*pointer;
-	int			type;
-};
-
 struct geometryStruct
 {
 	int			x,y;
@@ -80,6 +73,13 @@ struct colourStruct
 
 struct	gadgetList;
 class	LFSTK_gadgetClass;
+struct	mappedListener
+{
+	bool				(*function)(void *,XEvent *,int);
+	LFSTK_gadgetClass	*gadget;
+	int					type;
+};
+
 
 #include <lfstk/LFSTKLib.h>
 #include <lfstk/LFSTKWindow.h>
@@ -90,5 +90,7 @@ class	LFSTK_gadgetClass;
 #include <lfstk/LFSTKMenuButton.h>
 #include <lfstk/LFSTKLineEdit.h>
 #include <lfstk/LFSTKToggleButton.h>
+
+
 
 #endif

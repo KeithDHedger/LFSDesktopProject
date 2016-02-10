@@ -92,11 +92,12 @@ int main(int argc, char **argv)
 	mainloop=true;
 	while(mainloop==true)
 		{
-			listener *l=mainwind->LFSTK_getListener(event.xany.window);
-			if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
-				l->function(l->pointer,&event,l->type);
 
 			XNextEvent(mainwind->display,&event);
+			mappedListener *ml=mainwind->LFSTK_getMappedListener(event.xany.window);
+			if(ml!=NULL)
+				ml->function(ml->gadget,&event,ml->type);
+
 			switch(event.type)
 				{
 					case LeaveNotify:

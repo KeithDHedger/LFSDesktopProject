@@ -162,15 +162,6 @@ void LFSTK_gadgetClass::initGadget(void)
 }
 
 /**
-* Get the listener for gadget.
-* \return listener.
-*/
-listener* LFSTK_gadgetClass::getListen(void)
-{
-	return(&(this->listen));
-}
-
-/**
 * Do common setup for gadget.
 * \param parentwc Main parent window class.
 * \param label Displayed name.

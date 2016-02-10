@@ -230,11 +230,11 @@ int main(int argc, char **argv)
 	mainLoop=true;
 	while(mainLoop==true)
 		{
-			listener *l=wc->LFSTK_getListener(event.xany.window);
-			if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
-				l->function(l->pointer,&event,l->type);
-
 			XNextEvent(wc->display,&event);
+			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
+			if(ml!=NULL)
+				ml->function(ml->gadget,&event,ml->type);
+
 			switch(event.type)
 				{
 					case LeaveNotify:
@@ -248,10 +248,15 @@ int main(int argc, char **argv)
 						break;
 
 					case ClientMessage:
+					case SelectionNotify:
 						{
 						if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
 							mainLoop=false;
 						}
+						if(wc->acceptDnd==true)
+							{
+								wc->LFSTK_handleDnD(&event);
+							}
 						break;
 				}
 		}

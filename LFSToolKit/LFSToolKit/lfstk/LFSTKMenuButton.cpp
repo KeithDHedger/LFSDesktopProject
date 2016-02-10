@@ -200,9 +200,9 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	while (run==true)
 		{
 			XNextEvent(subwc->display,&event);
-			listener *l=subwc->LFSTK_getListener(event.xany.window);
-			if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
-				l->function(l->pointer,&event,l->type);
+			mappedListener *ml=subwc->LFSTK_getMappedListener(event.xany.window);
+			if(ml!=NULL)
+				ml->function(ml->gadget,&event,ml->type);
 
 			switch(event.type)
 				{
@@ -307,6 +307,7 @@ void LFSTK_menuButtonClass::LFSTK_addMenus(menuItemStruct* menus,int cnt)
 LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity)
 {
 	XSetWindowAttributes	wa;
+	mappedListener			*ml=new mappedListener;
 
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 
@@ -320,10 +321,11 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,const c
 	this->style=BEVELOUT;
 	this->LFSTK_setLabelOriention(LEFT);
 
-	this->listen.function=&(this->wc->globalLib->LFSTK_gadgetEvent);
-	this->listen.pointer=this;
-	this->listen.type=MENUBUTTONGADGET;
-	wc->LFSTK_setListener(this->window,this->getListen());
+	ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
+	ml->gadget=this;
+	ml->type=MENUBUTTONGADGET;
+	this->wc->LFSTK_addMappedListener(this->window,ml);
+
 	this->isSubmenu=false;
 }
 

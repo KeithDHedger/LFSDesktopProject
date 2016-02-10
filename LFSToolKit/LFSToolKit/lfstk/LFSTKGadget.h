@@ -105,12 +105,9 @@ class LFSTK_gadgetClass
 
 	protected:
 		void drawString(XftFont* font,int x,int y,int state,const char *s);
-		listener* getListen(void);
 		void drawBox(geometryStruct* g,gadgetState state,bevelType bevel);
 		void drawIndicator(geometryStruct* g,int state,indicatorType indic=NOINDICATOR);
 		bevelType getActiveBevel(void);
-
-		listener			listen;
 
 		char				*label;
 		geometryStruct		geom;

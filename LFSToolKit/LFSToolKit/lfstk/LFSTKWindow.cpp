@@ -58,6 +58,7 @@ void LFSTK_windowClass::LFSTK_addGadget(LFSTK_gadgetClass *addgadget)
 {
 	gadgetList	*gadg=new gadgetList;
 	gadgetList	*oldgadg=this->gadgets;
+	mappedListener	*ml;
 
 	if(this->gadgets==NULL)
 		{
@@ -71,6 +72,28 @@ void LFSTK_windowClass::LFSTK_addGadget(LFSTK_gadgetClass *addgadget)
 		}
 	gadg->gadget=addgadget;
 	this->gadgets=gadg;
+}
+
+/**
+ * Get a mapped listener from window id.
+ * \param window is window id.
+ */
+mappedListener* LFSTK_windowClass::LFSTK_getMappedListener(int window)
+{
+	mappedListener* l=NULL;
+
+	l=this->gadgetMap[window];
+	return(l);
+}
+
+/**
+ * Add a mapped listener.
+ * \param mapwindow is window id.
+ * \param ml is mappedListener pointer window retains ownership.
+ */
+void LFSTK_windowClass::LFSTK_addMappedListener(int mapwindow,mappedListener* ml)
+{
+	this->gadgetMap[mapwindow]=ml;
 }
 
 /**
@@ -204,7 +227,6 @@ LFSTK_windowClass::~LFSTK_windowClass()
 
 	this->LFSTK_freeAllGadgets();
 	XFreeGC(this->display,this->gc);
-	XDeleteContext(this->display,this->window,this->listeners);
 	XDestroyWindow(this->display,this->window);
 	XCloseDisplay(this->display);
 }
@@ -263,20 +285,6 @@ void LFSTK_windowClass::LFSTK_clearWindow(void)
 }
 
 /**
-* Set child gadget listner.
-* \param w Window of child gadget.
-* \param l Child gadgets listner.
-* \note Should only be called from child gadget constructor.
-*/
-void LFSTK_windowClass::LFSTK_setListener(Window w,listener *l)
-{
-	if (l==NULL)
-		XDeleteContext(this->display,w,this->listeners);
-	else
-		XSaveContext(this->display,w,this->listeners,(XPointer)l);
-}
-
-/**
 * Resize window.
 * \param w New width.
 * \param h New height.
@@ -306,23 +314,6 @@ void LFSTK_windowClass::LFSTK_moveWindow(int x,int y,bool tellx)
 	if(tellx==true)
 		XMoveWindow(this->display,this->window,x,y);
 	this->LFSTK_clearWindow();
-}
-
-/**
-* Get child gadget listner.
-* \param w Window of child gadget.
-* \return Listener of child gadget.
-* \note For use in main event loop.
-* \note eg:
-* \note listener *l=wc->LFSTK_getListener(event.xany.window);
-*/
-listener* LFSTK_windowClass::LFSTK_getListener(Window w)
-{
-	listener *l=NULL;
-	if (XFindContext(this->display,w,this->listeners,(XPointer *)&l)==0)
-		return l;
-	else
-		return NULL;
 }
 
 /**
@@ -646,8 +637,6 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 	XSetClassHint(this->display,this->window,&classHint);
 
 	this->gc=XCreateGC(this->display,this->rootWindow,0,NULL);
-
-	this->listeners=XUniqueContext();
 	this->LFSTK_setFontString((char*)DEFAULTFONT);
 
 	this->LFSTK_setDecorated(true);

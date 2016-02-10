@@ -160,18 +160,18 @@ bool LFSTK_buttonClass::LFSTK_getIgnoreCB(void)
 LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity)
 {
 	XSetWindowAttributes	wa;
+	mappedListener			*ml=new mappedListener;
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 
 	wa.win_gravity=gravity;
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
-	this->listen.function=&LFSTK_lib::LFSTK_gadgetEvent;
-	this->listen.pointer=this;
-	this->listen.type=BUTTONGADGET;
+	ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
+	ml->gadget=this;
+	ml->type=BUTTONGADGET;
+	this->wc->LFSTK_addMappedListener(this->window,ml);
 
-	this->wc->LFSTK_setListener(this->window,this->getListen());
-	
 	if(this->wc->globalLib->LFSTK_getUseTheme()==true)
 		this->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),-1);
 	else
