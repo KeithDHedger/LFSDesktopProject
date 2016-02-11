@@ -1,6 +1,7 @@
 0.1.1
 Mouse cursor now set to '+' only when over gadget that accepts dNd.
 New more efficient listener functions for all classes.
+Line edit gadget accepts dropped text or file uri.
 Added drag and drop to line edit gadget.
 Gadgets now destroyed with window.
 Includes now grouped into include/lfstk.
