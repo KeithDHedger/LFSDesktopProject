@@ -862,7 +862,7 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 					m.message_type=dNdAtoms[XDNDSTATUS];
 					m.format=32;
 					m.data.l[0]=this->window;
-					m.data.l[1]=(this->toBeRequested!=None);
+					m.data.l[1]=((this->toBeRequested!=None) && (this->dropGadget!=NULL) );
 					m.data.l[2]=0; //Specify an empty rectangle
 					m.data.l[3]=0;
 					m.data.l[4]=dNdAtoms[XDNDACTIONCOPY]; //We only accept copying anyway.
@@ -873,9 +873,8 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 
 			if(event->xclient.message_type == dNdAtoms[XDNDDROP])
 				{
-					if(this->toBeRequested == None)
+					if((this->toBeRequested == None) || (this->dropGadget==NULL))
 						{
-							//printf("not interested\n");
 							//It's sending anyway, despite instructions to the contrary.
 							//So reply that we're not interested.
 							XClientMessageEvent m;
@@ -885,7 +884,7 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 							m.window=event->xclient.data.l[0];
 							m.message_type=dNdAtoms[XDNDFINISHED];
 							m.format=32;
-							m.data.l[0]=this->window;//drop_window;
+							m.data.l[0]=this->window;
 							m.data.l[1]=0;
 							m.data.l[2]=None; //Failed.
 							XSendEvent(this->display,event->xclient.data.l[0], False, NoEventMask, (XEvent*)&m);
