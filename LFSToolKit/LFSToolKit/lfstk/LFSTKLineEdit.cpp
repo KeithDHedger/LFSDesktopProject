@@ -130,7 +130,6 @@ bool LFSTK_lineEditClass::mouseEnter(XButtonEvent *e)
 			this->LFSTK_clearWindow();
 			return(true);
 		}
-
 	return(true);
 }
 

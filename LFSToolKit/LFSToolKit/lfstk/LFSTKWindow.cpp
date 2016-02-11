@@ -43,37 +43,6 @@ struct Hints
 	unsigned long   status;
 };
 
-struct	gadgetList
-{
-	gadgetList			*prev;
-	gadgetList			*next;
-	LFSTK_gadgetClass	*gadget;
-};
-
-/**
- * \param gadget Gadget to add to list.
- */
-
-void LFSTK_windowClass::LFSTK_addGadget(LFSTK_gadgetClass *addgadget)
-{
-	gadgetList	*gadg=new gadgetList;
-	gadgetList	*oldgadg=this->gadgets;
-	mappedListener	*ml;
-
-	if(this->gadgets==NULL)
-		{
-			gadg->prev=NULL;
-			gadg->next=NULL;
-		}
-	else
-		{
-			gadg->next=oldgadg;
-			gadg->prev=NULL;
-		}
-	gadg->gadget=addgadget;
-	this->gadgets=gadg;
-}
-
 /**
  * Get a mapped listener from window id.
  * \param window is window id.
@@ -97,73 +66,39 @@ void LFSTK_windowClass::LFSTK_addMappedListener(int mapwindow,mappedListener* ml
 }
 
 /**
- * \param gadget Gadget to free.
- * \note gadget is deleted and removed from list.
- */
-void LFSTK_windowClass::LFSTK_freeAllGadgets(void)
-{
-	gadgetList	*gl;
-	gadgetList	*lastgl;
-
-	if(this->gadgets!=NULL)
-		{
-			gl=this->gadgets;
-			while(gl!=NULL)
-				{
-					delete gl->gadget;
-					lastgl=gl;
-					gl=gl->next;
-					delete lastgl;
-				}
-		}
-	this->gadgets=NULL;
-}
-
-/**
- * \param gadget Gadget to find.
+ * \param x,y Global mouse co-ords.
  * \return found gadget or NULL.
  */
 LFSTK_gadgetClass* LFSTK_windowClass::LFSTK_findGadgetByPos(int x, int y)
 {
-	gadgetList	*walklist=this->gadgets;
+	mappedListener	*ml=NULL;
 	geometryStruct *geom;
 
-	if(walklist==NULL)
-		return(NULL);
-	while(walklist!=NULL)
+	for (std::map<int,mappedListener*>::iterator it=this->gadgetMap.begin();it!=this->gadgetMap.end();++it)
 		{
-			geom=walklist->gadget->LFSTK_getGeom();
-			if((x>geom->x) && (x<geom->x+geom->w) && (y>geom->y) && (y<geom->y+geom->h) && (walklist->gadget->gadgetAcceptsDnD==true) )
-				return(walklist->gadget);
-			walklist=walklist->next;
+			ml=it->second;
+			if( (ml!=NULL) && (ml->gadget!=NULL) && (ml->gadget->gadgetAcceptsDnD==true) )
+				{
+					geom=ml->gadget->LFSTK_getGeom();
+					if((x>geom->x) && (x<geom->x+geom->w) && (y>geom->y) && (y<geom->y+geom->h) )
+						{
+							delete geom;
+							return(ml->gadget);
+						}
+					else
+						delete geom;
+				}
 		}
+
 	return(NULL);
 }
 
 /**
- * \return number of gadgets in list.
+ * \return number of gadgets in window.
  */
 int LFSTK_windowClass::LFSTK_gadgetCount(void)
 {
-	int cnt=0;
-
-	gadgetList	*gl=this->gadgets;
-	if(gadgets!=NULL)
-		while(gl!=NULL)
-			{
-				cnt++;
-				gl=gl->next;
-			}
-	return(cnt);
-}
-
-/**
- * \return gadget list.
- * \note list belongs to window, don't free.
- */
-gadgetList* LFSTK_windowClass::LFSTK_gadgetList(void)
-{
-	return(this->gadgets);
+	return(this->gadgetMap.size());
 }
 
 /**
@@ -186,7 +121,6 @@ void LFSTK_windowClass::initWindow(bool loadvars)
 	this->loadGlobalColours();
 	this->isActive=true;
 	this->useTile=false;
-	this->gadgets=NULL;
 }
 
 /**
@@ -225,7 +159,16 @@ LFSTK_windowClass::~LFSTK_windowClass()
 	delete this->globalLib;
 	free(this->monitors);
 
-	this->LFSTK_freeAllGadgets();
+	for (std::map<int,mappedListener*>::iterator it=this->gadgetMap.begin();it!=this->gadgetMap.end();++it)
+		{
+			mappedListener	*ml=it->second;
+			if (ml!=NULL)
+				{
+					delete ml->gadget;
+					free(ml);
+				}
+		}
+
 	XFreeGC(this->display,this->gc);
 	XDestroyWindow(this->display,this->window);
 	XCloseDisplay(this->display);
@@ -258,7 +201,6 @@ unsigned long LFSTK_windowClass::LFSTK_setColour(const char *name)
 	XAllocNamedColor(this->display,this->cm,name,&sc,&tc);
 	return sc.pixel;
 }
-
 
 /**
 * Clear the window to the appropriate state.
@@ -646,6 +588,8 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 		this->LFSTK_setTile(this->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
 	else
 		this->useTile=false;
+
+	this->gadgetMap.clear();
 }
 
 /**

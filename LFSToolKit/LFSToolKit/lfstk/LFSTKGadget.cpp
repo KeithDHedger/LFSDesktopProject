@@ -157,7 +157,6 @@ void LFSTK_gadgetClass::initGadget(void)
 	this->useImage=false;
 	this->image=NULL;
 	this->scaledImage=NULL;
-	this->wc->LFSTK_addGadget(this);
 	this->gadgetAcceptsDnD=false;
 }
 

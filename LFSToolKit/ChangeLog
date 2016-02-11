@@ -1,4 +1,5 @@
 0.1.1
+New more efficient listener functions for all classes.
 Added drag and drop to line edit gadget.
 Gadgets now destroyed with window.
 Includes now grouped into include/lfstk.
@@ -10,7 +11,6 @@ Synched versions to "0.1.0".
 Commited to github.
 
 0.0.10
-New more efficient listener functions for all classes.
 Windows now getting focus on show.
 Main window does not now lose focus when selecting menu.
 Menu buttons now use image instead of icons.

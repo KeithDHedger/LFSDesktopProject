@@ -101,13 +101,10 @@ class LFSTK_windowClass
 		void LFSTK_setTile(const char *path,int size);
 
 //gadget management
-		void LFSTK_addGadget(LFSTK_gadgetClass *addgadget);
-		void LFSTK_freeAllGadgets(void);
-		LFSTK_gadgetClass* LFSTK_findGadgetByPos(int x, int y);
-		int LFSTK_gadgetCount(void);
-		gadgetList* LFSTK_gadgetList(void);
-		mappedListener* LFSTK_getMappedListener(int window);
 		void LFSTK_addMappedListener(int mapwindow,mappedListener* ml);
+		mappedListener* LFSTK_getMappedListener(int window);
+		int LFSTK_gadgetCount(void);
+		LFSTK_gadgetClass* LFSTK_findGadgetByPos(int x, int y);
 		
 //dnd
 		void LFSTK_initDnD(void);
@@ -138,6 +135,7 @@ class LFSTK_windowClass
 		bool			useTile;
 		bool			acceptDnd;
 
+		LFSTK_gadgetClass *dropGadget;
 	private:
 //window routines
 		void initWindow(bool loadvars);
@@ -158,7 +156,7 @@ class LFSTK_windowClass
 		bool			isSticky;
 		int				monitorCount;
 		monitorStruct	*monitors;
-		gadgetList		*gadgets;
+		//gadgetList		*gadgets;
 		std::map<int,mappedListener*> gadgetMap;
 
 //Atoms etc for Xdnd
@@ -167,7 +165,6 @@ class LFSTK_windowClass
 		Atom			toBeRequested;
 		Window			sourceWindow;
 		int				xDnDVersion;
-		LFSTK_gadgetClass *dropGadget;
 };
 
 #endif
