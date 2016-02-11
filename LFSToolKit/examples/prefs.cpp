@@ -290,6 +290,17 @@ int main(int argc, char **argv)
 					//printf("configureWindow\n");
 						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
 						break;
+					case ClientMessage:
+					case SelectionNotify:
+						{
+						if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
+							wc=false;
+						}
+						if(wc->acceptDnd==true)
+							{
+								wc->LFSTK_handleDnD(&event);
+							}
+						break;
 					default:
 						//XNextEvent(wc->display,&event);
 						break;
