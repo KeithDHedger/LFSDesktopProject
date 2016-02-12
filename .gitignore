@@ -5,6 +5,7 @@ dropboxlinks
 html
 searchdata.xml
 *.[oa]
+*.l[oa]
 *~
 .deps/
 .dirstamp
@@ -16,6 +17,6 @@ Makefile
 Doxyfile
 config.h
 libtool
-
-
+*.BAK
+*.libs/
 
