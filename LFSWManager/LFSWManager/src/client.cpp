@@ -540,33 +540,49 @@ void cpopapp(struct client *c)
 
 	getclientstack(&v,&n);
 
-	for (int i=0; i<n; i++)
-		if (v[i]->app==c->app)
-			cpop(v[i]);
-
-	if (c->wmtransientfor != None)
+	cpop(c);
+	for(int i=0;i<n;i++)
 		{
-			for (int i=0; i<n; i++)
-				if (v[i]->window==c->wmtransientfor)
-					{
+			if(v[i]->app==c->app)
+				{
+					if(v[i]->wmtransientfor!=None)
 						cpop(v[i]);
-						break;
-					}
-			for (int i=0; i<n; i++)
-				if (v[i]->wmtransientfor==c->wmtransientfor)
-					cpop(v[i]);
-			cpop(c);
+				}
 		}
-	else
-		{
-			cpop(c);
-			for (int i=0; i<n; i++)
-				if (v[i]->wmtransientfor==c->window)
-					cpop(v[i]);
-		}
+
+//	if (c->wmtransientfor != None)
+//		{
+//		break;
+////		for(int i=0;i<n;i++)
+////		{
+////			if (v[i]->app==c->app)
+////			{
+////				printf(">>>%s--%s<<<\n",v[i]->wmname,v[i]->netwmname);
+////			}
+////		}	
+//			for (int i=0; i<n; i++)
+//				if (v[i]->window==c->wmtransientfor)
+//					{
+//						cpop(v[i]);
+//						break;
+//					}
+//			for (int i=0; i<n; i++)
+//				if (v[i]->wmtransientfor==c->wmtransientfor)
+//					cpop(v[i]);
+//			cpop(c);
+//		}
+//	else
+//		{
+//			cpop(c);
+//			for (int i=0; i<n; i++)
+//				if (v[i]->wmtransientfor==c->window)
+//					cpop(v[i]);
+//		}
 
 	c->beenPopped=false;
 	free(v);
+
+//	printf("-----\n");
 }
 
 void cupdatedesk(struct client *c)

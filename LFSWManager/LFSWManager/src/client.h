@@ -19,57 +19,57 @@
 
 struct client
 {
-	struct listener listener;
-	List winstack;
-	Window window;
-	Colormap colormap;
+	struct listener	listener;
+	List			winstack;
+	Window			window;
+	Colormap		colormap;
 
-	struct geometry geometry;
+	struct geometry	geometry;
 
-	XWMHints *wmhints;
-	XSizeHints *wmnormalhints;
-	Atom *wmprotocols;
-	int wmprotocolscount;
-	Window wmtransientfor;
+	XWMHints		*wmhints;
+	XSizeHints		*wmnormalhints;
+	Atom			*wmprotocols;
+	int				wmprotocolscount;
+	Window			wmtransientfor;
 
 	// WM_NAME property in current locale encoding
-	char *wmname;
+	char			*wmname;
 
 	// _NET_WM_NAME property in UTF-8 encoding
-	char *netwmname;
+	char			*netwmname;
 
 	// Application id of this client
-	XID app;
+	XID				app;
 
-	struct frame *frame;
+	struct frame	*frame;
 
-	Desk desk;
+	Desk			desk;
 
 	/*
 	 * If this counter is zero when an UnmapNotify event
 	 * is received,the client is considered withdrawn.
 	 */
-	int ignoreunmapcount;
+	int				ignoreunmapcount;
 
-	Bool ismapped;
-	Bool hasfocus;
-	Bool isfull;
-	Bool skiptaskbar;
-	Bool isundecorated;
-	Bool followdesk;
-	Bool initialized;
-	Bool isDesktop;
-	bool isDock;
-	Bool isAbove;
-	bool isBelow;
-	bool checked;
-	bool canMaximize;
-	bool canMinimize;
-	bool isIcon;
-	bool beenShuffled;
-	bool beenPopped;
+	Bool			ismapped;
+	Bool			hasfocus;
+	Bool			isfull;
+	Bool			skiptaskbar;
+	Bool			isundecorated;
+	Bool			followdesk;
+	Bool			initialized;
+	Bool			isDesktop;
+	bool			isDock;
+	Bool			isAbove;
+	bool			isBelow;
+	bool			checked;
+	bool			canMaximize;
+	bool			canMinimize;
+	bool			isIcon;
+	bool			beenShuffled;
+	bool			beenPopped;
 
-	unsigned int monitorNumber;
+	unsigned		monitorNumber;
 };
 //extern client *cc;
 
