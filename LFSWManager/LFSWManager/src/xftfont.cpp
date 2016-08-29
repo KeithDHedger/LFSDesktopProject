@@ -46,9 +46,9 @@ struct font *ftload(const char *name)
 
 	if (name != NULL)
 		{
-			font=XftFontOpenXlfd(dpy,screen,name);
+			font=XftFontOpenName(dpy,screen,name);
 			if (font==NULL)
-				font=XftFontOpenName(dpy,screen,name);
+				font=XftFontOpenXlfd(dpy,screen,name);
 			if (font==NULL)
 				errorf("cannot not load font %s",name);
 		}
@@ -58,7 +58,7 @@ struct font *ftload(const char *name)
 
 	if (font==NULL)
 		return NULL;
-
+////	font=XftFontOpen (dpy, screen, XFT_FAMILY, XftTypeString,"Santas Big Secret BB",XFT_SIZE, XftTypeDouble, 14.0, NULL);
 	struct font *f=(struct font*)xmalloc(sizeof *f);
 	f->size=font->ascent+font->descent;
 	f->ascent=font->ascent;

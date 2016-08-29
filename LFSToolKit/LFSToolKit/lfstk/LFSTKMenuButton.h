@@ -32,6 +32,7 @@
 
 struct menuItemStruct
 {
+	menuItemStruct():	label(NULL),userData(NULL),bc(NULL),subMenus(NULL),subMenuCnt(0),useIcon(false),iconSize(-1),useImage(false),imageWidth(-1),imageHeight(-1) {}
 	const char			*label;
 	void				*userData;
 	LFSTK_buttonClass	*bc;
