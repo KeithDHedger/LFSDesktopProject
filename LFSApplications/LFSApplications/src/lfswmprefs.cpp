@@ -60,6 +60,8 @@ LFSTK_labelClass		*label;
 LFSTK_labelClass		*labelFontSize;
 LFSTK_toggleButtonClass	*bold;
 LFSTK_toggleButtonClass	*italic;
+LFSTK_labelClass		*text;
+
 char					*holdFont;
 unsigned				fSize=10;
 
@@ -115,9 +117,14 @@ void buildFontString(void)
 	if(isItalic==true)
 		italicstr=":italic";
 
+	fontSize=strdup(static_cast<const char*>(fontSizeEdit->LFSTK_getBuffer()->c_str()));
+
 	if(titleFont!=NULL)
 		free(titleFont);
 	asprintf(&titleFont,"%s:size=%s%s%s",fontName,fontSize,boldstr,italicstr);
+
+	text->LFSTK_setFontString(titleFont);
+	text->LFSTK_clearWindow();
 }
 
 void setVars(void)
@@ -140,7 +147,6 @@ void setVars(void)
 		if(lb[j]!=NULL)
 			lb[j]->LFSTK_clearWindow();
 
-	fontSize=strdup(static_cast<const char*>(fontSizeEdit->LFSTK_getBuffer()->c_str()));
 	buildFontString();
 
 	if(numberOfDesktops!=NULL)
@@ -175,12 +181,16 @@ bool styleCB(void *object,void* userdata)
 		isBold=!isBold;
 	else
 		isItalic=!isItalic;
+
+	buildFontString();
 }
 
 bool fontsCB(void *object,void* userdata)
 {
 	free(fontName);
 	fontName=strdup(static_cast<LFSTK_gadgetClass*>(object)->LFSTK_getLabel());
+	fontEdit->LFSTK_setBuffer(fontName);
+	buildFontString();
 	return(true);
 }
 
@@ -383,6 +393,16 @@ int main(int argc, char **argv)
 
 	sx+=spacing;
 	fontSizeEdit=new LFSTK_lineEditClass(wc,fontSize,sx,sy-1,bwidth,24,NorthWestGravity);
+	//fontSizeEdit->LFSTK_setCallBack(xxx,xxx,(void*)123);
+	sy+=vspacing;
+	sx=col1;
+
+	text=new LFSTK_labelClass(wc,"ABCDEFGHI abcdefghi 1234567890",10,sy,col3-bwidth-30,24,NorthWestGravity);
+	text->LFSTK_setFontString(titleFont);
+	text->LFSTK_setLabelOriention(1);
+	text->LFSTK_setLabelAutoColour(false);
+
+/////	text->LFSTK_setFontColourName(NORMALCOLOUR,"black");
 	sy+=vspacing;
 	sx=col1;
 
@@ -446,6 +466,10 @@ int main(int argc, char **argv)
 				ml->function(ml->gadget,&event,ml->type);
 			switch(event.type)
 				{
+					break;
+				case KeyRelease:
+					if(ml->gadget==fontSizeEdit)
+						buildFontString();
 					break;
 				case Expose:
 					wc->LFSTK_setActive(true);

@@ -1,4 +1,7 @@
 0.1.1
+Added Font preview to lfswmprefs.
+Added bold/italic switches to lfswmprefs.
+Added font selection menu to lfswmprefs.
 Updated mainloops fro dNd.
 Code clean.
 Updated for new lib version.
