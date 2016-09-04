@@ -139,6 +139,10 @@ void LFSTK_windowClass::LFSTK_reloadGlobals(void)
 	this->LFSTK_clearWindow();
 }
 
+/**
+ * Delete window
+ * \note Attached gadgets automatically deleted so destroy user data first.
+ */
 LFSTK_windowClass::~LFSTK_windowClass()
 {
 	this->LFSTK_hideWindow();
