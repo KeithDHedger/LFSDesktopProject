@@ -21,31 +21,277 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <getopt.h>
 
 #include <lfstk/LFSTKGlobals.h>
 
 #define WIDTH 600
 #define HITE 400
-#define MAXPREVIEW 4
+#define BORDER 8
+#define GAP 4
+#define MAXPREVIEW 6
+#define BUTTONHITE 24
+#define BUTTONWIDTH 72
 
-LFSTK_buttonClass	*previews[MAXPREVIEW];
+#define USERDATA(x) (void*)(long)x
+#define LFSTKGADGET(x) static_cast<LFSTK_gadgetClass*>(x)
+#define GETUSERDATA(x) (long)x
+
+#define PREVIEWTEXT "ABCDEFGHIJK abcdefghijk 0123456789"
+
+enum {APPLY=1,CANCEL};
+enum {BOLD=0,ITALIC=1};
+
+char				**fontsAZ;
+unsigned			maxFonts=0;
+unsigned			currentFont;
+const char			*startUpFont=NULL;
+int					fontOffset=0;
+bool				mainLoop;
+bool				isBold=false;
+bool				isItalic=false;
+char				*finalFont=NULL;
+const char			*fontSize="10";
+bool				useDetail=false;
+
 LFSTK_windowClass	*mainWindow;
+LFSTK_buttonClass	*previews[MAXPREVIEW];
+LFSTK_lineEditClass	*previewEdit;
+LFSTK_lineEditClass	*fontSizeEdit;
+
+void loadFontStrings(void)
+{
+	unsigned	fontcnt=0;
+	FILE		*fp;
+	char		*command;
+	char		*out=NULL;
+	char		line[1024];
+
+	line[0]=0;
+	currentFont=0;
+
+	asprintf(&command,"%s","fc-list : family|awk -F, '{print $1}'|sort -u|wc -l");
+	command=mainWindow->globalLib->LFSTK_oneLiner("%s",command);
+	if(command==NULL)
+		fontcnt=0;
+	else
+		fontcnt=atoi(command);
+
+	fontsAZ=(char**)calloc(fontcnt,sizeof(char*));
+	maxFonts=fontcnt;
+	currentFont=0;
+
+	asprintf(&command,"%s","fc-list : family|awk -F, '{print $1}'|sort -ur");
+	fp=popen(command, "r");
+	while(fgets(line,1024,fp))
+		{
+			fontcnt--;
+			line[strlen(line)-1]=0;
+			fontsAZ[fontcnt]=strdup(line);
+			if((startUpFont!=NULL) && (strcasecmp(fontsAZ[fontcnt],startUpFont)==0))
+				currentFont=fontcnt;
+		}
+	free(command);
+}
+
+void buildFontString(void)
+{
+	const char	*boldstr="";
+	const char	*italicstr="";
+
+	if(isBold==true)
+		boldstr=":bold";
+	if(isItalic==true)
+		italicstr=":italic";
+
+	fontSize=strdup(static_cast<const char*>(fontSizeEdit->LFSTK_getBuffer()->c_str()));
+
+	if(finalFont!=NULL)
+		free(finalFont);
+	asprintf(&finalFont,"%s:size=%s%s%s",fontsAZ[currentFont],fontSize,boldstr,italicstr);
+
+	previewEdit->LFSTK_setFontString(finalFont);
+	previewEdit->LFSTK_clearWindow();
+}
+
+bool selectFontCB(void *object,void* userdata)
+{
+	LFSTK_gadgetClass	*gadg=LFSTKGADGET(object);
+	currentFont=GETUSERDATA(userdata)+fontOffset;
+	buildFontString();
+	return(true);
+}
+
+bool dialogCB(void *object,void* userdata)
+{
+	switch(GETUSERDATA(userdata))
+		{
+			case APPLY:
+				buildFontString();
+				if(useDetail==false)
+					printf("%s\n",finalFont);
+				else
+					printf("%s\n%s\n%i\n%i\n%s\n",fontsAZ[currentFont],fontSize,isBold,isItalic,finalFont);
+			case CANCEL:
+				mainLoop=false;
+		}
+	return(true);
+}
+
+bool styleCB(void *object,void* userdata)
+{
+	if(GETUSERDATA(userdata)==BOLD)
+		isBold=!isBold;
+	else
+		isItalic=!isItalic;
+
+	buildFontString();
+	return(true);
+}
+
+bool scrollCB(void *object,void* userdata)
+{
+	if(GETUSERDATA(userdata)==0)
+		fontOffset-=MAXPREVIEW;
+	else
+		fontOffset+=MAXPREVIEW;
+
+	if(fontOffset<0)
+		fontOffset=0;
+	if(fontOffset>(maxFonts-MAXPREVIEW))
+		fontOffset=maxFonts-MAXPREVIEW;
+
+//font select buttons
+	for(int j=0;j<MAXPREVIEW;j++)
+		{
+			previews[j]->LFSTK_setFontString(fontsAZ[j+fontOffset]);
+			previews[j]->LFSTK_setLabel(fontsAZ[j+fontOffset]);
+			previews[j]->LFSTK_clearWindow();
+		}
+	return(true);
+}
+
+void printHelp(void)
+{
+	printf("-?,-h,--help\t\tPrint this help\n");
+	printf("-b,--bold\t\tSet bold style\n");
+	printf("-i,--italic\t\tSet italic style\n");
+	printf("-s,--size\t\tSet font size\n");
+	printf("-d,--detail\t\tOutput details on seperate line like so:\n");
+	printf("Fontname\n");
+	printf("Size\n");
+	printf("Bold\n");
+	printf("Italic\n");
+	printf("Font String\n");
+}
 
 int main(int argc, char **argv)
 {
-	bool	mainLoop;
-	XEvent	event;
-
-	mainWindow=new LFSTK_windowClass(0,0,WIDTH,HITE,"Font Selector",false);
-
-	for(int j=0;j<MAXPREVIEW;j++)
+	XEvent					event;
+	LFSTK_buttonClass		*button;
+	LFSTK_toggleButtonClass	*toggle;
+	LFSTK_labelClass		*label;
+	unsigned				buttony=BORDER;
+	const char				*lfstkfontstr;
+	fontStruct				*lfstkfontstruct;
+	unsigned				gadgetwidth;
+	int						c=0;
+	int						option_index=0;
+	const char				*shortOpts="h?bis:";
+	option 					longOptions[]=
 		{
-			previews[j]=new LFSTK_buttonClass(mainWindow,"XXX",0,(j*24)+4,WIDTH,24,NorthWestGravity);
+			{"size",1,0,'s'},
+			{"detail",0,0,'d'},
+			{"bold",0,0,'b'},
+			{"italic",0,0,'i'},
+			{"help",0,0,'h'},
+			{0, 0, 0, 0}
+		};
+	while(1)
+		{
+			option_index=0;
+			c=getopt_long_only(argc,argv,shortOpts,longOptions,&option_index);
+			if (c==-1)
+				break;
+			switch (c)
+				{
+					case 'h':
+					case '?':
+						printHelp();
+						exit(0);
+					case 'd':
+						useDetail=true;
+						break;
+					case 'b':
+						isBold=true;
+						break;
+					case 'i':
+						isItalic=true;
+						break;
+					case 's':
+						fontSize=optarg;
+						break;
+				}
 		}
 
-	mainWindow->LFSTK_showWindow();
+	startUpFont=argv[optind];
 
-	printf("Number of gadgets in window=%i\n",mainWindow->LFSTK_gadgetCount());
+	mainWindow=new LFSTK_windowClass(0,0,WIDTH,HITE,"Font Selector",false);
+	lfstkfontstr=mainWindow->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEFONT);
+	lfstkfontstruct=mainWindow->globalLib->LFSTK_loadFont(mainWindow->display,mainWindow->screen,lfstkfontstr);
+	loadFontStrings();
+
+	fontOffset=currentFont;
+	if(fontOffset>(maxFonts-MAXPREVIEW))
+		fontOffset=maxFonts-MAXPREVIEW;
+
+//font select buttons
+	for(int j=0;j<MAXPREVIEW;j++)
+		{
+			previews[j]=new LFSTK_buttonClass(mainWindow,fontsAZ[j+fontOffset],BORDER,buttony,WIDTH-(BORDER*2),BUTTONHITE,NorthWestGravity);
+			previews[j]->LFSTK_setColourName(INACTIVECOLOUR,"white");
+			previews[j]->LFSTK_setFontColourName(INACTIVECOLOUR,"black");
+			previews[j]->LFSTK_setFontString(fontsAZ[j+fontOffset]);
+			previews[j]->LFSTK_setCallBack(NULL,selectFontCB,USERDATA((j)));
+			buttony+=BUTTONHITE+GAP;
+		}
+//style buttons
+	gadgetwidth=mainWindow->globalLib->LFSTK_getTextwidth(mainWindow->display,lfstkfontstruct->data,"Bold")+BUTTONHITE;
+	toggle=new LFSTK_toggleButtonClass(mainWindow,"Bold",BORDER,buttony,gadgetwidth,BUTTONHITE,NorthWestGravity);
+	toggle->LFSTK_setValue(isBold);
+	toggle->LFSTK_setCallBack(NULL,styleCB,USERDATA(BOLD));
+	gadgetwidth=mainWindow->globalLib->LFSTK_getTextwidth(mainWindow->display,lfstkfontstruct->data,"Italic")+BUTTONHITE;
+	toggle=new LFSTK_toggleButtonClass(mainWindow,"Italic",BORDER+BUTTONWIDTH+GAP,buttony,gadgetwidth,BUTTONHITE,NorthWestGravity);
+	toggle->LFSTK_setValue(isItalic);
+	toggle->LFSTK_setCallBack(NULL,styleCB,USERDATA(ITALIC));
+
+//navigate
+	button=new LFSTK_buttonClass(mainWindow,"↑",WIDTH-BORDER-(BUTTONWIDTH/4),buttony,BUTTONWIDTH/4,BUTTONHITE,NorthEastGravity);
+	button->LFSTK_setCallBack(NULL,scrollCB,USERDATA(0));
+	button=new LFSTK_buttonClass(mainWindow,"↓",WIDTH-BORDER-((BUTTONWIDTH/4)*2)-GAP,buttony,BUTTONWIDTH/4,BUTTONHITE,NorthEastGravity);
+	button->LFSTK_setCallBack(NULL,scrollCB,USERDATA(1));
+	buttony+=BUTTONHITE+GAP;
+
+//size
+	label=new LFSTK_labelClass(mainWindow,"Font Size",BORDER,buttony,BUTTONWIDTH,BUTTONHITE,NorthWestGravity);
+	label->LFSTK_setLabelOriention(0);
+
+	fontSizeEdit=new LFSTK_lineEditClass(mainWindow,fontSize,BORDER+BUTTONWIDTH+GAP,buttony,BUTTONWIDTH,BUTTONHITE,NorthWestGravity);
+	buttony+=BUTTONHITE+GAP;
+
+//font preview
+	previewEdit=new LFSTK_lineEditClass(mainWindow,PREVIEWTEXT,BORDER,buttony,WIDTH-(BORDER*2),72,NorthWestGravity);
+	previewEdit->LFSTK_setFontString(fontsAZ[currentFont]);
+
+//dialog buttons
+	button=new LFSTK_buttonClass(mainWindow,"Cancel",BORDER,HITE-BORDER-BUTTONHITE,BUTTONWIDTH,BUTTONHITE,SouthWestGravity);
+	button->LFSTK_setCallBack(NULL,dialogCB,USERDATA(CANCEL));
+	button=new LFSTK_buttonClass(mainWindow,"Apply",WIDTH-BORDER-BUTTONWIDTH,HITE-BORDER-BUTTONHITE,BUTTONWIDTH,BUTTONHITE,SouthEastGravity);
+	button->LFSTK_setCallBack(NULL,dialogCB,USERDATA(APPLY));
+
+	buildFontString();
+	mainWindow->LFSTK_showWindow();
+//	printf("Number of gadgets in window=%i\n",mainWindow->LFSTK_gadgetCount());
 	mainLoop=true;
 	while(mainLoop==true)
 		{
@@ -56,9 +302,14 @@ int main(int argc, char **argv)
 
 			switch(event.type)
 				{
+				case KeyRelease:
+					if(ml->gadget==fontSizeEdit)
+						buildFontString();
+					break;
 					case LeaveNotify:
 						break;
 					case Expose:
+						mainWindow->LFSTK_setActive(true);
 						mainWindow->LFSTK_clearWindow();
 						break;
 
@@ -76,12 +327,9 @@ int main(int argc, char **argv)
 				}
 		}
 
-
-	mainWindow->LFSTK_hideWindow();	
-	for(int j=0;j<MAXPREVIEW;j++)
-		{
-			delete previews[j];
-		}
+	for(int j=0;j<maxFonts;j++)
+		free(fontsAZ[j]);
+	free(fontsAZ);
 	delete mainWindow;
 	return 0;
 }

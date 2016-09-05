@@ -183,6 +183,7 @@ bool styleCB(void *object,void* userdata)
 		isItalic=!isItalic;
 
 	buildFontString();
+	return(true);
 }
 
 bool fontsCB(void *object,void* userdata)
@@ -466,7 +467,6 @@ int main(int argc, char **argv)
 				ml->function(ml->gadget,&event,ml->type);
 			switch(event.type)
 				{
-					break;
 				case KeyRelease:
 					if(ml->gadget==fontSizeEdit)
 						buildFontString();
