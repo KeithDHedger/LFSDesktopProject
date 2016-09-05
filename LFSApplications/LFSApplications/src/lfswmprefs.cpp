@@ -51,15 +51,8 @@ int						doswapdesk=-1;
 
 
 menuItemStruct			*placeMenu;
-menuItemStruct			*fontMenu;
-menuItemStruct			*fontSubMenus[subscnt];
 
 LFSTK_lineEditClass		*fontEdit;
-LFSTK_lineEditClass		*fontSizeEdit;
-LFSTK_labelClass		*label;
-LFSTK_labelClass		*labelFontSize;
-LFSTK_toggleButtonClass	*bold;
-LFSTK_toggleButtonClass	*italic;
 LFSTK_labelClass		*text;
 
 char					*holdFont;
@@ -97,7 +90,6 @@ LFSTK_buttonClass		*guibc[NOMORE]={NULL,};
 LFSTK_lineEditClass		*le[NOMOREEDITS]= {NULL,};
 LFSTK_labelClass		*lb[NOMORELABELS]= {NULL,};
 LFSTK_menuButtonClass	*mb=NULL;
-LFSTK_menuButtonClass	*fontButton=NULL;
 
 char					*env;
 
@@ -117,14 +109,13 @@ void buildFontString(void)
 	if(isItalic==true)
 		italicstr=":italic";
 
-	fontSize=strdup(static_cast<const char*>(fontSizeEdit->LFSTK_getBuffer()->c_str()));
-
 	if(titleFont!=NULL)
 		free(titleFont);
 	asprintf(&titleFont,"%s:size=%s%s%s",fontName,fontSize,boldstr,italicstr);
 
 	text->LFSTK_setFontString(titleFont);
 	text->LFSTK_clearWindow();
+	fontEdit->LFSTK_setBuffer(titleFont);
 }
 
 void setVars(void)
@@ -175,26 +166,6 @@ bool placeCB(void *p,void* ud)
 	return(true);
 }
 
-bool styleCB(void *object,void* userdata)
-{
-	if((long)userdata==0)
-		isBold=!isBold;
-	else
-		isItalic=!isItalic;
-
-	buildFontString();
-	return(true);
-}
-
-bool fontsCB(void *object,void* userdata)
-{
-	free(fontName);
-	fontName=strdup(static_cast<LFSTK_gadgetClass*>(object)->LFSTK_getLabel());
-	fontEdit->LFSTK_setBuffer(fontName);
-	buildFontString();
-	return(true);
-}
-
 bool callback(void *p,void* ud)
 {
 	if((long)ud==EXIT)
@@ -229,18 +200,74 @@ bool callback(void *p,void* ud)
 	return(true);
 }
 
+bool selectFontCB(void *object,void* userdata)
+{
+	FILE		*fp;
+	char		*command;
+	const char	*bld="";
+	const char	*it="";
+	char		line[1024];
+
+	wc->LFSTK_hideWindow();
+	line[0]=0;
+
+	if(isBold==true)
+		bld="-b";
+	if(isItalic==true)
+		it="-i";
+	
+	asprintf(&command,"$(which lfsfontselect) %s %s --size=%s \"%s\" -d 2>/dev/null",bld,it,fontSize,fontName);
+	fp=popen(command, "r");
+	if(fp!=NULL)
+		{
+			fgets(line,1024,fp);
+			if(strlen(line)>1)
+				{
+//fontname
+					line[strlen(line)-1]=0;
+					if(fontName!=NULL)
+						free(fontName);
+					fontName=strdup(line);
+//size
+					fgets(line,1024,fp);
+					line[strlen(line)-1]=0;
+					if(fontSize!=NULL)
+						free(fontSize);
+					fontSize=strdup(line);
+					fSize=atoi(fontSize);
+//bold
+					fgets(line,1024,fp);
+					line[strlen(line)-1]=0;
+					isBold=(bool)atoi(line);
+//italic
+					fgets(line,1024,fp);
+					line[strlen(line)-1]=0;
+					isItalic=(bool)atoi(line);
+//fontstring
+					fgets(line,1024,fp);
+					line[strlen(line)-1]=0;
+					pclose(fp);
+					buildFontString();
+				}
+		}
+	free(command);
+	wc->LFSTK_showWindow();
+}
+
 int main(int argc, char **argv)
 {
-	XEvent			event;
-	int				sx=0;
-	int				sy=0;
-	geometryStruct	*geom;
-	int				bwidth=BWIDTH;
-	int				bhite=24;
-	int				spacing=bwidth+10;
-	int				vspacing=bhite+10;
-	int				col1=10,col2=col1+bwidth+spacing+20,col3=col2+bwidth+spacing+20,col4;
-	char			*hfont;
+	XEvent				event;
+	int					sx=0;
+	int					sy=0;
+	geometryStruct		*geom;
+	int					bwidth=BWIDTH;
+	int					bhite=24;
+	int					spacing=bwidth+10;
+	int					vspacing=bhite+10;
+	int					col1=10,col2=col1+bwidth+spacing+20,col3=col2+bwidth+spacing+20,col4;
+	char				*hfont;
+	LFSTK_labelClass	*label;
+	LFSTK_buttonClass	*button;
 
 	fontColours[ACTIVEFRAME]=strdup("#000000");
 	fontColours[ACTIVEFRAMEFILL]=strdup("#00ffff");
@@ -303,107 +330,18 @@ int main(int argc, char **argv)
 			sx=col1;
 		}
 
-	unsigned	catcnt[subscnt]={0,};
-	FILE		*fp;
-	char		*command;
-	char		lower='a';
-	char		upper='A';
-	char		*out=NULL;
-	char		**fontsAZ[subscnt];
-	char		line[1024];
-
-	line[0]=0;
-
-	for(int j=0;j<subscnt;j++)
-		{
-			asprintf(&command,"%s%c%c%s","fc-list : family|awk -F, '{print $1}'|sed -n /^[",lower,upper,"]/p|sort -u|wc -l");
-			command=wc->globalLib->LFSTK_oneLiner("%s",command);
-			if(command==NULL)
-				catcnt[j]=0;
-			else
-				catcnt[j]=atoi(command);
-			fontsAZ[j]=(char**)calloc(catcnt[j],sizeof(char*));
-			fontSubMenus[j]=new menuItemStruct[catcnt[j]];
-			lower++;
-			upper++;
-			free(command);
-		}
-
-	lower='a';
-	upper='A';
-	unsigned	cnt=0;
-	for(int j=0;j<subscnt;j++)
-		{
-			cnt=0;
-			asprintf(&command,"%s%c%c%s","fc-list : family|awk -F, '{print $1}'|sed -n /^[",lower,upper,"]/p|sort -u");
-			fp=popen(command, "r");
-			while(fgets(line,1024,fp))
-				{
-					line[strlen(line)-1]=0;
-					fontsAZ[j][cnt]=strdup(line);
-					cnt++;
-				}
-			lower++;
-			upper++;
-			free(command);
-		}
-
-	for(int j=0;j<subscnt;j++)
-		{
-			fontSubMenus[j]=new menuItemStruct[catcnt[j]];
-			for(int k=0;k<catcnt[j];k++)
-				fontSubMenus[j][k].label=fontsAZ[j][k];
-		}
-
-	upper='A';
-	fontMenu=new menuItemStruct[subscnt];
-	for(int j=0;j<subscnt;j++)
-		{
-			asprintf(&command,"Fonts %c   ",upper);
-			fontMenu[j].label=command;
-			if(catcnt[j]>0)
-				{
-					fontMenu[j].subMenus=fontSubMenus[j];
-					fontMenu[j].subMenuCnt=catcnt[j];
-				}
-			upper++;
-		}
-
-	fontButton=new LFSTK_menuButtonClass(wc,"Fonts",sx,sy,bwidth,24,NorthWestGravity);
-	fontButton->LFSTK_addMenus(fontMenu,subscnt);
-	fontButton->LFSTK_setCallBack(NULL,fontsCB,NULL);
+	button=new LFSTK_buttonClass(wc,"Select Font",sx,sy,bwidth,24,NorthWestGravity);
+	button->LFSTK_setCallBack(NULL,selectFontCB,NULL);
 
 	sx+=spacing;
 	fontEdit=new LFSTK_lineEditClass(wc,fontName,sx,sy-1,col2-col1,24,NorthWestGravity);
-	sy+=vspacing;
 	sx=col1;
-
-	bold=new LFSTK_toggleButtonClass(wc,"Bold",sx,sy,bwidth,24,NorthWestGravity);
-	bold->LFSTK_setValue(isBold);
-	sx+=spacing;
-	italic=new LFSTK_toggleButtonClass(wc,"Italic",sx,sy,bwidth,24,NorthWestGravity);
-	italic->LFSTK_setValue(isItalic);
-	bold->LFSTK_setCallBack(NULL,styleCB,(void*)0);
-	italic->LFSTK_setCallBack(NULL,styleCB,(void*)1);
 	sy+=vspacing;
-	sx=col1;
-
-	labelFontSize=new LFSTK_labelClass(wc,"Font Size",sx,sy,bwidth,24,NorthWestGravity);
-	labelFontSize->LFSTK_setLabelAutoColour(true);
-	labelFontSize->LFSTK_setLabelOriention(0);
-
-	sx+=spacing;
-	fontSizeEdit=new LFSTK_lineEditClass(wc,fontSize,sx,sy-1,bwidth,24,NorthWestGravity);
-	//fontSizeEdit->LFSTK_setCallBack(xxx,xxx,(void*)123);
-	sy+=vspacing;
-	sx=col1;
 
 	text=new LFSTK_labelClass(wc,"ABCDEFGHI abcdefghi 1234567890",10,sy,col3-bwidth-30,24,NorthWestGravity);
 	text->LFSTK_setFontString(titleFont);
 	text->LFSTK_setLabelOriention(1);
 	text->LFSTK_setLabelAutoColour(false);
-
-/////	text->LFSTK_setFontColourName(NORMALCOLOUR,"black");
 	sy+=vspacing;
 	sx=col1;
 
@@ -467,10 +405,6 @@ int main(int argc, char **argv)
 				ml->function(ml->gadget,&event,ml->type);
 			switch(event.type)
 				{
-				case KeyRelease:
-					if(ml->gadget==fontSizeEdit)
-						buildFontString();
-					break;
 				case Expose:
 					wc->LFSTK_setActive(true);
 					wc->LFSTK_clearWindow();
@@ -491,37 +425,6 @@ int main(int argc, char **argv)
 				}
 		}
 
-	for(int j=0;j<subscnt;j++)
-		{
-			for(int k=0;k<catcnt[j];k++)
-				{
-					if(fontsAZ[j][k]!=NULL)
-						free(fontsAZ[j][k]);
-				}
-			if(&fontSubMenus[j]!=NULL)
-				delete fontSubMenus[j];
-		}
-
-	for(int j=0;j<NOMORE;j++)
-		delete guibc[j];
-	for(int j=0;j<NOMOREBUTTONS;j++)
-		delete bc[j];
-	for(int j=0;j<NOMOREEDITS;j++)
-		delete le[j];
-	for(int j=0;j<NOMORELABELS;j++)
-		delete lb[j];
-	delete mb;
-	delete fontButton;
-
-	delete fontEdit;
-	delete fontSizeEdit;
-	delete label;
-	delete labelFontSize;
-	delete bold;
-	delete italic;
-
-//TODO//
-//delete wc;
-
+	delete wc;
 	return 0;
 }

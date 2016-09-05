@@ -83,13 +83,17 @@ void loadFontStrings(void)
 
 	asprintf(&command,"%s","fc-list : family|awk -F, '{print $1}'|sort -ur");
 	fp=popen(command, "r");
-	while(fgets(line,1024,fp))
+	if(fp!=NULL)
 		{
-			fontcnt--;
-			line[strlen(line)-1]=0;
-			fontsAZ[fontcnt]=strdup(line);
-			if((startUpFont!=NULL) && (strcasecmp(fontsAZ[fontcnt],startUpFont)==0))
-				currentFont=fontcnt;
+			while(fgets(line,1024,fp))
+				{
+					fontcnt--;
+					line[strlen(line)-1]=0;
+					fontsAZ[fontcnt]=strdup(line);
+					if((startUpFont!=NULL) && (strcasecmp(fontsAZ[fontcnt],startUpFont)==0))
+						currentFont=fontcnt;
+				}
+			pclose(fp);
 		}
 	free(command);
 }
@@ -291,7 +295,8 @@ int main(int argc, char **argv)
 
 	buildFontString();
 	mainWindow->LFSTK_showWindow();
-//	printf("Number of gadgets in window=%i\n",mainWindow->LFSTK_gadgetCount());
+	mainWindow->LFSTK_setKeepAbove(true);
+
 	mainLoop=true;
 	while(mainLoop==true)
 		{
@@ -309,7 +314,6 @@ int main(int argc, char **argv)
 					case LeaveNotify:
 						break;
 					case Expose:
-						mainWindow->LFSTK_setActive(true);
 						mainWindow->LFSTK_clearWindow();
 						break;
 

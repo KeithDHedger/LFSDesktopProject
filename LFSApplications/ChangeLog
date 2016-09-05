@@ -1,4 +1,5 @@
 0.1.1
+Lfswmprefs now uses new font selector.
 Added Font selecter dialog.
 Added Font preview to lfswmprefs.
 Added bold/italic switches to lfswmprefs.
