@@ -58,12 +58,6 @@ LFSTK_lineEditClass		*fontEdit;
 LFSTK_labelClass		*text;
 
 char					*holdFont;
-unsigned				fSize=10;
-
-char					*fontName=NULL;
-char					*fontSize=NULL;
-bool					isBold=false;
-bool					isItalic=false;
 
 args					wmPrefs[]=
 {
@@ -78,10 +72,6 @@ args					wmPrefs[]=
 	{"liveupdate",TYPESTRING,&liveUpdate},
 	{"theme",TYPESTRING,&pathToTheme},
 	{"termcommand",TYPESTRING,&terminalCommand},
-	{"fontname",TYPESTRING,&fontName},
-	{"fontsize",TYPESTRING,&fontSize},
-	{"bold",TYPEBOOL,&isBold},
-	{"italic",TYPEBOOL,&isItalic},
 	{NULL,0,NULL}
 };
 
@@ -99,25 +89,6 @@ void placeToString(long place)
 {
 	le[EPLACEMENT]->LFSTK_setBuffer(placeNames[place]);
 	le[EPLACEMENT]->LFSTK_clearWindow();
-}
-
-void buildFontString(void)
-{
-	const char	*boldstr="";
-	const char	*italicstr="";
-
-	if(isBold==true)
-		boldstr=":bold";
-	if(isItalic==true)
-		italicstr=":italic";
-
-	if(titleFont!=NULL)
-		free(titleFont);
-	asprintf(&titleFont,"%s:size=%s%s%s",fontName,fontSize,boldstr,italicstr);
-
-	text->LFSTK_setFontString(titleFont);
-	text->LFSTK_clearWindow();
-	fontEdit->LFSTK_setBuffer(titleFont);
 }
 
 void setVars(void)
@@ -139,8 +110,6 @@ void setVars(void)
 	for(int j=THEMELABEL; j<NOMORELABELS; j++)
 		if(lb[j]!=NULL)
 			lb[j]->LFSTK_clearWindow();
-
-	buildFontString();
 
 	if(numberOfDesktops!=NULL)
 		free(numberOfDesktops);
@@ -210,6 +179,7 @@ bool selectFontCB(void *object,void* userdata)
 	const char	*it="";
 	char		line[1024];
 	long		wind;
+	char		*retval=NULL;
 
 	if(parentWindow==-1)
 		wind=wc->window;
@@ -217,45 +187,19 @@ bool selectFontCB(void *object,void* userdata)
 		wind=parentWindow;
 	line[0]=0;
 
-	if(isBold==true)
-		bld="-b";
-	if(isItalic==true)
-		it="-i";
-	
-	asprintf(&command,"$(which lfsfontselect) %s %s --size=%s \"%s\" -d --window=%i 2>/dev/null",bld,it,fontSize,fontName,wind);
-	fp=popen(command, "r");
-	if(fp!=NULL)
+	asprintf(&command,"lfsfontselect \"%s\" --window=%i 2>/dev/null",fontEdit->LFSTK_getBuffer()->c_str(),wind);
+	retval=wc->globalLib->LFSTK_oneLiner(command);
+	if(strlen(retval)>0)
 		{
-			fgets(line,1024,fp);
-			if(strlen(line)>1)
-				{
-//fontname
-					line[strlen(line)-1]=0;
-					if(fontName!=NULL)
-						free(fontName);
-					fontName=strdup(line);
-//size
-					fgets(line,1024,fp);
-					line[strlen(line)-1]=0;
-					if(fontSize!=NULL)
-						free(fontSize);
-					fontSize=strdup(line);
-					fSize=atoi(fontSize);
-//bold
-					fgets(line,1024,fp);
-					line[strlen(line)-1]=0;
-					isBold=(bool)atoi(line);
-//italic
-					fgets(line,1024,fp);
-					line[strlen(line)-1]=0;
-					isItalic=(bool)atoi(line);
-//fontstring
-					fgets(line,1024,fp);
-					line[strlen(line)-1]=0;
-					pclose(fp);
-					buildFontString();
-				}
+		if(titleFont!=NULL)
+			free(titleFont);
+		titleFont=retval;
+		text->LFSTK_setFontString(titleFont);
+		text->LFSTK_clearWindow();
+		fontEdit->LFSTK_setBuffer(titleFont);
+
 		}
+
 	free(command);
 }
 
@@ -317,11 +261,6 @@ int main(int argc, char **argv)
 	wc->LFSTK_setDecorated(true);
 	geom=wc->LFSTK_getGeom();
 
-	fontName=strdup("sans");
-	fontSize=strdup("12");
-	isBold=false;
-	isItalic=false;
-
 	asprintf(&env,"%s/.config/LFS/lfswmanager.rc",getenv("HOME"));
 	wc->globalLib->LFSTK_loadVarsFromFile(env,wmPrefs);
 
@@ -366,7 +305,7 @@ int main(int argc, char **argv)
 	button->LFSTK_setCallBack(NULL,selectFontCB,NULL);
 
 	sx+=spacing;
-	fontEdit=new LFSTK_lineEditClass(wc,fontName,sx,sy-1,col2-col1,24,NorthWestGravity);
+	fontEdit=new LFSTK_lineEditClass(wc,titleFont,sx,sy-1,col2-col1,24,NorthWestGravity);
 	sx=col1;
 	sy+=vspacing;
 

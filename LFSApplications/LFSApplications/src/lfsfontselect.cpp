@@ -45,13 +45,13 @@ enum {BOLD=0,ITALIC=1};
 char				**fontsAZ;
 unsigned			maxFonts=0;
 unsigned			currentFont;
-const char			*startUpFont=NULL;
+char				*startUpFont;
 int					fontOffset=0;
 bool				mainLoop;
 bool				isBold=false;
 bool				isItalic=false;
 char				*finalFont=NULL;
-const char			*fontSize="10";
+char				*fontSize;
 bool				useDetail=false;
 int					parentWindow=-1;
 
@@ -179,9 +179,6 @@ bool scrollCB(void *object,void* userdata)
 void printHelp(void)
 {
 	printf("-?,-h,--help\t\tPrint this help\n");
-	printf("-b,--bold\t\tSet bold style\n");
-	printf("-i,--italic\t\tSet italic style\n");
-	printf("-s,--size\t\tSet font size\n");
 	printf("-w,--window\t\tSet transient for window\n");
 	printf("-d,--detail\t\tOutput details on seperate line like so:\n");
 	printf("Fontname\n");
@@ -189,6 +186,45 @@ void printHelp(void)
 	printf("Bold\n");
 	printf("Italic\n");
 	printf("Font String\n");
+}
+
+void parseFontString(const char *fontstr)
+{
+	char	*string=strdup(fontstr);
+	char	*str;
+
+	str=strtok(string,":");
+	while(1)
+		{
+			bool	found=false;
+			if(str==NULL)
+				break;
+			if(strcasecmp(str,"bold")==0)
+				{
+					isBold=true;
+					found=true;
+				}
+			if(strcasecmp(str,"italic")==0)
+				{
+					isItalic=true;
+					found=true;
+				}
+			if(strcasestr(str,"size=")!=NULL)
+				{
+					if(fontSize!=NULL)
+						free(fontSize);
+					fontSize=strndup(&str[5],strlen(str)-5);
+					found=true;
+				}
+			if(found==false)
+				{
+					if(startUpFont!=NULL)
+						free(startUpFont);
+					startUpFont=strdup(str);
+				}
+			str=strtok(NULL,":");
+		}
+	free(string);
 }
 
 int main(int argc, char **argv)
@@ -207,13 +243,14 @@ int main(int argc, char **argv)
 	option 					longOptions[]=
 		{
 			{"window",1,0,'w'},
-			{"size",1,0,'s'},
 			{"detail",0,0,'d'},
-			{"bold",0,0,'b'},
-			{"italic",0,0,'i'},
 			{"help",0,0,'h'},
 			{0, 0, 0, 0}
 		};
+
+	startUpFont=strdup("sans");
+	fontSize=strdup("10");
+
 	while(1)
 		{
 			option_index=0;
@@ -229,22 +266,16 @@ int main(int argc, char **argv)
 					case 'd':
 						useDetail=true;
 						break;
-					case 'b':
-						isBold=true;
-						break;
-					case 'i':
-						isItalic=true;
-						break;
-					case 's':
-						fontSize=optarg;
-						break;
 					case 'w':
 						parentWindow=atoi(optarg);
 						break;
 				}
 		}
 
-	startUpFont=argv[optind];
+	if(argv[optind]==NULL)
+		parseFontString("");
+	else
+		parseFontString(argv[optind]);
 
 	mainWindow=new LFSTK_windowClass(0,0,WIDTH,HITE,"Font Selector",false);
 	lfstkfontstr=mainWindow->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEFONT);
@@ -342,6 +373,8 @@ int main(int argc, char **argv)
 	for(int j=0;j<maxFonts;j++)
 		free(fontsAZ[j]);
 	free(fontsAZ);
+	free(fontSize);
+	free(startUpFont);
 	delete mainWindow;
 	return 0;
 }
