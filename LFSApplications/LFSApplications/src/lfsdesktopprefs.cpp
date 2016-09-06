@@ -21,6 +21,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <getopt.h>
 
 #include <lfstk/LFSTKGlobals.h>
 
@@ -38,6 +39,7 @@ int						bwidth=96;
 int						spacing=bwidth+10;
 int						col1=10,col2=col1+bwidth+spacing+20,col3=col2+bwidth+spacing+20,col4;
 int						showSuffix;
+int						parentWindow=-1;
 
 #define BIG col2-col1
 
@@ -132,6 +134,33 @@ int main(int argc, char **argv)
 	geometryStruct	*geom;
 	int				bhite=24;
 	int				vspacing=bhite+10;
+	int				c=0;
+	int				option_index=0;
+	const char		*shortOpts="h?w:";
+	option 			longOptions[]=
+		{
+			{"window",1,0,'w'},
+			{"help",0,0,'h'},
+			{0, 0, 0, 0}
+		};
+	while(1)
+		{
+			option_index=0;
+			c=getopt_long_only(argc,argv,shortOpts,longOptions,&option_index);
+			if (c==-1)
+				break;
+			switch (c)
+				{
+					case 'h':
+					case '?':
+						printf("-?,-h,--help\t\tPrint this help\n");
+						printf("-w,--window\t\tSet transient for window\n");
+						exit(0);
+					case 'w':
+						parentWindow=atoi(optarg);
+						break;
+				}
+		}
 
 	prefs[ICONTHEME]=strdup("gnome");
 	prefs[ICONSIZE]=strdup("32");
@@ -200,6 +229,8 @@ int main(int argc, char **argv)
 	wc->LFSTK_resizeWindow(col2+BIG-bwidth-10,sy);
 	wc->LFSTK_showWindow();
 	wc->LFSTK_setKeepAbove(true);
+	if(parentWindow!=-1)
+		wc->LFSTK_setTransientFor(parentWindow);
 
 	printf("Current Settings:\n\n");
 	callback(NULL,(void*)PRINT);

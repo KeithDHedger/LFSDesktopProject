@@ -94,6 +94,8 @@ void setGroup(void)
 
 bool callback(void *p,void* ud)
 {
+	char	*command;
+
 	if((long)ud==EXIT)
 		{
 			mainloop=false;
@@ -103,24 +105,29 @@ bool callback(void *p,void* ud)
 	switch((long)ud)
 		{
 			case LAUNCHWALLPAPER:
-				wc->LFSTK_hideWindow();
-				system("lfsbackdropprefs");
+				asprintf(&command,"lfsbackdropprefs --window=%i",wc->window);
+				system(command);
+				free(command);
 				break;
 			case LAUNCHTOOLKIT:
-				wc->LFSTK_hideWindow();
-				system("lfstkprefs");
+				asprintf(&command,"lfstkprefs --window=%i",wc->window);
+				system(command);
+				free(command);
 				break;
 			case LAUNCHDESKTOP:
-				wc->LFSTK_hideWindow();
-				system("lfsdesktopprefs");
+				asprintf(&command,"lfsdesktopprefs --window=%i",wc->window);
+				system(command);
+				free(command);
 				break;
 			case LAUNCHWMANAGER:
-				wc->LFSTK_hideWindow();
-				system("lfswmprefs");
+				asprintf(&command,"lfswmprefs --window=%i",wc->window);
+				system(command);
+				free(command);
 				break;
 			case LAUNCHPANEL:
-				wc->LFSTK_hideWindow();
-				system("lfspanelprefs");
+				asprintf(&command,"lfspanelprefs --window=%i",wc->window);
+				system(command);
+				free(command);
 				break;
 
 			case UPDATEGROUP:

@@ -53,6 +53,7 @@ bool				isItalic=false;
 char				*finalFont=NULL;
 const char			*fontSize="10";
 bool				useDetail=false;
+int					parentWindow=-1;
 
 LFSTK_windowClass	*mainWindow;
 LFSTK_buttonClass	*previews[MAXPREVIEW];
@@ -181,6 +182,7 @@ void printHelp(void)
 	printf("-b,--bold\t\tSet bold style\n");
 	printf("-i,--italic\t\tSet italic style\n");
 	printf("-s,--size\t\tSet font size\n");
+	printf("-w,--window\t\tSet transient for window\n");
 	printf("-d,--detail\t\tOutput details on seperate line like so:\n");
 	printf("Fontname\n");
 	printf("Size\n");
@@ -201,9 +203,10 @@ int main(int argc, char **argv)
 	unsigned				gadgetwidth;
 	int						c=0;
 	int						option_index=0;
-	const char				*shortOpts="h?bis:";
+	const char				*shortOpts="h?bis:w:";
 	option 					longOptions[]=
 		{
+			{"window",1,0,'w'},
 			{"size",1,0,'s'},
 			{"detail",0,0,'d'},
 			{"bold",0,0,'b'},
@@ -234,6 +237,9 @@ int main(int argc, char **argv)
 						break;
 					case 's':
 						fontSize=optarg;
+						break;
+					case 'w':
+						parentWindow=atoi(optarg);
 						break;
 				}
 		}
@@ -296,6 +302,8 @@ int main(int argc, char **argv)
 	buildFontString();
 	mainWindow->LFSTK_showWindow();
 	mainWindow->LFSTK_setKeepAbove(true);
+	if(parentWindow!=-1)
+		mainWindow->LFSTK_setTransientFor(parentWindow);
 
 	mainLoop=true;
 	while(mainLoop==true)

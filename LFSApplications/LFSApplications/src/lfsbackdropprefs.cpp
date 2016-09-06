@@ -21,6 +21,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <getopt.h>
 
 #include <lfstk/LFSTKGlobals.h>
 
@@ -50,6 +51,7 @@ int						spacing=bwidth+10;
 int						col1=10,col2=col1+bwidth+spacing+20,col3=col2+bwidth+spacing+20,col4;
 char					*prefsPath=NULL;
 char					*monitorRCPath=NULL;
+int						parentWindow=-1;
 
 //prefs
 char					*wallpaperPath=NULL;
@@ -250,6 +252,33 @@ int main(int argc, char **argv)
 	int				vspacing=bhite+10;
 	FILE*			fp=NULL;
 	char			*command;
+	int				c=0;
+	int				option_index=0;
+	const char		*shortOpts="h?w:";
+	option 			longOptions[]=
+		{
+			{"window",1,0,'w'},
+			{"help",0,0,'h'},
+			{0, 0, 0, 0}
+		};
+	while(1)
+		{
+			option_index=0;
+			c=getopt_long_only(argc,argv,shortOpts,longOptions,&option_index);
+			if (c==-1)
+				break;
+			switch (c)
+				{
+					case 'h':
+					case '?':
+						printf("-?,-h,--help\t\tPrint this help\n");
+						printf("-w,--window\t\tSet transient for window\n");
+						exit(0);
+					case 'w':
+						parentWindow=atoi(optarg);
+						break;
+				}
+		}
 
 	wallpaperPath=strdup("");
 	backdropMode=0;
@@ -354,6 +383,8 @@ int main(int argc, char **argv)
 	wc->LFSTK_resizeWindow(col1+BIG+bwidth+20,sy,true);
 	wc->LFSTK_showWindow();
 	wc->LFSTK_setKeepAbove(true);
+	if(parentWindow!=-1)
+		wc->LFSTK_setTransientFor(parentWindow);
 
 	XFlush(wc->display);
 
@@ -368,6 +399,7 @@ int main(int argc, char **argv)
 				{
 						break;
 					case Expose:
+						wc->LFSTK_setActive(true);
 						wc->LFSTK_clearWindow();
 						break;
 					case ConfigureNotify:

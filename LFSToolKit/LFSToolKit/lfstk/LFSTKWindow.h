@@ -86,6 +86,7 @@ class LFSTK_windowClass
 		void LFSTK_setSticky(bool set);
 		bool LFSTK_getSticky(void);
 		void LFSTK_setWindowType(const char *type);
+		void LFSTK_setTransientFor(Window w);
 
 		int LFSTK_getMonitorCount(void);
 		const monitorStruct* LFSTK_getMonitorData(int monitor);

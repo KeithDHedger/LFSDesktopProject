@@ -21,6 +21,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <getopt.h>
 
 #include <lfstk/LFSTKGlobals.h>
 
@@ -38,6 +39,7 @@ LFSTK_toggleButtonClass	*autocolour=NULL;
 LFSTK_toggleButtonClass	*usetheme=NULL;
 
 bool					mainloop=false;
+int						parentWindow=-1;
 const char				*buttonnames[]={"Button Normal","Button Prelight","Button Active","Button Inactive","Menu Normal","Menu Prelight","Menu Active","Menu Inactive"};
 const char				*labelnames[]={"Normal Buttons","Back Colour","Font Colour","Menu Items","Back Colour","Font Colour","Window Colour","Font","Menu Item Font","Window Tile","Button Tile","Menu Item Tile","--"};
 
@@ -145,6 +147,33 @@ int main(int argc, char **argv)
 	int				cols[5];
 	int				state;
 	int				holdsy;
+	int				c=0;
+	int				option_index=0;
+	const char		*shortOpts="h?w:";
+	option 			longOptions[]=
+		{
+			{"window",1,0,'w'},
+			{"help",0,0,'h'},
+			{0, 0, 0, 0}
+		};
+	while(1)
+		{
+			option_index=0;
+			c=getopt_long_only(argc,argv,shortOpts,longOptions,&option_index);
+			if (c==-1)
+				break;
+			switch (c)
+				{
+					case 'h':
+					case '?':
+						printf("-?,-h,--help\t\tPrint this help\n");
+						printf("-w,--window\t\tSet transient for window\n");
+						exit(0);
+					case 'w':
+						parentWindow=atoi(optarg);
+						break;
+				}
+		}
 
 	cols[0]=10;
 	for(int j=1;j<5;j++)
@@ -292,6 +321,8 @@ int main(int argc, char **argv)
 	wc->LFSTK_resizeWindow(cols[3],sy);
 	wc->LFSTK_showWindow(true);
 	wc->LFSTK_setKeepAbove(true);
+	if(parentWindow!=-1)
+		wc->LFSTK_setTransientFor(parentWindow);
 
 	mainloop=true;
 	while(mainloop==true)

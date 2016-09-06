@@ -125,11 +125,6 @@ printf("confmes from line edit\n");
 */
 bool LFSTK_lineEditClass::mouseEnter(XButtonEvent *e)
 {
-	if(this->isActive==false)
-		{
-			this->LFSTK_clearWindow();
-			return(true);
-		}
 	return(true);
 }
 
@@ -168,7 +163,6 @@ bool LFSTK_lineEditClass::lostFocus(XEvent *e)
 		{
 			XUngrabKeyboard(this->display,CurrentTime);
 			this->isFocused=false;
-			this->inWindow=false;
 			this->LFSTK_clearWindow();
 		}
 	return(true);
@@ -185,7 +179,7 @@ bool LFSTK_lineEditClass::gotFocus(XEvent *e)
 		{
 			XGrabKeyboard(this->display,this->window,true,GrabModeAsync,GrabModeAsync,CurrentTime);
 			this->isFocused=true;
-			this->inWindow=true;
+			XSetInputFocus(this->display,this->window,RevertToParent,CurrentTime);
 			this->LFSTK_clearWindow();
 		}
 	return(true);

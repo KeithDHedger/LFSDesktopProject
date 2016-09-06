@@ -37,7 +37,7 @@
 
 enum		{LNAME,LDESCRIPTION,LCOPYRITE,LEMAIL,LWEBSITE,LGPL,LNOMORELABELS};
 
-const char	*labelTexts[]={"LFS Desktop Project","Low resource/dependency desktop for LFS","© 2015 K.D.Hedger",MYEMAIL,MYWEBSITE,"Released under GPLv3"};
+const char	*labelTexts[]={"LFS Desktop Project","Low resource/dependency desktop for LFS","© 2015-2016 K.D.Hedger",MYEMAIL,MYWEBSITE,"Released under GPLv3"};
 
 bool		mainLoop=true;
 

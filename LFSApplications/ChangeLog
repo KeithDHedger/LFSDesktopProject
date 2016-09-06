@@ -1,3 +1,7 @@
+0.1.2
+--window option added to apps to set transient window for.
+Lfsappearance now handles sub dialogs properly. 
+
 0.1.1
 Lfswmprefs now uses new font selector.
 Added Font selecter dialog.

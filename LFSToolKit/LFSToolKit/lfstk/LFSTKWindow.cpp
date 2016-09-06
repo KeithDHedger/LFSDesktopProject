@@ -430,6 +430,16 @@ void LFSTK_windowClass::LFSTK_setKeepAbove(bool set)
 }
 
 /**
+* Set transient for window.
+* \param w Window.
+*/
+void LFSTK_windowClass::LFSTK_setTransientFor(Window w)
+{
+	XSetTransientForHint(this->display,this->window,w);
+}
+
+
+/**
 * Set window active.
 * \param set.
 * \note Must be set AFTER window has been mapped ( in expose event ).

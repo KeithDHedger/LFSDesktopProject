@@ -21,6 +21,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <getopt.h>
 
 #include <lfstk/LFSTKGlobals.h>
 
@@ -48,6 +49,7 @@ char					*terminalCommand=NULL;
 
 char					*fontColours[5];
 int						doswapdesk=-1;
+int						parentWindow=-1;
 
 
 menuItemStruct			*placeMenu;
@@ -207,8 +209,12 @@ bool selectFontCB(void *object,void* userdata)
 	const char	*bld="";
 	const char	*it="";
 	char		line[1024];
+	long		wind;
 
-	wc->LFSTK_hideWindow();
+	if(parentWindow==-1)
+		wind=wc->window;
+	else
+		wind=parentWindow;
 	line[0]=0;
 
 	if(isBold==true)
@@ -216,7 +222,7 @@ bool selectFontCB(void *object,void* userdata)
 	if(isItalic==true)
 		it="-i";
 	
-	asprintf(&command,"$(which lfsfontselect) %s %s --size=%s \"%s\" -d 2>/dev/null",bld,it,fontSize,fontName);
+	asprintf(&command,"$(which lfsfontselect) %s %s --size=%s \"%s\" -d --window=%i 2>/dev/null",bld,it,fontSize,fontName,wind);
 	fp=popen(command, "r");
 	if(fp!=NULL)
 		{
@@ -251,7 +257,6 @@ bool selectFontCB(void *object,void* userdata)
 				}
 		}
 	free(command);
-	wc->LFSTK_showWindow();
 }
 
 int main(int argc, char **argv)
@@ -268,6 +273,33 @@ int main(int argc, char **argv)
 	char				*hfont;
 	LFSTK_labelClass	*label;
 	LFSTK_buttonClass	*button;
+	int				c=0;
+	int				option_index=0;
+	const char		*shortOpts="h?w:";
+	option 			longOptions[]=
+		{
+			{"window",1,0,'w'},
+			{"help",0,0,'h'},
+			{0, 0, 0, 0}
+		};
+	while(1)
+		{
+			option_index=0;
+			c=getopt_long_only(argc,argv,shortOpts,longOptions,&option_index);
+			if (c==-1)
+				break;
+			switch (c)
+				{
+					case 'h':
+					case '?':
+						printf("-?,-h,--help\t\tPrint this help\n");
+						printf("-w,--window\t\tSet transient for window\n");
+						exit(0);
+					case 'w':
+						parentWindow=atoi(optarg);
+						break;
+				}
+		}
 
 	fontColours[ACTIVEFRAME]=strdup("#000000");
 	fontColours[ACTIVEFRAMEFILL]=strdup("#00ffff");
@@ -391,6 +423,8 @@ int main(int argc, char **argv)
 	wc->LFSTK_resizeWindow(col3-10-bwidth,sy);
 	wc->LFSTK_showWindow();
 	wc->LFSTK_setKeepAbove(true);
+	if(parentWindow!=-1)
+		wc->LFSTK_setTransientFor(parentWindow);
 
 	printf("Current Settings:\n\n");
 	callback(NULL,(void*)PRINT);
