@@ -83,6 +83,8 @@ LFSTK_fontButtonClass::LFSTK_fontButtonClass(LFSTK_windowClass* parentwc,const c
 	this->fontOffset=0;
 	this->fontSize=strdup("10");
 	this->finalFont=NULL;
+	this->parseFontString(this->label);
+	this->LFSTK_setLabel(currentFontName);
 	thisFB=this;
 }
 
