@@ -49,6 +49,7 @@ LFSTK_buttonClass		*imageButton;
 menuItemStruct			*mainMenus;
 menuItemStruct			*mainMenusWithSubs;
 menuItemStruct			*subMenus;
+LFSTK_fontButtonClass	*fb;
 
 const char				*mainMenuNames[]={"Menu 1","Menu 2","Menu 3","Menu 4","--","bool mainLoop=true;","menuItemStruct *mainMenus;","LFSTK_menuButtonClass *mb=NULL;"};
 const char				*subMenuNames[]={"Sub Menu 1","Sub Menu 2","Sub Menu 3","Sub Menu 4"};
@@ -61,6 +62,15 @@ bool doQuit(void *p,void* ud)
 {
 	mainLoop=false;
 	return(false);
+}
+
+const char* fdes="DejaVu Serif:size=12:italic";
+bool fontCB(void *p,void* ud)
+{
+	//fb->LFSTK_setFontDesription(fdes);
+	fb->LFSTK_showDialog(fdes);
+	printf("---font=%s---\n",fb->LFSTK_getFontString());
+	fdes=fb->LFSTK_getFontString();
 }
 
 bool buttonCB(void *p,void* ud)
@@ -217,6 +227,11 @@ int main(int argc, char **argv)
 
 	sy+=IMAGESIZE;
 	sy+=12;
+
+//font
+	fb=new LFSTK_fontButtonClass(wc,"Select Font",BORDER,sy,BWIDTH*2,BHITE,BGRAV);
+	fb->LFSTK_setCallBack(NULL,fontCB,(void*)"Font Buttton");
+	sy+=BHITE+12;
 
 //line edit
 	le=new LFSTK_lineEditClass(wc,"Hello World",BORDER,sy,BWIDTH*2,BHITE,BGRAV);

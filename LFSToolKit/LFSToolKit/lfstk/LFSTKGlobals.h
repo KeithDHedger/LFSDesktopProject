@@ -90,6 +90,7 @@ struct	mappedListener
 #include <lfstk/LFSTKMenuButton.h>
 #include <lfstk/LFSTKLineEdit.h>
 #include <lfstk/LFSTKToggleButton.h>
+#include <lfstk/LFSTKFontButton.h>
 
 
 
