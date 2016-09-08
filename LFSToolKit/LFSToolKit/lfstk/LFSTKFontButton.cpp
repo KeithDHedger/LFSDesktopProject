@@ -203,17 +203,32 @@ bool LFSTK_fontButtonClass::styleCB(void *object,void* userdata)
 
 bool LFSTK_fontButtonClass::scrollCB(void *object,void* userdata)
 {
-	if(GETUSERDATA(userdata)==0)
-		thisFB->fontOffset-=MAXPREVIEW;
-	else
-		thisFB->fontOffset+=MAXPREVIEW;
+	switch(GETUSERDATA(userdata))
+		{
+			case DUP:
+				thisFB->fontOffset-=MAXPREVIEW;
+				break;
+			case DDOWN:
+				thisFB->fontOffset+=MAXPREVIEW;
+				break;
+			case DHOME:
+				thisFB->fontOffset=0;
+				break;
+			case DEND:
+				thisFB->fontOffset=thisFB->maxFonts-MAXPREVIEW;
+				break;
+		}
+//	if(GETUSERDATA(userdata)==DUP)
+//		thisFB->fontOffset-=MAXPREVIEW;
+//	else
+//		if(GETUSERDATA(userdata)==DUP)
+//			thisFB->fontOffset+=MAXPREVIEW;
 
 	if(thisFB->fontOffset<0)
 		thisFB->fontOffset=0;
 	if(thisFB->fontOffset>(thisFB->maxFonts-MAXPREVIEW))
 		thisFB->fontOffset=thisFB->maxFonts-MAXPREVIEW;
 
-printf("foffset=%i\n",thisFB->fontOffset);
 //font select buttons
 	for(int j=0;j<MAXPREVIEW;j++)
 		{
@@ -408,10 +423,20 @@ void LFSTK_fontButtonClass::LFSTK_showDialog(const char *fs)
 			this->toggleItalic->LFSTK_setCallBack(NULL,styleCB,USERDATA(DITALIC));
 
 //navigate
+//line up/down
 			button=new LFSTK_buttonClass(this->dialog,"↑",DWIDTH-DBORDER-(DBUTTONWIDTH/4),buttony,DBUTTONWIDTH/4,DBUTTONHITE,NorthEastGravity);
-			button->LFSTK_setCallBack(NULL,scrollCB,USERDATA(0));
+			button->LFSTK_setCallBack(NULL,scrollCB,USERDATA(DUP));
 			button=new LFSTK_buttonClass(this->dialog,"↓",DWIDTH-DBORDER-((DBUTTONWIDTH/4)*2)-DGAP,buttony,DBUTTONWIDTH/4,DBUTTONHITE,NorthEastGravity);
-			button->LFSTK_setCallBack(NULL,scrollCB,USERDATA(1));
+			button->LFSTK_setCallBack(NULL,scrollCB,USERDATA(DDOWN));
+
+//page home/end
+			button=new LFSTK_buttonClass(this->dialog,"⇤",DWIDTH-DBORDER-((DBUTTONWIDTH/4)*3)-DGAP*2,buttony,DBUTTONWIDTH/4,DBUTTONHITE,NorthEastGravity);
+			button->LFSTK_setCallBack(NULL,scrollCB,USERDATA(DHOME));
+			button=new LFSTK_buttonClass(this->dialog,"⇥",DWIDTH-DBORDER-((DBUTTONWIDTH/4)*4)-DGAP*3,buttony,DBUTTONWIDTH/4,DBUTTONHITE,NorthEastGravity);
+			button->LFSTK_setCallBack(NULL,scrollCB,USERDATA(DEND));
+
+
+
 			buttony+=DBUTTONHITE+DGAP;
 
 //size

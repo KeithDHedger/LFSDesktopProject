@@ -37,6 +37,7 @@
 
 enum {DAPPLY=1,DCANCEL};
 enum {DBOLD=0,DITALIC=1};
+enum {DUP,DDOWN,DHOME,DEND};
 
 class LFSTK_fontButtonClass  : public  LFSTK_buttonClass
 {

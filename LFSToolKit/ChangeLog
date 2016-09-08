@@ -1,4 +1,5 @@
 0.1.2
+Added home/end buttons to Font selector.
 Font dialog scroll buttons now 'stick' at bottom/top of list.
 Label for font button can now display font name or label.
 Added FontButton class to toolkit.
