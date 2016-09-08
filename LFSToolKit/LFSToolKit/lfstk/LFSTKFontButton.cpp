@@ -159,10 +159,6 @@ void LFSTK_fontButtonClass::buildFontString(bool usedata)
 	if(thisFB->LFSTK_getItalic()==true)
 		italicstr=":italic";
 
-	//if(thisFB->fontSize!=NULL)
-	//	free(thisFB->fontSize);
-	//asprintf(&thisFB->fontSize,"%i",thisFB->LFSTK_getFontSize());
-
 	asprintf(&fs,"%s:size=%s%s%s",thisFB->LFSTK_getCurrentFontName(),thisFB->LFSTK_getFontSize(),boldstr,italicstr);
 
 	previewEdit->LFSTK_setFontString(fs);
@@ -201,6 +197,30 @@ bool LFSTK_fontButtonClass::styleCB(void *object,void* userdata)
 	return(true);
 }
 
+void LFSTK_fontButtonClass::setNavSensitive(void)
+{
+	this->buttonDown->LFSTK_setActive(true);
+	this->buttonUp->LFSTK_setActive(true);
+	this->buttonHome->LFSTK_setActive(true);
+	this->buttonEnd->LFSTK_setActive(true);
+
+	if(this->fontOffset<=0)
+		{
+			this->buttonUp->LFSTK_setActive(false);
+			this->buttonHome->LFSTK_setActive(false);
+		}
+	if(this->fontOffset>=this->maxFonts-MAXPREVIEW)
+		{
+			this->buttonDown->LFSTK_setActive(false);
+			this->buttonEnd->LFSTK_setActive(false);
+		}
+
+	this->buttonDown->LFSTK_clearWindow();
+	this->buttonUp->LFSTK_clearWindow();
+	this->buttonHome->LFSTK_clearWindow();
+	this->buttonEnd->LFSTK_clearWindow();
+}
+
 bool LFSTK_fontButtonClass::scrollCB(void *object,void* userdata)
 {
 	switch(GETUSERDATA(userdata))
@@ -219,10 +239,13 @@ bool LFSTK_fontButtonClass::scrollCB(void *object,void* userdata)
 				break;
 		}
 
-	if(thisFB->fontOffset<0)
+	if(thisFB->fontOffset<=0)
 		thisFB->fontOffset=0;
-	if(thisFB->fontOffset>(thisFB->maxFonts-MAXPREVIEW))
+
+	if(thisFB->fontOffset>=(thisFB->maxFonts-MAXPREVIEW))
 		thisFB->fontOffset=thisFB->maxFonts-MAXPREVIEW;
+
+	thisFB->setNavSensitive();
 
 //font select buttons
 	for(int j=0;j<MAXPREVIEW;j++)
@@ -420,15 +443,15 @@ void LFSTK_fontButtonClass::LFSTK_showDialog(const char *fs)
 
 //navigate
 //line up/down
-			button=new LFSTK_buttonClass(this->dialog,"↑",DWIDTH-DBORDER-(DBUTTONWIDTH/4),buttony,DBUTTONWIDTH/4,DBUTTONHITE,NorthEastGravity);
-			button->LFSTK_setCallBack(NULL,scrollCB,USERDATA(DUP));
-			button=new LFSTK_buttonClass(this->dialog,"↓",DWIDTH-DBORDER-((DBUTTONWIDTH/4)*2)-DGAP,buttony,DBUTTONWIDTH/4,DBUTTONHITE,NorthEastGravity);
-			button->LFSTK_setCallBack(NULL,scrollCB,USERDATA(DDOWN));
+			this->buttonUp=new LFSTK_buttonClass(this->dialog,"↑",DWIDTH-DBORDER-(DBUTTONWIDTH/4),buttony,DBUTTONWIDTH/4,DBUTTONHITE,NorthEastGravity);
+			this->buttonUp->LFSTK_setCallBack(NULL,scrollCB,USERDATA(DUP));
+			buttonDown=new LFSTK_buttonClass(this->dialog,"↓",DWIDTH-DBORDER-((DBUTTONWIDTH/4)*2)-DGAP,buttony,DBUTTONWIDTH/4,DBUTTONHITE,NorthEastGravity);
+			buttonDown->LFSTK_setCallBack(NULL,scrollCB,USERDATA(DDOWN));
 //page home/end
-			button=new LFSTK_buttonClass(this->dialog,"⇤",DWIDTH-DBORDER-((DBUTTONWIDTH/4)*3)-DGAP*2,buttony,DBUTTONWIDTH/4,DBUTTONHITE,NorthEastGravity);
-			button->LFSTK_setCallBack(NULL,scrollCB,USERDATA(DHOME));
-			button=new LFSTK_buttonClass(this->dialog,"⇥",DWIDTH-DBORDER-((DBUTTONWIDTH/4)*4)-DGAP*3,buttony,DBUTTONWIDTH/4,DBUTTONHITE,NorthEastGravity);
-			button->LFSTK_setCallBack(NULL,scrollCB,USERDATA(DEND));
+			buttonHome=new LFSTK_buttonClass(this->dialog,"⇤",DWIDTH-DBORDER-((DBUTTONWIDTH/4)*3)-DGAP*2,buttony,DBUTTONWIDTH/4,DBUTTONHITE,NorthEastGravity);
+			buttonHome->LFSTK_setCallBack(NULL,scrollCB,USERDATA(DHOME));
+			buttonEnd=new LFSTK_buttonClass(this->dialog,"⇥",DWIDTH-DBORDER-((DBUTTONWIDTH/4)*4)-DGAP*3,buttony,DBUTTONWIDTH/4,DBUTTONHITE,NorthEastGravity);
+			buttonEnd->LFSTK_setCallBack(NULL,scrollCB,USERDATA(DEND));
 			buttony+=DBUTTONHITE+DGAP;
 
 //size
@@ -460,6 +483,7 @@ void LFSTK_fontButtonClass::LFSTK_showDialog(const char *fs)
 		free(this->holdFont);
 	this->holdFont=strdup(fs);
 
+	this->setNavSensitive();
 	this->dialog->LFSTK_showWindow();
 	this->dialog->LFSTK_setKeepAbove(true);
 	this->dialog->LFSTK_setTransientFor(this->wc->window);

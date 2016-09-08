@@ -76,12 +76,17 @@ class LFSTK_fontButtonClass  : public  LFSTK_buttonClass
 		LFSTK_windowClass		*dialog;
 		LFSTK_toggleButtonClass	*toggleBold;
 		LFSTK_toggleButtonClass	*toggleItalic;
+		LFSTK_buttonClass		*buttonHome;
+		LFSTK_buttonClass		*buttonEnd;
+		LFSTK_buttonClass		*buttonUp;
+		LFSTK_buttonClass		*buttonDown;
 
 		static bool				dialogCB(void *object,void* userdata);
 		static bool				styleCB(void *object,void* userdata);
 		static bool				scrollCB(void *object,void* userdata);
 		static bool				selectFontCB(void *object,void* userdata);
 
+		void					setNavSensitive(void);
 		void					loadFontStrings(void);
 		void					buildFontString(bool usedata);
 };
