@@ -85,6 +85,7 @@ LFSTK_fontButtonClass::LFSTK_fontButtonClass(LFSTK_windowClass* parentwc,const c
 	this->finalFont=NULL;
 	this->parseFontString(this->label);
 	this->LFSTK_setLabel(currentFontName);
+	this->labelIsFont=true;
 	thisFB=this;
 }
 
@@ -177,7 +178,8 @@ bool LFSTK_fontButtonClass::dialogCB(void *object,void* userdata)
 			case DAPPLY:
 				buildFontString(true);
 				mainLoop=false;
-				thisFB->LFSTK_setLabel(thisFB->fontsAZ[thisFB->currentFont]);
+				if(thisFB->labelIsFont==true)
+					thisFB->LFSTK_setLabel(thisFB->fontsAZ[thisFB->currentFont]);
 				break;
 			case DCANCEL:
 				buildFontString(false);
@@ -349,6 +351,16 @@ int LFSTK_fontButtonClass::LFSTK_getFontSize(void)
 {
 	return(atoi(static_cast<const char*>(this->fontSizeEdit->LFSTK_getBuffer()->c_str())));
 }
+
+/**
+* Set show button label as font
+* \param bool val
+*/
+void LFSTK_fontButtonClass::LFSTK_setLabelIsFont(bool val)
+{
+	this->labelIsFont=val;
+}
+
 
 /**
 * show font select dialog.

@@ -173,54 +173,38 @@ bool callback(void *p,void* ud)
 
 bool selectFontCB(void *object,void* userdata)
 {
-	FILE		*fp;
-	char		*command;
-	const char	*bld="";
-	const char	*it="";
-	char		line[1024];
-	long		wind;
-	char		*retval=NULL;
+	LFSTK_fontButtonClass	*fb;
 
-	if(parentWindow==-1)
-		wind=wc->window;
-	else
-		wind=parentWindow;
-	line[0]=0;
+	fb=static_cast<LFSTK_fontButtonClass*>(object);
+	fb->LFSTK_showDialog(titleFont);
 
-	asprintf(&command,"lfsfontselect \"%s\" --window=%i 2>/dev/null",fontEdit->LFSTK_getBuffer()->c_str(),wind);
-	retval=wc->globalLib->LFSTK_oneLiner(command);
-	if(strlen(retval)>0)
-		{
-		if(titleFont!=NULL)
-			free(titleFont);
-		titleFont=retval;
-		text->LFSTK_setFontString(titleFont);
-		text->LFSTK_clearWindow();
-		fontEdit->LFSTK_setBuffer(titleFont);
-
-		}
-
-	free(command);
+	if(titleFont!=NULL)
+		free(titleFont);
+	titleFont=strdup(fb->LFSTK_getFontString());
+	fontEdit->LFSTK_setBuffer(titleFont);
+	
+	printf("---font=%s---\n",fb->LFSTK_getFontString());
 }
 
 int main(int argc, char **argv)
 {
-	XEvent				event;
-	int					sx=0;
-	int					sy=0;
-	geometryStruct		*geom;
-	int					bwidth=BWIDTH;
-	int					bhite=24;
-	int					spacing=bwidth+10;
-	int					vspacing=bhite+10;
-	int					col1=10,col2=col1+bwidth+spacing+20,col3=col2+bwidth+spacing+20,col4;
-	char				*hfont;
-	LFSTK_labelClass	*label;
-	LFSTK_buttonClass	*button;
-	int				c=0;
-	int				option_index=0;
-	const char		*shortOpts="h?w:";
-	option 			longOptions[]=
+	XEvent					event;
+	int						sx=0;
+	int						sy=0;
+	geometryStruct			*geom;
+	int						bwidth=BWIDTH;
+	int						bhite=24;
+	int						spacing=bwidth+10;
+	int						vspacing=bhite+10;
+	int						col1=10,col2=col1+bwidth+spacing+20,col3=col2+bwidth+spacing+20,col4;
+	char					*hfont;
+	LFSTK_labelClass		*label;
+	LFSTK_buttonClass		*button;
+	LFSTK_fontButtonClass	*fontbutton;
+	int						c=0;
+	int						option_index=0;
+	const char				*shortOpts="h?w:";
+	option 					longOptions[]=
 		{
 			{"window",1,0,'w'},
 			{"help",0,0,'h'},
@@ -301,8 +285,8 @@ int main(int argc, char **argv)
 			sx=col1;
 		}
 
-	button=new LFSTK_buttonClass(wc,"Select Font",sx,sy,bwidth,24,NorthWestGravity);
-	button->LFSTK_setCallBack(NULL,selectFontCB,NULL);
+	fontbutton=new LFSTK_fontButtonClass(wc,titleFont,sx,sy,bwidth,24,NorthWestGravity);
+	fontbutton->LFSTK_setCallBack(NULL,selectFontCB,NULL);
 
 	sx+=spacing;
 	fontEdit=new LFSTK_lineEditClass(wc,titleFont,sx,sy-1,col2-col1,24,NorthWestGravity);

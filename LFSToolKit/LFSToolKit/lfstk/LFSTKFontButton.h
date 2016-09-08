@@ -53,13 +53,12 @@ class LFSTK_fontButtonClass  : public  LFSTK_buttonClass
 		int						LFSTK_getFontSize(void);
 		const char				*LFSTK_getFontString(void);
 		void					LFSTK_setFontDesription(const char*fs);
-
+		void					LFSTK_setLabelIsFont(bool val);
 		void					parseFontString(const char *fontstr);
 
 
 		char					*holdFont;
 		char					*fontSize;
-//		LFSTK_lineEditClass		*previewEdit;
 
 	private:
 		LFSTK_lineEditClass		*fontSizeEdit;
@@ -72,6 +71,8 @@ class LFSTK_fontButtonClass  : public  LFSTK_buttonClass
 		bool					isItalic;
 		bool					isBold;
 		char					*finalFont;
+		bool					labelIsFont;
+
 		LFSTK_windowClass		*dialog;
 		LFSTK_toggleButtonClass	*toggleBold;
 		LFSTK_toggleButtonClass	*toggleItalic;

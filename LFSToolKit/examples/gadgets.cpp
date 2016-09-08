@@ -229,8 +229,9 @@ int main(int argc, char **argv)
 	sy+=12;
 
 //font
-	fb=new LFSTK_fontButtonClass(wc,fdes,BORDER,sy,BWIDTH*2,BHITE,BGRAV);
+	fb=new LFSTK_fontButtonClass(wc,"Select Font",BORDER,sy,BWIDTH*2,BHITE,BGRAV);
 	fb->LFSTK_setCallBack(NULL,fontCB,(void*)"Font Buttton");
+	fb->LFSTK_setLabelIsFont(true);
 	sy+=BHITE+12;
 
 //line edit

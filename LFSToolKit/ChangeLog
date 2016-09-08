@@ -1,4 +1,5 @@
 0.1.2
+Label for font button can now display font name or label.
 Added FontButton class to toolkit.
 Line edit tweaks.
 Fixed focus/unfocus error when showing window with line edits.
