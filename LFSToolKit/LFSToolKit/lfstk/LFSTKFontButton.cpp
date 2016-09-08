@@ -213,6 +213,7 @@ bool LFSTK_fontButtonClass::scrollCB(void *object,void* userdata)
 	if(thisFB->fontOffset>(thisFB->maxFonts-MAXPREVIEW))
 		thisFB->fontOffset=thisFB->maxFonts-MAXPREVIEW;
 
+printf("foffset=%i\n",thisFB->fontOffset);
 //font select buttons
 	for(int j=0;j<MAXPREVIEW;j++)
 		{

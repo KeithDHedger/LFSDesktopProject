@@ -63,7 +63,7 @@ class LFSTK_fontButtonClass  : public  LFSTK_buttonClass
 	private:
 		LFSTK_lineEditClass		*fontSizeEdit;
 		LFSTK_buttonClass		*previews[MAXPREVIEW];
-		unsigned				fontOffset;
+		int						fontOffset;
 		unsigned				currentFont;
 		unsigned				maxFonts;
 		char					**fontsAZ;

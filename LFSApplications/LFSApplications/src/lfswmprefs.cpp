@@ -182,8 +182,6 @@ bool selectFontCB(void *object,void* userdata)
 		free(titleFont);
 	titleFont=strdup(fb->LFSTK_getFontString());
 	fontEdit->LFSTK_setBuffer(titleFont);
-	
-	printf("---font=%s---\n",fb->LFSTK_getFontString());
 }
 
 int main(int argc, char **argv)
@@ -285,7 +283,8 @@ int main(int argc, char **argv)
 			sx=col1;
 		}
 
-	fontbutton=new LFSTK_fontButtonClass(wc,titleFont,sx,sy,bwidth,24,NorthWestGravity);
+	fontbutton=new LFSTK_fontButtonClass(wc,"Select Font",sx,sy,bwidth,24,NorthWestGravity);
+	fontbutton->LFSTK_setLabelIsFont(false);
 	fontbutton->LFSTK_setCallBack(NULL,selectFontCB,NULL);
 
 	sx+=spacing;
