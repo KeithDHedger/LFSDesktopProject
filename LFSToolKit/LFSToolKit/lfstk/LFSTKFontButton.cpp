@@ -318,6 +318,9 @@ void LFSTK_fontButtonClass::parseFontString(const char *fontstr)
 
 	this->bold=false;
 	this->italic=false;
+	if(this->fontSize!=NULL)
+		free(this->fontSize);
+	this->fontSize=strdup("10");
 
 	str=strtok(string,":");
 	while(1)

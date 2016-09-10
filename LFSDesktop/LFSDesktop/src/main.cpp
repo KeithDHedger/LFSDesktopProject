@@ -321,31 +321,58 @@ void doPopUp(int x,int y)
 	wc->LFSTK_hideWindow();
 }
 
+void parseFontString(const char *fontstr)
+{
+	char	*string=strdup(fontstr);
+	char	*str;
+
+	weight=CAIRO_FONT_WEIGHT_NORMAL;
+	slant=CAIRO_FONT_SLANT_NORMAL;
+	fontSize=10;
+	if(fontName!=NULL)
+		free(fontName);
+	fontName=strdup("Sans");
+
+	str=strtok(string,":");
+	while(1)
+		{
+			bool	found=false;
+			if(str==NULL)
+				break;
+			if(strcasecmp(str,"bold")==0)
+				{
+					weight=CAIRO_FONT_WEIGHT_BOLD;
+					found=true;
+				}
+			if(strcasecmp(str,"italic")==0)
+				{
+					slant=CAIRO_FONT_SLANT_ITALIC;
+					found=true;
+				}
+			if(strcasestr(str,"size=")!=NULL)
+				{
+					fontSize=atoi(&str[5]);
+					found=true;
+				}
+
+			if(found==false)
+				{
+					if(fontName!=NULL)
+						free(fontName);
+					fontName=strdup(str);
+				}
+			str=strtok(NULL,":");
+		}
+	free(string);
+}
+
+
 void setFontEtc(void)
 {
-	char	*ptr;
+	//char	*ptr;
 	XColor	tc,sc;
 
-	ptr=strtok(fontFace,";");
-	if(ptr!=NULL)
-		fontName=strdup(ptr);
-	else
-		fontName=strdup("Sans");
-	ptr=strtok(NULL,";");
-	if(ptr!=NULL)
-		weight=(cairo_font_weight_t)atoi(ptr);
-	else
-		weight=CAIRO_FONT_WEIGHT_NORMAL;
-	ptr=strtok(NULL,";");
-	if(ptr!=NULL)
-		slant=(cairo_font_slant_t)atoi(ptr);
-	else
-		slant=CAIRO_FONT_SLANT_NORMAL;
-	ptr=strtok(NULL,";");
-	if(ptr!=NULL)
-		fontSize=atoi(ptr);
-	else
-		fontSize=10;
+	parseFontString(fontFace);
 
 	XAllocNamedColor(display,DefaultColormap(display,screen),backCol,&sc,&tc);
 	labelBackground=sc.pixel;

@@ -1,3 +1,6 @@
+0.1.2
+Updated font desc in prefs to match rest of lfs.
+
 0.1.1
 Popup list now hidden when custom icon dialog shown.
 Fixed crash when right clicking desktop icon after using custom icon dialog.

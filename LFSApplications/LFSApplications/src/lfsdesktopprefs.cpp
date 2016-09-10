@@ -25,9 +25,10 @@
 
 #include <lfstk/LFSTKGlobals.h>
 
+//enum {ICONTHEME=0,ICONSIZE,GRIDSIZE,GRIDBORDER,REFRESHRATE,FORECOLOUR,BACKCOLOUR,ALPHA,TERMCOMMAND,FONTFACE,IGNORES,NUMPREFS};
 enum {ICONTHEME=0,ICONSIZE,GRIDSIZE,GRIDBORDER,REFRESHRATE,FORECOLOUR,BACKCOLOUR,ALPHA,TERMCOMMAND,FONTFACE,IGNORES,NUMPREFS};
-enum {EXIT=0,APPLY,PRINT,NOMOREBUTTONS};
 
+enum {EXIT=0,APPLY,PRINT,NOMOREBUTTONS};
 LFSTK_windowClass		*wc;
 LFSTK_lineEditClass		*le[NUMPREFS]={NULL,};
 LFSTK_labelClass		*lb[NUMPREFS]={NULL,};
@@ -44,7 +45,10 @@ int						parentWindow=-1;
 #define BIG col2-col1
 
 char				*prefs[NUMPREFS]={NULL,};
+//const char			*labelNames[]={"Icon Theme","Icon Size","Grid Size","Border","Refresh","Text Colour","Label Colour","Label Alpha","Term Command","","Ignore"};
 const char			*labelNames[]={"Icon Theme","Icon Size","Grid Size","Border","Refresh","Text Colour","Label Colour","Label Alpha","Term Command","Font","Ignore"};
+
+
 int					editSize[]={BIG,bwidth,bwidth,bwidth,bwidth,bwidth,bwidth,bwidth,BIG,BIG,BIG};
 
 args				desktopPrefs[]=
@@ -126,6 +130,15 @@ bool setShowExt(void *p,void* ud)
 	return(true);
 }
 
+bool fontCB(void *object,void* userdata)
+{
+	LFSTK_fontButtonClass	*fb;
+
+	fb=static_cast<LFSTK_fontButtonClass*>(object);
+	fb->LFSTK_showDialog(le[FONTFACE]->LFSTK_getBuffer()->c_str());
+	le[FONTFACE]->LFSTK_setBuffer(fb->LFSTK_getFontString());
+}
+
 int main(int argc, char **argv)
 {
 	XEvent			event;
@@ -134,6 +147,8 @@ int main(int argc, char **argv)
 	geometryStruct	*geom;
 	int				bhite=24;
 	int				vspacing=bhite+10;
+	LFSTK_fontButtonClass	*fontbutton;
+
 	int				c=0;
 	int				option_index=0;
 	const char		*shortOpts="h?w:";
@@ -213,12 +228,24 @@ int main(int argc, char **argv)
 	sy+=vspacing;
 	for(int j=TERMCOMMAND;j<NUMPREFS;j++)
 		{
-			lb[j]=new LFSTK_labelClass(wc,labelNames[j],sx,sy,bwidth,24,NorthWestGravity);
-			lb[j]->LFSTK_setLabelAutoColour(true);
-			lb[j]->LFSTK_setActive(false);
-			lb[j]->LFSTK_setColourName(INACTIVECOLOUR,wc->windowColourNames[NORMALCOLOUR].name);
-			sx+=spacing;
-			le[j]=new LFSTK_lineEditClass(wc,prefs[j],sx,sy-1,editSize[j],24,NorthWestGravity);
+			if(j==FONTFACE)
+				{
+					lb[FONTFACE]=new LFSTK_labelClass(wc,labelNames[j],sx,sy,1,1,NorthWestGravity);
+					fontbutton=new LFSTK_fontButtonClass(wc,"Select Font",sx,sy,bwidth,24,NorthWestGravity);
+					fontbutton->LFSTK_setCallBack(NULL,fontCB,NULL);
+					fontbutton->LFSTK_setLabelIsFont(false);
+					sx+=spacing;
+					le[FONTFACE]=new LFSTK_lineEditClass(wc,prefs[FONTFACE],sx,sy-1,editSize[FONTFACE],24,NorthWestGravity);
+				}
+			else
+				{
+					lb[j]=new LFSTK_labelClass(wc,labelNames[j],sx,sy,bwidth,24,NorthWestGravity);
+					lb[j]->LFSTK_setLabelAutoColour(true);
+					lb[j]->LFSTK_setActive(false);
+					lb[j]->LFSTK_setColourName(INACTIVECOLOUR,wc->windowColourNames[NORMALCOLOUR].name);
+					sx+=spacing;
+					le[j]=new LFSTK_lineEditClass(wc,prefs[j],sx,sy-1,editSize[j],24,NorthWestGravity);
+				}
 			sy+=vspacing;
 			sx=col1;
 		}
