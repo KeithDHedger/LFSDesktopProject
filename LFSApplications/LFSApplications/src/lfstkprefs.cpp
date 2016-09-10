@@ -28,7 +28,7 @@
 enum {EXIT=0,APPLY,PRINT,NOMOREGBS};
 enum {NORMAL=0,PRELIGHT,ACTIVE,INACTIVE,MENUNORMAL,MENUPRELIGHT,MENUACTIVE,MENUINACTIVE,NOMOREBUTTONS};
 enum {ENORMAL=0,EPRELIGHT,EACTIVE,EINACTIVE,EFONTNORMAL,EFONTPRELIGHT,EFONTACTIVE,EFONTINACTIVE,EMENUNORMAL,EMENUPRELIGHT,EMENUACTIVE,EMENUINACTIVE,EMENUFONTNORMAL,EMENUFONTPRELIGHT,EMENUFONTACTIVE,EMENUFONTINACTIVE,EWINDOWCOLOUR,EFONTSTRING,EMENUFONTSTRING,EWINDOWTILE,EBUTTONTILE,EMENUITEMTILE,NOMOREBUTTONEDITS};
-enum {LNORMBUTTONS=0,LBACKCOLOUR,LFONTCOLOUR,LMENUBUTTONS,LMENUBACKCOLOUR,LMENUFONTCOLOUR,LWINDOWCOLOUR,LFONTSTRING,LMENUFONTSTRING,LWINDOWTILE,LBUTTONTILE,LMENUITEMTILE,LSPACER,NOMORELABELS};
+enum {LNORMBUTTONS=0,LBACKCOLOUR,LFONTCOLOUR,LMENUBUTTONS,LMENUBACKCOLOUR,LMENUFONTCOLOUR,LWINDOWCOLOUR,LWINDOWTILE,LBUTTONTILE,LMENUITEMTILE,LSPACER,NOMORELABELS};
 
 LFSTK_windowClass		*wc;
 LFSTK_buttonClass		*guibuttons[NOMOREGBS]={NULL,};
@@ -38,10 +38,13 @@ LFSTK_labelClass		*labels[NOMORELABELS]={NULL,};
 LFSTK_toggleButtonClass	*autocolour=NULL;
 LFSTK_toggleButtonClass	*usetheme=NULL;
 
+LFSTK_fontButtonClass	*menuItemFont;
+
 bool					mainloop=false;
 int						parentWindow=-1;
 const char				*buttonnames[]={"Button Normal","Button Prelight","Button Active","Button Inactive","Menu Normal","Menu Prelight","Menu Active","Menu Inactive"};
-const char				*labelnames[]={"Normal Buttons","Back Colour","Font Colour","Menu Items","Back Colour","Font Colour","Window Colour","Font","Menu Item Font","Window Tile","Button Tile","Menu Item Tile","--"};
+//const char				*labelnames[]={"Normal Buttons","Back Colour","Font Colour","Menu Items","Back Colour","Font Colour","Window Colour","Font","Menu Item Font","Window Tile","Button Tile","Menu Item Tile","--"};
+const char				*labelnames[]={"Normal Buttons","Back Colour","Font Colour","Menu Items","Back Colour","Font Colour","Window Colour","Window Tile","Button Tile","Menu Item Tile","--"};
 
 void setVars(void)
 {
@@ -133,6 +136,34 @@ bool callback(void *p,void* ud)
 	return(true);
 }
 
+/*
+	LFSTK_fontButtonClass	*fb;
+
+	fb=static_cast<LFSTK_fontButtonClass*>(object);
+	fb->LFSTK_showDialog(titleFont);
+
+	if(titleFont!=NULL)
+		free(titleFont);
+	titleFont=strdup(fb->LFSTK_getFontString());
+	fontEdit->LFSTK_setBuffer(titleFont);
+
+*/
+bool fontCB(void *object,void* userdata)
+{
+	LFSTK_fontButtonClass	*fb;
+
+	fb=static_cast<LFSTK_fontButtonClass*>(object);
+	if(GETUSERDATA(userdata)==100)
+		{
+			fb->LFSTK_showDialog(normaledits[EFONTSTRING]->LFSTK_getBuffer()->c_str());
+			normaledits[EFONTSTRING]->LFSTK_setBuffer(fb->LFSTK_getFontString());
+		}
+	else
+		{
+			fb->LFSTK_showDialog(normaledits[EMENUFONTSTRING]->LFSTK_getBuffer()->c_str());
+			normaledits[EMENUFONTSTRING]->LFSTK_setBuffer(fb->LFSTK_getFontString());
+		}
+}
 int main(int argc, char **argv)
 {
 	XEvent			event;
@@ -147,6 +178,10 @@ int main(int argc, char **argv)
 	int				cols[5];
 	int				state;
 	int				holdsy;
+	LFSTK_fontButtonClass	*lfstkFont;
+	LFSTK_fontButtonClass	*lfstkMenuFont;
+
+
 	int				c=0;
 	int				option_index=0;
 	const char		*shortOpts="h?w:";
@@ -231,8 +266,13 @@ int main(int argc, char **argv)
 			state++;
 			sy+=vspacing;
 		}
-	labels[LFONTSTRING]=new LFSTK_labelClass(wc,labelnames[LFONTSTRING],cols[0],sy,bwidth,24,NorthWestGravity);
-	labels[LFONTSTRING]->LFSTK_setLabelOriention(LEFT);	
+
+	lfstkFont=new LFSTK_fontButtonClass(wc,"Select Font",cols[0],sy,bwidth,24,NorthWestGravity);
+	lfstkFont->LFSTK_setCallBack(NULL,fontCB,USERDATA(100));
+	lfstkFont->LFSTK_setLabelIsFont(false);
+
+	//labels[LFONTSTRING]=new LFSTK_labelClass(wc,labelnames[LFONTSTRING],cols[0],sy,bwidth,24,NorthWestGravity);
+	//labels[LFONTSTRING]->LFSTK_setLabelOriention(LEFT);	
 	normaledits[EFONTSTRING]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEFONT),cols[1],sy,cols[3]-cols[1]-10,24,NorthWestGravity);
 	sy+=vspacing;
 
@@ -275,8 +315,13 @@ int main(int argc, char **argv)
 			state++;
 			sy+=vspacing;
 		}
-	labels[LMENUFONTSTRING]=new LFSTK_labelClass(wc,labelnames[LMENUFONTSTRING],cols[0],sy,bwidth,24,NorthWestGravity);
-	labels[LMENUFONTSTRING]->LFSTK_setLabelOriention(LEFT);	
+	//labels[LMENUFONTSTRING]=new LFSTK_labelClass(wc,labelnames[LMENUFONTSTRING],cols[0],sy,bwidth,24,NorthWestGravity);
+	//labels[LMENUFONTSTRING]->LFSTK_setLabelOriention(LEFT);	
+
+	lfstkMenuFont=new LFSTK_fontButtonClass(wc,"Select Font",cols[0],sy,bwidth,24,NorthWestGravity);
+	lfstkMenuFont->LFSTK_setCallBack(NULL,fontCB,USERDATA(200));
+	lfstkMenuFont->LFSTK_setLabelIsFont(false);
+
 	normaledits[EMENUFONTSTRING]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEMENUITEMFONT),cols[1],sy,cols[3]-cols[1]-10,24,NorthWestGravity);
 	sy+=vspacing;
 

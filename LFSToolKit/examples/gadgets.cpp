@@ -22,7 +22,7 @@ using namespace std;
 #include "lfstk/LFSTKGlobals.h"
 
 #define WIDTH			400
-#define HITE			600
+#define HITE			650
 #define HALF			WIDTH/2
 #define BWIDTH			96
 #define BHITE			24
@@ -64,13 +64,29 @@ bool doQuit(void *p,void* ud)
 	return(false);
 }
 
-const char* fdes="DejaVu Serif:size=12:italic";
-bool fontCB(void *p,void* ud)
+char* fdes1=strdup("DejaVu Serif:size=12:italic");
+char* fdes2=strdup("DejaVu Serif:size=20:bold");
+bool fontCB(void *object,void* ud)
 {
-	//fb->LFSTK_setFontDesription(fdes);
-	fb->LFSTK_showDialog(fdes);
-	printf("---font=%s---\n",fb->LFSTK_getFontString());
-	fdes=fb->LFSTK_getFontString();
+	LFSTK_fontButtonClass *button;
+	button=static_cast<LFSTK_fontButtonClass*>(object);
+	if(GETUSERDATA(ud)==100)
+		{
+			button->LFSTK_showDialog(fdes1);
+			free(fdes1);
+			fdes1=strdup(button->LFSTK_getFontString());
+		}
+	else
+		{
+			button->LFSTK_showDialog(fdes2);
+			free(fdes2);
+			fdes2=strdup(button->LFSTK_getFontString());
+		}
+	printf("\nFont desc=%s\n",button->LFSTK_getFontString());
+	printf("Font name=%s\n",button->LFSTK_getCurrentFontName());
+	printf("Font size=%s\n",button->LFSTK_getFontSize());
+	printf("Bold=%i\n",button->LFSTK_getBold());
+	printf("Italic=%i\n",button->LFSTK_getItalic());
 }
 
 bool buttonCB(void *p,void* ud)
@@ -229,8 +245,12 @@ int main(int argc, char **argv)
 	sy+=12;
 
 //font
-	fb=new LFSTK_fontButtonClass(wc,"Select Font",BORDER,sy,BWIDTH*2,BHITE,BGRAV);
-	fb->LFSTK_setCallBack(NULL,fontCB,(void*)"Font Buttton");
+	fb=new LFSTK_fontButtonClass(wc,"Select Font 1",BORDER,sy,BWIDTH*2,BHITE,BGRAV);
+	fb->LFSTK_setCallBack(NULL,fontCB,USERDATA(100));
+	fb->LFSTK_setLabelIsFont(true);
+	sy+=BHITE+12;
+	fb=new LFSTK_fontButtonClass(wc,"Select Font 2",BORDER,sy,BWIDTH*2,BHITE,BGRAV);
+	fb->LFSTK_setCallBack(NULL,fontCB,USERDATA(200));
 	fb->LFSTK_setLabelIsFont(true);
 	sy+=BHITE+12;
 

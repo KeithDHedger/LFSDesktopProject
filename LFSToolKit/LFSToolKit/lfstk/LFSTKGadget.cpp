@@ -219,6 +219,25 @@ void LFSTK_gadgetClass::LFSTK_setCallBack(bool (*downcb)(void *,void*),bool (*re
 	this->callback.ignoreCallback=false;
 }
 
+#if 0
+/**
+* Set callback for widget.
+* \param downcb Mouse down callback.
+* \param releasecb Mouse up callback.
+* \note Format for callback is "bool functioname(void *class,void *object,void* userdata)"
+* \note First param passed to callback is pointer to object.
+* \note Second param passed to callback is user data.
+*/
+void LFSTK_gadgetClass::LFSTK_setCallBack(bool (*downcb)(void*,void *,void*),bool (*releasecb)(void*,void *,void*),void* ud)
+{
+	this->callback.pressCallback=downcb;
+	this->callback.releaseCallback=releasecb;
+	this->callback.userData=ud;
+	this->callback.ignoreCallback=false;
+}
+
+#endif
+
 /**
 * Set gadget active state.
 * \param active Gadget active or not.

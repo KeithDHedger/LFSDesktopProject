@@ -30,14 +30,15 @@
 #define DBUTTONWIDTH 72
 
 #define USERDATA(x) (void*)(long)x
+#define DIALOGDATA(x) (void*)(&this->x)
+
 #define LFSTKGADGET(x) static_cast<LFSTK_gadgetClass*>(x)
 #define GETUSERDATA(x) (long)x
 
 #define DPREVIEWTEXT "ABCDEFGHIJK abcdefghijk 0123456789"
 
-enum {DAPPLY=1,DCANCEL};
-enum {DBOLD=0,DITALIC=1};
-enum {DUP,DDOWN,DHOME,DEND};
+enum {DAPPLY=0,DCANCEL,DBOLD,DITALIC,DUP,DDOWN,DHOME,DEND,DMAXBUTTONS};
+enum {DSIZE=1,DPREVIEW};
 
 class LFSTK_fontButtonClass  : public  LFSTK_buttonClass
 {
@@ -47,31 +48,36 @@ class LFSTK_fontButtonClass  : public  LFSTK_buttonClass
 
 		void					LFSTK_showDialog(const char *fs);	
 		const char				*LFSTK_getCurrentFontName(void);
-		void					LFSTK_setBold(bool bold);
-		void					LFSTK_setItalic(bool italic);
 		bool					LFSTK_getBold(void);
 		bool					LFSTK_getItalic(void);
 		const char				*LFSTK_getFontSize(void);
 		const char				*LFSTK_getFontString(void);
-		void					LFSTK_setFontDesription(const char*fs);
 		void					LFSTK_setLabelIsFont(bool val);
-		void					parseFontString(const char *fontstr);
-
-		char					*holdFont;
 
 	private:
+		struct dialogData
+			{
+				LFSTK_fontButtonClass	*mainObject;
+				unsigned				userData;
+			};
+
+
+		char					*fontDesc;
 		char					*fontSize;
+		char					*fontName;
+		bool					bold;
+		bool					italic;
+		unsigned				fontNumber;
+		int						fontOffset;
+
 		LFSTK_lineEditClass		*fontSizeEdit;
 		LFSTK_buttonClass		*previews[MAXPREVIEW];
-		int						fontOffset;
-		unsigned				currentFont;
+
 		unsigned				maxFonts;
 		char					**fontsAZ;
-		char					*currentFontName;
-		bool					isItalic;
-		bool					isBold;
-		char					*finalFont;
 		bool					labelIsFont;
+
+		bool					mainLoop;
 
 		LFSTK_windowClass		*dialog;
 		LFSTK_toggleButtonClass	*toggleBold;
@@ -80,6 +86,10 @@ class LFSTK_fontButtonClass  : public  LFSTK_buttonClass
 		LFSTK_buttonClass		*buttonEnd;
 		LFSTK_buttonClass		*buttonUp;
 		LFSTK_buttonClass		*buttonDown;
+		LFSTK_lineEditClass		*previewEdit;
+
+		dialogData				*buttonData;
+		dialogData				*previewData;
 
 		static bool				dialogCB(void *object,void* userdata);
 		static bool				styleCB(void *object,void* userdata);
@@ -89,6 +99,8 @@ class LFSTK_fontButtonClass  : public  LFSTK_buttonClass
 		void					setNavSensitive(void);
 		void					loadFontStrings(void);
 		void					buildFontString(bool usedata);
+		void					updateDialog(bool fonts);
+		void					parseFontString(const char *fontstr);
 };
 
 #endif

@@ -23,20 +23,22 @@
 
 #include "LFSTKGlobals.h"
 
-static LFSTK_fontButtonClass	*thisFB;
-static bool						mainLoop;
-static LFSTK_lineEditClass		*previewEdit;
-
 LFSTK_fontButtonClass::~LFSTK_fontButtonClass()
 {
 	for(int j=0;j<this->maxFonts;j++)
 		free(this->fontsAZ[j]);
-	free(this->fontsAZ);
-	if(this->currentFontName!=NULL)
-		free(this->currentFontName);
-	if(this->holdFont!=NULL)
-		free(this->holdFont);
+	delete this->fontsAZ;
+
+	if(this->fontDesc!=NULL)
+		free(this->fontDesc);
+	if(this->fontSize!=NULL)
+		free(this->fontSize);
+	if(this->fontName!=NULL)
+		free(this->fontName);
+
 	delete this->dialog;
+	delete this->previewData;
+	delete this->buttonData;
 }
 
 /**
@@ -72,21 +74,24 @@ LFSTK_fontButtonClass::LFSTK_fontButtonClass(LFSTK_windowClass* parentwc,const c
 
 	this->maxFonts=0;
 	this->fontsAZ=NULL;
-	this->currentFontName=strdup(label);
-	this->isBold=false;
-	this->isItalic=false;
-	this->currentFont=0;
-	this->holdFont=NULL;
 
 	this->loadFontStrings();
 	this->dialog=NULL;
 	this->fontOffset=0;
 	this->fontSize=strdup("10");
-	this->finalFont=NULL;
-	this->parseFontString(this->label);
-	this->LFSTK_setLabel(currentFontName);
 	this->labelIsFont=true;
-	thisFB=this;
+	this->previewData=new dialogData[MAXPREVIEW];
+	this->buttonData=new dialogData[DMAXBUTTONS];
+
+	this->fontDesc=NULL;
+	this->fontSize=NULL;
+	this->fontName=NULL;
+	this->bold=false;
+	this->italic=false;
+	this->fontNumber=0;
+	this->fontOffset=0;
+
+	this->fontDesc=NULL;
 }
 
 void LFSTK_fontButtonClass::loadFontStrings(void)
@@ -98,7 +103,6 @@ void LFSTK_fontButtonClass::loadFontStrings(void)
 	char		line[1024];
 
 	line[0]=0;
-	currentFont=0;
 
 	asprintf(&command,"%s","fc-list : family|awk -F, '{print $1}'|sort -u|wc -l");
 	command=this->wc->globalLib->LFSTK_oneLiner("%s",command);
@@ -107,9 +111,8 @@ void LFSTK_fontButtonClass::loadFontStrings(void)
 	else
 		fontcnt=atoi(command);
 
-	this->fontsAZ=(char**)calloc(fontcnt,sizeof(char*));
+	this->fontsAZ=new char*[fontcnt];
 	this->maxFonts=fontcnt;
-	this->currentFont=0;
 
 	asprintf(&command,"%s","fc-list : family|awk -F, '{print $1}'|sort -ur");
 	fp=popen(command, "r");
@@ -120,8 +123,6 @@ void LFSTK_fontButtonClass::loadFontStrings(void)
 					fontcnt--;
 					line[strlen(line)-1]=0;
 					this->fontsAZ[fontcnt]=strdup(line);
-					if((this->currentFontName!=NULL) && (strcasecmp(this->fontsAZ[fontcnt],this->currentFontName)==0))
-						this->currentFont=fontcnt;
 				}
 			pclose(fp);
 		}
@@ -130,70 +131,73 @@ void LFSTK_fontButtonClass::loadFontStrings(void)
 
 /**
 * Get current font name.
-*
 * \return const char * name of font.
-*
 * \note  String is owned by object and must not be freed.
 */
-
 const char* LFSTK_fontButtonClass::LFSTK_getCurrentFontName(void)
 {
-	return(this->fontsAZ[currentFont]);
+	return(this->fontsAZ[this->fontNumber]);
 }
 
 void LFSTK_fontButtonClass::buildFontString(bool usedata)
 {
 	const char	*boldstr="";
 	const char	*italicstr="";
-	char		*fs;
 
-	if(usedata==false)
-		{
-			thisFB->parseFontString(thisFB->holdFont);
-			buildFontString(true);
-			return;
-		}
-
-	if(thisFB->LFSTK_getBold()==true)
+	if(this->toggleBold->LFSTK_getValue()==true)
 		boldstr=":bold";
-	if(thisFB->LFSTK_getItalic()==true)
+	if(this->toggleItalic->LFSTK_getValue()==true)
 		italicstr=":italic";
 
-	asprintf(&fs,"%s:size=%s%s%s",thisFB->LFSTK_getCurrentFontName(),thisFB->LFSTK_getFontSize(),boldstr,italicstr);
+	if(this->fontDesc!=NULL)
+		free(this->fontDesc);
 
-	previewEdit->LFSTK_setFontString(fs);
-	previewEdit->LFSTK_clearWindow();
-	thisFB->LFSTK_setFontDesription(fs);
-	free(fs);
+	if(this->fontSize!=NULL)
+		free(this->fontSize);
+	this->fontSize=strdup(this->fontSizeEdit->LFSTK_getBuffer()->c_str());
+	asprintf(&this->fontDesc,"%s:size=%s%s%s",this->fontsAZ[this->fontNumber],this->fontSize,boldstr,italicstr);
 }
 
 bool LFSTK_fontButtonClass::dialogCB(void *object,void* userdata)
 {
-	switch(GETUSERDATA(userdata))
+	LFSTK_fontButtonClass	*button;
+	dialogData				*d=(dialogData*)userdata;
+	unsigned				data;
+
+	button=static_cast<LFSTK_fontButtonClass*>(d->mainObject);
+	data=d->userData;
+
+	switch(data)
 		{
 			case DAPPLY:
-				thisFB->buildFontString(true);
-				mainLoop=false;
-				if(thisFB->labelIsFont==true)
-					thisFB->LFSTK_setLabel(thisFB->fontsAZ[thisFB->currentFont]);
+				button->buildFontString(true);
+				if(button->labelIsFont==true)
+					button->LFSTK_setLabel(button->fontsAZ[button->fontNumber]);
 				break;
 			case DCANCEL:
-				thisFB->buildFontString(false);
-				mainLoop=false;
+				button->parseFontString(button->fontDesc);
+				button->updateDialog(false);
 				break;
 		}
+	button->mainLoop=false;
 	return(true);
 }
 
 bool LFSTK_fontButtonClass::styleCB(void *object,void* userdata)
 {
+	LFSTK_fontButtonClass	*button;
+	LFSTK_toggleButtonClass	*toggle;
 
-	if(GETUSERDATA(userdata)==DBOLD)
-		thisFB->LFSTK_setBold(!thisFB->LFSTK_getBold());
+	dialogData				*d=(dialogData*)userdata;
+
+	button=static_cast<LFSTK_fontButtonClass*>(d->mainObject);
+	toggle=static_cast<LFSTK_toggleButtonClass*>(object);
+
+	if(d->userData==DBOLD)
+		button->bold=toggle->LFSTK_getValue();
 	else
-		thisFB->LFSTK_setItalic(!thisFB->LFSTK_getItalic());
-
-	thisFB->buildFontString(true);
+		button->italic=toggle->LFSTK_getValue();
+	button->updateDialog(false);
 	return(true);
 }
 
@@ -223,45 +227,83 @@ void LFSTK_fontButtonClass::setNavSensitive(void)
 
 bool LFSTK_fontButtonClass::scrollCB(void *object,void* userdata)
 {
-	switch(GETUSERDATA(userdata))
+	LFSTK_fontButtonClass	*button;
+	dialogData				*d=(dialogData*)userdata;
+	unsigned				data;
+
+	button=static_cast<LFSTK_fontButtonClass*>(d->mainObject);
+	data=d->userData;
+
+	switch(data)
 		{
 			case DUP:
-				thisFB->fontOffset-=MAXPREVIEW;
+				button->fontOffset-=MAXPREVIEW;
 				break;
 			case DDOWN:
-				thisFB->fontOffset+=MAXPREVIEW;
+				button->fontOffset+=MAXPREVIEW;
 				break;
 			case DHOME:
-				thisFB->fontOffset=0;
+				button->fontOffset=0;
 				break;
 			case DEND:
-				thisFB->fontOffset=thisFB->maxFonts-MAXPREVIEW;
+				button->fontOffset=button->maxFonts-MAXPREVIEW;
 				break;
 		}
 
-	if(thisFB->fontOffset<=0)
-		thisFB->fontOffset=0;
+	if(button->fontOffset<=0)
+		button->fontOffset=0;
 
-	if(thisFB->fontOffset>=(thisFB->maxFonts-MAXPREVIEW))
-		thisFB->fontOffset=thisFB->maxFonts-MAXPREVIEW;
+	if(button->fontOffset>=(button->maxFonts-MAXPREVIEW))
+		button->fontOffset=button->maxFonts-MAXPREVIEW;
 
-	thisFB->setNavSensitive();
+	button->setNavSensitive();
 
 //font select buttons
 	for(int j=0;j<MAXPREVIEW;j++)
 		{
-			thisFB->previews[j]->LFSTK_setFontString(thisFB->fontsAZ[j+thisFB->fontOffset]);
-			thisFB->previews[j]->LFSTK_setLabel(thisFB->fontsAZ[j+thisFB->fontOffset]);
-			thisFB->previews[j]->LFSTK_clearWindow();
+			button->previews[j]->LFSTK_setFontString(button->fontsAZ[j+button->fontOffset]);
+			button->previews[j]->LFSTK_setLabel(button->fontsAZ[j+button->fontOffset]);
+			button->previews[j]->LFSTK_clearWindow();
 		}
 	return(true);
 }
 
+void LFSTK_fontButtonClass::updateDialog(bool fonts)
+{	
+	const char	*boldstr="";
+	const char	*italicstr="";
+	char		*fs;
+
+//	for(int j=0;j<MAXPREVIEW;j++)
+//		{
+//			this->previews[j]->LFSTK_setFontString(this->fontsAZ[j+this->tFontOffset]);
+//			this->previews[j]->LFSTK_setLabel(this->fontsAZ[j+this->tFontOffset]);
+//		}
+
+	if(this->toggleBold->LFSTK_getValue()==true)
+		boldstr=":bold";
+	if(this->toggleItalic->LFSTK_getValue()==true)
+		italicstr=":italic";
+
+	asprintf(&fs,"%s:size=%s%s%s",this->fontsAZ[this->fontNumber],this->fontSizeEdit->LFSTK_getBuffer()->c_str(),boldstr,italicstr);
+	previewEdit->LFSTK_setFontString(fs);
+	previewEdit->LFSTK_clearWindow();
+
+	free(fs);
+}
+
 bool LFSTK_fontButtonClass::selectFontCB(void *object,void* userdata)
 {
-	LFSTK_gadgetClass	*gadg=LFSTKGADGET(object);
-	thisFB->currentFont=GETUSERDATA(userdata)+thisFB->fontOffset;
-	thisFB->buildFontString(true);
+	LFSTK_fontButtonClass	*fb;
+	unsigned				data;
+	dialogData				*d=(dialogData*)userdata;
+
+	data=d->userData;
+	fb=static_cast<LFSTK_fontButtonClass*>(d->mainObject);
+
+	fb->fontNumber=data+fb->fontOffset;
+	fb->updateDialog(false);
+
 	return(true);
 }
 
@@ -274,8 +316,8 @@ void LFSTK_fontButtonClass::parseFontString(const char *fontstr)
 	char	*string=strdup(fontstr);
 	char	*str;
 
-	this->LFSTK_setBold(false);
-	this->LFSTK_setItalic(false);
+	this->bold=false;
+	this->italic=false;
 
 	str=strtok(string,":");
 	while(1)
@@ -285,12 +327,12 @@ void LFSTK_fontButtonClass::parseFontString(const char *fontstr)
 				break;
 			if(strcasecmp(str,"bold")==0)
 				{
-					this->LFSTK_setBold(true);
+					this->bold=true;
 					found=true;
 				}
 			if(strcasecmp(str,"italic")==0)
 				{
-					this->LFSTK_setItalic(true);
+					this->italic=true;
 					found=true;
 				}
 			if(strcasestr(str,"size=")!=NULL)
@@ -300,16 +342,17 @@ void LFSTK_fontButtonClass::parseFontString(const char *fontstr)
 					this->fontSize=strndup(&str[5],strlen(str)-5);
 					found=true;
 				}
+
 			if(found==false)
 				{
-					if(this->currentFontName!=NULL)
-						free(this->currentFontName);
-					this->currentFontName=strdup(str);
+					if(this->fontName!=NULL)
+						free(this->fontName);
+					this->fontName=strdup(str);
 					for(int j=0;j<this->maxFonts;j++)
 						{
-							if(strcasecmp(this->fontsAZ[j],this->currentFontName)==0)
+							if(strcasecmp(this->fontsAZ[j],this->fontName)==0)
 								{
-									this->currentFont=j;
+									this->fontNumber=j;
 									break;
 								}
 						}
@@ -320,30 +363,12 @@ void LFSTK_fontButtonClass::parseFontString(const char *fontstr)
 }
 
 /**
-* Set current font bold
-* \param bool bold
-*/
-void LFSTK_fontButtonClass::LFSTK_setBold(bool bold)
-{
-	this->isBold=bold;
-}
-
-/**
-* Set current font italic
-* \param bool italic
-*/
-void LFSTK_fontButtonClass::LFSTK_setItalic(bool italic)
-{
-	this->isItalic=italic;
-}
-
-/**
 * Get current boldness
 * \return boldness
 */
 bool LFSTK_fontButtonClass::LFSTK_getBold(void)
 {
-	return(this->isBold);
+	return(this->bold);
 }
 
 /**
@@ -352,7 +377,7 @@ bool LFSTK_fontButtonClass::LFSTK_getBold(void)
 */
 bool LFSTK_fontButtonClass::LFSTK_getItalic(void)
 {
-	return(this->isItalic);
+	return(this->italic);
 }
 
 /**
@@ -362,19 +387,7 @@ bool LFSTK_fontButtonClass::LFSTK_getItalic(void)
 */
 const char* LFSTK_fontButtonClass::LFSTK_getFontString(void)
 {
-	return(this->finalFont);
-}
-
-/**
-* Set font string
-* \param const char* fs font description string
-*/
-void LFSTK_fontButtonClass::LFSTK_setFontDesription(const char* fs)
-{
-	if(this->finalFont!=NULL)
-		free(this->finalFont);
-	this->finalFont=strdup(fs);
-	this->parseFontString(fs);
+	return(this->fontDesc);
 }
 
 /**
@@ -384,7 +397,7 @@ void LFSTK_fontButtonClass::LFSTK_setFontDesription(const char* fs)
 */
 const char* LFSTK_fontButtonClass::LFSTK_getFontSize(void)
 {
-	return(static_cast<const char*>(this->fontSizeEdit->LFSTK_getBuffer()->c_str()));
+	return(static_cast<const char*>(this->fontSize));
 }
 
 /**
@@ -413,9 +426,13 @@ void LFSTK_fontButtonClass::LFSTK_showDialog(const char *fs)
 	lfstkfontstr=this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEFONT);
 	lfstkfontstruct=this->wc->globalLib->LFSTK_loadFont(this->display,this->screen,lfstkfontstr);
 
-	this->parseFontString(fs);
+	if(this->fontDesc!=NULL)
+		free(this->fontDesc);
+	this->fontDesc=strdup(fs);
 
-	this->fontOffset=this->currentFont;
+	this->parseFontString(this->fontDesc);
+	this->fontOffset=this->fontNumber;
+
 	if(this->fontOffset>(this->maxFonts-MAXPREVIEW))
 		this->fontOffset=this->maxFonts-MAXPREVIEW;
 
@@ -429,29 +446,42 @@ void LFSTK_fontButtonClass::LFSTK_showDialog(const char *fs)
 					this->previews[j]=new LFSTK_buttonClass(this->dialog,this->fontsAZ[j+this->fontOffset],DBORDER,buttony,DWIDTH-(DBORDER*2),DBUTTONHITE,NorthWestGravity);
 					this->previews[j]->LFSTK_setColourName(INACTIVECOLOUR,"white");
 					this->previews[j]->LFSTK_setFontColourName(INACTIVECOLOUR,"black");
-					this->previews[j]->LFSTK_setCallBack(NULL,selectFontCB,USERDATA((j)));
+					this->previewData[j].mainObject=this;
+					this->previewData[j].userData=j;
+					this->previews[j]->LFSTK_setCallBack(NULL,selectFontCB,(void*)(&this->previewData[j]));
 					buttony+=DBUTTONHITE+DGAP;
 				}
-
 //style buttons
 			gadgetwidth=this->wc->globalLib->LFSTK_getTextwidth(this->display,lfstkfontstruct->data,"Bold")+DBUTTONHITE;
 			this->toggleBold=new LFSTK_toggleButtonClass(this->dialog,"Bold",DBORDER,buttony,gadgetwidth,DBUTTONHITE,NorthWestGravity);
-			this->toggleBold->LFSTK_setCallBack(NULL,styleCB,USERDATA(DBOLD));
+			this->buttonData[DBOLD].mainObject=this;
+			this->buttonData[DBOLD].userData=DBOLD;
+			this->toggleBold->LFSTK_setCallBack(NULL,styleCB,DIALOGDATA(buttonData[DBOLD]));
 			gadgetwidth=this->wc->globalLib->LFSTK_getTextwidth(this->display,lfstkfontstruct->data,"Italic")+DBUTTONHITE;
 			this->toggleItalic=new LFSTK_toggleButtonClass(this->dialog,"Italic",DBORDER+DBUTTONWIDTH+DGAP,buttony,gadgetwidth,DBUTTONHITE,NorthWestGravity);
-			this->toggleItalic->LFSTK_setCallBack(NULL,styleCB,USERDATA(DITALIC));
+			this->buttonData[DITALIC].mainObject=this;
+			this->buttonData[DITALIC].userData=DITALIC;
+			this->toggleItalic->LFSTK_setCallBack(NULL,styleCB,DIALOGDATA(buttonData[DITALIC]));
 
 //navigate
 //line up/down
 			this->buttonUp=new LFSTK_buttonClass(this->dialog,"↑",DWIDTH-DBORDER-(DBUTTONWIDTH/4),buttony,DBUTTONWIDTH/4,DBUTTONHITE,NorthEastGravity);
-			this->buttonUp->LFSTK_setCallBack(NULL,scrollCB,USERDATA(DUP));
+			this->buttonData[DUP].mainObject=this;
+			this->buttonData[DUP].userData=DUP;
+			buttonUp->LFSTK_setCallBack(NULL,scrollCB,DIALOGDATA(buttonData[DUP]));
 			buttonDown=new LFSTK_buttonClass(this->dialog,"↓",DWIDTH-DBORDER-((DBUTTONWIDTH/4)*2)-DGAP,buttony,DBUTTONWIDTH/4,DBUTTONHITE,NorthEastGravity);
-			buttonDown->LFSTK_setCallBack(NULL,scrollCB,USERDATA(DDOWN));
+			this->buttonData[DDOWN].mainObject=this;
+			this->buttonData[DDOWN].userData=DDOWN;
+			buttonDown->LFSTK_setCallBack(NULL,scrollCB,DIALOGDATA(buttonData[DDOWN]));
 //page home/end
 			buttonHome=new LFSTK_buttonClass(this->dialog,"⇤",DWIDTH-DBORDER-((DBUTTONWIDTH/4)*3)-DGAP*2,buttony,DBUTTONWIDTH/4,DBUTTONHITE,NorthEastGravity);
-			buttonHome->LFSTK_setCallBack(NULL,scrollCB,USERDATA(DHOME));
+			this->buttonData[DHOME].mainObject=this;
+			this->buttonData[DHOME].userData=DHOME;
+			buttonHome->LFSTK_setCallBack(NULL,scrollCB,DIALOGDATA(buttonData[DHOME]));
 			buttonEnd=new LFSTK_buttonClass(this->dialog,"⇥",DWIDTH-DBORDER-((DBUTTONWIDTH/4)*4)-DGAP*3,buttony,DBUTTONWIDTH/4,DBUTTONHITE,NorthEastGravity);
-			buttonEnd->LFSTK_setCallBack(NULL,scrollCB,USERDATA(DEND));
+			this->buttonData[DEND].mainObject=this;
+			this->buttonData[DEND].userData=DEND;
+			buttonEnd->LFSTK_setCallBack(NULL,scrollCB,DIALOGDATA(buttonData[DEND]));
 			buttony+=DBUTTONHITE+DGAP;
 
 //size
@@ -466,9 +496,13 @@ void LFSTK_fontButtonClass::LFSTK_showDialog(const char *fs)
 
 //dialog buttons
 			button=new LFSTK_buttonClass(this->dialog,"Cancel",DBORDER,DHITE-DBORDER-DBUTTONHITE,DBUTTONWIDTH,DBUTTONHITE,SouthWestGravity);
-			button->LFSTK_setCallBack(NULL,dialogCB,USERDATA(DCANCEL));
+			this->buttonData[DCANCEL].mainObject=this;
+			this->buttonData[DCANCEL].userData=DCANCEL;
+			button->LFSTK_setCallBack(NULL,dialogCB,(void*)(&this->buttonData[DCANCEL]));
 			button=new LFSTK_buttonClass(this->dialog,"Apply",DWIDTH-DBORDER-DBUTTONWIDTH,DHITE-DBORDER-DBUTTONHITE,DBUTTONWIDTH,DBUTTONHITE,SouthEastGravity);
-			button->LFSTK_setCallBack(NULL,dialogCB,USERDATA(DAPPLY));
+			this->buttonData[DAPPLY].mainObject=this;
+			this->buttonData[DAPPLY].userData=DAPPLY;
+			button->LFSTK_setCallBack(NULL,dialogCB,(void*)(&this->buttonData[DAPPLY]));
 		}
 
 	for(int j=0;j<MAXPREVIEW;j++)
@@ -476,20 +510,20 @@ void LFSTK_fontButtonClass::LFSTK_showDialog(const char *fs)
 			this->previews[j]->LFSTK_setFontString(this->fontsAZ[j+this->fontOffset]);
 			this->previews[j]->LFSTK_setLabel(this->fontsAZ[j+this->fontOffset]);
 		}
-	this->toggleBold->LFSTK_setValue(this->isBold);
-	this->toggleItalic->LFSTK_setValue(this->isItalic);
+
+	this->toggleBold->LFSTK_setValue(this->bold);
+	this->toggleItalic->LFSTK_setValue(this->italic);
+	this->fontSizeEdit->LFSTK_setBuffer(this->fontSize);
 	previewEdit->LFSTK_setFontString(fs);
-	if(this->holdFont!=NULL)
-		free(this->holdFont);
-	this->holdFont=strdup(fs);
+	this->updateDialog(false);
 
 	this->setNavSensitive();
 	this->dialog->LFSTK_showWindow();
 	this->dialog->LFSTK_setKeepAbove(true);
 	this->dialog->LFSTK_setTransientFor(this->wc->window);
 
-	mainLoop=true;
-	while(mainLoop==true)
+	this->mainLoop=true;
+	while(this->mainLoop==true)
 		{
 			XNextEvent(this->dialog->display,&event);
 			mappedListener *ml=this->dialog->LFSTK_getMappedListener(event.xany.window);
@@ -500,7 +534,7 @@ void LFSTK_fontButtonClass::LFSTK_showDialog(const char *fs)
 				{
 				case KeyRelease:
 					if(ml->gadget==this->fontSizeEdit)
-						buildFontString(true);
+						this->updateDialog(true);
 					break;
 					case LeaveNotify:
 						break;
@@ -516,7 +550,7 @@ void LFSTK_fontButtonClass::LFSTK_showDialog(const char *fs)
 					case SelectionNotify:
 						{
 							if(event.xclient.message_type==XInternAtom(this->dialog->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(this->dialog->display, "WM_DELETE_WINDOW", 1))
-							mainLoop=false;
+							this->mainLoop=false;
 						}
 						break;
 				}
