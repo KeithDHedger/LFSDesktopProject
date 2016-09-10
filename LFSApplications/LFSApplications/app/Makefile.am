@@ -16,9 +16,7 @@ lfspanelprefs_SOURCES = ../src/lfspanelprefs.cpp
 
 lfsabout_SOURCES = ../src/lfsabout.cpp
 
-lfsfontselect_SOURCES = ../src/lfsfontselect.cpp
-
 man1_MANS = ../resources/man/lfsapplications.1
 
-bin_PROGRAMS = lfstkprefs lfswmprefs lfsdesktopprefs lfsappearance lfsbackdropprefs lfspanelprefs lfsabout lfsfontselect
+bin_PROGRAMS = lfstkprefs lfswmprefs lfsdesktopprefs lfsappearance lfsbackdropprefs lfspanelprefs lfsabout
 

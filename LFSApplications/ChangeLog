@@ -1,4 +1,6 @@
 0.1.2
+Removed lfsfontselect app as font button is now in lfstk.
+Redone prefs to use new fontselector button from lfstk.
 Tidied up wmprefs and fontselector.
 --window option added to apps to set transient window for.
 Lfsappearance now handles sub dialogs properly. 

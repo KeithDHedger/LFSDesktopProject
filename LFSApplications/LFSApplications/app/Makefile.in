@@ -89,7 +89,7 @@ POST_UNINSTALL = :
 bin_PROGRAMS = lfstkprefs$(EXEEXT) lfswmprefs$(EXEEXT) \
 	lfsdesktopprefs$(EXEEXT) lfsappearance$(EXEEXT) \
 	lfsbackdropprefs$(EXEEXT) lfspanelprefs$(EXEEXT) \
-	lfsabout$(EXEEXT) lfsfontselect$(EXEEXT)
+	lfsabout$(EXEEXT)
 subdir = LFSApplications/app
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -115,9 +115,6 @@ lfsbackdropprefs_LDADD = $(LDADD)
 am_lfsdesktopprefs_OBJECTS = ../src/lfsdesktopprefs.$(OBJEXT)
 lfsdesktopprefs_OBJECTS = $(am_lfsdesktopprefs_OBJECTS)
 lfsdesktopprefs_LDADD = $(LDADD)
-am_lfsfontselect_OBJECTS = ../src/lfsfontselect.$(OBJEXT)
-lfsfontselect_OBJECTS = $(am_lfsfontselect_OBJECTS)
-lfsfontselect_LDADD = $(LDADD)
 am_lfspanelprefs_OBJECTS = ../src/lfspanelprefs.$(OBJEXT)
 lfspanelprefs_OBJECTS = $(am_lfspanelprefs_OBJECTS)
 lfspanelprefs_LDADD = $(LDADD)
@@ -158,12 +155,12 @@ am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(lfsabout_SOURCES) $(lfsappearance_SOURCES) \
 	$(lfsbackdropprefs_SOURCES) $(lfsdesktopprefs_SOURCES) \
-	$(lfsfontselect_SOURCES) $(lfspanelprefs_SOURCES) \
-	$(lfstkprefs_SOURCES) $(lfswmprefs_SOURCES)
+	$(lfspanelprefs_SOURCES) $(lfstkprefs_SOURCES) \
+	$(lfswmprefs_SOURCES)
 DIST_SOURCES = $(lfsabout_SOURCES) $(lfsappearance_SOURCES) \
 	$(lfsbackdropprefs_SOURCES) $(lfsdesktopprefs_SOURCES) \
-	$(lfsfontselect_SOURCES) $(lfspanelprefs_SOURCES) \
-	$(lfstkprefs_SOURCES) $(lfswmprefs_SOURCES)
+	$(lfspanelprefs_SOURCES) $(lfstkprefs_SOURCES) \
+	$(lfswmprefs_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -338,7 +335,6 @@ lfsappearance_SOURCES = ../src/lfsappearance.cpp
 lfsbackdropprefs_SOURCES = ../src/lfsbackdropprefs.cpp
 lfspanelprefs_SOURCES = ../src/lfspanelprefs.cpp
 lfsabout_SOURCES = ../src/lfsabout.cpp
-lfsfontselect_SOURCES = ../src/lfsfontselect.cpp
 man1_MANS = ../resources/man/lfsapplications.1
 all: all-am
 
@@ -446,12 +442,6 @@ lfsbackdropprefs$(EXEEXT): $(lfsbackdropprefs_OBJECTS) $(lfsbackdropprefs_DEPEND
 lfsdesktopprefs$(EXEEXT): $(lfsdesktopprefs_OBJECTS) $(lfsdesktopprefs_DEPENDENCIES) $(EXTRA_lfsdesktopprefs_DEPENDENCIES) 
 	@rm -f lfsdesktopprefs$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(lfsdesktopprefs_OBJECTS) $(lfsdesktopprefs_LDADD) $(LIBS)
-../src/lfsfontselect.$(OBJEXT): ../src/$(am__dirstamp) \
-	../src/$(DEPDIR)/$(am__dirstamp)
-
-lfsfontselect$(EXEEXT): $(lfsfontselect_OBJECTS) $(lfsfontselect_DEPENDENCIES) $(EXTRA_lfsfontselect_DEPENDENCIES) 
-	@rm -f lfsfontselect$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(lfsfontselect_OBJECTS) $(lfsfontselect_LDADD) $(LIBS)
 ../src/lfspanelprefs.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
 
@@ -482,7 +472,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfsappearance.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfsbackdropprefs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfsdesktopprefs.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfsfontselect.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfspanelprefs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfstkprefs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfswmprefs.Po@am__quote@
