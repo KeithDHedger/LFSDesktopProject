@@ -29,11 +29,9 @@
 #define DBUTTONHITE 24
 #define DBUTTONWIDTH 72
 
-#define USERDATA(x) (void*)(long)x
 #define DIALOGDATA(x) (void*)(&this->x)
 
 #define LFSTKGADGET(x) static_cast<LFSTK_gadgetClass*>(x)
-#define GETUSERDATA(x) (long)x
 
 #define DPREVIEWTEXT "ABCDEFGHIJK abcdefghijk 0123456789"
 

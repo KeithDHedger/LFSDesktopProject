@@ -28,6 +28,9 @@
 #define DEFAULTFONT "sans:size=10"
 #define DISCLOSURESIZE 6
 
+#define USERDATA(x) (void*)(long)x
+#define GETUSERDATA(x) (long)x
+
 enum {LEFT=0,CENTRE,RIGHT};
 enum gadgetState {NORMALCOLOUR=0,PRELIGHTCOLOUR,ACTIVECOLOUR,INACTIVECOLOUR,MAXCOLOURS};
 
@@ -91,6 +94,7 @@ struct	mappedListener
 #include <lfstk/LFSTKLineEdit.h>
 #include <lfstk/LFSTKToggleButton.h>
 #include <lfstk/LFSTKFontButton.h>
+#include <lfstk/LFSTKListGadget.h>
 
 
 

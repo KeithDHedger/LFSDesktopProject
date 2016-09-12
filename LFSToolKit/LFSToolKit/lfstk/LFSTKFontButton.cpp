@@ -90,7 +90,6 @@ LFSTK_fontButtonClass::LFSTK_fontButtonClass(LFSTK_windowClass* parentwc,const c
 	this->italic=false;
 	this->fontNumber=0;
 	this->fontOffset=0;
-
 	this->fontDesc=NULL;
 }
 

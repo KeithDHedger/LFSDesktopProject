@@ -22,7 +22,7 @@ using namespace std;
 #include "lfstk/LFSTKGlobals.h"
 
 #define WIDTH			400
-#define HITE			650
+#define HITE			800
 #define HALF			WIDTH/2
 #define BWIDTH			96
 #define BHITE			24
@@ -50,6 +50,7 @@ menuItemStruct			*mainMenus;
 menuItemStruct			*mainMenusWithSubs;
 menuItemStruct			*subMenus;
 LFSTK_fontButtonClass	*fb;
+LFSTK_listGadgetClass	*list;
 
 const char				*mainMenuNames[]={"Menu 1","Menu 2","Menu 3","Menu 4","--","bool mainLoop=true;","menuItemStruct *mainMenus;","LFSTK_menuButtonClass *mb=NULL;"};
 const char				*subMenuNames[]={"Sub Menu 1","Sub Menu 2","Sub Menu 3","Sub Menu 4"};
@@ -105,6 +106,12 @@ bool menuCB(void *p,void* ud)
 		return(true);
 
 	printf("Selected Menu Label:%s\n",menuitem->label);
+	return(true);
+}
+
+bool select(void *object,void* ud)
+{
+	printf("List item=%i\n",static_cast<LFSTK_listGadgetClass*>(object)->LFSTK_getCurrentListItem());
 	return(true);
 }
 
@@ -249,10 +256,15 @@ int main(int argc, char **argv)
 	fb->LFSTK_setCallBack(NULL,fontCB,USERDATA(100));
 	fb->LFSTK_setLabelIsFont(true);
 	sy+=BHITE+12;
-	fb=new LFSTK_fontButtonClass(wc,"Select Font 2",BORDER,sy,BWIDTH*2,BHITE,BGRAV);
-	fb->LFSTK_setCallBack(NULL,fontCB,USERDATA(200));
-	fb->LFSTK_setLabelIsFont(true);
-	sy+=BHITE+12;
+//	fb=new LFSTK_fontButtonClass(wc,"Select Font 2",BORDER,sy,BWIDTH*2,BHITE,BGRAV);
+//	fb->LFSTK_setCallBack(NULL,fontCB,USERDATA(200));
+//	fb->LFSTK_setLabelIsFont(true);
+
+//list
+	const char	*lst[]={"item1","item2","item 3","item 4","xxx","2122345","last item"};
+	list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,BWIDTH*3,BHITE*5,BGRAV,(char**)&lst,7);
+	list->LFSTK_setCallBack(NULL,select,NULL);
+	sy+=BHITE*6;
 
 //line edit
 	le=new LFSTK_lineEditClass(wc,"Hello World",BORDER,sy,BWIDTH*2,BHITE,BGRAV);
@@ -269,7 +281,11 @@ int main(int argc, char **argv)
 			XNextEvent(wc->display,&event);
 			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
 			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
+				{
+					ml->function(ml->gadget,&event,ml->type);
+					//ml->gadget->LFSTK_clearWindow();
+					list->LFSTK_clearWindow();
+				}
 
 			switch(event.type)
 				{
@@ -277,10 +293,12 @@ int main(int argc, char **argv)
 						break;
 					case Expose:
 						wc->LFSTK_clearWindow();
+						list->LFSTK_clearWindow();
 						break;
 
 					case ConfigureNotify:
 						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
+						list->LFSTK_clearWindow();
 						break;
 
 					case ClientMessage:
