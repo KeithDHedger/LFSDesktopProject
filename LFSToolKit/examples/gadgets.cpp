@@ -264,11 +264,11 @@ int main(int argc, char **argv)
 //	fb->LFSTK_setLabelIsFont(true);
 
 //list
-	const char	*lst[]={"item1","item2","item 3","item 4","xxx","2122345","last item"};
+	const char	*lst[]={"item 1","item 2","item 3","item 4","item 5","item 6","abc","def","ghi","jkl","123","456","789","101112","last item"};
 ///	const char	*lst[]={"item1","item2","item 3"};
 	//list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,BWIDTH*3,BHITE*5,BGRAV,(char**)&lst,3);
 	list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,BWIDTH*3,BHITE*5,BGRAV,NULL,0);
-	list->LFSTK_setList((char**)&lst,7);
+	list->LFSTK_setList((char**)&lst,15);
 	list->LFSTK_setCallBack(NULL,select,NULL);
 	sy+=BHITE*6;
 

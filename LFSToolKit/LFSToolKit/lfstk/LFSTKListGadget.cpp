@@ -112,6 +112,7 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 					this->labels[j]->LFSTK_setActive(false);
 				}
 		}
+	this->setNavSensitive();
 }
 
 bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
@@ -128,7 +129,7 @@ bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
 	switch(data)
 		{
 			case LUP:
-				start--;
+				start-=list->maxShowing;
 				if(start<0)
 					list->listOffset=0;
 				else
@@ -136,19 +137,55 @@ bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
 				
 				break;
 			case LDOWN:
-				start++;
+				start+=list->maxShowing;
+				
 				if((start+list->maxShowing) > (list->listCnt-list->maxShowing))
 					list->listOffset=list->listCnt-list->maxShowing;
 				else
 					list->listOffset=start;
 				break;
+
+			case LHOME:
+				list->listOffset=0;
+				break;
+			case LEND:
+				list->listOffset=list->listCnt-list->maxShowing;
+				break;
 		}
+
+	list->setNavSensitive();
 
 	for(int j=0;j<list->maxShowing;j++)
 		{
 			list->labels[j]->LFSTK_setLabel(list->listStrings[j+list->listOffset]);
 			list->data[j].userData=j+list->listOffset;
 		}
+	return(true);
+}
+
+void LFSTK_listGadgetClass::setNavSensitive(void)
+{
+	this->buttonDown->LFSTK_setActive(true);
+	this->buttonUp->LFSTK_setActive(true);
+	this->buttonHome->LFSTK_setActive(true);
+	this->buttonEnd->LFSTK_setActive(true);
+
+	if(this->listOffset<=0)
+		{
+			this->buttonUp->LFSTK_setActive(false);
+			this->buttonHome->LFSTK_setActive(false);
+		}
+
+	if(this->listOffset>=this->listCnt-this->maxShowing)
+		{
+			this->buttonDown->LFSTK_setActive(false);
+			this->buttonEnd->LFSTK_setActive(false);
+		}
+
+	this->buttonDown->LFSTK_clearWindow();
+	this->buttonUp->LFSTK_clearWindow();
+	this->buttonHome->LFSTK_clearWindow();
+	this->buttonEnd->LFSTK_clearWindow();
 }
 
 /**
@@ -223,6 +260,15 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 			this->scrollData[LDOWN].mainObject=this;
 			this->scrollData[LDOWN].userData=LDOWN;
 			buttonDown->LFSTK_setCallBack(NULL,scrollCB,SCROLLDATA(LDOWN));
+//page/updown
+			this->buttonHome=new LFSTK_buttonClass(parentwc,"⇤",this->x+this->w+LGAP,this->y+NAVBUTTONSIZE+LGAP,NAVBUTTONSIZE,NAVBUTTONSIZE,NorthEastGravity);
+			this->scrollData[LHOME].mainObject=this;
+			this->scrollData[LHOME].userData=LHOME;
+			buttonHome->LFSTK_setCallBack(NULL,scrollCB,SCROLLDATA(LHOME));
+			buttonEnd=new LFSTK_buttonClass(parentwc,"⇥",this->x+this->w+LGAP,this->y+this->h-(NAVBUTTONSIZE*2)-LGAP,NAVBUTTONSIZE,NAVBUTTONSIZE,NorthEastGravity);
+			this->scrollData[LEND].mainObject=this;
+			this->scrollData[LEND].userData=LEND;
+			buttonEnd->LFSTK_setCallBack(NULL,scrollCB,SCROLLDATA(LEND));
 
 	this->style=BEVELIN;
 }

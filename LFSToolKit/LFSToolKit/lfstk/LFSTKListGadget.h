@@ -59,6 +59,7 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		LFSTK_buttonClass	*buttonHome;
 		LFSTK_buttonClass	*buttonEnd;
 		void 				setCurrentItem(int item);
+		void				setNavSensitive(void);
 
 		static bool			select(void *object,void* userdata);
 		static bool			scrollCB(void *object,void* userdata);
