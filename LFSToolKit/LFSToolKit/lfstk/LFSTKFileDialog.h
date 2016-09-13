@@ -23,4 +23,13 @@
 #define _LFSTKFILEDIALOG_
 
 
+
+class LFSTK_fileDialogClass  : public  LFSTK_gadgetClass
+{
+	public:
+		~LFSTK_fileDialogClass();
+		LFSTK_fileDialogClass(Window parent,const char *label,const char *startdir);
+	private:
+};
+
 #endif

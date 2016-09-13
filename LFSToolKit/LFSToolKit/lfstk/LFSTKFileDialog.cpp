@@ -17,4 +17,16 @@
  * You should have received a copy of the GNU General Public License
  * along with LFSToolKit.  If not, see <http://www.gnu.org/licenses/>.
  */
+ 
+#include <unistd.h>
+#include <stdlib.h>
 
+#include "LFSTKGlobals.h"
+
+LFSTK_fileDialogClass::~LFSTK_fileDialogClass(void)
+{
+}
+
+LFSTK_fileDialogClass::LFSTK_fileDialogClass(Window parent,const char *label,const char *startdir)
+{
+}

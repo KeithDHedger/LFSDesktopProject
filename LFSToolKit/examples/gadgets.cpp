@@ -51,6 +51,7 @@ menuItemStruct			*mainMenusWithSubs;
 menuItemStruct			*subMenus;
 LFSTK_fontButtonClass	*fb;
 LFSTK_listGadgetClass	*list;
+LFSTK_buttonClass		*filebutton;
 
 const char				*mainMenuNames[]={"Menu 1","Menu 2","Menu 3","Menu 4","--","bool mainLoop=true;","menuItemStruct *mainMenus;","LFSTK_menuButtonClass *mb=NULL;"};
 const char				*subMenuNames[]={"Sub Menu 1","Sub Menu 2","Sub Menu 3","Sub Menu 4"};
@@ -115,6 +116,12 @@ bool select(void *object,void* ud)
 	printf("List item=%i\n",static_cast<LFSTK_listGadgetClass*>(object)->LFSTK_getCurrentListItem());
 	printf("List item 2 string=%s\n",static_cast<LFSTK_listGadgetClass*>(object)->LFSTK_getListString(2));
 	printf("Selected List item string=%s\n",static_cast<LFSTK_listGadgetClass*>(object)->LFSTK_getListString(-1));
+	return(true);
+}
+
+bool selectfile(void *object,void* ud)
+{
+	printf("Select file\n");
 	return(true);
 }
 
@@ -265,12 +272,15 @@ int main(int argc, char **argv)
 
 //list
 	const char	*lst[]={"item 1","item 2","item 3","item 4","item 5","item 6","abc","def","ghi","jkl","123","456","789","101112","last item"};
-///	const char	*lst[]={"item1","item2","item 3"};
-	//list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,BWIDTH*3,BHITE*5,BGRAV,(char**)&lst,3);
 	list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,BWIDTH*3,BHITE*5,BGRAV,NULL,0);
 	list->LFSTK_setList((char**)&lst,15);
 	list->LFSTK_setCallBack(NULL,select,NULL);
 	sy+=BHITE*6;
+
+//select file
+	filebutton=new LFSTK_buttonClass(wc,"Select File",BORDER,sy,BWIDTH,BHITE,BGRAV);
+	filebutton->LFSTK_setCallBack(NULL,selectfile,NULL);
+	sy+=BHITE+12;
 
 //line edit
 	le=new LFSTK_lineEditClass(wc,"Hello World",BORDER,sy,BWIDTH*2,BHITE,BGRAV);
