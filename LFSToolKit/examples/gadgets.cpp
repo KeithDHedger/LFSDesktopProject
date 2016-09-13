@@ -111,7 +111,10 @@ bool menuCB(void *p,void* ud)
 
 bool select(void *object,void* ud)
 {
+
 	printf("List item=%i\n",static_cast<LFSTK_listGadgetClass*>(object)->LFSTK_getCurrentListItem());
+	printf("List item 2 string=%s\n",static_cast<LFSTK_listGadgetClass*>(object)->LFSTK_getListString(2));
+	printf("Selected List item string=%s\n",static_cast<LFSTK_listGadgetClass*>(object)->LFSTK_getListString(-1));
 	return(true);
 }
 
@@ -262,7 +265,10 @@ int main(int argc, char **argv)
 
 //list
 	const char	*lst[]={"item1","item2","item 3","item 4","xxx","2122345","last item"};
-	list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,BWIDTH*3,BHITE*5,BGRAV,(char**)&lst,7);
+///	const char	*lst[]={"item1","item2","item 3"};
+	//list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,BWIDTH*3,BHITE*5,BGRAV,(char**)&lst,3);
+	list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,BWIDTH*3,BHITE*5,BGRAV,NULL,0);
+	list->LFSTK_setList((char**)&lst,7);
 	list->LFSTK_setCallBack(NULL,select,NULL);
 	sy+=BHITE*6;
 
