@@ -1,4 +1,5 @@
 0.2.0
+Added home/end buttons to list gadget.
 list gadget now usable and in examples/gadgets.cpp.
 Adding list gadget to toolkit.
 Fixed segfault if no size in font description string.

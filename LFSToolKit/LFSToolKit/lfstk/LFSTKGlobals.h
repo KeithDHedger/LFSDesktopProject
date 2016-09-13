@@ -95,6 +95,7 @@ struct	mappedListener
 #include <lfstk/LFSTKToggleButton.h>
 #include <lfstk/LFSTKFontButton.h>
 #include <lfstk/LFSTKListGadget.h>
+#include <lfstk/LFSTKFileDialog.h>
 
 
 

@@ -26,6 +26,13 @@
 LFSTK_listGadgetClass::~LFSTK_listGadgetClass()
 {
 	delete this->data;
+	delete this->scrollData;
+	if(this->listStrings!=NULL)
+		{
+			for(int j=0;j<this->listCnt;j++)
+				free(this->listStrings[j]);
+			delete this->listStrings;
+		}
 }
 
 bool LFSTK_listGadgetClass::select(void *object,void* userdata)
