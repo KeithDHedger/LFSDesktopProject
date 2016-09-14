@@ -1,5 +1,6 @@
 0.2.0
-Satarted file selector dialog.
+Added images to list gadget.
+Started file selector dialog.
 Added home/end buttons to list gadget.
 list gadget now usable and in examples/gadgets.cpp.
 Adding list gadget to toolkit.

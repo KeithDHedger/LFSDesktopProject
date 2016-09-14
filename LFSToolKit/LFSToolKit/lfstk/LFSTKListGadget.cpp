@@ -33,6 +33,12 @@ LFSTK_listGadgetClass::~LFSTK_listGadgetClass()
 				free(this->listStrings[j]);
 			delete this->listStrings;
 		}
+	if(this->listImages!=NULL)
+		{
+			for(int j=0;j<this->listImageCnt;j++)
+				free(this->listImages[j]);
+			delete this->listImages;
+		}
 }
 
 bool LFSTK_listGadgetClass::select(void *object,void* userdata)
@@ -85,6 +91,33 @@ const char* LFSTK_listGadgetClass::LFSTK_getListString(int listnum)
 }
 
 /**
+* Set new image list.
+*
+* \param list char** list of strings.
+* \param numitems Number of items in list.
+* \note Strings are copied so list can be disposed of by caller.
+* \note image list MUST be set before setting list.
+*/
+void LFSTK_listGadgetClass::LFSTK_setImageList(char **list,unsigned numitems)
+{
+	if(this->listImages!=NULL)
+		{
+			for(int j=0;j<this->listImageCnt;j++)
+				if(this->listImages[j]!=NULL)
+					free(this->listImages[j]);
+			delete this->listImages;
+		}
+
+	this->listImageCnt=numitems;
+	this->listImages=new char*[numitems];
+	for(int j=0;j<this->listImageCnt;j++)
+		if(list[j]!=NULL)
+			this->listImages[j]=strdup(list[j]);
+		else
+			this->listImages[j]=NULL;
+}
+
+/**
 * Set new list.
 *
 * \param list char** list of strings.
@@ -96,7 +129,8 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 	if(this->listStrings!=NULL)
 		{
 			for(int j=0;j<this->listCnt;j++)
-				free(this->listStrings[j]);
+				if(this->listStrings[j]!=NULL)
+					free(this->listStrings[j]);
 			delete this->listStrings;
 		}
 
@@ -104,7 +138,7 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 	this->listCnt=numitems;
 	for(int j=0;j<this->listCnt;j++)
 		this->listStrings[j]=strdup(list[j]);
-
+			
 	this->listOffset=0;
 	for(int j=0;j<this->maxShowing;j++)
 		{
@@ -112,6 +146,8 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 				{
 					this->labels[j]->LFSTK_setLabel(this->listStrings[j]);
 					this->labels[j]->LFSTK_setActive(true);
+					if((this->listImages!=NULL) && (this->listImages[j]!=NULL))
+						this->labels[j]->LFSTK_setImageFromPath(this->listImages[j],24,24);
 				}
 			else
 				{
@@ -231,7 +267,9 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 	this->scrollData=new listData[4];
 	this->listOffset=0;
 	this->listStrings=NULL;
+	this->listImages=NULL;
 	this->listCnt=0;
+	this->listImageCnt=0;
 
 	sx=x;
 	sy=y;

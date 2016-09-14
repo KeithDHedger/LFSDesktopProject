@@ -739,19 +739,26 @@ void LFSTK_gadgetClass::LFSTK_setIconFromPath(const char *file,int size)
 * \param w,h Size of image.
 */
 void LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int w,int h)
-{
-	this->image=NULL;
-
-	this->image=imlib_load_image_immediately_without_cache(file);
-	if(image!=NULL)
+{		
+	if(file==NULL)
 		{
-			this->imageWidth=w;
-			this->imageHeight=h;
-			this->useImage=true;
-			this->labelOffset=w+4;
+			this->useImage=false;
 		}
 	else
-		this->useImage=false;
+		{
+			this->image=NULL;
+
+			this->image=imlib_load_image_immediately_without_cache(file);
+			if(image!=NULL)
+				{
+					this->imageWidth=w;
+					this->imageHeight=h;
+					this->useImage=true;
+					this->labelOffset=w+4;
+				}
+			else
+				this->useImage=false;
+		}
 }
 
 /**

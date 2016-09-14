@@ -38,6 +38,7 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		int					LFSTK_getCurrentListItem(void);
 		const char			*LFSTK_getListString(int listnum);
 		void				LFSTK_setList(char **list,unsigned numitems);
+		void				LFSTK_setImageList(char **list,unsigned numitems);
 	private:
 		struct listData
 			{
@@ -45,7 +46,9 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 				unsigned				userData;
 			};
 		char				**listStrings;
+		char				**listImages;
 		unsigned			listCnt;
+		unsigned			listImageCnt;
 		int					currentItem;
 		unsigned			listOffset;
 
