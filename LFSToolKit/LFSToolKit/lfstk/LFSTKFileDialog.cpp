@@ -51,6 +51,7 @@ void LFSTK_fileDialogClass::getDirList(void)
 	if(dircnt>0)
 		{
 			this->dirList=new char*[dircnt];
+			this->dirImageList=new char*[dircnt];
 			asprintf(&command,"(cd %s ;find  -maxdepth 1 -mindepth 1 -type d| xargs -n 1 basename)",this->currentDir);
 			fp=popen(command, "r");
 			if(fp!=NULL)
@@ -60,6 +61,7 @@ void LFSTK_fileDialogClass::getDirList(void)
 							if(strlen(line)>0)
 								line[strlen(line)-1]=0;
 							this->dirList[cnt]=strdup(line);
+							this->dirImageList[cnt]=strdup(this->folderImage);
 							cnt++;
 						}
 					pclose(fp);
@@ -80,16 +82,17 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(Window parent,const char *label,con
 {
 	LFSTK_labelClass	*spacer;
 
-printf(">>>PDIR=%s<<<\n",LFSTKPIXMAPSDIR);
 	this->dirList=NULL;
 	this->currentDir=startdir;
 	this->list=NULL;
 	this->dirListCnt=0;
-
+	this->fileImage=LFSTKPIXMAPSDIR "/documents.png";
+	this->folderImage=LFSTKPIXMAPSDIR "/folder.png";
 	this->dialog=new LFSTK_windowClass(0,0,DWIDTH,DHITE,label,false);
 	this->getDirList();
 
 	this->list=new LFSTK_listGadgetClass(this->dialog,"list",FGAP,FGAP,FWIDTH-(FGAP*2)-FNAVBUTTONWID,FHITE-(FGAP*4)-(BUTTONHITE*2),NorthWestGravity,NULL,0);
+	this->list->LFSTK_setImageList(this->dirImageList,this->dirListCnt);
 	this->list->LFSTK_setList(this->dirList,this->dirListCnt);
 	spacer=new LFSTK_labelClass(this->dialog,"--",0,FHITE-(BUTTONHITE*2),FWIDTH,8,NorthWestGravity);
 
@@ -116,56 +119,50 @@ void LFSTK_fileDialogClass::LFSTK_showDialog(void)
 			this->dialog->LFSTK_setTransientFor(this->wc->window);
 			this->list->currentItem=-1;
 
-	this->mainLoop=true;
-	while(this->mainLoop==true)
-		{
-			XNextEvent(this->dialog->display,&event);
-			mappedListener *ml=this->dialog->LFSTK_getMappedListener(event.xany.window);
-			if(ml!=NULL)
+			this->mainLoop=true;
+			while(this->mainLoop==true)
 				{
-					ml->function(ml->gadget,&event,ml->type);
-				}
-
-			switch(event.type)
-				{
-				case ButtonRelease:
+					XNextEvent(this->dialog->display,&event);
+					mappedListener *ml=this->dialog->LFSTK_getMappedListener(event.xany.window);
 					if(ml!=NULL)
+						ml->function(ml->gadget,&event,ml->type);
+
+					switch(event.type)
 						{
-							if(ml->gadget==this->buttonApply)
+							case ButtonRelease:
+							if(ml!=NULL)
 								{
-									this->apply=true;
+									if(ml->gadget==this->buttonApply)
+										{
+											this->apply=true;
+											this->mainLoop=false;
+										}
+									if(ml->gadget==this->buttonCancel)
+										{
+											this->apply=false;
+											this->mainLoop=false;
+										}
+								}
+							break;
+
+							case Expose:
+								this->dialog->LFSTK_clearWindow();
+								break;
+
+							case ConfigureNotify:
+								this->dialog->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
+								break;
+
+							case ClientMessage:
+							case SelectionNotify:
+								{
+									if(event.xclient.message_type==XInternAtom(this->dialog->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(this->dialog->display, "WM_DELETE_WINDOW", 1))
 									this->mainLoop=false;
 								}
-							if(ml->gadget==this->buttonCancel)
-								{
-									this->apply=false;
-									this->mainLoop=false;
-								}
+								break;
 						}
-					break;
-
-					case Expose:
-						this->dialog->LFSTK_clearWindow();
-						break;
-
-					case ConfigureNotify:
-						this->dialog->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
-						break;
-
-					case ClientMessage:
-					case SelectionNotify:
-						{
-							if(event.xclient.message_type==XInternAtom(this->dialog->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(this->dialog->display, "WM_DELETE_WINDOW", 1))
-							this->mainLoop=false;
-						}
-						break;
 				}
+			this->dialog->LFSTK_hideWindow();
 		}
-
-	this->dialog->LFSTK_hideWindow();
-//	printf(">>selected num=%i<<<\n",this->list->LFSTK_getCurrentListItem());
-//	printf(">>selected label=%s<<<\n",this->list->LFSTK_getListString(this->list->LFSTK_getCurrentListItem()));
-		}
-
 }
 

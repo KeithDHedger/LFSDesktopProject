@@ -26,6 +26,7 @@
 #define SCROLLDATA(x) (void*)(&this->scrollData[x])
 #define LGAP 4
 #define	NAVBUTTONSIZE 16
+#define LICONSIZE 20
 
 enum {LUP=0,LDOWN,LHOME,LEND};
 

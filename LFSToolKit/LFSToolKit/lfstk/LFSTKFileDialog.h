@@ -28,6 +28,7 @@
 #define FGAP 4
 #define FNAVBUTTONWID 24
 #define FNAVBUTTONHITE 24
+#define FICONSIZE 22
 
 class LFSTK_fileDialogClass  : public  LFSTK_gadgetClass
 {
@@ -46,6 +47,8 @@ class LFSTK_fileDialogClass  : public  LFSTK_gadgetClass
 		const char			*currentDir;
 		bool				mainLoop;
 		bool				apply;
+		const char			*fileImage;
+		const char			*folderImage;
 
 		LFSTK_windowClass	*dialog;
 		void				getDirList(void);
