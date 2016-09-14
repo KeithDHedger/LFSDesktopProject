@@ -22,14 +22,35 @@
 #ifndef _LFSTKFILEDIALOG_
 #define _LFSTKFILEDIALOG_
 
-
+#define FWIDTH 600
+#define FHITE 400
+#define FBORDER 8
+#define FGAP 4
+#define FNAVBUTTONWID 24
+#define FNAVBUTTONHITE 24
 
 class LFSTK_fileDialogClass  : public  LFSTK_gadgetClass
 {
 	public:
-		~LFSTK_fileDialogClass();
-		LFSTK_fileDialogClass(Window parent,const char *label,const char *startdir);
+							~LFSTK_fileDialogClass();
+							LFSTK_fileDialogClass(Window parent,const char *label,const char *startdir);
+		void				LFSTK_showDialog(void);
+		bool				LFSTK_isValid(void);
+
+		LFSTK_listGadgetClass	*list;
 	private:
+		
+		char				**dirList;
+		char				**dirImageList;
+		unsigned			dirListCnt;
+		const char			*currentDir;
+		bool				mainLoop;
+		bool				apply;
+
+		LFSTK_windowClass	*dialog;
+		void				getDirList(void);
+		LFSTK_buttonClass	*buttonApply;
+		LFSTK_buttonClass	*buttonCancel;
 };
 
 #endif

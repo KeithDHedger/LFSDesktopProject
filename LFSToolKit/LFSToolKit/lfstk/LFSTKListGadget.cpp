@@ -44,13 +44,24 @@ LFSTK_listGadgetClass::~LFSTK_listGadgetClass()
 bool LFSTK_listGadgetClass::select(void *object,void* userdata)
 {
 	LFSTK_listGadgetClass	*list;
+	LFSTK_labelClass		*label;
+
 	listData				*d=(listData*)userdata;
 	unsigned				data;
+
+	label=static_cast<LFSTK_labelClass*>(object);
 
 	list=static_cast<LFSTK_listGadgetClass*>(d->mainObject);
 	data=d->userData;
 
 	list->setCurrentItem(data);
+	for(int j=0;j<list->maxShowing;j++)
+		{
+			list->labels[j]->LFSTK_setColourName(NORMALCOLOUR,"white");
+			list->labels[j]->LFSTK_clearWindow();
+		}
+	label->LFSTK_setColourName(NORMALCOLOUR,"grey");
+	label->LFSTK_clearWindow();
 
 	if(list->callback.releaseCallback!=NULL)
 		return(list->callback.releaseCallback(list,list->callback.userData));
@@ -208,6 +219,8 @@ bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
 
 void LFSTK_listGadgetClass::setNavSensitive(void)
 {
+	int fing;
+
 	this->buttonDown->LFSTK_setActive(true);
 	this->buttonUp->LFSTK_setActive(true);
 	this->buttonHome->LFSTK_setActive(true);
@@ -223,6 +236,18 @@ void LFSTK_listGadgetClass::setNavSensitive(void)
 		{
 			this->buttonDown->LFSTK_setActive(false);
 			this->buttonEnd->LFSTK_setActive(false);
+		}
+
+	fing=this->currentItem-this->listOffset;
+	for(int j=0;j<this->maxShowing;j++)
+		{
+			this->labels[j]->LFSTK_setColourName(NORMALCOLOUR,"white");
+			this->labels[j]->LFSTK_clearWindow();
+		}
+	if((fing>=0) && (fing<=this->maxShowing))
+		{
+			this->labels[fing]->LFSTK_setColourName(NORMALCOLOUR,"grey");
+			this->labels[fing]->LFSTK_clearWindow();
 		}
 
 	this->buttonDown->LFSTK_clearWindow();

@@ -128,17 +128,18 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pixfilesdir)" \
+am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(lfstkpxmapsdir)" \
+	"$(DESTDIR)$(pixfilesdir)" \
 	"$(DESTDIR)$(lfstoolkit_includedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 liblfstoolkit_la_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
-am__objects_1 = ../lfstk/LFSTKButton.lo ../lfstk/LFSTKFontButton.lo \
-	../lfstk/LFSTKGadget.lo ../lfstk/LFSTKImage.lo \
-	../lfstk/LFSTKLabel.lo ../lfstk/LFSTKLib.lo \
-	../lfstk/LFSTKLineEdit.lo ../lfstk/LFSTKListGadget.lo \
-	../lfstk/LFSTKMenuButton.lo ../lfstk/LFSTKToggleButton.lo \
-	../lfstk/LFSTKWindow.lo
+am__objects_1 = ../lfstk/LFSTKButton.lo ../lfstk/LFSTKFileDialog.lo \
+	../lfstk/LFSTKFontButton.lo ../lfstk/LFSTKGadget.lo \
+	../lfstk/LFSTKImage.lo ../lfstk/LFSTKLabel.lo \
+	../lfstk/LFSTKLib.lo ../lfstk/LFSTKLineEdit.lo \
+	../lfstk/LFSTKListGadget.lo ../lfstk/LFSTKMenuButton.lo \
+	../lfstk/LFSTKToggleButton.lo ../lfstk/LFSTKWindow.lo
 am_liblfstoolkit_la_OBJECTS = $(am__objects_1)
 liblfstoolkit_la_OBJECTS = $(am_liblfstoolkit_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -186,7 +187,7 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
-DATA = $(pixfiles_DATA)
+DATA = $(lfstkpxmaps_DATA) $(pixfiles_DATA)
 HEADERS = $(lfstoolkit_include_HEADERS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 # Read a list of newline-separated strings from the standard input,
@@ -364,13 +365,16 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 				-DPREFIX=\""${prefix}\"" \
 				-DDATADIR=\""${pkgdatadir}"\" \
 				-DSYSCONFDIR=\""${sysconfdir}/${PACKAGE}"\" \
-				-DLIBDIR=\""${libdir}/${PACKAGE}"\"
+				-DLIBDIR=\""${libdir}/${PACKAGE}"\" \
+				-DLFSTKPIXMAPSDIR=\""${pkgdatadir}/Pixmaps"\"
 
-COMMONSRC = ../lfstk/LFSTKButton.cpp ../lfstk/LFSTKFontButton.cpp ../lfstk/LFSTKGadget.cpp ../lfstk/LFSTKImage.cpp ../lfstk/LFSTKLabel.cpp ../lfstk/LFSTKLib.cpp ../lfstk/LFSTKLineEdit.cpp ../lfstk/LFSTKListGadget.cpp ../lfstk/LFSTKMenuButton.cpp ../lfstk/LFSTKToggleButton.cpp ../lfstk/LFSTKWindow.cpp
+COMMONSRC = ../lfstk/LFSTKButton.cpp ../lfstk/LFSTKFileDialog.cpp ../lfstk/LFSTKFontButton.cpp ../lfstk/LFSTKGadget.cpp ../lfstk/LFSTKImage.cpp ../lfstk/LFSTKLabel.cpp ../lfstk/LFSTKLib.cpp ../lfstk/LFSTKLineEdit.cpp ../lfstk/LFSTKListGadget.cpp ../lfstk/LFSTKMenuButton.cpp ../lfstk/LFSTKToggleButton.cpp ../lfstk/LFSTKWindow.cpp
 lib_LTLIBRARIES = liblfstoolkit.la
 liblfstoolkit_la_SOURCES = $(COMMONSRC)
 pixfilesdir = ${prefix}/share/pixmaps
-pixfiles_DATA = ../resources/pixmaps/*
+pixfiles_DATA = ../resources/pixmaps/*.png
+lfstkpxmapsdir = ${prefix}/share/LFSToolKit/Pixmaps
+lfstkpxmaps_DATA = ../resources/pixmaps/lfstkpngs/*.png
 lfstoolkit_includedir = $(includedir)/lfstk
 lfstoolkit_include_HEADERS = ../lfstk/LFSTK*.h
 all: all-am
@@ -450,6 +454,8 @@ clean-libLTLIBRARIES:
 	@: > ../lfstk/$(DEPDIR)/$(am__dirstamp)
 ../lfstk/LFSTKButton.lo: ../lfstk/$(am__dirstamp) \
 	../lfstk/$(DEPDIR)/$(am__dirstamp)
+../lfstk/LFSTKFileDialog.lo: ../lfstk/$(am__dirstamp) \
+	../lfstk/$(DEPDIR)/$(am__dirstamp)
 ../lfstk/LFSTKFontButton.lo: ../lfstk/$(am__dirstamp) \
 	../lfstk/$(DEPDIR)/$(am__dirstamp)
 ../lfstk/LFSTKGadget.lo: ../lfstk/$(am__dirstamp) \
@@ -483,6 +489,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKButton.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKFileDialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKFontButton.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKGadget.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKImage.Plo@am__quote@
@@ -524,6 +531,27 @@ mostlyclean-libtool:
 clean-libtool:
 	-rm -rf .libs _libs
 	-rm -rf ../lfstk/.libs ../lfstk/_libs
+install-lfstkpxmapsDATA: $(lfstkpxmaps_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(lfstkpxmaps_DATA)'; test -n "$(lfstkpxmapsdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(lfstkpxmapsdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(lfstkpxmapsdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(lfstkpxmapsdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(lfstkpxmapsdir)" || exit $$?; \
+	done
+
+uninstall-lfstkpxmapsDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(lfstkpxmaps_DATA)'; test -n "$(lfstkpxmapsdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(lfstkpxmapsdir)'; $(am__uninstall_files_from_dir)
 install-pixfilesDATA: $(pixfiles_DATA)
 	@$(NORMAL_INSTALL)
 	@list='$(pixfiles_DATA)'; test -n "$(pixfilesdir)" || list=; \
@@ -653,7 +681,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(LTLIBRARIES) $(DATA) $(HEADERS)
 installdirs:
-	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pixfilesdir)" "$(DESTDIR)$(lfstoolkit_includedir)"; do \
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(lfstkpxmapsdir)" "$(DESTDIR)$(pixfilesdir)" "$(DESTDIR)$(lfstoolkit_includedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -711,8 +739,8 @@ info: info-am
 
 info-am:
 
-install-data-am: install-lfstoolkit_includeHEADERS \
-	install-pixfilesDATA
+install-data-am: install-lfstkpxmapsDATA \
+	install-lfstoolkit_includeHEADERS install-pixfilesDATA
 
 install-dvi: install-dvi-am
 
@@ -758,8 +786,9 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-lfstoolkit_includeHEADERS \
-	uninstall-libLTLIBRARIES uninstall-pixfilesDATA
+uninstall-am: uninstall-lfstkpxmapsDATA \
+	uninstall-lfstoolkit_includeHEADERS uninstall-libLTLIBRARIES \
+	uninstall-pixfilesDATA
 
 .MAKE: install-am install-strip
 
@@ -770,13 +799,14 @@ uninstall-am: uninstall-lfstoolkit_includeHEADERS \
 	html-am info info-am install install-am install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
 	install-exec-am install-html install-html-am install-info \
-	install-info-am install-lfstoolkit_includeHEADERS \
-	install-libLTLIBRARIES install-man install-pdf install-pdf-am \
-	install-pixfilesDATA install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
+	install-info-am install-lfstkpxmapsDATA \
+	install-lfstoolkit_includeHEADERS install-libLTLIBRARIES \
+	install-man install-pdf install-pdf-am install-pixfilesDATA \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-am uninstall uninstall-am \
+	tags tags-am uninstall uninstall-am uninstall-lfstkpxmapsDATA \
 	uninstall-lfstoolkit_includeHEADERS uninstall-libLTLIBRARIES \
 	uninstall-pixfilesDATA
 

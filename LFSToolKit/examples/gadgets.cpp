@@ -112,7 +112,6 @@ bool menuCB(void *p,void* ud)
 
 bool select(void *object,void* ud)
 {
-
 	printf("List item=%i\n",static_cast<LFSTK_listGadgetClass*>(object)->LFSTK_getCurrentListItem());
 	printf("List item 2 string=%s\n",static_cast<LFSTK_listGadgetClass*>(object)->LFSTK_getListString(2));
 	printf("Selected List item string=%s\n",static_cast<LFSTK_listGadgetClass*>(object)->LFSTK_getListString(-1));
@@ -121,6 +120,15 @@ bool select(void *object,void* ud)
 
 bool selectfile(void *object,void* ud)
 {
+	LFSTK_fileDialogClass	*fc;
+
+	fc=new LFSTK_fileDialogClass(wc->window,"Select Dir","/home/keithhedger");
+	fc->LFSTK_showDialog();
+	if(fc->LFSTK_isValid()==true)
+		{
+			printf(">>sitem number=%i\n",fc->list->LFSTK_getCurrentListItem());
+			printf(">>sitem label=%s\n",fc->list->LFSTK_getListString(-1));
+		}
 	printf("Select file\n");
 	return(true);
 }

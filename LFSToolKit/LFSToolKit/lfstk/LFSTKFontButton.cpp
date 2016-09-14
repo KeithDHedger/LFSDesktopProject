@@ -104,11 +104,14 @@ void LFSTK_fontButtonClass::loadFontStrings(void)
 	line[0]=0;
 
 	asprintf(&command,"%s","fc-list : family|awk -F, '{print $1}'|sort -u|wc -l");
-	command=this->wc->globalLib->LFSTK_oneLiner("%s",command);
-	if(command==NULL)
+	out=this->wc->globalLib->LFSTK_oneLiner("%s",command);
+	if(out==NULL)
 		fontcnt=0;
 	else
-		fontcnt=atoi(command);
+		{
+			fontcnt=atoi(out);
+			free(out);
+		}
 
 	this->fontsAZ=new char*[fontcnt];
 	this->maxFonts=fontcnt;
