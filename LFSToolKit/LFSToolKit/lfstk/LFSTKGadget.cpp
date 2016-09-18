@@ -551,7 +551,6 @@ geometryStruct *LFSTK_gadgetClass::LFSTK_getGeom(void)
 */
 void LFSTK_gadgetClass::LFSTK_getGeom(geometryStruct *geom)
 {
-//	geometryStruct		*g=new geometryStruct;
 	XWindowAttributes	xwa;
 	int					x,y;
 	Window				child;

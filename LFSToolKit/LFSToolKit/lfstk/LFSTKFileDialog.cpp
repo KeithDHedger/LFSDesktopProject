@@ -78,7 +78,8 @@ void LFSTK_fileDialogClass::getFileList(void)
 	char		line[1024];
 	unsigned	cnt=0;
 
-	asprintf(&command,"(cd %s ;find  -maxdepth 1 -mindepth 1 -follow ! -type d| xargs -n 1 basename 2>/dev/null|wc -l)",this->currentDir);
+	asprintf(&command,"(cd %s ;find  -maxdepth 1 -mindepth 1 -follow ! -type d -print0 | xargs -0 -n 1 basename 2>/dev/null|sort|wc -l)",this->currentDir);
+	printf("command=%s\n",command);
 	out=this->wc->globalLib->LFSTK_oneLiner("%s",command);
 
 	if(out==NULL)
@@ -94,7 +95,7 @@ void LFSTK_fileDialogClass::getFileList(void)
 		{
 			this->fileList=new char*[filecnt];
 			this->fileImageList=new char*[filecnt];
-			asprintf(&command,"(cd %s ;find  -maxdepth 1 -mindepth 1 -follow ! -type d | xargs -n 1 basename 2>/dev/null)",this->currentDir);
+			asprintf(&command,"(cd %s ;find  -maxdepth 1 -mindepth 1 -follow ! -type d -print0 | xargs -0 -n 1 basename 2>/dev/null|sort)",this->currentDir);
 			fp=popen(command, "r");
 			if(fp!=NULL)
 				{
@@ -122,7 +123,7 @@ void LFSTK_fileDialogClass::getDirList(void)
 	char		line[1024];
 	unsigned	cnt=0;
 
-	asprintf(&command,"(cd %s ;find  -maxdepth 1 -mindepth 1 -follow -type d| xargs -n 1 basename 2>/dev/null|wc -l)",this->currentDir);
+	asprintf(&command,"(cd %s ;find  -maxdepth 1 -mindepth 1 -follow -type d -print0| xargs -0 -n 1 basename 2>/dev/null|sort|wc -l)",this->currentDir);
 //printf("command=%s\n",command);
 	out=this->wc->globalLib->LFSTK_oneLiner("%s",command);
 	if(out==NULL)
@@ -140,7 +141,7 @@ void LFSTK_fileDialogClass::getDirList(void)
 	this->dirList[cnt]=strdup("..");
 	this->dirImageList[cnt]=(char*)this->folderImage;
 	cnt++;
-	asprintf(&command,"(cd %s ;find  -maxdepth 1 -mindepth 1 -follow -type d| xargs -n 1 basename 2>/dev/null)",this->currentDir);
+	asprintf(&command,"(cd %s ;find  -maxdepth 1 -mindepth 1 -follow -type d -print0| xargs -0 -n 1 basename 2>/dev/null|sort)",this->currentDir);
 	fp=popen(command, "r");
 	if(fp!=NULL)
 		{

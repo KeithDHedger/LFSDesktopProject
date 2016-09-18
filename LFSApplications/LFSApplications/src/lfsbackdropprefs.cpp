@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <getopt.h>
+#include <libgen.h>
 
 #include <lfstk/LFSTKGlobals.h>
 
@@ -29,7 +30,7 @@ enum labels {BACKDROP=0,MAINCOLOUR,MONITORBACKDROP,LSPACER,NOMORELABELS};
 enum {EXIT=0,PRINT,APPLY,NOMOREGUIS};
 enum {STRETCHMODE=0,TILEMODE,CENTREMODE,SCALEDMODE,ZOOMEDMODE,NOMOREMODES};
 
-const char				*labelNames[]={"Main Backdrop","Root Colour","Monitor Backdrop","--"};
+const char				*labelNames[]={"Select File","Root Colour","Monitor Backdrop","--"};
 
 LFSTK_windowClass		*wc=NULL;
 LFSTK_lineEditClass		*backdropPath=NULL;
@@ -43,6 +44,7 @@ LFSTK_lineEditClass		*mainColourEdit=NULL;
 LFSTK_buttonClass		*guiButtons[NOMOREGUIS]={NULL,};
 LFSTK_labelClass		*labels[NOMORELABELS]={NULL,};
 LFSTK_menuButtonClass	*monitorNumber=NULL;
+LFSTK_buttonClass		*fileselect;
 
 bool					mainloop=true;
 int						bwidth=100;
@@ -123,6 +125,28 @@ void printMonitorData(bool tofile)
 
 	if((tofile==true) && (fd!=NULL))
 		fclose(fd);
+}
+
+bool selectfile(void *object,void* ud)
+{
+	char					*dir;
+	const char				*dirpath;
+	char					*filepath;
+
+	LFSTK_fileDialogClass	*fc;
+
+	dir=strdup(wallpaperPath);
+	dirpath=dirname(dir);
+	fc=new LFSTK_fileDialogClass(wc->window,"Select File",dirpath);
+	fc->LFSTK_showDialog();
+	if(fc->LFSTK_isValid()==true)
+		{
+			asprintf(&filepath,"%s/%s",fc->LFSTK_getCurrentDir(),fc->LFSTK_getCurrentFile());
+			backdropPath->LFSTK_setBuffer(filepath);
+			free(filepath);
+		}
+	free(dir);
+	return(true);
 }
 
 bool callback(void *p,void* ud)
@@ -307,7 +331,10 @@ int main(int argc, char **argv)
 
 	sx=col1;
 	sy=10;
-	labels[BACKDROP]=new LFSTK_labelClass(wc,labelNames[BACKDROP],sx,sy,bwidth,24,NorthWestGravity);
+	fileselect=new LFSTK_buttonClass(wc,"Select File",sx,sy,bwidth,24,NorthWestGravity);
+	fileselect->LFSTK_setCallBack(NULL,selectfile,NULL);
+
+//	labels[BACKDROP]=new LFSTK_labelClass(wc,labelNames[BACKDROP],sx,sy,bwidth,24,NorthWestGravity);
 	sx+=spacing;
 	backdropPath=new LFSTK_lineEditClass(wc,wallpaperPath,sx,sy,BIG,24,NorthWestGravity);
 
