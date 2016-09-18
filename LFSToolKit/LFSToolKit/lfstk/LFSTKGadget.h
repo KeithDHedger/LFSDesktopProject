@@ -86,10 +86,6 @@ class LFSTK_gadgetClass
 
 		geometryStruct *LFSTK_getGeom(void);
 		void LFSTK_getGeom(geometryStruct *geom);
-//		int				LFSTK_getX(void);
-//		int				LFSTK_getY(void);
-//		int				LFSTK_getW(void);
-//		int				LFSTK_getH(void);
 
 		LFSTK_windowClass	*wc;
 

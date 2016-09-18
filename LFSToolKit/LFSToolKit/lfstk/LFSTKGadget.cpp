@@ -559,12 +559,9 @@ void LFSTK_gadgetClass::LFSTK_getGeom(geometryStruct *geom)
 	XTranslateCoordinates(this->display,this->window,this->rootWindow,0,0,&geom->x,&geom->y,&child );
 	XGetWindowAttributes(this->display,this->window,&xwa);
 
-	//geom->x=x;
-	//geom->y=y;
 	geom->w=xwa.width;
 	geom->h=xwa.height;
 }
-
 
 /**
 * Reload global colours from main window.
