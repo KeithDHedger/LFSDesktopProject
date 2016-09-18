@@ -546,6 +546,27 @@ geometryStruct *LFSTK_gadgetClass::LFSTK_getGeom(void)
 }
 
 /**
+* Get gadget geometry.
+* \param geometry structure.
+*/
+void LFSTK_gadgetClass::LFSTK_getGeom(geometryStruct *geom)
+{
+//	geometryStruct		*g=new geometryStruct;
+	XWindowAttributes	xwa;
+	int					x,y;
+	Window				child;
+
+	XTranslateCoordinates(this->display,this->window,this->rootWindow,0,0,&geom->x,&geom->y,&child );
+	XGetWindowAttributes(this->display,this->window,&xwa);
+
+	//geom->x=x;
+	//geom->y=y;
+	geom->w=xwa.width;
+	geom->h=xwa.height;
+}
+
+
+/**
 * Reload global colours from main window.
 */
 void LFSTK_gadgetClass::LFSTK_reloadColours(void)

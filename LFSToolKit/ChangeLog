@@ -1,4 +1,5 @@
 0.2.0
+Overloaded LFSTK_getGeom to alow pasing a geom structure to be filled in.
 Finished file selector dialog.
 Fixe odd segfault when changing lists.
 Added file dialog icons.

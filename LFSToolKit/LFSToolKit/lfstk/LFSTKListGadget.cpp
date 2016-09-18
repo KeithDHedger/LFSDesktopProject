@@ -142,6 +142,8 @@ void LFSTK_listGadgetClass::LFSTK_setImageList(char **list,unsigned numitems)
 */
 void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 {
+	geometryStruct	geom;
+
 	if(this->listStrings!=NULL)
 		{
 			for(int j=0;j<this->listCnt;j++)
@@ -165,13 +167,19 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 					this->labels[j]->LFSTK_setLabel(this->listStrings[j]);
 					this->labels[j]->LFSTK_setActive(true);
 					if((this->listImages!=NULL) && (this->listImages[j]!=NULL))
-						this->labels[j]->LFSTK_setImageFromPath(this->listImages[j],24,24);
+						{
+							this->labels[j]->LFSTK_getGeom(&geom);
+							this->labels[j]->LFSTK_setImageFromPath(this->listImages[j],geom.h,geom.h);
+						}
 				}
 			else
 				{
 					this->labels[j]->LFSTK_setLabel("");
 					this->labels[j]->LFSTK_setActive(false);
+					this->labels[j]->LFSTK_setImageFromPath(NULL,0,0);
+					
 				}
+			this->labels[j]->LFSTK_clearWindow();
 		}
 
 	this->setNavSensitive();

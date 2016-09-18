@@ -278,7 +278,10 @@ void LFSTK_fileDialogClass::LFSTK_showDialog(void)
 								if((event.xbutton.x_root>geomdir->x) && (event.xbutton.x_root<(geomdir->x+geomdir->w)) && (event.xbutton.y_root>geomdir->y) && (event.xbutton.y_root<(geomdir->y+geomdir->h)))
 									{
 										if((event.xbutton.time-lasttime<1000) && (event.xbutton.state & Button1Mask))
-											this->doOpenDir();
+											{
+												this->doOpenDir();
+												lasttime=event.xbutton.time-1000;
+											}
 										else
 											lasttime=event.xbutton.time;
 									}
@@ -287,13 +290,12 @@ void LFSTK_fileDialogClass::LFSTK_showDialog(void)
 									{
 										if((event.xbutton.time-lasttime<1000) && (event.xbutton.state & Button1Mask))
 											{
+												lasttime=event.xbutton.time-1000;
 												this->apply=true;
 												this->mainLoop=false;
 											}
 										else
-											{
-												lasttime=event.xbutton.time;
-											}
+											lasttime=event.xbutton.time;
 									}
 
 								if(ml!=NULL)
