@@ -122,12 +122,11 @@ bool selectfile(void *object,void* ud)
 {
 	LFSTK_fileDialogClass	*fc;
 
-	fc=new LFSTK_fileDialogClass(wc->window,"Select Dir","/home/keithhedger");
+	fc=new LFSTK_fileDialogClass(wc->window,"Select File","/home/keithhedger");
 	fc->LFSTK_showDialog();
 	if(fc->LFSTK_isValid()==true)
 		{
-			printf(">>sitem number=%i\n",fc->list->LFSTK_getCurrentListItem());
-			printf(">>sitem label=%s\n",fc->list->LFSTK_getListString(-1));
+			printf("Dir=%s/%s\n",fc->LFSTK_getCurrentDir(),fc->LFSTK_getCurrentFile());
 		}
 	printf("Select file\n");
 	return(true);

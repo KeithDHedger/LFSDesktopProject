@@ -33,27 +33,43 @@
 class LFSTK_fileDialogClass  : public  LFSTK_gadgetClass
 {
 	public:
-							~LFSTK_fileDialogClass();
-							LFSTK_fileDialogClass(Window parent,const char *label,const char *startdir);
-		void				LFSTK_showDialog(void);
-		bool				LFSTK_isValid(void);
+		~LFSTK_fileDialogClass();
+		LFSTK_fileDialogClass(Window parent,const char *label,const char *startdir);
 
-		LFSTK_listGadgetClass	*list;
+
+		void					LFSTK_showDialog(void);
+		bool					LFSTK_isValid(void);
+		const char				*LFSTK_getCurrentDir(void);
+		const char				*LFSTK_getCurrentFile(void);
+
 	private:
 		
-		char				**dirList;
-		char				**dirImageList;
-		unsigned			dirListCnt;
-		const char			*currentDir;
-		bool				mainLoop;
-		bool				apply;
-		const char			*fileImage;
-		const char			*folderImage;
+		char					**dirList;
+		char					**dirImageList;
+		char					**fileList;
+		char					**fileImageList;
+		unsigned				dirListCnt;
+		unsigned				fileListCnt;
+		char					*currentDir;
+		char					*currentFile;
+		bool					mainLoop;
+		bool					apply;
+		const char				*fileImage;
+		const char				*folderImage;
 
-		LFSTK_windowClass	*dialog;
-		void				getDirList(void);
-		LFSTK_buttonClass	*buttonApply;
-		LFSTK_buttonClass	*buttonCancel;
+		LFSTK_listGadgetClass	*dirListGadget;
+		LFSTK_listGadgetClass	*fileListGadget;
+		LFSTK_windowClass		*dialog;
+		LFSTK_buttonClass		*buttonApply;
+		LFSTK_buttonClass		*buttonCancel;
+		LFSTK_lineEditClass		*dirEdit;
+
+		void					getDirList(void);
+		void					getFileList(void);
+		void					freeDirList();
+		void					freeFileList();
+		void					cleanDirPath(void);
+		void					doOpenDir(void);
 };
 
 #endif

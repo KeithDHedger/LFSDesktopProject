@@ -53,14 +53,13 @@ bool LFSTK_listGadgetClass::select(void *object,void* userdata)
 
 	list=static_cast<LFSTK_listGadgetClass*>(d->mainObject);
 	data=d->userData;
-
 	list->setCurrentItem(data);
 	for(int j=0;j<list->maxShowing;j++)
 		{
 			list->labels[j]->LFSTK_setColourName(NORMALCOLOUR,"white");
 			list->labels[j]->LFSTK_clearWindow();
 		}
-	label->LFSTK_setColourName(NORMALCOLOUR,"grey");
+	label->LFSTK_setColourName(NORMALCOLOUR,label->LFSTK_getColourName(ACTIVECOLOUR));
 	label->LFSTK_clearWindow();
 
 	if(list->callback.releaseCallback!=NULL)
@@ -98,7 +97,13 @@ const char* LFSTK_listGadgetClass::LFSTK_getListString(int listnum)
 	if((listnum>0) && (listnum<this->listCnt))
 		return(listStrings[listnum]);
 	else
-		return(listStrings[this->currentItem]);
+		{
+			if(this->currentItem<0)
+				this->currentItem=0;
+			if(this->currentItem>=this->listCnt)
+				this->currentItem=this->listCnt-1;
+			return(listStrings[this->currentItem]);
+		}
 }
 
 /**
@@ -144,15 +149,17 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 					free(this->listStrings[j]);
 			delete this->listStrings;
 		}
-
 	this->listStrings=new char*[numitems];
 	this->listCnt=numitems;
 	for(int j=0;j<this->listCnt;j++)
 		this->listStrings[j]=strdup(list[j]);
 			
 	this->listOffset=0;
+	this->currentItem=0;
+
 	for(int j=0;j<this->maxShowing;j++)
 		{
+			this->data[j].userData=j;
 			if(j<this->listCnt)
 				{
 					this->labels[j]->LFSTK_setLabel(this->listStrings[j]);
@@ -166,6 +173,7 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 					this->labels[j]->LFSTK_setActive(false);
 				}
 		}
+
 	this->setNavSensitive();
 }
 
@@ -241,12 +249,16 @@ void LFSTK_listGadgetClass::setNavSensitive(void)
 	fing=this->currentItem-this->listOffset;
 	for(int j=0;j<this->maxShowing;j++)
 		{
-			this->labels[j]->LFSTK_setColourName(NORMALCOLOUR,"white");
-			this->labels[j]->LFSTK_clearWindow();
+			if(j<this->listCnt)
+				{
+					this->labels[j]->LFSTK_setColourName(NORMALCOLOUR,"white");
+					this->labels[j]->LFSTK_clearWindow();
+				}
 		}
-	if((fing>=0) && (fing<=this->maxShowing))
+
+	if((fing>=0) && (fing<this->maxShowing))
 		{
-			this->labels[fing]->LFSTK_setColourName(NORMALCOLOUR,"grey");
+			this->labels[fing]->LFSTK_setColourName(NORMALCOLOUR,this->labels[fing]->LFSTK_getColourName(ACTIVECOLOUR));
 			this->labels[fing]->LFSTK_clearWindow();
 		}
 
@@ -288,7 +300,7 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 	ml->type=BUTTONGADGET;
 	this->wc->LFSTK_addMappedListener(this->window,ml);
 
-	this->currentItem=-1;
+	this->currentItem=0;
 	this->scrollData=new listData[4];
 	this->listOffset=0;
 	this->listStrings=NULL;
