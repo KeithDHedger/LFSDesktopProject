@@ -30,7 +30,7 @@ enum labels {BACKDROP=0,MAINCOLOUR,MONITORBACKDROP,LSPACER,NOMORELABELS};
 enum {EXIT=0,PRINT,APPLY,NOMOREGUIS};
 enum {STRETCHMODE=0,TILEMODE,CENTREMODE,SCALEDMODE,ZOOMEDMODE,NOMOREMODES};
 
-const char				*labelNames[]={"Select File","Root Colour","Monitor Backdrop","--"};
+const char				*labelNames[]={"Select File","Root Colour","Select File","--"};
 
 LFSTK_windowClass		*wc=NULL;
 LFSTK_lineEditClass		*backdropPath=NULL;
@@ -132,17 +132,27 @@ bool selectfile(void *object,void* ud)
 	char					*dir;
 	const char				*dirpath;
 	char					*filepath;
-
+//monitorBackdropPath
 	LFSTK_fileDialogClass	*fc;
 
-	dir=strdup(wallpaperPath);
+	if(GETUSERDATA(ud)==100)
+		{
+			dir=strdup(wallpaperPath);
+		}
+	else
+		{
+			dir=strdup(monitorData[currentMonitor].monitorPath);
+		}
 	dirpath=dirname(dir);
 	fc=new LFSTK_fileDialogClass(wc->window,"Select File",dirpath);
 	fc->LFSTK_showDialog();
 	if(fc->LFSTK_isValid()==true)
 		{
 			asprintf(&filepath,"%s/%s",fc->LFSTK_getCurrentDir(),fc->LFSTK_getCurrentFile());
-			backdropPath->LFSTK_setBuffer(filepath);
+			if(GETUSERDATA(ud)==100)
+				backdropPath->LFSTK_setBuffer(filepath);
+			else
+				monitorBackdropPath->LFSTK_setBuffer(filepath);
 			free(filepath);
 		}
 	free(dir);
@@ -332,9 +342,8 @@ int main(int argc, char **argv)
 	sx=col1;
 	sy=10;
 	fileselect=new LFSTK_buttonClass(wc,"Select File",sx,sy,bwidth,24,NorthWestGravity);
-	fileselect->LFSTK_setCallBack(NULL,selectfile,NULL);
+	fileselect->LFSTK_setCallBack(NULL,selectfile,USERDATA(100));
 
-//	labels[BACKDROP]=new LFSTK_labelClass(wc,labelNames[BACKDROP],sx,sy,bwidth,24,NorthWestGravity);
 	sx+=spacing;
 	backdropPath=new LFSTK_lineEditClass(wc,wallpaperPath,sx,sy,BIG,24,NorthWestGravity);
 
@@ -390,7 +399,9 @@ int main(int argc, char **argv)
 
 	sx=col1;
 	sy+=vspacing;
-	labels[MONITORBACKDROP]=new LFSTK_labelClass(wc,labelNames[MONITORBACKDROP],sx,sy,bwidth,24,NorthWestGravity);
+//	labels[MONITORBACKDROP]=new LFSTK_labelClass(wc,labelNames[MONITORBACKDROP],sx,sy,bwidth,24,NorthWestGravity);
+	fileselect=new LFSTK_buttonClass(wc,labelNames[MONITORBACKDROP],sx,sy,bwidth,24,NorthWestGravity);
+	fileselect->LFSTK_setCallBack(NULL,selectfile,USERDATA(200));
 	sx+=spacing;
 	monitorBackdropPath=new LFSTK_lineEditClass(wc,monitorData[0].monitorPath,sx,sy,BIG,24,NorthWestGravity);
 

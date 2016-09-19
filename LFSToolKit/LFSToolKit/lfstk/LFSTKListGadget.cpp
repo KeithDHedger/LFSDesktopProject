@@ -170,6 +170,7 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 						{
 							this->labels[j]->LFSTK_getGeom(&geom);
 							this->labels[j]->LFSTK_setImageFromPath(this->listImages[j],geom.h,geom.h);
+							//this->labels[j]->LFSTK_setIconFromPath(this->listImages[j],geom.h);
 						}
 				}
 			else
@@ -177,6 +178,7 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 					this->labels[j]->LFSTK_setLabel("");
 					this->labels[j]->LFSTK_setActive(false);
 					this->labels[j]->LFSTK_setImageFromPath(NULL,0,0);
+					//this->labels[j]->LFSTK_setIconFromPath(NULL,0);
 					
 				}
 			this->labels[j]->LFSTK_clearWindow();
@@ -227,7 +229,18 @@ bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
 
 	for(int j=0;j<list->maxShowing;j++)
 		{
+		//if(list->listImages[j+list->listOffset]==NULL)
+		//printf("image num=%i path=NULL\n",j+list->listOffset);
+		//else
+		//printf("image num=%i path=%s\n",j+list->listOffset,list->listImages[j+list->listOffset]);
 			list->labels[j]->LFSTK_setLabel(list->listStrings[j+list->listOffset]);
+			list->labels[j]->LFSTK_setImageFromPath(list->listImages[j+list->listOffset],24,24);
+			//list->labels[j]->LFSTK_setIconFromPath(list->listImages[j+list->listOffset],24);
+			//list->labels[j]->LFSTK_setImageFromPath(list->listImages[j+list->listOffset],24,24);
+			list->labels[j]->LFSTK_clearWindow();
+
+//printf(">>%s<<\n",list->listImages[j+list->listOffset]);
+
 			list->data[j].userData=j+list->listOffset;
 		}
 	return(true);

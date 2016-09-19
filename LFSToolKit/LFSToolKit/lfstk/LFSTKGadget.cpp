@@ -46,11 +46,11 @@ LFSTK_gadgetClass::~LFSTK_gadgetClass()
 			imlib_free_image();
 		}
 
-	if(this->scaledImage!=NULL)
-		{
-			imlib_context_set_image(this->scaledImage);
-			imlib_free_image();
-		}
+//	if(this->scaledImage!=NULL)
+//		{
+//			imlib_context_set_image(this->scaledImage);
+//			imlib_free_image();
+//		}
 
 	XftColorFree(this->display,this->visual,this->cm,&(this->blackXftColour));
 	XftColorFree(this->display,this->visual,this->cm,&(this->whiteXftColour));
@@ -156,7 +156,7 @@ void LFSTK_gadgetClass::initGadget(void)
 	this->useTile=false;
 	this->useImage=false;
 	this->image=NULL;
-	this->scaledImage=NULL;
+//	this->scaledImage=NULL;
 	this->gadgetAcceptsDnD=false;
 }
 
@@ -474,13 +474,15 @@ void LFSTK_gadgetClass::LFSTK_drawLabel(int state)
 					imlib_context_set_display(this->display);
 					imlib_context_set_visual(this->visual);
 					imlib_context_set_colormap(this->cm);
-					if(this->scaledImage==NULL)
-						{
-							imlib_context_set_image(this->image);
-							this->scaledImage=imlib_create_cropped_scaled_image(0,0,imlib_image_get_width(),imlib_image_get_height(),this->imageWidth,this->imageHeight);
-						}
+					//if(this->scaledImage==NULL)
+					//	{
+							//imlib_context_set_image(this->image);
+							//this->scaledImage=imlib_create_cropped_scaled_image(0,0,imlib_image_get_width(),imlib_image_get_height(),this->imageWidth,this->imageHeight);
+							//this->image=imlib_create_cropped_scaled_image(0,0,imlib_image_get_width(),imlib_image_get_height(),this->imageWidth,this->imageHeight);
+					//	}
+					imlib_context_set_image(this->image);
+				//	imlib_context_set_image(this->scaledImage);
 					imlib_context_set_drawable(this->window);
-					imlib_context_set_image(this->scaledImage);
 					imlib_render_image_on_drawable(4,(this->h/2)-(this->imageHeight/2)); 
 				}
 		}
@@ -728,7 +730,15 @@ void LFSTK_gadgetClass::LFSTK_setIconFromPath(const char *file,int size)
 {
 	Imlib_Image	image=NULL;
 
-	image=imlib_load_image_immediately_without_cache(file);
+	if(file==NULL)
+		{
+			this->gotIcon=false;
+			this->freeOnDelete=false;
+			return;
+		}
+		
+	//image=imlib_load_image_immediately_without_cache(file);
+	image=imlib_load_image(file);
 	if(image!=NULL)
 		{
 			this->iconSize=size;
@@ -756,16 +766,28 @@ void LFSTK_gadgetClass::LFSTK_setIconFromPath(const char *file,int size)
 * \param w,h Size of image.
 */
 void LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int w,int h)
-{		
+{
+	Imlib_Image timage=NULL;
+
 	if(file==NULL)
 		{
 			this->useImage=false;
 		}
 	else
 		{
+			if(this->image!=NULL)
+				{
+					imlib_context_set_image(this->image);
+					imlib_free_image();
+				}
 			this->image=NULL;
+			this->useImage=false;
 
-			this->image=imlib_load_image_immediately_without_cache(file);
+			//this->image=imlib_load_image_immediately_without_cache(file);
+			timage=imlib_load_image_immediately_without_cache(file);
+			imlib_context_set_image(timage);
+			this->image=imlib_create_cropped_scaled_image(0,0,imlib_image_get_width(),imlib_image_get_height(),w,h);
+
 			if(image!=NULL)
 				{
 					this->imageWidth=w;
@@ -773,8 +795,8 @@ void LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int w,int h)
 					this->useImage=true;
 					this->labelOffset=w+4;
 				}
-			else
-				this->useImage=false;
+			imlib_context_set_image(timage);
+			imlib_free_image();
 		}
 }
 

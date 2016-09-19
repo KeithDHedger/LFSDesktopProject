@@ -77,9 +77,11 @@ void LFSTK_fileDialogClass::getFileList(void)
 	char		*out=NULL;
 	char		line[1024];
 	unsigned	cnt=0;
+	char		*imagepath;
 
+//printf("11111111111111111111\n");
 	asprintf(&command,"(cd %s ;find  -maxdepth 1 -mindepth 1 -follow ! -type d -print0 | xargs -0 -n 1 basename 2>/dev/null|sort|wc -l)",this->currentDir);
-	printf("command=%s\n",command);
+//	printf("command=%s\n",command);
 	out=this->wc->globalLib->LFSTK_oneLiner("%s",command);
 
 	if(out==NULL)
@@ -104,14 +106,31 @@ void LFSTK_fileDialogClass::getFileList(void)
 							if(strlen(line)>0)
 								line[strlen(line)-1]=0;
 							this->fileList[cnt]=strdup(line);
-							this->fileImageList[cnt]=(char*)this->fileImage;
+							if	(
+									(strcasecmp(&line[strlen(line)-4],".jpg")==0) ||
+									(strcasecmp(&line[strlen(line)-4],".png")==0) ||
+									(strcasecmp(&line[strlen(line)-4],".gif")==0) ||
+									(strcasecmp(&line[strlen(line)-5],".tiff")==0)
+								)
+								asprintf(&imagepath,"%s/%s",this->currentDir,line);
+							else
+								asprintf(&imagepath,"%s",(char*)this->fileImage);
+//							getpath(line,this->currentDir);
+							
+							//this->fileImageList[cnt]=(char*)this->folderImage;
+							//this->fileImageList[cnt]=(char*)"/home/keithhedger/.local/share/xfce4/backdrops/72177-gnome_xmas_1280.jpg";
+							this->fileImageList[cnt]=strdup(imagepath);
+							//printf(">>>>path=%s<<<\n",imagepath);
 							cnt++;
 						}
 					pclose(fp);
 				}
 			free(command);
 		}
+	//for(int j=0;j<this->maxShowing;j++)
+		//this->fileListGadget->LFSTK_clearWindow();
 	this->fileListCnt=filecnt;
+//	printf("%i\n",this->fileListCnt);
 }
 
 void LFSTK_fileDialogClass::getDirList(void)
@@ -276,6 +295,8 @@ void LFSTK_fileDialogClass::LFSTK_showDialog(void)
 					switch(event.type)
 						{
 							case ButtonRelease:
+							//for(int j=0;j<20;j++)
+								//printf("%s\n",this->fileImageList[j]);
 								if((event.xbutton.x_root>geomdir->x) && (event.xbutton.x_root<(geomdir->x+geomdir->w)) && (event.xbutton.y_root>geomdir->y) && (event.xbutton.y_root<(geomdir->y+geomdir->h)))
 									{
 										if((event.xbutton.time-lasttime<1000) && (event.xbutton.state & Button1Mask))

@@ -273,18 +273,28 @@ int main(int argc, char **argv)
 	fb->LFSTK_setCallBack(NULL,fontCB,USERDATA(100));
 	fb->LFSTK_setLabelIsFont(true);
 	sy+=BHITE+12;
-//	fb=new LFSTK_fontButtonClass(wc,"Select Font 2",BORDER,sy,BWIDTH*2,BHITE,BGRAV);
-//	fb->LFSTK_setCallBack(NULL,fontCB,USERDATA(200));
-//	fb->LFSTK_setLabelIsFont(true);
 
 //list
 	const char	*lst[]={"item 1","item 2","item 3","item 4","item 5","item 6","abc","def","ghi","jkl","123","456","789","101112","last item",};
 
-	const char	*images[]={"./computer.png",NULL,NULL,NULL,"./AspellGUI.png","./computer.png","./AspellGUI.png","./computer.png","./computer.png","./computer.png","./computer.png","./computer.png","./computer.png","./computer.png","./computer.png"};
+	const char	*images[]={"./computer.png",NULL,NULL,NULL,"./AspellGUI.png",NULL,"./AspellGUI.png","./computer.png","./computer.png","./computer.png","./computer.png","./computer.png","./computer.png","./audio-speakers.png","./computer.png"};
 	list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,BWIDTH*3,BHITE*5,BGRAV,NULL,0);
 	list->LFSTK_setImageList((char**)&images,15);
 	list->LFSTK_setList((char**)&lst,15);
 	list->LFSTK_setCallBack(NULL,select,NULL);
+
+//	sy+=BHITE*6;
+//
+//	const char	*lst2[]={"item 1","item 2","item 3","item 4","item 5","item 6","abc","def","ghi","jkl","123","456","789","101112","last item",};
+//
+//	const char	*images2[]={"./AspellGUI.png",NULL,NULL,NULL,"./AspellGUI.png",NULL,"./AspellGUI.png",NULL,"./computer.png","./computer.png","./AspellGUI.png","./computer.png","./computer.png","./computer.png","./computer.png"};
+//	list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,BWIDTH*3,BHITE*5,BGRAV,NULL,0);
+//	list->LFSTK_setImageList((char**)&images2,15);
+//	list->LFSTK_setList((char**)&lst2,15);
+//	list->LFSTK_setCallBack(NULL,select,NULL);
+
+
+
 	sy+=BHITE*6;
 
 //select file

@@ -102,7 +102,7 @@ class LFSTK_gadgetClass
 		bool				gadgetAcceptsDnD;
 	private:
 		void initGadget(void);
-		Imlib_Image			scaledImage;
+		//Imlib_Image			scaledImage;
 
 	protected:
 		void drawString(XftFont* font,int x,int y,int state,const char *s);
