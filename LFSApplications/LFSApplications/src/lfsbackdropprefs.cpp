@@ -144,8 +144,8 @@ bool selectfile(void *object,void* ud)
 			dir=strdup(monitorData[currentMonitor].monitorPath);
 		}
 	dirpath=dirname(dir);
-	fc=new LFSTK_fileDialogClass(wc->window,"Select File",dirpath);
-	fc->LFSTK_showDialog();
+	fc=new LFSTK_fileDialogClass(wc,"Select File",dirpath);
+	fc->LFSTK_showFileDialog();
 	if(fc->LFSTK_isValid()==true)
 		{
 			asprintf(&filepath,"%s/%s",fc->LFSTK_getCurrentDir(),fc->LFSTK_getCurrentFile());

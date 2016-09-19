@@ -52,6 +52,7 @@ menuItemStruct			*subMenus;
 LFSTK_fontButtonClass	*fb;
 LFSTK_listGadgetClass	*list;
 LFSTK_buttonClass		*filebutton;
+LFSTK_fileDialogClass	*filedialog;
 
 const char				*mainMenuNames[]={"Menu 1","Menu 2","Menu 3","Menu 4","--","bool mainLoop=true;","menuItemStruct *mainMenus;","LFSTK_menuButtonClass *mb=NULL;"};
 const char				*subMenuNames[]={"Sub Menu 1","Sub Menu 2","Sub Menu 3","Sub Menu 4"};
@@ -59,6 +60,7 @@ LFSTK_buttonClass		*quit=NULL;
 
 bool					mainLoop=true;
 int						iconSize=16;
+char					*wd;
 
 bool doQuit(void *p,void* ud)
 {
@@ -120,20 +122,17 @@ bool select(void *object,void* ud)
 
 bool selectfile(void *object,void* ud)
 {
-	LFSTK_fileDialogClass	*fc;
-	fc=new LFSTK_fileDialogClass(wc,"Select File","/home/keithhedger");
 	//fc=new LFSTK_fileDialogClass(wc->window,"Select File","/home/keithhedger");
-	fc->LFSTK_showFileDialog();
-printf("out\n");
-//return(true);
-	if(fc->LFSTK_isValid()==true)
+	filedialog->LFSTK_setWorkingDir(wd);
+	filedialog->LFSTK_showFileDialog();
+	if(filedialog->LFSTK_isValid()==true)
 		{
-			printf("Dir=%s/%s\n",fc->LFSTK_getCurrentDir(),fc->LFSTK_getCurrentFile());
+			printf("Dir=%s/%s\n",filedialog->LFSTK_getCurrentDir(),filedialog->LFSTK_getCurrentFile());
+			free(wd);
+			wd=strdup(filedialog->LFSTK_getCurrentDir());
 		}
 	printf("Select file\n");
 //TODO//
-	//delete fc;
-
 	return(true);
 }
 
@@ -144,6 +143,12 @@ int main(int argc, char **argv)
 	Pixmap	ic[2];
 	
 	wc=new LFSTK_windowClass(0,0,WIDTH,HITE,"Gadgets",false);
+	wd=strdup("/");
+	filedialog=new LFSTK_fileDialogClass(wc,"Select File",wd);
+
+//	LFSTK_fileDialogClass	*fc;
+//	fc=new LFSTK_fileDialogClass(wc,"Select File","/home/keithhedger");
+//fc->LFSTK_showFileDialog();
 
 	label=new LFSTK_labelClass(wc,"Available Gadgets",BORDER,sy,WIDTH-(BORDER*2),BHITE,BGRAV);
 	sy+=(BORDER*2);
@@ -357,5 +362,6 @@ int main(int argc, char **argv)
 		}
 
 	delete wc;
+	delete filedialog;
 	return 0;
 }

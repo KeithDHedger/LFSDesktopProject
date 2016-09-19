@@ -32,7 +32,7 @@
 #define FFILEHITE 8
 #define FDIRHITE 5
 
-class LFSTK_fileDialogClass  : public  LFSTK_gadgetClass
+class LFSTK_fileDialogClass
 {
 	public:
 		~LFSTK_fileDialogClass();
@@ -44,6 +44,7 @@ class LFSTK_fileDialogClass  : public  LFSTK_gadgetClass
 		bool					LFSTK_isValid(void);
 		const char				*LFSTK_getCurrentDir(void);
 		const char				*LFSTK_getCurrentFile(void);
+		void					LFSTK_setWorkingDir(const char *dir);
 
 	private:
 		
@@ -60,9 +61,10 @@ class LFSTK_fileDialogClass  : public  LFSTK_gadgetClass
 		const char				*fileImage;
 		const char				*folderImage;
 
+		LFSTK_windowClass		*wc;
+		LFSTK_windowClass		*dialog;
 		LFSTK_listGadgetClass	*dirListGadget;
 		LFSTK_listGadgetClass	*fileListGadget;
-		LFSTK_windowClass		*dialog;
 		LFSTK_buttonClass		*buttonApply;
 		LFSTK_buttonClass		*buttonCancel;
 		LFSTK_lineEditClass		*dirEdit;

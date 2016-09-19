@@ -20,6 +20,8 @@
  
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #include "LFSTKGlobals.h"
 
@@ -31,6 +33,7 @@ LFSTK_fileDialogClass::~LFSTK_fileDialogClass(void)
 		free(this->currentFile);
 	this->freeDirList();
 	this->freeFileList();
+//	delete this->dialog;
 }
 
 void LFSTK_fileDialogClass::cleanDirPath(void)
@@ -131,19 +134,21 @@ void LFSTK_fileDialogClass::getDirList(void)
 	char		*out=NULL;
 	char		line[1024];
 	unsigned	cnt=0;
+	int			retval=0;
+	struct stat		buf;
 
+	retval=stat(this->currentDir,&buf);
+	if(retval==-1)
+		{
+			if(this->currentDir!=NULL)
+				free(this->currentDir);
+			this->currentDir=strdup(getenv("HOME"));
+		}
 	asprintf(&command,"(cd \"%s\" 2>/dev/null;find  -maxdepth 1 -mindepth 1 -follow -type d -print0| xargs -0 -n 1 basename 2>/dev/null|sort|wc -l)",this->currentDir);
 	out=this->wc->globalLib->LFSTK_oneLiner("%s",command);
 	if(out==NULL)
 		{
-		//	free(command);
-		//	asprintf(&command,"(cd \"%s\" 2>/dev/null;find  -maxdepth 1 -mindepth 1 -follow -type d -print0| xargs -0 -n 1 basename 2>/dev/null|sort|wc -l)",getenv("HOME"));
-		//	out=this->wc->globalLib->LFSTK_oneLiner("%s",command);
-		//	free(this->currentDir);
-		//	this->currentDir=strdup(getenv("HOME"));
-		//	dircnt=atoi(out);
 			dircnt=0;
-//			free(out);
 		}
 	else
 		{
@@ -174,6 +179,31 @@ void LFSTK_fileDialogClass::getDirList(void)
 		}
 	free(command);
 	this->dirListCnt=dircnt;
+}
+
+/**
+* Set the working directory.
+*
+* \param const char *path to folder.
+* \note Don't free.
+*/
+void LFSTK_fileDialogClass::LFSTK_setWorkingDir(const char *dir)
+{
+	if(this->currentDir!=NULL)
+		free(this->currentDir);
+	this->currentDir=strdup(dir);
+	//this->doOpenDir();
+	this->cleanDirPath();
+//folders
+	this->getDirList();
+	this->dirListGadget->LFSTK_setImageList(this->dirImageList,this->dirListCnt);
+	this->dirListGadget->LFSTK_setList(this->dirList,this->dirListCnt);
+	this->dirEdit->LFSTK_setBuffer(this->currentDir);
+//files
+	this->getFileList();
+	this->fileListGadget->LFSTK_setImageList(this->fileImageList,this->fileListCnt);
+	this->fileListGadget->LFSTK_setList(this->fileList,this->fileListCnt);
+
 }
 
 /**
@@ -209,7 +239,7 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 //LFSTK_fileDialogClass::LFSTK_fileDialogClass(Window parentwc,const char *label,const char *startdir)
 {
 	LFSTK_labelClass	*spacer;
-	this->LFSTK_setCommon(parentwc,label,0,0,1,1,NorthWestGravity);
+	this->wc=parentwc;
 	this->dialog=NULL;
 	this->dirList=NULL;
 	this->dirImageList=NULL;
@@ -227,7 +257,7 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	this->dirListGadget=new LFSTK_listGadgetClass(this->dialog,"list",FGAP,FGAP,FWIDTH-(FGAP*2)-FNAVBUTTONWID,(BUTTONHITE*FDIRHITE),NorthWestGravity,NULL,0);
 	this->dirListGadget->LFSTK_setImageList(this->dirImageList,this->dirListCnt);
 	this->dirListGadget->LFSTK_setList(this->dirList,this->dirListCnt);
-	this->dirEdit=new LFSTK_lineEditClass(this->dialog,startdir,FGAP,(BUTTONHITE*FDIRHITE)+(2*FGAP),FWIDTH-(FGAP*2),BUTTONHITE,NorthWestGravity);
+	this->dirEdit=new LFSTK_lineEditClass(this->dialog,this->currentDir,FGAP,(BUTTONHITE*FDIRHITE)+(2*FGAP),FWIDTH-(FGAP*2),BUTTONHITE,NorthWestGravity);
 
 //file list
 	this->fileListGadget=new LFSTK_listGadgetClass(this->dialog,"list",FGAP,FGAP+(BUTTONHITE*FDIRHITE)+(2*FGAP)+BUTTONHITE,FWIDTH-(FGAP*2)-FNAVBUTTONWID,(BUTTONHITE*FFILEHITE),NorthWestGravity,NULL,0);
@@ -253,7 +283,7 @@ void LFSTK_fileDialogClass::doOpenDir(void)
 	char	*newdir;
 	asprintf(&newdir,"%s/%s",this->currentDir,this->dirListGadget->LFSTK_getListString(-1));
 	if(this->currentDir!=NULL)
-	free(this->currentDir);
+		free(this->currentDir);
 	this->currentDir=newdir;
 	this->cleanDirPath();
 //folders

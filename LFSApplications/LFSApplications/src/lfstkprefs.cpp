@@ -119,9 +119,9 @@ bool selectfile(void *object,void* ud)
 
 	dir=strdup(normaledits[GETUSERDATA(ud)]->LFSTK_getBuffer()->c_str());
 	dirpath=dirname(dir);
-	fc=new LFSTK_fileDialogClass(wc->window,"Select Window Tile","XX");
-return(true);
-	fc->LFSTK_showDialog();
+	fc=new LFSTK_fileDialogClass(wc,"Select Window Tile",dirpath);
+
+	fc->LFSTK_showFileDialog();
 	if(fc->LFSTK_isValid()==true)
 		{
 			asprintf(&filepath,"%s/%s",fc->LFSTK_getCurrentDir(),fc->LFSTK_getCurrentFile());
@@ -129,6 +129,7 @@ return(true);
 			free(filepath);
 		}
 	free(dir);
+	delete fc;
 	return(true);
 }
 
