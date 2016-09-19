@@ -29,6 +29,8 @@
 #define FNAVBUTTONWID 24
 #define FNAVBUTTONHITE 24
 #define FICONSIZE 22
+#define FFILEHITE 8
+#define FDIRHITE 5
 
 class LFSTK_fileDialogClass  : public  LFSTK_gadgetClass
 {

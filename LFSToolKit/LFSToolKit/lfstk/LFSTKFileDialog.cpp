@@ -79,9 +79,7 @@ void LFSTK_fileDialogClass::getFileList(void)
 	unsigned	cnt=0;
 	char		*imagepath;
 
-//printf("11111111111111111111\n");
 	asprintf(&command,"(cd %s ;find  -maxdepth 1 -mindepth 1 -follow ! -type d -print0 | xargs -0 -n 1 basename 2>/dev/null|sort|wc -l)",this->currentDir);
-//	printf("command=%s\n",command);
 	out=this->wc->globalLib->LFSTK_oneLiner("%s",command);
 
 	if(out==NULL)
@@ -115,22 +113,14 @@ void LFSTK_fileDialogClass::getFileList(void)
 								asprintf(&imagepath,"%s/%s",this->currentDir,line);
 							else
 								asprintf(&imagepath,"%s",(char*)this->fileImage);
-//							getpath(line,this->currentDir);
-							
-							//this->fileImageList[cnt]=(char*)this->folderImage;
-							//this->fileImageList[cnt]=(char*)"/home/keithhedger/.local/share/xfce4/backdrops/72177-gnome_xmas_1280.jpg";
 							this->fileImageList[cnt]=strdup(imagepath);
-							//printf(">>>>path=%s<<<\n",imagepath);
 							cnt++;
 						}
 					pclose(fp);
 				}
 			free(command);
 		}
-	//for(int j=0;j<this->maxShowing;j++)
-		//this->fileListGadget->LFSTK_clearWindow();
 	this->fileListCnt=filecnt;
-//	printf("%i\n",this->fileListCnt);
 }
 
 void LFSTK_fileDialogClass::getDirList(void)
@@ -143,7 +133,6 @@ void LFSTK_fileDialogClass::getDirList(void)
 	unsigned	cnt=0;
 
 	asprintf(&command,"(cd %s ;find  -maxdepth 1 -mindepth 1 -follow -type d -print0| xargs -0 -n 1 basename 2>/dev/null|sort|wc -l)",this->currentDir);
-//printf("command=%s\n",command);
 	out=this->wc->globalLib->LFSTK_oneLiner("%s",command);
 	if(out==NULL)
 		dircnt=0;
@@ -225,13 +214,13 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(Window parent,const char *label,con
 	this->getFileList();
 
 //folder list
-	this->dirListGadget=new LFSTK_listGadgetClass(this->dialog,"list",FGAP,FGAP,FWIDTH-(FGAP*2)-FNAVBUTTONWID,(BUTTONHITE*4),NorthWestGravity,NULL,0);
+	this->dirListGadget=new LFSTK_listGadgetClass(this->dialog,"list",FGAP,FGAP,FWIDTH-(FGAP*2)-FNAVBUTTONWID,(BUTTONHITE*FDIRHITE),NorthWestGravity,NULL,0);
 	this->dirListGadget->LFSTK_setImageList(this->dirImageList,this->dirListCnt);
 	this->dirListGadget->LFSTK_setList(this->dirList,this->dirListCnt);
-	this->dirEdit=new LFSTK_lineEditClass(this->dialog,startdir,FGAP,(BUTTONHITE*4)+(2*FGAP),FWIDTH-(FGAP*2),BUTTONHITE,NorthWestGravity);
+	this->dirEdit=new LFSTK_lineEditClass(this->dialog,startdir,FGAP,(BUTTONHITE*FDIRHITE)+(2*FGAP),FWIDTH-(FGAP*2),BUTTONHITE,NorthWestGravity);
 
 //file list
-	this->fileListGadget=new LFSTK_listGadgetClass(this->dialog,"list",FGAP,FGAP+(BUTTONHITE*5)+(2*FGAP),FWIDTH-(FGAP*2)-FNAVBUTTONWID,(BUTTONHITE*4),NorthWestGravity,NULL,0);
+	this->fileListGadget=new LFSTK_listGadgetClass(this->dialog,"list",FGAP,FGAP+(BUTTONHITE*FDIRHITE)+(2*FGAP)+BUTTONHITE,FWIDTH-(FGAP*2)-FNAVBUTTONWID,(BUTTONHITE*FFILEHITE),NorthWestGravity,NULL,0);
 	this->fileListGadget->LFSTK_setImageList(this->fileImageList,this->fileListCnt);
 	this->fileListGadget->LFSTK_setList(this->fileList,this->fileListCnt);
 
@@ -295,8 +284,6 @@ void LFSTK_fileDialogClass::LFSTK_showDialog(void)
 					switch(event.type)
 						{
 							case ButtonRelease:
-							//for(int j=0;j<20;j++)
-								//printf("%s\n",this->fileImageList[j]);
 								if((event.xbutton.x_root>geomdir->x) && (event.xbutton.x_root<(geomdir->x+geomdir->w)) && (event.xbutton.y_root>geomdir->y) && (event.xbutton.y_root<(geomdir->y+geomdir->h)))
 									{
 										if((event.xbutton.time-lasttime<1000) && (event.xbutton.state & Button1Mask))

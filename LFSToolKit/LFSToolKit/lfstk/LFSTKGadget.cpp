@@ -46,12 +46,6 @@ LFSTK_gadgetClass::~LFSTK_gadgetClass()
 			imlib_free_image();
 		}
 
-//	if(this->scaledImage!=NULL)
-//		{
-//			imlib_context_set_image(this->scaledImage);
-//			imlib_free_image();
-//		}
-
 	XftColorFree(this->display,this->visual,this->cm,&(this->blackXftColour));
 	XftColorFree(this->display,this->visual,this->cm,&(this->whiteXftColour));
 	XDestroyWindow(this->display,this->window);
@@ -156,7 +150,6 @@ void LFSTK_gadgetClass::initGadget(void)
 	this->useTile=false;
 	this->useImage=false;
 	this->image=NULL;
-//	this->scaledImage=NULL;
 	this->gadgetAcceptsDnD=false;
 }
 
@@ -218,25 +211,6 @@ void LFSTK_gadgetClass::LFSTK_setCallBack(bool (*downcb)(void *,void*),bool (*re
 	this->callback.userData=ud;
 	this->callback.ignoreCallback=false;
 }
-
-#if 0
-/**
-* Set callback for widget.
-* \param downcb Mouse down callback.
-* \param releasecb Mouse up callback.
-* \note Format for callback is "bool functioname(void *class,void *object,void* userdata)"
-* \note First param passed to callback is pointer to object.
-* \note Second param passed to callback is user data.
-*/
-void LFSTK_gadgetClass::LFSTK_setCallBack(bool (*downcb)(void*,void *,void*),bool (*releasecb)(void*,void *,void*),void* ud)
-{
-	this->callback.pressCallback=downcb;
-	this->callback.releaseCallback=releasecb;
-	this->callback.userData=ud;
-	this->callback.ignoreCallback=false;
-}
-
-#endif
 
 /**
 * Set gadget active state.
@@ -474,14 +448,7 @@ void LFSTK_gadgetClass::LFSTK_drawLabel(int state)
 					imlib_context_set_display(this->display);
 					imlib_context_set_visual(this->visual);
 					imlib_context_set_colormap(this->cm);
-					//if(this->scaledImage==NULL)
-					//	{
-							//imlib_context_set_image(this->image);
-							//this->scaledImage=imlib_create_cropped_scaled_image(0,0,imlib_image_get_width(),imlib_image_get_height(),this->imageWidth,this->imageHeight);
-							//this->image=imlib_create_cropped_scaled_image(0,0,imlib_image_get_width(),imlib_image_get_height(),this->imageWidth,this->imageHeight);
-					//	}
 					imlib_context_set_image(this->image);
-				//	imlib_context_set_image(this->scaledImage);
 					imlib_context_set_drawable(this->window);
 					imlib_render_image_on_drawable(4,(this->h/2)-(this->imageHeight/2)); 
 				}
@@ -783,7 +750,6 @@ void LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int w,int h)
 			this->image=NULL;
 			this->useImage=false;
 
-			//this->image=imlib_load_image_immediately_without_cache(file);
 			timage=imlib_load_image_immediately_without_cache(file);
 			imlib_context_set_image(timage);
 			this->image=imlib_create_cropped_scaled_image(0,0,imlib_image_get_width(),imlib_image_get_height(),w,h);
