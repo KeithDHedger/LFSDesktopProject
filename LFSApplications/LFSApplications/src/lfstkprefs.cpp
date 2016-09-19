@@ -22,13 +22,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <getopt.h>
+#include <libgen.h>
 
 #include <lfstk/LFSTKGlobals.h>
 
 enum {EXIT=0,APPLY,PRINT,NOMOREGBS};
 enum {NORMAL=0,PRELIGHT,ACTIVE,INACTIVE,MENUNORMAL,MENUPRELIGHT,MENUACTIVE,MENUINACTIVE,NOMOREBUTTONS};
 enum {ENORMAL=0,EPRELIGHT,EACTIVE,EINACTIVE,EFONTNORMAL,EFONTPRELIGHT,EFONTACTIVE,EFONTINACTIVE,EMENUNORMAL,EMENUPRELIGHT,EMENUACTIVE,EMENUINACTIVE,EMENUFONTNORMAL,EMENUFONTPRELIGHT,EMENUFONTACTIVE,EMENUFONTINACTIVE,EWINDOWCOLOUR,EFONTSTRING,EMENUFONTSTRING,EWINDOWTILE,EBUTTONTILE,EMENUITEMTILE,NOMOREBUTTONEDITS};
-enum {LNORMBUTTONS=0,LBACKCOLOUR,LFONTCOLOUR,LMENUBUTTONS,LMENUBACKCOLOUR,LMENUFONTCOLOUR,LWINDOWCOLOUR,LWINDOWTILE,LBUTTONTILE,LMENUITEMTILE,LSPACER,NOMORELABELS};
+enum {LNORMBUTTONS=0,LBACKCOLOUR,LFONTCOLOUR,LMENUBUTTONS,LMENUBACKCOLOUR,LMENUFONTCOLOUR,LWINDOWCOLOUR,LSPACER,NOMORELABELS};
+//LWINDOWTILE,LBUTTONTILE,LMENUITEMTILE,LSPACER,NOMORELABELS};
 
 LFSTK_windowClass		*wc;
 LFSTK_buttonClass		*guibuttons[NOMOREGBS]={NULL,};
@@ -37,12 +39,13 @@ LFSTK_lineEditClass 	*normaledits[NOMOREBUTTONEDITS]={NULL,};
 LFSTK_labelClass		*labels[NOMORELABELS]={NULL,};
 LFSTK_toggleButtonClass	*autocolour=NULL;
 LFSTK_toggleButtonClass	*usetheme=NULL;
+LFSTK_buttonClass		*getFileButton=NULL;
 
 bool					mainloop=false;
 int						parentWindow=-1;
 const char				*buttonnames[]={"Button Normal","Button Prelight","Button Active","Button Inactive","Menu Normal","Menu Prelight","Menu Active","Menu Inactive"};
 //const char				*labelnames[]={"Normal Buttons","Back Colour","Font Colour","Menu Items","Back Colour","Font Colour","Window Colour","Font","Menu Item Font","Window Tile","Button Tile","Menu Item Tile","--"};
-const char				*labelnames[]={"Normal Buttons","Back Colour","Font Colour","Menu Items","Back Colour","Font Colour","Window Colour","Window Tile","Button Tile","Menu Item Tile","--"};
+const char				*labelnames[]={"Normal Buttons","Back Colour","Font Colour","Menu Items","Back Colour","Font Colour","Window Colour","--","Button Tile","Menu Item Tile","--"};
 
 void setVars(void)
 {
@@ -104,6 +107,29 @@ void setVars(void)
 	usetheme->LFSTK_setFontColourName(NORMALCOLOUR,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEFONTCOLOUR));
 	usetheme->LFSTK_clearWindow();
 	
+}
+
+bool selectfile(void *object,void* ud)
+{
+	char					*dir;
+	const char				*dirpath;
+	char					*filepath;
+
+	LFSTK_fileDialogClass	*fc;
+
+	dir=strdup(normaledits[GETUSERDATA(ud)]->LFSTK_getBuffer()->c_str());
+	dirpath=dirname(dir);
+	fc=new LFSTK_fileDialogClass(wc->window,"Select Window Tile","XX");
+return(true);
+	fc->LFSTK_showDialog();
+	if(fc->LFSTK_isValid()==true)
+		{
+			asprintf(&filepath,"%s/%s",fc->LFSTK_getCurrentDir(),fc->LFSTK_getCurrentFile());
+			normaledits[GETUSERDATA(ud)]->LFSTK_setBuffer(filepath);
+			free(filepath);
+		}
+	free(dir);
+	return(true);
 }
 
 bool callback(void *p,void* ud)
@@ -320,16 +346,24 @@ int main(int argc, char **argv)
 	usetheme->LFSTK_setCallBack(NULL,callback,(void*)PRINT);
 	usetheme->LFSTK_setValue(wc->globalLib->LFSTK_getUseTheme());
 	sy+=vspacing;
-	labels[LWINDOWTILE]=new LFSTK_labelClass(wc,labelnames[LWINDOWTILE],cols[0],sy,bwidth,24,NorthWestGravity);
-	labels[LWINDOWTILE]->LFSTK_setLabelOriention(LEFT);
+
+//	labels[LWINDOWTILE]=new LFSTK_labelClass(wc,labelnames[LWINDOWTILE],cols[0],sy,bwidth,24,NorthWestGravity);
+//	labels[LWINDOWTILE]->LFSTK_setLabelOriention(LEFT);
+	getFileButton=new LFSTK_buttonClass(wc,"Window Tile",cols[0],sy,bwidth,24,NorthWestGravity);
+	getFileButton->LFSTK_setCallBack(NULL,selectfile,USERDATA(EWINDOWTILE));
 	normaledits[EWINDOWTILE]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),cols[1],sy,cols[3]-cols[1]-10,24,NorthWestGravity);
+
 	sy+=vspacing;
-	labels[LBUTTONTILE]=new LFSTK_labelClass(wc,labelnames[LBUTTONTILE],cols[0],sy,bwidth,24,NorthWestGravity);
-	labels[LBUTTONTILE]->LFSTK_setLabelOriention(LEFT);	
+//	labels[LBUTTONTILE]=new LFSTK_labelClass(wc,labelnames[LBUTTONTILE],cols[0],sy,bwidth,24,NorthWestGravity);
+//	labels[LBUTTONTILE]->LFSTK_setLabelOriention(LEFT);	
+	getFileButton=new LFSTK_buttonClass(wc,"Button Tile",cols[0],sy,bwidth,24,NorthWestGravity);
+	getFileButton->LFSTK_setCallBack(NULL,selectfile,USERDATA(EBUTTONTILE));
 	normaledits[EBUTTONTILE]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),cols[1],sy,cols[3]-cols[1]-10,24,NorthWestGravity);
 	sy+=vspacing;
-	labels[LMENUITEMTILE]=new LFSTK_labelClass(wc,labelnames[LMENUITEMTILE],cols[0],sy,bwidth,24,NorthWestGravity);
-	labels[LMENUITEMTILE]->LFSTK_setLabelOriention(LEFT);	
+//	labels[LMENUITEMTILE]=new LFSTK_labelClass(wc,labelnames[LMENUITEMTILE],cols[0],sy,bwidth,24,NorthWestGravity);
+//	labels[LMENUITEMTILE]->LFSTK_setLabelOriention(LEFT);	
+	getFileButton=new LFSTK_buttonClass(wc,"Menu Item Tile",cols[0],sy,bwidth,24,NorthWestGravity);
+	getFileButton->LFSTK_setCallBack(NULL,selectfile,USERDATA(EMENUITEMTILE));
 	normaledits[EMENUITEMTILE]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMTILE),cols[1],sy,cols[3]-cols[1]-10,24,NorthWestGravity);
 
 	sy+=vspacing;

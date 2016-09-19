@@ -79,7 +79,7 @@ void LFSTK_fileDialogClass::getFileList(void)
 	unsigned	cnt=0;
 	char		*imagepath;
 
-	asprintf(&command,"(cd %s ;find  -maxdepth 1 -mindepth 1 -follow ! -type d -print0 | xargs -0 -n 1 basename 2>/dev/null|sort|wc -l)",this->currentDir);
+	asprintf(&command,"(cd \"%s\" ;find  -maxdepth 1 -mindepth 1 -follow ! -type d -print0 | xargs -0 -n 1 basename 2>/dev/null|sort|wc -l)",this->currentDir);
 	out=this->wc->globalLib->LFSTK_oneLiner("%s",command);
 
 	if(out==NULL)
@@ -95,7 +95,7 @@ void LFSTK_fileDialogClass::getFileList(void)
 		{
 			this->fileList=new char*[filecnt];
 			this->fileImageList=new char*[filecnt];
-			asprintf(&command,"(cd %s ;find  -maxdepth 1 -mindepth 1 -follow ! -type d -print0 | xargs -0 -n 1 basename 2>/dev/null|sort)",this->currentDir);
+			asprintf(&command,"(cd \"%s\" ;find  -maxdepth 1 -mindepth 1 -follow ! -type d -print0 | xargs -0 -n 1 basename 2>/dev/null|sort)",this->currentDir);
 			fp=popen(command, "r");
 			if(fp!=NULL)
 				{
@@ -132,10 +132,19 @@ void LFSTK_fileDialogClass::getDirList(void)
 	char		line[1024];
 	unsigned	cnt=0;
 
-	asprintf(&command,"(cd %s ;find  -maxdepth 1 -mindepth 1 -follow -type d -print0| xargs -0 -n 1 basename 2>/dev/null|sort|wc -l)",this->currentDir);
+	asprintf(&command,"(cd \"%s\" 2>/dev/null;find  -maxdepth 1 -mindepth 1 -follow -type d -print0| xargs -0 -n 1 basename 2>/dev/null|sort|wc -l)",this->currentDir);
 	out=this->wc->globalLib->LFSTK_oneLiner("%s",command);
 	if(out==NULL)
-		dircnt=0;
+		{
+		//	free(command);
+		//	asprintf(&command,"(cd \"%s\" 2>/dev/null;find  -maxdepth 1 -mindepth 1 -follow -type d -print0| xargs -0 -n 1 basename 2>/dev/null|sort|wc -l)",getenv("HOME"));
+		//	out=this->wc->globalLib->LFSTK_oneLiner("%s",command);
+		//	free(this->currentDir);
+		//	this->currentDir=strdup(getenv("HOME"));
+		//	dircnt=atoi(out);
+			dircnt=0;
+//			free(out);
+		}
 	else
 		{
 			dircnt=atoi(out);
@@ -149,7 +158,7 @@ void LFSTK_fileDialogClass::getDirList(void)
 	this->dirList[cnt]=strdup("..");
 	this->dirImageList[cnt]=(char*)this->folderImage;
 	cnt++;
-	asprintf(&command,"(cd %s ;find  -maxdepth 1 -mindepth 1 -follow -type d -print0| xargs -0 -n 1 basename 2>/dev/null|sort)",this->currentDir);
+	asprintf(&command,"(cd \"%s\" 2>/dev/null ;find  -maxdepth 1 -mindepth 1 -follow -type d -print0| xargs -0 -n 1 basename 2>/dev/null|sort)",this->currentDir);
 	fp=popen(command, "r");
 	if(fp!=NULL)
 		{
@@ -196,10 +205,11 @@ const char	*LFSTK_fileDialogClass::LFSTK_getCurrentFile(void)
 * \param const char *label Displayed name.
 * \param const char *startdir Open dialog in this folder.
 */
-LFSTK_fileDialogClass::LFSTK_fileDialogClass(Window parent,const char *label,const char *startdir)
+LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const char *label,const char *startdir)
+//LFSTK_fileDialogClass::LFSTK_fileDialogClass(Window parentwc,const char *label,const char *startdir)
 {
 	LFSTK_labelClass	*spacer;
-
+	this->LFSTK_setCommon(parentwc,label,0,0,1,1,NorthWestGravity);
 	this->dialog=NULL;
 	this->dirList=NULL;
 	this->dirImageList=NULL;
@@ -257,7 +267,7 @@ void LFSTK_fileDialogClass::doOpenDir(void)
 	this->fileListGadget->LFSTK_setList(this->fileList,this->fileListCnt);
 }
 
-void LFSTK_fileDialogClass::LFSTK_showDialog(void)
+void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 {
 	XEvent	event;
 	unsigned	lasttime=0;
@@ -348,4 +358,3 @@ void LFSTK_fileDialogClass::LFSTK_showDialog(void)
 			this->dialog->LFSTK_hideWindow();
 		}
 }
-

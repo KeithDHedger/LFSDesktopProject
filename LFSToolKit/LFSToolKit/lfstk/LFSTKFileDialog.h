@@ -36,10 +36,11 @@ class LFSTK_fileDialogClass  : public  LFSTK_gadgetClass
 {
 	public:
 		~LFSTK_fileDialogClass();
-		LFSTK_fileDialogClass(Window parent,const char *label,const char *startdir);
+		LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const char *label,const char *startdir);
+//		LFSTK_fileDialogClass(Window parentwc,const char *label,const char *startdir);
 
 
-		void					LFSTK_showDialog(void);
+		void					LFSTK_showFileDialog(void);
 		bool					LFSTK_isValid(void);
 		const char				*LFSTK_getCurrentDir(void);
 		const char				*LFSTK_getCurrentFile(void);

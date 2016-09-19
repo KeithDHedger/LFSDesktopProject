@@ -121,14 +121,19 @@ bool select(void *object,void* ud)
 bool selectfile(void *object,void* ud)
 {
 	LFSTK_fileDialogClass	*fc;
-
-	fc=new LFSTK_fileDialogClass(wc->window,"Select File","/home/keithhedger");
-	fc->LFSTK_showDialog();
+	fc=new LFSTK_fileDialogClass(wc,"Select File","/home/keithhedger");
+	//fc=new LFSTK_fileDialogClass(wc->window,"Select File","/home/keithhedger");
+	fc->LFSTK_showFileDialog();
+printf("out\n");
+//return(true);
 	if(fc->LFSTK_isValid()==true)
 		{
 			printf("Dir=%s/%s\n",fc->LFSTK_getCurrentDir(),fc->LFSTK_getCurrentFile());
 		}
 	printf("Select file\n");
+//TODO//
+	//delete fc;
+
 	return(true);
 }
 
