@@ -111,10 +111,6 @@ void LFSTK_windowClass::LFSTK_setWindowTitle(const char *title)
 		free(this->windowName);
 	this->windowName=strdup(title);
 	XStoreName(this->display,this->window,this->windowName);
-//	classHint.res_name=this->windowName;
-//	classHint.res_class=(char*)"LFSToolKit";
-//	XSetClassHint(this->display,this->window,&classHint);
-
 }
 
 /**

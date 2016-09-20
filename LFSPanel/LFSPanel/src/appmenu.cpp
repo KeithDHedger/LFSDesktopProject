@@ -368,6 +368,7 @@ void addExtras(void)
 	catagoryMenus[catagoryCnt].iconSize=iconSize;
 
 	iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"help-about","");
+
 	if(iconpath!=NULL)
 		{
 			catagoryMenus[catagoryCnt].image=imlib_load_image_immediately_without_cache(iconpath);
@@ -376,7 +377,6 @@ void addExtras(void)
 			catagoryMenus[catagoryCnt].iconSize=iconSize;
 			catagoryMenus[catagoryCnt].useImage=true;
 		}
-
 	catagoryCnt++;
 }
 

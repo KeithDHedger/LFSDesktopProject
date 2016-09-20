@@ -233,6 +233,37 @@ int main(int argc, char **argv)
 			subMenus[j].imageWidth=iconSize;
 			subMenus[j].imageHeight=iconSize;
 		}
+const char *iconpath=wc->globalLib->LFSTK_findThemedIcon("gnome","help-about","");
+	if(iconpath!=NULL)
+		{
+			subMenus[0].image=imlib_load_image_immediately_without_cache(iconpath);
+			subMenus[0].imageWidth=iconSize;
+			subMenus[0].imageHeight=iconSize;
+			subMenus[0].iconSize=iconSize;
+			subMenus[0].useImage=true;
+		}
+/*
+	catagoryMenus[catagoryCnt].label="About LFS Desktop";
+	catagoryMenus[catagoryCnt].userData=(void*)-1;
+	catagoryMenus[catagoryCnt].bc=NULL;
+	catagoryMenus[catagoryCnt].subMenus=NULL;
+	catagoryMenus[catagoryCnt].subMenuCnt=0;
+	catagoryMenus[catagoryCnt].useIcon=false;
+	catagoryMenus[catagoryCnt].useImage=false;
+	catagoryMenus[catagoryCnt].iconSize=iconSize;
+
+	iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"help-about","");
+	if(iconpath!=NULL)
+		{
+			catagoryMenus[catagoryCnt].image=imlib_load_image_immediately_without_cache(iconpath);
+			catagoryMenus[catagoryCnt].imageWidth=iconSize;
+			catagoryMenus[catagoryCnt].imageHeight=iconSize;
+			catagoryMenus[catagoryCnt].iconSize=iconSize;
+			catagoryMenus[catagoryCnt].useImage=true;
+		}
+
+*/
+
 //	wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"./audio-speakers.png",&subMenus[2].icon[0],&subMenus[2].icon[1],16);
 //add sub menus
 	mainMenusWithSubs[3].subMenus=subMenus;

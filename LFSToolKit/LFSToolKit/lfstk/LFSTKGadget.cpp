@@ -696,6 +696,9 @@ void LFSTK_gadgetClass::LFSTK_setImage(Imlib_Image image,int w,int h)
 */
 void LFSTK_gadgetClass::LFSTK_setScaledImage(Imlib_Image image,int w,int h)
 {
+	if(image==NULL)
+		return;
+
 	imlib_context_set_image(image);
 	image=imlib_create_cropped_scaled_image(0,0,imlib_image_get_width(),imlib_image_get_height(),w,h);
 	this->image=image;
@@ -770,6 +773,9 @@ void LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int w,int h)
 			this->useImage=false;
 
 			timage=imlib_load_image_immediately_without_cache(file);
+			if(timage==NULL)
+				return;
+
 			imlib_context_set_image(timage);
 			this->image=imlib_create_cropped_scaled_image(0,0,imlib_image_get_width(),imlib_image_get_height(),w,h);
 
