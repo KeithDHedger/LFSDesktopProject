@@ -689,6 +689,25 @@ void LFSTK_gadgetClass::LFSTK_setImage(Imlib_Image image,int w,int h)
 }
 
 /**
+* Set Scaled Image.
+* \param image Imlib_Image.
+* \param w,h dimensions.
+* \note Image is owned by caller.
+*/
+void LFSTK_gadgetClass::LFSTK_setScaledImage(Imlib_Image image,int w,int h)
+{
+	imlib_context_set_image(image);
+	image=imlib_create_cropped_scaled_image(0,0,imlib_image_get_width(),imlib_image_get_height(),w,h);
+	this->image=image;
+	this->useImage=true;
+	this->imageWidth=w;
+	this->imageHeight=h;
+	this->labelOffset=w+4;
+	this->freeOnDelete=false;
+}
+
+
+/**
 * Set Icon.
 * \param file Path to image file.
 * \param size Size of image.

@@ -105,6 +105,22 @@ int LFSTK_windowClass::LFSTK_gadgetCount(void)
  * Set default colours.
  *
  */
+void LFSTK_windowClass::LFSTK_setWindowTitle(const char *title)
+{
+	if(this->windowName!=NULL)
+		free(this->windowName);
+	this->windowName=strdup(title);
+	XStoreName(this->display,this->window,this->windowName);
+//	classHint.res_name=this->windowName;
+//	classHint.res_class=(char*)"LFSToolKit";
+//	XSetClassHint(this->display,this->window,&classHint);
+
+}
+
+/**
+ * Set default colours.
+ *
+ */
 void LFSTK_windowClass::initWindow(bool loadvars)
 {
 	this->fontColourNames[NORMALCOLOUR]=strdup("white");

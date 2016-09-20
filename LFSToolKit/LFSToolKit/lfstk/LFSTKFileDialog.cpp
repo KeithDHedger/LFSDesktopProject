@@ -33,15 +33,14 @@ LFSTK_fileDialogClass::~LFSTK_fileDialogClass(void)
 		free(this->currentFile);
 	this->freeDirList();
 	this->freeFileList();
-//	delete this->dialog;
+	delete this->dialog;
 }
 
 void LFSTK_fileDialogClass::cleanDirPath(void)
 {
 	char		*command;
 
-	asprintf(&command,"cd \"%s\" 2>/dev/null;pwd",this->currentDir);
-
+	asprintf(&command,"cd \"%s\" 2>/dev/null;realpath .",this->currentDir);
 	if(this->currentDir!=NULL)
 		free(this->currentDir);
 	this->currentDir=this->wc->globalLib->LFSTK_oneLiner("%s",command);
@@ -192,7 +191,6 @@ void LFSTK_fileDialogClass::LFSTK_setWorkingDir(const char *dir)
 	if(this->currentDir!=NULL)
 		free(this->currentDir);
 	this->currentDir=strdup(dir);
-	//this->doOpenDir();
 	this->cleanDirPath();
 //folders
 	this->getDirList();
@@ -203,7 +201,6 @@ void LFSTK_fileDialogClass::LFSTK_setWorkingDir(const char *dir)
 	this->getFileList();
 	this->fileListGadget->LFSTK_setImageList(this->fileImageList,this->fileListCnt);
 	this->fileListGadget->LFSTK_setList(this->fileList,this->fileListCnt);
-
 }
 
 /**
@@ -297,6 +294,27 @@ void LFSTK_fileDialogClass::doOpenDir(void)
 	this->fileListGadget->LFSTK_setList(this->fileList,this->fileListCnt);
 }
 
+/**
+* Set the working directory and dialog title on show.
+*
+* \param const char *start dir.
+* \param const char *title.
+*/
+
+void LFSTK_fileDialogClass::LFSTK_showFileDialog(const char *dir,const char *title)
+{
+	if(this->dialog!=NULL)
+		{
+			this->dialog->LFSTK_setWindowTitle(title);
+			this->LFSTK_setWorkingDir(dir);
+			this->LFSTK_showFileDialog();
+		}
+}
+
+/**
+* Show the file selector dialog.
+*/
+
 void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 {
 	XEvent	event;
@@ -309,6 +327,7 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 	this->apply=false;
 	if(this->dialog!=NULL)
 		{
+			//this->dialog->LFSTK_setWindowTitle("XXXXXXXXX");
 			this->dialog->LFSTK_showWindow();
 			this->dialog->LFSTK_setKeepAbove(true);
 			this->dialog->LFSTK_setTransientFor(this->wc->window);

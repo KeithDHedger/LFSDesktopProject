@@ -45,6 +45,7 @@ LFSTK_buttonClass		*guiButtons[NOMOREGUIS]={NULL,};
 LFSTK_labelClass		*labels[NOMORELABELS]={NULL,};
 LFSTK_menuButtonClass	*monitorNumber=NULL;
 LFSTK_buttonClass		*fileselect;
+LFSTK_fileDialogClass	*fc;
 
 bool					mainloop=true;
 int						bwidth=100;
@@ -144,7 +145,8 @@ bool selectfile(void *object,void* ud)
 			dir=strdup(monitorData[currentMonitor].monitorPath);
 		}
 	dirpath=dirname(dir);
-	fc=new LFSTK_fileDialogClass(wc,"Select File",dirpath);
+//	fc=new LFSTK_fileDialogClass(wc,"Select File",dirpath);
+	fc->LFSTK_setWorkingDir(dirpath);
 	fc->LFSTK_showFileDialog();
 	if(fc->LFSTK_isValid()==true)
 		{
@@ -325,6 +327,8 @@ int main(int argc, char **argv)
 	wc=new LFSTK_windowClass(sx,sy,1,1,"Wallpaper Prefs",false);
 	wc->LFSTK_setDecorated(true);
 	geom=wc->LFSTK_getGeom();
+
+	fc=new LFSTK_fileDialogClass(wc,"","/");
 
 	wc->globalLib->LFSTK_loadVarsFromFile(prefsPath,prefs);
 	monitorData=(monitors*)calloc(sizeof(monitors),wc->LFSTK_getMonitorCount());

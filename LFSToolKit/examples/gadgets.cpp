@@ -123,13 +123,14 @@ bool select(void *object,void* ud)
 bool selectfile(void *object,void* ud)
 {
 	//fc=new LFSTK_fileDialogClass(wc->window,"Select File","/home/keithhedger");
-	filedialog->LFSTK_setWorkingDir(wd);
-	filedialog->LFSTK_showFileDialog();
+	//filedialog->LFSTK_setWorkingDir(wd);
+	filedialog->LFSTK_showFileDialog(wd,"Select A File");
 	if(filedialog->LFSTK_isValid()==true)
 		{
 			printf("Dir=%s/%s\n",filedialog->LFSTK_getCurrentDir(),filedialog->LFSTK_getCurrentFile());
 			free(wd);
 			wd=strdup(filedialog->LFSTK_getCurrentDir());
+			
 		}
 	printf("Select file\n");
 //TODO//

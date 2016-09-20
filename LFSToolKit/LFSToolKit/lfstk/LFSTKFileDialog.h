@@ -41,6 +41,7 @@ class LFSTK_fileDialogClass
 
 
 		void					LFSTK_showFileDialog(void);
+		void					LFSTK_showFileDialog(const char *dir,const char *title);
 		bool					LFSTK_isValid(void);
 		const char				*LFSTK_getCurrentDir(void);
 		const char				*LFSTK_getCurrentFile(void);

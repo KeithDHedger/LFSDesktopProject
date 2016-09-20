@@ -70,6 +70,7 @@ class LFSTK_windowClass
 
 		void LFSTK_showWindow(bool all=true);
 		void LFSTK_hideWindow(void);
+		void LFSTK_setWindowTitle(const char *title);
 
 		void LFSTK_clearWindow(void);
 		unsigned long LFSTK_setColour(const char *name);

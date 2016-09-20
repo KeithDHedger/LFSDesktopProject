@@ -35,6 +35,7 @@ LFSTK_labelClass		*lb[NUMPREFS]={NULL,};
 LFSTK_labelClass		*spacer=NULL;
 LFSTK_buttonClass		*guibc[NOMOREBUTTONS]={NULL,};
 LFSTK_toggleButtonClass	*showExt=NULL;
+LFSTK_fileDialogClass	*fc;
 
 int						bwidth=96;
 int						spacing=bwidth+10;
@@ -193,6 +194,8 @@ int main(int argc, char **argv)
 	wc=new LFSTK_windowClass(sx,sy,800,600,"LFS Desktop Prefs",false);
 	wc->LFSTK_setDecorated(true);
 	geom=wc->LFSTK_getGeom();
+
+	fc=new LFSTK_fileDialogClass(wc,"","/");
 
 	asprintf(&env,"%s/.config/LFS/lfsdesktop.rc",getenv("HOME"));
 	wc->globalLib->LFSTK_loadVarsFromFile(env,desktopPrefs);

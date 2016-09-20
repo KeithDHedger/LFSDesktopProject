@@ -80,6 +80,7 @@ class LFSTK_gadgetClass
 		void LFSTK_setIcon(Pixmap image,Pixmap mask,int size=16);
 		void LFSTK_setImageFromPath(const char *file,int w,int h);
 		void LFSTK_setImage(Imlib_Image image,int w,int h);
+		void LFSTK_setScaledImage(Imlib_Image image,int w,int h);
 
 		int LFSTK_gadgetOnMonitor(void);
 		void LFSTK_setTile(const char *path,int size);

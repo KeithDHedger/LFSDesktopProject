@@ -1,4 +1,7 @@
 0.2.0
+Added new show file dialog to set cwd and dialog title.
+Fixed double slash in dir path in file selector.
+Fixed missized images in menu items.
 Added set working dir to file selector.
 Added thumbnails to file selector for .png, .jpg, .gif, and .tiff.
 Fixed file selector not handling filenames with spaces.
