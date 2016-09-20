@@ -1,5 +1,6 @@
 0.1.2
-Added file selector for getiing tiles.
+Added file selector for setting desktop icon theme.
+Added file selector for geting tiles to lfstkprefs.
 Backdrop prefs now uses file selecter.
 Removed lfsfontselect app as font button is now in lfstk.
 Redone prefs to use new fontselector button from lfstk.

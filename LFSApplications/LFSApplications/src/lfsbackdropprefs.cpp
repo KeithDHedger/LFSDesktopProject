@@ -133,7 +133,7 @@ bool selectfile(void *object,void* ud)
 	char					*dir;
 	const char				*dirpath;
 	char					*filepath;
-//monitorBackdropPath
+
 	LFSTK_fileDialogClass	*fc;
 
 	if(GETUSERDATA(ud)==100)
@@ -145,7 +145,6 @@ bool selectfile(void *object,void* ud)
 			dir=strdup(monitorData[currentMonitor].monitorPath);
 		}
 	dirpath=dirname(dir);
-//	fc=new LFSTK_fileDialogClass(wc,"Select File",dirpath);
 	fc->LFSTK_setWorkingDir(dirpath);
 	fc->LFSTK_showFileDialog();
 	if(fc->LFSTK_isValid()==true)

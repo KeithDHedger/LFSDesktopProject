@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <getopt.h>
+#include <libgen.h>
 
 #include <lfstk/LFSTKGlobals.h>
 
@@ -34,6 +35,7 @@ LFSTK_lineEditClass		*le[NUMPREFS]={NULL,};
 LFSTK_labelClass		*lb[NUMPREFS]={NULL,};
 LFSTK_labelClass		*spacer=NULL;
 LFSTK_buttonClass		*guibc[NOMOREBUTTONS]={NULL,};
+LFSTK_buttonClass		*button;
 LFSTK_toggleButtonClass	*showExt=NULL;
 LFSTK_fileDialogClass	*fc;
 
@@ -47,7 +49,7 @@ int						parentWindow=-1;
 
 char				*prefs[NUMPREFS]={NULL,};
 //const char			*labelNames[]={"Icon Theme","Icon Size","Grid Size","Border","Refresh","Text Colour","Label Colour","Label Alpha","Term Command","","Ignore"};
-const char			*labelNames[]={"Icon Theme","Icon Size","Grid Size","Border","Refresh","Text Colour","Label Colour","Label Alpha","Term Command","Font","Ignore"};
+const char			*labelNames[]={"Select Theme","Icon Size","Grid Size","Border","Refresh","Text Colour","Label Colour","Label Alpha","Term Command","Font","Ignore"};
 
 
 int					editSize[]={BIG,bwidth,bwidth,bwidth,bwidth,bwidth,bwidth,bwidth,BIG,BIG,BIG};
@@ -78,13 +80,11 @@ void setVars(void)
 	lb[FORECOLOUR]->LFSTK_setColourName(INACTIVECOLOUR,le[FORECOLOUR]->LFSTK_getBuffer()->c_str());
 	for(int j=ICONTHEME; j<NUMPREFS; j++)
 		{
-			if(lb[j]!=NULL)
-				{
-					lb[j]->LFSTK_clearWindow();
-					if(prefs[j]!=NULL)
-						free(prefs[j]);
-					prefs[j]=strdup(le[j]->LFSTK_getBuffer()->c_str());
-				}
+			if(j!=ICONTHEME)
+				lb[j]->LFSTK_clearWindow();
+			if(prefs[j]!=NULL)
+				free(prefs[j]);
+			prefs[j]=strdup(le[j]->LFSTK_getBuffer()->c_str());
 		}
 	showSuffix=showExt->LFSTK_getValue();
 }
@@ -138,6 +138,24 @@ bool fontCB(void *object,void* userdata)
 	fb=static_cast<LFSTK_fontButtonClass*>(object);
 	fb->LFSTK_showDialog(le[FONTFACE]->LFSTK_getBuffer()->c_str());
 	le[FONTFACE]->LFSTK_setBuffer(fb->LFSTK_getFontString());
+}
+
+bool selectfile(void *object,void* ud)
+{
+	char					*dir;
+	const char				*dirpath;
+
+	asprintf(&dir,"%s/.icons",getenv("HOME"));
+	fc->LFSTK_showFileDialog(dir,le[ICONTHEME]->LFSTK_getBuffer()->c_str());
+	if(fc->LFSTK_isValid()==true)
+		{
+			free(dir);
+			dir=strdup(fc->LFSTK_getCurrentDir());
+			dirpath=basename(dir);
+			le[ICONTHEME]->LFSTK_setBuffer(dirpath);
+		}
+	free(dir);
+	return(true);
 }
 
 int main(int argc, char **argv)
@@ -213,10 +231,18 @@ int main(int argc, char **argv)
 
 	for(int j=ICONTHEME;j<TERMCOMMAND;j++)
 		{
-			lb[j]=new LFSTK_labelClass(wc,labelNames[j],sx,sy,bwidth,24,NorthWestGravity);
-			lb[j]->LFSTK_setLabelAutoColour(true);
-			lb[j]->LFSTK_setActive(false);
-			lb[j]->LFSTK_setColourName(INACTIVECOLOUR,wc->windowColourNames[NORMALCOLOUR].name);
+			if(j!=ICONTHEME)
+				{
+					lb[j]=new LFSTK_labelClass(wc,labelNames[j],sx,sy,bwidth,24,NorthWestGravity);
+					lb[j]->LFSTK_setLabelAutoColour(true);
+					lb[j]->LFSTK_setActive(false);
+					lb[j]->LFSTK_setColourName(INACTIVECOLOUR,wc->windowColourNames[NORMALCOLOUR].name);
+				}
+			else
+				{
+					button=new LFSTK_buttonClass(wc,labelNames[ICONTHEME],sx,sy,bwidth,24,NorthWestGravity);
+					button->LFSTK_setCallBack(NULL,selectfile,NULL);
+				}
 			sx+=spacing;
 			le[j]=new LFSTK_lineEditClass(wc,prefs[j],sx,sy-1,editSize[j],24,NorthWestGravity);
 			sy+=vspacing;
