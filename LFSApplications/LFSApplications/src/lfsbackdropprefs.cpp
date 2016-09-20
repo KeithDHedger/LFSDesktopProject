@@ -134,19 +134,13 @@ bool selectfile(void *object,void* ud)
 	const char				*dirpath;
 	char					*filepath;
 
-	LFSTK_fileDialogClass	*fc;
-
 	if(GETUSERDATA(ud)==100)
-		{
-			dir=strdup(wallpaperPath);
-		}
+		dir=strdup(wallpaperPath);
 	else
-		{
-			dir=strdup(monitorData[currentMonitor].monitorPath);
-		}
+		dir=strdup(monitorData[currentMonitor].monitorPath);
+
 	dirpath=dirname(dir);
-	fc->LFSTK_setWorkingDir(dirpath);
-	fc->LFSTK_showFileDialog();
+	fc->LFSTK_showFileDialog(dirpath,"Select File");
 	if(fc->LFSTK_isValid()==true)
 		{
 			asprintf(&filepath,"%s/%s",fc->LFSTK_getCurrentDir(),fc->LFSTK_getCurrentFile());
@@ -327,7 +321,7 @@ int main(int argc, char **argv)
 	wc->LFSTK_setDecorated(true);
 	geom=wc->LFSTK_getGeom();
 
-	fc=new LFSTK_fileDialogClass(wc,"","/");
+	fc=new LFSTK_fileDialogClass(wc,"","/",false);
 
 	wc->globalLib->LFSTK_loadVarsFromFile(prefsPath,prefs);
 	monitorData=(monitors*)calloc(sizeof(monitors),wc->LFSTK_getMonitorCount());

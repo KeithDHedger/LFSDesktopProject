@@ -52,7 +52,8 @@ menuItemStruct			*subMenus;
 LFSTK_fontButtonClass	*fb;
 LFSTK_listGadgetClass	*list;
 LFSTK_buttonClass		*filebutton;
-LFSTK_fileDialogClass	*filedialog;
+LFSTK_fileDialogClass	*filedialogfile;
+LFSTK_fileDialogClass	*filedialogdir;
 
 const char				*mainMenuNames[]={"Menu 1","Menu 2","Menu 3","Menu 4","--","bool mainLoop=true;","menuItemStruct *mainMenus;","LFSTK_menuButtonClass *mb=NULL;"};
 const char				*subMenuNames[]={"Sub Menu 1","Sub Menu 2","Sub Menu 3","Sub Menu 4"};
@@ -122,20 +123,30 @@ bool select(void *object,void* ud)
 
 bool selectfile(void *object,void* ud)
 {
-	//fc=new LFSTK_fileDialogClass(wc->window,"Select File","/home/keithhedger");
-	//filedialog->LFSTK_setWorkingDir(wd);
-	filedialog->LFSTK_showFileDialog(wd,"Select A File");
-	if(filedialog->LFSTK_isValid()==true)
+	filedialogfile->LFSTK_showFileDialog(wd,"Select A File");
+	if(filedialogfile->LFSTK_isValid()==true)
 		{
-			printf("Dir=%s/%s\n",filedialog->LFSTK_getCurrentDir(),filedialog->LFSTK_getCurrentFile());
+			printf("File=%s/%s\n",filedialogfile->LFSTK_getCurrentDir(),filedialogfile->LFSTK_getCurrentFile());
 			free(wd);
-			wd=strdup(filedialog->LFSTK_getCurrentDir());
-			
+			wd=strdup(filedialogfile->LFSTK_getCurrentDir());			
 		}
 	printf("Select file\n");
-//TODO//
 	return(true);
 }
+
+bool selectdir(void *object,void* ud)
+{
+	filedialogdir->LFSTK_showFileDialog(wd,"Select A Folder");
+	if(filedialogdir->LFSTK_isValid()==true)
+		{
+			printf("Dir=%s\n",filedialogdir->LFSTK_getCurrentDir());
+			free(wd);
+			wd=strdup(filedialogdir->LFSTK_getCurrentDir());			
+		}
+	printf("Select folder\n");
+	return(true);
+}
+
 
 int main(int argc, char **argv)
 {
@@ -145,11 +156,8 @@ int main(int argc, char **argv)
 	
 	wc=new LFSTK_windowClass(0,0,WIDTH,HITE,"Gadgets",false);
 	wd=strdup("/");
-	filedialog=new LFSTK_fileDialogClass(wc,"Select File",wd);
-
-//	LFSTK_fileDialogClass	*fc;
-//	fc=new LFSTK_fileDialogClass(wc,"Select File","/home/keithhedger");
-//fc->LFSTK_showFileDialog();
+	filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",wd,false);
+	filedialogdir=new LFSTK_fileDialogClass(wc,"Select Folder",wd,true);
 
 	label=new LFSTK_labelClass(wc,"Available Gadgets",BORDER,sy,WIDTH-(BORDER*2),BHITE,BGRAV);
 	sy+=(BORDER*2);
@@ -233,7 +241,8 @@ int main(int argc, char **argv)
 			subMenus[j].imageWidth=iconSize;
 			subMenus[j].imageHeight=iconSize;
 		}
-const char *iconpath=wc->globalLib->LFSTK_findThemedIcon("gnome","help-about","");
+
+	const char *iconpath=wc->globalLib->LFSTK_findThemedIcon("gnome","help-about","");
 	if(iconpath!=NULL)
 		{
 			subMenus[0].image=imlib_load_image_immediately_without_cache(iconpath);
@@ -242,29 +251,7 @@ const char *iconpath=wc->globalLib->LFSTK_findThemedIcon("gnome","help-about",""
 			subMenus[0].iconSize=iconSize;
 			subMenus[0].useImage=true;
 		}
-/*
-	catagoryMenus[catagoryCnt].label="About LFS Desktop";
-	catagoryMenus[catagoryCnt].userData=(void*)-1;
-	catagoryMenus[catagoryCnt].bc=NULL;
-	catagoryMenus[catagoryCnt].subMenus=NULL;
-	catagoryMenus[catagoryCnt].subMenuCnt=0;
-	catagoryMenus[catagoryCnt].useIcon=false;
-	catagoryMenus[catagoryCnt].useImage=false;
-	catagoryMenus[catagoryCnt].iconSize=iconSize;
 
-	iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"help-about","");
-	if(iconpath!=NULL)
-		{
-			catagoryMenus[catagoryCnt].image=imlib_load_image_immediately_without_cache(iconpath);
-			catagoryMenus[catagoryCnt].imageWidth=iconSize;
-			catagoryMenus[catagoryCnt].imageHeight=iconSize;
-			catagoryMenus[catagoryCnt].iconSize=iconSize;
-			catagoryMenus[catagoryCnt].useImage=true;
-		}
-
-*/
-
-//	wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"./audio-speakers.png",&subMenus[2].icon[0],&subMenus[2].icon[1],16);
 //add sub menus
 	mainMenusWithSubs[3].subMenus=subMenus;
 	mainMenusWithSubs[3].subMenuCnt=MAXSUBMENUS;
@@ -342,6 +329,10 @@ const char *iconpath=wc->globalLib->LFSTK_findThemedIcon("gnome","help-about",""
 //select file
 	filebutton=new LFSTK_buttonClass(wc,"Select File",BORDER,sy,BWIDTH,BHITE,BGRAV);
 	filebutton->LFSTK_setCallBack(NULL,selectfile,NULL);
+
+	filebutton=new LFSTK_buttonClass(wc,"Select Folder",BORDER+BWIDTH+BORDER,sy,BWIDTH,BHITE,BGRAV);
+	filebutton->LFSTK_setCallBack(NULL,selectdir,NULL);
+
 	sy+=BHITE+12;
 
 //line edit
@@ -394,6 +385,7 @@ const char *iconpath=wc->globalLib->LFSTK_findThemedIcon("gnome","help-about",""
 		}
 
 	delete wc;
-	delete filedialog;
+	delete filedialogdir;
+	delete filedialogfile;
 	return 0;
 }

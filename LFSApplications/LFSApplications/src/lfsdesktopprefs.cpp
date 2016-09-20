@@ -213,7 +213,7 @@ int main(int argc, char **argv)
 	wc->LFSTK_setDecorated(true);
 	geom=wc->LFSTK_getGeom();
 
-	fc=new LFSTK_fileDialogClass(wc,"","/");
+	fc=new LFSTK_fileDialogClass(wc,"","/",true);
 
 	asprintf(&env,"%s/.config/LFS/lfsdesktop.rc",getenv("HOME"));
 	wc->globalLib->LFSTK_loadVarsFromFile(env,desktopPrefs);

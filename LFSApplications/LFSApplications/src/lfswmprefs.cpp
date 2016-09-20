@@ -36,7 +36,7 @@ enum {THEMELABEL=0,TERMLABEL,PLACELABEL,DESKLABEL,UPDATELABEL,LSPACER,NOMORELABE
 enum places {NOPLACE=0,UNDERMOUSE,CENTREMMONITOR,CENTRESCREEN,MOUSEMONITOR,NOMOREPLACES};
 
 const char				*buttonnames[]= {"Active Frame","Active Fill","Inactive Frame","Inactive Fill","Text Colour"};
-const char				*labelnames[]= {"Theme Path","Term Command"," Place Windows","Desktops", "Update","--"};
+const char				*labelnames[]= {"Theme Name","Term Command"," Place Windows","Desktops", "Update","--"};
 const char				*placeNames[]={"Smart Place On Screen","Under Mouse","Centre On Monitor With Mouse","Centre On Screen","Smart Place On Monitor With Mouse"};
 
 //prefs
@@ -56,6 +56,8 @@ menuItemStruct			*placeMenu;
 
 LFSTK_lineEditClass		*fontEdit;
 LFSTK_labelClass		*text;
+LFSTK_fileDialogClass	*fc;
+LFSTK_buttonClass		*button;
 
 char					*holdFont;
 
@@ -184,6 +186,24 @@ bool selectFontCB(void *object,void* userdata)
 	fontEdit->LFSTK_setBuffer(titleFont);
 }
 
+bool selectfolder(void *object,void* ud)
+{
+	char					*dir;
+	const char				*dirpath;
+
+	asprintf(&dir,"%s/.themes",getenv("HOME"));
+	fc->LFSTK_showFileDialog(dir,le[ETHEMEPATH]->LFSTK_getBuffer()->c_str());
+	if(fc->LFSTK_isValid()==true)
+		{
+			free(dir);
+			dir=strdup(fc->LFSTK_getCurrentDir());
+			dirpath=basename(dir);
+			le[ETHEMEPATH]->LFSTK_setBuffer(dirpath);
+		}
+	free(dir);
+	return(true);
+}
+
 int main(int argc, char **argv)
 {
 	XEvent					event;
@@ -242,6 +262,7 @@ int main(int argc, char **argv)
 	wc=new LFSTK_windowClass(sx,sy,800,600,"LFS WM Prefs",false);
 	wc->LFSTK_setDecorated(true);
 	geom=wc->LFSTK_getGeom();
+	fc=new LFSTK_fileDialogClass(wc,"","/",true);
 
 	asprintf(&env,"%s/.config/LFS/lfswmanager.rc",getenv("HOME"));
 	wc->globalLib->LFSTK_loadVarsFromFile(env,wmPrefs);
@@ -274,9 +295,18 @@ int main(int argc, char **argv)
 	sx=col1;
 	for(int j=THEMELABEL; j<PLACELABEL; j++)
 		{
-			lb[j]=new LFSTK_labelClass(wc,labelnames[j],sx,sy,bwidth,24,NorthWestGravity);
-			lb[j]->LFSTK_setLabelAutoColour(true);
-			lb[j]->LFSTK_setLabelOriention(0);
+			if(j!=THEMELABEL)
+				{
+					lb[j]=new LFSTK_labelClass(wc,labelnames[j],sx,sy,bwidth,24,NorthWestGravity);
+					lb[j]->LFSTK_setLabelAutoColour(true);
+					lb[j]->LFSTK_setLabelOriention(0);
+				}
+			else
+				{
+					button=new LFSTK_buttonClass(wc,labelnames[THEMELABEL],sx,sy,bwidth,24,NorthWestGravity);
+					button->LFSTK_setCallBack(NULL,selectfolder,NULL);
+				}
+
 			sx+=spacing;
 			le[ETHEMEPATH+j]=new LFSTK_lineEditClass(wc,labelnames[j],sx,sy-1,col2-col1,24,NorthWestGravity);
 			sy+=vspacing;

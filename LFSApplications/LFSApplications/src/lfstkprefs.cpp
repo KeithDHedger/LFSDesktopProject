@@ -227,7 +227,7 @@ int main(int argc, char **argv)
 	wc->LFSTK_setDecorated(true);
 	geom=wc->LFSTK_getGeom();
 
-	fc=new LFSTK_fileDialogClass(wc,"Select Window Tile","/");
+	fc=new LFSTK_fileDialogClass(wc,"Select Window Tile","/",false);
 
 	guibuttons[EXIT]=new LFSTK_buttonClass(wc,"Exit",10,geom->h-32,64,24,SouthWestGravity);
 	guibuttons[EXIT]->LFSTK_setCallBack(NULL,callback,(void*)EXIT);

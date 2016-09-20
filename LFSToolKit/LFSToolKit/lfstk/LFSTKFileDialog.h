@@ -36,8 +36,9 @@ class LFSTK_fileDialogClass
 {
 	public:
 		~LFSTK_fileDialogClass();
-		LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const char *label,const char *startdir);
+		LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const char *label,const char *startdir,bool type);
 //		LFSTK_fileDialogClass(Window parentwc,const char *label,const char *startdir);
+
 
 
 		void					LFSTK_showFileDialog(void);
@@ -46,6 +47,8 @@ class LFSTK_fileDialogClass
 		const char				*LFSTK_getCurrentDir(void);
 		const char				*LFSTK_getCurrentFile(void);
 		void					LFSTK_setWorkingDir(const char *dir);
+		void					LFSTK_setRequestType(bool type);
+		bool					LFSTK_getRequestType(void);
 
 	private:
 		
@@ -59,6 +62,7 @@ class LFSTK_fileDialogClass
 		char					*currentFile;
 		bool					mainLoop;
 		bool					apply;
+		bool					dialogType;
 		const char				*fileImage;
 		const char				*folderImage;
 

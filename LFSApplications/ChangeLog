@@ -1,4 +1,5 @@
 0.1.2
+Added file selector for setting wm theme.
 Added file selector for setting desktop icon theme.
 Added file selector for geting tiles to lfstkprefs.
 Backdrop prefs now uses file selecter.
