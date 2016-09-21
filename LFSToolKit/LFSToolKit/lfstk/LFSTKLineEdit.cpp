@@ -357,6 +357,7 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 				case XK_Up:
 				case XK_Select ... XK_Num_Lock:
 				case XK_F1 ... XK_R15:
+				case XK_Return://TODO//set a callback for this?
 					break;
 
 				default:

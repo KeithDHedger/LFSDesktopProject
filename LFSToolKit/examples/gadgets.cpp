@@ -147,6 +147,23 @@ bool selectdir(void *object,void* ud)
 	return(true);
 }
 
+bool selectdirxxxx(void *object,void* ud)
+{
+LFSTK_fileDialogClass	*filedialogdirx;
+	filedialogdirx=new LFSTK_fileDialogClass(wc,"Select Folder xxx",wd,true);
+
+	filedialogdirx->LFSTK_showFileDialog(wd,"Select A Folderxxx");
+	if(filedialogdirx->LFSTK_isValid()==true)
+		{
+			printf("Dir=%s\n",filedialogdirx->LFSTK_getCurrentDir());
+			free(wd);
+			wd=strdup(filedialogdirx->LFSTK_getCurrentDir());			
+		}
+	printf("Select folder  xxxx\n");
+	delete filedialogdirx;
+	return(true);
+}
+
 
 int main(int argc, char **argv)
 {

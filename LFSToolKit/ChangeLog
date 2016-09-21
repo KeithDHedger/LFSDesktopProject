@@ -1,4 +1,5 @@
 0.2.0
+Added typing folder path in dialog box.
 Added new show file dialog to set cwd and dialog title.
 Fixed double slash in dir path in file selector.
 Fixed missized images in menu items.

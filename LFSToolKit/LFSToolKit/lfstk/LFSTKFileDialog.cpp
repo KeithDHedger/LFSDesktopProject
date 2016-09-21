@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-
+//#include <X11/keysym.h>
 #include "LFSTKGlobals.h"
 
 LFSTK_fileDialogClass::~LFSTK_fileDialogClass(void)
@@ -53,10 +53,17 @@ void LFSTK_fileDialogClass::freeDirList(void)
 		{
 			for(int j=0;j<this->dirListCnt;j++)
 				free(this->dirList[j]);
-			free(this->dirList);
+			delete[] this->dirList;
 		}
-	if(this->dirImageList!=NULL)
-		free(this->dirImageList);
+//TODO//
+//not needed yet
+//	if(this->dirImageList!=NULL)
+//		{
+//			for(int j=0;j<this->dirListCnt;j++)
+//				if(this->dirImageList[j]!=NULL)
+//					free(this->dirImageList[j]);
+//		}
+	delete[] this->dirImageList;
 }
 
 void LFSTK_fileDialogClass::freeFileList(void)
@@ -65,10 +72,14 @@ void LFSTK_fileDialogClass::freeFileList(void)
 		{
 			for(int j=0;j<this->fileListCnt;j++)
 				free(this->fileList[j]);
-			free(this->fileList);
+			delete[] this->fileList;
 		}
 	if(this->fileImageList!=NULL)
-		free(this->fileImageList);
+		{
+			for(int j=0;j<this->fileListCnt;j++)
+				free(this->fileImageList[j]);
+			delete[] this->fileImageList;
+		}
 }
 
 void LFSTK_fileDialogClass::getFileList(void)
@@ -264,6 +275,9 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	this->dialog=NULL;
 	this->dirList=NULL;
 	this->dirImageList=NULL;
+	this->fileList=NULL;
+	this->fileImageList=NULL;
+	this->fileListCnt=0;
 	this->currentDir=strdup(startdir);
 	this->currentFile=NULL;
 	this->dirListGadget=NULL;
@@ -310,13 +324,8 @@ bool LFSTK_fileDialogClass::LFSTK_isValid(void)
 	return(false);
 }
 
-void LFSTK_fileDialogClass::doOpenDir(void)
+void LFSTK_fileDialogClass::openDir(void)
 {
-	char	*newdir;
-	asprintf(&newdir,"%s/%s",this->currentDir,this->dirListGadget->LFSTK_getListString(-1));
-	if(this->currentDir!=NULL)
-		free(this->currentDir);
-	this->currentDir=newdir;
 	this->cleanDirPath();
 //folders
 	this->getDirList();
@@ -330,6 +339,24 @@ void LFSTK_fileDialogClass::doOpenDir(void)
 			this->fileListGadget->LFSTK_setImageList(this->fileImageList,this->fileListCnt);
 			this->fileListGadget->LFSTK_setList(this->fileList,this->fileListCnt);
 		}
+}
+
+void LFSTK_fileDialogClass::doOpenDir(void)
+{
+	char	*newdir;
+	asprintf(&newdir,"%s/%s",this->currentDir,this->dirListGadget->LFSTK_getListString(-1));
+	if(this->currentDir!=NULL)
+		free(this->currentDir);
+	this->currentDir=newdir;
+	this->openDir();
+}
+
+void LFSTK_fileDialogClass::doOpenDir(const char *dir)
+{
+	if(this->currentDir!=NULL)
+		free(this->currentDir);
+	this->currentDir=strdup(dir);
+	this->openDir();
 }
 
 /**
@@ -355,10 +382,10 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(const char *dir,const char *tit
 
 void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 {
-	XEvent	event;
-	unsigned	lasttime=0;
-	unsigned	lastdiritem=0;
-	unsigned	lastfileitem=0;
+	XEvent			event;
+	unsigned		lasttime=0;
+	unsigned		lastdiritem=0;
+	unsigned		lastfileitem=0;
 	geometryStruct	*geomdir=NULL;
 	geometryStruct	*geomfile=NULL;
 
@@ -382,6 +409,20 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 
 					switch(event.type)
 						{
+							case KeyRelease:
+								if(ml->gadget==this->dirEdit)
+									{
+										char	c[4];
+										KeySym	keysym_return;
+										XLookupString(&event.xkey,(char*)&c,255,&keysym_return,NULL);
+										if(keysym_return==XK_Return)
+											{
+												this->doOpenDir(this->dirEdit->LFSTK_getBuffer()->c_str());
+												lasttime=event.xkey.time-1000;
+											}
+									}
+								break;
+
 							case ButtonRelease:
 								if((event.xbutton.x_root>geomdir->x) && (event.xbutton.x_root<(geomdir->x+geomdir->w)) && (event.xbutton.y_root>geomdir->y) && (event.xbutton.y_root<(geomdir->y+geomdir->h)))
 									{

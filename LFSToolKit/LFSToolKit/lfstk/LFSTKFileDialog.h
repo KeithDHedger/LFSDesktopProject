@@ -73,13 +73,14 @@ class LFSTK_fileDialogClass
 		LFSTK_buttonClass		*buttonApply;
 		LFSTK_buttonClass		*buttonCancel;
 		LFSTK_lineEditClass		*dirEdit;
-
 		void					getDirList(void);
 		void					getFileList(void);
 		void					freeDirList();
 		void					freeFileList();
 		void					cleanDirPath(void);
+		void					openDir(void);
 		void					doOpenDir(void);
+		void					doOpenDir(const char *dir);
 };
 
 #endif
