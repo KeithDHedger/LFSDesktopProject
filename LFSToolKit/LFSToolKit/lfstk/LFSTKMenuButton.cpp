@@ -141,7 +141,6 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 							if(this->menus[j].useIcon==true)
 								bc->LFSTK_setIcon(this->menus[j].icon[0],this->menus[j].icon[1],this->menus[j].iconSize);
 							else if(this->menus[j].useImage==true)
-							//	bc->LFSTK_setScaledImage(this->menus[j].image,this->h-2,this->h-2);
 								bc->LFSTK_setScaledImage(this->menus[j].image,this->menus[j].imageWidth,this->menus[j].imageHeight);
 							for(int j=0;j<MAXCOLOURS;j++)
 								{
@@ -204,12 +203,11 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 			mappedListener *ml=subwc->LFSTK_getMappedListener(event.xany.window);
 			if(ml!=NULL)
 				ml->function(ml->gadget,&event,ml->type);
-
 			switch(event.type)
 				{
 				case LeaveNotify:
 					if(event.xany.window==subwc->window)
-						run=false;
+					run=false;
 					break;
 				case Expose:
 				break;

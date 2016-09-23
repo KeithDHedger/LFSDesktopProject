@@ -99,6 +99,7 @@ struct	mappedListener
 #include <lfstk/LFSTKFontButton.h>
 #include <lfstk/LFSTKListGadget.h>
 #include <lfstk/LFSTKFileDialog.h>
+#include <lfstk/LFSTKMenuList.h>
 
 
 
