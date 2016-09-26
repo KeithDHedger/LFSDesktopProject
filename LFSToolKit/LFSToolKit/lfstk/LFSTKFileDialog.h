@@ -37,9 +37,6 @@ class LFSTK_fileDialogClass
 	public:
 		~LFSTK_fileDialogClass();
 		LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const char *label,const char *startdir,bool type);
-//		LFSTK_fileDialogClass(Window parentwc,const char *label,const char *startdir);
-
-
 
 		void					LFSTK_showFileDialog(void);
 		void					LFSTK_showFileDialog(const char *dir,const char *title);

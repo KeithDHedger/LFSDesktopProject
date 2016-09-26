@@ -332,6 +332,7 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 			this->labels[j]->LFSTK_setTile(NULL,0);
 			this->labels[j]->LFSTK_setColourName(NORMALCOLOUR,"white");
 			this->labels[j]->LFSTK_setColourName(INACTIVECOLOUR,"white");
+			this->labels[j]->LFSTK_setLabelAutoColour(true);
 			this->labels[j]->LFSTK_setCallBack(NULL,select,LISTDATA(j));
 			this->data[j].mainObject=this;
 			this->data[j].userData=j;
