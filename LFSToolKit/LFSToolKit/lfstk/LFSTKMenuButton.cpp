@@ -169,7 +169,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 							if(this->menus[j].useIcon==true)
 								mb->LFSTK_setIcon(this->menus[j].icon[0],this->menus[j].icon[1],this->menus[j].iconSize);
 							else if(this->menus[j].useImage==true)
-								mb->LFSTK_setImage(this->menus[j].image,this->menus[j].imageWidth,this->menus[j].imageHeight);
+								mb->LFSTK_setScaledImage(this->menus[j].image,this->menus[j].imageWidth,this->menus[j].imageHeight);
 
 							mb->isSubmenu=true;
 						}
