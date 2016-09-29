@@ -322,20 +322,20 @@ bool setGravCB(void *p,void* ud)
 
 int main(int argc, char **argv)
 {
-	XEvent			event;
-	int				sx=0;
-	int				sy=0;
-	geometryStruct	*geom;
-	int				bhite=24;
-	int				vspacing=bhite+10;
-	FILE*			fp=NULL;
-	char			*command;
-	char			*lfspanels;
-	char			buffer[512];
-	int				c=0;
-	int				option_index=0;
-	const char		*shortOpts="h?w:";
-	option 			longOptions[]=
+	XEvent					event;
+	int						sx=0;
+	int						sy=0;
+	const geometryStruct	*geom;
+	int						bhite=24;
+	int						vspacing=bhite+10;
+	FILE*					fp=NULL;
+	char					*command;
+	char					*lfspanels;
+	char					buffer[512];
+	int						c=0;
+	int						option_index=0;
+	const char				*shortOpts="h?w:";
+	option 					longOptions[]=
 		{
 			{"window",1,0,'w'},
 			{"help",0,0,'h'},
@@ -363,7 +363,7 @@ int main(int argc, char **argv)
 	wc=new LFSTK_windowClass(sx,sy,1,1,"LFSPanel Prefs",false);
 	wc->LFSTK_setDecorated(true);
 	wc->autoLabelColour=true;
-	geom=wc->LFSTK_getGeom();
+	geom=wc->LFSTK_getWindowGeom();
 	guibc[EXIT]=new LFSTK_buttonClass(wc,"Exit",10,geom->h-32,64,24,SouthWestGravity);
 	guibc[EXIT]->LFSTK_setCallBack(NULL,callback,(void*)EXIT);
 

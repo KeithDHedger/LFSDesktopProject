@@ -249,7 +249,7 @@ bool inWindow(void)
 
 	if(XQueryPointer(wc->display,wc->rootWindow,&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
 		{
-			geometryStruct *g=wc->LFSTK_getGeom();
+			const geometryStruct *g=wc->LFSTK_getWindowGeom();
 			if((root_x_return>g->x) && (root_x_return<(int)(g->x+g->w)) && (root_y_return>g->y) && (root_y_return<(int)(g->y+g->h)))
 				return(true);
 		}

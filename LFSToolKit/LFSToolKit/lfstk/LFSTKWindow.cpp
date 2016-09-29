@@ -193,6 +193,7 @@ LFSTK_windowClass::~LFSTK_windowClass()
 LFSTK_windowClass::LFSTK_windowClass()
 {
 	this->initWindow(false);
+	this->setWindowGeom(0,0,0,0,WINDSETALL);	
 }
 
 void LFSTK_windowClass::loadGlobalColours(void)
@@ -255,6 +256,7 @@ void LFSTK_windowClass::LFSTK_resizeWindow(int w,int h,bool tellx)
 	this->h=h;
 	if(tellx==true)
 		XResizeWindow(this->display,this->window,w,h);
+	this->setWindowGeom(0,0,w,h,WINDSETWH);
 	this->LFSTK_clearWindow();
 }
 
@@ -271,6 +273,7 @@ void LFSTK_windowClass::LFSTK_moveWindow(int x,int y,bool tellx)
 	this->y=y;
 	if(tellx==true)
 		XMoveWindow(this->display,this->window,x,y);
+	this->setWindowGeom(x,y,0,0,WINDSETXY);
 	this->LFSTK_clearWindow();
 }
 
@@ -309,28 +312,29 @@ void LFSTK_windowClass::LFSTK_setDecorated(bool isDecorated)
 		}
 }
 
-/**
-* Get window geometry.
-* \return geometry structure.
-* \note Caller should free structure after use.
-*/
-geometryStruct *LFSTK_windowClass::LFSTK_getGeom()
-{
-	geometryStruct		*g=new geometryStruct;
-	XWindowAttributes	xwa;
-	int					x,y;
-	Window				child;
-
-	XTranslateCoordinates(this->display,this->window,this->rootWindow,0,0,&x,&y,&child );
-	XGetWindowAttributes(this->display,this->window,&xwa);
-
-	g->x=x;
-	g->y=y;
-	g->w=xwa.width;
-	g->h=xwa.height;
-
-	return(g);
-}
+//TODO//
+///**
+//* Get window geometry.
+//* \return geometry structure.
+//* \note Caller should free structure after use.
+//*/
+//geometryStruct *LFSTK_windowClass::LFSTK_getGeom()
+//{
+//	geometryStruct		*g=new geometryStruct;
+//	XWindowAttributes	xwa;
+//	int					x,y;
+//	Window				child;
+//
+//	XTranslateCoordinates(this->display,this->window,this->rootWindow,0,0,&x,&y,&child );
+//	XGetWindowAttributes(this->display,this->window,&xwa);
+//
+//	g->x=x;
+//	g->y=y;
+//	g->w=xwa.width;
+//	g->h=xwa.height;
+//
+//	return(g);
+//}
 
 /**
 * Set the colour name for font.
@@ -570,6 +574,8 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 	this->y=y;
 	this->w=w;
 	this->h=h;
+	this->setWindowGeom(x,y,w,h,WINDSETALL);
+
 	this->fontString=NULL;
 	this->isActive=false;
 	this->acceptDnd=false;
@@ -976,3 +982,38 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 				}
 		}
 }
+
+/**
+ * Return windows geometry.
+ * \param *geometryStruct structure to be filled in.
+ * \note returned geometryStruct is owned by class.
+ */
+const geometryStruct *LFSTK_windowClass::LFSTK_getWindowGeom(void)
+{
+	return(&(this->windowGeom));
+}
+
+/**
+ * Set window geometry.
+ * \param int x,y,w,h.
+ */
+void LFSTK_windowClass::setWindowGeom(int x,int y,int h,int w,setWindowGeomFlags flags)
+{
+	if((flags==WINDSETXY) || (flags==WINDSETALL))
+		{
+			this->windowGeom.x=x;
+			this->windowGeom.y=y;
+		}
+	if((flags==WINDSETWH) || (flags==WINDSETALL))
+		{
+			this->windowGeom.w=w;
+			this->windowGeom.h=h;
+		}
+}
+
+
+
+
+
+
+

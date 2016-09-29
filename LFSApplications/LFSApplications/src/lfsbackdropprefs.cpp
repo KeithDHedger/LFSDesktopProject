@@ -273,18 +273,18 @@ void loadMonitorData(void)
 
 int main(int argc, char **argv)
 {
-	XEvent			event;
-	int				sx=0;
-	int				sy=0;
-	geometryStruct	*geom;
-	int				bhite=24;
-	int				vspacing=bhite+10;
-	FILE*			fp=NULL;
-	char			*command;
-	int				c=0;
-	int				option_index=0;
-	const char		*shortOpts="h?w:";
-	option 			longOptions[]=
+	XEvent					event;
+	int						sx=0;
+	int						sy=0;
+	const geometryStruct	*geom;
+	int						bhite=24;
+	int						vspacing=bhite+10;
+	FILE*					fp=NULL;
+	char					*command;
+	int						c=0;
+	int						option_index=0;
+	const char				*shortOpts="h?w:";
+	option 					longOptions[]=
 		{
 			{"window",1,0,'w'},
 			{"help",0,0,'h'},
@@ -319,7 +319,7 @@ int main(int argc, char **argv)
 
 	wc=new LFSTK_windowClass(sx,sy,1,1,"Wallpaper Prefs",false);
 	wc->LFSTK_setDecorated(true);
-	geom=wc->LFSTK_getGeom();
+	geom=wc->LFSTK_getWindowGeom();
 
 	fc=new LFSTK_fileDialogClass(wc,"","/",false);
 

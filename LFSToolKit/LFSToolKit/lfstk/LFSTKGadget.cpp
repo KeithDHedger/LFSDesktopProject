@@ -339,6 +339,7 @@ void LFSTK_gadgetClass::LFSTK_resizeWindow(int w,int h)
 	this->w=w;
 	this->h=h;
 	XResizeWindow(this->display,this->window,w,h);
+	this->wc->setWindowGeom(0,0,w,h,WINDSETWH);
 	this->LFSTK_clearWindow();
 }
 
@@ -801,7 +802,7 @@ int LFSTK_gadgetClass::LFSTK_gadgetOnMonitor(void)
 	int	tx=this->x;
 	int	ty=this->y;
 
-	geometryStruct	*g=this->wc->LFSTK_getGeom();
+	const geometryStruct	*g=this->wc->LFSTK_getWindowGeom();
 
 	if(tx>=0)
 		tx=(g->x)+this->x;
@@ -812,7 +813,6 @@ int LFSTK_gadgetClass::LFSTK_gadgetOnMonitor(void)
 		ty=(g->y)+this->y;
 	else
 		ty=(g->h+g->y)-abs(this->y);
-	free(g);
 
 	if(tx<0)
 		tx=0;

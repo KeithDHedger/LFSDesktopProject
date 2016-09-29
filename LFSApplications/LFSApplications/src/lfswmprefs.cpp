@@ -209,7 +209,7 @@ int main(int argc, char **argv)
 	XEvent					event;
 	int						sx=0;
 	int						sy=0;
-	geometryStruct			*geom;
+	const geometryStruct	*geom;
 	int						bwidth=BWIDTH;
 	int						bhite=24;
 	int						spacing=bwidth+10;
@@ -261,7 +261,7 @@ int main(int argc, char **argv)
 
 	wc=new LFSTK_windowClass(sx,sy,800,600,"LFS WM Prefs",false);
 	wc->LFSTK_setDecorated(true);
-	geom=wc->LFSTK_getGeom();
+	geom=wc->LFSTK_getWindowGeom();
 	fc=new LFSTK_fileDialogClass(wc,"","/",true);
 
 	asprintf(&env,"%s/.config/LFS/lfswmanager.rc",getenv("HOME"));

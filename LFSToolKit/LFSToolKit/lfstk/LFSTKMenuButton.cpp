@@ -83,7 +83,6 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	fontStruct				*tfont;
 	const char				*itemfont;
 	LFSTK_menuButtonClass	*mb=NULL;
-	const monitorStruct 	*mons;
 	int 					xpos;
 	int 					ypos;
 	int						maxiconsize=0;
@@ -180,19 +179,6 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 
 	xpos=g->x;
 	ypos=g->y+this->h;
-	subwc->LFSTK_moveWindow(xpos,ypos,true);
-
-	mons=this->wc->LFSTK_getMonitorData(this->LFSTK_gadgetOnMonitor());
-	geometryStruct *subwcg=subwc->LFSTK_getGeom();
-
-	if(xpos+subwcg->w>mons->x+mons->w)
-		xpos=(mons->x+mons->w)-subwcg->w;
-
-	if(xpos<mons->x)
-		xpos=mons->x;
-
-	if(ypos+subwcg->h>mons->y+mons->h)
-		ypos=(mons->y+mons->h)-subwcg->h;
 
 	subwc->LFSTK_moveWindow(xpos,ypos,true);
 	subwc->LFSTK_showWindow(true);
@@ -203,8 +189,6 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 			mappedListener *ml=subwc->LFSTK_getMappedListener(event.xany.window);
 			if(ml!=NULL)
 				ml->function(ml->gadget,&event,ml->type);
-
-//printf("%i %i %i %i\n",this->wc->x,this->wc->y,this->wc->w,this->wc->h);
 
 			switch(event.type)
 				{
@@ -229,7 +213,6 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 
 	subwc->LFSTK_hideWindow();
 	delete g;
-	delete subwcg;
 	return(true);
 }
 	

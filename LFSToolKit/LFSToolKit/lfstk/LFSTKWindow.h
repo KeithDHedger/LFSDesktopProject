@@ -44,6 +44,8 @@ struct propertyStruct
 
 enum {XDNDENTER=0,XDNDPOSITION,XDNDSTATUS,XDNDTYPELIST,XDNDACTIONCOPY,XDNDDROP,XDNDLEAVE,XDNDFINISHED,XDNDSELECTION,XDNDPROXY,XA_CLIPBOARD,XA_COMPOUND_TEXT,XA_UTF8_STRING,XA_TARGETS,PRIMARY,DNDATOMCOUNT};
 
+enum setWindowGeomFlags {WINDSETXY,WINDSETWH,WINDSETALL};
+
 /**
  *
  * \brief Window class for LFSToolKit.
@@ -68,105 +70,108 @@ class LFSTK_windowClass
 		~LFSTK_windowClass();
 		LFSTK_windowClass(int x,int y,int w,int h,const char* name,bool override,bool loadvars=true);
 
-		void LFSTK_showWindow(bool all=true);
-		void LFSTK_hideWindow(void);
-		void LFSTK_setWindowTitle(const char *title);
+		void					LFSTK_showWindow(bool all=true);
+		void					LFSTK_hideWindow(void);
+		void					LFSTK_setWindowTitle(const char *title);
 
-		void LFSTK_clearWindow(void);
-		unsigned long LFSTK_setColour(const char *name);
-		void LFSTK_resizeWindow(int w,int h,bool tellx=true);
-		void LFSTK_moveWindow(int x,int y,bool tellx=true);
+		void 					LFSTK_clearWindow(void);
+		void					LFSTK_resizeWindow(int w,int h,bool tellx=true);
+		void					LFSTK_moveWindow(int x,int y,bool tellx=true);
+		const geometryStruct	*LFSTK_getWindowGeom(void);
+		void					setWindowGeom(int x,int y,int h,int w,setWindowGeomFlags flags);
 
-		void LFSTK_setFontString(const char *s);
-		void LFSTK_setFontColourName(int p,const char *colour);
-		void LFSTK_setWindowColourName(int p,const char* colour);
-		void LFSTK_setDecorated(bool isDecorated);
-		void LFSTK_setKeepAbove(bool set);
-		void LFSTK_setActive(bool set);
-		bool LFSTK_getActive(void);
-		void LFSTK_setSticky(bool set);
-		bool LFSTK_getSticky(void);
-		void LFSTK_setWindowType(const char *type);
-		void LFSTK_setTransientFor(Window w);
+		unsigned long			LFSTK_setColour(const char *name);
+		void					LFSTK_setFontString(const char *s);
+		void					LFSTK_setFontColourName(int p,const char *colour);
+		void					LFSTK_setWindowColourName(int p,const char* colour);
+		void					LFSTK_setDecorated(bool isDecorated);
+		void					LFSTK_setKeepAbove(bool set);
+		void					LFSTK_setActive(bool set);
+		bool					LFSTK_getActive(void);
+		void					LFSTK_setSticky(bool set);
+		bool					LFSTK_getSticky(void);
+		void					LFSTK_setWindowType(const char *type);
+		void					LFSTK_setTransientFor(Window w);
 
-		int LFSTK_getMonitorCount(void);
-		const monitorStruct* LFSTK_getMonitorData(int monitor);
-		const monitorStruct* LFSTK_getMonitors(void);
+		int						LFSTK_getMonitorCount(void);
+		const monitorStruct		*LFSTK_getMonitorData(int monitor);
+		const monitorStruct		*LFSTK_getMonitors(void);
 	
-		void LFSTK_reloadGlobals(void);
-		void LFSTK_setXProperty(Atom property,Atom type,int format,void *dataptr,int propcnt);
-		void LFSTK_sendMessage(const char *msg,unsigned long data0,unsigned long data1,unsigned long data2,unsigned long data3,unsigned long data4);
+		void					LFSTK_reloadGlobals(void);
+		void					LFSTK_setXProperty(Atom property,Atom type,int format,void *dataptr,int propcnt);
+		void					LFSTK_sendMessage(const char *msg,unsigned long data0,unsigned long data1,unsigned long data2,unsigned long data3,unsigned long data4);
 
-		geometryStruct	*LFSTK_getGeom(void);
-		int LFSTK_windowOnMonitor(void);
+		int						LFSTK_windowOnMonitor(void);
 
-		void LFSTK_setTile(const char *path,int size);
+		void					LFSTK_setTile(const char *path,int size);
 
 //gadget management
-		void LFSTK_addMappedListener(int mapwindow,mappedListener* ml);
-		mappedListener* LFSTK_getMappedListener(int window);
-		int LFSTK_gadgetCount(void);
-		LFSTK_gadgetClass* LFSTK_findGadgetByPos(int x, int y);
+		void					LFSTK_addMappedListener(int mapwindow,mappedListener* ml);
+		mappedListener			*LFSTK_getMappedListener(int window);
+		int						LFSTK_gadgetCount(void);
+		LFSTK_gadgetClass		*LFSTK_findGadgetByPos(int x, int y);
 		
 //dnd
-		void LFSTK_initDnD(void);
-		Atom LFSTK_getDnDAtom(int atomnum);
-		void LFSTK_handleDnD(XEvent *event);
+		void					LFSTK_initDnD(void);
+		Atom					LFSTK_getDnDAtom(int atomnum);
+		void					LFSTK_handleDnD(XEvent *event);
 
-		Display			*display;
-		Window			window;
-		GC				gc;
-		int				screen;
-		Visual			*visual;
-		Window			rootWindow;		
-		Colormap		cm;
-		XftDraw 		*draw;
+		Display					*display;
+		Window					window;
+		GC						gc;
+		int						screen;
+		Visual					*visual;
+		Window					rootWindow;		
+		Colormap				cm;
+		XftDraw 				*draw;
 
-		char			*fontString;
-		char			*fontColourNames[MAXCOLOURS];
-		colourStruct	windowColourNames[MAXCOLOURS];
-		bool			autoLabelColour;
-		LFSTK_lib		*globalLib;
+		char					*fontString;
+		char					*fontColourNames[MAXCOLOURS];
+		colourStruct			windowColourNames[MAXCOLOURS];
+		bool					autoLabelColour;
+		LFSTK_lib				*globalLib;
 
-		fontStruct		*font;
+		fontStruct				*font;
 
-		Window			parentWindow;
-		int				x;
-		int				y;
-		int				w;
-		int				h;
-		Pixmap			tile[2];
-		bool			useTile;
-		bool			acceptDnd;
+		Window					parentWindow;
+		int						x;
+		int						y;
+		int						w;
+		int						h;
+		Pixmap					tile[2];
+		bool					useTile;
+		bool					acceptDnd;
 
-		LFSTK_gadgetClass *dropGadget;
+		LFSTK_gadgetClass		*dropGadget;
 	private:
 //window routines
-		void initWindow(bool loadvars);
-		void loadGlobalColours(void);
-		void loadMonitorData(void);
+		void					initWindow(bool loadvars);
+		void					loadGlobalColours(void);
+		void					loadMonitorData(void);
+//		void					setWindowGeom(int x,int y,int h,int w,setWindowGeomFlags flags);
 
 //dnd routines
-		propertyStruct* readProperty(Window src,Atom property);
-		std::string getAtomName(Atom a);
-		Atom pickTargetFromList(Atom* atom_list,int nitems);
-		Atom pickTargetFromTargets(propertyStruct* p);
-		Atom pickTargetFromAtoms(Atom t1, Atom t2, Atom t3);
+		propertyStruct			*readProperty(Window src,Atom property);
+		std::string				getAtomName(Atom a);
+		Atom					pickTargetFromList(Atom* atom_list,int nitems);
+		Atom					pickTargetFromTargets(propertyStruct* p);
+		Atom					pickTargetFromAtoms(Atom t1, Atom t2, Atom t3);
 
-		char			*windowName;
-		bool			isActive;
-		bool			isSticky;
-		int				monitorCount;
-		monitorStruct	*monitors;
-		//gadgetList		*gadgets;
+		char					*windowName;
+		bool					isActive;
+		bool					isSticky;
+		int						monitorCount;
+		monitorStruct			*monitors;
+		geometryStruct			windowGeom;
+
 		std::map<int,mappedListener*> gadgetMap;
 
 //Atoms etc for Xdnd
-		Atom			dNdAtoms[DNDATOMCOUNT];
+		Atom					dNdAtoms[DNDATOMCOUNT];
 		std::map<std::string,int> dNdTypes;
-		Atom			toBeRequested;
-		Window			sourceWindow;
-		int				xDnDVersion;
+		Atom					toBeRequested;
+		Window					sourceWindow;
+		int						xDnDVersion;
 };
 
 #endif

@@ -348,10 +348,10 @@ int main(int argc, char **argv)
 	sy+=BHITE+12;
 
 //new menu list gadget
-	const char	*menulistlabels[4]={"menu 1","menu2","abcde","menu 4"};
-	menulist=new LFSTK_menuListClass(wc,"Menu List",BORDER,sy,BWIDTH*2,BHITE,BGRAV);
-	menulist->LFSTK_addMenuList((char**)menulistlabels,4);
-	sy+=BHITE+12;
+//	const char	*menulistlabels[4]={"menu 1","menu2","abcde","menu 4"};
+//	menulist=new LFSTK_menuListClass(wc,"Menu List",BORDER,sy,BWIDTH*2,BHITE,BGRAV);
+//	menulist->LFSTK_addMenuList((char**)menulistlabels,4);
+//	sy+=BHITE+12;
 
 //line edit
 	le=new LFSTK_lineEditClass(wc,"Hello World",BORDER,sy,BWIDTH*2,BHITE,BGRAV);
@@ -384,6 +384,8 @@ int main(int argc, char **argv)
 						break;
 
 					case ConfigureNotify:
+						//wc->LFSTK_setWindowGeom(event.xconfigurerequest.x,event.xconfigurerequest.y,event.xconfigurerequest.width,event.xconfigurerequest.height);
+						//printf("x=%i y=%i w=%i h=%i\n",event.xconfigurerequest.x,event.xconfigurerequest.y,event.xconfigurerequest.width,event.xconfigurerequest.height);
 						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
 						list->LFSTK_clearWindow();
 						break;
