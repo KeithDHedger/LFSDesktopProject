@@ -56,13 +56,6 @@ enum setWindowGeomFlags {WINDSETXY,WINDSETWH,WINDSETALL};
  *
  */
 
-//#include <map>
-//#include <iostream>
-//#include <cstdio>
-//#include <climits>
-//#include <cstring>
-//using namespace std;
-
 class LFSTK_windowClass
 {
 	public:
@@ -134,10 +127,6 @@ class LFSTK_windowClass
 		fontStruct				*font;
 
 		Window					parentWindow;
-		int						x;
-		int						y;
-		int						w;
-		int						h;
 		Pixmap					tile[2];
 		bool					useTile;
 		bool					acceptDnd;
@@ -148,7 +137,6 @@ class LFSTK_windowClass
 		void					initWindow(bool loadvars);
 		void					loadGlobalColours(void);
 		void					loadMonitorData(void);
-//		void					setWindowGeom(int x,int y,int h,int w,setWindowGeomFlags flags);
 
 //dnd routines
 		propertyStruct			*readProperty(Window src,Atom property);
