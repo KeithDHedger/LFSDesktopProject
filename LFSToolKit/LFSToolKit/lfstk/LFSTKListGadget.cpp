@@ -363,6 +363,8 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 			buttonEnd->LFSTK_setCallBack(NULL,scrollCB,SCROLLDATA(LEND));
 
 	this->style=BEVELIN;
+	if(newlist!=NULL)
+		this->LFSTK_setList(newlist,cnt);
 }
 
 

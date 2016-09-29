@@ -39,24 +39,26 @@ class LFSTK_lib
 	public:
 		LFSTK_lib(bool loadvars);
 		~LFSTK_lib();
-		bool LFSTK_loadVarsFromFile(const char* filepath,const args* dataptr);
-		void LFSTK_saveVarsToFile(const char* filepath,const args* dataptr);
-		const args *LFSTK_getTKArgs(void);
-		const char *LFSTK_getGlobalString(int state,int type);
-		void LFSTK_setGlobalString(int state,int type,const char *str);
-		bool LFSTK_getAutoLabelColour(void);
-		void LFSTK_setAutoLabelColour(bool toset);
-		bool LFSTK_getUseTheme(void);
-		void LFSTK_setUseTheme(bool use);
+		bool		LFSTK_loadVarsFromFile(const char* filepath,const args* dataptr);
+		void		LFSTK_saveVarsToFile(const char* filepath,const args* dataptr);
+		const args	*LFSTK_getTKArgs(void);
+		const char	*LFSTK_getGlobalString(int state,int type);
+		void		LFSTK_setGlobalString(int state,int type,const char *str);
+		bool		LFSTK_getAutoLabelColour(void);
+		void		LFSTK_setAutoLabelColour(bool toset);
+		bool		LFSTK_getUseTheme(void);
+		void		LFSTK_setUseTheme(bool use);
 	
-		const char* bestFontColour(long pixel);
-		int LFSTK_getTextwidth(Display *disp,XftFont *font,const char *str);
-		fontStruct* LFSTK_loadFont(Display *disp,int scr,const char *name);
-		static bool LFSTK_gadgetEvent(void *self,XEvent *e,int type);
+		const char	*bestFontColour(long pixel);
+		int			LFSTK_getTextwidth(Display *disp,XftFont *font,const char *str);
+		fontStruct	*LFSTK_loadFont(Display *disp,int scr,const char *name);
+		static bool	LFSTK_gadgetEvent(void *self,XEvent *e,int type);
 
-		bool LFSTK_setPixmapsFromPath(Display *display,Visual *visual,Colormap cm,Window w,const char *file,Pixmap *image,Pixmap *mask,int size);
-		const char* LFSTK_findThemedIcon(const char *theme,const char *icon,const char *catagory);
-		char* LFSTK_oneLiner(const char* fmt,...);
+		bool		LFSTK_setPixmapsFromPath(Display *display,Visual *visual,Colormap cm,Window w,const char *file,Pixmap *image,Pixmap *mask,int size);
+		const char	*LFSTK_findThemedIcon(const char *theme,const char *icon,const char *catagory);
+		char		*LFSTK_oneLiner(const char* fmt,...);
+
+		bool		LFSTK_pointInRect(pointStruct *point,geometryStruct *geom);
 
 	private:
 		static int callback(const char *fpath,const struct stat *sb,int typeflag);

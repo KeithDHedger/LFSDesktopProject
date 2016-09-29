@@ -54,6 +54,7 @@ LFSTK_listGadgetClass	*list;
 LFSTK_buttonClass		*filebutton;
 LFSTK_fileDialogClass	*filedialogfile;
 LFSTK_fileDialogClass	*filedialogdir;
+LFSTK_menuListClass		*menulist;
 
 const char				*mainMenuNames[]={"Menu 1","Menu 2","Menu 3","Menu 4","--","bool mainLoop=true;","menuItemStruct *mainMenus;","LFSTK_menuButtonClass *mb=NULL;"};
 const char				*subMenuNames[]={"Sub Menu 1","Sub Menu 2","Sub Menu 3","Sub Menu 4"};
@@ -220,20 +221,6 @@ int main(int argc, char **argv)
 	mainMenus[1].imageWidth=iconSize;
 	mainMenus[1].imageHeight=iconSize;
 
-
-const char *imagepath=wc->globalLib->LFSTK_findThemedIcon("nouveGnomeSteel","applications-office","");
-printf(">>>%s<%i<<\n",imagepath,iconSize);
-			mainMenus[3].image=imlib_load_image_immediately_without_cache(imagepath);
-			mainMenus[3].imageWidth=16;
-			mainMenus[3].imageHeight=16;
-			mainMenus[3].iconSize=16;
-			mainMenus[3].useImage=true;
-			mainMenus[3].useIcon=false;
-			mainMenus[3].icon[0]=0;
-			mainMenus[3].icon[1]=0;
-
-
-
 	mb=new LFSTK_menuButtonClass(wc,"Main Menu",BORDER,sy,BWIDTH,BHITE,BGRAV);
 	mb->LFSTK_setIconFromPath("./BookMark.png");
 	mb->LFSTK_setCallBack(NULL,menuCB,NULL);
@@ -289,14 +276,6 @@ printf(">>>%s<%i<<\n",imagepath,iconSize);
 			subMenus[1].iconSize=iconSize;
 			subMenus[1].useImage=true;
 			
-iconpath=wc->globalLib->LFSTK_findThemedIcon("nouveGnomeSteel","applications-office","");
-printf(">>>%s<%i<<\n",iconpath,iconSize);
-			subMenus[2].image=imlib_load_image_immediately_without_cache(iconpath);
-			subMenus[2].imageWidth=iconSize;
-			subMenus[2].imageHeight=iconSize;
-			subMenus[2].iconSize=iconSize;
-			subMenus[2].useImage=true;
-
 //add sub menus
 	mainMenusWithSubs[3].subMenus=subMenus;
 	mainMenusWithSubs[3].subMenuCnt=MAXSUBMENUS;
@@ -314,19 +293,6 @@ printf(">>>%s<%i<<\n",iconpath,iconSize);
 
 	mainMenusWithSubs[1].subMenus=subMenus;
 	mainMenusWithSubs[1].subMenuCnt=MAXSUBMENUS;
-
-
-iconpath=wc->globalLib->LFSTK_findThemedIcon("nouveGnomeSteel","applications-office","");
-printf(">>>%s<%i<<\n",iconpath,iconSize);
-			mainMenusWithSubs[3].image=imlib_load_image_immediately_without_cache(iconpath);
-			mainMenusWithSubs[3].imageWidth=16;
-			mainMenusWithSubs[3].imageHeight=16;
-			mainMenusWithSubs[3].iconSize=16;
-			mainMenusWithSubs[3].useImage=true;
-			mainMenusWithSubs[3].useIcon=false;
-			mainMenusWithSubs[3].icon[0]=0;
-			mainMenusWithSubs[3].icon[1]=0;
-
 
 	mbwithsubs=new LFSTK_menuButtonClass(wc,"Sub Menus",BORDER,sy,BWIDTH,BHITE,BGRAV);
 	mbwithsubs->LFSTK_setIconFromPath("./ManPageEditor.png");
@@ -370,18 +336,6 @@ printf(">>>%s<%i<<\n",iconpath,iconSize);
 	list->LFSTK_setList((char**)&lst,15);
 	list->LFSTK_setCallBack(NULL,select,NULL);
 
-//	sy+=BHITE*6;
-//
-//	const char	*lst2[]={"item 1","item 2","item 3","item 4","item 5","item 6","abc","def","ghi","jkl","123","456","789","101112","last item",};
-//
-//	const char	*images2[]={"./AspellGUI.png",NULL,NULL,NULL,"./AspellGUI.png",NULL,"./AspellGUI.png",NULL,"./computer.png","./computer.png","./AspellGUI.png","./computer.png","./computer.png","./computer.png","./computer.png"};
-//	list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,BWIDTH*3,BHITE*5,BGRAV,NULL,0);
-//	list->LFSTK_setImageList((char**)&images2,15);
-//	list->LFSTK_setList((char**)&lst2,15);
-//	list->LFSTK_setCallBack(NULL,select,NULL);
-
-
-
 	sy+=BHITE*6;
 
 //select file
@@ -391,6 +345,12 @@ printf(">>>%s<%i<<\n",iconpath,iconSize);
 	filebutton=new LFSTK_buttonClass(wc,"Select Folder",BORDER+BWIDTH+BORDER,sy,BWIDTH,BHITE,BGRAV);
 	filebutton->LFSTK_setCallBack(NULL,selectdir,NULL);
 
+	sy+=BHITE+12;
+
+//new menu list gadget
+	const char	*menulistlabels[4]={"menu 1","menu2","abcde","menu 4"};
+	menulist=new LFSTK_menuListClass(wc,"Menu List",BORDER,sy,BWIDTH*2,BHITE,BGRAV);
+	menulist->LFSTK_addMenuList((char**)menulistlabels,4);
 	sy+=BHITE+12;
 
 //line edit

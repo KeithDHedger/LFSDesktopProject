@@ -846,3 +846,23 @@ void LFSTK_gadgetClass::LFSTK_setTile(const char *path,int size)
 	else
 		this->useTile=false;
 }
+
+/**
+* Get font width and height.
+* \param geometryStruct *geom;
+* \param const char *label;
+*/
+
+void LFSTK_gadgetClass::LFSTK_getFontGeom(geometryStruct *geom,const char *label)
+{
+	const char		*itemfont;
+	fontStruct		*tfont;
+
+	geom->x=0;
+	geom->y=0;
+	itemfont=this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
+	tfont=this->wc->globalLib->LFSTK_loadFont(this->display,this->screen,itemfont);
+	geom->w=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(tfont->data),label);
+	geom->h=tfont->ascent+tfont->descent+8;
+}
+

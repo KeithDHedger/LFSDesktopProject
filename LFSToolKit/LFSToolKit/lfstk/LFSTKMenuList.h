@@ -32,12 +32,24 @@
 #define FFILEHITE 8
 #define FDIRHITE 5
 
-class LFSTK_menuListClass
+class LFSTK_menuListClass  : public  LFSTK_gadgetClass
 {
 	public:
 		~LFSTK_menuListClass();
-		LFSTK_menuListClass(LFSTK_windowClass* parentwc,const char *label,const char *startdir,bool type);
+		LFSTK_menuListClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity);
 
+		void					LFSTK_addMenuList(char **list,unsigned cnt);
+		bool					mouseDown(XButtonEvent *e);
+
+	private:
+		char					**listStrings;
+		char					**listImages;
+		unsigned				listCnt;
+		unsigned				listImageCnt;
+		geometryStruct			*menuWindowSize;
+
+		LFSTK_listGadgetClass	*mainList;
 };
 
 #endif
+

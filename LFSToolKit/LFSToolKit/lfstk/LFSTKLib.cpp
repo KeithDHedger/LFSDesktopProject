@@ -737,6 +737,21 @@ char* LFSTK_lib::LFSTK_oneLiner(const char* fmt,...)
 	return(NULL);
 }
 
+/**
+* Get if point (x,y) is in rect (geom).
+* \param pointStruct *point.
+* \param geometryStruct *geom.
+* \return true=inrect.
+*/
+
+bool LFSTK_lib::LFSTK_pointInRect(pointStruct *point,geometryStruct *geom)
+{
+	if((point->x>geom->x) && (point->x<(geom->x+geom->w)) && (point->y>geom->y) && (point->y<(geom->y+geom->h)))
+		return(true);
+
+	return(false);
+}
+
 
 
 

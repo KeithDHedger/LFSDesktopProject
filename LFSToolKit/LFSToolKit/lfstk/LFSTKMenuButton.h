@@ -47,7 +47,6 @@ struct menuItemStruct
 	int					imageHeight;
 };
 
-
 /**
  *
  * \brief Menu button class for LFSToolKit.

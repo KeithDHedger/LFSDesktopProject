@@ -42,51 +42,52 @@ class LFSTK_gadgetClass
 		virtual ~LFSTK_gadgetClass();
 
 //window events
-		virtual void LFSTK_clearWindow(void);
-		virtual void LFSTK_resizeWindow(int w,int h);
-		virtual bool clientMessage(XEvent *e);
-		virtual bool gotFocus(XEvent *e);
-		virtual bool lostFocus(XEvent *e);
+		virtual void		LFSTK_clearWindow(void);
+		virtual void		LFSTK_resizeWindow(int w,int h);
+		virtual bool		clientMessage(XEvent *e);
+		virtual bool		gotFocus(XEvent *e);
+		virtual bool		lostFocus(XEvent *e);
 
 //mouse events
-		virtual bool mouseUp(XButtonEvent *e);
-		virtual bool mouseDown(XButtonEvent *e);
-		virtual bool mouseExit(XButtonEvent *e);
-		virtual bool mouseEnter(XButtonEvent *e);
-		virtual bool keyRelease(XKeyEvent *e);
+		virtual bool		mouseUp(XButtonEvent *e);
+		virtual bool		mouseDown(XButtonEvent *e);
+		virtual bool		mouseExit(XButtonEvent *e);
+		virtual bool		mouseEnter(XButtonEvent *e);
+		virtual bool		keyRelease(XKeyEvent *e);
 
 //DnD routines
-		virtual void LFSTK_dropData(propertyStruct* data);
+		virtual void		LFSTK_dropData(propertyStruct* data);
 
-		Window LFSTK_getWindow(void);
-		void LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned int w,unsigned int h,int gravity);
-		void LFSTK_setCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud);
+		Window				LFSTK_getWindow(void);
+		void				LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned int w,unsigned int h,int gravity);
+		void				LFSTK_setCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud);
 
-		void LFSTK_setColourName(int p,const char* colour);
-		const char* LFSTK_getColourName(int p);
-		void LFSTK_setFontString(const char *s);
-		void LFSTK_setFontColourName(int p,const char* colour);
-		void LFSTK_reloadColours(void);
+		void				LFSTK_setColourName(int p,const char* colour);
+		const char			*LFSTK_getColourName(int p);
+		void				LFSTK_setFontString(const char *s);
+		void				LFSTK_setFontColourName(int p,const char* colour);
+		void				LFSTK_getFontGeom(geometryStruct *geom,const char *label);
+		void				LFSTK_reloadColours(void);
 
-		void LFSTK_setActive(bool active);
-		void LFSTK_setLabelAutoColour(bool setauto);
+		void				LFSTK_setActive(bool active);
+		void				LFSTK_setLabelAutoColour(bool setauto);
 
-		virtual void LFSTK_drawLabel(int state);
-		void LFSTK_setLabel(const char *newlabel);
-		const char *LFSTK_getLabel(void);
-		void LFSTK_setLabelOriention(int orient);
+		virtual void		LFSTK_drawLabel(int state);
+		void				LFSTK_setLabel(const char *newlabel);
+		const char			*LFSTK_getLabel(void);
+		void				LFSTK_setLabelOriention(int orient);
 
-		void LFSTK_setIconFromPath(const char *file,int size=16);
-		void LFSTK_setIcon(Pixmap image,Pixmap mask,int size=16);
-		void LFSTK_setImageFromPath(const char *file,int w,int h);
-		void LFSTK_setImage(Imlib_Image image,int w,int h);
-		void LFSTK_setScaledImage(Imlib_Image image,int w,int h);
+		void				LFSTK_setIconFromPath(const char *file,int size=16);
+		void				LFSTK_setIcon(Pixmap image,Pixmap mask,int size=16);
+		void				LFSTK_setImageFromPath(const char *file,int w,int h);
+		void				LFSTK_setImage(Imlib_Image image,int w,int h);
+		void				LFSTK_setScaledImage(Imlib_Image image,int w,int h);
 
-		int LFSTK_gadgetOnMonitor(void);
-		void LFSTK_setTile(const char *path,int size);
+		int					LFSTK_gadgetOnMonitor(void);
+		void				LFSTK_setTile(const char *path,int size);
 
-		geometryStruct *LFSTK_getGeom(void);
-		void LFSTK_getGeom(geometryStruct *geom);
+		geometryStruct		*LFSTK_getGeom(void);
+		void				LFSTK_getGeom(geometryStruct *geom);
 
 		LFSTK_windowClass	*wc;
 
@@ -101,15 +102,15 @@ class LFSTK_gadgetClass
 		Colormap			cm;
 
 		bool				gadgetAcceptsDnD;
+		bool				isSubMenu;
 	private:
-		void initGadget(void);
-		//Imlib_Image			scaledImage;
+		void				initGadget(void);
 
 	protected:
-		void drawString(XftFont* font,int x,int y,int state,const char *s);
-		void drawBox(geometryStruct* g,gadgetState state,bevelType bevel);
-		void drawIndicator(geometryStruct* g,int state,indicatorType indic=NOINDICATOR);
-		bevelType getActiveBevel(void);
+		void				drawString(XftFont* font,int x,int y,int state,const char *s);
+		void				drawBox(geometryStruct* g,gadgetState state,bevelType bevel);
+		void				drawIndicator(geometryStruct* g,int state,indicatorType indic=NOINDICATOR);
+		bevelType			getActiveBevel(void);
 
 		char				*label;
 		geometryStruct		geom;
