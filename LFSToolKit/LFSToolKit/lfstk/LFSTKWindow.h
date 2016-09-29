@@ -133,6 +133,8 @@ class LFSTK_windowClass
 		Window			parentWindow;
 		int				x;
 		int				y;
+		int				w;
+		int				h;
 		Pixmap			tile[2];
 		bool			useTile;
 		bool			acceptDnd;
@@ -151,8 +153,6 @@ class LFSTK_windowClass
 		Atom pickTargetFromTargets(propertyStruct* p);
 		Atom pickTargetFromAtoms(Atom t1, Atom t2, Atom t3);
 
-		int				w;
-		int				h;
 		char			*windowName;
 		bool			isActive;
 		bool			isSticky;

@@ -1,4 +1,5 @@
 0.2.0
+Leaving sub mnu now returns to main menu.
 Fixed sub menu image not being scaled.
 Set text colour in list gadget to auto.
 Started to add new menulist class.

@@ -203,19 +203,27 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 			mappedListener *ml=subwc->LFSTK_getMappedListener(event.xany.window);
 			if(ml!=NULL)
 				ml->function(ml->gadget,&event,ml->type);
+
+//printf("%i %i %i %i\n",this->wc->x,this->wc->y,this->wc->w,this->wc->h);
+
 			switch(event.type)
 				{
-				case LeaveNotify:
-					if(event.xany.window==subwc->window)
-					run=false;
-					break;
-				case Expose:
-				break;
-				case ButtonRelease:
-					run=false;
-					break;
-				default:
-					break;
+					case LeaveNotify:
+						if(event.xany.window==subwc->window)
+							{
+								run=false;
+								XFlush(this->display);
+								XSync(this->display,true);
+								this->LFSTK_clearWindow();
+							}
+						break;
+					case Expose:
+						break;
+					case ButtonRelease:
+						run=false;
+						break;
+					default:
+						break;
 				}
 		}
 
