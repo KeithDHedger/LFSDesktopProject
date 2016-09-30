@@ -237,7 +237,8 @@ void setCatagories(void)
 		}
 }
 
-bool inWindow(void)
+#if 0
+bool xxinWindow(void)
 {
 	Window			root_return;
 	Window			child_return;
@@ -255,6 +256,7 @@ bool inWindow(void)
 		}
 	return(false);
 }
+#endif
 
 int main(int argc, char **argv)
 {
@@ -382,7 +384,8 @@ int main(int argc, char **argv)
 			switch(event.type)
 				{
 					case LeaveNotify:
-						mainloop=inWindow();
+						if(event.xany.window==wc->window)
+							mainloop=false;
 						break;
 					case Expose:
 						wc->LFSTK_clearWindow();
