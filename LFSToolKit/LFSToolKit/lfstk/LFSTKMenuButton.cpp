@@ -183,6 +183,30 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	subwc->LFSTK_moveWindow(xpos,ypos,true);
 	subwc->LFSTK_showWindow(true);
 
+/*
+XEvent event;
+// [...]
+while (true) {
+  // Process pending events:
+  while (XPending(display) > 0) {
+    // Fetch next event:
+    XNextEvent(display, &event);
+
+    // Process the event:
+    switch (event.type) {
+      // I'll save you the event handling, since it is only
+      // delegation into other functions of the program, like
+      // key mapping, shutting down, etc. However, no other
+      // calls to the Xlib are made.
+    }
+  }
+  
+  // Draw:
+  drawScene(); // <- I modified this so it just clears the screen and
+               //    swaps the buffers. Not much involved here.  
+}
+*/
+int cnt=0;
 	while (run==true)
 		{
 			XNextEvent(subwc->display,&event);
