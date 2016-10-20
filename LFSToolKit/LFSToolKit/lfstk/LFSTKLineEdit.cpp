@@ -84,14 +84,14 @@ void LFSTK_lineEditClass::LFSTK_clearWindow()
 		XSetForeground(this->display,this->gc,whiteColour);
 	else
 		XSetForeground(this->display,this->gc,this->colourNames[INACTIVECOLOUR].pixel);
-	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
+	XFillRectangle(this->display,this->window,this->gc,0,0,this->gadgetGeom.w,this->gadgetGeom.h);
 
 	XSetForeground(this->display,this->gc,this->blackColour);
-	XDrawLine(this->display,this->window,this->gc,0,this->h-1,0,0);
-	XDrawLine(this->display,this->window,this->gc,0,0,this->w-1,0);
+	XDrawLine(this->display,this->window,this->gc,0,this->gadgetGeom.h-1,0,0);
+	XDrawLine(this->display,this->window,this->gc,0,0,this->gadgetGeom.w-1,0);
 	XSetForeground(this->display,this->gc,this->whiteColour);
-	XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
-	XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
+	XDrawLine(this->display,this->window,this->gc,0,this->gadgetGeom.h-1,this->gadgetGeom.w-1,this->gadgetGeom.h-1);
+	XDrawLine(this->display,this->window,this->gc,this->gadgetGeom.w-1,this->gadgetGeom.h-1,this->gadgetGeom.w-1,0);
 
 	this->drawLabel();
 }
@@ -146,9 +146,9 @@ bool LFSTK_lineEditClass::mouseDown(XButtonEvent *e)
 
 void LFSTK_lineEditClass::LFSTK_resizeWindow(int w,int h)
 {
-	this->w=w-(pad*2);
-	this->h=h-(pad*2);
-	XResizeWindow(this->display,this->window,this->w,this->h);
+	this->gadgetGeom.w=w-(pad*2);
+	this->gadgetGeom.h=h-(pad*2);
+	XResizeWindow(this->display,this->window,this->gadgetGeom.w,this->gadgetGeom.h);
 	this->LFSTK_clearWindow();
 }
 
@@ -212,42 +212,41 @@ void LFSTK_lineEditClass::drawLabel(void)
 	int	len=this->buffer.length();
 	int curpos;
 
-	if(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.c_str())<this->w-4)
+	if(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.c_str())<this->gadgetGeom.w-4)
 		{
 			startchar=0;
 			len=this->buffer.length();
 			curpos=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(startchar,this->cursorPos).c_str());
 		}
-	else if(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(0,this->cursorPos).c_str())>this->w-4)
+	else if(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(0,this->cursorPos).c_str())>this->gadgetGeom.w-4)
 		{
 			startchar=0;
 			len=this->cursorPos;
-			while(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(startchar,len).c_str())>this->w-4)
+			while(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(startchar,len).c_str())>this->gadgetGeom.w-4)
 				{
 					startchar++;
 					len--;
 				}
 			curpos=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(startchar,len).c_str());
 		}
-	else if(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(0,len).c_str())>this->w-4)
+	else if(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(0,len).c_str())>this->gadgetGeom.w-4)
 		{
 			startchar=0;
 			len=this->buffer.length();
-			while(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(startchar,len).c_str())>this->w-4)
+			while(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(startchar,len).c_str())>this->gadgetGeom.w-4)
 				{
 					len--;
 				}
 			curpos=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(startchar,this->cursorPos).c_str());
 		}
 
-//	this->drawString((XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),NORMALCOLOUR,this->buffer.substr(startchar,len).c_str());
 	XftDrawChange(this->wc->draw,this->window);
-	XftDrawStringUtf8(this->wc->draw,&(this->blackXftColour),(XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),(XftChar8 *)this->buffer.substr(startchar,len).c_str(),len);
+	XftDrawStringUtf8(this->wc->draw,&(this->blackXftColour),(XftFont*)(this->font->data),2,(this->gadgetGeom.h/2)+((this->wc->font->ascent-2)/2),(XftChar8 *)this->buffer.substr(startchar,len).c_str(),len);
 
 	if(this->isFocused==true)
 		{
 			XSetForeground(this->display,this->gc,this->blackColour);
-			XDrawLine(this->display,this->window,this->gc,2+curpos,3,2+curpos,this->h-3);
+			XDrawLine(this->display,this->window,this->gc,2+curpos,3,2+curpos,this->gadgetGeom.h-3);
 		}
 }
 

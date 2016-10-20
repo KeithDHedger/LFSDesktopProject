@@ -54,14 +54,6 @@ void LFSTK_fileDialogClass::freeDirList(void)
 				free(this->dirList[j]);
 			delete[] this->dirList;
 		}
-//TODO//
-//not needed yet
-//	if(this->dirImageList!=NULL)
-//		{
-//			for(int j=0;j<this->dirListCnt;j++)
-//				if(this->dirImageList[j]!=NULL)
-//					free(this->dirImageList[j]);
-//		}
 	delete[] this->dirImageList;
 }
 
@@ -390,10 +382,7 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 
 	this->apply=false;
 	if(this->dialog!=NULL)
-		{
-//			if(this->dialogType==true)
-//				delete this->fileListGadget;
-			
+		{			
 			this->dialog->LFSTK_showWindow();
 			this->dialog->LFSTK_setKeepAbove(true);
 			this->dialog->LFSTK_setTransientFor(this->wc->window);
@@ -470,12 +459,12 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 							case ConfigureNotify:
 								if(geomdir!=NULL)
 									delete geomdir;
-								geomdir=this->dirListGadget->LFSTK_getGeom();
+								geomdir=this->dirListGadget->LFSTK_getGlobalGeom();
 								if(this->dialogType==false)
 									{
 										if(geomfile!=NULL)
 											delete geomfile;
-										geomfile=this->fileListGadget->LFSTK_getGeom();
+										geomfile=this->fileListGadget->LFSTK_getGlobalGeom();
 									}
 								this->dialog->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
 								break;

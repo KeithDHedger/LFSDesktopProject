@@ -32,17 +32,17 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 {
 	if(this->wc->useTile==true) 
 		{
-			XSetTSOrigin(this->display,this->gc,0-this->x,0-this->y);
+			XSetTSOrigin(this->display,this->gc,0-this->gadgetGeom.x,0-this->gadgetGeom.y);
 			XSetFillStyle(this->display,this->gc,FillTiled);
 			XSetTile(this->display,this->gc,this->wc->tile[0]);
-			XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
+			XFillRectangle(this->display,this->window,this->gc,0,0,this->gadgetGeom.w,this->gadgetGeom.h);
 			XSetFillStyle(this->display,this->gc,FillSolid);
 		}
 	else
 		{
 			XSetFillStyle(this->display,this->gc,FillSolid);
 			XSetForeground(this->display,this->gc,this->wc->windowColourNames[NORMALCOLOUR].pixel);
-			XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
+			XFillRectangle(this->display,this->window,this->gc,0,0,this->gadgetGeom.w,this->gadgetGeom.h);
 		}
 
 	if(this->gotIcon==true)
@@ -61,7 +61,7 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 			imlib_context_set_drawable(this->window);
 			imlib_context_set_image(this->image);
 			imlib_context_set_blend(1);
-			imlib_render_image_on_drawable_at_size(4,(this->h/2)-(this->imageHeight/2),this->imageWidth,this->imageHeight); 
+			imlib_render_image_on_drawable_at_size(4,(this->gadgetGeom.h/2)-(this->imageHeight/2),this->imageWidth,this->imageHeight); 
 		}
 }
 
@@ -82,7 +82,7 @@ LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* image
 	this->LFSTK_setCommon(parentwc,imagepath,x,y,w,w,gravity);
 
 	wa.win_gravity=gravity;
-	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
+	this->window=XCreateWindow(this->display,this->parent,x,y,w,this->gadgetGeom.h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
 	ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
@@ -90,5 +90,5 @@ LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* image
 	ml->type=IMAGEGADGET;
 	this->wc->LFSTK_addMappedListener(this->window,ml);
 
-	this->LFSTK_setImageFromPath(imagepath,w,h);
+	this->LFSTK_setImageFromPath(imagepath,w,this->gadgetGeom.h);
 }

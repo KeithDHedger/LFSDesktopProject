@@ -169,15 +169,10 @@ void LFSTK_gadgetClass::LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* 
 	this->display=this->wc->display;
 	this->parent=this->wc->window;
 
-	this->x=x;
-	this->y=y;
-	this->w=w;
-	this->h=h;
-
-	this->geom.x=x;
-	this->geom.y=y;
-	this->geom.w=w;
-	this->geom.h=h;
+	this->gadgetGeom.x=x;
+	this->gadgetGeom.y=y;
+	this->gadgetGeom.w=w;
+	this->gadgetGeom.h=h;
 
 	this->screen=this->wc->screen;
 	this->visual=this->wc->visual;
@@ -239,7 +234,7 @@ void LFSTK_gadgetClass::LFSTK_setLabelAutoColour(bool setauto)
 */
 void LFSTK_gadgetClass::LFSTK_clearWindow()
 {
-	geometryStruct g={0,0,this->w,this->h};
+	geometryStruct	g={0,0,this->gadgetGeom.w,this->gadgetGeom.h};
 
 	if(this->isActive==true)
 		{
@@ -320,7 +315,7 @@ bool LFSTK_gadgetClass::mouseExit(XButtonEvent *e)
 */
 bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 {
-	geometryStruct	g={0,0,this->w,this->h};
+	geometryStruct	g={0,0,this->gadgetGeom.w,this->gadgetGeom.h};
 
 	if(this->isActive==false)
 		{
@@ -336,10 +331,10 @@ bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 
 void LFSTK_gadgetClass::LFSTK_resizeWindow(int w,int h)
 {
-	this->w=w;
-	this->h=h;
-	XResizeWindow(this->display,this->window,w,h);
-	this->wc->setWindowGeom(0,0,w,h,WINDSETWH);
+	this->gadgetGeom.w=w;
+	this->gadgetGeom.h=h;
+	XResizeWindow(this->display,this->window,this->gadgetGeom.w,this->gadgetGeom.h);
+	this->wc->setWindowGeom(0,0,this->gadgetGeom.w,this->gadgetGeom.h,WINDSETWH);
 	this->LFSTK_clearWindow();
 }
 
@@ -427,21 +422,21 @@ void LFSTK_gadgetClass::LFSTK_drawLabel(int state)
 			switch(this->labelOrientation)
 				{
 					case LEFT:
-						this->drawString((XftFont*)(this->font->data),2+this->labelOffset,(this->h/2)+((this->font->ascent-2)/2),state,this->label);
+						this->drawString((XftFont*)(this->font->data),2+this->labelOffset,(this->gadgetGeom.h/2)+((this->font->ascent-2)/2),state,this->label);
 						break;
 					case RIGHT:
-						this->drawString((XftFont*)(this->font->data),this->w-2-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->label))+this->labelOffset,(this->h/2)+((this->font->ascent-2)/2),state,this->label);
+						this->drawString((XftFont*)(this->font->data),this->gadgetGeom.w-2-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->label))+this->labelOffset,(this->gadgetGeom.h/2)+((this->font->ascent-2)/2),state,this->label);
 						break;
 					default://centre
-						this->drawString((XftFont*)(this->font->data),(this->w/2)-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)this->font->data,this->label)/2)+this->labelOffset,(this->h/2)+((this->font->ascent-2)/2),state,this->label);
+						this->drawString((XftFont*)(this->font->data),(this->gadgetGeom.w/2)-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)this->font->data,this->label)/2)+this->labelOffset,(this->gadgetGeom.h/2)+((this->font->ascent-2)/2),state,this->label);
 						break;
 				}
 
 			if(this->gotIcon==true)
 				{
 					XSetClipMask(this->display,this->gc,this->icon[1]);
-					XSetClipOrigin(this->display,this->gc,4,(this->h/2)-(this->iconSize/2));
-					XCopyArea(this->display,this->icon[0],this->window,this->gc,0,0,this->iconSize,this->iconSize,4,(this->h/2)-(this->iconSize/2));
+					XSetClipOrigin(this->display,this->gc,4,(this->gadgetGeom.h/2)-(this->iconSize/2));
+					XCopyArea(this->display,this->icon[0],this->window,this->gc,0,0,this->iconSize,this->iconSize,4,(this->gadgetGeom.h/2)-(this->iconSize/2));
 					XSetClipMask(this->display,this->gc,None);
 				}
 			else if(this->useImage==true)
@@ -451,7 +446,7 @@ void LFSTK_gadgetClass::LFSTK_drawLabel(int state)
 					imlib_context_set_colormap(this->cm);
 					imlib_context_set_image(this->image);
 					imlib_context_set_drawable(this->window);
-					imlib_render_image_on_drawable(4,(this->h/2)-(this->imageHeight/2)); 
+					imlib_render_image_on_drawable(4,(this->gadgetGeom.h/2)-(this->imageHeight/2)); 
 				}
 		}
 	else
@@ -459,9 +454,9 @@ void LFSTK_gadgetClass::LFSTK_drawLabel(int state)
 			XSetClipMask(this->display,this->gc,None);
 			XSetFillStyle(this->display,this->gc,FillSolid);
 			XSetForeground(this->display,this->gc,this->blackColour);
-			XDrawLine(this->display,this->window,this->gc,this->x,this->h/2,this->x+this->w,this->h/2);
+			XDrawLine(this->display,this->window,this->gc,this->gadgetGeom.x,this->gadgetGeom.h/2,this->gadgetGeom.x+this->gadgetGeom.w,this->gadgetGeom.h/2);
 			XSetForeground(this->display,this->gc,this->whiteColour);
-			XDrawLine(this->display,this->window,this->gc,this->x,(this->h/2)+1,this->x+this->w,(this->h/2)+1);
+			XDrawLine(this->display,this->window,this->gc,this->gadgetGeom.x,(this->gadgetGeom.h/2)+1,this->gadgetGeom.x+this->gadgetGeom.w,(this->gadgetGeom.h/2)+1);
 		}
 }
 
@@ -493,25 +488,22 @@ void LFSTK_gadgetClass::LFSTK_setLabelOriention(int orient)
 }
 
 /**
-* Get gadget geometry.
+* Get gadget geometry in global co-ords.
 * \return geometry structure.
 * \note Caller should free structure after use.
 */
-geometryStruct *LFSTK_gadgetClass::LFSTK_getGeom(void)
+geometryStruct *LFSTK_gadgetClass::LFSTK_getGlobalGeom(void)
 {
 	geometryStruct		*g=new geometryStruct;
-	XWindowAttributes	xwa;
 	int					x,y;
 	Window				child;
 
 	XTranslateCoordinates(this->display,this->window,this->rootWindow,0,0,&x,&y,&child );
-	XGetWindowAttributes(this->display,this->window,&xwa);
 
 	g->x=x;
 	g->y=y;
-	g->w=xwa.width;
-	g->h=xwa.height;
-
+	g->w=this->gadgetGeom.w;
+	g->h=this->gadgetGeom.h;
 	return(g);
 }
 
@@ -629,7 +621,7 @@ void LFSTK_gadgetClass::drawBox(geometryStruct* g,gadgetState state,bevelType be
 
 	if(this->useTile==true)
 		{
-			XSetTSOrigin(this->display,this->gc,0-this->x,0-this->y);
+			XSetTSOrigin(this->display,this->gc,0-this->gadgetGeom.x,0-this->gadgetGeom.y);
 			XSetFillStyle(this->display,this->gc,FillTiled);
 			XSetTile(this->display,this->gc,this->tile[0]);
 			XFillRectangle(this->display,this->window,this->gc,g->x,g->y,g->w,g->h);
@@ -799,20 +791,20 @@ void LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int w,int h)
 
 int LFSTK_gadgetClass::LFSTK_gadgetOnMonitor(void)
 {
-	int	tx=this->x;
-	int	ty=this->y;
+	int	tx=this->gadgetGeom.x;
+	int	ty=this->gadgetGeom.y;
 
 	const geometryStruct	*g=this->wc->LFSTK_getWindowGeom();
 
 	if(tx>=0)
-		tx=(g->x)+this->x;
+		tx=(g->x)+this->gadgetGeom.x;
 	else
-		tx=(g->w+g->x)-abs(this->x);
+		tx=(g->w+g->x)-abs(this->gadgetGeom.x);
 
 	if(ty>=0)
-		ty=(g->y)+this->y;
+		ty=(g->y)+this->gadgetGeom.y;
 	else
-		ty=(g->h+g->y)-abs(this->y);
+		ty=(g->h+g->y)-abs(this->gadgetGeom.y);
 
 	if(tx<0)
 		tx=0;

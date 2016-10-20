@@ -58,7 +58,7 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 	this->boxStyle=TOGGLECHECK;
 
 	this->toggleState=false;
-	this->labelOffset=(this->h/2);
+	this->labelOffset=(this->gadgetGeom.h/2);
 	this->LFSTK_setLabelOriention(LEFT);
 		if(this->wc->globalLib->LFSTK_getUseTheme()==true)
 		this->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),-1);
@@ -90,25 +90,25 @@ void LFSTK_toggleButtonClass::drawButton(gadgetState state)
 	if(this->boxStyle==TOGGLECHECK)
 		{
 			g->x=0;
-			g->w=(this->h/2);
-			g->h=(this->h/2);
+			g->w=(this->gadgetGeom.h/2);
+			g->h=(this->gadgetGeom.h/2);
 			g->y=g->h-(g->h/2)-1;
 			this->LFSTK_setLabelOriention(LEFT);
-			this->labelOffset=(this->h/2);
+			this->labelOffset=(this->gadgetGeom.h/2);
 
 			if(this->wc->useTile==true) 
 				{
-					XSetTSOrigin(this->display,this->gc,0-this->x,0-this->y);
+					XSetTSOrigin(this->display,this->gc,0-this->gadgetGeom.x,0-this->gadgetGeom.y);
 					XSetFillStyle(this->display,this->gc,FillTiled);
 					XSetTile(this->display,this->gc,this->wc->tile[0]);
-					XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
+					XFillRectangle(this->display,this->window,this->gc,0,0,this->gadgetGeom.w,this->gadgetGeom.h);
 					XSetFillStyle(this->display,this->gc,FillSolid);
 				}
 			else
 				{
 					XSetFillStyle(this->display,this->gc,FillSolid);
 					XSetForeground(this->display,this->gc,this->wc->windowColourNames[NORMALCOLOUR].pixel);
-					XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
+					XFillRectangle(this->display,this->window,this->gc,0,0,this->gadgetGeom.w,this->gadgetGeom.h);
 				}
 
 			this->drawBox(g,state,bv);
@@ -133,8 +133,8 @@ void LFSTK_toggleButtonClass::drawButton(gadgetState state)
 		{
 			g->x=0;
 			g->y=0;
-			g->w=this->w;
-			g->h=this->h;
+			g->w=this->gadgetGeom.w;
+			g->h=this->gadgetGeom.h;
 			this->LFSTK_setLabelOriention(CENTRE);
 			this->labelOffset=2;
 			this->drawBox(g,state,bv);
@@ -158,7 +158,7 @@ void LFSTK_toggleButtonClass::LFSTK_clearWindow()
 
 	XSetForeground(this->display,this->gc,this->wc->windowColourNames[NORMALCOLOUR].pixel);
 
-	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
+	XFillRectangle(this->display,this->window,this->gc,0,0,this->gadgetGeom.w,this->gadgetGeom.h);
 
 	if(this->isActive==false)
 		this->drawButton(INACTIVECOLOUR);

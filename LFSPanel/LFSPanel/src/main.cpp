@@ -189,7 +189,6 @@ int main(int argc,char **argv)
 {
 	char			*env;
 	XEvent			event;
-	geometryStruct	*geom;
 	fontStruct		*tfont;
 	const char		*itemfont;
 	int				psize;
@@ -317,7 +316,6 @@ int main(int argc,char **argv)
 	mainwind->LFSTK_moveWindow(px,py,true);
 	mainwind->LFSTK_showWindow(true);
 	mainwind->LFSTK_setKeepAbove(true);
-	delete geom;
 
 	mainLoop=true;
 	while(mainLoop==true)

@@ -86,7 +86,7 @@ class LFSTK_gadgetClass
 		int					LFSTK_gadgetOnMonitor(void);
 		void				LFSTK_setTile(const char *path,int size);
 
-		geometryStruct		*LFSTK_getGeom(void);
+		geometryStruct		*LFSTK_getGlobalGeom(void);
 		void				LFSTK_getGeom(geometryStruct *geom);
 
 		LFSTK_windowClass	*wc;
@@ -113,11 +113,7 @@ class LFSTK_gadgetClass
 		bevelType			getActiveBevel(void);
 
 		char				*label;
-		geometryStruct		geom;
-		int					x;
-		int					y;
-		int					w;
-		int					h;
+		geometryStruct		gadgetGeom;
 		int					pad;
 
 		int					blackColour;

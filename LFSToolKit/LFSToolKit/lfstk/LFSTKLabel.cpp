@@ -37,10 +37,10 @@ void LFSTK_labelClass::LFSTK_clearWindow(void)
 {
 	if(this->wc->useTile==true)
 		{
-			XSetTSOrigin(this->display,this->gc,0-this->x,0-this->y);
+			XSetTSOrigin(this->display,this->gc,0-this->gadgetGeom.x,0-this->gadgetGeom.y);
 			XSetFillStyle(this->display,this->gc,FillTiled);
 			XSetTile(this->display,this->gc,this->wc->tile[0]);
-			XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
+			XFillRectangle(this->display,this->window,this->gc,0,0,this->gadgetGeom.w,this->gadgetGeom.h);
 			XSetFillStyle(this->display,this->gc,FillSolid);
 		}
 	else
@@ -51,7 +51,7 @@ void LFSTK_labelClass::LFSTK_clearWindow(void)
 				XSetForeground(this->display,this->gc,this->wc->windowColourNames[NORMALCOLOUR].pixel);
 			else
 				XSetForeground(this->display,this->gc,this->colourNames[INACTIVECOLOUR].pixel);
-			XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
+			XFillRectangle(this->display,this->window,this->gc,0,0,this->gadgetGeom.w,this->gadgetGeom.h);
 		}
 
 	if(this->isActive==true)

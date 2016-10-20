@@ -344,20 +344,20 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 
 //navigate
 //line up/down
-			this->buttonUp=new LFSTK_buttonClass(parentwc,"↑",this->x+this->w+LGAP,this->y,NAVBUTTONSIZE,NAVBUTTONSIZE,NorthEastGravity);
+			this->buttonUp=new LFSTK_buttonClass(parentwc,"↑",this->gadgetGeom.x+this->gadgetGeom.w+LGAP,this->gadgetGeom.y,NAVBUTTONSIZE,NAVBUTTONSIZE,NorthEastGravity);
 			this->scrollData[LUP].mainObject=this;
 			this->scrollData[LUP].userData=LUP;
 			buttonUp->LFSTK_setCallBack(NULL,scrollCB,SCROLLDATA(LUP));
-			buttonDown=new LFSTK_buttonClass(parentwc,"↓",this->x+this->w+LGAP,this->y+this->h-NAVBUTTONSIZE,NAVBUTTONSIZE,NAVBUTTONSIZE,NorthEastGravity);
+			buttonDown=new LFSTK_buttonClass(parentwc,"↓",this->gadgetGeom.x+this->gadgetGeom.w+LGAP,this->gadgetGeom.y+this->gadgetGeom.h-NAVBUTTONSIZE,NAVBUTTONSIZE,NAVBUTTONSIZE,NorthEastGravity);
 			this->scrollData[LDOWN].mainObject=this;
 			this->scrollData[LDOWN].userData=LDOWN;
 			buttonDown->LFSTK_setCallBack(NULL,scrollCB,SCROLLDATA(LDOWN));
 //page/updown
-			this->buttonHome=new LFSTK_buttonClass(parentwc,"⇤",this->x+this->w+LGAP,this->y+NAVBUTTONSIZE+LGAP,NAVBUTTONSIZE,NAVBUTTONSIZE,NorthEastGravity);
+			this->buttonHome=new LFSTK_buttonClass(parentwc,"⇤",this->gadgetGeom.x+this->gadgetGeom.w+LGAP,this->gadgetGeom.y+NAVBUTTONSIZE+LGAP,NAVBUTTONSIZE,NAVBUTTONSIZE,NorthEastGravity);
 			this->scrollData[LHOME].mainObject=this;
 			this->scrollData[LHOME].userData=LHOME;
 			buttonHome->LFSTK_setCallBack(NULL,scrollCB,SCROLLDATA(LHOME));
-			buttonEnd=new LFSTK_buttonClass(parentwc,"⇥",this->x+this->w+LGAP,this->y+this->h-(NAVBUTTONSIZE*2)-LGAP,NAVBUTTONSIZE,NAVBUTTONSIZE,NorthEastGravity);
+			buttonEnd=new LFSTK_buttonClass(parentwc,"⇥",this->gadgetGeom.x+this->gadgetGeom.w+LGAP,this->gadgetGeom.y+this->gadgetGeom.h-(NAVBUTTONSIZE*2)-LGAP,NAVBUTTONSIZE,NAVBUTTONSIZE,NorthEastGravity);
 			this->scrollData[LEND].mainObject=this;
 			this->scrollData[LEND].userData=LEND;
 			buttonEnd->LFSTK_setCallBack(NULL,scrollCB,SCROLLDATA(LEND));

@@ -79,7 +79,7 @@ LFSTK_gadgetClass* LFSTK_windowClass::LFSTK_findGadgetByPos(int x, int y)
 			ml=it->second;
 			if( (ml!=NULL) && (ml->gadget!=NULL) && (ml->gadget->gadgetAcceptsDnD==true) )
 				{
-					geom=ml->gadget->LFSTK_getGeom();
+					geom=ml->gadget->LFSTK_getGlobalGeom();
 					if((x>geom->x) && (x<geom->x+geom->w) && (y>geom->y) && (y<geom->y+geom->h) )
 						{
 							delete geom;

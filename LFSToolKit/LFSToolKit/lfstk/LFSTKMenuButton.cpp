@@ -48,7 +48,7 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass()
 */
 void LFSTK_menuButtonClass::LFSTK_clearWindow()
 {
-	geometryStruct g={0,0,this->w,this->h};
+	geometryStruct	g={0,0,this->gadgetGeom.w,this->gadgetGeom.h};
 
 	if(this->isActive==true)
 		{
@@ -87,7 +87,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	int 					ypos;
 	int						maxiconsize=0;
 
-	geometryStruct	geom={0,0,this->w,this->h};
+	geometryStruct	geom={0,0,this->gadgetGeom.w,this->gadgetGeom.h};
 
 	if(this->isActive==false)
 		{
@@ -98,7 +98,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	this->drawBox(&geom,ACTIVECOLOUR,this->getActiveBevel());
 	this->LFSTK_drawLabel(ACTIVECOLOUR);
 	this->drawIndicator(&geom,ACTIVECOLOUR,DISCLOSURE);
-	g=this->LFSTK_getGeom();
+	g=this->LFSTK_getGlobalGeom();
 
 	if(this->builtMenu==false)
 		{
@@ -178,35 +178,11 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 		}
 
 	xpos=g->x;
-	ypos=g->y+this->h;
+	ypos=g->y+this->gadgetGeom.h;
 
 	subwc->LFSTK_moveWindow(xpos,ypos,true);
 	subwc->LFSTK_showWindow(true);
 
-/*
-XEvent event;
-// [...]
-while (true) {
-  // Process pending events:
-  while (XPending(display) > 0) {
-    // Fetch next event:
-    XNextEvent(display, &event);
-
-    // Process the event:
-    switch (event.type) {
-      // I'll save you the event handling, since it is only
-      // delegation into other functions of the program, like
-      // key mapping, shutting down, etc. However, no other
-      // calls to the Xlib are made.
-    }
-  }
-  
-  // Draw:
-  drawScene(); // <- I modified this so it just clears the screen and
-               //    swaps the buffers. Not much involved here.  
-}
-*/
-int cnt=0;
 	while (run==true)
 		{
 			XNextEvent(subwc->display,&event);
@@ -283,7 +259,7 @@ bool LFSTK_menuButtonClass::mouseExit(XButtonEvent *e)
 */
 bool LFSTK_menuButtonClass::mouseEnter(XButtonEvent *e)
 {
-	geometryStruct	g={0,0,this->w,this->h};
+	geometryStruct	g={0,0,this->gadgetGeom.w,this->gadgetGeom.h};
 
 	if(this->isActive==false)
 		{
