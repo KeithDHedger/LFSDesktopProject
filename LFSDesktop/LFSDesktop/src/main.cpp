@@ -428,7 +428,8 @@ int main(int argc,char **argv)
 	if(fw!=NULL)
 		{
 			fgets(buffer,MAXBUFFER,fw);
-			kill(atoi(buffer),SIGKILL);
+			if(atoi(buffer)>1)
+				kill(atoi(buffer),SIGKILL);
 			fclose(fw);
 		}
 
