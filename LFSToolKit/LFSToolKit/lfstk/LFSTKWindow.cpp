@@ -28,7 +28,7 @@
 
 #include <string.h>
 
-#include "LFSTKGlobals.h"
+#include "lfstk/LFSTKGlobals.h"
 
 #define _NET_WM_STATE_REMOVE	0
 #define _NET_WM_STATE_ADD		1

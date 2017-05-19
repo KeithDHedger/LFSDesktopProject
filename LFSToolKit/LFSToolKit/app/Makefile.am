@@ -13,4 +13,4 @@ lfstkpxmapsdir = ${prefix}/share/LFSToolKit/Pixmaps
 lfstkpxmaps_DATA = ../resources/pixmaps/lfstkpngs/*.png
 
 lfstoolkit_includedir = $(includedir)/lfstk
-lfstoolkit_include_HEADERS = ../lfstk/LFSTK*.h
+lfstoolkit_include_HEADERS = ../lfstk/lfstk/LFSTK*.h

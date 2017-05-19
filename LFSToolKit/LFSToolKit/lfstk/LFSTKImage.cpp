@@ -18,7 +18,7 @@
  * along with LFSToolKit.  If not, see <http://www.gnu.org/licenses/>.
  */
  
-#include "LFSTKGlobals.h"
+#include "lfstk/LFSTKGlobals.h"
 
 LFSTK_imageClass::~LFSTK_imageClass()
 {

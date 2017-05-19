@@ -91,21 +91,17 @@ struct	mappedListener
 	int					type;
 };
 
-
-#include <lfstk/LFSTKLib.h>
-#include <lfstk/LFSTKWindow.h>
-#include <lfstk/LFSTKGadget.h>
-#include <lfstk/LFSTKLabel.h>
-#include <lfstk/LFSTKImage.h>
-#include <lfstk/LFSTKButton.h>
-#include <lfstk/LFSTKMenuButton.h>
-#include <lfstk/LFSTKLineEdit.h>
-#include <lfstk/LFSTKToggleButton.h>
-#include <lfstk/LFSTKFontButton.h>
-#include <lfstk/LFSTKListGadget.h>
-#include <lfstk/LFSTKFileDialog.h>
-#include <lfstk/LFSTKMenuList.h>
-
-
+#include "LFSTKLib.h"
+#include "LFSTKWindow.h"
+#include "LFSTKGadget.h"
+#include "LFSTKLabel.h"
+#include "LFSTKImage.h"
+#include "LFSTKButton.h"
+#include "LFSTKMenuButton.h"
+#include "LFSTKLineEdit.h"
+#include "LFSTKToggleButton.h"
+#include "LFSTKFontButton.h"
+#include "LFSTKListGadget.h"
+#include "LFSTKFileDialog.h"
 
 #endif
