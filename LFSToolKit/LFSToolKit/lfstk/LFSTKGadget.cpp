@@ -246,6 +246,9 @@ void LFSTK_gadgetClass::LFSTK_clearWindow()
 			this->drawBox(&g,INACTIVECOLOUR,this->style);
 			this->LFSTK_drawLabel(INACTIVECOLOUR);
 		}
+
+	if(this->useImage==true)
+		this->drawImage();
 }
 
 /**
@@ -304,6 +307,8 @@ bool LFSTK_gadgetClass::mouseExit(XButtonEvent *e)
 		}
 
 	this->LFSTK_clearWindow();
+	if(this->useImage==true)
+		this->drawImage();
 	this->inWindow=false;
 	return(true);
 }
@@ -325,7 +330,8 @@ bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 
 	this->drawBox(&g,PRELIGHTCOLOUR,this->style);
 	this->LFSTK_drawLabel(PRELIGHTCOLOUR);
-	this->inWindow=true;
+	if(this->useImage==true)
+		this->drawImage();
 	return(true);
 }
 
@@ -410,6 +416,41 @@ void LFSTK_gadgetClass::drawString(XftFont* font,int x,int y,int state,const cha
 }
 
 /**
+* Draw Scaled image.
+*/
+void LFSTK_gadgetClass::drawImage()
+{
+	int		txtx=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->label);
+	float	maxWidth=this->gadgetGeom.w-txtx-8;
+	float	maxHeight=this->gadgetGeom.h-8;
+	float	ratio;
+	float	width=cairo_image_surface_get_width(this->cImage);
+	float	height=cairo_image_surface_get_height(this->cImage);
+	int		yoffset=0.0;
+	int		xoffset=0.0;
+
+	if(maxWidth>maxHeight)
+		ratio=maxHeight/height;
+	else
+		ratio=maxWidth/width;
+
+	this->scaleY=(float)ratio;
+	this->scaleX=(float)ratio;
+	yoffset=(maxHeight/2)-(height * ratio)/2+4;
+	xoffset=(maxWidth/2)-(width * ratio)/2+4;
+
+	XSync(this->display,false);
+
+	cairo_save(this->cr);
+		cairo_reset_clip (this->cr);
+		cairo_translate(this->cr,xoffset,yoffset);
+		cairo_scale(this->cr,this->scaleX,this->scaleY);
+		cairo_set_source_surface(this->cr,this->cImage,0,0);
+		cairo_paint(this->cr);
+	cairo_restore(this->cr);
+}
+
+/**
 * Draw label.
 * \param p Button state.
 * \note State NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2,INACTIVECOLOUR=3.
@@ -441,12 +482,7 @@ void LFSTK_gadgetClass::LFSTK_drawLabel(int state)
 				}
 			else if(this->useImage==true)
 				{
-					imlib_context_set_display(this->display);
-					imlib_context_set_visual(this->visual);
-					imlib_context_set_colormap(this->cm);
-					imlib_context_set_image(this->image);
-					imlib_context_set_drawable(this->window);
-					imlib_render_image_on_drawable(4,(this->gadgetGeom.h/2)-(this->imageHeight/2)); 
+					this->drawImage();
 				}
 		}
 	else
@@ -569,7 +605,6 @@ void LFSTK_gadgetClass::drawIndicator(geometryStruct* g,int state,indicatorType 
 				for(int j=0;j<DISCLOSURESIZE/2;j++)
 					XDrawLine(this->display,this->window,this->gc,sx+j,sy+j,sx+j,sy+DISCLOSURESIZE-j);
 				break;
-			
 		}
 }
 
@@ -742,6 +777,7 @@ void LFSTK_gadgetClass::LFSTK_setIconFromPath(const char *file,int size)
 		}
 }
 
+#if 0
 /**
 * Set image and render with imlib2.
 * \param file Path to image file.
@@ -783,7 +819,39 @@ void LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int w,int h)
 			imlib_free_image();
 		}
 }
+#else
+/**
+* Set image and render with cairo.
+* \param file Path to image file.
+* \param w,h Size of image.
+*/
+cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int w,int h)
+{
+	cairo_status_t cs=CAIRO_STATUS_SUCCESS;
 
+	this->useImage=false;
+	this->gotIcon=false;
+	if(file==NULL)
+		return(CAIRO_STATUS_FILE_NOT_FOUND);
+
+	this->sfc=cairo_xlib_surface_create(this->display,this->window,this->visual,this->gadgetGeom.w,this->gadgetGeom.h);
+	this->cr=cairo_create(sfc);
+	this->cImage=cairo_image_surface_create_from_png(file);
+	cs=cairo_surface_status (this->cImage);
+	if(cs==CAIRO_STATUS_SUCCESS)
+		{
+			this->scaleX=(float)((float)this->gadgetGeom.w/(float)cairo_image_surface_get_width(this->cImage));
+			this->scaleY=(float)((float)this->gadgetGeom.h/(float)cairo_image_surface_get_height(this->cImage));
+			this->useImage=true;
+			this->gotIcon=false;
+			this->labelOrientation=RIGHT;
+		}
+	else	
+		printf("File %s error - Error:%s\n",file,cairo_status_to_string(cs));
+	return(cs);
+}
+
+#endif
 /**
 * Get gadget monitor.
 * \return unsigned Monitor that gadget top left is on;

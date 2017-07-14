@@ -5,7 +5,7 @@
 g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2||exit 1
 LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./a.out "$@"
 retval=$?
-#rm ./a.out
+rm ./a.out
 exit $retval
 
 #endif
@@ -54,7 +54,7 @@ LFSTK_listGadgetClass	*list;
 LFSTK_buttonClass		*filebutton;
 LFSTK_fileDialogClass	*filedialogfile;
 LFSTK_fileDialogClass	*filedialogdir;
-LFSTK_menuListClass		*menulist;
+//LFSTK_menuListClass		*menulist;
 
 const char				*mainMenuNames[]={"Menu 1","Menu 2","Menu 3","Menu 4","--","bool mainLoop=true;","menuItemStruct *mainMenus;","LFSTK_menuButtonClass *mb=NULL;"};
 const char				*subMenuNames[]={"Sub Menu 1","Sub Menu 2","Sub Menu 3","Sub Menu 4"};
@@ -197,6 +197,14 @@ int main(int argc, char **argv)
 	tbnormal->LFSTK_setIconFromPath("./api.png");
 	sy+=YSPACING;
 
+
+
+
+
+
+#if 0
+
+
 //menu button
 	wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"./computer.png",&ic[0],&ic[1],iconSize);
 	mainMenus=new menuItemStruct[MAXMAINMENUS];
@@ -215,11 +223,15 @@ int main(int argc, char **argv)
 		}
 
 	wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"system-lock-screen.png",&mainMenus[0].icon[0],&mainMenus[0].icon[1],iconSize);
-	mainMenus[1].useIcon=false;
-	mainMenus[1].useImage=true;
-	mainMenus[1].image=imlib_load_image_immediately_without_cache("./system-lock-screen.png");
-	mainMenus[1].imageWidth=iconSize;
-	mainMenus[1].imageHeight=iconSize;
+	wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"system-lock-screen.png",&mainMenus[1].icon[0],&mainMenus[1].icon[1],iconSize);
+
+//	mainMenus[1].useIcon=false;
+//	mainMenus[1].useImage=true;
+//	mainMenus[1].image=imlib_load_image_immediately_without_cache("./system-lock-screen.png");
+//	mainMenus[1].imageWidth=iconSize;
+//	mainMenus[1].imageHeight=iconSize;
+
+
 
 	mb=new LFSTK_menuButtonClass(wc,"Main Menu",BORDER,sy,BWIDTH,BHITE,BGRAV);
 	mb->LFSTK_setIconFromPath("./BookMark.png");
@@ -301,32 +313,41 @@ int main(int argc, char **argv)
 	mbwithsubs->LFSTK_addMenus(mainMenusWithSubs,MAXMAINMENUS);
 	sy+=YSPACING;
 
+
+
+#endif
+
+
 //icon button
-	iconButton=new LFSTK_buttonClass(wc,"",BORDER,sy,68,64+4,NorthWestGravity);
-	iconButton->LFSTK_setCallBack(NULL,buttonCB,(void*)iconButton->LFSTK_getLabel());
+	iconButton=new LFSTK_buttonClass(wc,"iconButton",BORDER,sy,68,64+4,NorthWestGravity);
+	iconButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"iconButton");
 	iconButton->LFSTK_setIconFromPath("../LFSToolKit/resources/pixmaps/LFSTux.png",64);
+	//iconButton->LFSTK_setIconFromPath("green.png",64);
 	sy+=64;
 	sy+=12;
 
 //image button
-	imageButton=new LFSTK_buttonClass(wc,"",BORDER,sy,68,64+4,NorthWestGravity);
-	imageButton->LFSTK_setCallBack(NULL,buttonCB,(void*)iconButton->LFSTK_getLabel());
-	imageButton->LFSTK_setImageFromPath("./AspellGUI.png",IMAGESIZE,IMAGESIZE);
+
+	imageButton=new LFSTK_buttonClass(wc,"imageButton",BORDER,sy,128,64+4,NorthWestGravity);
+	imageButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"imageButton");
+	imageButton->LFSTK_setImageFromPath("computerW.png",IMAGESIZE,IMAGESIZE);
 	sy+=64;
 
 	sy+=16;
-	image=new LFSTK_imageClass(wc,"./AspellGUI.png",BORDER,sy,IMAGESIZE,NorthWestGravity);
+	image=new LFSTK_imageClass(wc,"ManPageEditor.png",BORDER,sy,IMAGESIZE,NorthWestGravity);
 	sy+=16;
 
 	sy+=IMAGESIZE;
 	sy+=12;
 
+/*
 //font
 	fb=new LFSTK_fontButtonClass(wc,"Select Font 1",BORDER,sy,BWIDTH*2,BHITE,BGRAV);
 	fb->LFSTK_setCallBack(NULL,fontCB,USERDATA(100));
 	fb->LFSTK_setLabelIsFont(true);
 	sy+=BHITE+12;
-
+*/
+/*
 //list
 	const char	*lst[]={"item 1","item 2","item 3","item 4","item 5","item 6","abc","def","ghi","jkl","123","456","789","101112","last item",};
 
@@ -335,7 +356,6 @@ int main(int argc, char **argv)
 	list->LFSTK_setImageList((char**)&images,15);
 	list->LFSTK_setList((char**)&lst,15);
 	list->LFSTK_setCallBack(NULL,select,NULL);
-
 	sy+=BHITE*6;
 
 //select file
@@ -353,6 +373,8 @@ int main(int argc, char **argv)
 //	menulist->LFSTK_addMenuList((char**)menulistlabels,4);
 //	sy+=BHITE+12;
 
+
+*/
 //line edit
 	le=new LFSTK_lineEditClass(wc,"Hello World",BORDER,sy,BWIDTH*2,BHITE,BGRAV);
 	
@@ -371,7 +393,7 @@ int main(int argc, char **argv)
 				{
 					ml->function(ml->gadget,&event,ml->type);
 					//ml->gadget->LFSTK_clearWindow();
-					list->LFSTK_clearWindow();
+					//list->LFSTK_clearWindow();
 				}
 
 			switch(event.type)
@@ -380,14 +402,14 @@ int main(int argc, char **argv)
 						break;
 					case Expose:
 						wc->LFSTK_clearWindow();
-						list->LFSTK_clearWindow();
+						//list->LFSTK_clearWindow();
 						break;
 
 					case ConfigureNotify:
 						//wc->LFSTK_setWindowGeom(event.xconfigurerequest.x,event.xconfigurerequest.y,event.xconfigurerequest.width,event.xconfigurerequest.height);
 						//printf("x=%i y=%i w=%i h=%i\n",event.xconfigurerequest.x,event.xconfigurerequest.y,event.xconfigurerequest.width,event.xconfigurerequest.height);
 						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
-						list->LFSTK_clearWindow();
+						//list->LFSTK_clearWindow();
 						break;
 
 					case ClientMessage:

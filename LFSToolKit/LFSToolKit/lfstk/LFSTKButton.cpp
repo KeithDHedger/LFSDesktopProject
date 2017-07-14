@@ -47,6 +47,9 @@ bool LFSTK_buttonClass::mouseDown(XButtonEvent *e)
 
 	this->drawBox(&g,ACTIVECOLOUR,this->getActiveBevel());
 	this->LFSTK_drawLabel(ACTIVECOLOUR);
+	XSync(this->display, false);
+	if(this->useImage==true)
+		this->drawImage();
 
 	if(this->callback.pressCallback!=NULL)
 		return(this->callback.pressCallback(this,this->callback.userData));
@@ -88,18 +91,6 @@ void* LFSTK_buttonClass::LFSTK_getCallbackUD()
 }
 
 /**
-* Mouse exit callback.
-* \param e XButtonEvent passed from mainloop->listener.
-* \return Return true if event fully handeled or false to pass it on.
-*/
-bool LFSTK_buttonClass::mouseExit(XButtonEvent *e)
-{
-	this->LFSTK_clearWindow();
-	this->inWindow=false;
-	return(true);
-}
-
-/**
 * Mouse enter callback.
 * \param e XButtonEvent passed from mainloop->listener.
 * \return Return true if event fully handeled or false to pass it on.
@@ -116,6 +107,8 @@ bool LFSTK_buttonClass::mouseEnter(XButtonEvent *e)
 
 	this->drawBox(&g,PRELIGHTCOLOUR,this->style);
 	this->LFSTK_drawLabel(PRELIGHTCOLOUR);
+	if(this->useImage==true)
+		this->drawImage();
 	this->inWindow=true;
 	return(true);
 }

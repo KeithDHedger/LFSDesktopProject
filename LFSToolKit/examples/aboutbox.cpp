@@ -5,7 +5,7 @@
 g++ "$0" -O3 -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft ) -llfstoolkit -lImlib2||exit 1
 LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./a.out "$@"
 retval=$?
-rm ./a.out
+#rm ./a.out
 exit $retval
 
 #endif

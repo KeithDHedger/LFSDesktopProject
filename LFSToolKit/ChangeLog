@@ -1,4 +1,5 @@
 0.2.1
+Migrating to cairo from imlib.
 Code clean.
 Removed MenuListClass.
 

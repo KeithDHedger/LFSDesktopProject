@@ -131,7 +131,7 @@ int main(int argc, char **argv)
 	XEvent			event;
 	int				sx=0;
 	int				sy=0;
-	geometryStruct	*geom;
+	const geometryStruct	*geom;
 	int				bwidth=96;
 	int				bhite=24;
 	int				spacing=bwidth+10;
@@ -140,7 +140,7 @@ int main(int argc, char **argv)
 
 	wc=new LFSTK_windowClass(sx,sy,800,600,"LFS Tool Kit Prefs",false);
 	wc->LFSTK_setDecorated(true);
-	geom=wc->LFSTK_getGeom();
+	geom=wc->LFSTK_getWindowGeom();
 	bc[EXIT]=new LFSTK_buttonClass(wc,"Exit",10,geom->h-32,64,24,SouthWestGravity);
 	bc[EXIT]->LFSTK_setCallBack(NULL,callback,(void*)EXIT);
 
