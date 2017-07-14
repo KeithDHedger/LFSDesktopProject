@@ -202,7 +202,6 @@ int main(int argc, char **argv)
 
 
 
-#if 0
 
 
 //menu button
@@ -239,6 +238,8 @@ int main(int argc, char **argv)
 	mb->LFSTK_addMenus(mainMenus,MAXMAINMENUS);
 	mb->LFSTK_setLabelOriention(LEFT);
 	sy+=YSPACING;
+
+#if 0
 
 //menu button with sub menu
 	mainMenusWithSubs=new menuItemStruct[MAXMAINMENUS];

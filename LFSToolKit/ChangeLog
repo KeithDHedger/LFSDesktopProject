@@ -1,4 +1,5 @@
 0.2.1
+Fixed images in list with labels.
 Migrating to cairo from imlib.
 Code clean.
 Removed MenuListClass.
