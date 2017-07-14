@@ -330,7 +330,7 @@ int main(int argc, char **argv)
 
 	imageButton=new LFSTK_buttonClass(wc,"imageButton",BORDER,sy,128,64+4,NorthWestGravity);
 	imageButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"imageButton");
-	imageButton->LFSTK_setImageFromPath("computerW.png",IMAGESIZE,IMAGESIZE);
+	imageButton->LFSTK_setImageFromPath("computerW.png",AUTO);
 	sy+=64;
 
 	sy+=16;
@@ -340,14 +340,13 @@ int main(int argc, char **argv)
 	sy+=IMAGESIZE;
 	sy+=12;
 
-/*
+
 //font
 	fb=new LFSTK_fontButtonClass(wc,"Select Font 1",BORDER,sy,BWIDTH*2,BHITE,BGRAV);
 	fb->LFSTK_setCallBack(NULL,fontCB,USERDATA(100));
 	fb->LFSTK_setLabelIsFont(true);
 	sy+=BHITE+12;
-*/
-/*
+
 //list
 	const char	*lst[]={"item 1","item 2","item 3","item 4","item 5","item 6","abc","def","ghi","jkl","123","456","789","101112","last item",};
 
@@ -374,7 +373,7 @@ int main(int argc, char **argv)
 //	sy+=BHITE+12;
 
 
-*/
+
 //line edit
 	le=new LFSTK_lineEditClass(wc,"Hello World",BORDER,sy,BWIDTH*2,BHITE,BGRAV);
 	
@@ -402,20 +401,20 @@ int main(int argc, char **argv)
 						break;
 					case Expose:
 						wc->LFSTK_clearWindow();
-						//list->LFSTK_clearWindow();
+						list->LFSTK_clearWindow();
 						break;
 
 					case ConfigureNotify:
 						//wc->LFSTK_setWindowGeom(event.xconfigurerequest.x,event.xconfigurerequest.y,event.xconfigurerequest.width,event.xconfigurerequest.height);
 						//printf("x=%i y=%i w=%i h=%i\n",event.xconfigurerequest.x,event.xconfigurerequest.y,event.xconfigurerequest.width,event.xconfigurerequest.height);
 						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
-						//list->LFSTK_clearWindow();
+						list->LFSTK_clearWindow();
 						break;
 
 					case ClientMessage:
 					case SelectionNotify:
 						{
-						if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
+							if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
 							mainLoop=false;
 						}
 						if(wc->acceptDnd==true)

@@ -115,5 +115,5 @@ LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* image
 	ml->type=IMAGEGADGET;
 	this->wc->LFSTK_addMappedListener(this->window,ml);
 
-	this->LFSTK_setImageFromPath(imagepath,w,this->gadgetGeom.h);
+	this->LFSTK_setImageFromPath(imagepath,AUTO);
 }

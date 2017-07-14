@@ -436,9 +436,18 @@ void LFSTK_gadgetClass::drawImage()
 
 	this->scaleY=(float)ratio;
 	this->scaleX=(float)ratio;
-	yoffset=(maxHeight/2)-(height * ratio)/2+4;
-	xoffset=(maxWidth/2)-(width * ratio)/2+4;
 
+	yoffset=(maxHeight/2)-(height * ratio)/2+4;
+	switch(this->imageOrientation)
+		{
+			case AUTO:
+				xoffset=(maxWidth/2)-(width * ratio)/2+4;
+				break;
+			case LEFT:
+				xoffset=4;
+				break;
+		}
+	
 	XSync(this->display,false);
 
 	cairo_save(this->cr);
@@ -825,7 +834,8 @@ void LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int w,int h)
 * \param file Path to image file.
 * \param w,h Size of image.
 */
-cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int w,int h)
+//cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int w,int h)
+cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int orient)
 {
 	cairo_status_t cs=CAIRO_STATUS_SUCCESS;
 
@@ -845,6 +855,7 @@ cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int w,
 			this->useImage=true;
 			this->gotIcon=false;
 			this->labelOrientation=RIGHT;
+			this->imageOrientation=orient;
 		}
 	else	
 		printf("File %s error - Error:%s\n",file,cairo_status_to_string(cs));

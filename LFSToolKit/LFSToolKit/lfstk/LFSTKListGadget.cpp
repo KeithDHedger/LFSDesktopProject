@@ -143,6 +143,7 @@ void LFSTK_listGadgetClass::LFSTK_setImageList(char **list,unsigned numitems)
 void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 {
 	geometryStruct	geom;
+	int orient=LEFT;
 
 	if(this->listStrings!=NULL)
 		{
@@ -151,6 +152,10 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 					free(this->listStrings[j]);
 			delete this->listStrings;
 		}
+
+	if(this->listImages!=NULL)
+		orient=RIGHT;
+
 	this->listStrings=new char*[numitems];
 	this->listCnt=numitems;
 	for(int j=0;j<this->listCnt;j++)
@@ -166,17 +171,19 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 				{
 					this->labels[j]->LFSTK_setLabel(this->listStrings[j]);
 					this->labels[j]->LFSTK_setActive(true);
+					this->labels[j]->LFSTK_setLabelOriention(orient);
+
 					if((this->listImages!=NULL) && (this->listImages[j]!=NULL))
 						{
 							this->labels[j]->LFSTK_getGeom(&geom);
-							this->labels[j]->LFSTK_setImageFromPath(this->listImages[j],geom.h,geom.h);
+							this->labels[j]->LFSTK_setImageFromPath(this->listImages[j],LEFT);
 						}
 				}
 			else
 				{
 					this->labels[j]->LFSTK_setLabel("");
 					this->labels[j]->LFSTK_setActive(false);
-					this->labels[j]->LFSTK_setImageFromPath(NULL,0,0);
+					this->labels[j]->LFSTK_setImageFromPath(NULL,LEFT);
 				}
 			this->labels[j]->LFSTK_clearWindow();
 		}
@@ -227,7 +234,7 @@ bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
 	for(int j=0;j<list->maxShowing;j++)
 		{
 			list->labels[j]->LFSTK_setLabel(list->listStrings[j+list->listOffset]);
-			list->labels[j]->LFSTK_setImageFromPath(list->listImages[j+list->listOffset],24,24);
+			list->labels[j]->LFSTK_setImageFromPath(list->listImages[j+list->listOffset],LEFT);
 			list->data[j].userData=j+list->listOffset;
 			list->labels[j]->LFSTK_clearWindow();
 		}
@@ -325,10 +332,9 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 
 	for(int j=0;j<this->maxShowing;j++)
 		{
-			this->labels[j]=new LFSTK_buttonClass(parentwc," ",sx,sy,w,LABELHITE,gravity);
+			this->labels[j]=new LFSTK_buttonClass(parentwc,"",sx,sy,w,LABELHITE,gravity);
 			this->labels[j]->LFSTK_setActive(false);
 			this->labels[j]->LFSTK_setStyle(BEVELNONE);
-			this->labels[j]->LFSTK_setLabelOriention(LEFT);
 			this->labels[j]->LFSTK_setTile(NULL,0);
 			this->labels[j]->LFSTK_setColourName(NORMALCOLOUR,"white");
 			this->labels[j]->LFSTK_setColourName(INACTIVECOLOUR,"white");
