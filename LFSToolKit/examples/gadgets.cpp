@@ -56,7 +56,7 @@ LFSTK_fileDialogClass	*filedialogfile;
 LFSTK_fileDialogClass	*filedialogdir;
 //LFSTK_menuListClass		*menulist;
 
-const char				*mainMenuNames[]={"Menu 1","Menu 2","Menu 3","Menu 4","--","bool mainLoop=true;","menuItemStruct *mainMenus;","LFSTK_menuButtonClass *mb=NULL;"};
+const char				*mainMenuNames[]={"Menu 1","Menu 2","Menu 3","Menu 4","--","bool mainLoop=true;","menuItemStruct *mainMenus;","LFSTK_menuButtonClass *mb=NULL1234567890;"};
 const char				*subMenuNames[]={"Sub Menu 1","Sub Menu 2","Sub Menu 3","Sub Menu 4"};
 LFSTK_buttonClass		*quit=NULL;
 
@@ -67,6 +67,8 @@ char					*wd;
 bool doQuit(void *p,void* ud)
 {
 	mainLoop=false;
+	XFlush(wc->display);
+	XSync(wc->display,true);
 	return(false);
 }
 
@@ -171,10 +173,14 @@ int main(int argc, char **argv)
 	XEvent	event;
 	int		sy=BORDER;
 	Pixmap	ic[2];
-	
+	Display	*display;
+		
 	wc=new LFSTK_windowClass(0,0,WIDTH,HITE,"Gadgets",false);
-	wd=strdup("/");
+	display=wc->display;
+
+	wd=strdup("/home/keithhedger/backdrops");
 	filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",wd,false);
+	//filedialogfile->LFSTK_setWorkingDir("/home/keithhedger/backdrops");
 	filedialogdir=new LFSTK_fileDialogClass(wc,"Select Folder",wd,true);
 
 	label=new LFSTK_labelClass(wc,"Available Gadgets",BORDER,sy,WIDTH-(BORDER*2),BHITE,BGRAV);
@@ -197,13 +203,6 @@ int main(int argc, char **argv)
 	tbnormal->LFSTK_setIconFromPath("./api.png");
 	sy+=YSPACING;
 
-
-
-
-
-
-
-
 //menu button
 	wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"./computer.png",&ic[0],&ic[1],iconSize);
 	mainMenus=new menuItemStruct[MAXMAINMENUS];
@@ -211,47 +210,29 @@ int main(int argc, char **argv)
 	for(int j=0;j<MAXMAINMENUS;j++)
 		{
 			mainMenus[j].label=mainMenuNames[j];
-			mainMenus[j].userData=NULL;
-			mainMenus[j].bc=NULL;
-			mainMenus[j].subMenus=NULL;
-			mainMenus[j].useIcon=true;
-			mainMenus[j].useImage=false;
-			mainMenus[j].icon[0]=ic[0];
-			mainMenus[j].icon[1]=ic[1];
-			mainMenus[j].iconSize=iconSize;
+			mainMenus[j].imagePath="computer.png";
+			
+	//mainMenus[j].imagePath=NULL;
 		}
 
-	wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"system-lock-screen.png",&mainMenus[0].icon[0],&mainMenus[0].icon[1],iconSize);
-	wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"system-lock-screen.png",&mainMenus[1].icon[0],&mainMenus[1].icon[1],iconSize);
-
-//	mainMenus[1].useIcon=false;
-//	mainMenus[1].useImage=true;
-//	mainMenus[1].image=imlib_load_image_immediately_without_cache("./system-lock-screen.png");
-//	mainMenus[1].imageWidth=iconSize;
-//	mainMenus[1].imageHeight=iconSize;
-
-
+	mainMenus[2].imagePath=NULL;
+ 	mainMenus[3].imagePath="system-lock-screen.png";
 
 	mb=new LFSTK_menuButtonClass(wc,"Main Menu",BORDER,sy,BWIDTH,BHITE,BGRAV);
-	mb->LFSTK_setIconFromPath("./BookMark.png");
+	mb->LFSTK_setImageFromPath("BookMark.png",LEFT);
 	mb->LFSTK_setCallBack(NULL,menuCB,NULL);
 	mb->LFSTK_addMenus(mainMenus,MAXMAINMENUS);
-	mb->LFSTK_setLabelOriention(LEFT);
+	mb->LFSTK_setLabelGravity(LEFT);
 	sy+=YSPACING;
 
-#if 0
 
 //menu button with sub menu
 	mainMenusWithSubs=new menuItemStruct[MAXMAINMENUS];
 	for(int j=0;j<MAXMAINMENUS;j++)
-		{
-			mainMenusWithSubs[j].label=mainMenuNames[j];
-			mainMenusWithSubs[j].userData=NULL;
-			mainMenusWithSubs[j].bc=NULL;
-			mainMenusWithSubs[j].subMenus=NULL;
-			mainMenusWithSubs[j].useIcon=false;
-			mainMenusWithSubs[j].useImage=false;
-		}
+		mainMenusWithSubs[j].label=mainMenuNames[j];
+
+	mainMenusWithSubs[2].imagePath="audio-speakers.png";
+#if 1
 //sub menus
 	subMenus=new menuItemStruct[MAXSUBMENUS];
 	for(int j=0;j<MAXSUBMENUS;j++)
@@ -259,68 +240,37 @@ int main(int argc, char **argv)
 			char *smname;
 			asprintf(&smname,"Sub Menu %i",j);
 			subMenus[j].label=smname;
-			subMenus[j].userData=NULL;
-			subMenus[j].bc=NULL;
-			subMenus[j].subMenus=NULL;
-			subMenus[j].useIcon=true;
-			subMenus[j].icon[0]=ic[0];
-			subMenus[j].icon[1]=ic[1];
-			subMenus[j].iconSize=iconSize;
-			subMenus[j].useIcon=false;
-			subMenus[j].useImage=true;
-			subMenus[j].image=imlib_load_image_immediately_without_cache("./system-lock-screen.png");
-			subMenus[j].imageWidth=iconSize;
-			subMenus[j].imageHeight=iconSize;
+			subMenus[j].imagePath="AspellGUI.png";
 		}
 
 	const char *iconpath=wc->globalLib->LFSTK_findThemedIcon("gnome","help-about","");
 	if(iconpath!=NULL)
 		{
-			subMenus[0].image=imlib_load_image_immediately_without_cache(iconpath);
-			subMenus[0].imageWidth=iconSize;
-			subMenus[0].imageHeight=iconSize;
-			subMenus[0].iconSize=iconSize;
-			subMenus[0].useImage=true;
+			subMenus[0].imagePath=(char*)iconpath;
 		}
-
-			subMenus[1].image=imlib_load_image_immediately_without_cache("./AspellGUI.png");
-			subMenus[1].imageWidth=iconSize;
-			subMenus[1].imageHeight=iconSize;
-			subMenus[1].iconSize=iconSize;
-			subMenus[1].useImage=true;
+	subMenus[4].imagePath="BookMark.png";
 			
 //add sub menus
+#endif
 	mainMenusWithSubs[3].subMenus=subMenus;
 	mainMenusWithSubs[3].subMenuCnt=MAXSUBMENUS;
 
-	mainMenusWithSubs[0].useIcon=true;
-	mainMenusWithSubs[0].useImage=false;
-	mainMenusWithSubs[0].icon[0]=ic[0];
-	mainMenusWithSubs[0].icon[1]=ic[1];
-	mainMenusWithSubs[0].iconSize=iconSize;
-	mainMenusWithSubs[1].useImage=false;
-	mainMenusWithSubs[1].useIcon=true;
-	mainMenusWithSubs[1].icon[0]=ic[0];
-	mainMenusWithSubs[1].icon[1]=ic[1];
-	mainMenusWithSubs[1].iconSize=iconSize;
+	mainMenusWithSubs[0].imagePath="green.png";
+	mainMenusWithSubs[1].imagePath="computer.png";
 
 	mainMenusWithSubs[1].subMenus=subMenus;
 	mainMenusWithSubs[1].subMenuCnt=MAXSUBMENUS;
 
 	mbwithsubs=new LFSTK_menuButtonClass(wc,"Sub Menus",BORDER,sy,BWIDTH,BHITE,BGRAV);
-	mbwithsubs->LFSTK_setIconFromPath("./ManPageEditor.png");
+	mbwithsubs->LFSTK_setIconFromPath("ManPageEditor.png");
 	mbwithsubs->LFSTK_setCallBack(NULL,menuCB,NULL);
-	mbwithsubs->LFSTK_setLabelOriention(LEFT);
+	mbwithsubs->LFSTK_setLabelGravity(MENU);
 	mbwithsubs->LFSTK_addMenus(mainMenusWithSubs,MAXMAINMENUS);
 	sy+=YSPACING;
 
 
-
-#endif
-
-
 //icon button
-	iconButton=new LFSTK_buttonClass(wc,"iconButton",BORDER,sy,68,64+4,NorthWestGravity);
+	iconButton=new LFSTK_buttonClass(wc,"",BORDER,sy,68,64+4,NorthWestGravity);
 	iconButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"iconButton");
 	iconButton->LFSTK_setIconFromPath("../LFSToolKit/resources/pixmaps/LFSTux.png",64);
 	//iconButton->LFSTK_setIconFromPath("green.png",64);
@@ -329,9 +279,11 @@ int main(int argc, char **argv)
 
 //image button
 
-	imageButton=new LFSTK_buttonClass(wc,"imageButton",BORDER,sy,128,64+4,NorthWestGravity);
+	imageButton=new LFSTK_buttonClass(wc,"imageButton",BORDER,sy,196,64+4,NorthWestGravity);
 	imageButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"imageButton");
-	imageButton->LFSTK_setImageFromPath("computerW.png",AUTO);
+	imageButton->LFSTK_setImageFromPath("casper1.JPG",LEFT);
+	//imageButton->LFSTK_setLabelGravity(CENTRE);
+	imageButton->LFSTK_setActive(true);
 	sy+=64;
 
 	sy+=16;
@@ -341,13 +293,13 @@ int main(int argc, char **argv)
 	sy+=IMAGESIZE;
 	sy+=12;
 
-
 //font
 	fb=new LFSTK_fontButtonClass(wc,"Select Font 1",BORDER,sy,BWIDTH*2,BHITE,BGRAV);
 	fb->LFSTK_setCallBack(NULL,fontCB,USERDATA(100));
 	fb->LFSTK_setLabelIsFont(true);
 	sy+=BHITE+12;
 
+#if 1
 //list
 	const char	*lst[]={"item 1","item 2","item 3","item 4","item 5","item 6","abc","def","ghi","jkl","123","456","789","101112","last item",};
 
@@ -357,7 +309,7 @@ int main(int argc, char **argv)
 	list->LFSTK_setList((char**)&lst,15);
 	list->LFSTK_setCallBack(NULL,select,NULL);
 	sy+=BHITE*6;
-
+#endif
 //select file
 	filebutton=new LFSTK_buttonClass(wc,"Select File",BORDER,sy,BWIDTH,BHITE,BGRAV);
 	filebutton->LFSTK_setCallBack(NULL,selectfile,NULL);
@@ -393,7 +345,7 @@ int main(int argc, char **argv)
 				{
 					ml->function(ml->gadget,&event,ml->type);
 					//ml->gadget->LFSTK_clearWindow();
-					//list->LFSTK_clearWindow();
+					list->LFSTK_clearWindow();
 				}
 
 			switch(event.type)
@@ -416,7 +368,10 @@ int main(int argc, char **argv)
 					case SelectionNotify:
 						{
 							if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
-							mainLoop=false;
+								{
+									wc->LFSTK_hideWindow();
+									mainLoop=false;
+								}
 						}
 						if(wc->acceptDnd==true)
 							{
@@ -426,8 +381,9 @@ int main(int argc, char **argv)
 				}
 		}
 
-	delete wc;
 	delete filedialogdir;
 	delete filedialogfile;
+	delete wc;
+	XCloseDisplay(display);
 	return 0;
 }

@@ -36,7 +36,9 @@ void LFSTK_menuButtonClass::initMenuButton(void)
 
 LFSTK_menuButtonClass::~LFSTK_menuButtonClass()
 {
-	delete subwc;
+	if(subwc!=NULL)
+		delete subwc;
+	subwc=NULL;
 }
 
 LFSTK_menuButtonClass::LFSTK_menuButtonClass()
@@ -53,16 +55,19 @@ void LFSTK_menuButtonClass::LFSTK_clearWindow()
 	if(this->isActive==true)
 		{
 			this->drawBox(&g,NORMALCOLOUR,this->style);
+			if(this->useImage==true)
+				this->drawImage();
 			this->LFSTK_drawLabel(NORMALCOLOUR);
 		}
 	else
 		{
 			this->drawBox(&g,INACTIVECOLOUR,this->style);
+			if(this->useImage==true)
+				this->drawImage();
 			this->LFSTK_drawLabel(INACTIVECOLOUR);
 		}
 	this->drawIndicator(&g,NORMALCOLOUR,DISCLOSURE);
 }
-
 
 /**
 * Mouse down callback.
@@ -86,6 +91,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	int 					xpos;
 	int 					ypos;
 	int						maxiconsize=0;
+	bool					gotimage;
 
 	geometryStruct	geom={0,0,this->gadgetGeom.w,this->gadgetGeom.h};
 
@@ -96,30 +102,38 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 		}
 
 	this->drawBox(&geom,ACTIVECOLOUR,this->getActiveBevel());
+	if(this->useImage==true)
+		this->drawImage();
 	this->LFSTK_drawLabel(ACTIVECOLOUR);
 	this->drawIndicator(&geom,ACTIVECOLOUR,DISCLOSURE);
 	g=this->LFSTK_getGlobalGeom();
+	gotimage=false;
 
+
+//TODO//needs tweaking
 	if(this->builtMenu==false)
 		{
 			itemfont=this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
 			tfont=this->wc->globalLib->LFSTK_loadFont(this->display,this->screen,itemfont);
-			maxiconsize=0;
+
 			for(int j=0;j<this->menuCount;j++)
 				{
 					testwid=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(tfont->data),this->menus[j].label);
-					if((this->menus[j].useIcon==true) || (this->menus[j].useImage==true))
+					if(this->menus[j].imagePath!=NULL)
 						{
-							if(maxiconsize<this->menus[j].iconSize)
-								maxiconsize=this->menus[j].iconSize;
-							testwid+=maxiconsize;
+							gotimage=true;
+							testwid+=tfont->ascent+tfont->descent+8;
 						}
 					if(testwid>maxwid)
 						maxwid=testwid;
 				}
 
 			addto=tfont->ascent+tfont->descent+8;
-			maxwid+=maxiconsize+4;
+			//if(gotimage==true)
+				maxwid+=maxiconsize+4;
+			//else
+			//	maxwid-=tfont->ascent+tfont->descent+8;		
+
 			subwc->LFSTK_resizeWindow(maxwid,this->menuCount*addto,true);
 			sy=0;
 
@@ -129,7 +143,11 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 						{
 							bc=new LFSTK_buttonClass(subwc,this->menus[j].label,0,sy,maxwid,addto,0);
 							this->menus[j].bc=bc;
-							bc->LFSTK_setLabelOriention(LEFT);
+							if(gotimage==true)
+								bc->LFSTK_setLabelGravity(MENU);
+							else
+								bc->LFSTK_setLabelGravity(LEFT);
+								
 							bc->LFSTK_setCallBack(NULL,this->callback.releaseCallback,(void*)&(this->menus[j]));
 							bc->LFSTK_setStyle(BEVELNONE);
 							bc->LFSTK_setFontString(itemfont);
@@ -137,10 +155,10 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 							if(this->wc->globalLib->LFSTK_getUseTheme()==true)
 								bc->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMTILE),-1);
 
-							if(this->menus[j].useIcon==true)
-								bc->LFSTK_setIcon(this->menus[j].icon[0],this->menus[j].icon[1],this->menus[j].iconSize);
-							else if(this->menus[j].useImage==true)
-								bc->LFSTK_setScaledImage(this->menus[j].image,this->menus[j].imageWidth,this->menus[j].imageHeight);
+							bc->LFSTK_setImageFromPath(this->menus[j].imagePath,LEFT);
+							if(this->menus[j].imagePath!=NULL)
+							bc->useImage=true;
+							//bc->gotIcon=true;
 							for(int j=0;j<MAXCOLOURS;j++)
 								{
 									bc->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEM));
@@ -165,11 +183,11 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 							this->menus[j].bc=static_cast<LFSTK_buttonClass*>(mb);
 							mb->LFSTK_addMenus(this->menus[j].subMenus,this->menus[j].subMenuCnt);
 							mb->LFSTK_setCallBack(NULL,this->callback.releaseCallback,(void*)&(this->menus[j]));
-							if(this->menus[j].useIcon==true)
-								mb->LFSTK_setIcon(this->menus[j].icon[0],this->menus[j].icon[1],this->menus[j].iconSize);
-							else if(this->menus[j].useImage==true)
-								mb->LFSTK_setScaledImage(this->menus[j].image,this->menus[j].imageWidth,this->menus[j].imageHeight);
-
+							mb->LFSTK_setImageFromPath(this->menus[j].imagePath,LEFT);
+							if(gotimage==true)
+								mb->LFSTK_setLabelGravity(MENU);
+							else
+								mb->LFSTK_setLabelGravity(LEFT);
 							mb->isSubmenu=true;
 						}
 					sy+=addto;
@@ -198,10 +216,11 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 								run=false;
 								XFlush(this->display);
 								XSync(this->display,true);
-								this->LFSTK_clearWindow();
+								//this->LFSTK_clearWindow();
 							}
 						break;
 					case Expose:
+					printf("xxxx\n");
 						break;
 					case ButtonRelease:
 						run=false;
@@ -259,6 +278,24 @@ bool LFSTK_menuButtonClass::mouseExit(XButtonEvent *e)
 */
 bool LFSTK_menuButtonClass::mouseEnter(XButtonEvent *e)
 {
+
+	geometryStruct	g={0,0,this->gadgetGeom.w,this->gadgetGeom.h};
+printf("xxxxx\n");
+//	if(this->isActive==false)
+//		{
+//			this->LFSTK_clearWindow();
+//			return(true);
+//		}
+
+	//this->drawBox(&g,PRELIGHTCOLOUR,this->style);
+	//this->LFSTK_drawLabel(PRELIGHTCOLOUR);
+	if(this->useImage==true)
+		this->drawImage();
+	this->drawIndicator(&g,PRELIGHTCOLOUR,DISCLOSURE);
+//	this->inWindow=true;
+//	return(true);
+
+/*
 	geometryStruct	g={0,0,this->gadgetGeom.w,this->gadgetGeom.h};
 
 	if(this->isActive==false)
@@ -268,8 +305,12 @@ bool LFSTK_menuButtonClass::mouseEnter(XButtonEvent *e)
 		}
 
 	this->drawBox(&g,PRELIGHTCOLOUR,this->style);
+	if(this->useImage==true)
+		this->drawImage();
 	this->LFSTK_drawLabel(PRELIGHTCOLOUR);
-	this->drawIndicator(&g,PRELIGHTCOLOUR,DISCLOSURE);}
+	this->drawIndicator(&g,PRELIGHTCOLOUR,DISCLOSURE);
+*/
+}
 
 /**
 * Add array of menu items to gadget.
@@ -309,7 +350,7 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,const c
 	this->initMenuButton();
 
 	this->style=BEVELOUT;
-	this->LFSTK_setLabelOriention(LEFT);
+	this->LFSTK_setLabelGravity(LEFT);
 
 	ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	ml->gadget=this;

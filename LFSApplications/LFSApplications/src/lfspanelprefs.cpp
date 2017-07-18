@@ -335,6 +335,7 @@ int main(int argc, char **argv)
 	int						c=0;
 	int						option_index=0;
 	const char				*shortOpts="h?w:";
+	Display					*display;
 	option 					longOptions[]=
 		{
 			{"window",1,0,'w'},
@@ -361,6 +362,7 @@ int main(int argc, char **argv)
 		}
 
 	wc=new LFSTK_windowClass(sx,sy,1,1,"LFSPanel Prefs",false);
+	display=wc->display;
 	wc->LFSTK_setDecorated(true);
 	wc->autoLabelColour=true;
 	geom=wc->LFSTK_getWindowGeom();
@@ -378,7 +380,7 @@ int main(int argc, char **argv)
 	sy=16;
 	panelSelect=new LFSTK_menuButtonClass(wc,"Panel Config",sx,sy,bwidth,24,NorthWestGravity);
 	panelSelect->LFSTK_setStyle(BEVELOUT);
-	panelSelect->LFSTK_setLabelOriention(CENTRE);
+	panelSelect->LFSTK_setLabelGravity(CENTRE);
 	panels=new menuItemStruct[MAXPANELS];
 	panelSelect->LFSTK_setCallBack(NULL,panelSelectCB,NULL);
 	
@@ -396,8 +398,7 @@ int main(int argc, char **argv)
 					panels[cnt].label=strdup(basename(buffer));
 					panels[cnt].userData=(void*)(long)cnt;
 					panels[cnt].subMenus=NULL;
-					panels[cnt].useIcon=false;
-					panels[cnt].useImage=false;
+					panels[cnt].imagePath=NULL;
 					panels[cnt].bc=NULL;
 					cnt++;
 				}
@@ -412,8 +413,7 @@ int main(int argc, char **argv)
 		{
 			panelWidthMenu[j].label=panelOptionString[PANELWIDTH][j];
 			panelWidthMenu[j].subMenus=NULL;
-			panelWidthMenu[j].useIcon=false;
-			panelWidthMenu[j].useImage=false;
+			panelWidthMenu[j].imagePath=NULL;
 			panelWidthMenu[j].bc=NULL;
 		}
 	panelWidthMenu[0].userData=(void*)-1;
@@ -440,8 +440,7 @@ int main(int argc, char **argv)
 		{
 			panelPosMenu[j].label=panelOptionString[PANELPOS][j];
 			panelPosMenu[j].subMenus=NULL;
-			panelPosMenu[j].useIcon=false;
-			panelPosMenu[j].useImage=false;
+			panelPosMenu[j].imagePath=NULL;
 			panelPosMenu[j].bc=NULL;
 		}
 	panelPosMenu[0].userData=(void*)LEFTPOS;
@@ -462,8 +461,7 @@ int main(int argc, char **argv)
 		{
 			panelGravMenu[j].label=panelOptionString[PANELGRAV][j];
 			panelGravMenu[j].subMenus=NULL;
-			panelGravMenu[j].useIcon=false;
-			panelGravMenu[j].useImage=false;
+			panelGravMenu[j].imagePath=NULL;
 			panelGravMenu[j].bc=NULL;
 		}
 	panelGravMenu[0].userData=(void*)NORTHGRAV;
@@ -574,5 +572,6 @@ int main(int argc, char **argv)
 	wc->LFSTK_hideWindow();
 
 	delete wc;
+	XCloseDisplay(display);
 	return(0);
 }

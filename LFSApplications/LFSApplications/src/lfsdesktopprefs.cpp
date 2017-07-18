@@ -167,6 +167,7 @@ int main(int argc, char **argv)
 	int						bhite=24;
 	int						vspacing=bhite+10;
 	LFSTK_fontButtonClass	*fontbutton;
+	Display					*display;
 
 	int						c=0;
 	int						option_index=0;
@@ -210,6 +211,8 @@ int main(int argc, char **argv)
 	prefs[IGNORES]=strdup("");
 
 	wc=new LFSTK_windowClass(sx,sy,800,600,"LFS Desktop Prefs",false);
+	display=wc->display;
+
 	wc->LFSTK_setDecorated(true);
 	geom=wc->LFSTK_getWindowGeom();
 
@@ -326,6 +329,8 @@ int main(int argc, char **argv)
 			free(prefs[j]);
 
 	delete wc;
+	XCloseDisplay(display);
+
 	free(env);
 	return(0);
 };

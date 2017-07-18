@@ -284,6 +284,7 @@ int main(int argc, char **argv)
 	int						c=0;
 	int						option_index=0;
 	const char				*shortOpts="h?w:";
+	Display					*display;
 	option 					longOptions[]=
 		{
 			{"window",1,0,'w'},
@@ -324,6 +325,8 @@ int main(int argc, char **argv)
 	fc=new LFSTK_fileDialogClass(wc,"","/",false);
 
 	wc->globalLib->LFSTK_loadVarsFromFile(prefsPath,prefs);
+	display=wc->display;
+
 	monitorData=(monitors*)calloc(sizeof(monitors),wc->LFSTK_getMonitorCount());
 	loadMonitorData();
 
@@ -360,8 +363,7 @@ int main(int argc, char **argv)
 			modeMenus[j].bc=NULL;
 			modeMenus[j].subMenus=NULL;
 			modeMenus[j].subMenuCnt=0;
-			modeMenus[j].useIcon=false;
-			modeMenus[j].useImage=false;
+			modeMenus[j].imagePath=NULL;
 		}
 
 	mainMode=new LFSTK_menuButtonClass(wc,"Main Mode",sx,sy,bwidth,24,NorthWestGravity);
@@ -386,8 +388,7 @@ int main(int argc, char **argv)
 			monitorMenus[j].bc=NULL;
 			monitorMenus[j].subMenus=NULL;
 			monitorMenus[j].subMenuCnt=0;
-			monitorMenus[j].useIcon=false;
-			monitorMenus[j].useImage=false;
+			monitorMenus[j].imagePath=NULL;
 		}
 
 	monitorNumber=new LFSTK_menuButtonClass(wc,"Monitor 0",sx,sy,bwidth,24,NorthWestGravity);
@@ -463,8 +464,9 @@ int main(int argc, char **argv)
 
 	delete monitorMenus;
 	delete modeMenus;
-	delete geom;
 	delete wc;
+	XCloseDisplay(display);
+
 	free(prefsPath);
 	free(monitorRCPath);
 	return(0);

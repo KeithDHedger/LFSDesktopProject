@@ -189,8 +189,7 @@ void loadGroups()
 			groups[j].bc=NULL;
 			groups[j].subMenus=NULL;
 			groups[j].subMenuCnt=0;
-			groups[j].useIcon=false;
-			groups[j].useImage=false;
+			groups[j].imagePath=NULL;
 		}
 
 	asprintf(&groupfolder,"%s/.config/LFS/lfsgroupsprefs",getenv("HOME"));
@@ -251,6 +250,7 @@ int main(int argc, char **argv)
 	int						vspacing=bhite+10;
 	FILE*					fp=NULL;
 	char					*command;
+	Display					*display;
 
 	asprintf(&command,"cat %s/.config/LFS/lfsappearance.rc",getenv("HOME"));
 	fp=popen(command,"r");
@@ -265,6 +265,8 @@ int main(int argc, char **argv)
 	free(command);
 
 	wc=new LFSTK_windowClass(sx,sy,800,600,"LFS Appearance",false);
+	display=wc->display;
+
 	wc->LFSTK_setDecorated(true);
 	wc->autoLabelColour=true;
 	geom=wc->LFSTK_getWindowGeom();
@@ -317,7 +319,7 @@ int main(int argc, char **argv)
 	sy+=vspacing;
 	mb=new LFSTK_menuButtonClass(wc,"Load Set",sx,sy,bwidth,24,NorthWestGravity);
 	mb->LFSTK_setStyle(BEVELOUT);
-	mb->LFSTK_setLabelOriention(CENTRE);
+	mb->LFSTK_setLabelGravity(CENTRE);
 	groups=new menuItemStruct[maxGroups];
 	mb->LFSTK_setCallBack(NULL,bcb,NULL);
 	
@@ -381,5 +383,7 @@ int main(int argc, char **argv)
 			free((char*)groups[j].label);
 
 	delete wc;
+	XCloseDisplay(display);
+
 	return(0);
 }

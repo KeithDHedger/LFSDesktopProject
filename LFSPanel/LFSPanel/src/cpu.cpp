@@ -94,7 +94,7 @@ int addCpuData(int x,int y,int grav)
 
 	setNewData();
 	cpuButton=new LFSTK_labelClass(mainwind,"CPU=0.0%",xpos,0,width,panelHeight,grav);
-	cpuButton->LFSTK_setLabelOriention(LEFT);
+	cpuButton->LFSTK_setLabelGravity(LEFT);
 	useAlarm=true;
 	return(retval);
 }

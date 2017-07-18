@@ -174,16 +174,11 @@ int ftwCallback(const char *fpath,const struct stat *sb,int typeflag)
 							holdicon=NULL;
 							if(iconpath!=NULL)
 								{
-									catagorySubMenus[catPtr[mycatcnt]][subMenusCnt[catPtr[mycatcnt]]].useIcon=false;
-									catagorySubMenus[catPtr[mycatcnt]][subMenusCnt[catPtr[mycatcnt]]].useImage=true;
-									catagorySubMenus[catPtr[mycatcnt]][subMenusCnt[catPtr[mycatcnt]]].image=imlib_load_image_immediately_without_cache(iconpath);
-									catagorySubMenus[catPtr[mycatcnt]][subMenusCnt[catPtr[mycatcnt]]].imageWidth=iconSize;
-									catagorySubMenus[catPtr[mycatcnt]][subMenusCnt[catPtr[mycatcnt]]].imageHeight=iconSize;
+									catagorySubMenus[catPtr[mycatcnt]][subMenusCnt[catPtr[mycatcnt]]].imagePath=(char*)strdup(iconpath);
 								}
 							else
 								{
-									catagorySubMenus[catPtr[mycatcnt]][subMenusCnt[catPtr[mycatcnt]]].useIcon=false;
-									catagorySubMenus[catPtr[mycatcnt]][subMenusCnt[catPtr[mycatcnt]]].useImage=false;
+									catagorySubMenus[catPtr[mycatcnt]][subMenusCnt[catPtr[mycatcnt]]].imagePath=NULL;
 								}
 						}
 
@@ -238,9 +233,7 @@ void addEntries(void)
 					catagorySubMenus[j][k].userData=NULL;
 					catagorySubMenus[j][k].bc=NULL;
 					catagorySubMenus[j][k].subMenus=NULL;
-					catagorySubMenus[j][k].useIcon=false;
-					catagorySubMenus[j][k].useImage=false;
-					catagorySubMenus[j][k].iconSize=16;
+					catagorySubMenus[j][k].imagePath=NULL;
 				}
 		}
 
@@ -325,17 +318,11 @@ void addCatagories(void)
 					catagoryMenus[catagoryCnt].bc=NULL;
 					catagoryMenus[catagoryCnt].subMenus=NULL;
 					catagoryMenus[catagoryCnt].subMenuCnt=0;
-					catagoryMenus[catagoryCnt].useIcon=false;
-					catagoryMenus[catagoryCnt].useImage=false;
-					catagoryMenus[catagoryCnt].iconSize=iconSize;
 					catPtr[catcnt]=catagoryCnt;
 					iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,catImageNames[catcnt],"");
 					if(iconpath!=NULL)
 						{
-							catagoryMenus[catagoryCnt].useImage=true;
-							catagoryMenus[catagoryCnt].image=imlib_load_image_immediately_without_cache(iconpath);
-							catagoryMenus[catagoryCnt].imageWidth=iconSize;
-							catagoryMenus[catagoryCnt].imageHeight=iconSize;
+							catagoryMenus[catagoryCnt].imagePath=(char*)strdup(iconpath);
 						}
 
 					catagoryCnt++;
@@ -353,9 +340,7 @@ void addExtras(void)
 	catagoryMenus[catagoryCnt].bc=NULL;
 	catagoryMenus[catagoryCnt].subMenus=NULL;
 	catagoryMenus[catagoryCnt].subMenuCnt=0;
-	catagoryMenus[catagoryCnt].useIcon=false;
-	catagoryMenus[catagoryCnt].useImage=false;
-	catagoryMenus[catagoryCnt].iconSize=iconSize;
+	catagoryMenus[catagoryCnt].imagePath=NULL;
 	catagoryCnt++;
 
 	catagoryMenus[catagoryCnt].label="About LFS Desktop";
@@ -363,19 +348,13 @@ void addExtras(void)
 	catagoryMenus[catagoryCnt].bc=NULL;
 	catagoryMenus[catagoryCnt].subMenus=NULL;
 	catagoryMenus[catagoryCnt].subMenuCnt=0;
-	catagoryMenus[catagoryCnt].useIcon=false;
-	catagoryMenus[catagoryCnt].useImage=false;
-	catagoryMenus[catagoryCnt].iconSize=iconSize;
+	catagoryMenus[catagoryCnt].imagePath=NULL;
 
 	iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"help-about","");
 
 	if(iconpath!=NULL)
 		{
-			catagoryMenus[catagoryCnt].image=imlib_load_image_immediately_without_cache(iconpath);
-			catagoryMenus[catagoryCnt].imageWidth=iconSize;
-			catagoryMenus[catagoryCnt].imageHeight=iconSize;
-			catagoryMenus[catagoryCnt].iconSize=iconSize;
-			catagoryMenus[catagoryCnt].useImage=true;
+			catagoryMenus[catagoryCnt].imagePath=(char*)strdup(iconpath);
 		}
 	catagoryCnt++;
 }
@@ -401,7 +380,7 @@ int addAppmenu(int x,int y,int grav,bool fromleft)
 	setSizes(&xpos,&ypos,&width,&height,&iconsize,&thisgrav,fromleft);
 
 	appButton=new LFSTK_menuButtonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
-	appButton->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",iconsize,iconsize);
+	appButton->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",LEFT);
 	addCatagories();
 	addEntries();
 	addExtras();

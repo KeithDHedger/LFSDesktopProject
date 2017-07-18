@@ -35,6 +35,7 @@ struct menuEntryStruct
 	bool				inTerm;
 	Pixmap				pm[2];
 	bool				gotIcon;
+	char				*imagePath;
 	
 };
 
@@ -223,10 +224,13 @@ void setCatagories(void)
 											const char *imagefile=twc->globalLib->LFSTK_findThemedIcon(desktopTheme,foundiconbuffer,"");
 											if(imagefile!=NULL)
 												{
-													twc->globalLib->LFSTK_setPixmapsFromPath(twc->display,twc->visual,twc->cm,twc->window,imagefile,&mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].pm[0],&mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].pm[1],16);
-													mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].gotIcon=true;
+													//twc->globalLib->LFSTK_setPixmapsFromPath(twc->display,twc->visual,twc->cm,twc->window,imagefile,&mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].pm[0],&mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].pm[1],16);
+													//mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].gotIcon=true;
+													mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].imagePath=strdup(imagefile);
 												}
 										}
+									else
+										mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].imagePath=NULL;
 
 									mainMenus[foundcatmatch].maxentrys++;
 								}
@@ -236,27 +240,6 @@ void setCatagories(void)
 			pclose(fp);
 		}
 }
-
-#if 0
-bool xxinWindow(void)
-{
-	Window			root_return;
-	Window			child_return;
-	int				root_x_return;
-	int				root_y_return;
-	int				win_x_return;
-	int				win_y_return;
-	unsigned int	mask_return;
-
-	if(XQueryPointer(wc->display,wc->rootWindow,&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
-		{
-			const geometryStruct *g=wc->LFSTK_getWindowGeom();
-			if((root_x_return>g->x) && (root_x_return<(int)(g->x+g->w)) && (root_y_return>g->y) && (root_y_return<(int)(g->y+g->h)))
-				return(true);
-		}
-	return(false);
-}
-#endif
 
 int main(int argc, char **argv)
 {
@@ -337,12 +320,11 @@ int main(int argc, char **argv)
 				{
 					bc[menucount]=new LFSTK_menuButtonClass(wc,(char*)mainMenus[j].name,sx,sy,maxwid,addto,0);
 					themeicon=wc->globalLib->LFSTK_findThemedIcon(desktopTheme,catImageNames[j],"categories");
-					bc[menucount]->LFSTK_setLabelOriention(CENTRE);
+					bc[menucount]->LFSTK_setLabelGravity(CENTRE);
 					if(themeicon!=NULL)
 						{
-							//bc[menucount]->LFSTK_setIconFromPath(themeicon,addto-2);
-							bc[menucount]->LFSTK_setIconFromPath(themeicon,iconSize);
-							bc[menucount]->LFSTK_setLabelOriention(LEFT);
+							bc[menucount]->LFSTK_setImageFromPath(themeicon,LEFT);
+							bc[menucount]->LFSTK_setLabelGravity(LEFT);
 						}
 					bc[menucount]->LFSTK_setCallBack(NULL,bcb,NULL);
 					bc[menucount]->LFSTK_setStyle(BEVELOUT);
@@ -358,10 +340,7 @@ int main(int argc, char **argv)
 							pms->bc=NULL;
 							pms->subMenus=NULL;
 							pms->subMenuCnt=0;
-							pms->useIcon=mainMenus[j].entry[k].gotIcon;
-							pms->icon[0]=mainMenus[j].entry[k].pm[0];
-							pms->icon[1]=mainMenus[j].entry[k].pm[1];
-							pms->iconSize=iconSize;
+							pms->imagePath=mainMenus[j].entry[k].imagePath;
 							pms++;
 						}
 					bc[menucount]->LFSTK_addMenus(ms,mainMenus[j].maxentrys);

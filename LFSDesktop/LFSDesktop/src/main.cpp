@@ -615,12 +615,12 @@ int main(int argc,char **argv)
 					diskButtons[buttoncnt]->LFSTK_setCallBack(NULL,pushedButtonCB,(void*)(long)(buttoncnt+1));
 					if(diskIconData[buttoncnt]==NULL)
 						{
-							diskButtons[buttoncnt]->LFSTK_setLabelOriention(CENTRE);
+							diskButtons[buttoncnt]->LFSTK_setLabelGravity(CENTRE);
 						}
 					else
 						{
-							diskButtons[buttoncnt]->LFSTK_setImageFromPath(diskIconData[buttoncnt],24-4,24-4);
-							diskButtons[buttoncnt]->LFSTK_setLabelOriention(LEFT);
+							diskButtons[buttoncnt]->LFSTK_setImageFromPath(diskIconData[buttoncnt],LEFT);
+							diskButtons[buttoncnt]->LFSTK_setLabelGravity(LEFT);
 						}
 						
 					sy+=addto;
@@ -655,12 +655,12 @@ int main(int argc,char **argv)
 			fileButtons[buttoncnt]->LFSTK_setCallBack(NULL,pushedButtonCB,(void*)(long)(buttoncnt+1));
 			if(diskIconData[buttoncnt]==NULL)
 				{
-					fileButtons[buttoncnt]->LFSTK_setLabelOriention(CENTRE);
+					fileButtons[buttoncnt]->LFSTK_setLabelGravity(CENTRE);
 				}
 			else
 				{
-					fileButtons[buttoncnt]->LFSTK_setImageFromPath(diskIconData[buttoncnt],24-4,24-4);
-					fileButtons[buttoncnt]->LFSTK_setLabelOriention(LEFT);
+					fileButtons[buttoncnt]->LFSTK_setImageFromPath(diskIconData[buttoncnt],LEFT);
+					fileButtons[buttoncnt]->LFSTK_setLabelGravity(LEFT);
 				}
 			buttoncnt++;
 			sy+=addto;

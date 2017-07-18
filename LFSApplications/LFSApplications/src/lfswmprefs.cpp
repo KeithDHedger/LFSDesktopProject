@@ -222,6 +222,7 @@ int main(int argc, char **argv)
 	int						c=0;
 	int						option_index=0;
 	const char				*shortOpts="h?w:";
+	Display					*display;
 	option 					longOptions[]=
 		{
 			{"window",1,0,'w'},
@@ -260,6 +261,7 @@ int main(int argc, char **argv)
 	terminalCommand=strdup("xterm -e ");
 
 	wc=new LFSTK_windowClass(sx,sy,800,600,"LFS WM Prefs",false);
+	display=wc->display;
 	wc->LFSTK_setDecorated(true);
 	geom=wc->LFSTK_getWindowGeom();
 	fc=new LFSTK_fileDialogClass(wc,"","/",true);
@@ -299,7 +301,7 @@ int main(int argc, char **argv)
 				{
 					lb[j]=new LFSTK_labelClass(wc,labelnames[j],sx,sy,bwidth,24,NorthWestGravity);
 					lb[j]->LFSTK_setLabelAutoColour(true);
-					lb[j]->LFSTK_setLabelOriention(0);
+					lb[j]->LFSTK_setLabelGravity(0);
 				}
 			else
 				{
@@ -324,7 +326,7 @@ int main(int argc, char **argv)
 
 	text=new LFSTK_labelClass(wc,"ABCDEFGHI abcdefghi 1234567890",10,sy,col3-bwidth-30,24,NorthWestGravity);
 	text->LFSTK_setFontString(titleFont);
-	text->LFSTK_setLabelOriention(1);
+	text->LFSTK_setLabelGravity(1);
 	text->LFSTK_setLabelAutoColour(false);
 	sy+=vspacing;
 	sx=col1;
@@ -334,11 +336,6 @@ int main(int argc, char **argv)
 		{
 			placeMenu[j].label=placeNames[j];
 			placeMenu[j].userData=(void*)(long)j;
-			placeMenu[j].bc=NULL;
-			placeMenu[j].subMenus=NULL;
-			placeMenu[j].subMenuCnt=0;
-			placeMenu[j].useIcon=false;
-			placeMenu[j].useImage=false;
 		}
 
 	mb=new LFSTK_menuButtonClass(wc,labelnames[PLACELABEL],sx,sy,bwidth,24,NorthWestGravity);
@@ -353,7 +350,7 @@ int main(int argc, char **argv)
 		{
 			lb[j]=new LFSTK_labelClass(wc,labelnames[j],sx,sy,bwidth,24,NorthWestGravity);
 			lb[j]->LFSTK_setLabelAutoColour(true);
-			lb[j]->LFSTK_setLabelOriention(0);
+			lb[j]->LFSTK_setLabelGravity(0);
 
 			sx+=spacing;
 			le[ETHEMEPATH+j]=new LFSTK_lineEditClass(wc,labelnames[j],sx,sy-1,bwidth,24,NorthWestGravity);
@@ -412,5 +409,6 @@ int main(int argc, char **argv)
 		}
 
 	delete wc;
+	XCloseDisplay(display);
 	return 0;
 }

@@ -190,6 +190,7 @@ int main(int argc, char **argv)
 	int						state;
 	int						holdsy;
 	LFSTK_fontButtonClass	*fontbutton;
+	Display					*display;
 
 	int						c=0;
 	int						option_index=0;
@@ -224,6 +225,8 @@ int main(int argc, char **argv)
 		cols[j]=cols[j-1]+bwidth+xspace;
 
 	wc=new LFSTK_windowClass(sx,sy,800,600,"LFS Tool Kit Prefs",false);
+	display=wc->display;
+
 	wc->LFSTK_setDecorated(true);
 	geom=wc->LFSTK_getWindowGeom();
 
@@ -243,7 +246,7 @@ int main(int argc, char **argv)
 	for(int j=LNORMBUTTONS;j<=LFONTCOLOUR;j++)
 		{
 			labels[j]=new LFSTK_labelClass(wc,labelnames[j],cols[j],sy,bwidth,24,NorthWestGravity);
-			labels[j]->LFSTK_setLabelOriention(LEFT);
+			labels[j]->LFSTK_setLabelGravity(LEFT);
 		}
 
 //buttons
@@ -290,7 +293,7 @@ int main(int argc, char **argv)
 		{
 			labels[j]=new LFSTK_labelClass(wc,labelnames[j],cols[state],sy,bwidth,24,NorthWestGravity);
 			state++;
-			labels[j]->LFSTK_setLabelOriention(LEFT);
+			labels[j]->LFSTK_setLabelGravity(LEFT);
 		}
 //menu items
 	sy+=vspacing;
@@ -332,7 +335,7 @@ int main(int argc, char **argv)
 
 //window label and colour
 	labels[LWINDOWCOLOUR]=new LFSTK_labelClass(wc,labelnames[LWINDOWCOLOUR],cols[0],sy,bwidth,24,NorthWestGravity);
-	labels[LWINDOWCOLOUR]->LFSTK_setLabelOriention(LEFT);	
+	labels[LWINDOWCOLOUR]->LFSTK_setLabelGravity(LEFT);	
 	normaledits[EWINDOWCOLOUR]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEWINDOW),cols[1],sy,bwidth,24,NorthWestGravity);
 
 //auto font colour
@@ -407,5 +410,7 @@ int main(int argc, char **argv)
 		}
 
 	delete wc;
+	XCloseDisplay(display);
+
 	return(0);
 }

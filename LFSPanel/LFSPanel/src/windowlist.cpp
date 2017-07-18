@@ -67,7 +67,6 @@ bool windowDeskMenuCB(void *p,void* ud)
 
 void resetMenus(void)
 {
-	//for(int j=0; j<windowListCnt+1; j++)
 	for(int j=0; j<MAXWINDOWSINLIST; j++)
 		if(windowList[j].label!=NULL)
 			{
@@ -231,9 +230,9 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 					windowDeskList[windowDeskListCnt].bc=NULL;
 					windowDeskList[windowDeskListCnt].subMenus=NULL;
 					windowDeskList[windowDeskListCnt].subMenuCnt=desktop;
-					windowDeskList[windowDeskListCnt].useIcon=false;
 					windowDeskList[windowDeskListCnt].label=strdup(wname);
 					windowDeskList[windowDeskListCnt].userData=(void*)winid;
+					windowDeskList[windowDeskListCnt].imagePath=NULL;
 					windowDeskListCnt++;
 				}
 			else
@@ -241,9 +240,9 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 					windowList[windowListCnt].bc=NULL;
 					windowList[windowListCnt].subMenus=NULL;
 					windowList[windowListCnt].subMenuCnt=desktop;
-					windowList[windowListCnt].useIcon=false;
 					windowList[windowListCnt].label=strdup(wname);
 					windowList[windowListCnt].userData=(void*)winid;
+					windowDeskList[windowDeskListCnt].imagePath=NULL;
 					windowListCnt++;
 				}
 		}
@@ -352,9 +351,9 @@ int addWindowDeskMenu(int x,int y,int grav,bool fromleft)
 	windowDeskMenu=new LFSTK_menuButtonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
 	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"remote-desktop","");
 	if(icon!=NULL)
-		windowDeskMenu->LFSTK_setImageFromPath(icon,iconsize,iconsize);
+		windowDeskMenu->LFSTK_setImageFromPath(icon,LEFT);
 	else
-		windowDeskMenu->LFSTK_setIconFromPath(DATADIR "/pixmaps/windows.png",iconsize);
+		windowDeskMenu->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",LEFT);
 	windowDeskMenu->LFSTK_setCallBack(NULL,windowDeskMenuCB,NULL);
 
 	windowDeskListCnt=-1;
@@ -386,9 +385,10 @@ int addWindowMenu(int x,int y,int grav,bool fromleft)
 	windowMenu=new LFSTK_menuButtonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
 	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"computer","");
 	if(icon!=NULL)
-		windowMenu->LFSTK_setIconFromPath(icon,iconsize);
+		windowMenu->LFSTK_setImageFromPath(icon,LEFT);
 	else
-		windowMenu->LFSTK_setIconFromPath(DATADIR "/pixmaps/windows.png",iconsize);
+//		windowMenu->LFSTK_setIconFromPath(DATADIR "/pixmaps/windows.png",iconsize);
+		windowMenu->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",LEFT);
 	windowMenu->LFSTK_setCallBack(NULL,windowMenuCB,NULL);
 
 	windowDeskListCnt=-1;

@@ -171,7 +171,7 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 				{
 					this->labels[j]->LFSTK_setLabel(this->listStrings[j]);
 					this->labels[j]->LFSTK_setActive(true);
-					this->labels[j]->LFSTK_setLabelOriention(orient);
+					this->labels[j]->LFSTK_setLabelGravity(MENU);
 
 					if((this->listImages!=NULL) && (this->listImages[j]!=NULL))
 						{

@@ -22,6 +22,8 @@
 #include <stdlib.h>
 
 #include "lfstk/LFSTKGlobals.h"
+#include <fcntl.h>
+#include <jpeglib.h>
 
 LFSTK_gadgetClass::~LFSTK_gadgetClass()
 {
@@ -140,7 +142,7 @@ void LFSTK_gadgetClass::initGadget(void)
 	this->LFSTK_setActive(true);
 	this->LFSTK_setLabelAutoColour(false);
 	this->style=BEVELOUT;
-	this->labelOrientation=CENTRE;
+	this->labelGravity=CENTRE;
 	this->inWindow=false;
 	this->autoLabelColour=this->wc->autoLabelColour;
 	this->labelOffset=0;
@@ -150,6 +152,8 @@ void LFSTK_gadgetClass::initGadget(void)
 	this->useTile=false;
 	this->useImage=false;
 	this->image=NULL;
+	this->imageWidth=0;
+
 	this->gadgetAcceptsDnD=false;
 }
 
@@ -234,21 +238,18 @@ void LFSTK_gadgetClass::LFSTK_setLabelAutoColour(bool setauto)
 */
 void LFSTK_gadgetClass::LFSTK_clearWindow()
 {
+	gadgetState		drawcolour=INACTIVECOLOUR;
 	geometryStruct	g={0,0,this->gadgetGeom.w,this->gadgetGeom.h};
 
 	if(this->isActive==true)
-		{
-			this->drawBox(&g,NORMALCOLOUR,this->style);
-			this->LFSTK_drawLabel(NORMALCOLOUR);
-		}
-	else
-		{
-			this->drawBox(&g,INACTIVECOLOUR,this->style);
-			this->LFSTK_drawLabel(INACTIVECOLOUR);
-		}
+		drawcolour=NORMALCOLOUR;
+
+	this->drawBox(&g,drawcolour,this->style);
 
 	if(this->useImage==true)
 		this->drawImage();
+
+	this->LFSTK_drawLabel(drawcolour);
 }
 
 /**
@@ -320,6 +321,7 @@ bool LFSTK_gadgetClass::mouseExit(XButtonEvent *e)
 */
 bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 {
+printf("11111\n");
 	geometryStruct	g={0,0,this->gadgetGeom.w,this->gadgetGeom.h};
 
 	if(this->isActive==false)
@@ -332,6 +334,7 @@ bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 	this->LFSTK_drawLabel(PRELIGHTCOLOUR);
 	if(this->useImage==true)
 		this->drawImage();
+	this->inWindow=true;
 	return(true);
 }
 
@@ -420,40 +423,29 @@ void LFSTK_gadgetClass::drawString(XftFont* font,int x,int y,int state,const cha
 */
 void LFSTK_gadgetClass::drawImage()
 {
-	int		txtx=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->label);
-	float	maxWidth=this->gadgetGeom.w-txtx-8;
-	float	maxHeight=this->gadgetGeom.h-8;
-	float	ratio;
-	float	width=cairo_image_surface_get_width(this->cImage);
-	float	height=cairo_image_surface_get_height(this->cImage);
-	int		yoffset=0.0;
-	int		xoffset=0.0;
+	int		yoffset=0;
+	int		xoffset=0;
 
-	if(maxWidth>maxHeight)
-		ratio=maxHeight/height;
-	else
-		ratio=maxWidth/width;
+	if(strcmp(this->label,"--")==0)
+		return;
 
-	this->scaleY=(float)ratio;
-	this->scaleX=(float)ratio;
-
-	yoffset=(maxHeight/2)-(height * ratio)/2+4;
-	switch(this->imageOrientation)
+	yoffset=(this->gadgetGeom.h/2)-(this->imageHeight/2);
+	switch(this->imageGravity)
 		{
 			case AUTO:
-				xoffset=(maxWidth/2)-(width * ratio)/2+4;
+				//xoffset=(maxWidth/2)-(width * ratio)/2+4;
 				break;
 			case LEFT:
 				xoffset=4;
 				break;
 		}
-	
+
 	XSync(this->display,false);
 
 	cairo_save(this->cr);
 		cairo_reset_clip (this->cr);
 		cairo_translate(this->cr,xoffset,yoffset);
-		cairo_scale(this->cr,this->scaleX,this->scaleY);
+		//cairo_scale(this->cr,1.0,1.0);
 		cairo_set_source_surface(this->cr,this->cImage,0,0);
 		cairo_paint(this->cr);
 	cairo_restore(this->cr);
@@ -467,32 +459,45 @@ void LFSTK_gadgetClass::drawImage()
 */
 void LFSTK_gadgetClass::LFSTK_drawLabel(int state)
 {
+	int	labelwidth=0;
+	int labelx=0;
+
+	labelwidth=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)this->font->data,this->label);
 	if(strcmp(this->label,"--")!=0)
 		{
-			switch(this->labelOrientation)
+			switch(this->labelGravity)
 				{
 					case LEFT:
-						this->drawString((XftFont*)(this->font->data),2+this->labelOffset,(this->gadgetGeom.h/2)+((this->font->ascent-2)/2),state,this->label);
+						if(this->useImage==true)
+							labelx=this->imageWidth+8;
+						else
+							labelx=this->labelOffset+2;
+						this->drawString((XftFont*)(this->font->data),labelx,(this->gadgetGeom.h/2)+((this->font->ascent-2)/2),state,this->label);	
 						break;
 					case RIGHT:
-						this->drawString((XftFont*)(this->font->data),this->gadgetGeom.w-2-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->label))+this->labelOffset,(this->gadgetGeom.h/2)+((this->font->ascent-2)/2),state,this->label);
+						labelx=this->gadgetGeom.w-labelwidth-2;			
+						this->drawString((XftFont*)(this->font->data),labelx,(this->gadgetGeom.h/2)+((this->font->ascent-2)/2),state,this->label);	
+						break;
+					case MENU:
+						if(this->useImage==true)
+							labelx=this->imageWidth+8;
+						else
+							labelx=this->gadgetGeom.h+1;
+						this->drawString((XftFont*)(this->font->data),labelx,(this->gadgetGeom.h/2)+((this->font->ascent-2)/2),state,this->label);
 						break;
 					default://centre
-						this->drawString((XftFont*)(this->font->data),(this->gadgetGeom.w/2)-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)this->font->data,this->label)/2)+this->labelOffset,(this->gadgetGeom.h/2)+((this->font->ascent-2)/2),state,this->label);
+						labelx=((this->gadgetGeom.w-this->imageWidth)/2)-(labelwidth/2)+this->imageWidth;
+						this->drawString((XftFont*)(this->font->data),labelx,(this->gadgetGeom.h/2)+((this->font->ascent-2)/2),state,this->label);
 						break;
 				}
 
-			if(this->gotIcon==true)
-				{
-					XSetClipMask(this->display,this->gc,this->icon[1]);
-					XSetClipOrigin(this->display,this->gc,4,(this->gadgetGeom.h/2)-(this->iconSize/2));
-					XCopyArea(this->display,this->icon[0],this->window,this->gc,0,0,this->iconSize,this->iconSize,4,(this->gadgetGeom.h/2)-(this->iconSize/2));
-					XSetClipMask(this->display,this->gc,None);
-				}
-			else if(this->useImage==true)
-				{
-					this->drawImage();
-				}
+//			if(this->gotIcon==true)
+//				{
+//					XSetClipMask(this->display,this->gc,this->icon[1]);
+//					XSetClipOrigin(this->display,this->gc,4,(this->gadgetGeom.h/2)-(this->iconSize/2));
+//					XCopyArea(this->display,this->icon[0],this->window,this->gc,0,0,this->iconSize,this->iconSize,4,(this->gadgetGeom.h/2)-(this->iconSize/2));
+//					XSetClipMask(this->display,this->gc,None);
+//				}
 		}
 	else
 		{
@@ -503,6 +508,7 @@ void LFSTK_gadgetClass::LFSTK_drawLabel(int state)
 			XSetForeground(this->display,this->gc,this->whiteColour);
 			XDrawLine(this->display,this->window,this->gc,this->gadgetGeom.x,(this->gadgetGeom.h/2)+1,this->gadgetGeom.x+this->gadgetGeom.w,(this->gadgetGeom.h/2)+1);
 		}
+	XFlushGC(this->display,this->gc);
 }
 
 void LFSTK_gadgetClass::LFSTK_setLabel(const char *newlabel)
@@ -527,9 +533,9 @@ const char *LFSTK_gadgetClass::LFSTK_getLabel(void)
 * \param o.
 * \note o=LEFT=0,CENTRE=1,RIGHT=2.
 */
-void LFSTK_gadgetClass::LFSTK_setLabelOriention(int orient)
+void LFSTK_gadgetClass::LFSTK_setLabelGravity(int orient)
 {
-	this->labelOrientation=orient;
+	this->labelGravity=orient;
 }
 
 /**
@@ -691,6 +697,8 @@ void LFSTK_gadgetClass::drawBox(geometryStruct* g,gadgetState state,bevelType be
 			XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x,g->y+g->h-1);
 			XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x+g->w-1,g->y);
 		}
+	XFlushGC(this->display,this->gc);
+
 }
 
 /**
@@ -786,58 +794,129 @@ void LFSTK_gadgetClass::LFSTK_setIconFromPath(const char *file,int size)
 		}
 }
 
-#if 0
-/**
-* Set image and render with imlib2.
-* \param file Path to image file.
-* \param w,h Size of image.
-*/
-void LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int w,int h)
+/*! This function decompresses a JPEG image from a memory buffer and creates a
+ * Cairo image surface.
+ * @param data Pointer to JPEG data (i.e. the full contents of a JPEG file read
+ * into this buffer).
+ * @param len Length of buffer in bytes.
+ * @return Returns a pointer to a cairo_surface_t structure. It should be
+ * checked with cairo_surface_status() for errors.
+ */
+cairo_surface_t *cairo_image_surface_create_from_jpeg_mem(const unsigned char* data, size_t len)
 {
-	Imlib_Image timage=NULL;
+	struct jpeg_decompress_struct	cinfo;
+	struct jpeg_error_mgr			jerr;
+	JSAMPROW						row_pointer[1];
+	cairo_surface_t					*sfc;
+ 
+   // initialize jpeg decompression structures
+	cinfo.err=jpeg_std_error(&jerr);
+	jpeg_create_decompress(&cinfo);
+	jpeg_mem_src(&cinfo,(const unsigned char*)data, len);
+	jpeg_read_header(&cinfo,true);
 
-	if(file==NULL)
-		{
-			this->useImage=false;
-		}
-	else
-		{
-			if(this->image!=NULL)
-				{
-					imlib_context_set_image(this->image);
-					imlib_free_image();
-				}
-			this->image=NULL;
-			this->useImage=false;
-
-			timage=imlib_load_image_immediately_without_cache(file);
-			if(timage==NULL)
-				return;
-
-			imlib_context_set_image(timage);
-			this->image=imlib_create_cropped_scaled_image(0,0,imlib_image_get_width(),imlib_image_get_height(),w,h);
-
-			if(image!=NULL)
-				{
-					this->imageWidth=w;
-					this->imageHeight=h;
-					this->useImage=true;
-					this->labelOffset=w+4;
-				}
-			imlib_context_set_image(timage);
-			imlib_free_image();
-		}
-}
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+	cinfo.out_color_space=JCS_EXT_BGRA;
 #else
+	cinfo.out_color_space=JCS_EXT_ARGB;
+#endif
+
+   // start decompressor
+	jpeg_start_decompress(&cinfo);
+
+   // create Cairo image surface
+	sfc=cairo_image_surface_create(CAIRO_FORMAT_RGB24,cinfo.output_width,cinfo.output_height);
+	if(cairo_surface_status(sfc)!=CAIRO_STATUS_SUCCESS)
+		{
+			jpeg_destroy_decompress(&cinfo);
+			return(sfc);
+		}
+
+   // loop over all scanlines and fill Cairo image surface
+	while(cinfo.output_scanline<cinfo.output_height)
+		{
+			row_pointer[0]=cairo_image_surface_get_data(sfc)+(cinfo.output_scanline * cairo_image_surface_get_stride(sfc));
+			jpeg_read_scanlines(&cinfo,row_pointer,1);
+		}
+
+   // finish and close everything
+	cairo_surface_mark_dirty(sfc);
+	jpeg_finish_decompress(&cinfo);
+	jpeg_destroy_decompress(&cinfo);
+
+   // set jpeg mime data
+	cairo_surface_set_mime_data(sfc,CAIRO_MIME_TYPE_JPEG,(const unsigned char*)data,len,free,(void*)data);
+
+	return sfc;
+}
+
+/*! This function reads an JPEG image from a file an creates a Cairo image
+ * surface. Internally the filesize is determined with fstat(2) and then the
+ * whole data is read at once.
+ * @param filename Pointer to filename of JPEG file.
+ * @return Returns a pointer to a cairo_surface_t structure. It should be
+ * checked with cairo_surface_status() for errors.
+ * @note If the returned surface is invalid you can use errno to determine
+ * further reasons. Errno is set according to fopen(3) and malloc(3). If you
+ * intend to check errno you shall set it to 0 before calling this function
+ * because it does not modify errno itself.
+ */
+cairo_surface_t *cairo_image_surface_create_from_jpeg(const char *filename)
+{
+	const unsigned char		*data;
+	int						infile;
+	struct stat				stat;
+	char					magic[]="\xff\xd8\xff";
+
+   // open input file
+	if((infile=open(filename,O_RDONLY))==-1)
+		return(cairo_image_surface_create(CAIRO_FORMAT_INVALID,0,0));
+
+   // get stat structure for file size
+	if (fstat(infile,&stat)==-1)
+		return cairo_image_surface_create(CAIRO_FORMAT_INVALID, 0, 0);
+
+   // allocate memory
+	if((data=(const unsigned char*)malloc(stat.st_size))==NULL)
+		return(cairo_image_surface_create(CAIRO_FORMAT_INVALID,0,0));
+
+   // read data
+	if(read(infile,(void*)data,stat.st_size)<stat.st_size)
+		return(cairo_image_surface_create(CAIRO_FORMAT_INVALID,0,0));
+
+	char *ptr=(char*)data;
+	bool flag=true;
+	for(int j=0;j<3;j++)
+		if(ptr[j]!=magic[j])
+			flag=false;
+
+	close(infile);
+	if(flag==false)
+		{
+			printf("not a jpeg\n");
+			return(NULL);
+		}
+	return cairo_image_surface_create_from_jpeg_mem(data, stat.st_size);
+}
+
 /**
 * Set image and render with cairo.
 * \param file Path to image file.
 * \param w,h Size of image.
 */
-//cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int w,int h)
-cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int orient)
+cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int grav)
 {
-	cairo_status_t cs=CAIRO_STATUS_SUCCESS;
+	cairo_status_t	cs=CAIRO_STATUS_SUCCESS;
+	cairo_surface_t	*tempimage;
+	cairo_t			*tcr;
+	float			scaleX=1.0;
+	float			scaleY=1.0;
+	int				txtx;
+	float			maxWidth;
+	float			maxHeight;
+	float			ratio;
+	float			width;
+	float			height;
 
 	this->useImage=false;
 	this->gotIcon=false;
@@ -846,23 +925,50 @@ cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int or
 
 	this->sfc=cairo_xlib_surface_create(this->display,this->window,this->visual,this->gadgetGeom.w,this->gadgetGeom.h);
 	this->cr=cairo_create(sfc);
-	this->cImage=cairo_image_surface_create_from_png(file);
-	cs=cairo_surface_status (this->cImage);
-	if(cs==CAIRO_STATUS_SUCCESS)
+
+	tempimage=cairo_image_surface_create_from_png(file);
+	cs=cairo_surface_status(tempimage);
+	if(cs!=CAIRO_STATUS_SUCCESS)
 		{
-			this->scaleX=(float)((float)this->gadgetGeom.w/(float)cairo_image_surface_get_width(this->cImage));
-			this->scaleY=(float)((float)this->gadgetGeom.h/(float)cairo_image_surface_get_height(this->cImage));
-			this->useImage=true;
-			this->gotIcon=false;
-			this->labelOrientation=RIGHT;
-			this->imageOrientation=orient;
+			tempimage=cairo_image_surface_create_from_jpeg(file);
+			if(tempimage==NULL)
+				{
+					printf("Unkown Format : %s\n",file);
+					return(CAIRO_STATUS_INVALID_FORMAT);
+				}
 		}
-	else	
-		printf("File %s error - Error:%s\n",file,cairo_status_to_string(cs));
+
+	txtx=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->label);
+	maxWidth=this->gadgetGeom.w-txtx-8;
+	maxHeight=this->gadgetGeom.h-8;
+	width=cairo_image_surface_get_width(tempimage);
+	height=cairo_image_surface_get_height(tempimage);
+
+	if(maxWidth>maxHeight)
+		ratio=maxHeight/height;
+	else
+		ratio=maxWidth/width;
+
+	this->imageWidth=width*ratio;
+	this->imageHeight=height*ratio;
+
+	this->useImage=true;
+	this->imageGravity=grav;
+	this->labelOffset=this->imageWidth;
+
+	this->cImage=cairo_surface_create_similar_image(tempimage,cairo_image_surface_get_format(tempimage),this->imageWidth,this->imageHeight);
+	tcr=cairo_create(this->cImage);
+	cairo_reset_clip(tcr);
+	cairo_scale(tcr,ratio,ratio);
+	cairo_set_source_surface(tcr,tempimage,0,0);
+	cairo_paint(tcr);
+
+	cairo_destroy(tcr);
+	cairo_surface_destroy(tempimage);
+
 	return(cs);
 }
 
-#endif
 /**
 * Get gadget monitor.
 * \return unsigned Monitor that gadget top left is on;

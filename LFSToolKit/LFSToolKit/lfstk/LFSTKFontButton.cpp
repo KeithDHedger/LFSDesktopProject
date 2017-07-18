@@ -491,7 +491,7 @@ void LFSTK_fontButtonClass::LFSTK_showDialog(const char *fs)
 
 //size
 			label=new LFSTK_labelClass(this->dialog,"Font Size",DBORDER,buttony,DBUTTONWIDTH,DBUTTONHITE,NorthWestGravity);
-			label->LFSTK_setLabelOriention(0);
+			label->LFSTK_setLabelGravity(0);
 
 			this->fontSizeEdit=new LFSTK_lineEditClass(this->dialog,this->fontSize,DBORDER+DBUTTONWIDTH+DGAP,buttony,DBUTTONWIDTH,DBUTTONHITE,NorthWestGravity);
 			buttony+=DBUTTONHITE+DGAP;

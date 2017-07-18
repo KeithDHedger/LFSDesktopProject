@@ -171,7 +171,6 @@ LFSTK_windowClass::~LFSTK_windowClass()
 
 	if(this->windowName!=NULL)
 		free(this->windowName);
-
 	delete this->globalLib;
 	free(this->monitors);
 
@@ -187,7 +186,6 @@ LFSTK_windowClass::~LFSTK_windowClass()
 
 	XFreeGC(this->display,this->gc);
 	XDestroyWindow(this->display,this->window);
-	XCloseDisplay(this->display);
 }
 
 LFSTK_windowClass::LFSTK_windowClass()

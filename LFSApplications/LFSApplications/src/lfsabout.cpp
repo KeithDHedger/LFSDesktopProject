@@ -49,15 +49,17 @@ bool doQuit(void *p,void* ud)
 
 int main(int argc, char **argv)
 {
-	XEvent	event;
-	int		sy=BORDER;
-	Pixmap	ic[2];
+	XEvent				event;
+	int					sy=BORDER;
+	Pixmap				ic[2];
 	LFSTK_imageClass	*icon;	
 	LFSTK_windowClass	*wc;
 	LFSTK_buttonClass	*quit;
 	LFSTK_labelClass	*labels[LNOMORELABELS];
-	
+	Display				*display;
+
 	wc=new LFSTK_windowClass(0,0,WINWIDTH,WINHITE,"About LFS Desktop",false);
+	display=wc->display;
 
 	icon=new LFSTK_imageClass(wc,"/usr/share/pixmaps/LFSTux.png",MIDWIN-(ICONBUTTON/2),sy,ICONBUTTON,NorthGravity);
 
@@ -103,5 +105,7 @@ int main(int argc, char **argv)
 		}
 
 	delete wc;
+	XCloseDisplay(display);
+
 	return 0;
 }

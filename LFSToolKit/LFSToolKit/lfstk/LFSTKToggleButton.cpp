@@ -59,7 +59,7 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 
 	this->toggleState=false;
 	this->labelOffset=(this->gadgetGeom.h/2);
-	this->LFSTK_setLabelOriention(LEFT);
+	this->LFSTK_setLabelGravity(LEFT);
 		if(this->wc->globalLib->LFSTK_getUseTheme()==true)
 		this->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),-1);
 	else
@@ -93,9 +93,9 @@ void LFSTK_toggleButtonClass::drawButton(gadgetState state)
 			g->w=(this->gadgetGeom.h/2);
 			g->h=(this->gadgetGeom.h/2);
 			g->y=g->h-(g->h/2)-1;
-			this->LFSTK_setLabelOriention(LEFT);
+			this->LFSTK_setLabelGravity(LEFT);
 			this->labelOffset=(this->gadgetGeom.h/2);
-
+//this->labelOffset=2;
 			if(this->wc->useTile==true) 
 				{
 					XSetTSOrigin(this->display,this->gc,0-this->gadgetGeom.x,0-this->gadgetGeom.y);
@@ -135,7 +135,7 @@ void LFSTK_toggleButtonClass::drawButton(gadgetState state)
 			g->y=0;
 			g->w=this->gadgetGeom.w;
 			g->h=this->gadgetGeom.h;
-			this->LFSTK_setLabelOriention(CENTRE);
+			this->LFSTK_setLabelGravity(CENTRE);
 			this->labelOffset=2;
 			this->drawBox(g,state,bv);
 		}

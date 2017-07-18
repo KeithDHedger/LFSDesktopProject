@@ -588,8 +588,8 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
-IMLIB_LIBS
-IMLIB_CFLAGS
+CAIRO_LIBS
+CAIRO_CFLAGS
 XFT_LIBS
 XFT_CFLAGS
 X11_LIBS
@@ -713,8 +713,8 @@ X11_CFLAGS
 X11_LIBS
 XFT_CFLAGS
 XFT_LIBS
-IMLIB_CFLAGS
-IMLIB_LIBS'
+CAIRO_CFLAGS
+CAIRO_LIBS'
 
 
 # Initialize some variables set by options.
@@ -1356,9 +1356,9 @@ Some influential environment variables:
   X11_LIBS    linker flags for X11, overriding pkg-config
   XFT_CFLAGS  C compiler flags for XFT, overriding pkg-config
   XFT_LIBS    linker flags for XFT, overriding pkg-config
-  IMLIB_CFLAGS
-              C compiler flags for IMLIB, overriding pkg-config
-  IMLIB_LIBS  linker flags for IMLIB, overriding pkg-config
+  CAIRO_CFLAGS
+              C compiler flags for CAIRO, overriding pkg-config
+  CAIRO_LIBS  linker flags for CAIRO, overriding pkg-config
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -4675,22 +4675,22 @@ fi
 
 
 
-IMLIB_MODULES="imlib2 >= 1.4.6"
+CAIRO_MODULES="cairo >= 1.12.16"
 
 pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for IMLIB" >&5
-$as_echo_n "checking for IMLIB... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for CAIRO" >&5
+$as_echo_n "checking for CAIRO... " >&6; }
 
-if test -n "$IMLIB_CFLAGS"; then
-    pkg_cv_IMLIB_CFLAGS="$IMLIB_CFLAGS"
+if test -n "$CAIRO_CFLAGS"; then
+    pkg_cv_CAIRO_CFLAGS="$CAIRO_CFLAGS"
  elif test -n "$PKG_CONFIG"; then
     if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"\$IMLIB_MODULES\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "$IMLIB_MODULES") 2>&5
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"\$CAIRO_MODULES\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "$CAIRO_MODULES") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_IMLIB_CFLAGS=`$PKG_CONFIG --cflags "$IMLIB_MODULES" 2>/dev/null`
+  pkg_cv_CAIRO_CFLAGS=`$PKG_CONFIG --cflags "$CAIRO_MODULES" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
@@ -4698,16 +4698,16 @@ fi
  else
     pkg_failed=untried
 fi
-if test -n "$IMLIB_LIBS"; then
-    pkg_cv_IMLIB_LIBS="$IMLIB_LIBS"
+if test -n "$CAIRO_LIBS"; then
+    pkg_cv_CAIRO_LIBS="$CAIRO_LIBS"
  elif test -n "$PKG_CONFIG"; then
     if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"\$IMLIB_MODULES\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "$IMLIB_MODULES") 2>&5
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"\$CAIRO_MODULES\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "$CAIRO_MODULES") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_IMLIB_LIBS=`$PKG_CONFIG --libs "$IMLIB_MODULES" 2>/dev/null`
+  pkg_cv_CAIRO_LIBS=`$PKG_CONFIG --libs "$CAIRO_MODULES" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
@@ -4728,22 +4728,22 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        IMLIB_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "$IMLIB_MODULES" 2>&1`
+	        CAIRO_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "$CAIRO_MODULES" 2>&1`
         else
-	        IMLIB_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "$IMLIB_MODULES" 2>&1`
+	        CAIRO_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "$CAIRO_MODULES" 2>&1`
         fi
 	# Put the nasty error message in config.log where it belongs
-	echo "$IMLIB_PKG_ERRORS" >&5
+	echo "$CAIRO_PKG_ERRORS" >&5
 
-	as_fn_error $? "Package requirements ($IMLIB_MODULES) were not met:
+	as_fn_error $? "Package requirements ($CAIRO_MODULES) were not met:
 
-$IMLIB_PKG_ERRORS
+$CAIRO_PKG_ERRORS
 
 Consider adjusting the PKG_CONFIG_PATH environment variable if you
 installed software in a non-standard prefix.
 
-Alternatively, you may set the environment variables IMLIB_CFLAGS
-and IMLIB_LIBS to avoid the need to call pkg-config.
+Alternatively, you may set the environment variables CAIRO_CFLAGS
+and CAIRO_LIBS to avoid the need to call pkg-config.
 See the pkg-config man page for more details." "$LINENO" 5
 elif test $pkg_failed = untried; then
      	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
@@ -4754,15 +4754,15 @@ as_fn_error $? "The pkg-config script could not be found or is too old.  Make su
 is in your PATH or set the PKG_CONFIG environment variable to the full
 path to pkg-config.
 
-Alternatively, you may set the environment variables IMLIB_CFLAGS
-and IMLIB_LIBS to avoid the need to call pkg-config.
+Alternatively, you may set the environment variables CAIRO_CFLAGS
+and CAIRO_LIBS to avoid the need to call pkg-config.
 See the pkg-config man page for more details.
 
 To get pkg-config, see <http://pkg-config.freedesktop.org/>.
 See \`config.log' for more details" "$LINENO" 5; }
 else
-	IMLIB_CFLAGS=$pkg_cv_IMLIB_CFLAGS
-	IMLIB_LIBS=$pkg_cv_IMLIB_LIBS
+	CAIRO_CFLAGS=$pkg_cv_CAIRO_CFLAGS
+	CAIRO_LIBS=$pkg_cv_CAIRO_LIBS
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 

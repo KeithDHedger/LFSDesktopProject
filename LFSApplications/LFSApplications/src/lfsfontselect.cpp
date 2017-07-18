@@ -315,7 +315,7 @@ int main(int argc, char **argv)
 
 //size
 	label=new LFSTK_labelClass(mainWindow,"Font Size",BORDER,buttony,BUTTONWIDTH,BUTTONHITE,NorthWestGravity);
-	label->LFSTK_setLabelOriention(0);
+	label->LFSTK_setLabelGravity(0);
 
 	fontSizeEdit=new LFSTK_lineEditClass(mainWindow,fontSize,BORDER+BUTTONWIDTH+GAP,buttony,BUTTONWIDTH,BUTTONHITE,NorthWestGravity);
 	buttony+=BUTTONHITE+GAP;

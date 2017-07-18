@@ -1,4 +1,5 @@
 0.1.1
+Updated appmenu to use cairo.
 Fixed appmenu popup.
 Tweaked window stack for transient windows.
 Code clean

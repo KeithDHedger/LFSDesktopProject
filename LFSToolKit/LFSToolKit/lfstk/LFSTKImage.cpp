@@ -56,7 +56,7 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 		{
 			cairo_save(this->cr);
 				cairo_translate(this->cr,0,0);
-				cairo_scale(this->cr,this->scaleX,this->scaleY);
+				//cairo_scale(this->cr,this->scaleX,this->scaleY);
 				cairo_set_source_surface(this->cr,this->cImage,0,0);
 				cairo_paint(this->cr);
 			cairo_restore(this->cr);
