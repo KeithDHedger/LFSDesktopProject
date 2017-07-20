@@ -119,14 +119,16 @@ class LFSTK_windowClass
 		Window					rootWindow;		
 		Colormap				cm;
 		XftDraw 				*draw;
-//		cairo_t					*cr;
-//		cairo_surface_t 		*sfc;
 
 		char					*fontString;
 		char					*fontColourNames[MAXCOLOURS];
 		colourStruct			windowColourNames[MAXCOLOURS];
 		bool					autoLabelColour;
 		LFSTK_lib				*globalLib;
+
+//user dirs
+		const char				*userHome;
+		char					*configDir;
 
 		fontStruct				*font;
 

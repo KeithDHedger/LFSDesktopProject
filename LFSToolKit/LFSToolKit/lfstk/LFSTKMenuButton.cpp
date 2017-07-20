@@ -129,10 +129,8 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 				}
 
 			addto=tfont->ascent+tfont->descent+8;
-			//if(gotimage==true)
+			if(gotimage==true)
 				maxwid+=maxiconsize+4;
-			//else
-			//	maxwid-=tfont->ascent+tfont->descent+8;		
 
 			subwc->LFSTK_resizeWindow(maxwid,this->menuCount*addto,true);
 			sy=0;
@@ -156,9 +154,6 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 								bc->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMTILE),-1);
 
 							bc->LFSTK_setImageFromPath(this->menus[j].imagePath,LEFT);
-							if(this->menus[j].imagePath!=NULL)
-							bc->useImage=true;
-							//bc->gotIcon=true;
 							for(int j=0;j<MAXCOLOURS;j++)
 								{
 									bc->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEM));
@@ -214,13 +209,10 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 						if(event.xany.window==subwc->window)
 							{
 								run=false;
-								XFlush(this->display);
-								XSync(this->display,true);
-								//this->LFSTK_clearWindow();
+								this->LFSTK_clearWindow();
 							}
 						break;
 					case Expose:
-					printf("xxxx\n");
 						break;
 					case ButtonRelease:
 						run=false;
@@ -278,24 +270,6 @@ bool LFSTK_menuButtonClass::mouseExit(XButtonEvent *e)
 */
 bool LFSTK_menuButtonClass::mouseEnter(XButtonEvent *e)
 {
-
-	geometryStruct	g={0,0,this->gadgetGeom.w,this->gadgetGeom.h};
-printf("xxxxx\n");
-//	if(this->isActive==false)
-//		{
-//			this->LFSTK_clearWindow();
-//			return(true);
-//		}
-
-	//this->drawBox(&g,PRELIGHTCOLOUR,this->style);
-	//this->LFSTK_drawLabel(PRELIGHTCOLOUR);
-	if(this->useImage==true)
-		this->drawImage();
-	this->drawIndicator(&g,PRELIGHTCOLOUR,DISCLOSURE);
-//	this->inWindow=true;
-//	return(true);
-
-/*
 	geometryStruct	g={0,0,this->gadgetGeom.w,this->gadgetGeom.h};
 
 	if(this->isActive==false)
@@ -308,8 +282,11 @@ printf("xxxxx\n");
 	if(this->useImage==true)
 		this->drawImage();
 	this->LFSTK_drawLabel(PRELIGHTCOLOUR);
+
 	this->drawIndicator(&g,PRELIGHTCOLOUR,DISCLOSURE);
-*/
+	XSync(this->display,false);
+	this->inWindow=true;
+	return(true);
 }
 
 /**

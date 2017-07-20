@@ -39,6 +39,7 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		int					LFSTK_getCurrentListItem(void);
 		const char			*LFSTK_getListString(int listnum);
 		void				LFSTK_setList(char **list,unsigned numitems);
+		void				LFSTK_setListFromFile(const char *filepath,bool includeempty);
 		void				LFSTK_setImageList(char **list,unsigned numitems);
 		int					currentItem;
 	private:

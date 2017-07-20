@@ -52,43 +52,13 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 			XCopyArea(this->display,this->icon[0],this->window,this->gc,0,0,this->iconSize,this->iconSize,0,0);
 			XSetClipMask(this->display,this->gc,None);
 		}
+
+
 	else if(this->useImage==true)
 		{
-			cairo_save(this->cr);
-				cairo_translate(this->cr,0,0);
-				//cairo_scale(this->cr,this->scaleX,this->scaleY);
-				cairo_set_source_surface(this->cr,this->cImage,0,0);
-				cairo_paint(this->cr);
-			cairo_restore(this->cr);
+			this->drawImage();
 		}
 }
-
-#if 0
-/**
-* Set image and render with cairo.
-* \param file Path to image file.
-* \param w,h Size of image.
-*/
-cairo_status_t LFSTK_imageClass::LFSTK_setImageFromPathX(const char *file,int w,int h)
-{
-	cairo_status_t cs=CAIRO_STATUS_SUCCESS;
-
-	this->sfc=cairo_xlib_surface_create(this->display,this->window,this->visual,w,h);
-	cairo_xlib_surface_set_size(sfc,w,h);
-	this->cr=cairo_create(sfc);
-	this->cImage=cairo_image_surface_create_from_png(file);
-	cs=cairo_surface_status (this->cImage);
-	if(cs==CAIRO_STATUS_SUCCESS)
-		{
-			this->scaleX=(float)((float)this->gadgetGeom.w/(float)cairo_image_surface_get_width(this->cImage));
-			this->scaleY=(float)((float)this->gadgetGeom.h/(float)cairo_image_surface_get_height(this->cImage));
-			this->useImage=true;
-		}
-	else	
-		printf("File %s error - Error:%s\n",file,cairo_status_to_string(cs));
-	return(cs);
-}
-#endif
 
 /**
 * Main button constructor.

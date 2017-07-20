@@ -191,8 +191,12 @@ bool LFSTK_lineEditClass::gotFocus(XEvent *e)
 */
 void LFSTK_lineEditClass::LFSTK_setBuffer(const char *str)
 {
-	this->buffer=str;
-	this->cursorPos=strlen(str);
+	const char	*bufferstr=str;
+
+	if(bufferstr==NULL)
+		bufferstr="";
+	this->buffer=bufferstr;
+	this->cursorPos=strlen(bufferstr);
 	this->LFSTK_clearWindow();
 }
 

@@ -262,12 +262,11 @@ int main(int argc, char **argv)
 	mainMenusWithSubs[1].subMenuCnt=MAXSUBMENUS;
 
 	mbwithsubs=new LFSTK_menuButtonClass(wc,"Sub Menus",BORDER,sy,BWIDTH,BHITE,BGRAV);
-	mbwithsubs->LFSTK_setIconFromPath("ManPageEditor.png");
+	mbwithsubs->LFSTK_setImageFromPath("ManPageEditor.png",LEFT);
 	mbwithsubs->LFSTK_setCallBack(NULL,menuCB,NULL);
 	mbwithsubs->LFSTK_setLabelGravity(MENU);
 	mbwithsubs->LFSTK_addMenus(mainMenusWithSubs,MAXMAINMENUS);
 	sy+=YSPACING;
-
 
 //icon button
 	iconButton=new LFSTK_buttonClass(wc,"",BORDER,sy,68,64+4,NorthWestGravity);

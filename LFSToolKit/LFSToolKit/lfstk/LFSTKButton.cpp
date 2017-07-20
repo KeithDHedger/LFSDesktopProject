@@ -80,47 +80,6 @@ bool LFSTK_buttonClass::mouseUp(XButtonEvent *e)
 }
 
 /**
-* Mouse enter callback.
-* \param e XButtonEvent passed from mainloop->listener.
-* \return Return true if event fully handeled or false to pass it on.
-*/
-bool LFSTK_buttonClass::mouseEnterx(XButtonEvent *e)
-{
-printf("2222\n");
-	geometryStruct	g={0,0,this->gadgetGeom.w,this->gadgetGeom.h};
-
-//	if(this->isActive==false)
-//		{
-//			this->LFSTK_clearWindow();
-//			return(true);
-//		}
-
-	this->drawBox(&g,PRELIGHTCOLOUR,this->style);
-
-XFlushGC(this->display, this->gc);
-XFlushGC(this->display, this->gc);
-XFlushGC(this->display, this->gc);
-
-	XFlush(this->display);
-	XSync(this->display,false);
-	XFlush(this->display);
-	XSync(this->display,false);
-	XFlush(this->display);
-	XSync(this->display,false);
-	XFlush(this->display);
-	XSync(this->display,false);
-
-	this->LFSTK_drawLabel(PRELIGHTCOLOUR);
-XFlushGC(this->display, this->gc);
-	XFlush(this->display);
-	XSync(this->display,false);
-	if(this->useImage==true)
-		this->drawImage();
-	this->inWindow=true;
-	return(true);
-}
-
-/**
 * Return callback user data.
 * \note Returns a void* so must be cast.
 * \note return value must not be freed.

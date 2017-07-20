@@ -36,7 +36,10 @@ LFSTK_listGadgetClass::~LFSTK_listGadgetClass()
 	if(this->listImages!=NULL)
 		{
 			for(int j=0;j<this->listImageCnt;j++)
-				free(this->listImages[j]);
+				{
+					if(this->listImages[j]!=NULL)
+						free(this->listImages[j]);
+				}
 			delete this->listImages;
 		}
 }
@@ -134,6 +137,76 @@ void LFSTK_listGadgetClass::LFSTK_setImageList(char **list,unsigned numitems)
 }
 
 /**
+* Set new list from contents of file.
+*
+* \param list const char * file path.
+* \note Passing NULL dletes current list.
+*/
+void LFSTK_listGadgetClass::LFSTK_setListFromFile(const char *filepath,bool includeempty)
+{
+	FILE	*file=NULL;
+	char	*buffer;
+	int		cnt=0;
+	char	*lines=NULL;
+	int		linecnt=0;
+	char	**newlist=0;
+
+	if(this->listStrings!=NULL)
+		{
+			for(int j=0;j<this->listCnt;j++)
+				free(this->listStrings[j]);
+			delete this->listStrings;
+		}
+	if(this->listImages!=NULL)
+		{
+			for(int j=0;j<this->listImageCnt;j++)
+				{
+					if(this->listImages[j]!=NULL)
+						free(this->listImages[j]);
+				}
+			delete this->listImages;
+		}
+	this->listStrings=NULL;
+	this->listImages=NULL;
+	this->listCnt=0;
+	this->listImageCnt=0;
+
+	lines=this->wc->globalLib->LFSTK_oneLiner("wc -l %s",filepath);
+	linecnt=atoi(lines)+1;
+	free(lines);
+
+	newlist=new char*[linecnt];
+	buffer=(char*)alloca(256);
+	if(filepath!=NULL)
+		{
+			file=fopen(filepath,"r");
+			if(file!=NULL)
+				{
+					while(fgets(buffer,256,file)!=NULL)
+						{
+							buffer[strlen(buffer)-1]=0;
+							if(includeempty==true)
+								newlist[cnt++]=strdup(buffer);
+							else
+								{
+									if(strlen(buffer)>0)
+										newlist[cnt++]=strdup(buffer);
+								}
+						}
+					fclose(file);
+					if(newlist!=NULL)
+						{
+							LFSTK_setList(newlist,cnt--);
+							for(int j=0;j<cnt;j++)
+								if(newlist[j]!=NULL)
+							free(newlist[j]);
+							delete newlist;
+						}
+				}
+		}
+}
+
+/**
 * Set new list.
 *
 * \param list char** list of strings.
@@ -154,7 +227,7 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 		}
 
 	if(this->listImages!=NULL)
-		orient=RIGHT;
+		orient=MENU;
 
 	this->listStrings=new char*[numitems];
 	this->listCnt=numitems;
@@ -171,11 +244,12 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 				{
 					this->labels[j]->LFSTK_setLabel(this->listStrings[j]);
 					this->labels[j]->LFSTK_setActive(true);
-					this->labels[j]->LFSTK_setLabelGravity(MENU);
+					this->labels[j]->LFSTK_setLabelGravity(orient);
 
 					if((this->listImages!=NULL) && (this->listImages[j]!=NULL))
 						{
 							this->labels[j]->LFSTK_getGeom(&geom);
+							if(this->listImages!=NULL)
 							this->labels[j]->LFSTK_setImageFromPath(this->listImages[j],LEFT);
 						}
 				}
@@ -183,11 +257,12 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 				{
 					this->labels[j]->LFSTK_setLabel("");
 					this->labels[j]->LFSTK_setActive(false);
+							if(this->listImages!=NULL)
 					this->labels[j]->LFSTK_setImageFromPath(NULL,LEFT);
 				}
 			this->labels[j]->LFSTK_clearWindow();
 		}
-
+	this->currentItem=this->listCnt;
 	this->setNavSensitive();
 }
 
@@ -234,7 +309,8 @@ bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
 	for(int j=0;j<list->maxShowing;j++)
 		{
 			list->labels[j]->LFSTK_setLabel(list->listStrings[j+list->listOffset]);
-			list->labels[j]->LFSTK_setImageFromPath(list->listImages[j+list->listOffset],LEFT);
+			if(list->listImages!=NULL)
+				list->labels[j]->LFSTK_setImageFromPath(list->listImages[j+list->listOffset],LEFT);
 			list->data[j].userData=j+list->listOffset;
 			list->labels[j]->LFSTK_clearWindow();
 		}
@@ -345,8 +421,8 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 			sy+=LABELHITE;
 		}
 
-	if(newlist!=NULL)
-		this->LFSTK_setList(newlist,cnt);
+//	if(newlist!=NULL)
+//		this->LFSTK_setList(newlist,cnt);
 
 //navigate
 //line up/down

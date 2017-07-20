@@ -16,7 +16,9 @@ lfspanelprefs_SOURCES = ../src/lfspanelprefs.cpp
 
 lfsabout_SOURCES = ../src/lfsabout.cpp
 
+lfsruncommand_SOURCES = ../src/lfsruncommand.cpp
+
 man1_MANS = ../resources/man/lfsapplications.1
 
-bin_PROGRAMS = lfstkprefs lfswmprefs lfsdesktopprefs lfsappearance lfsbackdropprefs lfspanelprefs lfsabout
+bin_PROGRAMS = lfstkprefs lfswmprefs lfsdesktopprefs lfsappearance lfsbackdropprefs lfspanelprefs lfsabout lfsruncommand
 

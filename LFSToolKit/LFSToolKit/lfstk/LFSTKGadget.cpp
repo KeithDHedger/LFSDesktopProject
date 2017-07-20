@@ -321,7 +321,6 @@ bool LFSTK_gadgetClass::mouseExit(XButtonEvent *e)
 */
 bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 {
-printf("11111\n");
 	geometryStruct	g={0,0,this->gadgetGeom.w,this->gadgetGeom.h};
 
 	if(this->isActive==false)
@@ -334,7 +333,9 @@ printf("11111\n");
 	this->LFSTK_drawLabel(PRELIGHTCOLOUR);
 	if(this->useImage==true)
 		this->drawImage();
+	XSync(this->display,false);
 	this->inWindow=true;
+
 	return(true);
 }
 
@@ -433,6 +434,7 @@ void LFSTK_gadgetClass::drawImage()
 	switch(this->imageGravity)
 		{
 			case AUTO:
+				//TODO//
 				//xoffset=(maxWidth/2)-(width * ratio)/2+4;
 				break;
 			case LEFT:
@@ -440,12 +442,9 @@ void LFSTK_gadgetClass::drawImage()
 				break;
 		}
 
-	XSync(this->display,false);
-
 	cairo_save(this->cr);
 		cairo_reset_clip (this->cr);
 		cairo_translate(this->cr,xoffset,yoffset);
-		//cairo_scale(this->cr,1.0,1.0);
 		cairo_set_source_surface(this->cr,this->cImage,0,0);
 		cairo_paint(this->cr);
 	cairo_restore(this->cr);
@@ -508,7 +507,6 @@ void LFSTK_gadgetClass::LFSTK_drawLabel(int state)
 			XSetForeground(this->display,this->gc,this->whiteColour);
 			XDrawLine(this->display,this->window,this->gc,this->gadgetGeom.x,(this->gadgetGeom.h/2)+1,this->gadgetGeom.x+this->gadgetGeom.w,(this->gadgetGeom.h/2)+1);
 		}
-	XFlushGC(this->display,this->gc);
 }
 
 void LFSTK_gadgetClass::LFSTK_setLabel(const char *newlabel)
@@ -611,7 +609,8 @@ void LFSTK_gadgetClass::drawIndicator(geometryStruct* g,int state,indicatorType 
 				break;
 
 			case DISCLOSURE:
-				if(strcmp(this->wc->globalLib->bestFontColour(this->colourNames[state].pixel),"black")==0)
+				if(state==PRELIGHTCOLOUR)
+//				if(strcmp(this->wc->globalLib->bestFontColour(this->colourNames[state].pixel),"black")==0)
 					XSetForeground(this->display,this->gc,this->blackColour);
 				else
 					XSetForeground(this->display,this->gc,this->whiteColour);
@@ -697,8 +696,6 @@ void LFSTK_gadgetClass::drawBox(geometryStruct* g,gadgetState state,bevelType be
 			XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x,g->y+g->h-1);
 			XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x+g->w-1,g->y);
 		}
-	XFlushGC(this->display,this->gc);
-
 }
 
 /**
@@ -1042,4 +1039,3 @@ void LFSTK_gadgetClass::LFSTK_getFontGeom(geometryStruct *geom,const char *label
 	geom->w=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(tfont->data),label);
 	geom->h=tfont->ascent+tfont->descent+8;
 }
-

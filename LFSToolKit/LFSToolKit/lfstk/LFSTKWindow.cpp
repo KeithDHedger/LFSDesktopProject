@@ -184,6 +184,7 @@ LFSTK_windowClass::~LFSTK_windowClass()
 				}
 		}
 
+	free(this->configDir);
 	XFreeGC(this->display,this->gc);
 	XDestroyWindow(this->display,this->window);
 }
@@ -582,28 +583,15 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 	this->LFSTK_setDecorated(true);
 	this->initWindow(loadvars);
 
-//		cairo_status_t cs;
-//	this->sfc=cairo_xlib_surface_create(this->display,this->window,this->visual,w,h);
-//		cs=cairo_surface_status (this->sfc);
-//		printf("--->%s<---\n",cairo_status_to_string (cs));
-//
-//	//	cairo_status (this->cr);
-//	//	printf("--->%s<---\n",cairo_status_to_string (cs));
-//
-//	cairo_xlib_surface_set_size(sfc,w,h);
-//		cs=cairo_surface_status (this->sfc);
-//		printf("--->%s<---\n",cairo_status_to_string (cs));
-//
-//	this->cr=cairo_create(sfc);
-//		cairo_status (this->cr);
-//		printf("--->%s<---\n",cairo_status_to_string (cs));
-
 	if(this->globalLib->LFSTK_getUseTheme()==true)
 		this->LFSTK_setTile(this->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
 	else
 		this->useTile=false;
 
 	this->gadgetMap.clear();
+
+	this->userHome=getenv("HOME");
+	asprintf(&this->configDir,"%s/.config/LFS",this->userHome);
 }
 
 /**
