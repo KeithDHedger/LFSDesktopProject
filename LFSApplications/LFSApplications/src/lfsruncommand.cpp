@@ -1,14 +1,22 @@
-#if 0
+/*
+ *
+ * ©K. D. Hedger. Thu 20 Jul 13:19:52 BST 2017 kdhedger68713@gmail.com
 
-#©keithhedger Fri 7 Aug 15:57:52 BST 2015 kdhedger68713@gmail.com
+ * This file (lfsruncommand.cpp) is part of LFSApplications.
 
-g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2||exit 1
-LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./a.out "$@"
-retval=$?
-rm ./a.out
-exit $retval
+ * LFSApplications is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * at your option) any later version.
 
-#endif
+ * LFSApplications is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with LFSApplications.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include <stdio.h>
 #include <unistd.h>
@@ -48,8 +56,7 @@ bool doExecute(void *object,void* ud)
 {
 	char	*data;
 
-	asprintf(&data,"%s &",le->LFSTK_getBuffer()->c_str());
-	system(data);
+	system(le->LFSTK_getBuffer()->c_str());
 	mainLoop=false;
 
 	asprintf(&data,"echo %s >> %s",le->LFSTK_getBuffer()->c_str(),commandfile);
@@ -89,7 +96,7 @@ int main(int argc, char **argv)
 	sy+=LISTHITE+8;
 
 //command
-	le=new LFSTK_lineEditClass(wc,"",BORDER,sy,WINWIDTH-BORDER,BUTTONHITE,NorthWestGravity);
+	le=new LFSTK_lineEditClass(wc,list->LFSTK_getListString(list->LFSTK_getCurrentListItem()),BORDER,sy,WINWIDTH-BORDER,BUTTONHITE,NorthWestGravity);
 	sy+=BUTTONHITE+8;
 
 	quit=new LFSTK_buttonClass(wc,"Quit",BORDER,sy,BUTTONWITDH,BUTTONHITE,NorthWestGravity);

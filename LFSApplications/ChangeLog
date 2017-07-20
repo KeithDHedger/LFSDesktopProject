@@ -1,4 +1,5 @@
 0.1.2
+Added lfsruncommand to install.
 Updated prefs dialogs.
 Added file selector for setting wm theme.
 Added file selector for setting desktop icon theme.

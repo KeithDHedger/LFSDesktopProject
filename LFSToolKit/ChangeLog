@@ -1,4 +1,6 @@
 0.2.1
+Added setting list from file.
+Images now scaled after loading/before displaying.
 Fixed images in list with labels.
 Migrating to cairo from imlib.
 Code clean.

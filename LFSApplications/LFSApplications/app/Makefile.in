@@ -89,7 +89,7 @@ POST_UNINSTALL = :
 bin_PROGRAMS = lfstkprefs$(EXEEXT) lfswmprefs$(EXEEXT) \
 	lfsdesktopprefs$(EXEEXT) lfsappearance$(EXEEXT) \
 	lfsbackdropprefs$(EXEEXT) lfspanelprefs$(EXEEXT) \
-	lfsabout$(EXEEXT)
+	lfsabout$(EXEEXT) lfsruncommand$(EXEEXT)
 subdir = LFSApplications/app
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -118,6 +118,9 @@ lfsdesktopprefs_LDADD = $(LDADD)
 am_lfspanelprefs_OBJECTS = ../src/lfspanelprefs.$(OBJEXT)
 lfspanelprefs_OBJECTS = $(am_lfspanelprefs_OBJECTS)
 lfspanelprefs_LDADD = $(LDADD)
+am_lfsruncommand_OBJECTS = ../src/lfsruncommand.$(OBJEXT)
+lfsruncommand_OBJECTS = $(am_lfsruncommand_OBJECTS)
+lfsruncommand_LDADD = $(LDADD)
 am_lfstkprefs_OBJECTS = ../src/lfstkprefs.$(OBJEXT)
 lfstkprefs_OBJECTS = $(am_lfstkprefs_OBJECTS)
 lfstkprefs_LDADD = $(LDADD)
@@ -155,12 +158,12 @@ am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(lfsabout_SOURCES) $(lfsappearance_SOURCES) \
 	$(lfsbackdropprefs_SOURCES) $(lfsdesktopprefs_SOURCES) \
-	$(lfspanelprefs_SOURCES) $(lfstkprefs_SOURCES) \
-	$(lfswmprefs_SOURCES)
+	$(lfspanelprefs_SOURCES) $(lfsruncommand_SOURCES) \
+	$(lfstkprefs_SOURCES) $(lfswmprefs_SOURCES)
 DIST_SOURCES = $(lfsabout_SOURCES) $(lfsappearance_SOURCES) \
 	$(lfsbackdropprefs_SOURCES) $(lfsdesktopprefs_SOURCES) \
-	$(lfspanelprefs_SOURCES) $(lfstkprefs_SOURCES) \
-	$(lfswmprefs_SOURCES)
+	$(lfspanelprefs_SOURCES) $(lfsruncommand_SOURCES) \
+	$(lfstkprefs_SOURCES) $(lfswmprefs_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -339,6 +342,7 @@ lfsappearance_SOURCES = ../src/lfsappearance.cpp
 lfsbackdropprefs_SOURCES = ../src/lfsbackdropprefs.cpp
 lfspanelprefs_SOURCES = ../src/lfspanelprefs.cpp
 lfsabout_SOURCES = ../src/lfsabout.cpp
+lfsruncommand_SOURCES = ../src/lfsruncommand.cpp
 man1_MANS = ../resources/man/lfsapplications.1
 all: all-am
 
@@ -452,6 +456,12 @@ lfsdesktopprefs$(EXEEXT): $(lfsdesktopprefs_OBJECTS) $(lfsdesktopprefs_DEPENDENC
 lfspanelprefs$(EXEEXT): $(lfspanelprefs_OBJECTS) $(lfspanelprefs_DEPENDENCIES) $(EXTRA_lfspanelprefs_DEPENDENCIES) 
 	@rm -f lfspanelprefs$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(lfspanelprefs_OBJECTS) $(lfspanelprefs_LDADD) $(LIBS)
+../src/lfsruncommand.$(OBJEXT): ../src/$(am__dirstamp) \
+	../src/$(DEPDIR)/$(am__dirstamp)
+
+lfsruncommand$(EXEEXT): $(lfsruncommand_OBJECTS) $(lfsruncommand_DEPENDENCIES) $(EXTRA_lfsruncommand_DEPENDENCIES) 
+	@rm -f lfsruncommand$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(lfsruncommand_OBJECTS) $(lfsruncommand_LDADD) $(LIBS)
 ../src/lfstkprefs.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
 
@@ -477,6 +487,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfsbackdropprefs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfsdesktopprefs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfspanelprefs.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfsruncommand.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfstkprefs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfswmprefs.Po@am__quote@
 
