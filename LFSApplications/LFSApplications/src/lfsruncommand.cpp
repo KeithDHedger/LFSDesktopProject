@@ -56,18 +56,22 @@ bool doExecute(void *object,void* ud)
 {
 	char	*data;
 
-	system(le->LFSTK_getBuffer()->c_str());
-	mainLoop=false;
+	asprintf(&data,"%s &",le->LFSTK_getBuffer()->c_str());
+	if(strlen(data)>2)
+		{
+			system(data);
+			free(data);
 
-	asprintf(&data,"echo %s >> %s",le->LFSTK_getBuffer()->c_str(),commandfile);
-	system(data);
+			asprintf(&data,"echo %s >> %s",le->LFSTK_getBuffer()->c_str(),commandfile);
+			system(data);
+			free(data);
+			asprintf(&data,"tail -n " MAXHISTORY " %s|sort -u -o %s.tmp; mv %s.tmp %s",commandfile,commandfile,commandfile,commandfile);
+			system(data);
+		}
 	free(data);
-	asprintf(&data,"tail -n " MAXHISTORY " %s|sort -u -o %s.tmp; mv %s.tmp %s",commandfile,commandfile,commandfile,commandfile);
-	system(data);
-	free(data);
+	mainLoop=false;
 	return(true);
 }
-
 
 bool select(void *object,void* ud)
 {
@@ -96,7 +100,7 @@ int main(int argc, char **argv)
 	sy+=LISTHITE+8;
 
 //command
-	le=new LFSTK_lineEditClass(wc,list->LFSTK_getListString(list->LFSTK_getCurrentListItem()),BORDER,sy,WINWIDTH-BORDER,BUTTONHITE,NorthWestGravity);
+	le=new LFSTK_lineEditClass(wc,"",BORDER,sy,WINWIDTH-BORDER,BUTTONHITE,NorthWestGravity);
 	sy+=BUTTONHITE+8;
 
 	quit=new LFSTK_buttonClass(wc,"Quit",BORDER,sy,BUTTONWITDH,BUTTONHITE,NorthWestGravity);

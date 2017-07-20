@@ -50,6 +50,7 @@ bool doExecute(void *object,void* ud)
 
 	asprintf(&data,"%s &",le->LFSTK_getBuffer()->c_str());
 	system(data);
+	free(data);
 	mainLoop=false;
 
 	asprintf(&data,"echo %s >> %s",le->LFSTK_getBuffer()->c_str(),commandfile);
