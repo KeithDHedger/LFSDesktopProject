@@ -200,7 +200,7 @@ int main(int argc, char **argv)
 	tbnormal=new LFSTK_toggleButtonClass(wc,"Toggle",BORDER,sy,BWIDTH,BHITE,NorthWestGravity);
 	tbnormal->LFSTK_setCallBack(NULL,buttonCB,(void*)tbnormal->LFSTK_getLabel());
 	tbnormal->LFSTK_setToggleStyle(TOGGLENORMAL);
-	tbnormal->LFSTK_setIconFromPath("./api.png");
+//	tbnormal->LFSTK_setIconFromPath("audio-speakers.png");
 	sy+=YSPACING;
 
 //menu button
@@ -269,12 +269,12 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //icon button
-	iconButton=new LFSTK_buttonClass(wc,"",BORDER,sy,68,64+4,NorthWestGravity);
-	iconButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"iconButton");
-	iconButton->LFSTK_setIconFromPath("../LFSToolKit/resources/pixmaps/LFSTux.png",64);
-	//iconButton->LFSTK_setIconFromPath("green.png",64);
-	sy+=64;
-	sy+=12;
+//	iconButton=new LFSTK_buttonClass(wc,"",BORDER,sy,68,64+4,NorthWestGravity);
+//	iconButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"iconButton");
+//	iconButton->LFSTK_setIconFromPath("../LFSToolKit/resources/pixmaps/LFSTux.png",64);
+//	//iconButton->LFSTK_setIconFromPath("green.png",64);
+//	sy+=64;
+//	sy+=12;
 
 //image button
 

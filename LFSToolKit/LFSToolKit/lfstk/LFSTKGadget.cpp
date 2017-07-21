@@ -704,7 +704,7 @@ void LFSTK_gadgetClass::drawBox(geometryStruct* g,gadgetState state,bevelType be
 * \param mask Pixmap mask.
 * \note Pixmap and mask are owned by caller.
 */
-void LFSTK_gadgetClass::LFSTK_setIcon(Pixmap image,Pixmap mask,int size)
+void LFSTK_gadgetClass::LFSTK_setIconxx(Pixmap image,Pixmap mask,int size)
 {
 	this->icon[0]=image;
 	this->icon[1]=mask;

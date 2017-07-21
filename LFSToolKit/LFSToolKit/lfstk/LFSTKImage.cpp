@@ -45,19 +45,18 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 			XFillRectangle(this->display,this->window,this->gc,0,0,this->gadgetGeom.w,this->gadgetGeom.h);
 		}
 
-	if(this->gotIcon==true)
-		{
-			XSetClipMask(this->display,this->gc,this->icon[1]);
-			XSetClipOrigin(this->display,this->gc,0,0);
-			XCopyArea(this->display,this->icon[0],this->window,this->gc,0,0,this->iconSize,this->iconSize,0,0);
-			XSetClipMask(this->display,this->gc,None);
-		}
+//	if(this->gotIcon==true)
+//		{
+//			XSetClipMask(this->display,this->gc,this->icon[1]);
+//			XSetClipOrigin(this->display,this->gc,0,0);
+//			XCopyArea(this->display,this->icon[0],this->window,this->gc,0,0,this->iconSize,this->iconSize,0,0);
+//			XSetClipMask(this->display,this->gc,None);
+//		}
 
 
-	else if(this->useImage==true)
-		{
+//	else if(this->useImage==true)
+	if(this->useImage==true)
 			this->drawImage();
-		}
 }
 
 /**

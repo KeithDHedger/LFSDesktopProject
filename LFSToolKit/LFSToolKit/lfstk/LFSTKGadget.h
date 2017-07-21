@@ -79,7 +79,7 @@ class LFSTK_gadgetClass
 		void				drawImage();
 
 		void				LFSTK_setIconFromPath(const char *file,int size=16);
-		void				LFSTK_setIcon(Pixmap image,Pixmap mask,int size=16);
+		void				LFSTK_setIconxx(Pixmap image,Pixmap mask,int size=16);
 		cairo_status_t 		LFSTK_setImageFromPath(const char *file,int grav);
 		void				LFSTK_setImage(Imlib_Image image,int w,int h);
 		void				LFSTK_setScaledImage(Imlib_Image image,int w,int h);

@@ -150,7 +150,8 @@ void LFSTK_listGadgetClass::LFSTK_setListFromFile(const char *filepath,bool incl
 	char	*lines=NULL;
 	int		linecnt=0;
 	char	**newlist=0;
-
+	size_t	linelen=0;
+	ssize_t read=0;
 	if(this->listStrings!=NULL)
 		{
 			for(int j=0;j<this->listCnt;j++)
@@ -176,22 +177,30 @@ void LFSTK_listGadgetClass::LFSTK_setListFromFile(const char *filepath,bool incl
 	free(lines);
 
 	newlist=new char*[linecnt];
-	buffer=(char*)alloca(256);
+
 	if(filepath!=NULL)
 		{
 			file=fopen(filepath,"r");
 			if(file!=NULL)
 				{
-					while(fgets(buffer,256,file)!=NULL)
+					while(!feof(file))
 						{
-							buffer[strlen(buffer)-1]=0;
-							if(includeempty==true)
-								newlist[cnt++]=strdup(buffer);
-							else
-								{
-									if(strlen(buffer)>0)
-										newlist[cnt++]=strdup(buffer);
-								}
+							buffer=NULL;
+							linelen=0;
+							read=getline(&buffer,&linelen,file);
+								if(read>0)
+									{
+										buffer[strlen(buffer)-1]=0;
+										if(includeempty==true)
+											newlist[cnt++]=strdup(buffer);
+										else
+											{
+												if(strlen(buffer)>0)
+													newlist[cnt++]=strdup(buffer);
+											}
+									}
+							if(buffer!=NULL)
+								free(buffer);
 						}
 					fclose(file);
 					if(newlist!=NULL)
