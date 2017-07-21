@@ -339,6 +339,16 @@ bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 	return(true);
 }
 
+/**
+* Mouse drag callback.
+* \param e XButtonEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
+bool LFSTK_gadgetClass::mouseDrag(XMotionEvent *e)
+{
+	return(true);
+}
+
 void LFSTK_gadgetClass::LFSTK_resizeWindow(int w,int h)
 {
 	this->gadgetGeom.w=w;
@@ -695,99 +705,6 @@ void LFSTK_gadgetClass::drawBox(geometryStruct* g,gadgetState state,bevelType be
 			XSetForeground(this->display,this->gc,tlcolour);
 			XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x,g->y+g->h-1);
 			XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x+g->w-1,g->y);
-		}
-}
-
-/**
-* Set Icon.
-* \param image Pixmap.
-* \param mask Pixmap mask.
-* \note Pixmap and mask are owned by caller.
-*/
-void LFSTK_gadgetClass::LFSTK_setIconxx(Pixmap image,Pixmap mask,int size)
-{
-	this->icon[0]=image;
-	this->icon[1]=mask;
-	this->gotIcon=true;
-	this->iconSize=size;
-	this->labelOffset=this->iconSize+4;
-	this->freeOnDelete=false;
-}
-
-/**
-* Set Image.
-* \param image Imlib_Image.
-* \param w,h dimensions.
-* \note Image is owned by caller.
-*/
-void LFSTK_gadgetClass::LFSTK_setImage(Imlib_Image image,int w,int h)
-{
-	this->image=image;
-	this->useImage=true;
-	this->imageWidth=w;
-	this->imageHeight=h;
-	this->labelOffset=w+4;
-	this->freeOnDelete=false;
-}
-
-/**
-* Set Scaled Image.
-* \param image Imlib_Image.
-* \param w,h dimensions.
-* \note Image is owned by caller.
-*/
-void LFSTK_gadgetClass::LFSTK_setScaledImage(Imlib_Image image,int w,int h)
-{
-	if(image==NULL)
-		return;
-
-	imlib_context_set_image(image);
-	image=imlib_create_cropped_scaled_image(0,0,imlib_image_get_width(),imlib_image_get_height(),w,h);
-	this->image=image;
-	this->useImage=true;
-	this->imageWidth=w;
-	this->imageHeight=h;
-	this->labelOffset=w+4;
-	this->freeOnDelete=false;
-}
-
-
-/**
-* Set Icon.
-* \param file Path to image file.
-* \param size Size of image.
-*/
-void LFSTK_gadgetClass::LFSTK_setIconFromPath(const char *file,int size)
-{
-	Imlib_Image	image=NULL;
-
-	if(file==NULL)
-		{
-			this->gotIcon=false;
-			this->freeOnDelete=false;
-			return;
-		}
-		
-	//image=imlib_load_image_immediately_without_cache(file);
-	image=imlib_load_image(file);
-	if(image!=NULL)
-		{
-			this->iconSize=size;
-			imlib_context_set_display(this->wc->display);
-			imlib_context_set_visual(this->wc->visual);
-			imlib_context_set_colormap(this->wc->cm);
-			imlib_context_set_drawable(this->wc->window);
-			imlib_context_set_image(image);
-			imlib_render_pixmaps_for_whole_image_at_size(&this->icon[0],&this->icon[1],this->iconSize,this->iconSize);
-			imlib_free_image();
-			this->gotIcon=true;
-			this->labelOffset=this->iconSize+4;
-			this->freeOnDelete=true;
-		}
-	else
-		{
-			this->gotIcon=false;
-			this->freeOnDelete=false;
 		}
 }
 

@@ -1,4 +1,6 @@
 0.2.1
+Images can now be set to draggable.
+Removed redundant imlib image load functions.
 Added setting list from file.
 Images now scaled after loading/before displaying.
 Fixed images in list with labels.

@@ -494,10 +494,10 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				break;
 
 			case MotionNotify:
+				retval=gadget->mouseDrag(&e->xmotion);
+				///printf("MotionNotify\n");
 				break;
 			case Expose:
-			 //		printf("xpose from lib type=%i\n",type);
-				//XSetInputFocus(gadget->wc->display,None,RevertToNone,CurrentTime);
 				gadget->LFSTK_clearWindow();
 				break;
 

@@ -53,6 +53,7 @@ class LFSTK_gadgetClass
 		virtual bool		mouseDown(XButtonEvent *e);
 		virtual bool		mouseExit(XButtonEvent *e);
 		virtual bool		mouseEnter(XButtonEvent *e);
+		virtual bool		mouseDrag(XMotionEvent *e);
 		virtual bool		keyRelease(XKeyEvent *e);
 
 //DnD routines
@@ -78,11 +79,7 @@ class LFSTK_gadgetClass
 		void				LFSTK_setLabelGravity(int orient);
 		void				drawImage();
 
-		void				LFSTK_setIconFromPath(const char *file,int size=16);
-		void				LFSTK_setIconxx(Pixmap image,Pixmap mask,int size=16);
 		cairo_status_t 		LFSTK_setImageFromPath(const char *file,int grav);
-		void				LFSTK_setImage(Imlib_Image image,int w,int h);
-		void				LFSTK_setScaledImage(Imlib_Image image,int w,int h);
 
 		int					LFSTK_gadgetOnMonitor(void);
 		void				LFSTK_setTile(const char *path,int size);

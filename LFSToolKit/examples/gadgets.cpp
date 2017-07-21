@@ -100,7 +100,12 @@ bool fontCB(void *object,void* ud)
 bool buttonCB(void *p,void* ud)
 {
 	if(ud!=NULL)
-		printf(">>>%s<<<\n",(const char*)ud);
+		{
+			printf(">>>%s<<<\n",(const char*)ud);
+			if(strcmp("Image Dragable",(const char*)ud)==0)
+				image->LFSTK_setCanDrag(!image->LFSTK_getCanDrag());
+				
+		}
 	printf("Line edit=%s\n",le->LFSTK_getBuffer()->c_str());
 	return(true);
 }
@@ -192,7 +197,7 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //check button	
-	tb=new LFSTK_toggleButtonClass(wc,"Check",BORDER,sy,BWIDTH,BHITE,NorthWestGravity);
+	tb=new LFSTK_toggleButtonClass(wc,"Image Dragable",BORDER,sy,BWIDTH+16,BHITE,NorthWestGravity);
 	tb->LFSTK_setCallBack(NULL,buttonCB,(void*)tb->LFSTK_getLabel());
 	sy+=YSPACING;
 
@@ -232,7 +237,7 @@ int main(int argc, char **argv)
 		mainMenusWithSubs[j].label=mainMenuNames[j];
 
 	mainMenusWithSubs[2].imagePath="audio-speakers.png";
-#if 1
+
 //sub menus
 	subMenus=new menuItemStruct[MAXSUBMENUS];
 	for(int j=0;j<MAXSUBMENUS;j++)
@@ -251,7 +256,6 @@ int main(int argc, char **argv)
 	subMenus[4].imagePath="BookMark.png";
 			
 //add sub menus
-#endif
 	mainMenusWithSubs[3].subMenus=subMenus;
 	mainMenusWithSubs[3].subMenuCnt=MAXSUBMENUS;
 
@@ -284,8 +288,8 @@ int main(int argc, char **argv)
 	//imageButton->LFSTK_setLabelGravity(CENTRE);
 	imageButton->LFSTK_setActive(true);
 	sy+=64;
-
 	sy+=16;
+
 	image=new LFSTK_imageClass(wc,"ManPageEditor.png",BORDER,sy,IMAGESIZE,NorthWestGravity);
 	sy+=16;
 
@@ -298,7 +302,6 @@ int main(int argc, char **argv)
 	fb->LFSTK_setLabelIsFont(true);
 	sy+=BHITE+12;
 
-#if 1
 //list
 	const char	*lst[]={"item 1","item 2","item 3","item 4","item 5","item 6","abc","def","ghi","jkl","123","456","789","101112","last item",};
 
@@ -308,7 +311,7 @@ int main(int argc, char **argv)
 	list->LFSTK_setList((char**)&lst,15);
 	list->LFSTK_setCallBack(NULL,select,NULL);
 	sy+=BHITE*6;
-#endif
+
 //select file
 	filebutton=new LFSTK_buttonClass(wc,"Select File",BORDER,sy,BWIDTH,BHITE,BGRAV);
 	filebutton->LFSTK_setCallBack(NULL,selectfile,NULL);
@@ -317,14 +320,6 @@ int main(int argc, char **argv)
 	filebutton->LFSTK_setCallBack(NULL,selectdir,NULL);
 
 	sy+=BHITE+12;
-
-//new menu list gadget
-//	const char	*menulistlabels[4]={"menu 1","menu2","abcde","menu 4"};
-//	menulist=new LFSTK_menuListClass(wc,"Menu List",BORDER,sy,BWIDTH*2,BHITE,BGRAV);
-//	menulist->LFSTK_addMenuList((char**)menulistlabels,4);
-//	sy+=BHITE+12;
-
-
 
 //line edit
 	le=new LFSTK_lineEditClass(wc,"Hello World",BORDER,sy,BWIDTH*2,BHITE,BGRAV);

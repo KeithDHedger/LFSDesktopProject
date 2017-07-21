@@ -45,18 +45,59 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 			XFillRectangle(this->display,this->window,this->gc,0,0,this->gadgetGeom.w,this->gadgetGeom.h);
 		}
 
-//	if(this->gotIcon==true)
-//		{
-//			XSetClipMask(this->display,this->gc,this->icon[1]);
-//			XSetClipOrigin(this->display,this->gc,0,0);
-//			XCopyArea(this->display,this->icon[0],this->window,this->gc,0,0,this->iconSize,this->iconSize,0,0);
-//			XSetClipMask(this->display,this->gc,None);
-//		}
-
-
-//	else if(this->useImage==true)
 	if(this->useImage==true)
 			this->drawImage();
+}
+
+
+/**
+* Mouse down callback.
+* \param e XButtonEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
+bool LFSTK_imageClass::mouseDown(XButtonEvent *e)
+{
+	this->mouseDownX=e->x;
+	this->mouseDownY=e->y;
+	return(true);
+}
+
+/**
+* Mouse drag callback.
+* \param e XMotionEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
+bool LFSTK_imageClass::mouseDrag(XMotionEvent *e)
+{
+	if(this->canDrag==true)
+		{
+			this->gadgetGeom.x+=e->x-this->mouseDownX;
+			this->gadgetGeom.y+=e->y-this->mouseDownY;
+			XMoveWindow(this->display,this->window,this->gadgetGeom.x,this->gadgetGeom.y);
+			this->LFSTK_clearWindow();
+		}
+	return(true);
+}
+
+/**
+* Set if image can be dragged
+*
+* \param candrag draggable.
+*/
+void LFSTK_imageClass::LFSTK_setCanDrag(bool candrag)
+{
+	this->canDrag=candrag;
+}
+
+/**
+* Get if image can be dragged
+*
+* \return Draggable.
+*/
+
+bool LFSTK_imageClass::LFSTK_getCanDrag(void)
+{
+	return(this->canDrag);
 }
 
 /**
@@ -77,7 +118,7 @@ LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* image
 
 	wa.win_gravity=gravity;
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,this->gadgetGeom.h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
-	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
+	XSelectInput(this->display,this->window,ButtonPressMask|ExposureMask|ButtonMotionMask);
 
 	ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	ml->gadget=this;
