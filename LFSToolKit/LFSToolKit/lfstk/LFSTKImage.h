@@ -35,20 +35,23 @@ class LFSTK_imageClass  : public  LFSTK_gadgetClass
 		~LFSTK_imageClass();
 		LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* imagepath,int x,int y,int w,int gravity);
 
-		bool mouseUp(XButtonEvent *e) {return(true);};
+		bool mouseUp(XButtonEvent *e);
 		bool mouseDown(XButtonEvent *e);
-		bool mouseExit(XButtonEvent *e) {return(true);};
-		bool mouseEnter(XButtonEvent *e) {return(true);};
+//		bool mouseExit(XButtonEvent *e) {return(true);};
+//		bool mouseEnter(XButtonEvent *e) {return(true);};
 		bool mouseDrag(XMotionEvent *e);
 
 		void LFSTK_clearWindow(void);
 
 		void LFSTK_setCanDrag(bool candrag);
 		bool LFSTK_getCanDrag(void);
+		void LFSTK_snapSize(int sze);
+
 	protected:
 		bool	canDrag=false;
 		int		mouseDownX=0;
 		int		mouseDownY=0;
+		int		snap=1;
 };
 
 #endif

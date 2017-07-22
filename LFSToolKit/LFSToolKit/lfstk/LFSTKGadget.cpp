@@ -551,34 +551,32 @@ void LFSTK_gadgetClass::LFSTK_setLabelGravity(int orient)
 * \return geometry structure.
 * \note Caller should free structure after use.
 */
-geometryStruct *LFSTK_gadgetClass::LFSTK_getGlobalGeom(void)
+void LFSTK_gadgetClass::LFSTK_getGlobalGeom(geometryStruct *geom)
 {
-	geometryStruct		*g=new geometryStruct;
 	int					x,y;
 	Window				child;
+	XWindowAttributes	xwa;
 
 	XTranslateCoordinates(this->display,this->window,this->rootWindow,0,0,&x,&y,&child );
+	XGetWindowAttributes(this->display,this->window,&xwa);
 
-	g->x=x;
-	g->y=y;
-	g->w=this->gadgetGeom.w;
-	g->h=this->gadgetGeom.h;
-	return(g);
+	geom->x=x;
+	geom->y=y;
+	geom->w=xwa.width;
+	geom->h=xwa.height;
 }
 
 /**
-* Get gadget geometry.
+* Get gadget geometry in local co-ords.
 * \param geometry structure.
 */
 void LFSTK_gadgetClass::LFSTK_getGeom(geometryStruct *geom)
 {
 	XWindowAttributes	xwa;
-	int					x,y;
-	Window				child;
 
-	XTranslateCoordinates(this->display,this->window,this->rootWindow,0,0,&geom->x,&geom->y,&child );
 	XGetWindowAttributes(this->display,this->window,&xwa);
-
+	geom->x=xwa.x;
+	geom->y=xwa.y;
 	geom->w=xwa.width;
 	geom->h=xwa.height;
 }

@@ -63,6 +63,27 @@ bool LFSTK_imageClass::mouseDown(XButtonEvent *e)
 }
 
 /**
+* Mouse up callback.
+* \param e XButtonEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
+bool LFSTK_imageClass::mouseUp(XButtonEvent *e)
+{
+	pointStruct 	pt;
+
+	pt.x=this->gadgetGeom.x+e->x;
+	pt.y=this->gadgetGeom.y+e->y;
+
+	if(this->wc->globalLib->LFSTK_pointInRect(&pt,&(this->gadgetGeom))==true)
+		{
+			if(this->callback.releaseCallback!=NULL)
+				return(this->callback.releaseCallback(this,this->callback.userData));
+		}
+	return(true);
+}
+
+
+/**
 * Mouse drag callback.
 * \param e XMotionEvent passed from mainloop->listener.
 * \return Return true if event fully handeled or false to pass it on.
@@ -73,6 +94,9 @@ bool LFSTK_imageClass::mouseDrag(XMotionEvent *e)
 		{
 			this->gadgetGeom.x+=e->x-this->mouseDownX;
 			this->gadgetGeom.y+=e->y-this->mouseDownY;
+			
+			this->gadgetGeom.x=(this->gadgetGeom.x/this->snap)*this->snap;
+			this->gadgetGeom.y=(this->gadgetGeom.y/this->snap)*this->snap;
 			XMoveWindow(this->display,this->window,this->gadgetGeom.x,this->gadgetGeom.y);
 			this->LFSTK_clearWindow();
 		}
@@ -101,6 +125,17 @@ bool LFSTK_imageClass::LFSTK_getCanDrag(void)
 }
 
 /**
+* Set snap to grid size
+*
+* \param int sze.
+*/
+void LFSTK_imageClass::LFSTK_snapSize(int sze)
+{
+	this->snap=sze;
+}
+
+
+/**
 * Main button constructor.
 *
 * \param parentwc Main parent window class.
@@ -118,7 +153,7 @@ LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* image
 
 	wa.win_gravity=gravity;
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,this->gadgetGeom.h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
-	XSelectInput(this->display,this->window,ButtonPressMask|ExposureMask|ButtonMotionMask);
+	XSelectInput(this->display,this->window,ButtonPressMask|ButtonReleaseMask|ExposureMask|ButtonMotionMask);
 
 	ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	ml->gadget=this;

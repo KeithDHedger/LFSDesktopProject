@@ -84,7 +84,7 @@ class LFSTK_gadgetClass
 		int					LFSTK_gadgetOnMonitor(void);
 		void				LFSTK_setTile(const char *path,int size);
 
-		geometryStruct		*LFSTK_getGlobalGeom(void);
+		void				LFSTK_getGlobalGeom(geometryStruct *geom);
 		void				LFSTK_getGeom(geometryStruct *geom);
 
 		LFSTK_windowClass	*wc;

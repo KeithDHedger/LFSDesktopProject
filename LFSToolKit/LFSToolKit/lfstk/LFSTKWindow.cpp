@@ -72,24 +72,19 @@ void LFSTK_windowClass::LFSTK_addMappedListener(int mapwindow,mappedListener* ml
 LFSTK_gadgetClass* LFSTK_windowClass::LFSTK_findGadgetByPos(int x, int y)
 {
 	mappedListener	*ml=NULL;
-	geometryStruct *geom;
+	geometryStruct	geom;
 
 	for (std::map<int,mappedListener*>::iterator it=this->gadgetMap.begin();it!=this->gadgetMap.end();++it)
 		{
 			ml=it->second;
 			if( (ml!=NULL) && (ml->gadget!=NULL) && (ml->gadget->gadgetAcceptsDnD==true) )
 				{
-					geom=ml->gadget->LFSTK_getGlobalGeom();
-					if((x>geom->x) && (x<geom->x+geom->w) && (y>geom->y) && (y<geom->y+geom->h) )
-						{
-							delete geom;
-							return(ml->gadget);
-						}
-					else
-						delete geom;
+					ml->gadget->LFSTK_getGlobalGeom(&geom);
+//TODO//
+					if((x>geom.x) && (x<geom.x+geom.w) && (y>geom.y) && (y<geom.y+geom.h) )
+						return(ml->gadget);
 				}
 		}
-
 	return(NULL);
 }
 

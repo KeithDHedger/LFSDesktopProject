@@ -1,4 +1,6 @@
 0.2.1
+Fixed not getting local co-ords of gadget.
+Standized getting geometryStruct.
 Images can now be set to draggable.
 Removed redundant imlib image load functions.
 Added setting list from file.

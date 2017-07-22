@@ -78,7 +78,7 @@ void LFSTK_menuButtonClass::LFSTK_clearWindow()
 bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 {
 	LFSTK_buttonClass		*bc;
-	geometryStruct			*g;
+	geometryStruct			g;
 	int						maxwid=0;
 	XEvent					event;
 	bool					run=true;
@@ -93,7 +93,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	int						maxiconsize=0;
 	bool					gotimage;
 
-	geometryStruct	geom={0,0,this->gadgetGeom.w,this->gadgetGeom.h};
+	geometryStruct			geom={0,0,this->gadgetGeom.w,this->gadgetGeom.h};
 
 	if(this->isActive==false)
 		{
@@ -106,9 +106,8 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 		this->drawImage();
 	this->LFSTK_drawLabel(ACTIVECOLOUR);
 	this->drawIndicator(&geom,ACTIVECOLOUR,DISCLOSURE);
-	g=this->LFSTK_getGlobalGeom();
+	this->LFSTK_getGlobalGeom(&g);
 	gotimage=false;
-
 
 //TODO//needs tweaking
 	if(this->builtMenu==false)
@@ -190,8 +189,8 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 			this->builtMenu=true;
 		}
 
-	xpos=g->x;
-	ypos=g->y+this->gadgetGeom.h;
+	xpos=g.x;
+	ypos=g.y+this->gadgetGeom.h;
 
 	subwc->LFSTK_moveWindow(xpos,ypos,true);
 	subwc->LFSTK_showWindow(true);
@@ -223,7 +222,6 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 		}
 
 	subwc->LFSTK_hideWindow();
-	delete g;
 	return(true);
 }
 	

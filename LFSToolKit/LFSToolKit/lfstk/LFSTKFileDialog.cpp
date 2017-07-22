@@ -378,8 +378,9 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 	unsigned		lasttime=0;
 	unsigned		lastdiritem=0;
 	unsigned		lastfileitem=0;
-	geometryStruct	*geomdir=NULL;
-	geometryStruct	*geomfile=NULL;
+	geometryStruct	geomdir;
+	geometryStruct	geomfile;
+
 
 	this->apply=false;
 	if(this->dialog!=NULL)
@@ -413,7 +414,7 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 								break;
 
 							case ButtonRelease:
-								if((event.xbutton.x_root>geomdir->x) && (event.xbutton.x_root<(geomdir->x+geomdir->w)) && (event.xbutton.y_root>geomdir->y) && (event.xbutton.y_root<(geomdir->y+geomdir->h)))
+								if((event.xbutton.x_root>geomdir.x) && (event.xbutton.x_root<(geomdir.x+geomdir.w)) && (event.xbutton.y_root>geomdir.y) && (event.xbutton.y_root<(geomdir.y+geomdir.h)))
 									{
 										if((event.xbutton.time-lasttime<1000) && (event.xbutton.state & Button1Mask))
 											{
@@ -425,7 +426,7 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 									}
 								if(this->dialogType==false)
 									{
-										if((event.xbutton.x_root>geomfile->x) && (event.xbutton.x_root<(geomfile->x+geomfile->w)) && (event.xbutton.y_root>geomfile->y) && (event.xbutton.y_root<(geomfile->y+geomfile->h)))
+										if((event.xbutton.x_root>geomfile.x) && (event.xbutton.x_root<(geomfile.x+geomfile.w)) && (event.xbutton.y_root>geomfile.y) && (event.xbutton.y_root<(geomfile.y+geomfile.h)))
 											{
 												if((event.xbutton.time-lasttime<1000) && (event.xbutton.state & Button1Mask))
 													{
@@ -458,14 +459,10 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 								break;
 
 							case ConfigureNotify:
-								if(geomdir!=NULL)
-									delete geomdir;
-								geomdir=this->dirListGadget->LFSTK_getGlobalGeom();
+								this->dirListGadget->LFSTK_getGlobalGeom(&geomdir);
 								if(this->dialogType==false)
 									{
-										if(geomfile!=NULL)
-											delete geomfile;
-										geomfile=this->fileListGadget->LFSTK_getGlobalGeom();
+										this->fileListGadget->LFSTK_getGlobalGeom(&geomfile);
 									}
 								this->dialog->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
 								break;

@@ -103,7 +103,9 @@ bool buttonCB(void *p,void* ud)
 		{
 			printf(">>>%s<<<\n",(const char*)ud);
 			if(strcmp("Image Dragable",(const char*)ud)==0)
-				image->LFSTK_setCanDrag(!image->LFSTK_getCanDrag());
+				{
+					image->LFSTK_setCanDrag(!image->LFSTK_getCanDrag());
+				}
 				
 		}
 	printf("Line edit=%s\n",le->LFSTK_getBuffer()->c_str());
@@ -119,6 +121,18 @@ bool menuCB(void *p,void* ud)
 
 	printf("Selected Menu Label:%s\n",menuitem->label);
 	return(true);
+}
+
+bool imageCB(void *p,void* ud)
+{
+	geometryStruct geom;
+	geometryStruct geom2;
+	image->LFSTK_getGlobalGeom(&geom);
+	printf("Image x=%i, y=%i,w=%i, h=%i\n",geom.x,geom.y,geom.w,geom.h);
+	image->LFSTK_getGeom(&geom2);
+	printf("Image x=%i, y=%i,w=%i, h=%i\n",geom2.x,geom2.y,geom2.w,geom2.h);
+
+
 }
 
 bool select(void *object,void* ud)
@@ -272,25 +286,18 @@ int main(int argc, char **argv)
 	mbwithsubs->LFSTK_addMenus(mainMenusWithSubs,MAXMAINMENUS);
 	sy+=YSPACING;
 
-//icon button
-//	iconButton=new LFSTK_buttonClass(wc,"",BORDER,sy,68,64+4,NorthWestGravity);
-//	iconButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"iconButton");
-//	iconButton->LFSTK_setIconFromPath("../LFSToolKit/resources/pixmaps/LFSTux.png",64);
-//	//iconButton->LFSTK_setIconFromPath("green.png",64);
-//	sy+=64;
-//	sy+=12;
-
 //image button
 
 	imageButton=new LFSTK_buttonClass(wc,"imageButton",BORDER,sy,196,64+4,NorthWestGravity);
 	imageButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"imageButton");
 	imageButton->LFSTK_setImageFromPath("casper1.JPG",LEFT);
-	//imageButton->LFSTK_setLabelGravity(CENTRE);
 	imageButton->LFSTK_setActive(true);
 	sy+=64;
 	sy+=16;
 
 	image=new LFSTK_imageClass(wc,"ManPageEditor.png",BORDER,sy,IMAGESIZE,NorthWestGravity);
+	image->LFSTK_setCallBack(NULL,imageCB,NULL);
+	image->LFSTK_snapSize(16);
 	sy+=16;
 
 	sy+=IMAGESIZE;

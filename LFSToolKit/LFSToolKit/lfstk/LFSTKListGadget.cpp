@@ -224,7 +224,6 @@ void LFSTK_listGadgetClass::LFSTK_setListFromFile(const char *filepath,bool incl
 */
 void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 {
-	geometryStruct	geom;
 	int orient=LEFT;
 
 	if(this->listStrings!=NULL)
@@ -257,9 +256,8 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 
 					if((this->listImages!=NULL) && (this->listImages[j]!=NULL))
 						{
-							this->labels[j]->LFSTK_getGeom(&geom);
 							if(this->listImages!=NULL)
-							this->labels[j]->LFSTK_setImageFromPath(this->listImages[j],LEFT);
+								this->labels[j]->LFSTK_setImageFromPath(this->listImages[j],LEFT);
 						}
 				}
 			else
