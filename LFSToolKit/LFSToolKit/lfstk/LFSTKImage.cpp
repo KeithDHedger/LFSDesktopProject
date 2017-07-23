@@ -46,7 +46,7 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 		}
 
 	if(this->useImage==true)
-			this->drawImage();
+		this->drawImage();
 }
 
 
@@ -145,11 +145,11 @@ void LFSTK_imageClass::LFSTK_snapSize(int sze)
 * \param w Width.
 * \param gravity Button gravity.
 */
-LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* imagepath,int x,int y,int w,int gravity)
+LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* imagepath,int x,int y,int w,int h,int gravity,bool scale)
 {
 	XSetWindowAttributes	wa;
 	mappedListener			*ml=new mappedListener;
-	this->LFSTK_setCommon(parentwc,imagepath,x,y,w,w,gravity);
+	this->LFSTK_setCommon(parentwc,imagepath,x,y,w,h,gravity);
 
 	wa.win_gravity=gravity;
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,this->gadgetGeom.h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
@@ -160,5 +160,5 @@ LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* image
 	ml->type=IMAGEGADGET;
 	this->wc->LFSTK_addMappedListener(this->window,ml);
 
-	this->LFSTK_setImageFromPath(imagepath,AUTO);
+	this->LFSTK_setImageFromPath(imagepath,gravity,scale);
 }

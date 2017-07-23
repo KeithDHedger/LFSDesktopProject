@@ -619,7 +619,7 @@ int main(int argc,char **argv)
 						}
 					else
 						{
-							diskButtons[buttoncnt]->LFSTK_setImageFromPath(diskIconData[buttoncnt],LEFT);
+							diskButtons[buttoncnt]->LFSTK_setImageFromPath(diskIconData[buttoncnt],LEFT,true);
 							diskButtons[buttoncnt]->LFSTK_setLabelGravity(LEFT);
 						}
 						
@@ -659,7 +659,7 @@ int main(int argc,char **argv)
 				}
 			else
 				{
-					fileButtons[buttoncnt]->LFSTK_setImageFromPath(diskIconData[buttoncnt],LEFT);
+					fileButtons[buttoncnt]->LFSTK_setImageFromPath(diskIconData[buttoncnt],LEFT,true);
 					fileButtons[buttoncnt]->LFSTK_setLabelGravity(LEFT);
 				}
 			buttoncnt++;

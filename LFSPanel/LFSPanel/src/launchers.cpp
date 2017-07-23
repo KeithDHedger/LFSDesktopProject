@@ -168,10 +168,10 @@ int addLaunchers(int x,int y,int grav,bool fromleft)
 			if(loopll->icon!=NULL)
 				icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,loopll->icon,"");
 			if(icon!=NULL)
-				loopll->bc->LFSTK_setImageFromPath(icon,LEFT);
+				loopll->bc->LFSTK_setImageFromPath(icon,LEFT,true);
 			else
 			//	loopll->bc->LFSTK_setIconFromPath(DATADIR "/pixmaps/command.png",iconsize);
-				loopll->bc->LFSTK_setImageFromPath(DATADIR "/pixmaps/command.png",LEFT);
+				loopll->bc->LFSTK_setImageFromPath(DATADIR "/pixmaps/command.png",LEFT,true);
 			loopll=loopll->next;
 			if((grav==PANELNORTH) || (grav==PANELSOUTH))
 				sx+=width;

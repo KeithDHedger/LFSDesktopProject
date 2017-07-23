@@ -79,7 +79,7 @@ class LFSTK_gadgetClass
 		void				LFSTK_setLabelGravity(int orient);
 		void				drawImage();
 
-		cairo_status_t 		LFSTK_setImageFromPath(const char *file,int grav);
+		cairo_status_t 		LFSTK_setImageFromPath(const char *file,int grav,bool scale);
 
 		int					LFSTK_gadgetOnMonitor(void);
 		void				LFSTK_setTile(const char *path,int size);

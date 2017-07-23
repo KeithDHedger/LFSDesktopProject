@@ -75,9 +75,9 @@ int  addLogout(int x,int y,int grav,bool fromleft)
 
 //TODO//
 	if(icon!=NULL)
-		logoutButton->LFSTK_setImageFromPath(icon,LEFT);
+		logoutButton->LFSTK_setImageFromPath(icon,LEFT,true);
 	else
-		logoutButton->LFSTK_setImageFromPath(DATADIR "/pixmaps/exit.png",LEFT);
+		logoutButton->LFSTK_setImageFromPath(DATADIR "/pixmaps/exit.png",LEFT,true);
 
 	logoutButton->LFSTK_setCallBack(logoutCB,NULL,NULL);
 	logoutItems=new menuItemStruct[NUMLOGOUTENTRYS];

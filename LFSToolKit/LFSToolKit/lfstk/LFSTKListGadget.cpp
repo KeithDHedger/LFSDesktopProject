@@ -257,7 +257,7 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 					if((this->listImages!=NULL) && (this->listImages[j]!=NULL))
 						{
 							if(this->listImages!=NULL)
-								this->labels[j]->LFSTK_setImageFromPath(this->listImages[j],LEFT);
+								this->labels[j]->LFSTK_setImageFromPath(this->listImages[j],LEFT,true);
 						}
 				}
 			else
@@ -265,7 +265,7 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 					this->labels[j]->LFSTK_setLabel("");
 					this->labels[j]->LFSTK_setActive(false);
 							if(this->listImages!=NULL)
-					this->labels[j]->LFSTK_setImageFromPath(NULL,LEFT);
+					this->labels[j]->LFSTK_setImageFromPath(NULL,LEFT,true);
 				}
 			this->labels[j]->LFSTK_clearWindow();
 		}
@@ -317,7 +317,7 @@ bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
 		{
 			list->labels[j]->LFSTK_setLabel(list->listStrings[j+list->listOffset]);
 			if(list->listImages!=NULL)
-				list->labels[j]->LFSTK_setImageFromPath(list->listImages[j+list->listOffset],LEFT);
+				list->labels[j]->LFSTK_setImageFromPath(list->listImages[j+list->listOffset],LEFT,true);
 			list->data[j].userData=j+list->listOffset;
 			list->labels[j]->LFSTK_clearWindow();
 		}

@@ -380,7 +380,7 @@ int addAppmenu(int x,int y,int grav,bool fromleft)
 	setSizes(&xpos,&ypos,&width,&height,&iconsize,&thisgrav,fromleft);
 
 	appButton=new LFSTK_menuButtonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
-	appButton->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",LEFT);
+	appButton->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",LEFT,true);
 	addCatagories();
 	addEntries();
 	addExtras();

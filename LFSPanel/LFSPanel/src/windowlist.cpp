@@ -351,9 +351,9 @@ int addWindowDeskMenu(int x,int y,int grav,bool fromleft)
 	windowDeskMenu=new LFSTK_menuButtonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
 	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"remote-desktop","");
 	if(icon!=NULL)
-		windowDeskMenu->LFSTK_setImageFromPath(icon,LEFT);
+		windowDeskMenu->LFSTK_setImageFromPath(icon,LEFT,true);
 	else
-		windowDeskMenu->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",LEFT);
+		windowDeskMenu->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",LEFT,true);
 	windowDeskMenu->LFSTK_setCallBack(NULL,windowDeskMenuCB,NULL);
 
 	windowDeskListCnt=-1;
@@ -385,10 +385,10 @@ int addWindowMenu(int x,int y,int grav,bool fromleft)
 	windowMenu=new LFSTK_menuButtonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
 	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"computer","");
 	if(icon!=NULL)
-		windowMenu->LFSTK_setImageFromPath(icon,LEFT);
+		windowMenu->LFSTK_setImageFromPath(icon,LEFT,true);
 	else
 //		windowMenu->LFSTK_setIconFromPath(DATADIR "/pixmaps/windows.png",iconsize);
-		windowMenu->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",LEFT);
+		windowMenu->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",LEFT,true);
 	windowMenu->LFSTK_setCallBack(NULL,windowMenuCB,NULL);
 
 	windowDeskListCnt=-1;

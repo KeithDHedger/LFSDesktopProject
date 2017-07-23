@@ -1,4 +1,5 @@
 0.2.1
+Fixed NULL label in setImageFromPath.
 Fixed not getting local co-ords of gadget.
 Standized getting geometryStruct.
 Images can now be set to draggable.

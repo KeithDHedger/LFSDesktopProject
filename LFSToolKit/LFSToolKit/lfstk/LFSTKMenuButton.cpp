@@ -152,7 +152,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 							if(this->wc->globalLib->LFSTK_getUseTheme()==true)
 								bc->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMTILE),-1);
 
-							bc->LFSTK_setImageFromPath(this->menus[j].imagePath,LEFT);
+							bc->LFSTK_setImageFromPath(this->menus[j].imagePath,LEFT,true);
 							for(int j=0;j<MAXCOLOURS;j++)
 								{
 									bc->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEM));
@@ -177,7 +177,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 							this->menus[j].bc=static_cast<LFSTK_buttonClass*>(mb);
 							mb->LFSTK_addMenus(this->menus[j].subMenus,this->menus[j].subMenuCnt);
 							mb->LFSTK_setCallBack(NULL,this->callback.releaseCallback,(void*)&(this->menus[j]));
-							mb->LFSTK_setImageFromPath(this->menus[j].imagePath,LEFT);
+							mb->LFSTK_setImageFromPath(this->menus[j].imagePath,LEFT,true);
 							if(gotimage==true)
 								mb->LFSTK_setLabelGravity(MENU);
 							else

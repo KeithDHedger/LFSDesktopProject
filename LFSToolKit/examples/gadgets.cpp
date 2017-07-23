@@ -238,7 +238,7 @@ int main(int argc, char **argv)
  	mainMenus[3].imagePath="system-lock-screen.png";
 
 	mb=new LFSTK_menuButtonClass(wc,"Main Menu",BORDER,sy,BWIDTH,BHITE,BGRAV);
-	mb->LFSTK_setImageFromPath("BookMark.png",LEFT);
+	mb->LFSTK_setImageFromPath("BookMark.png",LEFT,true);
 	mb->LFSTK_setCallBack(NULL,menuCB,NULL);
 	mb->LFSTK_addMenus(mainMenus,MAXMAINMENUS);
 	mb->LFSTK_setLabelGravity(LEFT);
@@ -280,7 +280,7 @@ int main(int argc, char **argv)
 	mainMenusWithSubs[1].subMenuCnt=MAXSUBMENUS;
 
 	mbwithsubs=new LFSTK_menuButtonClass(wc,"Sub Menus",BORDER,sy,BWIDTH,BHITE,BGRAV);
-	mbwithsubs->LFSTK_setImageFromPath("ManPageEditor.png",LEFT);
+	mbwithsubs->LFSTK_setImageFromPath("ManPageEditor.png",LEFT,true);
 	mbwithsubs->LFSTK_setCallBack(NULL,menuCB,NULL);
 	mbwithsubs->LFSTK_setLabelGravity(MENU);
 	mbwithsubs->LFSTK_addMenus(mainMenusWithSubs,MAXMAINMENUS);
@@ -290,12 +290,16 @@ int main(int argc, char **argv)
 
 	imageButton=new LFSTK_buttonClass(wc,"imageButton",BORDER,sy,196,64+4,NorthWestGravity);
 	imageButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"imageButton");
-	imageButton->LFSTK_setImageFromPath("casper1.JPG",LEFT);
+	imageButton->LFSTK_setImageFromPath("casper1.JPG",LEFT,true);
 	imageButton->LFSTK_setActive(true);
 	sy+=64;
 	sy+=16;
 
-	image=new LFSTK_imageClass(wc,"ManPageEditor.png",BORDER,sy,IMAGESIZE,NorthWestGravity);
+//	image=new LFSTK_imageClass(wc,"ManPageEditor.png",BORDER,sy,IMAGESIZE,IMAGESIZE,NorthWestGravity);
+	image=new LFSTK_imageClass(wc,NULL,BORDER,sy,IMAGESIZE,IMAGESIZE,NONE,true);
+//image=new LFSTK_imageClass(wc,"green.png",BORDER,sy,IMAGESIZE,IMAGESIZE,NONE,false);
+	//image=new LFSTK_imageClass(wc,NULL,BORDER,sy,IMAGESIZE,IMAGESIZE,NONE,false);
+	image->LFSTK_setImageFromPath("green.png",LEFT,true);
 	image->LFSTK_setCallBack(NULL,imageCB,NULL);
 	image->LFSTK_snapSize(16);
 	sy+=16;

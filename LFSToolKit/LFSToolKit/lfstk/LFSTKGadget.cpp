@@ -186,6 +186,9 @@ void LFSTK_gadgetClass::LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* 
 
 	if(label!=NULL)
 		this->label=strdup(label);
+	else
+		this->label=strdup("");
+
 	this->initGadget();
  	this->blackColour=BlackPixel(this->display,this->screen);
 	this->whiteColour=WhitePixel(this->display,this->screen);
@@ -449,6 +452,10 @@ void LFSTK_gadgetClass::drawImage()
 				break;
 			case LEFT:
 				xoffset=4;
+				break;
+			case NONE:
+				xoffset=0;
+				yoffset=0;
 				break;
 		}
 
@@ -814,9 +821,10 @@ cairo_surface_t *cairo_image_surface_create_from_jpeg(const char *filename)
 /**
 * Set image and render with cairo.
 * \param file Path to image file.
-* \param w,h Size of image.
+* \param grav gravity of image.
+* \param scale scale type for image.
 */
-cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int grav)
+cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int grav,bool scale)
 {
 	cairo_status_t	cs=CAIRO_STATUS_SUCCESS;
 	cairo_surface_t	*tempimage;
@@ -867,6 +875,13 @@ cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int gr
 	this->useImage=true;
 	this->imageGravity=grav;
 	this->labelOffset=this->imageWidth;
+
+	if(scale==false)
+		{
+			this->imageWidth=this->gadgetGeom.w;
+			this->imageHeight=this->gadgetGeom.h;
+			ratio=1.0;
+		}
 
 	this->cImage=cairo_surface_create_similar_image(tempimage,cairo_image_surface_get_format(tempimage),this->imageWidth,this->imageHeight);
 	tcr=cairo_create(this->cImage);

@@ -323,7 +323,7 @@ int main(int argc, char **argv)
 					bc[menucount]->LFSTK_setLabelGravity(CENTRE);
 					if(themeicon!=NULL)
 						{
-							bc[menucount]->LFSTK_setImageFromPath(themeicon,LEFT);
+							bc[menucount]->LFSTK_setImageFromPath(themeicon,LEFT,true);
 							bc[menucount]->LFSTK_setLabelGravity(LEFT);
 						}
 					bc[menucount]->LFSTK_setCallBack(NULL,bcb,NULL);
