@@ -42,10 +42,12 @@ class LFSTK_imageClass  : public  LFSTK_gadgetClass
 		bool mouseDrag(XMotionEvent *e);
 
 		void LFSTK_clearWindow(void);
+void LFSTK_clearParentWindowRect(void);
 
 		void LFSTK_setCanDrag(bool candrag);
 		bool LFSTK_getCanDrag(void);
 		void LFSTK_snapSize(int sze);
+XVisualInfo vinfo;
 
 	protected:
 		bool	canDrag=false;

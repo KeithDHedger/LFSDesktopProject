@@ -72,8 +72,8 @@ int main(int argc, char **argv)
 	
 	wc=new LFSTK_windowClass(0,0,WINWIDTH,WINHITE,"About LFS Desktop",false);
 
-	icon=new LFSTK_imageClass(wc,"/usr/share/pixmaps/LFSTux.png",MIDWIN-(ICONBUTTON/2),sy,ICONBUTTON,NorthGravity);
-
+	icon=new LFSTK_imageClass(wc,"/usr/share/pixmaps/LFSTux.png",MIDWIN-(ICONBUTTON/2),sy,ICONBUTTON,ICONBUTTON,NorthGravity,true);
+//	imag=new LFSTK_imageClass(wc,NULL,BORDER+100,sy,IMAGESIZE,IMAGESIZE,NONE,true);
 	quit=new LFSTK_buttonClass(wc,"Close",MIDWIN-(BUTTONWITDH/2),WINHITE-BUTTONHITE-BORDER,BUTTONWITDH,BUTTONHITE,SouthGravity);
 	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
 

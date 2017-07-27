@@ -218,19 +218,32 @@ unsigned long LFSTK_windowClass::LFSTK_setColour(const char *name)
 */
 void LFSTK_windowClass::LFSTK_clearWindow(void)
 {
+int alpha=0xff;
+
 	if(this->useTile==true)
 		{
+			XSetClipMask(this->display,this->gc,None);
 			XSetTSOrigin(this->display,this->gc,0,0);
 			XSetFillStyle(this->display,this->gc,FillTiled);
 			XSetTile(this->display,this->gc,this->tile[0]);
+			//	XSetFillStyle(this->display,this->gc,FillSolid);
+			//	XSetForeground(this->display,this->gc,0x80808080);
+			//	XSetBackground(this->display,this->gc,0x80808080);
 			XFillRectangle(this->display,this->window,this->gc,0,0,this->windowGeom.w,this->windowGeom.h);
+			//XMapRaised(this->display, this->window);
+//printf("clear window\n");
 		}
 	else
 		{
 			XSetFillStyle(this->display,this->gc,FillSolid);
 			XSetClipMask(this->display,this->gc,None);
 			if(this->isActive==true)
+			{
+			//printf("for wc=%x\n",this->windowColourNames[NORMALCOLOUR].pixel);
 				XSetForeground(this->display,this->gc,this->windowColourNames[NORMALCOLOUR].pixel);
+				//XSetForeground(this->display,this->gc,0xff808000);
+		//	printf("pixel=%x\n",this->windowColourNames[NORMALCOLOUR].pixel);
+			}
 			else
 				XSetForeground(this->display,this->gc,this->windowColourNames[INACTIVECOLOUR].pixel);
 			XFillRectangle(this->display,this->window,this->gc,0,0,this->windowGeom.w,this->windowGeom.h);
@@ -329,7 +342,8 @@ void LFSTK_windowClass::LFSTK_setWindowColourName(int p,const char* colour)
 		free(this->windowColourNames[p].name);
 	this->windowColourNames[p].name=strdup(colour);
 	XAllocNamedColor(this->display,this->cm,colour,&sc,&tc);
-	this->windowColourNames[p].pixel=sc.pixel;
+	printf(">>sc.pixel=%x name=%s\n",sc.pixel,this->windowColourNames[p].name);
+	this->windowColourNames[p].pixel=sc.pixel+0x20000000;
 }
 
 /**
@@ -514,6 +528,34 @@ int LFSTK_windowClass::LFSTK_windowOnMonitor(void)
 	return(-1);
 }
 
+//int get_argb_visual(Visual** vis,int *depth,Display disp)
+//{
+//	/* code from gtk project,gdk_screen_get_rgba_visual */
+//	XVisualInfo visual_template;
+//	XVisualInfo *visual_list=NULL;
+//	int nxvisuals=0,i;
+//	visual_template.screen=DefaultScreen(disp);
+//	visual_list=XGetVisualInfo (display,0,&visual_template,&nxvisuals);
+//
+//	for (i=0; i < nxvisuals; i++)
+//		{
+//			if (visual_list[i].depth==32 &&
+//			        (visual_list[i].red_mask==0xff0000 &&
+//			         visual_list[i].green_mask==0x00ff00 &&
+//			         visual_list[i].blue_mask==0x0000ff ))
+//				{
+//					*vis=visual_list[i].visual;
+//					*depth=visual_list[i].depth;
+//					XFree(visual_list);
+//					return 0;
+//				}
+//		}
+//	// no argb visual available
+//	printf("no rgb\n");
+//	XFree(visual_list);
+//	return 1;
+//}
+
 /**
 * Main window constructor.
 * \param x X pos.
@@ -531,6 +573,7 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 	XClassHint				classHint;
 	Atom					xa;
 	Atom					xa_prop[3];
+	int						depth=32;
 
 	this->display=XOpenDisplay(NULL);
 	if(this->display==NULL)
@@ -553,6 +596,111 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 	wa.override_redirect=override;
 	wm_delete_window=XInternAtom(this->display,"WM_DELETE_WINDOW",0);
 
+
+#if 0
+	int	rc=1;
+////	Atom	xa;
+//	Atom	xa_prop[10];
+//	Hints	hints;
+
+
+	XVisualInfo visual_template;
+	XVisualInfo *visual_list=NULL;
+	int nxvisuals=0,i;
+	visual_template.screen=DefaultScreen(this->display);
+	visual_list=XGetVisualInfo (this->display,0,&visual_template,&nxvisuals);
+
+	for (i=0; i < nxvisuals; i++)
+		{
+			if (visual_list[i].depth==32 &&
+			        (visual_list[i].red_mask==0xff0000 &&
+			         visual_list[i].green_mask==0x00ff00 &&
+			         visual_list[i].blue_mask==0x0000ff ))
+				{
+					this->visual=visual_list[i].visual;
+					depth=visual_list[i].depth;
+					//XFree(visual_list);
+					rc=0;
+					break;
+				}
+		}
+	// no argb visual available
+if(rc!=0)
+	printf("no rgb\n");
+	XFree(visual_list);
+
+
+//	rc=get_argb_visual(&this->visual,&depth,this->display);
+	if(rc==0)
+		{
+		printf("rgdbwindow\n");
+			XSetWindowAttributes attr;
+			wa.colormap=XCreateColormap(this->display,DefaultRootWindow(this->display),this->visual,AllocNone);
+			wa.border_pixel=0;
+			wa.background_pixel=0;
+
+			this->window=XCreateWindow(this->display,DefaultRootWindow(this->display),0,0,w,h,0,depth,InputOutput,this->visual,CWColormap | CWBorderPixel | CWBackPixel ,&wa);
+
+		}
+#endif
+#if 0
+XVisualInfo vinfo;
+  int depth;
+  XVisualInfo *visual_list;
+  XVisualInfo visual_template;
+  int nxvisuals;
+  int i;
+//  XSetWindowAttributes attrs;
+
+printf("111111111111111\n");
+nxvisuals = 0;
+  visual_template.screen = DefaultScreen(this->display);
+  visual_list = XGetVisualInfo (this->display, VisualScreenMask, &visual_template, &nxvisuals);
+//	for (i = 0; i < nxvisuals; ++i)
+//    {
+//      printf("  %3d: visual 0x%lx  (%s) depth %d\n",
+//             i,
+//             visual_list[i].visualid,
+//             visual_list[i].depth);
+//    }
+   
+if (!XMatchVisualInfo(this->display, XDefaultScreen(this->display), 32, TrueColor, &vinfo))
+    {
+      fprintf(stderr, "no such visual\n");
+//      this->window=XCreateWindow(this->display,this->parent,x,y,w,this->gadgetGeom.h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
+ this->window=XCreateWindow(this->display,this->rootWindow,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWOverrideRedirect,&wa);
+    }
+else
+{
+printf("Matched visual 0x%lx  depth %d\n",
+         vinfo.visualid,
+         vinfo.depth);
+printf("8888888888888888\n");
+//XSync(this->display, True);
+
+
+printf("creating RGBA child\n");
+
+  this->visual = vinfo.visual;
+  depth = vinfo.depth;
+
+this->cm=XCreateColormap(this->display, this->rootWindow, this->visual, AllocNone);
+  wa.colormap =this->cm;// XCreateColormap(this->display, this->rootWindow, this->visual, AllocNone);
+  wa.background_pixel = 0;
+  wa.border_pixel = 0;
+
+  this->window=XCreateWindow(this->display, this->rootWindow, x,y,w,h, 0, 32, InputOutput,
+                this->visual, CWBackPixel | CWColormap | CWBorderPixel|CWWinGravity|CWOverrideRedirect, &wa);
+
+//	this->gc=XCreateGC(this->display,this->window,0,NULL);
+//	XSetBackground(this->display, this->gc,0x0);
+//XSync(this->display, True);
+
+}	
+
+#endif
+
+
 	this->window=XCreateWindow(this->display,this->rootWindow,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWOverrideRedirect,&wa);
 	XSelectInput(this->display,this->window,StructureNotifyMask|ButtonPressMask | ButtonReleaseMask | ExposureMask|LeaveWindowMask|FocusChangeMask);
 
@@ -572,7 +720,8 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 	classHint.res_class=(char*)"LFSToolKit";
 	XSetClassHint(this->display,this->window,&classHint);
 
-	this->gc=XCreateGC(this->display,this->rootWindow,0,NULL);
+	//this->gc=XCreateGC(this->display,this->rootWindow,0,NULL);
+this->gc=XCreateGC(this->display,this->window,0,NULL);
 	this->LFSTK_setFontString((char*)DEFAULTFONT);
 
 	this->LFSTK_setDecorated(true);
@@ -587,6 +736,14 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 
 	this->userHome=getenv("HOME");
 	asprintf(&this->configDir,"%s/.config/LFS",this->userHome);
+			XFlush(this->display);
+			XFlushGC(this->display,this->gc);
+			XSync(this->display,true);
+	this->LFSTK_clearWindow();
+				XFlush(this->display);
+			XFlushGC(this->display,this->gc);
+			XSync(this->display,true);
+
 }
 
 /**

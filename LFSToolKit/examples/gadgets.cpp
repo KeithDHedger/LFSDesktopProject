@@ -299,7 +299,7 @@ int main(int argc, char **argv)
 	image=new LFSTK_imageClass(wc,NULL,BORDER,sy,IMAGESIZE,IMAGESIZE,NONE,true);
 //image=new LFSTK_imageClass(wc,"green.png",BORDER,sy,IMAGESIZE,IMAGESIZE,NONE,false);
 	//image=new LFSTK_imageClass(wc,NULL,BORDER,sy,IMAGESIZE,IMAGESIZE,NONE,false);
-	image->LFSTK_setImageFromPath("green.png",LEFT,true);
+	image->LFSTK_setImageFromPath("ManPageEditor.png",LEFT,true);
 	image->LFSTK_setCallBack(NULL,imageCB,NULL);
 	image->LFSTK_snapSize(16);
 	sy+=16;
