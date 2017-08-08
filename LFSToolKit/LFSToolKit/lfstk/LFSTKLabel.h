@@ -38,8 +38,6 @@ class LFSTK_labelClass : public LFSTK_gadgetClass
 		bool mouseDown(XButtonEvent *e) {return(true);};
 		bool mouseExit(XButtonEvent *e) {return(true);};
 		bool mouseEnter(XButtonEvent *e) {return(true);};
-
-		void LFSTK_clearWindow(void);
 };
 
 #endif

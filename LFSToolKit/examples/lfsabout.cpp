@@ -1,62 +1,57 @@
 #if 0
 
-#©keithhedger Fri 7 Aug 15:57:52 BST 2015 kdhedger68713@gmail.com
+#©keithhedger Wed 2 Aug 15:43:22 BST 2017 kdhedger68713@gmail.com
 
-g++ "$0" -O3 -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo) -llfstoolkit -lImlib2||exit 1
-LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./a.out "$@"
+g++ "$0" -O0 -ggdb -I/media/LinuxData/Development64/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit -L/media/LinuxData/Development64/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2||exit 1
+LD_LIBRARY_PATH=/media/LinuxData/Development64/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit/app/.libs ./a.out "$@"
 retval=$?
 rm ./a.out
 exit $retval
 
 #endif
 
+#include "lfstk/LFSTKGlobals.h"
 
-/*
- *
- * ©K. D. Hedger. Thu  5 Nov 15:09:23 GMT 2015 kdhedger68713@gmail.com
+#define WINDOWWIDTH			320
+#define WINDOWHITE			10
+#define WINDOWMIDDLE		WINDOWWIDTH/2
 
- * This file (lfsabout.cpp) is part of LFSApplications.
+#define GADEGETWIDTH		96
+#define GADEGETHITE			24
+#define HALFGADEGETWIDTH	GADEGETWIDTH/2
 
- * LFSApplications is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * at your option) any later version.
+#define BORDER				20
+#define YSPACING			24
+#define HALFYSPACING		YSPACING/2
+#define BUTTONGRAV			NorthWestGravity
 
- * LFSApplications is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
- * You should have received a copy of the GNU General Public License
- * along with LFSApplications.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-#include <stdio.h>
-#include <unistd.h>
-
-#include <lfstk/LFSTKGlobals.h>
-
-#define		WINWIDTH 352
-#define		WINHITE 240
-#define		ICONBUTTON 48
-#define		MIDWIN WINWIDTH/2
-#define		BUTTONWITDH 64
-#define		BUTTONHITE 24
-#define		YSPACING BUTTONHITE
-#define		BORDER 8
-
-#define		MYEMAIL "keithhedger@keithhedger.darktech.org"
-#define		MYWEBSITE "http://keithhedger.darktech.org/"
+#define COPYRITE			"Copyright © 2013-2016 K.D.Hedger"
+#define PERSONAL			"keithhedger@keithhedger.darktech.org"
+#define	MYWEBSITE			"http://keithhedger.darktech.org/"
 
 enum		{LNAME,LDESCRIPTION,LCOPYRITE,LEMAIL,LWEBSITE,LGPL,LNOMORELABELS};
 
-const char	*labelTexts[]={"LFS Desktop Project","Low resource/dependency desktop for LFS","© 2015-2016 K.D.Hedger",MYEMAIL,MYWEBSITE,"Released under GPLv3"};
+const char	*labelTexts[]={"LFS Desktop Project","Low resource/dependency desktop for LFS","© 2015-2016 K.D.Hedger",PERSONAL,MYWEBSITE,"Released under GPLv3"};
 
-bool		mainLoop=true;
+#define IMAGESIZE		64
+
+LFSTK_windowClass		*wc=NULL;
+LFSTK_labelClass		*label=NULL;
+LFSTK_labelClass		*personal=NULL;
+LFSTK_labelClass		*copyrite=NULL;
+LFSTK_buttonClass		*seperator=NULL;
+LFSTK_buttonClass		*quit=NULL;
+LFSTK_imageClass		*tux;
+LFSTK_labelClass		*labels[LNOMORELABELS];
+
+bool					mainLoop=true;
+Display					*display;
 
 bool doQuit(void *p,void* ud)
 {
 	mainLoop=false;
+	XFlush(wc->display);
+	XSync(wc->display,true);
 	return(false);
 }
 
@@ -64,57 +59,82 @@ int main(int argc, char **argv)
 {
 	XEvent	event;
 	int		sy=BORDER;
-	Pixmap	ic[2];
-	LFSTK_imageClass	*icon;	
-	LFSTK_windowClass	*wc;
-	LFSTK_buttonClass	*quit;
-	LFSTK_labelClass	*labels[LNOMORELABELS];
-	
-	wc=new LFSTK_windowClass(0,0,WINWIDTH,WINHITE,"About LFS Desktop",false);
+		
+	wc=new LFSTK_windowClass(0,0,WINDOWWIDTH,WINDOWHITE,"Gadgets",false);
+	display=wc->display;
 
-	icon=new LFSTK_imageClass(wc,"/usr/share/pixmaps/LFSTux.png",MIDWIN-(ICONBUTTON/2),sy,ICONBUTTON,ICONBUTTON,NorthGravity,true);
-//	imag=new LFSTK_imageClass(wc,NULL,BORDER+100,sy,IMAGESIZE,IMAGESIZE,NONE,true);
-	quit=new LFSTK_buttonClass(wc,"Close",MIDWIN-(BUTTONWITDH/2),WINHITE-BUTTONHITE-BORDER,BUTTONWITDH,BUTTONHITE,SouthGravity);
-	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
+	tux=new LFSTK_imageClass(wc,NULL,WINDOWMIDDLE-(IMAGESIZE/2),sy,IMAGESIZE,IMAGESIZE,BUTTONGRAV,true);
+	tux->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",AUTO,true);
+	tux->LFSTK_clearWindow();
+	sy+=YSPACING*3;
 
-	sy=ICONBUTTON+BORDER;
+
 	for(int j=LNAME;j<LNOMORELABELS;j++)
 		{
-			labels[j]=new LFSTK_labelClass(wc,labelTexts[j],0,sy,WINWIDTH,BUTTONHITE,CenterGravity);
-			labels[LNAME]->LFSTK_setFontString("sans-serif:size=8");
+			labels[j]=new LFSTK_labelClass(wc,labelTexts[j],0,sy,WINDOWWIDTH,GADEGETHITE,BUTTONGRAV);
 			sy+=YSPACING;
 		}
-	labels[LNAME]->LFSTK_setFontString("sans-serif:size=14:bold");
-	labels[LDESCRIPTION]->LFSTK_setFontString("sans-serif:size=12");
+	labels[LNAME]->LFSTK_setCairoFontDataParts("sB",18);
+	labels[LDESCRIPTION]->LFSTK_setCairoFontDataParts("s",14);
 
+//line
+	seperator=new LFSTK_buttonClass(wc,"--",0,sy,WINDOWWIDTH,GADEGETHITE,BUTTONGRAV);
+	seperator->LFSTK_setStyle(BEVELNONE);
+	seperator->gadgetDetails.buttonTile=false;
+	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
+	sy+=YSPACING;
+
+//quit
+	quit=new LFSTK_buttonClass(wc,"Close",WINDOWMIDDLE-HALFGADEGETWIDTH,sy,GADEGETWIDTH,GADEGETHITE,BUTTONGRAV);
+	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
+	sy+=YSPACING+16;
+
+	wc->LFSTK_resizeWindow(WINDOWWIDTH,sy,true);
 	wc->LFSTK_showWindow();
-	wc->LFSTK_setKeepAbove(true);
+	tux->LFSTK_clearWindow();
 
+	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	mainLoop=true;
 	while(mainLoop==true)
 		{
 			XNextEvent(wc->display,&event);
 			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
 			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
+				{
+					ml->function(ml->gadget,&event,ml->type);
+				}
+
 			switch(event.type)
 				{
+					case ButtonRelease:
+						break;
 					case LeaveNotify:
 						break;
 					case Expose:
+					//printf("expose\n");
 						wc->LFSTK_clearWindow();
 						break;
 
 					case ConfigureNotify:
-						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
+						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
+						wc->globalLib->LFSTK_setCairoSurface(wc->display,wc->window,wc->visual,&wc->sfc,&wc->cr,event.xconfigurerequest.width,event.xconfigurerequest.height);
+						wc->LFSTK_clearWindow();
 						break;
 
 					case ClientMessage:
-						if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
-							mainLoop=false;
+					case SelectionNotify:
+						{
+							if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
+								{
+									wc->LFSTK_hideWindow();
+									mainLoop=false;
+								}
+						}
+						break;
 				}
 		}
 
 	delete wc;
+	XCloseDisplay(display);
 	return 0;
 }

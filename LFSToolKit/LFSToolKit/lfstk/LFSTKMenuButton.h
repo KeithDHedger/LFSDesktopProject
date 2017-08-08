@@ -22,6 +22,7 @@
 #ifndef _LFSTKMENUBUTTON_
 #define _LFSTKMENUBUTTON_
 
+#define TRIANGLESIZE 8
 /**
  *
  * Menu structure for menuItemClass.
@@ -29,23 +30,14 @@
  * \note and MUST be freed by application.
  * \note Including image and icon data.
  */
-
 struct menuItemStruct
 {
-//	menuItemStruct():	label(NULL),userData(NULL),bc(NULL),subMenus(NULL),subMenuCnt(0),useIcon(false),iconSize(-1),useImage(false),imageWidth(-1),imageHeight(-1) {}
 	menuItemStruct():	label(NULL),userData(NULL),bc(NULL),subMenus(NULL),subMenuCnt(0),imagePath(NULL) {}
 	const char			*label;
 	void				*userData;
 	LFSTK_buttonClass	*bc;
 	menuItemStruct		*subMenus;
 	int					subMenuCnt;
-//	bool				useIcon;
-//	Pixmap				icon[2];
-//	int					iconSize;
-//	bool				useImage;
-//	Imlib_Image			image;
-//	int					imageWidth;
-//	int					imageHeight;
 	char				*imagePath;
 };
 
@@ -66,21 +58,17 @@ class LFSTK_menuButtonClass : public LFSTK_buttonClass
 		~LFSTK_menuButtonClass();
 		LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity);
 
-		void LFSTK_clearWindow(void);		
-		bool mouseEnter(XButtonEvent *e);
-		bool mouseExit(XButtonEvent *e);
 		bool mouseDown(XButtonEvent *e);
-		bool mouseUp(XButtonEvent *e);
 		void LFSTK_addMenus(menuItemStruct* menus,int cnt);
 		void LFSTK_updateMenus(menuItemStruct* menus,int cnt);
 
-		bool				isSubmenu;
 	private:
 		void initMenuButton(void);
 		menuItemStruct		*menus;
 		int					menuCount;
 		LFSTK_windowClass	*subwc;
 		bool				builtMenu;
+		const char			*menuItemFont=NULL;
 };
 
 #endif

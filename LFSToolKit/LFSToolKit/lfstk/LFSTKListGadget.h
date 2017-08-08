@@ -42,6 +42,10 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		void				LFSTK_setListFromFile(const char *filepath,bool includeempty);
 		void				LFSTK_setImageList(char **list,unsigned numitems);
 		int					currentItem;
+
+		bool				mouseExit(XButtonEvent *e) {return(true);};
+		bool				mouseEnter(XButtonEvent *e) {return(true);};
+
 	private:
 		struct listData
 			{

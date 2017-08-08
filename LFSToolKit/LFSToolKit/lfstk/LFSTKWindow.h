@@ -105,12 +105,13 @@ class LFSTK_windowClass
 		mappedListener			*LFSTK_getMappedListener(int window);
 		int						LFSTK_gadgetCount(void);
 		LFSTK_gadgetClass		*LFSTK_findGadgetByPos(int x, int y);
-		
+
 //dnd
 		void					LFSTK_initDnD(void);
 		Atom					LFSTK_getDnDAtom(int atomnum);
 		void					LFSTK_handleDnD(XEvent *event);
 
+//window graphics
 		Display					*display;
 		Window					window;
 		GC						gc;
@@ -119,6 +120,9 @@ class LFSTK_windowClass
 		Window					rootWindow;		
 		Colormap				cm;
 		XftDraw 				*draw;
+		cairo_surface_t 		*sfc=NULL;
+		cairo_t					*cr=NULL;
+		cairo_pattern_t			*pattern=NULL;
 
 		char					*fontString;
 		char					*fontColourNames[MAXCOLOURS];

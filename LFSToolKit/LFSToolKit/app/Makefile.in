@@ -135,11 +135,12 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 liblfstoolkit_la_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
 am__objects_1 = ../lfstk/LFSTKButton.lo ../lfstk/LFSTKFileDialog.lo \
-	../lfstk/LFSTKFontButton.lo ../lfstk/LFSTKGadget.lo \
-	../lfstk/LFSTKImage.lo ../lfstk/LFSTKLabel.lo \
-	../lfstk/LFSTKLib.lo ../lfstk/LFSTKLineEdit.lo \
-	../lfstk/LFSTKListGadget.lo ../lfstk/LFSTKMenuButton.lo \
-	../lfstk/LFSTKToggleButton.lo ../lfstk/LFSTKWindow.lo
+	../lfstk/LFSTKFontButton.lo ../lfstk/LFSTKFontDialog.lo \
+	../lfstk/LFSTKGadget.lo ../lfstk/LFSTKImage.lo \
+	../lfstk/LFSTKLabel.lo ../lfstk/LFSTKLib.lo \
+	../lfstk/LFSTKLineEdit.lo ../lfstk/LFSTKListGadget.lo \
+	../lfstk/LFSTKMenuButton.lo ../lfstk/LFSTKToggleButton.lo \
+	../lfstk/LFSTKWindow.lo
 am_liblfstoolkit_la_OBJECTS = $(am__objects_1)
 liblfstoolkit_la_OBJECTS = $(am_liblfstoolkit_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -372,7 +373,7 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 				-DLIBDIR=\""${libdir}/${PACKAGE}"\" \
 				-DLFSTKPIXMAPSDIR=\""${pkgdatadir}/Pixmaps"\"
 
-COMMONSRC = ../lfstk/LFSTKButton.cpp ../lfstk/LFSTKFileDialog.cpp ../lfstk/LFSTKFontButton.cpp ../lfstk/LFSTKGadget.cpp ../lfstk/LFSTKImage.cpp ../lfstk/LFSTKLabel.cpp ../lfstk/LFSTKLib.cpp ../lfstk/LFSTKLineEdit.cpp ../lfstk/LFSTKListGadget.cpp ../lfstk/LFSTKMenuButton.cpp ../lfstk/LFSTKToggleButton.cpp ../lfstk/LFSTKWindow.cpp
+COMMONSRC = ../lfstk/LFSTKButton.cpp ../lfstk/LFSTKFileDialog.cpp ../lfstk/LFSTKFontButton.cpp ../lfstk/LFSTKFontDialog.cpp ../lfstk/LFSTKGadget.cpp ../lfstk/LFSTKImage.cpp ../lfstk/LFSTKLabel.cpp ../lfstk/LFSTKLib.cpp ../lfstk/LFSTKLineEdit.cpp ../lfstk/LFSTKListGadget.cpp ../lfstk/LFSTKMenuButton.cpp ../lfstk/LFSTKToggleButton.cpp ../lfstk/LFSTKWindow.cpp
 lib_LTLIBRARIES = liblfstoolkit.la
 liblfstoolkit_la_SOURCES = $(COMMONSRC)
 pixfilesdir = ${prefix}/share/pixmaps
@@ -462,6 +463,8 @@ clean-libLTLIBRARIES:
 	../lfstk/$(DEPDIR)/$(am__dirstamp)
 ../lfstk/LFSTKFontButton.lo: ../lfstk/$(am__dirstamp) \
 	../lfstk/$(DEPDIR)/$(am__dirstamp)
+../lfstk/LFSTKFontDialog.lo: ../lfstk/$(am__dirstamp) \
+	../lfstk/$(DEPDIR)/$(am__dirstamp)
 ../lfstk/LFSTKGadget.lo: ../lfstk/$(am__dirstamp) \
 	../lfstk/$(DEPDIR)/$(am__dirstamp)
 ../lfstk/LFSTKImage.lo: ../lfstk/$(am__dirstamp) \
@@ -495,6 +498,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKButton.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKFileDialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKFontButton.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKFontDialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKGadget.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKImage.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKLabel.Plo@am__quote@

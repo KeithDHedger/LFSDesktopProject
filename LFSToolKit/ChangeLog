@@ -1,4 +1,19 @@
-0.2.1
+0.2.3
+Added new font dialog button class.
+Fixed visual problems with list/dialog gadgets.
+Fixed folder/file dialog nav buttons crash.
+Corrected wrong font in menu items.
+Done file/folder dialogs.
+Done list gadget.
+Plugged lots of memory leaks.
+Done images in menus and sub menus.
+Done sub menus ... still needs work.
+Fixed disclosure indicator.
+Done basic menus.
+Fixed auto colour for labels.
+Converted gadget, button, label & image class to use cairo.
+
+0.2.2
 Fixed NULL label in setImageFromPath.
 Fixed not getting local co-ords of gadget.
 Standized getting geometryStruct.

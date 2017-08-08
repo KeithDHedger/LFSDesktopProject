@@ -44,6 +44,38 @@ char		retBuffer[512];
 LFSTK_lib::~LFSTK_lib()
 {
 	free(lfsToolKitGlobals);
+	for(int j=0; j<MAXCOLOURS; j++)
+		{
+			if(this->globalWindowColours[j]!=NULL)
+				free(this->globalWindowColours[j]);
+
+			if(this->globalButtonColours[j]!=NULL)
+				free(this->globalButtonColours[j]);
+
+			if(this->globalMenuItemColours[j]!=NULL)
+				free(this->globalMenuItemColours[j]);
+
+			if(this->globalMenuItemFontColourNames[j]!=NULL)
+				free(this->globalMenuItemFontColourNames[j]);
+
+			if(this->globalFontColourNames[j]!=NULL)
+				free(this->globalFontColourNames[j]);
+		}
+
+	if(this->globalWindowTile!=NULL)
+		free(this->globalWindowTile);
+
+	if(this->globalButtonTile!=NULL)
+		free(this->globalButtonTile);
+
+	if(this->globalMenuItemTile!=NULL)
+		free(this->globalMenuItemTile);
+
+	if(this->globalMenuItemFontString!=NULL)
+		free(this->globalMenuItemFontString);
+
+	if(this->globalFontString!=NULL)
+		free(this->globalFontString);
 }
 
 /**
@@ -139,6 +171,8 @@ const char *LFSTK_lib::LFSTK_getGlobalString(int state,int type)
 	switch(type)
 		{
 			case TYPEWINDOW:
+			//printf("--->%s<---\n",this->globalWindowColours[state]);
+
 				ptr=this->globalWindowColours[state];
 				if(ptr==NULL)
 					ptr=defaultColourStrings[state];
@@ -215,6 +249,7 @@ LFSTK_lib::LFSTK_lib(bool loadvars)
 		{"menuitem_prelight",TYPESTRING,&(this->globalMenuItemColours[PRELIGHTCOLOUR])},
 		{"menuitem_active",TYPESTRING,&(this->globalMenuItemColours[ACTIVECOLOUR])},
 		{"menuitem_inactive",TYPESTRING,&(this->globalMenuItemColours[INACTIVECOLOUR])},
+
 		{"menuitem_font",TYPESTRING,&(this->globalMenuItemFontString)},
 		{"menuitem_font_normal",TYPESTRING,&(this->globalMenuItemFontColourNames[NORMALCOLOUR])},
 		{"menuitem_font_prelight",TYPESTRING,&(this->globalMenuItemFontColourNames[PRELIGHTCOLOUR])},
@@ -291,6 +326,8 @@ bool LFSTK_lib::LFSTK_loadVarsFromFile(const char* filepath,const args* dataptr)
 				{
 					buffer[0]=0;
 					fgets(buffer,2048,fd);
+					argname=NULL;
+					strarg=NULL;
 					sscanf(buffer,"%ms %ms",&argname,&strarg);
 					cnt=0;
 					while(dataptr[cnt].name!=NULL)
@@ -318,8 +355,6 @@ bool LFSTK_lib::LFSTK_loadVarsFromFile(const char* filepath,const args* dataptr)
 						free(argname);
 					if(strarg!=NULL)
 						free(strarg);
-					argname=NULL;
-					strarg=NULL;
 				}
 			fclose(fd);
 			return(true);
@@ -415,11 +450,19 @@ const char* LFSTK_lib::bestFontColour(long pixel)
 * \param str* String.
 * \return int Width in pixels.
 */
+//int LFSTK_lib::LFSTK_getTextwidth(Display *disp,XftFont *font,const char *str)
 int LFSTK_lib::LFSTK_getTextwidth(Display *disp,XftFont *font,const char *str)
 {
-	XGlyphInfo info;
-	XftTextExtentsUtf8(disp,font,(XftChar8 *)str,strlen(str),&info);
-	return info.width-info.x;
+return(100);
+//	cairo_save(this->cr);
+//		cairo_select_font_face(this->cr,this->fontName,this->slant,this->weight);
+//		cairo_set_font_size(this->cr,this->fontSize);
+//		cairo_text_extents(this->cr,this->label,&this->extents);
+//	cairo_restore(this->cr);
+
+//	XGlyphInfo info;
+//	XftTextExtentsUtf8(disp,font,(XftChar8 *)str,strlen(str),&info);
+//	return info.width-info.x;
 }
 
 /**
@@ -430,7 +473,7 @@ int LFSTK_lib::LFSTK_getTextwidth(Display *disp,XftFont *font,const char *str)
 * \return fontStruct* Font structure.
 * \note Return structure shopuld be freed.
 */
-fontStruct* LFSTK_lib::LFSTK_loadFont(Display *disp,int scr,const char *name)
+fontStruct* LFSTK_lib::LFSTK_loadFontxx(Display *disp,int scr,const char *name)
 {
 	XftFont	*font=NULL;
 
@@ -502,11 +545,11 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				break;
 
 			case FocusIn:
-				//printf("focus in libev\n");
+				printf("focus in libev\n");
 				retval=gadget->gotFocus(e);
 				break;
 			case FocusOut:
-				//printf("focus out libev\n");
+				printf("focus out libev\n");
 				retval=gadget->lostFocus(e);
 				break;
 
@@ -743,7 +786,6 @@ char* LFSTK_lib::LFSTK_oneLiner(const char* fmt,...)
 * \param geometryStruct *geom.
 * \return true=inrect.
 */
-
 bool LFSTK_lib::LFSTK_pointInRect(pointStruct *point,geometryStruct *geom)
 {
 	if((point->x>geom->x) && (point->x<(geom->x+geom->w)) && (point->y>geom->y) && (point->y<(geom->y+geom->h)))
@@ -752,8 +794,206 @@ bool LFSTK_lib::LFSTK_pointInRect(pointStruct *point,geometryStruct *geom)
 	return(false);
 }
 
+/**
+* Set cairo surface and context for window.
+* \param Display* display.
+* \param Window window.
+* \param Visual visual.
+* \param cairo_surface_t **sfc.
+* \param cairo_t **cr.
+* \param int width.
+* \param int height.
+*/
+void LFSTK_lib::LFSTK_setCairoSurface(Display *display,Window window,Visual *visual,cairo_surface_t **sfc,cairo_t **cr,int width,int height)
+{
+	cairo_surface_destroy(*sfc);
+	cairo_destroy(*cr);
+	*sfc=cairo_xlib_surface_create(display,window,visual,width,height);
+	*cr=cairo_create(*sfc);
+}
 
 
+#if 0
+/*! This function decompresses a JPEG image from a memory buffer and creates a
+ * Cairo image surface.
+ * @param data Pointer to JPEG data (i.e. the full contents of a JPEG file read
+ * into this buffer).
+ * @param len Length of buffer in bytes.
+ * @return Returns a pointer to a cairo_surface_t structure. It should be
+ * checked with cairo_surface_status() for errors.
+ */
+cairo_surface_t *cairo_image_surface_create_from_jpeg_mem(const unsigned char* data, size_t len)
+{
+	struct jpeg_decompress_struct	cinfo;
+	struct jpeg_error_mgr			jerr;
+	JSAMPROW						row_pointer[1];
+	cairo_surface_t					*sfc;
+ 
+   // initialize jpeg decompression structures
+	cinfo.err=jpeg_std_error(&jerr);
+	jpeg_create_decompress(&cinfo);
+	jpeg_mem_src(&cinfo,(const unsigned char*)data, len);
+	jpeg_read_header(&cinfo,true);
 
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+	cinfo.out_color_space=JCS_EXT_BGRA;
+#else
+	cinfo.out_color_space=JCS_EXT_ARGB;
+#endif
+
+   // start decompressor
+	jpeg_start_decompress(&cinfo);
+
+   // create Cairo image surface
+	sfc=cairo_image_surface_create(CAIRO_FORMAT_RGB24,cinfo.output_width,cinfo.output_height);
+	if(cairo_surface_status(sfc)!=CAIRO_STATUS_SUCCESS)
+		{
+			jpeg_destroy_decompress(&cinfo);
+			return(sfc);
+		}
+
+   // loop over all scanlines and fill Cairo image surface
+	while(cinfo.output_scanline<cinfo.output_height)
+		{
+			row_pointer[0]=cairo_image_surface_get_data(sfc)+(cinfo.output_scanline * cairo_image_surface_get_stride(sfc));
+			jpeg_read_scanlines(&cinfo,row_pointer,1);
+		}
+
+   // finish and close everything
+	cairo_surface_mark_dirty(sfc);
+	jpeg_finish_decompress(&cinfo);
+	jpeg_destroy_decompress(&cinfo);
+
+   // set jpeg mime data
+	cairo_surface_set_mime_data(sfc,CAIRO_MIME_TYPE_JPEG,(const unsigned char*)data,len,free,(void*)data);
+
+	return sfc;
+}
+
+/*! This function reads an JPEG image from a file an creates a Cairo image
+ * surface. Internally the filesize is determined with fstat(2) and then the
+ * whole data is read at once.
+ * @param filename Pointer to filename of JPEG file.
+ * @return Returns a pointer to a cairo_surface_t structure. It should be
+ * checked with cairo_surface_status() for errors.
+ * @note If the returned surface is invalid you can use errno to determine
+ * further reasons. Errno is set according to fopen(3) and malloc(3). If you
+ * intend to check errno you shall set it to 0 before calling this function
+ * because it does not modify errno itself.
+ */
+cairo_surface_t *cairo_image_surface_create_from_jpeg(const char *filename)
+{
+	const unsigned char		*data;
+	int						infile;
+	struct stat				stat;
+	char					magic[]="\xff\xd8\xff";
+
+   // open input file
+	if((infile=open(filename,O_RDONLY))==-1)
+		return(cairo_image_surface_create(CAIRO_FORMAT_INVALID,0,0));
+
+   // get stat structure for file size
+	if (fstat(infile,&stat)==-1)
+		return cairo_image_surface_create(CAIRO_FORMAT_INVALID, 0, 0);
+
+   // allocate memory
+	if((data=(const unsigned char*)malloc(stat.st_size))==NULL)
+		return(cairo_image_surface_create(CAIRO_FORMAT_INVALID,0,0));
+
+   // read data
+	if(read(infile,(void*)data,stat.st_size)<stat.st_size)
+		return(cairo_image_surface_create(CAIRO_FORMAT_INVALID,0,0));
+
+	char *ptr=(char*)data;
+	bool flag=true;
+	for(int j=0;j<3;j++)
+		if(ptr[j]!=magic[j])
+			flag=false;
+
+	close(infile);
+	if(flag==false)
+		{
+			printf("not a jpeg\n");
+			return(NULL);
+		}
+	return cairo_image_surface_create_from_jpeg_mem(data, stat.st_size);
+}
+
+/**
+* Set image and render with cairo.
+* \param file Path to image file.
+* \param grav gravity of image.
+* \param scale scale type for image.
+*/
+cairo_status_t LFSTK_lib::LFSTK_setImageFromPath(const char *file,int grav,bool scale)
+{
+	cairo_status_t	cs=CAIRO_STATUS_SUCCESS;
+	cairo_surface_t	*tempimage;
+	cairo_t			*tcr;
+	float			scaleX=1.0;
+	float			scaleY=1.0;
+	int				txtx;
+	float			maxWidth;
+	float			maxHeight;
+	float			ratio;
+	float			width;
+	float			height;
+
+	this->useImage=false;
+	this->gotIcon=false;
+	if(file==NULL)
+		return(CAIRO_STATUS_FILE_NOT_FOUND);
+
+	tempimage=cairo_image_surface_create_from_png(file);
+	cs=cairo_surface_status(tempimage);
+	if(cs!=CAIRO_STATUS_SUCCESS)
+		{
+			tempimage=cairo_image_surface_create_from_jpeg(file);
+			if(tempimage==NULL)
+				{
+					printf("Unkown Format : %s\n",file);
+					return(CAIRO_STATUS_INVALID_FORMAT);
+				}
+		}
+
+	txtx=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->label);
+	maxWidth=this->gadgetGeom.w-txtx-8;
+	maxHeight=this->gadgetGeom.h-8;
+	width=cairo_image_surface_get_width(tempimage);
+	height=cairo_image_surface_get_height(tempimage);
+
+	if(maxWidth>maxHeight)
+		ratio=maxHeight/height;
+	else
+		ratio=maxWidth/width;
+
+	this->imageWidth=width*ratio;
+	this->imageHeight=height*ratio;
+
+	this->useImage=true;
+	this->imageGravity=grav;
+	this->labelOffset=this->imageWidth;
+
+	if(scale==false)
+		{
+			this->imageWidth=this->gadgetGeom.w;
+			this->imageHeight=this->gadgetGeom.h;
+			ratio=1.0;
+		}
+
+	this->cImage=cairo_surface_create_similar_image(tempimage,cairo_image_surface_get_format(tempimage),this->imageWidth,this->imageHeight);
+	tcr=cairo_create(this->cImage);
+	cairo_reset_clip(tcr);
+	cairo_scale(tcr,ratio,ratio);
+	cairo_set_source_surface(tcr,tempimage,0,0);
+	cairo_paint(tcr);
+
+	cairo_destroy(tcr);
+	cairo_surface_destroy(tempimage);
+
+	return(cs);
+}
+
+#endif
 
 

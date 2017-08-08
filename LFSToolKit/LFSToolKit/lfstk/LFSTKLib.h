@@ -50,8 +50,9 @@ class LFSTK_lib
 		void		LFSTK_setUseTheme(bool use);
 	
 		const char	*bestFontColour(long pixel);
+//		int			LFSTK_getTextwidth(Display *disp,XftFont *font,const char *str);
 		int			LFSTK_getTextwidth(Display *disp,XftFont *font,const char *str);
-		fontStruct	*LFSTK_loadFont(Display *disp,int scr,const char *name);
+		fontStruct	*LFSTK_loadFontxx(Display *disp,int scr,const char *name);
 		static bool	LFSTK_gadgetEvent(void *self,XEvent *e,int type);
 
 		bool		LFSTK_setPixmapsFromPath(Display *display,Visual *visual,Colormap cm,Window w,const char *file,Pixmap *image,Pixmap *mask,int size);
@@ -59,6 +60,10 @@ class LFSTK_lib
 		char		*LFSTK_oneLiner(const char* fmt,...);
 
 		bool		LFSTK_pointInRect(pointStruct *point,geometryStruct *geom);
+
+//graphics
+		void		LFSTK_setCairoSurface(Display *display,Window window,Visual *visual,cairo_surface_t **sfc,cairo_t **cr,int width,int height);
+//		cairo_status_t LFSTK_lib::LFSTK_setImageFromPath(const char *file,int grav,bool scale);
 
 	private:
 		static int callback(const char *fpath,const struct stat *sb,int typeflag);

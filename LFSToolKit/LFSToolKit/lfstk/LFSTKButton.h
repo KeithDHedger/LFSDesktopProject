@@ -41,9 +41,6 @@ class LFSTK_buttonClass : public LFSTK_gadgetClass
 		void LFSTK_setStyle(bevelType s);
 		void LFSTK_setIgnoreCB(bool ignore);
 		bool LFSTK_getIgnoreCB(void);
-
-		bool mouseDown(XButtonEvent *e);
-		bool mouseUp(XButtonEvent *e);
 };
 
 #endif

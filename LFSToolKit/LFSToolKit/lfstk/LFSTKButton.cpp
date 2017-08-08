@@ -31,55 +31,6 @@ LFSTK_buttonClass::LFSTK_buttonClass()
 }
 
 /**
-* Mouse down callback.
-* \param e XButtonEvent passed from mainloop->listener.
-* \return Return true if event fully handeled or false to pass it on.
-*/
-bool LFSTK_buttonClass::mouseDown(XButtonEvent *e)
-{
-	geometryStruct	g={0,0,this->gadgetGeom.w,this->gadgetGeom.h};
-
-	if(this->isActive==false)
-		{
-			this->LFSTK_clearWindow();
-			return(true);
-		}
-
-	this->drawBox(&g,ACTIVECOLOUR,this->getActiveBevel());
-	if(this->useImage==true)
-		this->drawImage();
-	this->LFSTK_drawLabel(ACTIVECOLOUR);
-
-	if(this->callback.pressCallback!=NULL)
-		return(this->callback.pressCallback(this,this->callback.userData));
-	return(true);
-}
-
-/**
-* Mouse up callback.
-* \param e XButtonEvent passed from mainloop->listener.
-* \return Return true if event fully handeled or false to pass it on.
-*/
-bool LFSTK_buttonClass::mouseUp(XButtonEvent *e)
-{
-	if(this->isActive==false)
-		{
-			this->LFSTK_clearWindow();
-			return(true);
-		}
-
-	if(this->inWindow==false)
-		this->LFSTK_clearWindow();
-	else
-		{
-			this->mouseEnter(e);
-			if(this->callback.releaseCallback!=NULL)
-				return(this->callback.releaseCallback(this,this->callback.userData));
-		}
-	return(true);
-}
-
-/**
 * Return callback user data.
 * \note Returns a void* so must be cast.
 * \note return value must not be freed.
@@ -130,10 +81,16 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* lab
 {
 	XSetWindowAttributes	wa;
 	mappedListener			*ml=new mappedListener;
+//this->autoLabelColour=this->wc->autoLabelColour;
+//this->autoLabelColour=true;
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 
 	wa.win_gravity=gravity;
+	wa.save_under=true;
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
+	this->gc=XCreateGC(this->display,this->window,0,NULL);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+	this->LFSTK_setCairoFontData();
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
 	ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
@@ -145,4 +102,6 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* lab
 		this->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),-1);
 	else
 		this->useTile=false;
+
+	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NULL,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
 }

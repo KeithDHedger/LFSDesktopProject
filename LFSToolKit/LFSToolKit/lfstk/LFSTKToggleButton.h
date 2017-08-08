@@ -22,6 +22,8 @@
 #ifndef _LFSTKTOGGLEBUTTON_
 #define _LFSTKTOGGLEBUTTON_
 
+#define CHECKBOXSIZE 12
+
 enum drawStyle {TOGGLECHECK=0,TOGGLERADIO,TOGGLENORMAL};
 
 /**
@@ -43,14 +45,15 @@ class LFSTK_toggleButtonClass  : public  LFSTK_gadgetClass
 		bool mouseDown(XButtonEvent *e);
 		bool mouseUp(XButtonEvent *e);
 
-		void LFSTK_clearWindow(void);
+		void LFSTK_clearWindowxx(void);
 		void LFSTK_setToggleStyle(drawStyle ds);
 		void LFSTK_setValue(bool val);
 		bool LFSTK_getValue(void);
 
 	private:
-		drawStyle	boxStyle;
-		void drawButton(gadgetState state);
+		drawStyle		boxStyle;
+		void 			drawButton(gadgetState state);
+		geometryStruct	indicGeom={0,0,0,0};
 
 		bool toggleState;
 };

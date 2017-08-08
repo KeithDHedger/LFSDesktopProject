@@ -47,7 +47,11 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 
 	wa.win_gravity=gravity;
+	wa.save_under=true;
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
+	this->gc=XCreateGC(this->display,this->window,0,NULL);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+	this->LFSTK_setCairoFontData();
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
 	ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
@@ -60,10 +64,15 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 	this->toggleState=false;
 	this->labelOffset=(this->gadgetGeom.h/2);
 	this->LFSTK_setLabelGravity(LEFT);
-		if(this->wc->globalLib->LFSTK_getUseTheme()==true)
+	if(this->wc->globalLib->LFSTK_getUseTheme()==true)
 		this->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),-1);
 	else
 		this->useTile=false;
+
+	this->indicGeom={0,0,CHECKBOXSIZE,CHECKBOXSIZE};
+	this->style=BEVELNONE;
+	gadgetDetails={&this->wc->windowColourNames[NORMALCOLOUR],BEVELOUT,CHECK,&this->indicGeom,NORMALCOLOUR,CHECKBOXSIZE,false,{0,0,w,h},{2,(h/2)-(CHECKBOXSIZE/2),CHECKBOXSIZE,CHECKBOXSIZE},true};
+	this->LFSTK_setFontColourName(0,this->wc->globalLib->LFSTK_getGlobalString(0,TYPEFONTCOLOUR),true);
 }
 
 /**
@@ -71,6 +80,8 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 */
 void LFSTK_toggleButtonClass::drawButton(gadgetState state)
 {
+#if 0
+//return;
 	bevelType bv;
 	geometryStruct	*g=new geometryStruct;
 
@@ -93,6 +104,9 @@ void LFSTK_toggleButtonClass::drawButton(gadgetState state)
 			g->w=(this->gadgetGeom.h/2);
 			g->h=(this->gadgetGeom.h/2);
 			g->y=g->h-(g->h/2)-1;
+		//	this->drawIndicator();
+
+#if 1
 			this->LFSTK_setLabelGravity(LEFT);
 			this->labelOffset=(this->gadgetGeom.h/2);
 //this->labelOffset=2;
@@ -127,6 +141,7 @@ void LFSTK_toggleButtonClass::drawButton(gadgetState state)
 					if(state==NORMALCOLOUR||state==PRELIGHTCOLOUR||state==INACTIVECOLOUR)
 						this->drawIndicator(g,state,CHECK);
 				}
+#endif
 		}	
 
 	if(this->boxStyle==TOGGLENORMAL)
@@ -135,8 +150,8 @@ void LFSTK_toggleButtonClass::drawButton(gadgetState state)
 			g->y=0;
 			g->w=this->gadgetGeom.w;
 			g->h=this->gadgetGeom.h;
-			this->LFSTK_setLabelGravity(CENTRE);
-			this->labelOffset=2;
+			//this->LFSTK_setLabelGravity(CENTRE);
+			//this->labelOffset=2;
 			this->drawBox(g,state,bv);
 		}
 
@@ -146,13 +161,36 @@ void LFSTK_toggleButtonClass::drawButton(gadgetState state)
 		this->LFSTK_drawLabel(INACTIVECOLOUR);
 
 	delete g;
+#endif
 }
 
 /**
 * Clear the gadget window to the appropriate state.
 */
-void LFSTK_toggleButtonClass::LFSTK_clearWindow()
+void LFSTK_toggleButtonClass::LFSTK_clearWindowxx()
 {
+#if 0
+	if(this->toggleState==true)
+		{
+			this->style=BEVELIN;
+		}
+	else
+		{
+			this->style=BEVELOUT;
+		}
+
+	if(this->boxStyle==TOGGLENORMAL)
+		{
+			LFSTK_gadgetClass::LFSTK_clearWindow();
+			return;
+		}
+
+	if(this->boxStyle==TOGGLECHECK)
+		{
+			//this->clearBox(&this->wc->windowColourNames[NORMALCOLOUR],BEVELOUT);
+			this->LFSTK_drawLabel(NORMALCOLOUR);
+		}
+return;
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 
@@ -169,6 +207,7 @@ void LFSTK_toggleButtonClass::LFSTK_clearWindow()
 			else
 				this->drawButton(PRELIGHTCOLOUR);
 		}
+#endif
 }
 
 /**
@@ -178,16 +217,58 @@ void LFSTK_toggleButtonClass::LFSTK_clearWindow()
 */
 bool LFSTK_toggleButtonClass::mouseEnter(XButtonEvent *e)
 {
-	if(this->isActive==false)
+	if(this->boxStyle==TOGGLENORMAL)
 		{
-			this->LFSTK_clearWindow();
-			return(true);
+			this->gadgetDetails.colour=&this->colourNames[PRELIGHTCOLOUR];
+			this->gadgetDetails.state=PRELIGHTCOLOUR;
+			if(this->toggleState==true)
+				this->gadgetDetails.bevel=BEVELIN;
+			else
+				this->gadgetDetails.bevel=BEVELOUT;
+		}
+	else
+		{
+			this->gadgetDetails.indic=CHECK;
+			this->gadgetDetails.colour=&this->wc->windowColourNames[NORMALCOLOUR];
+			this->gadgetDetails.state=PRELIGHTCOLOUR;
+			if(this->toggleState==true)
+				this->gadgetDetails.bevel=BEVELIN;
+			else
+				this->gadgetDetails.bevel=BEVELOUT;
 		}
 
-	this->LFSTK_clearWindow();
-	this->drawButton(PRELIGHTCOLOUR);
 	this->inWindow=true;
+	XSync(this->display,false);
+	LFSTK_gadgetClass::LFSTK_clearWindow();
 	return(true);
+//
+//
+//	if(this->boxStyle==TOGGLENORMAL)
+//		{
+//			LFSTK_gadgetClass::mouseEnter(e);
+//			return(true);
+//		}
+//	if(this->boxStyle==TOGGLENORMAL)
+//		{
+//			if(this->toggleState==true)
+//				this->style=BEVELIN;
+//			else
+//				this->style=BEVELOUT;
+//			LFSTK_gadgetClass::mouseEnter(e);
+//			return(true);
+//		}
+//
+//return(true);
+//	if(this->isActive==false)
+//		{
+//			this->LFSTK_clearWindow();
+//			return(true);
+//		}
+//
+//	this->LFSTK_clearWindow();
+//	this->drawButton(PRELIGHTCOLOUR);
+//	this->inWindow=true;
+//	return(true);
 }
 
 /**
@@ -197,16 +278,56 @@ bool LFSTK_toggleButtonClass::mouseEnter(XButtonEvent *e)
 */
 bool LFSTK_toggleButtonClass::mouseExit(XButtonEvent *e)
 {
-	if(this->isActive==false)
+	if(this->boxStyle==TOGGLENORMAL)
 		{
-			this->LFSTK_clearWindow();
-			return(true);
+			this->gadgetDetails.colour=&this->colourNames[NORMALCOLOUR];
+			this->gadgetDetails.state=NORMALCOLOUR;
+			if(this->toggleState==true)
+				this->gadgetDetails.bevel=BEVELIN;
+			else
+				this->gadgetDetails.bevel=BEVELOUT;
+		}
+	else
+		{
+			this->gadgetDetails.indic=CHECK;
+			this->gadgetDetails.colour=&this->wc->windowColourNames[NORMALCOLOUR];
+			this->gadgetDetails.state=NORMALCOLOUR;
+			if(this->toggleState==true)
+				this->gadgetDetails.bevel=BEVELIN;
+			else
+				this->gadgetDetails.bevel=BEVELOUT;
 		}
 
-	this->LFSTK_clearWindow();
-	this->drawButton(NORMALCOLOUR);
 	this->inWindow=false;
+	XSync(this->display,false);
+	LFSTK_gadgetClass::LFSTK_clearWindow();
 	return(true);
+//
+////	if(this->boxStyle==TOGGLENORMAL)
+////		{
+////			if(this->toggleState==true)
+////				this->style=BEVELIN;
+////			else
+////				this->style=BEVELOUT;
+////			LFSTK_gadgetClass::mouseEnter(e);
+////			return(true);
+////		}
+////return(true);
+//	if(this->boxStyle==TOGGLENORMAL)
+//		{
+//			LFSTK_gadgetClass::mouseExit(e);
+//			return(true);
+//		}
+//	if(this->isActive==false)
+//		{
+//			this->LFSTK_clearWindow();
+//			return(true);
+//		}
+//
+//	this->LFSTK_clearWindow();
+//	this->drawButton(NORMALCOLOUR);
+//	this->inWindow=false;
+//	return(true);
 }
 
 /**
@@ -216,18 +337,44 @@ bool LFSTK_toggleButtonClass::mouseExit(XButtonEvent *e)
 */
 bool LFSTK_toggleButtonClass::mouseDown(XButtonEvent *e)
 {
-	if(this->isActive==false)
+	if(this->boxStyle==TOGGLENORMAL)
 		{
-			this->LFSTK_clearWindow();
-			return(true);
+			this->gadgetDetails.colour=&this->colourNames[ACTIVECOLOUR];
+			this->gadgetDetails.state=ACTIVECOLOUR;
+			if(this->toggleState==true)
+				this->gadgetDetails.bevel=BEVELOUT;
+			else
+				this->gadgetDetails.bevel=BEVELIN;
+		}
+	else
+		{
+			this->gadgetDetails.colour=&this->wc->windowColourNames[NORMALCOLOUR];
+			this->gadgetDetails.state=ACTIVECOLOUR;
+			if(this->toggleState==true)
+				this->gadgetDetails.bevel=BEVELIN;
+			else
+				this->gadgetDetails.bevel=BEVELOUT;
 		}
 
-	this->LFSTK_clearWindow();
-	this->drawButton(ACTIVECOLOUR);
-	
+	XSync(this->display,false);
+	LFSTK_gadgetClass::LFSTK_clearWindow();
 	if(this->callback.pressCallback!=NULL)
 		return(this->callback.pressCallback(this,this->callback.userData));
 	return(true);
+//
+//return(true);
+//	if(this->isActive==false)
+//		{
+//			this->LFSTK_clearWindow();
+//			return(true);
+//		}
+//
+//	this->drawButton(ACTIVECOLOUR);
+//	XSync(this->display,false);
+//
+//	if(this->callback.pressCallback!=NULL)
+//		return(this->callback.pressCallback(this,this->callback.userData));
+//	return(true);
 }
 
 /**
@@ -237,23 +384,70 @@ bool LFSTK_toggleButtonClass::mouseDown(XButtonEvent *e)
 */
 bool LFSTK_toggleButtonClass::mouseUp(XButtonEvent *e)
 {
-	if(this->isActive==false)
-		{
-			this->LFSTK_clearWindow();
-			return(true);
-		}
+	gadgetState col=NORMALCOLOUR;
 
-	if(this->inWindow==false)
-		this->LFSTK_clearWindow();
-	else
+	if(this->inWindow==true)
 		{
 			this->toggleState=!this->toggleState;
-			this->mouseEnter(e);
+			col=PRELIGHTCOLOUR;
+		}
+
+	if(this->boxStyle==TOGGLENORMAL)
+		{
+			this->gadgetDetails.colour=&this->colourNames[col];
+			this->gadgetDetails.state=col;
+			if(this->toggleState==true)
+				this->gadgetDetails.bevel=BEVELIN;
+			else
+				this->gadgetDetails.bevel=BEVELOUT;
+		}
+	else
+		{
+			this->gadgetDetails.colour=&this->wc->windowColourNames[NORMALCOLOUR];
+			this->gadgetDetails.state=col;
+			if(this->toggleState==true)
+				this->gadgetDetails.bevel=BEVELIN;
+			else
+				this->gadgetDetails.bevel=BEVELOUT;
+		}
+
+	LFSTK_gadgetClass::LFSTK_clearWindow();
+	XSync(this->display,false);
+
+	if(this->inWindow==true)
+		{
 			if(this->callback.releaseCallback!=NULL)
 				return(this->callback.releaseCallback(this,this->callback.userData));
 		}
 	return(true);
+//
+//
+//
+//	if(this->boxStyle==TOGGLENORMAL)
+//		{
+//			LFSTK_gadgetClass::mouseUp(e);
+//			return(true);
+//		}
+//	this->state=NORMALCOLOUR;
+//
+//	if(this->isActive==false)
+//		{
+//			this->LFSTK_clearWindow();
+//			return(true);
+//		}
+//
+//	if(this->inWindow==false)
+//		this->LFSTK_clearWindow();
+//	else
+//		{
+//			this->toggleState=!this->toggleState;
+//			this->mouseEnter(e);
+//			if(this->callback.releaseCallback!=NULL)
+//				return(this->callback.releaseCallback(this,this->callback.userData));
+//		}
+//	return(true);
 }
+//	gadgetDetails={&this->gadgetGeom,&this->wc->windowColourNames[NORMALCOLOUR],BEVELOUT,CHECK,&this->indicGeom,NORMALCOLOUR,h-4,false,false,{0,0,w,h},{2,2,8,8},true};
 
 /**
 * Set the toggle button style.
@@ -263,7 +457,44 @@ void LFSTK_toggleButtonClass::LFSTK_setToggleStyle(drawStyle ds)
 {
 	this->boxStyle=ds;
 	if(ds==TOGGLENORMAL)
-		this->labelOffset=0;
+		{
+			this->labelOffset=0;
+			this->style=BEVELOUT;
+			this->LFSTK_setLabelGravity(CENTRE);
+		//	this->LFSTK_setFontColourName(0,this->wc->globalLib->LFSTK_getGlobalString(0,TYPEFONTCOLOUR),true);
+		//	this->LFSTK_setFontColourName(0,this->wc->globalLib->LFSTK_getGlobalString(0,TYPEFONTCOLOUR),false);
+
+//	for(int j=0;j<MAXCOLOURS;j++)
+//		this->fontColourNames[j].name=NULL;
+//
+//	for(int j=0;j<MAXCOLOURS;j++)
+//		this->colourNames[j].name=NULL;
+//
+//	this->autoLabelColour=this->wc->autoLabelColour;
+//	for(int j=0;j<MAXCOLOURS;j++)
+//		this->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON));
+//
+//	for(int j=0;j<MAXCOLOURS;j++)
+//		this->LFSTK_setFontColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEFONTCOLOUR),false);
+
+
+
+			gadgetDetails.hasIndicator=false;
+			gadgetDetails.bevel=BEVELOUT;
+			gadgetDetails.colour=&this->colourNames[NORMALCOLOUR];
+			gadgetDetails.reserveSpace=0;
+			gadgetDetails.buttonTile=true;
+			//gadgetDetails={&this->gadgetGeom,&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NULL,NORMALCOLOUR,0,false,false};
+		}
+	else
+		{
+			this->style=BEVELNONE;
+			this->LFSTK_setLabelGravity(LEFT);
+			gadgetDetails.hasIndicator=true;
+			gadgetDetails.buttonTile=false;
+//			gadgetDetails.butt=false;
+			//gadgetDetails={&this->gadgetGeom,&this->wc->windowColourNames[NORMALCOLOUR],BEVELNONE,CHECK,&this->indicGeom,NORMALCOLOUR,this->gadgetGeom.h,false,false};
+		}
 }
 
 /**

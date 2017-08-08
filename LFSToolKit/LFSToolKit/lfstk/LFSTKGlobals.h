@@ -37,11 +37,15 @@
 #define BUTTONWIDTH 72
 #define BUTTONHITE 24
 
+enum {CANCEL=0,APPLY};
 enum {LEFT=0,CENTRE,RIGHT,AUTO,MENU,NONE};
 enum gadgetState {NORMALCOLOUR=0,PRELIGHTCOLOUR,ACTIVECOLOUR,INACTIVECOLOUR,MAXCOLOURS};
 
 enum {BUTTONGADGET=1,MENUBUTTONGADGET,LINEEDITGADGET,LABELGADGET,TOGGLEGADGET,IMAGEGADGET,LISTGADGET,DIALOGGADGET,MENULISTGADGET};
 enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
+
+enum bevelType {BEVELIN=0,BEVELOUT,BEVELNONE};
+enum indicatorType {CHECK=0,RADIO,PICTURE,DISCLOSURE,NOINDICATOR};
 
 struct args
 {
@@ -78,11 +82,19 @@ struct pointStruct
 	int			x,y;
 };
 
+struct	cairoColor
+{
+	double	r,g,b,a;
+};
+
 struct colourStruct
 {
 	char		*name;
 	long		pixel;
 	XftColor	xftcol;
+	cairoColor	RGBAColour;
+	cairoColor	backColour;
+	cairoColor	foreColour;
 };
 
 struct	gadgetList;
@@ -93,6 +105,21 @@ struct	mappedListener
 	LFSTK_gadgetClass	*gadget;
 	int					type;
 };
+
+struct gadgetStruct
+{
+	colourStruct	*colour;
+	bevelType		bevel;
+	indicatorType	indic;
+	geometryStruct	*indicGeom;
+	int				state;
+	int				reserveSpace;
+	bool			buttonTile;
+	geometryStruct	gadgetGeom;
+	geometryStruct	indicatorGeom;
+	bool			hasIndicator;
+};
+
 
 #include "LFSTKLib.h"
 #include "LFSTKWindow.h"
@@ -106,5 +133,6 @@ struct	mappedListener
 #include "LFSTKFontButton.h"
 #include "LFSTKListGadget.h"
 #include "LFSTKFileDialog.h"
+#include "LFSTKFontDialog.h"
 
 #endif

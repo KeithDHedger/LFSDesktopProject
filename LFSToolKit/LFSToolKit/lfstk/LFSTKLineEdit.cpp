@@ -50,10 +50,15 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 	this->isFocused=false;
 	this->inWindow=false;
+
 	wa.win_gravity=gravity;
 	wa.bit_gravity=gravity;
-
-	this->window=XCreateWindow(this->display,this->parent,x+pad,y+pad,w-(pad*2),h-(pad*2),0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWBitGravity,&wa);
+	wa.save_under=true;
+	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWBitGravity,&wa);
+	this->gc=XCreateGC(this->display,this->window,0,NULL);
+	this->LFSTK_setFontString(this->monoFontString);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+	this->LFSTK_setCairoFontData();
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|FocusChangeMask|KeyReleaseMask);
 
 	ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
@@ -70,6 +75,11 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 
 	this->wc->LFSTK_initDnD();
 	this->gadgetAcceptsDnD=true;
+	this->labelGravity=LEFT;
+
+	LFSTK_setColourName(NORMALCOLOUR,"white");
+	LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
+	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NULL,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
 }
 
 /**
@@ -77,23 +87,10 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 */
 void LFSTK_lineEditClass::LFSTK_clearWindow()
 {
-	XSetFillStyle(this->display,this->gc,FillSolid);
-	XSetClipMask(this->display,this->gc,None);
-
-	if(this->isActive==true)
-		XSetForeground(this->display,this->gc,whiteColour);
-	else
-		XSetForeground(this->display,this->gc,this->colourNames[INACTIVECOLOUR].pixel);
-	XFillRectangle(this->display,this->window,this->gc,0,0,this->gadgetGeom.w,this->gadgetGeom.h);
-
-	XSetForeground(this->display,this->gc,this->blackColour);
-	XDrawLine(this->display,this->window,this->gc,0,this->gadgetGeom.h-1,0,0);
-	XDrawLine(this->display,this->window,this->gc,0,0,this->gadgetGeom.w-1,0);
-	XSetForeground(this->display,this->gc,this->whiteColour);
-	XDrawLine(this->display,this->window,this->gc,0,this->gadgetGeom.h-1,this->gadgetGeom.w-1,this->gadgetGeom.h-1);
-	XDrawLine(this->display,this->window,this->gc,this->gadgetGeom.w-1,this->gadgetGeom.h-1,this->gadgetGeom.w-1,0);
-
+	this->gadgetDetails.bevel=BEVELIN;
 	this->drawLabel();
+	this->drawBevel(&this->gadgetDetails.gadgetGeom,this->gadgetDetails.bevel);
+	return;
 }
 
 /**
@@ -212,6 +209,21 @@ const std::string* LFSTK_lineEditClass::LFSTK_getBuffer(void)
 
 void LFSTK_lineEditClass::drawLabel(void)
 {
+	cairo_save(this->cr);
+		cairo_reset_clip(this->cr);
+		cairo_set_source_rgba(this->cr,1.0,1.0,1.0,1.0);
+		cairo_paint(this->cr);
+
+		cairo_select_font_face(this->cr,fontName,slant,weight);
+		cairo_set_font_size(this->cr,fontSize);
+		cairo_move_to(this->cr,this->pad,(this->gadgetDetails.gadgetGeom.h/2)-(extents.y_bearing/2));
+		cairo_set_source_rgba(this->cr,0.0,0,0,1.0);
+		cairo_show_text(this->cr,this->buffer.substr(0,this->cursorPos).c_str()); 
+		cairo_show_text(this->cr,"█"); 
+		cairo_show_text(this->cr,this->buffer.substr(this->cursorPos,this->buffer.length()).c_str()); 
+	cairo_restore(this->cr);
+
+	return;
 	int startchar=0;
 	int	len=this->buffer.length();
 	int curpos;
@@ -256,6 +268,7 @@ void LFSTK_lineEditClass::drawLabel(void)
 
 void LFSTK_lineEditClass::getClip(void)
 {
+return;
 	Window			selectionOwner;
 	unsigned char	*data=NULL;
 	Atom			type;
@@ -307,6 +320,7 @@ void LFSTK_lineEditClass::getClip(void)
 * Key release callback.
 * \param e XEvent passed from mainloop->listener.
 * \return Return true if event fully handeled or false to pass it on.
+* \note Keysyms here keysymdef.h
 */
 bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 {
@@ -333,6 +347,11 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 		{
 			switch(keysym_return)
 				{
+				case XK_Tab:
+					this->buffer.insert(this->cursorPos,8,' ');
+					this->cursorPos+=8;
+
+					break;
 				case XK_BackSpace:
 					if(this->cursorPos>0)
 						{
@@ -371,6 +390,7 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 					break;
 				}
 		}
+//	printf(">>>%s<<<\n",this->buffer.c_str());
 	this->LFSTK_clearWindow();
 	return(true);
 }

@@ -29,15 +29,21 @@ LFSTK_gadgetClass::~LFSTK_gadgetClass()
 {
 	if(this->label!=NULL)
 		free(this->label);
+
 	for(int j=NORMALCOLOUR;j<MAXCOLOURS;j++)
 		{
 			if(this->fontColourNames[j].name!=NULL)
 				free(this->fontColourNames[j].name);
+
 			if(this->colourNames[j].name!=NULL)
 				free(this->colourNames[j].name);
 		}
+
 	if(this->fontString!=NULL)
 		free(this->fontString);
+
+	if(this->monoFontString!=NULL)
+		free(this->monoFontString);
 
 	if(this->freeOnDelete==true)
 		imlib_free_pixmap_and_mask(this->icon[0]);
@@ -48,8 +54,20 @@ LFSTK_gadgetClass::~LFSTK_gadgetClass()
 			imlib_free_image();
 		}
 
+	if(this->pattern!=NULL)
+		cairo_pattern_destroy(this->pattern);
+	if(this->sfc!=NULL)
+		cairo_surface_destroy(this->sfc);
+	if(this->cr!=NULL)
+		cairo_destroy(this->cr);
+
+	if(this->fontName!=NULL)
+		free(this->fontName);
+
 	XftColorFree(this->display,this->visual,this->cm,&(this->blackXftColour));
 	XftColorFree(this->display,this->visual,this->cm,&(this->whiteXftColour));
+
+	XFreeGC(this->display,this->gc);
 	XDestroyWindow(this->display,this->window);
 }
 
@@ -58,6 +76,7 @@ LFSTK_gadgetClass::LFSTK_gadgetClass()
 	pad=2;
 }
 
+#if 0
 /**
 * Set the colour name for font.
 * \param p Font state.
@@ -66,8 +85,127 @@ LFSTK_gadgetClass::LFSTK_gadgetClass()
 */
 void LFSTK_gadgetClass::LFSTK_setFontColourName(int p,const char* colour)
 {
+
 	this->fontColourNames[p].name=strdup(colour);
 	XftColorAllocName(this->display,this->visual,this->cm,colour,&(this->fontColourNames[p].xftcol));
+
+	if(this->autoLabelColour==true)
+		{
+			if(strcmp(this->wc->globalLib->bestFontColour(this->colourNames[p].pixel),"black")==0)
+				{
+					this->fontColourNames[p].RGBAColour.r=0.0;
+					this->fontColourNames[p].RGBAColour.g=0.0;
+					this->fontColourNames[p].RGBAColour.b=0.0;
+					this->fontColourNames[p].RGBAColour.a=1.0;
+				}
+			else
+				{
+					this->fontColourNames[p].RGBAColour.r=1.0;
+					this->fontColourNames[p].RGBAColour.g=1.0;
+					this->fontColourNames[p].RGBAColour.b=1.0;
+					this->fontColourNames[p].RGBAColour.a=1.0;
+				}
+		}
+	else
+		{
+			this->fontColourNames[p].RGBAColour.r=((this->fontColourNames[p].xftcol.pixel>>16) & 0xff)/256.0;
+			this->fontColourNames[p].RGBAColour.g=((this->fontColourNames[p].xftcol.pixel>>8) & 0xff)/256.0;
+			this->fontColourNames[p].RGBAColour.b=((this->fontColourNames[p].xftcol.pixel>>0) & 0xff)/256.0;
+			this->fontColourNames[p].RGBAColour.a=1.0;
+		}
+}
+#endif
+
+/**
+* Set the colour name for font.
+* \param p Font state.
+* \param colour Colour name.
+* \param bool usewindow Use window colour.
+* \note state is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2,INACTIVECOLOUR=3.
+* \note font colour based on window or button back colour.
+*/
+void LFSTK_gadgetClass::LFSTK_setFontColourName(int p,const char* colour,bool usewindow)
+{
+/*
+	XColor tc,sc;
+	if(this->colourNames[p].name!=NULL)
+		free(this->colourNames[p].name);
+	this->colourNames[p].name=strdup(colour);
+	XAllocNamedColor(this->display,this->cm,colour,&sc,&tc);
+	this->colourNames[p].pixel=sc.pixel;
+
+	this->colourNames[p].RGBAColour.r=((this->colourNames[p].pixel>>16) & 0xff)/256.0;
+	this->colourNames[p].RGBAColour.g=((this->colourNames[p].pixel>>8) & 0xff)/256.0;
+	this->colourNames[p].RGBAColour.b=((this->colourNames[p].pixel>>0) & 0xff)/256.0;
+	this->colourNames[p].RGBAColour.a=1.0;
+
+*/
+	XColor			tc;
+	XColor			sc;
+	colourStruct	col=this->colourNames[p];
+
+	if(this->fontColourNames[p].name!=NULL)
+		free(this->fontColourNames[p].name);
+	this->fontColourNames[p].name=strdup(colour);
+	XAllocNamedColor(this->display,this->cm,colour,&sc,&tc);
+	this->fontColourNames[p].pixel=sc.pixel;
+
+	if(usewindow==true)
+		col=this->wc->windowColourNames[0];
+
+	if((this->autoLabelColour==true) && (p!=INACTIVECOLOUR))
+		{
+			if(strcmp(this->wc->globalLib->bestFontColour(col.pixel),"black")==0)
+				{
+					this->fontColourNames[p].RGBAColour.r=0.0;
+					this->fontColourNames[p].RGBAColour.g=0.0;
+					this->fontColourNames[p].RGBAColour.b=0.0;
+					this->fontColourNames[p].RGBAColour.a=1.0;
+				}
+			else
+				{
+					this->fontColourNames[p].RGBAColour.r=1.0;
+					this->fontColourNames[p].RGBAColour.g=1.0;
+					this->fontColourNames[p].RGBAColour.b=1.0;
+					this->fontColourNames[p].RGBAColour.a=1.0;
+				}
+		}
+	else
+		{
+			this->fontColourNames[p].RGBAColour.r=((this->fontColourNames[p].pixel>>16) & 0xff)/256.0;
+			this->fontColourNames[p].RGBAColour.g=((this->fontColourNames[p].pixel>>8) & 0xff)/256.0;
+			this->fontColourNames[p].RGBAColour.b=((this->fontColourNames[p].pixel>>0) & 0xff)/256.0;
+			this->fontColourNames[p].RGBAColour.a=1.0;
+		}
+
+return;
+	this->fontColourNames[p].name=strdup(colour);
+	XftColorAllocName(this->display,this->visual,this->cm,colour,&(this->fontColourNames[p].xftcol));
+
+	if(this->autoLabelColour==true)
+		{
+			if(strcmp(this->wc->globalLib->bestFontColour(this->colourNames[p].pixel),"black")==0)
+				{
+					this->fontColourNames[p].RGBAColour.r=0.0;
+					this->fontColourNames[p].RGBAColour.g=0.0;
+					this->fontColourNames[p].RGBAColour.b=0.0;
+					this->fontColourNames[p].RGBAColour.a=1.0;
+				}
+			else
+				{
+					this->fontColourNames[p].RGBAColour.r=1.0;
+					this->fontColourNames[p].RGBAColour.g=1.0;
+					this->fontColourNames[p].RGBAColour.b=1.0;
+					this->fontColourNames[p].RGBAColour.a=1.0;
+				}
+		}
+	else
+		{
+			this->fontColourNames[p].RGBAColour.r=((this->fontColourNames[p].xftcol.pixel>>16) & 0xff)/256.0;
+			this->fontColourNames[p].RGBAColour.g=((this->fontColourNames[p].xftcol.pixel>>8) & 0xff)/256.0;
+			this->fontColourNames[p].RGBAColour.b=((this->fontColourNames[p].xftcol.pixel>>0) & 0xff)/256.0;
+			this->fontColourNames[p].RGBAColour.a=1.0;
+		}
 }
 
 /**
@@ -90,7 +228,7 @@ void LFSTK_gadgetClass::LFSTK_setFontString(const char *s)
 	if(this->fontString!=NULL)
 		free(this->fontString);
 	this->fontString=strdup(s);
-	this->font=this->wc->globalLib->LFSTK_loadFont(this->display,this->screen,s);
+//	this->font=this->wc->globalLib->LFSTK_loadFont(this->display,this->screen,s);
 }
 
 /**
@@ -107,6 +245,11 @@ void LFSTK_gadgetClass::LFSTK_setColourName(int p,const char* colour)
 	this->colourNames[p].name=strdup(colour);
 	XAllocNamedColor(this->display,this->cm,colour,&sc,&tc);
 	this->colourNames[p].pixel=sc.pixel;
+
+	this->colourNames[p].RGBAColour.r=((this->colourNames[p].pixel>>16) & 0xff)/256.0;
+	this->colourNames[p].RGBAColour.g=((this->colourNames[p].pixel>>8) & 0xff)/256.0;
+	this->colourNames[p].RGBAColour.b=((this->colourNames[p].pixel>>0) & 0xff)/256.0;
+	this->colourNames[p].RGBAColour.a=1.0;
 }
 
 /**
@@ -132,19 +275,20 @@ void LFSTK_gadgetClass::initGadget(void)
 
 	this->fontString=NULL;
 
+	this->autoLabelColour=this->wc->autoLabelColour;
+//	this->autoLabelColour=false;
 	for(int j=0;j<MAXCOLOURS;j++)
 		this->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON));
 
 	for(int j=0;j<MAXCOLOURS;j++)
-		this->LFSTK_setFontColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEFONTCOLOUR));
+		this->LFSTK_setFontColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEFONTCOLOUR),false);
 
 	this->LFSTK_setFontString(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEFONT));
+	this->monoFontString=strdup("mono:size=12");
 	this->LFSTK_setActive(true);
-	this->LFSTK_setLabelAutoColour(false);
 	this->style=BEVELOUT;
 	this->labelGravity=CENTRE;
 	this->inWindow=false;
-	this->autoLabelColour=this->wc->autoLabelColour;
 	this->labelOffset=0;
 	this->gotIcon=false;
 	this->iconSize=16;
@@ -182,7 +326,6 @@ void LFSTK_gadgetClass::LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* 
 	this->visual=this->wc->visual;
 	this->rootWindow=this->wc->rootWindow;
 	this->cm=this->wc->cm;
-	this->gc=this->wc->gc;
 
 	if(label!=NULL)
 		this->label=strdup(label);
@@ -236,23 +379,190 @@ void LFSTK_gadgetClass::LFSTK_setLabelAutoColour(bool setauto)
 	this->autoLabelColour=setauto;
 }
 
+
+/**
+* Clear box to colour.
+* \param gadgetStruct* details
+*/
+void LFSTK_gadgetClass::clearBox(gadgetStruct* details)
+{
+	cairo_pattern_t	*patt;
+	colourStruct	*usecolour;
+
+	if(this->isActive==false)
+		details->colour=&this->colourNames[INACTIVECOLOUR];
+
+	if(this->useTile==true)
+		{
+			if(details->buttonTile==true)
+				patt=this->pattern;
+			else
+				patt=this->wc->pattern;
+
+			cairo_save(this->cr);
+				cairo_reset_clip (this->cr);
+				cairo_translate(this->cr,-this->gadgetGeom.x,-this->gadgetGeom.y);
+				cairo_set_source(this->cr,patt);
+				cairo_paint(this->cr);
+			cairo_restore(this->cr);
+		}
+	else
+		{
+			cairo_save(this->cr);
+				cairo_reset_clip (this->cr);
+				cairo_set_source_rgba(this->cr,details->colour->RGBAColour.r,details->colour->RGBAColour.g,details->colour->RGBAColour.b,1.0);
+				cairo_paint(this->cr);
+//		cairo_rectangle(this->cr,-10,-10,details->gadgetGeom.w+10,details->gadgetGeom.h+10);
+//		cairo_fill(this->cr);
+			cairo_restore(this->cr);
+		}
+	XSync(this->display,false);
+}
+
+/**
+* Draw bevel.
+* \param geometryStruct	*geom
+* \param bevelType		bevel
+*/
+void LFSTK_gadgetClass::drawBevel(geometryStruct* geom,bevelType bevel)
+{
+	cairoColor tlcolour;
+	cairoColor brcolour;
+
+	if(bevel==BEVELNONE)
+		return;
+	
+	switch(bevel)
+		{
+			case BEVELIN:
+				tlcolour={0,0,0,1};
+				brcolour={1,1,1,1};
+				break;
+			case BEVELOUT:
+				tlcolour={1,1,1,1};
+				brcolour={0,0,0,1};
+				break;
+		}
+	cairo_save(this->cr);
+		cairo_reset_clip (this->cr);
+		cairo_set_antialias (this->cr,CAIRO_ANTIALIAS_NONE);
+		cairo_set_line_width(this->cr,1.0);
+		cairo_set_source_rgba(this->cr,tlcolour.r,tlcolour.g,tlcolour.b,1.0);
+		cairo_move_to(this->cr,geom->x+1,geom->h+geom->y+1);
+		cairo_line_to(this->cr,geom->x+1,geom->y+1);
+		cairo_line_to(this->cr,geom->x+geom->w,geom->y+1);
+		cairo_stroke(this->cr);
+		
+		cairo_set_source_rgba(this->cr,brcolour.r,brcolour.g,brcolour.b,1.0);
+		cairo_move_to(this->cr,geom->x+geom->w,geom->y+1);
+		cairo_line_to(this->cr,geom->x+geom->w,geom->y+geom->h);
+		cairo_line_to(this->cr,geom->x+1,geom->y+geom->h);
+		cairo_stroke(this->cr);			
+	cairo_restore(this->cr);
+	XSync(this->display,false);
+}
+
+/**
+* Draw label.
+* \param p Button state.
+* \note State NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2,INACTIVECOLOUR=3.
+* \note If this->label="--" then draw a seperator.
+*/
+void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
+{
+	int labelx=0;
+	if(this->isActive==false)
+		details->state=INACTIVECOLOUR;
+
+	if(strcmp(this->label,"--")!=0)
+		{
+			switch(this->labelGravity)
+				{
+					case MENU:
+						labelx=details->gadgetGeom.h+(this->pad*4);
+						break;
+					case LEFT:
+						labelx=details->reserveSpace+this->pad;
+						break;
+					case CENTRE:
+						labelx=((details->gadgetGeom.w-details->reserveSpace)/2)-(this->extents.width/2)+details->reserveSpace;
+						break;
+					case RIGHT:
+						labelx=details->gadgetGeom.w-this->LFSTK_getTextWidth(this->label)-this->pad;
+						break;
+				}
+
+			cairo_save(this->cr);
+				cairo_select_font_face(this->cr,fontName,slant,weight);
+				cairo_set_font_size(this->cr,fontSize);
+				cairo_move_to(this->cr,labelx,(details->gadgetGeom.h/2)-(extents.y_bearing/2));
+				cairo_set_source_rgba(this->cr,this->fontColourNames[details->state].RGBAColour.r,this->fontColourNames[details->state].RGBAColour.g,this->fontColourNames[details->state].RGBAColour.b,1.0);
+				cairo_show_text(this->cr,this->label); 
+			cairo_restore(this->cr);
+		}
+	else
+		{
+			cairoColor	tlcolour={0,0,0,1};
+			cairoColor	brcolour={1,1,1,1};
+
+			cairo_save(this->cr);
+				cairo_reset_clip (this->cr);
+				cairo_set_antialias (this->cr,CAIRO_ANTIALIAS_NONE);
+				cairo_set_line_width(this->cr,1.0);
+				cairo_set_source_rgba(this->cr,tlcolour.r,tlcolour.g,tlcolour.b,tlcolour.a);
+				cairo_move_to(this->cr,0,details->gadgetGeom.h/2);
+				cairo_line_to(this->cr,details->gadgetGeom.w,details->gadgetGeom.h/2);
+				cairo_stroke(this->cr);
+
+				cairo_set_source_rgba(this->cr,brcolour.r,brcolour.g,brcolour.b,brcolour.a);
+				cairo_move_to(this->cr,0,details->gadgetGeom.h/2+1);
+				cairo_line_to(this->cr,details->gadgetGeom.w,details->gadgetGeom.h/2+1);
+				cairo_stroke(this->cr);
+			cairo_restore(this->cr);
+		}
+	XSync(this->display,false);
+}
+
+/**
+* Draw a button.
+*/
+void LFSTK_gadgetClass::drawGagetDetails(void)
+{
+//printf("gx=%i gy=%i gw=%i gh=%i\n",this->gadgetDetails.gadgetGeom.x,this->gadgetDetails.gadgetGeom.y,this->gadgetDetails.gadgetGeom.w,this->gadgetDetails.gadgetGeom.h);
+//printf("ix=%i iy=%i iw=%i ih=%i\n",this->gadgetDetails.indicatorGeom.x,this->gadgetDetails.indicatorGeom.y,this->gadgetDetails.indicatorGeom.w,this->gadgetDetails.indicatorGeom.h);
+
+	this->clearBox(&this->gadgetDetails);
+	this->drawIndicator(&this->gadgetDetails);
+	this->drawLabel(&this->gadgetDetails);
+	if(this->style!=BEVELNONE)
+		this->drawBevel(&this->gadgetDetails.gadgetGeom,this->gadgetDetails.bevel);
+	if(this->useImage==true)
+		this->drawImage();
+//	XSync(this->display,false);
+}
+
+
 /**
 * Clear the gadget window to the appropriate state.
 */
 void LFSTK_gadgetClass::LFSTK_clearWindow()
 {
-	gadgetState		drawcolour=INACTIVECOLOUR;
-	geometryStruct	g={0,0,this->gadgetGeom.w,this->gadgetGeom.h};
 
-	if(this->isActive==true)
-		drawcolour=NORMALCOLOUR;
-
-	this->drawBox(&g,drawcolour,this->style);
-
-	if(this->useImage==true)
-		this->drawImage();
-
-	this->LFSTK_drawLabel(drawcolour);
+	this->drawGagetDetails();
+return;
+//
+//	gadgetState		drawcolour=this->state;
+//	geometryStruct	g={0,0,this->gadgetGeom.w,this->gadgetGeom.h};
+//
+//	if(this->isActive!=true)
+//		drawcolour=INACTIVECOLOUR;
+//
+//	this->drawBox(&g,drawcolour,this->style);
+//
+//	if(this->useImage==true)
+//		this->drawImage();
+//
+//	//this->LFSTK_drawLabel(drawcolour);
 }
 
 /**
@@ -263,20 +573,26 @@ void LFSTK_gadgetClass::LFSTK_clearWindow()
 bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 {
 	if(this->isActive==false)
-		{
-			this->LFSTK_clearWindow();
-			return(true);
-		}
+		return(true);
 
-	if(this->inWindow==false)
-		this->LFSTK_clearWindow();
-	else
+	if(strcmp(this->label,"--")==0)
+		return(true);;
+	this->gadgetDetails.colour=&this->colourNames[NORMALCOLOUR];
+	this->gadgetDetails.state=NORMALCOLOUR;
+	this->gadgetDetails.bevel=BEVELOUT;
+	this->LFSTK_clearWindow();
+	if(this->inWindow==true)
 		{
-			this->mouseEnter(e);
 			if(this->callback.releaseCallback!=NULL)
 				return(this->callback.releaseCallback(this,this->callback.userData));
 		}
 	return(true);
+
+//	if(this->isActive==false)
+//		{
+//			this->LFSTK_clearWindow();
+//			return(true);
+//		}
 }
 
 /**
@@ -287,14 +603,25 @@ bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 {
 	if(this->isActive==false)
-		{
-			this->LFSTK_clearWindow();
-			return(true);
-		}
+		return(true);
 
+	if(strcmp(this->label,"--")==0)
+		return(true);;
+	this->gadgetDetails.colour=&this->colourNames[ACTIVECOLOUR];
+	this->gadgetDetails.state=ACTIVECOLOUR;
+	this->gadgetDetails.bevel=BEVELIN;
+	this->LFSTK_clearWindow();
 	if(this->callback.pressCallback!=NULL)
 		return(this->callback.pressCallback(this,this->callback.userData));
 	return(true);
+
+//	if(this->isActive==false)
+//		{
+//			this->LFSTK_clearWindow();
+//			return(true);
+//		}
+//
+//	return(true);
 }
 
 /**
@@ -305,16 +632,28 @@ bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 bool LFSTK_gadgetClass::mouseExit(XButtonEvent *e)
 {
 	if(this->isActive==false)
-		{
-			this->LFSTK_clearWindow();
-			return(true);
-		}
+		return(true);
 
+	if(strcmp(this->label,"--")==0)
+		return(true);;
+	this->gadgetDetails.colour=&this->colourNames[NORMALCOLOUR];
+	this->gadgetDetails.state=NORMALCOLOUR;
+	this->gadgetDetails.bevel=BEVELOUT;
 	this->LFSTK_clearWindow();
-	if(this->useImage==true)
-		this->drawImage();
 	this->inWindow=false;
 	return(true);
+
+//	if(this->isActive==false)
+//		{
+//			this->LFSTK_clearWindow();
+//			return(true);
+//		}
+//
+//	this->LFSTK_clearWindow();
+//	if(this->useImage==true)
+//		this->drawImage();
+//	this->inWindow=false;
+//	return(true);
 }
 
 /**
@@ -324,22 +663,34 @@ bool LFSTK_gadgetClass::mouseExit(XButtonEvent *e)
 */
 bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 {
-	geometryStruct	g={0,0,this->gadgetGeom.w,this->gadgetGeom.h};
-
 	if(this->isActive==false)
-		{
-			this->LFSTK_clearWindow();
-			return(true);
-		}
+		return(true);
 
-	this->drawBox(&g,PRELIGHTCOLOUR,this->style);
-	this->LFSTK_drawLabel(PRELIGHTCOLOUR);
-	if(this->useImage==true)
-		this->drawImage();
-	XSync(this->display,false);
+	if(strcmp(this->label,"--")==0)
+		return(true);
+	this->gadgetDetails.colour=&this->colourNames[PRELIGHTCOLOUR];
+	this->gadgetDetails.state=PRELIGHTCOLOUR;
+	this->gadgetDetails.bevel=BEVELOUT;
+	this->LFSTK_clearWindow();
 	this->inWindow=true;
-
 	return(true);
+	
+//	geometryStruct	g={0,0,this->gadgetGeom.w,this->gadgetGeom.h};
+//
+//	if(this->isActive==false)
+//		{
+//			this->LFSTK_clearWindow();
+//			return(true);
+//		}
+//
+//	this->drawBox(&g,PRELIGHTCOLOUR,this->style);
+//	this->LFSTK_drawLabel(PRELIGHTCOLOUR);
+//	if(this->useImage==true)
+//		this->drawImage();
+//	XSync(this->display,false);
+//	this->inWindow=true;
+//
+//	return(true);
 }
 
 /**
@@ -411,28 +762,6 @@ bool LFSTK_gadgetClass::gotFocus(XEvent *e)
 }
 
 /**
-* Draw string.
-* \param font Font to use..
-* \param x Xpos.
-* \param y Ypos.
-* \param col Colour.
-* \param s String to draw.
-*/
-void LFSTK_gadgetClass::drawString(XftFont* font,int x,int y,int state,const char *s)
-{
-	XftDrawChange(this->wc->draw,this->window);
-	if(this->autoLabelColour==true)
-		{
-			if(strcmp(this->wc->globalLib->bestFontColour(this->colourNames[state].pixel),"black")==0)
-				XftDrawStringUtf8(this->wc->draw,&(this->blackXftColour),font,x,y,(XftChar8 *)s,strlen(s));
-			else
-				XftDrawStringUtf8(this->wc->draw,&(this->whiteXftColour),font,x,y,(XftChar8 *)s,strlen(s));
-		}
-	else
-		XftDrawStringUtf8(this->wc->draw,&(this->fontColourNames[state].xftcol),font,x,y,(XftChar8 *)s,strlen(s));
-}
-
-/**
 * Draw Scaled image.
 */
 void LFSTK_gadgetClass::drawImage()
@@ -446,12 +775,19 @@ void LFSTK_gadgetClass::drawImage()
 	yoffset=(this->gadgetGeom.h/2)-(this->imageHeight/2);
 	switch(this->imageGravity)
 		{
-			case AUTO:
+			case MENU:
+				xoffset=this->pad*2;
 				//TODO//
-				//xoffset=(maxWidth/2)-(width * ratio)/2+4;
+				//xoffset=(this->gadgetGeom.w/2)-(width * ratio)/2+4;
 				break;
 			case LEFT:
-				xoffset=4;
+				xoffset=this->pad;
+				break;
+			case CENTRE:
+				xoffset=(this->gadgetGeom.w/2)-(this->imageWidth/2);
+				break;
+			case RIGHT:
+				xoffset=this->gadgetGeom.w-this->imageWidth-this->pad;
 				break;
 			case NONE:
 				xoffset=0;
@@ -465,72 +801,142 @@ void LFSTK_gadgetClass::drawImage()
 		cairo_set_source_surface(this->cr,this->cImage,0,0);
 		cairo_paint(this->cr);
 	cairo_restore(this->cr);
+	XSync(this->display,false);
 }
 
 /**
-* Draw label.
-* \param p Button state.
-* \note State NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2,INACTIVECOLOUR=3.
-* \note If this->label="--" then dra a seperator.
+* Set font extents.
+* \note Reset on changing label.
+* \note Font string format "Sans:size=14:bold"
 */
-void LFSTK_gadgetClass::LFSTK_drawLabel(int state)
+void LFSTK_gadgetClass::LFSTK_setCairoFontData(void)
 {
-	int	labelwidth=0;
-	int labelx=0;
+	char	*string=strdup(this->fontString);
+	char	*str;
+	bool	found=false;
+	int		labelwidth=0;
+	int		labelx=0;
 
-	labelwidth=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)this->font->data,this->label);
-	if(strcmp(this->label,"--")!=0)
+	this->weight=CAIRO_FONT_WEIGHT_NORMAL;
+	this->slant=CAIRO_FONT_SLANT_NORMAL;
+	this->fontSize=10;
+
+	if(this->fontName!=NULL)
+		free(this->fontName);
+	this->fontName=strdup("Sans");
+
+	str=strtok(string,":");
+	while(1)
 		{
-			switch(this->labelGravity)
+			found=false;
+			if(str==NULL)
+				break;
+			if(strcasecmp(str,"bold")==0)
 				{
-					case LEFT:
-						if(this->useImage==true)
-							labelx=this->imageWidth+8;
-						else
-							labelx=this->labelOffset+2;
-						this->drawString((XftFont*)(this->font->data),labelx,(this->gadgetGeom.h/2)+((this->font->ascent-2)/2),state,this->label);	
+					this->weight=CAIRO_FONT_WEIGHT_BOLD;
+					found=true;
+				}
+			if(strcasecmp(str,"italic")==0)
+				{
+					this->slant=CAIRO_FONT_SLANT_ITALIC;
+					found=true;
+				}
+			if(strcasestr(str,"size=")!=NULL)
+				{
+					this->fontSize=atoi(&str[5]);
+					found=true;
+				}
+
+			if(found==false)
+				{
+					if(this->fontName!=NULL)
+						free(this->fontName);
+					this->fontName=strdup(str);
+				}
+			str=strtok(NULL,":");
+		}
+	free(string);
+	cairo_save(this->cr);
+		cairo_select_font_face(this->cr,this->fontName,this->slant,this->weight);
+		cairo_set_font_size(this->cr,this->fontSize);
+		cairo_text_extents(this->cr,this->label,&this->extents);
+	cairo_restore(this->cr);
+}
+
+/**
+* Get width of text.
+* \returns test width
+*/
+int LFSTK_gadgetClass::LFSTK_getTextWidth(const char* text)
+{
+	cairo_text_extents_t returnextents;
+
+	cairo_save(this->cr);
+		cairo_select_font_face(this->cr,this->fontName,this->slant,this->weight);
+		cairo_set_font_size(this->cr,this->fontSize);
+		cairo_text_extents(this->cr,text,&returnextents);
+	cairo_restore(this->cr);
+	return(returnextents.width);
+}
+
+/**
+* Set font parts.
+* \note Reset on changing label.
+* \ Format string = n=font name, I=italic,i=no italic.
+* \ Format string = B=bold, b=no bold, s=font size.
+*/
+void LFSTK_gadgetClass::LFSTK_setCairoFontDataParts(const char* fmt,...)
+{
+	va_list	ap;
+	va_start(ap, fmt);
+	while (*fmt)
+		{
+			switch(*fmt)
+				{
+					case 'n':
+						if(this->fontName!=NULL)
+							free(this->fontName);
+						this->fontName=strdup(va_arg(ap,char*));
 						break;
-					case RIGHT:
-						labelx=this->gadgetGeom.w-labelwidth-2;			
-						this->drawString((XftFont*)(this->font->data),labelx,(this->gadgetGeom.h/2)+((this->font->ascent-2)/2),state,this->label);	
+					case 'I':
+						this->slant=CAIRO_FONT_SLANT_ITALIC;
 						break;
-					case MENU:
-						if(this->useImage==true)
-							labelx=this->imageWidth+8;
-						else
-							labelx=this->gadgetGeom.h+1;
-						this->drawString((XftFont*)(this->font->data),labelx,(this->gadgetGeom.h/2)+((this->font->ascent-2)/2),state,this->label);
+					case 'i':
+						this->slant=CAIRO_FONT_SLANT_NORMAL;
 						break;
-					default://centre
-						labelx=((this->gadgetGeom.w-this->imageWidth)/2)-(labelwidth/2)+this->imageWidth;
-						this->drawString((XftFont*)(this->font->data),labelx,(this->gadgetGeom.h/2)+((this->font->ascent-2)/2),state,this->label);
+					case 'B':
+						this->weight=CAIRO_FONT_WEIGHT_BOLD;
+						break;
+					case 'b':
+						this->weight=CAIRO_FONT_WEIGHT_NORMAL;
+						break;
+					case 's':
+						this->fontSize=va_arg(ap,int);
 						break;
 				}
 
-//			if(this->gotIcon==true)
-//				{
-//					XSetClipMask(this->display,this->gc,this->icon[1]);
-//					XSetClipOrigin(this->display,this->gc,4,(this->gadgetGeom.h/2)-(this->iconSize/2));
-//					XCopyArea(this->display,this->icon[0],this->window,this->gc,0,0,this->iconSize,this->iconSize,4,(this->gadgetGeom.h/2)-(this->iconSize/2));
-//					XSetClipMask(this->display,this->gc,None);
-//				}
+			fmt++;
 		}
-	else
-		{
-			XSetClipMask(this->display,this->gc,None);
-			XSetFillStyle(this->display,this->gc,FillSolid);
-			XSetForeground(this->display,this->gc,this->blackColour);
-			XDrawLine(this->display,this->window,this->gc,this->gadgetGeom.x,this->gadgetGeom.h/2,this->gadgetGeom.x+this->gadgetGeom.w,this->gadgetGeom.h/2);
-			XSetForeground(this->display,this->gc,this->whiteColour);
-			XDrawLine(this->display,this->window,this->gc,this->gadgetGeom.x,(this->gadgetGeom.h/2)+1,this->gadgetGeom.x+this->gadgetGeom.w,(this->gadgetGeom.h/2)+1);
-		}
+	va_end(ap);
+//this->weight=CAIRO_FONT_WEIGHT_NORMAL;
+	cairo_save(this->cr);
+		cairo_select_font_face(this->cr,this->fontName,this->slant,this->weight);
+		cairo_set_font_size(this->cr,this->fontSize);
+		cairo_text_extents(this->cr,this->label,&this->extents);
+	cairo_restore(this->cr);
 }
 
+/**
+* Set label.
+* \param newlabel new label.
+* \note Label is copied.
+*/
 void LFSTK_gadgetClass::LFSTK_setLabel(const char *newlabel)
 {
 	if(this->label!=NULL)
 		free(this->label);
 	this->label=strdup(newlabel);
+	this->LFSTK_setCairoFontData();
 	this->LFSTK_clearWindow();
 }
 
@@ -594,7 +1000,7 @@ void LFSTK_gadgetClass::LFSTK_getGeom(geometryStruct *geom)
 void LFSTK_gadgetClass::LFSTK_reloadColours(void)
 {
 	for(int j=0;j<MAXCOLOURS;j++)
-		this->LFSTK_setFontColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEFONTCOLOUR));
+		this->LFSTK_setFontColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEFONTCOLOUR),false);
 	for(int j=0;j<MAXCOLOURS;j++)
 		this->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON));
 	this->LFSTK_setFontString(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEFONT));
@@ -607,20 +1013,75 @@ void LFSTK_gadgetClass::LFSTK_reloadColours(void)
 * \param state Button state.
 * \param indic Indicator type CHECK=0,RADIO=1,PICTURE=2,NOINDICATOR=3.
 */
-void LFSTK_gadgetClass::drawIndicator(geometryStruct* g,int state,indicatorType indic)
+//void LFSTK_gadgetClass::drawIndicator(geometryStruct* g,int state,indicatorType indic)
+void LFSTK_gadgetClass::drawIndicator(gadgetStruct* details)
 {
+	if(this->gadgetDetails.hasIndicator==false)
+		return;
+
+	switch(details->indic)
+		{
+			case CHECK:
+				cairo_save(this->cr);
+					cairo_reset_clip (this->cr);
+					cairo_set_source_rgba(this->cr,this->colourNames[details->state].RGBAColour.r,colourNames[details->state].RGBAColour.g,colourNames[details->state].RGBAColour.b,colourNames[details->state].RGBAColour.a);
+					cairo_rectangle(this->cr,details->indicatorGeom.x,details->indicatorGeom.y,details->indicatorGeom.w,details->indicatorGeom.h);
+					cairo_fill(this->cr);
+				cairo_restore(this->cr);
+				this->drawBevel(&this->gadgetDetails.indicatorGeom,this->gadgetDetails.bevel);
+				break;
+
+/*
+	cairoColor tlcolour;
+	cairoColor brcolour;
+
+	if(bevel==BEVELNONE)
+		return;
+	
+	switch(bevel)
+		{
+			case BEVELIN:
+				tlcolour={0,0,0,1};
+				brcolour={1,1,1,1};
+				break;
+			case BEVELOUT:
+				tlcolour={1,1,1,1};
+				brcolour={0,0,0,1};
+
+*/
+			case DISCLOSURE:
+				cairo_save(this->cr);
+					cairo_reset_clip (this->cr);
+					cairo_set_antialias (this->cr,CAIRO_ANTIALIAS_NONE);
+				cairo_set_line_width(this->cr,1.0);
+
+					cairo_set_source_rgba(this->cr,this->fontColourNames[details->state].RGBAColour.r,fontColourNames[details->state].RGBAColour.g,fontColourNames[details->state].RGBAColour.b,fontColourNames[details->state].RGBAColour.a);
+					cairo_move_to(this->cr,details->indicatorGeom.x,(details->gadgetGeom.h/2)-(details->indicatorGeom.h/2));
+					cairo_line_to(this->cr,details->indicatorGeom.x+details->indicatorGeom.w,details->gadgetGeom.h/2);
+					cairo_line_to(this->cr,details->indicatorGeom.x,details->indicatorGeom.y+details->indicatorGeom.h);
+					cairo_line_to(this->cr,details->indicatorGeom.x,(details->gadgetGeom.h/2)-(details->indicatorGeom.h/2));
+					//cairo_stroke(this->cr);
+					cairo_fill(this->cr);
+				cairo_restore(this->cr);
+				
+				break;
+		}
+	XSync(this->display,false);
+	return;
+
+#if 0
 	int sx,sy;
 
 	switch(indic)
 		{
 			case CHECK:
-				XSetForeground(this->display,this->gc,this->blackColour);
-				XDrawLine(this->display,this->window,this->gc,g->x,g->y+1,g->x+g->w-1,g->y+g->h);
-				XDrawLine(this->display,this->window,this->gc,g->x+1,g->y+g->h,g->x+g->w,g->y+1);
-
-				XSetForeground(this->display,this->gc,this->whiteColour);
-				XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x+g->w,g->y+g->h);
-				XDrawLine(this->display,this->window,this->gc,g->x,g->y+g->h,g->x+g->w,g->y);
+//				XSetForeground(this->display,this->gc,this->blackColour);
+//				XDrawLine(this->display,this->window,this->gc,g->x,g->y+1,g->x+g->w-1,g->y+g->h);
+//				XDrawLine(this->display,this->window,this->gc,g->x+1,g->y+g->h,g->x+g->w,g->y+1);
+//
+//				XSetForeground(this->display,this->gc,this->whiteColour);
+//				XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x+g->w,g->y+g->h);
+//				XDrawLine(this->display,this->window,this->gc,g->x,g->y+g->h,g->x+g->w,g->y);
 				break;
 
 			case DISCLOSURE:
@@ -635,6 +1096,7 @@ void LFSTK_gadgetClass::drawIndicator(geometryStruct* g,int state,indicatorType 
 					XDrawLine(this->display,this->window,this->gc,sx+j,sy+j,sx+j,sy+DISCLOSURESIZE-j);
 				break;
 		}
+#endif
 }
 
 /**
@@ -664,6 +1126,44 @@ bevelType LFSTK_gadgetClass::getActiveBevel(void)
 */
 void LFSTK_gadgetClass::drawBox(geometryStruct* g,gadgetState state,bevelType bevel)
 {
+	cairoColor tlcolour;
+	cairoColor brcolour;
+	
+//printf("state=%i  pixel=%x\n",state,colourNames[state].pixel);
+#if 1
+	switch(bevel)
+		{
+			case BEVELIN:
+				tlcolour={0,0,0,1};
+				brcolour={1,1,1,1};
+				break;
+			case BEVELOUT:
+				tlcolour={1,1,1,1};
+				brcolour={0,0,0,1};
+				break;
+		}
+	cairo_save(this->cr);
+		cairo_reset_clip (this->cr);
+		cairo_set_source_rgba(this->cr,this->colourNames[state].RGBAColour.r,this->colourNames[state].RGBAColour.g,this->colourNames[state].RGBAColour.b,this->colourNames[state].RGBAColour.a);
+		cairo_paint(this->cr);
+
+		if(bevel!=BEVELNONE)
+			{
+				cairo_set_source_rgba(this->cr,tlcolour.r,tlcolour.g,tlcolour.b,tlcolour.a);
+				cairo_move_to(this->cr,0,g->h);
+				cairo_line_to(this->cr,0,0);
+				cairo_line_to(this->cr,g->w-1,0);
+				cairo_stroke(this->cr);
+				cairo_set_source_rgba(this->cr,brcolour.r,brcolour.g,brcolour.b,brcolour.a);
+				cairo_move_to(this->cr,g->w,0);
+				cairo_line_to(this->cr,g->w,g->h);
+				cairo_line_to(this->cr,0,g->h);
+				cairo_stroke(this->cr);			
+			}
+	cairo_restore(this->cr);
+	XSync(this->display,false);
+
+#else
 	int tlcolour;
 	int brcolour;
 
@@ -682,7 +1182,6 @@ void LFSTK_gadgetClass::drawBox(geometryStruct* g,gadgetState state,bevelType be
 				brcolour=this->colourNames[state].pixel;
 				break;
 		}
-
 	if(this->useTile==true)
 		{
 			XSetTSOrigin(this->display,this->gc,0-this->gadgetGeom.x,0-this->gadgetGeom.y);
@@ -711,6 +1210,7 @@ void LFSTK_gadgetClass::drawBox(geometryStruct* g,gadgetState state,bevelType be
 			XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x,g->y+g->h-1);
 			XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x+g->w-1,g->y);
 		}
+#endif
 }
 
 /*! This function decompresses a JPEG image from a memory buffer and creates a
@@ -821,10 +1321,10 @@ cairo_surface_t *cairo_image_surface_create_from_jpeg(const char *filename)
 /**
 * Set image and render with cairo.
 * \param file Path to image file.
-* \param grav gravity of image.
+* \param orient orientation of image ( LEFT,CENTRE,RIGHT ).
 * \param scale scale type for image.
 */
-cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int grav,bool scale)
+cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int orient,bool scale)
 {
 	cairo_status_t	cs=CAIRO_STATUS_SUCCESS;
 	cairo_surface_t	*tempimage;
@@ -843,8 +1343,8 @@ cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int gr
 	if(file==NULL)
 		return(CAIRO_STATUS_FILE_NOT_FOUND);
 
-	this->sfc=cairo_xlib_surface_create(this->display,this->window,this->visual,this->gadgetGeom.w,this->gadgetGeom.h);
-	this->cr=cairo_create(sfc);
+//	this->sfc=cairo_xlib_surface_create(this->display,this->window,this->visual,this->gadgetGeom.w,this->gadgetGeom.h);
+//	this->cr=cairo_create(sfc);
 
 	tempimage=cairo_image_surface_create_from_png(file);
 	cs=cairo_surface_status(tempimage);
@@ -858,23 +1358,33 @@ cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int gr
 				}
 		}
 
-	txtx=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->label);
-	maxWidth=this->gadgetGeom.w-txtx-8;
-	maxHeight=this->gadgetGeom.h-8;
+	if(orient!=MENU)
+		{
+			txtx=this->LFSTK_getTextWidth(this->label);
+			maxWidth=this->gadgetGeom.w-txtx-8;
+			maxHeight=this->gadgetGeom.h-8;
+		}
+	else
+		{
+			maxWidth=this->gadgetGeom.h-(pad*4);
+			maxHeight=maxWidth;
+			this->labelGravity=MENU;
+			this->gadgetDetails.reserveSpace=maxHeight;
+		}
+
 	width=cairo_image_surface_get_width(tempimage);
 	height=cairo_image_surface_get_height(tempimage);
 
-	if(maxWidth>maxHeight)
+	if(maxWidth>=maxHeight)
 		ratio=maxHeight/height;
 	else
 		ratio=maxWidth/width;
-
 	this->imageWidth=width*ratio;
 	this->imageHeight=height*ratio;
 
 	this->useImage=true;
-	this->imageGravity=grav;
-	this->labelOffset=this->imageWidth;
+	this->imageGravity=orient;
+//	this->labelOffset=this->imageWidth;
 
 	if(scale==false)
 		{
@@ -890,6 +1400,8 @@ cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int gr
 	cairo_set_source_surface(tcr,tempimage,0,0);
 	cairo_paint(tcr);
 
+	this->gadgetDetails.reserveSpace=this->imageWidth;
+	
 	cairo_destroy(tcr);
 	cairo_surface_destroy(tempimage);
 
@@ -940,6 +1452,22 @@ int LFSTK_gadgetClass::LFSTK_gadgetOnMonitor(void)
 */
 void LFSTK_gadgetClass::LFSTK_setTile(const char *path,int size)
 {
+
+	cairo_surface_t	*tempimage;
+	cairo_status_t	cs=CAIRO_STATUS_SUCCESS;
+	tempimage=cairo_image_surface_create_from_png(path);
+	cs=cairo_surface_status(tempimage);
+	if(cs==CAIRO_STATUS_SUCCESS)
+		{
+			this->pattern=cairo_pattern_create_for_surface(tempimage);
+			cairo_surface_destroy(tempimage);
+			cairo_pattern_set_extend(pattern,CAIRO_EXTEND_REPEAT);
+			this->useTile=true;
+		}
+	else
+		this->useTile=false;
+return;
+
 	if(this->useTile==true)
 		{
 			this->useTile=false;
@@ -959,13 +1487,14 @@ void LFSTK_gadgetClass::LFSTK_setTile(const char *path,int size)
 
 void LFSTK_gadgetClass::LFSTK_getFontGeom(geometryStruct *geom,const char *label)
 {
+return;
 	const char		*itemfont;
 	fontStruct		*tfont;
 
 	geom->x=0;
 	geom->y=0;
 	itemfont=this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
-	tfont=this->wc->globalLib->LFSTK_loadFont(this->display,this->screen,itemfont);
+//	tfont=this->wc->globalLib->LFSTK_loadFont(this->display,this->screen,itemfont);
 	geom->w=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(tfont->data),label);
 	geom->h=tfont->ascent+tfont->descent+8;
 }

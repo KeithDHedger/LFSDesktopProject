@@ -25,7 +25,7 @@
 void LFSTK_menuButtonClass::initMenuButton(void)
 {
 	this->subwc=new LFSTK_windowClass(0,0,1,1,"menu window",true,true);
-	this->subwc->LFSTK_setWindowType("_NET_WM_WINDOW_TYPE_MENU");
+	this->subwc->LFSTK_setWindowType("_NET_WM_WINDOW_TYPE_NORMAL");
 	this->builtMenu=false;
 
 	if(this->wc->globalLib->LFSTK_getUseTheme()==true)
@@ -45,6 +45,7 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass()
 {
 }
 
+#if 0
 /**
 * Clear the gadget window to the appropriate state.
 */
@@ -66,8 +67,9 @@ void LFSTK_menuButtonClass::LFSTK_clearWindow()
 				this->drawImage();
 			this->LFSTK_drawLabel(INACTIVECOLOUR);
 		}
-	this->drawIndicator(&g,NORMALCOLOUR,DISCLOSURE);
+//	this->drawIndicator(&g,NORMALCOLOUR,DISCLOSURE);
 }
+#endif
 
 /**
 * Mouse down callback.
@@ -77,127 +79,94 @@ void LFSTK_menuButtonClass::LFSTK_clearWindow()
 */
 bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 {
-	LFSTK_buttonClass		*bc;
-	geometryStruct			g;
-	int						maxwid=0;
-	XEvent					event;
+	int						maxwidth=0;
+	int						sy=0;
+	int						buttonwidth=0;
+	int						winhite=0;
 	bool					run=true;
-	int						testwid=0;
-	int						addto;
-	int						sy;
-	fontStruct				*tfont;
-	const char				*itemfont;
+	XEvent					event;
+	geometryStruct			g;
+	Window					sink;
+	Window					childwindow;
+	int						sinkx;
+	int						sinky;
+	bool					runsub=true;
+	unsigned int			buttonmask;
 	LFSTK_menuButtonClass	*mb=NULL;
-	int 					xpos;
-	int 					ypos;
-	int						maxiconsize=0;
-	bool					gotimage;
-
-	geometryStruct			geom={0,0,this->gadgetGeom.w,this->gadgetGeom.h};
+	LFSTK_buttonClass		*bc=NULL;
+	pointStruct				point;
+	const geometryStruct	*parentwindowgeom=this->wc->LFSTK_getWindowGeom();
+	const geometryStruct	*subwindowgeom;
+	int						labelorient;
+	bool					addimagespace=false;
 
 	if(this->isActive==false)
-		{
-			this->LFSTK_clearWindow();
-			return(true);
-		}
+		return(true);
 
-	this->drawBox(&geom,ACTIVECOLOUR,this->getActiveBevel());
-	if(this->useImage==true)
-		this->drawImage();
-	this->LFSTK_drawLabel(ACTIVECOLOUR);
-	this->drawIndicator(&geom,ACTIVECOLOUR,DISCLOSURE);
-	this->LFSTK_getGlobalGeom(&g);
-	gotimage=false;
+	this->gadgetDetails.colour=&this->colourNames[ACTIVECOLOUR];
+	this->gadgetDetails.state=ACTIVECOLOUR;
+	this->gadgetDetails.bevel=BEVELIN;
+	this->LFSTK_clearWindow();
 
-//TODO//needs tweaking
 	if(this->builtMenu==false)
 		{
-			itemfont=this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
-			tfont=this->wc->globalLib->LFSTK_loadFont(this->display,this->screen,itemfont);
-
+			labelorient=LEFT;
 			for(int j=0;j<this->menuCount;j++)
 				{
-					testwid=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(tfont->data),this->menus[j].label);
-					if(this->menus[j].imagePath!=NULL)
+				//TODO//
+					buttonwidth=this->LFSTK_getTextWidth(menus[j].label);
+					if(buttonwidth>maxwidth)
+						maxwidth=buttonwidth;
+					if(menus[j].imagePath!=NULL)
 						{
-							gotimage=true;
-							testwid+=tfont->ascent+tfont->descent+8;
+							labelorient=MENU;
+							addimagespace=true;
 						}
-					if(testwid>maxwid)
-						maxwid=testwid;
 				}
-
-			addto=tfont->ascent+tfont->descent+8;
-			if(gotimage==true)
-				maxwid+=maxiconsize+4;
-
-			subwc->LFSTK_resizeWindow(maxwid,this->menuCount*addto,true);
-			sy=0;
+			maxwidth+=4;
+			if(addimagespace==true)
+				maxwidth+=this->gadgetDetails.gadgetGeom.h+(this->pad*4);
 
 			for(int j=0;j<this->menuCount;j++)
 				{
-					if(this->menus[j].subMenus==NULL)
+					if(menus[j].subMenus==NULL)
 						{
-							bc=new LFSTK_buttonClass(subwc,this->menus[j].label,0,sy,maxwid,addto,0);
-							this->menus[j].bc=bc;
-							if(gotimage==true)
-								bc->LFSTK_setLabelGravity(MENU);
-							else
-								bc->LFSTK_setLabelGravity(LEFT);
-								
+							bc=new LFSTK_buttonClass(this->subwc,this->menus[j].label,0,winhite,maxwidth,24,0);
 							bc->LFSTK_setCallBack(NULL,this->callback.releaseCallback,(void*)&(this->menus[j]));
-							bc->LFSTK_setStyle(BEVELNONE);
-							bc->LFSTK_setFontString(itemfont);
-							bc->LFSTK_setLabelAutoColour(this->autoLabelColour);
-							if(this->wc->globalLib->LFSTK_getUseTheme()==true)
-								bc->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMTILE),-1);
-
-							bc->LFSTK_setImageFromPath(this->menus[j].imagePath,LEFT,true);
-							for(int j=0;j<MAXCOLOURS;j++)
-								{
-									bc->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEM));
-									bc->LFSTK_setFontColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEMFONTCOLOUR));
-								}
+							this->menus[j].bc=static_cast<LFSTK_buttonClass*>(bc);
 						}
 					else
 						{
-							mb=new LFSTK_menuButtonClass(subwc,this->menus[j].label,0,sy,maxwid,addto,0);
-							mb->LFSTK_setStyle(BEVELNONE);
-							mb->LFSTK_setFontString(itemfont);
-							mb->LFSTK_setLabelAutoColour(this->autoLabelColour);
-
-							if(this->wc->globalLib->LFSTK_getUseTheme()==true)
-								mb->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMTILE),-1);
-							for(int k=0;k<MAXCOLOURS;k++)
-								{
-									mb->LFSTK_setColourName(k,this->wc->globalLib->LFSTK_getGlobalString(k,TYPEMENUITEM));
-									mb->LFSTK_setFontColourName(k,this->wc->globalLib->LFSTK_getGlobalString(k,TYPEMENUITEMFONTCOLOUR));
-								}
-
+							mb=new LFSTK_menuButtonClass(this->subwc,this->menus[j].label,0,winhite,maxwidth,24,0);
+							mb->LFSTK_setCallBack(NULL,this->callback.releaseCallback,NULL);
+							mb->LFSTK_addMenus(menus[j].subMenus,menus[j].subMenuCnt);
 							this->menus[j].bc=static_cast<LFSTK_buttonClass*>(mb);
-							mb->LFSTK_addMenus(this->menus[j].subMenus,this->menus[j].subMenuCnt);
-							mb->LFSTK_setCallBack(NULL,this->callback.releaseCallback,(void*)&(this->menus[j]));
-							mb->LFSTK_setImageFromPath(this->menus[j].imagePath,LEFT,true);
-							if(gotimage==true)
-								mb->LFSTK_setLabelGravity(MENU);
-							else
-								mb->LFSTK_setLabelGravity(LEFT);
-							mb->isSubmenu=true;
 						}
-					sy+=addto;
+					winhite+=24;
+					this->menus[j].bc->LFSTK_setStyle(BEVELNONE);
+					if(this->wc->globalLib->LFSTK_getUseTheme()==true)
+						this->menus[j].bc->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMTILE),-1);
+					this->menus[j].bc->LFSTK_setFontString(this->menuItemFont);
+					this->menus[j].bc->LFSTK_setCairoFontData();
+
+					if(menus[j].imagePath!=NULL)
+						this->menus[j].bc->LFSTK_setImageFromPath(menus[j].imagePath,MENU,true);
+					this->menus[j].bc->LFSTK_setLabelGravity(labelorient);
 				}
+
+			this->subwc->LFSTK_resizeWindow(maxwidth,winhite,true);
 			this->builtMenu=true;
 		}
 
-	xpos=g.x;
-	ypos=g.y+this->gadgetGeom.h;
-
-	subwc->LFSTK_moveWindow(xpos,ypos,true);
-	subwc->LFSTK_showWindow(true);
+	this->LFSTK_getGlobalGeom(&g);
+	this->subwc->LFSTK_moveWindow(g.x+g.w-TRIANGLESIZE*2,g.y+this->gadgetGeom.h-TRIANGLESIZE*2,true);
+	this->subwc->LFSTK_showWindow(true);
+	subwindowgeom=this->subwc->LFSTK_getWindowGeom();
 
 	while (run==true)
 		{
 			XNextEvent(subwc->display,&event);
+
 			mappedListener *ml=subwc->LFSTK_getMappedListener(event.xany.window);
 			if(ml!=NULL)
 				ml->function(ml->gadget,&event,ml->type);
@@ -205,13 +174,39 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 			switch(event.type)
 				{
 					case LeaveNotify:
+					
 						if(event.xany.window==subwc->window)
 							{
-								run=false;
+								runsub=true;
+								while(runsub==true)
+									{
+										XQueryPointer(this->display, this->subwc->window,&sink,&childwindow,&sinkx,&sinky,&sinkx,&sinky,&buttonmask);
+										if(childwindow!=0)
+											runsub=false;
+
+										if((childwindow==0) && (buttonmask != 0))
+											{
+												runsub=false;
+												run=false;
+											}
+										point.x=subwindowgeom->x+sinkx;
+										point.y=subwindowgeom->y+sinky;
+										if(this->wc->globalLib->LFSTK_pointInRect(&point,(geometryStruct*)parentwindowgeom))
+											{
+												XSync(this->display,true);
+												subwc->LFSTK_hideWindow();
+												this->gadgetDetails.colour=&this->colourNames[NORMALCOLOUR];
+												this->gadgetDetails.state=NORMALCOLOUR;
+												this->LFSTK_clearWindow();
+												this->inWindow=false;
+												return(true);
+											}
+									}
 								this->LFSTK_clearWindow();
 							}
 						break;
 					case Expose:
+						this->subwc->LFSTK_clearWindow();
 						break;
 					case ButtonRelease:
 						run=false;
@@ -222,68 +217,6 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 		}
 
 	subwc->LFSTK_hideWindow();
-	return(true);
-}
-	
-/**
-* Mouse up callback.
-* \param e XButtonEvent passed from mainloop->listener.
-* \return Return true if event fully handeled or false to pass it on.
-*/
-bool LFSTK_menuButtonClass::mouseUp(XButtonEvent *e)
-{
-	if(this->isActive==false)
-		{
-			this->LFSTK_clearWindow();
-			return(true);
-		}
-
-	if(this->inWindow==false)
-		this->LFSTK_clearWindow();
-	else
-		{
-			this->mouseEnter(e);
-			if((this->callback.releaseCallback!=NULL) && ((this->callback.ignoreCallback==false)))
-				return(this->callback.releaseCallback(this,this->callback.userData));
-		}
-	return(true);
-}
-
-/**
-* Mouse exit callback.
-* \param e XButtonEvent passed from mainloop->listener.
-* \return Return true if event fully handeled or false to pass it on.
-*/
-bool LFSTK_menuButtonClass::mouseExit(XButtonEvent *e)
-{
-	this->LFSTK_clearWindow();
-	this->inWindow=false;
-	return(true);
-}
-
-/**
-* Mouse enter callback.
-* \param e XButtonEvent passed from mainloop->listener.
-* \return Return true if event fully handeled or false to pass it on.
-*/
-bool LFSTK_menuButtonClass::mouseEnter(XButtonEvent *e)
-{
-	geometryStruct	g={0,0,this->gadgetGeom.w,this->gadgetGeom.h};
-
-	if(this->isActive==false)
-		{
-			this->LFSTK_clearWindow();
-			return(true);
-		}
-
-	this->drawBox(&g,PRELIGHTCOLOUR,this->style);
-	if(this->useImage==true)
-		this->drawImage();
-	this->LFSTK_drawLabel(PRELIGHTCOLOUR);
-
-	this->drawIndicator(&g,PRELIGHTCOLOUR,DISCLOSURE);
-	XSync(this->display,false);
-	this->inWindow=true;
 	return(true);
 }
 
@@ -318,8 +251,11 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,const c
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 
 	wa.win_gravity=gravity;
-
+	wa.save_under=true;
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
+	this->gc=XCreateGC(this->display,this->window,0,NULL);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+	this->LFSTK_setCairoFontData();
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
 	this->initMenuButton();
@@ -332,7 +268,9 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,const c
 	ml->type=MENUBUTTONGADGET;
 	this->wc->LFSTK_addMappedListener(this->window,ml);
 
-	this->isSubmenu=false;
+	menuItemFont=this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
+
+	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,DISCLOSURE,NULL,NORMALCOLOUR,0,true,{0,0,w,h},{w-TRIANGLESIZE-(this->pad*2),(h/2)-(TRIANGLESIZE/2)+(this->pad/2),TRIANGLESIZE,TRIANGLESIZE},true};
 }
 
 /**

@@ -257,7 +257,7 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 					if((this->listImages!=NULL) && (this->listImages[j]!=NULL))
 						{
 							if(this->listImages!=NULL)
-								this->labels[j]->LFSTK_setImageFromPath(this->listImages[j],LEFT,true);
+								this->labels[j]->LFSTK_setImageFromPath(this->listImages[j],MENU,true);
 						}
 				}
 			else
@@ -267,6 +267,9 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 							if(this->listImages!=NULL)
 					this->labels[j]->LFSTK_setImageFromPath(NULL,LEFT,true);
 				}
+
+			this->labels[j]->gadgetDetails.colour=&this->labels[j]->colourNames[NORMALCOLOUR];
+			this->labels[j]->gadgetDetails.state=NORMALCOLOUR;
 			this->labels[j]->LFSTK_clearWindow();
 		}
 	this->currentItem=this->listCnt;
@@ -317,7 +320,7 @@ bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
 		{
 			list->labels[j]->LFSTK_setLabel(list->listStrings[j+list->listOffset]);
 			if(list->listImages!=NULL)
-				list->labels[j]->LFSTK_setImageFromPath(list->listImages[j+list->listOffset],LEFT,true);
+				list->labels[j]->LFSTK_setImageFromPath(list->listImages[j+list->listOffset],MENU,true);
 			list->data[j].userData=j+list->listOffset;
 			list->labels[j]->LFSTK_clearWindow();
 		}
@@ -327,11 +330,19 @@ bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
 void LFSTK_listGadgetClass::setNavSensitive(void)
 {
 	int fing;
-
-	this->buttonDown->LFSTK_setActive(true);
-	this->buttonUp->LFSTK_setActive(true);
-	this->buttonHome->LFSTK_setActive(true);
-	this->buttonEnd->LFSTK_setActive(true);
+	if(this->listCnt==0)
+		{
+			this->buttonDown->LFSTK_setActive(false);
+			this->buttonUp->LFSTK_setActive(false);
+			this->buttonHome->LFSTK_setActive(false);
+			this->buttonEnd->LFSTK_setActive(false);
+		}
+	else
+		{
+			this->buttonDown->LFSTK_setActive(true);
+			this->buttonUp->LFSTK_setActive(true);
+			this->buttonHome->LFSTK_setActive(true);
+			this->buttonEnd->LFSTK_setActive(true);
 
 	if(this->listOffset<=0)
 		{
@@ -339,7 +350,7 @@ void LFSTK_listGadgetClass::setNavSensitive(void)
 			this->buttonHome->LFSTK_setActive(false);
 		}
 
-	if(this->listOffset>=this->listCnt-this->maxShowing)
+	if((this->listOffset>=this->listCnt-this->maxShowing) || (this->listCnt<=this->maxShowing))
 		{
 			this->buttonDown->LFSTK_setActive(false);
 			this->buttonEnd->LFSTK_setActive(false);
@@ -361,10 +372,18 @@ void LFSTK_listGadgetClass::setNavSensitive(void)
 			this->labels[fing]->LFSTK_clearWindow();
 		}
 
+	this->buttonDown->gadgetDetails.state=NORMALCOLOUR;
+	this->buttonUp->gadgetDetails.state=NORMALCOLOUR;
+	this->buttonHome->gadgetDetails.state=NORMALCOLOUR;
+	this->buttonEnd->gadgetDetails.state=NORMALCOLOUR;
+
+}
+
 	this->buttonDown->LFSTK_clearWindow();
 	this->buttonUp->LFSTK_clearWindow();
 	this->buttonHome->LFSTK_clearWindow();
 	this->buttonEnd->LFSTK_clearWindow();
+	XSync(this->display,true);
 }
 
 /**
@@ -391,7 +410,17 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 	this->LFSTK_setCommon(parentwc,label,x-1,y-1,w+2,h+2,gravity);
 
 	wa.win_gravity=gravity;
-	this->window=XCreateWindow(this->display,this->parent,x-1,y-1,w+2,h+2,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
+	wa.save_under=true;
+//	this->window=XCreateWindow(this->display,this->parent,x-1,y-1,w+2,h+2,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
+	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
+	this->gc=XCreateGC(this->display,this->window,0,NULL);
+
+	this->LFSTK_setFontString(this->monoFontString);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+	this->LFSTK_setCairoFontData();
+
+//	this->sfc=cairo_xlib_surface_create(this->display,this->window,this->visual,this->gadgetGeom.w,this->gadgetGeom.h);
+//	this->cr=cairo_create(sfc);
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
 	ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
@@ -407,53 +436,78 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 	this->listCnt=0;
 	this->listImageCnt=0;
 
-	sx=x;
-	sy=y;
-	this->maxShowing=(h/LABELHITE);
+	sx=x+1;
+	sy=y+1;
+	this->maxShowing=((h)/LABELHITE);
 	this->labels=new LFSTK_buttonClass*[this->maxShowing];
 	this->data=new listData[this->maxShowing];
 
 	for(int j=0;j<this->maxShowing;j++)
 		{
-			this->labels[j]=new LFSTK_buttonClass(parentwc,"",sx,sy,w,LABELHITE,gravity);
+			this->labels[j]=new LFSTK_buttonClass(parentwc,"",sx,sy,w-2,LABELHITE-4,gravity);
+			this->labels[j]->LFSTK_setLabelAutoColour(true);
+			this->labels[j]->LFSTK_reloadColours();
+			this->labels[j]->LFSTK_setColourName(NORMALCOLOUR,"white");
+			this->labels[j]->LFSTK_setColourName(INACTIVECOLOUR,"white");
+
+			this->labels[j]->gadgetDetails.colour=&this->labels[j]->colourNames[NORMALCOLOUR];
+			this->labels[j]->gadgetDetails.state=NORMALCOLOUR;
+			this->labels[j]->gadgetDetails.bevel=BEVELNONE;
+			
 			this->labels[j]->LFSTK_setActive(false);
 			this->labels[j]->LFSTK_setStyle(BEVELNONE);
 			this->labels[j]->LFSTK_setTile(NULL,0);
-			this->labels[j]->LFSTK_setColourName(NORMALCOLOUR,"white");
-			this->labels[j]->LFSTK_setColourName(INACTIVECOLOUR,"white");
-			this->labels[j]->LFSTK_setLabelAutoColour(true);
 			this->labels[j]->LFSTK_setCallBack(NULL,select,LISTDATA(j));
+			this->labels[j]->LFSTK_setFontString(this->monoFontString);
+			this->labels[j]->LFSTK_setCairoFontData();
+
 			this->data[j].mainObject=this;
 			this->data[j].userData=j;
 			sy+=LABELHITE;
 		}
 
-//	if(newlist!=NULL)
-//		this->LFSTK_setList(newlist,cnt);
-
 //navigate
 //line up/down
-			this->buttonUp=new LFSTK_buttonClass(parentwc,"↑",this->gadgetGeom.x+this->gadgetGeom.w+LGAP,this->gadgetGeom.y,NAVBUTTONSIZE,NAVBUTTONSIZE,NorthEastGravity);
-			this->scrollData[LUP].mainObject=this;
-			this->scrollData[LUP].userData=LUP;
-			buttonUp->LFSTK_setCallBack(NULL,scrollCB,SCROLLDATA(LUP));
-			buttonDown=new LFSTK_buttonClass(parentwc,"↓",this->gadgetGeom.x+this->gadgetGeom.w+LGAP,this->gadgetGeom.y+this->gadgetGeom.h-NAVBUTTONSIZE,NAVBUTTONSIZE,NAVBUTTONSIZE,NorthEastGravity);
-			this->scrollData[LDOWN].mainObject=this;
-			this->scrollData[LDOWN].userData=LDOWN;
-			buttonDown->LFSTK_setCallBack(NULL,scrollCB,SCROLLDATA(LDOWN));
+//up
+	this->buttonUp=new LFSTK_buttonClass(parentwc,"▲",this->gadgetGeom.x+this->gadgetGeom.w+LGAP,this->gadgetGeom.y,NAVBUTTONSIZE,NAVBUTTONSIZE,NorthEastGravity);
+	this->buttonUp->LFSTK_setLabelGravity(CENTRE);
+	this->scrollData[LUP].mainObject=this;
+	this->scrollData[LUP].userData=LUP;
+	buttonUp->LFSTK_setCallBack(NULL,scrollCB,SCROLLDATA(LUP));
+//down
+	buttonDown=new LFSTK_buttonClass(parentwc,"▼",this->gadgetGeom.x+this->gadgetGeom.w+LGAP,this->gadgetGeom.y+this->gadgetGeom.h-NAVBUTTONSIZE,NAVBUTTONSIZE,NAVBUTTONSIZE,NorthEastGravity);
+	this->buttonDown->LFSTK_setLabelGravity(CENTRE);
+	this->scrollData[LDOWN].mainObject=this;
+	this->scrollData[LDOWN].userData=LDOWN;
+	buttonDown->LFSTK_setCallBack(NULL,scrollCB,SCROLLDATA(LDOWN));
 //page/updown
-			this->buttonHome=new LFSTK_buttonClass(parentwc,"⇤",this->gadgetGeom.x+this->gadgetGeom.w+LGAP,this->gadgetGeom.y+NAVBUTTONSIZE+LGAP,NAVBUTTONSIZE,NAVBUTTONSIZE,NorthEastGravity);
-			this->scrollData[LHOME].mainObject=this;
-			this->scrollData[LHOME].userData=LHOME;
-			buttonHome->LFSTK_setCallBack(NULL,scrollCB,SCROLLDATA(LHOME));
-			buttonEnd=new LFSTK_buttonClass(parentwc,"⇥",this->gadgetGeom.x+this->gadgetGeom.w+LGAP,this->gadgetGeom.y+this->gadgetGeom.h-(NAVBUTTONSIZE*2)-LGAP,NAVBUTTONSIZE,NAVBUTTONSIZE,NorthEastGravity);
-			this->scrollData[LEND].mainObject=this;
-			this->scrollData[LEND].userData=LEND;
-			buttonEnd->LFSTK_setCallBack(NULL,scrollCB,SCROLLDATA(LEND));
+//home
+	this->buttonHome=new LFSTK_buttonClass(parentwc,"◄",this->gadgetGeom.x+this->gadgetGeom.w+LGAP,this->gadgetGeom.y+NAVBUTTONSIZE+LGAP,NAVBUTTONSIZE,NAVBUTTONSIZE,NorthEastGravity);
+	this->buttonHome->LFSTK_setLabelGravity(CENTRE);
+	this->scrollData[LHOME].mainObject=this;
+	this->scrollData[LHOME].userData=LHOME;
+	buttonHome->LFSTK_setCallBack(NULL,scrollCB,SCROLLDATA(LHOME));
+//end
+	buttonEnd=new LFSTK_buttonClass(parentwc,"►",this->gadgetGeom.x+this->gadgetGeom.w+LGAP,this->gadgetGeom.y+this->gadgetGeom.h-(NAVBUTTONSIZE*2)-LGAP,NAVBUTTONSIZE,NAVBUTTONSIZE,NorthEastGravity);
+	this->buttonEnd->LFSTK_setLabelGravity(CENTRE);
+	this->scrollData[LEND].mainObject=this;
+	this->scrollData[LEND].userData=LEND;
+	buttonEnd->LFSTK_setCallBack(NULL,scrollCB,SCROLLDATA(LEND));
+
+	this->buttonDown->gadgetDetails.state=NORMALCOLOUR;
+	this->buttonUp->gadgetDetails.state=NORMALCOLOUR;
+	this->buttonHome->gadgetDetails.state=NORMALCOLOUR;
+	this->buttonEnd->gadgetDetails.state=NORMALCOLOUR;
 
 	this->style=BEVELIN;
 	if(newlist!=NULL)
 		this->LFSTK_setList(newlist,cnt);
+	this->setNavSensitive();
+
+	LFSTK_setColourName(NORMALCOLOUR,"white");
+	LFSTK_setColourName(INACTIVECOLOUR,"white");
+//	LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
+	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NULL,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
 }
 
 

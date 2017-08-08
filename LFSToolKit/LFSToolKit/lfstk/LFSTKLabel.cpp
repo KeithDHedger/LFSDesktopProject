@@ -24,42 +24,6 @@ LFSTK_labelClass::~LFSTK_labelClass()
 {
 }
 
-LFSTK_labelClass::LFSTK_labelClass()
-{
-}
-
-/**
-* Clear the gadget window to the appropriate state.
-* \note Label background is set to the window normal colour unless the label is set as inactive,
-* \note in which case the label's inactive colour is used.
-*/
-void LFSTK_labelClass::LFSTK_clearWindow(void)
-{
-	if(this->wc->useTile==true)
-		{
-			XSetTSOrigin(this->display,this->gc,0-this->gadgetGeom.x,0-this->gadgetGeom.y);
-			XSetFillStyle(this->display,this->gc,FillTiled);
-			XSetTile(this->display,this->gc,this->wc->tile[0]);
-			XFillRectangle(this->display,this->window,this->gc,0,0,this->gadgetGeom.w,this->gadgetGeom.h);
-			XSetFillStyle(this->display,this->gc,FillSolid);
-		}
-	else
-		{
-			XSetFillStyle(this->display,this->gc,FillSolid);
-			XSetClipMask(this->display,this->gc,None);
-			if(this->isActive==true)
-				XSetForeground(this->display,this->gc,this->wc->windowColourNames[NORMALCOLOUR].pixel);
-			else
-				XSetForeground(this->display,this->gc,this->colourNames[INACTIVECOLOUR].pixel);
-			XFillRectangle(this->display,this->window,this->gc,0,0,this->gadgetGeom.w,this->gadgetGeom.h);
-		}
-
-	if(this->isActive==true)
-		this->LFSTK_drawLabel(NORMALCOLOUR);
-	else
-		this->LFSTK_drawLabel(INACTIVECOLOUR);
-}
-
 /**
 * Main Label constructor.
 *
@@ -79,7 +43,11 @@ LFSTK_labelClass::LFSTK_labelClass(LFSTK_windowClass* parentwc,const char* label
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 
 	wa.win_gravity=gravity;
+	wa.save_under=true;
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
+	this->gc=XCreateGC(this->display,this->window,0,NULL);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+	this->LFSTK_setCairoFontData();
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
 	this->style=BEVELNONE;
@@ -89,12 +57,12 @@ LFSTK_labelClass::LFSTK_labelClass(LFSTK_windowClass* parentwc,const char* label
 	ml->type=LABELGADGET;
 	this->wc->LFSTK_addMappedListener(this->window,ml);
 
-	this->LFSTK_setActive(true);
-	this->LFSTK_setFontColourName(NORMALCOLOUR,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEFONTCOLOUR));
-	this->LFSTK_setColourName(NORMALCOLOUR,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEWINDOW));
-
 	if(this->wc->globalLib->LFSTK_getUseTheme()==true)
 		this->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
 	else
 		this->useTile=false;
+
+	this->LFSTK_setFontColourName(0,this->wc->globalLib->LFSTK_getGlobalString(0,TYPEFONTCOLOUR),true);
+
+	gadgetDetails={&this->wc->windowColourNames[NORMALCOLOUR],BEVELNONE,NOINDICATOR,NULL,NORMALCOLOUR,0,false,{0,0,w,h},{0,0,0,0},false};
 }

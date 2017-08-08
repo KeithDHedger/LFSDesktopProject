@@ -25,8 +25,8 @@
 #include <X11/Xlib.h>
 #include <Imlib2.h>
 
-enum bevelType {BEVELIN=0,BEVELOUT,BEVELNONE};
-enum indicatorType {CHECK=0,RADIO,PICTURE,DISCLOSURE,NOINDICATOR};
+//enum bevelType {BEVELIN=0,BEVELOUT,BEVELNONE};
+//enum indicatorType {CHECK=0,RADIO,PICTURE,DISCLOSURE,NOINDICATOR};
 
 /**
  *
@@ -63,29 +63,38 @@ class LFSTK_gadgetClass
 		void				LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned int w,unsigned int h,int gravity);
 		void				LFSTK_setCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud);
 
+//colours
+		colourStruct		fontColourNames[MAXCOLOURS];
+		colourStruct		colourNames[MAXCOLOURS];
+
 		void				LFSTK_setColourName(int p,const char* colour);
 		const char			*LFSTK_getColourName(int p);
 		void				LFSTK_setFontString(const char *s);
-		void				LFSTK_setFontColourName(int p,const char* colour);
+		void				LFSTK_setFontColourName(int p,const char* colour,bool usewindow);
 		void				LFSTK_getFontGeom(geometryStruct *geom,const char *label);
 		void				LFSTK_reloadColours(void);
 
 		void				LFSTK_setActive(bool active);
 		void				LFSTK_setLabelAutoColour(bool setauto);
+		void				LFSTK_setCairoFontDataParts(const char* fmt,...);
 
-		virtual void		LFSTK_drawLabel(int state);
 		void				LFSTK_setLabel(const char *newlabel);
 		const char			*LFSTK_getLabel(void);
 		void				LFSTK_setLabelGravity(int orient);
 		void				drawImage();
 
-		cairo_status_t 		LFSTK_setImageFromPath(const char *file,int grav,bool scale);
+		cairo_status_t 		LFSTK_setImageFromPath(const char *file,int orient,bool scale);
 
 		int					LFSTK_gadgetOnMonitor(void);
 		void				LFSTK_setTile(const char *path,int size);
 
+//geometry
 		void				LFSTK_getGlobalGeom(geometryStruct *geom);
 		void				LFSTK_getGeom(geometryStruct *geom);
+		int					LFSTK_getTextWidth(const char* text);
+
+//fonts
+		void				LFSTK_setCairoFontData(void);
 
 		LFSTK_windowClass	*wc;
 
@@ -103,16 +112,16 @@ class LFSTK_gadgetClass
 		bool				gotIcon;
 		bool				gadgetAcceptsDnD;
 		bool				isSubMenu;
+		gadgetStruct		gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NULL,NORMALCOLOUR,0,false,{0,0,0,0},{0,0,0,0},false};
+
 	private:
 		void				initGadget(void);
 
 	protected:
-		void				drawString(XftFont* font,int x,int y,int state,const char *s);
 		void				drawBox(geometryStruct* g,gadgetState state,bevelType bevel);
-		void				drawIndicator(geometryStruct* g,int state,indicatorType indic=NOINDICATOR);
+		void				drawIndicator(gadgetStruct* details);
 		bevelType			getActiveBevel(void);
 
-		char				*label;
 		geometryStruct		gadgetGeom;
 		int					pad;
 
@@ -124,10 +133,20 @@ class LFSTK_gadgetClass
 
 		buttonCB			callback;
 
-		char				*fontString;
+//font and label stuff
+
+		char				*label=NULL;
+		char				*fontString=NULL;
+		char				*monoFontString=NULL;
 		fontStruct			*font;
-		colourStruct		fontColourNames[MAXCOLOURS];
-		colourStruct		colourNames[MAXCOLOURS];
+		cairo_text_extents_t	extents;
+		cairo_font_weight_t	weight;
+		cairo_font_slant_t	slant;
+		int					fontSize;
+		char				*fontName=NULL;
+
+//		colourStruct		fontColourNames[MAXCOLOURS];
+//		colourStruct		colourNames[MAXCOLOURS];
 		bool				inWindow;
 		bool				isActive;
 		bool				autoLabelColour;
@@ -141,14 +160,24 @@ class LFSTK_gadgetClass
 		Pixmap				tile[2];
 		Imlib_Image			image;
 
-		cairo_t				*cr;
-		cairo_surface_t 	*sfc;
-		cairo_surface_t		*cImage;
+		cairo_t				*cr=NULL;
+		cairo_surface_t 	*sfc=NULL;
+		cairo_surface_t		*cImage=NULL;
 		int					imageWidth=0;
 		int					imageHeight=0;
 		int					imageGravity;
 		float				ratio;
 		bool				useTile;
+		cairo_pattern_t		*pattern=NULL;
+
+		bevelType			newbevel=BEVELOUT;
+		gadgetState			state=NORMALCOLOUR;
+
+//gadget graphics details
+		void				drawGagetDetails(void);
+		void				clearBox(gadgetStruct* details);
+		void				drawBevel(geometryStruct* geom,bevelType bevel);
+		void				drawLabel(gadgetStruct* details);
 };
 
 #endif

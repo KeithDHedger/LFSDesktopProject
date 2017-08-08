@@ -284,12 +284,12 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 //folder list
 	if(this->dialogType==true)
 		{
-			this->dirListGadget=new LFSTK_listGadgetClass(this->dialog,"list",FGAP,FGAP,FWIDTH-(FGAP*2)-FNAVBUTTONWID,(BUTTONHITE*FDIRHITE)+(BUTTONHITE*FFILEHITE),NorthWestGravity,NULL,0);
+			this->dirListGadget=new LFSTK_listGadgetClass(this->dialog,"",FGAP,FGAP,FWIDTH-(FGAP*2)-FNAVBUTTONWID,(BUTTONHITE*FDIRHITE)+(BUTTONHITE*FFILEHITE),NorthWestGravity,NULL,0);
 			this->dirEdit=new LFSTK_lineEditClass(this->dialog,this->currentDir,FGAP,(BUTTONHITE*FDIRHITE)+(2*FGAP)+(BUTTONHITE*FFILEHITE),FWIDTH-(FGAP*2),BUTTONHITE,NorthWestGravity);
 		}
 	else
 		{
-			this->dirListGadget=new LFSTK_listGadgetClass(this->dialog,"list",FGAP,FGAP,FWIDTH-(FGAP*2)-FNAVBUTTONWID,(BUTTONHITE*FDIRHITE),NorthWestGravity,NULL,0);
+			this->dirListGadget=new LFSTK_listGadgetClass(this->dialog,"",FGAP,FGAP,FWIDTH-(FGAP*2)-FNAVBUTTONWID,(BUTTONHITE*FDIRHITE),NorthWestGravity,NULL,0);
 			this->dirEdit=new LFSTK_lineEditClass(this->dialog,this->currentDir,FGAP,(BUTTONHITE*FDIRHITE)+(2*FGAP),FWIDTH-(FGAP*2),BUTTONHITE,NorthWestGravity);
 		}
 	this->dirListGadget->LFSTK_setImageList(this->dirImageList,this->dirListCnt);
@@ -298,7 +298,7 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 //file list
 	if(this->dialogType==false)
 		{
-			this->fileListGadget=new LFSTK_listGadgetClass(this->dialog,"list",FGAP,FGAP+(BUTTONHITE*FDIRHITE)+(2*FGAP)+BUTTONHITE,FWIDTH-(FGAP*2)-FNAVBUTTONWID,(BUTTONHITE*FFILEHITE),NorthWestGravity,NULL,0);
+			this->fileListGadget=new LFSTK_listGadgetClass(this->dialog,"",FGAP,FGAP+(BUTTONHITE*FDIRHITE)+(2*FGAP)+BUTTONHITE,FWIDTH-(FGAP*2)-FNAVBUTTONWID,(BUTTONHITE*FFILEHITE),NorthWestGravity,NULL,0);
 			this->fileListGadget->LFSTK_setImageList(this->fileImageList,this->fileListCnt);
 			this->fileListGadget->LFSTK_setList(this->fileList,this->fileListCnt);
 		}

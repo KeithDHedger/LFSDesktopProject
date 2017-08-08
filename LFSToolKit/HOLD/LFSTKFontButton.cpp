@@ -59,7 +59,12 @@ LFSTK_fontButtonClass::LFSTK_fontButtonClass(LFSTK_windowClass* parentwc,const c
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 
 	wa.win_gravity=gravity;
+	wa.save_under=true;
+
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
+	this->gc=XCreateGC(this->display,this->window,0,NULL);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+	this->LFSTK_setCairoFontData();
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
 	ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
@@ -91,6 +96,7 @@ LFSTK_fontButtonClass::LFSTK_fontButtonClass(LFSTK_windowClass* parentwc,const c
 	this->fontNumber=0;
 	this->fontOffset=0;
 	this->fontDesc=NULL;
+	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NULL,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
 }
 
 void LFSTK_fontButtonClass::loadFontStrings(void)
@@ -429,7 +435,7 @@ void LFSTK_fontButtonClass::LFSTK_showDialog(const char *fs)
 	const char				*lfstkfontstr;
 
 	lfstkfontstr=this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEFONT);
-	lfstkfontstruct=this->wc->globalLib->LFSTK_loadFont(this->display,this->screen,lfstkfontstr);
+//	lfstkfontstruct=this->wc->globalLib->LFSTK_loadFont(this->display,this->screen,lfstkfontstr);
 
 	if(this->fontDesc!=NULL)
 		free(this->fontDesc);
@@ -444,25 +450,29 @@ void LFSTK_fontButtonClass::LFSTK_showDialog(const char *fs)
 	if(this->dialog==NULL)
 		{
 			this->dialog=new LFSTK_windowClass(0,0,DWIDTH,DHITE,"Font Selector",false);
+			this->dialog->autoLabelColour=false;
+			this->dialog->LFSTK_reloadGlobals();	
 
 //font select buttons
 			for(int j=0;j<MAXPREVIEW;j++)
 				{
 					this->previews[j]=new LFSTK_buttonClass(this->dialog,this->fontsAZ[j+this->fontOffset],DBORDER,buttony,DWIDTH-(DBORDER*2),DBUTTONHITE,NorthWestGravity);
-					this->previews[j]->LFSTK_setColourName(INACTIVECOLOUR,"white");
-					this->previews[j]->LFSTK_setFontColourName(INACTIVECOLOUR,"black");
+					//this->previews[j]->LFSTK_setColourName(INACTIVECOLOUR,"white");
+					//this->previews[j]->LFSTK_setFontColourName(INACTIVECOLOUR,"black",false);
 					this->previewData[j].mainObject=this;
 					this->previewData[j].userData=j;
 					this->previews[j]->LFSTK_setCallBack(NULL,selectFontCB,(void*)(&this->previewData[j]));
 					buttony+=DBUTTONHITE+DGAP;
 				}
 //style buttons
-			gadgetwidth=this->wc->globalLib->LFSTK_getTextwidth(this->display,lfstkfontstruct->data,"Bold")+DBUTTONHITE;
+//			gadgetwidth=this->wc->globalLib->LFSTK_getTextwidth(this->display,lfstkfontstruct->data,"Bold")+DBUTTONHITE;
+			gadgetwidth=this->LFSTK_getTextWidth("Bold")+DBUTTONHITE;
 			this->toggleBold=new LFSTK_toggleButtonClass(this->dialog,"Bold",DBORDER,buttony,gadgetwidth,DBUTTONHITE,NorthWestGravity);
 			this->buttonData[DBOLD].mainObject=this;
 			this->buttonData[DBOLD].userData=DBOLD;
 			this->toggleBold->LFSTK_setCallBack(NULL,styleCB,DIALOGDATA(buttonData[DBOLD]));
-			gadgetwidth=this->wc->globalLib->LFSTK_getTextwidth(this->display,lfstkfontstruct->data,"Italic")+DBUTTONHITE;
+//			gadgetwidth=this->wc->globalLib->LFSTK_getTextwidth(this->display,lfstkfontstruct->data,"Italic")+DBUTTONHITE;
+			gadgetwidth=this->LFSTK_getTextWidth("Italic")+DBUTTONHITE;
 			this->toggleItalic=new LFSTK_toggleButtonClass(this->dialog,"Italic",DBORDER+DBUTTONWIDTH+DGAP,buttony,gadgetwidth,DBUTTONHITE,NorthWestGravity);
 			this->buttonData[DITALIC].mainObject=this;
 			this->buttonData[DITALIC].userData=DITALIC;
@@ -470,20 +480,20 @@ void LFSTK_fontButtonClass::LFSTK_showDialog(const char *fs)
 
 //navigate
 //line up/down
-			this->buttonUp=new LFSTK_buttonClass(this->dialog,"↑",DWIDTH-DBORDER-(DBUTTONWIDTH/4),buttony,DBUTTONWIDTH/4,DBUTTONHITE,NorthEastGravity);
+			this->buttonUp=new LFSTK_buttonClass(this->dialog,"▲",DWIDTH-DBORDER-(DBUTTONWIDTH/4),buttony,DBUTTONWIDTH/4,DBUTTONHITE,NorthEastGravity);
 			this->buttonData[DUP].mainObject=this;
 			this->buttonData[DUP].userData=DUP;
 			buttonUp->LFSTK_setCallBack(NULL,scrollCB,DIALOGDATA(buttonData[DUP]));
-			buttonDown=new LFSTK_buttonClass(this->dialog,"↓",DWIDTH-DBORDER-((DBUTTONWIDTH/4)*2)-DGAP,buttony,DBUTTONWIDTH/4,DBUTTONHITE,NorthEastGravity);
+			buttonDown=new LFSTK_buttonClass(this->dialog,"▼",DWIDTH-DBORDER-((DBUTTONWIDTH/4)*2)-DGAP,buttony,DBUTTONWIDTH/4,DBUTTONHITE,NorthEastGravity);
 			this->buttonData[DDOWN].mainObject=this;
 			this->buttonData[DDOWN].userData=DDOWN;
 			buttonDown->LFSTK_setCallBack(NULL,scrollCB,DIALOGDATA(buttonData[DDOWN]));
 //page home/end
-			buttonHome=new LFSTK_buttonClass(this->dialog,"⇤",DWIDTH-DBORDER-((DBUTTONWIDTH/4)*3)-DGAP*2,buttony,DBUTTONWIDTH/4,DBUTTONHITE,NorthEastGravity);
+			buttonHome=new LFSTK_buttonClass(this->dialog,"◄",DWIDTH-DBORDER-((DBUTTONWIDTH/4)*3)-DGAP*2,buttony,DBUTTONWIDTH/4,DBUTTONHITE,NorthEastGravity);
 			this->buttonData[DHOME].mainObject=this;
 			this->buttonData[DHOME].userData=DHOME;
 			buttonHome->LFSTK_setCallBack(NULL,scrollCB,DIALOGDATA(buttonData[DHOME]));
-			buttonEnd=new LFSTK_buttonClass(this->dialog,"⇥",DWIDTH-DBORDER-((DBUTTONWIDTH/4)*4)-DGAP*3,buttony,DBUTTONWIDTH/4,DBUTTONHITE,NorthEastGravity);
+			buttonEnd=new LFSTK_buttonClass(this->dialog,"►",DWIDTH-DBORDER-((DBUTTONWIDTH/4)*4)-DGAP*3,buttony,DBUTTONWIDTH/4,DBUTTONHITE,NorthEastGravity);
 			this->buttonData[DEND].mainObject=this;
 			this->buttonData[DEND].userData=DEND;
 			buttonEnd->LFSTK_setCallBack(NULL,scrollCB,DIALOGDATA(buttonData[DEND]));
@@ -498,7 +508,6 @@ void LFSTK_fontButtonClass::LFSTK_showDialog(const char *fs)
 
 //font preview
 			previewEdit=new LFSTK_lineEditClass(this->dialog,DPREVIEWTEXT,DBORDER,buttony,DWIDTH-(DBORDER*2),72,NorthWestGravity);
-
 //dialog buttons
 			button=new LFSTK_buttonClass(this->dialog,"Cancel",DBORDER,DHITE-DBORDER-DBUTTONHITE,DBUTTONWIDTH,DBUTTONHITE,SouthWestGravity);
 			this->buttonData[DCANCEL].mainObject=this;
