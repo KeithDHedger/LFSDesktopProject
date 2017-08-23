@@ -45,32 +45,6 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass()
 {
 }
 
-#if 0
-/**
-* Clear the gadget window to the appropriate state.
-*/
-void LFSTK_menuButtonClass::LFSTK_clearWindow()
-{
-	geometryStruct	g={0,0,this->gadgetGeom.w,this->gadgetGeom.h};
-
-	if(this->isActive==true)
-		{
-			this->drawBox(&g,NORMALCOLOUR,this->style);
-			if(this->useImage==true)
-				this->drawImage();
-			this->LFSTK_drawLabel(NORMALCOLOUR);
-		}
-	else
-		{
-			this->drawBox(&g,INACTIVECOLOUR,this->style);
-			if(this->useImage==true)
-				this->drawImage();
-			this->LFSTK_drawLabel(INACTIVECOLOUR);
-		}
-//	this->drawIndicator(&g,NORMALCOLOUR,DISCLOSURE);
-}
-#endif
-
 /**
 * Mouse down callback.
 * \param e XButtonEvent passed from mainloop->listener.
@@ -126,7 +100,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 			maxwidth+=4;
 			if(addimagespace==true)
 				maxwidth+=this->gadgetDetails.gadgetGeom.h+(this->pad*4);
-
+//TODO//
 			for(int j=0;j<this->menuCount;j++)
 				{
 					if(menus[j].subMenus==NULL)

@@ -98,7 +98,10 @@ void LFSTK_lineEditClass::LFSTK_clearWindow()
 */
 void LFSTK_lineEditClass::LFSTK_setFocus(void)
 {
-	XGrabKeyboard(this->display,this->window,true,GrabModeAsync,GrabModeAsync,CurrentTime);
+//return;
+
+	//XGrabKeyboard(this->display,this->window,true,GrabModeAsync,GrabModeAsync,CurrentTime);
+//	XMapRaised(this->display,this->window);
 	XSetInputFocus(this->display,this->window,RevertToParent,CurrentTime);
 	this->isFocused=true;
 	this->LFSTK_clearWindow();
@@ -209,66 +212,64 @@ const std::string* LFSTK_lineEditClass::LFSTK_getBuffer(void)
 
 void LFSTK_lineEditClass::drawLabel(void)
 {
+	int		cursorwidth;
+	int		startchar=0;
+	int		len=this->cursorPos;
+	char	*buffer;
+	char	*curs="";
+	char	*endchr="";
+	char	*foward;
+
+	cursorwidth=this->LFSTK_getTextWidth(CURSORCHAR);
+	while(this->LFSTK_getTextWidth(this->buffer.substr(startchar,len).c_str())>this->gadgetGeom.w-cursorwidth)
+		{
+			startchar++;
+			len--;
+		}
+
 	cairo_save(this->cr);
 		cairo_reset_clip(this->cr);
 		cairo_set_source_rgba(this->cr,1.0,1.0,1.0,1.0);
 		cairo_paint(this->cr);
+	cairo_restore(this->cr);
 
+	
+	if(this->isFocused==true)
+		curs=CURSORCHAR;
+
+	startchar=0;
+	len=this->cursorPos-startchar;
+
+	while(this->LFSTK_getTextWidth(this->buffer.substr(startchar,len).c_str()) >= this->gadgetGeom.w-cursorwidth)
+		{
+			startchar++;
+			len=this->cursorPos-startchar;
+		}
+
+	if(this->isFocused==true)
+		curs=CURSORCHAR;
+
+	asprintf(&foward,"%s%s",this->buffer.substr(startchar,len).c_str(),curs);
+
+	if(this->LFSTK_getTextWidth(foward) >= this->gadgetGeom.w-cursorwidth-2)
+		asprintf(&buffer,"%s%s",this->buffer.substr(startchar,len).c_str(),curs);
+	else
+		asprintf(&buffer,"%s%s%s",this->buffer.substr(startchar,len).c_str(),curs,this->buffer.substr(this->cursorPos,this->buffer.length()).c_str());
+
+	cairo_save(this->cr);
 		cairo_select_font_face(this->cr,fontName,slant,weight);
 		cairo_set_font_size(this->cr,fontSize);
 		cairo_move_to(this->cr,this->pad,(this->gadgetDetails.gadgetGeom.h/2)-(extents.y_bearing/2));
 		cairo_set_source_rgba(this->cr,0.0,0,0,1.0);
-		cairo_show_text(this->cr,this->buffer.substr(0,this->cursorPos).c_str()); 
-		cairo_show_text(this->cr,"█"); 
-		cairo_show_text(this->cr,this->buffer.substr(this->cursorPos,this->buffer.length()).c_str()); 
+		cairo_show_text(this->cr,buffer);
 	cairo_restore(this->cr);
 
-	return;
-	int startchar=0;
-	int	len=this->buffer.length();
-	int curpos;
-
-	if(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.c_str())<this->gadgetGeom.w-4)
-		{
-			startchar=0;
-			len=this->buffer.length();
-			curpos=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(startchar,this->cursorPos).c_str());
-		}
-	else if(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(0,this->cursorPos).c_str())>this->gadgetGeom.w-4)
-		{
-			startchar=0;
-			len=this->cursorPos;
-			while(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(startchar,len).c_str())>this->gadgetGeom.w-4)
-				{
-					startchar++;
-					len--;
-				}
-			curpos=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(startchar,len).c_str());
-		}
-	else if(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(0,len).c_str())>this->gadgetGeom.w-4)
-		{
-			startchar=0;
-			len=this->buffer.length();
-			while(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(startchar,len).c_str())>this->gadgetGeom.w-4)
-				{
-					len--;
-				}
-			curpos=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(startchar,this->cursorPos).c_str());
-		}
-
-	XftDrawChange(this->wc->draw,this->window);
-	XftDrawStringUtf8(this->wc->draw,&(this->blackXftColour),(XftFont*)(this->font->data),2,(this->gadgetGeom.h/2)+((this->wc->font->ascent-2)/2),(XftChar8 *)this->buffer.substr(startchar,len).c_str(),len);
-
-	if(this->isFocused==true)
-		{
-			XSetForeground(this->display,this->gc,this->blackColour);
-			XDrawLine(this->display,this->window,this->gc,2+curpos,3,2+curpos,this->gadgetGeom.h-3);
-		}
+	free(buffer);
+	free(foward);
 }
 
 void LFSTK_lineEditClass::getClip(void)
 {
-return;
 	Window			selectionOwner;
 	unsigned char	*data=NULL;
 	Atom			type;
@@ -320,12 +321,15 @@ return;
 * Key release callback.
 * \param e XEvent passed from mainloop->listener.
 * \return Return true if event fully handeled or false to pass it on.
+* \note button down callback is used for "Return" key callback.
+* \note button up callback is used for key callback.
 * \note Keysyms here keysymdef.h
 */
 bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 {
 	char	c[255];
 	KeySym	keysym_return;
+	char	*command;
 
 	if(this->isActive==false)
 		{
@@ -342,6 +346,19 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 		{
 			if(keysym_return==XK_v)
 				this->getClip();
+//TODO//
+			if(keysym_return==XK_c)
+				{
+					asprintf(&command,"echo \"%s\"|xclip  -selection clipboard",this->buffer.c_str());
+					system(command);
+					free(command);
+				}
+
+
+			if(keysym_return==XK_Delete)
+				{
+					this->LFSTK_setBuffer("");
+				}
 		}
 	else
 		{
@@ -379,7 +396,10 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 				case XK_Up:
 				case XK_Select ... XK_Num_Lock:
 				case XK_F1 ... XK_R15:
-				case XK_Return://TODO//set a callback for this?
+					break;
+				case XK_Return:
+					if(this->callback.pressCallback!=NULL)
+						return(this->callback.pressCallback(this,this->callback.userData));
 					break;
 
 				default:
@@ -390,8 +410,11 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 					break;
 				}
 		}
-//	printf(">>>%s<<<\n",this->buffer.c_str());
+
 	this->LFSTK_clearWindow();
+	if(this->callback.releaseCallback!=NULL)
+		return(this->callback.releaseCallback(this,this->callback.userData));
+
 	return(true);
 }
 

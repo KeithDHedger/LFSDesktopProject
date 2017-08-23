@@ -56,8 +56,6 @@ bool					makestatic=false;
 LFSTK_windowClass		*wc;
 LFSTK_menuButtonClass	*bc[MAXCATS]={NULL,};
 char					*desktopTheme=NULL;
-LFSTK_windowClass		*twc;
-int						iconSize=16;
 
 void freeData(void)
 {
@@ -71,8 +69,7 @@ void freeData(void)
 						free(mainMenus[j].entry[k].name);
 				}
 		}
-	delete wc;
-	delete twc;
+
 }
 
 bool bcb(void *p,void* ud)
@@ -221,7 +218,7 @@ void setCatagories(void)
 
 									if(foundicon==true)
 										{
-											const char *imagefile=twc->globalLib->LFSTK_findThemedIcon(desktopTheme,foundiconbuffer,"");
+											const char *imagefile=wc->globalLib->LFSTK_findThemedIcon(desktopTheme,foundiconbuffer,"");
 											if(imagefile!=NULL)
 												{
 													//twc->globalLib->LFSTK_setPixmapsFromPath(twc->display,twc->visual,twc->cm,twc->window,imagefile,&mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].pm[0],&mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].pm[1],16);
@@ -243,38 +240,33 @@ void setCatagories(void)
 
 int main(int argc, char **argv)
 {
-	XEvent			event;
-	int				menucount=0;
-	menuItemStruct *ms,*pms;
-	int				sx=0;
-	int				sy=0;
-	Window			dumpwind;
-	int				dumpint;
-	int				win_x_return;
-	int				win_y_return;
-	unsigned int	mask_return;
-	Display			*disp;
-	fontStruct		*tfont;
-	const char		*itemfont;
+	XEvent					event;
+	int						menucount=0;
+	menuItemStruct			*ms,*pms;
+	int						sx=0;
+	int						sy=0;
+	Window					dumpwind;
+	int						dumpint;
+	int						win_x_return;
+	int						win_y_return;
+	unsigned int			mask_return;
+	Display					*disp;
+	const char				*itemfont;
+	LFSTK_menuButtonClass	*test=NULL;
+	int						maxbuttons=0;
 
-	twc=new LFSTK_windowClass(0,0,800,400,"appmenu",true);
-	desktopTheme=twc->globalLib->LFSTK_oneLiner("cat %s/.config/LFS/lfsdesktop.rc|grep icontheme|awk '{print $2}'",getenv("HOME"));
-
-	itemfont=twc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
-	tfont=twc->globalLib->LFSTK_loadFont(twc->display,twc->screen,itemfont);
-	iconSize=tfont->size;
-	free(tfont);
+	wc=new LFSTK_windowClass(0,0,1,1,"appmenu",true,true);
+	desktopTheme=wc->globalLib->LFSTK_oneLiner("cat %s/.config/LFS/lfsdesktop.rc|grep icontheme|awk '{print $2}'",getenv("HOME"));
 
 	setCatagories();
+	printf("mycatcnt=%i\n",mainMenus[0].maxentrys);
 	makestatic=true;
 
-	disp=XOpenDisplay(NULL);
-	if(disp==NULL)
-		exit(1);
+	disp=wc->display;
 
 	if(argc==2)
 		{
-			if(XQueryPointer(disp,DefaultRootWindow(disp),&dumpwind,&dumpwind,&dumpint,&dumpint,&win_x_return,&win_y_return,&mask_return)==true)
+			if(XQueryPointer(wc->display,wc->rootWindow,&dumpwind,&dumpwind,&dumpint,&dumpint,&win_x_return,&win_y_return,&mask_return)==true)
 				{
 					sx=win_x_return-10;
 					sy=win_y_return-10;
@@ -286,29 +278,22 @@ int main(int argc, char **argv)
 			sy=atoi(argv[3]);
 		}
 	terminalCommand=argv[1];
-	delete wc;
-	
-	wc=new LFSTK_windowClass(sx,sy,800,400,"appmenu",true);
-	wc->LFSTK_setDecorated(true);
 
 	sx=0;
 	sy=0;
 
-	int addto=wc->font->ascent+wc->font->descent+8;
+	test=new LFSTK_menuButtonClass(wc,"|",-10,-10,1,1,NorthGravity);
+	int addto=test->LFSTK_getTextHeight("|")+10;
 	int maxwid=0;
 
 	while(myCats[sx]!=NULL)
 		{
-			XftFont *font=(XftFont*)wc->font->data;
-			XGlyphInfo info;
-			
-			XftTextExtentsUtf8(wc->display,font,(XftChar8 *)myCats[sx],strlen(myCats[sx]),&info);
+			if(test->LFSTK_getTextWidth(myCats[sx])>maxwid)
+				maxwid=test->LFSTK_getTextWidth(myCats[sx]);
 			sx++;
-			if((info.width-info.x)>maxwid)
-				maxwid=info.width;
 		}
 
-	maxwid+=8+addto;
+	maxwid+=10+(addto*2);
 	sx=0;
 	sy=0;
 
@@ -318,13 +303,14 @@ int main(int argc, char **argv)
 			bc[j]=NULL;
 			if(mainMenus[j].name!=NULL)
 				{
+				maxbuttons++;
 					bc[menucount]=new LFSTK_menuButtonClass(wc,(char*)mainMenus[j].name,sx,sy,maxwid,addto,0);
 					themeicon=wc->globalLib->LFSTK_findThemedIcon(desktopTheme,catImageNames[j],"categories");
-					bc[menucount]->LFSTK_setLabelGravity(CENTRE);
+					bc[menucount]->LFSTK_setLabelGravity(MENU);
 					if(themeicon!=NULL)
 						{
 							bc[menucount]->LFSTK_setImageFromPath(themeicon,LEFT,true);
-							bc[menucount]->LFSTK_setLabelGravity(LEFT);
+							bc[menucount]->LFSTK_setLabelGravity(MENU);
 						}
 					bc[menucount]->LFSTK_setCallBack(NULL,bcb,NULL);
 					bc[menucount]->LFSTK_setStyle(BEVELOUT);
@@ -347,10 +333,22 @@ int main(int argc, char **argv)
 					menucount++;
 				}
 		}
-	XResizeWindow(wc->display,wc->window,maxwid,sy);
-	wc->LFSTK_resizeWindow(maxwid,sy);
-	wc->LFSTK_clearWindow();
-	XMapWindow(wc->display,wc->window);
+
+	XQueryPointer(wc->display, wc->rootWindow,&dumpwind,&dumpwind,&dumpint,&dumpint,&win_x_return,&win_y_return,&mask_return);
+		{
+			sx=win_x_return-10;
+			sy=win_y_return-10;
+		}
+
+	wc->LFSTK_resizeWindow(maxwid,maxbuttons*addto,true);
+	wc->LFSTK_moveWindow(sx,sy,true);
+	wc->LFSTK_showWindow(true);
+
+	Window					childwindow;
+	int						sinkx;
+	int						sinky;
+	bool					runsub=true;
+	unsigned int			buttonmask;
 
 	mainloop=true;
 	while(mainloop==true)
@@ -364,13 +362,40 @@ int main(int argc, char **argv)
 				{
 					case LeaveNotify:
 						if(event.xany.window==wc->window)
-							mainloop=false;
+							{
+								runsub=true;
+								while(runsub==true)
+									{
+										XQueryPointer(wc->display,wc->window,&dumpwind,&childwindow,&sinkx,&sinky,&sinkx,&sinky,&buttonmask);
+										if(childwindow!=0)
+											runsub=false;
+
+										if((childwindow==0) && (buttonmask != 0))
+											{
+												runsub=false;
+												mainloop=false;
+											}
+//										point.x=subwindowgeom->x+sinkx;
+//										point.y=subwindowgeom->y+sinky;
+//										if(this->wc->globalLib->LFSTK_pointInRect(&point,(geometryStruct*)parentwindowgeom))
+//											{
+//												XSync(this->display,true);
+//												wc->LFSTK_hideWindow();
+//												//wc->gadgetDetails.colour=&this->colourNames[NORMALCOLOUR];
+//												//wc->gadgetDetails.state=NORMALCOLOUR;
+//												//wc->LFSTK_clearWindow();
+//												//wc->inWindow=false;
+//												return(true);
+//											}
+									}
+								wc->LFSTK_clearWindow();
+							}
+						break;
 						break;
 					case Expose:
 						wc->LFSTK_clearWindow();
 						break;
 					case ConfigureNotify:
-						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
 						wc->LFSTK_clearWindow();
 						break;
 				}
@@ -378,7 +403,10 @@ int main(int argc, char **argv)
 
 	if(desktopTheme!=NULL)
 		free(desktopTheme);
-
+	wc->LFSTK_hideWindow();
+	XSync(wc->display,true);
 	freeData();
+	delete wc;
+	XCloseDisplay(disp);
 	return 0;
 }

@@ -638,8 +638,6 @@ JPEG_LIBS
 JPEG_CFLAGS
 CAIRO_LIBS
 CAIRO_CFLAGS
-IMLIB_LIBS
-IMLIB_CFLAGS
 HAVE_DOXYGEN_FALSE
 HAVE_DOXYGEN_TRUE
 DOXYGEN
@@ -810,8 +808,6 @@ XFT_CFLAGS
 XFT_LIBS
 XINERAMA_CFLAGS
 XINERAMA_LIBS
-IMLIB_CFLAGS
-IMLIB_LIBS
 CAIRO_CFLAGS
 CAIRO_LIBS
 JPEG_CFLAGS
@@ -1485,9 +1481,6 @@ Some influential environment variables:
               C compiler flags for XINERAMA, overriding pkg-config
   XINERAMA_LIBS
               linker flags for XINERAMA, overriding pkg-config
-  IMLIB_CFLAGS
-              C compiler flags for IMLIB, overriding pkg-config
-  IMLIB_LIBS  linker flags for IMLIB, overriding pkg-config
   CAIRO_CFLAGS
               C compiler flags for CAIRO, overriding pkg-config
   CAIRO_LIBS  linker flags for CAIRO, overriding pkg-config
@@ -16194,101 +16187,6 @@ if test -z "$HAVE_DOXYGEN_TRUE"; then :
   ac_config_files="$ac_config_files docs/Doxyfile"
 
 fi
-
-IMLIB_MODULES="imlib2 >= 1.4.6"
-
-pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for IMLIB" >&5
-$as_echo_n "checking for IMLIB... " >&6; }
-
-if test -n "$IMLIB_CFLAGS"; then
-    pkg_cv_IMLIB_CFLAGS="$IMLIB_CFLAGS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"\$IMLIB_MODULES\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "$IMLIB_MODULES") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_IMLIB_CFLAGS=`$PKG_CONFIG --cflags "$IMLIB_MODULES" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-if test -n "$IMLIB_LIBS"; then
-    pkg_cv_IMLIB_LIBS="$IMLIB_LIBS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"\$IMLIB_MODULES\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "$IMLIB_MODULES") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_IMLIB_LIBS=`$PKG_CONFIG --libs "$IMLIB_MODULES" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-
-
-
-if test $pkg_failed = yes; then
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
-        _pkg_short_errors_supported=yes
-else
-        _pkg_short_errors_supported=no
-fi
-        if test $_pkg_short_errors_supported = yes; then
-	        IMLIB_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "$IMLIB_MODULES" 2>&1`
-        else
-	        IMLIB_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "$IMLIB_MODULES" 2>&1`
-        fi
-	# Put the nasty error message in config.log where it belongs
-	echo "$IMLIB_PKG_ERRORS" >&5
-
-	as_fn_error $? "Package requirements ($IMLIB_MODULES) were not met:
-
-$IMLIB_PKG_ERRORS
-
-Consider adjusting the PKG_CONFIG_PATH environment variable if you
-installed software in a non-standard prefix.
-
-Alternatively, you may set the environment variables IMLIB_CFLAGS
-and IMLIB_LIBS to avoid the need to call pkg-config.
-See the pkg-config man page for more details." "$LINENO" 5
-elif test $pkg_failed = untried; then
-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
-$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "The pkg-config script could not be found or is too old.  Make sure it
-is in your PATH or set the PKG_CONFIG environment variable to the full
-path to pkg-config.
-
-Alternatively, you may set the environment variables IMLIB_CFLAGS
-and IMLIB_LIBS to avoid the need to call pkg-config.
-See the pkg-config man page for more details.
-
-To get pkg-config, see <http://pkg-config.freedesktop.org/>.
-See \`config.log' for more details" "$LINENO" 5; }
-else
-	IMLIB_CFLAGS=$pkg_cv_IMLIB_CFLAGS
-	IMLIB_LIBS=$pkg_cv_IMLIB_LIBS
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-
-fi
-
-
 
 CAIRO_MODULES="cairo >= 1.12.16"
 

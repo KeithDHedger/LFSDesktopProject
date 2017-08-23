@@ -75,7 +75,6 @@ class LFSTK_windowClass
 		const geometryStruct	*LFSTK_getWindowGeom(void);
 		void					setWindowGeom(int x,int y,int h,int w,setWindowGeomFlags flags);
 
-		unsigned long			LFSTK_setColour(const char *name);
 		void					LFSTK_setFontString(const char *s);
 		void					LFSTK_setFontColourName(int p,const char *colour);
 		void					LFSTK_setWindowColourName(int p,const char* colour);
@@ -133,8 +132,6 @@ class LFSTK_windowClass
 //user dirs
 		const char				*userHome;
 		char					*configDir;
-
-		fontStruct				*font;
 
 		Window					parentWindow;
 		Pixmap					tile[2];

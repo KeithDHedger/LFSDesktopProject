@@ -1,4 +1,13 @@
 0.2.3
+CTRL Delete now clears edit field.
+Fixed check button not updating when set manually.
+Addev CTRL-v/CTRL-c to copy/paste to/from edit box ( needas xclip ).
+Fixed test len exceeding gadget width in line edit.
+Removed imlib references.
+Code clean.
+Fixed double clicking in dfile/folder dialogs.
+Image gadgets now use shaped window.
+Added Defauult dialog, button sizes etc to global defines.
 Added new font dialog button class.
 Fixed visual problems with list/dialog gadgets.
 Fixed folder/file dialog nav buttons crash.

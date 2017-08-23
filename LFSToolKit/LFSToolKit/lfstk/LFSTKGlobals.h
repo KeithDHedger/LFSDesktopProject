@@ -28,20 +28,34 @@
 #include <cairo.h>
 #include <cairo-xlib.h>
 
-#define DEFAULTFONT "sans:size=10"
-#define DISCLOSURESIZE 6
+#define COPYRITE			"Copyright © 2013-2017 K.D.Hedger"
+#define PERSONAL			"keithhedger@keithhedger.darktech.org"
+#define	MYWEBSITE			"http://keithhedger.darktech.org/"
 
-#define USERDATA(x) (void*)(long)x
-#define GETUSERDATA(x) (long)x
+#define DEFAULTFONT			"sans:size=10"
+#define DISCLOSURESIZE		6
 
-#define BUTTONWIDTH 72
-#define BUTTONHITE 24
+#define USERDATA(x)			(void*)(long)x
+#define GETUSERDATA(x)		(long)x
+
+#define DIALOGWIDTH			450
+#define DIALOGHITE			800
+#define DIALOGMIDDLE		DIALOGWIDTH/2
+
+#define GADGETWIDTH			80
+#define GADGETHITE			24
+#define HALFGADGETWIDTH		GADGETWIDTH/2
+
+#define BORDER				16
+#define YSPACING			32
+#define HALFYSPACING		YSPACING/2
+#define BUTTONGRAV			NorthWestGravity
 
 enum {CANCEL=0,APPLY};
 enum {LEFT=0,CENTRE,RIGHT,AUTO,MENU,NONE};
 enum gadgetState {NORMALCOLOUR=0,PRELIGHTCOLOUR,ACTIVECOLOUR,INACTIVECOLOUR,MAXCOLOURS};
 
-enum {BUTTONGADGET=1,MENUBUTTONGADGET,LINEEDITGADGET,LABELGADGET,TOGGLEGADGET,IMAGEGADGET,LISTGADGET,DIALOGGADGET,MENULISTGADGET};
+enum {BUTTONGADGET=1,MENUBUTTONGADGET,LINEEDITGADGET,LABELGADGET,TOGGLEGADGET,IMAGEGADGET,LISTGADGET,DIALOGGADGET};
 enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
 
 enum bevelType {BEVELIN=0,BEVELOUT,BEVELNONE};
@@ -49,55 +63,43 @@ enum indicatorType {CHECK=0,RADIO,PICTURE,DISCLOSURE,NOINDICATOR};
 
 struct args
 {
-	const char*		name;
-	int				type;
-	void*			data;
+	const char*				name;
+	int						type;
+	void*					data;
 };
 
 struct buttonCB
 {
-	bool		(*pressCallback)(void *,void*);
-	bool		(*releaseCallback)(void *,void*);
-	void		*userData;
-	bool		ignoreCallback;
-};
-
-struct fontStruct
-{
-	int			ascent;
-	int			descent;
-	int			size;
-	XftFont		*data;
+	bool					(*pressCallback)(void *,void*);
+	bool					(*releaseCallback)(void *,void*);
+	void					*userData;
+	bool					ignoreCallback;
 };
 
 struct geometryStruct
 {
-	int			x,y;
-	unsigned	w,h;
-	unsigned	monitor;
+	int						x,y;
+	unsigned				w,h;
+	unsigned				monitor;
 };
 
 struct pointStruct
 {
-	int			x,y;
+	int						x,y;
 };
 
 struct	cairoColor
 {
-	double	r,g,b,a;
+	double					r,g,b,a;
 };
 
 struct colourStruct
 {
-	char		*name;
-	long		pixel;
-	XftColor	xftcol;
-	cairoColor	RGBAColour;
-	cairoColor	backColour;
-	cairoColor	foreColour;
+	char					*name;
+	long					pixel;
+	cairoColor				RGBAColour;
 };
 
-struct	gadgetList;
 class	LFSTK_gadgetClass;
 struct	mappedListener
 {
@@ -130,7 +132,6 @@ struct gadgetStruct
 #include "LFSTKMenuButton.h"
 #include "LFSTKLineEdit.h"
 #include "LFSTKToggleButton.h"
-#include "LFSTKFontButton.h"
 #include "LFSTKListGadget.h"
 #include "LFSTKFileDialog.h"
 #include "LFSTKFontDialog.h"

@@ -23,9 +23,9 @@
 #define _LFSTKLINEEDIT_
 
 #include <string>
-
 #include <X11/Xatom.h>
 
+#define CURSORCHAR "█"
 /**
  *
  * \brief Line edit class for LFSToolKit.

@@ -22,15 +22,12 @@
 #ifndef _LFSTKFILEDIALOG_
 #define _LFSTKFILEDIALOG_
 
-#define FWIDTH 600
-#define FHITE 400
-#define FBORDER 8
 #define FGAP 4
 #define FNAVBUTTONWID 24
-#define FNAVBUTTONHITE 24
+#define FNAVGADGETHITE 24
 #define FICONSIZE 22
-#define FFILEHITE 8
-#define FDIRHITE 5
+#define FFILEHITE 10
+#define FDIRHITE 10
 
 class LFSTK_fileDialogClass
 {

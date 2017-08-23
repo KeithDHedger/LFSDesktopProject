@@ -578,12 +578,13 @@ int main(int argc,char **argv)
 	rootWin=DefaultRootWindow(display);
 	visual=DefaultVisual(display,screen);
 	cm=DefaultColormap(display,screen);
-
+printf("00000\n");
 	createDesktopWindow();
 
 //disks
 	diskWindow=new LFSTK_windowClass(0,0,64,128,"xxx",true,true);
-	addto=diskWindow->font->ascent+diskWindow->font->descent+8;
+//	addto=diskWindow->font->ascent+diskWindow->font->descent+8;
+addto=32;
 
 	for(int j=BUTTONMOUNT;j<=BUTTONREMOVEICON;j++)
 		{
@@ -595,15 +596,16 @@ int main(int argc,char **argv)
 				diskIconData[j-1]=NULL;
 		}
 
-	while(diskLabelData[buttoncnt]!=NULL)
-		{
-			XftFont *font=(XftFont*)diskWindow->font->data;
-			XGlyphInfo info;
-			XftTextExtentsUtf8(diskWindow->display,font,(XftChar8 *)diskLabelData[buttoncnt],strlen(diskLabelData[buttoncnt]),&info);
-			buttoncnt++;
-			if((info.width-info.x)>maxwid)
-				maxwid=info.width;
-		}
+//	while(diskLabelData[buttoncnt]!=NULL)
+//		{
+//			XftFont *font=(XftFont*)diskWindow->font->data;
+//			XGlyphInfo info;
+//			XftTextExtentsUtf8(diskWindow->display,font,(XftChar8 *)diskLabelData[buttoncnt],strlen(diskLabelData[buttoncnt]),&info);
+//			buttoncnt++;
+//			if((info.width-info.x)>maxwid)
+//				maxwid=info.width;
+//		}
+maxwid=32;
 	maxwid+=24+4;
 
 	buttoncnt=0;
@@ -634,19 +636,22 @@ int main(int argc,char **argv)
 	maxwid=0;
 
 	fileWindow=new LFSTK_windowClass(0,0,64,128,"xxx",true,true);
-	addto=fileWindow->font->ascent+fileWindow->font->descent+8;
+//	addto=fileWindow->font->ascent+fileWindow->font->descent+8;
+addto=32;
 	buttoncnt=3;
 	sy=0;
-	while(diskLabelData[buttoncnt]!=NULL)
-		{
-			XftFont *font=(XftFont*)fileWindow->font->data;
-			XGlyphInfo info;
-			XftTextExtentsUtf8(fileWindow->display,font,(XftChar8 *)diskLabelData[buttoncnt],strlen(diskLabelData[buttoncnt]),&info);
-			buttoncnt++;
-			if((info.width-info.x)>maxwid)
-				maxwid=info.width;
-		}
+//	while(diskLabelData[buttoncnt]!=NULL)
+//		{
+//			XftFont *font=(XftFont*)fileWindow->font->data;
+//			XGlyphInfo info;
+//			XftTextExtentsUtf8(fileWindow->display,font,(XftChar8 *)diskLabelData[buttoncnt],strlen(diskLabelData[buttoncnt]),&info);
+//			buttoncnt++;
+//			if((info.width-info.x)>maxwid)
+//				maxwid=info.width;
+//		}
+maxwid=32;
 	maxwid+=24+4;
+printf("9999999\n");
 
 	buttoncnt=3;
 	while(diskLabelData[buttoncnt]!=NULL)

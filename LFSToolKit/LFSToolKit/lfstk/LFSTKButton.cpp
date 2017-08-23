@@ -49,10 +49,10 @@ void LFSTK_buttonClass::LFSTK_setStyle(bevelType s)
 	this->style=s;
 }
 
-/**
-* Ignore callbacks.
-* \param ignore.
-*/
+///**
+//* Ignore callbacks.
+//* \param ignore.
+//*/
 void LFSTK_buttonClass::LFSTK_setIgnoreCB(bool ignore)
 {
 	this->callback.ignoreCallback=ignore;
@@ -81,8 +81,7 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* lab
 {
 	XSetWindowAttributes	wa;
 	mappedListener			*ml=new mappedListener;
-//this->autoLabelColour=this->wc->autoLabelColour;
-//this->autoLabelColour=true;
+
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 
 	wa.win_gravity=gravity;

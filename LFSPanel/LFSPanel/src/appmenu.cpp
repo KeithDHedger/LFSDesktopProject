@@ -313,7 +313,7 @@ void addCatagories(void)
 			if(ftw("/usr/share/applications",ftwCatCallback,16)==1)
 				{
 					catagorySubMenus[catagoryCnt]=new menuItemStruct[MAXENTRYS];
-					catagoryMenus[catagoryCnt].label=myCats[catcnt];
+					catagoryMenus[catagoryCnt].label=(char*)myCats[catcnt];
 					catagoryMenus[catagoryCnt].userData=NULL;
 					catagoryMenus[catagoryCnt].bc=NULL;
 					catagoryMenus[catagoryCnt].subMenus=NULL;
@@ -335,7 +335,7 @@ void addExtras(void)
 {
 	const char	*iconpath=NULL;
 
-	catagoryMenus[catagoryCnt].label="--";
+	catagoryMenus[catagoryCnt].label=(char*)"--";
 	catagoryMenus[catagoryCnt].userData=NULL;
 	catagoryMenus[catagoryCnt].bc=NULL;
 	catagoryMenus[catagoryCnt].subMenus=NULL;
@@ -343,7 +343,7 @@ void addExtras(void)
 	catagoryMenus[catagoryCnt].imagePath=NULL;
 	catagoryCnt++;
 
-	catagoryMenus[catagoryCnt].label="About LFS Desktop";
+	catagoryMenus[catagoryCnt].label=(char*)"About LFS Desktop";
 	catagoryMenus[catagoryCnt].userData=(void*)-1;
 	catagoryMenus[catagoryCnt].bc=NULL;
 	catagoryMenus[catagoryCnt].subMenus=NULL;

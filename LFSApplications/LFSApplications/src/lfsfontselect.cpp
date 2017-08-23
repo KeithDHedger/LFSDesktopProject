@@ -30,8 +30,8 @@
 #define BORDER 8
 #define GAP 4
 #define MAXPREVIEW 6
-#define BUTTONHITE 24
-#define BUTTONWIDTH 72
+#define GADGETHITE 24
+#define GADGETWIDTH 72
 
 #define USERDATA(x) (void*)(long)x
 #define LFSTKGADGET(x) static_cast<LFSTK_gadgetClass*>(x)
@@ -289,45 +289,45 @@ int main(int argc, char **argv)
 //font select buttons
 	for(int j=0;j<MAXPREVIEW;j++)
 		{
-			previews[j]=new LFSTK_buttonClass(mainWindow,fontsAZ[j+fontOffset],BORDER,buttony,WIDTH-(BORDER*2),BUTTONHITE,NorthWestGravity);
+			previews[j]=new LFSTK_buttonClass(mainWindow,fontsAZ[j+fontOffset],BORDER,buttony,WIDTH-(BORDER*2),GADGETHITE,NorthWestGravity);
 			previews[j]->LFSTK_setColourName(INACTIVECOLOUR,"white");
 			previews[j]->LFSTK_setFontColourName(INACTIVECOLOUR,"black");
 			previews[j]->LFSTK_setFontString(fontsAZ[j+fontOffset]);
 			previews[j]->LFSTK_setCallBack(NULL,selectFontCB,USERDATA((j)));
-			buttony+=BUTTONHITE+GAP;
+			buttony+=GADGETHITE+GAP;
 		}
 //style buttons
-	gadgetwidth=mainWindow->globalLib->LFSTK_getTextwidth(mainWindow->display,lfstkfontstruct->data,"Bold")+BUTTONHITE;
-	toggle=new LFSTK_toggleButtonClass(mainWindow,"Bold",BORDER,buttony,gadgetwidth,BUTTONHITE,NorthWestGravity);
+	gadgetwidth=mainWindow->globalLib->LFSTK_getTextwidth(mainWindow->display,lfstkfontstruct->data,"Bold")+GADGETHITE;
+	toggle=new LFSTK_toggleButtonClass(mainWindow,"Bold",BORDER,buttony,gadgetwidth,GADGETHITE,NorthWestGravity);
 	toggle->LFSTK_setValue(isBold);
 	toggle->LFSTK_setCallBack(NULL,styleCB,USERDATA(BOLD));
-	gadgetwidth=mainWindow->globalLib->LFSTK_getTextwidth(mainWindow->display,lfstkfontstruct->data,"Italic")+BUTTONHITE;
-	toggle=new LFSTK_toggleButtonClass(mainWindow,"Italic",BORDER+BUTTONWIDTH+GAP,buttony,gadgetwidth,BUTTONHITE,NorthWestGravity);
+	gadgetwidth=mainWindow->globalLib->LFSTK_getTextwidth(mainWindow->display,lfstkfontstruct->data,"Italic")+GADGETHITE;
+	toggle=new LFSTK_toggleButtonClass(mainWindow,"Italic",BORDER+GADGETWIDTH+GAP,buttony,gadgetwidth,GADGETHITE,NorthWestGravity);
 	toggle->LFSTK_setValue(isItalic);
 	toggle->LFSTK_setCallBack(NULL,styleCB,USERDATA(ITALIC));
 
 //navigate
-	button=new LFSTK_buttonClass(mainWindow,"↑",WIDTH-BORDER-(BUTTONWIDTH/4),buttony,BUTTONWIDTH/4,BUTTONHITE,NorthEastGravity);
+	button=new LFSTK_buttonClass(mainWindow,"↑",WIDTH-BORDER-(GADGETWIDTH/4),buttony,GADGETWIDTH/4,GADGETHITE,NorthEastGravity);
 	button->LFSTK_setCallBack(NULL,scrollCB,USERDATA(0));
-	button=new LFSTK_buttonClass(mainWindow,"↓",WIDTH-BORDER-((BUTTONWIDTH/4)*2)-GAP,buttony,BUTTONWIDTH/4,BUTTONHITE,NorthEastGravity);
+	button=new LFSTK_buttonClass(mainWindow,"↓",WIDTH-BORDER-((GADGETWIDTH/4)*2)-GAP,buttony,GADGETWIDTH/4,GADGETHITE,NorthEastGravity);
 	button->LFSTK_setCallBack(NULL,scrollCB,USERDATA(1));
-	buttony+=BUTTONHITE+GAP;
+	buttony+=GADGETHITE+GAP;
 
 //size
-	label=new LFSTK_labelClass(mainWindow,"Font Size",BORDER,buttony,BUTTONWIDTH,BUTTONHITE,NorthWestGravity);
+	label=new LFSTK_labelClass(mainWindow,"Font Size",BORDER,buttony,GADGETWIDTH,GADGETHITE,NorthWestGravity);
 	label->LFSTK_setLabelGravity(0);
 
-	fontSizeEdit=new LFSTK_lineEditClass(mainWindow,fontSize,BORDER+BUTTONWIDTH+GAP,buttony,BUTTONWIDTH,BUTTONHITE,NorthWestGravity);
-	buttony+=BUTTONHITE+GAP;
+	fontSizeEdit=new LFSTK_lineEditClass(mainWindow,fontSize,BORDER+GADGETWIDTH+GAP,buttony,GADGETWIDTH,GADGETHITE,NorthWestGravity);
+	buttony+=GADGETHITE+GAP;
 
 //font preview
 	previewEdit=new LFSTK_lineEditClass(mainWindow,PREVIEWTEXT,BORDER,buttony,WIDTH-(BORDER*2),72,NorthWestGravity);
 	previewEdit->LFSTK_setFontString(fontsAZ[currentFont]);
 
 //dialog buttons
-	button=new LFSTK_buttonClass(mainWindow,"Cancel",BORDER,HITE-BORDER-BUTTONHITE,BUTTONWIDTH,BUTTONHITE,SouthWestGravity);
+	button=new LFSTK_buttonClass(mainWindow,"Cancel",BORDER,HITE-BORDER-GADGETHITE,GADGETWIDTH,GADGETHITE,SouthWestGravity);
 	button->LFSTK_setCallBack(NULL,dialogCB,USERDATA(CANCEL));
-	button=new LFSTK_buttonClass(mainWindow,"Apply",WIDTH-BORDER-BUTTONWIDTH,HITE-BORDER-BUTTONHITE,BUTTONWIDTH,BUTTONHITE,SouthEastGravity);
+	button=new LFSTK_buttonClass(mainWindow,"Apply",WIDTH-BORDER-GADGETWIDTH,HITE-BORDER-GADGETHITE,GADGETWIDTH,GADGETHITE,SouthEastGravity);
 	button->LFSTK_setCallBack(NULL,dialogCB,USERDATA(APPLY));
 
 	buildFontString();

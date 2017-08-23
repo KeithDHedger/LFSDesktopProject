@@ -86,10 +86,10 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = lfstkprefs$(EXEEXT) lfswmprefs$(EXEEXT) \
-	lfsdesktopprefs$(EXEEXT) lfsappearance$(EXEEXT) \
-	lfsbackdropprefs$(EXEEXT) lfspanelprefs$(EXEEXT) \
-	lfsabout$(EXEEXT) lfsruncommand$(EXEEXT)
+bin_PROGRAMS = lfstkprefs$(EXEEXT) lfsappearance$(EXEEXT) \
+	lfsdesktopprefs$(EXEEXT) lfsabout$(EXEEXT) lfswmprefs$(EXEEXT) \
+	lfsruncommand$(EXEEXT) lfsbackdropprefs$(EXEEXT) \
+	lfspanelprefs$(EXEEXT)
 subdir = LFSApplications/app
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac

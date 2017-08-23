@@ -22,6 +22,9 @@
 
 LFSTK_imageClass::~LFSTK_imageClass()
 {
+	XFreePixmap(this->display,shape);
+	cairo_surface_destroy(this->shapesfc);
+	cairo_destroy(this->shapecr);
 }
 
 LFSTK_imageClass::LFSTK_imageClass()
@@ -73,9 +76,11 @@ bool LFSTK_imageClass::mouseDrag(XMotionEvent *e)
 		{
 			this->gadgetGeom.x+=e->x-this->mouseDownX;
 			this->gadgetGeom.y+=e->y-this->mouseDownY;
-			
-			this->gadgetGeom.x=(this->gadgetGeom.x/this->snap)*this->snap;
-			this->gadgetGeom.y=(this->gadgetGeom.y/this->snap)*this->snap;
+			if(this->snap>1)
+				{
+					this->gadgetGeom.x=(this->gadgetGeom.x/this->snap)*this->snap;
+					this->gadgetGeom.y=(this->gadgetGeom.y/this->snap)*this->snap;
+				}
 			XMoveWindow(this->display,this->window,this->gadgetGeom.x,this->gadgetGeom.y);
 		}
 	return(true);
@@ -96,7 +101,6 @@ void LFSTK_imageClass::LFSTK_setCanDrag(bool candrag)
 *
 * \return Draggable.
 */
-
 bool LFSTK_imageClass::LFSTK_getCanDrag(void)
 {
 	return(this->canDrag);
@@ -110,6 +114,31 @@ bool LFSTK_imageClass::LFSTK_getCanDrag(void)
 void LFSTK_imageClass::LFSTK_snapSize(int sze)
 {
 	this->snap=sze;
+}
+
+/**
+* Clear the image window ans set shape.
+*/
+void LFSTK_imageClass::LFSTK_clearWindow(void)
+{
+	cairo_save(this->cr);
+		cairo_reset_clip(this->cr);
+		cairo_set_source_surface(this->cr,this->cImage,0,0);
+		cairo_paint(this->cr);
+	cairo_restore(this->cr);
+
+	cairo_save(this->shapecr);
+		cairo_reset_clip(this->shapecr);
+		cairo_set_operator(this->shapecr,CAIRO_OPERATOR_CLEAR);
+		cairo_rectangle(this->shapecr,0,0,this->gadgetGeom.w,this->gadgetGeom.h);
+		cairo_fill(this->shapecr);
+		cairo_set_operator(this->shapecr,CAIRO_OPERATOR_OVER);
+		cairo_mask_surface(this->shapecr,this->cImage,0,0);
+	cairo_restore(this->shapecr);
+
+	XShapeCombineMask(this->display,this->window,ShapeBounding,0,0,cairo_xlib_surface_get_drawable(shapesfc),ShapeSet);
+	XFlush(this->display);
+	XSync(this->display,false);
 }
 
 /**
@@ -131,10 +160,8 @@ LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* image
 	wa.win_gravity=gravity;
 	wa.save_under=true;
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,this->gadgetGeom.h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWSaveUnder,&wa);
-
 	this->gc=XCreateGC(this->display,this->window,0,NULL);
-	this->sfc=cairo_xlib_surface_create(this->display,this->window,this->visual,this->gadgetGeom.w,this->gadgetGeom.h);
-	this->cr=cairo_create(sfc);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_setCairoFontData();
 	XSelectInput(this->display,this->window,ButtonPressMask|ButtonReleaseMask|ExposureMask|ButtonMotionMask);
 
@@ -146,4 +173,8 @@ LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* image
 	this->LFSTK_setImageFromPath(imagepath,gravity,scale);
 	this->useTile=this->wc->useTile;
 	gadgetDetails={&this->wc->windowColourNames[NORMALCOLOUR],BEVELNONE,NOINDICATOR,NULL,NORMALCOLOUR,0,false,{0,0,w,h},{0,0,0,0},false};
+
+	this->shape=XCreatePixmap(this->display,this->window,w,h,1);
+	this->shapesfc=cairo_xlib_surface_create_for_bitmap(this->display,this->shape,DefaultScreenOfDisplay(this->display),w,h);
+	this->shapecr=cairo_create(shapesfc);
 }

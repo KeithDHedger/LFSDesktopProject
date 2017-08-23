@@ -213,23 +213,10 @@ void LFSTK_windowClass::loadGlobalColours(void)
 }
 
 /**
-* Set colour from name.
-* \param name Colour name eg "#ff00ff".
-* \return Pixel colour.
-*/
-unsigned long LFSTK_windowClass::LFSTK_setColour(const char *name)
-{
-	XColor tc,sc;
-	XAllocNamedColor(this->display,this->cm,name,&sc,&tc);
-	return sc.pixel;
-}
-
-/**
 * Clear the window to the appropriate state.
 */
 void LFSTK_windowClass::LFSTK_clearWindow(void)
 {
-#if 1
 	int	state=NORMALCOLOUR;
 
 	if(this->isActive==false)
@@ -250,32 +237,6 @@ void LFSTK_windowClass::LFSTK_clearWindow(void)
 				cairo_paint(this->cr);
 			cairo_restore(this->cr);
 		}
-
-return;
-#else
-
-
-	if(this->useTile==true)
-		{
-			XSetClipMask(this->display,this->gc,None);
-			XSetTSOrigin(this->display,this->gc,0,0);
-			XSetFillStyle(this->display,this->gc,FillTiled);
-			XSetTile(this->display,this->gc,this->tile[0]);
-			XFillRectangle(this->display,this->window,this->gc,0,0,this->windowGeom.w,this->windowGeom.h);
-		}
-	else
-		{
-			XSetFillStyle(this->display,this->gc,FillSolid);
-			XSetClipMask(this->display,this->gc,None);
-			if(this->isActive==true)
-				{
-					XSetForeground(this->display,this->gc,this->windowColourNames[NORMALCOLOUR].pixel);
-				}
-			else
-				XSetForeground(this->display,this->gc,this->windowColourNames[INACTIVECOLOUR].pixel);
-			XFillRectangle(this->display,this->window,this->gc,0,0,this->windowGeom.w,this->windowGeom.h);
-		}
-#endif
 }
 
 /**
@@ -319,7 +280,6 @@ void LFSTK_windowClass::LFSTK_setFontString(const char *s)
 	if(this->fontString!=NULL)
 		free(this->fontString);
 	this->fontString=strdup(s);
-//	this->font=this->globalLib->LFSTK_loadFont(this->display,this->screen,s);
 }
 
 /**
@@ -655,7 +615,7 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 		}
 
 
-	XSelectInput(this->display,this->window,StructureNotifyMask|ButtonPressMask | ButtonReleaseMask | ExposureMask|LeaveWindowMask|FocusChangeMask);
+	XSelectInput(this->display,this->window,SubstructureRedirectMask|StructureNotifyMask|ButtonPressMask | ButtonReleaseMask | ExposureMask|LeaveWindowMask|FocusChangeMask);
 
 	XSetWMProtocols(this->display,this->window,&wm_delete_window,1);
 	xa=XInternAtom(this->display,"_NET_WM_ALLOWED_ACTIONS",False);
@@ -698,9 +658,25 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 */
 void LFSTK_windowClass::LFSTK_showWindow(bool all)
 {
+	XEvent xev;
+	XWindowAttributes wattr;
+
 	if(all==true)
 		XMapSubwindows(this->display,this->window);
 	XMapRaised(this->display,this->window);
+#if 1	
+	memset(&xev,0,sizeof(xev));
+	xev.type=ClientMessage;
+	xev.xclient.display=this->display;
+	xev.xclient.window=this->window;
+	xev.xclient.message_type=XInternAtom(this->display,"_NET_ACTIVE_WINDOW",false);
+	xev.xclient.format=32;
+	xev.xclient.data.l[0]=2L;
+	xev.xclient.data.l[1]=CurrentTime;
+
+	XGetWindowAttributes(this->display,this->window,&wattr);
+	XSendEvent(this->display,wattr.screen->root,false,SubstructureNotifyMask|SubstructureRedirectMask,&xev);
+#endif
 }
 
 /**
@@ -743,22 +719,22 @@ const monitorStruct* LFSTK_windowClass::LFSTK_getMonitors(void)
 */
 void LFSTK_windowClass::LFSTK_setTile(const char *path,int size)
 {
-/*
-				pattern=cairo_pattern_create_for_surface(images[imagenum]);
-				cairo_pattern_set_extend (pattern,CAIRO_EXTEND_REPEAT);
-				cairo_save(mainWindowContext);
-					cairo_set_source(mainWindowContext,pattern);
-					cairo_paint(mainWindowContext);
-				cairo_restore(mainWindowContext);
-				cairo_pattern_destroy(pattern);
+	if(this->pattern!=NULL)
+		{
+			cairo_pattern_destroy(this->pattern);
+			this->pattern=NULL;
+		}
+	if(path==NULL)
+		{
+			this->useTile=false;
+			return;
+		}
 
-*/
 	cairo_surface_t	*tempimage;
 	cairo_status_t	cs=CAIRO_STATUS_SUCCESS;
 	tempimage=cairo_image_surface_create_from_png(path);
 	cs=cairo_surface_status(tempimage);
 	if(cs==CAIRO_STATUS_SUCCESS)
-	//if(this->globalLib->LFSTK_setPixmapsFromPath(this->display,this->visual,this->cm,this->window,path,&this->tile[0],&this->tile[1],size)==true)
 		{
 			this->pattern=cairo_pattern_create_for_surface(tempimage);
 			cairo_surface_destroy(tempimage);
@@ -1098,10 +1074,4 @@ void LFSTK_windowClass::setWindowGeom(int x,int y,int w,int h,setWindowGeomFlags
 			this->windowGeom.h=h;
 		}
 }
-
-
-
-
-
-
 

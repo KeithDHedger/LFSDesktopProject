@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Mon  7 Sep 13:20:24 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Thu 17 Aug 15:46:21 BST 2017 kdhedger68713@gmail.com
 
  * This file (lfswmprefs.cpp) is part of LFSApplications.
 
@@ -18,212 +18,176 @@
  * along with LFSApplications.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <getopt.h>
+#include <libgen.h>
 
-#include <lfstk/LFSTKGlobals.h>
+#include "lfstk/LFSTKGlobals.h"
 
-#define BWIDTH 104
-#define subscnt 26
+#define MAXMENUS			5
+#define EDITBOXWIDTH		GADGETWIDTH*4
 
-enum {BACTIVEFRAME=0,BACTIVEFILL,BINACTIVEFRAME,BINACTIVEFILL,BWIDGETCOLOUR,NOMOREBUTTONS};
-enum {EACTIVEFRAME=0,EACTIVEFILL,EINACTIVEFRAME,EINACTIVEFILL,EWIDGETCOLOUR,ETHEMEPATH,ETERMCOMMAND,EPLACEMENT,ENUMDESKS,ELIVEUPDATE,NOMOREEDITS};
-enum {ACTIVEFRAME=0,ACTIVEFRAMEFILL,INACTIVEFRAME,INACTIVEFRAMEFILL,TEXTCOLOUR};
-enum {EXIT=0,APPLY,PRINT,NOMORE};
-enum {THEMELABEL=0,TERMLABEL,PLACELABEL,DESKLABEL,UPDATELABEL,LSPACER,NOMORELABELS};
-enum places {NOPLACE=0,UNDERMOUSE,CENTREMMONITOR,CENTRESCREEN,MOUSEMONITOR,NOMOREPLACES};
+LFSTK_windowClass		*wc=NULL;
+LFSTK_labelClass		*label=NULL;
+LFSTK_labelClass		*personal=NULL;
+LFSTK_labelClass		*copyrite=NULL;
+LFSTK_buttonClass		*seperator=NULL;
+LFSTK_buttonClass		*quit=NULL;
+LFSTK_buttonClass		*test=NULL;
+LFSTK_buttonClass		*apply=NULL;
 
-const char				*buttonnames[]= {"Active Frame","Active Fill","Inactive Frame","Inactive Fill","Text Colour"};
-const char				*labelnames[]= {"Theme Name","Term Command"," Place Windows","Desktops", "Update","--"};
-const char				*placeNames[]={"Smart Place On Screen","Under Mouse","Centre On Monitor With Mouse","Centre On Screen","Smart Place On Monitor With Mouse"};
+//preview colours
+LFSTK_buttonClass		*previewButtons[5]={NULL,};
+LFSTK_lineEditClass		*previeColourEdit[5]={NULL,};
+const char				*previewButtonLabels[5]={"Active Frame","Active Fill","Inactive Frame","Inactive Fill","Widget Colour"};
+
+//theme
+LFSTK_fileDialogClass	*themeFolder=NULL;
+LFSTK_buttonClass		*themeButton=NULL;
+LFSTK_lineEditClass		*themeEdit=NULL;
+
+LFSTK_lineEditClass		*terminalEdit=NULL;
+
+
+LFSTK_lineEditClass		*deskCountEdit=NULL;
+LFSTK_lineEditClass		*refreshEdit=NULL;
+
+LFSTK_fontDialogClass	*fontSelector=NULL;
+LFSTK_lineEditClass		*fontEdit=NULL;
+
+bool					mainLoop=true;
+Display					*display;
+char					*envFile=NULL;
+char					*wd=NULL;
+
+//placement
+LFSTK_menuButtonClass	*placeWindowMenu=NULL;
+LFSTK_lineEditClass		*placeWindowEdit=NULL;
+menuItemStruct			*placementMenus;
+const char				*placementMenuNames[]={"Smart Place On Screen","Under Mouse","Centre On Monitor With Mouse","Centre On Screen","Smart Place On Monitor With Mouse"};
 
 //prefs
-int						placement=0;
-char					*titleFont=NULL;
-char					*numberOfDesktops=NULL;
-char					*liveUpdate=NULL;
-char					*pathToTheme=NULL;
-char					*terminalCommand=NULL;
+char					*prefsColours[5]={NULL,};
+char					*prefsFont=NULL;
+char					*prefsTheme=NULL;
+char					*prefsTermCommand=NULL;
+int						prefsPlacement=2;
+int						prefsPlacementTemp=2;
+int						prefsDeskCnt=6;
+int						prefsRefresh=15;
 
-char					*fontColours[5];
-int						doswapdesk=-1;
-int						parentWindow=-1;
-
-
-menuItemStruct			*placeMenu;
-
-LFSTK_lineEditClass		*fontEdit;
-LFSTK_labelClass		*text;
-LFSTK_fileDialogClass	*fc;
-LFSTK_buttonClass		*button;
-
-char					*holdFont;
-
-args					wmPrefs[]=
+args					lfsWMPrefs[]=
 {
-	{"wmactive_frame",TYPESTRING,&fontColours[ACTIVEFRAME]},
-	{"wmactive_fill",TYPESTRING,&fontColours[ACTIVEFRAMEFILL]},
-	{"wminactive_frame",TYPESTRING,&fontColours[INACTIVEFRAME]},
-	{"wminactive_fill",TYPESTRING,&fontColours[INACTIVEFRAMEFILL]},
-	{"widgetcolour",TYPESTRING,&fontColours[TEXTCOLOUR]},
-	{"placement",TYPEINT,&placement},
-	{"titlefont",TYPESTRING,&titleFont},
-	{"desktops",TYPESTRING,&numberOfDesktops},
-	{"liveupdate",TYPESTRING,&liveUpdate},
-	{"theme",TYPESTRING,&pathToTheme},
-	{"termcommand",TYPESTRING,&terminalCommand},
+	{"wmactive_frame",TYPESTRING,&prefsColours[0]},
+	{"wmactive_fill",TYPESTRING,&prefsColours[1]},
+	{"wminactive_frame",TYPESTRING,&prefsColours[2]},
+	{"wminactive_fill",TYPESTRING,&prefsColours[3]},
+	{"widgetcolour",TYPESTRING,&prefsColours[4]},
+	{"titlefont",TYPESTRING,&prefsFont},
+	{"theme",TYPESTRING,&prefsTheme},
+	{"termcommand",TYPESTRING,&prefsTermCommand},
+	{"placement",TYPEINT,&prefsPlacement},
+	{"desktops",TYPEINT,&prefsDeskCnt},
+	{"liveupdate",TYPEINT,&prefsRefresh},
 	{NULL,0,NULL}
 };
 
-bool					mainloop=false;
-LFSTK_windowClass		*wc;
-LFSTK_buttonClass		*bc[NOMOREBUTTONS]= {NULL,};
-LFSTK_buttonClass		*guibc[NOMORE]={NULL,};
-LFSTK_lineEditClass		*le[NOMOREEDITS]= {NULL,};
-LFSTK_labelClass		*lb[NOMORELABELS]= {NULL,};
-LFSTK_menuButtonClass	*mb=NULL;
-
-char					*env;
-
-void placeToString(long place)
+bool doQuit(void *p,void* ud)
 {
-	le[EPLACEMENT]->LFSTK_setBuffer(placeNames[place]);
-	le[EPLACEMENT]->LFSTK_clearWindow();
+	mainLoop=false;
+	XFlush(wc->display);
+	XSync(wc->display,true);
+	return(false);
 }
 
-void setVars(void)
+bool buttonCB(void *p,void* ud)
 {
-	for(int j=BACTIVEFRAME; j<NOMOREBUTTONS; j++)
-		if(bc[j]!=NULL)
-			{
-				bc[j]->LFSTK_setColourName(INACTIVECOLOUR,le[j]->LFSTK_getBuffer()->c_str());
-				bc[j]->LFSTK_clearWindow();
-			}
-	for(int j=EACTIVEFRAME; j<ETHEMEPATH; j++)
-		if(le[j]!=NULL)
-			{
-				if(fontColours[j]!=NULL)
-					free(fontColours[j]);
-				fontColours[j]=strdup((char*)le[j]->LFSTK_getBuffer()->c_str());
-				le[j]->LFSTK_clearWindow();
-			}
-	for(int j=THEMELABEL; j<NOMORELABELS; j++)
-		if(lb[j]!=NULL)
-			lb[j]->LFSTK_clearWindow();
+	const fontDataStruct	*fd;
+	char					*buffer;
 
-	if(numberOfDesktops!=NULL)
-		free(numberOfDesktops);
-	numberOfDesktops=strdup(static_cast<const char*>(le[ENUMDESKS]->LFSTK_getBuffer()->c_str()));
-	if(liveUpdate!=NULL)
-		free(liveUpdate);
-	liveUpdate=strdup(static_cast<const char*>(le[ELIVEUPDATE]->LFSTK_getBuffer()->c_str()));
-	if(pathToTheme!=NULL)
-		free(pathToTheme);
-	pathToTheme=strdup(static_cast<const char*>(le[ETHEMEPATH]->LFSTK_getBuffer()->c_str()));
-	if(terminalCommand!=NULL)
-		free(terminalCommand);
-	terminalCommand=strdup(static_cast<const char*>(le[ETERMCOMMAND]->LFSTK_getBuffer()->c_str()));
+	if(ud!=NULL)
+		{
+			if(strcmp((char*)ud,"SELECTFONT")==0)
+				{
+					fontSelector->LFSTK_showDialog("");
+					fd=fontSelector->LFSTK_getFontData(false);
+					if(fd->isValid==true)
+						fontEdit->LFSTK_setBuffer(fd->fontString);
+					return(true);
+				}
+
+			if(strcmp((char*)ud,"SELECTTHEME")==0)
+				{
+					themeFolder->LFSTK_showFileDialog(wd,"Select Theme Folder");
+					if(themeFolder->LFSTK_isValid()==true)
+						{
+							asprintf(&buffer,"%s",themeFolder->LFSTK_getCurrentDir());
+							themeEdit->LFSTK_setBuffer(basename(buffer));
+							free(buffer);
+							free(wd);
+							wd=strdup(themeFolder->LFSTK_getCurrentDir());		
+						}
+					return(true);
+				}
+
+			if(strcmp((char*)ud,"TEST")==0)
+				{
+					for(int j=0;j<5;j++)
+						{
+							previewButtons[j]->LFSTK_setColourName(NORMALCOLOUR,previeColourEdit[j]->LFSTK_getBuffer()->c_str());
+							previewButtons[j]->LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
+							previewButtons[j]->LFSTK_clearWindow();
+						}
+					return(true);
+				}
+			if(strcmp((char*)ud,"APPLY")==0)
+				{
+					for(int j=0;j<5;j++)
+						{
+							free(prefsColours[j]);
+							prefsColours[j]=strdup(previeColourEdit[j]->LFSTK_getBuffer()->c_str());
+							previewButtons[j]->LFSTK_setColourName(NORMALCOLOUR,previeColourEdit[j]->LFSTK_getBuffer()->c_str());
+							previewButtons[j]->LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
+							previewButtons[j]->LFSTK_clearWindow();
+						}
+					free(prefsFont);
+					prefsFont=strdup(fontEdit->LFSTK_getBuffer()->c_str());
+					free(prefsTheme);
+					prefsTheme=strdup(themeEdit->LFSTK_getBuffer()->c_str());
+					free(prefsTermCommand);
+					prefsTermCommand=strdup(terminalEdit->LFSTK_getBuffer()->c_str());
+					prefsPlacement=prefsPlacementTemp;
+					prefsDeskCnt=atoi(deskCountEdit->LFSTK_getBuffer()->c_str());
+					prefsRefresh=atoi(refreshEdit->LFSTK_getBuffer()->c_str());
+					wc->globalLib->LFSTK_saveVarsToFile(envFile,lfsWMPrefs);
+					return(true);
+				}
+		}
+	return(true);
 }
 
-bool placeCB(void *p,void* ud)
+bool menuCB(void *p,void* ud)
 {
 	menuItemStruct	*menuitem=(menuItemStruct*)ud;
 
-	if(menuitem==NULL)
+	if(ud==NULL)
 		return(true);
-	placement=(int)(long)menuitem->userData;
-	placeToString((long)menuitem->userData);
 
-	return(true);
-}
-
-bool callback(void *p,void* ud)
-{
-	if((long)ud==EXIT)
-		{
-			wc->LFSTK_clearWindow();
-			setVars();
-			wc->globalLib->LFSTK_saveVarsToFile("-",wmPrefs);
-			printf("\n");
-			mainloop=false;
-			return(false);
-		}
-
-	switch((long)ud)
-		{
-		case PRINT:
-			wc->LFSTK_clearWindow();
-			setVars();
-			wc->globalLib->LFSTK_saveVarsToFile("-",wmPrefs);
-			printf("\n");
-			break;
-
-		case APPLY:
-			wc->LFSTK_clearWindow();
-			setVars();
-			wc->globalLib->LFSTK_saveVarsToFile(env,wmPrefs);
-			system("killall lfswmanager");
-			sleep(1);
-			system("lfswmanager &");
-			break;
-			break;
-		}
-	return(true);
-}
-
-bool selectFontCB(void *object,void* userdata)
-{
-	LFSTK_fontButtonClass	*fb;
-
-	fb=static_cast<LFSTK_fontButtonClass*>(object);
-	fb->LFSTK_showDialog(titleFont);
-
-	if(titleFont!=NULL)
-		free(titleFont);
-	titleFont=strdup(fb->LFSTK_getFontString());
-	fontEdit->LFSTK_setBuffer(titleFont);
-}
-
-bool selectfolder(void *object,void* ud)
-{
-	char					*dir;
-	const char				*dirpath;
-
-	asprintf(&dir,"%s/.themes",getenv("HOME"));
-	fc->LFSTK_showFileDialog(dir,le[ETHEMEPATH]->LFSTK_getBuffer()->c_str());
-	if(fc->LFSTK_isValid()==true)
-		{
-			free(dir);
-			dir=strdup(fc->LFSTK_getCurrentDir());
-			dirpath=basename(dir);
-			le[ETHEMEPATH]->LFSTK_setBuffer(dirpath);
-		}
-	free(dir);
+	placeWindowEdit->LFSTK_setBuffer(menuitem->label);
+	prefsPlacementTemp=(int)(long)menuitem->userData;
+	printf("Selected Menu Label:%s num=%i\n",menuitem->label,prefsPlacement);
 	return(true);
 }
 
 int main(int argc, char **argv)
 {
-	XEvent					event;
-	int						sx=0;
-	int						sy=0;
-	const geometryStruct	*geom;
-	int						bwidth=BWIDTH;
-	int						bhite=24;
-	int						spacing=bwidth+10;
-	int						vspacing=bhite+10;
-	int						col1=10,col2=col1+bwidth+spacing+20,col3=col2+bwidth+spacing+20,col4;
-	char					*hfont;
-	LFSTK_labelClass		*label;
-	LFSTK_buttonClass		*button;
-	LFSTK_fontButtonClass	*fontbutton;
-	int						c=0;
-	int						option_index=0;
-	const char				*shortOpts="h?w:";
-	Display					*display;
-	option 					longOptions[]=
+	XEvent		event;
+	int			sy=0;
+	int			sx=BORDER;
+	int			parentWindow=-1;
+	int			c=0;
+	int			option_index=0;
+	const char	*shortOpts="h?w:";		
+	option		longOptions[]=
 		{
 			{"window",1,0,'w'},
 			{"help",0,0,'h'},
@@ -248,167 +212,167 @@ int main(int argc, char **argv)
 				}
 		}
 
-	fontColours[ACTIVEFRAME]=strdup("#000000");
-	fontColours[ACTIVEFRAMEFILL]=strdup("#00ffff");
-	fontColours[INACTIVEFRAME]=strdup("#000000");
-	fontColours[INACTIVEFRAMEFILL]=strdup("#ffffff");
-	fontColours[TEXTCOLOUR]=strdup("#ffffff");
-
-	titleFont=strdup("sans:size=10");
-	numberOfDesktops=strdup("12");
-	liveUpdate=strdup("5");
-	pathToTheme=strdup("");
-	terminalCommand=strdup("xterm -e ");
-
-	wc=new LFSTK_windowClass(sx,sy,800,600,"LFS WM Prefs",false);
+	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Gadgets",false);
 	display=wc->display;
-	wc->LFSTK_setDecorated(true);
-	geom=wc->LFSTK_getWindowGeom();
-	fc=new LFSTK_fileDialogClass(wc,"","/",true);
 
-	asprintf(&env,"%s/.config/LFS/lfswmanager.rc",getenv("HOME"));
-	wc->globalLib->LFSTK_loadVarsFromFile(env,wmPrefs);
+	asprintf(&envFile,"%s/lfswmanager.rc",wc->configDir);
+	wc->globalLib->LFSTK_loadVarsFromFile(envFile,lfsWMPrefs);
+	prefsPlacementTemp=prefsPlacement;
 
-	guibc[EXIT]=new LFSTK_buttonClass(wc,"Exit",10,geom->h-32,64,24,SouthWestGravity);
-	guibc[EXIT]->LFSTK_setCallBack(NULL,callback,(void*)EXIT);
+	wd=strdup(wc->userHome);
+	themeFolder=new LFSTK_fileDialogClass(wc,"Select File",wd,true);
 
-	guibc[APPLY]=new LFSTK_buttonClass(wc,"Apply",geom->w-74,geom->h-32,64,24,SouthEastGravity);
-	guibc[APPLY]->LFSTK_setCallBack(NULL,callback,(void*)APPLY);
+	placementMenus=new menuItemStruct[MAXMENUS];
 
-	guibc[PRINT]=new LFSTK_buttonClass(wc,"Print",(geom->w/2)-(64/2),geom->h-32,64,24,SouthGravity);
-	guibc[PRINT]->LFSTK_setCallBack(NULL,callback,(void*)PRINT);
-	sx=col1;
-	sy=10;
-	int state=0;
-	for (int j=BACTIVEFRAME; j<NOMOREBUTTONS; j++)
+	for(int j=0;j<MAXMENUS;j++)
 		{
-			bc[j]=new LFSTK_buttonClass(wc,buttonnames[state],sx,sy,bwidth,24,NorthWestGravity);
-			bc[j]->LFSTK_setActive(false);
-			bc[j]->LFSTK_setLabelAutoColour(true);
-			bc[j]->LFSTK_setColourName(INACTIVECOLOUR,fontColours[state]);
-			bc[j]->LFSTK_setTile("",-1);
-			sx+=spacing;
-			le[j]=new LFSTK_lineEditClass(wc,fontColours[state],sx,sy-1,bwidth,24,NorthWestGravity);
-			sy+=vspacing;
-			sx=col1;
-			state++;
+			placementMenus[j].label=(char*)placementMenuNames[j];
+			placementMenus[j].imagePath=NULL;
+			placementMenus[j].userData=(void*)j;
 		}
 
-	sx=col1;
-	for(int j=THEMELABEL; j<PLACELABEL; j++)
-		{
-			if(j!=THEMELABEL)
-				{
-					lb[j]=new LFSTK_labelClass(wc,labelnames[j],sx,sy,bwidth,24,NorthWestGravity);
-					lb[j]->LFSTK_setLabelAutoColour(true);
-					lb[j]->LFSTK_setLabelGravity(0);
-				}
-			else
-				{
-					button=new LFSTK_buttonClass(wc,labelnames[THEMELABEL],sx,sy,bwidth,24,NorthWestGravity);
-					button->LFSTK_setCallBack(NULL,selectfolder,NULL);
-				}
+	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
+	sy+=HALFYSPACING;
+	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
+	personal->LFSTK_setCairoFontDataParts("B");
+	sy+=YSPACING;
 
-			sx+=spacing;
-			le[ETHEMEPATH+j]=new LFSTK_lineEditClass(wc,labelnames[j],sx,sy-1,col2-col1,24,NorthWestGravity);
-			sy+=vspacing;
-			sx=col1;
+//frame colours
+	for(int j=0;j<5;j++)
+		{
+			previewButtons[j]=new LFSTK_buttonClass(wc,previewButtonLabels[j],sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+			previewButtons[j]->LFSTK_setLabelAutoColour(true);
+			previewButtons[j]->LFSTK_setTile(NULL,0);
+			previewButtons[j]->LFSTK_setColourName(NORMALCOLOUR,prefsColours[j]);
+			previewButtons[j]->LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
+			previewButtons[j]->LFSTK_setIgnoreCB(true);
+			sx+=GADGETWIDTH+BORDER;
+			previeColourEdit[j]=new LFSTK_lineEditClass(wc,prefsColours[j],sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+			sy+=YSPACING;
+			sx=BORDER;
 		}
 
-	fontbutton=new LFSTK_fontButtonClass(wc,"Select Font",sx,sy,bwidth,24,NorthWestGravity);
-	fontbutton->LFSTK_setLabelIsFont(false);
-	fontbutton->LFSTK_setCallBack(NULL,selectFontCB,NULL);
+//font
+	fontSelector=new LFSTK_fontDialogClass(wc,"Select Font",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	fontSelector->LFSTK_setCallBack(NULL,buttonCB,(void*)"SELECTFONT");
+	sx+=GADGETWIDTH+BORDER;
+	fontEdit=new LFSTK_lineEditClass(wc,prefsFont,sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
+	sx=BORDER;
 
-	sx+=spacing;
-	fontEdit=new LFSTK_lineEditClass(wc,titleFont,sx,sy-1,col2-col1,24,NorthWestGravity);
-	sx=col1;
-	sy+=vspacing;
+//theme
+	themeButton=new LFSTK_buttonClass(wc,"Select Theme",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	themeButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"SELECTTHEME");
+	sx+=GADGETWIDTH+BORDER;
+	themeEdit=new LFSTK_lineEditClass(wc,prefsTheme,sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
+	sx=BORDER;
 
-	text=new LFSTK_labelClass(wc,"ABCDEFGHI abcdefghi 1234567890",10,sy,col3-bwidth-30,24,NorthWestGravity);
-	text->LFSTK_setFontString(titleFont);
-	text->LFSTK_setLabelGravity(1);
-	text->LFSTK_setLabelAutoColour(false);
-	sy+=vspacing;
-	sx=col1;
+//placement
+	placeWindowMenu=new LFSTK_menuButtonClass(wc,"Placement",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	placeWindowMenu->LFSTK_setCallBack(NULL,menuCB,NULL);
+	placeWindowMenu->LFSTK_addMenus(placementMenus,MAXMENUS);
+	placeWindowMenu->LFSTK_setLabelGravity(CENTRE);
+	sx+=GADGETWIDTH+BORDER;
+	placeWindowEdit=new LFSTK_lineEditClass(wc,placementMenuNames[prefsPlacement],sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
+	sx=BORDER;
 
-	placeMenu=new menuItemStruct[NOMOREPLACES];
-	for(int j=0;j<NOMOREPLACES;j++)
-		{
-			placeMenu[j].label=placeNames[j];
-			placeMenu[j].userData=(void*)(long)j;
-		}
+//desks
+	label=new LFSTK_labelClass(wc,"Desktops",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	sx+=GADGETWIDTH+BORDER;
+	deskCountEdit=new LFSTK_lineEditClass(wc,std::to_string(prefsDeskCnt).c_str(),sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
+	sx=BORDER;
+//update
+	label=new LFSTK_labelClass(wc,"Update",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	sx+=GADGETWIDTH+BORDER;
+	refreshEdit=new LFSTK_lineEditClass(wc,std::to_string(prefsRefresh).c_str(),sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
+	sx=BORDER;
+//term command
+	label=new LFSTK_labelClass(wc,"Term Command",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	sx+=GADGETWIDTH+BORDER;
+	terminalEdit=new LFSTK_lineEditClass(wc,prefsTermCommand,sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
+	sx=BORDER;
 
-	mb=new LFSTK_menuButtonClass(wc,labelnames[PLACELABEL],sx,sy,bwidth,24,NorthWestGravity);
-	mb->LFSTK_addMenus(placeMenu,NOMOREPLACES);
-	le[EPLACEMENT]=new LFSTK_lineEditClass(wc,"",sx+spacing,sy-1,col2-col1,24,NorthWestGravity);
-	placeToString(placement);
-	mb->LFSTK_setCallBack(NULL,placeCB,NULL);
+//line
+	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
+	seperator->LFSTK_setStyle(BEVELNONE);
+	seperator->gadgetDetails.buttonTile=false;
+	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
+	sy+=YSPACING;
 
-	sy+=vspacing;
+//quit
+	quit=new LFSTK_buttonClass(wc,"Quit",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
 
-	for(int j=DESKLABEL; j<LSPACER; j++)
-		{
-			lb[j]=new LFSTK_labelClass(wc,labelnames[j],sx,sy,bwidth,24,NorthWestGravity);
-			lb[j]->LFSTK_setLabelAutoColour(true);
-			lb[j]->LFSTK_setLabelGravity(0);
+//test
+	test=new LFSTK_buttonClass(wc,"Test",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	test->LFSTK_setCallBack(NULL,buttonCB,(void*)"TEST");
 
-			sx+=spacing;
-			le[ETHEMEPATH+j]=new LFSTK_lineEditClass(wc,labelnames[j],sx,sy-1,bwidth,24,NorthWestGravity);
-			sy+=vspacing;
-			sx=col1;
-		}
+//apply
+	apply=new LFSTK_buttonClass(wc,"Apply",DIALOGWIDTH-BORDER-GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	apply->LFSTK_setCallBack(NULL,buttonCB,(void*)"APPLY");
+	sy+=YSPACING;
 
-	le[ENUMDESKS]->LFSTK_setBuffer(numberOfDesktops);
-	le[ELIVEUPDATE]->LFSTK_setBuffer(liveUpdate);
-	le[ETHEMEPATH]->LFSTK_setBuffer(pathToTheme);
-	le[ETERMCOMMAND]->LFSTK_setBuffer(terminalCommand);
-	sy-=vspacing;
-
-	sy+=vspacing;
-	lb[LSPACER]=new LFSTK_labelClass(wc,labelnames[LSPACER],0,sy,col3,8,NorthWestGravity);
-	sy+=16;
-	sy+=vspacing;
-
-	wc->LFSTK_resizeWindow(col3-10-bwidth,sy);
+	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();
 	wc->LFSTK_setKeepAbove(true);
 	if(parentWindow!=-1)
 		wc->LFSTK_setTransientFor(parentWindow);
 
-	printf("Current Settings:\n\n");
-	callback(NULL,(void*)PRINT);
-	printf("\n\n");
-
-	mainloop=true;
-	while(mainloop==true)
+	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
+	mainLoop=true;
+	while(mainLoop==true)
 		{
 			XNextEvent(wc->display,&event);
 			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
 			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
+				{
+					ml->function(ml->gadget,&event,ml->type);
+				}
+
 			switch(event.type)
 				{
-				case Expose:
-					wc->LFSTK_setActive(true);
-					wc->LFSTK_clearWindow();
-					break;
-				case ConfigureNotify:
-					wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
-					break;
+					case ButtonRelease:
+						break;
+					case LeaveNotify:
+						break;
+					case Expose:
+						wc->LFSTK_clearWindow();
+						break;
+
+					case ConfigureNotify:
+						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
+						wc->globalLib->LFSTK_setCairoSurface(wc->display,wc->window,wc->visual,&wc->sfc,&wc->cr,event.xconfigurerequest.width,event.xconfigurerequest.height);
+						wc->LFSTK_clearWindow();
+						break;
+
 					case ClientMessage:
 					case SelectionNotify:
-						if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
-							mainloop=false;
-						if(wc->acceptDnd==true)
-							{
-								wc->LFSTK_handleDnD(&event);
-							}
-				default:
-					break;
+						{
+							if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
+								{
+									wc->LFSTK_hideWindow();
+									mainLoop=false;
+								}
+						}
+						break;
 				}
 		}
 
 	delete wc;
 	XCloseDisplay(display);
+	free(envFile);
+	for(int j=0;j<5;j++)
+		free(prefsColours[j]);
+	free(prefsFont);
+	free(prefsTheme);
+	free(prefsTermCommand);
+	free(wd);
+	delete placementMenus;
+
 	return 0;
 }

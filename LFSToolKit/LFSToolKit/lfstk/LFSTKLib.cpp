@@ -172,7 +172,6 @@ const char *LFSTK_lib::LFSTK_getGlobalString(int state,int type)
 		{
 			case TYPEWINDOW:
 			//printf("--->%s<---\n",this->globalWindowColours[state]);
-
 				ptr=this->globalWindowColours[state];
 				if(ptr==NULL)
 					ptr=defaultColourStrings[state];
@@ -444,66 +443,6 @@ const char* LFSTK_lib::bestFontColour(long pixel)
 }
 
 /**
-* Get width of string.
-* \param disp* Dsiplay.
-* \param font* Font to use.
-* \param str* String.
-* \return int Width in pixels.
-*/
-//int LFSTK_lib::LFSTK_getTextwidth(Display *disp,XftFont *font,const char *str)
-int LFSTK_lib::LFSTK_getTextwidth(Display *disp,XftFont *font,const char *str)
-{
-return(100);
-//	cairo_save(this->cr);
-//		cairo_select_font_face(this->cr,this->fontName,this->slant,this->weight);
-//		cairo_set_font_size(this->cr,this->fontSize);
-//		cairo_text_extents(this->cr,this->label,&this->extents);
-//	cairo_restore(this->cr);
-
-//	XGlyphInfo info;
-//	XftTextExtentsUtf8(disp,font,(XftChar8 *)str,strlen(str),&info);
-//	return info.width-info.x;
-}
-
-/**
-* Load a font.
-* \param disp* Display.
-* \param scr Screen.
-* \param name* Font name.
-* \return fontStruct* Font structure.
-* \note Return structure shopuld be freed.
-*/
-fontStruct* LFSTK_lib::LFSTK_loadFontxx(Display *disp,int scr,const char *name)
-{
-	XftFont	*font=NULL;
-
-	if (name!=NULL)
-		{
-			font=XftFontOpenXlfd(disp,scr,name);
-
-			if (font==NULL)
-				font=XftFontOpenName(disp,scr,name);
-
-			if (font==NULL)
-				fprintf(stderr,"cannot not load font %s",name);
-		}
-
-	if (font==NULL)
-		font=XftFontOpenName(disp,scr,DEFAULTFONT);
-
-	if (font==NULL)
-		return NULL;
-
-	fontStruct *f=(fontStruct*)malloc(sizeof(fontStruct));
-	f->size=font->ascent+font->descent;
-	f->ascent=font->ascent;
-	f->descent=font->descent;
-	f->data=font;
-
-	return f;
-}
-
-/**
 * Handle gadget events.
 * \param self* Gadget.
 * \param XEvent* Pointer to Xevent from main loop.
@@ -539,17 +478,18 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 			case MotionNotify:
 				retval=gadget->mouseDrag(&e->xmotion);
 				///printf("MotionNotify\n");
+				//gadget->LFSTK_clearWindow();
 				break;
 			case Expose:
 				gadget->LFSTK_clearWindow();
 				break;
 
 			case FocusIn:
-				printf("focus in libev\n");
+				//printf("focus in libev\n");
 				retval=gadget->gotFocus(e);
 				break;
 			case FocusOut:
-				printf("focus out libev\n");
+				//printf("focus out libev\n");
 				retval=gadget->lostFocus(e);
 				break;
 
@@ -569,13 +509,12 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				//XCheckTypedWindowEvent
 //				printf("resize\n");
 				break;
-//			case ClientMessage:
+			case ClientMessage:
 //				//printf("ClientMessage from lib\n");
 //				retval=gadget->clientMessage(e);
-//				break;
+				break;
 				
 		}
-//	printf("%i\n",ud);
 	if(retval==false)
 		XSendEvent(gadget->wc->display,gadget->wc->window,False,0L,e);
 	return(retval);
@@ -614,54 +553,6 @@ bool LFSTK_lib::LFSTK_getUseTheme(void)
 void LFSTK_lib::LFSTK_setUseTheme(bool use)
 {
 	this->useTheme=use;
-}
-
-
-/**
-* Set Pixmaps From Path.
-* \param display Xlib display.
-* \param visual Xlib visual.
-* \param cm Xlib colormap.
-* \param w Xlib window.
-* \param file Path to image file.
-* \param image Return address for image pixmap.
-* \param mask Return address for image mask.
-* \param size Destination size.
-* \return true on success or false on fail.
-* \note If size=-1 then the size is set from the image file.
-*/
-bool LFSTK_lib::LFSTK_setPixmapsFromPath(Display *display,Visual *visual,Colormap cm,Window w,const char *file,Pixmap *image,Pixmap *mask,int size)
-{
-	Imlib_Image	data=NULL;
-	int			imagesizew;
-	int			imagesizeh;
-
-	if(file==NULL)
-		return(false);
-
-	data=imlib_load_image(file);
-	if(data!=NULL)
-		{
-			imlib_context_set_display(display);
-			imlib_context_set_visual(visual);
-			imlib_context_set_colormap(cm);
-			imlib_context_set_drawable(w);
-			imlib_context_set_image(data);
-			if(size==-1)
-				{
-					imagesizew=imlib_image_get_width();
-					imagesizeh=imlib_image_get_height();
-				}
-			else
-				{
-					imagesizew=size;
-					imagesizeh=size;
-				}
-			imlib_render_pixmaps_for_whole_image_at_size(image,mask,imagesizew,imagesizeh);
-			imlib_free_image();
-			return(true);
-		}
-	return(false);
 }
 
 int LFSTK_lib::callback(const char *fpath,const struct stat *sb,int typeflag)
@@ -795,6 +686,27 @@ bool LFSTK_lib::LFSTK_pointInRect(pointStruct *point,geometryStruct *geom)
 }
 
 /**
+* Get pixel from colour name.
+* \param Display *display.
+* \param Colormap cm.
+* \param name Colour name eg "#ff00ff".
+* \return unsigned long Pixel colour.
+*/
+unsigned long LFSTK_lib::LFSTK_getColourFromName(Display *display,Colormap cm,const char *name)
+{
+	unsigned long	retval=0x000000;
+	XColor			tc,sc;
+
+	if(XAllocNamedColor(display,cm,name,&sc,&tc)!=0)
+		{
+			retval=sc.pixel;
+			XFreeColors(display,cm,&sc.pixel,1,0);
+		}
+
+	return(retval);
+}
+
+/**
 * Set cairo surface and context for window.
 * \param Display* display.
 * \param Window window.
@@ -811,189 +723,5 @@ void LFSTK_lib::LFSTK_setCairoSurface(Display *display,Window window,Visual *vis
 	*sfc=cairo_xlib_surface_create(display,window,visual,width,height);
 	*cr=cairo_create(*sfc);
 }
-
-
-#if 0
-/*! This function decompresses a JPEG image from a memory buffer and creates a
- * Cairo image surface.
- * @param data Pointer to JPEG data (i.e. the full contents of a JPEG file read
- * into this buffer).
- * @param len Length of buffer in bytes.
- * @return Returns a pointer to a cairo_surface_t structure. It should be
- * checked with cairo_surface_status() for errors.
- */
-cairo_surface_t *cairo_image_surface_create_from_jpeg_mem(const unsigned char* data, size_t len)
-{
-	struct jpeg_decompress_struct	cinfo;
-	struct jpeg_error_mgr			jerr;
-	JSAMPROW						row_pointer[1];
-	cairo_surface_t					*sfc;
- 
-   // initialize jpeg decompression structures
-	cinfo.err=jpeg_std_error(&jerr);
-	jpeg_create_decompress(&cinfo);
-	jpeg_mem_src(&cinfo,(const unsigned char*)data, len);
-	jpeg_read_header(&cinfo,true);
-
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-	cinfo.out_color_space=JCS_EXT_BGRA;
-#else
-	cinfo.out_color_space=JCS_EXT_ARGB;
-#endif
-
-   // start decompressor
-	jpeg_start_decompress(&cinfo);
-
-   // create Cairo image surface
-	sfc=cairo_image_surface_create(CAIRO_FORMAT_RGB24,cinfo.output_width,cinfo.output_height);
-	if(cairo_surface_status(sfc)!=CAIRO_STATUS_SUCCESS)
-		{
-			jpeg_destroy_decompress(&cinfo);
-			return(sfc);
-		}
-
-   // loop over all scanlines and fill Cairo image surface
-	while(cinfo.output_scanline<cinfo.output_height)
-		{
-			row_pointer[0]=cairo_image_surface_get_data(sfc)+(cinfo.output_scanline * cairo_image_surface_get_stride(sfc));
-			jpeg_read_scanlines(&cinfo,row_pointer,1);
-		}
-
-   // finish and close everything
-	cairo_surface_mark_dirty(sfc);
-	jpeg_finish_decompress(&cinfo);
-	jpeg_destroy_decompress(&cinfo);
-
-   // set jpeg mime data
-	cairo_surface_set_mime_data(sfc,CAIRO_MIME_TYPE_JPEG,(const unsigned char*)data,len,free,(void*)data);
-
-	return sfc;
-}
-
-/*! This function reads an JPEG image from a file an creates a Cairo image
- * surface. Internally the filesize is determined with fstat(2) and then the
- * whole data is read at once.
- * @param filename Pointer to filename of JPEG file.
- * @return Returns a pointer to a cairo_surface_t structure. It should be
- * checked with cairo_surface_status() for errors.
- * @note If the returned surface is invalid you can use errno to determine
- * further reasons. Errno is set according to fopen(3) and malloc(3). If you
- * intend to check errno you shall set it to 0 before calling this function
- * because it does not modify errno itself.
- */
-cairo_surface_t *cairo_image_surface_create_from_jpeg(const char *filename)
-{
-	const unsigned char		*data;
-	int						infile;
-	struct stat				stat;
-	char					magic[]="\xff\xd8\xff";
-
-   // open input file
-	if((infile=open(filename,O_RDONLY))==-1)
-		return(cairo_image_surface_create(CAIRO_FORMAT_INVALID,0,0));
-
-   // get stat structure for file size
-	if (fstat(infile,&stat)==-1)
-		return cairo_image_surface_create(CAIRO_FORMAT_INVALID, 0, 0);
-
-   // allocate memory
-	if((data=(const unsigned char*)malloc(stat.st_size))==NULL)
-		return(cairo_image_surface_create(CAIRO_FORMAT_INVALID,0,0));
-
-   // read data
-	if(read(infile,(void*)data,stat.st_size)<stat.st_size)
-		return(cairo_image_surface_create(CAIRO_FORMAT_INVALID,0,0));
-
-	char *ptr=(char*)data;
-	bool flag=true;
-	for(int j=0;j<3;j++)
-		if(ptr[j]!=magic[j])
-			flag=false;
-
-	close(infile);
-	if(flag==false)
-		{
-			printf("not a jpeg\n");
-			return(NULL);
-		}
-	return cairo_image_surface_create_from_jpeg_mem(data, stat.st_size);
-}
-
-/**
-* Set image and render with cairo.
-* \param file Path to image file.
-* \param grav gravity of image.
-* \param scale scale type for image.
-*/
-cairo_status_t LFSTK_lib::LFSTK_setImageFromPath(const char *file,int grav,bool scale)
-{
-	cairo_status_t	cs=CAIRO_STATUS_SUCCESS;
-	cairo_surface_t	*tempimage;
-	cairo_t			*tcr;
-	float			scaleX=1.0;
-	float			scaleY=1.0;
-	int				txtx;
-	float			maxWidth;
-	float			maxHeight;
-	float			ratio;
-	float			width;
-	float			height;
-
-	this->useImage=false;
-	this->gotIcon=false;
-	if(file==NULL)
-		return(CAIRO_STATUS_FILE_NOT_FOUND);
-
-	tempimage=cairo_image_surface_create_from_png(file);
-	cs=cairo_surface_status(tempimage);
-	if(cs!=CAIRO_STATUS_SUCCESS)
-		{
-			tempimage=cairo_image_surface_create_from_jpeg(file);
-			if(tempimage==NULL)
-				{
-					printf("Unkown Format : %s\n",file);
-					return(CAIRO_STATUS_INVALID_FORMAT);
-				}
-		}
-
-	txtx=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->label);
-	maxWidth=this->gadgetGeom.w-txtx-8;
-	maxHeight=this->gadgetGeom.h-8;
-	width=cairo_image_surface_get_width(tempimage);
-	height=cairo_image_surface_get_height(tempimage);
-
-	if(maxWidth>maxHeight)
-		ratio=maxHeight/height;
-	else
-		ratio=maxWidth/width;
-
-	this->imageWidth=width*ratio;
-	this->imageHeight=height*ratio;
-
-	this->useImage=true;
-	this->imageGravity=grav;
-	this->labelOffset=this->imageWidth;
-
-	if(scale==false)
-		{
-			this->imageWidth=this->gadgetGeom.w;
-			this->imageHeight=this->gadgetGeom.h;
-			ratio=1.0;
-		}
-
-	this->cImage=cairo_surface_create_similar_image(tempimage,cairo_image_surface_get_format(tempimage),this->imageWidth,this->imageHeight);
-	tcr=cairo_create(this->cImage);
-	cairo_reset_clip(tcr);
-	cairo_scale(tcr,ratio,ratio);
-	cairo_set_source_surface(tcr,tempimage,0,0);
-	cairo_paint(tcr);
-
-	cairo_destroy(tcr);
-	cairo_surface_destroy(tempimage);
-
-	return(cs);
-}
-
-#endif
 
 

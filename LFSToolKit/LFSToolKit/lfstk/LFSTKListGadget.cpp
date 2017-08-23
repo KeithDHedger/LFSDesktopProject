@@ -272,7 +272,7 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 			this->labels[j]->gadgetDetails.state=NORMALCOLOUR;
 			this->labels[j]->LFSTK_clearWindow();
 		}
-	this->currentItem=this->listCnt;
+	this->currentItem=0;
 	this->setNavSensitive();
 }
 
@@ -419,13 +419,11 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_setCairoFontData();
 
-//	this->sfc=cairo_xlib_surface_create(this->display,this->window,this->visual,this->gadgetGeom.w,this->gadgetGeom.h);
-//	this->cr=cairo_create(sfc);
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
 	ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	ml->gadget=this;
-	ml->type=BUTTONGADGET;
+	ml->type=LISTGADGET;
 	this->wc->LFSTK_addMappedListener(this->window,ml);
 
 	this->currentItem=0;
@@ -506,7 +504,6 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 
 	LFSTK_setColourName(NORMALCOLOUR,"white");
 	LFSTK_setColourName(INACTIVECOLOUR,"white");
-//	LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
 	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NULL,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
 }
 

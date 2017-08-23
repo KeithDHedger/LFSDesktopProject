@@ -25,11 +25,9 @@
 /**
  *
  * \brief Button class for LFSToolKit.
- *
  * Basic button class for LFSToolKit.
  *
  */
-
 class LFSTK_buttonClass : public LFSTK_gadgetClass
 {
 	public:

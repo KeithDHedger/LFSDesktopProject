@@ -41,11 +41,11 @@ struct	diskIconStruct
 		cairo_surface_t	*cairoImage;
 	};
 
-struct	cairoColor
-{
-	double	r,g,b,a;
-};
-
+//struct	cairoColor
+//{
+//	double	r,g,b,a;
+//};
+//
 extern cairo_t				*cr;
 extern char					*fontName;
 extern cairo_font_weight_t	weight;

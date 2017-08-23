@@ -38,7 +38,7 @@ LFSTK_fileDialogClass::~LFSTK_fileDialogClass(void)
 
 void LFSTK_fileDialogClass::cleanDirPath(void)
 {
-	char		*command;
+	char	*command;
 
 	asprintf(&command,"cd \"%s\" 2>/dev/null;realpath .",this->currentDir);
 	if(this->currentDir!=NULL)
@@ -259,10 +259,13 @@ const char	*LFSTK_fileDialogClass::LFSTK_getCurrentFile(void)
 * \param Window parent Window transient for.
 * \param const char *label Displayed name.
 * \param const char *startdir Open dialog in this folder.
+* \param type true=folder select, false= file select.
 */
 LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const char *label,const char *startdir,bool type)
 {
+	int					hite=DIALOGHITE;
 	LFSTK_labelClass	*spacer;
+
 	this->wc=parentwc;
 	this->dialog=NULL;
 	this->dirList=NULL;
@@ -276,37 +279,65 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	this->dirListCnt=0;
 	this->fileImage=LFSTKPIXMAPSDIR "/documents.png";
 	this->folderImage=LFSTKPIXMAPSDIR "/folder.png";
-	this->dialog=new LFSTK_windowClass(0,0,DWIDTH,DHITE,label,false);
-	this->dialogType=type;
-	this->getDirList();
-	this->getFileList();
 
-//folder list
+
+	this->dialogType=type;
+	int dirlisthite=GADGETHITE*FDIRHITE;
+	int dirlistwid=DIALOGWIDTH-(FGAP*2)-FNAVBUTTONWID;
+
 	if(this->dialogType==true)
 		{
-			this->dirListGadget=new LFSTK_listGadgetClass(this->dialog,"",FGAP,FGAP,FWIDTH-(FGAP*2)-FNAVBUTTONWID,(BUTTONHITE*FDIRHITE)+(BUTTONHITE*FFILEHITE),NorthWestGravity,NULL,0);
-			this->dirEdit=new LFSTK_lineEditClass(this->dialog,this->currentDir,FGAP,(BUTTONHITE*FDIRHITE)+(2*FGAP)+(BUTTONHITE*FFILEHITE),FWIDTH-(FGAP*2),BUTTONHITE,NorthWestGravity);
+			dirlisthite=GADGETHITE*FDIRHITE;
+			hite=dirlisthite+(FGAP*7)+(GADGETHITE*2);
 		}
 	else
 		{
-			this->dirListGadget=new LFSTK_listGadgetClass(this->dialog,"",FGAP,FGAP,FWIDTH-(FGAP*2)-FNAVBUTTONWID,(BUTTONHITE*FDIRHITE),NorthWestGravity,NULL,0);
-			this->dirEdit=new LFSTK_lineEditClass(this->dialog,this->currentDir,FGAP,(BUTTONHITE*FDIRHITE)+(2*FGAP),FWIDTH-(FGAP*2),BUTTONHITE,NorthWestGravity);
+			dirlisthite=GADGETHITE*(FDIRHITE/2);
+			hite=dirlisthite+(FGAP*6)+GADGETHITE+(FFILEHITE*GADGETHITE)+FGAP+GADGETHITE+FGAP;
 		}
-	this->dirListGadget->LFSTK_setImageList(this->dirImageList,this->dirListCnt);
-	this->dirListGadget->LFSTK_setList(this->dirList,this->dirListCnt);
 
-//file list
-	if(this->dialogType==false)
+	this->dialog=new LFSTK_windowClass(0,0,DIALOGWIDTH,hite,label,false);
+//TODO//?
+	XSizeHints sh;
+	sh.flags=PMinSize|PMaxSize|PSize|USSize;
+	sh.min_width=DIALOGWIDTH;
+	sh.min_height=hite;
+	sh.max_width=DIALOGWIDTH;
+	sh.max_height=hite;
+
+	XSetWMNormalHints(this->wc->display,dialog->window,&sh);
+
+	this->getDirList();
+	this->getFileList();
+
+	if(this->dialogType==true)
 		{
-			this->fileListGadget=new LFSTK_listGadgetClass(this->dialog,"",FGAP,FGAP+(BUTTONHITE*FDIRHITE)+(2*FGAP)+BUTTONHITE,FWIDTH-(FGAP*2)-FNAVBUTTONWID,(BUTTONHITE*FFILEHITE),NorthWestGravity,NULL,0);
+			this->dirListGadget=new LFSTK_listGadgetClass(this->dialog,"",FGAP,FGAP,dirlistwid,dirlisthite,NorthWestGravity,NULL,0);
+			this->dirEdit=new LFSTK_lineEditClass(this->dialog,this->currentDir,FGAP,dirlisthite+(FGAP*2),dirlistwid,GADGETHITE,NorthWestGravity);
+			this->dirListGadget->LFSTK_setImageList(this->dirImageList,this->dirListCnt);
+			this->dirListGadget->LFSTK_setList(this->dirList,this->dirListCnt);
+
+			spacer=new LFSTK_labelClass(this->dialog,"--",0,dirlisthite+(FGAP*3)+GADGETHITE,DIALOGWIDTH,8,NorthWestGravity);
+			
+			this->buttonCancel=new LFSTK_buttonClass(this->dialog,"Cancel",BORDER,dirlisthite+(FGAP*6)+GADGETHITE,GADGETWIDTH,GADGETHITE,SouthWestGravity);
+			this->buttonApply=new LFSTK_buttonClass(this->dialog,"Apply",DIALOGWIDTH-BORDER-GADGETWIDTH,dirlisthite+(FGAP*6)+GADGETHITE,GADGETWIDTH,GADGETHITE,SouthEastGravity);
+		}
+	else
+		{
+			this->dirListGadget=new LFSTK_listGadgetClass(this->dialog,"",FGAP,FGAP,dirlistwid,dirlisthite,NorthWestGravity,NULL,0);
+			this->dirEdit=new LFSTK_lineEditClass(this->dialog,this->currentDir,FGAP,dirlisthite+(FGAP*2),dirlistwid,GADGETHITE,NorthWestGravity);
+			this->dirListGadget->LFSTK_setImageList(this->dirImageList,this->dirListCnt);
+			this->dirListGadget->LFSTK_setList(this->dirList,this->dirListCnt);
+
+			this->fileListGadget=new LFSTK_listGadgetClass(this->dialog,"",FGAP,dirlisthite+(FGAP*3)+GADGETHITE,DIALOGWIDTH-(FGAP*2)-FNAVBUTTONWID,(GADGETHITE*FFILEHITE),NorthWestGravity,NULL,0);
 			this->fileListGadget->LFSTK_setImageList(this->fileImageList,this->fileListCnt);
 			this->fileListGadget->LFSTK_setList(this->fileList,this->fileListCnt);
-		}
-	spacer=new LFSTK_labelClass(this->dialog,"--",0,FHITE-(BUTTONHITE*2),FWIDTH,8,NorthWestGravity);
 
-//dialog buttons
-	this->buttonCancel=new LFSTK_buttonClass(this->dialog,"Cancel",FBORDER,FHITE-FBORDER-BUTTONHITE,BUTTONWIDTH,BUTTONHITE,SouthWestGravity);
-	this->buttonApply=new LFSTK_buttonClass(this->dialog,"Apply",FWIDTH-FBORDER-BUTTONWIDTH,FHITE-FBORDER-BUTTONHITE,BUTTONWIDTH,BUTTONHITE,SouthEastGravity);
+			spacer=new LFSTK_labelClass(this->dialog,"--",0,dirlisthite+(FGAP*3)+GADGETHITE+(FFILEHITE*GADGETHITE)+FGAP,DIALOGWIDTH,8,NorthWestGravity);
+			
+			this->buttonCancel=new LFSTK_buttonClass(this->dialog,"Cancel",BORDER,dirlisthite+(FGAP*6)+GADGETHITE+(FFILEHITE*GADGETHITE)+FGAP,GADGETWIDTH,GADGETHITE,SouthWestGravity);
+			this->buttonApply=new LFSTK_buttonClass(this->dialog,"Apply",DIALOGWIDTH-BORDER-GADGETWIDTH,dirlisthite+(FGAP*6)+GADGETHITE+(FFILEHITE*GADGETHITE)+FGAP,GADGETWIDTH,GADGETHITE,SouthEastGravity);
+		}
 }
 
 bool LFSTK_fileDialogClass::LFSTK_isValid(void)
@@ -357,7 +388,6 @@ void LFSTK_fileDialogClass::doOpenDir(const char *dir)
 * \param const char *start dir.
 * \param const char *title.
 */
-
 void LFSTK_fileDialogClass::LFSTK_showFileDialog(const char *dir,const char *title)
 {
 	if(this->dialog!=NULL)
@@ -371,7 +401,6 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(const char *dir,const char *tit
 /**
 * Show the file selector dialog.
 */
-
 void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 {
 	XEvent			event;
@@ -380,7 +409,7 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 	unsigned		lastfileitem=0;
 	geometryStruct	geomdir;
 	geometryStruct	geomfile;
-
+	pointStruct		pt;
 
 	this->apply=false;
 	if(this->dialog!=NULL)
@@ -414,30 +443,22 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 								break;
 
 							case ButtonRelease:
-								if((event.xbutton.x_root>geomdir.x) && (event.xbutton.x_root<(geomdir.x+geomdir.w)) && (event.xbutton.y_root>geomdir.y) && (event.xbutton.y_root<(geomdir.y+geomdir.h)))
+								if((event.xbutton.time-lasttime<1000) && (event.xbutton.state & Button1Mask))
 									{
-										if((event.xbutton.time-lasttime<1000) && (event.xbutton.state & Button1Mask))
+										pt={event.xbutton.x_root,event.xbutton.y_root};
+										lasttime=event.xbutton.time-1000;
+
+										if(this->wc->globalLib->LFSTK_pointInRect(&pt,&geomdir)==true)
+											this->doOpenDir();
+
+										if(this->wc->globalLib->LFSTK_pointInRect(&pt,&geomfile)==true)
 											{
-												this->doOpenDir();
-												lasttime=event.xbutton.time-1000;
-											}
-										else
-											lasttime=event.xbutton.time;
-									}
-								if(this->dialogType==false)
-									{
-										if((event.xbutton.x_root>geomfile.x) && (event.xbutton.x_root<(geomfile.x+geomfile.w)) && (event.xbutton.y_root>geomfile.y) && (event.xbutton.y_root<(geomfile.y+geomfile.h)))
-											{
-												if((event.xbutton.time-lasttime<1000) && (event.xbutton.state & Button1Mask))
-													{
-														lasttime=event.xbutton.time-1000;
-														this->apply=true;
-														this->mainLoop=false;
-													}
-												else
-													lasttime=event.xbutton.time;
+												this->apply=true;
+												this->mainLoop=false;
 											}
 									}
+								else
+									lasttime=event.xbutton.time;
 
 								if(ml!=NULL)
 									{

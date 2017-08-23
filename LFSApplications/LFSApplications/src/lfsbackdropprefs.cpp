@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Fri 25 Sep 14:51:01 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Fri 18 Aug 16:52:24 BST 2017 kdhedger68713@gmail.com
 
  * This file (lfsbackdropprefs.cpp) is part of LFSApplications.
 
@@ -18,171 +18,125 @@
  * along with LFSApplications.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <getopt.h>
 #include <libgen.h>
 
-#include <lfstk/LFSTKGlobals.h>
+#include "lfstk/LFSTKGlobals.h"
 
-enum labels {BACKDROP=0,MAINCOLOUR,MONITORBACKDROP,LSPACER,NOMORELABELS};
-enum {EXIT=0,PRINT,APPLY,NOMOREGUIS};
-enum {STRETCHMODE=0,TILEMODE,CENTREMODE,SCALEDMODE,ZOOMEDMODE,NOMOREMODES};
-
-const char				*labelNames[]={"Select File","Root Colour","Select File","--"};
+struct					monitorInfo
+{
+	char	*path;
+	int		mode;
+};
 
 LFSTK_windowClass		*wc=NULL;
-LFSTK_lineEditClass		*backdropPath=NULL;
-LFSTK_toggleButtonClass	*multi=NULL;
+LFSTK_labelClass		*label=NULL;
+LFSTK_labelClass		*personal=NULL;
+LFSTK_labelClass		*copyrite=NULL;
+LFSTK_buttonClass		*seperator=NULL;
+LFSTK_buttonClass		*quit=NULL;
+LFSTK_buttonClass		*apply=NULL;
+
+//file select
+LFSTK_fileDialogClass	*fileDialog;
+LFSTK_buttonClass		*dialogButton=NULL;
+
+//root window
+LFSTK_lineEditClass		*mainBackdropEdit=NULL;
+LFSTK_lineEditClass		*rootColourEdit=NULL;
 LFSTK_menuButtonClass	*mainMode=NULL;
 LFSTK_lineEditClass		*mainModeEdit=NULL;
-LFSTK_menuButtonClass	*monitorMode=NULL;
-LFSTK_lineEditClass		*monitorModeEdit=NULL;
-LFSTK_lineEditClass		*monitorBackdropPath=NULL;
-LFSTK_lineEditClass		*mainColourEdit=NULL;
-LFSTK_buttonClass		*guiButtons[NOMOREGUIS]={NULL,};
-LFSTK_labelClass		*labels[NOMORELABELS]={NULL,};
-LFSTK_menuButtonClass	*monitorNumber=NULL;
-LFSTK_buttonClass		*fileselect;
-LFSTK_fileDialogClass	*fc;
-
-bool					mainloop=true;
-int						bwidth=100;
-int						bigbwidth=128;
-int						spacing=bwidth+10;
-int						col1=10,col2=col1+bwidth+spacing+20,col3=col2+bwidth+spacing+20,col4;
-char					*prefsPath=NULL;
-char					*monitorRCPath=NULL;
-int						parentWindow=-1;
-
-//prefs
-char					*wallpaperPath=NULL;
-int						backdropMode;
-char					*mainColour=NULL;
-bool					multiMode;
+LFSTK_toggleButtonClass	*multipleMonitors=NULL;
 
 //monitors
-menuItemStruct			*modeMenus=NULL;
-menuItemStruct			*monitorMenus=NULL;
-const char				*modeName[]={"Stretch","Tile","Centre","Scale","Zoom"};
-int						currentMonitor=0;
+LFSTK_menuButtonClass	*monitorsMenuButton=NULL;
+menuItemStruct			*monitorsMenu=NULL;
+LFSTK_lineEditClass		*monitorModeEdit=NULL;
+LFSTK_lineEditClass		*monitorBackdropEdit=NULL;
+LFSTK_menuButtonClass	*monitorMode=NULL;
+char					*monitorBackdrops[20]={NULL,};
+monitorInfo				monitors[20]={{NULL,0},};
+
+int						selectedMonitor=0;
+
+bool					mainLoop=true;
+Display					*display;
+char					*wd=NULL;
+Window					parentWindow=-1;
+
+//prefs
+char					*mainPrefs;
+char					*monitorPrefs;
+char					*wallpaperPath=NULL;
+char					*mainColour=NULL;
+int						backdropMode=0;
+bool					multiMode=false;
+
+//modes
+const char				*modeLabel[5]={"Stretch","Tile","Centre","Scale","Zoom"};
+menuItemStruct			*modeMenu=NULL;
 
 args					prefs[]=
 {
 	{"backdrop",TYPESTRING,&wallpaperPath},
-	{"mainmode",TYPEINT,&backdropMode},
 	{"colour",TYPESTRING,&mainColour},
+	{"mainmode",TYPEINT,&backdropMode},
 	{"multimode",TYPEBOOL,&multiMode},
 	{NULL,0,NULL}
 };
 
-struct					monitors
+bool doQuit(void *p,void* ud)
 {
-	int		monW;
-	int		monH;
-	int		monX;
-	int		monY;
-	int		monMode;
-	char	*monitorPath;
-};
-
-monitors				*monitorData=NULL;
-
-#define BIG col3-col1
-
-void setVars()
-{
-	if(wallpaperPath!=NULL)
-		free(wallpaperPath);
-	wallpaperPath=strdup(backdropPath->LFSTK_getBuffer()->c_str());
-
-	if(mainColour!=NULL)
-		free(mainColour);
-	mainColour=strdup(mainColourEdit->LFSTK_getBuffer()->c_str());
-	multiMode=multi->LFSTK_getValue();
-
-	if(monitorData[currentMonitor].monitorPath!=NULL)
-		free(monitorData[currentMonitor].monitorPath);
-	monitorData[currentMonitor].monitorPath=strdup(monitorBackdropPath->LFSTK_getBuffer()->c_str());
+	mainLoop=false;
+	XFlush(wc->display);
+	XSync(wc->display,true);
+	return(false);
 }
 
-void printMonitorData(bool tofile)
+bool buttonCB(void *p,void* ud)
 {
-	FILE*	fd=NULL;
-	char	buffer[2048];
+	FILE	*fd=NULL;
 
-	if(tofile==true)
+	if(ud!=NULL)
 		{
-			fd=fopen(monitorRCPath,"w");
-			if(fd==NULL)
-				fd=stdout;
+			if(strcmp((char*)ud,"APPLY")==0)
+				{
+					free(wallpaperPath);
+					wallpaperPath=strdup(mainBackdropEdit->LFSTK_getBuffer()->c_str());
+					free(mainColour);
+					mainColour=strdup(rootColourEdit->LFSTK_getBuffer()->c_str());
+					wc->globalLib->LFSTK_saveVarsToFile(mainPrefs,prefs);
+					fd=fopen(monitorPrefs,"w");
+					if(fd!=NULL)
+						{
+							for(long j=0;j<wc->LFSTK_getMonitorCount();j++)
+								fprintf(fd,"%i\n%s\n",monitors[j].mode,monitors[j].path);
+							fclose(fd);
+						}
+					system("lfssetwallpaper");
+				}
+
+			if(strcmp((char*)ud,"MULTIMODE")==0)
+				multiMode=multipleMonitors->LFSTK_getValue();
 		}
-	else
-		fd=stdout;
-
-	for(int j=0;j<wc->LFSTK_getMonitorCount();j++)
-		fprintf(fd,"%i\n%s\n",monitorData[j].monMode,monitorData[j].monitorPath);
-
-	if((tofile==true) && (fd!=NULL))
-		fclose(fd);
-}
-
-bool selectfile(void *object,void* ud)
-{
-	char					*dir;
-	const char				*dirpath;
-	char					*filepath;
-
-	if(GETUSERDATA(ud)==100)
-		dir=strdup(wallpaperPath);
-	else
-		dir=strdup(monitorData[currentMonitor].monitorPath);
-
-	dirpath=dirname(dir);
-	fc->LFSTK_showFileDialog(dirpath,"Select File");
-	if(fc->LFSTK_isValid()==true)
-		{
-			asprintf(&filepath,"%s/%s",fc->LFSTK_getCurrentDir(),fc->LFSTK_getCurrentFile());
-			if(GETUSERDATA(ud)==100)
-				backdropPath->LFSTK_setBuffer(filepath);
-			else
-				monitorBackdropPath->LFSTK_setBuffer(filepath);
-			free(filepath);
-		}
-	free(dir);
 	return(true);
 }
 
-bool callback(void *p,void* ud)
+bool selectFile(void *object,void* ud)
 {
+	char				*filepath;
+	LFSTK_lineEditClass	*edbox=static_cast<LFSTK_lineEditClass*>(ud);
 
-	switch((long)ud)
+	fileDialog->LFSTK_showFileDialog(wd,"Select A File");
+	if(fileDialog->LFSTK_isValid()==true)
 		{
-			case EXIT:
-				wc->LFSTK_clearWindow();
-				setVars();
-				wc->globalLib->LFSTK_saveVarsToFile("-",prefs);
-				printf("\n");
-				mainloop=false;
-				return(false);
-				break;
-
-			case PRINT:
-				wc->LFSTK_clearWindow();
-				setVars();
-				printf("\n");
-				wc->globalLib->LFSTK_saveVarsToFile("-",prefs);
-				printMonitorData(false);
-				break;
-
-			case APPLY:
-				wc->LFSTK_clearWindow();
-				setVars();
-				wc->globalLib->LFSTK_saveVarsToFile(prefsPath,prefs);
-				printMonitorData(true);
-				system("lfssetwallpaper");
-				break;
+			asprintf(&filepath,"%s/%s",fileDialog->LFSTK_getCurrentDir(),fileDialog->LFSTK_getCurrentFile());
+			free(wd);
+			wd=strdup(fileDialog->LFSTK_getCurrentDir());
+			edbox->LFSTK_setBuffer(filepath);
+			free(monitors[selectedMonitor].path);
+			monitors[selectedMonitor].path=strdup(filepath);
+			free(filepath);
 		}
 	return(true);
 }
@@ -191,12 +145,10 @@ bool mainModeCB(void *p,void* ud)
 {
 	menuItemStruct	*menuitem=(menuItemStruct*)ud;
 
-	if(menuitem==NULL)
+	if(ud==NULL)
 		return(true);
-
-	backdropMode=(int)(long)(menuitem->userData);
 	mainModeEdit->LFSTK_setBuffer(menuitem->label);
-	mainModeEdit->LFSTK_clearWindow();
+	backdropMode=(int)(long)menuitem->userData;
 	return(true);
 }
 
@@ -204,58 +156,54 @@ bool monitorModeCB(void *p,void* ud)
 {
 	menuItemStruct	*menuitem=(menuItemStruct*)ud;
 
-	if(menuitem==NULL)
+	if(ud==NULL)
 		return(true);
 
-	monitorData[currentMonitor].monMode=(int)(long)(menuitem->userData);
 	monitorModeEdit->LFSTK_setBuffer(menuitem->label);
-	monitorModeEdit->LFSTK_clearWindow();
+	monitors[selectedMonitor].mode=(int)(long)menuitem->userData;
 	return(true);
 }
 
-bool selectMonitor(void *p,void* ud)
+bool monitorMenuCB(void *p,void* ud)
 {
 	menuItemStruct	*menuitem=(menuItemStruct*)ud;
-	char			*buffer;
-	FILE			*fp;
 
-	if(menuitem==NULL)
+	if(ud==NULL)
 		return(true);
-
-	asprintf(&buffer,"Monitor %i",(int)(long)menuitem->userData);
-	currentMonitor=(int)(long)menuitem->userData;
-	monitorNumber->LFSTK_setLabel(buffer);
-	monitorBackdropPath->LFSTK_setBuffer(monitorData[currentMonitor].monitorPath);
-	monitorModeEdit->LFSTK_setBuffer(modeName[monitorData[currentMonitor].monMode]);
-	monitorModeEdit->LFSTK_clearWindow();
-	monitorBackdropPath->LFSTK_clearWindow();
-	monitorNumber->LFSTK_clearWindow();
-	free(buffer);
-
+	monitorsMenuButton->LFSTK_setLabel(menuitem->label);
+	selectedMonitor=(int)(long)menuitem->userData;
+	monitorBackdropEdit->LFSTK_setBuffer(monitors[selectedMonitor].path);
+	monitorModeEdit->LFSTK_setBuffer(modeLabel[monitors[selectedMonitor].mode]);
+	
 	return(true);
 }
 
-void loadMonitorData(void)
+void loadMonitorInfo(void)
 {
 	FILE*	fd=NULL;
-	char	buffer[2048];
+	char	*buffer=NULL;
 	int		monnum=0;
+	char	*monitorrc;
+	int		numchars;
+	size_t	n;
 
-	fd=fopen(monitorRCPath,"r");
+	asprintf(&monitorrc,"%s/lfsmonitors.rc",wc->configDir);
+	fd=fopen(monitorrc,"r");
 	if(fd!=NULL)
 		{
 			while(feof(fd)==0)
 				{
-					buffer[0]=0;
-					fgets(buffer,2048,fd);
-					if(buffer[0]!=0)
+					buffer=NULL;
+					numchars=getline(&buffer,&n,fd);
+					if(numchars!=-1)
 						{
-							buffer[strlen(buffer)-1]=0;
-							monitorData[monnum].monMode=atoi(buffer);
-							buffer[0]=0;
-							fgets(buffer,2048,fd);
-							buffer[strlen(buffer)-1]=0;
-							monitorData[monnum].monitorPath=strdup(buffer);
+							buffer[numchars-1]=0;
+							monitors[monnum].mode=atoi(buffer);
+							free(buffer);
+							buffer=NULL;
+							numchars=getline(&buffer,&n,fd);
+							buffer[numchars-1]=0;
+							monitors[monnum].path=buffer;
 							monnum++;
 						}
 				}
@@ -265,26 +213,19 @@ void loadMonitorData(void)
 		{
 			for(int j=0;j<wc->LFSTK_getMonitorCount();j++)
 				{
-					monitorData[j].monMode=0;
-					monitorData[j].monitorPath=strdup("");
+					monitors[j].mode=0;
+					monitors[j].path=strdup("");
 				}
 		}
 }
 
 int main(int argc, char **argv)
 {
-	XEvent					event;
-	int						sx=0;
-	int						sy=0;
-	const geometryStruct	*geom;
-	int						bhite=24;
-	int						vspacing=bhite+10;
-	FILE*					fp=NULL;
-	char					*command;
+	XEvent	event;
+	int		sy=0;
 	int						c=0;
 	int						option_index=0;
 	const char				*shortOpts="h?w:";
-	Display					*display;
 	option 					longOptions[]=
 		{
 			{"window",1,0,'w'},
@@ -310,164 +251,147 @@ int main(int argc, char **argv)
 				}
 		}
 
-	wallpaperPath=strdup("");
-	backdropMode=0;
-	mainColour=strdup("8421504");
-	multiMode=false;
-
-	asprintf(&prefsPath,"%s/.config/LFS/lfssetwallpaper.rc",getenv("HOME"));
-	asprintf(&monitorRCPath,"%s/.config/LFS/lfsmonitors.rc",getenv("HOME"));
-
-	wc=new LFSTK_windowClass(sx,sy,1,1,"Wallpaper Prefs",false);
-	wc->LFSTK_setDecorated(true);
-	geom=wc->LFSTK_getWindowGeom();
-
-	fc=new LFSTK_fileDialogClass(wc,"","/",false);
-
-	wc->globalLib->LFSTK_loadVarsFromFile(prefsPath,prefs);
+	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Backdrop Prefs",false);
 	display=wc->display;
 
-	monitorData=(monitors*)calloc(sizeof(monitors),wc->LFSTK_getMonitorCount());
-	loadMonitorData();
+	asprintf(&wd,"%s",wc->userHome);
+	asprintf(&mainPrefs,"%s/lfssetwallpaper.rc",wc->configDir);
+	asprintf(&monitorPrefs,"%s/lfsmonitors.rc",wc->configDir);
 
-	guiButtons[EXIT]=new LFSTK_buttonClass(wc,"Exit",10,geom->h-32,64,24,SouthWestGravity);
-	guiButtons[EXIT]->LFSTK_setCallBack(NULL,callback,(void*)EXIT);
+	fileDialog=new LFSTK_fileDialogClass(wc,"Select File",wd,false);
 
-	guiButtons[APPLY]=new LFSTK_buttonClass(wc,"Apply",geom->w-74,geom->h-32,64,24,SouthEastGravity);
-	guiButtons[APPLY]->LFSTK_setCallBack(NULL,callback,(void*)APPLY);
+	wc->globalLib->LFSTK_loadVarsFromFile(mainPrefs,prefs);
 
-	guiButtons[PRINT]=new LFSTK_buttonClass(wc,"Print",(geom->w/2)-(64/2),geom->h-32,64,24,SouthGravity);
-	guiButtons[PRINT]->LFSTK_setCallBack(NULL,callback,(void*)PRINT);
+	copyrite=new LFSTK_labelClass(wc,COPYRITE,0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
+	sy+=HALFYSPACING;
+	personal=new LFSTK_labelClass(wc,PERSONAL,0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
+	personal->LFSTK_setCairoFontDataParts("B");
+	sy+=YSPACING;
 
-	sx=col1;
-	sy=10;
-	fileselect=new LFSTK_buttonClass(wc,"Select File",sx,sy,bwidth,24,NorthWestGravity);
-	fileselect->LFSTK_setCallBack(NULL,selectfile,USERDATA(100));
-
-	sx+=spacing;
-	backdropPath=new LFSTK_lineEditClass(wc,wallpaperPath,sx,sy,BIG,24,NorthWestGravity);
-
-	sx=col1;
-	sy+=vspacing;
-	labels[MAINCOLOUR]=new LFSTK_labelClass(wc,labelNames[MAINCOLOUR],sx,sy,bwidth,24,NorthWestGravity);
-	sx+=spacing;
-	mainColourEdit=new LFSTK_lineEditClass(wc,mainColour,sx,sy,bwidth,24,NorthWestGravity);
-
-	sx=col1;
-	sy+=vspacing;
-	modeMenus=new menuItemStruct[NOMOREMODES];
-	for(int j=0;j<NOMOREMODES;j++)
+//root window
+//backdrop
+	dialogButton=new LFSTK_buttonClass(wc,"Select File",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	mainBackdropEdit=new LFSTK_lineEditClass(wc,wallpaperPath,(BORDER*2)+GADGETWIDTH,sy,DIALOGWIDTH-(BORDER*3)-GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	dialogButton->LFSTK_setCallBack(NULL,selectFile,(void*)mainBackdropEdit);
+	sy+=YSPACING;
+//colour
+	label=new LFSTK_labelClass(wc,"Root Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	rootColourEdit=new LFSTK_lineEditClass(wc,mainColour,(BORDER*2)+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
+//mode
+	modeMenu=new menuItemStruct[5];
+	for(long j=0;j<5;j++)
 		{
-			modeMenus[j].label=modeName[j];
-			modeMenus[j].userData=(void*)(long)j;
-			modeMenus[j].bc=NULL;
-			modeMenus[j].subMenus=NULL;
-			modeMenus[j].subMenuCnt=0;
-			modeMenus[j].imagePath=NULL;
+			modeMenu[j].label=(char*)modeLabel[j];
+			modeMenu[j].userData=(void*)j;
 		}
-
-	mainMode=new LFSTK_menuButtonClass(wc,"Main Mode",sx,sy,bwidth,24,NorthWestGravity);
-	mainMode->LFSTK_addMenus(modeMenus,NOMOREMODES);
+	mainMode=new LFSTK_menuButtonClass(wc,"Main Mode",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	mainMode->LFSTK_addMenus(modeMenu,5);
+	mainModeEdit=new LFSTK_lineEditClass(wc,modeLabel[backdropMode],(BORDER*2)+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	mainMode->LFSTK_setCallBack(NULL,mainModeCB,NULL);
-
-	sx+=spacing;
-	mainModeEdit=new LFSTK_lineEditClass(wc,modeName[backdropMode],sx,sy,bwidth,24,NorthWestGravity);
-	sy+=vspacing;
-	sx=col1;
-	multi=new LFSTK_toggleButtonClass(wc,"Multiple Monitors",col1+spacing,sy,bwidth*2,24,NorthWestGravity);
-	multi->LFSTK_setValue(multiMode);
-	sy+=vspacing;
-	sx=col1;	
+	sy+=YSPACING;
+//multi mode
+	multipleMonitors=new LFSTK_toggleButtonClass(wc,"Multiple Monitors",BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
+	multipleMonitors->LFSTK_setValue(multiMode);
+	multipleMonitors->LFSTK_setCallBack(NULL,buttonCB,(void*)"MULTIMODE");
+	sy+=YSPACING;
 
 //monitors
-	monitorMenus=new menuItemStruct[wc->LFSTK_getMonitorCount()];
-	for(int j=0;j<wc->LFSTK_getMonitorCount();j++)
+	monitorsMenu=new menuItemStruct[wc->LFSTK_getMonitorCount()];
+	for(long j=0;j<wc->LFSTK_getMonitorCount();j++)
 		{
-			asprintf((char**)&(monitorMenus[j].label),"Monitor %i",j);
-			monitorMenus[j].userData=(void*)(long)j;
-			monitorMenus[j].bc=NULL;
-			monitorMenus[j].subMenus=NULL;
-			monitorMenus[j].subMenuCnt=0;
-			monitorMenus[j].imagePath=NULL;
+			char	*lab;
+			asprintf(&lab,"Monitor %i",j);
+			monitorsMenu[j].label=lab;
+			monitorsMenu[j].userData=(void*)j;
 		}
+	monitorsMenuButton=new LFSTK_menuButtonClass(wc,"Monitor 0",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	monitorsMenuButton->LFSTK_addMenus(monitorsMenu,wc->LFSTK_getMonitorCount());
+	monitorsMenuButton->LFSTK_setCallBack(NULL,monitorMenuCB,NULL);
+	loadMonitorInfo();
+	sy+=YSPACING;
 
-	monitorNumber=new LFSTK_menuButtonClass(wc,"Monitor 0",sx,sy,bwidth,24,NorthWestGravity);
-	monitorNumber->LFSTK_addMenus(monitorMenus,wc->LFSTK_getMonitorCount());
-	monitorNumber->LFSTK_setCallBack(NULL,selectMonitor,NULL);
-
-	sx=col1;
-	sy+=vspacing;
-//	labels[MONITORBACKDROP]=new LFSTK_labelClass(wc,labelNames[MONITORBACKDROP],sx,sy,bwidth,24,NorthWestGravity);
-	fileselect=new LFSTK_buttonClass(wc,labelNames[MONITORBACKDROP],sx,sy,bwidth,24,NorthWestGravity);
-	fileselect->LFSTK_setCallBack(NULL,selectfile,USERDATA(200));
-	sx+=spacing;
-	monitorBackdropPath=new LFSTK_lineEditClass(wc,monitorData[0].monitorPath,sx,sy,BIG,24,NorthWestGravity);
-
-	sx=col1;
-	sy+=vspacing;
-	monitorMode=new LFSTK_menuButtonClass(wc,"Monitor Mode",sx,sy,bwidth,24,NorthWestGravity);
+//monitor info
+//backdrop
+	dialogButton=new LFSTK_buttonClass(wc,"Select File",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	monitorBackdropEdit=new LFSTK_lineEditClass(wc,monitors[0].path,(BORDER*2)+GADGETWIDTH,sy,DIALOGWIDTH-(BORDER*3)-GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	dialogButton->LFSTK_setCallBack(NULL,selectFile,(void*)monitorBackdropEdit);
+	sy+=YSPACING;
+//mode
+	monitorMode=new LFSTK_menuButtonClass(wc,"Monitor Mode",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	monitorMode->LFSTK_addMenus(modeMenu,5);
+	monitorModeEdit=new LFSTK_lineEditClass(wc,modeLabel[monitors[selectedMonitor].mode],(BORDER*2)+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	monitorMode->LFSTK_setCallBack(NULL,monitorModeCB,NULL);
-	monitorMode->LFSTK_addMenus(modeMenus,NOMOREMODES);
-	sx+=spacing;
-	monitorModeEdit=new LFSTK_lineEditClass(wc,modeName[monitorData[0].monMode],sx,sy,bwidth,24,NorthWestGravity);
-	sy+=vspacing;
+	sy+=YSPACING;
 
-	labels[LSPACER]=new LFSTK_labelClass(wc,labelNames[LSPACER],0,sy,col1+BIG+bwidth+20,8,NorthWestGravity);
-	sy+=vspacing;
-	sy+=16;
+//line
+	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
+	seperator->LFSTK_setStyle(BEVELNONE);
+	seperator->gadgetDetails.buttonTile=false;
+	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
+	sy+=YSPACING;
 
-	wc->LFSTK_resizeWindow(col1+BIG+bwidth+20,sy,true);
+//quit
+	quit=new LFSTK_buttonClass(wc,"Quit",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
+//apply
+	apply=new LFSTK_buttonClass(wc,"Apply",DIALOGWIDTH-GADGETWIDTH-BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	apply->LFSTK_setCallBack(NULL,buttonCB,(void*)"APPLY");
+
+	sy+=YSPACING;
+
+	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();
 	wc->LFSTK_setKeepAbove(true);
 	if(parentWindow!=-1)
 		wc->LFSTK_setTransientFor(parentWindow);
 
-	XFlush(wc->display);
-
-	mainloop=true;
-	while(mainloop==true)
+	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
+	mainLoop=true;
+	while(mainLoop==true)
 		{
 			XNextEvent(wc->display,&event);
 			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
 			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
+				{
+					ml->function(ml->gadget,&event,ml->type);
+				}
+
 			switch(event.type)
 				{
+					case ButtonRelease:
+						break;
+					case LeaveNotify:
 						break;
 					case Expose:
-						wc->LFSTK_setActive(true);
+					//printf("expose\n");
 						wc->LFSTK_clearWindow();
 						break;
+
 					case ConfigureNotify:
 						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
+						wc->globalLib->LFSTK_setCairoSurface(wc->display,wc->window,wc->visual,&wc->sfc,&wc->cr,event.xconfigurerequest.width,event.xconfigurerequest.height);
+						wc->LFSTK_clearWindow();
 						break;
+
 					case ClientMessage:
 					case SelectionNotify:
-						if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
-							mainloop=false;
-						if(wc->acceptDnd==true)
-							{
-								wc->LFSTK_handleDnD(&event);
-							}
-					default:
+						{
+							if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
+								{
+									wc->LFSTK_hideWindow();
+									mainLoop=false;
+								}
+						}
 						break;
 				}
 		}
 
-	wc->LFSTK_hideWindow();
-
-	for(int j=0;j<wc->LFSTK_getMonitorCount();j++)
-		{
-			if(monitorMenus[j].label!=NULL)
-				free((char*)monitorMenus[j].label);
-		}
-
-	delete monitorMenus;
-	delete modeMenus;
 	delete wc;
 	XCloseDisplay(display);
-
-	free(prefsPath);
-	free(monitorRCPath);
-	return(0);
+	free(wd);
+	free(mainPrefs);
+	free(monitorPrefs);
+	return 0;
 }
+

@@ -1,50 +1,33 @@
-/*
- *
- * ©K. D. Hedger. Thu 20 Jul 13:19:52 BST 2017 kdhedger68713@gmail.com
+#if 0
 
- * This file (lfsruncommand.cpp) is part of LFSApplications.
+#©keithhedger Thu 17 Aug 16:30:38 BST 2017 kdhedger68713@gmail.com
 
- * LFSApplications is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * at your option) any later version.
+g++ "$0" -O0 -ggdb -I/media/LinuxData/Development64/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit -L/media/LinuxData/Development64/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2||exit 1
+LD_LIBRARY_PATH=/media/LinuxData/Development64/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit/app/.libs ./a.out "$@"
+retval=$?
+rm ./a.out
+exit $retval
 
- * LFSApplications is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+#endif
 
- * You should have received a copy of the GNU General Public License
- * along with LFSApplications.  If not, see <http://www.gnu.org/licenses/>.
- */
+#include "lfstk/LFSTKGlobals.h"
 
-#include <stdio.h>
-#include <unistd.h>
-
-#include <lfstk/LFSTKGlobals.h>
-
-#define		WINWIDTH 800
-#define		WINHITE 600
-#define		ICONBUTTON 48
-#define		MIDWIN WINWIDTH/2
-#define		BUTTONWITDH 64
-#define		BUTTONHITE 24
-#define		YSPACING BUTTONHITE
-#define		BORDER 8
-#define		LISTHITE BUTTONHITE * 8
-#define		MAXHISTORY "20"
-
-#define		MYEMAIL "keithhedger@keithhedger.darktech.org"
-#define		MYWEBSITE "http://keithhedger.darktech.org/"
+#undef DIALOGWIDTH
+#define DIALOGWIDTH		800
+#define LISTHITE		GADGETHITE * 8
+#define MAXHISTORY		40
 
 LFSTK_windowClass		*wc=NULL;
 LFSTK_listGadgetClass	*list=NULL;
 LFSTK_lineEditClass		*le=NULL;
+LFSTK_labelClass		*personal=NULL;
+LFSTK_labelClass		*copyrite=NULL;
 
 const char				*commandToRun=NULL;
-	char				*commandfile;
+char					*commandfile;
 
 bool					mainLoop=true;
+Display					*display;
 
 bool doQuit(void *p,void* ud)
 {
@@ -65,7 +48,7 @@ bool doExecute(void *object,void* ud)
 			asprintf(&data,"echo %s >> %s",le->LFSTK_getBuffer()->c_str(),commandfile);
 			system(data);
 			free(data);
-			asprintf(&data,"tail -n " MAXHISTORY " %s|sort -u -o %s.tmp; mv %s.tmp %s",commandfile,commandfile,commandfile,commandfile);
+			asprintf(&data,"tail -n %i %s|sort -u -o %s.tmp; mv %s.tmp %s",MAXHISTORY,commandfile,commandfile,commandfile,commandfile);
 			system(data);
 		}
 	free(data);
@@ -83,16 +66,23 @@ bool select(void *object,void* ud)
 int main(int argc, char **argv)
 {
 	XEvent				event;
-
+	int 				sy=0;
 	LFSTK_windowClass	*wc;
 	LFSTK_buttonClass	*quit;
 	LFSTK_buttonClass	*run;
 	LFSTK_labelClass	*label;
 
-	int 				sy=BORDER;
 
-	wc=new LFSTK_windowClass(0,0,WINWIDTH,WINHITE,"About LFS Desktop",false);
-	list=list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,WINWIDTH-32,LISTHITE,NorthWestGravity,NULL,0);
+	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Run Command",false);
+	display=wc->display;
+
+	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
+	sy+=HALFYSPACING;
+	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
+	personal->LFSTK_setCairoFontDataParts("B");
+	sy+=YSPACING;
+
+	list=list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2)-(NAVBUTTONSIZE)-LGAP,LISTHITE,NorthWestGravity,NULL,0);
 
 	asprintf(&commandfile,"%s/%s",wc->configDir,"command.hist");
 	list->LFSTK_setListFromFile(commandfile,false);
@@ -100,17 +90,17 @@ int main(int argc, char **argv)
 	sy+=LISTHITE+8;
 
 //command
-	le=new LFSTK_lineEditClass(wc,"",BORDER,sy,WINWIDTH-BORDER,BUTTONHITE,NorthWestGravity);
-	sy+=BUTTONHITE+8;
+	le=new LFSTK_lineEditClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE,NorthWestGravity);
+	sy+=GADGETHITE+8;
 
-	quit=new LFSTK_buttonClass(wc,"Quit",BORDER,sy,BUTTONWITDH,BUTTONHITE,NorthWestGravity);
+	quit=new LFSTK_buttonClass(wc,"Quit",BORDER,sy,GADGETWIDTH,GADGETHITE,NorthWestGravity);
 	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
 
-	run=new LFSTK_buttonClass(wc,"Execute",WINWIDTH-BORDER-BUTTONWITDH,sy,BUTTONWITDH,BUTTONHITE,NorthEastGravity);
+	run=new LFSTK_buttonClass(wc,"Execute",DIALOGWIDTH-BORDER-GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthEastGravity);
 	run->LFSTK_setCallBack(NULL,doExecute,NULL);
-	sy+=BUTTONHITE+BORDER;
+	sy+=GADGETHITE+BORDER;
 
-	wc->LFSTK_resizeWindow(WINWIDTH,sy);
+	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();
 	wc->LFSTK_setKeepAbove(true);
 
@@ -143,6 +133,7 @@ int main(int argc, char **argv)
 
 	free(commandfile);
 	delete wc;
+	XCloseDisplay(display);
 	
 	return 0;
 }

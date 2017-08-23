@@ -189,7 +189,6 @@ int main(int argc,char **argv)
 {
 	char			*env;
 	XEvent			event;
-	fontStruct		*tfont;
 	const char		*itemfont;
 	int				psize;
 	int				thold;
@@ -216,10 +215,12 @@ int main(int argc,char **argv)
 	NET_WM_WINDOW_TYPE=XInternAtom(mainwind->display,"_NET_WM_WINDOW_TYPE",False);
 	NET_WM_STATE=XInternAtom(mainwind->display,"_NET_WM_STATE",False);
 
-	itemfont=mainwind->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
-	tfont=mainwind->globalLib->LFSTK_loadFont(mainwind->display,mainwind->screen,itemfont);
-	iconSize=tfont->size;
-	free(tfont);
+//TODO//
+	//itemfont=mainwind->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
+	//tfont=mainwind->globalLib->LFSTK_loadFont(mainwind->display,mainwind->screen,itemfont);
+	//iconSize=tfont->size;
+	iconSize=32;
+	//free(tfont);
 
 	if(argc>1)
 		{

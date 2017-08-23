@@ -20,6 +20,10 @@
 
 #ifndef _LFSTKIMAGE_
 #define _LFSTKIMAGE_
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <stdio.h>
+#include <X11/extensions/shape.h>
 
 /**
  *
@@ -35,19 +39,25 @@ class LFSTK_imageClass  : public  LFSTK_gadgetClass
 		~LFSTK_imageClass();
 		LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* imagepath,int x,int y,int w,int h,int gravity,bool scale);
 
-		bool mouseUp(XButtonEvent *e);
-		bool mouseDown(XButtonEvent *e);
-		bool mouseDrag(XMotionEvent *e);
+		bool			mouseUp(XButtonEvent *e);
+		bool			mouseDown(XButtonEvent *e);
+		bool			mouseDrag(XMotionEvent *e);
 
-		void LFSTK_setCanDrag(bool candrag);
-		bool LFSTK_getCanDrag(void);
-		void LFSTK_snapSize(int sze);
+		void			LFSTK_setCanDrag(bool candrag);
+		bool			LFSTK_getCanDrag(void);
+		void			LFSTK_snapSize(int sze);
+
+		void			LFSTK_clearWindow(void);
+
+		cairo_surface_t	*shapesfc;
+		cairo_t			*shapecr;
+		Pixmap			shape;
 
 	protected:
-		bool	canDrag=false;
-		int		mouseDownX=0;
-		int		mouseDownY=0;
-		int		snap=1;
+		bool			canDrag=false;
+		int				mouseDownX=0;
+		int				mouseDownY=0;
+		int				snap=1;
 };
 
 #endif

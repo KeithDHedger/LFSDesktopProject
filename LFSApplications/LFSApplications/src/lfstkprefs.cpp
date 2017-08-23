@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Wed 16 Sep 11:51:14 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Sun 13 Aug 18:33:35 BST 2017 kdhedger68713@gmail.com
 
  * This file (lfstkprefs.cpp) is part of LFSApplications.
 
@@ -18,189 +18,199 @@
  * along with LFSApplications.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <getopt.h>
-#include <libgen.h>
+#include "lfstk/LFSTKGlobals.h"
 
-#include <lfstk/LFSTKGlobals.h>
+#define EDITBOXWIDTH	GADGETWIDTH*2
 
-enum {EXIT=0,APPLY,PRINT,NOMOREGBS};
-enum {NORMAL=0,PRELIGHT,ACTIVE,INACTIVE,MENUNORMAL,MENUPRELIGHT,MENUACTIVE,MENUINACTIVE,NOMOREBUTTONS};
-enum {ENORMAL=0,EPRELIGHT,EACTIVE,EINACTIVE,EFONTNORMAL,EFONTPRELIGHT,EFONTACTIVE,EFONTINACTIVE,EMENUNORMAL,EMENUPRELIGHT,EMENUACTIVE,EMENUINACTIVE,EMENUFONTNORMAL,EMENUFONTPRELIGHT,EMENUFONTACTIVE,EMENUFONTINACTIVE,EWINDOWCOLOUR,EFONTSTRING,EMENUFONTSTRING,EWINDOWTILE,EBUTTONTILE,EMENUITEMTILE,NOMOREBUTTONEDITS};
-enum {LNORMBUTTONS=0,LBACKCOLOUR,LFONTCOLOUR,LMENUBUTTONS,LMENUBACKCOLOUR,LMENUFONTCOLOUR,LWINDOWCOLOUR,LSPACER,NOMORELABELS};
-//LWINDOWTILE,LBUTTONTILE,LMENUITEMTILE,LSPACER,NOMORELABELS};
+LFSTK_windowClass		*wc=NULL;
+LFSTK_labelClass		*label=NULL;
+LFSTK_labelClass		*personal=NULL;
+LFSTK_labelClass		*copyrite=NULL;
+LFSTK_buttonClass		*seperator=NULL;
+LFSTK_buttonClass		*quit=NULL;
+LFSTK_buttonClass		*apply=NULL;
+LFSTK_buttonClass		*test=NULL;
 
-enum {FWTILENAME=7,FBTILENAME,FMITEMNAME};
+//preview buttons
+LFSTK_buttonClass		*previewButtons[4]={NULL,};
+LFSTK_lineEditClass		*previeBackColourEdit[4]={NULL,};
+LFSTK_lineEditClass		*previeFontColourEdit[4]={NULL,};
+const char				*previewButtonLabels[4]={"Button Normal","Button Prelight","Button Active","Button Inactive"};
 
-LFSTK_windowClass		*wc;
-LFSTK_buttonClass		*guibuttons[NOMOREGBS]={NULL,};
-LFSTK_buttonClass		*normalbuttons[NOMOREBUTTONS]={NULL,};
-LFSTK_lineEditClass 	*normaledits[NOMOREBUTTONEDITS]={NULL,};
-LFSTK_labelClass		*labels[NOMORELABELS]={NULL,};
-LFSTK_toggleButtonClass	*autocolour=NULL;
-LFSTK_toggleButtonClass	*usetheme=NULL;
-LFSTK_buttonClass		*getFileButton=NULL;
+//menu buttons
+LFSTK_buttonClass		*previewMenus[4]={NULL,};
+LFSTK_lineEditClass		*previeMenuBackColourEdit[4]={NULL,};
+LFSTK_lineEditClass		*previeMenuFontColourEdit[4]={NULL,};
+const char				*previewMenuLabels[4]={"Menu Normal","Menu Prelight","Menu Active","Menu Inactive"};
 
-bool					mainloop=false;
+//buton font
+LFSTK_fontDialogClass	*buttonFontDialogButton=NULL;
+LFSTK_lineEditClass		*buttonFontEdit=NULL;
+
+//menu font
+LFSTK_fontDialogClass	*menuFontDialogButton=NULL;
+LFSTK_lineEditClass		*menuFontEdit=NULL;
+
+//window stuff
+LFSTK_lineEditClass		*windowColourEdit=NULL;
+LFSTK_toggleButtonClass	*autoColourCheck=NULL;
+
+//themes
+LFSTK_toggleButtonClass	*useTheme=NULL;
+LFSTK_buttonClass		*windowTile=NULL;
+LFSTK_buttonClass		*buttonTile=NULL;
+LFSTK_buttonClass		*menuTile=NULL;
+LFSTK_lineEditClass		*windowTileEdit=NULL;
+LFSTK_lineEditClass		*buttonTileEdit=NULL;
+LFSTK_lineEditClass		*menuTileEdit=NULL;
+LFSTK_fileDialogClass	*tileDialog=NULL;
+
+bool					mainLoop=true;
+Display					*display;
+char					*wd;
 int						parentWindow=-1;
-const char				*buttonnames[]={"Button Normal","Button Prelight","Button Active","Button Inactive","Menu Normal","Menu Prelight","Menu Active","Menu Inactive"};
-//const char				*labelnames[]={"Normal Buttons","Back Colour","Font Colour","Menu Items","Back Colour","Font Colour","Window Colour","Font","Menu Item Font","Window Tile","Button Tile","Menu Item Tile","--"};
-const char				*labelnames[]={"Normal Buttons","Back Colour","Font Colour","Menu Items","Back Colour","Font Colour","Window Colour","Window Tile","Button Tile","Menu Item Tile","--"};
-LFSTK_fileDialogClass	*fc;
+
+bool doQuit(void *p,void* ud)
+{
+	mainLoop=false;
+	XFlush(wc->display);
+	XSync(wc->display,true);
+	return(false);
+}
 
 void setVars(void)
 {
-//window clolour
-	wc->LFSTK_setWindowColourName(NORMALCOLOUR,normaledits[EWINDOWCOLOUR]->LFSTK_getBuffer()->c_str());
-	wc->globalLib->LFSTK_setGlobalString(NORMALCOLOUR,TYPEWINDOW,wc->windowColourNames[NORMALCOLOUR].name);
-	wc->LFSTK_clearWindow();
+	for(int j=0;j<4;j++)
+		{
+//buttons
+			wc->globalLib->LFSTK_setGlobalString(j,TYPEBUTTON,previeBackColourEdit[j]->LFSTK_getBuffer()->c_str());
+			wc->globalLib->LFSTK_setGlobalString(j,TYPEFONTCOLOUR,previeFontColourEdit[j]->LFSTK_getBuffer()->c_str());
+//menus
+			wc->globalLib->LFSTK_setGlobalString(j,TYPEMENUITEM,previeMenuBackColourEdit[j]->LFSTK_getBuffer()->c_str());
+			wc->globalLib->LFSTK_setGlobalString(j,TYPEMENUITEMFONTCOLOUR,previeMenuFontColourEdit[j]->LFSTK_getBuffer()->c_str());
+		}
 
-//auto label colour
-	wc->globalLib->LFSTK_setAutoLabelColour(autocolour->LFSTK_getValue());
-	wc->autoLabelColour=wc->globalLib->LFSTK_getAutoLabelColour();
+	wc->globalLib->LFSTK_setGlobalString(0,TYPEWINDOW,windowColourEdit->LFSTK_getBuffer()->c_str());
+	wc->globalLib->LFSTK_setAutoLabelColour(autoColourCheck->LFSTK_getValue());
+	wc->globalLib->LFSTK_setUseTheme(useTheme->LFSTK_getValue());
+//tiles
+	wc->globalLib->LFSTK_setGlobalString(0,TYPEWINDOWTILE,windowTileEdit->LFSTK_getBuffer()->c_str());
+	wc->globalLib->LFSTK_setGlobalString(0,TYPEBUTTONTILE,buttonTileEdit->LFSTK_getBuffer()->c_str());
+	wc->globalLib->LFSTK_setGlobalString(0,TYPEMENUITEMTILE,menuTileEdit->LFSTK_getBuffer()->c_str());
 //fonts
-	wc->globalLib->LFSTK_setGlobalString(-1,TYPEFONT,normaledits[EFONTSTRING]->LFSTK_getBuffer()->c_str());
-	wc->globalLib->LFSTK_setGlobalString(-1,TYPEMENUITEMFONT,normaledits[EMENUFONTSTRING]->LFSTK_getBuffer()->c_str());
+	wc->globalLib->LFSTK_setGlobalString(0,TYPEFONT,buttonFontEdit->LFSTK_getBuffer()->c_str());
+	wc->globalLib->LFSTK_setGlobalString(0,TYPEMENUITEMFONT,menuFontEdit->LFSTK_getBuffer()->c_str());
 
-//button colours
-	for(int j=NORMALCOLOUR;j<MAXCOLOURS;j++)
-		{
-			wc->globalLib->LFSTK_setGlobalString(j,TYPEBUTTON,normaledits[ENORMAL+j]->LFSTK_getBuffer()->c_str());
-			wc->globalLib->LFSTK_setGlobalString(j,TYPEMENUITEM,normaledits[EMENUNORMAL+j]->LFSTK_getBuffer()->c_str());
-			wc->globalLib->LFSTK_setGlobalString(j,TYPEFONTCOLOUR,normaledits[EFONTNORMAL+j]->LFSTK_getBuffer()->c_str());
-			wc->globalLib->LFSTK_setGlobalString(j,TYPEMENUITEMFONTCOLOUR,normaledits[EMENUFONTNORMAL+j]->LFSTK_getBuffer()->c_str());
-//reset button colours
-			normalbuttons[NORMAL+j]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON));
-			normalbuttons[NORMAL+j]->LFSTK_setFontColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(j,TYPEFONTCOLOUR));
-			normalbuttons[NORMAL+j]->LFSTK_setLabelAutoColour(wc->autoLabelColour);
-			normalbuttons[NORMAL+j]->LFSTK_setFontString(wc->globalLib->LFSTK_getGlobalString(-1,TYPEFONT));
-			normalbuttons[NORMAL+j]->LFSTK_clearWindow();
-//reset menu item colours
-			normalbuttons[MENUNORMAL+j]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEM));
-			normalbuttons[MENUNORMAL+j]->LFSTK_setFontColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEMFONTCOLOUR));
-			normalbuttons[MENUNORMAL+j]->LFSTK_setLabelAutoColour(wc->autoLabelColour);
-			normalbuttons[MENUNORMAL+j]->LFSTK_setFontString(wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT));
-			normalbuttons[MENUNORMAL+j]->LFSTK_clearWindow();
-		}
+}
 
-//auto label clour checkbox
-	autocolour->LFSTK_setLabelAutoColour(wc->autoLabelColour);
-	autocolour->LFSTK_setFontColourName(NORMALCOLOUR,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEFONTCOLOUR));
-	autocolour->LFSTK_clearWindow();
-
-//reset label background colours
-	for(int j=LNORMBUTTONS;j<NOMORELABELS;j++)
-		{
-			labels[j]->LFSTK_setLabelAutoColour(wc->autoLabelColour);
-			labels[j]->LFSTK_setColourName(NORMALCOLOUR,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEWINDOW));
-			labels[j]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(INACTIVECOLOUR,TYPEWINDOW));
-			labels[j]->LFSTK_clearWindow();
-		}
-
-//themes
-	wc->globalLib->LFSTK_setGlobalString(-1,TYPEWINDOWTILE,normaledits[EWINDOWTILE]->LFSTK_getBuffer()->c_str());
-	wc->globalLib->LFSTK_setGlobalString(-1,TYPEBUTTONTILE,normaledits[EBUTTONTILE]->LFSTK_getBuffer()->c_str());
-	wc->globalLib->LFSTK_setGlobalString(-1,TYPEMENUITEMTILE,normaledits[EMENUITEMTILE]->LFSTK_getBuffer()->c_str());
-	wc->globalLib->LFSTK_setUseTheme(usetheme->LFSTK_getValue());
-
-//use theme checkbox
-	usetheme->LFSTK_setLabelAutoColour(wc->autoLabelColour);
-	usetheme->LFSTK_setFontColourName(NORMALCOLOUR,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEFONTCOLOUR));
-	usetheme->LFSTK_clearWindow();
+void setPreviewData(void)
+{
+//	if(useTheme->LFSTK_getValue()==true)
+//		wc->LFSTK_setTile(windowTileEdit->LFSTK_getBuffer()->c_str(),0);
+//	else
+//		wc->LFSTK_setTile(NULL,0);
+//	wc->LFSTK_clearWindow();
+//	XSync(wc->display,false);
 	
+	for(int j=0;j<4;j++)
+		{
+			previewButtons[j]->LFSTK_setLabelAutoColour(autoColourCheck->LFSTK_getValue());
+			if(useTheme->LFSTK_getValue()==true)
+				previewButtons[j]->LFSTK_setTile(buttonTileEdit->LFSTK_getBuffer()->c_str(),0);
+			else
+				previewButtons[j]->LFSTK_setTile(NULL,0);
+			previewButtons[j]->LFSTK_setFontString(buttonFontEdit->LFSTK_getBuffer()->c_str());
+			previewButtons[j]->LFSTK_setCairoFontData();
+			previewButtons[j]->LFSTK_setColourName(NORMALCOLOUR,previeBackColourEdit[j]->LFSTK_getBuffer()->c_str());
+			previewButtons[j]->LFSTK_setFontColourName(NORMALCOLOUR,previeFontColourEdit[j]->LFSTK_getBuffer()->c_str(),false);
+			previewButtons[j]->LFSTK_clearWindow();
+
+			previewMenus[j]->LFSTK_setLabelAutoColour(autoColourCheck->LFSTK_getValue());
+			if(useTheme->LFSTK_getValue()==true)
+				previewMenus[j]->LFSTK_setTile(menuTileEdit->LFSTK_getBuffer()->c_str(),0);
+			else
+				previewMenus[j]->LFSTK_setTile(NULL,0);
+			previewMenus[j]->LFSTK_setFontString(menuFontEdit->LFSTK_getBuffer()->c_str());
+			previewMenus[j]->LFSTK_setCairoFontData();
+			previewMenus[j]->LFSTK_setColourName(NORMALCOLOUR,previeMenuBackColourEdit[j]->LFSTK_getBuffer()->c_str());
+			previewMenus[j]->LFSTK_setFontColourName(NORMALCOLOUR,previeMenuFontColourEdit[j]->LFSTK_getBuffer()->c_str(),false);
+			previewMenus[j]->LFSTK_clearWindow();
+		}
 }
 
 bool selectfile(void *object,void* ud)
 {
-	char					*dir;
-	const char				*dirpath;
-	char					*filepath;
+	char	*buffer;
 
-	dir=strdup(normaledits[GETUSERDATA(ud)]->LFSTK_getBuffer()->c_str());
-	dirpath=dirname(dir);
-	fc->LFSTK_showFileDialog(dirpath,labelnames[GETUSERDATA(ud)-12]);
-	if(fc->LFSTK_isValid()==true)
+	LFSTK_lineEditClass	*fd=static_cast<LFSTK_lineEditClass*>(ud);
+
+	tileDialog->LFSTK_showFileDialog(wd,"Select A File");
+	if(tileDialog->LFSTK_isValid()==true)
 		{
-			asprintf(&filepath,"%s/%s",fc->LFSTK_getCurrentDir(),fc->LFSTK_getCurrentFile());
-			normaledits[GETUSERDATA(ud)]->LFSTK_setBuffer(filepath);
-			free(filepath);
-		}
-	free(dir);
-	return(true);
-}
-
-bool callback(void *p,void* ud)
-{
-	char *env;
-
-	switch((long)ud)
-		{
-			case EXIT:
-				setVars();
-				wc->globalLib->LFSTK_saveVarsToFile("-",wc->globalLib->LFSTK_getTKArgs());
-				printf("\n");
-				mainloop=false;
-				return(false);
-				break;
-				case PRINT:
-				setVars();
-				wc->globalLib->LFSTK_saveVarsToFile("-",wc->globalLib->LFSTK_getTKArgs());
-				printf("\n");
-				break;
-			case APPLY:
-				setVars();
-				asprintf(&env,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
-				wc->globalLib->LFSTK_saveVarsToFile(env,wc->globalLib->LFSTK_getTKArgs());
-				free(env);
-				break;
+			asprintf(&buffer,"%s/%s",tileDialog->LFSTK_getCurrentDir(),tileDialog->LFSTK_getCurrentFile());
+			fd->LFSTK_setBuffer(buffer);
+			free(buffer);
+			free(wd);
+			wd=strdup(tileDialog->LFSTK_getCurrentDir());			
 		}
 	return(true);
 }
 
-bool fontCB(void *object,void* userdata)
+bool buttonCB(void *p,void* ud)
 {
-	LFSTK_fontButtonClass	*fb;
+	char					*prefsfile;
+	const fontDataStruct	*fd;
+	if(ud!=NULL)
+		{
+			if(strcmp((char*)ud,"SELECTBUTTONFONT")==0)
+				{
+					buttonFontDialogButton->LFSTK_showDialog("");
+					fd=buttonFontDialogButton->LFSTK_getFontData(false);
+					if(fd->isValid==true)
+						buttonFontEdit->LFSTK_setBuffer(fd->fontString);
+					return(true);
+				}
 
-	fb=static_cast<LFSTK_fontButtonClass*>(object);
-	if(GETUSERDATA(userdata)==100)
-		{
-			fb->LFSTK_showDialog(normaledits[EFONTSTRING]->LFSTK_getBuffer()->c_str());
-			normaledits[EFONTSTRING]->LFSTK_setBuffer(fb->LFSTK_getFontString());
+			if(strcmp((char*)ud,"SELECTMENUFONT")==0)
+				{
+					menuFontDialogButton->LFSTK_showDialog("");
+					fd=menuFontDialogButton->LFSTK_getFontData(false);
+					if(fd->isValid==true)
+						menuFontEdit->LFSTK_setBuffer(fd->fontString);
+					return(true);
+				}
+
+			if(strcmp((char*)ud,"TEST")==0)
+				setPreviewData();
+
+			if(strcmp((char*)ud,"APPLY")==0)
+				{
+					setPreviewData();
+					setVars();
+					asprintf(&prefsfile,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
+					wc->globalLib->LFSTK_saveVarsToFile(prefsfile,wc->globalLib->LFSTK_getTKArgs());
+					free(prefsfile);
+				}
 		}
-	else
-		{
-			fb->LFSTK_showDialog(normaledits[EMENUFONTSTRING]->LFSTK_getBuffer()->c_str());
-			normaledits[EMENUFONTSTRING]->LFSTK_setBuffer(fb->LFSTK_getFontString());
-		}
+	return(true);
 }
+
 int main(int argc, char **argv)
 {
-	XEvent					event;
-	int						sx=0;
-	int						sy=0;
-	const geometryStruct	*geom;
-	int						bwidth=96;
-	int						bhite=24;
-	int						spacing=bwidth+10;
-	int						vspacing=bhite+10;
-	int						xspace=10;
-	int						cols[5];
-	int						state;
-	int						holdsy;
-	LFSTK_fontButtonClass	*fontbutton;
-	Display					*display;
-
-	int						c=0;
-	int						option_index=0;
-	const char				*shortOpts="h?w:";
-	option 					longOptions[]=
+	XEvent		event;
+	int			sy=0;
+	int			sx=BORDER;
+	int			c=0;
+	int			option_index=0;
+	const char	*shortOpts="h?w:";
+	option		longOptions[]=
 		{
 			{"window",1,0,'w'},
 			{"help",0,0,'h'},
 			{0, 0, 0, 0}
 		};
+
 	while(1)
 		{
 			option_index=0;
@@ -219,198 +229,168 @@ int main(int argc, char **argv)
 						break;
 				}
 		}
-
-	cols[0]=10;
-	for(int j=1;j<5;j++)
-		cols[j]=cols[j-1]+bwidth+xspace;
-
-	wc=new LFSTK_windowClass(sx,sy,800,600,"LFS Tool Kit Prefs",false);
-	display=wc->display;
-
-	wc->LFSTK_setDecorated(true);
-	geom=wc->LFSTK_getWindowGeom();
-
-	fc=new LFSTK_fileDialogClass(wc,"Select Window Tile","/",false);
-
-	guibuttons[EXIT]=new LFSTK_buttonClass(wc,"Exit",10,geom->h-32,64,24,SouthWestGravity);
-	guibuttons[EXIT]->LFSTK_setCallBack(NULL,callback,(void*)EXIT);
-
-	guibuttons[APPLY]=new LFSTK_buttonClass(wc,"Apply",geom->w-74,geom->h-32,64,24,SouthEastGravity);
-	guibuttons[APPLY]->LFSTK_setCallBack(NULL,callback,(void*)APPLY);
-
-	guibuttons[PRINT]=new LFSTK_buttonClass(wc,"Test",(geom->w/2)-(64/2),geom->h-32,64,24,SouthGravity);
-	guibuttons[PRINT]->LFSTK_setCallBack(NULL,callback,(void*)PRINT);
-
-//buttons label
-	sy=10;
-	for(int j=LNORMBUTTONS;j<=LFONTCOLOUR;j++)
-		{
-			labels[j]=new LFSTK_labelClass(wc,labelnames[j],cols[j],sy,bwidth,24,NorthWestGravity);
-			labels[j]->LFSTK_setLabelGravity(LEFT);
-		}
-
-//buttons
-	sy+=vspacing;
-	holdsy=sy;
-	state=NORMALCOLOUR;
-	for(int j=NORMAL;j<=INACTIVE;j++)
-		{
-			normalbuttons[j]=new LFSTK_buttonClass(wc,buttonnames[j],cols[0],sy,bwidth,24,NorthWestGravity);
-			normalbuttons[j]->LFSTK_setActive(false);
-			normalbuttons[j]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(state,TYPEBUTTON));
-			normalbuttons[j]->LFSTK_setFontColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(state,TYPEFONTCOLOUR));
-			state++;
-			sy+=vspacing;
-		}
-//button back col
-	state=NORMALCOLOUR;
-	sy=holdsy;
-	for(int j=ENORMAL;j<=EINACTIVE;j++)
-		{
-			normaledits[j]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(state,TYPEBUTTON),cols[1],sy,bwidth,24,NorthWestGravity);
-			state++;
-			sy+=vspacing;
-		}
-//button font col
-	state=NORMALCOLOUR;
-	sy=holdsy;
-	for(int j=EFONTNORMAL;j<=EFONTINACTIVE;j++)
-		{
-			normaledits[j]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(state,TYPEFONTCOLOUR),cols[2],sy,bwidth,24,NorthWestGravity);
-			state++;
-			sy+=vspacing;
-		}
-
-	fontbutton=new LFSTK_fontButtonClass(wc,"Select Font",cols[0],sy,bwidth,24,NorthWestGravity);
-	fontbutton->LFSTK_setCallBack(NULL,fontCB,USERDATA(100));
-	fontbutton->LFSTK_setLabelIsFont(false);
-	normaledits[EFONTSTRING]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEFONT),cols[1],sy,cols[3]-cols[1]-10,24,NorthWestGravity);
-	sy+=vspacing;
-
-//menu items labels
-	state=0;
-	for(int j=LMENUBUTTONS;j<=LMENUFONTCOLOUR;j++)
-		{
-			labels[j]=new LFSTK_labelClass(wc,labelnames[j],cols[state],sy,bwidth,24,NorthWestGravity);
-			state++;
-			labels[j]->LFSTK_setLabelGravity(LEFT);
-		}
-//menu items
-	sy+=vspacing;
-	holdsy=sy;
-	state=NORMALCOLOUR;
-	for(int j=MENUNORMAL;j<=MENUINACTIVE;j++)
-		{
-			normalbuttons[j]=new LFSTK_buttonClass(wc,buttonnames[j],cols[0],sy,bwidth,24,NorthWestGravity);
-			normalbuttons[j]->LFSTK_setActive(false);
-			normalbuttons[j]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(state,TYPEBUTTON));
-			normalbuttons[j]->LFSTK_setFontColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(state,TYPEMENUITEMFONTCOLOUR));
-			state++;
-			sy+=vspacing;
-		}
-//menu back col
-	state=NORMALCOLOUR;
-	sy=holdsy;
-	for(int j=EMENUNORMAL;j<=EMENUINACTIVE;j++)
-		{
-			normaledits[j]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(state,TYPEMENUITEM),cols[1],sy,bwidth,24,NorthWestGravity);
-			state++;
-			sy+=vspacing;
-		}
-//menu font col
-	state=NORMALCOLOUR;
-	sy=holdsy;
-	for(int j=EMENUFONTNORMAL;j<=EMENUFONTINACTIVE;j++)
-		{
-			normaledits[j]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(state,TYPEMENUITEMFONTCOLOUR),cols[2],sy,bwidth,24,NorthWestGravity);
-			state++;
-			sy+=vspacing;
-		}
-
-	fontbutton=new LFSTK_fontButtonClass(wc,"Select Font",cols[0],sy,bwidth,24,NorthWestGravity);
-	fontbutton->LFSTK_setCallBack(NULL,fontCB,USERDATA(200));
-	fontbutton->LFSTK_setLabelIsFont(false);
-	normaledits[EMENUFONTSTRING]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEMENUITEMFONT),cols[1],sy,cols[3]-cols[1]-10,24,NorthWestGravity);
-	sy+=vspacing;
-
-//window label and colour
-	labels[LWINDOWCOLOUR]=new LFSTK_labelClass(wc,labelnames[LWINDOWCOLOUR],cols[0],sy,bwidth,24,NorthWestGravity);
-	labels[LWINDOWCOLOUR]->LFSTK_setLabelGravity(LEFT);	
-	normaledits[EWINDOWCOLOUR]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEWINDOW),cols[1],sy,bwidth,24,NorthWestGravity);
-
-//auto font colour
-	autocolour=new LFSTK_toggleButtonClass(wc,"Auto Colour",cols[2],sy,bwidth,24,NorthWestGravity);
-	autocolour->LFSTK_setCallBack(NULL,callback,(void*)PRINT);
-	autocolour->LFSTK_setValue(wc->autoLabelColour);
-	sy+=vspacing;
-
-//theme parts
-//use theme
-	usetheme=new LFSTK_toggleButtonClass(wc,"Use Theme",cols[0],sy,bwidth,24,NorthWestGravity);
-	usetheme->LFSTK_setCallBack(NULL,callback,(void*)PRINT);
-	usetheme->LFSTK_setValue(wc->globalLib->LFSTK_getUseTheme());
-	sy+=vspacing;
-
-	getFileButton=new LFSTK_buttonClass(wc,labelnames[FWTILENAME],cols[0],sy,bwidth,24,NorthWestGravity);
-	getFileButton->LFSTK_setCallBack(NULL,selectfile,USERDATA(EWINDOWTILE));
-	normaledits[EWINDOWTILE]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),cols[1],sy,cols[3]-cols[1]-10,24,NorthWestGravity);
-
-	sy+=vspacing;
-	getFileButton=new LFSTK_buttonClass(wc,labelnames[FBTILENAME],cols[0],sy,bwidth,24,NorthWestGravity);
-	getFileButton->LFSTK_setCallBack(NULL,selectfile,USERDATA(EBUTTONTILE));
-	normaledits[EBUTTONTILE]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),cols[1],sy,cols[3]-cols[1]-10,24,NorthWestGravity);
-	sy+=vspacing;
-	getFileButton=new LFSTK_buttonClass(wc,labelnames[FMITEMNAME],cols[0],sy,bwidth,24,NorthWestGravity);
-	getFileButton->LFSTK_setCallBack(NULL,selectfile,USERDATA(EMENUITEMTILE));
-	normaledits[EMENUITEMTILE]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMTILE),cols[1],sy,cols[3]-cols[1]-10,24,NorthWestGravity);
-
-	sy+=vspacing;
-	labels[LSPACER]=new LFSTK_labelClass(wc,labelnames[LSPACER],0,sy,cols[3],8,NorthWestGravity);
-	sy+=16;
 	
-	printf("Current Settings:\n\n");
-	callback(NULL,(void*)PRINT);
-	printf("\n\n");
+	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH-BORDER-BORDER-BORDER,DIALOGHITE,"LFS Toolkit Prefs",false);
+	display=wc->display;
+	wd=strdup(wc->configDir);
+	tileDialog=new LFSTK_fileDialogClass(wc,"Select File",wd,false);
 
-	sy+=(vspacing);
-	wc->LFSTK_resizeWindow(cols[3],sy);
-	wc->LFSTK_showWindow(true);
+	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
+	sy+=HALFYSPACING;
+	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
+	personal->LFSTK_setCairoFontDataParts("B");
+	sy+=YSPACING;
+
+//normal buutons
+	for(int j=0;j<4;j++)
+		{
+			previewButtons[j]=new LFSTK_buttonClass(wc,previewButtonLabels[j],sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+			previewButtons[j]->LFSTK_setIgnoreCB(true);
+			sx+=GADGETWIDTH+BORDER;
+			previeBackColourEdit[j]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+			sx+=EDITBOXWIDTH+BORDER;
+			previeFontColourEdit[j]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(j,TYPEFONTCOLOUR),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+			sy+=YSPACING;
+			sx=BORDER;
+		}
+
+	sx=BORDER;
+//button font
+	buttonFontDialogButton=new LFSTK_fontDialogClass(wc,"Select Font",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	buttonFontDialogButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"SELECTBUTTONFONT");
+	sx+=GADGETWIDTH+BORDER;
+	buttonFontEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEFONT),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
+
+	sx=BORDER;
+//menu buttons
+	for(int j=0;j<4;j++)
+		{
+			previewMenus[j]=new LFSTK_buttonClass(wc,previewMenuLabels[j],sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+			previewMenus[j]->LFSTK_setIgnoreCB(true);
+			sx+=GADGETWIDTH+BORDER;
+			previeMenuBackColourEdit[j]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEM),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+			sx+=EDITBOXWIDTH+BORDER;
+			previeMenuFontColourEdit[j]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEMFONTCOLOUR),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+			sy+=YSPACING;
+			sx=BORDER;
+		}
+	sx=BORDER;
+//menu font
+	menuFontDialogButton=new LFSTK_fontDialogClass(wc,"Select Font",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	menuFontDialogButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"SELECTMENUFONT");
+	sx+=GADGETWIDTH+BORDER;
+	menuFontEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEMENUITEMFONT),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
+	sx=BORDER;
+
+//window
+	label=new LFSTK_labelClass(wc,"Window Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	sx+=BORDER+GADGETWIDTH;
+	windowColourEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEWINDOW),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+	sx+=BORDER+EDITBOXWIDTH;
+	autoColourCheck=new LFSTK_toggleButtonClass(wc,"Auto Colour",sx,sy,GADGETWIDTH,GADGETHITE,NorthWestGravity);
+	sy+=YSPACING;
+
+//themes
+	useTheme=new LFSTK_toggleButtonClass(wc,"Use Theme",BORDER,sy,GADGETWIDTH,GADGETHITE,NorthWestGravity);
+	sy+=YSPACING;
+	sx=BORDER;
+//window tile
+	windowTile=new LFSTK_buttonClass(wc,"Window Tile",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	sx+=GADGETWIDTH+BORDER;
+	windowTileEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEWINDOWTILE),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
+	windowTile->LFSTK_setCallBack(NULL,selectfile,(void*)windowTileEdit);
+	sy+=YSPACING;
+	sx=BORDER;
+//button tile
+	buttonTile=new LFSTK_buttonClass(wc,"Button Tile",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	sx+=GADGETWIDTH+BORDER;
+	buttonTileEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEBUTTONTILE),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
+	buttonTile->LFSTK_setCallBack(NULL,selectfile,(void*)buttonTileEdit);
+	sy+=YSPACING;
+	sx=BORDER;
+//menu tile
+	menuTile=new LFSTK_buttonClass(wc,"Menu Tile",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	sx+=GADGETWIDTH+BORDER;
+	menuTileEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEMENUITEMTILE),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
+	menuTile->LFSTK_setCallBack(NULL,selectfile,(void*)menuTileEdit);
+	sy+=YSPACING;
+
+	autoColourCheck->LFSTK_setValue(wc->autoLabelColour);
+	useTheme->LFSTK_setValue(wc->globalLib->LFSTK_getUseTheme());
+
+	setPreviewData();
+	sx=BORDER;
+
+	sx=EDITBOXWIDTH*2+(BORDER*4)+GADGETWIDTH;
+//line
+	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
+	seperator->LFSTK_setStyle(BEVELNONE);
+	seperator->gadgetDetails.buttonTile=false;
+	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
+	sy+=YSPACING;
+
+//quit
+	quit=new LFSTK_buttonClass(wc,"Quit",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
+
+//test
+	test=new LFSTK_buttonClass(wc,"Test",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	test->LFSTK_setCallBack(NULL,buttonCB,(void*)"TEST");
+
+//apply
+	apply=new LFSTK_buttonClass(wc,"Apply",sx-GADGETWIDTH-BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	apply->LFSTK_setCallBack(NULL,buttonCB,(void*)"APPLY");
+	sy+=YSPACING;
+
+	wc->LFSTK_resizeWindow(sx,sy,true);
+	wc->LFSTK_showWindow();
 	wc->LFSTK_setKeepAbove(true);
 	if(parentWindow!=-1)
 		wc->LFSTK_setTransientFor(parentWindow);
 
-	mainloop=true;
-	while(mainloop==true)
+	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
+	mainLoop=true;
+	while(mainLoop==true)
 		{
 			XNextEvent(wc->display,&event);
 			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
 			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
+				{
+					ml->function(ml->gadget,&event,ml->type);
+				}
+
 			switch(event.type)
 				{
+					case ButtonRelease:
+						break;
+					case LeaveNotify:
 						break;
 					case Expose:
-						wc->LFSTK_setActive(true);
 						wc->LFSTK_clearWindow();
 						break;
+
 					case ConfigureNotify:
 						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
+						wc->globalLib->LFSTK_setCairoSurface(wc->display,wc->window,wc->visual,&wc->sfc,&wc->cr,event.xconfigurerequest.width,event.xconfigurerequest.height);
+						wc->LFSTK_clearWindow();
 						break;
+
 					case ClientMessage:
 					case SelectionNotify:
-						if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
-							mainloop=false;
-						if(wc->acceptDnd==true)
-							{
-								wc->LFSTK_handleDnD(&event);
-							}
-					default:
+						{
+							if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
+								{
+									wc->LFSTK_hideWindow();
+									mainLoop=false;
+								}
+						}
 						break;
 				}
 		}
 
 	delete wc;
 	XCloseDisplay(display);
-
-	return(0);
+	return 0;
 }

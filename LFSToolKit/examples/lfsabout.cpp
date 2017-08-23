@@ -16,22 +16,12 @@ exit $retval
 #define WINDOWHITE			10
 #define WINDOWMIDDLE		WINDOWWIDTH/2
 
-#define GADEGETWIDTH		96
-#define GADEGETHITE			24
-#define HALFGADEGETWIDTH	GADEGETWIDTH/2
-
-#define BORDER				20
-#define YSPACING			24
-#define HALFYSPACING		YSPACING/2
-#define BUTTONGRAV			NorthWestGravity
-
-#define COPYRITE			"Copyright © 2013-2016 K.D.Hedger"
-#define PERSONAL			"keithhedger@keithhedger.darktech.org"
-#define	MYWEBSITE			"http://keithhedger.darktech.org/"
+#define SPACING				24
+#define HALFSPACING			SPACING/2
 
 enum		{LNAME,LDESCRIPTION,LCOPYRITE,LEMAIL,LWEBSITE,LGPL,LNOMORELABELS};
 
-const char	*labelTexts[]={"LFS Desktop Project","Low resource/dependency desktop for LFS","© 2015-2016 K.D.Hedger",PERSONAL,MYWEBSITE,"Released under GPLv3"};
+const char	*labelTexts[]={"LFS Desktop Project","Low resource/dependency desktop for LFS",COPYRITE,PERSONAL,MYWEBSITE,"Released under GPLv3"};
 
 #define IMAGESIZE		64
 
@@ -60,34 +50,34 @@ int main(int argc, char **argv)
 	XEvent	event;
 	int		sy=BORDER;
 		
-	wc=new LFSTK_windowClass(0,0,WINDOWWIDTH,WINDOWHITE,"Gadgets",false);
+	wc=new LFSTK_windowClass(0,0,WINDOWWIDTH,WINDOWHITE,"LFS Desktop Project",false);
 	display=wc->display;
 
 	tux=new LFSTK_imageClass(wc,NULL,WINDOWMIDDLE-(IMAGESIZE/2),sy,IMAGESIZE,IMAGESIZE,BUTTONGRAV,true);
 	tux->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",AUTO,true);
 	tux->LFSTK_clearWindow();
-	sy+=YSPACING*3;
+	sy+=SPACING*3;
 
 
 	for(int j=LNAME;j<LNOMORELABELS;j++)
 		{
-			labels[j]=new LFSTK_labelClass(wc,labelTexts[j],0,sy,WINDOWWIDTH,GADEGETHITE,BUTTONGRAV);
-			sy+=YSPACING;
+			labels[j]=new LFSTK_labelClass(wc,labelTexts[j],0,sy,WINDOWWIDTH,GADGETHITE,BUTTONGRAV);
+			sy+=SPACING;
 		}
 	labels[LNAME]->LFSTK_setCairoFontDataParts("sB",18);
 	labels[LDESCRIPTION]->LFSTK_setCairoFontDataParts("s",14);
 
 //line
-	seperator=new LFSTK_buttonClass(wc,"--",0,sy,WINDOWWIDTH,GADEGETHITE,BUTTONGRAV);
+	seperator=new LFSTK_buttonClass(wc,"--",0,sy,WINDOWWIDTH,GADGETHITE,BUTTONGRAV);
 	seperator->LFSTK_setStyle(BEVELNONE);
 	seperator->gadgetDetails.buttonTile=false;
 	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
-	sy+=YSPACING;
+	sy+=SPACING;
 
 //quit
-	quit=new LFSTK_buttonClass(wc,"Close",WINDOWMIDDLE-HALFGADEGETWIDTH,sy,GADEGETWIDTH,GADEGETHITE,BUTTONGRAV);
+	quit=new LFSTK_buttonClass(wc,"Close",WINDOWMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
-	sy+=YSPACING+16;
+	sy+=SPACING+16;
 
 	wc->LFSTK_resizeWindow(WINDOWWIDTH,sy,true);
 	wc->LFSTK_showWindow();
@@ -111,7 +101,6 @@ int main(int argc, char **argv)
 					case LeaveNotify:
 						break;
 					case Expose:
-					//printf("expose\n");
 						wc->LFSTK_clearWindow();
 						break;
 

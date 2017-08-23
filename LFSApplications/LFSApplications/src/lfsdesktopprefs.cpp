@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Sun 13 Sep 14:10:19 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Wed 16 Aug 13:55:27 BST 2017 kdhedger68713@gmail.com
 
  * This file (lfsdesktopprefs.cpp) is part of LFSApplications.
 
@@ -18,161 +18,157 @@
  * along with LFSApplications.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <getopt.h>
 #include <libgen.h>
 
-#include <lfstk/LFSTKGlobals.h>
-
-//enum {ICONTHEME=0,ICONSIZE,GRIDSIZE,GRIDBORDER,REFRESHRATE,FORECOLOUR,BACKCOLOUR,ALPHA,TERMCOMMAND,FONTFACE,IGNORES,NUMPREFS};
-enum {ICONTHEME=0,ICONSIZE,GRIDSIZE,GRIDBORDER,REFRESHRATE,FORECOLOUR,BACKCOLOUR,ALPHA,TERMCOMMAND,FONTFACE,IGNORES,NUMPREFS};
-
-enum {EXIT=0,APPLY,PRINT,NOMOREBUTTONS};
-LFSTK_windowClass		*wc;
-LFSTK_lineEditClass		*le[NUMPREFS]={NULL,};
-LFSTK_labelClass		*lb[NUMPREFS]={NULL,};
-LFSTK_labelClass		*spacer=NULL;
-LFSTK_buttonClass		*guibc[NOMOREBUTTONS]={NULL,};
-LFSTK_buttonClass		*button;
-LFSTK_toggleButtonClass	*showExt=NULL;
-LFSTK_fileDialogClass	*fc;
-
-int						bwidth=96;
-int						spacing=bwidth+10;
-int						col1=10,col2=col1+bwidth+spacing+20,col3=col2+bwidth+spacing+20,col4;
-int						showSuffix;
-int						parentWindow=-1;
-
-#define BIG col2-col1
-
-char				*prefs[NUMPREFS]={NULL,};
-//const char			*labelNames[]={"Icon Theme","Icon Size","Grid Size","Border","Refresh","Text Colour","Label Colour","Label Alpha","Term Command","","Ignore"};
-const char			*labelNames[]={"Select Theme","Icon Size","Grid Size","Border","Refresh","Text Colour","Label Colour","Label Alpha","Term Command","Font","Ignore"};
+#include "lfstk/LFSTKGlobals.h"
 
 
-int					editSize[]={BIG,bwidth,bwidth,bwidth,bwidth,bwidth,bwidth,bwidth,BIG,BIG,BIG};
+LFSTK_windowClass			*wc=NULL;
+LFSTK_labelClass			*label=NULL;
+LFSTK_labelClass			*personal=NULL;
+LFSTK_labelClass			*copyrite=NULL;
+LFSTK_buttonClass			*seperator=NULL;
+LFSTK_buttonClass			*quit=NULL;
+LFSTK_buttonClass			*apply=NULL;
+LFSTK_buttonClass			*button=NULL;
 
-args				desktopPrefs[]=
+LFSTK_fileDialogClass		*themeDialog=NULL;
+LFSTK_lineEditClass			*themeEditBox=NULL;
+
+LFSTK_lineEditClass			*iconSizeEditBox=NULL;
+LFSTK_lineEditClass			*gridSizeEditBox=NULL;
+LFSTK_lineEditClass			*borderEditBox=NULL;
+LFSTK_lineEditClass			*refreshEditBox=NULL;
+LFSTK_lineEditClass			*textColurEditBox=NULL;
+LFSTK_lineEditClass			*labelColurEditBox=NULL;
+LFSTK_lineEditClass			*labelAlphaColurEditBox=NULL;
+LFSTK_toggleButtonClass		*showSuffixCheck=NULL;
+LFSTK_lineEditClass			*termCommandEditBox=NULL;
+LFSTK_lineEditClass			*fontEditBox=NULL;
+LFSTK_lineEditClass			*ignoreEditBox=NULL;
+
+LFSTK_fontDialogClass		*fontButton=NULL;
+
+bool						mainLoop=true;
+Display						*display;
+char						*wd=NULL;
+char						*envFile=NULL;
+
+//prefs
+char						*prefsTheme=NULL;
+int							prefsIconSize=32;
+int							prefsGridSize=64;
+int							prefsBorder=12;
+int							prefsRefresh=2;
+char						*prefsTermCommand=NULL;
+bool						prefsShowSuffix=false;
+char						*prefsFont=NULL;
+char						*prefsTextColour=NULL;
+char						*prefsLabelColour=NULL;
+char						*prefsLabelAlpha=NULL;
+char						*prefsIgnoreList=NULL;
+
+args						desktopPrefs[]=
 {
-	{"icontheme",TYPESTRING,&prefs[ICONTHEME]},
-	{"iconsize",TYPESTRING,&prefs[ICONSIZE]},
-	{"gridsize",TYPESTRING,&prefs[GRIDSIZE]},
-	{"gridborder",TYPESTRING,&prefs[GRIDBORDER]},
-	{"refreshrate",TYPESTRING,&prefs[REFRESHRATE]},
-	{"termcommand",TYPESTRING,&prefs[TERMCOMMAND]},
-	{"showextension",TYPEBOOL,&showSuffix},
-	{"fontface",TYPESTRING,&prefs[FONTFACE]},
-	{"labelforeground",TYPESTRING,&prefs[FORECOLOUR]},
-	{"labelbackground",TYPESTRING,&prefs[BACKCOLOUR]},
-	{"labelalpha",TYPESTRING,&prefs[ALPHA]},
-	{"noshow",TYPESTRING,&prefs[IGNORES]},
+	{"icontheme",TYPESTRING,&prefsTheme},
+	{"iconsize",TYPEINT,&prefsIconSize},
+	{"gridsize",TYPEINT,&prefsGridSize},
+	{"gridborder",TYPEINT,&prefsBorder},
+	{"refreshrate",TYPEINT,&prefsRefresh},
+	{"termcommand",TYPESTRING,&prefsTermCommand},
+	{"showextension",TYPEBOOL,&prefsShowSuffix},
+	{"fontface",TYPESTRING,&prefsFont},
+	{"labelforeground",TYPESTRING,&prefsTextColour},
+	{"labelbackground",TYPESTRING,&prefsLabelColour},
+	{"labelalpha",TYPESTRING,&prefsLabelAlpha},
+	{"noshow",TYPESTRING,&prefsIgnoreList},
 	{NULL,0,NULL}
 };
 
-bool				mainloop=false;
-char				*env;
-
-void setVars(void)
+bool doQuit(void *p,void* ud)
 {
-	lb[BACKCOLOUR]->LFSTK_setColourName(INACTIVECOLOUR,le[BACKCOLOUR]->LFSTK_getBuffer()->c_str());
-	lb[FORECOLOUR]->LFSTK_setColourName(INACTIVECOLOUR,le[FORECOLOUR]->LFSTK_getBuffer()->c_str());
-	for(int j=ICONTHEME; j<NUMPREFS; j++)
-		{
-			if(j!=ICONTHEME)
-				lb[j]->LFSTK_clearWindow();
-			if(prefs[j]!=NULL)
-				free(prefs[j]);
-			prefs[j]=strdup(le[j]->LFSTK_getBuffer()->c_str());
-		}
-	showSuffix=showExt->LFSTK_getValue();
+	mainLoop=false;
+	XFlush(wc->display);
+	XSync(wc->display,true);
+	return(false);
 }
 
-bool callback(void *p,void* ud)
+bool buttonCB(void *p,void* ud)
 {
-	if((long)ud==EXIT)
-		{
-			wc->LFSTK_clearWindow();
-			setVars();
-			wc->globalLib->LFSTK_saveVarsToFile("-",desktopPrefs);
-			printf("\n");
-			mainloop=false;
-			return(false);
-		}
+	free(prefsTheme);
+	free(prefsTermCommand);
+	free(prefsTextColour);
+	free(prefsLabelColour);
+	free(prefsLabelAlpha);
+	free(prefsIgnoreList);
+	free(prefsFont);
 
-	switch((long)ud)
-		{
-			case PRINT:
-				wc->LFSTK_clearWindow();
-				setVars();
-				wc->globalLib->LFSTK_saveVarsToFile("-",desktopPrefs);
-				printf("\n");
-				break;
+	prefsTheme=strdup(themeEditBox->LFSTK_getBuffer()->c_str());
+	prefsTermCommand=strdup(termCommandEditBox->LFSTK_getBuffer()->c_str());
+	prefsTextColour=strdup(textColurEditBox->LFSTK_getBuffer()->c_str());
+	prefsLabelColour=strdup(labelColurEditBox->LFSTK_getBuffer()->c_str());
+	prefsLabelAlpha=strdup(labelAlphaColurEditBox->LFSTK_getBuffer()->c_str());
+	prefsIgnoreList=strdup(ignoreEditBox->LFSTK_getBuffer()->c_str());
+	prefsFont=strdup(fontEditBox->LFSTK_getBuffer()->c_str());
 
-			case APPLY:
-				wc->LFSTK_clearWindow();
-				setVars();
-				wc->globalLib->LFSTK_saveVarsToFile(env,desktopPrefs);
-				system("lfsdesktop &");
-				break;
+	prefsIconSize=atoi(iconSizeEditBox->LFSTK_getBuffer()->c_str());
+	prefsGridSize=atoi(gridSizeEditBox->LFSTK_getBuffer()->c_str());
+	prefsBorder=atoi(borderEditBox->LFSTK_getBuffer()->c_str());
+	prefsRefresh=atoi(refreshEditBox->LFSTK_getBuffer()->c_str());
+
+	prefsShowSuffix=showSuffixCheck->LFSTK_getValue();
+
+	wc->globalLib->LFSTK_saveVarsToFile(envFile,desktopPrefs);
+	return(true);
+}
+
+bool selectThemeFolder(void *object,void* ud)
+{
+	char	*buffer;
+
+	LFSTK_lineEditClass	*fd=static_cast<LFSTK_lineEditClass*>(ud);
+
+	themeDialog->LFSTK_showFileDialog(wd,"Select A Folder");
+	if(themeDialog->LFSTK_isValid()==true)
+		{
+			asprintf(&buffer,"%s",themeDialog->LFSTK_getCurrentDir());
+			fd->LFSTK_setBuffer(basename(buffer));
+			free(buffer);
+			free(wd);
+			wd=strdup(themeDialog->LFSTK_getCurrentDir());			
 		}
 	return(true);
 }
 
-bool setShowExt(void *p,void* ud)
+bool selectFontCB(void *p,void* ud)
 {
-	if(showExt->LFSTK_getValue()==true)
-		showExt->LFSTK_setLabel("Show Suffix");
-	else
-		showExt->LFSTK_setLabel("Hide Suffix");
+	const fontDataStruct	*fd;
+	LFSTK_lineEditClass		*edbox=static_cast<LFSTK_lineEditClass*>(ud);
 
-	showExt->LFSTK_clearWindow();
-	return(true);
-}
-
-bool fontCB(void *object,void* userdata)
-{
-	LFSTK_fontButtonClass	*fb;
-
-	fb=static_cast<LFSTK_fontButtonClass*>(object);
-	fb->LFSTK_showDialog(le[FONTFACE]->LFSTK_getBuffer()->c_str());
-	le[FONTFACE]->LFSTK_setBuffer(fb->LFSTK_getFontString());
-}
-
-bool selectfile(void *object,void* ud)
-{
-	char					*dir;
-	const char				*dirpath;
-
-	asprintf(&dir,"%s/.icons",getenv("HOME"));
-	fc->LFSTK_showFileDialog(dir,le[ICONTHEME]->LFSTK_getBuffer()->c_str());
-	if(fc->LFSTK_isValid()==true)
+	if(ud!=NULL)
 		{
-			free(dir);
-			dir=strdup(fc->LFSTK_getCurrentDir());
-			dirpath=basename(dir);
-			le[ICONTHEME]->LFSTK_setBuffer(dirpath);
+			fontButton->LFSTK_showDialog("");
+			fd=fontButton->LFSTK_getFontData(false);
+			if(fd->isValid==true)
+				{
+					edbox->LFSTK_setBuffer(fd->fontString);
+				}
 		}
-	free(dir);
 	return(true);
 }
 
 int main(int argc, char **argv)
 {
-	XEvent					event;
-	int						sx=0;
-	int						sy=0;
-	const geometryStruct	*geom;
-	int						bhite=24;
-	int						vspacing=bhite+10;
-	LFSTK_fontButtonClass	*fontbutton;
-	Display					*display;
+	XEvent		event;
+	int			sy=0;
+	int			parentWindow=-1;
+	char		*sizes[32]={0,};
 
-	int						c=0;
-	int						option_index=0;
-	const char				*shortOpts="h?w:";
-	option 					longOptions[]=
+	int			c=0;
+	int			option_index=0;
+	const char	*shortOpts="h?w:";		
+	option		longOptions[]=
 		{
 			{"window",1,0,'w'},
 			{"help",0,0,'h'},
@@ -197,140 +193,151 @@ int main(int argc, char **argv)
 				}
 		}
 
-	prefs[ICONTHEME]=strdup("gnome");
-	prefs[ICONSIZE]=strdup("32");
-	prefs[GRIDSIZE]=strdup("64");
-	prefs[GRIDBORDER]=strdup("32");
-	prefs[REFRESHRATE]=strdup("2");
-	prefs[TERMCOMMAND]=strdup("xterm -e ");
-	showSuffix=false;
-	prefs[FONTFACE]=strdup("Sans;0;0;10");
-	prefs[FORECOLOUR]=strdup("#ffffff");
-	prefs[BACKCOLOUR]=strdup("#000000");
-	prefs[ALPHA]=strdup("#ff");
-	prefs[IGNORES]=strdup("");
-
-	wc=new LFSTK_windowClass(sx,sy,800,600,"LFS Desktop Prefs",false);
+	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"LFS Desktop Prefs",false);
 	display=wc->display;
 
-	wc->LFSTK_setDecorated(true);
-	geom=wc->LFSTK_getWindowGeom();
+	asprintf(&envFile,"%s/lfsdesktop.rc",wc->configDir);
+	wc->globalLib->LFSTK_loadVarsFromFile(envFile,desktopPrefs);
 
-	fc=new LFSTK_fileDialogClass(wc,"","/",true);
+	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
+	sy+=HALFYSPACING;
+	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
+	personal->LFSTK_setCairoFontDataParts("B");
+	sy+=YSPACING;
 
-	asprintf(&env,"%s/.config/LFS/lfsdesktop.rc",getenv("HOME"));
-	wc->globalLib->LFSTK_loadVarsFromFile(env,desktopPrefs);
+//theme
+	asprintf(&wd,"%s/.icons",wc->userHome);
+	themeDialog=new LFSTK_fileDialogClass(wc,"Select Theme",wd,true);
+	button=new LFSTK_buttonClass(wc,"Select Theme",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	themeEditBox=new LFSTK_lineEditClass(wc,prefsTheme,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
+	button->LFSTK_setCallBack(NULL,selectThemeFolder,(void*)themeEditBox);
+	sy+=YSPACING;
 
-	guibc[EXIT]=new LFSTK_buttonClass(wc,"Exit",10,geom->h-32,64,24,SouthWestGravity);
-	guibc[EXIT]->LFSTK_setCallBack(NULL,callback,(void*)EXIT);
+//font
+	fontButton=new LFSTK_fontDialogClass(wc,"Select Font",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	fontEditBox=new LFSTK_lineEditClass(wc,prefsFont,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
+	fontButton->LFSTK_setCallBack(NULL,selectFontCB,(void*)fontEditBox);
+	sy+=YSPACING;
 
-	guibc[APPLY]=new LFSTK_buttonClass(wc,"Apply",geom->w-74,geom->h-32,64,24,SouthEastGravity);
-	guibc[APPLY]->LFSTK_setCallBack(NULL,callback,(void*)APPLY);
+//icon sizes
+	label=new LFSTK_labelClass(wc,"Icon Size",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	iconSizeEditBox=new LFSTK_lineEditClass(wc,(char*)std::to_string(prefsIconSize).c_str(),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
 
-	guibc[PRINT]=new LFSTK_buttonClass(wc,"Print",(geom->w/2)-(64/2),geom->h-32,64,24,SouthGravity);
-	guibc[PRINT]->LFSTK_setCallBack(NULL,callback,(void*)PRINT);
-	sx=col1;
-	sy=10;
+	label=new LFSTK_labelClass(wc,"Grid Size",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	gridSizeEditBox=new LFSTK_lineEditClass(wc,(char*)std::to_string(prefsGridSize).c_str(),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
 
-	for(int j=ICONTHEME;j<TERMCOMMAND;j++)
-		{
-			if(j!=ICONTHEME)
-				{
-					lb[j]=new LFSTK_labelClass(wc,labelNames[j],sx,sy,bwidth,24,NorthWestGravity);
-					lb[j]->LFSTK_setLabelAutoColour(true);
-					lb[j]->LFSTK_setActive(false);
-					lb[j]->LFSTK_setColourName(INACTIVECOLOUR,wc->windowColourNames[NORMALCOLOUR].name);
-				}
-			else
-				{
-					button=new LFSTK_buttonClass(wc,labelNames[ICONTHEME],sx,sy,bwidth,24,NorthWestGravity);
-					button->LFSTK_setCallBack(NULL,selectfile,NULL);
-				}
-			sx+=spacing;
-			le[j]=new LFSTK_lineEditClass(wc,prefs[j],sx,sy-1,editSize[j],24,NorthWestGravity);
-			sy+=vspacing;
-			sx=col1;
-		}
+	label=new LFSTK_labelClass(wc,"Border",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	borderEditBox=new LFSTK_lineEditClass(wc,(char*)std::to_string(prefsBorder).c_str(),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
 
-	showExt=new LFSTK_toggleButtonClass(wc,"Show Suffix",col1+bwidth+10,sy,bwidth,24,NorthWestGravity);
-	showExt->LFSTK_setValue(showSuffix);
-	showExt->LFSTK_setCallBack(NULL,setShowExt,NULL);
-	setShowExt(NULL,NULL);
+	label=new LFSTK_labelClass(wc,"Refresh",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	refreshEditBox=new LFSTK_lineEditClass(wc,(char*)std::to_string(prefsRefresh).c_str(),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
 
-	sy+=vspacing;
-	for(int j=TERMCOMMAND;j<NUMPREFS;j++)
-		{
-			if(j==FONTFACE)
-				{
-					lb[FONTFACE]=new LFSTK_labelClass(wc,labelNames[j],sx,sy,1,1,NorthWestGravity);
-					fontbutton=new LFSTK_fontButtonClass(wc,"Select Font",sx,sy,bwidth,24,NorthWestGravity);
-					fontbutton->LFSTK_setCallBack(NULL,fontCB,NULL);
-					fontbutton->LFSTK_setLabelIsFont(false);
-					sx+=spacing;
-					le[FONTFACE]=new LFSTK_lineEditClass(wc,prefs[FONTFACE],sx,sy-1,editSize[FONTFACE],24,NorthWestGravity);
-				}
-			else
-				{
-					lb[j]=new LFSTK_labelClass(wc,labelNames[j],sx,sy,bwidth,24,NorthWestGravity);
-					lb[j]->LFSTK_setLabelAutoColour(true);
-					lb[j]->LFSTK_setActive(false);
-					lb[j]->LFSTK_setColourName(INACTIVECOLOUR,wc->windowColourNames[NORMALCOLOUR].name);
-					sx+=spacing;
-					le[j]=new LFSTK_lineEditClass(wc,prefs[j],sx,sy-1,editSize[j],24,NorthWestGravity);
-				}
-			sy+=vspacing;
-			sx=col1;
-		}
+	label=new LFSTK_labelClass(wc,"Text Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	textColurEditBox=new LFSTK_lineEditClass(wc,prefsTextColour,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
 
-	spacer=new LFSTK_labelClass(wc,"--",0,sy,col3,8,NorthWestGravity);
-	sy+=16;
-	sy+=vspacing;
-	wc->LFSTK_resizeWindow(col2+BIG-bwidth-10,sy);
+	label=new LFSTK_labelClass(wc,"Label Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	labelColurEditBox=new LFSTK_lineEditClass(wc,prefsLabelColour,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
+
+	label=new LFSTK_labelClass(wc,"Label Alpha",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	labelAlphaColurEditBox=new LFSTK_lineEditClass(wc,prefsLabelAlpha,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
+
+//show suffix
+	label=new LFSTK_labelClass(wc,"Show Suffix",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	showSuffixCheck=new LFSTK_toggleButtonClass(wc,"",BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	showSuffixCheck->LFSTK_setValue(prefsShowSuffix);
+	sy+=YSPACING;
+
+//terminal command
+	label=new LFSTK_labelClass(wc,"Term Command",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	termCommandEditBox=new LFSTK_lineEditClass(wc,prefsTermCommand,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
+
+//ignore
+	label=new LFSTK_labelClass(wc,"Ignore",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	ignoreEditBox=new LFSTK_lineEditClass(wc,prefsIgnoreList,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
+
+//line
+	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
+	seperator->LFSTK_setStyle(BEVELNONE);
+	seperator->gadgetDetails.buttonTile=false;
+	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
+	sy+=YSPACING;
+
+//quit
+	quit=new LFSTK_buttonClass(wc,"Quit",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
+
+//apply
+	apply=new LFSTK_buttonClass(wc,"Apply",DIALOGWIDTH-BORDER-GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	apply->LFSTK_setCallBack(NULL,buttonCB,NULL);
+	sy+=YSPACING;
+
+	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();
 	wc->LFSTK_setKeepAbove(true);
 	if(parentWindow!=-1)
 		wc->LFSTK_setTransientFor(parentWindow);
 
-	printf("Current Settings:\n\n");
-	callback(NULL,(void*)PRINT);
-	printf("\n\n");
-
-	mainloop=true;
-	while(mainloop==true)
+	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
+	mainLoop=true;
+	while(mainLoop==true)
 		{
 			XNextEvent(wc->display,&event);
 			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
 			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
+				{
+					ml->function(ml->gadget,&event,ml->type);
+				}
+
 			switch(event.type)
 				{
+					case ButtonRelease:
+						break;
+					case LeaveNotify:
 						break;
 					case Expose:
+					//printf("expose\n");
 						wc->LFSTK_clearWindow();
 						break;
+
 					case ConfigureNotify:
 						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
+						wc->globalLib->LFSTK_setCairoSurface(wc->display,wc->window,wc->visual,&wc->sfc,&wc->cr,event.xconfigurerequest.width,event.xconfigurerequest.height);
+						wc->LFSTK_clearWindow();
 						break;
+
 					case ClientMessage:
 					case SelectionNotify:
-						if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
-							mainloop=false;
-						if(wc->acceptDnd==true)
-							{
-								wc->LFSTK_handleDnD(&event);
-							}
-					default:
+						{
+							if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
+								{
+									wc->LFSTK_hideWindow();
+									mainLoop=false;
+								}
+						}
 						break;
 				}
 		}
 
-	for(int j=ICONTHEME;j<NUMPREFS;j++)
-		if(prefs[j]!=NULL)
-			free(prefs[j]);
-
 	delete wc;
 	XCloseDisplay(display);
+	free(wd);
+	free(envFile);
+	free(prefsTheme);
+	free(prefsTermCommand);
+	free(prefsTextColour);
+	free(prefsLabelColour);
+	free(prefsLabelAlpha);
+	free(prefsIgnoreList);
+	free(prefsFont);
 
-	free(env);
-	return(0);
-};
+	return 0;
+}
