@@ -33,7 +33,7 @@ class LFSTK_buttonClass : public LFSTK_gadgetClass
 	public:
 		LFSTK_buttonClass();
 		~LFSTK_buttonClass();
-		LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity);
+		LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity);
 
 		void *LFSTK_getCallbackUD(void);
 		void LFSTK_setStyle(bevelType s);

@@ -106,10 +106,12 @@ class LFSTK_gadgetClass
 		Window					rootWindow;		
 		Colormap				cm;
 
+		void					LFSTK_setShowIndicator(bool show);
 		bool					useImage;
 		bool					gotIcon;
 		bool					gadgetAcceptsDnD;
 		bool					isSubMenu;
+		bool					showIndicator;
 		gadgetStruct			gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NULL,NORMALCOLOUR,0,false,{0,0,0,0},{0,0,0,0},false};
 
 	private:
@@ -121,7 +123,7 @@ class LFSTK_gadgetClass
 		bevelType				getActiveBevel(void);
 
 		geometryStruct			gadgetGeom;
-		int						pad;
+		unsigned				pad;
 
 		int						blackColour;
 		int						whiteColour;

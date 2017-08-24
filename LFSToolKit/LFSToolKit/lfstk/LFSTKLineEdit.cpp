@@ -42,7 +42,7 @@ LFSTK_lineEditClass::LFSTK_lineEditClass()
 * \param h Height.
 * \param gravity Button gravity.
 */
-LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity)
+LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity)
 {
 	XSetWindowAttributes	wa;
 	mappedListener			*ml=new mappedListener;
@@ -212,13 +212,12 @@ const std::string* LFSTK_lineEditClass::LFSTK_getBuffer(void)
 
 void LFSTK_lineEditClass::drawLabel(void)
 {
-	int		cursorwidth;
-	int		startchar=0;
-	int		len=this->cursorPos;
-	char	*buffer;
-	char	*curs="";
-	char	*endchr="";
-	char	*foward;
+	int			cursorwidth;
+	int			startchar=0;
+	int			len=this->cursorPos;
+	char		*buffer;
+	const char	*curs="";
+	char		*foward;
 
 	cursorwidth=this->LFSTK_getTextWidth(CURSORCHAR);
 	while(this->LFSTK_getTextWidth(this->buffer.substr(startchar,len).c_str())>this->gadgetGeom.w-cursorwidth)

@@ -38,7 +38,7 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 	public:
 		LFSTK_lineEditClass();
 		~LFSTK_lineEditClass();
-		LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity);
+		LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity);
 
 		void LFSTK_clearWindow(void);
 		void LFSTK_resizeWindow(int w,int h);

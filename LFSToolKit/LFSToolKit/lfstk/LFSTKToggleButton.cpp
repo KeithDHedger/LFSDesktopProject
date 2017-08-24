@@ -39,7 +39,7 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass()
 * \param h Height.
 * \param gravity Button gravity.
 */
-LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity)
+LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity)
 {
 	XSetWindowAttributes	wa;
 	mappedListener			*ml=new mappedListener;
@@ -71,7 +71,8 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 
 	this->indicGeom={0,0,CHECKBOXSIZE,CHECKBOXSIZE};
 	this->style=BEVELNONE;
-	gadgetDetails={&this->wc->windowColourNames[NORMALCOLOUR],BEVELOUT,CHECK,&this->indicGeom,NORMALCOLOUR,CHECKBOXSIZE,false,{0,0,w,h},{2,(h/2)-(CHECKBOXSIZE/2),CHECKBOXSIZE,CHECKBOXSIZE},true};
+
+	gadgetDetails={&this->wc->windowColourNames[NORMALCOLOUR],BEVELOUT,CHECK,&this->indicGeom,NORMALCOLOUR,CHECKBOXSIZE,false,{0,0,w,h},{2,(int)((h/2)-(CHECKBOXSIZE/2)),CHECKBOXSIZE,CHECKBOXSIZE},true};
 	this->LFSTK_setFontColourName(0,this->wc->globalLib->LFSTK_getGlobalString(0,TYPEFONTCOLOUR),true);
 }
 

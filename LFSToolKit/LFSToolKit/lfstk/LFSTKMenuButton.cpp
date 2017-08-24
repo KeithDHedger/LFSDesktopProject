@@ -217,7 +217,7 @@ void LFSTK_menuButtonClass::LFSTK_addMenus(menuItemStruct* menus,int cnt)
 * \param h Height.
 * \param gravity Button gravity.
 */
-LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity)
+LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity)
 {
 	XSetWindowAttributes	wa;
 	mappedListener			*ml=new mappedListener;
@@ -243,8 +243,10 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,const c
 	this->wc->LFSTK_addMappedListener(this->window,ml);
 
 	menuItemFont=this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
+unsigned xxx=w-TRIANGLESIZE-(this->pad*2);
 
-	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,DISCLOSURE,NULL,NORMALCOLOUR,0,true,{0,0,w,h},{w-TRIANGLESIZE-(this->pad*2),(h/2)-(TRIANGLESIZE/2)+(this->pad/2),TRIANGLESIZE,TRIANGLESIZE},true};
+
+	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,DISCLOSURE,NULL,NORMALCOLOUR,0,true,{0,0,w,h},{(int)(w-TRIANGLESIZE-(this->pad*2)),(int)((h/2)-(TRIANGLESIZE/2)+(this->pad/2)),TRIANGLESIZE,TRIANGLESIZE},true};
 }
 
 /**

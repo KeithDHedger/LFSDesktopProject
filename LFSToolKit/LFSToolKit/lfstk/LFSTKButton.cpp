@@ -77,7 +77,7 @@ bool LFSTK_buttonClass::LFSTK_getIgnoreCB(void)
 * \param h Height.
 * \param gravity Button gravity.
 */
-LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity)
+LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity)
 {
 	XSetWindowAttributes	wa;
 	mappedListener			*ml=new mappedListener;

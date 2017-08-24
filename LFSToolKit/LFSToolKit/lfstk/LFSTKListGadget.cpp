@@ -400,7 +400,7 @@ void LFSTK_listGadgetClass::setNavSensitive(void)
 * \param cnt Number of items in list.
 * \note newlist owned by caller dont free till after object destroyed ( TODO ).
 */
-LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const char *label,int x,int y,int w,int h,int gravity,char **newlist,unsigned cnt)
+LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const char *label,int x,int y,unsigned w,unsigned h,int gravity,char **newlist,unsigned cnt)
 {
 	unsigned				sx;
 	unsigned				sy;
@@ -411,7 +411,6 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 
 	wa.win_gravity=gravity;
 	wa.save_under=true;
-//	this->window=XCreateWindow(this->display,this->parent,x-1,y-1,w+2,h+2,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
 	this->gc=XCreateGC(this->display,this->window,0,NULL);
 
@@ -505,6 +504,7 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 	LFSTK_setColourName(NORMALCOLOUR,"white");
 	LFSTK_setColourName(INACTIVECOLOUR,"white");
 	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NULL,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
+	this->clearBox(&this->gadgetDetails);
 }
 
 

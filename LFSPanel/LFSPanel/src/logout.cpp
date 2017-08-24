@@ -101,6 +101,7 @@ int  addLogout(int x,int y,int grav,bool fromleft)
 	logoutButton->LFSTK_setStyle(BEVELOUT);
 	logoutButton->LFSTK_setLabelGravity(CENTRE);
 	logoutButton->LFSTK_setCallBack(NULL,logoutCB,NULL);
+	logoutButton->LFSTK_setShowIndicator(false);
 	logoutButton->LFSTK_addMenus(logoutItems,NUMLOGOUTENTRYS);
 	return(width);
 }

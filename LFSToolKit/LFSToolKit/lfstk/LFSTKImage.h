@@ -37,7 +37,7 @@ class LFSTK_imageClass  : public  LFSTK_gadgetClass
 	public:
 		LFSTK_imageClass();
 		~LFSTK_imageClass();
-		LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* imagepath,int x,int y,int w,int h,int gravity,bool scale);
+		LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* imagepath,int x,int y,unsigned w,unsigned h,int gravity,bool scale);
 
 		bool			mouseUp(XButtonEvent *e);
 		bool			mouseDown(XButtonEvent *e);

@@ -22,7 +22,7 @@
 #ifndef _LFSTKMENUBUTTON_
 #define _LFSTKMENUBUTTON_
 
-#define TRIANGLESIZE 8
+#define TRIANGLESIZE 8u
 /**
  *
  * Menu structure for menuItemClass.
@@ -56,7 +56,7 @@ class LFSTK_menuButtonClass : public LFSTK_buttonClass
 	public:
 		LFSTK_menuButtonClass();
 		~LFSTK_menuButtonClass();
-		LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity);
+		LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity);
 
 		bool mouseDown(XButtonEvent *e);
 		void LFSTK_addMenus(menuItemStruct* menus,int cnt);

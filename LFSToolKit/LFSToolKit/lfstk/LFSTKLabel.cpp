@@ -35,7 +35,7 @@ LFSTK_labelClass::~LFSTK_labelClass()
 * \param h Height.
 * \param gravity Button gravity.
 */
-LFSTK_labelClass::LFSTK_labelClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity)
+LFSTK_labelClass::LFSTK_labelClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity)
 {
 	XSetWindowAttributes	wa;
 	mappedListener			*ml=new mappedListener;

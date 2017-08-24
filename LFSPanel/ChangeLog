@@ -1,4 +1,5 @@
 0.1.2
+Removed disclosure triangles from main buttons.
 Updated to use cairo.
 Fixed segfault.
 Fixed some icons not scaling properly.

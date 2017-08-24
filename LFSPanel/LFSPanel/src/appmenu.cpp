@@ -385,6 +385,7 @@ int addAppmenu(int x,int y,int grav,bool fromleft)
 	addEntries();
 	addExtras();
 	appButton->LFSTK_addMenus(catagoryMenus,catagoryCnt);
+	appButton->LFSTK_setShowIndicator(false);
 	XMapWindow(mainwind->display,appButton->LFSTK_getWindow());
 	appButton->LFSTK_setCallBack(NULL,callback,NULL);
 	appButton->LFSTK_clearWindow();

@@ -1,14 +1,22 @@
-#if 0
+/*
+ *
+ * ©K. D. Hedger. Thu 24 Aug 13:29:34 BST 2017 kdhedger68713@gmail.com
 
-#©keithhedger Thu 17 Aug 16:30:38 BST 2017 kdhedger68713@gmail.com
+ * This file (lfsruncommand.cpp) is part of LFSApplications.
 
-g++ "$0" -O0 -ggdb -I/media/LinuxData/Development64/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit -L/media/LinuxData/Development64/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2||exit 1
-LD_LIBRARY_PATH=/media/LinuxData/Development64/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit/app/.libs ./a.out "$@"
-retval=$?
-rm ./a.out
-exit $retval
+ * LFSApplications is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * at your option) any later version.
 
-#endif
+ * LFSApplications is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with LFSApplications.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "lfstk/LFSTKGlobals.h"
 
@@ -82,7 +90,7 @@ int main(int argc, char **argv)
 	personal->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
 
-	list=list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2)-(NAVBUTTONSIZE)-LGAP,LISTHITE,NorthWestGravity,NULL,0);
+	list=list=new LFSTK_listGadgetClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2)-(NAVBUTTONSIZE)-LGAP,LISTHITE,NorthWestGravity,NULL,0);
 
 	asprintf(&commandfile,"%s/%s",wc->configDir,"command.hist");
 	list->LFSTK_setListFromFile(commandfile,false);

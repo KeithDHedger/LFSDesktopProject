@@ -34,7 +34,7 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 {
 	public:
 		~LFSTK_listGadgetClass();
-		LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const char *label,int x,int y,int w,int h,int gravity,char **list,unsigned cnt);
+		LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const char *label,int x,int y,unsigned w,unsigned h,int gravity,char **list,unsigned cnt);
 
 		int					LFSTK_getCurrentListItem(void);
 		const char			*LFSTK_getListString(int listnum);

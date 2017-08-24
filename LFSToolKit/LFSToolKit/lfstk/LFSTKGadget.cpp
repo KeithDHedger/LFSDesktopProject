@@ -199,6 +199,7 @@ void LFSTK_gadgetClass::initGadget(void)
 	this->useImage=false;
 	this->imageWidth=0;
 	this->gadgetAcceptsDnD=false;
+	this->showIndicator=true;
 }
 
 /**
@@ -425,12 +426,13 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 void LFSTK_gadgetClass::drawGagetDetails(void)
 {
 	this->clearBox(&this->gadgetDetails);
-	this->drawIndicator(&this->gadgetDetails);
 	this->drawLabel(&this->gadgetDetails);
 	if(this->style!=BEVELNONE)
 		this->drawBevel(&this->gadgetDetails.gadgetGeom,this->gadgetDetails.bevel);
 	if(this->useImage==true)
 		this->drawImage();
+	if(this->showIndicator==true)
+		this->drawIndicator(&this->gadgetDetails);
 }
 
 
@@ -1236,3 +1238,15 @@ void LFSTK_gadgetClass::LFSTK_setIgnoreCB(bool ignore)
 {
 	this->callback.ignoreCallback=ignore;
 }
+
+/**
+* Set show indicator.
+* \param show.
+* \note Shows/Hides indicator on gadgets that have one.
+* \note Defaults to true, no effect on gadgets that have no indicator.
+*/
+void LFSTK_gadgetClass::LFSTK_setShowIndicator(bool show)
+{
+	this->showIndicator=show;
+}
+

@@ -22,7 +22,7 @@
 #ifndef _LFSTKTOGGLEBUTTON_
 #define _LFSTKTOGGLEBUTTON_
 
-#define CHECKBOXSIZE 12
+#define CHECKBOXSIZE 12u
 
 enum drawStyle {TOGGLECHECK=0,TOGGLERADIO,TOGGLENORMAL};
 
@@ -38,7 +38,7 @@ class LFSTK_toggleButtonClass  : public  LFSTK_gadgetClass
 	public:
 		LFSTK_toggleButtonClass();
 		~LFSTK_toggleButtonClass();
-		LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity);
+		LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity);
 
 		bool mouseEnter(XButtonEvent *e);
 		bool mouseExit(XButtonEvent *e);

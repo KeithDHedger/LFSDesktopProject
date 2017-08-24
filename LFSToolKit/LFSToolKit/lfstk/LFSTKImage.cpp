@@ -151,7 +151,7 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 * \param w Width.
 * \param gravity Button gravity.
 */
-LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* imagepath,int x,int y,int w,int h,int gravity,bool scale)
+LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* imagepath,int x,int y,unsigned w,unsigned h,int gravity,bool scale)
 {
 	XSetWindowAttributes	wa;
 	mappedListener			*ml=new mappedListener;
