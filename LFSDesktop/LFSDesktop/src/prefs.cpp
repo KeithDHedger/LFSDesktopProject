@@ -129,7 +129,7 @@ bool loadVarsFromFile(char* filepath,args* dataptr)
 				{
 					buffer[0]=0;
 					fgets(buffer,2048,fd);
-					sscanf(buffer,"%as %as",&argname,&strarg);
+					sscanf(buffer,"%ms %ms",&argname,&strarg);
 					cnt=0;
 					while(dataptr[cnt].name!=NULL)
 						{
@@ -143,7 +143,7 @@ bool loadVarsFromFile(char* filepath,args* dataptr)
 										case TYPESTRING:
 											if(*(char**)(dataptr[cnt].data)!=NULL)
 												free(*(char**)(dataptr[cnt].data));
-											sscanf(buffer,"%*s %a[^\n]s",(char**)dataptr[cnt].data);
+											sscanf(buffer,"%*s %m[^\n]s",(char**)dataptr[cnt].data);
 											break;
 										case TYPEBOOL:
 											*(bool*)dataptr[cnt].data=(bool)atoi(strarg);

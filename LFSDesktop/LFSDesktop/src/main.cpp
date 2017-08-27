@@ -740,7 +740,7 @@ printf("9999999\n");
 		{
 			buffer[0]=0;
 			fgets(buffer,MAXBUFFER,fp);
-			sscanf(buffer,"%as",&rootDev);
+			sscanf(buffer,"%ms",&rootDev);
 			pclose(fp);
 		}
 

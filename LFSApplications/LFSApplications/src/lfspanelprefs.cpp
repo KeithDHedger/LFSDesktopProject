@@ -252,7 +252,7 @@ int main(int argc, char **argv)
 	size_t	n;
 	int		retchars=0;
 	int		numpanels=0;
-	int		menuuserdata[3]={-1,-2,-3};
+	long	menuuserdata[3]={-1,-2,-3};
 
 	buffer=wc->globalLib->LFSTK_oneLiner("find %s -maxdepth 1 -mindepth 1 -type f -name \"lfspanel*.rc\"|wc -l",wc->configDir);
 	numpanels=atoi(buffer);
@@ -271,7 +271,7 @@ int main(int argc, char **argv)
 							buffer[retchars-1]=0;
 							panelNames[panelCnt].label=strdup(basename(buffer));
 							panelNames[panelCnt].imagePath=NULL;
-							panelNames[panelCnt].userData=(void*)panelCnt;
+							panelNames[panelCnt].userData=(void*)(long)panelCnt;
 							panelCnt++;
 							free(buffer);
 						}
@@ -329,11 +329,11 @@ int main(int argc, char **argv)
 //panel grav
 	panelGrav=new LFSTK_menuButtonClass(wc,"Panel Gravity",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	panelGravMenu=new menuItemStruct[4];
-	for(int j=0;j<4;j++)
+	for(long j=0;j<4;j++)
 		{
 			panelGravMenu[j].label=(char*)panelGravConvertToStr[j+1];
 			panelGravMenu[j].imagePath=NULL;
-			panelGravMenu[j].userData=(void*)j+1;
+			panelGravMenu[j].userData=(void*)(j+1);
 		}
 	panelGrav->LFSTK_addMenus(panelGravMenu,4);
 

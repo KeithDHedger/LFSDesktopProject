@@ -224,7 +224,7 @@ int main(int argc, char **argv)
 
 	placementMenus=new menuItemStruct[MAXMENUS];
 
-	for(int j=0;j<MAXMENUS;j++)
+	for(long j=0;j<MAXMENUS;j++)
 		{
 			placementMenus[j].label=(char*)placementMenuNames[j];
 			placementMenus[j].imagePath=NULL;

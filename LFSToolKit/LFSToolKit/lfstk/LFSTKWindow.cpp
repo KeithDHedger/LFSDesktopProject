@@ -601,7 +601,7 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 	this->cm=XCreateColormap(this->display,this->rootWindow,this->visual,AllocNone);
 	if(gotargb==true)
 		{
-			printf("Got ARGB Window\n");
+			//printf("Got ARGB Window\n");
 			wa.colormap=this->cm;
 			wa.border_pixel=0;
 			wa.background_pixel=0;

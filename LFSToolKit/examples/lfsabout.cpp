@@ -2,22 +2,19 @@
 
 #©keithhedger Wed 2 Aug 15:43:22 BST 2017 kdhedger68713@gmail.com
 
-g++ "$0" -O0 -ggdb -I/media/LinuxData/Development64/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit -L/media/LinuxData/Development64/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2||exit 1
-LD_LIBRARY_PATH=/media/LinuxData/Development64/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit/app/.libs ./a.out "$@"
+g++ "$0" -O0 -ggdb -I/media/LinuxData/Development64/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit -L/media/LinuxData/Development64/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2 -o aboutexample||exit 1
+LD_LIBRARY_PATH=/media/LinuxData/Development64/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit/app/.libs ./aboutexample "$@"
 retval=$?
-rm ./a.out
+echo "Exit code $retval"
 exit $retval
-
 #endif
 
 #include "lfstk/LFSTKGlobals.h"
 
-#define WINDOWWIDTH			320
-#define WINDOWHITE			10
-#define WINDOWMIDDLE		WINDOWWIDTH/2
-
-#define SPACING				24
-#define HALFSPACING			SPACING/2
+#undef DIALOGWIDTH
+#define DIALOGWIDTH		320
+#define SPACING			24
+#define HALFSPACING		SPACING/2
 
 enum		{LNAME,LDESCRIPTION,LCOPYRITE,LEMAIL,LWEBSITE,LGPL,LNOMORELABELS};
 
@@ -50,10 +47,10 @@ int main(int argc, char **argv)
 	XEvent	event;
 	int		sy=BORDER;
 		
-	wc=new LFSTK_windowClass(0,0,WINDOWWIDTH,WINDOWHITE,"LFS Desktop Project",false);
+	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"LFS Desktop Project",false);
 	display=wc->display;
 
-	tux=new LFSTK_imageClass(wc,NULL,WINDOWMIDDLE-(IMAGESIZE/2),sy,IMAGESIZE,IMAGESIZE,BUTTONGRAV,true);
+	tux=new LFSTK_imageClass(wc,NULL,DIALOGMIDDLE-(IMAGESIZE/2),sy,IMAGESIZE,IMAGESIZE,BUTTONGRAV,true);
 	tux->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",AUTO,true);
 	tux->LFSTK_clearWindow();
 	sy+=SPACING*3;
@@ -61,25 +58,25 @@ int main(int argc, char **argv)
 
 	for(int j=LNAME;j<LNOMORELABELS;j++)
 		{
-			labels[j]=new LFSTK_labelClass(wc,labelTexts[j],0,sy,WINDOWWIDTH,GADGETHITE,BUTTONGRAV);
+			labels[j]=new LFSTK_labelClass(wc,labelTexts[j],0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
 			sy+=SPACING;
 		}
 	labels[LNAME]->LFSTK_setCairoFontDataParts("sB",18);
 	labels[LDESCRIPTION]->LFSTK_setCairoFontDataParts("s",14);
 
 //line
-	seperator=new LFSTK_buttonClass(wc,"--",0,sy,WINDOWWIDTH,GADGETHITE,BUTTONGRAV);
+	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
 	seperator->LFSTK_setStyle(BEVELNONE);
 	seperator->gadgetDetails.buttonTile=false;
 	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
 	sy+=SPACING;
 
 //quit
-	quit=new LFSTK_buttonClass(wc,"Close",WINDOWMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	quit=new LFSTK_buttonClass(wc,"Close",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
 	sy+=SPACING+16;
 
-	wc->LFSTK_resizeWindow(WINDOWWIDTH,sy,true);
+	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();
 	tux->LFSTK_clearWindow();
 
