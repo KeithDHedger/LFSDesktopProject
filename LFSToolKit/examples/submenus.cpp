@@ -2,8 +2,8 @@
 
 #©keithhedger Thu 3 Aug 12:48:12 BST 2017 kdhedger68713@gmail.com
 
-g++ "$0" -O0 -ggdb -I/media/LinuxData/Development64/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit -L/media/LinuxData/Development64/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2 -o submenuexample||exit 1
-LD_LIBRARY_PATH=/media/LinuxData/Development64/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit/app/.libs ./submenuexample "$@"
+g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2 -o submenuexample||exit 1
+LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./submenuexample "$@"
 retval=$?
 echo "Exit code $retval"
 exit $retval
@@ -159,8 +159,8 @@ int main(int argc, char **argv)
 
 	delete wc;
 	XCloseDisplay(display);
-	delete mainMenus;
-	delete subMenus;
+	delete[] mainMenus;
+	delete[] subMenus;
 
 	return 0;
 }

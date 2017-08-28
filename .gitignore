@@ -20,3 +20,4 @@ libtool
 *.BAK
 *.libs/
 HOLD/
+LFSToolKit/examples/*example

@@ -64,9 +64,9 @@ class LFSTK_lib
 
 		args		*lfsToolKitGlobals;
 //window stirngs
-		char		*globalWindowColours[MAXCOLOURS];
-		char		*globalButtonColours[MAXCOLOURS];
-		char		*globalMenuItemColours[MAXCOLOURS];
+		char		*globalWindowColours[MAXCOLOURS]={NULL,};
+		char		*globalButtonColours[MAXCOLOURS]={NULL,};
+		char		*globalMenuItemColours[MAXCOLOURS]={NULL,};
 		char		*globalFontString;
 		char		*globalWindowTile;
 		char		*globalButtonTile;

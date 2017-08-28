@@ -119,6 +119,7 @@ void LFSTK_fileDialogClass::getFileList(void)
 							else
 								asprintf(&imagepath,"%s",(char*)this->fileImage);
 							this->fileImageList[cnt]=strdup(imagepath);
+							free(imagepath);
 							cnt++;
 						}
 					pclose(fp);

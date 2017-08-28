@@ -33,10 +33,16 @@ LFSTK_gadgetClass::~LFSTK_gadgetClass()
 	for(int j=NORMALCOLOUR;j<MAXCOLOURS;j++)
 		{
 			if(this->fontColourNames[j].name!=NULL)
-				free(this->fontColourNames[j].name);
+				{
+					free(this->fontColourNames[j].name);
+					XFreeColors(this->display,this->cm,(long unsigned int*)&this->fontColourNames[j].pixel,1,0);
+				}
 
 			if(this->colourNames[j].name!=NULL)
-				free(this->colourNames[j].name);
+				{
+					free(this->colourNames[j].name);
+					XFreeColors(this->display,this->cm,(long unsigned int*)&this->colourNames[j].pixel,1,0);
+				}
 		}
 
 	if(this->fontString!=NULL)
@@ -45,12 +51,13 @@ LFSTK_gadgetClass::~LFSTK_gadgetClass()
 	if(this->monoFontString!=NULL)
 		free(this->monoFontString);
 
+	if(this->cImage!=NULL)
+		cairo_surface_destroy(this->cImage);
 	if(this->pattern!=NULL)
 		cairo_pattern_destroy(this->pattern);
-	if(this->sfc!=NULL)
-		cairo_surface_destroy(this->sfc);
-	if(this->cr!=NULL)
-		cairo_destroy(this->cr);
+
+	cairo_surface_destroy(this->sfc);
+	cairo_destroy(this->cr);
 
 	if(this->fontName!=NULL)
 		free(this->fontName);
@@ -82,7 +89,7 @@ void LFSTK_gadgetClass::LFSTK_setFontColourName(int p,const char* colour,bool us
 		free(this->fontColourNames[p].name);
 	this->fontColourNames[p].name=strdup(colour);
 	XAllocNamedColor(this->display,this->cm,colour,&sc,&tc);
-	this->fontColourNames[p].pixel=sc.pixel;
+	this->fontColourNames[p].pixel=tc.pixel;
 
 	if(usewindow==true)
 		col=this->wc->windowColourNames[0];

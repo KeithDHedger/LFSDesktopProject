@@ -118,15 +118,14 @@ class LFSTK_windowClass
 		Visual					*visual;
 		Window					rootWindow;		
 		Colormap				cm;
-		XftDraw 				*draw;
 		cairo_surface_t 		*sfc=NULL;
 		cairo_t					*cr=NULL;
 		cairo_pattern_t			*pattern=NULL;
 
 		char					*fontString;
-		char					*fontColourNames[MAXCOLOURS];
-		colourStruct			windowColourNames[MAXCOLOURS];
-		bool					autoLabelColour;
+		char					*fontColourNames[MAXCOLOURS]={NULL,};
+		colourStruct			windowColourNames[MAXCOLOURS]={{NULL,0,{0,0,0,0}},};
+		bool					autoLabelColour=false;
 		LFSTK_lib				*globalLib;
 
 //user dirs
@@ -134,7 +133,6 @@ class LFSTK_windowClass
 		char					*configDir;
 
 		Window					parentWindow;
-		Pixmap					tile[2];
 		bool					useTile;
 		bool					acceptDnd;
 

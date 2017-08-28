@@ -2,8 +2,8 @@
 
 #©keithhedger Sat 5 Aug 19:18:08 BST 2017 kdhedger68713@gmail.com
 
-g++ "$0" -O0 -ggdb -I/media/LinuxData/Development64/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit -L/media/LinuxData/Development64/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2 -o lineditexample||exit 1
-LD_LIBRARY_PATH=/media/LinuxData/Development64/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit/app/.libs ./lineditexample "$@"
+g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2 -o lineeditexample||exit 1
+LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./lineeditexample "$@"
 retval=$?
 echo "Exit code $retval"
 exit $retval
@@ -11,7 +11,6 @@ exit $retval
 
 #include "lfstk/LFSTKGlobals.h"
 
-#define HALFYSPACING		YSPACING/2
 #define BOXLABEL			"Line Edit"
 
 LFSTK_windowClass			*wc=NULL;

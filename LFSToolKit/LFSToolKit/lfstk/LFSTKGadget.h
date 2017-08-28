@@ -62,8 +62,8 @@ class LFSTK_gadgetClass
 		void					LFSTK_setCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud);
 
 //colours
-		colourStruct			fontColourNames[MAXCOLOURS];
-		colourStruct			colourNames[MAXCOLOURS];
+		colourStruct			fontColourNames[MAXCOLOURS]={NULL,};
+		colourStruct			colourNames[MAXCOLOURS]={NULL,};
 
 		void					LFSTK_setColourName(int p,const char* colour);
 		const char				*LFSTK_getColourName(int p);
@@ -143,7 +143,7 @@ class LFSTK_gadgetClass
 
 		bool					inWindow;
 		bool					isActive;
-		bool					autoLabelColour;
+		bool					autoLabelColour=false;
 		int						labelGravity;
 
 		bevelType				style;

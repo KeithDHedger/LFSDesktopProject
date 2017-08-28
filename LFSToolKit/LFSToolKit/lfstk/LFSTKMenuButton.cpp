@@ -190,7 +190,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 				}
 		}
 
-	subwc->LFSTK_hideWindow();
+	this->subwc->LFSTK_hideWindow();
 	return(true);
 }
 
@@ -243,8 +243,6 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,const c
 	this->wc->LFSTK_addMappedListener(this->window,ml);
 
 	menuItemFont=this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
-unsigned xxx=w-TRIANGLESIZE-(this->pad*2);
-
 
 	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,DISCLOSURE,NULL,NORMALCOLOUR,0,true,{0,0,w,h},{(int)(w-TRIANGLESIZE-(this->pad*2)),(int)((h/2)-(TRIANGLESIZE/2)+(this->pad/2)),TRIANGLESIZE,TRIANGLESIZE},true};
 }

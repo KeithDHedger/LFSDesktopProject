@@ -172,7 +172,7 @@ const char *LFSTK_lib::LFSTK_getGlobalString(int state,int type)
 		{
 			case TYPEWINDOW:
 			//printf("--->%s<---\n",this->globalWindowColours[state]);
-				ptr=this->globalWindowColours[state];
+			ptr=this->globalWindowColours[state];
 				if(ptr==NULL)
 					ptr=defaultColourStrings[state];
 				break;
@@ -431,10 +431,12 @@ const args *LFSTK_lib::LFSTK_getTKArgs(void)
 */
 const char* LFSTK_lib::bestFontColour(long pixel)
 {
-	int r,g,b;
-	r=(pixel & 0xff0000)>>16;
-	g=(pixel & 0x00ff00)>>8;
-	b=(pixel & 0x0000ff);
+	int		r=0,g=0,b=0;
+	long	pix=pixel;
+
+	r=(pix & 0xff0000)>>16;
+	g=(pix & 0x00ff00)>>8;
+	b=(pix & 0x0000ff);
 
 	if((r+r+r+b+g+g+g+g)>>3>128)
 		return("black");

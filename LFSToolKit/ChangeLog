@@ -1,4 +1,5 @@
 0.2.3
+Plugging memory leaks.
 CTRL Delete now clears edit field.
 Fixed check button not updating when set manually.
 Addev CTRL-v/CTRL-c to copy/paste to/from edit box ( needas xclip ).

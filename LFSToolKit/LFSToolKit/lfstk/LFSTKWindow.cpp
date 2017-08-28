@@ -153,6 +153,13 @@ void LFSTK_windowClass::LFSTK_reloadGlobals(void)
 LFSTK_windowClass::~LFSTK_windowClass()
 {
 	this->LFSTK_hideWindow();
+
+	if(this->pattern!=NULL)
+		cairo_pattern_destroy(this->pattern);
+
+	cairo_surface_destroy(this->sfc);
+	cairo_destroy(this->cr);
+
 	if(this->fontString!=NULL)
 		free(this->fontString);
 
@@ -162,7 +169,10 @@ LFSTK_windowClass::~LFSTK_windowClass()
 				free(this->fontColourNames[j]);
 			
 			if(this->windowColourNames[j].name!=NULL)
-				free(this->windowColourNames[j].name);
+				{
+					free(this->windowColourNames[j].name);
+					XFreeColors(this->display,this->cm,(long unsigned int*)&this->windowColourNames[j].pixel,1,0);
+				}
 		}
 
 	if(this->windowName!=NULL)
@@ -183,15 +193,9 @@ LFSTK_windowClass::~LFSTK_windowClass()
 
 	this->gadgetMap.clear();
 
-	if(this->pattern!=NULL)
-		cairo_pattern_destroy(this->pattern);
-	if(this->sfc!=NULL)
-		cairo_surface_destroy(this->sfc);
-	if(this->cr!=NULL)
-		cairo_destroy(this->cr);
-
 	free(this->configDir);
 	XFreeGC(this->display,this->gc);
+
 	XDestroyWindow(this->display,this->window);
 }
 
@@ -328,9 +332,10 @@ void LFSTK_windowClass::LFSTK_setWindowColourName(int p,const char* colour)
 
 	if(this->windowColourNames[p].name!=NULL)
 		free(this->windowColourNames[p].name);
+
 	this->windowColourNames[p].name=strdup(colour);
 	XAllocNamedColor(this->display,this->cm,colour,&sc,&tc);
-	this->windowColourNames[p].pixel=sc.pixel;
+	this->windowColourNames[p].pixel=tc.pixel;
 
 	if(this->autoLabelColour==true)
 		{
@@ -648,6 +653,7 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 
 	this->userHome=getenv("HOME");
 	asprintf(&this->configDir,"%s/.config/LFS",this->userHome);
+
 
 	this->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
 }

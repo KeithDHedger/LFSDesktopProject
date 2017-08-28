@@ -25,13 +25,13 @@
 
 LFSTK_listGadgetClass::~LFSTK_listGadgetClass()
 {
-	delete this->data;
-	delete this->scrollData;
+	delete[] this->data;
+	delete[] this->scrollData;
 	if(this->listStrings!=NULL)
 		{
 			for(int j=0;j<this->listCnt;j++)
 				free(this->listStrings[j]);
-			delete this->listStrings;
+			delete[] this->listStrings;
 		}
 	if(this->listImages!=NULL)
 		{
@@ -40,7 +40,7 @@ LFSTK_listGadgetClass::~LFSTK_listGadgetClass()
 					if(this->listImages[j]!=NULL)
 						free(this->listImages[j]);
 				}
-			delete this->listImages;
+			delete[] this->listImages;
 		}
 }
 
@@ -50,13 +50,13 @@ bool LFSTK_listGadgetClass::select(void *object,void* userdata)
 	LFSTK_labelClass		*label;
 
 	listData				*d=(listData*)userdata;
-	unsigned				data;
+	unsigned				datax;
 
 	label=static_cast<LFSTK_labelClass*>(object);
 
 	list=static_cast<LFSTK_listGadgetClass*>(d->mainObject);
-	data=d->userData;
-	list->setCurrentItem(data);
+	datax=d->userData;
+	list->setCurrentItem(datax);
 	for(int j=0;j<list->maxShowing;j++)
 		{
 			list->labels[j]->LFSTK_setColourName(NORMALCOLOUR,"white");
@@ -124,7 +124,7 @@ void LFSTK_listGadgetClass::LFSTK_setImageList(char **list,unsigned numitems)
 			for(int j=0;j<this->listImageCnt;j++)
 				if(this->listImages[j]!=NULL)
 					free(this->listImages[j]);
-			delete this->listImages;
+			delete[] this->listImages;
 		}
 
 	this->listImageCnt=numitems;
@@ -152,11 +152,12 @@ void LFSTK_listGadgetClass::LFSTK_setListFromFile(const char *filepath,bool incl
 	char	**newlist=0;
 	size_t	linelen=0;
 	ssize_t read=0;
+
 	if(this->listStrings!=NULL)
 		{
 			for(int j=0;j<this->listCnt;j++)
 				free(this->listStrings[j]);
-			delete this->listStrings;
+			delete[] this->listStrings;
 		}
 	if(this->listImages!=NULL)
 		{
@@ -165,7 +166,7 @@ void LFSTK_listGadgetClass::LFSTK_setListFromFile(const char *filepath,bool incl
 					if(this->listImages[j]!=NULL)
 						free(this->listImages[j]);
 				}
-			delete this->listImages;
+			delete[] this->listImages;
 		}
 	this->listStrings=NULL;
 	this->listImages=NULL;
@@ -208,8 +209,8 @@ void LFSTK_listGadgetClass::LFSTK_setListFromFile(const char *filepath,bool incl
 							LFSTK_setList(newlist,cnt--);
 							for(int j=0;j<cnt;j++)
 								if(newlist[j]!=NULL)
-							free(newlist[j]);
-							delete newlist;
+									free(newlist[j]);
+							delete[] newlist;
 						}
 				}
 		}
@@ -231,7 +232,7 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 			for(int j=0;j<this->listCnt;j++)
 				if(this->listStrings[j]!=NULL)
 					free(this->listStrings[j]);
-			delete this->listStrings;
+			delete[] this->listStrings;
 		}
 
 	if(this->listImages!=NULL)
@@ -280,14 +281,14 @@ bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
 {
 	LFSTK_listGadgetClass	*list;
 	listData				*d=(listData*)userdata;
-	unsigned				data;
+	unsigned				datax;
 
 	int						start;
 	list=static_cast<LFSTK_listGadgetClass*>(d->mainObject);
-	data=d->userData;
+	datax=d->userData;
 
 	start=list->listOffset;
-	switch(data)
+	switch(datax)
 		{
 			case LUP:
 				start-=list->maxShowing;
