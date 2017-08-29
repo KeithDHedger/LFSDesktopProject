@@ -63,7 +63,7 @@ class LFSTK_windowClass
 	public:
 		LFSTK_windowClass();
 		~LFSTK_windowClass();
-		LFSTK_windowClass(int x,int y,int w,int h,const char* name,bool override,bool loadvars=true);
+		LFSTK_windowClass(int x,int y,int w,int h,const char* name,bool override,bool loadvars=true,bool shutdisplayonexit=false);
 
 		void					LFSTK_showWindow(bool all=true);
 		void					LFSTK_hideWindow(void);
@@ -112,6 +112,7 @@ class LFSTK_windowClass
 
 //window graphics
 		Display					*display;
+		bool					closeDisplayOnExit=false;
 		Window					window;
 		GC						gc;
 		int						screen;

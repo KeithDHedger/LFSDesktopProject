@@ -1,9 +1,9 @@
 #if 0
 
-#©keithhedger Fri 4 Aug 20:10:13 BST 2017 kdhedger68713@gmail.com
+#©keithhedger Mon 28 Aug 15:32:14 BST 2017 kdhedger68713@gmail.com
 
-g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2 -o imagebuttonexample||exit 1
-LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./imagebuttonexample "$@"
+g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2 -o subwindowexample||exit 1
+LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./subwindowexample "$@"
 retval=$?
 echo "Exit code $retval"
 exit $retval
@@ -11,17 +11,15 @@ exit $retval
 
 #include "lfstk/LFSTKGlobals.h"
 
-#define BOXLABEL			"Image Buttons"
+#define BOXLABEL			"Sub Window Test"
 
 LFSTK_windowClass			*wc=NULL;
 LFSTK_labelClass			*label=NULL;
 LFSTK_labelClass			*personal=NULL;
 LFSTK_labelClass			*copyrite=NULL;
-LFSTK_buttonClass			*imagebuttonL=NULL;
-LFSTK_buttonClass			*imagebuttonC=NULL;
-LFSTK_buttonClass			*imagebuttonR=NULL;
 LFSTK_buttonClass			*seperator=NULL;
 LFSTK_buttonClass			*quit=NULL;
+LFSTK_buttonClass			*test=NULL;
 
 bool						mainLoop=true;
 Display						*display;
@@ -38,7 +36,59 @@ bool buttonCB(void *p,void* ud)
 {
 	if(ud!=NULL)
 		{
-			printf(">>>%p<<<\n",(const char*)ud);
+			LFSTK_windowClass		*subwc=NULL;
+			LFSTK_labelClass		*label=NULL;
+			bool					subwcloop=true;
+			XEvent					event;
+			LFSTK_buttonClass		*button=NULL;
+
+			subwc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"SUB WINDOW",false,true,true);
+			button=new LFSTK_buttonClass(subwc,"Close",200-HALFGADGETWIDTH,200,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+			subwcloop=true;
+			subwc->LFSTK_resizeWindow(400,400,true);
+			subwc->LFSTK_showWindow();
+
+			while(subwcloop==true)
+				{
+					XNextEvent(subwc->display,&event);
+					mappedListener *ml=subwc->LFSTK_getMappedListener(event.xany.window);
+					if(ml!=NULL)
+						{
+							ml->function(ml->gadget,&event,ml->type);
+						}
+
+					switch(event.type)
+						{
+							case ButtonRelease:
+								subwc->LFSTK_hideWindow();
+								subwcloop=false;
+								break;
+							case LeaveNotify:
+								break;
+							case Expose:
+								subwc->LFSTK_clearWindow();
+								break;
+
+							case ConfigureNotify:
+							//printf("---->\n");
+								subwc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
+								subwc->globalLib->LFSTK_setCairoSurface(subwc->display,subwc->window,subwc->visual,&subwc->sfc,&subwc->cr,event.xconfigurerequest.width,event.xconfigurerequest.height);
+								subwc->LFSTK_clearWindow();
+								break;
+
+							case ClientMessage:
+							case SelectionNotify:
+								{
+									if (event.xclient.message_type == XInternAtom(subwc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(subwc->display, "WM_DELETE_WINDOW", 1))
+										{
+											subwc->LFSTK_hideWindow();
+											subwcloop=false;
+										}
+								}
+								break;
+						}
+				}
+			delete subwc;
 		}
 	return(true);
 }
@@ -48,7 +98,7 @@ int main(int argc, char **argv)
 	XEvent	event;
 	int		sy=BORDER;
 		
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Image Button Example",false);
+	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Sub Window Example",false);
 	display=wc->display;
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
@@ -61,37 +111,16 @@ int main(int argc, char **argv)
 	personal->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
 
-//image button left
-	imagebuttonL=new LFSTK_buttonClass(wc,"Image Button",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*2,BUTTONGRAV);
-	imagebuttonL->LFSTK_setCallBack(NULL,buttonCB,(void*)0xdeadbeef1);
-	imagebuttonL->LFSTK_setImageFromPath("./casper2.JPG",LEFT,true);
-	sy+=YSPACING*2;
-
-//image button centre
-	imagebuttonC=new LFSTK_buttonClass(wc,"",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*2,BUTTONGRAV);
-	imagebuttonC->LFSTK_setCallBack(NULL,buttonCB,(void*)0xdeadbeef2);
-	imagebuttonC->LFSTK_setImageFromPath("./casper2.JPG",CENTRE,true);
-	sy+=YSPACING*2;
-
-//image button right
-	imagebuttonR=new LFSTK_buttonClass(wc,"Image Button",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*2,BUTTONGRAV);
-	imagebuttonR->LFSTK_setCallBack(NULL,buttonCB,(void*)0xdeadbeef3);
-	imagebuttonR->LFSTK_setImageFromPath("./casper2.JPG",RIGHT,true);
-	imagebuttonR->LFSTK_setLabelGravity(LEFT);
-	imagebuttonR->gadgetDetails.reserveSpace=4;
-	sy+=YSPACING*2;
-
-//image button menu
-	imagebuttonR=new LFSTK_buttonClass(wc,"Menu Image Button",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
-	imagebuttonR->LFSTK_setCallBack(NULL,buttonCB,(void*)0xdeadbeef4);
-	imagebuttonR->LFSTK_setImageFromPath("./casper2.JPG",MENU,true);
-	sy+=YSPACING;
-
 //line
 	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
 	seperator->LFSTK_setStyle(BEVELNONE);
 	seperator->gadgetDetails.buttonTile=false;
 	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
+	sy+=YSPACING;
+
+//test
+	test=new LFSTK_buttonClass(wc,"Sub-Window",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	test->LFSTK_setCallBack(NULL,buttonCB,(void*)0xdeadbeef);
 	sy+=YSPACING;
 
 //quit
@@ -120,7 +149,6 @@ int main(int argc, char **argv)
 					case LeaveNotify:
 						break;
 					case Expose:
-					//printf("expose\n");
 						wc->LFSTK_clearWindow();
 						break;
 
@@ -146,5 +174,6 @@ int main(int argc, char **argv)
 	delete wc;
 	XCloseDisplay(display);
 	cairo_debug_reset_static_data();
+
 	return 0;
 }

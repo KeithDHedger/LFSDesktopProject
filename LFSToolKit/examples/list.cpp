@@ -110,7 +110,6 @@ int main(int argc, char **argv)
 					case LeaveNotify:
 						break;
 					case Expose:
-					//printf("expose\n");
 						wc->LFSTK_clearWindow();
 						break;
 
@@ -135,5 +134,6 @@ int main(int argc, char **argv)
 
 	delete wc;
 	XCloseDisplay(display);
+	cairo_debug_reset_static_data();
 	return 0;
 }

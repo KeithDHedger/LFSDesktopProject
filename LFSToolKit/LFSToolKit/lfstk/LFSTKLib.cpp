@@ -720,10 +720,13 @@ unsigned long LFSTK_lib::LFSTK_getColourFromName(Display *display,Colormap cm,co
 */
 void LFSTK_lib::LFSTK_setCairoSurface(Display *display,Window window,Visual *visual,cairo_surface_t **sfc,cairo_t **cr,int width,int height)
 {
-	cairo_surface_destroy(*sfc);
-	cairo_destroy(*cr);
-	*sfc=cairo_xlib_surface_create(display,window,visual,width,height);
-	*cr=cairo_create(*sfc);
+	if(*sfc==NULL)
+		*sfc=cairo_xlib_surface_create(display,window,visual,width,height);
+	else
+		cairo_xlib_surface_set_size(*sfc,width,height);
+
+	if(*cr==NULL)
+		*cr=cairo_create(*sfc);
 }
 
 

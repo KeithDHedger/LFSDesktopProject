@@ -9,6 +9,7 @@ LFSTK_fontDialogClass::~LFSTK_fontDialogClass()
 			free(this->fontsAZ[j]);
 		}
 	delete[] this->fontsAZ;
+	free(this->fontData.fontString);
 	delete this->dialog;
 }
 
@@ -201,6 +202,7 @@ void LFSTK_fontDialogClass::buildDialog(void)
 	char	*sizestr[4]={0,};
 
 	dialog=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Font Selector",false);
+	dialog->closeDisplayOnExit=true;
 	this->dialog->autoLabelColour=false;
 	this->dialog->LFSTK_reloadGlobals();	
 	this->dialog->LFSTK_clearWindow();

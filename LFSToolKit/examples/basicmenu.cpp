@@ -2,8 +2,8 @@
 
 #©keithhedger Thu 3 Aug 12:48:12 BST 2017 kdhedger68713@gmail.com
 
-g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2 -o menuexample||exit 1
-LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./menuexample "$@"
+g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2 -o basicmenuexample||exit 1
+LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./basicmenuexample "$@"
 retval=$?
 echo "Exit code $retval"
 exit $retval
@@ -142,5 +142,6 @@ int main(int argc, char **argv)
 	XCloseDisplay(display);
 
 	delete[] mainMenus;
+	cairo_debug_reset_static_data();
 	return 0;
 }

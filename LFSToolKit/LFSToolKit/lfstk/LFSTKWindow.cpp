@@ -157,8 +157,8 @@ LFSTK_windowClass::~LFSTK_windowClass()
 	if(this->pattern!=NULL)
 		cairo_pattern_destroy(this->pattern);
 
-	cairo_surface_destroy(this->sfc);
 	cairo_destroy(this->cr);
+	cairo_surface_destroy(this->sfc);
 
 	if(this->fontString!=NULL)
 		free(this->fontString);
@@ -197,6 +197,8 @@ LFSTK_windowClass::~LFSTK_windowClass()
 	XFreeGC(this->display,this->gc);
 
 	XDestroyWindow(this->display,this->window);
+	if(this->closeDisplayOnExit==true)
+		XCloseDisplay(this->display);
 }
 
 LFSTK_windowClass::LFSTK_windowClass()
@@ -556,7 +558,7 @@ int LFSTK_windowClass::LFSTK_windowOnMonitor(void)
 * \param override True=ignore window manager placement.
 * \param loadvars Load default variables from file, default=true.
 */
-LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bool override,bool loadvars)
+LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bool override,bool loadvars,bool shutdisplayonexit)
 {
 	XSetWindowAttributes	wa;
 	Atom					wm_delete_window;
@@ -653,7 +655,7 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 
 	this->userHome=getenv("HOME");
 	asprintf(&this->configDir,"%s/.config/LFS",this->userHome);
-
+	this->closeDisplayOnExit=shutdisplayonexit;
 
 	this->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
 }

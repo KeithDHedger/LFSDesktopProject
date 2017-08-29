@@ -23,8 +23,8 @@
 LFSTK_imageClass::~LFSTK_imageClass()
 {
 	XFreePixmap(this->display,shape);
-	cairo_surface_destroy(this->shapesfc);
 	cairo_destroy(this->shapecr);
+	cairo_surface_destroy(this->shapesfc);
 }
 
 LFSTK_imageClass::LFSTK_imageClass()

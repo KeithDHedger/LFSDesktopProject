@@ -24,7 +24,7 @@
 
 void LFSTK_menuButtonClass::initMenuButton(void)
 {
-	this->subwc=new LFSTK_windowClass(0,0,1,1,"menu window",true,true);
+	this->subwc=new LFSTK_windowClass(0,0,1,1,"menu window",true,true,true);
 	this->subwc->LFSTK_setWindowType("_NET_WM_WINDOW_TYPE_NORMAL");
 	this->builtMenu=false;
 

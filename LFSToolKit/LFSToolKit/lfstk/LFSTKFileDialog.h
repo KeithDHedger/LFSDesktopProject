@@ -46,14 +46,14 @@ class LFSTK_fileDialogClass
 
 	private:
 		
-		char					**dirList;
-		char					**dirImageList;
-		char					**fileList;
-		char					**fileImageList;
-		unsigned				dirListCnt;
-		unsigned				fileListCnt;
-		char					*currentDir;
-		char					*currentFile;
+		char					**dirList=NULL;
+		char					**dirImageList=NULL;
+		char					**fileList=NULL;
+		char					**fileImageList=NULL;
+		unsigned				dirListCnt=0;
+		unsigned				fileListCnt=0;
+		char					*currentDir=NULL;
+		char					*currentFile=NULL;
 		bool					mainLoop;
 		bool					apply;
 		bool					dialogType;

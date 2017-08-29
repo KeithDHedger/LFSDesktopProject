@@ -51,13 +51,14 @@ LFSTK_gadgetClass::~LFSTK_gadgetClass()
 	if(this->monoFontString!=NULL)
 		free(this->monoFontString);
 
+	cairo_destroy(this->cr);
+
 	if(this->cImage!=NULL)
 		cairo_surface_destroy(this->cImage);
 	if(this->pattern!=NULL)
 		cairo_pattern_destroy(this->pattern);
 
 	cairo_surface_destroy(this->sfc);
-	cairo_destroy(this->cr);
 
 	if(this->fontName!=NULL)
 		free(this->fontName);
@@ -1053,19 +1054,23 @@ cairo_surface_t *cairo_image_surface_create_from_jpeg(const char *filename)
 
    // open input file
 	if((infile=open(filename,O_RDONLY))==-1)
-		return(cairo_image_surface_create(CAIRO_FORMAT_INVALID,0,0));
+		return(NULL);
+//		return(cairo_image_surface_create(CAIRO_FORMAT_INVALID,0,0));
 
    // get stat structure for file size
 	if (fstat(infile,&stat)==-1)
-		return cairo_image_surface_create(CAIRO_FORMAT_INVALID, 0, 0);
+		return(NULL);
+//		return cairo_image_surface_create(CAIRO_FORMAT_INVALID, 0, 0);
 
    // allocate memory
 	if((data=(const unsigned char*)malloc(stat.st_size))==NULL)
-		return(cairo_image_surface_create(CAIRO_FORMAT_INVALID,0,0));
+		return(NULL);
+//		return(cairo_image_surface_create(CAIRO_FORMAT_INVALID,0,0));
 
    // read data
 	if(read(infile,(void*)data,stat.st_size)<stat.st_size)
-		return(cairo_image_surface_create(CAIRO_FORMAT_INVALID,0,0));
+		return(NULL);
+//		return(cairo_image_surface_create(CAIRO_FORMAT_INVALID,0,0));
 
 	char *ptr=(char*)data;
 	bool flag=true;
@@ -1091,7 +1096,7 @@ cairo_surface_t *cairo_image_surface_create_from_jpeg(const char *filename)
 cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int orient,bool scale)
 {
 	cairo_status_t	cs=CAIRO_STATUS_SUCCESS;
-	cairo_surface_t	*tempimage;
+	cairo_surface_t	*tempimage=NULL;
 	cairo_t			*tcr;
 	float			scaleX=1.0;
 	float			scaleY=1.0;
@@ -1107,6 +1112,7 @@ cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int or
 	if(file==NULL)
 		return(CAIRO_STATUS_FILE_NOT_FOUND);
 
+	
 	tempimage=cairo_image_surface_create_from_png(file);
 	cs=cairo_surface_status(tempimage);
 	if(cs!=CAIRO_STATUS_SUCCESS)
@@ -1152,6 +1158,9 @@ cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int or
 			this->imageHeight=this->gadgetGeom.h;
 			ratio=1.0;
 		}
+
+	if(this->cImage!=NULL)
+		cairo_surface_destroy(this->cImage);
 
 	this->cImage=cairo_surface_create_similar_image(tempimage,cairo_image_surface_get_format(tempimage),this->imageWidth,this->imageHeight);
 	tcr=cairo_create(this->cImage);

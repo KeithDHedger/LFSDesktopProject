@@ -65,12 +65,14 @@ void LFSTK_fileDialogClass::freeFileList(void)
 			for(int j=0;j<this->fileListCnt;j++)
 				free(this->fileList[j]);
 			delete[] this->fileList;
+			this->fileList=NULL;
 		}
 	if(this->fileImageList!=NULL)
 		{
 			for(int j=0;j<this->fileListCnt;j++)
 				free(this->fileImageList[j]);
 			delete[] this->fileImageList;
+			this->fileImageList=NULL;
 		}
 }
 
@@ -83,6 +85,8 @@ void LFSTK_fileDialogClass::getFileList(void)
 	char		line[1024];
 	unsigned	cnt=0;
 	char		*imagepath;
+
+	this->freeFileList();
 
 	asprintf(&command,"(cd \"%s\" ;find  -maxdepth 1 -mindepth 1 -follow ! -type d -print0 | xargs -0 -n 1 basename 2>/dev/null|sort|wc -l)",this->currentDir);
 	out=this->wc->globalLib->LFSTK_oneLiner("%s",command);
@@ -109,12 +113,7 @@ void LFSTK_fileDialogClass::getFileList(void)
 							if(strlen(line)>0)
 								line[strlen(line)-1]=0;
 							this->fileList[cnt]=strdup(line);
-							if	(
-									(strcasecmp(&line[strlen(line)-4],".jpg")==0) ||
-									(strcasecmp(&line[strlen(line)-4],".png")==0) ||
-									(strcasecmp(&line[strlen(line)-4],".gif")==0) ||
-									(strcasecmp(&line[strlen(line)-5],".tiff")==0)
-								)
+							if((strcasecmp(&line[strlen(line)-4],".jpg")==0) || (strcasecmp(&line[strlen(line)-4],".png")==0))
 								asprintf(&imagepath,"%s/%s",this->currentDir,line);
 							else
 								asprintf(&imagepath,"%s",(char*)this->fileImage);
@@ -140,6 +139,7 @@ void LFSTK_fileDialogClass::getDirList(void)
 	int			retval=0;
 	struct stat		buf;
 
+
 	retval=stat(this->currentDir,&buf);
 	if(retval==-1)
 		{
@@ -147,6 +147,7 @@ void LFSTK_fileDialogClass::getDirList(void)
 				free(this->currentDir);
 			this->currentDir=strdup(getenv("HOME"));
 		}
+
 	asprintf(&command,"(cd \"%s\" 2>/dev/null;find  -maxdepth 1 -mindepth 1 -follow -type d -print0| xargs -0 -n 1 basename 2>/dev/null|sort|wc -l)",this->currentDir);
 	out=this->wc->globalLib->LFSTK_oneLiner("%s",command);
 	if(out==NULL)
@@ -181,7 +182,7 @@ void LFSTK_fileDialogClass::getDirList(void)
 			pclose(fp);
 		}
 	free(command);
-	this->dirListCnt=dircnt;
+	this->dirListCnt=cnt;
 }
 
 /**
@@ -297,7 +298,8 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 			hite=dirlisthite+(FGAP*6)+GADGETHITE+(FFILEHITE*GADGETHITE)+FGAP+GADGETHITE+FGAP;
 		}
 
-	this->dialog=new LFSTK_windowClass(0,0,DIALOGWIDTH,hite,label,false);
+	this->dialog=new LFSTK_windowClass(0,0,DIALOGWIDTH,hite,label,false,true,true);
+	//this->dialog->closeDisplayOnExit=true;
 //TODO//?
 	XSizeHints sh;
 	sh.flags=PMinSize|PMaxSize|PSize|USSize;
@@ -362,6 +364,8 @@ void LFSTK_fileDialogClass::openDir(void)
 			this->getFileList();
 			this->fileListGadget->LFSTK_setImageList(this->fileImageList,this->fileListCnt);
 			this->fileListGadget->LFSTK_setList(this->fileList,this->fileListCnt);
+				this->freeFileList();
+
 		}
 }
 

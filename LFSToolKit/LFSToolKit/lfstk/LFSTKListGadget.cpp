@@ -42,6 +42,8 @@ LFSTK_listGadgetClass::~LFSTK_listGadgetClass()
 				}
 			delete[] this->listImages;
 		}
+
+	delete[] this->labels;
 }
 
 bool LFSTK_listGadgetClass::select(void *object,void* userdata)
@@ -149,7 +151,7 @@ void LFSTK_listGadgetClass::LFSTK_setListFromFile(const char *filepath,bool incl
 	int		cnt=0;
 	char	*lines=NULL;
 	int		linecnt=0;
-	char	**newlist=0;
+	char	**newlist=NULL;
 	size_t	linelen=0;
 	ssize_t read=0;
 
@@ -193,20 +195,28 @@ void LFSTK_listGadgetClass::LFSTK_setListFromFile(const char *filepath,bool incl
 									{
 										buffer[strlen(buffer)-1]=0;
 										if(includeempty==true)
-											newlist[cnt++]=strdup(buffer);
+											{
+												newlist[cnt++]=buffer;
+											}
 										else
 											{
 												if(strlen(buffer)>0)
-													newlist[cnt++]=strdup(buffer);
+													newlist[cnt++]=buffer;
+												else
+													free(buffer);
 											}
 									}
-							if(buffer!=NULL)
-								free(buffer);
+								else
+									{
+										if(buffer!=NULL)
+											free(buffer);
+									}
 						}
+
 					fclose(file);
 					if(newlist!=NULL)
 						{
-							LFSTK_setList(newlist,cnt--);
+							LFSTK_setList(newlist,cnt);
 							for(int j=0;j<cnt;j++)
 								if(newlist[j]!=NULL)
 									free(newlist[j]);
