@@ -169,10 +169,8 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 											{
 												XSync(this->display,true);
 												subwc->LFSTK_hideWindow();
-												this->gadgetDetails.colour=&this->colourNames[NORMALCOLOUR];
-												this->gadgetDetails.state=NORMALCOLOUR;
-												this->LFSTK_clearWindow();
 												this->inWindow=false;
+												this->mouseExit(&event.xbutton);
 												return(true);
 											}
 									}
@@ -191,6 +189,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 		}
 
 	this->subwc->LFSTK_hideWindow();
+	this->mouseExit(&event.xbutton);
 	return(true);
 }
 

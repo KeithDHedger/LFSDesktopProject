@@ -392,5 +392,6 @@ int main(int argc, char **argv)
 
 	delete wc;
 	XCloseDisplay(display);
+//	cairo_debug_reset_static_data();
 	return 0;
 }

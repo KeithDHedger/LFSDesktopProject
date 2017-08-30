@@ -1,4 +1,5 @@
 0.2.3
+Fixed menubutton visual glitch.
 Added more examples.
 Plugging memory leaks.
 CTRL Delete now clears edit field.

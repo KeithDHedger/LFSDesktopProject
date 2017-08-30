@@ -187,6 +187,7 @@ void addGroup(void)
 					buffer=NULL;
 					numchars=0;
 				}
+			free(buffer);
 			pclose(fp);
 			groupNameMenuItems=new menuItemStruct[mapcnt];
 			for(int j=0;j<mapcnt;j++)
@@ -354,5 +355,6 @@ int main(int argc, char **argv)
 	delete[] groupNameMenuItems;
 	groupNames.clear();
 
+	cairo_debug_reset_static_data();
 	return 0;
 }
