@@ -1,4 +1,6 @@
 0.2.3
+Fixed list controls not setting proper state on first showing.
+Fixe whit text on white background on list gadget.
 Fixed menubutton visual glitch.
 Added more examples.
 Plugging memory leaks.

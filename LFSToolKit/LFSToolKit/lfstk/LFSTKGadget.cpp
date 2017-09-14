@@ -307,7 +307,7 @@ void LFSTK_gadgetClass::clearBox(gadgetStruct* details)
 				patt=this->wc->pattern;
 
 			cairo_save(this->cr);
-				cairo_reset_clip (this->cr);
+				cairo_reset_clip(this->cr);
 				cairo_translate(this->cr,-this->gadgetGeom.x,-this->gadgetGeom.y);
 				cairo_set_source(this->cr,patt);
 				cairo_paint(this->cr);
@@ -316,7 +316,7 @@ void LFSTK_gadgetClass::clearBox(gadgetStruct* details)
 	else
 		{
 			cairo_save(this->cr);
-				cairo_reset_clip (this->cr);
+				cairo_reset_clip(this->cr);
 				cairo_set_source_rgba(this->cr,details->colour->RGBAColour.r,details->colour->RGBAColour.g,details->colour->RGBAColour.b,details->colour->RGBAColour.a);
 				cairo_paint(this->cr);
 			cairo_restore(this->cr);
@@ -443,7 +443,6 @@ void LFSTK_gadgetClass::drawGagetDetails(void)
 		this->drawIndicator(&this->gadgetDetails);
 }
 
-
 /**
 * Clear the gadget window to the appropriate state.
 */
@@ -464,6 +463,8 @@ bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 
 	if(strcmp(this->label,"--")==0)
 		return(true);;
+
+
 	this->gadgetDetails.colour=&this->colourNames[NORMALCOLOUR];
 	this->gadgetDetails.state=NORMALCOLOUR;
 	this->gadgetDetails.bevel=BEVELOUT;

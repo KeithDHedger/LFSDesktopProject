@@ -355,46 +355,51 @@ void LFSTK_listGadgetClass::setNavSensitive(void)
 			this->buttonHome->LFSTK_setActive(true);
 			this->buttonEnd->LFSTK_setActive(true);
 
-	if(this->listOffset<=0)
-		{
-			this->buttonUp->LFSTK_setActive(false);
-			this->buttonHome->LFSTK_setActive(false);
-		}
-
-	if((this->listOffset>=this->listCnt-this->maxShowing) || (this->listCnt<=this->maxShowing))
-		{
-			this->buttonDown->LFSTK_setActive(false);
-			this->buttonEnd->LFSTK_setActive(false);
-		}
-
-	fing=this->currentItem-this->listOffset;
-	for(int j=0;j<this->maxShowing;j++)
-		{
-			if(j<this->listCnt)
+			if(this->listOffset<=0)
 				{
-					this->labels[j]->LFSTK_setColourName(NORMALCOLOUR,"white");
-					this->labels[j]->LFSTK_clearWindow();
+					this->buttonUp->LFSTK_setActive(false);
+					this->buttonHome->LFSTK_setActive(false);
 				}
+
+			if((this->listOffset>=this->listCnt-this->maxShowing) || (this->listCnt<=this->maxShowing))
+				{
+					this->buttonDown->LFSTK_setActive(false);
+					this->buttonEnd->LFSTK_setActive(false);
+				}
+
+			fing=this->currentItem-this->listOffset;
+			for(int j=0;j<this->maxShowing;j++)
+				{
+					if(j<this->listCnt)
+						{
+							this->labels[j]->LFSTK_setColourName(NORMALCOLOUR,"white");
+							this->labels[j]->LFSTK_clearWindow();
+						}
+				}
+
+			if((fing>=0) && (fing<this->maxShowing))
+				{
+					this->labels[fing]->LFSTK_setColourName(NORMALCOLOUR,this->labels[fing]->LFSTK_getColourName(ACTIVECOLOUR));
+					this->labels[fing]->LFSTK_clearWindow();
+				}
+
+			this->buttonDown->gadgetDetails.state=NORMALCOLOUR;
+			this->buttonUp->gadgetDetails.state=NORMALCOLOUR;
+			this->buttonHome->gadgetDetails.state=NORMALCOLOUR;
+			this->buttonEnd->gadgetDetails.state=NORMALCOLOUR;
 		}
 
-	if((fing>=0) && (fing<this->maxShowing))
-		{
-			this->labels[fing]->LFSTK_setColourName(NORMALCOLOUR,this->labels[fing]->LFSTK_getColourName(ACTIVECOLOUR));
-			this->labels[fing]->LFSTK_clearWindow();
-		}
-
-	this->buttonDown->gadgetDetails.state=NORMALCOLOUR;
-	this->buttonUp->gadgetDetails.state=NORMALCOLOUR;
-	this->buttonHome->gadgetDetails.state=NORMALCOLOUR;
-	this->buttonEnd->gadgetDetails.state=NORMALCOLOUR;
-
-}
+	this->buttonEnd->gadgetDetails.colour=&this->buttonEnd->colourNames[NORMALCOLOUR];
+	this->buttonUp->gadgetDetails.colour=&this->buttonUp->colourNames[NORMALCOLOUR];
+	this->buttonHome->gadgetDetails.colour=&this->buttonHome->colourNames[NORMALCOLOUR];
+	this->buttonDown->gadgetDetails.colour=&this->buttonDown->colourNames[NORMALCOLOUR];
 
 	this->buttonDown->LFSTK_clearWindow();
 	this->buttonUp->LFSTK_clearWindow();
 	this->buttonHome->LFSTK_clearWindow();
 	this->buttonEnd->LFSTK_clearWindow();
-	XSync(this->display,true);
+	XFlush(this->display);
+	XSync(this->display,false);
 }
 
 /**
@@ -467,6 +472,8 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 			this->labels[j]->LFSTK_setTile(NULL,0);
 			this->labels[j]->LFSTK_setCallBack(NULL,select,LISTDATA(j));
 			this->labels[j]->LFSTK_setFontString(this->monoFontString);
+			this->labels[j]->LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
+			this->labels[j]->LFSTK_setFontColourName(INACTIVECOLOUR,"black",false);
 			this->labels[j]->LFSTK_setCairoFontData();
 
 			this->data[j].mainObject=this;
@@ -512,9 +519,9 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 		this->LFSTK_setList(newlist,cnt);
 	this->setNavSensitive();
 
-	LFSTK_setColourName(NORMALCOLOUR,"white");
-	LFSTK_setColourName(INACTIVECOLOUR,"white");
-	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NULL,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
+	this->LFSTK_setColourName(NORMALCOLOUR,"white");
+	this->LFSTK_setColourName(INACTIVECOLOUR,"white");
+	this->gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NULL,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
 	this->clearBox(&this->gadgetDetails);
 }
 
