@@ -244,6 +244,8 @@ void LFSTK_fileDialogClass::LFSTK_setWorkingDir(const char *dir)
 */
 const char	*LFSTK_fileDialogClass::LFSTK_getCurrentDir(void)
 {
+//	if(this->currentDir==NULL)
+//		printf("this->apply=%i\n",this->apply);
 	return(this->currentDir);
 }
 
@@ -255,6 +257,9 @@ const char	*LFSTK_fileDialogClass::LFSTK_getCurrentDir(void)
 */
 const char	*LFSTK_fileDialogClass::LFSTK_getCurrentFile(void)
 {
+//	if(this->currentFile==NULL)
+//		this->apply=false;
+//		printf("this->apply=%i\n",this->apply);
 	return(this->currentFile);
 }
 
@@ -276,6 +281,15 @@ const char *LFSTK_fileDialogClass::LFSTK_getCurrentPath(void)
 }
 
 /**
+* Set show preview of selected file.
+* \param bool show
+*/
+void LFSTK_fileDialogClass::LFSTK_setShowPreview(bool show)
+{
+	this->showPreview=show;
+}
+
+/**
 * Main constructor.
 *
 * \param Window parent Window transient for.
@@ -283,9 +297,11 @@ const char *LFSTK_fileDialogClass::LFSTK_getCurrentPath(void)
 * \param const char *startdir Open dialog in this folder.
 * \param type true=folder select, false= file select.
 */
-LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const char *label,const char *startdir,bool type)
+LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const char *label,const char *startdir,bool type,bool showpreview)
 {
 	int					hite=DIALOGHITE;
+	int					addpreviewspace=0;
+
 	LFSTK_labelClass	*spacer;
 
 	this->wc=parentwc;
@@ -319,14 +335,17 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 			hite=dirlisthite+(FGAP*6)+GADGETHITE+(FFILEHITE*GADGETHITE)+FGAP+GADGETHITE+FGAP;
 		}
 
-	this->dialog=new LFSTK_windowClass(0,0,DIALOGWIDTH,hite,label,false,true,true);
+	if(showpreview==true)
+		addpreviewspace=500;
+
+	this->dialog=new LFSTK_windowClass(0,0,DIALOGWIDTH+addpreviewspace,hite,label,false,true,true);
 	//this->dialog->closeDisplayOnExit=true;
 //TODO//?
 	XSizeHints sh;
 	sh.flags=PMinSize|PMaxSize|PSize|USSize;
-	sh.min_width=DIALOGWIDTH;
+	sh.min_width=DIALOGWIDTH+addpreviewspace;
 	sh.min_height=hite;
-	sh.max_width=DIALOGWIDTH;
+	sh.max_width=DIALOGWIDTH+addpreviewspace;
 	sh.max_height=hite;
 
 	XSetWMNormalHints(this->wc->display,dialog->window,&sh);
@@ -361,13 +380,29 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 			
 			this->buttonCancel=new LFSTK_buttonClass(this->dialog,"Cancel",BORDER,dirlisthite+(FGAP*6)+GADGETHITE+(FFILEHITE*GADGETHITE)+FGAP,GADGETWIDTH,GADGETHITE,SouthWestGravity);
 			this->buttonApply=new LFSTK_buttonClass(this->dialog,"Apply",DIALOGWIDTH-BORDER-GADGETWIDTH,dirlisthite+(FGAP*6)+GADGETHITE+(FFILEHITE*GADGETHITE)+FGAP,GADGETWIDTH,GADGETHITE,SouthEastGravity);
+
+			if(showpreview==true)
+				{
+						this->tux=new LFSTK_imageClass(this->dialog,NULL,DIALOGWIDTH,BORDER,IMAGESIZE,IMAGESIZE,NorthGravity,true);
+						this->tux->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",AUTO,true);
+				}
 		}
 }
 
 bool LFSTK_fileDialogClass::LFSTK_isValid(void)
 {
-	if(this->dirListGadget->LFSTK_getCurrentListItem()!=-1)
-		return(this->apply);
+	if(this->apply==false)
+		return(false);
+	if(this->dialogType==FILEDIALOG)
+		{
+			if((this->currentFile!=NULL) && (this->currentDir!=NULL))
+				return(true);
+		}
+	else
+		{
+			if(this->currentDir!=NULL)
+				return(true);
+		}
 	return(false);
 }
 
@@ -480,6 +515,9 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 										if(this->wc->globalLib->LFSTK_pointInRect(&pt,&geomfile)==true)
 											{
 												this->apply=true;
+												if(this->currentFile!=NULL)
+													free(this->currentFile);
+												asprintf(&this->currentFile,"%s",this->fileListGadget->LFSTK_getListString(this->fileListGadget->LFSTK_getCurrentListItem()));
 												this->mainLoop=false;
 											}
 									}
@@ -492,9 +530,12 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 											{
 												this->apply=true;
 												this->mainLoop=false;
-												if(this->currentFile!=NULL)
-													free(this->currentFile);
-												asprintf(&this->currentFile,"%s",this->fileListGadget->LFSTK_getListString(this->fileListGadget->LFSTK_getCurrentListItem()));
+												if(this->dialogType==FILEDIALOG)
+													{
+														if(this->currentFile!=NULL)
+															free(this->currentFile);
+														asprintf(&this->currentFile,"%s",this->fileListGadget->LFSTK_getListString(this->fileListGadget->LFSTK_getCurrentListItem()));
+													}
 											}
 										if(ml->gadget==this->buttonCancel)
 											{

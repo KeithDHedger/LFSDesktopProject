@@ -45,7 +45,7 @@ bool selectfile(void *object,void* ud)
 			printf("Selected Dir Path=%s\n",filedialogfile->LFSTK_getCurrentDir());
 			printf("Selected File Name=%s\n",filedialogfile->LFSTK_getCurrentFile());
 			printf("File Mime-Type=%s\n",wc->globalLib->LFSTK_getMimeType(filedialogfile->LFSTK_getCurrentPath()));
-			
+
 			free(wd);
 			wd=strdup(filedialogfile->LFSTK_getCurrentDir());			
 		}
@@ -84,8 +84,10 @@ int main(int argc, char **argv)
 
 //files and folders
 	asprintf(&wd,"%s",wc->userHome);
-	filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",wd,false);
-	filedialogdir=new LFSTK_fileDialogClass(wc,"Select Folder",wd,true);
+	filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",wd,FILEDIALOG,true);
+	filedialogdir=new LFSTK_fileDialogClass(wc,"Select Folder",wd,FOLDERDIALOG);
+
+//	filedialogfile->LFSTK_setShowPreview(true);
 
 //file button
 	filebutton=new LFSTK_buttonClass(wc,"Select File",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);

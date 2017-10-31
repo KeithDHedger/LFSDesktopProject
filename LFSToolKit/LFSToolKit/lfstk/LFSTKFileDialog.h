@@ -28,12 +28,16 @@
 #define FICONSIZE 22
 #define FFILEHITE 10
 #define FDIRHITE 10
+#define IMAGESIZE 64
+
+#define FILEDIALOG false
+#define FOLDERDIALOG true
 
 class LFSTK_fileDialogClass
 {
 	public:
 		~LFSTK_fileDialogClass();
-		LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const char *label,const char *startdir,bool type);
+		LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const char *label,const char *startdir,bool type,bool showpreview=false);
 
 		void					LFSTK_showFileDialog(void);
 		void					LFSTK_showFileDialog(const char *dir,const char *title);
@@ -44,6 +48,7 @@ class LFSTK_fileDialogClass
 		void					LFSTK_setWorkingDir(const char *dir);
 		void					LFSTK_setRequestType(bool type);
 		bool					LFSTK_getRequestType(void);
+		void					LFSTK_setShowPreview(bool);
 
 	private:
 		
@@ -61,6 +66,8 @@ class LFSTK_fileDialogClass
 		bool					dialogType;
 		const char				*fileImage;
 		const char				*folderImage;
+		bool					showPreview=false;
+		LFSTK_imageClass		*tux=NULL;
 
 		LFSTK_windowClass		*wc;
 		LFSTK_windowClass		*dialog;
