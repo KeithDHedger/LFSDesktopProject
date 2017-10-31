@@ -59,6 +59,9 @@ class LFSTK_lib
 //graphics
 		void		LFSTK_setCairoSurface(Display *display,Window window,Visual *visual,cairo_surface_t **sfc,cairo_t **cr,int width,int height);
 
+//files
+		char		*LFSTK_getMimeType(const char* path);
+
 	private:
 		static int	callback(const char *fpath,const struct stat *sb,int typeflag);
 

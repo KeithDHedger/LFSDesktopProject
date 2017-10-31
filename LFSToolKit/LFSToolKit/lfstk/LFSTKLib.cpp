@@ -729,4 +729,14 @@ void LFSTK_lib::LFSTK_setCairoSurface(Display *display,Window window,Visual *vis
 		*cr=cairo_create(*sfc);
 }
 
-
+/**
+* Get mime type of file.
+* \param char *path.
+* \return char*.
+* \note Caller owns returned allocated string.
+*/
+char* LFSTK_lib::LFSTK_getMimeType(const char* path)
+{
+	return(this->LFSTK_oneLiner("file -b --mime-type \"%s\"",path));
+}
+ 

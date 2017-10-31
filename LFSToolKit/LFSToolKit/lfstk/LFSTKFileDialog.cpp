@@ -31,6 +31,9 @@ LFSTK_fileDialogClass::~LFSTK_fileDialogClass(void)
 		free(this->currentDir);
 	if(this->currentFile!=NULL)
 		free(this->currentFile);
+	if(this->currentPath!=NULL)
+		free(this->currentPath);
+
 	this->freeDirList();
 	this->freeFileList();
 	delete this->dialog;
@@ -247,12 +250,29 @@ const char	*LFSTK_fileDialogClass::LFSTK_getCurrentDir(void)
 /**
 * Return the currently selected file.
 *
-* \return const char *path to file.
+* \return const char *filename.
 * \note Don't free.
 */
 const char	*LFSTK_fileDialogClass::LFSTK_getCurrentFile(void)
 {
-	return(this->fileListGadget->LFSTK_getListString(this->fileListGadget->LFSTK_getCurrentListItem()));
+	return(this->currentFile);
+}
+
+/**
+* Return the currently selected filepath.
+*
+* \return const char *path to file.
+* \note Don't free.
+*/
+const char *LFSTK_fileDialogClass::LFSTK_getCurrentPath(void)
+{
+	if((this->currentDir!=NULL) && (this->currentFile!=NULL))
+		{
+			if(this->currentPath!=NULL)
+				free(this->currentPath);
+			asprintf(&this->currentPath,"%s/%s",this->currentDir,this->currentFile);
+		}
+	return(this->currentPath);
 }
 
 /**
@@ -277,6 +297,7 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	this->fileListCnt=0;
 	this->currentDir=strdup(startdir);
 	this->currentFile=NULL;
+	this->currentPath=NULL;
 	this->dirListGadget=NULL;
 	this->dirListCnt=0;
 	this->fileImage=LFSTKPIXMAPSDIR "/documents.png";
@@ -471,6 +492,9 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 											{
 												this->apply=true;
 												this->mainLoop=false;
+												if(this->currentFile!=NULL)
+													free(this->currentFile);
+												asprintf(&this->currentFile,"%s",this->fileListGadget->LFSTK_getListString(this->fileListGadget->LFSTK_getCurrentListItem()));
 											}
 										if(ml->gadget==this->buttonCancel)
 											{

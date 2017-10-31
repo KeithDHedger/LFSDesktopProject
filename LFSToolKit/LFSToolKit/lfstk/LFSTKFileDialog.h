@@ -40,6 +40,7 @@ class LFSTK_fileDialogClass
 		bool					LFSTK_isValid(void);
 		const char				*LFSTK_getCurrentDir(void);
 		const char				*LFSTK_getCurrentFile(void);
+		const char				*LFSTK_getCurrentPath(void);
 		void					LFSTK_setWorkingDir(const char *dir);
 		void					LFSTK_setRequestType(bool type);
 		bool					LFSTK_getRequestType(void);
@@ -54,6 +55,7 @@ class LFSTK_fileDialogClass
 		unsigned				fileListCnt=0;
 		char					*currentDir=NULL;
 		char					*currentFile=NULL;
+		char					*currentPath=NULL;
 		bool					mainLoop;
 		bool					apply;
 		bool					dialogType;
