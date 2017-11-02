@@ -47,6 +47,9 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	XSetWindowAttributes	wa;
 	mappedListener			*ml=new mappedListener;
 
+	if(label==NULL)
+		label="";
+
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 	this->isFocused=false;
 	this->inWindow=false;

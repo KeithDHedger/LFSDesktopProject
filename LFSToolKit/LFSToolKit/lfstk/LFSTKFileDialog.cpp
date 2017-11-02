@@ -558,6 +558,7 @@ void LFSTK_fileDialogClass::setPreviewData(void)
 		}
 
 	this->tux->LFSTK_setImageFromPath(iconpath,FREE,true);
+	this->wc->LFSTK_clearWindow();
 	this->tux->LFSTK_clearWindow();
 	this->wc->LFSTK_clearWindow();
 

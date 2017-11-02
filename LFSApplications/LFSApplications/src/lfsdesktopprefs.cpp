@@ -204,7 +204,6 @@ int main(int argc, char **argv)
 	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
 	personal->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
-
 //theme
 	asprintf(&wd,"%s/.icons",wc->userHome);
 	themeDialog=new LFSTK_fileDialogClass(wc,"Select Theme",wd,true);
