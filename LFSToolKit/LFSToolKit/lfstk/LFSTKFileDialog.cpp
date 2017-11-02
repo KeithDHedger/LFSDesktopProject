@@ -297,12 +297,11 @@ void LFSTK_fileDialogClass::LFSTK_setShowPreview(bool show)
 * \param const char *startdir Open dialog in this folder.
 * \param type true=folder select, false= file select.
 */
-LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const char *label,const char *startdir,bool type,bool showpreview)
+LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const char *label,const char *startdir,bool type)
 {
 	int					hite=DIALOGHITE;
-	int					addpreviewspace=0;
-
 	LFSTK_labelClass	*spacer;
+	int					midprev;
 
 	this->wc=parentwc;
 	this->dialog=NULL;
@@ -335,17 +334,14 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 			hite=dirlisthite+(FGAP*6)+GADGETHITE+(FFILEHITE*GADGETHITE)+FGAP+GADGETHITE+FGAP;
 		}
 
-	if(showpreview==true)
-		addpreviewspace=500;
-
-	this->dialog=new LFSTK_windowClass(0,0,DIALOGWIDTH+addpreviewspace,hite,label,false,true,true);
+	this->dialog=new LFSTK_windowClass(0,0,DIALOGWIDTH+PREVIEWWIDTH,hite,label,false,true,true);
 	//this->dialog->closeDisplayOnExit=true;
 //TODO//?
 	XSizeHints sh;
 	sh.flags=PMinSize|PMaxSize|PSize|USSize;
-	sh.min_width=DIALOGWIDTH+addpreviewspace;
+	sh.min_width=DIALOGWIDTH+PREVIEWWIDTH;
 	sh.min_height=hite;
-	sh.max_width=DIALOGWIDTH+addpreviewspace;
+	sh.max_width=DIALOGWIDTH+PREVIEWWIDTH;
 	sh.max_height=hite;
 
 	XSetWMNormalHints(this->wc->display,dialog->window,&sh);
@@ -353,7 +349,7 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	this->getDirList();
 	this->getFileList();
 
-	if(this->dialogType==true)
+	if(this->dialogType==FOLDERDIALOG)
 		{
 			this->dirListGadget=new LFSTK_listGadgetClass(this->dialog,"",FGAP,FGAP,dirlistwid,dirlisthite,NorthWestGravity,NULL,0);
 			this->dirEdit=new LFSTK_lineEditClass(this->dialog,this->currentDir,FGAP,dirlisthite+(FGAP*2),dirlistwid,GADGETHITE,NorthWestGravity);
@@ -376,16 +372,17 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 			this->fileListGadget->LFSTK_setImageList(this->fileImageList,this->fileListCnt);
 			this->fileListGadget->LFSTK_setList(this->fileList,this->fileListCnt);
 
-			spacer=new LFSTK_labelClass(this->dialog,"--",0,dirlisthite+(FGAP*3)+GADGETHITE+(FFILEHITE*GADGETHITE)+FGAP,DIALOGWIDTH,8,NorthWestGravity);
+			spacer=new LFSTK_labelClass(this->dialog,"--",0,dirlisthite+(FGAP*3)+GADGETHITE+(FFILEHITE*GADGETHITE)+FGAP,DIALOGWIDTH+PREVIEWWIDTH,8,NorthWestGravity);
 			
 			this->buttonCancel=new LFSTK_buttonClass(this->dialog,"Cancel",BORDER,dirlisthite+(FGAP*6)+GADGETHITE+(FFILEHITE*GADGETHITE)+FGAP,GADGETWIDTH,GADGETHITE,SouthWestGravity);
-			this->buttonApply=new LFSTK_buttonClass(this->dialog,"Apply",DIALOGWIDTH-BORDER-GADGETWIDTH,dirlisthite+(FGAP*6)+GADGETHITE+(FFILEHITE*GADGETHITE)+FGAP,GADGETWIDTH,GADGETHITE,SouthEastGravity);
+			this->buttonApply=new LFSTK_buttonClass(this->dialog,"Apply",DIALOGWIDTH-BORDER-GADGETWIDTH+PREVIEWWIDTH,dirlisthite+(FGAP*6)+GADGETHITE+(FFILEHITE*GADGETHITE)+FGAP,GADGETWIDTH,GADGETHITE,SouthEastGravity);
 
-			if(showpreview==true)
-				{
-						this->tux=new LFSTK_imageClass(this->dialog,NULL,DIALOGWIDTH,BORDER,IMAGESIZE,IMAGESIZE,NorthGravity,true);
-						this->tux->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",AUTO,true);
-				}
+			midprev=DIALOGWIDTH+PREVIEWWIDTH-(PREVIEWWIDTH/2);
+			this->tux=new LFSTK_imageClass(this->dialog,NULL,midprev-(PREVIEWWIDTH/2),BORDER,PREVIEWWIDTH,PREVIEWWIDTH,NorthGravity,true);
+			this->tux->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",AUTO,true);
+			this->previewMimeType=new LFSTK_labelClass(this->dialog,"text/x-c++src",DIALOGWIDTH,BORDER+PREVIEWWIDTH,PREVIEWWIDTH,16,NorthWestGravity);
+			this->previewMimeType->LFSTK_setFontString(this->previewMimeType->monoFontString);
+			this->previewMimeType->LFSTK_setCairoFontData();
 		}
 }
 
@@ -415,13 +412,12 @@ void LFSTK_fileDialogClass::openDir(void)
 	this->dirListGadget->LFSTK_setList(this->dirList,this->dirListCnt);
 	this->dirEdit->LFSTK_setBuffer(this->currentDir);
 //files
-	if(this->dialogType==false)
+	if(this->dialogType==FILEDIALOG)
 		{
 			this->getFileList();
 			this->fileListGadget->LFSTK_setImageList(this->fileImageList,this->fileListCnt);
 			this->fileListGadget->LFSTK_setList(this->fileList,this->fileListCnt);
-				this->freeFileList();
-
+			this->freeFileList();
 		}
 }
 
@@ -460,6 +456,117 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(const char *dir,const char *tit
 }
 
 /**
+* Find themed icon from mimetype
+* \param const char *mimetype
+* \return char*
+* \note Caller owns return value and must free.
+*/
+char* LFSTK_fileDialogClass::findThemedIconFromMime(const char *mimetype)
+{
+	char		*theme=NULL;
+	char		*iconpath=NULL;
+	const char	*iconthemes[3];
+	const char	*iconfolders[2];
+
+	theme=this->wc->globalLib->LFSTK_oneLiner("head ~/.config/LFS/lfsdesktop.rc|grep -i icontheme|awk '{print $2}'");
+	if(theme==NULL)
+		asprintf(&theme,"gnome");
+
+	iconthemes[0]=theme;
+	iconthemes[1]="hicolor";
+	iconthemes[2]="gnome";
+
+	iconfolders[0]="~/.icons";
+	iconfolders[1]="/usr/share/icons";
+	iconpath=NULL;
+	for(int j=0;j<2;j++)
+		{
+			for(int k=0;k<3;k++)
+				{
+				//printf(">>>find %s/\"%s\"/*/mime* -iname \"*%s.*\" 2>/dev/null|head -n1 2>/dev/null<<\n",iconfolders[j],iconthemes[k],mimetype);
+					iconpath=this->wc->globalLib->LFSTK_oneLiner("find %s/\"%s\"/*/mime* -iname \"*%s.*\" 2>/dev/null|sort -Vr|head -n1 2>/dev/null",iconfolders[j],iconthemes[k],mimetype);
+					if((iconpath!=NULL) && (strlen(iconpath)>1))
+						goto breakReturn;
+					if(iconpath!=NULL)
+						free(iconpath);
+					iconpath=NULL;
+				}
+		}
+breakReturn:
+	return(iconpath);
+}
+
+/**
+* Set preview data
+*/
+void LFSTK_fileDialogClass::setPreviewData(void)
+{
+	char	*mt=NULL;
+	char	*convmt=NULL;
+	char	*iconpath=NULL;
+	char	*testmime=NULL;
+	char	*ptr=NULL;
+
+	if(this->dialogType!=FILEDIALOG)
+		return;
+
+	if(this->fileListCnt==0)
+		{
+			this->previewMimeType->LFSTK_setLabel("");
+			this->tux->useImage=false;
+			this->previewMimeType->LFSTK_clearWindow();
+			this->tux->LFSTK_clearWindow();
+			return;
+		}
+
+	asprintf(&mt,"%s/%s",this->currentDir,this->fileListGadget->LFSTK_getListString(this->fileListGadget->LFSTK_getCurrentListItem()));
+	convmt=this->wc->globalLib->LFSTK_getMimeType(mt);
+	this->previewMimeType->LFSTK_setLabel(convmt);
+
+	for(int j=0;j<strlen(convmt);j++)
+		{
+			if(convmt[j]=='/')
+				convmt[j]='-';
+		}
+
+	if((strcmp(convmt,"image-jpeg")==0) || (strcmp(convmt,"image-png")==0))
+		iconpath=strdup(mt);
+	else
+		{
+			iconpath=this->findThemedIconFromMime(convmt);
+
+			if((iconpath!=NULL) && (strlen(iconpath)<2) || (iconpath==NULL))
+				{
+					asprintf(&testmime,"gnome-mime-%s",convmt);
+					ptr=strrchr(testmime,'-');
+					ptr[0]=0;
+					iconpath=this->findThemedIconFromMime(testmime);
+					free(testmime);
+				}
+
+			if((iconpath!=NULL) && (strlen(iconpath)<2) || (iconpath==NULL))
+				{
+					ptr=strchr(convmt,'-');
+					ptr++;
+					asprintf(&testmime,"gnome-mime-application-%s",ptr);
+					iconpath=this->findThemedIconFromMime(testmime);
+					free(testmime);
+				}
+
+			if((iconpath!=NULL) && (strlen(iconpath)<2) || (iconpath==NULL))
+				iconpath=strdup("/usr/share/icons/gnome/256x256/mimetypes/text-x-generic.png");
+		}
+
+	this->tux->LFSTK_setImageFromPath(iconpath,FREE,true);
+	this->tux->LFSTK_clearWindow();
+	this->wc->LFSTK_clearWindow();
+
+	free(mt);
+	free(convmt);
+	free(iconpath);
+}
+
+/**
 * Show the file selector dialog.
 */
 void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
@@ -474,7 +581,8 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 
 	this->apply=false;
 	if(this->dialog!=NULL)
-		{			
+		{
+			this->setPreviewData();
 			this->dialog->LFSTK_showWindow();
 			this->dialog->LFSTK_setKeepAbove(true);
 			this->dialog->LFSTK_setTransientFor(this->wc->window);
@@ -503,6 +611,10 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 									}
 								break;
 
+//							case ButtonPress:
+//								printf(">>%s<<\n",this->fileListGadget->LFSTK_getListString(this->fileListGadget->LFSTK_getCurrentListItem()));
+//								break;
+
 							case ButtonRelease:
 								if((event.xbutton.time-lasttime<1000) && (event.xbutton.state & Button1Mask))
 									{
@@ -522,7 +634,11 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 											}
 									}
 								else
-									lasttime=event.xbutton.time;
+									{
+										lasttime=event.xbutton.time;
+									}
+
+								setPreviewData();
 
 								if(ml!=NULL)
 									{

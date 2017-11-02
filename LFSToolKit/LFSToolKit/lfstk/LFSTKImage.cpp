@@ -117,10 +117,26 @@ void LFSTK_imageClass::LFSTK_snapSize(int sze)
 }
 
 /**
-* Clear the image window ans set shape.
+* Clear the image window and set shape.
 */
 void LFSTK_imageClass::LFSTK_clearWindow(void)
 {
+	if(this->useImage==false)
+		{
+			cairo_save(this->shapecr);
+				cairo_reset_clip(this->shapecr);
+				cairo_set_operator(this->shapecr,CAIRO_OPERATOR_CLEAR);
+				cairo_rectangle(this->shapecr,0,0,this->gadgetGeom.w,this->gadgetGeom.h);
+				cairo_fill(this->shapecr);
+			cairo_restore(this->shapecr);
+
+			XShapeCombineMask(this->display,this->window,ShapeBounding,0,0,cairo_xlib_surface_get_drawable(shapesfc),ShapeSet);
+			XFlush(this->display);
+			XSync(this->display,false);
+			this->wc->LFSTK_clearWindow();
+			return;
+		}
+
 	cairo_save(this->cr);
 		cairo_reset_clip(this->cr);
 		cairo_set_source_surface(this->cr,this->cImage,0,0);
@@ -139,6 +155,7 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 	XShapeCombineMask(this->display,this->window,ShapeBounding,0,0,cairo_xlib_surface_get_drawable(shapesfc),ShapeSet);
 	XFlush(this->display);
 	XSync(this->display,false);
+	this->wc->LFSTK_clearWindow();
 }
 
 /**

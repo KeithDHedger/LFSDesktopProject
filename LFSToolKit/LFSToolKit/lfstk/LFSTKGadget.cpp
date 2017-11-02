@@ -1113,7 +1113,6 @@ cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int or
 	if(file==NULL)
 		return(CAIRO_STATUS_FILE_NOT_FOUND);
 
-	
 	tempimage=cairo_image_surface_create_from_png(file);
 	cs=cairo_surface_status(tempimage);
 	if(cs!=CAIRO_STATUS_SUCCESS)
@@ -1125,6 +1124,9 @@ cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int or
 					return(CAIRO_STATUS_INVALID_FORMAT);
 				}
 		}
+
+	width=cairo_image_surface_get_width(tempimage);
+	height=cairo_image_surface_get_height(tempimage);
 
 	if(orient!=MENU)
 		{
@@ -1140,13 +1142,19 @@ cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int or
 			this->gadgetDetails.reserveSpace=maxHeight;
 		}
 
-	width=cairo_image_surface_get_width(tempimage);
-	height=cairo_image_surface_get_height(tempimage);
-
 	if(maxWidth>=maxHeight)
 		ratio=maxHeight/height;
 	else
 		ratio=maxWidth/width;
+
+	if(orient==FREE)
+		{
+			if(width>=height)
+				ratio=maxWidth/width;
+			else
+				ratio=maxHeight/height;
+		}
+
 	this->imageWidth=width*ratio;
 	this->imageHeight=height*ratio;
 

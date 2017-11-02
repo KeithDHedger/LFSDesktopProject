@@ -113,6 +113,7 @@ class LFSTK_gadgetClass
 		bool					isSubMenu;
 		bool					showIndicator;
 		gadgetStruct			gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NULL,NORMALCOLOUR,0,false,{0,0,0,0},{0,0,0,0},false};
+		char					*monoFontString=NULL;
 
 	private:
 		void					initGadget(void);
@@ -133,7 +134,6 @@ class LFSTK_gadgetClass
 //font and label stuff
 		char					*label=NULL;
 		char					*fontString=NULL;
-		char					*monoFontString=NULL;
 
 		cairo_text_extents_t	extents;
 		cairo_font_weight_t		weight;

@@ -737,6 +737,6 @@ void LFSTK_lib::LFSTK_setCairoSurface(Display *display,Window window,Visual *vis
 */
 char* LFSTK_lib::LFSTK_getMimeType(const char* path)
 {
-	return(this->LFSTK_oneLiner("file -b --mime-type \"%s\"",path));
+	return(this->LFSTK_oneLiner("file -L -b --mime-type \"%s\"",path));
 }
  

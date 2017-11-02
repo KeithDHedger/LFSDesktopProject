@@ -84,7 +84,7 @@ int main(int argc, char **argv)
 
 //files and folders
 	asprintf(&wd,"%s",wc->userHome);
-	filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",wd,FILEDIALOG,true);
+	filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",wd,FILEDIALOG);
 	filedialogdir=new LFSTK_fileDialogClass(wc,"Select Folder",wd,FOLDERDIALOG);
 
 //	filedialogfile->LFSTK_setShowPreview(true);

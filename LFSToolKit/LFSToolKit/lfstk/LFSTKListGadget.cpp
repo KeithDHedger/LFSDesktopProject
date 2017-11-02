@@ -486,8 +486,10 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 //up
 	this->buttonUp=new LFSTK_buttonClass(parentwc,"▲",this->gadgetGeom.x+this->gadgetGeom.w+LGAP,this->gadgetGeom.y,NAVBUTTONSIZE,NAVBUTTONSIZE,NorthEastGravity);
 	this->buttonUp->LFSTK_setLabelGravity(CENTRE);
+	
 	this->scrollData[LUP].mainObject=this;
 	this->scrollData[LUP].userData=LUP;
+	
 	buttonUp->LFSTK_setCallBack(NULL,scrollCB,SCROLLDATA(LUP));
 //down
 	buttonDown=new LFSTK_buttonClass(parentwc,"▼",this->gadgetGeom.x+this->gadgetGeom.w+LGAP,this->gadgetGeom.y+this->gadgetGeom.h-NAVBUTTONSIZE,NAVBUTTONSIZE,NAVBUTTONSIZE,NorthEastGravity);

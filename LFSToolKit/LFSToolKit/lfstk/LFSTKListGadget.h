@@ -45,6 +45,7 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 
 		bool				mouseExit(XButtonEvent *e) {return(true);};
 		bool				mouseEnter(XButtonEvent *e) {return(true);};
+		unsigned			listCnt;
 
 	private:
 		struct listData
@@ -54,7 +55,6 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 			};
 		char				**listStrings;
 		char				**listImages;
-		unsigned			listCnt;
 		unsigned			listImageCnt;
 		unsigned			listOffset;
 

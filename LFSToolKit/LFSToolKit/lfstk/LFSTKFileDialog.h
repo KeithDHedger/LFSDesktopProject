@@ -33,11 +33,13 @@
 #define FILEDIALOG false
 #define FOLDERDIALOG true
 
+#define PREVIEWWIDTH 192
+
 class LFSTK_fileDialogClass
 {
 	public:
 		~LFSTK_fileDialogClass();
-		LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const char *label,const char *startdir,bool type,bool showpreview=false);
+		LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const char *label,const char *startdir,bool type);
 
 		void					LFSTK_showFileDialog(void);
 		void					LFSTK_showFileDialog(const char *dir,const char *title);
@@ -51,7 +53,9 @@ class LFSTK_fileDialogClass
 		void					LFSTK_setShowPreview(bool);
 
 	private:
-		
+		char					*findThemedIconFromMime(const char *mimetype);
+		void					setPreviewData(void);
+
 		char					**dirList=NULL;
 		char					**dirImageList=NULL;
 		char					**fileList=NULL;
@@ -68,6 +72,9 @@ class LFSTK_fileDialogClass
 		const char				*folderImage;
 		bool					showPreview=false;
 		LFSTK_imageClass		*tux=NULL;
+		LFSTK_labelClass		*previewMimeType;
+		LFSTK_labelClass		*previewSize;
+		//LFSTK_labelClass		*previewMimeType;
 
 		LFSTK_windowClass		*wc;
 		LFSTK_windowClass		*dialog;
