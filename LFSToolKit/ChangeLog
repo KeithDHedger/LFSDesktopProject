@@ -1,4 +1,5 @@
 0.2.3
+Added file data to preview.
 Added file preview to file dialogs.
 Validating file/folder selections now more robust.
 Added *LFSTK_fileDialogClass::LFSTK_getCurrentPath(void) to file dialog class.

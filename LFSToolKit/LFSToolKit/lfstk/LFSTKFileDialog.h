@@ -47,6 +47,7 @@ class LFSTK_fileDialogClass
 		const char				*LFSTK_getCurrentDir(void);
 		const char				*LFSTK_getCurrentFile(void);
 		const char				*LFSTK_getCurrentPath(void);
+		const char				*LFSTK_getCurrentFileSelection(void);
 		void					LFSTK_setWorkingDir(const char *dir);
 		void					LFSTK_setRequestType(bool type);
 		bool					LFSTK_getRequestType(void);
@@ -74,7 +75,8 @@ class LFSTK_fileDialogClass
 		LFSTK_imageClass		*tux=NULL;
 		LFSTK_labelClass		*previewMimeType;
 		LFSTK_labelClass		*previewSize;
-		//LFSTK_labelClass		*previewMimeType;
+		LFSTK_labelClass		*previewFileName;
+		LFSTK_labelClass		*previewMode;
 
 		LFSTK_windowClass		*wc;
 		LFSTK_windowClass		*dialog;

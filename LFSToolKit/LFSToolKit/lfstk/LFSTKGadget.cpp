@@ -637,6 +637,10 @@ void LFSTK_gadgetClass::drawImage()
 			case RIGHT:
 				xoffset=this->gadgetGeom.w-this->imageWidth-this->pad;
 				break;
+			case PRESERVEASPECT:
+				xoffset=(this->gadgetGeom.w/2)-(this->imageWidth/2);
+				yoffset=(this->gadgetGeom.h/2)-(this->imageHeight/2);
+				break;
 			case NONE:
 				xoffset=0;
 				yoffset=0;
@@ -1147,7 +1151,7 @@ cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int or
 	else
 		ratio=maxWidth/width;
 
-	if(orient==FREE)
+	if(orient==PRESERVEASPECT)
 		{
 			if(width>=height)
 				ratio=maxWidth/width;

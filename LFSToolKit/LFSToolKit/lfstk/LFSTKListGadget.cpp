@@ -276,7 +276,7 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 					this->labels[j]->LFSTK_setLabel("");
 					this->labels[j]->LFSTK_setActive(false);
 							if(this->listImages!=NULL)
-					this->labels[j]->LFSTK_setImageFromPath(NULL,LEFT,true);
+					this->labels[j]->LFSTK_setImageFromPath(NULL,MENU,true);//was LEFT
 				}
 
 			this->labels[j]->gadgetDetails.colour=&this->labels[j]->colourNames[NORMALCOLOUR];

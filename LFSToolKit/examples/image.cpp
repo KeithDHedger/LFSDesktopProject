@@ -51,7 +51,7 @@ int main(int argc, char **argv)
 	display=wc->display;
 
 	tux=new LFSTK_imageClass(wc,NULL,DIALOGMIDDLE-(IMAGESIZE/2),sy,IMAGESIZE,IMAGESIZE,NorthGravity,true);
-	tux->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",AUTO,true);
+	tux->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",PRESERVEASPECT,true);
 	tux->LFSTK_setCanDrag(true);
 	tux->LFSTK_snapSize(1);
 	tux->LFSTK_setTile(NULL,0);

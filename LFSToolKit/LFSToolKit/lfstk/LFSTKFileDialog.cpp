@@ -302,6 +302,7 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	int					hite=DIALOGHITE;
 	LFSTK_labelClass	*spacer;
 	int					midprev;
+	int					yoffset=BORDER+PREVIEWWIDTH;
 
 	this->wc=parentwc;
 	this->dialog=NULL;
@@ -378,11 +379,28 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 			this->buttonApply=new LFSTK_buttonClass(this->dialog,"Apply",DIALOGWIDTH-BORDER-GADGETWIDTH+PREVIEWWIDTH,dirlisthite+(FGAP*6)+GADGETHITE+(FFILEHITE*GADGETHITE)+FGAP,GADGETWIDTH,GADGETHITE,SouthEastGravity);
 
 			midprev=DIALOGWIDTH+PREVIEWWIDTH-(PREVIEWWIDTH/2);
-			this->tux=new LFSTK_imageClass(this->dialog,NULL,midprev-(PREVIEWWIDTH/2),BORDER,PREVIEWWIDTH,PREVIEWWIDTH,NorthGravity,true);
-			this->tux->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",AUTO,true);
-			this->previewMimeType=new LFSTK_labelClass(this->dialog,"text/x-c++src",DIALOGWIDTH,BORDER+PREVIEWWIDTH,PREVIEWWIDTH,16,NorthWestGravity);
+			this->tux=new LFSTK_imageClass(this->dialog,NULL,midprev-(PREVIEWWIDTH/2)-(BORDER/4),BORDER,PREVIEWWIDTH,PREVIEWWIDTH,PRESERVEASPECT,true);
+//			this->tux->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",AUTO,true);
+//filename
+			this->previewFileName=new LFSTK_labelClass(this->dialog,"",DIALOGWIDTH,yoffset,PREVIEWWIDTH,16,NorthWestGravity);
+			this->previewFileName->LFSTK_setFontString(this->previewFileName->monoFontString);
+			this->previewFileName->LFSTK_setCairoFontData();
+			yoffset+=GADGETHITE;
+//mime type
+			this->previewMimeType=new LFSTK_labelClass(this->dialog,"",DIALOGWIDTH,yoffset,PREVIEWWIDTH,16,NorthWestGravity);
 			this->previewMimeType->LFSTK_setFontString(this->previewMimeType->monoFontString);
 			this->previewMimeType->LFSTK_setCairoFontData();
+			yoffset+=GADGETHITE;
+//size
+			this->previewSize=new LFSTK_labelClass(this->dialog,"",DIALOGWIDTH,yoffset,PREVIEWWIDTH,16,NorthWestGravity);
+			this->previewSize->LFSTK_setFontString(this->previewSize->monoFontString);
+			this->previewSize->LFSTK_setCairoFontData();
+			yoffset+=GADGETHITE;
+//mode
+			this->previewMode=new LFSTK_labelClass(this->dialog,"",DIALOGWIDTH,yoffset,PREVIEWWIDTH,16,NorthWestGravity);
+			this->previewMode->LFSTK_setFontString(this->previewMode->monoFontString);
+			this->previewMode->LFSTK_setCairoFontData();
+
 		}
 }
 
@@ -497,15 +515,27 @@ breakReturn:
 }
 
 /**
+* Get current selection
+* \return const char*
+* \note Return is owned by TK don't free.
+*/
+const char* LFSTK_fileDialogClass::LFSTK_getCurrentFileSelection(void)
+{
+	return(this->fileListGadget->LFSTK_getListString(this->fileListGadget->LFSTK_getCurrentListItem()));
+}
+
+/**
 * Set preview data
 */
 void LFSTK_fileDialogClass::setPreviewData(void)
 {
-	char	*mt=NULL;
-	char	*convmt=NULL;
-	char	*iconpath=NULL;
-	char	*testmime=NULL;
-	char	*ptr=NULL;
+	char		*mt=NULL;
+	char		*convmt=NULL;
+	char		*iconpath=NULL;
+	char		*testmime=NULL;
+	char		*ptr=NULL;
+	struct stat	buf;
+	char		*statdata=NULL;
 
 	if(this->dialogType!=FILEDIALOG)
 		return;
@@ -513,15 +543,29 @@ void LFSTK_fileDialogClass::setPreviewData(void)
 	if(this->fileListCnt==0)
 		{
 			this->previewMimeType->LFSTK_setLabel("");
+			this->previewSize->LFSTK_setLabel("");
+			this->previewFileName->LFSTK_setLabel("");
 			this->tux->useImage=false;
 			this->previewMimeType->LFSTK_clearWindow();
+			this->previewSize->LFSTK_clearWindow();
+			this->previewFileName->LFSTK_clearWindow();
 			this->tux->LFSTK_clearWindow();
 			return;
 		}
 
-	asprintf(&mt,"%s/%s",this->currentDir,this->fileListGadget->LFSTK_getListString(this->fileListGadget->LFSTK_getCurrentListItem()));
+	asprintf(&mt,"%s/%s",this->currentDir,this->LFSTK_getCurrentFileSelection());
 	convmt=this->wc->globalLib->LFSTK_getMimeType(mt);
 	this->previewMimeType->LFSTK_setLabel(convmt);
+	this->previewFileName->LFSTK_setLabel(this->LFSTK_getCurrentFileSelection());
+	if(stat(mt,&buf)==0)
+		{
+			asprintf(&statdata,"Size:%i",buf.st_size);
+			this->previewSize->LFSTK_setLabel(statdata);
+			free(statdata);
+			asprintf(&statdata,"Mode:%o",buf.st_mode & 07777);
+			this->previewMode->LFSTK_setLabel(statdata);
+			free(statdata);
+		}
 
 	for(int j=0;j<strlen(convmt);j++)
 		{
@@ -557,7 +601,7 @@ void LFSTK_fileDialogClass::setPreviewData(void)
 				iconpath=strdup("/usr/share/icons/gnome/256x256/mimetypes/text-x-generic.png");
 		}
 
-	this->tux->LFSTK_setImageFromPath(iconpath,FREE,true);
+	this->tux->LFSTK_setImageFromPath(iconpath,PRESERVEASPECT,true);
 	this->wc->LFSTK_clearWindow();
 	this->tux->LFSTK_clearWindow();
 	this->wc->LFSTK_clearWindow();

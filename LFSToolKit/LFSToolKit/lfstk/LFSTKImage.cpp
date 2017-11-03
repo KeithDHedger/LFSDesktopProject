@@ -121,6 +121,9 @@ void LFSTK_imageClass::LFSTK_snapSize(int sze)
 */
 void LFSTK_imageClass::LFSTK_clearWindow(void)
 {
+	int xoffset;
+	int yoffset;
+
 	if(this->useImage==false)
 		{
 			cairo_save(this->shapecr);
@@ -137,19 +140,24 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 			return;
 		}
 
-	cairo_save(this->cr);
-		cairo_reset_clip(this->cr);
-		cairo_set_source_surface(this->cr,this->cImage,0,0);
-		cairo_paint(this->cr);
-	cairo_restore(this->cr);
+	xoffset=(this->gadgetGeom.w/2)-(this->imageWidth/2);
+	yoffset=(this->gadgetGeom.h/2)-(this->imageHeight/2);
+
+//	cairo_save(this->cr);
+//		cairo_reset_clip(this->cr);
+//		cairo_set_source_surface(this->cr,this->cImage,xoffset,yoffset);
+//		cairo_paint(this->cr);
+//	cairo_restore(this->cr);
 
 	cairo_save(this->shapecr);
 		cairo_reset_clip(this->shapecr);
+		cairo_set_source_surface(this->cr,this->cImage,xoffset,yoffset);
+		cairo_paint(this->cr);
 		cairo_set_operator(this->shapecr,CAIRO_OPERATOR_CLEAR);
 		cairo_rectangle(this->shapecr,0,0,this->gadgetGeom.w,this->gadgetGeom.h);
 		cairo_fill(this->shapecr);
 		cairo_set_operator(this->shapecr,CAIRO_OPERATOR_OVER);
-		cairo_mask_surface(this->shapecr,this->cImage,0,0);
+		cairo_mask_surface(this->shapecr,this->cImage,xoffset,yoffset);
 	cairo_restore(this->shapecr);
 
 	XShapeCombineMask(this->display,this->window,ShapeBounding,0,0,cairo_xlib_surface_get_drawable(shapesfc),ShapeSet);
@@ -189,7 +197,7 @@ LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* image
 
 	this->LFSTK_setImageFromPath(imagepath,gravity,scale);
 	this->useTile=this->wc->useTile;
-	gadgetDetails={&this->wc->windowColourNames[NORMALCOLOUR],BEVELNONE,NOINDICATOR,NULL,NORMALCOLOUR,0,false,{0,0,w,h},{0,0,0,0},false};
+	this->gadgetDetails={&this->wc->windowColourNames[NORMALCOLOUR],BEVELNONE,NOINDICATOR,NULL,NORMALCOLOUR,0,false,{0,0,w,h},{0,0,0,0},false};
 
 	this->shape=XCreatePixmap(this->display,this->window,w,h,1);
 	this->shapesfc=cairo_xlib_surface_create_for_bitmap(this->display,this->shape,DefaultScreenOfDisplay(this->display),w,h);
