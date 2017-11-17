@@ -45,7 +45,6 @@ class LFSTK_toggleButtonClass  : public  LFSTK_gadgetClass
 		bool mouseDown(XButtonEvent *e);
 		bool mouseUp(XButtonEvent *e);
 
-		void LFSTK_clearWindowxx(void);
 		void LFSTK_setToggleStyle(drawStyle ds);
 		void LFSTK_setValue(bool val);
 		bool LFSTK_getValue(void);

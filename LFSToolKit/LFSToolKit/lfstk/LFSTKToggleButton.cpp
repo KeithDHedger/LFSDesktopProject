@@ -219,7 +219,6 @@ bool LFSTK_toggleButtonClass::mouseUp(XButtonEvent *e)
 		}
 	return(true);
 }
-//	gadgetDetails={&this->gadgetGeom,&this->wc->windowColourNames[NORMALCOLOUR],BEVELOUT,CHECK,&this->indicGeom,NORMALCOLOUR,h-4,false,false,{0,0,w,h},{2,2,8,8},true};
 
 /**
 * Set the toggle button style.

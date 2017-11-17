@@ -143,12 +143,6 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 	xoffset=(this->gadgetGeom.w/2)-(this->imageWidth/2);
 	yoffset=(this->gadgetGeom.h/2)-(this->imageHeight/2);
 
-//	cairo_save(this->cr);
-//		cairo_reset_clip(this->cr);
-//		cairo_set_source_surface(this->cr,this->cImage,xoffset,yoffset);
-//		cairo_paint(this->cr);
-//	cairo_restore(this->cr);
-
 	cairo_save(this->shapecr);
 		cairo_reset_clip(this->shapecr);
 		cairo_set_source_surface(this->cr,this->cImage,xoffset,yoffset);
