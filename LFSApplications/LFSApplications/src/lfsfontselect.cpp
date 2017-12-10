@@ -278,6 +278,8 @@ int main(int argc, char **argv)
 		parseFontString(argv[optind]);
 
 	mainWindow=new LFSTK_windowClass(0,0,WIDTH,HITE,"Font Selector",false);
+	//mainWindow->LFSTK_initDnD();
+
 	lfstkfontstr=mainWindow->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEFONT);
 	lfstkfontstruct=mainWindow->globalLib->LFSTK_loadFont(mainWindow->display,mainWindow->screen,lfstkfontstr);
 	loadFontStrings();

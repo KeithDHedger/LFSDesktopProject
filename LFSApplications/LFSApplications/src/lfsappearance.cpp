@@ -234,6 +234,7 @@ int main(int argc, char **argv)
 
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"LFS Appearance",false);
 	display=wc->display;
+//	wc->LFSTK_initDnD();
 
 	groupNames.clear();
 	addGroup();

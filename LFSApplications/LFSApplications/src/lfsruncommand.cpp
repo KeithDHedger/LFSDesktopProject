@@ -80,9 +80,9 @@ int main(int argc, char **argv)
 	LFSTK_buttonClass	*run;
 	LFSTK_labelClass	*label;
 
-
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Run Command",false);
 	display=wc->display;
+	//wc->LFSTK_initDnD();
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
 	sy+=HALFYSPACING;

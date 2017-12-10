@@ -238,6 +238,7 @@ int main(int argc, char **argv)
 
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"LFSPanel Prefs",false);
 	display=wc->display;
+	//wc->LFSTK_initDnD();
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
 	sy+=HALFYSPACING;

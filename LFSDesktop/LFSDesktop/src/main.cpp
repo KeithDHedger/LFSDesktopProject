@@ -578,13 +578,12 @@ int main(int argc,char **argv)
 	rootWin=DefaultRootWindow(display);
 	visual=DefaultVisual(display,screen);
 	cm=DefaultColormap(display,screen);
-printf("00000\n");
+
 	createDesktopWindow();
 
 //disks
 	diskWindow=new LFSTK_windowClass(0,0,64,128,"xxx",true,true);
-//	addto=diskWindow->font->ascent+diskWindow->font->descent+8;
-addto=32;
+	addto=32;
 
 	for(int j=BUTTONMOUNT;j<=BUTTONREMOVEICON;j++)
 		{
@@ -595,17 +594,6 @@ addto=32;
 			else
 				diskIconData[j-1]=NULL;
 		}
-
-//	while(diskLabelData[buttoncnt]!=NULL)
-//		{
-//			XftFont *font=(XftFont*)diskWindow->font->data;
-//			XGlyphInfo info;
-//			XftTextExtentsUtf8(diskWindow->display,font,(XftChar8 *)diskLabelData[buttoncnt],strlen(diskLabelData[buttoncnt]),&info);
-//			buttoncnt++;
-//			if((info.width-info.x)>maxwid)
-//				maxwid=info.width;
-//		}
-maxwid=32;
 	maxwid+=24+4;
 
 	buttoncnt=0;
@@ -636,22 +624,10 @@ maxwid=32;
 	maxwid=0;
 
 	fileWindow=new LFSTK_windowClass(0,0,64,128,"xxx",true,true);
-//	addto=fileWindow->font->ascent+fileWindow->font->descent+8;
-addto=32;
+	addto=32;
 	buttoncnt=3;
 	sy=0;
-//	while(diskLabelData[buttoncnt]!=NULL)
-//		{
-//			XftFont *font=(XftFont*)fileWindow->font->data;
-//			XGlyphInfo info;
-//			XftTextExtentsUtf8(fileWindow->display,font,(XftChar8 *)diskLabelData[buttoncnt],strlen(diskLabelData[buttoncnt]),&info);
-//			buttoncnt++;
-//			if((info.width-info.x)>maxwid)
-//				maxwid=info.width;
-//		}
-maxwid=32;
-	maxwid+=24+4;
-printf("9999999\n");
+	maxwid=32;
 
 	buttoncnt=3;
 	while(diskLabelData[buttoncnt]!=NULL)
@@ -677,23 +653,14 @@ printf("9999999\n");
 //icon chooser
 	iconChooser=new LFSTK_windowClass(0,0,width,hite,"Enter Path To Icon",false);
 	LFSTK_buttonClass	*bc;
-	//LFSTK_lineEditClass	*le;
+//	iconChooser->LFSTK_initDnD();
 
 	iconChooserEdit=new LFSTK_lineEditClass(iconChooser,"",0,0,width,24,NorthWestGravity);
-//	XMapWindow(iconChooser->display,le->LFSTK_getWindow());
 
 	bc=new LFSTK_buttonClass(iconChooser,"Apply",4,24+4+4,75,24,SouthWestGravity);
 	bc->LFSTK_setCallBack(NULL,setIconCallback,(void*)1);
-//	XMapWindow(iconChooser->display,bc->LFSTK_getWindow());
-
 	bc=new LFSTK_buttonClass(iconChooser,"Cancel",width-4-75,24+4+4,75,24,SouthEastGravity);
 	bc->LFSTK_setCallBack(NULL,setIconCallback,(void*)2);
-//	XMapWindow(iconChooser->display,bc->LFSTK_getWindow());
-//	fileWindow->LFSTK_showWindow(true);
-//	fileWindow->LFSTK_hideWindow();
-
-//			XMapWindow(mainwind->display,mainwind->window);
-//			mainwind->LFSTK_setKeepAbove(true);
 
 	sfc=cairo_xlib_surface_create(display,drawOnThis,visual,displayWidth,displayHeight);
 	cairo_xlib_surface_set_size(sfc,displayWidth,displayHeight);

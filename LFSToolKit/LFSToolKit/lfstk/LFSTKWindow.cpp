@@ -784,9 +784,10 @@ void LFSTK_windowClass::LFSTK_sendMessage(const char *msg,unsigned long data0,un
 void LFSTK_windowClass::LFSTK_initDnD(void)
 {
 //Announce XDND support
-	Atom XdndAware=XInternAtom(this->display,"XdndAware",true);
+	Atom XdndAware=XInternAtom(this->display,"XdndAware",false);
 	Atom version=5;
-	XChangeProperty(this->display,this->window,XdndAware,XA_ATOM,32,PropModeReplace,(unsigned char*)&version,1);
+	if(XdndAware!=None)
+		XChangeProperty(this->display,this->window,XdndAware,XA_ATOM,32,PropModeReplace,(unsigned char*)&version,1);
 
 	dNdAtoms[XDNDENTER]=XInternAtom(this->display,"XdndEnter",false);
 	dNdAtoms[XDNDPOSITION]=XInternAtom(this->display,"XdndPosition",false);

@@ -253,6 +253,7 @@ int main(int argc, char **argv)
 
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Backdrop Prefs",false);
 	display=wc->display;
+	//wc->LFSTK_initDnD();
 
 	asprintf(&wd,"%s",wc->userHome);
 	asprintf(&mainPrefs,"%s/lfssetwallpaper.rc",wc->configDir);

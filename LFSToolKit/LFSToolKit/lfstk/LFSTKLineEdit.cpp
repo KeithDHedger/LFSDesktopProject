@@ -57,6 +57,7 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	wa.win_gravity=gravity;
 	wa.bit_gravity=gravity;
 	wa.save_under=true;
+
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWBitGravity,&wa);
 	this->gc=XCreateGC(this->display,this->window,0,NULL);
 	this->LFSTK_setFontString(this->monoFontString);
@@ -73,7 +74,6 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 		this->cursorPos=strlen(label);
 	else
 		this->cursorPos=0;
-
 	this->buffer=label;
 
 	this->wc->LFSTK_initDnD();

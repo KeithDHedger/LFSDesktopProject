@@ -212,8 +212,15 @@ int main(int argc, char **argv)
 				}
 		}
 
+	prefsColours[0]=strdup("black");
+	prefsColours[1]=strdup("#00ffff");
+	prefsColours[2]=strdup("black");
+	prefsColours[3]=strdup("white");
+	prefsColours[4]=strdup("white");
+
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Gadgets",false);
 	display=wc->display;
+	//wc->LFSTK_initDnD();
 
 	asprintf(&envFile,"%s/lfswmanager.rc",wc->configDir);
 	wc->globalLib->LFSTK_loadVarsFromFile(envFile,lfsWMPrefs);
@@ -236,6 +243,7 @@ int main(int argc, char **argv)
 	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
 	personal->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
+
 
 //frame colours
 	for(int j=0;j<5;j++)

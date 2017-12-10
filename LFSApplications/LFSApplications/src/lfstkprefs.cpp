@@ -232,6 +232,8 @@ int main(int argc, char **argv)
 	
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH-BORDER-BORDER-BORDER,DIALOGHITE,"LFS Toolkit Prefs",false);
 	display=wc->display;
+	//wc->LFSTK_initDnD();
+
 	wd=strdup(wc->configDir);
 	tileDialog=new LFSTK_fileDialogClass(wc,"Select File",wd,false);
 

@@ -67,6 +67,7 @@ int main(int argc, char **argv)
 	
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Gadgets",false);
 	display=wc->display;
+//	wc->LFSTK_initDnD();
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
 	label->LFSTK_setCairoFontDataParts("sB",20);

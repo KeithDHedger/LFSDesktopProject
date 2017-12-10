@@ -71,6 +71,7 @@ int main(int argc, char **argv)
 
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Run Command",false);
 	display=wc->display;
+	//wc->LFSTK_initDnD();
 
 	label=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
 	sy+=HALFYSPACING;
