@@ -56,7 +56,6 @@ int main(int argc, char **argv)
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,BOXLABEL,false);
 
 	display=wc->display;
-//	wc->LFSTK_initDnD();
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
 	label->LFSTK_setCairoFontDataParts("sB",20);
@@ -131,14 +130,12 @@ int main(int argc, char **argv)
 					case Expose:
 					//printf("expose\n");
 						wc->LFSTK_clearWindow();
-						//wc->LFSTK_initDnD();
 						break;
 
 					case ConfigureNotify:
 						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
 						wc->globalLib->LFSTK_setCairoSurface(wc->display,wc->window,wc->visual,&wc->sfc,&wc->cr,event.xconfigurerequest.width,event.xconfigurerequest.height);
 						wc->LFSTK_clearWindow();
-						//wc->LFSTK_initDnD();
 						break;
 
 					case ClientMessage:
@@ -152,7 +149,6 @@ int main(int argc, char **argv)
 //dnd for edit box
 							if(wc->acceptDnd==true)
 								{
-								//	wc->LFSTK_initDnD();
 									wc->LFSTK_handleDnD(&event);
 								}
 						}

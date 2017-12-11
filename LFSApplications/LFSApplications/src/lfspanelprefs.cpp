@@ -105,6 +105,39 @@ bool doQuit(void *p,void* ud)
 	return(false);
 }
 
+void getEdits(void)
+{
+//printf("h=%i\n",atoi(panelHeightEdit->LFSTK_getBuffer()->c_str()));
+	panelHeightPref=atoi(panelHeightEdit->LFSTK_getBuffer()->c_str());
+	onMonitorPref=atoi(panelOnMonitor->LFSTK_getBuffer()->c_str());
+	terminalCommandPref=strdup(termCommand->LFSTK_getBuffer()->c_str());
+	logoutCommandPref=strdup(logout->LFSTK_getBuffer()->c_str());
+	restartCommandPref=strdup(restart->LFSTK_getBuffer()->c_str());
+	shutdownCommandPref=strdup(shutdown->LFSTK_getBuffer()->c_str());
+	leftGadgetsPref=strdup(panelLeftGadgets->LFSTK_getBuffer()->c_str());
+	rightGadgetsPref=strdup(panelrightGadgets->LFSTK_getBuffer()->c_str());
+
+//	panelHeightPref=atoi(panelHeightEdit->LFSTK_getBuffer()->c_str());
+//	panelHeightPref=atoi(panelHeightEdit->LFSTK_getBuffer()->c_str());
+//	panelHeightPref=atoi(panelHeightEdit->LFSTK_getBuffer()->c_str());
+//	panelHeightPref=atoi(panelHeightEdit->LFSTK_getBuffer()->c_str());
+//	panelHeightPref=atoi(panelHeightEdit->LFSTK_getBuffer()->c_str());
+return;
+
+//	panelWidthEdit->LFSTK_setBuffer(panelWidthConvertToStr[panelWidthPref]);
+
+	panelHeightEdit->LFSTK_setBuffer(std::to_string(panelHeightPref).c_str());
+//	panelPosEdit->LFSTK_setBuffer(panelPosConvertToStr[panelPosPref]);
+//	panelGravEdit->LFSTK_setBuffer(panelGravConvertToStr[panelGravityPref]);
+	panelOnMonitor->LFSTK_setBuffer(std::to_string(onMonitorPref).c_str());
+	termCommand->LFSTK_setBuffer(terminalCommandPref);
+	logout->LFSTK_setBuffer(logoutCommandPref);
+	restart->LFSTK_setBuffer(restartCommandPref);
+	shutdown->LFSTK_setBuffer(shutdownCommandPref);
+	panelLeftGadgets->LFSTK_setBuffer(leftGadgetsPref);
+	panelrightGadgets->LFSTK_setBuffer(rightGadgetsPref);
+}
+
 bool applyCB(void *p,void* ud)
 {
 	char	*env=NULL;
@@ -154,6 +187,7 @@ bool applyCB(void *p,void* ud)
 						}
 				}
 
+			getEdits();
 			asprintf(&env,"%s/%s",wc->configDir,panelNameEdit->LFSTK_getBuffer()->c_str());
 			wc->globalLib->LFSTK_saveVarsToFile(env,panelPrefs);
 			free(env);
