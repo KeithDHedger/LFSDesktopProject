@@ -19,6 +19,7 @@
  */
 
 #include <string>
+#include <getopt.h>
 
 #include "lfstk/LFSTKGlobals.h"
 #undef DIALOGWIDTH
@@ -269,6 +270,34 @@ int main(int argc, char **argv)
 {
 	XEvent	event;
 	int		sy=0;
+	int			parentWindow=-1;
+	int			c=0;
+	int			option_index=0;
+	const char	*shortOpts="h?w:";		
+	option		longOptions[]=
+		{
+			{"window",1,0,'w'},
+			{"help",0,0,'h'},
+			{0, 0, 0, 0}
+		};
+	while(1)
+		{
+			option_index=0;
+			c=getopt_long_only(argc,argv,shortOpts,longOptions,&option_index);
+			if (c==-1)
+				break;
+			switch (c)
+				{
+					case 'h':
+					case '?':
+						printf("-?,-h,--help\t\tPrint this help\n");
+						printf("-w,--window\t\tSet transient for window\n");
+						exit(0);
+					case 'w':
+						parentWindow=atoi(optarg);
+						break;
+				}
+		}
 
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"LFSPanel Prefs",false);
 	display=wc->display;
@@ -426,6 +455,9 @@ int main(int argc, char **argv)
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();
+	wc->LFSTK_setKeepAbove(true);
+	if(parentWindow!=-1)
+		wc->LFSTK_setTransientFor(parentWindow);
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	mainLoop=true;

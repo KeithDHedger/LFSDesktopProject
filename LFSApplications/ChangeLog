@@ -1,4 +1,5 @@
 0.1.2
+Fixed panelprefs not staying in front of main appearance window.
 Fixed panel prefs not writing changes to some properties.
 Converted lfstkprefs to new toolkit.
 Added lfsruncommand to install.
