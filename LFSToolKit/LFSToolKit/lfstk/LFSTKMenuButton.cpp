@@ -108,6 +108,11 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 							bc=new LFSTK_buttonClass(this->subwc,this->menus[j].label,0,winhite,maxwidth,24,0);
 							bc->LFSTK_setCallBack(NULL,this->callback.releaseCallback,(void*)&(this->menus[j]));
 							this->menus[j].bc=static_cast<LFSTK_buttonClass*>(bc);
+
+							for(int k=0;k<MAXCOLOURS;k++)
+								this->menus[j].bc->LFSTK_setColourName(k,this->wc->globalLib->LFSTK_getGlobalString(k,TYPEMENUITEM));
+							for(int k=0;k<MAXCOLOURS;k++)
+								this->menus[j].bc->LFSTK_setFontColourName(k,this->wc->globalLib->LFSTK_getGlobalString(k,TYPEMENUITEMFONTCOLOUR),false);
 						}
 					else
 						{
