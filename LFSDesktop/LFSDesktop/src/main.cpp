@@ -419,9 +419,8 @@ int main(int argc,char **argv)
 	char				*diskIconData[BUTTONREMOVEICON];
 	LFSTK_buttonClass	*diskButtons[BUTTONREMOVEICON];
 	LFSTK_buttonClass	*fileButtons[3];
-	int					buttoncnt=0,sy=0;
-	int					addto=0;
-	int					maxwid=0;
+	int					buttoncnt=0
+	int					sy=0;
 
 	asprintf(&path,"%s/.config/LFS/pidfile",getenv("HOME"));
 	fw=fopen(path,"r");
@@ -583,7 +582,6 @@ int main(int argc,char **argv)
 
 //disks
 	diskWindow=new LFSTK_windowClass(0,0,64,128,"xxx",true,true);
-	addto=32;
 
 	for(int j=BUTTONMOUNT;j<=BUTTONREMOVEICON;j++)
 		{
@@ -594,14 +592,14 @@ int main(int argc,char **argv)
 			else
 				diskIconData[j-1]=NULL;
 		}
-	maxwid+=24+4;
 
 	buttoncnt=0;
+	sy=0;
 	while(diskLabelData[buttoncnt]!=NULL)
 		{
 			if(buttoncnt!=BUTTONOPEN-1)
 				{
-					diskButtons[buttoncnt]=new LFSTK_buttonClass(diskWindow,diskLabelData[buttoncnt],0,sy,maxwid,24,NorthWestGravity);
+					diskButtons[buttoncnt]=new LFSTK_buttonClass(diskWindow,diskLabelData[buttoncnt],0,sy,GADGETWIDTH,24,NorthWestGravity);
 					diskButtons[buttoncnt]->LFSTK_setCallBack(NULL,pushedButtonCB,(void*)(long)(buttoncnt+1));
 					if(diskIconData[buttoncnt]==NULL)
 						{
@@ -612,27 +610,20 @@ int main(int argc,char **argv)
 							diskButtons[buttoncnt]->LFSTK_setImageFromPath(diskIconData[buttoncnt],LEFT,true);
 							diskButtons[buttoncnt]->LFSTK_setLabelGravity(LEFT);
 						}
-						
-					sy+=addto;
+					sy+=GADGETHITE;
 				}
 			buttoncnt++;
 		}
-	diskWindow->LFSTK_resizeWindow(maxwid,sy,true);
+	diskWindow->LFSTK_resizeWindow(GADGETWIDTH,sy,true);
 	diskWindow->LFSTK_showWindow(true);
 	diskWindow->LFSTK_hideWindow();
 //files
-	maxwid=0;
-
 	fileWindow=new LFSTK_windowClass(0,0,64,128,"xxx",true,true);
-	addto=32;
-	buttoncnt=3;
 	sy=0;
-	maxwid=32;
-
 	buttoncnt=3;
 	while(diskLabelData[buttoncnt]!=NULL)
 		{
-			fileButtons[buttoncnt]=new LFSTK_buttonClass(fileWindow,diskLabelData[buttoncnt],0,sy,maxwid,24,NorthWestGravity);
+			fileButtons[buttoncnt]=new LFSTK_buttonClass(fileWindow,diskLabelData[buttoncnt],0,sy,GADGETWIDTH,24,NorthWestGravity);
 			fileButtons[buttoncnt]->LFSTK_setCallBack(NULL,pushedButtonCB,(void*)(long)(buttoncnt+1));
 			if(diskIconData[buttoncnt]==NULL)
 				{
@@ -644,16 +635,15 @@ int main(int argc,char **argv)
 					fileButtons[buttoncnt]->LFSTK_setLabelGravity(LEFT);
 				}
 			buttoncnt++;
-			sy+=addto;
+			sy+=GADGETHITE;
 		}
-	fileWindow->LFSTK_resizeWindow(maxwid,sy,true);
+	fileWindow->LFSTK_resizeWindow(GADGETWIDTH,sy,true);
 	fileWindow->LFSTK_showWindow(true);
 	fileWindow->LFSTK_hideWindow();
 
 //icon chooser
 	iconChooser=new LFSTK_windowClass(0,0,width,hite,"Enter Path To Icon",false);
 	LFSTK_buttonClass	*bc;
-//	iconChooser->LFSTK_initDnD();
 
 	iconChooserEdit=new LFSTK_lineEditClass(iconChooser,"",0,0,width,24,NorthWestGravity);
 
