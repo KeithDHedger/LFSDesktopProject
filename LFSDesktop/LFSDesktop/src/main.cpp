@@ -419,7 +419,7 @@ int main(int argc,char **argv)
 	char				*diskIconData[BUTTONREMOVEICON];
 	LFSTK_buttonClass	*diskButtons[BUTTONREMOVEICON];
 	LFSTK_buttonClass	*fileButtons[3];
-	int					buttoncnt=0
+	int					buttoncnt=0;
 	int					sy=0;
 
 	asprintf(&path,"%s/.config/LFS/pidfile",getenv("HOME"));
