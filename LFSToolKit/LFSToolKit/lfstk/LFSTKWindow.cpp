@@ -77,7 +77,7 @@ LFSTK_gadgetClass* LFSTK_windowClass::LFSTK_findGadgetByPos(int x, int y)
 	for (std::map<int,mappedListener*>::iterator it=this->gadgetMap.begin();it!=this->gadgetMap.end();++it)
 		{
 			ml=it->second;
-			if( (ml!=NULL) && (ml->gadget!=NULL) && (ml->gadget->gadgetAcceptsDnD==true) )
+			if( (ml!=NULL) && (ml->gadget!=NULL) )
 				{
 					ml->gadget->LFSTK_getGlobalGeom(&geom);
 //TODO//
@@ -927,16 +927,57 @@ Atom LFSTK_windowClass::pickTargetFromAtoms(Atom t1, Atom t2, Atom t3)
 }
 
 /**
+* Drop data.
+* \param data Data drooped on gadget as string.
+*/
+void LFSTK_windowClass::LFSTK_dropData(propertyStruct* data)
+{
+	int	endl;
+
+	this->droppedData.type=-1;
+	if(this->droppedData.data!=NULL)
+		free(this->droppedData.data);
+	this->droppedData.data=NULL;
+	
+	if(strcasecmp(data->mimeType,"text/plain")==0)
+		{
+			this->droppedData.type=0;
+			asprintf(&(this->droppedData.data),"%s",data->data);
+		}
+
+	if(strcasecmp(data->mimeType,"text/uri-list")==0)
+		{
+			char	*d;
+			char	*ret;
+			asprintf(&d,"%s",(const char*)data->data);
+			endl=strlen(d)-1;
+			while ((endl >= 0) && (isspace(d[endl])) )
+				{
+					d[endl]=0;
+					endl--;
+				}
+			ret=this->globalLib->LFSTK_oneLiner("echo -n \"%s\"|sed 's|^file://||;s|%%20| |g'",d);
+			this->droppedData.type=1;
+			this->droppedData.data=ret;
+			free(d);
+		}
+}
+
+/**
  * Handle a dNd event.
  * \param event The event.
  * \note Only for line edit class gadgets for now.
  */
 void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 {
+	int res;
 	if(event->type == ClientMessage)
 		{
 			if(event->xclient.message_type==this->dNdAtoms[XDNDENTER])
 				{
+					this->dropGadget=this->LFSTK_findGadgetByPos(event->xclient.data.l[2] >> 16,event->xclient.data.l[2] & 0xffff);
+					if((this->dropGadget!=NULL) && (this->dropGadget->gadgetAcceptsDnD==false))
+						this->dropGadget=NULL;
 					this->xDnDVersion=(event->xclient.data.l[1] >> 24);
 					//more than three
 					Window source=event->xclient.data.l[0];
@@ -958,7 +999,6 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 				{
 					//Xdnd: reply with an XDND status message
 					this->dropGadget=this->LFSTK_findGadgetByPos(event->xclient.data.l[2] >> 16,event->xclient.data.l[2] & 0xffff);
-
 					XClientMessageEvent m;
 					memset(&m, sizeof(m), 0);
 					m.type=ClientMessage;
@@ -967,7 +1007,10 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 					m.message_type=dNdAtoms[XDNDSTATUS];
 					m.format=32;
 					m.data.l[0]=this->window;
-					m.data.l[1]=((this->toBeRequested!=None) && (this->dropGadget!=NULL) );
+					res=0;
+					res+=((this->dropGadget!=NULL) && (this->dropGadget->gadgetAcceptsDnD==true));
+					res+=((this->dropGadget==NULL) && (this->acceptOnThis==true));
+					m.data.l[1]=res;
 					m.data.l[2]=0; //Specify an empty rectangle
 					m.data.l[3]=0;
 					m.data.l[4]=dNdAtoms[XDNDACTIONCOPY]; //We only accept copying anyway.
@@ -978,7 +1021,7 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 
 			if(event->xclient.message_type == dNdAtoms[XDNDDROP])
 				{
-					if((this->toBeRequested == None) || (this->dropGadget==NULL))
+					if((this->toBeRequested == None) || (res==0))
 						{
 							//It's sending anyway, despite instructions to the contrary.
 							//So reply that we're not interested.
@@ -1031,6 +1074,9 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 						{
 							if(this->dropGadget!=NULL)
 								this->dropGadget->LFSTK_dropData(myprops);
+							else
+								if(this->acceptOnThis==true)
+									this->LFSTK_dropData(myprops);
 
 							//Reply OK.
 							XClientMessageEvent m;

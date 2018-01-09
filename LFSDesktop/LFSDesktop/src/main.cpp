@@ -390,6 +390,290 @@ void setFontEtc(void)
 	foreColour.a=1.0;
 }
 
+#if 0
+//struct propertyStruct
+//{
+//	unsigned char	*data;
+//	int				format;
+//	int				nitems;
+//	Atom			type;
+//	char			*mimeType;
+//};
+
+//enum {XDNDENTER=0,XDNDPOSITION,XDNDSTATUS,XDNDTYPELIST,XDNDACTIONCOPY,XDNDDROP,XDNDLEAVE,XDNDFINISHED,XDNDSELECTION,XDNDPROXY,XA_CLIPBOARD,XA_COMPOUND_TEXT,XA_UTF8_STRING,XA_TARGETS,PRIMARY,DNDATOMCOUNT};
+Atom					dNdAtoms[DNDATOMCOUNT];
+std::map<std::string,int> dNdTypes;
+Atom					toBeRequested;
+Window					sourceWindow;
+int						xDnDVersion;
+bool					acceptDnd;
+//Convert an atom name in to a std::string
+std::string getAtomName(Atom a)
+{
+	if(a == None)
+		return "None";
+	else
+		return XGetAtomName(display,a);
+}
+
+Atom pickTargetFromList(Atom* atom_list,int nitems)
+{
+	Atom to_be_requested=None;
+	//This is higger than the maximum priority.
+	int priority=INT_MAX;
+
+	for(int i=0; i < nitems; i++)
+		{
+			std::string atom_name=getAtomName(atom_list[i]);
+			//See if this data type is allowed and of higher priority (closer to zero) than the present one.
+			if(dNdTypes.find(atom_name)!= dNdTypes.end())
+				if(priority > dNdTypes[atom_name])
+					{
+						priority=dNdTypes[atom_name];
+						to_be_requested=atom_list[i];
+					}
+		}
+	return to_be_requested;
+}
+
+// Finds the best target given a local copy of a property.
+Atom pickTargetFromTargets(propertyStruct* p)
+{
+	//The list of targets is a list of atoms, so it should have type XA_ATOM but it may have the type TARGETS instead.
+	if((p->type!=XA_ATOM && p->type!=dNdAtoms[XA_TARGETS]) || p->format!=32)
+		{
+			//This would be really broken. Targets have to be an atom list and applications should support this. Nevertheless,
+			//some seem broken (MATLAB 7, for instance), so ask for STRING next instead as the lowest common denominator
+			if(dNdTypes.count("STRING"))
+				return(XA_STRING);
+			else
+				return None;
+		}
+	else
+		{
+			Atom *atom_list=(Atom*)p->data;
+			return pickTargetFromList(atom_list,p->nitems);
+		}
+}
+
+// Finds the best target given up to three atoms provided (any can be None).
+// Useful for part of the Xdnd protocol.
+Atom pickTargetFromAtoms(Atom t1, Atom t2, Atom t3)
+{
+	Atom atoms[3];
+	int  n=0;
+
+	if(t1!=None)
+		atoms[n++]=t1;
+
+	if(t2!=None)
+		atoms[n++]=t2;
+
+	if(t3!=None)
+		atoms[n++]=t3;
+
+	return pickTargetFromList(atoms, n);
+}
+
+propertyStruct* readProperty(Window src,Atom property)
+{
+	Atom			actual_type;
+	int				actual_format;
+	unsigned long	nitems;
+	unsigned long	bytes_after;
+	unsigned char	*ret=0;
+	propertyStruct	*props=new propertyStruct;
+
+	int read_bytes=1024;
+
+	//Keep trying to read the property until there are no bytes unread.
+	do
+		{
+			if(ret!=0)
+				XFree(ret);
+			XGetWindowProperty(display,src,property,0,read_bytes,False,AnyPropertyType,&actual_type,&actual_format, &nitems,&bytes_after,&ret);
+
+			read_bytes *= 2;
+		}
+	while(bytes_after!=0);
+
+	props->data=ret;
+	props->format=actual_format;
+	props->nitems=nitems;
+	props->type=actual_type;
+	props->mimeType=NULL;
+	return props;
+}
+
+/**
+ * Handle a dNd event.
+ * \param event The event.
+ * \note Only for line edit class gadgets for now.
+ */
+void handleDnD(XEvent *event)
+{
+//printf("-------------\n");
+	if(event->type == ClientMessage)
+		{
+	printf("000000000000000000\n");
+			if(event->xclient.message_type==dNdAtoms[XDNDENTER])
+				{
+					xDnDVersion=(event->xclient.data.l[1] >> 24);
+					//more than three
+					Window source=event->xclient.data.l[0];
+					if(event->xclient.data.l[1] & 1)
+						{
+							//Fetch the list of possible conversions
+							propertyStruct *props=readProperty(source,dNdAtoms[XDNDTYPELIST]);
+							toBeRequested=pickTargetFromTargets(props);
+							XFree(props->data);
+						}
+					else
+						{
+							//Use the available list
+							toBeRequested=pickTargetFromAtoms(event->xclient.data.l[2],event->xclient.data.l[3],event->xclient.data.l[4]);
+						}
+				}
+
+			if(event->xclient.message_type == dNdAtoms[XDNDPOSITION])
+				{
+					//Xdnd: reply with an XDND status message
+					//dropGadget=this->LFSTK_findGadgetByPos(event->xclient.data.l[2] >> 16,event->xclient.data.l[2] & 0xffff);
+
+					XClientMessageEvent m;
+					memset(&m, sizeof(m), 0);
+					m.type=ClientMessage;
+					m.display=event->xclient.display;
+					m.window=event->xclient.data.l[0];
+					m.message_type=dNdAtoms[XDNDSTATUS];
+					m.format=32;
+					m.data.l[0]=rootWin;
+					//m.data.l[1]=((toBeRequested!=None) && (this->dropGadget!=NULL) );
+					m.data.l[2]=0; //Specify an empty rectangle
+					m.data.l[3]=0;
+					m.data.l[4]=dNdAtoms[XDNDACTIONCOPY]; //We only accept copying anyway.
+
+					XSendEvent(display,event->xclient.data.l[0],False,NoEventMask,(XEvent*)&m);
+					XFlush(display);
+				}
+
+			if(event->xclient.message_type == dNdAtoms[XDNDDROP])
+				{
+//					if((toBeRequested == None) || (dropGadget==NULL))
+//						{
+//							//It's sending anyway, despite instructions to the contrary.
+//							//So reply that we're not interested.
+//							XClientMessageEvent m;
+//							memset(&m, sizeof(m), 0);
+//							m.type=ClientMessage;
+//							m.display=event->xclient.display;
+//							m.window=event->xclient.data.l[0];
+//							m.message_type=dNdAtoms[XDNDFINISHED];
+//							m.format=32;
+//							m.data.l[0]=rootWin;
+//							m.data.l[1]=0;
+//							m.data.l[2]=None; //Failed.
+//							XSendEvent(display,event->xclient.data.l[0], False, NoEventMask, (XEvent*)&m);
+//						}
+//					else
+//						{
+							sourceWindow=event->xclient.data.l[0];
+							if(xDnDVersion >= 1)
+								XConvertSelection(display, dNdAtoms[XDNDSELECTION],toBeRequested,dNdAtoms[PRIMARY],rootWin, event->xclient.data.l[2]);
+							else
+								XConvertSelection(display, dNdAtoms[XDNDSELECTION],toBeRequested,dNdAtoms[PRIMARY],rootWin, CurrentTime);
+//						}
+				}
+		}
+	if(event->type == SelectionNotify)
+		{
+			Atom target=event->xselection.target;
+
+			if(event->xselection.property == None)
+				{
+					return;
+				}
+			else
+				{
+					propertyStruct *myprops=readProperty(rootWin,dNdAtoms[PRIMARY]);
+
+					myprops->mimeType=XGetAtomName(display,target);
+					//If we're being given a list of targets (possible conversions)
+					if(target == dNdAtoms[XA_TARGETS])
+						{
+							toBeRequested=pickTargetFromTargets(myprops);
+
+							if(toBeRequested == None)
+								return;
+							else //Request the data type we are able to select
+								XConvertSelection(display,dNdAtoms[XDNDSELECTION],toBeRequested,dNdAtoms[XDNDSELECTION],rootWin,CurrentTime);
+						}
+					else if(target==toBeRequested)
+						{
+							//if(this->dropGadget!=NULL)
+							//	this->dropGadget->LFSTK_dropData(myprops);
+
+							//Reply OK.
+							XClientMessageEvent m;
+							memset(&m, sizeof(m), 0);
+							m.type=ClientMessage;
+							m.display=display;
+							m.window=sourceWindow;
+							m.message_type=dNdAtoms[XDNDFINISHED];
+							m.format=32;
+							m.data.l[0]=rootWin;//w;
+							m.data.l[1]=1;
+							m.data.l[2]=dNdAtoms[XDNDACTIONCOPY]; //We only ever copy.
+
+							XSendEvent(display,sourceWindow,False,NoEventMask,(XEvent*)&m);
+							XSync(display, False);
+						}
+					else
+						return;
+
+					XFree(myprops->data);
+					XFree(myprops->mimeType);
+				}
+		}
+}
+
+
+void initDnD(void)
+{
+//Announce XDND support
+	Atom XdndAware=XInternAtom(display,"XdndAware",false);
+	Atom version=5;
+//	if(XdndAware!=None)
+		XChangeProperty(display,rootWin,XdndAware,XA_ATOM,32,PropModeReplace,(unsigned char*)&version,1);
+
+	dNdAtoms[XDNDENTER]=XInternAtom(display,"XdndEnter",false);
+	dNdAtoms[XDNDPOSITION]=XInternAtom(display,"XdndPosition",false);
+	dNdAtoms[XDNDSTATUS]=XInternAtom(display,"XdndStatus",false);
+	dNdAtoms[XDNDTYPELIST]=XInternAtom(display,"XdndTypeList",false);
+	dNdAtoms[XDNDACTIONCOPY]=XInternAtom(display,"XdndActionCopy",false);
+	dNdAtoms[XDNDDROP]=XInternAtom(display,"XdndDrop",false);
+	dNdAtoms[XDNDLEAVE]=XInternAtom(display,"XdndLeave",false);
+	dNdAtoms[XDNDFINISHED]=XInternAtom(display,"XdndFinished",false);
+	dNdAtoms[XDNDSELECTION]=XInternAtom(display,"XdndSelection",false);
+	dNdAtoms[XDNDPROXY]=XInternAtom(display,"XdndProxy",false);
+	dNdAtoms[XA_CLIPBOARD]=XInternAtom(display,"CLIPBOARD",false);
+	dNdAtoms[XA_COMPOUND_TEXT]=XInternAtom(display,"COMPOUND_TEXT",false);
+	dNdAtoms[XA_UTF8_STRING]=XInternAtom(display,"UTF8_STRING",false);
+	dNdAtoms[XA_TARGETS]=XInternAtom(display,"TARGETS",false);
+	dNdAtoms[PRIMARY]=XInternAtom(display,"PRIMARY",false);
+
+	acceptDnd=true;
+	toBeRequested=None;
+	sourceWindow=None;
+	xDnDVersion=0;
+//	dropGadget=NULL;
+
+	dNdTypes["text/plain"]=1;
+	dNdTypes["text/uri-list"]=2;
+}
+
+#endif
+
 int main(int argc,char **argv)
 {
 	int					c;
@@ -579,6 +863,9 @@ int main(int argc,char **argv)
 	cm=DefaultColormap(display,screen);
 
 	createDesktopWindow();
+
+
+//initDnD();
 
 //disks
 	diskWindow=new LFSTK_windowClass(0,0,64,128,"xxx",true,true);
@@ -796,10 +1083,16 @@ int main(int argc,char **argv)
 			if(dragging==false)
 				usleep(25000);
 
+			//XCheckWindowEvent(display,rootWin,SubstructureRedirectMask|StructureNotifyMask|ButtonPress|ButtonReleaseMask|PointerMotionMask | ExposureMask | EnterWindowMask | LeaveWindowMask|StructureNotifyMask,&ev);
 			XCheckWindowEvent(display,rootWin,ButtonPress|ButtonReleaseMask|PointerMotionMask,&ev);
-
 			switch(ev.type)
 				{
+			//	case SelectionNotify:
+			//	case ClientMessage:
+			//	handleDnD(&ev);
+			//	printf(">>>>>>>>>>>>>\n");
+			//	break;
+
 				case ButtonPress:
 				//debugstr("button down");
 					if(ev.xbutton.button==Button3)

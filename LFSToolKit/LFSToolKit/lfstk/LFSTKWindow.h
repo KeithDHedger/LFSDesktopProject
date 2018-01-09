@@ -43,6 +43,16 @@ struct propertyStruct
 	char			*mimeType;
 };
 
+/**
+* Drop data structure.
+* \param type 0=text, 1=uri, -1 invalid.
+* \param char*. 
+*/
+struct dropDataStruct
+{
+	int				type;
+	char			*data;
+};
 
 enum {XDNDENTER=0,XDNDPOSITION,XDNDSTATUS,XDNDTYPELIST,XDNDACTIONCOPY,XDNDDROP,XDNDLEAVE,XDNDFINISHED,XDNDSELECTION,XDNDPROXY,XA_CLIPBOARD,XA_COMPOUND_TEXT,XA_UTF8_STRING,XA_TARGETS,PRIMARY,DNDATOMCOUNT};
 
@@ -109,6 +119,8 @@ class LFSTK_windowClass
 		void					LFSTK_initDnD(void);
 		Atom					LFSTK_getDnDAtom(int atomnum);
 		void					LFSTK_handleDnD(XEvent *event);
+		dropDataStruct			droppedData={-1,NULL};
+		bool					acceptOnThis=false;
 
 //window graphics
 		Display					*display;
@@ -145,6 +157,8 @@ class LFSTK_windowClass
 		void					loadMonitorData(void);
 
 //dnd routines
+//DnD routines
+		void					LFSTK_dropData(propertyStruct* data);
 		propertyStruct			*readProperty(Window src,Atom property);
 		std::string				getAtomName(Atom a);
 		Atom					pickTargetFromList(Atom* atom_list,int nitems);

@@ -83,9 +83,11 @@ int main(int argc, char **argv)
 
 //quit
 	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+printf("quitx=%i quity=%i\n",DIALOGMIDDLE-HALFGADGETWIDTH,sy);
 	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
 	sy+=YSPACING;
 
+	wc->acceptOnThis=true;
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();
 
@@ -150,6 +152,12 @@ int main(int argc, char **argv)
 							if(wc->acceptDnd==true)
 								{
 									wc->LFSTK_handleDnD(&event);
+									if((wc->droppedData.type!=-1) && (wc->acceptOnThis==true))
+										{
+											printf("dropped on window=>>%s<<\n",wc->droppedData.data);
+											wc->droppedData.type=-1;
+											
+										}
 								}
 						}
 						break;
