@@ -289,6 +289,7 @@ int main(int argc, char **argv)
 	mainMode=new LFSTK_menuButtonClass(wc,"Main Mode",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	mainMode->LFSTK_addMenus(modeMenu,5);
 	mainModeEdit=new LFSTK_lineEditClass(wc,modeLabel[backdropMode],(BORDER*2)+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	mainModeEdit->gadgetAcceptsDnD=false;
 	mainMode->LFSTK_setCallBack(NULL,mainModeCB,NULL);
 	sy+=YSPACING;
 //multi mode
@@ -322,6 +323,7 @@ int main(int argc, char **argv)
 	monitorMode=new LFSTK_menuButtonClass(wc,"Monitor Mode",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	monitorMode->LFSTK_addMenus(modeMenu,5);
 	monitorModeEdit=new LFSTK_lineEditClass(wc,modeLabel[monitors[selectedMonitor].mode],(BORDER*2)+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	monitorModeEdit->gadgetAcceptsDnD=false;
 	monitorMode->LFSTK_setCallBack(NULL,monitorModeCB,NULL);
 	sy+=YSPACING;
 
@@ -383,6 +385,8 @@ int main(int argc, char **argv)
 									wc->LFSTK_hideWindow();
 									mainLoop=false;
 								}
+							if(wc->acceptDnd==true)
+								wc->LFSTK_handleDnD(&event);
 						}
 						break;
 				}

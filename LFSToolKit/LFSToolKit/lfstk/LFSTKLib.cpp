@@ -24,6 +24,8 @@
 #include <string.h>
 #include <ftw.h>
 #include <fnmatch.h>
+#include <fcntl.h>
+#include <jpeglib.h>
 
 #include "lfstk/LFSTKGlobals.h"
 
@@ -739,4 +741,108 @@ char* LFSTK_lib::LFSTK_getMimeType(const char* path)
 {
 	return(this->LFSTK_oneLiner("file -L -b --mime-type \"%s\"",path));
 }
+
+/*! This function decompresses a JPEG image from a memory buffer and creates a
+ * Cairo image surface.
+ * @param data Pointer to JPEG data (i.e. the full contents of a JPEG file read
+ * into this buffer).
+ * @param len Length of buffer in bytes.
+ * @return Returns a pointer to a cairo_surface_t structure. It should be
+ * checked with cairo_surface_status() for errors.
+ */
+cairo_surface_t* LFSTK_lib::cairo_image_surface_create_from_jpeg_mem(const unsigned char* data, size_t len)
+{
+	struct jpeg_decompress_struct	cinfo;
+	struct jpeg_error_mgr			jerr;
+	JSAMPROW						row_pointer[1];
+	cairo_surface_t					*sfc;
  
+   // initialize jpeg decompression structures
+	cinfo.err=jpeg_std_error(&jerr);
+	jpeg_create_decompress(&cinfo);
+	jpeg_mem_src(&cinfo,(const unsigned char*)data, len);
+	jpeg_read_header(&cinfo,true);
+
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+	cinfo.out_color_space=JCS_EXT_BGRA;
+#else
+	cinfo.out_color_space=JCS_EXT_ARGB;
+#endif
+
+   // start decompressor
+	jpeg_start_decompress(&cinfo);
+
+   // create Cairo image surface
+	sfc=cairo_image_surface_create(CAIRO_FORMAT_RGB24,cinfo.output_width,cinfo.output_height);
+	if(cairo_surface_status(sfc)!=CAIRO_STATUS_SUCCESS)
+		{
+			jpeg_destroy_decompress(&cinfo);
+			return(sfc);
+		}
+
+   // loop over all scanlines and fill Cairo image surface
+	while(cinfo.output_scanline<cinfo.output_height)
+		{
+			row_pointer[0]=cairo_image_surface_get_data(sfc)+(cinfo.output_scanline * cairo_image_surface_get_stride(sfc));
+			jpeg_read_scanlines(&cinfo,row_pointer,1);
+		}
+
+   // finish and close everything
+	cairo_surface_mark_dirty(sfc);
+	jpeg_finish_decompress(&cinfo);
+	jpeg_destroy_decompress(&cinfo);
+
+   // set jpeg mime data
+	cairo_surface_set_mime_data(sfc,CAIRO_MIME_TYPE_JPEG,(const unsigned char*)data,len,free,(void*)data);
+
+	return sfc;
+}
+
+/*! This function reads an JPEG image from a file an creates a Cairo image
+ * surface. Internally the filesize is determined with fstat(2) and then the
+ * whole data is read at once.
+ * @param filename Pointer to filename of JPEG file.
+ * @return Returns a pointer to a cairo_surface_t structure. It should be
+ * checked with cairo_surface_status() for errors.
+ * @note If the returned surface is invalid you can use errno to determine
+ * further reasons. Errno is set according to fopen(3) and malloc(3). If you
+ * intend to check errno you shall set it to 0 before calling this function
+ * because it does not modify errno itself.
+ */
+cairo_surface_t* LFSTK_lib::LFSTK_cairo_image_surface_create_from_jpeg(const char *filename)
+{
+	const unsigned char		*data;
+	int						infile;
+	struct stat				stat;
+	char					magic[]="\xff\xd8\xff";
+
+   // open input file
+	if((infile=open(filename,O_RDONLY))==-1)
+		return(NULL);
+
+   // get stat structure for file size
+	if (fstat(infile,&stat)==-1)
+		return(NULL);
+
+   // allocate memory
+	if((data=(const unsigned char*)malloc(stat.st_size))==NULL)
+		return(NULL);
+
+   // read data
+	if(read(infile,(void*)data,stat.st_size)<stat.st_size)
+		return(NULL);
+
+	char *ptr=(char*)data;
+	bool flag=true;
+	for(int j=0;j<3;j++)
+		if(ptr[j]!=magic[j])
+			flag=false;
+
+	close(infile);
+	if(flag==false)
+		{
+			printf("not a jpeg\n");
+			return(NULL);
+		}
+	return cairo_image_surface_create_from_jpeg_mem(data, stat.st_size);
+}

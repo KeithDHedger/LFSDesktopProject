@@ -136,7 +136,7 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 			XShapeCombineMask(this->display,this->window,ShapeBounding,0,0,cairo_xlib_surface_get_drawable(shapesfc),ShapeSet);
 			XFlush(this->display);
 			XSync(this->display,false);
-			this->wc->LFSTK_clearWindow();
+			//this->wc->LFSTK_clearWindow();
 			return;
 		}
 
@@ -157,7 +157,7 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 	XShapeCombineMask(this->display,this->window,ShapeBounding,0,0,cairo_xlib_surface_get_drawable(shapesfc),ShapeSet);
 	XFlush(this->display);
 	XSync(this->display,false);
-	this->wc->LFSTK_clearWindow();
+	//this->wc->LFSTK_clearWindow();
 }
 
 /**

@@ -1,4 +1,5 @@
 0.2.3
+Removed redundant clear window from image class.
 Added DnD to main window.
 Fixed DnD atom creation.
 Added file data to preview.

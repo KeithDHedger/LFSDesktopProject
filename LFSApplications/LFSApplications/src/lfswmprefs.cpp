@@ -366,6 +366,8 @@ int main(int argc, char **argv)
 									wc->LFSTK_hideWindow();
 									mainLoop=false;
 								}
+							if(wc->acceptDnd==true)
+								wc->LFSTK_handleDnD(&event);
 						}
 						break;
 				}

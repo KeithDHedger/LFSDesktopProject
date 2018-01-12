@@ -740,8 +740,17 @@ void LFSTK_windowClass::LFSTK_setTile(const char *path,int size)
 
 	cairo_surface_t	*tempimage;
 	cairo_status_t	cs=CAIRO_STATUS_SUCCESS;
+
 	tempimage=cairo_image_surface_create_from_png(path);
 	cs=cairo_surface_status(tempimage);
+	if(cs!=CAIRO_STATUS_SUCCESS)
+		{
+			tempimage=this->globalLib->LFSTK_cairo_image_surface_create_from_jpeg(path);
+			cs=cairo_surface_status(tempimage);
+			if(tempimage==NULL)
+				printf("Unkown Format : %s\n",path);
+		}
+
 	if(cs==CAIRO_STATUS_SUCCESS)
 		{
 			this->pattern=cairo_pattern_create_for_surface(tempimage);
