@@ -123,6 +123,9 @@ class LFSTK_windowClass
 		bool					acceptOnThis=false;
 
 //window graphics
+		void					LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h);
+		Pixmap					px;
+		bool					usePixmap=false;
 		Display					*display;
 		bool					closeDisplayOnExit=false;
 		Window					window;
@@ -131,6 +134,7 @@ class LFSTK_windowClass
 		Visual					*visual;
 		Window					rootWindow;		
 		Colormap				cm;
+		int						depth;
 		cairo_surface_t 		*sfc=NULL;
 		cairo_t					*cr=NULL;
 		cairo_pattern_t			*pattern=NULL;

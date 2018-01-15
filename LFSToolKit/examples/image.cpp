@@ -52,9 +52,11 @@ int main(int argc, char **argv)
 
 	tux=new LFSTK_imageClass(wc,NULL,DIALOGMIDDLE-(IMAGESIZE/2),sy,IMAGESIZE,IMAGESIZE,NorthGravity,true);
 	tux->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",PRESERVEASPECT,true);
+//	tux->LFSTK_setImageFromPath("box.png",PRESERVEASPECT,true);
 	tux->LFSTK_setCanDrag(true);
 	tux->LFSTK_snapSize(1);
 	tux->LFSTK_setTile(NULL,0);
+	tux->LFSTK_setAlpha(0.5);
 
 	sy+=YSPACING*3;
 

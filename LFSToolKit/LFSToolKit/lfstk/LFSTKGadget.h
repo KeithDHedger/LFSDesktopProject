@@ -54,6 +54,8 @@ class LFSTK_gadgetClass
 		virtual bool			mouseDrag(XMotionEvent *e);
 		virtual bool			keyRelease(XKeyEvent *e);
 
+void LFSTK_setCanDrag(bool candrag);
+
 //DnD routines
 		virtual void			LFSTK_dropData(propertyStruct* data);
 
@@ -84,6 +86,7 @@ class LFSTK_gadgetClass
 
 		int						LFSTK_gadgetOnMonitor(void);
 		void					LFSTK_setTile(const char *path,int size);
+		void					LFSTK_setUseWindowTile(bool usebutton);
 
 //geometry
 		void					LFSTK_getGlobalGeom(geometryStruct *geom);
@@ -168,6 +171,13 @@ class LFSTK_gadgetClass
 		void					clearBox(gadgetStruct* details);
 		void					drawBevel(geometryStruct* geom,bevelType bevel);
 		void					drawLabel(gadgetStruct* details);
+
+//drag stuff
+		bool				canDrag=false;
+		int					mouseDownX=0;
+		int					mouseDownY=0;
+		int					snap=1;
+		double				alpha=1.0;
 };
 
 #endif

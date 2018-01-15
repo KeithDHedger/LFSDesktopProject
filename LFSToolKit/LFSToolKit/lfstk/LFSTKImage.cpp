@@ -117,6 +117,16 @@ void LFSTK_imageClass::LFSTK_snapSize(int sze)
 }
 
 /**
+* Set alpha of image
+*
+* \param double alpha.
+*/
+void LFSTK_imageClass::LFSTK_setAlpha(double alph)
+{
+	this->alpha=alph;
+}
+
+/**
 * Clear the image window and set shape.
 */
 void LFSTK_imageClass::LFSTK_clearWindow(void)
@@ -143,10 +153,21 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 	xoffset=(this->gadgetGeom.w/2)-(this->imageWidth/2);
 	yoffset=(this->gadgetGeom.h/2)-(this->imageHeight/2);
 
+
+
+	cairo_save(this->cr);
+		cairo_set_source_rgba (this->cr,1.0,1.0,1.0,this->alpha);
+		//cairo_set_operator(this->cr,CAIRO_OPERATOR_SOURCE);
+		cairo_rectangle(this->cr,0,0,this->gadgetGeom.w,this->gadgetGeom.h);
+		cairo_fill(this->cr);
+	cairo_restore(this->cr);
+
+
 	cairo_save(this->shapecr);
 		cairo_reset_clip(this->shapecr);
 		cairo_set_source_surface(this->cr,this->cImage,xoffset,yoffset);
-		cairo_paint(this->cr);
+//		cairo_paint(this->cr);
+		cairo_paint_with_alpha(this->cr,this->alpha);
 		cairo_set_operator(this->shapecr,CAIRO_OPERATOR_CLEAR);
 		cairo_rectangle(this->shapecr,0,0,this->gadgetGeom.w,this->gadgetGeom.h);
 		cairo_fill(this->shapecr);

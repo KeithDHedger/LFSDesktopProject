@@ -286,6 +286,11 @@ void LFSTK_gadgetClass::LFSTK_setLabelAutoColour(bool setauto)
 	this->autoLabelColour=setauto;
 }
 
+void LFSTK_gadgetClass::LFSTK_setUseWindowTile(bool usebutton)
+{
+	this->gadgetDetails.buttonTile=usebutton;
+}
+
 
 /**
 * Clear box to colour.
@@ -295,6 +300,7 @@ void LFSTK_gadgetClass::clearBox(gadgetStruct* details)
 {
 	cairo_pattern_t	*patt;
 	colourStruct	*usecolour;
+int				x,y;
 
 	if(this->isActive==false)
 		details->colour=&this->colourNames[INACTIVECOLOUR];
@@ -302,16 +308,28 @@ void LFSTK_gadgetClass::clearBox(gadgetStruct* details)
 	if(this->useTile==true)
 		{
 			if(details->buttonTile==true)
-				patt=this->pattern;
-			else
-				patt=this->wc->pattern;
+				{
+					patt=this->pattern;
+//			else
 
-			cairo_save(this->cr);
-				cairo_reset_clip(this->cr);
-				cairo_translate(this->cr,-this->gadgetGeom.x,-this->gadgetGeom.y);
-				cairo_set_source(this->cr,patt);
-				cairo_paint(this->cr);
-			cairo_restore(this->cr);
+					cairo_save(this->cr);
+						cairo_reset_clip(this->cr);
+						cairo_translate(this->cr,-this->gadgetGeom.x,-this->gadgetGeom.y);
+						cairo_set_source(this->cr,patt);
+						cairo_paint(this->cr);
+					cairo_restore(this->cr);
+				}
+			else
+				{
+				patt=this->wc->pattern;
+					cairo_save(this->cr);
+						cairo_reset_clip(this->cr);
+						cairo_translate(this->cr,-this->gadgetGeom.x,-this->gadgetGeom.y);
+						cairo_set_source(this->cr,patt);
+//						cairo_set_source_surface(this->cr,this->wc->sfc,0,0);
+						cairo_paint(this->cr);
+					cairo_restore(this->cr);
+				}
 		}
 	else
 		{
@@ -452,6 +470,16 @@ void LFSTK_gadgetClass::LFSTK_clearWindow()
 }
 
 /**
+* Set if image can be dragged
+*
+* \param candrag draggable.
+*/
+void LFSTK_gadgetClass::LFSTK_setCanDrag(bool candrag)
+{
+	this->canDrag=candrag;
+}
+
+/**
 * Mouse up callback.
 * \param e XButtonEvent passed from mainloop->listener.
 * \return Return true if event fully handeled or false to pass it on.
@@ -484,6 +512,9 @@ bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 */
 bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 {
+	this->mouseDownX=e->x;
+	this->mouseDownY=e->y;
+
 	if((this->isActive==false) || (this->callback.ignoreCallback==true))
 		return(true);
 
@@ -548,7 +579,21 @@ bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 */
 bool LFSTK_gadgetClass::mouseDrag(XMotionEvent *e)
 {
+
+	if(this->canDrag==true)
+		{
+			this->gadgetGeom.x+=e->x-this->mouseDownX;
+			this->gadgetGeom.y+=e->y-this->mouseDownY;
+			if(this->snap>1)
+				{
+					this->gadgetGeom.x=(this->gadgetGeom.x/this->snap)*this->snap;
+					this->gadgetGeom.y=(this->gadgetGeom.y/this->snap)*this->snap;
+				}
+			XMoveWindow(this->display,this->window,this->gadgetGeom.x,this->gadgetGeom.y);
+		}
 	return(true);
+
+//	return(true);
 }
 
 void LFSTK_gadgetClass::LFSTK_resizeWindow(int w,int h)

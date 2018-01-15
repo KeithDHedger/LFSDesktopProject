@@ -846,3 +846,31 @@ cairo_surface_t* LFSTK_lib::LFSTK_cairo_image_surface_create_from_jpeg(const cha
 		}
 	return cairo_image_surface_create_from_jpeg_mem(data, stat.st_size);
 }
+
+/**
+* Returns the root window pixmap
+* \return Pixmap
+* \note Returns pixmap or 0.
+*/
+Pixmap LFSTK_lib::LFSTK_getWindowPixmap(Display *display,Window win)
+{
+   Pixmap			currentRootPixmap=0;
+    Atom			act_type;
+    int				act_format;
+    unsigned long	nitems;
+    unsigned long	bytes_after;
+    unsigned char	*data=NULL;
+    Atom			_XROOTPMAP_ID;
+
+    _XROOTPMAP_ID=XInternAtom(display,"_XROOTPMAP_ID",False);
+
+    if (XGetWindowProperty(display,win,_XROOTPMAP_ID,0,1,False,XA_PIXMAP,&act_type,&act_format,&nitems,&bytes_after,&data)==Success)
+    	{
+	        if (data)
+	        	{
+					currentRootPixmap=*((Pixmap *)data);
+					XFree(data);
+        		}
+    	}
+	return currentRootPixmap;
+}

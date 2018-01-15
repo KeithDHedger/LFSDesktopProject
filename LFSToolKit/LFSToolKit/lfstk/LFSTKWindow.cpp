@@ -219,10 +219,47 @@ void LFSTK_windowClass::loadGlobalColours(void)
 }
 
 /**
+* Set window pixmap
+* \param Pixmap Pource pixmap.
+* \param w Width.
+* \param h Height.
+*/
+void LFSTK_windowClass::LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h)
+{
+	cairo_surface_t	*surfaceto;
+	cairo_surface_t	*surfacefrom;
+	cairo_t			*cr;
+
+	this->px=XCreatePixmap(display,this->window,w,h,this->depth);
+
+	surfaceto=cairo_xlib_surface_create(display,this->px,this->visual,w,h);
+	surfacefrom=cairo_xlib_surface_create(display,pixmap,DefaultVisual(display,this->screen),w,h);
+	cr=cairo_create(surfaceto);
+
+	cairo_save(cr);
+		cairo_reset_clip(cr);
+		cairo_set_source_surface(cr,surfacefrom,0,0);
+		cairo_paint(cr);
+	cairo_restore(cr);
+
+	XSetWindowBackgroundPixmap(display,this->window,this->px);
+
+	cairo_surface_destroy(surfaceto);
+	cairo_surface_destroy(surfacefrom);
+	cairo_destroy(cr);
+
+	this->usePixmap=true;
+	XSync(display,false);
+}
+
+/**
 * Clear the window to the appropriate state.
 */
 void LFSTK_windowClass::LFSTK_clearWindow(void)
 {
+	if(this->usePixmap==true)
+		return;
+
 	int	state=NORMALCOLOUR;
 
 	if(this->isActive==false)
@@ -565,7 +602,7 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 	XClassHint				classHint;
 	Atom					xa;
 	Atom					xa_prop[3];
-	int						depth=32;
+//	int						depth=32;
 	bool					gotargb;
 	XVisualInfo				visual_template;
 	XVisualInfo				*visual_list=NULL;
@@ -575,6 +612,7 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 	if(this->display==NULL)
 		exit(1);
 
+	this->depth=32;
 	this->setWindowGeom(x,y,w,h,WINDSETALL);
 
 	this->fontString=NULL;
@@ -585,6 +623,8 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 	this->visual=DefaultVisual(this->display,this->screen);
 	this->rootWindow=DefaultRootWindow(this->display);
 	this->loadMonitorData();
+
+//	wa.background_pixmap=ParentRelative;
 
 	wa.win_gravity=NorthWestGravity;
 	wa.override_redirect=override;
@@ -598,7 +638,7 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 			if(visual_list[i].depth==32 && (visual_list[i].red_mask==0xff0000 && visual_list[i].green_mask==0x00ff00 && visual_list[i].blue_mask==0x0000ff ))
 				{
 					this->visual=visual_list[i].visual;
-					depth=visual_list[i].depth;
+					this->depth=visual_list[i].depth;
 					gotargb=true;
 					break;
 				}
@@ -613,12 +653,14 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 			wa.border_pixel=0;
 			wa.background_pixel=0;
 
-			this->window=XCreateWindow(this->display,this->rootWindow,0,0,w,h,0,depth,InputOutput,this->visual,CWColormap | CWBorderPixel | CWBackPixel|CWWinGravity|CWOverrideRedirect ,&wa);
+			this->window=XCreateWindow(this->display,this->rootWindow,0,0,w,h,0,this->depth,InputOutput,this->visual,CWColormap | CWBorderPixel |CWWinGravity|CWOverrideRedirect,&wa);
+//			this->window=XCreateWindow(this->display,this->rootWindow,0,0,w,h,0,depth,InputOutput,this->visual,CWColormap | CWBorderPixel |CWWinGravity|CWOverrideRedirect|CWBackPixmap ,&wa);
 
 		}
 	else
 		{
 			this->window=XCreateWindow(this->display,this->rootWindow,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWOverrideRedirect,&wa);
+//			this->window=XCreateWindow(this->display,this->rootWindow,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWOverrideRedirect|CWBackPixmap,&wa);
 		}
 
 
