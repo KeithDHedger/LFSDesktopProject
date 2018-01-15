@@ -288,7 +288,7 @@ void LFSTK_gadgetClass::LFSTK_setLabelAutoColour(bool setauto)
 
 void LFSTK_gadgetClass::LFSTK_setUseWindowTile(bool usebutton)
 {
-	this->gadgetDetails.buttonTile=usebutton;
+	this->gadgetDetails.buttonTile=!usebutton;
 }
 
 
@@ -300,7 +300,6 @@ void LFSTK_gadgetClass::clearBox(gadgetStruct* details)
 {
 	cairo_pattern_t	*patt;
 	colourStruct	*usecolour;
-int				x,y;
 
 	if(this->isActive==false)
 		details->colour=&this->colourNames[INACTIVECOLOUR];
@@ -308,28 +307,16 @@ int				x,y;
 	if(this->useTile==true)
 		{
 			if(details->buttonTile==true)
-				{
 					patt=this->pattern;
-//			else
-
-					cairo_save(this->cr);
-						cairo_reset_clip(this->cr);
-						cairo_translate(this->cr,-this->gadgetGeom.x,-this->gadgetGeom.y);
-						cairo_set_source(this->cr,patt);
-						cairo_paint(this->cr);
-					cairo_restore(this->cr);
-				}
 			else
-				{
-				patt=this->wc->pattern;
-					cairo_save(this->cr);
-						cairo_reset_clip(this->cr);
-						cairo_translate(this->cr,-this->gadgetGeom.x,-this->gadgetGeom.y);
-						cairo_set_source(this->cr,patt);
-//						cairo_set_source_surface(this->cr,this->wc->sfc,0,0);
-						cairo_paint(this->cr);
-					cairo_restore(this->cr);
-				}
+					patt=this->wc->pattern;
+				
+			cairo_save(this->cr);
+				cairo_reset_clip(this->cr);
+				cairo_translate(this->cr,-this->gadgetGeom.x,-this->gadgetGeom.y);
+				cairo_set_source(this->cr,patt);
+				cairo_paint(this->cr);
+			cairo_restore(this->cr);
 		}
 	else
 		{

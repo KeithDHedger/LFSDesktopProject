@@ -70,15 +70,10 @@ int main(int argc, char **argv)
 //image button centre
 	imagebuttonC=new LFSTK_buttonClass(wc,"",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*2,BUTTONGRAV);
 	imagebuttonC->LFSTK_setCallBack(NULL,buttonCB,(void*)0xdeadbeef2);
-//	imagebuttonC->LFSTK_setImageFromPath("./casper2.JPG",CENTRE,true);
-	imagebuttonC->LFSTK_setImageFromPath(NULL,CENTRE,true);
+	imagebuttonC->LFSTK_setImageFromPath("./casper2.JPG",CENTRE,true);
 
-	imagebuttonC->LFSTK_setCanDrag(true);
-	imagebuttonC->LFSTK_setUseWindowTile(false);
-
-//imagebuttonC->gadgetDetails.buttonTile==true;
-//	imagebuttonC->useTile=true;
-//	imagebuttonC->useImage=false;
+//	imagebuttonC->LFSTK_setCanDrag(true);
+//	imagebuttonC->LFSTK_setUseWindowTile(true);
 
 //	imagebuttonC->LFSTK_snapSize(1);
 //	imagebuttonC->LFSTK_setTile(NULL,0);
