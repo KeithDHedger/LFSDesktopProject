@@ -21,3 +21,7 @@ libtool
 *.libs/
 HOLD/
 LFSToolKit/examples/*example
+LFSToolKit/examples/box.png
+LFSToolKit/examples/diskmenu.cpp
+LFSToolKit/examples/windowtest.cpp
+

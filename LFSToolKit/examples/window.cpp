@@ -37,9 +37,7 @@ int main(int argc, char **argv)
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,NorthGravity);
 	label->LFSTK_setCairoFontDataParts("sB",20);
 	sy+=YSPACING;
-	sy+=100;
 
-	wc->LFSTK_setWindowPixmap(wc->globalLib->LFSTK_getWindowPixmap(display,wc->rootWindow),DisplayWidth(display,wc->screen),DisplayHeight(display,wc->screen));
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();
 

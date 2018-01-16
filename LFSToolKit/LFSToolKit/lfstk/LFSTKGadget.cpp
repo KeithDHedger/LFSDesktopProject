@@ -292,6 +292,12 @@ void LFSTK_gadgetClass::LFSTK_setUseWindowTile(bool usebutton)
 }
 
 
+void LFSTK_gadgetClass::LFSTK_setUseWindowPixmap(bool usepixmap)
+{
+	this->gadgetDetails.useWindowPixmap=usepixmap;
+}
+
+
 /**
 * Clear box to colour.
 * \param gadgetStruct* details
@@ -300,6 +306,24 @@ void LFSTK_gadgetClass::clearBox(gadgetStruct* details)
 {
 	cairo_pattern_t	*patt;
 	colourStruct	*usecolour;
+
+	if(details->useWindowPixmap==true)
+		{
+			geometryStruct geom;
+			this->LFSTK_getGeom(&geom);
+			cairo_surface_t	*surface;
+			surface=cairo_xlib_surface_create(display,wc->px,wc->visual,this->gadgetGeom.w+1000,this->gadgetGeom.h+1000);
+			cairo_save(this->cr);
+				cairo_reset_clip(this->cr);
+				//cairo_translate(this->cr,this->gadgetGeom.x,this->gadgetGeom.y);
+				cairo_set_source_surface(this->cr,surface,-geom.x,-geom.y);
+				cairo_paint(this->cr);
+			cairo_restore(this->cr);
+			XFlush(display);
+			XSync(display,false);
+
+			return;
+		}
 
 	if(this->isActive==false)
 		details->colour=&this->colourNames[INACTIVECOLOUR];
@@ -381,8 +405,12 @@ void LFSTK_gadgetClass::drawBevel(geometryStruct* geom,bevelType bevel)
 void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 {
 	int labelx=0;
+	int	labely;
+
 	if(this->isActive==false)
 		details->state=INACTIVECOLOUR;
+
+	labely=(details->gadgetGeom.h/2)-(extents.y_bearing/2);
 
 	if(strcmp(this->label,"--")!=0)
 		{
@@ -392,20 +420,24 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 						labelx=details->gadgetGeom.h+(this->pad*4);
 						break;
 					case LEFT:
-						labelx=details->reserveSpace+this->pad;
+						labelx=details->gadgetGeom.w-(details->reserveSpace)-(this->extents.width/2);
 						break;
 					case CENTRE:
 						labelx=((details->gadgetGeom.w-details->reserveSpace)/2)-(this->extents.width/2)+details->reserveSpace;
 						break;
 					case RIGHT:
-						labelx=details->gadgetGeom.w-this->LFSTK_getTextWidth(this->label)-this->pad;
+						labelx=details->gadgetGeom.x+(((details->gadgetGeom.w/2)-details->reserveSpace)-this->extents.width);
+						break;
+					case TOOLBAR:
+						labelx=((details->gadgetGeom.w)/2)-(this->extents.width/2);
+						labely=details->gadgetGeom.h-(this->extents.height)+this->pad;
 						break;
 				}
 
 			cairo_save(this->cr);
 				cairo_select_font_face(this->cr,fontName,slant,weight);
 				cairo_set_font_size(this->cr,fontSize);
-				cairo_move_to(this->cr,labelx,(details->gadgetGeom.h/2)-(extents.y_bearing/2));
+				cairo_move_to(this->cr,labelx,labely);
 				cairo_set_source_rgba(this->cr,this->fontColourNames[details->state].RGBAColour.r,this->fontColourNames[details->state].RGBAColour.g,this->fontColourNames[details->state].RGBAColour.b,1.0);
 				cairo_show_text(this->cr,this->label); 
 			cairo_restore(this->cr);
@@ -676,6 +708,10 @@ void LFSTK_gadgetClass::drawImage()
 			case NONE:
 				xoffset=0;
 				yoffset=0;
+				break;
+			case TOOLBAR:
+				xoffset=(this->gadgetGeom.w/2)-(this->imageWidth/2);
+				yoffset=this->pad*2;
 				break;
 		}
 
@@ -1065,8 +1101,13 @@ cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int or
 		{
 			maxWidth=this->gadgetGeom.h-(pad*4);
 			maxHeight=maxWidth;
-			this->labelGravity=MENU;
 			this->gadgetDetails.reserveSpace=maxHeight;
+		}
+
+	if(orient==TOOLBAR)
+		{
+			maxWidth=this->gadgetGeom.w-(this->pad*2);
+			maxHeight=this->gadgetGeom.h-8-(this->extents.height+(this->pad*2));
 		}
 
 	if(maxWidth>=maxHeight)
@@ -1087,6 +1128,7 @@ cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int or
 
 	this->useImage=true;
 	this->imageGravity=orient;
+	this->labelGravity=orient;
 
 	if(scale==false)
 		{

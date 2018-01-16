@@ -80,6 +80,8 @@ void LFSTK_setCanDrag(bool candrag);
 		void					LFSTK_setLabel(const char *newlabel);
 		const char				*LFSTK_getLabel(void);
 		void					LFSTK_setLabelGravity(int orient);
+
+//grahics
 		void					drawImage();
 
 		cairo_status_t 			LFSTK_setImageFromPath(const char *file,int orient,bool scale);
@@ -87,6 +89,7 @@ void LFSTK_setCanDrag(bool candrag);
 		int						LFSTK_gadgetOnMonitor(void);
 		void					LFSTK_setTile(const char *path,int size);
 		void					LFSTK_setUseWindowTile(bool usebutton);
+		void					LFSTK_setUseWindowPixmap(bool usepixmap);
 
 //geometry
 		void					LFSTK_getGlobalGeom(geometryStruct *geom);
@@ -115,7 +118,7 @@ void LFSTK_setCanDrag(bool candrag);
 		bool					gadgetAcceptsDnD;
 		bool					isSubMenu;
 		bool					showIndicator;
-		gadgetStruct			gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NULL,NORMALCOLOUR,0,false,{0,0,0,0},{0,0,0,0},false};
+		gadgetStruct			gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NULL,NORMALCOLOUR,0,false,{0,0,0,0},{0,0,0,0},false,false};
 		char					*monoFontString=NULL;
 
 	private:
@@ -173,11 +176,11 @@ void LFSTK_setCanDrag(bool candrag);
 		void					drawLabel(gadgetStruct* details);
 
 //drag stuff
-		bool				canDrag=false;
-		int					mouseDownX=0;
-		int					mouseDownY=0;
-		int					snap=1;
-		double				alpha=1.0;
+		bool					canDrag=false;
+		int						mouseDownX=0;
+		int						mouseDownY=0;
+		int						snap=1;
+		double					alpha=1.0;
 };
 
 #endif

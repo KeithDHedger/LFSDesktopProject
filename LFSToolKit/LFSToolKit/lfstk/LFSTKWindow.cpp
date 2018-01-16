@@ -27,6 +27,7 @@
 #include <X11/extensions/Xinerama.h>
 
 #include <string.h>
+#include <map>
 
 #include "lfstk/LFSTKGlobals.h"
 
@@ -42,6 +43,11 @@ struct Hints
 	long            inputMode;
 	unsigned long   status;
 };
+
+std::map<int,mappedListener*> LFSTK_windowClass::LFSTK_getGadgets(void)
+{
+	return this->gadgetMap;
+}
 
 /**
  * Get a mapped listener from window id.

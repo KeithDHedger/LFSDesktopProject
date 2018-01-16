@@ -1,4 +1,5 @@
 0.2.3
+Added 'tool bar' type to image button.
 Added setting window background pixmap to window class.
 Added getting window pixmap to lib.
 Removed redundant clear window from image class.

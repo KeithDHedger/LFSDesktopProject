@@ -25,6 +25,7 @@
 #include <X11/Xutil.h>
 #include <cairo.h>
 #include <cairo-xlib.h>
+#include <map>
 
 struct	monitorStruct
 {
@@ -154,6 +155,8 @@ class LFSTK_windowClass
 		bool					acceptDnd;
 
 		LFSTK_gadgetClass		*dropGadget;
+		std::map<int,mappedListener*> LFSTK_getGadgets(void);
+
 	private:
 //window routines
 		void					initWindow(bool loadvars);
