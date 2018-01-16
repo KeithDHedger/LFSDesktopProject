@@ -503,6 +503,16 @@ void LFSTK_gadgetClass::LFSTK_setCanDrag(bool candrag)
 }
 
 /**
+* Get if image can be dragged
+*
+* \return Draggable.
+*/
+bool LFSTK_gadgetClass::LFSTK_getCanDrag(void)
+{
+	return(this->canDrag);
+}
+
+/**
 * Mouse up callback.
 * \param e XButtonEvent passed from mainloop->listener.
 * \return Return true if event fully handeled or false to pass it on.
@@ -723,7 +733,8 @@ void LFSTK_gadgetClass::drawImage()
 		cairo_reset_clip (this->cr);
 		cairo_translate(this->cr,xoffset,yoffset);
 		cairo_set_source_surface(this->cr,this->cImage,0,0);
-		cairo_paint(this->cr);
+//		cairo_paint(this->cr);
+		cairo_paint_with_alpha(this->cr,this->alpha);
 	cairo_restore(this->cr);
 	XSync(this->display,false);
 }
@@ -1246,5 +1257,40 @@ void LFSTK_gadgetClass::LFSTK_setIgnoreCB(bool ignore)
 void LFSTK_gadgetClass::LFSTK_setShowIndicator(bool show)
 {
 	this->showIndicator=show;
+}
+
+/**
+* Set gadget size.
+* \param int width.
+* \param int height.
+*/
+void LFSTK_gadgetClass::LFSTK_setGadgetSize(int width,int height)
+{
+	XResizeWindow(this->display,this->window,width,height);
+	this->gadgetDetails.gadgetGeom.w=width;
+	this->gadgetDetails.gadgetGeom.h=height;
+	this->gadgetGeom.w=width;
+	this->gadgetGeom.h=height;
+	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,width,height);
+}
+
+/**
+* Set snap to grid size
+*
+* \param int sze.
+*/
+void LFSTK_gadgetClass::LFSTK_snapSize(int sze)
+{
+	this->snap=sze;
+}
+
+/**
+* Set alpha of image
+*
+* \param double alpha.
+*/
+void LFSTK_gadgetClass::LFSTK_setAlpha(double alph)
+{
+	this->alpha=alph;
 }
 

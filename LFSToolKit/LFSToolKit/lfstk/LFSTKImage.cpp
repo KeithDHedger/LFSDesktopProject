@@ -87,46 +87,6 @@ bool LFSTK_imageClass::mouseDrag(XMotionEvent *e)
 }
 
 /**
-* Set if image can be dragged
-*
-* \param candrag draggable.
-*/
-void LFSTK_imageClass::LFSTK_setCanDrag(bool candrag)
-{
-	this->canDrag=candrag;
-}
-
-/**
-* Get if image can be dragged
-*
-* \return Draggable.
-*/
-bool LFSTK_imageClass::LFSTK_getCanDrag(void)
-{
-	return(this->canDrag);
-}
-
-/**
-* Set snap to grid size
-*
-* \param int sze.
-*/
-void LFSTK_imageClass::LFSTK_snapSize(int sze)
-{
-	this->snap=sze;
-}
-
-/**
-* Set alpha of image
-*
-* \param double alpha.
-*/
-void LFSTK_imageClass::LFSTK_setAlpha(double alph)
-{
-	this->alpha=alph;
-}
-
-/**
 * Clear the image window and set shape.
 */
 void LFSTK_imageClass::LFSTK_clearWindow(void)

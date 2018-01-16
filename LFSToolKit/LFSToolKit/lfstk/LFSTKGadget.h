@@ -54,7 +54,9 @@ class LFSTK_gadgetClass
 		virtual bool			mouseDrag(XMotionEvent *e);
 		virtual bool			keyRelease(XKeyEvent *e);
 
-void LFSTK_setCanDrag(bool candrag);
+		bool					LFSTK_getCanDrag(void);
+		void					LFSTK_setCanDrag(bool candrag);
+		void					LFSTK_snapSize(int sze);
 
 //DnD routines
 		virtual void			LFSTK_dropData(propertyStruct* data);
@@ -90,12 +92,14 @@ void LFSTK_setCanDrag(bool candrag);
 		void					LFSTK_setTile(const char *path,int size);
 		void					LFSTK_setUseWindowTile(bool usebutton);
 		void					LFSTK_setUseWindowPixmap(bool usepixmap);
+		void					LFSTK_setAlpha(double alph);
 
 //geometry
 		void					LFSTK_getGlobalGeom(geometryStruct *geom);
 		void					LFSTK_getGeom(geometryStruct *geom);
 		int						LFSTK_getTextWidth(const char* text);
 		int						LFSTK_getTextHeight(const char* text);
+		void					LFSTK_setGadgetSize(int width,int height);
 
 //fonts
 		void					LFSTK_setCairoFontData(void);
@@ -121,6 +125,8 @@ void LFSTK_setCanDrag(bool candrag);
 		gadgetStruct			gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NULL,NORMALCOLOUR,0,false,{0,0,0,0},{0,0,0,0},false,false};
 		char					*monoFontString=NULL;
 
+
+
 	private:
 		void					initGadget(void);
 
@@ -129,13 +135,13 @@ void LFSTK_setCanDrag(bool candrag);
 		void					drawIndicator(gadgetStruct* details);
 		bevelType				getActiveBevel(void);
 
-		geometryStruct			gadgetGeom;
 		unsigned				pad;
 
 		int						blackColour;
 		int						whiteColour;
 
 		buttonCB				callback;
+		geometryStruct			gadgetGeom;
 
 //font and label stuff
 		char					*label=NULL;

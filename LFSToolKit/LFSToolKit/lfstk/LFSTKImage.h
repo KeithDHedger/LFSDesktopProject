@@ -43,11 +43,6 @@ class LFSTK_imageClass  : public  LFSTK_gadgetClass
 		bool			mouseDown(XButtonEvent *e);
 		bool			mouseDrag(XMotionEvent *e);
 
-		void			LFSTK_setCanDrag(bool candrag);
-		bool			LFSTK_getCanDrag(void);
-		void			LFSTK_snapSize(int sze);
-		void			LFSTK_setAlpha(double alph);
-
 		void			LFSTK_clearWindow(void);
 
 		cairo_surface_t	*shapesfc;
@@ -55,11 +50,8 @@ class LFSTK_imageClass  : public  LFSTK_gadgetClass
 		Pixmap			shape;
 
 	protected:
-		bool			canDrag=false;
 		int				mouseDownX=0;
 		int				mouseDownY=0;
-		int				snap=1;
-		double			alpha=1.0;
 };
 
 #endif
