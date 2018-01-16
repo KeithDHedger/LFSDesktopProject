@@ -44,6 +44,9 @@ struct Hints
 	unsigned long   status;
 };
 
+/**
+ * Get current gadget map list.
+ */
 std::map<int,mappedListener*> LFSTK_windowClass::LFSTK_getGadgets(void)
 {
 	return this->gadgetMap;

@@ -22,8 +22,6 @@
 #include <stdlib.h>
 
 #include "lfstk/LFSTKGlobals.h"
-//#include <fcntl.h>
-//#include <jpeglib.h>
 
 LFSTK_gadgetClass::~LFSTK_gadgetClass()
 {
