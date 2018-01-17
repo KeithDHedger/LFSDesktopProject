@@ -1,4 +1,6 @@
 0.2.3
+Updated basic button example.
+Fixed label gravity ... Again!
 Added snap to grid size and alpha to main gadget class.
 Fixed label gravity.
 Added 'tool bar' type to image button.

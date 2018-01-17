@@ -257,7 +257,6 @@ bool pushedButtonCB(void *p,void* ud)
 
 	diskWindow->LFSTK_hideWindow();
 	fileWindow->LFSTK_hideWindow();
-
 	switch(what)
 		{
 			case BUTTONOPEN:
@@ -890,12 +889,12 @@ int main(int argc,char **argv)
 					diskButtons[buttoncnt]->LFSTK_setCallBack(NULL,pushedButtonCB,(void*)(long)(buttoncnt+1));
 					if(diskIconData[buttoncnt]==NULL)
 						{
-							diskButtons[buttoncnt]->LFSTK_setLabelGravity(CENTRE);
+							diskButtons[buttoncnt]->LFSTK_setLabelGravity(LEFT);
 						}
 					else
 						{
 							diskButtons[buttoncnt]->LFSTK_setImageFromPath(diskIconData[buttoncnt],LEFT,true);
-							diskButtons[buttoncnt]->LFSTK_setLabelGravity(LEFT);
+							//diskButtons[buttoncnt]->LFSTK_setLabelGravity(LEFT);
 						}
 					sy+=GADGETHITE;
 				}
@@ -914,12 +913,12 @@ int main(int argc,char **argv)
 			fileButtons[buttoncnt]->LFSTK_setCallBack(NULL,pushedButtonCB,(void*)(long)(buttoncnt+1));
 			if(diskIconData[buttoncnt]==NULL)
 				{
-					fileButtons[buttoncnt]->LFSTK_setLabelGravity(CENTRE);
+					fileButtons[buttoncnt]->LFSTK_setLabelGravity(LEFT);
 				}
 			else
 				{
 					fileButtons[buttoncnt]->LFSTK_setImageFromPath(diskIconData[buttoncnt],LEFT,true);
-					fileButtons[buttoncnt]->LFSTK_setLabelGravity(LEFT);
+					//fileButtons[buttoncnt]->LFSTK_setLabelGravity(LEFT);
 				}
 			buttoncnt++;
 			sy+=GADGETHITE;

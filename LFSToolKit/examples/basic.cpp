@@ -22,6 +22,9 @@ LFSTK_buttonClass			*quit=NULL;
 LFSTK_buttonClass			*inactivebutton=NULL;
 LFSTK_buttonClass			*normalbutton=NULL;
 LFSTK_buttonClass			*ignoredButton=NULL;
+LFSTK_buttonClass			*leftButton=NULL;
+LFSTK_buttonClass			*centreButton=NULL;
+LFSTK_buttonClass			*rightButton=NULL;
 
 bool						mainLoop=true;
 Display						*display;
@@ -83,6 +86,55 @@ int main(int argc, char **argv)
 	seperator->gadgetDetails.buttonTile=false;
 	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
 	sy+=YSPACING;
+
+//left
+	leftButton=new LFSTK_buttonClass(wc,"Label Left",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);
+	leftButton->LFSTK_setLabelGravity(LEFT);
+	leftButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"Left");
+	sy+=YSPACING;
+//centre
+	centreButton=new LFSTK_buttonClass(wc,"Label Centre",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);
+	centreButton->LFSTK_setLabelGravity(CENTRE);
+	centreButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"Centre");
+	sy+=YSPACING;
+//rite
+	rightButton=new LFSTK_buttonClass(wc,"Label Right",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);
+	rightButton->LFSTK_setLabelGravity(RIGHT);
+	rightButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"Right");
+	sy+=YSPACING;
+
+//line
+	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
+	seperator->LFSTK_setStyle(BEVELNONE);
+	seperator->gadgetDetails.buttonTile=false;
+	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
+	sy+=YSPACING;
+
+//left image
+	leftButton=new LFSTK_buttonClass(wc,"Left Label+Image",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE,NorthGravity);
+	leftButton->LFSTK_setImageFromPath("./casper2.JPG",LEFT,true);
+	leftButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"Left Label+Image");
+	sy+=YSPACING;
+//centre image
+	centreButton=new LFSTK_buttonClass(wc,"Centre Label+Image",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE,NorthGravity);
+	centreButton->LFSTK_setImageFromPath("./casper2.JPG",LEFT,true);
+	centreButton->LFSTK_setLabelGravity(CENTRE);
+	centreButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"Centre Label+Image");
+	sy+=YSPACING;
+//rite image
+	rightButton=new LFSTK_buttonClass(wc,"Right Label+Image",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE,NorthGravity);
+	rightButton->LFSTK_setImageFromPath("./casper2.JPG",LEFT,true);
+	rightButton->LFSTK_setLabelGravity(RIGHT);
+	rightButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"Right Label+Image");
+	sy+=YSPACING;
+
+//line image
+	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
+	seperator->LFSTK_setStyle(BEVELNONE);
+	seperator->gadgetDetails.buttonTile=false;
+	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
+	sy+=YSPACING;
+
 
 //quit
 	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);

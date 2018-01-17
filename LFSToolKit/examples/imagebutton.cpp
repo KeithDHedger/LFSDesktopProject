@@ -66,13 +66,13 @@ int main(int argc, char **argv)
 	imagebuttonT=new LFSTK_buttonClass(wc,"Tool Button",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*2,BUTTONGRAV);
 	imagebuttonT->LFSTK_setCallBack(NULL,buttonCB,(void*)0xdeadbeef0);
 	imagebuttonT->LFSTK_setImageFromPath("./casper2.JPG",TOOLBAR,true);
-	//imagebuttonT->LFSTK_setLabelGravity(TOOLBAR);
 	sy+=YSPACING*2;
 
 //image button left
 	imagebuttonL=new LFSTK_buttonClass(wc,"Left Image",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*2,BUTTONGRAV);
 	imagebuttonL->LFSTK_setCallBack(NULL,buttonCB,(void*)0xdeadbeef1);
 	imagebuttonL->LFSTK_setImageFromPath("./casper2.JPG",LEFT,true);
+	imagebuttonL->LFSTK_setLabelGravity(CENTRE);
 	sy+=YSPACING*2;
 
 //image button centre
@@ -80,21 +80,13 @@ int main(int argc, char **argv)
 	imagebuttonC->LFSTK_setCallBack(NULL,buttonCB,(void*)0xdeadbeef2);
 	imagebuttonC->LFSTK_setImageFromPath("./casper2.JPG",CENTRE,true);
 
-//	imagebuttonC->LFSTK_setCanDrag(true);
-//	imagebuttonC->LFSTK_setUseWindowTile(true);
-
-//	imagebuttonC->LFSTK_snapSize(1);
-//	imagebuttonC->LFSTK_setTile(NULL,0);
-//	imagebuttonC->LFSTK_setAlpha(0.5);
-
-
 	sy+=YSPACING*2;
 
 //image button right
 	imagebuttonR=new LFSTK_buttonClass(wc,"Right Image",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*2,BUTTONGRAV);
 	imagebuttonR->LFSTK_setCallBack(NULL,buttonCB,(void*)0xdeadbeef3);
 	imagebuttonR->LFSTK_setImageFromPath("./casper2.JPG",RIGHT,true);
-	//imagebuttonR->LFSTK_setLabelGravity(LEFT);
+	imagebuttonR->LFSTK_setLabelGravity(CENTRE);
 	imagebuttonR->gadgetDetails.reserveSpace=4;
 	sy+=YSPACING*2;
 

@@ -419,16 +419,24 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 						break;
 					case LEFT:
 						if(this->useImage==true)
-							labelx=details->gadgetGeom.w-(details->reserveSpace)-(this->extents.width/2);
+							labelx=details->reserveSpace+pad*2;
 						else
 							labelx=details->reserveSpace+(this->pad*2);
 						break;
 					case CENTRE:
-						labelx=((details->gadgetGeom.w-details->reserveSpace)/2)-(this->extents.width/2)+details->reserveSpace;
+						if(this->useImage==true)
+							{
+								if(this->imageGravity==RIGHT)
+									labelx=((details->gadgetGeom.w-this->imageWidth)/2)-(this->extents.width/2);
+								else
+									labelx=((details->gadgetGeom.w-details->reserveSpace)/2)-(this->extents.width/2)+details->reserveSpace;
+							}
+						else
+							labelx=((details->gadgetGeom.w-details->reserveSpace)/2)-(this->extents.width/2)+details->reserveSpace;
 						break;
 					case RIGHT:
 						if(this->useImage==true)
-							labelx=details->gadgetGeom.x+(((details->gadgetGeom.w/2)-details->reserveSpace)-this->extents.width);
+							labelx=details->gadgetGeom.w-(this->extents.width)-pad*2;
 						else
 							labelx=details->gadgetGeom.w-this->extents.width-this->pad*2;
 						break;
