@@ -590,7 +590,7 @@ char* LFSTK_lib::LFSTK_findThemedIcon(const char *theme,const char *icon,const c
 
 	char        *iconpath=NULL;
 	const char  *iconthemes[3];
-	const char  *iconfolders[5];
+	const char  *iconfolders[GLOBALPIXMAPSEND];
 	bool		maskdot=false;
 	char		*holdicon=strdup(icon);
 	
