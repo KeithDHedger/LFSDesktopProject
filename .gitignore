@@ -24,4 +24,12 @@ LFSToolKit/examples/*example
 LFSToolKit/examples/box.png
 LFSToolKit/examples/diskmenu.cpp
 LFSToolKit/examples/windowtest.cpp
+LFSApplications/LFSApplications/app/lfs*
+LFSDesktop/LFSDesktop/app/lfs*
+LFSDesktop/LFSDesktop/helper/lfshelper
+LFSPanel/LFSPanel/app/lfs*
+LFSSetWallpaper/LFSSetWallpaper/app/lfs*
+LFSWManager/LFSWManager/app/lfs*
+LFSWManager/LFSWManager/helper/appmenu
+
 
