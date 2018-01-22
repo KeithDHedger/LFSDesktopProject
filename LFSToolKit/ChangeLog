@@ -1,4 +1,5 @@
 0.2.3
+Tweaked find themed icon to include users .local/share/icons folder.
 Updated basic button example.
 Fixed label gravity ... Again!
 Added snap to grid size and alpha to main gadget class.

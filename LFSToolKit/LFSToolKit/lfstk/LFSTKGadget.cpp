@@ -1302,3 +1302,19 @@ void LFSTK_gadgetClass::LFSTK_setAlpha(double alph)
 	this->alpha=alph;
 }
 
+/**
+* Show gadget
+*/
+void LFSTK_gadgetClass::LFSTK_showGadget(void)
+{
+	XMapWindow(this->display,this->window);
+}
+
+/**
+* Hide gadget
+*/
+void LFSTK_gadgetClass::LFSTK_hideGadget(void)
+{
+	XUnmapWindow(this->display,this->window);
+}
+

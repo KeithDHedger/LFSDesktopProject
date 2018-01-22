@@ -28,6 +28,7 @@ LFSTK_buttonClass			*rightButton=NULL;
 
 bool						mainLoop=true;
 Display						*display;
+bool						show=true;
 
 bool doQuit(void *p,void* ud)
 {
@@ -42,6 +43,15 @@ bool buttonCB(void *p,void* ud)
 	if(ud!=NULL)
 		{
 			printf(">>>%s<<<\n",(const char*)ud);
+			if(strcmp((const char*)ud,"Active")==0)
+				{
+					show=!show;
+					if(show==true)
+						inactivebutton->LFSTK_showGadget();
+					else
+						inactivebutton->LFSTK_hideGadget();
+					wc->LFSTK_clearWindow();
+				}
 		}
 	return(true);
 }
@@ -66,12 +76,12 @@ int main(int argc, char **argv)
 
 //inactivebutton
 	inactivebutton=new LFSTK_buttonClass(wc,"Inactive",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);
-	inactivebutton->LFSTK_setCallBack(NULL,buttonCB,(void*)"Inactive");
+//	inactivebutton->LFSTK_setCallBack(NULL,buttonCB,(void*)"Inactive");
 	inactivebutton->LFSTK_setActive(false);
 	sy+=YSPACING;
 
 //normal button
-	normalbutton=new LFSTK_buttonClass(wc,"Active",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);
+	normalbutton=new LFSTK_buttonClass(wc,"Show/Hide",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);
 	normalbutton->LFSTK_setCallBack(NULL,buttonCB,(void*)"Active");
 	sy+=YSPACING;
 

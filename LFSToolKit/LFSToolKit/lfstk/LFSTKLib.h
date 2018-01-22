@@ -51,7 +51,7 @@ class LFSTK_lib
 		const char	*bestFontColour(long pixel);
 		static bool	LFSTK_gadgetEvent(void *self,XEvent *e,int type);
 
-		const char	*LFSTK_findThemedIcon(const char *theme,const char *icon,const char *catagory);
+		char		*LFSTK_findThemedIcon(const char *theme,const char *icon,const char *catagory);
 		char		*LFSTK_oneLiner(const char* fmt,...);
 		bool		LFSTK_pointInRect(pointStruct *point,geometryStruct *geom);
 		unsigned long	LFSTK_getColourFromName(Display *display,Colormap cm,const char *name);

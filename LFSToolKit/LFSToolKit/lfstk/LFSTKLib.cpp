@@ -578,12 +578,77 @@ int LFSTK_lib::callback(const char *fpath,const struct stat *sb,int typeflag)
 * \param theme Theme name ( case sensitive ).
 * \param icon Icon name ( case insensitive ).
 * \param catagory Catagory or "" NOT NULL ( case insensitive ).
-* \return char* Static string caller should NOT free.
+* \return char* string caller should free.
 * \note returned string is set to NULL on error.
 */
-const char* LFSTK_lib::LFSTK_findThemedIcon(const char *theme,const char *icon,const char *catagory)
+#define GLOBALICONS 0
+#define GLOBALPIXMAPS 2
+#define GLOBALPIXMAPSEND 5
+
+char* LFSTK_lib::LFSTK_findThemedIcon(const char *theme,const char *icon,const char *catagory)
 {
 
+	char        *iconpath=NULL;
+	const char  *iconthemes[3];
+	const char  *iconfolders[5];
+	bool		maskdot=false;
+	char		*holdicon=strdup(icon);
+	
+	if(icon[0]=='/')
+		return(strdup(icon));
+
+	if(strcasecmp(&holdicon[strlen(holdicon)-4],".png")==0)
+		{
+			maskdot=true;
+			holdicon[strlen(holdicon)-4]=0;
+		}
+	if(theme==NULL)
+		theme="gnome";
+	
+	iconthemes[0]=theme;
+	iconthemes[1]="hicolor";
+	iconthemes[2]="gnome";
+
+	iconfolders[0]="~/.icons";
+	iconfolders[1]="/usr/share/icons";
+
+	iconfolders[2]="/usr/share/pixmaps";
+	iconfolders[3]="/usr/share/icons/hicolor";
+	iconfolders[4]="~/.local/share/icons";
+
+	iconpath=NULL;
+	for(int j=GLOBALICONS;j<GLOBALPIXMAPS;j++)
+		{
+			for(int k=0;k<3;k++)
+				{
+					iconpath=this->LFSTK_oneLiner("find %s/\"%s\"/*/%s -iname '*%s.png' 2>/dev/null|sort --version-sort|tail -n1 2>/dev/null",iconfolders[j],iconthemes[k],catagory,holdicon);
+
+					if((iconpath!=NULL) && (strlen(iconpath)>1))
+						goto breakReturn;
+					if(iconpath!=NULL)
+						free(iconpath);
+					iconpath=NULL;
+				}
+		}
+
+	if(iconpath==NULL)
+		{
+			for(int j=GLOBALPIXMAPS;j<GLOBALPIXMAPSEND;j++)
+				{
+					iconpath=this->LFSTK_oneLiner("find %s -iname '*%s.*'",iconfolders[j],holdicon);
+					if((iconpath!=NULL) && (strlen(iconpath)>1))
+						goto breakReturn;
+					if(iconpath!=NULL)
+						free(iconpath);
+					iconpath=NULL;
+				}
+			printf("no icon\n");
+		}
+breakReturn:
+	free(holdicon);
+	return(iconpath);
+
+#if 0
 	char	dirbuffer[2048];
 
 	sprintf(dirbuffer,"/usr/share/icons/%s",theme);
@@ -610,6 +675,7 @@ const char* LFSTK_lib::LFSTK_findThemedIcon(const char *theme,const char *icon,c
 		return(retBuffer);
 
 	return(NULL);
+#endif
 }
 
 //synchronous only

@@ -723,7 +723,7 @@ void LFSTK_windowClass::LFSTK_showWindow(bool all)
 	if(all==true)
 		XMapSubwindows(this->display,this->window);
 	XMapRaised(this->display,this->window);
-#if 1	
+
 	memset(&xev,0,sizeof(xev));
 	xev.type=ClientMessage;
 	xev.xclient.display=this->display;
@@ -735,7 +735,6 @@ void LFSTK_windowClass::LFSTK_showWindow(bool all)
 
 	XGetWindowAttributes(this->display,this->window,&wattr);
 	XSendEvent(this->display,wattr.screen->root,false,SubstructureNotifyMask|SubstructureRedirectMask,&xev);
-#endif
 }
 
 /**
