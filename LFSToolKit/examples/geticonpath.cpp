@@ -11,7 +11,7 @@ exit $retval
 
 #include "lfstk/LFSTKGlobals.h"
 
-#define BOXLABEL			"Line Edit"
+#define BOXLABEL			"Get Path To Themed Icon"
 
 LFSTK_windowClass			*wc=NULL;
 LFSTK_labelClass			*label=NULL;
@@ -41,7 +41,7 @@ bool doKeyUp(void *p,void* ud)
 }
 
 
-bool dGetPath(void *p,void* ud)
+bool getPath(void *p,void* ud)
 {
 
 	char	*iconpath=NULL;
@@ -54,41 +54,6 @@ bool dGetPath(void *p,void* ud)
 		printf("iconpath=%s\n",iconpath);
 	free(iconpath);
 	return(true);
-#if 0
-	char        *iconpath=NULL;
-	const char  *iconthemes[3];
-	const char  *iconfolders[2];
-
-	if(theme==NULL)
-		asprintf(&theme,"gnome");
-	
-	iconthemes[0]=theme;
-	iconthemes[1]="hicolor";
-	iconthemes[2]="gnome";
-
-	iconfolders[0]="~/.icons";
-	iconfolders[1]="/usr/share/icons";
-	iconpath=NULL;
-	for(int j=0;j<2;j++)
-		{
-			for(int k=0;k<3;k++)
-				{
-
-					iconpath=wc->globalLib->LFSTK_oneLiner("find %s/\"%s\"/*/%s -iname '*%s.*' 2>/dev/null|sort --version-sort|tail -n1 2>/dev/null",iconfolders[j],iconthemes[k],catEdit->LFSTK_getBuffer()->c_str(),mimeEdit->LFSTK_getBuffer()->c_str());
-
-					if((iconpath!=NULL) && (strlen(iconpath)>1))
-						goto breakReturn;
-					if(iconpath!=NULL)
-						free(iconpath);
-					iconpath=NULL;
-				}
-		}
-breakReturn:
-
-	if(iconpath!=NULL)
-		printf("iconpath=%s\n",iconpath);
-	return(true);
-#endif
 }
 
 int main(int argc, char **argv)
@@ -111,18 +76,25 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //mime edit
+	label=new LFSTK_labelClass(wc,"Icon Name",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
+	label->LFSTK_setCairoFontDataParts("B");
+	sy+=GADGETHITE;
+
 	mimeEdit=new LFSTK_lineEditClass(wc,"drive-harddisk",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
 	mimeEdit->LFSTK_setCallBack(NULL,doKeyUp,USERDATA(12345));
 	sy+=YSPACING;
 
 //catagory edit
+	label=new LFSTK_labelClass(wc,"Catagory",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
+	label->LFSTK_setCairoFontDataParts("B");
+	sy+=GADGETHITE;
 	catEdit=new LFSTK_lineEditClass(wc,"devices",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
 	catEdit->LFSTK_setCallBack(NULL,doKeyUp,USERDATA(12345));
 	sy+=YSPACING;
 
 //get path to icon
 	getIconPath=new LFSTK_buttonClass(wc,"Get Path",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	getIconPath->LFSTK_setCallBack(NULL,dGetPath,NULL);
+	getIconPath->LFSTK_setCallBack(NULL,getPath,NULL);
 	sy+=YSPACING;
 
 //line
