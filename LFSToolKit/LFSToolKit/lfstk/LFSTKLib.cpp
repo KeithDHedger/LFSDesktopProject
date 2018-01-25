@@ -471,6 +471,25 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				retval=gadget->mouseExit(&e->xbutton);
 				break;
 			case ButtonRelease:
+				if(gadget->firstClick==false)
+					{
+						gadget->isDoubleClick=false;
+						gadget->firstClick=true;
+						gadget->lastTime=e->xbutton.time;
+					}
+				else
+					{
+						gadget->firstClick=false;
+						if(e->xbutton.time-gadget->lastTime<gadget->wc->dbClick)
+							gadget->isDoubleClick=true;
+						else
+							{
+								gadget->lastTime=e->xbutton.time;
+								gadget->firstClick=true;
+								gadget->isDoubleClick=false;
+							}
+					}
+
 				retval=gadget->mouseUp(&e->xbutton);
 				break;
 			case ButtonPress:

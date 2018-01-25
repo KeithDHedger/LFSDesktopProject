@@ -122,6 +122,7 @@ class LFSTK_windowClass
 		void					LFSTK_handleDnD(XEvent *event);
 		dropDataStruct			droppedData={-1,NULL};
 		bool					acceptOnThis=false;
+		LFSTK_gadgetClass		*dropGadget;
 
 //window graphics
 		void					LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h);
@@ -154,8 +155,11 @@ class LFSTK_windowClass
 		bool					useTile;
 		bool					acceptDnd;
 
-		LFSTK_gadgetClass		*dropGadget;
 		std::map<int,mappedListener*> LFSTK_getGadgets(void);
+
+//events etc
+		void					LFSTK_setDoubleClickTime(unsigned interval);
+		unsigned				dbClick=500;
 
 	private:
 //window routines

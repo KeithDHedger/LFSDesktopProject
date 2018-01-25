@@ -35,9 +35,10 @@ bool doQuit(void *p,void* ud)
 
 bool buttonCB(void *p,void* ud)
 {
-	if(ud!=NULL)
+	if(p!=NULL)
 		{
-			printf(">>>%s<<<\n",(const char*)ud);
+			if(static_cast<LFSTK_imageClass*>(p)->isDoubleClick==true)
+				printf("was a double click\n");
 		}
 	return(true);
 }
@@ -49,10 +50,12 @@ int main(int argc, char **argv)
 		
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Draggaable Image Example",false);
 	display=wc->display;
-
+//	wc->LFSTK_setDoubleClickTime(200);
+	
 	tux=new LFSTK_imageClass(wc,NULL,DIALOGMIDDLE-(IMAGESIZE/2),sy,IMAGESIZE,IMAGESIZE,NorthGravity,true);
 	tux->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",PRESERVEASPECT,true);
 //	tux->LFSTK_setImageFromPath("box.png",PRESERVEASPECT,true);
+	tux->LFSTK_setCallBack(NULL,buttonCB,NULL);
 	tux->LFSTK_setCanDrag(true);
 	tux->LFSTK_snapSize(1);
 	tux->LFSTK_setTile(NULL,0);

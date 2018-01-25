@@ -60,6 +60,11 @@ class LFSTK_gadgetClass
 		void					LFSTK_setCanDrag(bool candrag);
 		void					LFSTK_snapSize(int sze);
 
+//events etc
+		Time					lastTime=0;
+		bool					firstClick=false;
+		bool					isDoubleClick=false;
+
 //DnD routines
 		virtual void			LFSTK_dropData(propertyStruct* data);
 
@@ -126,8 +131,6 @@ class LFSTK_gadgetClass
 		bool					showIndicator;
 		gadgetStruct			gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NULL,NORMALCOLOUR,0,false,{0,0,0,0},{0,0,0,0},false,false};
 		char					*monoFontString=NULL;
-
-
 
 	private:
 		void					initGadget(void);

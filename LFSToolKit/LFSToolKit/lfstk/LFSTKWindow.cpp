@@ -1189,3 +1189,12 @@ void LFSTK_windowClass::setWindowGeom(int x,int y,int w,int h,setWindowGeomFlags
 		}
 }
 
+/**
+* Set double click time.
+* \param unsigned double click interval.
+*/
+void LFSTK_windowClass::LFSTK_setDoubleClickTime(unsigned interval)
+{
+	this->dbClick=(interval);
+}
+

@@ -1,3 +1,6 @@
+0.2.4
+Added double click detection.
+
 0.2.3
 Added geticonpath.cpp to examples.
 Tweaked find themed icon to include users .local/share/icons folder.
