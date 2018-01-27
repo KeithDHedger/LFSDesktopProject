@@ -457,6 +457,7 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 {
 	bool				retval=true;
 	LFSTK_gadgetClass	*gadget=NULL;
+	geometryStruct		geom;
 
 //printf("---%i---\n",type);
 //printf("===type=%i====\n",e->type);
@@ -493,13 +494,26 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				retval=gadget->mouseUp(&e->xbutton);
 				break;
 			case ButtonPress:
+				gadget->currentButton=e->xbutton.button;
+				if((gadget->LFSTK_getContextWindow()!=NULL) && (gadget->currentButton==Button3))
+					{
+						gadget->wc->popupFromGadget=gadget;
+						gadget->LFSTK_getGlobalGeom(&geom);
+						gadget->LFSTK_doPopUp(geom.x+(geom.w/2),geom.y+(geom.h/4));
+						retval=true;
+						break;
+					}
+				else
+					gadget->wc->popupFromGadget=NULL;
+
 				if(type==LINEEDITGADGET)
 					XSetInputFocus(gadget->wc->display,e->xbutton.window,RevertToNone,CurrentTime);
 				retval=gadget->mouseDown(&e->xbutton);
 				break;
 
 			case MotionNotify:
-				retval=gadget->mouseDrag(&e->xmotion);
+				if(gadget->currentButton==Button1)
+					retval=gadget->mouseDrag(&e->xmotion);
 				///printf("MotionNotify\n");
 				//gadget->LFSTK_clearWindow();
 				break;
@@ -959,3 +973,48 @@ Pixmap LFSTK_lib::LFSTK_getWindowPixmap(Display *display,Window win)
     	}
 	return currentRootPixmap;
 }
+
+//void LFSTK_lib::debugFunc(const char *fmt, ...)
+//{
+//	va_list	ap;
+//	char	*buffer,*subbuffer;
+//
+//	buffer=(char*)alloca(MAXBUFFER);
+//	subbuffer=(char*)alloca(MAXBUFFER);
+//
+//	buffer[0]=0;
+//	subbuffer[0]=0;
+//	va_start(ap, fmt);
+//	while (*fmt)
+//		{
+//			subbuffer[0]=0;
+//			if(fmt[0]=='%')
+//				{
+//					fmt++;
+//					switch(*fmt)
+//						{
+//							case 's':
+//								sprintf(subbuffer,"%s",va_arg(ap,char*));
+//								break;
+//							case 'i':
+//								sprintf(subbuffer,"%i",va_arg(ap,int));
+//								break;
+//							case 'p':
+//								sprintf(subbuffer,"%p",va_arg(ap,char*));
+//								break;
+//							default:
+//								sprintf(subbuffer,"%c",fmt[0]);
+//								break;
+//						}
+//				}
+//			else
+//				sprintf(subbuffer,"%c",fmt[0]);
+//			strcat(buffer,subbuffer);
+//			fmt++;
+//		}
+//	va_end(ap);
+//	printf("\nFile: %s\nFunc: %s\nLine: %i\n",basename(errFile),errFunc,errLine);
+//	printf("----USER DATA----\n%s\n----END----\n",buffer);
+//}
+
+

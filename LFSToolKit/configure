@@ -643,8 +643,6 @@ HAVE_DOXYGEN_TRUE
 DOXYGEN
 XINERAMA_LIBS
 XINERAMA_CFLAGS
-XFT_LIBS
-XFT_CFLAGS
 X11_LIBS
 X11_CFLAGS
 PKG_CONFIG_LIBDIR
@@ -784,6 +782,7 @@ with_aix_soname
 with_gnu_ld
 with_sysroot
 enable_libtool_lock
+enable_debug
 '
       ac_precious_vars='build_alias
 host_alias
@@ -804,8 +803,6 @@ PKG_CONFIG_PATH
 PKG_CONFIG_LIBDIR
 X11_CFLAGS
 X11_LIBS
-XFT_CFLAGS
-XFT_LIBS
 XINERAMA_CFLAGS
 XINERAMA_LIBS
 CAIRO_CFLAGS
@@ -1441,6 +1438,7 @@ Optional Features:
   --enable-fast-install[=PKGS]
                           optimize for fast installation [default=yes]
   --disable-libtool-lock  avoid locking (might break parallel builds)
+  --enable-debug          Enable debug code
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -1475,8 +1473,6 @@ Some influential environment variables:
               path overriding pkg-config's built-in search path
   X11_CFLAGS  C compiler flags for X11, overriding pkg-config
   X11_LIBS    linker flags for X11, overriding pkg-config
-  XFT_CFLAGS  C compiler flags for XFT, overriding pkg-config
-  XFT_LIBS    linker flags for XFT, overriding pkg-config
   XINERAMA_CFLAGS
               C compiler flags for XINERAMA, overriding pkg-config
   XINERAMA_LIBS
@@ -15940,100 +15936,10 @@ fi
 
 
 
-XFT_MODULES="xft >= 2.3.1"
-
-pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for XFT" >&5
-$as_echo_n "checking for XFT... " >&6; }
-
-if test -n "$XFT_CFLAGS"; then
-    pkg_cv_XFT_CFLAGS="$XFT_CFLAGS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"\$XFT_MODULES\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "$XFT_MODULES") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_XFT_CFLAGS=`$PKG_CONFIG --cflags "$XFT_MODULES" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-if test -n "$XFT_LIBS"; then
-    pkg_cv_XFT_LIBS="$XFT_LIBS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"\$XFT_MODULES\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "$XFT_MODULES") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_XFT_LIBS=`$PKG_CONFIG --libs "$XFT_MODULES" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-
-
-
-if test $pkg_failed = yes; then
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
-        _pkg_short_errors_supported=yes
-else
-        _pkg_short_errors_supported=no
-fi
-        if test $_pkg_short_errors_supported = yes; then
-	        XFT_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "$XFT_MODULES" 2>&1`
-        else
-	        XFT_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "$XFT_MODULES" 2>&1`
-        fi
-	# Put the nasty error message in config.log where it belongs
-	echo "$XFT_PKG_ERRORS" >&5
-
-	as_fn_error $? "Package requirements ($XFT_MODULES) were not met:
-
-$XFT_PKG_ERRORS
-
-Consider adjusting the PKG_CONFIG_PATH environment variable if you
-installed software in a non-standard prefix.
-
-Alternatively, you may set the environment variables XFT_CFLAGS
-and XFT_LIBS to avoid the need to call pkg-config.
-See the pkg-config man page for more details." "$LINENO" 5
-elif test $pkg_failed = untried; then
-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
-$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "The pkg-config script could not be found or is too old.  Make sure it
-is in your PATH or set the PKG_CONFIG environment variable to the full
-path to pkg-config.
-
-Alternatively, you may set the environment variables XFT_CFLAGS
-and XFT_LIBS to avoid the need to call pkg-config.
-See the pkg-config man page for more details.
-
-To get pkg-config, see <http://pkg-config.freedesktop.org/>.
-See \`config.log' for more details" "$LINENO" 5; }
-else
-	XFT_CFLAGS=$pkg_cv_XFT_CFLAGS
-	XFT_LIBS=$pkg_cv_XFT_LIBS
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-
-fi
-
-
+#XFT_MODULES="xft >= 2.3.1"
+#PKG_CHECK_MODULES(XFT, $XFT_MODULES)
+#AC_SUBST(XFT_CFLAGS)D
+#AC_SUBST(XFT_LIBS)
 
 XINERAMA_MODULES="xinerama >= 1.1.3"
 
@@ -16378,6 +16284,22 @@ fi
 
 
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to build dbug functions" >&5
+$as_echo_n "checking whether to build dbug functions... " >&6; }
+# Check whether --enable-debug was given.
+if test "${enable_debug+set}" = set; then :
+  enableval=$enable_debug; enable_debug=$enableval
+else
+  enable_debug="no"
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $enable_debug" >&5
+$as_echo "$enable_debug" >&6; }
+if test "$enable_debug" = "yes"; then
+
+$as_echo "#define _ENABLEDEBUG_ /**/" >>confdefs.h
+
+fi
 
 ac_config_files="$ac_config_files Makefile LFSToolKit/app/Makefile docs/Makefile"
 

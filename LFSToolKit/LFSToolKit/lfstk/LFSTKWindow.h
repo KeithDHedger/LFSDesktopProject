@@ -147,19 +147,22 @@ class LFSTK_windowClass
 		bool					autoLabelColour=false;
 		LFSTK_lib				*globalLib;
 
-//user dirs
+//user data and dirs
 		const char				*userHome;
 		char					*configDir;
 
 		Window					parentWindow;
 		bool					useTile;
 		bool					acceptDnd;
+		void					*userData=NULL;
+		LFSTK_gadgetClass		*popupFromGadget=NULL;
 
 		std::map<int,mappedListener*> LFSTK_getGadgets(void);
 
 //events etc
 		void					LFSTK_setDoubleClickTime(unsigned interval);
 		unsigned				dbClick=500;
+		bool					popupLoop=false;
 
 	private:
 //window routines

@@ -620,7 +620,6 @@ bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 */
 bool LFSTK_gadgetClass::mouseDrag(XMotionEvent *e)
 {
-
 	if(this->canDrag==true)
 		{
 			this->gadgetGeom.x+=e->x-this->mouseDownX;
@@ -922,8 +921,7 @@ void LFSTK_gadgetClass::LFSTK_setLabelGravity(int orient)
 
 /**
 * Get gadget geometry in global co-ords.
-* \return geometry structure.
-* \note Caller should free structure after use.
+* \param geometry structure.
 */
 void LFSTK_gadgetClass::LFSTK_getGlobalGeom(geometryStruct *geom)
 {
@@ -1316,5 +1314,65 @@ void LFSTK_gadgetClass::LFSTK_showGadget(void)
 void LFSTK_gadgetClass::LFSTK_hideGadget(void)
 {
 	XUnmapWindow(this->display,this->window);
+}
+
+/**
+* Run context window event loop.
+* \param int x.
+* \param int y.
+*/
+void LFSTK_gadgetClass::LFSTK_doPopUp(int x,int y)
+{
+	XEvent	event;
+
+	this->wc->popupLoop=true;
+	this->contextWC->LFSTK_moveWindow(x,y,true);
+	this->contextWC->LFSTK_showWindow(true);
+	this->contextWC->LFSTK_clearWindow();
+
+	while(this->wc->popupLoop==true)
+		{
+			while (XPending(display) && (this->wc->popupLoop==true))
+				{
+					XNextEvent(this->contextWC->display,&event);
+					mappedListener *ml=this->contextWC->LFSTK_getMappedListener(event.xany.window);
+					if(ml!=NULL)
+							ml->function(ml->gadget,&event,ml->type);
+
+					switch(event.type)
+						{
+							case LeaveNotify:
+								if(event.xany.window==this->contextWC->window)
+									this->wc->popupLoop=false;
+								break;
+							case Expose:
+								this->contextWC->LFSTK_clearWindow();
+								break;
+							case ConfigureNotify:
+								this->contextWC->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
+								this->contextWC->LFSTK_clearWindow();
+								break;
+						}
+					}
+		}
+	this->contextWC->LFSTK_hideWindow();
+}
+
+/**
+* Set context window for gadget.
+* \param LFSTK_windowClass *wc.
+*/
+void LFSTK_gadgetClass::LFSTK_setContextWindow(LFSTK_windowClass *wc)
+{
+	this->contextWC=wc;
+}
+
+/**
+* Get context window for gadget.
+* \return LFSTK_windowClass*.
+*/
+LFSTK_windowClass* LFSTK_gadgetClass::LFSTK_getContextWindow(void)
+{
+	return(this->contextWC);
 }
 

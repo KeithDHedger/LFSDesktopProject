@@ -64,6 +64,14 @@ class LFSTK_gadgetClass
 		Time					lastTime=0;
 		bool					firstClick=false;
 		bool					isDoubleClick=false;
+		unsigned int			currentButton=-1;
+
+//context window
+//		LFSTK_windowClass		*contextWC=NULL;
+//		bool					popupLoop=false;
+		void					LFSTK_doPopUp(int x,int y);
+		LFSTK_windowClass 		*LFSTK_getContextWindow(void);
+		void					LFSTK_setContextWindow(LFSTK_windowClass *wc);
 
 //DnD routines
 		virtual void			LFSTK_dropData(propertyStruct* data);
@@ -132,6 +140,9 @@ class LFSTK_gadgetClass
 		gadgetStruct			gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NULL,NORMALCOLOUR,0,false,{0,0,0,0},{0,0,0,0},false,false};
 		char					*monoFontString=NULL;
 
+//user data
+		void					*userData=NULL;
+
 	private:
 		void					initGadget(void);
 
@@ -192,6 +203,10 @@ class LFSTK_gadgetClass
 		int						mouseDownY=0;
 		int						snap=1;
 		double					alpha=1.0;
+
+//context
+		LFSTK_windowClass		*contextWC=NULL;
+
 };
 
 #endif

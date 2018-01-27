@@ -295,8 +295,6 @@ STRIP = @STRIP@
 VERSION = @VERSION@
 X11_CFLAGS = @X11_CFLAGS@
 X11_LIBS = @X11_LIBS@
-XFT_CFLAGS = @XFT_CFLAGS@
-XFT_LIBS = @XFT_LIBS@
 XINERAMA_CFLAGS = @XINERAMA_CFLAGS@
 XINERAMA_LIBS = @XINERAMA_LIBS@
 abs_builddir = @abs_builddir@
@@ -353,7 +351,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = subdir-objects
-AM_CXXFLAGS = -Wl,--version-script=../lfstk/exportmap
+AM_CXXFLAGS = -Wl,--version-script=../lfstk/exportmap -include config.h
 AM_LDFLAGS = -version-info $(LFSTOOLKIT_LIBTOOL_VERSION)
 AM_CPPFLAGS = -I$(top_srcdir) \
 				-I.. \

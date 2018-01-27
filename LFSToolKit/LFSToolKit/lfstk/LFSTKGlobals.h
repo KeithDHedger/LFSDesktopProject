@@ -61,6 +61,54 @@ enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
 enum bevelType {BEVELIN=0,BEVELOUT,BEVELNONE};
 enum indicatorType {CHECK=0,RADIO,PICTURE,DISCLOSURE,NOINDICATOR};
 
+#ifdef _ENABLEDEBUG_
+static void debugFunc(const char *file,const char *func,int line,const char *fmt, ...)
+{
+	va_list	ap;
+	char	*buffer,*subbuffer;
+
+	buffer=(char*)alloca(512);
+	subbuffer=(char*)alloca(512);
+
+	buffer[0]=0;
+	subbuffer[0]=0;
+	va_start(ap, fmt);
+	while (*fmt)
+		{
+			subbuffer[0]=0;
+			if(fmt[0]=='%')
+				{
+					fmt++;
+					switch(*fmt)
+						{
+							case 's':
+								sprintf(subbuffer,"%s",va_arg(ap,char*));
+								break;
+							case 'i':
+								sprintf(subbuffer,"%i",va_arg(ap,int));
+								break;
+							case 'p':
+								sprintf(subbuffer,"%p",va_arg(ap,char*));
+								break;
+							default:
+								sprintf(subbuffer,"%c",fmt[0]);
+								break;
+						}
+				}
+			else
+				sprintf(subbuffer,"%c",fmt[0]);
+			strcat(buffer,subbuffer);
+			fmt++;
+		}
+	va_end(ap);
+	printf("\nFile: %s\nFunc: %s\nLine: %i\n",basename(file),func,line);
+	printf("----USER DATA----\n%s\n----END----\n",buffer);
+}
+#define DEBUGFUNC(x,...) debugFunc(__FILE__,__func__,__LINE__,(const char*)x,__VA_ARGS__)
+#else
+#define DEBUGFUNC(...) printf("Remove debug code here: %s:%i\n",__FILE__,__LINE__);
+#endif
+
 struct args
 {
 	const char*				name;

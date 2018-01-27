@@ -2,7 +2,7 @@
 
 #©keithhedger Wed 2 Aug 15:43:22 BST 2017 kdhedger68713@gmail.com
 
-g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2 -o imageexample||exit 1
+g++ "$0" -O0 -ggdb -D_ENABLEDEBUG_ -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2 -o imageexample||exit 1
 LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./imageexample "$@"
 retval=$?
 echo "Exit code $retval"
@@ -12,6 +12,7 @@ exit $retval
 #include "lfstk/LFSTKGlobals.h"
 
 #define BOXLABEL		"Drag Image"
+#define BOXLABEL2		"Right Click For Context"
 #define IMAGESIZE		64
 
 LFSTK_windowClass		*wc=NULL;
@@ -24,6 +25,13 @@ LFSTK_imageClass		*tux;
 
 bool					mainLoop=true;
 Display					*display;
+enum {BUTTONMOUNT=0,BUTTONUNMOUNT,BUTTONEJECT,BUTTONOPEN,BUTTONADDICON,BUTTONREMOVEICON,NOMOREBUTONS};
+
+const char	*diskLabelData[]={"Mount","Unmount","Eject","Open","Custom Icon","Remove Icon",NULL};
+const char	*diskThemeIconData[]={"drive-harddisk","media-eject","media-eject","document-open","list-add","list-remove"};
+char	*iconpath=NULL;
+LFSTK_windowClass	*diskWindow=NULL;
+LFSTK_buttonClass	*diskButtons[NOMOREBUTONS];
 
 bool doQuit(void *p,void* ud)
 {
@@ -43,29 +51,43 @@ bool buttonCB(void *p,void* ud)
 	return(true);
 }
 
+bool contextCB(void *p,void* ud)
+{
+	if(p!=NULL)
+		{
+			wc->popupLoop=false;
+			DEBUGFUNC("gadget label=%s",(char*)wc->popupFromGadget->userData);
+			printf("data=%p\n",ud);
+		}
+	return(true);
+}
+
 int main(int argc, char **argv)
 {
 	XEvent	event;
 	int		sy=BORDER;
-		
+
+	DEBUGFUNC("Entering main ...","");
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Draggaable Image Example",false);
 	display=wc->display;
-//	wc->LFSTK_setDoubleClickTime(200);
 	
 	tux=new LFSTK_imageClass(wc,NULL,DIALOGMIDDLE-(IMAGESIZE/2),sy,IMAGESIZE,IMAGESIZE,NorthGravity,true);
 	tux->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",PRESERVEASPECT,true);
-//	tux->LFSTK_setImageFromPath("box.png",PRESERVEASPECT,true);
 	tux->LFSTK_setCallBack(NULL,buttonCB,NULL);
 	tux->LFSTK_setCanDrag(true);
 	tux->LFSTK_snapSize(1);
 	tux->LFSTK_setTile(NULL,0);
 	tux->LFSTK_setAlpha(0.5);
+	tux->userData=(void*)"tux image";
 
 	sy+=YSPACING*3;
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,NorthGravity);
 	label->LFSTK_setCairoFontDataParts("sB",20);
 	sy+=YSPACING;
+
+	label=new LFSTK_labelClass(wc,BOXLABEL2,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,NorthGravity);
+	sy+=YSPACING/2;
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,NorthGravity);
 	sy+=HALFYSPACING;
@@ -88,6 +110,23 @@ int main(int argc, char **argv)
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();
 	XSync(display,false);
+
+//disks
+
+	diskWindow=new LFSTK_windowClass(100,100,200,200,"xxx",true,true);
+	sy=0;
+	for(int j=BUTTONMOUNT;j<NOMOREBUTONS;j++)
+		{
+			diskButtons[j]=new LFSTK_buttonClass(diskWindow,diskLabelData[j],0,sy,GADGETWIDTH,24,NorthWestGravity);
+			diskButtons[j]->LFSTK_setCallBack(NULL,contextCB,(void*)(long)(j+1));
+			iconpath=diskWindow->globalLib->LFSTK_findThemedIcon("gnome",diskThemeIconData[j],"");
+			diskButtons[j]->LFSTK_setImageFromPath(iconpath,LEFT,true);
+			sy+=GADGETHITE;
+		}
+	diskWindow->LFSTK_resizeWindow(GADGETWIDTH,sy,true);
+	diskWindow->LFSTK_showWindow(true);
+	diskWindow->LFSTK_hideWindow();
+	tux->LFSTK_setContextWindow(diskWindow);
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	mainLoop=true;

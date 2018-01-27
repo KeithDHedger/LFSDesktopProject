@@ -1,5 +1,5 @@
 
-AM_CXXFLAGS = -Wl,--version-script=../lfstk/exportmap
+AM_CXXFLAGS = -Wl,--version-script=../lfstk/exportmap -include config.h
 AM_LDFLAGS = -version-info $(LFSTOOLKIT_LIBTOOL_VERSION)
 
 AM_CPPFLAGS =	-I$(top_srcdir) \
