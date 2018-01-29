@@ -22,30 +22,6 @@
 
 
 #include "config.h"
-/*
-#if _DEBUGLEVEL_ == DBG0
-#define ERRDATA
-#else
-#if _DEBUGLEVEL_ == DBG5
-#define ERRDATA errLine=__LINE__,errFile=__FILE__,errFunc=__func__;printf("File: %s,Func: %s,Line: %i\n",errFile,errFunc,errLine);
-#else
-#define ERRDATA errLine=__LINE__,errFile=__FILE__,errFunc=__func__;
-#endif
-#endif
-*/
-#if _DEBUGLEVEL_ == DBG1
-#include "debug.h"
-#else
-#define DEBUGFUNC(x,...) 
-#define debugfunc  DEBUGFUNC
-#define MESSAGE(s)
-#define message MESSAGE
-#define CHECKPOINT
-#define checkpoint CHECKPOINT
-#define LASTCHECKPOINT
-#define lastcheckpoint LASTCHECKPOINT
-#endif
-
 
 #define MIN(a,b) ((a)<(b) ? (a) : (b))
 #define MAX(a,b) ((a)>(b) ? (a) : (b))

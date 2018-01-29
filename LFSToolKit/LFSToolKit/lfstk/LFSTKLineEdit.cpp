@@ -213,6 +213,17 @@ const std::string* LFSTK_lineEditClass::LFSTK_getBuffer(void)
 	return(const_cast<std::string*>(&(this->buffer)));
 }
 
+/**
+* Return the contents of the gadget.
+* \return Return's a c str.
+* \note Don't free the returned string.
+*/
+const char* LFSTK_lineEditClass::LFSTK_getCStr(void)
+{
+	return(this->buffer.c_str());
+}
+
+
 void LFSTK_lineEditClass::drawLabel(void)
 {
 	int			cursorwidth;

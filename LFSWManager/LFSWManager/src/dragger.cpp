@@ -58,8 +58,7 @@ void motionnotify(struct dragger *d,XMotionEvent *e)
 
 bool draggerevent(void *self,XEvent *e,int type)
 {
-	CHECKPOINT
-	switch (e->type)
+		switch (e->type)
 		{
 		case ButtonRelease:
 			if((windowToUpdate!=None) )
@@ -84,8 +83,7 @@ bool draggerevent(void *self,XEvent *e,int type)
 
 struct dragger *dcreate(Window parent,int x,int y,int width,int height,int gravity,Cursor cursor,void (*dragnotify)(void *,int,int,unsigned long,Time),void *arg)
 {
-	CHECKPOINT
-	XSetWindowAttributes sa;
+		XSetWindowAttributes sa;
 
 	sa.win_gravity=gravity;
 	sa.cursor=cursor;
@@ -158,8 +156,7 @@ struct dragger *dcreate(Window parent,int x,int y,int width,int height,int gravi
 
 void ddestroy(struct dragger *d)
 {
-	CHECKPOINT
-	setlistener(d->window,NULL);
+		setlistener(d->window,NULL);
 	XDestroyWindow(dpy,d->window);
 	free(d);
 }

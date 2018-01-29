@@ -62,6 +62,7 @@ enum bevelType {BEVELIN=0,BEVELOUT,BEVELNONE};
 enum indicatorType {CHECK=0,RADIO,PICTURE,DISCLOSURE,NOINDICATOR};
 
 #ifdef _ENABLEDEBUG_
+static bool	showFileData=true;
 static void debugFunc(const char *file,const char *func,int line,const char *fmt, ...)
 {
 	va_list	ap;
@@ -101,8 +102,16 @@ static void debugFunc(const char *file,const char *func,int line,const char *fmt
 			fmt++;
 		}
 	va_end(ap);
-	printf("\nFile: %s\nFunc: %s\nLine: %i\n",basename(file),func,line);
-	printf("----USER DATA----\n%s\n----END----\n",buffer);
+
+	if(showFileData==true)
+		{
+			printf("\nFile: %s\nFunc: %s\nLine: %i\n",basename(file),func,line);
+			printf("----USER DATA----\n%s\n----END----\n",buffer);
+		}
+	else
+		{
+			printf("%s\n",buffer);
+		}
 }
 #define DEBUGFUNC(x,...) debugFunc(__FILE__,__func__,__LINE__,(const char*)x,__VA_ARGS__)
 #else
@@ -171,6 +180,19 @@ struct gadgetStruct
 	bool			useWindowPixmap;
 };
 
+struct windowInitStruct
+{
+	int			x=0;
+	int			y=0;
+	int			w=1;
+	int			h=1;
+	const char	*name="";
+	bool		overRide=false;
+	bool		loadVars=true;
+	bool		shutDisplayOnExit=false;
+	const char	*windowType="_NET_WM_WINDOW_TYPE_NORMAL";
+	bool		decorated=true;
+};
 
 #include "LFSTKLib.h"
 #include "LFSTKWindow.h"

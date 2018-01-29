@@ -49,8 +49,7 @@ bitmap	*shadeBitmap;
 
 void update(struct button *b)
 {
-	CHECKPOINT
-	int				usepixnum=0;
+		int				usepixnum=0;
 	int				partoffset=0;
 	unsigned long	framefill;
 	unsigned long	frame;
@@ -144,15 +143,13 @@ void buttonrelease(struct button *b,XButtonEvent *e)
 
 void enternotify(struct button *b,XCrossingEvent *e)
 {
-	CHECKPOINT
-	b->entered=True;
+		b->entered=True;
 	update(b);
 }
 
 void leavenotify(struct button *b,XCrossingEvent *e)
 {
-	CHECKPOINT
-	if (b->entered)
+		if (b->entered)
 		{
 			b->entered=False;
 			update(b);
@@ -161,8 +158,7 @@ void leavenotify(struct button *b,XCrossingEvent *e)
 
 void unmapnotify(struct button *b,XUnmapEvent *e)
 {
-	CHECKPOINT
-	if (b->pressed)
+		if (b->pressed)
 		{
 			b->pressed=False;
 			update(b);
@@ -171,8 +167,7 @@ void unmapnotify(struct button *b,XUnmapEvent *e)
 
 void expose(struct button *b,XExposeEvent *e)
 {
-	CHECKPOINT
-	if(theme.useTheme==true)
+		if(theme.useTheme==true)
 		update(b);
 	else
 		XCopyArea(dpy,b->pixmap,b->window,activeGC,e->x,e->y,e->width,e->height,e->x,e->y);
@@ -180,8 +175,7 @@ void expose(struct button *b,XExposeEvent *e)
 
 bool buttonevent(void *self,XEvent *e,int type)
 {
-	CHECKPOINT
-	switch (e->type)
+		switch (e->type)
 		{
 		case Expose:
 			expose((button*)self,&e->xexpose);
@@ -207,8 +201,7 @@ bool buttonevent(void *self,XEvent *e,int type)
 
 struct button *bcreate(void (*function)(void *,Time),void *arg,struct bitmap *bitmap,Window parent,int x,int y,int width,int height,int gravity,int buttonnum,struct frame *f)
 {
-	CHECKPOINT
-	XSetWindowAttributes	sa;
+		XSetWindowAttributes	sa;
 	sa.win_gravity=gravity;
 
 	struct button *b=(button*)xmalloc(sizeof *b);
@@ -237,8 +230,7 @@ struct button *bcreate(void (*function)(void *,Time),void *arg,struct bitmap *bi
 
 void bdestroy(struct button *b)
 {
-	CHECKPOINT
-	setlistener(b->window,NULL);
+		setlistener(b->window,NULL);
 	XFreePixmap(dpy,b->pixmap);
 	XDestroyWindow(dpy,b->window);
 	free(b);

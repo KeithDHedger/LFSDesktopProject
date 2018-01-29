@@ -60,9 +60,22 @@ int main(int argc, char **argv)
 {
 	XEvent	event;
 	int		sy=BORDER;
-		
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,BOXLABEL,false);
+	windowInitStruct	*wi;
+
+	wi=new windowInitStruct;
+	wi->x=100;
+	wi->y=100;
+	wi->w=DIALOGWIDTH;
+	wi->h=DIALOGHITE;
+	wi->name=BOXLABEL;
+//tests
+//	wi->decorated=false;
+//	wi->windowType="_NET_WM_WINDOW_TYPE_DOCK";
+//	wi->overRide=true;
+
+	wc=new LFSTK_windowClass(wi);
 	display=wc->display;
+	delete wi;
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,NorthGravity);
 	label->LFSTK_setCairoFontDataParts("sB",20);
@@ -76,7 +89,6 @@ int main(int argc, char **argv)
 
 //inactivebutton
 	inactivebutton=new LFSTK_buttonClass(wc,"Inactive",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);
-//	inactivebutton->LFSTK_setCallBack(NULL,buttonCB,(void*)"Inactive");
 	inactivebutton->LFSTK_setActive(false);
 	sy+=YSPACING;
 
@@ -145,13 +157,13 @@ int main(int argc, char **argv)
 	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
 	sy+=YSPACING;
 
-
 //quit
 	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);
 	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
 	sy+=YSPACING;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
+	//wc->LFSTK_moveWindow(100,100,true);
 	wc->LFSTK_showWindow();
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
@@ -167,12 +179,7 @@ int main(int argc, char **argv)
 
 			switch(event.type)
 				{
-					case ButtonRelease:
-						break;
-					case LeaveNotify:
-						break;
 					case Expose:
-					//printf("expose\n");
 						wc->LFSTK_clearWindow();
 						break;
 

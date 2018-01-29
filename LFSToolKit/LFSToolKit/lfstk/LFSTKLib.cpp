@@ -494,6 +494,7 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				retval=gadget->mouseUp(&e->xbutton);
 				break;
 			case ButtonPress:
+				//DEBUGFUNC("gadget=%p",gadget);
 				gadget->currentButton=e->xbutton.button;
 				if((gadget->LFSTK_getContextWindow()!=NULL) && (gadget->currentButton==Button3))
 					{

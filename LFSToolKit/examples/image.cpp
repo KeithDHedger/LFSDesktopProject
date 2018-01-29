@@ -33,6 +33,7 @@ char	*iconpath=NULL;
 LFSTK_windowClass	*diskWindow=NULL;
 LFSTK_buttonClass	*diskButtons[NOMOREBUTONS];
 
+bool	sticky=false;
 bool doQuit(void *p,void* ud)
 {
 	mainLoop=false;
@@ -46,7 +47,13 @@ bool buttonCB(void *p,void* ud)
 	if(p!=NULL)
 		{
 			if(static_cast<LFSTK_imageClass*>(p)->isDoubleClick==true)
-				printf("was a double click\n");
+				{
+					printf("was a double click\n");
+					sticky=!sticky;
+					//wc->LFSTK_hideWindow();
+					wc->LFSTK_setSticky(sticky);
+					//wc->LFSTK_showWindow();
+				}
 		}
 	return(true);
 }
@@ -67,10 +74,17 @@ int main(int argc, char **argv)
 	XEvent	event;
 	int		sy=BORDER;
 
+	windowInitStruct *wi=new windowInitStruct;
+	wi->w=DIALOGWIDTH;
+	wi->h=DIALOGHITE;
+	wi->name="Draggaable Image Example";
+
 	DEBUGFUNC("Entering main ...","");
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Draggaable Image Example",false);
+
+	wc=new LFSTK_windowClass(wi);
 	display=wc->display;
-	
+	delete	wi;
+
 	tux=new LFSTK_imageClass(wc,NULL,DIALOGMIDDLE-(IMAGESIZE/2),sy,IMAGESIZE,IMAGESIZE,NorthGravity,true);
 	tux->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",PRESERVEASPECT,true);
 	tux->LFSTK_setCallBack(NULL,buttonCB,NULL);
@@ -109,6 +123,7 @@ int main(int argc, char **argv)
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();
+	//wc->LFSTK_setKeepBelow(true);
 	XSync(display,false);
 
 //disks
@@ -124,8 +139,9 @@ int main(int argc, char **argv)
 			sy+=GADGETHITE;
 		}
 	diskWindow->LFSTK_resizeWindow(GADGETWIDTH,sy,true);
-	diskWindow->LFSTK_showWindow(true);
-	diskWindow->LFSTK_hideWindow();
+	
+	//diskWindow->LFSTK_showWindow(true);
+	//diskWindow->LFSTK_hideWindow();
 	tux->LFSTK_setContextWindow(diskWindow);
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
@@ -135,16 +151,10 @@ int main(int argc, char **argv)
 			XNextEvent(wc->display,&event);
 			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
 			if(ml!=NULL)
-				{
-					ml->function(ml->gadget,&event,ml->type);
-				}
+				ml->function(ml->gadget,&event,ml->type);
 
 			switch(event.type)
 				{
-					case ButtonRelease:
-						break;
-					case LeaveNotify:
-						break;
 					case Expose:
 						wc->LFSTK_clearWindow();
 						break;

@@ -94,8 +94,7 @@ keymapstructclient keymapclient[] =
  */
 void getclientstack(struct client ***vp,int *np)
 {
-	CHECKPOINT
-	int n=0;
+		int n=0;
 	List *lp;
 	LIST_FOREACH(lp,&winstack)
 	n++;
@@ -112,14 +111,12 @@ void getclientstack(struct client ***vp,int *np)
  */
 Bool cisvisible(struct client *c)
 {
-	CHECKPOINT
-	return (c->desk==curdesk || c->desk==DESK_ALL) && (c->isIcon==false);
+		return (c->desk==curdesk || c->desk==DESK_ALL) && (c->isIcon==false);
 }
 
 void restack(void)
 {
-	CHECKPOINT
-	if (!needrestack)
+		if (!needrestack)
 		return;
 	int n=1;
 	List *lp;
@@ -145,8 +142,6 @@ void restack(void)
 
 void cmap(struct client *c)
 {
-	CHECKPOINT
-
 	// Prevent premature mapping
 	if (!c->initialized)
 		return;
@@ -177,8 +172,7 @@ void cmap(struct client *c)
 
 bool shuffleDesktop(void)
 {
-	CHECKPOINT
-	List	*lp;
+		List	*lp;
 	
 	LIST_FOREACH(lp,&winstack)
 		{
@@ -203,8 +197,7 @@ bool shuffleDesktop(void)
 
 bool shuffleDownUp(void)
 {
-	CHECKPOINT
-	List	*lp;
+		List	*lp;
 	
 	LIST_FOREACH(lp,&winstack)
 		{
@@ -229,8 +222,7 @@ bool shuffleDownUp(void)
 
 void shuffle(void)
 {
-	CHECKPOINT
-	List	*lp;
+		List	*lp;
 
 	LIST_FOREACH(lp,&winstack)
 		{
@@ -248,8 +240,7 @@ void shuffle(void)
 
 void cunmap(struct client *c)
 {
-	CHECKPOINT
-	if (c->ismapped)
+		if (c->ismapped)
 		{
 			setwmstate(c->window,IconicState);
 			if (c->frame != NULL)
@@ -267,8 +258,7 @@ void cunmap(struct client *c)
 
 void csetdesk(struct client *c,Desk d)
 {
-	CHECKPOINT
-	if (d >= numberOfDesktops && d != DESK_ALL)
+		if (d >= numberOfDesktops && d != DESK_ALL)
 		d=numberOfDesktops-1;
 
 	c->desk=d;
@@ -286,8 +276,7 @@ void csetdesk(struct client *c,Desk d)
 
 void gotodesk(Desk d)
 {
-	CHECKPOINT
-	if (d==curdesk || d >= numberOfDesktops || d==DESK_ALL)
+		if (d==curdesk || d >= numberOfDesktops || d==DESK_ALL)
 		return;
 
 	curdesk=d;
@@ -315,8 +304,7 @@ void gotodesk(Desk d)
 
 void setndesk(Desk val)
 {
-	CHECKPOINT
-	if (val==0 || val >= 0xffffffffUL)
+		if (val==0 || val >= 0xffffffffUL)
 		return;
 	Desk oldval=numberOfDesktops;
 	numberOfDesktops=val;
@@ -341,8 +329,7 @@ void setndesk(Desk val)
 
 void csetappdesk(struct client *c,Desk d)
 {
-	CHECKPOINT
-	struct client **v;
+		struct client **v;
 	int n;
 	getclientstack(&v,&n);
 	for (int i=0; i<n; i++)
@@ -353,14 +340,11 @@ void csetappdesk(struct client *c,Desk d)
 
 Bool cisframed(struct client *c)
 {
-	CHECKPOINT
-	return !c->isfull && !c->isDock && !c->isundecorated;
+		return !c->isfull && !c->isDock && !c->isundecorated;
 }
 
 void creframe(struct client *c)
 {
-	CHECKPOINT
-
 	if (cisframed(c))
 		{
 			if (c->frame==NULL)
@@ -375,8 +359,7 @@ void creframe(struct client *c)
 
 void csetdock(struct client *c,Bool isdock)
 {
-	CHECKPOINT
-	c->isDock=isdock;
+		c->isDock=isdock;
 	creframe(c);
 }
 
@@ -388,8 +371,7 @@ void csetdock(struct client *c,Bool isdock)
  */
 void cfocus(struct client *c,Time time)
 {
-	CHECKPOINT
-	if (!c->ismapped)
+		if (!c->ismapped)
 		return;
 
 	XSetInputFocus(dpy,c->window,RevertToPointerRoot,time);
@@ -397,8 +379,7 @@ void cfocus(struct client *c,Time time)
 
 void csetfull(struct client *c,Bool enabled)
 {
-	CHECKPOINT
-	if (enabled && !c->isfull)
+		if (enabled && !c->isfull)
 		{
 			Bool f=c->hasfocus;
 			cunmap(c);
@@ -440,8 +421,7 @@ void csetfull(struct client *c,Bool enabled)
 
 void csetundecorated(struct client *c,Bool enabled)
 {
-	CHECKPOINT
-	c->isundecorated=enabled;
+		c->isundecorated=enabled;
 	creframe(c);
 }
 
@@ -451,8 +431,7 @@ void csetundecorated(struct client *c,Bool enabled)
  */
 void getwindowstack(Window **vp,size_t *np)
 {
-	CHECKPOINT
-	List *lp;
+		List *lp;
 
 	size_t n=0;
 	LIST_FOREACH(lp,&winstack)
@@ -472,8 +451,7 @@ void getwindowstack(Window **vp,size_t *np)
 
 void cpush(struct client *c)
 {
-	CHECKPOINT
-	if (LIST_HEAD(&winstack) != &c->winstack)
+		if (LIST_HEAD(&winstack) != &c->winstack)
 		{
 			LIST_REMOVE(&c->winstack);
 			LIST_INSERT_HEAD(&winstack,&c->winstack);
@@ -483,8 +461,7 @@ void cpush(struct client *c)
 
 void cpushapp(struct client *c)
 {
-	CHECKPOINT
-	struct client **v;
+		struct client **v;
 	int n;
 	getclientstack(&v,&n);
 	for (int i=n-1; i >= 0; i--)
@@ -495,8 +472,7 @@ void cpushapp(struct client *c)
 
 void cpop(struct client *c)
 {
-	CHECKPOINT
-	if (LIST_TAIL(&winstack) != &c->winstack)
+		if (LIST_TAIL(&winstack) != &c->winstack)
 		{
 			LIST_REMOVE(&c->winstack);
 			LIST_INSERT_TAIL(&winstack,&c->winstack);
@@ -512,8 +488,7 @@ void cpop(struct client *c)
 
 void cpopapp(struct client *c)
 {
-	CHECKPOINT
-	struct client	**v;
+		struct client	**v;
 	int				n;
 	unsigned char	*data;
 	Atom			*atoms;
@@ -587,8 +562,7 @@ void cpopapp(struct client *c)
 
 void cupdatedesk(struct client *c)
 {
-	CHECKPOINT
-	Desk d=c->desk;
+		Desk d=c->desk;
 	struct client **v;
 	int n;
 	getclientstack(&v,&n);
@@ -617,8 +591,7 @@ void cupdatedesk(struct client *c)
 
 void reloadwmtransientfor(struct client *c)
 {
-	CHECKPOINT
-	c->wmtransientfor=None;
+		c->wmtransientfor=None;
 	XGetTransientForHint(dpy,c->window,&c->wmtransientfor);
 
 	if (c->wmtransientfor != None)
@@ -638,14 +611,12 @@ void reloadwmtransientfor(struct client *c)
 
 Bool cisurgent(struct client *c)
 {
-	CHECKPOINT
-	return c->wmhints != NULL && (c->wmhints->flags & XUrgencyHint) != 0;
+		return c->wmhints != NULL && (c->wmhints->flags & XUrgencyHint) != 0;
 }
 
 void reloadwmhints(struct client *c)
 {
-	CHECKPOINT
-	if (c->wmhints != NULL)
+		if (c->wmhints != NULL)
 		XFree(c->wmhints);
 	c->wmhints=XGetWMHints(dpy,c->window);
 
@@ -671,8 +642,7 @@ void reloadwmhints(struct client *c)
 
 void reloadwmnormalhints(struct client *c)
 {
-	CHECKPOINT
-	if (c->wmnormalhints==NULL)
+		if (c->wmnormalhints==NULL)
 		c->wmnormalhints=XAllocSizeHints();
 	if (c->wmnormalhints != NULL)
 		{
@@ -684,8 +654,7 @@ void reloadwmnormalhints(struct client *c)
 
 void reloadwmname(struct client *c)
 {
-	CHECKPOINT
-	free(c->wmname);
+		free(c->wmname);
 	c->wmname=NULL;
 
 	XTextProperty p;
@@ -702,8 +671,7 @@ void reloadwmname(struct client *c)
 
 void reloadwmprotocols(struct client *c)
 {
-	CHECKPOINT
-	if (c->wmprotocols != NULL)
+		if (c->wmprotocols != NULL)
 		{
 			XFree(c->wmprotocols);
 			c->wmprotocols=NULL;
@@ -718,24 +686,21 @@ void reloadwmprotocols(struct client *c)
 
 void buttonpress(struct client *c,XButtonEvent *e)
 {
-	CHECKPOINT
-	cpopapp(c);
+		cpopapp(c);
 	cfocus(c,e->time);
 	XAllowEvents(dpy,ReplayPointer,e->time);
 }
 
 void keypress(struct client *c,XKeyEvent *e)
 {
-	CHECKPOINT
-	for (unsigned int i=0; i<NELEM(keymapclient); i++)
+		for (unsigned int i=0; i<NELEM(keymapclient); i++)
 		if (XKeysymToKeycode(dpy,keymapclient[i].keysym)==e->keycode)
 			keymapclient[i].function(c,e->state,e->time);
 }
 
 Bool chaswmproto(struct client *c,Atom protocol)
 {
-	CHECKPOINT
-	for (int i=0; i<c->wmprotocolscount; i++)
+		for (int i=0; i<c->wmprotocolscount; i++)
 		if (c->wmprotocols[i]==protocol)
 			return True;
 	return False;
@@ -743,8 +708,7 @@ Bool chaswmproto(struct client *c,Atom protocol)
 
 void csendwmproto(struct client *c,Atom protocol,Time time)
 {
-	CHECKPOINT
-	XEvent e;
+		XEvent e;
 
 	memset(&e,0,sizeof e);
 	e.xclient.type=ClientMessage;
@@ -759,15 +723,13 @@ void csendwmproto(struct client *c,Atom protocol,Time time)
 
 void cdelete(struct client *c,Time time)
 {
-	CHECKPOINT
-	if (chaswmproto(c,WM_DELETE_WINDOW))
+		if (chaswmproto(c,WM_DELETE_WINDOW))
 		csendwmproto(c,WM_DELETE_WINDOW,time);
 }
 
 void keypress_delete(struct client *c,unsigned state,Time time)
 {
-	CHECKPOINT
-	if (!c->isDock)
+		if (!c->isDock)
 		cdelete(c,time);
 }
 
@@ -776,14 +738,12 @@ void keypress_delete(struct client *c,unsigned state,Time time)
  */
 Bool cistask(struct client *c)
 {
-	CHECKPOINT
-	return !c->skiptaskbar && c->wmtransientfor==None;
+		return !c->skiptaskbar && c->wmtransientfor==None;
 }
 
 struct client *getfronttask(void)
 {
-	CHECKPOINT
-	List *lp;
+		List *lp;
 	LIST_FOREACH_REV(lp,&winstack)
 	{
 		struct client *c=LIST_ITEM(lp,struct client,winstack);
@@ -801,16 +761,14 @@ struct client *getfronttask(void)
  */
 Bool expectsfocus(struct client *c)
 {
-	CHECKPOINT
-	return c->wmhints==NULL ||
+		return c->wmhints==NULL ||
 	       !(c->wmhints->flags & InputHint) ||
 	       c->wmhints->input;
 }
 
 void cfocusapp(struct client *c,Time time)
 {
-	CHECKPOINT
-	struct client *topmost=NULL;
+		struct client *topmost=NULL;
 	struct client *focus=NULL;
 
 	// Find a window of the application that expects focus.
@@ -841,8 +799,7 @@ void cfocusapp(struct client *c,Time time)
  */
 struct client *refocus(Time time)
 {
-	CHECKPOINT
-	struct client *c=getfronttask();
+		struct client *c=getfronttask();
 	if (c != NULL)
 		cfocusapp(c,time);
 	return c;
@@ -850,22 +807,19 @@ struct client *refocus(Time time)
 
 void keypress_pushapp(struct client *c,unsigned state,Time time)
 {
-	CHECKPOINT
-	cpushapp(c);
+		cpushapp(c);
 	refocus(time);
 }
 
 void keypress_fullscreen(struct client *c,unsigned state,Time time)
 {
-	CHECKPOINT
-	if (!c->isDock)
+		if (!c->isDock)
 		csetfull(c,!c->isfull);
 }
 
 void keypress_sticky(struct client *c,unsigned state,Time time)
 {
-	CHECKPOINT
-	if (c->isDock)
+		if (c->isDock)
 		return;
 
 	if (c->desk==DESK_ALL)
@@ -881,8 +835,7 @@ void keypress_sticky(struct client *c,unsigned state,Time time)
 
 void keypress_group(struct client *c,unsigned state,Time time)
 {
-	CHECKPOINT
-	struct client	**v;
+		struct client	**v;
 	int				n;
 	int				cd=curdesk;
 
@@ -901,15 +854,13 @@ void keypress_group(struct client *c,unsigned state,Time time)
 
 void cinstallcolormaps(struct client *c)
 {
-	CHECKPOINT
-	XInstallColormap(dpy,c->colormap==None ?
+		XInstallColormap(dpy,c->colormap==None ?
 	                 DefaultColormap(dpy,screen) : c->colormap);
 }
 
 void focusin(struct client *c,XFocusChangeEvent *e)
 {
-	CHECKPOINT
-	if (e->mode==NotifyUngrab || e->detail==NotifyPointerRoot ||
+		if (e->mode==NotifyUngrab || e->detail==NotifyPointerRoot ||
 	        e->detail==NotifyPointer)
 		return;
 
@@ -931,8 +882,7 @@ void focusin(struct client *c,XFocusChangeEvent *e)
 
 void focusout(struct client *c,XFocusChangeEvent *e)
 {
-	CHECKPOINT
-	if (e->mode==NotifyGrab)
+		if (e->mode==NotifyGrab)
 		return;
 
 	if (e->detail==NotifyPointerRoot ||
@@ -957,8 +907,7 @@ void focusout(struct client *c,XFocusChangeEvent *e)
 
 struct geometry cgetgeom(struct client *c)
 {
-	CHECKPOINT
-	if (c->isfull)
+		if (c->isfull)
 		return (struct geometry)
 		{
 			.x=-c->geometry.borderwidth,
@@ -973,8 +922,7 @@ struct geometry cgetgeom(struct client *c)
 
 void csendconf(struct client *c)
 {
-	CHECKPOINT
-	struct geometry g=cgetgeom(c);
+		struct geometry g=cgetgeom(c);
 	XConfigureEvent ce;
 
 	ce.type=ConfigureNotify;
@@ -994,8 +942,7 @@ void csendconf(struct client *c)
 
 void configurerequest(struct client *c,XConfigureRequestEvent *e)
 {
-	CHECKPOINT
-	XWindowChanges	wc;
+		XWindowChanges	wc;
 
 	if (c->frame != NULL)
 		{
@@ -1044,8 +991,7 @@ void configurerequest(struct client *c,XConfigureRequestEvent *e)
 
 void propertynotify(struct client *c,XPropertyEvent *e)
 {
-	CHECKPOINT
-	switch (e->atom)
+		switch (e->atom)
 		{
 		case XA_WM_NAME:
 			reloadwmname(c);
@@ -1075,8 +1021,7 @@ void propertynotify(struct client *c,XPropertyEvent *e)
  */
 void maprequest(struct client *c,XMapRequestEvent *e)
 {
-	CHECKPOINT
-	ewmh_maprequest(c);
+		ewmh_maprequest(c);
 	cpopapp(c);
 	if (cisvisible(c))
 		{
@@ -1087,8 +1032,7 @@ void maprequest(struct client *c,XMapRequestEvent *e)
 
 struct client *getfocus(void)
 {
-	CHECKPOINT
-	List *lp;
+		List *lp;
 	LIST_FOREACH_REV(lp,&winstack)
 	{
 		struct client *c=LIST_ITEM(lp,struct client,winstack);
@@ -1104,8 +1048,7 @@ struct client *getfocus(void)
 
 void crelease(struct client *c,Bool clientrequested)
 {
-	CHECKPOINT
-	// Unset this or fdestroy() will refocus the window.
+		// Unset this or fdestroy() will refocus the window.
 	c->hasfocus=False;
 	c->isundecorated=true;
 
@@ -1142,8 +1085,7 @@ void crelease(struct client *c,Bool clientrequested)
 
 void cwithdraw(struct client *c)
 {
-	CHECKPOINT
-	ewmh_withdraw(c);
+		ewmh_withdraw(c);
 	setwmstate(c->window,WithdrawnState);
 	crelease(c,True);
 }
@@ -1151,8 +1093,7 @@ void cwithdraw(struct client *c)
 
 void unmapnotify(struct client *c,XUnmapEvent *e)
 {
-	CHECKPOINT
-	if (c->ignoreunmapcount>0)
+		if (c->ignoreunmapcount>0)
 		c->ignoreunmapcount--;
 	else
 		cwithdraw(c);
@@ -1160,26 +1101,22 @@ void unmapnotify(struct client *c,XUnmapEvent *e)
 
 void destroynotify(struct client *c,XDestroyWindowEvent *e)
 {
-	CHECKPOINT
-	cwithdraw(c);
+		cwithdraw(c);
 }
 
 Bool chasfocus(struct client *c)
 {
-	CHECKPOINT
-	return c->hasfocus;
+		return c->hasfocus;
 }
 
 void clientmessage(struct client *c,XClientMessageEvent *e)
 {
-	CHECKPOINT
-	ewmh_clientmessage(c,e);
+		ewmh_clientmessage(c,e);
 }
 
 void colormapnotify(struct client *c,myXColormapEvent *e)
 {
-	CHECKPOINT
-	if (e->mynew)
+		if (e->mynew)
 		{
 			c->colormap=e->colormap;
 			if (c->hasfocus)
@@ -1189,14 +1126,12 @@ void colormapnotify(struct client *c,myXColormapEvent *e)
 
 void csetgeom(struct client *c,struct geometry g)
 {
-	CHECKPOINT
-	c->geometry=g;
+		c->geometry=g;
 }
 
 bool clientevent(void *self,XEvent *e,int type)
 {
-	CHECKPOINT
-	switch (e->type)
+		switch (e->type)
 		{
 		case ButtonRelease:
 			break;
@@ -1252,8 +1187,7 @@ bool clientevent(void *self,XEvent *e,int type)
  */
 Bool samedesk(struct client *c1,struct client *c2)
 {
-	CHECKPOINT
-	return c1->desk==c2->desk ||
+		return c1->desk==c2->desk ||
 	       c1->desk==DESK_ALL || c2->desk==DESK_ALL;
 }
 
@@ -1262,8 +1196,7 @@ Bool samedesk(struct client *c1,struct client *c2)
  */
 void randomPosition(struct geometry *g,int monnum)
 {
-	CHECKPOINT
-	int wid;
+		int wid;
 	int hite;
 	int xoff;
 	int yoff;
@@ -1302,8 +1235,7 @@ void randomPosition(struct geometry *g,int monnum)
 
 unsigned long overlaparea(struct geometry g1,struct geometry g2)
 {
-	CHECKPOINT
-	int x1=g1.x;
+		int x1=g1.x;
 	int x2=g2.x;
 	int x3=g1.x+g1.width+2 * g1.borderwidth;
 	int x4=g2.x+g2.width+2 * g2.borderwidth;
@@ -1329,8 +1261,7 @@ unsigned long overlaparea(struct geometry g1,struct geometry g2)
  */
 void move(struct client *c,int x,int y)
 {
-	CHECKPOINT
-	Window parent=c->frame==NULL ? root : fgetwin(c->frame);
+		Window parent=c->frame==NULL ? root : fgetwin(c->frame);
 	XEvent e;
 	XConfigureRequestEvent cre;
 
@@ -1349,8 +1280,7 @@ void move(struct client *c,int x,int y)
 
 int getMouseMonitor(client *c)
 {
-	CHECKPOINT
-	Window			root_return;
+		Window			root_return;
 	Window			child_return;
 	int				root_x_return;
 	int				root_y_return;
@@ -1381,8 +1311,7 @@ int getMouseMonitor(client *c)
  */
 void smartpos(struct client *c)
 {
-	CHECKPOINT
-	Window			root_return;
+		Window			root_return;
 	Window			child_return;
 	int				root_x_return;
 	int				root_y_return;
@@ -1496,8 +1425,7 @@ void smartpos(struct client *c)
 
 struct client *manage(Window window)
 {
-	CHECKPOINT
-	XWindowAttributes	attr;
+		XWindowAttributes	attr;
 	Atom				type;
 	int					format;
 	unsigned long		nItem,bytesAfter;
@@ -1788,8 +1716,7 @@ struct client *manage(Window window)
 
 void manageall(void)
 {
-	CHECKPOINT
-	//assert(stacktop==None);
+		//assert(stacktop==None);
 	stacktop=XCreateWindow(dpy,root,0,0,100,100,0,CopyFromParent,InputOnly,CopyFromParent,0,NULL);
 	Window r,p,*stack;
 	unsigned n;
@@ -1809,16 +1736,14 @@ void manageall(void)
 
 void cunmanage(struct client *c)
 {
-	CHECKPOINT
-	ewmh_unmanage(c);
+		ewmh_unmanage(c);
 	setwmstate(c->window,NormalState);
 	crelease(c,False);
 }
 
 void unmanageall(void)
 {
-	CHECKPOINT
-	struct client **v;
+		struct client **v;
 	int n;
 	getclientstack(&v,&n);
 	for (int i=n-1; i >= 0; i--)
@@ -1834,8 +1759,6 @@ void unmanageall(void)
 
 int namewidth(struct font *font,struct client *c)
 {
-	CHECKPOINT
-
 	if (c->netwmname != NULL)
 		return fttextwidth_utf8(font,c->netwmname);
 	else if (c->wmname != NULL)
@@ -1846,8 +1769,7 @@ int namewidth(struct font *font,struct client *c)
 
 char* getMaxString(struct font *font,struct client *c,int width)
 {
-	CHECKPOINT
-	char	*buffer;
+		char	*buffer;
 	int		maxwid;
 
 	if (c->netwmname != NULL)
@@ -1888,8 +1810,7 @@ char* getMaxString(struct font *font,struct client *c,int width)
 
 void drawname(Drawable d,struct font *font,struct fontcolor *color,int x,int y,struct client *c)
 {
-	CHECKPOINT
-	if (c->netwmname != NULL)
+		if (c->netwmname != NULL)
 		ftdrawstring_utf8(d,font,color,x,y,c->netwmname);
 	else if (c->wmname != NULL)
 		ftdrawstring(d,font,color,x,y,c->wmname);
@@ -1897,8 +1818,7 @@ void drawname(Drawable d,struct font *font,struct fontcolor *color,int x,int y,s
 
 int cgetgrav(struct client *c)
 {
-	CHECKPOINT
-	if (c->wmnormalhints != NULL &&
+		if (c->wmnormalhints != NULL &&
 	        (c->wmnormalhints->flags & PWinGravity) != 0)
 		return c->wmnormalhints->win_gravity;
 	else
@@ -1907,8 +1827,7 @@ int cgetgrav(struct client *c)
 
 void chintsize(struct client *c,int width,int height,int *rwidth,int *rheight)
 {
-	CHECKPOINT
-	width=MAX(1,width);
+		width=MAX(1,width);
 	height=MAX(1,height);
 
 	XSizeHints *h=c->wmnormalhints;
@@ -1992,8 +1911,7 @@ void chintsize(struct client *c,int width,int height,int *rwidth,int *rheight)
 
 void csetnetwmname(struct client *c,const char *name)
 {
-	CHECKPOINT
-	free(c->netwmname);
+		free(c->netwmname);
 	c->netwmname=(name==NULL) ? NULL : xstrdup(name);
 
 	if (c->frame != NULL)
@@ -2002,8 +1920,7 @@ void csetnetwmname(struct client *c,const char *name)
 
 void cignoreunmap(struct client *c)
 {
-	CHECKPOINT
-	//assert(c->ismapped);
+		//assert(c->ismapped);
 	c->ignoreunmapcount++;
 }
 

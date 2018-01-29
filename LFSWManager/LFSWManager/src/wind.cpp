@@ -62,12 +62,6 @@ unsigned long		widgetColour;
 //buttons
 GC					activeGC;
 
-#ifdef _DEBUGLEVEL_
-//debug
-int					errLine;
-const char			*errFile;
-const char			*errFunc;
-#endif
 bool				xLibWarnings=false;
 
 /*
@@ -85,8 +79,7 @@ void errorf(const char *fmt,...)
 
 void setlistener(Window w,const struct listener *l)
 {
-	CHECKPOINT
-	if (l==NULL)
+		if (l==NULL)
 		XDeleteContext(dpy,w,listeners);
 	else
 		XSaveContext(dpy,w,listeners,(XPointer)l);
@@ -94,8 +87,7 @@ void setlistener(Window w,const struct listener *l)
 
 struct listener *getlistener(Window w)
 {
-	CHECKPOINT
-	struct listener *l;
+		struct listener *l;
 	if (XFindContext(dpy,w,listeners,(XPointer *)&l)==0)
 		return l;
 	else
@@ -104,8 +96,7 @@ struct listener *getlistener(Window w)
 
 int redirect(XEvent *e,Window w)
 {
-	CHECKPOINT
-	struct listener *l=getlistener(w);
+		struct listener *l=getlistener(w);
 	if (l==NULL)
 		return -1;
 

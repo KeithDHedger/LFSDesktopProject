@@ -76,8 +76,7 @@ void saveVarsToFile(const char* filepath,args* dataptr,const char *fs)
 
 bool loadVarsFromFile(char* filepath,args* dataptr,const char *fs)
 {
-	CHECKPOINT
-	FILE*	fd=NULL;
+		FILE*	fd=NULL;
 	char	buffer[2048];
 	int		cnt;
 	char*	strarg=NULL;

@@ -22,8 +22,8 @@
 #ifndef _GLOBALS_
 #define _GLOBALS_
 
-#define DEBUGFUNC(x,...) errLine=__LINE__,errFile=__FILE__,errFunc=__func__;debugFunc((const char*)x,__VA_ARGS__)
-#define debugfunc  DEBUGFUNC
+//##define DEBUGFUNC(x,...) errLine=__LINE__,errFile=__FILE__,errFunc=__func__;debugFunc((const char*)x,__VA_ARGS__)
+//#define debugfunc  DEBUGFUNC
 
 #define RESERVED 2
 #define MAXBUFFER 512

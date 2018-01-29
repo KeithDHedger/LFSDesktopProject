@@ -55,27 +55,23 @@ struct
 
 void ewmh_notifyclientdesktop(Window w,unsigned long i)
 {
-	CHECKPOINT
-	setprop(w,NET_WM_DESKTOP,XA_CARDINAL,32,&i,1);
+		setprop(w,NET_WM_DESKTOP,XA_CARDINAL,32,&i,1);
 }
 
 void ewmh_notifycurdesk(unsigned long n)
 {
-	CHECKPOINT
-	setprop(root,NET_CURRENT_DESKTOP,XA_CARDINAL,32,&n,1);
+		setprop(root,NET_CURRENT_DESKTOP,XA_CARDINAL,32,&n,1);
 }
 
 void ewmh_notifyframeextents(Window w,struct extents e)
 {
-	CHECKPOINT
-	unsigned long v[4]= { (unsigned long)e.left,(unsigned long)e.right,(unsigned long)e.top,(unsigned long)e.bottom };
+		unsigned long v[4]= { (unsigned long)e.left,(unsigned long)e.right,(unsigned long)e.top,(unsigned long)e.bottom };
 	setprop(w,NET_FRAME_EXTENTS,XA_CARDINAL,32,v,NELEM(v));
 }
 
 void addclient(Window w)
 {
-	CHECKPOINT
-	if (clientlist.n==clientlist.lim)
+		if (clientlist.n==clientlist.lim)
 		{
 			clientlist.lim += 32;
 			clientlist.v=(Window*)xrealloc(clientlist.v,clientlist.lim * sizeof clientlist.v[0]);
@@ -86,8 +82,7 @@ void addclient(Window w)
 
 void delclient(Window w)
 {
-	CHECKPOINT
-	unsigned int i;
+		unsigned int i;
 
 	for (i=0; i<clientlist.n && clientlist.v[i] != w; i++);
 	if (i<clientlist.n)
@@ -107,8 +102,7 @@ void delclient(Window w)
 
 unsigned long ewmh_getndesktops(void)
 {
-	CHECKPOINT
-	unsigned long nd=DEFAULT_NUMBER_OF_DESKTOPS;
+		unsigned long nd=DEFAULT_NUMBER_OF_DESKTOPS;
 	unsigned long n;
 	unsigned long *p=(long unsigned int*)getprop(root,NET_NUMBER_OF_DESKTOPS,XA_CARDINAL,32,&n);
 	if (p != NULL)
@@ -122,8 +116,7 @@ unsigned long ewmh_getndesktops(void)
 
 void ewmh_notifyndesk(unsigned long n)
 {
-	CHECKPOINT
-	long *viewport=(long int*)xmalloc(n * 2 * sizeof (long));
+		long *viewport=(long int*)xmalloc(n * 2 * sizeof (long));
 	long *workarea=(long int*)xmalloc(n * 4 * sizeof (long));
 	for (unsigned long i=0; i<n; i++)
 		{
@@ -145,14 +138,12 @@ void ewmh_notifyndesk(unsigned long n)
 
 void setcurrentdesktop(unsigned long i)
 {
-	CHECKPOINT
-	setprop(root,NET_CURRENT_DESKTOP,XA_CARDINAL,32,&i,1);
+		setprop(root,NET_CURRENT_DESKTOP,XA_CARDINAL,32,&i,1);
 }
 
 void ewmh_startwm(void)
 {
-	CHECKPOINT
-	UTF8_STRING=xatom("UTF8_STRING");
+		UTF8_STRING=xatom("UTF8_STRING");
 
 	Atom globals[]=
 		{
@@ -229,14 +220,12 @@ void ewmh_startwm(void)
 
 void ewmh_stopwm(void)
 {
-	CHECKPOINT
-	XDestroyWindow(dpy,wmcheckwin);
+		XDestroyWindow(dpy,wmcheckwin);
 }
 
 void reloadwindowname(struct client *c)
 {
-	CHECKPOINT
-	unsigned long n=0;
+		unsigned long n=0;
 	char *name=(char*)getprop(c->window,NET_WM_NAME,UTF8_STRING,8,&n);
 	csetnetwmname(c,name);
 	if (name != NULL)
@@ -248,8 +237,7 @@ void reloadwindowname(struct client *c)
  */
 void removestate(Window w,Atom state)
 {
-	CHECKPOINT
-	unsigned long n=0;
+		unsigned long n=0;
 	Atom *v=(Atom*)getprop(w,NET_WM_STATE,XA_ATOM,32,&n);
 	unsigned long k=0;
 	for (unsigned long i=0; i<n; i++)
@@ -263,8 +251,7 @@ void removestate(Window w,Atom state)
 
 void reloadwindowstate(struct client *c)
 {
-	CHECKPOINT
-	Window			w=c->window;
+		Window			w=c->window;
 	unsigned long	n=0;
 	bool			handled;
 	bool			unmax=true;
@@ -335,8 +322,7 @@ void reloadwindowstate(struct client *c)
 
 void reloadwindowtype(struct client *c)
 {
-	CHECKPOINT
-	Bool isdock=False;
+		Bool isdock=False;
 
 	unsigned long n=0;
 	Atom *types=(Atom*)getprop(c->window,NET_WM_WINDOW_TYPE,XA_ATOM,32,&n);
@@ -352,8 +338,7 @@ void reloadwindowtype(struct client *c)
 
 void reloadwindowdesktop(struct client *c)
 {
-	CHECKPOINT
-	Window w=c->window;
+		Window w=c->window;
 	unsigned long n=0;
 	long *deskp=(long*)getprop(w,NET_WM_DESKTOP,XA_CARDINAL,32,&n);
 	if (deskp != NULL)
@@ -368,8 +353,7 @@ void reloadwindowdesktop(struct client *c)
 
 void ewmh_maprequest(struct client *c)
 {
-	CHECKPOINT
-	/*
+		/*
 	 * The order of the following calls is optimized
 	 * for visual appearance.
 	 */
@@ -380,8 +364,7 @@ void ewmh_maprequest(struct client *c)
 
 void ewmh_manage(struct client *c)
 {
-	CHECKPOINT
-	Window	w=c->window;
+		Window	w=c->window;
 	int		vcnt=3;
 	addclient(w);
 
@@ -438,8 +421,7 @@ void ewmh_manage(struct client *c)
  */
 void ewmh_notifyfocus(Window old,Window mynew)
 {
-	CHECKPOINT
-	// The last recorded focus window
+		// The last recorded focus window
 	Window current=None;
 
 	if (old==None || old==current)
@@ -451,8 +433,7 @@ void ewmh_notifyfocus(Window old,Window mynew)
 
 void ewmh_unmanage(struct client *c)
 {
-	CHECKPOINT
-	Window w=c->window;
+		Window w=c->window;
 	ewmh_notifyfocus(w,None);
 	delclient(w);
 	XDeleteProperty(dpy,w,NET_WM_ALLOWED_ACTIONS);
@@ -460,8 +441,6 @@ void ewmh_unmanage(struct client *c)
 
 void ewmh_withdraw(struct client *c)
 {
-	CHECKPOINT
-
 	c->isundecorated=true;
 	Window w=c->window;
 //	XDeleteProperty(dpy,w,NET_WM_ALLOWED_ACTIONS);
@@ -473,8 +452,7 @@ void ewmh_withdraw(struct client *c)
 
 void ewmh_notifyrestack(void)
 {
-	CHECKPOINT
-	Window *v;
+		Window *v;
 	size_t n;
 	getwindowstack(&v,&n);
 	setprop(root,NET_CLIENT_LIST_STACKING,XA_WINDOW,32,v,n);
@@ -483,15 +461,13 @@ void ewmh_notifyrestack(void)
 
 void ewmh_propertynotify(struct client *c,XPropertyEvent *e)
 {
-	CHECKPOINT
-	if (e->atom==NET_WM_NAME)
+		if (e->atom==NET_WM_NAME)
 		reloadwindowname(c);
 }
 
 Bool hasstate(Window w,Atom state)
 {
-	CHECKPOINT
-	unsigned long n=0;
+		unsigned long n=0;
 	Atom *v=(Atom*)getprop(w,NET_WM_STATE,XA_ATOM,32,&n);
 	Bool found=False;
 	for (unsigned long i=0; i<n; i++)
@@ -510,8 +486,7 @@ Bool hasstate(Window w,Atom state)
  */
 void addstate(Window w,Atom state)
 {
-	CHECKPOINT
-	unsigned long n=0;
+		unsigned long n=0;
 	Atom *old=(Atom*)getprop(w,NET_WM_STATE,XA_ATOM,32,&n);
 	Bool present=False;
 	for (unsigned long i=0; i<n; i++)
@@ -535,8 +510,7 @@ void addstate(Window w,Atom state)
 //IMPORTANT//
 void changestate(Window w,int how,Atom state)
 {
-	CHECKPOINT
-	switch (how)
+		switch (how)
 		{
 		case NET_WM_STATE_REMOVE:
 			removestate(w,state);
@@ -555,8 +529,7 @@ void changestate(Window w,int how,Atom state)
 
 void ewmh_notifyfull(Window w,Bool full)
 {
-	CHECKPOINT
-	if (full)
+		if (full)
 		{
 			if (!hasstate(w,NET_WM_STATE_FULLSCREEN))
 				addstate(w,NET_WM_STATE_FULLSCREEN);
@@ -567,8 +540,6 @@ void ewmh_notifyfull(Window w,Bool full)
 
 void ewmh_clientmessage(struct client *c,XClientMessageEvent *e)
 {
-	CHECKPOINT
-
 	if (e->message_type==NET_ACTIVE_WINDOW && e->format==32)
 		{
 			c->isIcon=false;
@@ -617,8 +588,7 @@ void ewmh_clientmessage(struct client *c,XClientMessageEvent *e)
 
 void ewmh_rootclientmessage(XClientMessageEvent *e)
 {
-	CHECKPOINT
-	if (e->message_type==NET_CURRENT_DESKTOP && e->format==32)
+		if (e->message_type==NET_CURRENT_DESKTOP && e->format==32)
 		{
 			gotodesk(e->data.l[0]);
 			refocus((Time)e->data.l[1]);

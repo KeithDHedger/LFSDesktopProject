@@ -46,7 +46,7 @@ void saveInfofile(int where,char* label,char* mime,char* path,char* uuid,char* t
 void getFreeSlot(int *x,int *y);
 char* getMimeType(char *filepath);
 char* oneLiner(const char* fmt,...);
-void debugFunc(const char *fmt, ...);
+void debugFuncxx(const char *fmt, ...);
 char* defaultIcon(char *theme,char *name,const char *catagory);
 
 #endif

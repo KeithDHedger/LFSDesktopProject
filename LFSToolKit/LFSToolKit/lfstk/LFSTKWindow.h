@@ -75,6 +75,7 @@ class LFSTK_windowClass
 		LFSTK_windowClass();
 		~LFSTK_windowClass();
 		LFSTK_windowClass(int x,int y,int w,int h,const char* name,bool override,bool loadvars=true,bool shutdisplayonexit=false);
+		LFSTK_windowClass(windowInitStruct *wi);
 
 		void					LFSTK_showWindow(bool all=true);
 		void					LFSTK_hideWindow(void);
@@ -91,6 +92,7 @@ class LFSTK_windowClass
 		void					LFSTK_setWindowColourName(int p,const char* colour);
 		void					LFSTK_setDecorated(bool isDecorated);
 		void					LFSTK_setKeepAbove(bool set);
+		void					LFSTK_setKeepBelow(bool set);
 		void					LFSTK_setActive(bool set);
 		bool					LFSTK_getActive(void);
 		void					LFSTK_setSticky(bool set);
@@ -166,6 +168,7 @@ class LFSTK_windowClass
 
 	private:
 //window routines
+		void					windowClassInitCommon(windowInitStruct *wi);
 		void					initWindow(bool loadvars);
 		void					loadGlobalColours(void);
 		void					loadMonitorData(void);

@@ -1,4 +1,7 @@
 0.2.4
+Added window constructor using struct to set data.
+Show winow no longer raises window as well.
+Added getcstr to linedit class.
 Added debug code.
 Added context menu to gadgets.
 Drag only with button 1 now.

@@ -407,7 +407,7 @@ char* oneLiner(const char* fmt,...)
 	return(NULL);
 }
 
-void debugFunc(const char *fmt, ...)
+void debugFuncxx(const char *fmt, ...)
 {
 	va_list	ap;
 	char	*buffer,*subbuffer;

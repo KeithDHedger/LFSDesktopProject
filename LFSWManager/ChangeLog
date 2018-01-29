@@ -1,4 +1,7 @@
 0.1.2
+Appmenu now available on either root window or DESKTOP type windows.
+Code clean.
+Replaced old debug code with new.
 Updated for new toolkit.
 
 0.1.1

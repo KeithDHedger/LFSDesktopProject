@@ -53,8 +53,7 @@ const unsigned lockmasks[] =
 
 void *xmalloc(size_t size)
 {
-	CHECKPOINT
-	void *p;
+		void *p;
 	while ((p=malloc(size))==NULL && size != 0)
 		{
 			errorf("out of memory");
@@ -65,8 +64,7 @@ void *xmalloc(size_t size)
 
 void *xrealloc(const void *p,size_t size)
 {
-	CHECKPOINT
-	void *q;
+		void *q;
 	while ((q=realloc((void *)p,size))==NULL && size != 0)
 		{
 			errorf("out of memory");
@@ -77,8 +75,7 @@ void *xrealloc(const void *p,size_t size)
 
 char *xstrdup(const char *s)
 {
-	CHECKPOINT
-//MAYBEBAD//
+	//MAYBEBAD//
 	return(strdup(s));
 //	size_t n=strlen(s)+1;
 //	return ((char*)memcpy(xmalloc(n),s,n));
@@ -89,8 +86,7 @@ char *xstrdup(const char *s)
  */
 void grabkey(int keycode,unsigned modifiers,Window grabwin,Bool ownerevents,int ptrmode,int keymode)
 {
-	CHECKPOINT
-	if (modifiers==AnyModifier)
+		if (modifiers==AnyModifier)
 		XGrabKey(dpy,keycode,modifiers,grabwin,ownerevents,ptrmode,keymode);
 	else
 		for (unsigned int i=0; i<NELEM(lockmasks); i++)
@@ -102,8 +98,7 @@ void grabkey(int keycode,unsigned modifiers,Window grabwin,Bool ownerevents,int 
  */
 void ungrabkey(int keycode,unsigned modifiers,Window grabwin)
 {
-	CHECKPOINT
-	if (modifiers==AnyModifier)
+		if (modifiers==AnyModifier)
 		XUngrabKey(dpy,keycode,AnyModifier,grabwin);
 	else
 		for (unsigned int i=0; i<NELEM(lockmasks); i++)
@@ -115,8 +110,7 @@ void ungrabkey(int keycode,unsigned modifiers,Window grabwin)
  */
 void grabbutton(unsigned button,unsigned modifiers,Window grabwin,Bool ownerevents,unsigned eventmask,int ptrmode,int keymode,Window confineto,Cursor cursor)
 {
-	CHECKPOINT
-	if (modifiers==AnyModifier)
+		if (modifiers==AnyModifier)
 		XGrabButton(dpy,button,AnyModifier,grabwin,ownerevents,eventmask,ptrmode,keymode,confineto,cursor);
 	else
 		for (unsigned int i=0; i<NELEM(lockmasks); i++)
@@ -128,8 +122,7 @@ void grabbutton(unsigned button,unsigned modifiers,Window grabwin,Bool ownereven
  */
 void ungrabbutton(unsigned button,unsigned modifiers,Window grabwin)
 {
-	CHECKPOINT
-	if (modifiers==AnyModifier)
+		if (modifiers==AnyModifier)
 		XUngrabButton(dpy,button,modifiers,grabwin);
 	else
 		for (unsigned int i=0; i<lockmasks[i]; i++)
@@ -141,8 +134,7 @@ void ungrabbutton(unsigned button,unsigned modifiers,Window grabwin)
  */
 long getwmstate(Window w)
 {
-	CHECKPOINT
-	unsigned long nitems,bytesafter;
+		unsigned long nitems,bytesafter;
 	unsigned char *prop;
 	Atom actualtype;
 	int actualformat;
@@ -164,8 +156,7 @@ long getwmstate(Window w)
  */
 void setwmstate(Window w,long state)
 {
-	CHECKPOINT
-	long data[2]= { state,None };
+		long data[2]= { state,None };
 	XChangeProperty(dpy,w,WM_STATE,WM_STATE,32,PropModeReplace,(unsigned char *)data,2);
 }
 
@@ -174,15 +165,13 @@ void setwmstate(Window w,long state)
  */
 Bool ismapped(Window w)
 {
-	CHECKPOINT
-	XWindowAttributes a;
+		XWindowAttributes a;
 	return XGetWindowAttributes(dpy,w,&a) && a.map_state != IsUnmapped;
 }
 
 char *decodetextproperty(XTextProperty *p)
 {
-	CHECKPOINT
-	char *s=NULL;
+		char *s=NULL;
 	char **v=NULL;
 	int n=0;
 	XmbTextPropertyToTextList(dpy,p,&v,&n);
@@ -195,14 +184,12 @@ char *decodetextproperty(XTextProperty *p)
 
 void setprop(Window w,Atom prop,Atom type,int fmt,void *ptr,int nelem)
 {
-	CHECKPOINT
-	XChangeProperty(dpy,w,prop,type,fmt,PropModeReplace,(const unsigned char*)ptr,nelem);
+		XChangeProperty(dpy,w,prop,type,fmt,PropModeReplace,(const unsigned char*)ptr,nelem);
 }
 
 void *getprop(Window w,Atom prop,Atom type,int fmt,unsigned long *rcountp)
 {
-	CHECKPOINT
-	void *ptr=NULL;
+		void *ptr=NULL;
 	unsigned long count=32;
 	Atom rtype;
 	int rfmt;
@@ -235,16 +222,14 @@ void *getprop(Window w,Atom prop,Atom type,int fmt,unsigned long *rcountp)
 
 void drawbitmap(Drawable d,GC gc,struct bitmap *b,int x,int y)
 {
-	CHECKPOINT
-	if (b->pixmap==None)
+		if (b->pixmap==None)
 		b->pixmap=XCreateBitmapFromData(dpy,d,(char *)b->bits,b->width,b->height);
 	XCopyPlane(dpy,b->pixmap,d,gc,0,0,b->width,b->height,x,y,1);
 }
 
 unsigned long getpixel(const char *name)
 {
-	CHECKPOINT
-	XColor tc,sc;
+		XColor tc,sc;
 	XAllocNamedColor(dpy,DefaultColormap(dpy,screen),name,&sc,&tc);
 	return sc.pixel;
 }

@@ -36,7 +36,6 @@ struct menuEntryStruct
 	Pixmap				pm[2];
 	bool				gotIcon;
 	char				*imagePath;
-	
 };
 
 struct appMenuStruct
@@ -69,7 +68,6 @@ void freeData(void)
 						free(mainMenus[j].entry[k].name);
 				}
 		}
-
 }
 
 bool bcb(void *p,void* ud)
@@ -221,8 +219,6 @@ void setCatagories(void)
 											const char *imagefile=wc->globalLib->LFSTK_findThemedIcon(desktopTheme,foundiconbuffer,"");
 											if(imagefile!=NULL)
 												{
-													//twc->globalLib->LFSTK_setPixmapsFromPath(twc->display,twc->visual,twc->cm,twc->window,imagefile,&mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].pm[0],&mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].pm[1],16);
-													//mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].gotIcon=true;
 													mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].imagePath=strdup(imagefile);
 												}
 										}
@@ -375,18 +371,6 @@ int main(int argc, char **argv)
 												runsub=false;
 												mainloop=false;
 											}
-//										point.x=subwindowgeom->x+sinkx;
-//										point.y=subwindowgeom->y+sinky;
-//										if(this->wc->globalLib->LFSTK_pointInRect(&point,(geometryStruct*)parentwindowgeom))
-//											{
-//												XSync(this->display,true);
-//												wc->LFSTK_hideWindow();
-//												//wc->gadgetDetails.colour=&this->colourNames[NORMALCOLOUR];
-//												//wc->gadgetDetails.state=NORMALCOLOUR;
-//												//wc->LFSTK_clearWindow();
-//												//wc->inWindow=false;
-//												return(true);
-//											}
 									}
 								wc->LFSTK_clearWindow();
 							}

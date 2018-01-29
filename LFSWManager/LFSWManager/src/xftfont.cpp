@@ -41,8 +41,7 @@
 
 struct font *ftload(const char *name)
 {
-	CHECKPOINT
-	XftFont  *font=NULL;
+		XftFont  *font=NULL;
 
 	if (name != NULL)
 		{
@@ -78,8 +77,7 @@ struct fontcolor
 
 struct fontcolor *ftloadcolor(const char *name,const char *fallback)
 {
-	CHECKPOINT
-	XftDraw *draw;
+		XftDraw *draw;
 	XftColor color;
 	Visual *visual=DefaultVisual(dpy,screen);
 	Colormap colormap=DefaultColormap(dpy,screen);
@@ -108,40 +106,35 @@ struct fontcolor *ftloadcolor(const char *name,const char *fallback)
 
 void ftfree(struct font *f)
 {
-	CHECKPOINT
-	XftFont *font=(XftFont*)f->data;
+		XftFont *font=(XftFont*)f->data;
 	XftFontClose(dpy,font);
 	free(f);
 }
 
 void ftfreecolor(struct fontcolor *fc)
 {
-	CHECKPOINT
-	XftColorFree(dpy,fc->visual,fc->colormap,&fc->color);
+		XftColorFree(dpy,fc->visual,fc->colormap,&fc->color);
 	XftDrawDestroy(fc->draw);
 	free(fc);
 }
 
 void ftdrawstring(Drawable d,struct font *f,struct fontcolor *c,int x,int y,const char *s)
 {
-	CHECKPOINT
-	XftFont *font=(XftFont*)f->data;
+		XftFont *font=(XftFont*)f->data;
 	XftDrawChange(c->draw,d);
 	XftDrawString8(c->draw,&c->color,font,x,y,(XftChar8 *)s,strlen(s));
 }
 
 void ftdrawstring_utf8(Drawable d,struct font *f,struct fontcolor *c,int x,int y,const char *s)
 {
-	CHECKPOINT
-	XftFont *font=(XftFont*)f->data;
+		XftFont *font=(XftFont*)f->data;
 	XftDrawChange(c->draw,d);
 	XftDrawStringUtf8(c->draw,&c->color,font,x,y,(XftChar8 *)s,strlen(s));
 }
 
 int fttextwidth(struct font *f,const char *s)
 {
-	CHECKPOINT
-	XftFont *font=(XftFont*)f->data;
+		XftFont *font=(XftFont*)f->data;
 	XGlyphInfo info;
 	XftTextExtents8(dpy,font,(XftChar8 *)s,strlen(s),&info);
 	return info.width-info.x; // [sic]
@@ -149,8 +142,7 @@ int fttextwidth(struct font *f,const char *s)
 
 int fttextwidth_utf8(struct font *f,const char *s)
 {
-	CHECKPOINT
-	XftFont *font=(XftFont*)f->data;
+		XftFont *font=(XftFont*)f->data;
 	XGlyphInfo info;
 	XftTextExtentsUtf8(dpy,font,(XftChar8 *)s,strlen(s),&info);
 	return info.width-info.x; // [sic]

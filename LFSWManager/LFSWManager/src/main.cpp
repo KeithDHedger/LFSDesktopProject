@@ -49,6 +49,9 @@
 
 #include <Imlib2.h>
 
+#include "config.h"
+#include <lfstk/LFSTKGlobals.h>
+
 #include "wind.h"
 #include "x11font.h"
 #include "list.h"
@@ -61,8 +64,6 @@
 #include "button.h"
 #include "atoms.h"
 #include "appmenu.h"
-
-#include "config.h"
 
 #include "deleven.xbm"
 #include "delodd.xbm"
@@ -85,12 +86,6 @@ DEFINE_BITMAP(shadeodd);
 enum			runlevel runlevel=RL_STARTUP;
 int				exitstatus;
 
-/*
- * If true,enable debug mode. This will enable synchronous
- * X11 transactions,and print Xlib errors to standard error.
- */
-//Bool			debug=False;
-
 // The display name used in call to XOpenDisplay
 const char		*displayname=NULL;
 
@@ -103,17 +98,15 @@ sigset_t		sigmask;
 
 int errhandler(Display *dpy,XErrorEvent *e)
 {
-#if _DEBUGLEVEL_ == DBG1
+#ifdef _ENABLEDEBUG_
 	char buf[128];
 
 	if(xLibWarnings==true)
 		{
-			lastcheckpoint(">>>>>>>>>>>>>>>>>>>>>>>");
 			buf[0]='\0';
 			XGetErrorText(dpy,e->error_code,buf,sizeof buf);
-			errorf("Xlib: %s",buf);
+			DEBUGFUNC("Xlib: %s",buf);
 			xerror=buf;
-			printf("<<<<<<<<<<<<<<<<<<<<<<<\n");
 		}
 #endif
 	return 0;
@@ -121,22 +114,8 @@ int errhandler(Display *dpy,XErrorEvent *e)
 
 void onsignal(int signal)
 {
-#if _DEBUGLEVEL_ == DBG1
-	FILE*	fp=NULL;
-
-	fp=fopen("/tmp/lfswmanager.error.log","a");
-
-	fprintf(stderr,"Traped signal %s\n",strsignal(signal));
-	fprintf(stderr,"File: %s, Function: %s, Line: %i\n",errFile,errFunc,errLine);
-
-	if(fp!=NULL)
-		{
-			fprintf(fp,"Traped signal %s\n",strsignal(signal));
-			fprintf(fp,"File: %s, Function: %s, Line: %i\n",errFile,errFunc,errLine);
-		}
-
-	if(fp!=NULL)
-		fclose(fp);
+#ifdef _ENABLEDEBUG_
+	DEBUGFUNC("Traped signal %s\n",strsignal(signal));
 #endif
 
 	if(signal==SIGSEGV)
@@ -147,8 +126,6 @@ void onsignal(int signal)
 
 int waitevent(void)
 {
-	CHECKPOINT
-
 	if (XPending(dpy)>0)
 		return 0;
 	fd_set rfds;
@@ -245,8 +222,6 @@ const char	*themePartNames[]=
 
 void loadTheme(void)
 {
-	CHECKPOINT
-
 	char		buffer[2048];
 	int			partcnt=0;
 	int			hite=0;
@@ -339,8 +314,6 @@ void makeFullPathToTheme(void)
 
 int main(int argc,char *argv[])
 {
-	CHECKPOINT
-
 	int					cnt=-1;
 	XineramaScreenInfo	*p=NULL;
 	char				*prefsfile;
@@ -505,11 +478,8 @@ int main(int argc,char *argv[])
 			exit(1);
 		}
 
-#if _DEBUGLEVEL_ == DBG1
+#ifdef _ENABLEDEBUG_
 	xLibWarnings=true;
-	fprintf(stderr,"%s\n",PACKAGE_STRING);
-	fprintf(stderr,"Synchronous DEBUG mode enabled. Printing Xlib errors on standard error.\n");
-	fprintf(stderr,"Report bugs to <kdhedger68713@gmail.com>.\n");
 #else
 	xLibWarnings=false;
 #endif
@@ -609,14 +579,16 @@ int main(int argc,char *argv[])
 	refocus(CurrentTime);
 	runlevel=RL_NORMAL;
 
-	CHECKPOINT
-	Window			root_return;
+		Window			root_return;
 	Window			child_return;
 	int				root_x_return;
 	int				root_y_return;
 	int				win_x_return;
 	int				win_y_return;
 	unsigned int	mask_return;
+	Atom			*types=NULL;
+	unsigned long	n=0;
+	bool			isdesktop=false;
 #define MAXBUFFER 512
 	char			buffer[MAXBUFFER];
 
@@ -626,102 +598,21 @@ int main(int argc,char *argv[])
 			XNextEvent(dpy,&e);
 			if(XQueryPointer(dpy,DefaultRootWindow(dpy),&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
 					{
-					
 						if(mask_return & Button3Mask)
 							{
-								if(child_return==0)
+								isdesktop=false;
+								types=(Atom*)getprop(child_return,NET_WM_WINDOW_TYPE,XA_ATOM,32,&n);
+								if (types != NULL)
 									{
-#if 0
-									if (redirect(&e,e.xany.window)==-1)
-													{
-														if (e.type==ClientMessage)
-															redirect(&e,root);
-													}
-									bool popupLoop=true;
-									XEvent	evente;
-
-									printf(">>>>here\n");
-										//appWindow->LFSTK_moveWindow(root_x_return,root_y_return,true);
-										appWindow->LFSTK_moveWindow(100,100,true);
-										appWindow->LFSTK_resizeWindow(800,600,true);
-										appWindow->LFSTK_clearWindow();
-										appWindow->LFSTK_showWindow(true);
-										appWindow->LFSTK_hideWindow();
-										appWindow->LFSTK_showWindow(true);
-										refreshMenu();
-										while(popupLoop==true)
+										for (unsigned long i=0; i<n; i++)
 											{
-											
-
-												XNextEvent(dpy,&evente);
-												printf("----------\n");
-			//	{
-					/*
-					 * EWMH specifies some root window client
-					 * messages with a non-root event window,
-					 * so we need to redirect those manually.
-					 */
-
-			//		
-			//	}
-//												listener *l=appWindow->LFSTK_getListener(evente.xany.window);
-//
-//												if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
-//													l->function(l->pointer,&evente,l->type);
-
-			if((evente.xany.window==appWindow->window) ||(evente.xany.window==catButtons[0]->LFSTK_getWindow()))
-			//if(redirect(&evente,evente.xany.window)==-1)
-		//	{
-		//												if (evente.type==ClientMessage)
-		//													redirect(&evente,root);
-		//	}
-		//	else
-			{
-printf(">>winid=%p<<\n",evente.xany.window);
-
-												listener *l=appWindow->LFSTK_getListener(evente.xany.window);
-
-												if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
-													l->function(l->pointer,&evente,l->type);
-												switch(evente.type)
-													{
-														case ClientMessage:
-														appWindow->LFSTK_clearWindow();
-															//appWindow->LFSTK_showWindow(true);
-															refreshMenu();
-														//	if (redirect(&evente,evente.xany.window)==-1)
-														//		redirect(&evente,root);
-															break;
-														case LeaveNotify:
-															//if(evente.xany.window==appWindow->window)
-															//	popupLoop=false;
-															break;
-														case Expose:
-														printf("expose\n");
-															appWindow->LFSTK_clearWindow();
-															//appWindow->LFSTK_showWindow(true);
-															refreshMenu();
-															break;
-														case ConfigureNotify:
-														printf("config\n");
-															appWindow->LFSTK_resizeWindow(evente.xconfigurerequest.width,evente.xconfigurerequest.height);
-															appWindow->LFSTK_clearWindow();
-															//appWindow->LFSTK_showWindow(true);
-															refreshMenu();
-															break;
-													}
-													}
-													else
-													{
-												if (redirect(&evente,evente.xany.window)==-1)
-													{
-														if (evente.type==ClientMessage)
-															redirect(&evente,evente.xany.window);
-													}
-}
+												if (types[i]==NET_WM_WINDOW_TYPE_DESKTOP)
+													isdesktop=true;
 											}
-										appWindow->LFSTK_hideWindow();
-#endif
+									}
+
+								if((isdesktop==true) || (child_return==0))
+									{
 										sprintf(buffer,"%s \"%s\"",MAINMENUAPP,terminalCommand);
 										system(buffer);
 									}

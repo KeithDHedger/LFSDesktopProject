@@ -588,7 +588,6 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
-with_debug_level
 IMLIB_LIBS
 IMLIB_CFLAGS
 CAIRO_LIBS
@@ -708,7 +707,7 @@ ac_user_opts='
 enable_option_checking
 enable_dependency_tracking
 enable_silent_rules
-with_debug_level
+enable_debug
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1365,11 +1364,7 @@ Optional Features:
                           speeds up one-time build
   --enable-silent-rules   less verbose build output (undo: "make V=1")
   --disable-silent-rules  verbose build output (undo: "make V=0")
-
-Optional Packages:
-  --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
-  --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
-  --with-debug-level      Debug level ( 0,1 )
+  --enable-debug          Enable debug code
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -5494,17 +5489,22 @@ fi
 
 
 
-
-# Check whether --with-debug_level was given.
-if test "${with_debug_level+set}" = set; then :
-  withval=$with_debug_level; with_debug_level=$withval
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to build dbug functions" >&5
+$as_echo_n "checking whether to build dbug functions... " >&6; }
+# Check whether --enable-debug was given.
+if test "${enable_debug+set}" = set; then :
+  enableval=$enable_debug; enable_debug=$enableval
 else
-  with_debug_level=0
+  enable_debug="no"
 fi
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $enable_debug" >&5
+$as_echo "$enable_debug" >&6; }
+if test "$enable_debug" = "yes"; then
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: Setting debug level to $with_debug_level" >&5
-$as_echo "Setting debug level to $with_debug_level" >&6; }
+$as_echo "#define _ENABLEDEBUG_ /**/" >>confdefs.h
+
+fi
 
 ac_config_files="$ac_config_files Makefile LFSWManager/app/Makefile LFSWManager/helper/Makefile"
 

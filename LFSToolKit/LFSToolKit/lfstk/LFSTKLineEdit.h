@@ -45,6 +45,7 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 
 		const std::string* LFSTK_getBuffer(void);
 		void LFSTK_setBuffer(const char *str);
+		const char *LFSTK_getCStr(void);
 
 		bool mouseDown(XButtonEvent *e);
 		bool mouseEnter(XButtonEvent *e);

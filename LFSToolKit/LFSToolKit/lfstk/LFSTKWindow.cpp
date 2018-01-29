@@ -424,6 +424,7 @@ bool LFSTK_windowClass::LFSTK_getSticky(void)
 /**
 * Set window sticky.
 * \param set.
+* \note MUST be set AFTER show window.
 */
 void LFSTK_windowClass::LFSTK_setSticky(bool set)
 {
@@ -490,6 +491,34 @@ void LFSTK_windowClass::LFSTK_setKeepAbove(bool set)
 	xclient.data.l[2]=0;
 	XSendEvent(this->display,this->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
 }
+
+/**
+* Set window keep below.
+* \param set.
+* \note Must be set AFTER window has been mapped.
+*/
+void LFSTK_windowClass::LFSTK_setKeepBelow(bool set)
+{
+	XClientMessageEvent	xclient;
+	Atom				xa,xa1;
+
+	memset(&xclient,0,sizeof(xclient) );
+	xa=XInternAtom(this->display,"_NET_WM_STATE",False);
+	xa1=XInternAtom(display,"_NET_WM_STATE_BELOW",False);
+
+	xclient.type=ClientMessage;
+	xclient.window=this->window;
+	xclient.message_type=xa;
+	xclient.format=32;
+	if(set==true)
+		xclient.data.l[0] =_NET_WM_STATE_ADD;
+	else
+		xclient.data.l[0] =_NET_WM_STATE_REMOVE;
+	xclient.data.l[1] =xa1;
+	xclient.data.l[2]=0;
+	XSendEvent(this->display,this->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
+}
+
 
 /**
 * Set transient for window.
@@ -595,23 +624,30 @@ int LFSTK_windowClass::LFSTK_windowOnMonitor(void)
 }
 
 /**
-* Main window constructor.
-* \param x X pos.
-* \param y Y pos.
-* \param w Width.
-* \param h Height.
-* \param name Window name.
-* \param override True=ignore window manager placement.
-* \param loadvars Load default variables from file, default=true.
+* Common window constructor.
+* \param windowInitStruct *wi.
+* \note wi contains startup window params.
 */
-LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bool override,bool loadvars,bool shutdisplayonexit)
+void LFSTK_windowClass::windowClassInitCommon(windowInitStruct *wi)
 {
+//	DEBUGFUNC("int x=%i",wi->x);
+//showFileData=false;
+//	DEBUGFUNC("int y=%i",wi->y);
+//	DEBUGFUNC("int w=%i",wi->w);
+//	DEBUGFUNC("int h=%i",wi->h);
+//	DEBUGFUNC("const char	*name=%s",wi->name);
+//	DEBUGFUNC("bool override=%i",wi->overRide);
+//	DEBUGFUNC("bool loadVars=%i",wi->loadVars);
+//	DEBUGFUNC("bool shutDisplayOnExit=%i",wi->shutDisplayOnExit);
+//	DEBUGFUNC("const char	*windowType=%s",wi->windowType);
+//showFileData=true;
+
+
 	XSetWindowAttributes	wa;
 	Atom					wm_delete_window;
 	XClassHint				classHint;
 	Atom					xa;
 	Atom					xa_prop[3];
-//	int						depth=32;
 	bool					gotargb;
 	XVisualInfo				visual_template;
 	XVisualInfo				*visual_list=NULL;
@@ -622,7 +658,7 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 		exit(1);
 
 	this->depth=32;
-	this->setWindowGeom(x,y,w,h,WINDSETALL);
+	this->setWindowGeom(wi->x,wi->y,wi->w,wi->h,WINDSETALL);
 
 	this->fontString=NULL;
 	this->isActive=false;
@@ -633,10 +669,8 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 	this->rootWindow=DefaultRootWindow(this->display);
 	this->loadMonitorData();
 
-//	wa.background_pixmap=ParentRelative;
-
 	wa.win_gravity=NorthWestGravity;
-	wa.override_redirect=override;
+	wa.override_redirect=wi->overRide;
 	wm_delete_window=XInternAtom(this->display,"WM_DELETE_WINDOW",0);
 
 	visual_template.screen=this->screen;
@@ -657,21 +691,16 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 	this->cm=XCreateColormap(this->display,this->rootWindow,this->visual,AllocNone);
 	if(gotargb==true)
 		{
-			//printf("Got ARGB Window\n");
 			wa.colormap=this->cm;
 			wa.border_pixel=0;
 			wa.background_pixel=0;
 
-			this->window=XCreateWindow(this->display,this->rootWindow,0,0,w,h,0,this->depth,InputOutput,this->visual,CWColormap | CWBorderPixel |CWWinGravity|CWOverrideRedirect,&wa);
-//			this->window=XCreateWindow(this->display,this->rootWindow,0,0,w,h,0,depth,InputOutput,this->visual,CWColormap | CWBorderPixel |CWWinGravity|CWOverrideRedirect|CWBackPixmap ,&wa);
-
+			this->window=XCreateWindow(this->display,this->rootWindow,0,0,wi->w,wi->h,0,this->depth,InputOutput,this->visual,CWColormap | CWBorderPixel |CWWinGravity|CWOverrideRedirect,&wa);
 		}
 	else
 		{
-			this->window=XCreateWindow(this->display,this->rootWindow,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWOverrideRedirect,&wa);
-//			this->window=XCreateWindow(this->display,this->rootWindow,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWOverrideRedirect|CWBackPixmap,&wa);
+			this->window=XCreateWindow(this->display,this->rootWindow,wi->x,wi->y,wi->w,wi->h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWOverrideRedirect,&wa);
 		}
-
 
 	XSelectInput(this->display,this->window,SubstructureRedirectMask|StructureNotifyMask|ButtonPressMask | ButtonReleaseMask | ExposureMask|LeaveWindowMask|FocusChangeMask);
 
@@ -679,13 +708,14 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 	xa=XInternAtom(this->display,"_NET_WM_ALLOWED_ACTIONS",False);
 	xa_prop[0]=XInternAtom(this->display,"_NET_WM_STATE_STICKY",False);
 	xa_prop[1]=XInternAtom(this->display,"_NET_WM_STATE_ABOVE",False);
-	xa_prop[2]=XInternAtom(this->display,"_NET_WM_ACTION_CHANGE_DESKTOP",False);
+	xa_prop[2]=XInternAtom(this->display,"_NET_WM_STATE_BELOW",False);
+	xa_prop[3]=XInternAtom(this->display,"_NET_WM_ACTION_CHANGE_DESKTOP",False);
 
 	if(xa!=None)
-		XChangeProperty(this->display,this->window,xa,XA_ATOM,32,PropModeAppend,(unsigned char *)&xa_prop,3);
+		XChangeProperty(this->display,this->window,xa,XA_ATOM,32,PropModeAppend,(unsigned char *)&xa_prop,4);
 
-	this->LFSTK_setWindowType("_NET_WM_WINDOW_TYPE_NORMAL");
-	this->windowName=strdup(name);
+	this->LFSTK_setWindowType(wi->windowType);
+	this->windowName=strdup(wi->name);
 	XStoreName(this->display,this->window,this->windowName);
 	classHint.res_name=this->windowName;
 	classHint.res_class=(char*)"LFSToolKit";
@@ -693,9 +723,8 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 
 	this->gc=XCreateGC(this->display,this->window,0,NULL);
 	this->LFSTK_setFontString((char*)DEFAULTFONT);
-
-	this->LFSTK_setDecorated(true);
-	this->initWindow(loadvars);
+	this->LFSTK_setDecorated(wi->decorated);
+	this->initWindow(wi->loadVars);
 
 	if(this->globalLib->LFSTK_getUseTheme()==true)
 		this->LFSTK_setTile(this->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
@@ -706,9 +735,44 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 
 	this->userHome=getenv("HOME");
 	asprintf(&this->configDir,"%s/.config/LFS",this->userHome);
-	this->closeDisplayOnExit=shutdisplayonexit;
+	this->closeDisplayOnExit=wi->shutDisplayOnExit;
 
-	this->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+	this->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,wi->w,wi->h);
+}
+
+/**
+* Main window constructor.
+* \param windowInitStruct *wi.
+* \note wi contains startup window params.
+*/
+LFSTK_windowClass::LFSTK_windowClass(windowInitStruct *wi)
+{
+	this->windowClassInitCommon(wi);
+}
+
+/**
+* Main window constructor.
+* \param x X pos.
+* \param y Y pos.
+* \param w Width.
+* \param h Height.
+* \param name Window name.
+* \param override True=ignore window manager placement.
+* \param loadvars Load default variables from file, default=true.
+*/
+LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bool override,bool loadvars,bool shutdisplayonexit)
+{
+	windowInitStruct *wi=new windowInitStruct;
+	wi->x=x;
+	wi->y=y;
+	wi->w=w;
+	wi->h=h;
+	wi->name=name;
+	wi->overRide=override;
+	wi->loadVars=loadvars;
+	wi->shutDisplayOnExit=shutdisplayonexit;
+
+	this->windowClassInitCommon(wi);
 }
 
 /**
@@ -722,7 +786,7 @@ void LFSTK_windowClass::LFSTK_showWindow(bool all)
 
 	if(all==true)
 		XMapSubwindows(this->display,this->window);
-	XMapRaised(this->display,this->window);
+	XMapWindow(this->display,this->window);
 
 	memset(&xev,0,sizeof(xev));
 	xev.type=ClientMessage;

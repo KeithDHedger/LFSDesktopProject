@@ -34,10 +34,9 @@ bool doQuit(void *p,void* ud)
 
 bool doKeyUp(void *p,void* ud)
 {
-	printf(">>%s<<\n",editbox->LFSTK_getBuffer()->c_str());
+	printf(">>%s<<\n",editbox->LFSTK_getCStr());
 	return(true);
 }
-
 
 bool buttonCB(void *p,void* ud)
 {
