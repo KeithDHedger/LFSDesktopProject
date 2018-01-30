@@ -1,4 +1,5 @@
 0.1.2
+Appmenu now uses CNTRL + Button3.
 Appmenu now available on either root window or DESKTOP type windows.
 Code clean.
 Replaced old debug code with new.

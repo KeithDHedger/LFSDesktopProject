@@ -171,7 +171,7 @@ Bool ismapped(Window w)
 
 char *decodetextproperty(XTextProperty *p)
 {
-		char *s=NULL;
+	char *s=NULL;
 	char **v=NULL;
 	int n=0;
 	XmbTextPropertyToTextList(dpy,p,&v,&n);
@@ -189,7 +189,7 @@ void setprop(Window w,Atom prop,Atom type,int fmt,void *ptr,int nelem)
 
 void *getprop(Window w,Atom prop,Atom type,int fmt,unsigned long *rcountp)
 {
-		void *ptr=NULL;
+	void *ptr=NULL;
 	unsigned long count=32;
 	Atom rtype;
 	int rfmt;

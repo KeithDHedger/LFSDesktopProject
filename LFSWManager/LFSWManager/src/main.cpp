@@ -598,19 +598,20 @@ int main(int argc,char *argv[])
 			XNextEvent(dpy,&e);
 			if(XQueryPointer(dpy,DefaultRootWindow(dpy),&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
 					{
-						if(mask_return & Button3Mask)
+						if((mask_return & Button3Mask) && (mask_return & ControlMask))
 							{
-								isdesktop=false;
-								types=(Atom*)getprop(child_return,NET_WM_WINDOW_TYPE,XA_ATOM,32,&n);
-								if (types != NULL)
+								isdesktop=false;		
+								if(child_return!=0)
 									{
-										for (unsigned long i=0; i<n; i++)
+										types=(Atom*)getprop(child_return,NET_WM_WINDOW_TYPE,XA_ATOM,32,&n);
+										if (types != NULL)
 											{
-												if (types[i]==NET_WM_WINDOW_TYPE_DESKTOP)
+												if (types[0]==NET_WM_WINDOW_TYPE_DESKTOP)
 													isdesktop=true;
+												XFree(types);
 											}
 									}
-
+								
 								if((isdesktop==true) || (child_return==0))
 									{
 										sprintf(buffer,"%s \"%s\"",MAINMENUAPP,terminalCommand);
