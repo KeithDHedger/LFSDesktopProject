@@ -1,4 +1,6 @@
 0.2.4
+Fixed gadgets using parent windows pixmap.
+Can now set above/below/normal on window create.
 Added window constructor using struct to set data.
 Show winow no longer raises window as well.
 Added getcstr to linedit class.

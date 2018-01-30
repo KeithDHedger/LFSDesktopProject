@@ -1,5 +1,5 @@
 
-AC_INIT([LFSDesktop],[0.1.2],[LFSDesktop],[LFSDesktop])
+AC_INIT([LFSDesktop],[0.1.3],[LFSDesktop],[LFSDesktop])
 
 AC_CONFIG_HEADER([config.h])
 AC_PROG_CXX
@@ -46,6 +46,15 @@ if test $enable_suidhelper = "yes" ;then
 	AC_DEFINE([_USESUIDHELPER_], [], [Use suid helper])
 fi
 AC_MSG_RESULT($enable_suidhelper)
+
+AC_MSG_CHECKING(whether to build dbug functions)
+AC_ARG_ENABLE(debug,AS_HELP_STRING([--enable-debug],[Enable debug code]),
+    [enable_debug=$enableval],
+    [enable_debug="no"])
+AC_MSG_RESULT($enable_debug)
+if test "$enable_debug" = "yes"; then
+	AC_DEFINE([_ENABLEDEBUG_], [], [Enable debug code])
+fi
 
 AC_OUTPUT(Makefile LFSDesktop/app/Makefile LFSDesktop/helper/Makefile)
 

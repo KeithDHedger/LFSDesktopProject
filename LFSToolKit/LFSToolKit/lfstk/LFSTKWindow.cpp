@@ -206,6 +206,9 @@ LFSTK_windowClass::~LFSTK_windowClass()
 	XFreeGC(this->display,this->gc);
 
 	XDestroyWindow(this->display,this->window);
+	if(this->px!=None)
+		XFreePixmap(this->display,this->px);
+
 	if(this->closeDisplayOnExit==true)
 		XCloseDisplay(this->display);
 }
@@ -229,7 +232,7 @@ void LFSTK_windowClass::loadGlobalColours(void)
 
 /**
 * Set window pixmap
-* \param Pixmap Pource pixmap.
+* \param Pixmap Source pixmap.
 * \param w Width.
 * \param h Height.
 */
@@ -239,6 +242,8 @@ void LFSTK_windowClass::LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h)
 	cairo_surface_t	*surfacefrom;
 	cairo_t			*cr;
 
+	if(this->px!=None)
+		XFreePixmap(this->display,this->px);
 	this->px=XCreatePixmap(display,this->window,w,h,this->depth);
 
 	surfaceto=cairo_xlib_surface_create(display,this->px,this->visual,w,h);
@@ -252,11 +257,11 @@ void LFSTK_windowClass::LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h)
 	cairo_restore(cr);
 
 	XSetWindowBackgroundPixmap(display,this->window,this->px);
+	XClearWindow(display,this->window);
 
 	cairo_surface_destroy(surfaceto);
 	cairo_surface_destroy(surfacefrom);
 	cairo_destroy(cr);
-
 	this->usePixmap=true;
 	XSync(display,false);
 }
@@ -267,7 +272,10 @@ void LFSTK_windowClass::LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h)
 void LFSTK_windowClass::LFSTK_clearWindow(void)
 {
 	if(this->usePixmap==true)
-		return;
+		{
+			//XClearWindow(display,this->window);
+			return;
+		}
 
 	int	state=NORMALCOLOUR;
 
@@ -303,6 +311,8 @@ void LFSTK_windowClass::LFSTK_resizeWindow(int w,int h,bool tellx)
 	this->setWindowGeom(0,0,w,h,WINDSETWH);
 	if(tellx==true)
 		XResizeWindow(this->display,this->window,w,h);
+
+	this->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_clearWindow();
 }
 
@@ -489,7 +499,8 @@ void LFSTK_windowClass::LFSTK_setKeepAbove(bool set)
 		xclient.data.l[0] =_NET_WM_STATE_REMOVE;
 	xclient.data.l[1] =xa1;
 	xclient.data.l[2]=0;
-	XSendEvent(this->display,this->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
+//	XSendEvent(this->display,this->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
+	XSendEvent(this->display,this->window,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
 }
 
 /**
@@ -516,7 +527,8 @@ void LFSTK_windowClass::LFSTK_setKeepBelow(bool set)
 		xclient.data.l[0] =_NET_WM_STATE_REMOVE;
 	xclient.data.l[1] =xa1;
 	xclient.data.l[2]=0;
-	XSendEvent(this->display,this->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
+//	XSendEvent(this->display,this->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
+	XSendEvent(this->display,this->window,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
 }
 
 
@@ -695,7 +707,7 @@ void LFSTK_windowClass::windowClassInitCommon(windowInitStruct *wi)
 			wa.border_pixel=0;
 			wa.background_pixel=0;
 
-			this->window=XCreateWindow(this->display,this->rootWindow,0,0,wi->w,wi->h,0,this->depth,InputOutput,this->visual,CWColormap | CWBorderPixel |CWWinGravity|CWOverrideRedirect,&wa);
+			this->window=XCreateWindow(this->display,this->rootWindow,wi->x,wi->y,wi->w,wi->h,0,this->depth,InputOutput,this->visual,CWColormap | CWBorderPixel |CWWinGravity|CWOverrideRedirect,&wa);
 		}
 	else
 		{
@@ -738,6 +750,16 @@ void LFSTK_windowClass::windowClassInitCommon(windowInitStruct *wi)
 	this->closeDisplayOnExit=wi->shutDisplayOnExit;
 
 	this->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,wi->w,wi->h);
+
+	switch(wi->level)
+		{
+			case BELOWALL:
+				XLowerWindow(this->display,this->window);
+				break;
+			case ABOVEALL:
+				XRaiseWindow(this->display,this->window);
+				break;
+		}
 }
 
 /**

@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Thu 13 Aug 16:53:47 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Wed Jan 10 11:33:17 GMT 2018 kdhedger68713@gmail.com
 
  * This file (globals.h) is part of LFSDesktop.
 
@@ -18,81 +18,125 @@
  * along with LFSDesktop.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #ifndef _GLOBALS_
 #define _GLOBALS_
 
-//##define DEBUGFUNC(x,...) errLine=__LINE__,errFile=__FILE__,errFunc=__func__;debugFunc((const char*)x,__VA_ARGS__)
-//#define debugfunc  DEBUGFUNC
 
-#define RESERVED 2
-#define MAXBUFFER 512
+//#include <Python.h>
+
+#include <getopt.h>
+#include <sys/inotify.h>
+#include <limits.h>
+#include <poll.h>
+#include <ctype.h>
+#include <unistd.h>
+#include <signal.h>
+
+#include "config.h"
 
 #include <lfstk/LFSTKGlobals.h>
 
-enum {CACHEFOLDER,DISKFOLDER};
-enum {HOMEDATA=0,ROOTDATA};
-enum diskButtonID {BUTTONMOUNT=1,BUTTONUNMOUNT,BUTTONEJECT,BUTTONOPEN,BUTTONADDICON,BUTTONREMOVEICON};
+#include "prefs.h"
+#include "files.h"
+#include "disks.h"
 
-struct deskIcons
+#define EVENT_BUF_LEN	(sizeof(inotify_event)+NAME_MAX)*2
+
+struct	diskDataStruct
 {
-	char			*label;
-	char			*uuid;
-	char			*dev;
-	char			*mountpoint;
-	char			*mime;
-	char			*icon;
-	int				x;
-	int				y;
-	bool			mounted;
-	char			*partname;
-	bool			ignore;
-	bool			dvd;
-	bool			cdrom;
-	bool			usb;
-	bool			file;
-	int				iconhint;
-	bool			installed;
-	bool			customicon;
+	LFSTK_buttonClass	*diskImage;
+	char				*label;
+	char				*devName;
+	char				*uuid;
+	char				*pathToIcon;
+	int					diskType;
+	int					posx;
+	int					posy;
+	bool				hasCustomIcon;
+	bool				mounted;
+	bool				driveHasMedia;
+	int					dataType;
+	int					gadgetSize;
+	bool				dirty;
 };
 
-extern int			deskIconsCnt;
-extern int			deskIconsMaxCnt;
-extern deskIcons	*deskIconsArray;
+struct	diskLinkedList
+{
+	diskLinkedList	*prev;
+	diskDataStruct	*data;
+	diskLinkedList	*next;
+};
 
-extern int			errLine;
-extern const char	*errFile;
-extern const char	*errFunc;
+struct Hints
+{
+	unsigned long   flags;
+	unsigned long   functions;
+	unsigned long   decorations;
+	long            inputMode;
+	unsigned long   status;
+};
 
-extern bool shapeset;
+enum {TYPENONE=-1,DISKDATATYPE=0,FILEDATATYPE};
+enum {HDDDISK,USBHDD,THUMBDISK,CDROM,DVDROM,DESKFOLDER,DESKFILE,DESKTOPFILE};
+enum {MOUNTDISK=0,UNMOUNTDISK,EJECTDISK,OPENDISK,CUSTOMICONDISK,REMOVECUSTOMDISK,NOMOREBUTONS};
+enum {DIALOGRETERROR=0,DIALOGRETAPPLY,DIALOGRETCANCEL};
+
+//main window
+extern LFSTK_windowClass	*wc;
+extern bool					mainLoop;
+extern Display				*display;
+
+//list
+extern diskLinkedList		*diskLL;
+
+//paths
+extern char					*diskInfoPath;
+extern char					*cacheDisksPath;
+extern char					*cacheDeskPath;
+extern char					*prefsPath;
+extern char					*desktopPath;
+
+//save data
+extern char					*diskUUID;
+extern char					*iconPath;
+extern int					xPos;
+extern int					yPos;
+extern bool					customIcon;
+extern int					dataType;
+
+extern args					diskData[];
+
+//prefs
+extern bool					showSuffix;
+extern int					maxXSlots;
+extern int					maxYSlots;
+extern int					**xySlot;
+extern geometryStruct		oldPos;
+
+//info
+extern int					errLine;
+extern const char			*errFile;
+extern const char			*errFunc;
 
 //dialogs
 extern LFSTK_windowClass	*diskWindow;
 extern LFSTK_windowClass	*fileWindow;
 extern LFSTK_windowClass	*iconChooser;
 extern LFSTK_lineEditClass *iconChooserEdit;
+extern LFSTK_buttonClass	*diskButtons[];
+extern LFSTK_buttonClass	*fileButtons[];
+extern bool					dialogLoop;
+extern int					dialogRetVal;
 
-//save/load file
-extern args		globalFileData[];
-//global file data
-extern char		*fileDiskLabel;
-extern char		*fileDiskMime;
-extern char		*fileDiskPath;
-extern char		*fileDiskUUID;
-extern char		*fileDiskType;
-extern char		*fileCustomIcon;
-extern int		fileDiskXPos;
-extern int		fileDiskYPos;
-extern bool		fileGotCustomIcon;
-
-extern int		foundDiskNumber;
-extern bool		isDisk;
-extern bool		debugDeskFlag;
-
-extern int		xCnt;
-extern int		yCnt;
-
-extern char		*rootDev;
-extern const char	*possibleError;
+void freeAndNull(char **data);
+diskLinkedList* isInList(const char *devname);
+void newNode(void);
+void printDiskData(diskDataStruct *diskstruct);
+void setImageSize(diskDataStruct *dnode);
+void removeDeleted(void);
+void getFreeSlot(int *x,int *y);
+void setSlotFromPos(int x,int y,int val);
+bool dialogCB(void *p,void* ud);
+void dialogRun(LFSTK_windowClass *dialog);
 
 #endif

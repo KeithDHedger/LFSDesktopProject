@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Thu 13 Aug 16:55:25 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Thu Jan 11 13:01:38 GMT 2018 kdhedger68713@gmail.com
 
  * This file (disks.h) is part of LFSDesktop.
 
@@ -18,17 +18,15 @@
  * along with LFSDesktop.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #ifndef _DISKS_
 #define _DISKS_
 
-#define READFROM "ls -1 /sys/class/block"
+#include "globals.h"
 
-enum {HARDDIVE=0,USB,CDROM,DVD,STICK,IPOD,CARD,HOME,COMPUTER};
+enum {HOMEPB=0,DESKTOPPB,COMPUTERPB,BOOKMARKPB,USBDISKPB,HDDRIVEPB,ROMPB,DVDROMPB,CDROMPB,NETWORKDIVE,NUMPBS};
 
-extern const char	*iconDiskType[];
-
-void mountDisk(int what);
-void fillDesk(void);
+void loadDisks(void);
+void updateDisks(void);
+bool doDiskMenuSelect(void *p,void* ud);
 
 #endif

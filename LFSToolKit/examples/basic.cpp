@@ -69,13 +69,16 @@ int main(int argc, char **argv)
 	wi->h=DIALOGHITE;
 	wi->name=BOXLABEL;
 //tests
-//	wi->decorated=false;
-//	wi->windowType="_NET_WM_WINDOW_TYPE_DOCK";
+//	wi->decorated=true;
+//	wi->windowType="_NET_WM_WINDOW_TYPE_NORMAL";
 //	wi->overRide=true;
+//	wi->level=BELOWALL;
 
 	wc=new LFSTK_windowClass(wi);
 	display=wc->display;
 	delete wi;
+
+//wc->LFSTK_setKeepBelow(true);
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,NorthGravity);
 	label->LFSTK_setCairoFontDataParts("sB",20);
@@ -162,10 +165,10 @@ int main(int argc, char **argv)
 	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
 	sy+=YSPACING;
 
+	wc->LFSTK_setWindowPixmap(wc->globalLib->LFSTK_getWindowPixmap(display,wc->rootWindow),DIALOGWIDTH,sy);
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
-	//wc->LFSTK_moveWindow(100,100,true);
 	wc->LFSTK_showWindow();
-
+//	wc->LFSTK_moveWindow(100,100,true);
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	mainLoop=true;
 	while(mainLoop==true)
@@ -186,6 +189,7 @@ int main(int argc, char **argv)
 					case ConfigureNotify:
 						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
 						wc->globalLib->LFSTK_setCairoSurface(wc->display,wc->window,wc->visual,&wc->sfc,&wc->cr,event.xconfigurerequest.width,event.xconfigurerequest.height);
+						wc->LFSTK_setWindowPixmap(wc->globalLib->LFSTK_getWindowPixmap(display,wc->rootWindow),event.xconfigurerequest.width,event.xconfigurerequest.height);
 						wc->LFSTK_clearWindow();
 						break;
 

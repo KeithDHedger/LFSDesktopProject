@@ -1,1 +1,1 @@
-COMMONSRC = ../src/disks.cpp ../src/files.cpp ../src/globals.cpp ../src/graphics.cpp ../src/main.cpp ../src/prefs.cpp
+COMMONSRC = ../src/disks.cpp ../src/files.cpp ../src/globals.cpp ../src/main.cpp ../src/prefs.cpp

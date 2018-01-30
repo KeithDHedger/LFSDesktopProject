@@ -1,4 +1,31 @@
+0.1.3
+No longer needs composite manager.
+New desktop now allows copying files to ~/Desktop via DnD.Done Custom add/remove icon for desk items.
+Done Custom add/remove icon for disk items.
+Double clicking now mounts and opens disks.
+Code clean.
+Done mount/unmount eject.
+Added context menu to desktop items.
+Added context menu to disks.
+Double clicking now launches items.
+Done snap to grid for disks.
+Done snap to grid for desktop items.
+Done copy dropped item to desktop.
+Done desktop items.
+Saves position.
+Added custom icon path to disks.
+Better state change for drives.
+Better insert/remove detection for removable drives.
+Code clean.
+Switched to linked list for disk data.
+Added alpha to un-mounted disks.
+Added disks.
+Added prefs.
+Sets root window as backdrop.
+Complete rewrite.
+
 0.1.2
+Fixed multiple resizing events.
 Fixed context menus for desktop icons.
 Updated to use new toolkit.
 Updated font desc in prefs to match rest of lfs.

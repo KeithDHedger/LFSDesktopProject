@@ -128,7 +128,7 @@ class LFSTK_windowClass
 
 //window graphics
 		void					LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h);
-		Pixmap					px;
+		Pixmap					px=None;
 		bool					usePixmap=false;
 		Display					*display;
 		bool					closeDisplayOnExit=false;

@@ -18,38 +18,10 @@
  * along with LFSDesktop.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <search.h>
-#include <magic.h>
-#include <stdarg.h>
-#include <alloca.h>
-
-#include "globals.h"
-#include "prefs.h"
-#include "graphics.h"
-#include "disks.h"
 #include "files.h"
 
-char		*diskInfoPath;
-char		*cachePath;
-char		*prefsPath;
-char		*desktopPath;
-char		findbuffer[2048];
 
-struct hsearch_data	hashtab;
-
-int fileExists(char *name)
-{
-	struct stat buffer;
-	return (stat(name,&buffer));
-}
-
+#if 0
 char* getMimeType(char *filepath)
 {
 	const char			*mime;
@@ -64,385 +36,391 @@ char* getMimeType(char *filepath)
 	magic_close(magic);
 	return(returnstr);
 }
+#endif
 
-void findThemedIcon(char *theme,const char *name,const char *catagory)
+void launchDesktopFile(const char *name)
 {
-	FILE	*fp;
-
-	sprintf(findbuffer,"find \"/usr/share/icons/%s\" \"%s/.icons/%s\" -iname \"*%s*.png\" 2>/dev/null|grep -i \"%s\"|sort -nr -t \"x\"  -k 2.1|head -n1",theme,getenv("HOME"),theme,name,catagory);
-
-	fp=popen(findbuffer,"r");
-	if(fp!=NULL)
-		{
-			findbuffer[0]=0;
-			fgets(findbuffer,2048,fp);
-			findbuffer[strlen(findbuffer)-1]=0;
-			pclose(fp);
-		}
+	char	*out=NULL;
+	out=wc->globalLib->LFSTK_oneLiner("sed -n 's/^Exec=\\(.*\\)/\\1 \\&/Ip' '%s/%s'|sed 's/%%.//g'",desktopPath,name);
+	system(out);
+	free(out);	
 }
 
-char* defaultIcon(char *theme,char *name,const char *catagory)
+void doGetIconPath(void)
 {
-	const char	*defaultname=NULL;
+	XEvent				event;
 
-	if(strstr(name,"text")!=NULL)
+	iconChooser->LFSTK_showWindow();
+	iconChooser->LFSTK_setKeepAbove(true);
+	iconChooser->LFSTK_setTransientFor(wc->window);
+	while(dialogLoop==true)
 		{
-			defaultname="text-plain";
-			findThemedIcon(theme,defaultname,catagory);
-			if(strlen(findbuffer)>0)
-				return(strdup(findbuffer));
-			else
-				return(strdup("/usr/share/icons/gnome/256x256/mimetypes/text-x-generic.png"));
+			while (XPending(display) && (dialogLoop==true))
+				{
+					XNextEvent(iconChooser->display,&event);
+					mappedListener *ml=iconChooser->LFSTK_getMappedListener(event.xany.window);
+					if(ml!=NULL)
+						ml->function(ml->gadget,&event,ml->type);
+
+					switch(event.type)
+						{
+							case Expose:
+								iconChooser->LFSTK_clearWindow();
+								break;
+
+							case ConfigureNotify:
+								iconChooser->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
+								iconChooser->globalLib->LFSTK_setCairoSurface(iconChooser->display,iconChooser->window,iconChooser->visual,&iconChooser->sfc,&iconChooser->cr,event.xconfigurerequest.width,event.xconfigurerequest.height);
+								break;
+
+							case ClientMessage:
+							case SelectionNotify:
+								{
+									if (event.xclient.message_type == XInternAtom(iconChooser->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(iconChooser->display, "WM_DELETE_WINDOW", 1))
+										{
+											iconChooser->LFSTK_hideWindow();
+											dialogLoop=false;
+											dialogRetVal=0;
+										}
+//dnd for edit box
+									if(iconChooser->acceptDnd==true)
+										{
+											iconChooser->LFSTK_handleDnD(&event);
+											iconChooser->droppedData.type=-1;
+										}
+								}
+						}
+				}
 		}
-
-	if(strstr(name,"shellscript")!=NULL)
-		{
-			defaultname="text-x-script";
-			findThemedIcon(theme,defaultname,catagory);
-			if(strlen(findbuffer)>0)
-				return(strdup(findbuffer));
-			else
-				return(strdup("/usr/share/icons/gnome/256x256/mimetypes/text-x-script.png"));
-		}
-
-	if(strstr(name,"empty")!=NULL)
-		{
-			defaultname="empty";
-			findThemedIcon(theme,defaultname,"mimetype");
-			if(strlen(findbuffer)>0)
-				return(strdup(findbuffer));
-			else
-				return(strdup("/usr/share/icons/gnome/256x256/mimetypes/empty.png"));
-		}
-
-	if(strstr(name,"audio")!=NULL)
-		{
-			defaultname="audio-x-generic";
-			findThemedIcon(theme,defaultname,catagory);
-			if(strlen(findbuffer)>0)
-				return(strdup(findbuffer));
-			else
-				return(strdup("/usr/share/icons/gnome/256x256/mimetypes/audio-x-generic.png"));
-		}
-
-	if(strstr(name,"image")!=NULL)
-		{
-			defaultname="image-x-generic";
-			findThemedIcon(theme,defaultname,catagory);
-			if(strlen(findbuffer)>0)
-				return(strdup(findbuffer));
-			else
-				return(strdup("/usr/share/icons/gnome/256x256/mimetypes/image-x-generic.png"));
-		}
-	if(strstr(name,"harddisk")!=NULL)
-		{
-			defaultname="harddisk";
-			findThemedIcon(theme,defaultname,"devices");
-			if(strlen(findbuffer)>0)
-				return(strdup(findbuffer));
-			else
-				return(strdup("/usr/share/icons/gnome/256x256/devices/drive-harddisk.png"));
-		}
-
-
-	if(strstr(name,"harddisk-usb")!=NULL)
-		{
-			defaultname="media-usb";
-			findThemedIcon(theme,defaultname,"devices");
-			if(strlen(findbuffer)>0)
-				return(strdup(findbuffer));
-			else
-				return(strdup("/usr/share/icons/gnome/256x256/devices/drive-removable-media.png"));
-		}
-
-	if(strstr(name,"flash")!=NULL)
-		{
-			defaultname="media-flash";
-			findThemedIcon(theme,defaultname,"devices");
-			if(strlen(findbuffer)>0)
-				return(strdup(findbuffer));
-			else
-				return(strdup("/usr/share/icons/gnome/256x256/devices/media-flash.png"));
-		}
-
-	if(strstr(name,"zip")!=NULL)
-		{
-			defaultname="x-archive";
-			findThemedIcon(theme,defaultname,"mimetypes");
-			if(strlen(findbuffer)>0)
-				return(strdup(findbuffer));
-			else
-				return(strdup("/usr/share/icons/gnome/256x256/mimetypes/package-x-generic.png"));
-		}
-
-
-	return(strdup("/usr/share/icons/gnome/256x256/mimetypes/empty.png"));		
+	iconChooser->LFSTK_hideWindow();
 }
 
-char* pathToIcon(char* name,const char* catagory)
+const char* getSuffix(const char *path)
 {
-	char	*command;
-	char	*retstr=NULL;
-
-	asprintf(&command,"find \"/usr/share/icons/%s\" \"%s/.icons/%s\" -iname \"*%s.png\"  2>/dev/null|grep -i \"%s\"|sort -nr -t \"x\"  -k 2.1|head -n1",iconTheme,getenv("HOME"),iconTheme,name,catagory);
-	retstr=oneLiner("%s",command);
-
-	if((retstr==NULL) || (strlen(retstr)==0))
-		{
-			free(command);
-			asprintf(&command,"find \"/usr/share/pixmaps\"  \"/usr/share/icons/hicolor\" -iname \"*%s.png\"  2>/dev/null|grep -i \"%s\"|sort -nr -t \"x\"  -k 2.1|head -n1",name,catagory);
-			retstr=oneLiner("%s",command);
-		}
-
-	if((retstr==NULL) || (strlen(retstr)==0))
-		{
-			if(retstr!=NULL)
-				free(retstr);
-			retstr=defaultIcon(iconTheme,name,catagory);
-		}
-	free(command);
-	return(retstr);
+	return(strrchr(path,'.'));
 }
 
-void makeImage(char *imagepath,diskIconStruct *hashdata)
+void setDeskType(diskDataStruct *dnode)
 {
-	hashdata->cairoImage=cairo_image_surface_create_from_png(imagepath);
-	if(cairo_surface_status(hashdata->cairoImage)!=CAIRO_STATUS_SUCCESS)
+	char		*out=NULL;
+	char		*ticon=NULL;
+	const char	*suffix=NULL;
+
+	dnode->diskType=DESKFILE;
+	suffix=getSuffix(dnode->devName);
+	if(suffix!=NULL)
 		{
-			fprintf(stderr,"Can't use file:%s\n",imagepath);
-			hashdata->cairoImage=cairo_image_surface_create_from_png("/usr/share/icons/gnome/256x256/mimetypes/empty.png");
+			if(strcasecmp(suffix,".desktop")==0)
+				{
+					dnode->diskType=DESKTOPFILE;
+					out=wc->globalLib->LFSTK_oneLiner("sed -n 's/^icon=\\(.*\\)$/\\1/Ip' '%s/%s'",desktopPath,dnode->devName);
+					if(strlen(out)>0)
+						{
+							ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,out,"");
+							if(ticon!=NULL)
+								dnode->pathToIcon=ticon;
+							free(out);
+							return;
+						}
+				}
 		}
-	hashdata->scale=(double)iconSize/cairo_image_surface_get_width(hashdata->cairoImage);
+
+	out=wc->globalLib->LFSTK_oneLiner("file -bL --mime-type '%s/%s'|awk -F/ '{print \"-\" $2}'",desktopPath,dnode->devName);
+	if(strcmp(out,"-directory")==0)
+		ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,out,"places");
+	else
+		ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,out,"mimetypes");
+
+	if(ticon==NULL)
+		ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,"text-plain","mimetypes");
+	free(out);
+	dnode->pathToIcon=ticon;
 }
 
-void saveInfofile(int where,char* label,char* mime,char* path,char* uuid,char* type,int x, int y,int iconnum)
+bool doDeskItemMenuSelect(void *p,void* ud)
 {
-	char	*filepath;
-
-	fileDiskLabel=label;
-	fileDiskMime=mime;
-	fileDiskPath=path;
-	fileDiskUUID=uuid;
-	fileDiskType=type;
-	fileDiskXPos=x;
-	fileDiskYPos=y;
-
-	if(deskIconsArray[iconnum].customicon==true)
+	diskDataStruct *dnode=NULL;
+	char			*filename;
+	if(p!=NULL)
 		{
-			fileCustomIcon=deskIconsArray[iconnum].icon;
-			fileGotCustomIcon=true;
+			wc->popupLoop=false;
+			dnode=static_cast<diskDataStruct*>(wc->popupFromGadget->userData);
+			
+			switch((long)ud)
+				{
+					case OPENDISK:
+						if(dnode->diskType==DESKTOPFILE)
+							launchDesktopFile(dnode->devName);
+						if(dnode->diskType==DESKFILE)
+							{
+								filename=wc->globalLib->LFSTK_oneLiner("xdg-open '%s/%s'",desktopPath,dnode->devName);
+								free(filename);
+							}
+						break;
+					case CUSTOMICONDISK:
+						fileWindow->LFSTK_hideWindow();
+						dialogLoop=true;
+						dialogRetVal=DIALOGRETERROR;
+						dialogRun(iconChooser);
+						if(dialogRetVal==DIALOGRETAPPLY)
+							{
+								freeAndNull(&dnode->pathToIcon);
+								dnode->pathToIcon=strdup(iconChooserEdit->LFSTK_getBuffer()->c_str());
+								dnode->hasCustomIcon=true;
+								dnode->diskImage->LFSTK_setImageFromPath(dnode->pathToIcon,TOOLBAR,true);
+								dnode->diskImage->LFSTK_clearWindow();
+								asprintf(&filename,"%s/%s.rc",cacheDeskPath,dnode->devName);
+								iconPath=dnode->pathToIcon;
+								customIcon=dnode->hasCustomIcon;
+								dataType=dnode->dataType;
+								xPos=dnode->posx;
+								yPos=dnode->posy;
+								saveVarsToFile(filename,diskData);
+								diskUUID=NULL;
+								iconPath=NULL;
+								customIcon=false;
+								dataType=TYPENONE;
+								free(filename);
+							}
+						break;
+					case REMOVECUSTOMDISK:
+						freeAndNull(&dnode->pathToIcon);
+						dnode->hasCustomIcon=false;
+						setDeskType(dnode);
+						dnode->diskImage->LFSTK_setImageFromPath(dnode->pathToIcon,TOOLBAR,true);
+						dnode->diskImage->LFSTK_clearWindow();
+						asprintf(&filename,"%s/%s.rc",cacheDeskPath,dnode->devName);
+						iconPath=dnode->pathToIcon;
+						customIcon=dnode->hasCustomIcon;
+						dataType=dnode->dataType;
+						xPos=dnode->posx;
+						yPos=dnode->posy;
+						saveVarsToFile(filename,diskData);
+						diskUUID=NULL;
+						iconPath=NULL;
+						customIcon=false;
+						dataType=TYPENONE;
+						free(filename);
+						break;
+				}
 		}
+	return(true);
+}
 
-	if(where==DISKFOLDER)
+bool deskUpCB(void *p,void* ud)
+{
+	char			*diskfile;
+	diskDataStruct	*dnode=(diskDataStruct*)ud;
+	geometryStruct	geom;
+	char			*filename=NULL;
+
+	if(dnode->diskImage->currentButton!=Button1)
+		return(true);
+
+	if(dnode->diskImage->isDoubleClick==true)
 		{
-			asprintf(&filepath,"%s/%s",diskInfoPath,uuid);
-			saveVarsToFile(filepath,globalFileData);
+			if(dnode->diskType==DESKTOPFILE)
+				launchDesktopFile(dnode->devName);
+			if(dnode->diskType==DESKFILE)
+				{
+					filename=wc->globalLib->LFSTK_oneLiner("xdg-open '%s/%s'",desktopPath,dnode->devName);
+					free(filename);
+				}
+			return(true);
+		}
+	dnode->diskImage->LFSTK_getGeom(&geom);
+
+	asprintf(&diskfile,"%s/%s.rc",cacheDeskPath,dnode->devName);
+
+	diskUUID=NULL;
+	iconPath=dnode->pathToIcon;
+
+	setSlotFromPos(oldPos.x,oldPos.y,0);
+	xPos=(geom.x/gridSize)*gridSize;
+	yPos=(geom.y/gridSize)*gridSize;
+
+	XMoveWindow(dnode->diskImage->display,dnode->diskImage->window,xPos,yPos);
+	setSlotFromPos(xPos,yPos,1);
+	dnode->posx=xPos;
+	dnode->posy=yPos;
+	customIcon=dnode->hasCustomIcon;
+	dataType=dnode->dataType;
+	saveVarsToFile(diskfile,diskData);
+
+	diskUUID=NULL;
+	iconPath=NULL;
+	customIcon=false;
+	dataType=TYPENONE;
+	free(diskfile);
+	free(filename);
+	dnode->diskImage->LFSTK_clearWindow();
+
+	return(true);
+}
+
+void setDeskData(diskDataStruct *dnode)
+{
+	char	*base=NULL;
+	char	*suffixptr=NULL;
+
+	base=strdup(dnode->devName);
+
+	if(showSuffix==false)
+		{
+			suffixptr=strrchr(base,'.');
+			if(suffixptr!=NULL)
+				*suffixptr=0;
+		}
+	dnode->label=strdup(basename(base));
+	free(base);
+	setDeskType(dnode);
+	return;
+}
+
+void addDeskData(diskDataStruct *dnode,const char *devname,int x,int y)
+{
+	char	*diskfile;
+
+	dnode->devName=strdup(devname);
+
+	setDeskData(dnode);
+
+	asprintf(&diskfile,"%s/%s.rc",cacheDeskPath,dnode->devName);
+	if(loadVarsFromFile(diskfile,diskData)==true)
+		{
+			setSlotFromPos(x,y,0);
+			dnode->posx=xPos;
+			dnode->posy=yPos;
+			dnode->hasCustomIcon=customIcon;
+			if(dnode->hasCustomIcon==true)
+				{
+					free(dnode->pathToIcon);
+					dnode->pathToIcon=strdup(iconPath);
+				}
 		}
 	else
 		{
-			asprintf(&filepath,"%s/%s",cachePath,label);
-			saveVarsToFile(filepath,globalFileData);
+			dnode->posx=x;
+			dnode->posy=y;
 		}
-	free(filepath);
 
-	fileDiskLabel=NULL;
-	fileDiskMime=NULL;
-	fileDiskPath=NULL;
-	fileDiskType=NULL;
-	fileDiskType=NULL;
-	fileCustomIcon=NULL;
-	fileGotCustomIcon=false;
-	fileDiskXPos=-1;
-	fileDiskYPos=-1;
+	freeAndNull(&diskUUID);
+	freeAndNull(&iconPath);
+	customIcon=false;
+	free(diskfile);
+
+	dnode->diskImage=new LFSTK_buttonClass(wc,dnode->label,dnode->posx,dnode->posy,iconSize,iconSize,NorthWestGravity);
+	setImageSize(dnode);
+	dnode->diskImage->LFSTK_setCanDrag(true);
+	dnode->diskImage->LFSTK_setStyle(BEVELNONE);
+	dnode->diskImage->LFSTK_setImageFromPath(dnode->pathToIcon,TOOLBAR,true);
+	dnode->diskImage->LFSTK_setUseWindowPixmap(true);
+	dnode->diskImage->LFSTK_setCallBack(NULL,deskUpCB,(void*)dnode);
+	dnode->diskImage->LFSTK_setContextWindow(fileWindow);
+	dnode->diskImage->userData=(void*)dnode;
+
+	setSlotFromPos(dnode->posx,dnode->posy,1);
 }
 
-void getFreeSlot(int *x,int *y)
+void addDeskItem(const char *name)
 {
+	int				x=gridBorder+iconSize;
+	int				y=gridBorder+iconSize+100;
+	diskLinkedList	*disklistnode=NULL;
+	newNode();
+	disklistnode=diskLL;
 
-	for(int xx=0; xx<MAXGRIDX; xx++)
-		{
-			for(int yy=0; yy<MAXGRIDY; yy++)
-				{
-					if(xySlot[xx][yy]==0)
-						{
-							*x=xx;
-							*y=yy;
-							xySlot[xx][yy]=1;
-							return;
-						}
-				}
-		}
-	
-	for(int yy=0; yy<yCnt; yy++)
-		{
-			for(int xx=0; xx<xCnt; xx++)
-				{
-					if(xySlot[xx][yy]==0)
-						{
-							*x=xx;
-							*y=yy;
-							xySlot[xx][yy]=1;
-							return;
-						}
-				}
-		}
+	getFreeSlot(&x,&y);
+	x=(x*gridSize);
+	y=(y*gridSize);
+
+	addDeskData(disklistnode->data,name,x,y);
+	disklistnode->data->dataType=FILEDATATYPE;
+	disklistnode->data->dirty=true;
+	disklistnode->data->diskImage->LFSTK_clearWindow();
+	wc->LFSTK_clearWindow();
 }
 
-void readDesktopFile(const char* name)
+void deleteDeskItem(const char *name)
 {
-	FILE	*fr;
-	char	buffer[2048];
-	char	*tptr=NULL;
-	char	*ptr=NULL;
+	geometryStruct	geom;
+	diskLinkedList	*disklistnode=NULL;
+	diskLinkedList	*prevnode=NULL;
+	diskLinkedList	*nextnode=NULL;
+	diskDataStruct	*data=NULL;
+	disklistnode=isInList(name);
 
-	fileDiskLabel=NULL;
-	fileDiskMime=NULL;
-	fileDiskPath=NULL;
-	fileCustomIcon=NULL;
-	fileGotCustomIcon=false;
-	fileDiskUUID=NULL;
-	fileDiskType=NULL;
-
-	snprintf(buffer,2047,"%s/%s",cachePath,name);
-	fr=fopen(buffer,"r");
-	if(fr!=NULL)
+	if(disklistnode!=NULL)
 		{
-			fileGotCustomIcon=false;
-			loadVarsFromFile(buffer,globalFileData);
-			deskIconsArray[deskIconsCnt].label=fileDiskLabel;
-			deskIconsArray[deskIconsCnt].mime=strdup(fileDiskMime);
-			deskIconsArray[deskIconsCnt].mountpoint=fileDiskPath;
-			deskIconsArray[deskIconsCnt].icon=fileCustomIcon;
-			deskIconsArray[deskIconsCnt].customicon=fileGotCustomIcon;
-			if(fileCustomIcon!=NULL)
+			prevnode=disklistnode->prev;
+			nextnode=disklistnode->next;
+			if(prevnode!=NULL)
+				prevnode->next=nextnode;
+
+			if(nextnode!=NULL)
+				nextnode->prev=prevnode;
+
+			data=disklistnode->data;
+			if(data!=NULL)
 				{
-					deskIconsArray[deskIconsCnt].icon=fileCustomIcon;
-					deskIconsArray[deskIconsCnt].iconhint=666;
+					freeAndNull(&data->label);
+					freeAndNull(&data->devName);
+					freeAndNull(&data->uuid);
+					freeAndNull(&data->pathToIcon);
+					data->diskImage->LFSTK_getGeom(&geom);
+					xySlot[geom.x/gridSize][geom.y/gridSize]=0;
+					delete data->diskImage;
 				}
-			deskIconsArray[deskIconsCnt].x=fileDiskXPos;
-			deskIconsArray[deskIconsCnt].y=fileDiskYPos;
-			deskIconsArray[deskIconsCnt].file=true;
-			deskIconsArray[deskIconsCnt].installed=true;
-			xySlot[fileDiskXPos][fileDiskYPos]=1;
-			snprintf(buffer,2047,"%s/%s",desktopPath,name);
-			tptr=getMimeType(buffer);
-			if(tptr!=NULL)
-				{
-					ptr=strchr(tptr,'/');
-					while(ptr!=NULL)
-						{
-							*ptr='-';
-							ptr=strchr(tptr,'/');
-						}
-					ptr=strstr(tptr,"text-x-shellscript");
-					if(ptr==NULL)
-						deskIconsArray[deskIconsCnt].mime=strdup(tptr);
-					else
-						deskIconsArray[deskIconsCnt].mime=strdup("application-x-shellscript");
-					free(tptr);
-				}
-			fileDiskLabel=NULL;
-			fileDiskMime=NULL;
-			fileDiskPath=NULL;
-			fileCustomIcon=NULL;
-			fileGotCustomIcon=false;
-			deskIconsCnt++;
-			fclose(fr);
+			if(disklistnode==diskLL)
+				diskLL=nextnode;
+			free(disklistnode);
 		}
 }
 
-//synchronous only
-char* oneLiner(const char* fmt,...)
+void loadDesktopItems(void)
 {
-	FILE	*fp;
-	va_list	ap;
-	char	*buffer,*subbuffer;
+	char		*command;
+	FILE		*fd=NULL;
+	char		buffer[2048];
+	int			x;
+	int			y;
+	char		*itemname=NULL;
 
-	buffer=(char*)alloca(MAXBUFFER);
-	subbuffer=(char*)alloca(MAXBUFFER);
+printf(">>loadDesktopItems<<\n");
 
-	buffer[0]=0;
-	subbuffer[0]=0;
-	va_start(ap, fmt);
-	while (*fmt)
+	diskLinkedList	*disklistnode=NULL;
+	asprintf(&command,"find %s -maxdepth 1 -mindepth 1 |sort",desktopPath);
+
+	fd=popen(command,"r");
+	if(fd!=NULL)
 		{
-			subbuffer[0]=0;
-			if(fmt[0]=='%')
+			while(feof(fd)==0)
 				{
-					fmt++;
-					switch(*fmt)
+					buffer[0]=0;
+					fgets(buffer,2048,fd);
+					if(strlen(buffer)>0)
 						{
-							case 's':
-								sprintf(subbuffer,"%s",va_arg(ap,char*));
-								break;
-							case 'i':
-								sprintf(subbuffer,"%i",va_arg(ap,int));
-								break;
-							default:
-								sprintf(subbuffer,"%c",fmt[0]);
-								break;
+							buffer[strlen(buffer)-1]=0;
+							itemname=basename(buffer);
+							//removeDeleted();
+							disklistnode=isInList(itemname);
+							if(disklistnode==NULL)
+								{
+									newNode();
+									disklistnode=diskLL;
+									getFreeSlot(&x,&y);
+									x=(x*gridSize);
+									y=(y*gridSize);
+									addDeskData(disklistnode->data,itemname,x,y);
+									disklistnode->data->dataType=FILEDATATYPE;
+									disklistnode->data->dirty=true;
+									//printDiskData(disklistnode->data);
+									disklistnode->data->diskImage->LFSTK_clearWindow();
+									wc->LFSTK_clearWindow();
+								}
 						}
+					buffer[0]=0;
 				}
-			else
-				sprintf(subbuffer,"%c",fmt[0]);
-			strcat(buffer,subbuffer);
-			fmt++;
+			pclose(fd);
 		}
-	va_end(ap);
-
-//debugfunc("%s",buffer);
-	fp=popen(buffer,"r");
-	if(fp!=NULL)
-		{
-			buffer[0]=0;
-			fgets(buffer,MAXBUFFER,fp);
-			if(strlen(buffer)>0)
-				{
-					if(buffer[strlen(buffer)-1] =='\n')
-						buffer[strlen(buffer)-1]=0;
-				}
-			pclose(fp);
-			return(strdup(buffer));
-		}
-	return(NULL);
-}
-
-void debugFuncxx(const char *fmt, ...)
-{
-	va_list	ap;
-	char	*buffer,*subbuffer;
-
-	buffer=(char*)alloca(MAXBUFFER);
-	subbuffer=(char*)alloca(MAXBUFFER);
-
-	buffer[0]=0;
-	subbuffer[0]=0;
-	va_start(ap, fmt);
-	while (*fmt)
-		{
-			subbuffer[0]=0;
-			if(fmt[0]=='%')
-				{
-					fmt++;
-					switch(*fmt)
-						{
-							case 's':
-								sprintf(subbuffer,"%s",va_arg(ap,char*));
-								break;
-							case 'i':
-								sprintf(subbuffer,"%i",va_arg(ap,int));
-								break;
-							default:
-								sprintf(subbuffer,"%c",fmt[0]);
-								break;
-						}
-				}
-			else
-				sprintf(subbuffer,"%c",fmt[0]);
-			strcat(buffer,subbuffer);
-			fmt++;
-		}
-	va_end(ap);
-	printf("File: %s,Func: %s,Line: %i\n",errFile,errFunc,errLine);
-	printf(">>%s<<\n",buffer);
 }

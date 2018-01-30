@@ -121,10 +121,11 @@ int main(int argc, char **argv)
 	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
 	sy+=YSPACING;
 
+	wc->LFSTK_setWindowPixmap(wc->globalLib->LFSTK_getWindowPixmap(display,wc->rootWindow),DIALOGWIDTH,sy);
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();
 	//wc->LFSTK_setKeepBelow(true);
-	XSync(display,false);
+//	XSync(display,false);
 
 //disks
 
@@ -143,6 +144,8 @@ int main(int argc, char **argv)
 	//diskWindow->LFSTK_showWindow(true);
 	//diskWindow->LFSTK_hideWindow();
 	tux->LFSTK_setContextWindow(diskWindow);
+	wc->LFSTK_resizeWindow(1000,400,true);
+//wc->LFSTK_setWindowPixmap(wc->globalLib->LFSTK_getWindowPixmap(display,wc->rootWindow),800,800);
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	mainLoop=true;
@@ -156,13 +159,30 @@ int main(int argc, char **argv)
 			switch(event.type)
 				{
 					case Expose:
+						//wc->LFSTK_resizeWindow(event.xexpose.width,event.xexpose.height,false);
+						//wc->globalLib->LFSTK_setCairoSurface(wc->display,wc->window,wc->visual,&wc->sfc,&wc->cr,event.xexpose.width,event.xexpose.height);
+						//wc->LFSTK_setWindowPixmap(wc->globalLib->LFSTK_getWindowPixmap(display,wc->rootWindow),event.xexpose.width,event.xexpose.height);
 						wc->LFSTK_clearWindow();
+						//XSync(display,false);
 						break;
 
-					case ConfigureNotify:
-						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
-						wc->globalLib->LFSTK_setCairoSurface(wc->display,wc->window,wc->visual,&wc->sfc,&wc->cr,event.xconfigurerequest.width,event.xconfigurerequest.height);
+					case ResizeRequest:
+					DEBUGFUNC("ResizeRequest","");
+						wc->LFSTK_resizeWindow(event.xresizerequest.width,event.xresizerequest.height,false);
+						//wc->globalLib->LFSTK_setCairoSurface(wc->display,wc->window,wc->visual,&wc->sfc,&wc->cr,event.xconfigurerequest.width,event.xconfigurerequest.height);
+						wc->LFSTK_setWindowPixmap(wc->globalLib->LFSTK_getWindowPixmap(display,wc->rootWindow),event.xresizerequest.width,event.xresizerequest.height);
+						XClearWindow(wc->display,wc->window);
 						wc->LFSTK_clearWindow();
+						//XSync(display,false);
+						break;
+					case ConfigureNotify:
+					DEBUGFUNC("ConfigureNotify","");
+						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
+						//wc->globalLib->LFSTK_setCairoSurface(wc->display,wc->window,wc->visual,&wc->sfc,&wc->cr,event.xconfigurerequest.width,event.xconfigurerequest.height);
+						wc->LFSTK_setWindowPixmap(wc->globalLib->LFSTK_getWindowPixmap(display,wc->rootWindow),event.xconfigurerequest.width,event.xconfigurerequest.height);
+						XClearWindow(wc->display,wc->window);
+						//wc->LFSTK_clearWindow();
+						//XSync(display,false);
 						break;
 
 					case ClientMessage:

@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Thu 13 Aug 16:54:44 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Wed Jan 10 20:31:07 GMT 2018 kdhedger68713@gmail.com
 
  * This file (prefs.cpp) is part of LFSDesktop.
 
@@ -18,53 +18,25 @@
  * along with LFSDesktop.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include "globals.h"
 
-#include "prefs.h"
-#include "files.h"
-
-char			*iconTheme;
+char	*iconTheme;
 
 //desktop prefs
-int				iconSize=40;
-int				gridBorder=32;
-int				gridSize=iconSize+gridBorder;
-int				refreshRate=2;
-char			*terminalCommand=NULL;
-bool			showSuffix=false;
-char			*fontFace=NULL;
-char			*foreCol;
-char			*backCol;
-char			*backAlpha;
-char			*ignores=NULL;
+int		iconSize=40;
+int		gridBorder=32;
+int		gridSize=iconSize+gridBorder;
+int		refreshRate=2;
+char	*terminalCommand=NULL;
+//bool	showSuffix=false;
+char	*fontFace=NULL;
+char	*foreCol;
+char	*backCol;
+char	*backAlpha;
+char	*includeList=NULL;
+char	*excludeList=NULL;
 
-Display			*display;
-Window			rootWin;
-int				displayWidth;
-int				displayHeight;
-GC				gc;
-Region			rg;
-XdbeBackBuffer	buffer;
-XdbeSwapInfo	swapInfo;
-Drawable		drawOnThis;
-Colormap		cm;
-Visual			*visual=NULL;
-int				depth=0;
-int				screen;
-int				blackColor;
-int				whiteColor;
-
-GC				labelGC;
-//XFontStruct		*labelFont;
-
-unsigned long	labelBackground;
-unsigned long	labelForeground;
-
-int				**xySlot;
-
-args			desktopPrefs[]=
+args	desktopPrefs[]=
 {
 	{"icontheme",TYPESTRING,&iconTheme},
 	{"iconsize",TYPEINT,&iconSize},
@@ -77,7 +49,8 @@ args			desktopPrefs[]=
 	{"labelforeground",TYPESTRING,&foreCol},
 	{"labelbackground",TYPESTRING,&backCol},
 	{"labelalpha",TYPESTRING,&backAlpha},
-	{"noshow",TYPESTRING,&ignores},
+	{"includelist",TYPESTRING,&includeList},
+	{"excludelist",TYPESTRING,&excludeList},
 	{NULL,0,NULL}
 };
 
@@ -163,4 +136,24 @@ bool loadVarsFromFile(char* filepath,args* dataptr)
 			return(true);
 		}
 	return(false);
+}
+
+void freePrefs(void)
+{
+	if(iconTheme!=NULL)
+		free(iconTheme);
+	if(terminalCommand!=NULL)
+		free(terminalCommand);
+	if(fontFace!=NULL)
+		free(fontFace);
+	if(foreCol!=NULL)
+		free(foreCol);
+	if(backCol!=NULL)
+		free(backCol);
+	if(backAlpha!=NULL)
+		free(backAlpha);
+	if(includeList!=NULL)
+		free(includeList);
+	if(excludeList!=NULL)
+		free(excludeList);
 }

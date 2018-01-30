@@ -292,7 +292,13 @@ void LFSTK_gadgetClass::LFSTK_setUseWindowTile(bool usebutton)
 
 void LFSTK_gadgetClass::LFSTK_setUseWindowPixmap(bool usepixmap)
 {
-	this->gadgetDetails.useWindowPixmap=usepixmap;
+	if((this->wc->px!=None) && (usepixmap==true))
+		{
+			XSetWindowBackgroundPixmap(display,this->window,ParentRelative);
+			this->gadgetDetails.useWindowPixmap=usepixmap;
+		}
+	else
+		this->gadgetDetails.useWindowPixmap=false;
 }
 
 
@@ -307,19 +313,7 @@ void LFSTK_gadgetClass::clearBox(gadgetStruct* details)
 
 	if(details->useWindowPixmap==true)
 		{
-			geometryStruct geom;
-			this->LFSTK_getGeom(&geom);
-			cairo_surface_t	*surface;
-			surface=cairo_xlib_surface_create(display,wc->px,wc->visual,this->gadgetGeom.w+1000,this->gadgetGeom.h+1000);
-			cairo_save(this->cr);
-				cairo_reset_clip(this->cr);
-				//cairo_translate(this->cr,this->gadgetGeom.x,this->gadgetGeom.y);
-				cairo_set_source_surface(this->cr,surface,-geom.x,-geom.y);
-				cairo_paint(this->cr);
-			cairo_restore(this->cr);
-			XFlush(display);
-			XSync(display,false);
-
+			XClearWindow(wc->display,this->window);
 			return;
 		}
 

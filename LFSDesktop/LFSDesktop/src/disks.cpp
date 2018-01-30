@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Thu 13 Aug 16:55:19 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Thu Jan 11 13:01:45 GMT 2018 kdhedger68713@gmail.com
 
  * This file (disks.cpp) is part of LFSDesktop.
 
@@ -18,359 +18,393 @@
  * along with LFSDesktop.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-#include <X11/extensions/shape.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <libudev.h>
-
-#include "config.h"
-#include "prefs.h"
-#include "files.h"
 #include "disks.h"
 
-const char	*iconDiskType[]= {"harddisk","harddisk-usb","dev-cdrom","dev-dvd","media-removable","multimedia-player","flash","user-home","computer","customicon"};
-
-void clearDeskEntry(int num,bool clearslot)
+void setDiskType(diskDataStruct *dnode)
 {
-	if(deskIconsArray[num].label!=NULL)
-		free(deskIconsArray[num].label);
-	deskIconsArray[num].label=NULL;
-	if(deskIconsArray[num].uuid!=NULL)
-		free(deskIconsArray[num].uuid);
-	deskIconsArray[num].uuid=NULL;
-	if(deskIconsArray[num].mountpoint!=NULL)
-		free(deskIconsArray[num].mountpoint);
-	deskIconsArray[num].mountpoint=NULL;
-	if(deskIconsArray[num].partname!=NULL)
-		free(deskIconsArray[num].partname);
-	deskIconsArray[num].partname=NULL;
-	if(deskIconsArray[num].dev!=NULL)
-		free(deskIconsArray[num].dev);
-	deskIconsArray[num].dev=NULL;
-	if(deskIconsArray[num].mime!=NULL)
-		free(deskIconsArray[num].mime);
-	deskIconsArray[num].mime=NULL;
-	if(deskIconsArray[num].icon!=NULL)
-		free(deskIconsArray[num].icon);
-	deskIconsArray[num].icon=NULL;
+	char		*out=NULL;
+	int			disktype=HDDDISK;
+	char		*ticon=NULL;
 
-	if(clearslot==true)
-		xySlot[deskIconsArray[num].x][deskIconsArray[num].y]=0;
+	ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,"-harddisk","devices");
 
-	deskIconsArray[num].dvd=false;
-	deskIconsArray[num].cdrom=false;
-	deskIconsArray[num].usb=false;
-	deskIconsArray[num].file=false;
-	deskIconsArray[num].iconhint=-1;
-	deskIconsArray[num].installed=false;
-	deskIconsArray[num].customicon=false;
+//cdrom
+	out=wc->globalLib->LFSTK_oneLiner("udevadm info --query=property --name=%s|grep 'ID_CDROM=1'",dnode->devName);
+	if(strlen(out)>0)
+		{
+			ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,"-cdrom","devices");
+			disktype=CDROM;
+			free(out);
+		}
+//usb
+	out=wc->globalLib->LFSTK_oneLiner("udevadm info --query=property --name=%s|grep 'usb'",dnode->devName);
+	if(strlen(out)>0)
+		{
+			free(out);
+			out=wc->globalLib->LFSTK_oneLiner("udevadm info --query=property --name=%s|grep 'ID_DRIVE_THUMB'",dnode->devName);
+			if(strlen(out)>0)
+				{
+					ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,"-removable","devices");
+					disktype=THUMBDISK;
+				}
+			else
+				{
+					ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,"-usb","devices");
+					disktype=USBHDD;
+				}
+			free(out);
+		}
+
+//icon
+	if((ticon!=NULL) && (strlen(ticon)>0) && (dnode->hasCustomIcon==false))
+		dnode->pathToIcon=ticon;
+
+//disk type
+	dnode->diskType=disktype;
 }
 
-void mountDisk(int what)
+bool doDiskMenuSelect(void *p,void* ud)
 {
-	char	*command;
-	char	*termcommand;
-	bool	interm=false;
-
-	if(isDisk==false)
+	char			*command;
+	int				retval=0;
+	char			*filename;
+	diskDataStruct *dnode=NULL;
+	if(p!=NULL)
 		{
-			switch (what)
+			wc->popupLoop=false;
+			dnode=static_cast<diskDataStruct*>(wc->popupFromGadget->userData);
+
+			switch((long)ud)
 				{
-					case BUTTONOPEN:
-						if(strstr(deskIconsArray[foundDiskNumber].mountpoint,".desktop")!=0)
-							{
-								interm=false;
-								command=oneLiner("awk -F= '/Terminal=/{print $2}' \"%s\"",deskIconsArray[foundDiskNumber].mountpoint);
-								if(strcasecmp(command,"true")==0)
-									interm=true;
-								free(command);
-								command=oneLiner("echo \"$(awk -F= '/Exec=/{print $2}' \"%s\"|sed 's/%%.//g') &\"",deskIconsArray[foundDiskNumber].mountpoint);
-								if(interm==true)
-									{
-										asprintf(&termcommand,"%s %s",terminalCommand,command);
-										system(termcommand);
-										free(termcommand);
-									}	
-								else
-									system(command);
-							}
-						else
-							{
-								if(strcmp(deskIconsArray[foundDiskNumber].mime,"application-x-executable")==0)
-									{
-										asprintf(&command,"\"%s\" &",deskIconsArray[foundDiskNumber].mountpoint);
-										system(command);
-									}
-								else
-									{
-										asprintf(&command,"xdg-open \"%s\" &",deskIconsArray[foundDiskNumber].mountpoint);
-										system(command);
-									}
-							}
+					case MOUNTDISK:
+					case UNMOUNTDISK:
+					case EJECTDISK:
+						asprintf(&command,"%s \"%s\" \"/media/%s\" %lu &>/dev/null",HELPERAPP,dnode->uuid,dnode->label,(unsigned long)ud+1);
+						retval=system(command);
 						free(command);
-						return;
+						if((WEXITSTATUS(retval)==0) && ((long)ud)==MOUNTDISK)
+							updateDisks();
+
+					case OPENDISK:
+						if(((long)ud==MOUNTDISK) || ((long)ud==OPENDISK))
+							if(dnode->mounted==true)
+								{
+									asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|xargs xdg-open & &>/dev/null",dnode->uuid);
+									system(command);
+									free(command);
+								}
 						break;
+					case CUSTOMICONDISK:
+						diskWindow->LFSTK_hideWindow();
+						dialogLoop=true;
+						dialogRetVal=DIALOGRETERROR;
+						dialogRun(iconChooser);
+						if(dialogRetVal==DIALOGRETAPPLY)
+							{
+								freeAndNull(&dnode->pathToIcon);
+								dnode->pathToIcon=strdup(iconChooserEdit->LFSTK_getBuffer()->c_str());
+								dnode->hasCustomIcon=true;
+								dnode->diskImage->LFSTK_setImageFromPath(dnode->pathToIcon,TOOLBAR,true);
+								dnode->diskImage->LFSTK_clearWindow();
+								asprintf(&filename,"%s/%s.rc",cacheDisksPath,dnode->uuid);
+								iconPath=dnode->pathToIcon;
+								customIcon=dnode->hasCustomIcon;
+								dataType=dnode->dataType;
+								xPos=dnode->posx;
+								yPos=dnode->posy;
+								saveVarsToFile(filename,diskData);
+								diskUUID=NULL;
+								iconPath=NULL;
+								customIcon=false;
+								dataType=TYPENONE;
+								free(filename);
+							}
+						break;
+					case REMOVECUSTOMDISK:
+						freeAndNull(&dnode->pathToIcon);
+						dnode->hasCustomIcon=false;
+						setDiskType(dnode);
+						dnode->diskImage->LFSTK_setImageFromPath(dnode->pathToIcon,TOOLBAR,true);
+						dnode->diskImage->LFSTK_clearWindow();
+						asprintf(&filename,"%s/%s.rc",cacheDisksPath,dnode->uuid);
+						iconPath=dnode->pathToIcon;
+						customIcon=dnode->hasCustomIcon;
+						dataType=dnode->dataType;
+						xPos=dnode->posx;
+						yPos=dnode->posy;
+						saveVarsToFile(filename,diskData);
+						diskUUID=NULL;
+						iconPath=NULL;
+						customIcon=false;
+						dataType=TYPENONE;
+						free(filename);
+						break;
+				}
+		}
+	return(true);
+}
+
+bool diskUpCB(void *p,void* ud)
+{
+	char			*diskfile;
+	diskDataStruct	*dnode=(diskDataStruct*)ud;
+	geometryStruct	geom;
+
+	if(dnode->diskImage->currentButton!=Button1)
+		return(true);
+
+	if(dnode->diskImage->isDoubleClick==true)
+		{
+			wc->popupFromGadget=dnode->diskImage;
+			doDiskMenuSelect(p,(void*)MOUNTDISK);
+			wc->popupFromGadget=NULL;
+			return(true);
+		}
+
+	dnode->diskImage->LFSTK_getGeom(&geom);
+
+	asprintf(&diskfile,"%s/%s.rc",cacheDisksPath,dnode->uuid);
+
+	diskUUID=dnode->uuid;
+	iconPath=dnode->pathToIcon;
+
+	setSlotFromPos(oldPos.x,oldPos.y,0);
+	xPos=(geom.x/gridSize)*gridSize;
+	yPos=(geom.y/gridSize)*gridSize;
+	customIcon=dnode->hasCustomIcon;
+	dataType=dnode->dataType;
+
+	XMoveWindow(dnode->diskImage->display,dnode->diskImage->window,xPos,yPos);
+	setSlotFromPos(xPos,yPos,1);
+	saveVarsToFile(diskfile,diskData);
+
+	diskUUID=NULL;
+	iconPath=NULL;
+	customIcon=false;
+	dataType=TYPENONE;
+	free(diskfile);
+	dnode->diskImage->LFSTK_clearWindow();
+	return(true);
+}
+
+void setDiskLabel(diskDataStruct *dnode)
+{
+	char	*holdlabel=NULL;
+
+	holdlabel=wc->globalLib->LFSTK_oneLiner("udevadm info --query=property --name='%s'|grep 'ID_FS_LABEL'|awk -F= '{print $2}'",dnode->devName);
+	if(strlen(holdlabel)==0)
+		{
+			free(holdlabel);
+			holdlabel=wc->globalLib->LFSTK_oneLiner("udevadm info --query=property --name='%s'|sed -rn  's/(ID_MODEL|ID_VENDOR)=//gp'|sed -z 's/\\n/-/'",dnode->devName);
+			if(strlen(holdlabel)==0)
+				{
+					free(holdlabel);
+					holdlabel=strdup(dnode->devName);
+				}
+		}
+
+	if(dnode->label!=NULL)
+		{
+			if(strcmp(dnode->label,holdlabel)!=0)
+				{
+					dnode->dirty=true;
+					free(dnode->label);
+					dnode->label=strdup(holdlabel);
+				}
+		}
+	else
+		dnode->label=strdup(holdlabel);
+}
+
+
+bool setDiskData(diskDataStruct *dnode)
+{
+	char	*buffer=NULL;
+	bool	oldmounted=dnode->mounted;
+	geometryStruct	geom;
+
+	buffer=wc->globalLib->LFSTK_oneLiner("udevadm info --query=property '%s' 2>/dev/null|grep 'ID_FS_UUID='|awk -F= '{print $2}'",dnode->devName);
+	if(strlen(buffer)==0)
+		{
+			dnode->diskImage->LFSTK_getGeom(&geom);
+			setSlotFromPos(geom.x,geom.y,0);
+			freeAndNull(&dnode->label);
+			freeAndNull(&dnode->uuid);
+			freeAndNull(&dnode->pathToIcon);
+			dnode->mounted=false;
+			dnode->driveHasMedia=false;
+			free(buffer);
+			return(false);
+		}
+
+	dnode->dirty=false;
+	setDiskType(dnode);
+	dnode->uuid=buffer;
+	setDiskLabel(dnode);
+	buffer=wc->globalLib->LFSTK_oneLiner("findmnt -no TARGET '%s'",dnode->devName);
+	if(strlen(buffer)>0)
+		dnode->mounted=true;
+	else
+		dnode->mounted=false;
+
+	if(oldmounted!=dnode->mounted)
+		dnode->dirty=true;
+
+	dnode->driveHasMedia=true;
+
+	free(buffer);
+
+	return(true);
+}
+
+void addDiskData(diskDataStruct *dnode,const char *devname,int x,int y)
+{
+	char	*diskfile;
+
+	dnode->devName=strdup(devname);
+
+	if(setDiskData(dnode)==true)
+		{
+			asprintf(&diskfile,"%s/%s.rc",cacheDisksPath,dnode->uuid);
+			if(loadVarsFromFile(diskfile,diskData)==true)
+				{
+					setSlotFromPos(x,y,0);
+					dnode->posx=xPos;
+					dnode->posy=yPos;
+					dnode->hasCustomIcon=customIcon;
+					if(dnode->hasCustomIcon==true)
+						{
+							free(dnode->pathToIcon);
+							dnode->pathToIcon=strdup(iconPath);
+						}
+				}
+			else
+				{
+					dnode->posx=x;
+					dnode->posy=y;
+				}
+
+			freeAndNull(&diskUUID);
+			freeAndNull(&iconPath);
+			customIcon=false;
+			free(diskfile);
+
+			dnode->diskImage=new LFSTK_buttonClass(wc,dnode->label,dnode->posx,dnode->posy,iconSize,iconSize,NorthWestGravity);
+			setImageSize(dnode);
+			dnode->diskImage->LFSTK_setCanDrag(true);
+			dnode->diskImage->LFSTK_setStyle(BEVELNONE);
+			dnode->diskImage->LFSTK_snapSize(gridBorder+iconSize);
+			dnode->diskImage->LFSTK_snapSize(8);
+			dnode->diskImage->LFSTK_setImageFromPath(dnode->pathToIcon,TOOLBAR,true);
+			dnode->diskImage->LFSTK_setUseWindowPixmap(true);
+			dnode->diskImage->LFSTK_setCallBack(NULL,diskUpCB,(void*)dnode);
+			dnode->diskImage->LFSTK_setContextWindow(diskWindow);
+			dnode->diskImage->userData=(void*)dnode;
+
+			setSlotFromPos(dnode->posx,dnode->posy,1);
+
+			if(dnode->mounted==true)
+				dnode->diskImage->LFSTK_setAlpha(1.0);
+			else
+				dnode->diskImage->LFSTK_setAlpha(0.5);
+		}
+}
+
+void checkForChanges(diskDataStruct *dnode)
+{
+	if(dnode->dataType==FILEDATATYPE)
+		{
+			return;
+		}
+	if(setDiskData(dnode)==false)
+		{
+			if(dnode->diskImage!=NULL)
+				{
+					dnode->diskImage->LFSTK_hideGadget();
+					wc->LFSTK_clearWindow();
 				}
 		}
 	else
 		{
-#ifdef _USESUIDHELPER_
-			asprintf(&command,"%s \"%s\" \"/media/%s\" %i",HELPERAPP,deskIconsArray[foundDiskNumber].uuid,deskIconsArray[foundDiskNumber].label,what);
-#else
-			asprintf(&command,"udevil mount `findfs UUID=%s`",deskIconsArray[foundDiskNumber].uuid);
-#endif
-			system(command);
-			free(command);
-			if(what==BUTTONMOUNT)
+			if(dnode->diskImage!=NULL)
 				{
-					asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|xargs xdg-open &",deskIconsArray[foundDiskNumber].uuid);
-					system(command);
-					free(command);
-				}
-
-			if(what==BUTTONEJECT)
-				clearDeskEntry(foundDiskNumber,true);
-		}
-}
-
-int getUSBData(const char *ptr)
-{
-	if(ptr!=NULL)
-		{
-			if(strcasestr(ptr,"apple")!=NULL)
-				return(IPOD);
-			if(strcasestr(ptr,"sandisk")!=NULL)
-				return(CARD);
-			if(strcasestr(ptr,"generic")!=NULL)
-				return(CARD);
-		}
-	return(USB);
-}
-
-void addExtraIconSpace(void)
-{
-	if(deskIconsCnt>=deskIconsMaxCnt)
-		{
-			deskIconsMaxCnt+=10;
-			deskIconsArray=(deskIcons*)realloc(deskIconsArray,deskIconsMaxCnt*sizeof(deskIcons));
-			for(int j=deskIconsCnt;j<deskIconsMaxCnt;j++)
-				{
-					deskIconsArray[j].label=NULL;
-					deskIconsArray[j].uuid=NULL;
-					deskIconsArray[j].dev=NULL;
-					deskIconsArray[j].mountpoint=NULL;
-					deskIconsArray[j].mime=NULL;
-					deskIconsArray[j].partname=NULL;
-					deskIconsArray[j].icon=NULL;
-					deskIconsArray[j].installed=false;
-					deskIconsArray[j].ignore=false;
-					deskIconsArray[j].iconhint=0;
-				}
-		}
-}
-
-void fillDesk(void)
-{
-	struct udev		*udev;
-	udev_device 	*thedev;
-	udev_device 	*usbdev;
-	char			buffer[BUFFERSIZE];
-	char			path[BUFFERSIZE];
-	char			*uuid=NULL;
-	int				iconhint=0;
-	bool			iscd=false;
-	bool			isdvd=false;
-	bool			isusb=false;
-	FILE			*fp;
-	const char		*ptr;
-	char			*holdfilename=NULL;
-
-	/* Create the udev object */
-	udev = udev_new();
-	if (!udev) {
-		printf("Can't create udev\n");
-		exit(1);
-	}
-
-	deskIconsCnt=RESERVED;
-
-	fp=popen("ls -1 /dev/disk/by-uuid","r");
-	if(fp!=NULL)
-		{
-			buffer[0]=0;
-			while(fgets(buffer,BUFFERSIZE,fp))
-				{
-					addExtraIconSpace();
-					clearDeskEntry(deskIconsCnt,false);
-					buffer[strlen(buffer)-1]=0;
-					asprintf(&uuid,"%s",buffer);
-					sprintf(path,"/dev/disk/by-uuid/%s",buffer);
-					buffer[readlink(path,buffer,BUFFERSIZE)]=0;
-					ptr=strrchr(buffer,'/');
-					ptr++;
-					sprintf(path,"/dev/%s",ptr);
-					if(strcmp(path,rootDev)==0)
-						continue;
-					deskIconsArray[deskIconsCnt].partname=strdup(ptr);
-					thedev=udev_device_new_from_subsystem_sysname(udev,"block",ptr);
-					if(thedev==NULL)
-						{
-							printf("no dev for %s from %s\n",ptr,buffer);
-							exit(1);
-						}
+					dnode->diskImage->LFSTK_showGadget();
+					if(dnode->mounted==true)
+						dnode->diskImage->LFSTK_setAlpha(1.0);
 					else
+						dnode->diskImage->LFSTK_setAlpha(0.5);
+					if(dnode->dirty==true)
 						{
-							if(strcmp(udev_device_get_property_value(thedev,"ID_FS_USAGE"),"filesystem")==0)
-								{
-									ptr=udev_device_get_property_value(thedev,"ID_FS_LABEL");
-									if(ptr==NULL)
-										ptr=udev_device_get_property_value(thedev,"ID_SERIAL");
-									if(ptr==NULL)
-										continue;
-
-									iconhint=0;
-									deskIconsArray[deskIconsCnt].label=strdup(ptr);
-									deskIconsArray[deskIconsCnt].uuid=uuid;
-
-									isdvd=false;
-									iscd=false;
-									isusb=false;
-									if(udev_device_get_property_value(thedev,"ID_CDROM_MEDIA_DVD")!=NULL)
-										{
-											iconhint=DVD;
-											isdvd=true;
-										}
-									if(udev_device_get_property_value(thedev,"ID_CDROM_MEDIA_CD")!=NULL)
-										{
-											iconhint=CDROM;
-											iscd=true;
-										}
-									
-									usbdev=udev_device_get_parent_with_subsystem_devtype(thedev,"usb","usb_device");
-									if(usbdev!=NULL)
-										{
-											isusb=true;
-											if(udev_device_get_property_value(thedev,"ID_DRIVE_THUMB")!=NULL)
-												iconhint=STICK;
-											else
-												iconhint=getUSBData(udev_device_get_property_value(thedev,"ID_VENDOR"));
-										}
-									asprintf(&deskIconsArray[deskIconsCnt].dev,"/dev/%s",deskIconsArray[deskIconsCnt].partname);
-									deskIconsArray[deskIconsCnt].dvd=isdvd;
-									deskIconsArray[deskIconsCnt].cdrom=iscd;
-									deskIconsArray[deskIconsCnt].usb=isusb;
-									deskIconsArray[deskIconsCnt].file=false;
-									deskIconsArray[deskIconsCnt].iconhint=iconhint;
-									
-									if(ignores!=NULL)
-										{
-											if(strstr(ignores,deskIconsArray[deskIconsCnt].label)!=NULL)
-												deskIconsArray[deskIconsCnt].ignore=true;
-										}
-									sprintf(buffer,"%s/%s",diskInfoPath,deskIconsArray[deskIconsCnt].uuid);
-									
-									if(loadVarsFromFile(buffer,globalFileData))
-										{
-											deskIconsArray[deskIconsCnt].x=fileDiskXPos;
-											deskIconsArray[deskIconsCnt].y=fileDiskYPos;
-											if(fileGotCustomIcon==true)
-												{
-													deskIconsArray[deskIconsCnt].icon=fileCustomIcon;
-													deskIconsArray[deskIconsCnt].customicon=true;
-													fileCustomIcon=NULL;
-													fileGotCustomIcon=false;
-												}
-											else
-												deskIconsArray[deskIconsCnt].icon=NULL;
-										}
-									else
-										{
-											getFreeSlot(&deskIconsArray[deskIconsCnt].x,&deskIconsArray[deskIconsCnt].y);
-											saveInfofile(DISKFOLDER,deskIconsArray[deskIconsCnt].label,NULL,NULL,deskIconsArray[deskIconsCnt].uuid,(char*)iconDiskType[deskIconsArray[deskIconsCnt].iconhint],deskIconsArray[deskIconsCnt].x,deskIconsArray[deskIconsCnt].y,deskIconsCnt);
-										}
-									deskIconsArray[deskIconsCnt].installed=true;
-									xySlot[deskIconsArray[deskIconsCnt].x][deskIconsArray[deskIconsCnt].y]=1;
-									deskIconsCnt++;
-								}
+							dnode->diskImage->LFSTK_setLabel(dnode->label);
+							setImageSize(dnode);
+							dnode->diskImage->LFSTK_clearWindow();
+							wc->LFSTK_clearWindow();
 						}
-				}
-		}
-	pclose(fp);
-
-	holdfilename=NULL;
-
-//desktop files
-	sprintf(buffer,"find %s -mindepth 1 -maxdepth 1",desktopPath);
-	char	buffer2[4096];
-	char	*tptr;
-	fp=popen(buffer,"r");
-	while(fgets(buffer,BUFFERSIZE,fp))
-		{
-			char	*ptr;
-			buffer[strlen(buffer)-1]=0;
-			ptr=strrchr(buffer,'/');
-			ptr++;
-			sprintf(buffer2,"%s/%s",cachePath,ptr);
-			addExtraIconSpace();
-
-			if(strcmp(&buffer[strlen(buffer)-8],".desktop")==0)
-				{
-					holdfilename=strdup(buffer);
-				}
-				
-			if(fileExists(buffer2)==-1)
-				{
-					clearDeskEntry(deskIconsCnt,false);
-					deskIconsArray[deskIconsCnt].mountpoint=strdup(buffer);
-					ptr=strrchr(buffer,'/');
-					ptr++;
-					deskIconsArray[deskIconsCnt].label=strdup(ptr);
-					tptr=getMimeType(buffer);
-					ptr=strchr(tptr,'/');
-					while(ptr!=NULL)
-						{
-							*ptr='-';
-							ptr=strchr(tptr,'/');
-						}
-					ptr=strstr(tptr,"text-x-shellscript");
-					if(ptr==NULL)
-						deskIconsArray[deskIconsCnt].mime=strdup(tptr);
-					else
-						deskIconsArray[deskIconsCnt].mime=strdup("application-x-shellscript");
-					free(tptr);
-					getFreeSlot(&deskIconsArray[deskIconsCnt].x,&deskIconsArray[deskIconsCnt].y);
-					xySlot[deskIconsArray[deskIconsCnt].x][deskIconsArray[deskIconsCnt].y]=1;
-					saveInfofile(CACHEFOLDER,deskIconsArray[deskIconsCnt].label,deskIconsArray[deskIconsCnt].mime,deskIconsArray[deskIconsCnt].mountpoint,NULL,NULL,deskIconsArray[deskIconsCnt].x,deskIconsArray[deskIconsCnt].y,deskIconsCnt);
-					deskIconsArray[deskIconsCnt].installed=true;
-					deskIconsArray[deskIconsCnt].file=true;
-					deskIconsCnt++;
 				}
 			else
 				{
-					readDesktopFile(ptr);
-				}
-			
-			if((holdfilename!=NULL) && (deskIconsArray[deskIconsCnt-1].customicon==false))
-				{
-					char	commandbuffer[MAXBUFFER];
-					char	*icon;
-					char	*pth;
-
-					sprintf(commandbuffer,"awk -F= '/Icon=/{print $2}' \"%s\"",holdfilename);
-					icon=oneLiner("%s",commandbuffer);
-					pth=strrchr(icon,'.');
-					if(pth!=NULL)
-						*pth=0;
-					if(icon!=NULL)
-						{
-							pth=pathToIcon(icon,"");
-							deskIconsArray[deskIconsCnt-1].icon=strdup(pth);
-						}
-					free(holdfilename);
-					holdfilename=NULL;
-					fileCustomIcon=NULL;
+					addDiskData(dnode,dnode->devName,0,100);
 				}
 		}
-	pclose(fp);
+					
+}
+
+void updateDisks(void)
+{
+	diskLinkedList	*list=diskLL;
+
+	if(list==NULL)
+		return;
+
+	do
+		{
+			if(list->data==NULL)
+				continue;
+			checkForChanges(list->data);
+			list=list->next;
+		}
+	while(list!=NULL);
+}
+
+void loadDisks(void)
+{
+	char		*command;
+	FILE		*fd=NULL;
+	char		buffer[2048];
+	int			x;
+	int			y;
+
+	diskLinkedList	*disklistnode=NULL;
+ 
+	asprintf(&command,"find /dev -maxdepth 1 -mindepth 1  -regextype sed -regex \"%s\"|grep -v \"%s\"|sort --version-sort",includeList,excludeList);
+
+	fd=popen(command,"r");
+	if(fd!=NULL)
+		{
+			while(feof(fd)==0)
+				{
+					buffer[0]=0;
+					fgets(buffer,2048,fd);
+					if(strlen(buffer)>0)
+						{
+							buffer[strlen(buffer)-1]=0;
+							disklistnode=isInList(buffer);
+							if(disklistnode==NULL)
+								{
+									newNode();
+									disklistnode=diskLL;
+									getFreeSlot(&x,&y);
+									x=(x*gridSize);
+									y=(y*gridSize);
+
+									addDiskData(disklistnode->data,buffer,x,y);
+									disklistnode->data->dataType=DISKDATATYPE;
+									disklistnode->data->dirty=true;
+									//printDiskData(disklistnode->data);
+								}
+							buffer[0]=0;
+						}
+				}
+			pclose(fd);
+		}
 }

@@ -101,8 +101,8 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
 am__objects_1 = ../src/disks.$(OBJEXT) ../src/files.$(OBJEXT) \
-	../src/globals.$(OBJEXT) ../src/graphics.$(OBJEXT) \
-	../src/main.$(OBJEXT) ../src/prefs.$(OBJEXT)
+	../src/globals.$(OBJEXT) ../src/main.$(OBJEXT) \
+	../src/prefs.$(OBJEXT)
 am_lfsdesktop_OBJECTS = $(am__objects_1)
 lfsdesktop_OBJECTS = $(am_lfsdesktop_OBJECTS)
 lfsdesktop_LDADD = $(LDADD)
@@ -324,7 +324,7 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 			-DHELPERDIR=\""${libexecdir}/${PACKAGE}"\" \
 			-DHELPERAPP=\""${libexecdir}/${PACKAGE}/lfshelper"\"
 
-COMMONSRC = ../src/disks.cpp ../src/files.cpp ../src/globals.cpp ../src/graphics.cpp ../src/main.cpp ../src/prefs.cpp
+COMMONSRC = ../src/disks.cpp ../src/files.cpp ../src/globals.cpp ../src/main.cpp ../src/prefs.cpp
 lfsdesktop_SOURCES = $(COMMONSRC)
 man1_MANS = ../resources/man/lfsdesktop.1
 all: all-am
@@ -415,8 +415,6 @@ clean-binPROGRAMS:
 	../src/$(DEPDIR)/$(am__dirstamp)
 ../src/globals.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
-../src/graphics.$(OBJEXT): ../src/$(am__dirstamp) \
-	../src/$(DEPDIR)/$(am__dirstamp)
 ../src/main.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
 ../src/prefs.$(OBJEXT): ../src/$(am__dirstamp) \
@@ -436,7 +434,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/disks.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/files.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/globals.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/graphics.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/prefs.Po@am__quote@
 

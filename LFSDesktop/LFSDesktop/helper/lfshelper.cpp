@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+enum {MOUNTDISK=1,UNMOUNTDISK,EJECTDISK};
 int checkForNTFS(const char *arg)
 {
 	char	*command;
@@ -24,7 +25,14 @@ int main(int argc, char **argv)
 	uid_t	user=getuid(); 
 	int		isNTFS=1;
 	int		what;
+	int		retval=0;
+	int		exitstatus=-666;
 
+	if(argc<4)
+		{
+			printf("Usage:\nlfshelper UUID MOUNTPOINT [1=Mount|2=Unmount|3=Eject]\n");
+			return(1);
+		}
 	if(argc==4)
 		{
 			isNTFS=checkForNTFS(argv[1]);
@@ -35,27 +43,30 @@ int main(int argc, char **argv)
 			what=atoi(argv[3]);
 			switch(what)
 				{
-					case 1:
+					case MOUNTDISK:
 						if(isNTFS==0)
 							asprintf(&command,"mount -o user,uid=%i,gid=%i UUID=\"%s\" \"%s\"",user,user,argv[1],argv[2]);
 						else
 							asprintf(&command,"mount UUID=\"%s\" \"%s\"",argv[1],argv[2]);
 						break;
-					case 2:
+					case UNMOUNTDISK:
 						asprintf(&command,"umount UUID=\"%s\"",argv[1]);
-						system(command);
+						exitstatus=system(command);
 						free(command);			
 						asprintf(&command,"rmdir \"%s\"",argv[2]);
 						break;
-					case 3:
+					case EJECTDISK:
 						asprintf(&command,"eject UUID=\"%s\" &",argv[1]);
-						system(command);
+						exitstatus=system(command);
 						free(command);			
 						asprintf(&command,"rmdir \"%s\"",argv[2]);
 						break;
 				}
-			system(command);
+			retval=system(command);
 			free(command);			
 		}
-	return 0;
+	if(exitstatus!=-666)
+		return(WEXITSTATUS(exitstatus));
+	else
+		return(WEXITSTATUS(retval));
 }
