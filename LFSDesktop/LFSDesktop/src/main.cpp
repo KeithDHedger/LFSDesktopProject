@@ -140,30 +140,17 @@ int main(int argc, char **argv)
 	wi->windowType="_NET_WM_WINDOW_TYPE_DESKTOP";
 	wi->overRide=true;
 	wi->level=BELOWALL;
-	wi->w=1920;
-	wi->h=1980;
-//	wi->decorated=false;
-//	wc=new LFSTK_windowClass(0,0,1,1,"LFS Desktop Project",true,true);
-//	wc=new LFSTK_windowClass(0,0,1,1,"LFS Desktop Project",false);
-//	wc=new LFSTK_windowClass(0,0,1,1,"LFS Desktop Project",true);
+	wi->w=1;
+	wi->h=1;
 	wc=new LFSTK_windowClass(wi);
 	display=wc->display;
-//	wc->LFSTK_moveWindow(0,0,true);
 
 
-//	wc->LFSTK_resizeWindow(1000,800,true);
 	wc->LFSTK_resizeWindow(DisplayWidth(display,wc->screen),DisplayHeight(display,wc->screen),true);
 	wc->LFSTK_setWindowPixmap(wc->globalLib->LFSTK_getWindowPixmap(display,wc->rootWindow),DisplayWidth(display,wc->screen),DisplayHeight(display,wc->screen));
 	wc->LFSTK_initDnD();
 	wc->acceptOnThis=true;
-	//wc->LFSTK_setWindowType("_NET_WM_WINDOW_TYPE_DESKTOP");
 
-//wc->LFSTK_moveWindow(0,0,true);
-//
-//wc->LFSTK_setDecorated(false);
-//wc->LFSTK_setSticky(true);
-//wc->LFSTK_setKeepAbove(false);
-DEBUGFUNC("sx=%i sy=%i",DisplayWidth(display,wc->screen),DisplayHeight(display,wc->screen));
 	asprintf(&diskInfoPath,"%s/.config/LFS/disks2",getenv("HOME"));
 	asprintf(&command,"mkdir -p %s 2>&1 >/dev/null",diskInfoPath);
 	system(command);
@@ -200,8 +187,8 @@ DEBUGFUNC("sx=%i sy=%i",DisplayWidth(display,wc->screen),DisplayHeight(display,w
 	if(gridSize<1)
 		gridSize=1;
 
-	maxXSlots=1920/gridSize;
-	maxYSlots=1980/gridSize;
+	maxXSlots=DisplayWidth(display,wc->screen)/gridSize;
+	maxYSlots=DisplayHeight(display,wc->screen)/gridSize;
 
 	xySlot=(int**)malloc(maxXSlots*sizeof(int*));
 	for(int j=0; j<maxXSlots; j++)
@@ -269,12 +256,7 @@ DEBUGFUNC("sx=%i sy=%i",DisplayWidth(display,wc->screen),DisplayHeight(display,w
 	loadDesktopItems();
 	signal(SIGALRM,alarmCallBack);
 
-	//wc->LFSTK_setDecorated(false);
-	//wc->LFSTK_setKeepBelow(true);
-//wc->LFSTK_setWindowPixmap(wc->globalLib->LFSTK_getWindowPixmap(display,wc->rootWindow),DisplayWidth(display,wc->screen),DisplayHeight(display,wc->screen));
 	wc->LFSTK_showWindow();
-	//XLowerWindow(wc->display,wc->window);
-//	wc->LFSTK_moveWindow(0,0,true);
 	wc->LFSTK_clearWindow();
 
 //disk insert/remove
