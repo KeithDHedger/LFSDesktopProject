@@ -1,4 +1,7 @@
 0.1.3
+Code clean.
+Added right border to prefs.
+Better default placement.
 No longer needs composite manager.
 New desktop now allows copying files to ~/Desktop via DnD.Done Custom add/remove icon for desk items.
 Done Custom add/remove icon for disk items.

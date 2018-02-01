@@ -36,6 +36,7 @@ const char			*diskLabelData[]={"Mount","Unmount","Eject","Open","Custom Icon","R
 const char			*diskThemeIconData[]={"drive-harddisk","media-eject","media-eject","document-open","list-add","list-remove"};
 
 LFSTK_labelClass	*label;
+bool				needsRefresh=true;
 
 void printhelp(void)
 {
@@ -47,31 +48,6 @@ void printhelp(void)
 			"Report bugs to kdhedger@yahoo.co.uk\n"
 	      );
 }
-
-Pixmap GetRootPixmap(Display* display, Window *root)
-{
-    Pixmap			currentRootPixmap=0;
-    Atom			act_type;
-    int				act_format;
-    unsigned long	nitems;
-    unsigned long	bytes_after;
-    unsigned char	*data=NULL;
-    Atom			_XROOTPMAP_ID;
-
-    _XROOTPMAP_ID=XInternAtom(display,"_XROOTPMAP_ID",False);
-
-    if (XGetWindowProperty(display,*root,_XROOTPMAP_ID,0,1,False,XA_PIXMAP,&act_type,&act_format,&nitems,&bytes_after,&data)==Success)
-    	{
-	        if (data)
-	        	{
-					currentRootPixmap=*((Pixmap *)data);
-					XFree(data);
-        		}
-    	}
-	return currentRootPixmap;
-}
-
-bool needsRefresh=true;
 
 void  alarmCallBack(int sig)
 {
@@ -172,7 +148,6 @@ int main(int argc, char **argv)
 	asprintf(&iconTheme,"gnome");
 	iconSize=32;
 	gridSize=64;
-	gridBorder=32;
 	asprintf(&terminalCommand,"xterm -e ");
 	showSuffix=false;
 	asprintf(&fontFace,"Sans;0;0;10");
@@ -187,16 +162,11 @@ int main(int argc, char **argv)
 	if(gridSize<1)
 		gridSize=1;
 
+	nextXPos=gridBorderLeft;
+	nextYPos=gridBorderLeft;
+
 	maxXSlots=DisplayWidth(display,wc->screen)/gridSize;
 	maxYSlots=DisplayHeight(display,wc->screen)/gridSize;
-
-	xySlot=(int**)malloc(maxXSlots*sizeof(int*));
-	for(int j=0; j<maxXSlots; j++)
-		xySlot[j]=(int*)malloc(maxYSlots*sizeof(int));
-
-	for(int yy=0;yy<maxYSlots;yy++)
-		for(int xx=0;xx<maxXSlots;xx++)
-			xySlot[xx][yy]=0;
 
 //disks
 	sy=0;
@@ -280,10 +250,6 @@ int main(int argc, char **argv)
 		{
 			if(needsRefresh==true)
 				{
-				//TODO//
-					//wc->LFSTK_setWindowPixmap(wc->globalLib->LFSTK_getWindowPixmap(display,wc->rootWindow),DisplayWidth(display,wc->screen),DisplayHeight(display,wc->screen));
-					//wc->LFSTK_clearWindow();
-
 //refresh disks
 					updateDisks();
 					ret=poll(&polldisks,POLLIN,20);		
@@ -338,7 +304,10 @@ int main(int argc, char **argv)
 							if(event.type==ButtonPress)
 								{
 									if(event.xbutton.button==Button1)
-										ml->gadget->LFSTK_getGeom(&oldPos);
+									{
+										oldPos.x=static_cast<diskDataStruct*>(ml->gadget->userData)->posx;
+										oldPos.y=static_cast<diskDataStruct*>(ml->gadget->userData)->posy;
+									}
 								}
 						}
 

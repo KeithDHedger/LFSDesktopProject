@@ -41,6 +41,7 @@ class LFSTK_gadgetClass
 //window events
 		virtual void			LFSTK_clearWindow(void);
 		virtual void			LFSTK_resizeWindow(int w,int h);
+		virtual void			LFSTK_moveGadget(int w,int h);
 		void					LFSTK_showGadget(void);
 		void					LFSTK_hideGadget(void);
 		virtual bool			clientMessage(XEvent *e);
@@ -67,8 +68,6 @@ class LFSTK_gadgetClass
 		unsigned int			currentButton=-1;
 
 //context window
-//		LFSTK_windowClass		*contextWC=NULL;
-//		bool					popupLoop=false;
 		void					LFSTK_doPopUp(int x,int y);
 		LFSTK_windowClass 		*LFSTK_getContextWindow(void);
 		void					LFSTK_setContextWindow(LFSTK_windowClass *wc);

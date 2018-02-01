@@ -210,6 +210,8 @@ bool doDeskItemMenuSelect(void *p,void* ud)
 bool deskUpCB(void *p,void* ud)
 {
 	char			*diskfile;
+	int 			realposx;
+	int 			realposy;
 	diskDataStruct	*dnode=(diskDataStruct*)ud;
 	geometryStruct	geom;
 	char			*filename=NULL;
@@ -235,17 +237,15 @@ bool deskUpCB(void *p,void* ud)
 	diskUUID=NULL;
 	iconPath=dnode->pathToIcon;
 
-	setSlotFromPos(oldPos.x,oldPos.y,0);
-	xPos=(geom.x/gridSize)*gridSize;
-	yPos=(geom.y/gridSize)*gridSize;
-
-	XMoveWindow(dnode->diskImage->display,dnode->diskImage->window,xPos,yPos);
-	setSlotFromPos(xPos,yPos,1);
-	dnode->posx=xPos;
-	dnode->posy=yPos;
 	customIcon=dnode->hasCustomIcon;
 	dataType=dnode->dataType;
+	setGridXY(dnode,geom.x,geom.y);
+	xPos=dnode->posx;
+	yPos=dnode->posy;
 	saveVarsToFile(diskfile,diskData);
+
+	getRealXY(dnode,&realposx,&realposy);	
+	dnode->diskImage->LFSTK_moveGadget(realposx,realposy);
 
 	diskUUID=NULL;
 	iconPath=NULL;
@@ -280,6 +280,8 @@ void setDeskData(diskDataStruct *dnode)
 void addDeskData(diskDataStruct *dnode,const char *devname,int x,int y)
 {
 	char	*diskfile;
+	int		realposx;
+	int		realposy;
 
 	dnode->devName=strdup(devname);
 
@@ -288,7 +290,6 @@ void addDeskData(diskDataStruct *dnode,const char *devname,int x,int y)
 	asprintf(&diskfile,"%s/%s.rc",cacheDeskPath,dnode->devName);
 	if(loadVarsFromFile(diskfile,diskData)==true)
 		{
-			setSlotFromPos(x,y,0);
 			dnode->posx=xPos;
 			dnode->posy=yPos;
 			dnode->hasCustomIcon=customIcon;
@@ -311,6 +312,9 @@ void addDeskData(diskDataStruct *dnode,const char *devname,int x,int y)
 
 	dnode->diskImage=new LFSTK_buttonClass(wc,dnode->label,dnode->posx,dnode->posy,iconSize,iconSize,NorthWestGravity);
 	setImageSize(dnode);
+	getRealXY(dnode,&realposx,&realposy);
+	dnode->diskImage->LFSTK_moveGadget(realposx,realposy);
+
 	dnode->diskImage->LFSTK_setCanDrag(true);
 	dnode->diskImage->LFSTK_setStyle(BEVELNONE);
 	dnode->diskImage->LFSTK_setImageFromPath(dnode->pathToIcon,TOOLBAR,true);
@@ -318,21 +322,17 @@ void addDeskData(diskDataStruct *dnode,const char *devname,int x,int y)
 	dnode->diskImage->LFSTK_setCallBack(NULL,deskUpCB,(void*)dnode);
 	dnode->diskImage->LFSTK_setContextWindow(fileWindow);
 	dnode->diskImage->userData=(void*)dnode;
-
-	setSlotFromPos(dnode->posx,dnode->posy,1);
 }
 
 void addDeskItem(const char *name)
 {
-	int				x=gridBorder+iconSize;
-	int				y=gridBorder+iconSize+100;
+	int				x;
+	int				y;
 	diskLinkedList	*disklistnode=NULL;
+
 	newNode();
 	disklistnode=diskLL;
-
-	getFreeSlot(&x,&y);
-	x=(x*gridSize);
-	y=(y*gridSize);
+	getFreeGridXY(&x,&y);
 
 	addDeskData(disklistnode->data,name,x,y);
 	disklistnode->data->dataType=FILEDATATYPE;
@@ -368,7 +368,6 @@ void deleteDeskItem(const char *name)
 					freeAndNull(&data->uuid);
 					freeAndNull(&data->pathToIcon);
 					data->diskImage->LFSTK_getGeom(&geom);
-					xySlot[geom.x/gridSize][geom.y/gridSize]=0;
 					delete data->diskImage;
 				}
 			if(disklistnode==diskLL)
@@ -386,8 +385,7 @@ void loadDesktopItems(void)
 	int			y;
 	char		*itemname=NULL;
 
-printf(">>loadDesktopItems<<\n");
-
+//printf(">>loadDesktopItems<<\n");
 	diskLinkedList	*disklistnode=NULL;
 	asprintf(&command,"find %s -maxdepth 1 -mindepth 1 |sort",desktopPath);
 
@@ -406,11 +404,10 @@ printf(">>loadDesktopItems<<\n");
 							disklistnode=isInList(itemname);
 							if(disklistnode==NULL)
 								{
+								
 									newNode();
 									disklistnode=diskLL;
-									getFreeSlot(&x,&y);
-									x=(x*gridSize);
-									y=(y*gridSize);
+									getFreeGridXY(&x,&y);
 									addDeskData(disklistnode->data,itemname,x,y);
 									disklistnode->data->dataType=FILEDATATYPE;
 									disklistnode->data->dirty=true;

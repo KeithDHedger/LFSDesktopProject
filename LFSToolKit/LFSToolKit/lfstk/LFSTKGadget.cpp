@@ -1370,3 +1370,22 @@ LFSTK_windowClass* LFSTK_gadgetClass::LFSTK_getContextWindow(void)
 	return(this->contextWC);
 }
 
+/**
+* Move gadget.
+* \param x New X.
+* \param y New Y.
+* \param tellx Inform X (default=true).
+*/
+void LFSTK_gadgetClass::LFSTK_moveGadget(int x,int y)
+{
+//	this->setWindowGeom(x,y,0,0,WINDSETXY);
+//	if(tellx==true)
+//		XMoveWindow(this->display,this->window,x,y);
+//	this->LFSTK_clearWindow();
+	this->gadgetGeom.x=x;
+	this->gadgetGeom.y=y;
+	XMoveWindow(this->display,this->window,x,y);
+	
+	this->wc->LFSTK_clearWindow();
+}
+

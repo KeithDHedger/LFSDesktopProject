@@ -27,6 +27,8 @@ Display				*display;
 
 //list
 diskLinkedList		*diskLL=NULL;
+int					nextXPos=2;
+int					nextYPos=2;
 
 //paths
 char				*diskInfoPath;
@@ -58,13 +60,7 @@ args				diskData[]=
 bool				showSuffix=false;
 int					maxXSlots;
 int					maxYSlots;
-int					**xySlot;
 geometryStruct		oldPos;
-
-//info
-int					errLine;
-const char			*errFile;
-const char			*errFunc;
 
 //dialogs
 LFSTK_windowClass	*diskWindow=NULL;
@@ -188,6 +184,13 @@ void printDiskData(diskDataStruct *diskstruct)
 	printf("\n");
 }
 
+//round to nearest int
+int toNearestInt(int left,int rite)
+{
+	return((int)(((float)left/(float)rite)+0.5));
+}
+
+
 //set icon size
 void setImageSize(diskDataStruct *dnode)
 {
@@ -200,34 +203,58 @@ void setImageSize(diskDataStruct *dnode)
 			if(textwid>iconSize)
 				{
 					dnode->diskImage->LFSTK_setGadgetSize(textwid,iconSize);
-					dnode->gadgetSize=iconSize;
+					dnode->gadgetSize=textwid;
 				}
+			else
+				dnode->gadgetSize=iconSize;
 		}
 
 }
 
 //slots
-void getFreeSlot(int *x,int *y)
+void setGridXY(diskDataStruct *dnode,int x,int y)
 {
+	int	addx=0;
 
-	for(int yy=0;yy<maxYSlots;yy++)
-		{
-			for(int xx=0;xx<maxXSlots;xx++)
-				{
-					if(xySlot[xx][yy]==0)
-						{
-							*x=xx;
-							*y=yy;
-							xySlot[xx][yy]=1;
-							return;
-						}
-				}
-		}
+	if(dnode->gadgetSize>gridSize)
+		addx=1;
+	dnode->posx=addx+toNearestInt(x,gridSize);
+	dnode->posy=toNearestInt(y,gridSize);
 }
 
-void setSlotFromPos(int x,int y,int val)
+void getRealXY(diskDataStruct *dnode,int *x,int *y)
 {
-	xySlot[x/gridSize][y/gridSize]=val;
+	*x=(dnode->posx*gridSize)-(dnode->gadgetSize/2);
+	*y=(dnode->posy*gridSize)-(iconSize/2)+1;
+}
+
+void getFreeGridXY(int *px,int *py)
+{
+	diskLinkedList	*list=diskLL;
+
+	if(list==NULL)
+		{
+			*px=gridBorderLeft;
+			*py=gridBorderRight;
+			return;
+		}
+
+	do
+		{
+			if((list->data->posx==nextXPos) && (list->data->posy==nextYPos))
+				{
+					nextXPos++;
+					if(nextXPos>(maxXSlots-gridBorderRight))
+						{
+							nextXPos=gridBorderLeft;
+							nextYPos++;
+						}
+				}
+			list=list->next;
+		}			
+		while(list!=NULL);
+	*px=nextXPos;
+	*py=nextYPos;
 }
 
 bool dialogCB(void *p,void* ud)
@@ -243,7 +270,7 @@ void dialogRun(LFSTK_windowClass *dialog)
 
 	dialog->LFSTK_showWindow();
 	dialog->LFSTK_setKeepAbove(true);
-	//dialog->LFSTK_setTransientFor(wc->window);
+	dialog->LFSTK_setTransientFor(wc->window);
 	while(dialogLoop==true)
 		{
 			while (XPending(display) && (dialogLoop==true))
@@ -257,11 +284,6 @@ void dialogRun(LFSTK_windowClass *dialog)
 						{
 							case Expose:
 								dialog->LFSTK_clearWindow();
-								break;
-
-							case ConfigureNotify:
-								//iconChooser->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
-								//iconChooser->globalLib->LFSTK_setCairoSurface(iconChooser->display,iconChooser->window,iconChooser->visual,&iconChooser->sfc,&iconChooser->cr,event.xconfigurerequest.width,event.xconfigurerequest.height);
 								break;
 
 							case ClientMessage:

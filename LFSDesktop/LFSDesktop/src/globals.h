@@ -88,6 +88,8 @@ extern Display				*display;
 
 //list
 extern diskLinkedList		*diskLL;
+extern int					nextXPos;
+extern int					nextYPos;
 
 //paths
 extern char					*diskInfoPath;
@@ -104,6 +106,7 @@ extern int					yPos;
 extern bool					customIcon;
 extern int					dataType;
 
+
 extern args					diskData[];
 
 //prefs
@@ -112,11 +115,6 @@ extern int					maxXSlots;
 extern int					maxYSlots;
 extern int					**xySlot;
 extern geometryStruct		oldPos;
-
-//info
-extern int					errLine;
-extern const char			*errFile;
-extern const char			*errFunc;
 
 //dialogs
 extern LFSTK_windowClass	*diskWindow;
@@ -138,5 +136,9 @@ void getFreeSlot(int *x,int *y);
 void setSlotFromPos(int x,int y,int val);
 bool dialogCB(void *p,void* ud);
 void dialogRun(LFSTK_windowClass *dialog);
+int toNearestInt(int left,int rite);
+void setGridXY(diskDataStruct *dnode,int x,int y);
+void getRealXY(diskDataStruct *dnode,int *x,int *y);
+void getFreeGridXY(int *x,int *y);
 
 #endif

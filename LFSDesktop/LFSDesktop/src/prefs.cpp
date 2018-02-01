@@ -24,8 +24,9 @@ char	*iconTheme;
 
 //desktop prefs
 int		iconSize=40;
-int		gridBorder=32;
-int		gridSize=iconSize+gridBorder;
+int		gridBorderLeft=2;
+int		gridBorderRight=2;
+int		gridSize=iconSize+gridBorderLeft;
 int		refreshRate=2;
 char	*terminalCommand=NULL;
 //bool	showSuffix=false;
@@ -41,7 +42,8 @@ args	desktopPrefs[]=
 	{"icontheme",TYPESTRING,&iconTheme},
 	{"iconsize",TYPEINT,&iconSize},
 	{"gridsize",TYPEINT,&gridSize},
-	{"gridborder",TYPEINT,&gridBorder},
+	{"gridborderleft",TYPEINT,&gridBorderLeft},
+	{"gridborderrite",TYPEINT,&gridBorderRight},
 	{"refreshrate",TYPEINT,&refreshRate},
 	{"termcommand",TYPESTRING,&terminalCommand},
 	{"showextension",TYPEBOOL,&showSuffix},

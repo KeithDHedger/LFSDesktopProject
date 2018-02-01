@@ -149,6 +149,8 @@ bool diskUpCB(void *p,void* ud)
 	char			*diskfile;
 	diskDataStruct	*dnode=(diskDataStruct*)ud;
 	geometryStruct	geom;
+	int 			realposx;
+	int 			realposy;
 
 	if(dnode->diskImage->currentButton!=Button1)
 		return(true);
@@ -168,15 +170,16 @@ bool diskUpCB(void *p,void* ud)
 	diskUUID=dnode->uuid;
 	iconPath=dnode->pathToIcon;
 
-	setSlotFromPos(oldPos.x,oldPos.y,0);
-	xPos=(geom.x/gridSize)*gridSize;
-	yPos=(geom.y/gridSize)*gridSize;
 	customIcon=dnode->hasCustomIcon;
 	dataType=dnode->dataType;
 
-	XMoveWindow(dnode->diskImage->display,dnode->diskImage->window,xPos,yPos);
-	setSlotFromPos(xPos,yPos,1);
+	setGridXY(dnode,geom.x,geom.y);
+	xPos=dnode->posx;
+	yPos=dnode->posy;
 	saveVarsToFile(diskfile,diskData);
+
+	getRealXY(dnode,&realposx,&realposy);	
+	dnode->diskImage->LFSTK_moveGadget(realposx,realposy);
 
 	diskUUID=NULL;
 	iconPath=NULL;
@@ -221,13 +224,11 @@ bool setDiskData(diskDataStruct *dnode)
 {
 	char	*buffer=NULL;
 	bool	oldmounted=dnode->mounted;
-	geometryStruct	geom;
 
 	buffer=wc->globalLib->LFSTK_oneLiner("udevadm info --query=property '%s' 2>/dev/null|grep 'ID_FS_UUID='|awk -F= '{print $2}'",dnode->devName);
 	if(strlen(buffer)==0)
 		{
-			dnode->diskImage->LFSTK_getGeom(&geom);
-			setSlotFromPos(geom.x,geom.y,0);
+			getFreeGridXY(&dnode->posx,&dnode->posy);
 			freeAndNull(&dnode->label);
 			freeAndNull(&dnode->uuid);
 			freeAndNull(&dnode->pathToIcon);
@@ -251,7 +252,6 @@ bool setDiskData(diskDataStruct *dnode)
 		dnode->dirty=true;
 
 	dnode->driveHasMedia=true;
-
 	free(buffer);
 
 	return(true);
@@ -260,6 +260,8 @@ bool setDiskData(diskDataStruct *dnode)
 void addDiskData(diskDataStruct *dnode,const char *devname,int x,int y)
 {
 	char	*diskfile;
+	int		realposx;
+	int		realposy;
 
 	dnode->devName=strdup(devname);
 
@@ -268,7 +270,6 @@ void addDiskData(diskDataStruct *dnode,const char *devname,int x,int y)
 			asprintf(&diskfile,"%s/%s.rc",cacheDisksPath,dnode->uuid);
 			if(loadVarsFromFile(diskfile,diskData)==true)
 				{
-					setSlotFromPos(x,y,0);
 					dnode->posx=xPos;
 					dnode->posy=yPos;
 					dnode->hasCustomIcon=customIcon;
@@ -291,17 +292,18 @@ void addDiskData(diskDataStruct *dnode,const char *devname,int x,int y)
 
 			dnode->diskImage=new LFSTK_buttonClass(wc,dnode->label,dnode->posx,dnode->posy,iconSize,iconSize,NorthWestGravity);
 			setImageSize(dnode);
+			getRealXY(dnode,&realposx,&realposy);
+			dnode->diskImage->LFSTK_moveGadget(realposx,realposy);
+
 			dnode->diskImage->LFSTK_setCanDrag(true);
 			dnode->diskImage->LFSTK_setStyle(BEVELNONE);
-			dnode->diskImage->LFSTK_snapSize(gridBorder+iconSize);
+			dnode->diskImage->LFSTK_snapSize(gridBorderLeft+iconSize);
 			dnode->diskImage->LFSTK_snapSize(8);
 			dnode->diskImage->LFSTK_setImageFromPath(dnode->pathToIcon,TOOLBAR,true);
 			dnode->diskImage->LFSTK_setUseWindowPixmap(true);
 			dnode->diskImage->LFSTK_setCallBack(NULL,diskUpCB,(void*)dnode);
 			dnode->diskImage->LFSTK_setContextWindow(diskWindow);
 			dnode->diskImage->userData=(void*)dnode;
-
-			setSlotFromPos(dnode->posx,dnode->posy,1);
 
 			if(dnode->mounted==true)
 				dnode->diskImage->LFSTK_setAlpha(1.0);
@@ -343,10 +345,9 @@ void checkForChanges(diskDataStruct *dnode)
 				}
 			else
 				{
-					addDiskData(dnode,dnode->devName,0,100);
+					addDiskData(dnode,dnode->devName,dnode->posx,dnode->posy);
 				}
 		}
-					
 }
 
 void updateDisks(void)
@@ -393,10 +394,7 @@ void loadDisks(void)
 								{
 									newNode();
 									disklistnode=diskLL;
-									getFreeSlot(&x,&y);
-									x=(x*gridSize);
-									y=(y*gridSize);
-
+									getFreeGridXY(&x,&y);
 									addDiskData(disklistnode->data,buffer,x,y);
 									disklistnode->data->dataType=DISKDATATYPE;
 									disklistnode->data->dirty=true;
