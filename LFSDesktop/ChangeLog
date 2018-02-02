@@ -1,4 +1,5 @@
 0.1.3
+Fixed mainloop hogging too much cpu time.
 Code clean.
 Added right border to prefs.
 Better default placement.

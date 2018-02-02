@@ -226,9 +226,9 @@ bool setDiskData(diskDataStruct *dnode)
 	bool	oldmounted=dnode->mounted;
 
 	buffer=wc->globalLib->LFSTK_oneLiner("udevadm info --query=property '%s' 2>/dev/null|grep 'ID_FS_UUID='|awk -F= '{print $2}'",dnode->devName);
+
 	if(strlen(buffer)==0)
 		{
-			getFreeGridXY(&dnode->posx,&dnode->posy);
 			freeAndNull(&dnode->label);
 			freeAndNull(&dnode->uuid);
 			freeAndNull(&dnode->pathToIcon);
