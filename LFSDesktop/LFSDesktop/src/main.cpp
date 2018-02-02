@@ -121,6 +121,32 @@ void  alarmCallBack(int sig)
 	alarm(refreshRate);
 }
 
+void createDirDesktops(void)
+{
+	const char	*homedesk="[Desktop Entry]\nName=Home\nExec=xdg-open ~\nIcon=user-home";
+	const char	*compdesk="[Desktop Entry]\nName=Computer\nExec=xdg-open /\nIcon=computer";
+	char		*filepath;
+	FILE		*f;
+
+	filepath=(char*)alloca(strlen(desktopPath) + strlen(".computer.desktop") + 1);
+
+	sprintf(filepath,"%s/.home.desktop",desktopPath);
+	f=fopen(filepath,"w");
+	if(f != NULL)
+		{
+			fprintf(f,"%s",homedesk);
+			fclose(f);
+		}
+
+	sprintf(filepath,"%s/.computer.desktop",desktopPath);
+	f=fopen(filepath,"w");
+	if(f != NULL)
+		{
+			fprintf(f,"%s",compdesk);
+			fclose(f);
+		}
+}
+
 int main(int argc, char **argv)
 {
 	int					c;
@@ -199,8 +225,10 @@ int main(int argc, char **argv)
 	free(command);
 
 	asprintf(&desktopPath,"%s/Desktop",getenv("HOME"));
+//create home/computer desktop files.
+	createDirDesktops();
 
-	asprintf(&prefsPath,"%s/.config/LFS/lfsdesktop2.rc",getenv("HOME"));
+	asprintf(&prefsPath,"%s/.config/LFS/lfsdesktop.rc",getenv("HOME"));
 	asprintf(&iconTheme,"gnome");
 	iconSize=32;
 	gridSize=64;

@@ -112,6 +112,15 @@ void setDeskType(diskDataStruct *dnode)
 		{
 			if(strcasecmp(suffix,".desktop")==0)
 				{
+				
+					out=wc->globalLib->LFSTK_oneLiner("sed -n 's/^name=\\(.*\\)$/\\1/Ip' '%s/%s'",desktopPath,dnode->devName);
+					if(strlen(out)>0)
+						{
+							freeAndNull(&dnode->label);
+							dnode->label=strdup(out);
+						}
+					free(out);
+				
 					dnode->diskType=DESKTOPFILE;
 					out=wc->globalLib->LFSTK_oneLiner("sed -n 's/^icon=\\(.*\\)$/\\1/Ip' '%s/%s'",desktopPath,dnode->devName);
 					if(strlen(out)>0)
