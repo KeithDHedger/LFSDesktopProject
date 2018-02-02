@@ -102,7 +102,7 @@ void doRefresh(void)
 					wc->LFSTK_showWindow();
 				}
 		}
-		//			needsRefresh=false;
+	needsRefresh=false;
 }
 
 
@@ -113,7 +113,6 @@ void  alarmCallBack(int sig)
 	if(isdragging==false)
 		{
 			needsRefresh=true;
-//	doRefresh();
 			event.type=Expose;
 			event.window=wc->window;
 			XSendEvent(wc->display,wc->window,false,ExposureMask,(XEvent*)&event);
@@ -127,13 +126,6 @@ int main(int argc, char **argv)
 	int					c;
 	XEvent				event;
 	char				*command;
-	pollfd				polldisks;
-	int					fhfordisks;
-	pollfd				polldesktop;
-	int					fhfordesktop;
-	long				numRead=0;
-	int					ret;
-	char				buffer[EVENT_BUF_LEN]={0,};
 	char				*iconpath=NULL;
 	int					sy;
 	LFSTK_buttonClass	*bc;
@@ -315,52 +307,9 @@ int main(int argc, char **argv)
 	while(mainLoop==true)
 		{
 			if(needsRefresh==true)
-				{
-//refresh disks
-					updateDisks();
-					ret=poll(&polldisks,POLLIN,20);		
-					if(ret!=0)
-						{
-							numRead=read(fhfordisks,buffer,MAXBUFFER);
-							if(numRead>0)
-								{
-									loadDisks();
-									wc->LFSTK_showWindow();
-								}
-							}
-
-//refresh desktop folder
-					ret=poll(&polldesktop,POLLIN,20);		
-					if(ret!=0)
-						{
-							numRead=read(fhfordesktop,buffer,EVENT_BUF_LEN);
-							if(numRead>0)
-								{
-									int cnt=0;
-									while(cnt<numRead)
-										{
-											inotify_event *event=(inotify_event*)&buffer[cnt];
-											if(event->len>0)
-												{
-													if(event->mask & IN_CREATE)
-														addDeskItem(event->name);
-													if(event->mask & IN_DELETE)
-														deleteDeskItem(event->name);
-													if(event->mask & IN_MOVED_FROM)
-														addDeskItem(event->name);
-													if(event->mask & IN_MOVED_TO)
-														deleteDeskItem(event->name);
-												}
-											cnt+=sizeof(inotify_event)+event->len;
-										}
-									wc->LFSTK_showWindow();
-								}
-							}
-					needsRefresh=false;
-				}
+				doRefresh();
 
 			XNextEvent(wc->display,&event);
-			//printf("got event\n");
 			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
 			if(ml!=NULL)
 				{
