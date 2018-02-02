@@ -64,12 +64,10 @@ class LFSTK_lib
 //files
 		char		*LFSTK_getMimeType(const char* path);
 
-//debug
-//		int			errLine;
-//		const char	*errFile;
-//		const char	*errFunc;
-//		void		debugFunc(const char *fmt, ...);
+//colours
+		void		LFSTK_setColourFromName(Display *display,Colormap cm,colourStruct *colptr,const char *name);
 
+//debug
 	private:
 		static int	callback(const char *fpath,const struct stat *sb,int typeflag);
 		cairo_surface_t*	cairo_image_surface_create_from_jpeg_mem(const unsigned char* data, size_t len);

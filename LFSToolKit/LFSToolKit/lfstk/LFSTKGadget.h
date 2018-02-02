@@ -130,6 +130,11 @@ class LFSTK_gadgetClass
 		Window					rootWindow;		
 		Colormap				cm;
 
+		bool					drawLabelBG=false;
+		bool					autoLabelBGColour=false;
+		colourStruct			labelBGColour={NULL,0,{1.0,1.0,1.0,1.0}};
+		void					LFSTK_setLabelBGColour(double r,double g,double b,double a);
+
 		void					LFSTK_setShowIndicator(bool show);
 		bool					useImage;
 		bool					gotIcon;

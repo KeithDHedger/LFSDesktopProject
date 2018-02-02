@@ -790,6 +790,27 @@ bool LFSTK_lib::LFSTK_pointInRect(pointStruct *point,geometryStruct *geom)
 }
 
 /**
+* Set colour struct from colour name.
+* \param Display *display.
+* \param Colormap cm.
+* \param colourStruct *colptr Struct to init.
+* \param const char *name Colour name 
+*/
+void LFSTK_lib::LFSTK_setColourFromName(Display *display,Colormap cm,colourStruct *colptr,const char *name)
+{
+	XColor tc,sc;
+	if(colptr->name!=NULL)
+		free(colptr->name);
+	colptr->name=strdup(name);
+	XAllocNamedColor(display,cm,name,&sc,&tc);
+	colptr->pixel=sc.pixel;
+
+	colptr->RGBAColour.r=((colptr->pixel>>16) & 0xff)/256.0;
+	colptr->RGBAColour.g=((colptr->pixel>>8) & 0xff)/256.0;
+	colptr->RGBAColour.b=((colptr->pixel>>0) & 0xff)/256.0;
+}
+
+/**
 * Get pixel from colour name.
 * \param Display *display.
 * \param Colormap cm.

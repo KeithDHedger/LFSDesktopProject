@@ -1,4 +1,5 @@
 0.1.3
+Added back label BG colour and alpha to prefs.
 Added Home and Computer locatins to desktop.
 Fixed mainloop hogging too much cpu time.
 Code clean.

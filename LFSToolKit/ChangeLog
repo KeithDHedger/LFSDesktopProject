@@ -1,4 +1,7 @@
 0.2.4
+Added label BG auto colour.
+Added setColourFromName to lib.
+Added label BG colour to gadgets.
 Fixed gadgets using parent windows pixmap.
 Can now set above/below/normal on window create.
 Added window constructor using struct to set data.

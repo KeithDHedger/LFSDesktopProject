@@ -396,8 +396,10 @@ void LFSTK_gadgetClass::drawBevel(geometryStruct* geom,bevelType bevel)
 */
 void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 {
-	int labelx=0;
-	int	labely;
+	int			labelx=0;
+	int			labely;
+	cairoColor	lcol;
+	cairoColor	*colptr=&this->labelBGColour.RGBAColour;
 
 	if(this->isActive==false)
 		details->state=INACTIVECOLOUR;
@@ -443,6 +445,33 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 			cairo_save(this->cr);
 				cairo_select_font_face(this->cr,fontName,slant,weight);
 				cairo_set_font_size(this->cr,fontSize);
+
+				if(this->drawLabelBG==true)
+					{
+						if(this->autoLabelBGColour==true)
+							{
+								if(strcmp(this->wc->globalLib->bestFontColour(this->fontColourNames[details->state].pixel),"black")==0)
+									{
+										lcol.r=0;
+										lcol.g=0;
+										lcol.b=0;
+										lcol.a=this->labelBGColour.RGBAColour.a;
+									}
+								else
+									{
+										lcol.r=1;
+										lcol.g=1;
+										lcol.b=1;
+										lcol.a=this->labelBGColour.RGBAColour.a;
+									}
+								colptr=&lcol;
+							}
+
+						cairo_set_source_rgba(this->cr,colptr->r,colptr->g,colptr->b,colptr->a);
+						cairo_rectangle(this->cr,labelx,labely-(int)(long)this->extents.height+((int)(long)this->extents.height+(int)(long)this->extents.y_bearing),this->extents.width,this->extents.height);
+						cairo_fill(this->cr);
+					}		
+
 				cairo_move_to(this->cr,labelx,labely);
 				cairo_set_source_rgba(this->cr,this->fontColourNames[details->state].RGBAColour.r,this->fontColourNames[details->state].RGBAColour.g,this->fontColourNames[details->state].RGBAColour.b,1.0);
 				cairo_show_text(this->cr,this->label); 
@@ -831,7 +860,8 @@ int LFSTK_gadgetClass::LFSTK_getTextHeight(const char* text)
 		cairo_set_font_size(this->cr,this->fontSize);
 		cairo_text_extents(this->cr,text,&returnextents);
 	cairo_restore(this->cr);
-	return(returnextents.height);
+	printf("hite=%f  y_bearing=%f,  %i\n",returnextents.height,returnextents.y_bearing,(int)(long)returnextents.height);
+	return((int)(long)returnextents.height);
 }
 
 /**
@@ -1389,3 +1419,19 @@ void LFSTK_gadgetClass::LFSTK_moveGadget(int x,int y)
 	this->wc->LFSTK_clearWindow();
 }
 
+/**
+* Set BG colour for label
+* \param double r Red componant.
+* \param double g Green componant.
+* \param double b blue componant.
+* \param double a Alpha componant.
+* 
+* \note The Alpha componant is also used for label autocolour.
+*/
+void LFSTK_gadgetClass::LFSTK_setLabelBGColour(double r,double g,double b,double a)
+{
+	this->labelBGColour.RGBAColour.r=r;
+	this->labelBGColour.RGBAColour.g=g;
+	this->labelBGColour.RGBAColour.b=b;
+	this->labelBGColour.RGBAColour.a=a;
+}
