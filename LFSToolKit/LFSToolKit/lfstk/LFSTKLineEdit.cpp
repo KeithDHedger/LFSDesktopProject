@@ -272,7 +272,7 @@ void LFSTK_lineEditClass::drawLabel(void)
 	cairo_save(this->cr);
 		cairo_select_font_face(this->cr,fontName,slant,weight);
 		cairo_set_font_size(this->cr,fontSize);
-		cairo_move_to(this->cr,this->pad,(this->gadgetDetails.gadgetGeom.h/2)-(extents.y_bearing/2));
+		cairo_move_to(this->cr,this->pad,(this->gadgetDetails.gadgetGeom.h/2)-(this->textExtents.y_bearing/2));
 		cairo_set_source_rgba(this->cr,0.0,0,0,1.0);
 		cairo_show_text(this->cr,buffer);
 	cairo_restore(this->cr);

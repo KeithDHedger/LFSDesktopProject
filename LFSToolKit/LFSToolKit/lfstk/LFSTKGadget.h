@@ -167,11 +167,13 @@ class LFSTK_gadgetClass
 		char					*label=NULL;
 		char					*fontString=NULL;
 
-		cairo_text_extents_t	extents;
+		cairo_text_extents_t	textExtents;
+		cairo_font_extents_t	fontExtents;
 		cairo_font_weight_t		weight;
 		cairo_font_slant_t		slant;
 		int						fontSize;
 		char					*fontName=NULL;
+		double					maxTextHeight;
 
 		bool					inWindow;
 		bool					isActive;

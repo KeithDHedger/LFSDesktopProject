@@ -84,6 +84,7 @@ int main(int argc, char **argv)
 	wc=new LFSTK_windowClass(wi);
 	display=wc->display;
 	delete	wi;
+	wc->LFSTK_setWindowPixmap(wc->globalLib->LFSTK_getWindowPixmap(display,wc->rootWindow),DIALOGWIDTH,sy);
 
 	tux=new LFSTK_imageClass(wc,NULL,DIALOGMIDDLE-(IMAGESIZE/2),sy,IMAGESIZE,IMAGESIZE,NorthGravity,true);
 	tux->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",PRESERVEASPECT,true);
@@ -98,15 +99,19 @@ int main(int argc, char **argv)
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,NorthGravity);
 	label->LFSTK_setCairoFontDataParts("sB",20);
+	label->LFSTK_setUseWindowPixmap(true);
 	sy+=YSPACING;
 
 	label=new LFSTK_labelClass(wc,BOXLABEL2,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,NorthGravity);
+	label->LFSTK_setUseWindowPixmap(true);
 	sy+=YSPACING/2;
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,NorthGravity);
+	copyrite->LFSTK_setUseWindowPixmap(true);
 	sy+=HALFYSPACING;
 	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,NorthGravity);
 	personal->LFSTK_setCairoFontDataParts("B");
+	personal->LFSTK_setUseWindowPixmap(true);
 	sy+=YSPACING;
 
 //line
@@ -114,6 +119,7 @@ int main(int argc, char **argv)
 	seperator->LFSTK_setStyle(BEVELNONE);
 	seperator->gadgetDetails.buttonTile=false;
 	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
+	seperator->LFSTK_setUseWindowPixmap(true);
 	sy+=YSPACING;
 
 //quit
@@ -121,7 +127,6 @@ int main(int argc, char **argv)
 	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
 	sy+=YSPACING;
 
-	wc->LFSTK_setWindowPixmap(wc->globalLib->LFSTK_getWindowPixmap(display,wc->rootWindow),DIALOGWIDTH,sy);
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();
 	//wc->LFSTK_setKeepBelow(true);
@@ -144,7 +149,7 @@ int main(int argc, char **argv)
 	//diskWindow->LFSTK_showWindow(true);
 	//diskWindow->LFSTK_hideWindow();
 	tux->LFSTK_setContextWindow(diskWindow);
-	wc->LFSTK_resizeWindow(1000,400,true);
+//	wc->LFSTK_resizeWindow(1000,400,true);
 //wc->LFSTK_setWindowPixmap(wc->globalLib->LFSTK_getWindowPixmap(display,wc->rootWindow),800,800);
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
@@ -159,19 +164,14 @@ int main(int argc, char **argv)
 			switch(event.type)
 				{
 					case Expose:
-						//wc->LFSTK_resizeWindow(event.xexpose.width,event.xexpose.height,false);
-						//wc->globalLib->LFSTK_setCairoSurface(wc->display,wc->window,wc->visual,&wc->sfc,&wc->cr,event.xexpose.width,event.xexpose.height);
-						//wc->LFSTK_setWindowPixmap(wc->globalLib->LFSTK_getWindowPixmap(display,wc->rootWindow),event.xexpose.width,event.xexpose.height);
 						wc->LFSTK_clearWindow();
-						//XSync(display,false);
 						break;
 
 					case ResizeRequest:
 					DEBUGFUNC("ResizeRequest","");
 						wc->LFSTK_resizeWindow(event.xresizerequest.width,event.xresizerequest.height,false);
-						//wc->globalLib->LFSTK_setCairoSurface(wc->display,wc->window,wc->visual,&wc->sfc,&wc->cr,event.xconfigurerequest.width,event.xconfigurerequest.height);
 						wc->LFSTK_setWindowPixmap(wc->globalLib->LFSTK_getWindowPixmap(display,wc->rootWindow),event.xresizerequest.width,event.xresizerequest.height);
-						XClearWindow(wc->display,wc->window);
+//						XClearWindow(wc->display,wc->window);
 						wc->LFSTK_clearWindow();
 						//XSync(display,false);
 						break;

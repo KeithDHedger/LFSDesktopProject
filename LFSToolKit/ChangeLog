@@ -1,4 +1,5 @@
 0.2.4
+Better label alignment.
 Added label BG auto colour.
 Added setColourFromName to lib.
 Added label BG colour to gadgets.
