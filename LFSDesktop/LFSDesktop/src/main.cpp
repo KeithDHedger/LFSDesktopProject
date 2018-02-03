@@ -85,19 +85,20 @@ void doRefresh(void)
 					int cnt=0;
 					while(cnt<numRead)
 						{
-							inotify_event *event=(inotify_event*)&buffer[cnt];
-							if(event->len>0)
+							inotify_event *notifyevent=(inotify_event*)&buffer[cnt];
+							if(notifyevent->len>0)
 								{
-									if(event->mask & IN_CREATE)
-										addDeskItem(event->name);
-									if(event->mask & IN_DELETE)
-										deleteDeskItem(event->name);
-									if(event->mask & IN_MOVED_FROM)
-										addDeskItem(event->name);
-									if(event->mask & IN_MOVED_TO)
-										deleteDeskItem(event->name);
+									if(notifyevent->mask & IN_CREATE)
+										addDeskItem(notifyevent->name);
+									if(notifyevent->mask & IN_DELETE)
+										deleteDeskItem(notifyevent->name);
+									if(notifyevent->mask & IN_MOVED_FROM)
+										deleteDeskItem(notifyevent->name);
+										
+									if(notifyevent->mask & IN_MOVED_TO)
+										addDeskItem(notifyevent->name);
 								}
-							cnt+=sizeof(inotify_event)+event->len;
+							cnt+=sizeof(inotify_event)+notifyevent->len;
 						}
 					wc->LFSTK_showWindow();
 				}
@@ -411,7 +412,7 @@ int main(int argc, char **argv)
 
 
 
-
+#if 0
 
 
 
@@ -603,7 +604,7 @@ int mainXX(int argc, char **argv)
 	polldesktop.fd=fhfordesktop;
 	polldesktop.events=POLLIN;
 	polldesktop.revents=0;
-	inotify_add_watch(fhfordesktop,desktopPath,IN_CREATE|IN_DELETE|IN_MOVED_FROM|IN_MOVED_TO);
+	inotify_add_watch(fhfordesktop,desktopPath,IN_CREATE|IN_DELETE|IN_MOVED_FROM|IN_MOVED_TO|IN_MODIFY);
 
 	alarm(refreshRate);
 
@@ -639,7 +640,9 @@ int mainXX(int argc, char **argv)
 							}
 
 //refresh desktop folder
-					ret=poll(&polldesktop,POLLIN,20);		
+					ret=poll(&polldesktop,POLLIN,20);
+												printf(">>>>>>>>>>>>>>..\n");
+					
 					if(ret!=0)
 						{
 							numRead=read(fhfordesktop,buffer,EVENT_BUF_LEN);
@@ -651,12 +654,16 @@ int mainXX(int argc, char **argv)
 											inotify_event *event=(inotify_event*)&buffer[cnt];
 											if(event->len>0)
 												{
+												
 													if(event->mask & IN_CREATE)
 														addDeskItem(event->name);
 													if(event->mask & IN_DELETE)
 														deleteDeskItem(event->name);
 													if(event->mask & IN_MOVED_FROM)
+													{
 														addDeskItem(event->name);
+														printf("in moved from\n");
+													}
 													if(event->mask & IN_MOVED_TO)
 														deleteDeskItem(event->name);
 												}
@@ -756,3 +763,4 @@ printf("there>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 	return 0;
 }
 
+#endif
