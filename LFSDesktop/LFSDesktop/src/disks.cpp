@@ -291,6 +291,8 @@ void addDiskData(diskDataStruct *dnode,const char *devname,int x,int y)
 			free(diskfile);
 
 			dnode->diskImage=new LFSTK_buttonClass(wc,dnode->label,dnode->posx,dnode->posy,iconSize,iconSize,NorthWestGravity);
+
+			dnode->diskImage->LFSTK_setFontString(fontFace,true);
 			setImageSize(dnode);
 			getRealXY(dnode,&realposx,&realposy);
 			dnode->diskImage->LFSTK_moveGadget(realposx,realposy);
@@ -303,6 +305,7 @@ void addDiskData(diskDataStruct *dnode,const char *devname,int x,int y)
 			dnode->diskImage->LFSTK_setUseWindowPixmap(true);
 			dnode->diskImage->LFSTK_setCallBack(NULL,diskUpCB,(void*)dnode);
 			dnode->diskImage->LFSTK_setContextWindow(diskWindow);
+
 
 			dnode->diskImage->LFSTK_setLabelBGColour(0.75,0.75,0.75,strtod(backAlpha,NULL));			
 			wc->globalLib->LFSTK_setColourFromName(wc->display,wc->cm,&dnode->diskImage->labelBGColour,backCol);

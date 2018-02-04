@@ -130,15 +130,20 @@ Window LFSTK_gadgetClass::LFSTK_getWindow(void)
 
 /**
 * Set default font string.
-* \param s Font string.
+* \param s		Font string.
+* \param bool	setfontdata default false.
+* \note setfontdata=true also resets text extents and other font data.
 * \note eg:
 * \note "sans-serif:size=8".
 */
-void LFSTK_gadgetClass::LFSTK_setFontString(const char *s)
+void LFSTK_gadgetClass::LFSTK_setFontString(const char *s,bool setfontdata)
 {
 	if(this->fontString!=NULL)
 		free(this->fontString);
 	this->fontString=strdup(s);
+
+	if(setfontdata==true)
+		this->LFSTK_setCairoFontData();
 }
 
 /**
@@ -242,6 +247,8 @@ void LFSTK_gadgetClass::LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* 
 	this->initGadget();
  	this->blackColour=BlackPixel(this->display,this->screen);
 	this->whiteColour=WhitePixel(this->display,this->screen);
+
+
 
 	this->LFSTK_setCallBack(NULL,NULL,(void*)-1);
 }
@@ -966,12 +973,11 @@ void LFSTK_gadgetClass::LFSTK_setCairoFontData(void)
 			str=strtok(NULL,":");
 		}
 	free(string);
+
 	cairo_save(this->cr);
 		cairo_select_font_face(this->cr,this->fontName,this->slant,this->weight);
 		cairo_set_font_size(this->cr,this->fontSize);
-	//	cairo_text_extents(this->cr,"`g",&this->textExtents);
 		cairo_font_extents(this->cr,&this->fontExtents);
-
 		cairo_text_extents(this->cr,this->label,&this->textExtents);
 		this->maxTextHeight=this->fontExtents.descent+this->fontExtents.height;
 	cairo_restore(this->cr);
@@ -1052,7 +1058,9 @@ void LFSTK_gadgetClass::LFSTK_setCairoFontDataParts(const char* fmt,...)
 	cairo_save(this->cr);
 		cairo_select_font_face(this->cr,this->fontName,this->slant,this->weight);
 		cairo_set_font_size(this->cr,this->fontSize);
+		cairo_font_extents(this->cr,&this->fontExtents);
 		cairo_text_extents(this->cr,this->label,&this->textExtents);
+		this->maxTextHeight=this->fontExtents.descent+this->fontExtents.height;
 	cairo_restore(this->cr);
 }
 

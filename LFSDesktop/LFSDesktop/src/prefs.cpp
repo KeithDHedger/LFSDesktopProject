@@ -31,7 +31,7 @@ int		refreshRate=2;
 char	*terminalCommand=NULL;
 //bool	showSuffix=false;
 char	*fontFace=NULL;
-char	*foreCol;
+//char	*foreCol;
 char	*backCol;
 char	*backAlpha;
 char	*includeList=NULL;
@@ -48,7 +48,6 @@ args	desktopPrefs[]=
 	{"termcommand",TYPESTRING,&terminalCommand},
 	{"showextension",TYPEBOOL,&showSuffix},
 	{"fontface",TYPESTRING,&fontFace},
-	{"labelforeground",TYPESTRING,&foreCol},
 	{"labelbackground",TYPESTRING,&backCol},
 	{"labelalpha",TYPESTRING,&backAlpha},
 	{"includelist",TYPESTRING,&includeList},
@@ -148,8 +147,6 @@ void freePrefs(void)
 		free(terminalCommand);
 	if(fontFace!=NULL)
 		free(fontFace);
-	if(foreCol!=NULL)
-		free(foreCol);
 	if(backCol!=NULL)
 		free(backCol);
 	if(backAlpha!=NULL)

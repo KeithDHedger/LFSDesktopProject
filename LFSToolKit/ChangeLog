@@ -1,4 +1,5 @@
 0.2.4
+LFSTK_setFontString now has option to reset fontdata.
 Better label alignment.
 Added label BG auto colour.
 Added setColourFromName to lib.

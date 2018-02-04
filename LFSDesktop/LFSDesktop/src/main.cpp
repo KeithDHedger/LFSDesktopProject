@@ -237,8 +237,7 @@ int main(int argc, char **argv)
 	gridBorderRight=2;
 	asprintf(&terminalCommand,"xterm -e ");
 	showSuffix=false;
-	asprintf(&fontFace,"Sans;0;0;10");
-	asprintf(&foreCol,"#ffffff");
+	asprintf(&fontFace,"DejaVu Sans:size=10:bold");
 	asprintf(&backCol,"#000000");
 	asprintf(&backAlpha,"0x00");
 	refreshRate=2;
