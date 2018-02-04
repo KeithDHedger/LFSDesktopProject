@@ -38,15 +38,16 @@ LFSTK_lineEditClass			*themeEditBox=NULL;
 
 LFSTK_lineEditClass			*iconSizeEditBox=NULL;
 LFSTK_lineEditClass			*gridSizeEditBox=NULL;
-LFSTK_lineEditClass			*borderEditBox=NULL;
+LFSTK_lineEditClass			*borderLeftEditBox=NULL;
+LFSTK_lineEditClass			*borderRightEditBox=NULL;
 LFSTK_lineEditClass			*refreshEditBox=NULL;
-LFSTK_lineEditClass			*textColurEditBox=NULL;
 LFSTK_lineEditClass			*labelColurEditBox=NULL;
 LFSTK_lineEditClass			*labelAlphaColurEditBox=NULL;
 LFSTK_toggleButtonClass		*showSuffixCheck=NULL;
 LFSTK_lineEditClass			*termCommandEditBox=NULL;
 LFSTK_lineEditClass			*fontEditBox=NULL;
-LFSTK_lineEditClass			*ignoreEditBox=NULL;
+LFSTK_lineEditClass			*includeEditBox=NULL;
+LFSTK_lineEditClass			*excludeEditBox=NULL;
 
 LFSTK_fontDialogClass		*fontButton=NULL;
 
@@ -59,30 +60,32 @@ char						*envFile=NULL;
 char						*prefsTheme=NULL;
 int							prefsIconSize=32;
 int							prefsGridSize=64;
-int							prefsBorder=12;
+int							prefsLeftBorder=2;
+int							prefsRightBorder=16;
 int							prefsRefresh=2;
 char						*prefsTermCommand=NULL;
 bool						prefsShowSuffix=false;
 char						*prefsFont=NULL;
-char						*prefsTextColour=NULL;
 char						*prefsLabelColour=NULL;
 char						*prefsLabelAlpha=NULL;
-char						*prefsIgnoreList=NULL;
+char						*prefsIncludeSed=NULL;
+char						*prefsExcludeSed=NULL;
 
 args						desktopPrefs[]=
 {
 	{"icontheme",TYPESTRING,&prefsTheme},
 	{"iconsize",TYPEINT,&prefsIconSize},
 	{"gridsize",TYPEINT,&prefsGridSize},
-	{"gridborder",TYPEINT,&prefsBorder},
+	{"gridborderleft",TYPEINT,&prefsLeftBorder},
+	{"gridborderrite",TYPEINT,&prefsRightBorder},
 	{"refreshrate",TYPEINT,&prefsRefresh},
 	{"termcommand",TYPESTRING,&prefsTermCommand},
 	{"showextension",TYPEBOOL,&prefsShowSuffix},
 	{"fontface",TYPESTRING,&prefsFont},
-	{"labelforeground",TYPESTRING,&prefsTextColour},
 	{"labelbackground",TYPESTRING,&prefsLabelColour},
 	{"labelalpha",TYPESTRING,&prefsLabelAlpha},
-	{"noshow",TYPESTRING,&prefsIgnoreList},
+	{"includelist",TYPESTRING,&prefsIncludeSed},
+	{"excludelist",TYPESTRING,&prefsExcludeSed},
 	{NULL,0,NULL}
 };
 
@@ -98,24 +101,25 @@ bool buttonCB(void *p,void* ud)
 {
 	free(prefsTheme);
 	free(prefsTermCommand);
-	free(prefsTextColour);
 	free(prefsLabelColour);
 	free(prefsLabelAlpha);
-	free(prefsIgnoreList);
+	free(prefsIncludeSed);
+	free(prefsExcludeSed);
 	free(prefsFont);
 
-	prefsTheme=strdup(themeEditBox->LFSTK_getBuffer()->c_str());
-	prefsTermCommand=strdup(termCommandEditBox->LFSTK_getBuffer()->c_str());
-	prefsTextColour=strdup(textColurEditBox->LFSTK_getBuffer()->c_str());
-	prefsLabelColour=strdup(labelColurEditBox->LFSTK_getBuffer()->c_str());
-	prefsLabelAlpha=strdup(labelAlphaColurEditBox->LFSTK_getBuffer()->c_str());
-	prefsIgnoreList=strdup(ignoreEditBox->LFSTK_getBuffer()->c_str());
-	prefsFont=strdup(fontEditBox->LFSTK_getBuffer()->c_str());
+	prefsTheme=strdup(themeEditBox->LFSTK_getCStr());
+	prefsTermCommand=strdup(termCommandEditBox->LFSTK_getCStr());
+	prefsLabelColour=strdup(labelColurEditBox->LFSTK_getCStr());
+	prefsLabelAlpha=strdup(labelAlphaColurEditBox->LFSTK_getCStr());
+	prefsIncludeSed=strdup(includeEditBox->LFSTK_getCStr());
+	prefsExcludeSed=strdup(excludeEditBox->LFSTK_getCStr());
+	prefsFont=strdup(fontEditBox->LFSTK_getCStr());
 
-	prefsIconSize=atoi(iconSizeEditBox->LFSTK_getBuffer()->c_str());
-	prefsGridSize=atoi(gridSizeEditBox->LFSTK_getBuffer()->c_str());
-	prefsBorder=atoi(borderEditBox->LFSTK_getBuffer()->c_str());
-	prefsRefresh=atoi(refreshEditBox->LFSTK_getBuffer()->c_str());
+	prefsIconSize=atoi(iconSizeEditBox->LFSTK_getCStr());
+	prefsGridSize=atoi(gridSizeEditBox->LFSTK_getCStr());
+	prefsLeftBorder=atoi(borderLeftEditBox->LFSTK_getCStr());
+	prefsRightBorder=atoi(borderRightEditBox->LFSTK_getCStr());
+	prefsRefresh=atoi(refreshEditBox->LFSTK_getCStr());
 
 	prefsShowSuffix=showSuffixCheck->LFSTK_getValue();
 
@@ -228,16 +232,13 @@ int main(int argc, char **argv)
 	gridSizeEditBox=new LFSTK_lineEditClass(wc,(char*)std::to_string(prefsGridSize).c_str(),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
-	label=new LFSTK_labelClass(wc,"Border",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	borderEditBox=new LFSTK_lineEditClass(wc,(char*)std::to_string(prefsBorder).c_str(),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	label=new LFSTK_labelClass(wc,"Borders",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	borderLeftEditBox=new LFSTK_lineEditClass(wc,(char*)std::to_string(prefsLeftBorder).c_str(),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	borderRightEditBox=new LFSTK_lineEditClass(wc,(char*)std::to_string(prefsRightBorder).c_str(),BORDER*2+GADGETWIDTH+GADGETWIDTH+BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
 	label=new LFSTK_labelClass(wc,"Refresh",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	refreshEditBox=new LFSTK_lineEditClass(wc,(char*)std::to_string(prefsRefresh).c_str(),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	sy+=YSPACING;
-
-	label=new LFSTK_labelClass(wc,"Text Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	textColurEditBox=new LFSTK_lineEditClass(wc,prefsTextColour,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
 	label=new LFSTK_labelClass(wc,"Label Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
@@ -259,9 +260,13 @@ int main(int argc, char **argv)
 	termCommandEditBox=new LFSTK_lineEditClass(wc,prefsTermCommand,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
-//ignore
-	label=new LFSTK_labelClass(wc,"Ignore",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	ignoreEditBox=new LFSTK_lineEditClass(wc,prefsIgnoreList,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
+//include list
+	label=new LFSTK_labelClass(wc,"Include Disks",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	includeEditBox=new LFSTK_lineEditClass(wc,prefsIncludeSed,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
+//exclude list
+	label=new LFSTK_labelClass(wc,"Exclude Disks",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	excludeEditBox=new LFSTK_lineEditClass(wc,prefsExcludeSed,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
 //line
@@ -335,10 +340,10 @@ int main(int argc, char **argv)
 	free(envFile);
 	free(prefsTheme);
 	free(prefsTermCommand);
-	free(prefsTextColour);
 	free(prefsLabelColour);
 	free(prefsLabelAlpha);
-	free(prefsIgnoreList);
+	free(prefsIncludeSed);
+	free(prefsExcludeSed);
 	free(prefsFont);
 
 	return 0;
