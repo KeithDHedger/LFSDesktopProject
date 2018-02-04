@@ -1,4 +1,5 @@
 0.1.3
+Fixed background launch of desktop item.
 Fixed wrong inotify events on file move/rename.
 Added back label BG colour and alpha to prefs.
 Added Home and Computer locatins to desktop.

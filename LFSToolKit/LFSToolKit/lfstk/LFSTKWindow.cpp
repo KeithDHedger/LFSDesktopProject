@@ -242,6 +242,12 @@ void LFSTK_windowClass::LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h)
 	cairo_surface_t	*surfacefrom;
 	cairo_t			*cr;
 
+	if(pixmap==None)
+		{
+			this->useTile=false;
+			return;
+		}
+
 	if(this->px!=None)
 		XFreePixmap(this->display,this->px);
 	this->px=XCreatePixmap(display,this->window,w,h,this->depth);
@@ -273,7 +279,6 @@ void LFSTK_windowClass::LFSTK_clearWindow(void)
 {
 	if(this->usePixmap==true)
 		{
-			//XClearWindow(display,this->window);
 			return;
 		}
 

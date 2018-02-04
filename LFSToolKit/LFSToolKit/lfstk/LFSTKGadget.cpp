@@ -284,12 +284,19 @@ void LFSTK_gadgetClass::LFSTK_setLabelAutoColour(bool setauto)
 	this->autoLabelColour=setauto;
 }
 
+/**
+* Set whether to use gadgets tile or windows tile.
+* \note if windows pixmap not available then use gadget colours.
+*/
 void LFSTK_gadgetClass::LFSTK_setUseWindowTile(bool usebutton)
 {
 	this->gadgetDetails.buttonTile=!usebutton;
 }
 
-
+/**
+* Set background of gadget to windows pixmap.
+* \note if windows pixmap not available then use gadget colours.
+*/
 void LFSTK_gadgetClass::LFSTK_setUseWindowPixmap(bool usepixmap)
 {
 	if((this->wc->px!=None) && (usepixmap==true))
@@ -298,9 +305,11 @@ void LFSTK_gadgetClass::LFSTK_setUseWindowPixmap(bool usepixmap)
 			this->gadgetDetails.useWindowPixmap=usepixmap;
 		}
 	else
-		this->gadgetDetails.useWindowPixmap=false;
+		{
+			this->gadgetDetails.useWindowPixmap=false;
+			this->useTile=false;
+		}
 }
-
 
 /**
 * Clear box to colour.
