@@ -359,7 +359,6 @@ void addDeskItem(const char *name)
 
 void deleteDeskItem(const char *name)
 {
-	geometryStruct	geom;
 	diskLinkedList	*disklistnode=NULL;
 	diskLinkedList	*prevnode=NULL;
 	diskLinkedList	*nextnode=NULL;
@@ -383,8 +382,8 @@ void deleteDeskItem(const char *name)
 					freeAndNull(&data->devName);
 					freeAndNull(&data->uuid);
 					freeAndNull(&data->pathToIcon);
-					data->diskImage->LFSTK_getGeom(&geom);
-					delete data->diskImage;
+					if(data->diskImage!=NULL)
+						delete data->diskImage;
 				}
 			if(disklistnode==diskLL)
 				diskLL=nextnode;

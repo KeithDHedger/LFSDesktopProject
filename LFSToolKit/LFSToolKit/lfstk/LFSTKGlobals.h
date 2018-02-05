@@ -119,6 +119,22 @@ static void debugFunc(const char *file,const char *func,int line,const char *fmt
 #define DEBUGFUNC(...) printf("Remove debug code here: %s:%i\n",__FILE__,__LINE__);
 #endif
 
+static bool	xLibError=false;
+static bool	xLibWarnings=false;
+static int	errhandler(Display *dpy,XErrorEvent *e)
+{
+	char buf[256];
+
+	xLibError=true;
+	if(xLibWarnings==true)
+		{
+			buf[0]=0;
+			XGetErrorText(dpy,e->error_code,buf,sizeof buf);
+			printf("Xlib Error: %s",buf);
+		}
+	return 0;
+}
+
 struct args
 {
 	const char*				name;

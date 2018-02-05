@@ -238,37 +238,56 @@ void LFSTK_windowClass::loadGlobalColours(void)
 */
 void LFSTK_windowClass::LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h)
 {
-	cairo_surface_t	*surfaceto;
-	cairo_surface_t	*surfacefrom;
-	cairo_t			*cr;
+	cairo_surface_t	*surfaceto=NULL;
+	cairo_surface_t	*surfacefrom=NULL;
+	cairo_t			*cr=NULL;
+	cairo_status_t	status;
 
 	if(pixmap==None)
 		{
 			this->useTile=false;
 			return;
 		}
+	xLibError=false;
+	XSetErrorHandler(errhandler);
+	XSynchronize(this->display,true);
 
 	if(this->px!=None)
 		XFreePixmap(this->display,this->px);
 	this->px=XCreatePixmap(display,this->window,w,h,this->depth);
 
+//HMMmmmmmm??
 	surfaceto=cairo_xlib_surface_create(display,this->px,this->visual,w,h);
 	surfacefrom=cairo_xlib_surface_create(display,pixmap,DefaultVisual(display,this->screen),w,h);
 	cr=cairo_create(surfaceto);
 
-	cairo_save(cr);
-		cairo_reset_clip(cr);
-		cairo_set_source_surface(cr,surfacefrom,0,0);
-		cairo_paint(cr);
-	cairo_restore(cr);
+	if(status==CAIRO_STATUS_SUCCESS)
+		{
+			cairo_save(cr);
+				cairo_reset_clip(cr);
+				cairo_set_source_surface(cr,surfacefrom,0,0);
+				cairo_paint(cr);
+			cairo_restore(cr);
 
-	XSetWindowBackgroundPixmap(display,this->window,this->px);
-	XClearWindow(display,this->window);
-
+			XSetWindowBackgroundPixmap(this->display,this->window,this->px);
+			XClearWindow(display,this->window);
+			XSync(display,false);
+			this->usePixmap=true;
+		}
 	cairo_surface_destroy(surfaceto);
 	cairo_surface_destroy(surfacefrom);
 	cairo_destroy(cr);
-	this->usePixmap=true;
+	XSetErrorHandler(NULL);
+	XSynchronize(this->display,false);
+
+	if(xLibError==true)
+		{
+			xLibError=false;
+			this->usePixmap=false;
+			this->useTile=false;
+			XSetWindowBackgroundPixmap(this->display,this->window,None);
+			XClearWindow(display,this->window);
+		}
 	XSync(display,false);
 }
 
