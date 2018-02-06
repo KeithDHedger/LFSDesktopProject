@@ -24,15 +24,11 @@ void setDiskType(diskDataStruct *dnode)
 {
 	char		*out=NULL;
 	int			disktype=HDDDISK;
-	char		*ticon=NULL;
-
-	ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,"-harddisk","devices");
 
 //cdrom
 	out=wc->globalLib->LFSTK_oneLiner("udevadm info --query=property --name=%s|grep 'ID_CDROM=1'",dnode->devName);
 	if(strlen(out)>0)
 		{
-			ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,"-cdrom","devices");
 			disktype=CDROM;
 			free(out);
 		}
@@ -44,20 +40,14 @@ void setDiskType(diskDataStruct *dnode)
 			out=wc->globalLib->LFSTK_oneLiner("udevadm info --query=property --name=%s|grep 'ID_DRIVE_THUMB'",dnode->devName);
 			if(strlen(out)>0)
 				{
-					ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,"-removable","devices");
 					disktype=THUMBDISK;
 				}
 			else
 				{
-					ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,"-usb","devices");
 					disktype=USBHDD;
 				}
 			free(out);
 		}
-
-//icon
-	if((ticon!=NULL) && (strlen(ticon)>0) && (dnode->hasCustomIcon==false))
-		dnode->pathToIcon=ticon;
 
 //disk type
 	dnode->diskType=disktype;
@@ -267,6 +257,8 @@ void addDiskData(diskDataStruct *dnode,const char *devname,int x,int y)
 
 	if(setDiskData(dnode)==true)
 		{
+			setIconImage(dnode);
+
 			asprintf(&diskfile,"%s/%s.rc",cacheDisksPath,dnode->uuid);
 			if(loadVarsFromFile(diskfile,diskData)==true)
 				{
@@ -305,7 +297,6 @@ void addDiskData(diskDataStruct *dnode,const char *devname,int x,int y)
 			dnode->diskImage->LFSTK_setUseWindowPixmap(true);
 			dnode->diskImage->LFSTK_setCallBack(NULL,diskUpCB,(void*)dnode);
 			dnode->diskImage->LFSTK_setContextWindow(diskWindow);
-
 
 			dnode->diskImage->LFSTK_setLabelBGColour(0.75,0.75,0.75,strtod(backAlpha,NULL));			
 			wc->globalLib->LFSTK_setColourFromName(wc->display,wc->cm,&dnode->diskImage->labelBGColour,backCol);

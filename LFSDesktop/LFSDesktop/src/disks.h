@@ -28,5 +28,6 @@ enum {HOMEPB=0,DESKTOPPB,COMPUTERPB,BOOKMARKPB,USBDISKPB,HDDRIVEPB,ROMPB,DVDROMP
 void loadDisks(void);
 void updateDisks(void);
 bool doDiskMenuSelect(void *p,void* ud);
+void setDiskType(diskDataStruct *dnode);
 
 #endif

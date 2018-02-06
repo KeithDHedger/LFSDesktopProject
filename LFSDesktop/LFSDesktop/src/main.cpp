@@ -57,7 +57,8 @@ int					fhfordesktop;
 int					queueID;
 msgBuffer			buffer;
 bool				reloadPixmap=false;
-
+bool				reloadPrefsFlag=false;
+bool				reloadDeskFlag=false;
 void readMsg(void)
 {
 	int retcode;
@@ -68,6 +69,13 @@ void readMsg(void)
 		{
 			if(strcmp(buffer.mText,"reloadbg")==0)
 				reloadPixmap=true;
+			if(strcmp(buffer.mText,"reloadprefs")==0)
+				reloadPrefsFlag=true;
+			if(strcmp(buffer.mText,"reloaddesk")==0)
+				{
+					mainLoop=false;
+					reloadDeskFlag=true;
+				}
 		}
 	buffer.mText[0]=0;
 }
@@ -145,6 +153,7 @@ void  alarmCallBack(int sig)
 			readMsg();
 			XSendEvent(wc->display,wc->window,false,ExposureMask,(XEvent*)&event);
 			XFlush(wc->display);
+			//XSync(wc->display,true);
 		}
 	alarm(refreshRate);
 }
@@ -404,6 +413,12 @@ int main(int argc, char **argv)
 							}
 						break;
 					case Expose:
+						if(reloadPrefsFlag==true)
+							{
+								reloadPrefs();
+								reloadPrefsFlag=false;
+							}
+
 						if(reloadPixmap==true)
 							{
 								wc->LFSTK_setWindowPixmap(wc->globalLib->LFSTK_getWindowPixmap(display,wc->rootWindow),DisplayWidth(display,wc->screen),DisplayHeight(display,wc->screen));
@@ -455,5 +470,35 @@ int main(int argc, char **argv)
 	delete wc;
 	XCloseDisplay(display);
 	freePrefs();
+	wc=NULL;
+
+	diskLinkedList	*list=NULL;
+	diskLinkedList	*holdlist=NULL;
+	while(list!=NULL)
+		{
+			if(list->data!=NULL)
+				{
+					freeAndNull(&list->data->label);
+					freeAndNull(&list->data->devName);
+					freeAndNull(&list->data->uuid);
+					freeAndNull(&list->data->pathToIcon);
+					free(list->data);
+				}
+			holdlist=list;
+			list=list->next;
+			free(holdlist);
+		}
+	diskLL=NULL;
+
+	if(reloadDeskFlag==true)
+		{
+			mainLoop=false;
+			reloadPixmap=false;
+			reloadPrefsFlag=false;
+			reloadDeskFlag=false;
+			needsRefresh=true;
+			isdragging=false;
+			main(argc,argv);
+		}
 	return 0;
 }

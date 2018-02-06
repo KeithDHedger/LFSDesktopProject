@@ -46,5 +46,6 @@ extern char	*excludeList;
 void saveVarsToFile(const char* filepath,args* dataptr);
 bool loadVarsFromFile(char* filepath,args* dataptr);
 void freePrefs(void);
+void reloadPrefs(void);
 
 #endif

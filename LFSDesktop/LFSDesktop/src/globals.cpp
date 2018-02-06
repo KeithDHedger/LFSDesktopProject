@@ -100,49 +100,6 @@ diskLinkedList* isInList(const char *devname)
 	return(NULL);
 }
 
-void removeDeleted(void)
-{
-#if 0
-	diskLinkedList	*list=diskLL;
-	char			*command;
-	FILE			*fd=NULL;
-	char			buffer[2048];
-
-	if(list==NULL)
-		return;
-
-	do
-		{
-			if(list->data==NULL)
-				continue;
-
-			asprintf(&command,"find %s -maxdepth 1 -mindepth 1 |sort",desktopPath);
-
-			fd=popen(command,"r");
-			if(fd!=NULL)
-				{
-					while(feof(fd)==0)
-						{
-							buffer[0]=0;
-							fgets(buffer,2048,fd);
-							if(strlen(buffer)>0)
-								{
-									buffer[strlen(buffer)-1]=0;
-									buffer[0]=0;
-								}
-							pclose(fd);
-						}
-				}
-			
-			if(strcmp(list->data->devName,devname)==0)
-				return(list);
-			list=list->next;
-		}
-	while(list!=NULL);
-	return(NULL);
-#endif
-}
-
 void newNode(void)
 {
 	diskLinkedList	*node;
@@ -190,6 +147,53 @@ int toNearestInt(int left,int rite)
 	return((int)(((float)left/(float)rite)+0.5));
 }
 
+//set icon
+void setIconImage(diskDataStruct *dnode)
+{
+	char			*out=NULL;
+	char			*ticon;
+
+	ticon=NULL;
+	switch(dnode->diskType)
+		{
+			case HDDDISK:
+				ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,"-harddisk","devices");
+				break;
+			case CDROM:
+				ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,"-cdrom","devices");
+				break;
+			case THUMBDISK:
+				ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,"-removable","devices");
+				break;
+			case USBHDD:
+				ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,"-usb","devices");
+				break;
+			case DESKTOPFILE:
+				out=wc->globalLib->LFSTK_oneLiner("sed -n 's/^icon=\\(.*\\)$/\\1/Ip' '%s/%s'",desktopPath,dnode->devName);
+				if(strlen(out)>0)
+					ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,out,"");
+				free(out);
+				break;
+			case DESKFILE:
+				out=wc->globalLib->LFSTK_oneLiner("file -bL --mime-type '%s/%s'|awk -F/ '{print \"-\" $2}'",desktopPath,dnode->devName);
+				if(strcmp(out,"-directory")==0)
+					ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,out,"places");
+				else
+					ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,out,"mimetypes");
+				free(out);
+				break;
+		}
+
+	if(ticon==NULL)
+		ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,"text-x-generic","mimetypes");
+
+	if((ticon!=NULL) && (dnode->hasCustomIcon==false))
+		{
+			freeAndNull(&dnode->pathToIcon);
+			dnode->pathToIcon=strdup(ticon);
+		}
+	freeAndNull(&ticon);
+}
 
 //set icon size
 void setImageSize(diskDataStruct *dnode)

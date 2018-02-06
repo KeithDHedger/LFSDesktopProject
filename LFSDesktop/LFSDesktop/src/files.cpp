@@ -103,7 +103,6 @@ const char* getSuffix(const char *path)
 void setDeskType(diskDataStruct *dnode)
 {
 	char		*out=NULL;
-	char		*ticon=NULL;
 	const char	*suffix=NULL;
 
 	dnode->diskType=DESKFILE;
@@ -122,28 +121,9 @@ void setDeskType(diskDataStruct *dnode)
 					free(out);
 				
 					dnode->diskType=DESKTOPFILE;
-					out=wc->globalLib->LFSTK_oneLiner("sed -n 's/^icon=\\(.*\\)$/\\1/Ip' '%s/%s'",desktopPath,dnode->devName);
-					if(strlen(out)>0)
-						{
-							ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,out,"");
-							if(ticon!=NULL)
-								dnode->pathToIcon=ticon;
-							free(out);
-							return;
-						}
 				}
 		}
-
-	out=wc->globalLib->LFSTK_oneLiner("file -bL --mime-type '%s/%s'|awk -F/ '{print \"-\" $2}'",desktopPath,dnode->devName);
-	if(strcmp(out,"-directory")==0)
-		ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,out,"places");
-	else
-		ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,out,"mimetypes");
-
-	if(ticon==NULL)
-		ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,"text-plain","mimetypes");
-	free(out);
-	dnode->pathToIcon=ticon;
+	setIconImage(dnode);
 }
 
 bool doDeskItemMenuSelect(void *p,void* ud)
@@ -400,7 +380,6 @@ void loadDesktopItems(void)
 	int			y;
 	char		*itemname=NULL;
 
-//printf(">>loadDesktopItems<<\n");
 	diskLinkedList	*disklistnode=NULL;
 	asprintf(&command,"find %s -maxdepth 1 -mindepth 1 |sort",desktopPath);
 

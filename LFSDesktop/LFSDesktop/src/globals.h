@@ -36,11 +36,10 @@
 
 #include <lfstk/LFSTKGlobals.h>
 
+#define EVENT_BUF_LEN	(sizeof(inotify_event)+NAME_MAX)*2
+
 #include "prefs.h"
 #include "files.h"
-#include "disks.h"
-
-#define EVENT_BUF_LEN	(sizeof(inotify_event)+NAME_MAX)*2
 
 struct	diskDataStruct
 {
@@ -60,6 +59,9 @@ struct	diskDataStruct
 	bool				dirty;
 };
 
+#include "disks.h"
+
+
 struct	diskLinkedList
 {
 	diskLinkedList	*prev;
@@ -77,7 +79,7 @@ struct Hints
 };
 
 enum {TYPENONE=-1,DISKDATATYPE=0,FILEDATATYPE};
-enum {HDDDISK,USBHDD,THUMBDISK,CDROM,DVDROM,DESKFOLDER,DESKFILE,DESKTOPFILE};
+enum {HDDDISK=0,USBHDD,THUMBDISK,CDROM,DVDROM,DESKFOLDER,DESKFILE,DESKTOPFILE};
 enum {MOUNTDISK=0,UNMOUNTDISK,EJECTDISK,OPENDISK,CUSTOMICONDISK,REMOVECUSTOMDISK,NOMOREBUTONS};
 enum {DIALOGRETERROR=0,DIALOGRETAPPLY,DIALOGRETCANCEL};
 
@@ -140,5 +142,6 @@ int toNearestInt(int left,int rite);
 void setGridXY(diskDataStruct *dnode,int x,int y);
 void getRealXY(diskDataStruct *dnode,int *x,int *y);
 void getFreeGridXY(int *x,int *y);
+void setIconImage(diskDataStruct *dnode);
 
 #endif

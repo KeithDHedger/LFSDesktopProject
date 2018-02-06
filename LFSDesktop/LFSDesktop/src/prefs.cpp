@@ -29,9 +29,7 @@ int		gridBorderRight=2;
 int		gridSize=iconSize+gridBorderLeft;
 int		refreshRate=2;
 char	*terminalCommand=NULL;
-//bool	showSuffix=false;
 char	*fontFace=NULL;
-//char	*foreCol;
 char	*backCol;
 char	*backAlpha;
 char	*includeList=NULL;
@@ -54,6 +52,21 @@ args	desktopPrefs[]=
 	{"excludelist",TYPESTRING,&excludeList},
 	{NULL,0,NULL}
 };
+
+void reloadPrefs(void)
+{
+	diskLinkedList	*dll=diskLL;
+
+	loadVarsFromFile(prefsPath,desktopPrefs);
+
+	while(dll!=NULL)
+		{
+			setIconImage(dll->data);
+			dll->data->diskImage->LFSTK_setImageFromPath(dll->data->pathToIcon,TOOLBAR,true);
+			dll->data->diskImage->LFSTK_clearWindow();
+			dll=dll->next;
+		}
+}
 
 void saveVarsToFile(const char* filepath,args* dataptr)
 {
@@ -142,17 +155,17 @@ bool loadVarsFromFile(char* filepath,args* dataptr)
 void freePrefs(void)
 {
 	if(iconTheme!=NULL)
-		free(iconTheme);
+		freeAndNull(&iconTheme);
 	if(terminalCommand!=NULL)
-		free(terminalCommand);
+		freeAndNull(&terminalCommand);
 	if(fontFace!=NULL)
-		free(fontFace);
+		freeAndNull(&fontFace);
 	if(backCol!=NULL)
-		free(backCol);
+		freeAndNull(&backCol);
 	if(backAlpha!=NULL)
-		free(backAlpha);
+		freeAndNull(&backAlpha);
 	if(includeList!=NULL)
-		free(includeList);
+		freeAndNull(&includeList);
 	if(excludeList!=NULL)
-		free(excludeList);
+		freeAndNull(&excludeList);
 }
