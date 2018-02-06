@@ -152,6 +152,17 @@ void setIconImage(diskDataStruct *dnode)
 {
 	char			*out=NULL;
 	char			*ticon;
+	struct stat			st;
+
+	if(dnode->hasCustomIcon==true)
+		{
+			int ex=stat(dnode->pathToIcon,&st);
+			if(!S_ISREG(st.st_mode))
+				{
+					freeAndNull(&dnode->pathToIcon);
+					dnode->hasCustomIcon=false;
+				}
+		}
 
 	ticon=NULL;
 	switch(dnode->diskType)

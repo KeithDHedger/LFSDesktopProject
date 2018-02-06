@@ -113,7 +113,6 @@ bool doDiskMenuSelect(void *p,void* ud)
 					case REMOVECUSTOMDISK:
 						freeAndNull(&dnode->pathToIcon);
 						dnode->hasCustomIcon=false;
-						setDiskType(dnode);
 						setIconImage(dnode);
 						dnode->diskImage->LFSTK_setImageFromPath(dnode->pathToIcon,TOOLBAR,true);
 						dnode->diskImage->LFSTK_clearWindow();
@@ -258,7 +257,7 @@ void addDiskData(diskDataStruct *dnode,const char *devname,int x,int y)
 
 	if(setDiskData(dnode)==true)
 		{
-			setIconImage(dnode);
+//			setIconImage(dnode);
 
 			asprintf(&diskfile,"%s/%s.rc",cacheDisksPath,dnode->uuid);
 			if(loadVarsFromFile(diskfile,diskData)==true)
@@ -277,6 +276,7 @@ void addDiskData(diskDataStruct *dnode,const char *devname,int x,int y)
 					dnode->posx=x;
 					dnode->posy=y;
 				}
+			setIconImage(dnode);
 
 			freeAndNull(&diskUUID);
 			freeAndNull(&iconPath);

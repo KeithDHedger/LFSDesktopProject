@@ -123,7 +123,7 @@ void setDeskType(diskDataStruct *dnode)
 					dnode->diskType=DESKTOPFILE;
 				}
 		}
-	setIconImage(dnode);
+//	setIconImage(dnode);
 }
 
 bool doDeskItemMenuSelect(void *p,void* ud)
@@ -175,7 +175,7 @@ bool doDeskItemMenuSelect(void *p,void* ud)
 					case REMOVECUSTOMDISK:
 						freeAndNull(&dnode->pathToIcon);
 						dnode->hasCustomIcon=false;
-						setDeskType(dnode);
+						setIconImage(dnode);
 						dnode->diskImage->LFSTK_setImageFromPath(dnode->pathToIcon,TOOLBAR,true);
 						dnode->diskImage->LFSTK_clearWindow();
 						asprintf(&filename,"%s/%s.rc",cacheDeskPath,dnode->devName);
@@ -293,6 +293,7 @@ void addDeskData(diskDataStruct *dnode,const char *devname,int x,int y)
 			dnode->posx=x;
 			dnode->posy=y;
 		}
+	setIconImage(dnode);
 
 	freeAndNull(&diskUUID);
 	freeAndNull(&iconPath);
