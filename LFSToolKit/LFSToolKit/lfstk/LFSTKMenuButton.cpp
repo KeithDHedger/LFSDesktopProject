@@ -25,7 +25,7 @@
 void LFSTK_menuButtonClass::initMenuButton(void)
 {
 	this->subwc=new LFSTK_windowClass(0,0,1,1,"menu window",true,true,true);
-	this->subwc->LFSTK_setWindowType("_NET_WM_WINDOW_TYPE_NORMAL");
+	this->subwc->LFSTK_setWindowType("_NET_WM_WINDOW_TYPE_MENU");
 	this->builtMenu=false;
 
 	if(this->wc->globalLib->LFSTK_getUseTheme()==true)
@@ -140,6 +140,8 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	this->LFSTK_getGlobalGeom(&g);
 	this->subwc->LFSTK_moveWindow(g.x+g.w-TRIANGLESIZE*2,g.y+this->gadgetGeom.h-TRIANGLESIZE*2,true);
 	this->subwc->LFSTK_showWindow(true);
+	XRaiseWindow(this->display,this->subwc->window);
+//	this->subwc->
 	subwindowgeom=this->subwc->LFSTK_getWindowGeom();
 
 	while (run==true)
