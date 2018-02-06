@@ -1,4 +1,5 @@
 0.1.3
+Fixed reseting icon on removing custom image.
 Send "reloadprefs" via messaging to reload icon theme.
 Send "reloaddesk" via messaging to restart desktop.
 Send "reloadbg" via messaging to reload background.

@@ -114,6 +114,7 @@ bool doDiskMenuSelect(void *p,void* ud)
 						freeAndNull(&dnode->pathToIcon);
 						dnode->hasCustomIcon=false;
 						setDiskType(dnode);
+						setIconImage(dnode);
 						dnode->diskImage->LFSTK_setImageFromPath(dnode->pathToIcon,TOOLBAR,true);
 						dnode->diskImage->LFSTK_clearWindow();
 						asprintf(&filename,"%s/%s.rc",cacheDisksPath,dnode->uuid);
