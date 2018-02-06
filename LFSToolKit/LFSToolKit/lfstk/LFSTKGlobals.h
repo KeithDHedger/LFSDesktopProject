@@ -119,14 +119,14 @@ static void debugFunc(const char *file,const char *func,int line,const char *fmt
 #define DEBUGFUNC(...) printf("Remove debug code here: %s:%i\n",__FILE__,__LINE__);
 #endif
 
-static bool	xLibError=false;
-static bool	xLibWarnings=false;
-static int	errhandler(Display *dpy,XErrorEvent *e)
+static bool	xLibErrorTK=false;
+static bool	xLibWarningsTK=false;
+static int	xErrHandler(Display *dpy,XErrorEvent *e)
 {
 	char buf[256];
 
-	xLibError=true;
-	if(xLibWarnings==true)
+	xLibErrorTK=true;
+	if(xLibWarningsTK==true)
 		{
 			buf[0]=0;
 			XGetErrorText(dpy,e->error_code,buf,sizeof buf);

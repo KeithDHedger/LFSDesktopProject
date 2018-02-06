@@ -240,6 +240,7 @@ int main(int argc, char **argv)
 		//	exit(NOMAKEQUEUE);
 		}
 
+BACKUP:
 	windowInitStruct *wi=new windowInitStruct;
 	wi->windowType="_NET_WM_WINDOW_TYPE_DESKTOP";
 	wi->overRide=true;
@@ -498,7 +499,7 @@ int main(int argc, char **argv)
 			reloadDeskFlag=false;
 			needsRefresh=true;
 			isdragging=false;
-			main(argc,argv);
+			goto BACKUP;
 		}
 	return 0;
 }

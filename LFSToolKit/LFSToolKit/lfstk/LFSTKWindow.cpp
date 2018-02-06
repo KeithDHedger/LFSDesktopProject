@@ -248,8 +248,8 @@ void LFSTK_windowClass::LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h)
 			this->useTile=false;
 			return;
 		}
-	xLibError=false;
-	XSetErrorHandler(errhandler);
+	xLibErrorTK=false;
+	XSetErrorHandler(xErrHandler);
 	XSynchronize(this->display,true);
 
 	if(this->px!=None)
@@ -280,9 +280,9 @@ void LFSTK_windowClass::LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h)
 	XSetErrorHandler(NULL);
 	XSynchronize(this->display,false);
 
-	if(xLibError==true)
+	if(xLibErrorTK==true)
 		{
-			xLibError=false;
+			xLibErrorTK=false;
 			this->usePixmap=false;
 			this->useTile=false;
 			XSetWindowBackgroundPixmap(this->display,this->window,None);
