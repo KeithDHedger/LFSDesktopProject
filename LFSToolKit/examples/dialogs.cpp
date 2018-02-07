@@ -36,6 +36,7 @@ bool doQuit(void *p,void* ud)
 	return(false);
 }
 
+//use wd =~
 bool selectfile(void *object,void* ud)
 {
 	filedialogfile->LFSTK_showFileDialog(wd,"Select A File");
@@ -52,9 +53,10 @@ bool selectfile(void *object,void* ud)
 	return(true);
 }
 
+//get last used folder
 bool selectdir(void *object,void* ud)
 {
-	filedialogdir->LFSTK_showFileDialog(wd,"Select A Folder");
+	filedialogdir->LFSTK_showFileDialog(NULL,"Select A Folder");
 	if(filedialogdir->LFSTK_isValid()==true)
 		{
 			printf("Selected Folder=%s\n",filedialogdir->LFSTK_getCurrentDir());
@@ -85,7 +87,7 @@ int main(int argc, char **argv)
 //files and folders
 	asprintf(&wd,"%s",wc->userHome);
 	filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",wd,FILEDIALOG);
-	filedialogdir=new LFSTK_fileDialogClass(wc,"Select Folder",wd,FOLDERDIALOG);
+	filedialogdir=new LFSTK_fileDialogClass(wc,"Select Folder",NULL,FOLDERDIALOG,"dialogscpp");
 
 //	filedialogfile->LFSTK_setShowPreview(true);
 

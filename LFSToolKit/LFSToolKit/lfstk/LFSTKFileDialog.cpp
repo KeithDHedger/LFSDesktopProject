@@ -220,6 +220,7 @@ void LFSTK_fileDialogClass::LFSTK_setWorkingDir(const char *dir)
 {
 	if(this->currentDir!=NULL)
 		free(this->currentDir);
+
 	this->currentDir=strdup(dir);
 	this->cleanDirPath();
 //folders
@@ -297,7 +298,7 @@ void LFSTK_fileDialogClass::LFSTK_setShowPreview(bool show)
 * \param const char *startdir Open dialog in this folder.
 * \param type true=folder select, false= file select.
 */
-LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const char *label,const char *startdir,bool type)
+LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const char *label,const char *startdir,bool type,const char *recentname)
 {
 	int					hite=DIALOGHITE;
 	LFSTK_labelClass	*spacer;
@@ -311,7 +312,6 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	this->fileList=NULL;
 	this->fileImageList=NULL;
 	this->fileListCnt=0;
-	this->currentDir=strdup(startdir);
 	this->currentFile=NULL;
 	this->currentPath=NULL;
 	this->dirListGadget=NULL;
@@ -319,6 +319,13 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	this->fileImage=LFSTKPIXMAPSDIR "/documents.png";
 	this->folderImage=LFSTKPIXMAPSDIR "/folder.png";
 
+	if(recentname!=NULL)
+		this->recentsName=recentname;
+
+	if(startdir==NULL)
+		this->LFSTK_getLastFolder();
+	else
+		this->currentDir=strdup(startdir);
 
 	this->dialogType=type;
 	int dirlisthite=GADGETHITE*FDIRHITE;
@@ -466,7 +473,13 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(const char *dir,const char *tit
 	if(this->dialog!=NULL)
 		{
 			this->dialog->LFSTK_setWindowTitle(title);
-			this->LFSTK_setWorkingDir(dir);
+			if(dir!=NULL)
+				this->LFSTK_setWorkingDir(dir);
+			else
+				{
+					this->LFSTK_getLastFolder();
+		//			DEBUGFUNC("this->LFSTK_getLastFolder();=%s",this->currentDir);
+				}
 			this->LFSTK_showFileDialog();
 		}
 }
@@ -610,6 +623,21 @@ void LFSTK_fileDialogClass::setPreviewData(void)
 }
 
 /**
+* Set current folder to last used folder, universal.
+*/
+void LFSTK_fileDialogClass::LFSTK_getLastFolder(void)
+{
+	if(this->currentDir!=NULL)
+		free(this->currentDir);
+	this->currentDir=this->wc->globalLib->LFSTK_oneLiner("grep -i '%s' '%s/dialoglast.rc'|awk -F= '{print $NF}'",this->recentsName,this->wc->configDir);
+	if(strlen(this->currentDir)==0)
+		{
+			free(this->currentDir);
+			this->currentDir=strdup(this->wc->userHome);
+		}
+}
+
+/**
 * Show the file selector dialog.
 */
 void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
@@ -621,6 +649,7 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 	geometryStruct	geomdir;
 	geometryStruct	geomfile;
 	pointStruct		pt;
+	char			*lastdir=NULL;
 
 	this->apply=false;
 	if(this->dialog!=NULL)
@@ -689,6 +718,12 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 											{
 												this->apply=true;
 												this->mainLoop=false;
+												if(currentDir!=NULL)
+													{
+														asprintf(&lastdir,"sed -i '/%s=/d' '%s/dialoglast.rc';echo '%s=%s'|cat - '%s/dialoglast.rc'|sort -uo '%s/dialoglast.rc'",this->recentsName,this->wc->configDir,this->recentsName,this->currentDir,this->wc->configDir,this->wc->configDir);
+														system(lastdir);
+														free(lastdir);
+													}
 												if(this->dialogType==FILEDIALOG)
 													{
 														if(this->currentFile!=NULL)

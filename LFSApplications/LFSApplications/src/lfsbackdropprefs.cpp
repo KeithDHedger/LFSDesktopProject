@@ -114,6 +114,7 @@ bool buttonCB(void *p,void* ud)
 							fclose(fd);
 						}
 					system("lfssetwallpaper");
+					system("climsg -s \"reloadbg\" -k 666");
 				}
 
 			if(strcmp((char*)ud,"MULTIMODE")==0)
@@ -127,7 +128,7 @@ bool selectFile(void *object,void* ud)
 	char				*filepath;
 	LFSTK_lineEditClass	*edbox=static_cast<LFSTK_lineEditClass*>(ud);
 
-	fileDialog->LFSTK_showFileDialog(wd,"Select A File");
+	fileDialog->LFSTK_showFileDialog(NULL,"Select A File");
 	if(fileDialog->LFSTK_isValid()==true)
 		{
 			asprintf(&filepath,"%s/%s",fileDialog->LFSTK_getCurrentDir(),fileDialog->LFSTK_getCurrentFile());
@@ -253,13 +254,12 @@ int main(int argc, char **argv)
 
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Backdrop Prefs",false);
 	display=wc->display;
-	//wc->LFSTK_initDnD();
 
 	asprintf(&wd,"%s",wc->userHome);
 	asprintf(&mainPrefs,"%s/lfssetwallpaper.rc",wc->configDir);
 	asprintf(&monitorPrefs,"%s/lfsmonitors.rc",wc->configDir);
 
-	fileDialog=new LFSTK_fileDialogClass(wc,"Select File",wd,false);
+	fileDialog=new LFSTK_fileDialogClass(wc,"Select File",NULL,false,"lfsbackdropprefs");
 
 	wc->globalLib->LFSTK_loadVarsFromFile(mainPrefs,prefs);
 

@@ -1,4 +1,5 @@
 0.2.4
+Fiile/folder dialogs can now save/restore last selected folder.
 Fixed occasional menu window not being on top.
 Trapped error when trying to set bg pixmap.
 LFSTK_setFontString now has option to reset fontdata.

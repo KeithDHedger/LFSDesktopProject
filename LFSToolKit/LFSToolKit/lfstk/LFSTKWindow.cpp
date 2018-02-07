@@ -204,7 +204,6 @@ LFSTK_windowClass::~LFSTK_windowClass()
 
 	free(this->configDir);
 	XFreeGC(this->display,this->gc);
-
 	XDestroyWindow(this->display,this->window);
 	if(this->px!=None)
 		XFreePixmap(this->display,this->px);

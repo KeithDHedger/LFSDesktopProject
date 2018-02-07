@@ -39,11 +39,12 @@ class LFSTK_fileDialogClass
 {
 	public:
 		~LFSTK_fileDialogClass();
-		LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const char *label,const char *startdir,bool type);
+		LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const char *label,const char *startdir,bool type,const char *recentname=NULL);
 
 		void					LFSTK_showFileDialog(void);
 		void					LFSTK_showFileDialog(const char *dir,const char *title);
 		bool					LFSTK_isValid(void);
+		void					LFSTK_getLastFolder(void);
 		const char				*LFSTK_getCurrentDir(void);
 		const char				*LFSTK_getCurrentFile(void);
 		const char				*LFSTK_getCurrentPath(void);
@@ -57,6 +58,7 @@ class LFSTK_fileDialogClass
 		char					*findThemedIconFromMime(const char *mimetype);
 		void					setPreviewData(void);
 
+		const char				*recentsName="universal";
 		char					**dirList=NULL;
 		char					**dirImageList=NULL;
 		char					**fileList=NULL;

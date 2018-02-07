@@ -24,7 +24,7 @@
 
 void LFSTK_menuButtonClass::initMenuButton(void)
 {
-	this->subwc=new LFSTK_windowClass(0,0,1,1,"menu window",true,true,true);
+	this->subwc=new LFSTK_windowClass(0,0,1,1,"menu window",true,true,false);
 	this->subwc->LFSTK_setWindowType("_NET_WM_WINDOW_TYPE_MENU");
 	this->builtMenu=false;
 
@@ -37,7 +37,10 @@ void LFSTK_menuButtonClass::initMenuButton(void)
 LFSTK_menuButtonClass::~LFSTK_menuButtonClass()
 {
 	if(subwc!=NULL)
-		delete subwc;
+		{
+			delete subwc;
+		}
+	
 	subwc=NULL;
 }
 
@@ -141,6 +144,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	this->subwc->LFSTK_moveWindow(g.x+g.w-TRIANGLESIZE*2,g.y+this->gadgetGeom.h-TRIANGLESIZE*2,true);
 	this->subwc->LFSTK_showWindow(true);
 	XRaiseWindow(this->display,this->subwc->window);
+	XSync(this->display,false);
 //	this->subwc->
 	subwindowgeom=this->subwc->LFSTK_getWindowGeom();
 

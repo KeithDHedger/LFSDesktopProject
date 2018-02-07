@@ -36,8 +36,8 @@ bool doQuit(void *p,void* ud)
 {
 	mainLoop=false;
 	XFlush(wc->display);
-	XSync(wc->display,true);
-	return(false);
+	XSync(wc->display,false);
+	return(true);
 }
 
 bool menuCB(void *p,void* ud)
@@ -157,10 +157,10 @@ int main(int argc, char **argv)
 		}
 
 	delete wc;
-	XCloseDisplay(display);
 	delete[] mainMenus;
 	delete[] subMenus;
 	cairo_debug_reset_static_data();
+	XCloseDisplay(display);
 
-	return 0;
+	return 0;	
 }
