@@ -72,9 +72,11 @@ int fileExists(const char *name)
 
 void updateDesktop(void)
 {
-	system("killall lfsdesktop &>/dev/null &");
+	system("climsg -s 'reloaddesk' -k 666");
+	//system("killall lfsdesktop &>/dev/null &");
 	system("lfssetwallpaper &>/dev/null");
-	system("killall lfswmanager &");
+//	system("killall lfswmanager &");
+	system("climsg -s 'reloadtheme' -k 667");
 	system("killall lfspanel &");
 }
 
