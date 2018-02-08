@@ -39,6 +39,7 @@ char				*titleFont;
 char				*fontColours[5];
 int					doswapdesk=-1;
 int					liveUpdate=1;
+int					prefsRescan=4;
 char				*terminalCommand=NULL;
 
 //theme

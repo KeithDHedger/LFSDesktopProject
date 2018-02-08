@@ -15,12 +15,6 @@
 #include <X11/extensions/Xdbe.h>
 
 #include "wind.h"
-//struct args
-//{
-//	const char*	name;
-//	int			type;
-//	void*		data;
-//};
 
 extern args				wmPrefs[];
 extern args				themeRC[];

@@ -47,9 +47,9 @@ LFSTK_lineEditClass		*themeEdit=NULL;
 
 LFSTK_lineEditClass		*terminalEdit=NULL;
 
-
 LFSTK_lineEditClass		*deskCountEdit=NULL;
 LFSTK_lineEditClass		*refreshEdit=NULL;
+LFSTK_lineEditClass		*rescanEdit=NULL;
 
 LFSTK_fontDialogClass	*fontSelector=NULL;
 LFSTK_lineEditClass		*fontEdit=NULL;
@@ -73,6 +73,7 @@ int						prefsPlacement=2;
 int						prefsPlacementTemp=2;
 int						prefsDeskCnt=6;
 int						prefsRefresh=15;
+int						prefsRescan=4;
 
 args					lfsWMPrefs[]=
 {
@@ -87,6 +88,7 @@ args					lfsWMPrefs[]=
 	{"placement",TYPEINT,&prefsPlacement},
 	{"desktops",TYPEINT,&prefsDeskCnt},
 	{"liveupdate",TYPEINT,&prefsRefresh},
+	{"rescanprefs",TYPEINT,&prefsRescan},
 	{NULL,0,NULL}
 };
 
@@ -130,7 +132,7 @@ bool buttonCB(void *p,void* ud)
 				{
 					for(int j=0;j<5;j++)
 						{
-							previewButtons[j]->LFSTK_setColourName(NORMALCOLOUR,previeColourEdit[j]->LFSTK_getBuffer()->c_str());
+							previewButtons[j]->LFSTK_setColourName(NORMALCOLOUR,previeColourEdit[j]->LFSTK_getCStr());
 							previewButtons[j]->LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
 							previewButtons[j]->LFSTK_clearWindow();
 						}
@@ -141,20 +143,21 @@ bool buttonCB(void *p,void* ud)
 					for(int j=0;j<5;j++)
 						{
 							free(prefsColours[j]);
-							prefsColours[j]=strdup(previeColourEdit[j]->LFSTK_getBuffer()->c_str());
+							prefsColours[j]=strdup(previeColourEdit[j]->LFSTK_getCStr());
 							previewButtons[j]->LFSTK_setColourName(NORMALCOLOUR,previeColourEdit[j]->LFSTK_getBuffer()->c_str());
 							previewButtons[j]->LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
 							previewButtons[j]->LFSTK_clearWindow();
 						}
 					free(prefsFont);
-					prefsFont=strdup(fontEdit->LFSTK_getBuffer()->c_str());
+					prefsFont=strdup(fontEdit->LFSTK_getCStr());
 					free(prefsTheme);
-					prefsTheme=strdup(themeEdit->LFSTK_getBuffer()->c_str());
+					prefsTheme=strdup(themeEdit->LFSTK_getCStr());
 					free(prefsTermCommand);
-					prefsTermCommand=strdup(terminalEdit->LFSTK_getBuffer()->c_str());
+					prefsTermCommand=strdup(terminalEdit->LFSTK_getCStr());
 					prefsPlacement=prefsPlacementTemp;
-					prefsDeskCnt=atoi(deskCountEdit->LFSTK_getBuffer()->c_str());
-					prefsRefresh=atoi(refreshEdit->LFSTK_getBuffer()->c_str());
+					prefsDeskCnt=atoi(deskCountEdit->LFSTK_getCStr());
+					prefsRefresh=atoi(refreshEdit->LFSTK_getCStr());
+					prefsRescan=atoi(rescanEdit->LFSTK_getCStr());
 					wc->globalLib->LFSTK_saveVarsToFile(envFile,lfsWMPrefs);
 					system("climsg -s 'reloadtheme' -k 667");
 					return(true);
@@ -240,7 +243,6 @@ int main(int argc, char **argv)
 	personal->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
 
-
 //frame colours
 	for(int j=0;j<5;j++)
 		{
@@ -294,6 +296,15 @@ int main(int argc, char **argv)
 	refreshEdit=new LFSTK_lineEditClass(wc,std::to_string(prefsRefresh).c_str(),sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 	sx=BORDER;
+
+//rescan prefs
+	label=new LFSTK_labelClass(wc,"Rescan Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	sx+=GADGETWIDTH+BORDER;
+	rescanEdit=new LFSTK_lineEditClass(wc,std::to_string(prefsRescan).c_str(),sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
+	sx=BORDER;
+
+
 //term command
 	label=new LFSTK_labelClass(wc,"Term Command",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sx+=GADGETWIDTH+BORDER;

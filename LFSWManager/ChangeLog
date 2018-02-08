@@ -1,4 +1,5 @@
 0.1.2
+Added rescan prefs option to prefs.
 Fixed reseting theme to colours from pixmap based,
 New event loop.
 Added SysV messaging to reset theme.

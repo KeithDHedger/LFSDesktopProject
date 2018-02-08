@@ -188,6 +188,7 @@ extern	unsigned int	numberOfDesktops;
 extern char				*titleFont;
 extern char				*fontColours[5];
 extern int				liveUpdate;
+extern int				prefsRescan;
 extern char				*terminalCommand;
 
 //theme

@@ -458,7 +458,7 @@ void alarmCallBack(int sig)
 			XSendEvent(dpy,root,true,ExposureMask,(XEvent*)&event);
 			XFlush(dpy);
 		}
-	alarm(4);
+	alarm(prefsRescan);
 }
 
 int main(int argc,char *argv[])
@@ -690,7 +690,7 @@ int main(int argc,char *argv[])
 	char			buffer[1024];
 
 	signal(SIGALRM,alarmCallBack);
-	alarm(4);
+	alarm(prefsRescan);
 
 	while (1)
 		{
