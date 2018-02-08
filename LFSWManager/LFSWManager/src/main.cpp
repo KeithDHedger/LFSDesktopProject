@@ -86,6 +86,7 @@ DEFINE_BITMAP(shadeeven);
 DEFINE_BITMAP(shadeodd);
 
 #define MAX_MSG_SIZE 256
+enum {REFRESHTHEME,SHOWAPPMENU};
 
 struct msgBuffer
 {
@@ -95,6 +96,7 @@ struct msgBuffer
 int				queueID;
 msgBuffer		buffer;
 bool			needsRefresh=false;
+int				whatMsg=-1;
 
 enum			runlevel runlevel=RL_STARTUP;
 int				exitstatus;
@@ -441,6 +443,12 @@ bool readMsg(void)
 		{
 			if(strcmp(buffer.mText,"reloadtheme")==0)
 				{
+					whatMsg=REFRESHTHEME;
+					return(true);
+				}
+			if(strcmp(buffer.mText,"showappmenu")==0)
+				{
+					whatMsg=SHOWAPPMENU;
 					return(true);
 				}
 		}
@@ -697,7 +705,7 @@ int main(int argc,char *argv[])
 			XEvent e;
 			XNextEvent(dpy,&e);
 
-			if(needsRefresh==true)
+			if((needsRefresh==true) && (whatMsg==REFRESHTHEME))
 				{
 					loadWMTheme();
 					needsRefresh=false;
@@ -705,7 +713,7 @@ int main(int argc,char *argv[])
 
 			if(XQueryPointer(dpy,DefaultRootWindow(dpy),&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
 					{
-						if((mask_return & Button3Mask) && (mask_return & ControlMask))
+						if(((mask_return & Button3Mask) && (mask_return & ControlMask)) || ((needsRefresh==true) && (whatMsg==SHOWAPPMENU)))
 							{
 								isdesktop=false;		
 								if(child_return!=0)
