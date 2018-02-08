@@ -1,4 +1,7 @@
 0.1.2
+Fixed reseting theme to colours from pixmap based,
+New event loop.
+Added SysV messaging to reset theme.
 Appmenu now uses CNTRL + Button3.
 Appmenu now available on either root window or DESKTOP type windows.
 Code clean.

@@ -114,7 +114,7 @@ bool buttonCB(void *p,void* ud)
 							fclose(fd);
 						}
 					system("lfssetwallpaper");
-					system("climsg -s \"reloadbg\" -k 666");
+					system("climsg -s 'reloadbg' -k 666");
 				}
 
 			if(strcmp((char*)ud,"MULTIMODE")==0)

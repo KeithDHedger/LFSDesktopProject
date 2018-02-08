@@ -1425,7 +1425,7 @@ void smartpos(struct client *c)
 
 struct client *manage(Window window)
 {
-		XWindowAttributes	attr;
+	XWindowAttributes	attr;
 	Atom				type;
 	int					format;
 	unsigned long		nItem,bytesAfter;
@@ -1743,7 +1743,7 @@ void cunmanage(struct client *c)
 
 void unmanageall(void)
 {
-		struct client **v;
+	struct client **v;
 	int n;
 	getclientstack(&v,&n);
 	for (int i=n-1; i >= 0; i--)

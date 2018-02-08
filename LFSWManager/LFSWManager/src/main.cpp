@@ -49,6 +49,8 @@
 
 #include <Imlib2.h>
 
+#include <sys/msg.h>
+
 #include "config.h"
 #include <lfstk/LFSTKGlobals.h>
 
@@ -82,6 +84,17 @@ DEFINE_BITMAP(mineven);
 DEFINE_BITMAP(minodd);
 DEFINE_BITMAP(shadeeven);
 DEFINE_BITMAP(shadeodd);
+
+#define MAX_MSG_SIZE 256
+
+struct msgBuffer
+{
+	long		mType;
+	char		mText[MAX_MSG_SIZE];
+};
+int				queueID;
+msgBuffer		buffer;
+bool			needsRefresh=false;
 
 enum			runlevel runlevel=RL_STARTUP;
 int				exitstatus;
@@ -280,7 +293,7 @@ void loadTheme(void)
 				}
 		}
 }
-
+void fupdate(struct frame *);
 void makeFullPathToTheme(void)
 {
 	char	*buffer;
@@ -312,6 +325,142 @@ void makeFullPathToTheme(void)
 	free(buffer);
 }
 
+void installTheme(void)
+{
+	font=ftload(titleFont);
+	if (font==NULL)
+		{
+			errorf("cannot load font");
+			exit(1);
+		}
+
+	if(theme.useTheme==false)
+		{
+			frameTop=20;
+			frameBottom=8;
+			frameLeft=2+1;
+			frameRight=2+1;
+		}
+	else
+		{
+			frameTop=theme.titleBarHeight;
+			frameBottom=theme.bottomHeight;
+			frameLeft=theme.leftWidth;
+			frameRight=theme.rightWidth;
+		}
+
+	fnormal=ftloadcolor(fontColours[INACTIVEFRAME],"#808080");
+	fhighlight=ftloadcolor(fontColours[TEXTCOLOUR],"#ffffff");
+
+	if (fnormal==NULL || fhighlight==NULL)
+		{
+			errorf("cannot load font colors");
+			exit(1);
+		}
+
+	if (frameTop % 2==0)
+		deletebitmap=&deleven;
+	else
+		deletebitmap=&delodd;
+
+	if (frameTop % 2==0)
+		maximizeBitmap=&maxeven;
+	else
+		maximizeBitmap=&maxodd;
+
+	if (frameTop % 2==0)
+		minimizeBitmap=&mineven;
+	else
+		minimizeBitmap=&minodd;
+
+	if (frameTop % 2==0)
+		shadeBitmap=&shadeeven;
+	else
+		shadeBitmap=&shadeodd;
+
+	activeFrame=getpixel(fontColours[ACTIVEFRAME]);
+	activeFrameFill=getpixel(fontColours[ACTIVEFRAMEFILL]);
+	inactiveFrame=getpixel(fontColours[INACTIVEFRAME]);
+	inactiveFrameFill=getpixel(fontColours[INACTIVEFRAMEFILL]);
+	widgetColour=getpixel(fontColours[TEXTCOLOUR]);
+}
+
+void loadWMTheme(void)
+{
+	char			*prefsfile;
+	struct client	**v;
+	int				n;
+
+	getclientstack(&v,&n);
+	for (int i=n-1; i >= 0; i--)
+		{
+			v[i]->decoratedHold=v[i]->isundecorated;
+			csetundecorated(v[i],true);
+		}
+	free(v);
+
+	asprintf(&prefsfile,"%s/.config/LFS/lfswmanager.rc",getenv("HOME"));
+	loadVarsFromFile(prefsfile,wmPrefs," ");
+	makeFullPathToTheme();
+
+	if((fileExists(theme.pathToTheme)==0) && (theme.pathToTheme!=NULL))
+		{
+			char	*themercpath;
+			theme.buttonOffset=40;
+			theme.useTheme=true;
+			theme.titleOffset=0;
+			loadTheme();
+			asprintf(&themercpath,"%s/xfwm4/themerc",theme.pathToTheme);
+			loadVarsFromFile(themercpath,themeRC,"=");
+			free(themercpath);
+		}
+	else
+		theme.useTheme=false;
+	free(prefsfile);
+
+	installTheme();
+
+	getclientstack(&v,&n);
+	for (int i=n-1; i >= 0; i--)
+		{
+			csetundecorated(v[i],v[i]->decoratedHold);
+		}
+	free(v);
+	refocus(CurrentTime);
+}
+
+bool readMsg(void)
+{
+	int		retcode;
+	char	*prefsfile;
+
+	buffer.mText[0]=0;
+	retcode=msgrcv(queueID,&buffer,MAX_MSG_SIZE,1,IPC_NOWAIT);
+
+	if(retcode>1)
+		{
+			if(strcmp(buffer.mText,"reloadtheme")==0)
+				{
+					return(true);
+				}
+		}
+	return(false);
+}
+
+void alarmCallBack(int sig)
+{
+	XExposeEvent	event;
+	needsRefresh=readMsg();
+	if(needsRefresh==true)
+		{
+			event.type=Expose;
+			event.window=root;
+			XSendEvent(dpy,root,true,ExposureMask,(XEvent*)&event);
+			XFlush(dpy);
+		}
+	alarm(4);
+}
+
 int main(int argc,char *argv[])
 {
 	int					cnt=-1;
@@ -326,6 +475,9 @@ int main(int argc,char *argv[])
 
 	runlevel=RL_STARTUP;
 
+	if((queueID=msgget(667,IPC_CREAT|0660))==-1)
+		fprintf(stderr,"Can't create message queue\n");
+
 	fontColours[ACTIVEFRAME]=strdup("rgb:00/00/00");
 	fontColours[ACTIVEFRAMEFILL]=strdup("rgb:00/ff/ff");
 	fontColours[INACTIVEFRAME]=strdup("rgb:00/00/00");
@@ -338,6 +490,7 @@ int main(int argc,char *argv[])
 	titleFont=strdup(DEFAULTFONT);
 	liveUpdate=5;
 	theme.pathToTheme=NULL;
+
 
 	asprintf(&prefsfile,"%s/.config/LFS/lfswmanager.rc",getenv("HOME"));
 	asprintf(&terminalCommand,"xterm -e ");
@@ -484,62 +637,7 @@ int main(int argc,char *argv[])
 	xLibWarnings=false;
 #endif
 
-	font=ftload(titleFont);
-	if (font==NULL)
-		{
-			errorf("cannot load font");
-			exit(1);
-		}
-
-	if(theme.useTheme==false)
-		{
-			frameTop=20;
-			frameBottom=8;
-			frameLeft=2+1;
-			frameRight=2+1;
-		}
-	else
-		{
-			frameTop=theme.titleBarHeight;
-			frameBottom=theme.bottomHeight;
-			frameLeft=theme.leftWidth;
-			frameRight=theme.rightWidth;
-		}
-
-	fnormal=ftloadcolor(fontColours[INACTIVEFRAME],"#808080");
-	fhighlight=ftloadcolor(fontColours[TEXTCOLOUR],"#ffffff");
-
-	if (fnormal==NULL || fhighlight==NULL)
-		{
-			errorf("cannot load font colors");
-			exit(1);
-		}
-
-	if (frameTop % 2==0)
-		deletebitmap=&deleven;
-	else
-		deletebitmap=&delodd;
-
-	if (frameTop % 2==0)
-		maximizeBitmap=&maxeven;
-	else
-		maximizeBitmap=&maxodd;
-
-	if (frameTop % 2==0)
-		minimizeBitmap=&mineven;
-	else
-		minimizeBitmap=&minodd;
-
-	if (frameTop % 2==0)
-		shadeBitmap=&shadeeven;
-	else
-		shadeBitmap=&shadeodd;
-
-	activeFrame=getpixel(fontColours[ACTIVEFRAME]);
-	activeFrameFill=getpixel(fontColours[ACTIVEFRAMEFILL]);
-	inactiveFrame=getpixel(fontColours[INACTIVEFRAME]);
-	inactiveFrameFill=getpixel(fontColours[INACTIVEFRAMEFILL]);
-	widgetColour=getpixel(fontColours[TEXTCOLOUR]);
+	installTheme();
 
 	XGCValues	gcv;
 	gcv.foreground=whiteColor;
@@ -579,7 +677,7 @@ int main(int argc,char *argv[])
 	refocus(CurrentTime);
 	runlevel=RL_NORMAL;
 
-		Window			root_return;
+	Window			root_return;
 	Window			child_return;
 	int				root_x_return;
 	int				root_y_return;
@@ -589,13 +687,22 @@ int main(int argc,char *argv[])
 	Atom			*types=NULL;
 	unsigned long	n=0;
 	bool			isdesktop=false;
-#define MAXBUFFER 512
-	char			buffer[MAXBUFFER];
+	char			buffer[1024];
 
-	while (waitevent() != -1)
+	signal(SIGALRM,alarmCallBack);
+	alarm(4);
+
+	while (1)
 		{
 			XEvent e;
 			XNextEvent(dpy,&e);
+
+			if(needsRefresh==true)
+				{
+					loadWMTheme();
+					needsRefresh=false;
+				}
+
 			if(XQueryPointer(dpy,DefaultRootWindow(dpy),&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
 					{
 						if((mask_return & Button3Mask) && (mask_return & ControlMask))

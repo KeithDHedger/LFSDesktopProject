@@ -235,10 +235,7 @@ int main(int argc, char **argv)
 	int key=666;
 
 	if((queueID=msgget(key,IPC_CREAT|0660))==-1)
-		{
-			fprintf(stderr,"Can't create message queue\n");
-		//	exit(NOMAKEQUEUE);
-		}
+		fprintf(stderr,"Can't create message queue\n");
 
 BACKUP:
 	windowInitStruct *wi=new windowInitStruct;

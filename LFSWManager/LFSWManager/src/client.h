@@ -70,6 +70,7 @@ struct client
 	bool			beenPopped;
 
 	unsigned		monitorNumber;
+	bool			decoratedHold;
 };
 //extern client *cc;
 

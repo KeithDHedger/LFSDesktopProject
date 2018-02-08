@@ -243,17 +243,17 @@ listener listener=
 
 void initroot(void)
 {
-		listener.function=event;
+	listener.function=event;
 	listener.pointer=NULL;
 
 	setlistener(root,&listener);
 
 	XSync(dpy,False);
 	xerror=NULL;
-	XSelectInput(dpy,root,ButtonPress|ButtonReleaseMask|EnterWindowMask |
+	XSelectInput(dpy,root,ExposureMask|ButtonPress|ButtonReleaseMask|EnterWindowMask |
 	             LeaveWindowMask |
 	             SubstructureRedirectMask |
-	             SubstructureNotifyMask);
+	             SubstructureNotifyMask|ButtonPressMask);
 	XSync(dpy,False);
 	if (xerror != NULL)
 		{

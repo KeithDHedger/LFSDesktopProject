@@ -352,7 +352,7 @@ void gravitate(int wingrav,int borderwidth,int *dx,int *dy)
 
 void repaint(struct frame *f)
 {
-		int					namewidth=f->namewidth;
+	int					namewidth=f->namewidth;
 	int					partoffset;
 	GC					gc;
 	int					ends;
@@ -641,8 +641,11 @@ void repaint(struct frame *f)
 					frame=inactiveFrame;
 					usecolour=fnormal;
 				}
+
 			XSetForeground(dpy,mainGC,framefill);
+			XSetClipMask(dpy,mainGC,None);
 			XFillRectangle(dpy,f->window,mainGC,x,1,f->width-2,frameTop);
+
 //title  string
 			if (f->client->netwmname != NULL)
 				ftdrawstring_utf8(f->window,font,usecolour,4,(frameTop/2)+((font->ascent-2)/2),f->client->netwmname);
