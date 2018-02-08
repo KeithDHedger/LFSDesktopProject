@@ -1,4 +1,6 @@
 0.1.2
+Set correct title to WM prefs.
+Added messageing to WM prefs.
 Bacdrop prefs remembers last folder across launches.
 Updated desktop prefs app for new desktop.
 Fixed DnD on prefs dialogs.

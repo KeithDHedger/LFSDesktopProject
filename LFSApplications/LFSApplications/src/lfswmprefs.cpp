@@ -57,7 +57,6 @@ LFSTK_lineEditClass		*fontEdit=NULL;
 bool					mainLoop=true;
 Display					*display;
 char					*envFile=NULL;
-char					*wd=NULL;
 
 //placement
 LFSTK_menuButtonClass	*placeWindowMenu=NULL;
@@ -117,14 +116,12 @@ bool buttonCB(void *p,void* ud)
 
 			if(strcmp((char*)ud,"SELECTTHEME")==0)
 				{
-					themeFolder->LFSTK_showFileDialog(wd,"Select Theme Folder");
+					themeFolder->LFSTK_showFileDialog(NULL,"Select Theme Folder");
 					if(themeFolder->LFSTK_isValid()==true)
 						{
 							asprintf(&buffer,"%s",themeFolder->LFSTK_getCurrentDir());
 							themeEdit->LFSTK_setBuffer(basename(buffer));
 							free(buffer);
-							free(wd);
-							wd=strdup(themeFolder->LFSTK_getCurrentDir());		
 						}
 					return(true);
 				}
@@ -159,6 +156,7 @@ bool buttonCB(void *p,void* ud)
 					prefsDeskCnt=atoi(deskCountEdit->LFSTK_getBuffer()->c_str());
 					prefsRefresh=atoi(refreshEdit->LFSTK_getBuffer()->c_str());
 					wc->globalLib->LFSTK_saveVarsToFile(envFile,lfsWMPrefs);
+					system("climsg -s 'reloadtheme' -k 667");
 					return(true);
 				}
 		}
@@ -218,16 +216,14 @@ int main(int argc, char **argv)
 	prefsColours[3]=strdup("white");
 	prefsColours[4]=strdup("white");
 
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Gadgets",false);
+	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"LFS WM Prefs",false);
 	display=wc->display;
-	//wc->LFSTK_initDnD();
 
 	asprintf(&envFile,"%s/lfswmanager.rc",wc->configDir);
 	wc->globalLib->LFSTK_loadVarsFromFile(envFile,lfsWMPrefs);
 	prefsPlacementTemp=prefsPlacement;
 
-	wd=strdup(wc->userHome);
-	themeFolder=new LFSTK_fileDialogClass(wc,"Select File",wd,true);
+	themeFolder=new LFSTK_fileDialogClass(wc,"Select File",NULL,true,"lfswmprefstheme");
 
 	placementMenus=new menuItemStruct[MAXMENUS];
 
@@ -317,7 +313,7 @@ int main(int argc, char **argv)
 	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
 
 //test
-	test=new LFSTK_buttonClass(wc,"Test",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	test=new LFSTK_buttonClass(wc,"Test Colours",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	test->LFSTK_setCallBack(NULL,buttonCB,(void*)"TEST");
 
 //apply
@@ -381,7 +377,6 @@ int main(int argc, char **argv)
 	free(prefsFont);
 	free(prefsTheme);
 	free(prefsTermCommand);
-	free(wd);
 	delete placementMenus;
 
 	return 0;
