@@ -52,12 +52,16 @@ class LFSTK_fileDialogClass
 		void					LFSTK_setWorkingDir(const char *dir);
 		void					LFSTK_setRequestType(bool type);
 		bool					LFSTK_getRequestType(void);
+//TODO
 		void					LFSTK_setShowPreview(bool);
-
+		void					LFSTK_setNameFilter(const char *filt);
 	private:
 		char					*findThemedIconFromMime(const char *mimetype);
 		void					setPreviewData(void);
+//TODO
+		void					resizeWindow(int w,int h);
 
+		int						dirlisthite=GADGETHITE*FDIRHITE;
 		const char				*recentsName="universal";
 		char					**dirList=NULL;
 		char					**dirImageList=NULL;
@@ -68,6 +72,9 @@ class LFSTK_fileDialogClass
 		char					*currentDir=NULL;
 		char					*currentFile=NULL;
 		char					*currentPath=NULL;
+//TODO
+		char					*filter=NULL;
+
 		bool					mainLoop;
 		bool					apply;
 		bool					dialogType;

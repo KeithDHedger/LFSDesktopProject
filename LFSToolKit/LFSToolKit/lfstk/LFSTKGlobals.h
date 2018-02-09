@@ -135,6 +135,15 @@ static int	xErrHandler(Display *dpy,XErrorEvent *e)
 	return 0;
 }
 
+static void freeAndNull(char **data)
+{
+	if((data!=NULL) && (*data!=NULL))
+		{
+			free(*data);
+			*data=NULL;
+		}
+}
+
 struct args
 {
 	const char*				name;

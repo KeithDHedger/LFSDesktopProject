@@ -89,7 +89,9 @@ int main(int argc, char **argv)
 	filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",wd,FILEDIALOG);
 	filedialogdir=new LFSTK_fileDialogClass(wc,"Select Folder",NULL,FOLDERDIALOG,"dialogscpp");
 
-//	filedialogfile->LFSTK_setShowPreview(true);
+//	filedialogdir->LFSTK_setNameFilter("xfwm4");
+//TODO
+//	filedialogfile->LFSTK_setShowPreview(false);
 
 //file button
 	filebutton=new LFSTK_buttonClass(wc,"Select File",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
