@@ -229,7 +229,7 @@ void LFSTK_fileDialogClass::LFSTK_setWorkingDir(const char *dir)
 	this->dirListGadget->LFSTK_setList(this->dirList,this->dirListCnt);
 	this->dirEdit->LFSTK_setBuffer(this->currentDir);
 //files
-	if(this->dialogType==false)
+	if(this->dialogType==FILEDIALOG)
 		{
 			this->getFileList();
 			this->fileListGadget->LFSTK_setImageList(this->fileImageList,this->fileListCnt);
@@ -330,11 +330,13 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	this->dialogType=type;
 	int dirlisthite=GADGETHITE*FDIRHITE;
 	int dirlistwid=DIALOGWIDTH-(FGAP*2)-FNAVBUTTONWID;
+	int dwidth=DIALOGWIDTH+PREVIEWWIDTH;
 
-	if(this->dialogType==true)
+	if(this->dialogType==FOLDERDIALOG)
 		{
 			dirlisthite=GADGETHITE*FDIRHITE;
 			hite=dirlisthite+(FGAP*7)+(GADGETHITE*2);
+			dwidth=DIALOGWIDTH;
 		}
 	else
 		{
@@ -342,7 +344,9 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 			hite=dirlisthite+(FGAP*6)+GADGETHITE+(FFILEHITE*GADGETHITE)+FGAP+GADGETHITE+FGAP;
 		}
 
-	this->dialog=new LFSTK_windowClass(0,0,DIALOGWIDTH+PREVIEWWIDTH,hite,label,false,true,true);
+	this->dialog=new LFSTK_windowClass(0,0,dwidth,hite,label,false,true,true);
+
+
 	//this->dialog->closeDisplayOnExit=true;
 //TODO//?
 	XSizeHints sh;
@@ -745,7 +749,7 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 
 							case ConfigureNotify:
 								this->dirListGadget->LFSTK_getGlobalGeom(&geomdir);
-								if(this->dialogType==false)
+								if(this->dialogType==FILEDIALOG)
 									{
 										this->fileListGadget->LFSTK_getGlobalGeom(&geomfile);
 									}

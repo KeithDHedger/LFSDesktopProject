@@ -231,7 +231,6 @@ const char	*themePartNames[]=
 	"shade-inactive",
 	"shade-prelight",
 	"shade-pressed",
-	
 	NULL
 };
 
@@ -245,6 +244,18 @@ void loadTheme(void)
 	imlib_context_set_dither(0);
 	imlib_context_set_display(dpy);
 	imlib_context_set_visual(visual);
+
+	int cnt=0;
+	while(themePartNames[cnt]!=NULL)
+		{
+			imlib_free_pixmap_and_mask(theme.pixmaps[cnt]);
+			theme.masks[cnt]=0;
+			theme.pixmaps[cnt]=0;
+			theme.gotPart[cnt]=false;
+			theme.partsWidth[cnt]=0;
+			theme.partsHeight[cnt]=0;	
+			cnt++;
+		}
 
 	while(themePartNames[partcnt]!=NULL)
 		{
@@ -273,6 +284,13 @@ void loadTheme(void)
 					imlib_render_pixmaps_for_whole_image(&theme.pixmaps[partcnt],&theme.masks[partcnt]);
 					imlib_free_image();
 				}
+			else
+				{
+					printf(">>>themePartNames[partcnt])=%s\n",themePartNames[partcnt]);
+					theme.gotPart[partcnt]=false;
+					theme.partsWidth[partcnt]=0;
+					theme.partsHeight[partcnt]=0;
+				}
 			partcnt++;
 		}
 
@@ -295,7 +313,7 @@ void loadTheme(void)
 				}
 		}
 }
-void fupdate(struct frame *);
+
 void makeFullPathToTheme(void)
 {
 	char	*buffer;
@@ -499,6 +517,20 @@ int main(int argc,char *argv[])
 	liveUpdate=5;
 	theme.pathToTheme=NULL;
 
+	cnt=0;
+	while(themePartNames[cnt]!=NULL)
+		{
+			theme.pixmaps[cnt]=0;
+			theme.masks[cnt]=0;
+			theme.gotPart[cnt]=false;
+					//XFreePixmap(dpy,theme.pixmaps[partcnt]);
+					//XFreePixmap(dpy,theme.masks[partcnt]);
+			theme.partsWidth[cnt]=0;
+			theme.partsHeight[cnt]=0;	
+			//XFreePixmap(dpy,theme.pixmaps[partcnt]);
+			//XFreePixmap(dpy,theme.masks[partcnt]);
+			cnt++;
+		}
 
 	asprintf(&prefsfile,"%s/.config/LFS/lfswmanager.rc",getenv("HOME"));
 	asprintf(&terminalCommand,"xterm -e ");
