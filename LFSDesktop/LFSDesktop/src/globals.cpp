@@ -72,15 +72,6 @@ LFSTK_buttonClass	*fileButtons[3];
 bool				dialogLoop=false;
 int					dialogRetVal=DIALOGRETERROR;
 
-void freeAndNull(char **data)
-{
-	if((data!=NULL) && (*data!=NULL))
-		{
-			free(*data);
-			*data=NULL;
-		}
-}
-
 diskLinkedList* isInList(const char *devname)
 {
 	diskLinkedList	*list=diskLL;
@@ -156,7 +147,7 @@ void setIconImage(diskDataStruct *dnode)
 
 	if(dnode->hasCustomIcon==true)
 		{
-			int ex=stat(dnode->pathToIcon,&st);
+			stat(dnode->pathToIcon,&st);
 			if(!S_ISREG(st.st_mode))
 				{
 					freeAndNull(&dnode->pathToIcon);

@@ -128,7 +128,6 @@ extern LFSTK_buttonClass	*fileButtons[];
 extern bool					dialogLoop;
 extern int					dialogRetVal;
 
-void freeAndNull(char **data);
 diskLinkedList* isInList(const char *devname);
 void newNode(void);
 void printDiskData(diskDataStruct *diskstruct);
