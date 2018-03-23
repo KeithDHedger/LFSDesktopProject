@@ -142,8 +142,9 @@ int toNearestInt(int left,int rite)
 void setIconImage(diskDataStruct *dnode)
 {
 	char			*out=NULL;
-	char			*ticon;
-	struct stat			st;
+	char			*ticon=NULL;
+	struct stat		st;
+	const char		*dot=NULL;
 
 	if(dnode->hasCustomIcon==true)
 		{
@@ -155,7 +156,19 @@ void setIconImage(diskDataStruct *dnode)
 				}
 		}
 
-	ticon=NULL;
+	if(dnode->hasCustomIcon==false)
+		{
+			dot=strrchr(dnode->devName,'.');
+			if(dot!=0)
+				{
+					if((strcasecmp(dot+1,"jpg")==0) || (strcasecmp(dot+1,"png")==0))
+						{
+							asprintf(&dnode->pathToIcon,"%s/Desktop/%s",wc->userHome,dnode->devName);
+							return;
+						}
+				}
+		}
+
 	switch(dnode->diskType)
 		{
 			case HDDDISK:
@@ -194,6 +207,7 @@ void setIconImage(diskDataStruct *dnode)
 			freeAndNull(&dnode->pathToIcon);
 			dnode->pathToIcon=strdup(ticon);
 		}
+
 	freeAndNull(&ticon);
 }
 
