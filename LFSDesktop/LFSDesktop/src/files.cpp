@@ -86,7 +86,7 @@ void doGetIconPath(void)
 									if(iconChooser->acceptDnd==true)
 										{
 											iconChooser->LFSTK_handleDnD(&event);
-											iconChooser->droppedData.type=-1;
+											iconChooser->droppedData.type=DROPINVALID;
 										}
 								}
 						}

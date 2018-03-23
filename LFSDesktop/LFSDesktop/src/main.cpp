@@ -452,13 +452,34 @@ BACKUP:
 							if(wc->acceptDnd==true)
 								{
 									wc->LFSTK_handleDnD(&event);
-									if((wc->droppedData.type!=-1) && (wc->acceptOnThis==true))
+									if((wc->droppedData.type!=DROPINVALID) && (wc->acceptOnThis==true))
 										{
 											printf("dropped on window=>>%s<<\n",wc->droppedData.data);
-											asprintf(&command,"cp '%s' ~/Desktop",wc->droppedData.data);
-											system(command);
-											freeAndNull(&command);
-											wc->droppedData.type=-1;
+											if(wc->droppedData.type==DROPURI)
+												{
+													asprintf(&command,"cp '%s' ~/Desktop",wc->droppedData.data);
+													system(command);
+													freeAndNull(&command);
+												}
+											if(wc->droppedData.type==DROPTEXT)
+												{
+													char	name[16]={0,};
+													char	*pathname;
+													FILE	*fd;
+													snprintf(name,16,"%s",wc->droppedData.data);
+													for(int j=0;j<14;j++)
+														if(isalnum(name[j])==false)
+															name[j]='_';
+													asprintf(&pathname,"%s/Desktop/%s.clip",getenv("HOME"),name);
+													fd=fopen(pathname,"w");
+													if(fd!=NULL)
+														{
+															fprintf(fd,"%s",wc->droppedData.data);
+															fclose(fd);
+														}
+													freeAndNull(&pathname);
+												}
+											wc->droppedData.type=DROPINVALID;
 										}
 								}
 						break;

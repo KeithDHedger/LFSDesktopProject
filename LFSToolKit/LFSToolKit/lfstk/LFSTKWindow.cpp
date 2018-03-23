@@ -1101,14 +1101,14 @@ void LFSTK_windowClass::LFSTK_dropData(propertyStruct* data)
 {
 	int	endl;
 
-	this->droppedData.type=-1;
+	this->droppedData.type=DROPINVALID;
 	if(this->droppedData.data!=NULL)
 		free(this->droppedData.data);
 	this->droppedData.data=NULL;
 	
 	if(strcasecmp(data->mimeType,"text/plain")==0)
 		{
-			this->droppedData.type=0;
+			this->droppedData.type=DROPTEXT;
 			asprintf(&(this->droppedData.data),"%s",data->data);
 		}
 
@@ -1124,7 +1124,7 @@ void LFSTK_windowClass::LFSTK_dropData(propertyStruct* data)
 					endl--;
 				}
 			ret=this->globalLib->LFSTK_oneLiner("echo -n \"%s\"|sed 's|^file://||;s|%%20| |g'",d);
-			this->droppedData.type=1;
+			this->droppedData.type=DROPURI;
 			this->droppedData.data=ret;
 			free(d);
 		}

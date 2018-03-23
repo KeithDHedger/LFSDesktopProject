@@ -51,7 +51,7 @@ struct propertyStruct
 */
 struct dropDataStruct
 {
-	int				type;
+	dropDataType	type;
 	char			*data;
 };
 
@@ -122,7 +122,7 @@ class LFSTK_windowClass
 		void					LFSTK_initDnD(void);
 		Atom					LFSTK_getDnDAtom(int atomnum);
 		void					LFSTK_handleDnD(XEvent *event);
-		dropDataStruct			droppedData={-1,NULL};
+		dropDataStruct			droppedData={DROPINVALID,NULL};
 		bool					acceptOnThis=false;
 		LFSTK_gadgetClass		*dropGadget;
 

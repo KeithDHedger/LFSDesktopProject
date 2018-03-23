@@ -305,7 +305,7 @@ void dialogRun(LFSTK_windowClass *dialog)
 									if(dialog->acceptDnd==true)
 										{
 											dialog->LFSTK_handleDnD(&event);
-											dialog->droppedData.type=-1;
+											dialog->droppedData.type=DROPINVALID;
 										}
 								}
 						}

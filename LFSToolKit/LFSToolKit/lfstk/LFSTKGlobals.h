@@ -62,6 +62,9 @@ enum {NORMAL=0,ABOVEALL,BELOWALL};
 enum bevelType {BEVELIN=0,BEVELOUT,BEVELNONE};
 enum indicatorType {CHECK=0,RADIO,PICTURE,DISCLOSURE,NOINDICATOR};
 
+//dropdata
+enum dropDataType {DROPINVALID=0,DROPTEXT,DROPURI};
+
 #ifdef _ENABLEDEBUG_
 static bool	showFileData=true;
 static void debugFunc(const char *file,const char *func,int line,const char *fmt, ...)
