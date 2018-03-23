@@ -1,4 +1,5 @@
 0.1.3
+Added cleandesktoprcs command to messaging.
 Images (jpg/png) now show thumbnail on desktop.
 Dropping text on desktop now creates text clipping file containing dropped text.
 Fixed reseting icon on removing custom image.

@@ -59,9 +59,19 @@ msgBuffer			buffer;
 bool				reloadPixmap=false;
 bool				reloadPrefsFlag=false;
 bool				reloadDeskFlag=false;
+
+int fileExists(const char *name)
+{
+	struct stat buffer;
+	return (stat(name,&buffer));
+}
+
 void readMsg(void)
 {
-	int retcode;
+	int		retcode;
+	char	*command;
+	FILE	*fd=NULL;
+	char	buff[2048];
 
 	retcode=msgrcv(queueID,&buffer,MAX_MSG_SIZE,1,IPC_NOWAIT);
 
@@ -76,6 +86,35 @@ void readMsg(void)
 					mainLoop=false;
 					reloadDeskFlag=true;
 				}
+			if(strcmp(buffer.mText,"cleandesktoprcs")==0)
+				{
+				printf("here\n");
+					asprintf(&command,"find %s -maxdepth 1 -mindepth 1 |sort",cacheDeskPath);
+					fd=popen(command,"r");
+					free(command);
+					if(fd!=NULL)
+						{
+							while(feof(fd)==0)
+								{
+									buff[0]=0;
+									fgets(buff,2048,fd);
+									if(strlen(buff)>0)
+										{
+											buff[strlen(buff)-1]=0;
+											*strrchr(buff,'.')=0;
+											asprintf(&command,"%s/%s",desktopPath,basename(buff));
+											if(fileExists(command)!=0)
+												{
+													free(command);
+													asprintf(&command,"%s.rc",buff);
+													unlink(command);
+													free(command);
+												}
+										}
+								}
+							pclose(fd);
+						}
+					}
 		}
 	buffer.mText[0]=0;
 }
