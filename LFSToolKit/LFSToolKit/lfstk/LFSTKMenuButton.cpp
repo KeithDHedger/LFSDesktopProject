@@ -145,7 +145,6 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	this->subwc->LFSTK_showWindow(true);
 	XRaiseWindow(this->display,this->subwc->window);
 	XSync(this->display,false);
-//	this->subwc->
 	subwindowgeom=this->subwc->LFSTK_getWindowGeom();
 
 	while (run==true)

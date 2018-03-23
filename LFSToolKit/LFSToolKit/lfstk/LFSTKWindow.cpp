@@ -47,9 +47,9 @@ struct Hints
 /**
  * Get current gadget map list.
  */
-std::map<int,mappedListener*> LFSTK_windowClass::LFSTK_getGadgets(void)
+std::map<int,mappedListener*> *LFSTK_windowClass::LFSTK_getGadgets(void)
 {
-	return this->gadgetMap;
+	return &(this->gadgetMap);
 }
 
 /**
@@ -82,7 +82,6 @@ LFSTK_gadgetClass* LFSTK_windowClass::LFSTK_findGadgetByPos(int x, int y)
 {
 	mappedListener	*ml=NULL;
 	geometryStruct	geom;
-
 	for (std::map<int,mappedListener*>::iterator it=this->gadgetMap.begin();it!=this->gadgetMap.end();++it)
 		{
 			ml=it->second;
@@ -1162,7 +1161,6 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 							this->toBeRequested=pickTargetFromAtoms(event->xclient.data.l[2],event->xclient.data.l[3],event->xclient.data.l[4]);
 						}
 				}
-
 			if(event->xclient.message_type == dNdAtoms[XDNDPOSITION])
 				{
 					//Xdnd: reply with an XDND status message

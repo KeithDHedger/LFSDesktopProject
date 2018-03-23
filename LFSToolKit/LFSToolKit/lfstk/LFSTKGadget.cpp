@@ -25,6 +25,8 @@
 
 LFSTK_gadgetClass::~LFSTK_gadgetClass()
 {
+	std::map<int,mappedListener*>	*map;
+
 	if(this->label!=NULL)
 		free(this->label);
 
@@ -63,6 +65,9 @@ LFSTK_gadgetClass::~LFSTK_gadgetClass()
 
 	XFreeGC(this->display,this->gc);
 	XDestroyWindow(this->display,this->window);
+
+	map=this->wc->LFSTK_getGadgets();
+	map->erase(this->window);
 }
 
 LFSTK_gadgetClass::LFSTK_gadgetClass()
@@ -247,8 +252,6 @@ void LFSTK_gadgetClass::LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* 
 	this->initGadget();
  	this->blackColour=BlackPixel(this->display,this->screen);
 	this->whiteColour=WhitePixel(this->display,this->screen);
-
-
 
 	this->LFSTK_setCallBack(NULL,NULL,(void*)-1);
 }

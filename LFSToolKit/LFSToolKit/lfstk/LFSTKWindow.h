@@ -159,7 +159,7 @@ class LFSTK_windowClass
 		void					*userData=NULL;
 		LFSTK_gadgetClass		*popupFromGadget=NULL;
 
-		std::map<int,mappedListener*> LFSTK_getGadgets(void);
+		std::map<int,mappedListener*> *LFSTK_getGadgets(void);
 
 //events etc
 		void					LFSTK_setDoubleClickTime(unsigned interval);
