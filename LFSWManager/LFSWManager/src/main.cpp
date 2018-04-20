@@ -286,7 +286,6 @@ void loadTheme(void)
 				}
 			else
 				{
-					printf(">>>themePartNames[partcnt])=%s\n",themePartNames[partcnt]);
 					theme.gotPart[partcnt]=false;
 					theme.partsWidth[partcnt]=0;
 					theme.partsHeight[partcnt]=0;

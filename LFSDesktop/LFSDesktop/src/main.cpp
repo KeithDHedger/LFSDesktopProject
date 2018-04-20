@@ -88,7 +88,6 @@ void readMsg(void)
 				}
 			if(strcmp(buffer.mText,"cleandesktoprcs")==0)
 				{
-				printf("here\n");
 					asprintf(&command,"find %s -maxdepth 1 -mindepth 1 |sort",cacheDeskPath);
 					fd=popen(command,"r");
 					free(command);
@@ -311,6 +310,7 @@ BACKUP:
 	createDirDesktops();
 
 	asprintf(&prefsPath,"%s/.config/LFS/lfsdesktop.rc",getenv("HOME"));
+//##
 	asprintf(&iconTheme,"gnome");
 	iconSize=32;
 	gridSize=64;
@@ -326,6 +326,7 @@ BACKUP:
 	excludeList=NULL;
 
 	loadVarsFromFile(prefsPath,desktopPrefs);
+
 	if(gridSize<1)
 		gridSize=1;
 
@@ -437,6 +438,7 @@ BACKUP:
 				{
 					case MotionNotify:
 						isdragging=true;
+						printf("released at xy= %i %i\n",event.xmotion.x,event.xmotion.y);
 						if(ml!=NULL)
 							ml->gadget->LFSTK_clearWindow();
 						break;
@@ -493,7 +495,7 @@ BACKUP:
 									wc->LFSTK_handleDnD(&event);
 									if((wc->droppedData.type!=DROPINVALID) && (wc->acceptOnThis==true))
 										{
-											printf("dropped on window=>>%s<<\n",wc->droppedData.data);
+											printf("dropped %s on window @x/y %i %i\n",wc->droppedData.data,wc->droppedData.x,wc->droppedData.y);
 											if(wc->droppedData.type==DROPURI)
 												{
 													asprintf(&command,"cp '%s' ~/Desktop",wc->droppedData.data);

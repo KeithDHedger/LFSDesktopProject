@@ -53,6 +53,7 @@ struct dropDataStruct
 {
 	dropDataType	type;
 	char			*data;
+	int				x,y;
 };
 
 enum {XDNDENTER=0,XDNDPOSITION,XDNDSTATUS,XDNDTYPELIST,XDNDACTIONCOPY,XDNDDROP,XDNDLEAVE,XDNDFINISHED,XDNDSELECTION,XDNDPROXY,XA_CLIPBOARD,XA_COMPOUND_TEXT,XA_UTF8_STRING,XA_TARGETS,PRIMARY,DNDATOMCOUNT};
@@ -122,7 +123,7 @@ class LFSTK_windowClass
 		void					LFSTK_initDnD(void);
 		Atom					LFSTK_getDnDAtom(int atomnum);
 		void					LFSTK_handleDnD(XEvent *event);
-		dropDataStruct			droppedData={DROPINVALID,NULL};
+		dropDataStruct			droppedData={DROPINVALID,NULL,-1,-1};
 		bool					acceptOnThis=false;
 		LFSTK_gadgetClass		*dropGadget;
 

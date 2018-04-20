@@ -1138,6 +1138,7 @@ void LFSTK_windowClass::LFSTK_dropData(propertyStruct* data)
 void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 {
 	int res;
+
 	if(event->type == ClientMessage)
 		{
 			if(event->xclient.message_type==this->dNdAtoms[XDNDENTER])
@@ -1161,10 +1162,14 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 							this->toBeRequested=pickTargetFromAtoms(event->xclient.data.l[2],event->xclient.data.l[3],event->xclient.data.l[4]);
 						}
 				}
+
 			if(event->xclient.message_type == dNdAtoms[XDNDPOSITION])
 				{
 					//Xdnd: reply with an XDND status message
 					this->dropGadget=this->LFSTK_findGadgetByPos(event->xclient.data.l[2] >> 16,event->xclient.data.l[2] & 0xffff);
+					this->droppedData.x=event->xclient.data.l[2] >> 16;
+					this->droppedData.y=event->xclient.data.l[2] & 0xffff;
+
 					XClientMessageEvent m;
 					memset(&m, sizeof(m), 0);
 					m.type=ClientMessage;
@@ -1243,7 +1248,6 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 							else
 								if(this->acceptOnThis==true)
 									this->LFSTK_dropData(myprops);
-
 							//Reply OK.
 							XClientMessageEvent m;
 							memset(&m, sizeof(m), 0);

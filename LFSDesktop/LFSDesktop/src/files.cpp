@@ -303,7 +303,22 @@ void addDeskData(diskDataStruct *dnode,const char *devname,int x,int y)
 	dnode->diskImage=new LFSTK_buttonClass(wc,dnode->label,dnode->posx,dnode->posy,iconSize,iconSize,NorthWestGravity);
 	dnode->diskImage->LFSTK_setFontString(fontFace,true);
 	setImageSize(dnode);
-	getRealXY(dnode,&realposx,&realposy);
+
+	if((wc->droppedData.x==-1) && (wc->droppedData.y==-1))
+		getRealXY(dnode,&realposx,&realposy);
+	else
+		{
+			realposx=wc->droppedData.x;
+			realposy=wc->droppedData.y;
+			wc->droppedData.x=-1;
+			wc->droppedData.y=-1;
+			setGridXY(dnode,realposx,realposy);
+			asprintf(&diskfile,"%s/%s.rc",cacheDeskPath,dnode->devName);
+			xPos=dnode->posx;
+			yPos=dnode->posy;
+			saveVarsToFile(diskfile,diskData);
+			getRealXY(dnode,&realposx,&realposy);	
+		}
 	dnode->diskImage->LFSTK_moveGadget(realposx,realposy);
 
 	dnode->diskImage->LFSTK_setCanDrag(true);

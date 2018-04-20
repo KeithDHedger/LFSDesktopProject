@@ -26,18 +26,18 @@ void setDiskType(diskDataStruct *dnode)
 	int			disktype=HDDDISK;
 
 //cdrom
-	out=wc->globalLib->LFSTK_oneLiner("udevadm info --query=property --name=%s|grep 'ID_CDROM=1'",dnode->devName);
+	out=wc->globalLib->LFSTK_oneLiner("/sbin/udevadm info --query=property --name=%s|grep 'ID_CDROM=1'",dnode->devName);
 	if(strlen(out)>0)
 		{
 			disktype=CDROM;
 			free(out);
 		}
 //usb
-	out=wc->globalLib->LFSTK_oneLiner("udevadm info --query=property --name=%s|grep 'usb'",dnode->devName);
+	out=wc->globalLib->LFSTK_oneLiner("/sbin/udevadm info --query=property --name=%s|grep 'usb'",dnode->devName);
 	if(strlen(out)>0)
 		{
 			free(out);
-			out=wc->globalLib->LFSTK_oneLiner("udevadm info --query=property --name=%s|grep 'ID_DRIVE_THUMB'",dnode->devName);
+			out=wc->globalLib->LFSTK_oneLiner("/sbin/udevadm info --query=property --name=%s|grep 'ID_DRIVE_THUMB'",dnode->devName);
 			if(strlen(out)>0)
 				{
 					disktype=THUMBDISK;
@@ -184,11 +184,11 @@ void setDiskLabel(diskDataStruct *dnode)
 {
 	char	*holdlabel=NULL;
 
-	holdlabel=wc->globalLib->LFSTK_oneLiner("udevadm info --query=property --name='%s'|grep 'ID_FS_LABEL'|awk -F= '{print $2}'",dnode->devName);
+	holdlabel=wc->globalLib->LFSTK_oneLiner("/sbin/udevadm info --query=property --name='%s'|grep 'ID_FS_LABEL'|awk -F= '{print $2}'",dnode->devName);
 	if(strlen(holdlabel)==0)
 		{
 			free(holdlabel);
-			holdlabel=wc->globalLib->LFSTK_oneLiner("udevadm info --query=property --name='%s'|sed -rn  's/(ID_MODEL|ID_VENDOR)=//gp'|sed -z 's/\\n/-/'",dnode->devName);
+			holdlabel=wc->globalLib->LFSTK_oneLiner("/sbin/udevadm info --query=property --name='%s'|sed -rn  's/(ID_MODEL|ID_VENDOR)=//gp'|sed -z 's/\\n/-/'",dnode->devName);
 			if(strlen(holdlabel)==0)
 				{
 					free(holdlabel);
@@ -215,8 +215,7 @@ bool setDiskData(diskDataStruct *dnode)
 	char	*buffer=NULL;
 	bool	oldmounted=dnode->mounted;
 
-	buffer=wc->globalLib->LFSTK_oneLiner("udevadm info --query=property '%s' 2>/dev/null|grep 'ID_FS_UUID='|awk -F= '{print $2}'",dnode->devName);
-
+	buffer=wc->globalLib->LFSTK_oneLiner("/sbin/udevadm info --query=property '%s' 2>/dev/null|grep 'ID_FS_UUID='|awk -F= '{print $2}'",dnode->devName);
 	if(strlen(buffer)==0)
 		{
 			freeAndNull(&dnode->label);
@@ -379,7 +378,6 @@ void loadDisks(void)
 	diskLinkedList	*disklistnode=NULL;
  
 	asprintf(&command,"find /dev -maxdepth 1 -mindepth 1  -regextype sed -regex \"%s\"|grep -v \"%s\"|sort --version-sort",includeList,excludeList);
-
 	fd=popen(command,"r");
 	if(fd!=NULL)
 		{
@@ -393,6 +391,7 @@ void loadDisks(void)
 							disklistnode=isInList(buffer);
 							if(disklistnode==NULL)
 								{
+					//printf("---%s---\n",buffer);
 									newNode();
 									disklistnode=diskLL;
 									getFreeGridXY(&x,&y);
