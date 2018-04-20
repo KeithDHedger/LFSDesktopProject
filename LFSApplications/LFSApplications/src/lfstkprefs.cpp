@@ -93,6 +93,9 @@ void setVars(void)
 
 	wc->globalLib->LFSTK_setGlobalString(0,TYPEWINDOW,windowColourEdit->LFSTK_getBuffer()->c_str());
 	wc->globalLib->LFSTK_setAutoLabelColour(autoColourCheck->LFSTK_getValue());
+
+	if(((strcmp(windowTileEdit->LFSTK_getCStr(),"")==0) || (strcmp(buttonTileEdit->LFSTK_getCStr(),"")==0) || (strcmp(menuTileEdit->LFSTK_getCStr(),"")==0))==true)
+		useTheme->LFSTK_setValue(false);
 	wc->globalLib->LFSTK_setUseTheme(useTheme->LFSTK_getValue());
 //tiles
 	wc->globalLib->LFSTK_setGlobalString(0,TYPEWINDOWTILE,windowTileEdit->LFSTK_getBuffer()->c_str());
