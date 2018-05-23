@@ -80,5 +80,6 @@ struct editorConfig
 };
 
 void editorAtExit(void);
+void editorRefreshScreen(void);
 
 #endif

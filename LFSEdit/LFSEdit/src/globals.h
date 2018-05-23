@@ -36,12 +36,14 @@
 #include <unistd.h>
 #include <stdarg.h>
 
+#include "config.h"
+
+#include "terminal.h"
 #include "highlight.h"
 #include "editor.h"
 
 //temp foworawrd ref
 void editorSetStatusMessage(const char *fmt,...);
-
 
 //editor
 extern editorConfig	editorPage;

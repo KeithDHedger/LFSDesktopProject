@@ -101,7 +101,8 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
 am__objects_1 = ../src/editor.$(OBJEXT) ../src/globals.$(OBJEXT) \
-	../src/highlight.$(OBJEXT) ../src/main.$(OBJEXT)
+	../src/highlight.$(OBJEXT) ../src/main.$(OBJEXT) \
+	../src/terminal.$(OBJEXT)
 am_lfsedit_OBJECTS = $(am__objects_1)
 lfsedit_OBJECTS = $(am_lfsedit_OBJECTS)
 lfsedit_LDADD = $(LDADD)
@@ -291,7 +292,7 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 			-DSYSCONFDIR=\""${sysconfdir}/${PACKAGE}"\" \
 			-DLIBDIR=\""${libdir}/${PACKAGE}"\"
 
-COMMONSRC = ../src/editor.cpp ../src/globals.cpp ../src/highlight.cpp ../src/main.cpp
+COMMONSRC = ../src/editor.cpp ../src/globals.cpp ../src/highlight.cpp ../src/main.cpp ../src/terminal.cpp
 lfsedit_SOURCES = $(COMMONSRC)
 lfsedit_CFLAGS = -O3
 man1_MANS = ../resources/man/lfsedit.1
@@ -385,6 +386,8 @@ clean-binPROGRAMS:
 	../src/$(DEPDIR)/$(am__dirstamp)
 ../src/main.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
+../src/terminal.$(OBJEXT): ../src/$(am__dirstamp) \
+	../src/$(DEPDIR)/$(am__dirstamp)
 
 lfsedit$(EXEEXT): $(lfsedit_OBJECTS) $(lfsedit_DEPENDENCIES) $(EXTRA_lfsedit_DEPENDENCIES) 
 	@rm -f lfsedit$(EXEEXT)
@@ -401,6 +404,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/globals.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/highlight.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/terminal.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\

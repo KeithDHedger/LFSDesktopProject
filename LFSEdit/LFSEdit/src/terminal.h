@@ -1,8 +1,8 @@
 /*
  *
- * ©K. D. Hedger. Wed 23 May 14:12:39 BST 2018 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Wed 23 May 20:19:58 BST 2018 kdhedger68713@gmail.com
 
- * This file (highlight.cpp) is part of LFSEdit.
+ * This file (terminal.h) is part of LFSEdit.
 
  * LFSEdit is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,27 +18,25 @@
  * along with LFSEdit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "globals.h"
 
-/* Maps syntax highlight token types to terminal colors. */
-int editorSyntaxToColor(int hl)
+#ifndef _TERMINAL_
+#define _TERMINAL_
+
+#define ABUF_INIT {NULL,0}
+
+/* We define a very simple "append buffer" structure,that is an heap
+ * allocated string where we can append to. This is useful in order to
+ * write all the escape sequences in a buffer and flush them to the standard
+ * output in a single call,to avoid flickering effects.
+*/
+
+struct appendBuffer
 {
-	switch(hl)
-		{
-		case HL_COMMENT:
-		case HL_MLCOMMENT:
-			return 36;     /* cyan */
-		case HL_KEYWORD1:
-			return 33;    /* yellow */
-		case HL_KEYWORD2:
-			return 32;    /* green */
-		case HL_STRING:
-			return 35;      /* magenta */
-		case HL_NUMBER:
-			return 31;      /* red */
-		case HL_MATCH:
-			return 34;      /* blu */
-		default:
-			return 37;             /* white */
-		}
-}
+	char *b;
+	int len;
+};
+
+void abAppend(struct appendBuffer *ab,const char *s,int len);
+void abFree(struct appendBuffer *ab);
+
+#endif

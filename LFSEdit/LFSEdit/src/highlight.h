@@ -49,5 +49,6 @@ struct editorSyntax
 	int flags;
 };
 
+int editorSyntaxToColor(int hl);
 
 #endif

@@ -1,8 +1,8 @@
 /*
  *
- * ©K. D. Hedger. Wed 23 May 14:12:39 BST 2018 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Wed 23 May 20:20:06 BST 2018 kdhedger68713@gmail.com
 
- * This file (highlight.cpp) is part of LFSEdit.
+ * This file (terminal.cpp) is part of LFSEdit.
 
  * LFSEdit is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,25 +20,20 @@
 
 #include "globals.h"
 
-/* Maps syntax highlight token types to terminal colors. */
-int editorSyntaxToColor(int hl)
+/* ============================= Terminal update ============================ */
+
+void abAppend(struct appendBuffer *ab,const char *s,int len)
 {
-	switch(hl)
-		{
-		case HL_COMMENT:
-		case HL_MLCOMMENT:
-			return 36;     /* cyan */
-		case HL_KEYWORD1:
-			return 33;    /* yellow */
-		case HL_KEYWORD2:
-			return 32;    /* green */
-		case HL_STRING:
-			return 35;      /* magenta */
-		case HL_NUMBER:
-			return 31;      /* red */
-		case HL_MATCH:
-			return 34;      /* blu */
-		default:
-			return 37;             /* white */
-		}
+	char *newBuf=(char*)realloc(ab->b,ab->len+len);
+
+	if(newBuf==NULL)
+		return;
+	memcpy(newBuf+ab->len,s,len);
+	ab->b=newBuf;
+	ab->len += len;
+}
+
+void abFree(struct appendBuffer *ab)
+{
+	free(ab->b);
 }
