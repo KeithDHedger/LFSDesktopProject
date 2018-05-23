@@ -1,6 +1,6 @@
 #
 #
-AC_INIT([LFSEdit],[0.0.1],[PROJ],[LFSEdit])
+AC_INIT([LFSEdit],[0.0.2],[PROJ],[LFSEdit])
 
 AC_CONFIG_HEADER([config.h])
 AC_PROG_CXX
