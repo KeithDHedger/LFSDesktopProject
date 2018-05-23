@@ -19,3 +19,22 @@
  */
 
 #include "globals.h"
+
+/* ======================= Low level terminal handling ====================== */
+
+void disableRawMode(int fd)
+{
+	/* Don't even check the return value as it's too late. */
+	if(editorPage.rawmode)
+		{
+			tcsetattr(fd,TCSAFLUSH,&orig_termios);
+			editorPage.rawmode=0;
+		}
+}
+
+/* Called at exit to avoid remaining in raw mode. */
+void editorAtExit(void)
+{
+	disableRawMode(STDIN_FILENO);
+}
+

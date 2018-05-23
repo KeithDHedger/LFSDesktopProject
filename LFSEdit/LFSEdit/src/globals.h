@@ -21,11 +21,41 @@
 #ifndef _GLOBALS_
 #define _GLOBALS_
 
+#include <termios.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <sys/types.h>
+#include <sys/time.h>
 #include <time.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
+#include <stdarg.h>
 
 #include "highlight.h"
 #include "editor.h"
 
+//temp foworawrd ref
+void editorSetStatusMessage(const char *fmt,...);
+
+
+//editor
 extern editorConfig	editorPage;
+
+//term
+extern termios orig_termios;
+
+//prefs
+
+//style
+extern char			*lang;
+extern unsigned		langFlags;
+extern const char	*langKeywords[];
+extern const char	*langComments[];
+
 
 #endif

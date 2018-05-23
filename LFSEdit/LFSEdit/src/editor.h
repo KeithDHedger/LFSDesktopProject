@@ -79,4 +79,6 @@ struct editorConfig
 	editorSyntax *syntax;    /* Current syntax highlight,or NULL. */
 };
 
+void editorAtExit(void);
+
 #endif

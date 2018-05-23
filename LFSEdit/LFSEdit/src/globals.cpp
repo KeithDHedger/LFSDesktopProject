@@ -20,4 +20,40 @@
 
 #include "globals.h"
 
+//term
+termios orig_termios; /* In order to restore at exit.*/
+
+//editor
 editorConfig	editorPage;
+
+//prefs
+
+//style
+char			*lang=NULL;
+unsigned		langFlags=HL_HIGHLIGHT_STRINGS | HL_HIGHLIGHT_NUMBERS;
+
+/* =========================== Syntax highlights DB =========================
+ *
+ * In order to add a new syntax,define two arrays with a list of file name
+ * matches and keywords. The file name matches are used in order to match
+ * a given syntax with a given file name: if a match pattern starts with a
+ * dot,it is matched as the last past of the filename,for example ".c".
+ * Otherwise the pattern is just searched inside the filenme,like "Makefile").
+ *
+ * The list of keywords to highlight is just a list of words,however if they
+ * a trailing '|' character is added at the end,they are highlighted in
+ * a different color,so that you can have two different sets of keywords.
+ *
+ * Finally add a stanza in the HLDB global variable with two two arrays
+ * of strings,and a set of flags in order to enable highlighting of
+ * comments and numbers.
+ *
+ * The characters for single and multi line comments must be exactly two
+ * and must be provided as well (see the C language example).
+ *
+ * There is no support to highlight patterns currently. */
+
+/* C / C++ */
+const char		*langKeywords[]= {"switch","if","while","for","break","continue","return","else","struct","union","typedef","static","enum","class","int|","long|","double|","float|","char|","unsigned|","signed|","void|",NULL};
+const char		*langComments[]= {"//","/*","*/",NULL};
+

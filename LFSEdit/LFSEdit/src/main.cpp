@@ -52,83 +52,11 @@
  * along with LFSEdit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <termios.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <errno.h>
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/time.h>
-#include <unistd.h>
-#include <stdarg.h>
-#include <fcntl.h>
-//#include <time.h>
+
 
 #include "config.h"
 #include "globals.h"
 
-void editorSetStatusMessage(const char *fmt,...);
-
-/* =========================== Syntax highlights DB =========================
- *
- * In order to add a new syntax,define two arrays with a list of file name
- * matches and keywords. The file name matches are used in order to match
- * a given syntax with a given file name: if a match pattern starts with a
- * dot,it is matched as the last past of the filename,for example ".c".
- * Otherwise the pattern is just searched inside the filenme,like "Makefile").
- *
- * The list of keywords to highlight is just a list of words,however if they
- * a trailing '|' character is added at the end,they are highlighted in
- * a different color,so that you can have two different sets of keywords.
- *
- * Finally add a stanza in the HLDB global variable with two two arrays
- * of strings,and a set of flags in order to enable highlighting of
- * comments and numbers.
- *
- * The characters for single and multi line comments must be exactly two
- * and must be provided as well (see the C language example).
- *
- * There is no support to highlight patterns currently. */
-
-/* C / C++ */
-char	*lang=NULL;
-const char	*langKeywords[]= {"switch","if","while","for","break","continue","return","else","struct","union","typedef","static","enum","class","int|","long|","double|","float|","char|","unsigned|","signed|","void|",NULL};
-const char	*langComments[]= {"//","/*","*/",NULL};
-unsigned	langFlags=HL_HIGHLIGHT_STRINGS | HL_HIGHLIGHT_NUMBERS;
-
-//char *C_HL_extensions[]= {".c",".cpp",NULL};
-//char *C_HL_keywords[] =
-//{
-//	/* A few C / C++ keywords */
-//	"switch","if","while","for","break","continue","return","else",
-//	"struct","union","typedef","static","enum","class",
-//	/* C types */
-//	"int|","long|","double|","float|","char|","unsigned|","signed|",
-//	"void|",NULL
-//};
-
-/* ======================= Low level terminal handling ====================== */
-
-static struct termios orig_termios; /* In order to restore at exit.*/
-
-void disableRawMode(int fd)
-{
-	/* Don't even check the return value as it's too late. */
-	if(editorPage.rawmode)
-		{
-			tcsetattr(fd,TCSAFLUSH,&orig_termios);
-			editorPage.rawmode=0;
-		}
-}
-
-/* Called at exit to avoid remaining in raw mode. */
-void editorAtExit(void)
-{
-	disableRawMode(STDIN_FILENO);
-}
 
 /* Raw mode: 1960 magic shit. */
 int enableRawMode(int fd)
