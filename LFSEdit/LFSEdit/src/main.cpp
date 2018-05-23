@@ -52,8 +52,6 @@
  * along with LFSEdit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define KILO_VERSION "0.0.1"
-
 #include <termios.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -87,11 +85,10 @@
 
 struct editorSyntax
 {
-	char **filematch;
 	char **keywords;
-	char singleline_comment_start[3];
-	char multiline_comment_start[3];
-	char multiline_comment_end[3];
+	char singleline_comment_start[8];
+	char multiline_comment_start[8];
+	char multiline_comment_end[8];
 	int flags;
 };
 
@@ -613,7 +610,6 @@ int editorSyntaxToColor(int hl)
 void editorSelectSyntaxHighlight(char *filename)
 {
 	editorPage.syntax=new editorSyntax;
-	editorPage.syntax->filematch=NULL;
 	editorPage.syntax->keywords=(char**)&langKeywords;
 	sprintf((char*)(editorPage.syntax->singleline_comment_start),"%s","//");
 	sprintf((char*)(editorPage.syntax->multiline_comment_start),"%s","/*");
@@ -1000,7 +996,7 @@ void editorRefreshScreen(void)
 						{
 							char welcome[80];
 							int welcomelen=snprintf(welcome,sizeof(welcome),
-							                        "Kilo editor -- verison %s\x1b[0K\r\n",KILO_VERSION);
+							                        "LFSEdit editor -- verison %s\x1b[0K\r\n",VERSION);
 							int padding=(editorPage.screencols-welcomelen)/2;
 							if(padding)
 								{
