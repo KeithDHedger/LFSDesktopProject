@@ -1,0 +1,10 @@
+
+INCLUDES =	-I$(top_srcdir) \
+			-DPREFIX=\""${prefix}\"" \
+			-DDATADIR=\""${pkgdatadir}"\" \
+			-DSYSCONFDIR=\""${sysconfdir}/${PACKAGE}"\" \
+			-DLIBDIR=\""${libdir}/${PACKAGE}"\"
+
+LIBS =	
+
+

@@ -178,7 +178,7 @@ printf("quitx=%i quity=%i\n",DIALOGMIDDLE-HALFGADGETWIDTH,sy);
 									if((wc->droppedData.type!=-1) && (wc->acceptOnThis==true))
 										{
 											printf("dropped on window=>>%s<<\n",wc->droppedData.data);
-											wc->droppedData.type=-1;
+											wc->droppedData.type=DROPINVALID;
 											
 										}
 								}
