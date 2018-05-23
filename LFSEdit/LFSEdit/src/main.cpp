@@ -69,6 +69,8 @@
 #include <fcntl.h>
 #include <time.h>
 
+#include "config.h"
+
 /* Syntax highlight types */
 #define HL_NORMAL 0
 #define HL_NONPRINT 1

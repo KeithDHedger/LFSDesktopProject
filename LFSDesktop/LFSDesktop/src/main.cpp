@@ -34,7 +34,6 @@ struct option long_options[] =
 	{0, 0, 0, 0}
 };
 
-
 struct msgBuffer
 {
 	long	mType;
