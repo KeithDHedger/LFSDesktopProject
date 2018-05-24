@@ -38,5 +38,7 @@ struct appendBuffer
 
 void abAppend(struct appendBuffer *ab,const char *s,int len);
 void abFree(struct appendBuffer *ab);
+int enableRawMode(int fd);
+int getWindowSize(int ifd,int ofd,int *rows,int *cols);
 
 #endif

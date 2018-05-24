@@ -81,5 +81,6 @@ struct editorConfig
 
 void editorAtExit(void);
 void editorRefreshScreen(void);
+int editorReadKey(int fd);
 
 #endif

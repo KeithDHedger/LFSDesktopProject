@@ -1,240 +1,29 @@
-/* Kilo -- A very simple editor in less than 1-kilo lines of code (as counted
- *         by "cloc"). Does not depend on libcurses,directly emits VT100
- *         escapes on the terminal.
- *
- * -----------------------------------------------------------------------
- *
- * Copyright (C) 2016 Salvatore Sanfilippo <antirez at gmail dot com>
- *
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms,with or without
- * modification,are permitted provided that the following conditions are
- * met:
- *
- *  *  Redistributions of source code must retain the above copyright
- *     notice,this list of conditions and the following disclaimer.
- *
- *  *  Redistributions in binary form must reproduce the above copyright
- *     notice,this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,INCLUDING,BUT NOT
- * LIMITED TO,THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,INDIRECT,INCIDENTAL,
- * SPECIAL,EXEMPLARY,OR CONSEQUENTIAL DAMAGES (INCLUDING,BUT NOT
- * LIMITED TO,PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA,OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY,WHETHER IN CONTRACT,STRICT LIABILITY,OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE,EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGeditorPage.
-*/
-
 /*
  *
  * ©K. D. Hedger. Wed 23 May 13:00:06 BST 2018 kdhedger68713@gmail.com
-
+ *
  * This file (main.cpp) is part of LFSEdit.
-
+ *
+ 
+ 
+ 
+ * See the included kilo-LICENSE file for details of original code.
+ *
  * LFSEdit is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * at your option) any later version.
-
+ *
  * LFSEdit is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with LFSEdit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
 #include "globals.h"
-
-
-/* Raw mode: 1960 magic shit. */
-int enableRawMode(int fd)
-{
-	struct termios raw;
-
-	if(editorPage.rawmode) return 0; /* Already enabled. */
-	if(!isatty(STDIN_FILENO)) goto fatal;
-	atexit(editorAtExit);
-	if(tcgetattr(fd,&orig_termios)==-1) goto fatal;
-
-	raw=orig_termios;  /* modify the original mode */
-	/* input modes: no break,no CR to NL,no parity check,no strip char,
-	 * no start/stop output control. */
-	raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
-	/* output modes - disable post processing */
-	raw.c_oflag &= ~(OPOST);
-	/* control modes - set 8 bit chars */
-	raw.c_cflag |= (CS8);
-	/* local modes - choing off,canonical off,no extended functions,
-	 * no signal chars (^Z,^C) */
-	raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
-	/* control chars - set return condition: min number of bytes and timer. */
-	raw.c_cc[VMIN]=0; /* Return each byte,or zero for timeout. */
-	raw.c_cc[VTIME]=1; /* 100 ms timeout (unit is tens of second). */
-
-	/* put terminal in raw mode after flushing */
-	if(tcsetattr(fd,TCSAFLUSH,&raw) < 0) goto fatal;
-	editorPage.rawmode=1;
-	return 0;
-
-fatal:
-	errno=ENOTTY;
-	return -1;
-}
-
-/* Read a key from the terminal put in raw mode,trying to handle
- * escape sequences. */
-int editorReadKey(int fd)
-{
-	int nread;
-	char c,seq[3];
-	while ((nread=read(fd,&c,1))==0);
-	if(nread==-1) exit(1);
-
-	while(1)
-		{
-			switch(c)
-				{
-				case ESC:    /* escape sequence */
-					/* If this is just an ESC,we'll timeout here. */
-					if(read(fd,seq,1)==0) return ESC;
-					if(read(fd,seq+1,1)==0) return ESC;
-
-					/* ESC [ sequences. */
-					if(seq[0]=='[')
-						{
-							if(seq[1] >= '0' && seq[1] <= '9')
-								{
-									/* Extended escape,read additional byte. */
-									if(read(fd,seq+2,1)==0) return ESC;
-									if(seq[2]=='~')
-										{
-											switch(seq[1])
-												{
-												case '3':
-													return DEL_KEY;
-												case '5':
-													return PAGE_UP;
-												case '6':
-													return PAGE_DOWN;
-												}
-										}
-								}
-							else
-								{
-									switch(seq[1])
-										{
-										case 'A':
-											return ARROW_UP;
-										case 'B':
-											return ARROW_DOWN;
-										case 'C':
-											return ARROW_RIGHT;
-										case 'D':
-											return ARROW_LEFT;
-										case 'H':
-											return HOME_KEY;
-										case 'F':
-											return END_KEY;
-										}
-								}
-						}
-
-					/* ESC O sequences. */
-					else if(seq[0]=='O')
-						{
-							switch(seq[1])
-								{
-								case 'H':
-									return HOME_KEY;
-								case 'F':
-									return END_KEY;
-								}
-						}
-					break;
-				default:
-					return c;
-				}
-		}
-}
-
-/* Use the ESC [6n escape sequence to query the horizontal cursor position
- * and return it. On error -1 is returned,on success the position of the
- * cursor is stored at *rows and *cols and 0 is returned. */
-int getCursorPosition(int ifd,int ofd,int *rows,int *cols)
-{
-	char buf[32];
-	unsigned int i=0;
-
-	/* Report cursor location */
-	if(write(ofd,"\x1b[6n",4) != 4) return -1;
-
-	/* Read the response: ESC [ rows ; cols R */
-	while (i < sizeof(buf)-1)
-		{
-			if(read(ifd,buf+i,1) != 1) break;
-			if(buf[i]=='R') break;
-			i++;
-		}
-	buf[i]='\0';
-
-	/* Parse it. */
-	if(buf[0] != ESC || buf[1] != '[') return -1;
-	if(sscanf(buf+2,"%d;%d",rows,cols) != 2) return -1;
-	return 0;
-}
-
-/* Try to get the number of columns in the current terminal. If the ioctl()
- * call fails the function will try to query the terminal itself.
- * Returns 0 on success,-1 on error. */
-int getWindowSize(int ifd,int ofd,int *rows,int *cols)
-{
-	struct winsize ws;
-
-	if(ioctl(1,TIOCGWINSZ,&ws)==-1 || ws.ws_col==0)
-		{
-			/* ioctl() failed. Try to query the terminal itself. */
-			int orig_row,orig_col,retval;
-
-			/* Get the initial position so we can restore it later. */
-			retval=getCursorPosition(ifd,ofd,&orig_row,&orig_col);
-			if(retval==-1) goto failed;
-
-			/* Go to right/bottom margin and get position. */
-			if(write(ofd,"\x1b[999C\x1b[999B",12) != 12) goto failed;
-			retval=getCursorPosition(ifd,ofd,rows,cols);
-			if(retval==-1) goto failed;
-
-			/* Restore position. */
-			char seq[32];
-			snprintf(seq,32,"\x1b[%d;%dH",orig_row,orig_col);
-			if(write(ofd,seq,strlen(seq))==-1)
-				{
-					/* Can't recover... */
-				}
-			return 0;
-		}
-	else
-		{
-			*cols=ws.ws_col;
-			*rows=ws.ws_row;
-			return 0;
-		}
-
-failed:
-	return -1;
-}
 
 /* ====================== Syntax highlight color scheme  ==================== */
 
@@ -248,11 +37,15 @@ int is_separator(int c)
  * of the row but spawns to the next row. */
 int editorRowHasOpenComment(editorRow *row)
 {
+fprintf(stderr,"row->idx=%i row->rsize=%i chars=%s\n",row->rsize,row->idx,row->chars);
 	if(row->hl && row->rsize && row->hl[row->rsize-1]==HL_MLCOMMENT &&
 	        (row->rsize < 2 || (row->render[row->rsize-2] != '*' ||
 	                            row->render[row->rsize-1] != '/'))) return 1;
+//return(!row->hl_oc);
 	return 0;
 }
+
+int isincomment=0;
 
 /* Set every byte of row->hl (that corresponds to every character in the line)
  * to the right syntax highlight type (HL_* defines). */
@@ -284,8 +77,12 @@ void editorUpdateSyntax(editorRow *row)
 
 	/* If the previous line has an open comment,this line starts
 	 * with an open comment state. */
+	//editorSetStatusMessage(">>>%i<<<<\n",row->idx,editorRowHasOpenComment(&editorPage.row[row->idx-1]));
+	//printf(">>>%i %i<<<<\n",row->idx);
 	if(row->idx > 0 && editorRowHasOpenComment(&editorPage.row[row->idx-1]))
 		in_comment=1;
+	//if(row->idx > 1 && editorRowHasOpenComment(&editorPage.row[row->idx-2]))
+	//	in_comment=1;
 
 	while(*p)
 		{
@@ -299,6 +96,7 @@ void editorUpdateSyntax(editorRow *row)
 
 			/* Handle multi line comments. */
 			if(in_comment)
+//			if(isincomment)
 				{
 					row->hl[i]=HL_MLCOMMENT;
 					if(*p==mce[0] && *(p+1)==mce[1])
@@ -307,6 +105,7 @@ void editorUpdateSyntax(editorRow *row)
 							p += 2;
 							i += 2;
 							in_comment=0;
+							isincomment=0;
 							prev_sep=1;
 							continue;
 						}
@@ -325,10 +124,11 @@ void editorUpdateSyntax(editorRow *row)
 					p += 2;
 					i += 2;
 					in_comment=1;
+					isincomment=1;
 					prev_sep=0;
 					continue;
 				}
-
+in_comment=isincomment;
 			/* Handle "" and '' */
 			if(in_string)
 				{
