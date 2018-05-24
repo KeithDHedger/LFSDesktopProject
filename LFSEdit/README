@@ -1,7 +1,0 @@
-Simple terminal based editor with syntax highlighting.
-Early stages yet only 'c' hightlighting ( hard coded ) for now, much to do!
-
-Simple text editor based on kilo available here:
-https://github.com/antirez/kilo
-Tutorial here:
-https://viewsourcecode.org/snaptoken/kilo/index.html

@@ -1,6 +1,0 @@
-#|/bin/bash
-
-shopt -s nullglob
-cd "LFSEdit/src"
-csrclst=$(echo "../src/*.c" "../src/*.cpp")
-echo COMMONSRC = $csrclst > ../sources
