@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Sun 11 Sep 19:09:02 BST 2016 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Sun 11 Sep 19:09:02 BST 2016 keithdhedger@gmail.com
 
  * This file (LFSTKListGadget.cpp) is part of LFSToolKit.
 

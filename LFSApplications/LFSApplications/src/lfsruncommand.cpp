@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Thu 24 Aug 13:29:34 BST 2017 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Thu 24 Aug 13:29:34 BST 2017 keithdhedger@gmail.com
 
  * This file (lfsruncommand.cpp) is part of LFSApplications.
 

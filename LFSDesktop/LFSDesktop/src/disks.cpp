@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Thu Jan 11 13:01:45 GMT 2018 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Thu Jan 11 13:01:45 GMT 2018 keithdhedger@gmail.com
 
  * This file (disks.cpp) is part of LFSDesktop.
 

@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Mon 12 Oct 16:45:21 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Mon 12 Oct 16:45:21 BST 2015 keithdhedger@gmail.com
 
  * This file (windowList.cpp) is part of LFSPanel.
 

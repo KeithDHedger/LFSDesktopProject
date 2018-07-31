@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Fri 21 Aug 12:29:04 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Fri 21 Aug 12:29:04 BST 2015 keithdhedger@gmail.com
 
  * This file (LFSTK_lib.h) is part of LFSToolKit.
 

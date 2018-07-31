@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Wed  5 Aug 12:36:06 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Wed  5 Aug 12:36:06 BST 2015 keithdhedger@gmail.com
 
  * This file (LFSTKLineEdit.h) is part of LFSToolKit.
 

@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Fri 24 Jul 19:33:15 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Fri 24 Jul 19:33:15 BST 2015 keithdhedger@gmail.com
 
  * This file (LFSTKGlobals.h) is part of LFSToolKit.
 
@@ -29,8 +29,8 @@
 #include <cairo-xlib.h>
 
 #define COPYRITE			"Copyright © 2013-2017 K.D.Hedger"
-#define PERSONAL			"keithhedger@keithhedger.darktech.org"
-#define	MYWEBSITE			"http://keithhedger.darktech.org/"
+#define PERSONAL			"keithdhedger@gmail.com"
+#define	MYWEBSITE			"http://keithhedger.freeddns.org/"
 
 #define DEFAULTFONT			"sans:size=10"
 #define DISCLOSURESIZE		6

@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Wed Jan 10 20:31:07 GMT 2018 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Wed Jan 10 20:31:07 GMT 2018 keithdhedger@gmail.com
 
  * This file (prefs.cpp) is part of LFSDesktop.
 

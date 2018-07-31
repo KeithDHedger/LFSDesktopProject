@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Thu  8 Oct 17:13:47 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Thu  8 Oct 17:13:47 BST 2015 keithdhedger@gmail.com
 
  * This file (disks.h) is part of LFSPanel.
 

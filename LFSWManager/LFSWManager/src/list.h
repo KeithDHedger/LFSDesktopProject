@@ -4,7 +4,7 @@
 	http://sourceforge.net/projects/windwm/?source=navbar
 
 	Changes/additions
-	©keithhedger Tue 23 Jun 09:56:25 BST 2015 kdhedger68713@gmail.com
+	©keithhedger Tue 23 Jun 09:56:25 BST 2015 keithdhedger@gmail.com
 
 	Extra code released under GPL3
 

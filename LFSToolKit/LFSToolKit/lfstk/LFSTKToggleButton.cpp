@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Thu 17 Sep 11:54:58 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Thu 17 Sep 11:54:58 BST 2015 keithdhedger@gmail.com
 
  * This file (LFSTKToggleButton.cpp) is part of LFSToolKit.
 

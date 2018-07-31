@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Mon 26 Oct 13:09:21 GMT 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Mon 26 Oct 13:09:21 GMT 2015 keithdhedger@gmail.com
 
  * This file (appmenu.h) is part of LFSWManager.
 

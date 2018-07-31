@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Fri 28 Aug 19:16:54 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Fri 28 Aug 19:16:54 BST 2015 keithdhedger@gmail.com
 
  * This file (LFSTKLabel.h) is part of LFSToolKit.
 

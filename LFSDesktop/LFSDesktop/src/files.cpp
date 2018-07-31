@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Thu 13 Aug 16:53:55 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Thu 13 Aug 16:53:55 BST 2015 keithdhedger@gmail.com
 
  * This file (files.cpp) is part of LFSDesktop.
 

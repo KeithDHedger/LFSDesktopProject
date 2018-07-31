@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Mon 21 Sep 13:41:36 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Mon 21 Sep 13:41:36 BST 2015 keithdhedger@gmail.com
 
  * This file (clock.cpp) is part of LFSPanel.
 

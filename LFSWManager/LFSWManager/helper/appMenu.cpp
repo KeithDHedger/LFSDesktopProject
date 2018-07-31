@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Fri 31 Jul 17:35:44 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Fri 31 Jul 17:35:44 BST 2015 keithdhedger@gmail.com
 
  * This file (appMenu.cpp) is part of LFSWManager.
 

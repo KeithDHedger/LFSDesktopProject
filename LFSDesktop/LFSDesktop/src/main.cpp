@@ -1,7 +1,7 @@
 
 /*
  *
- * ©K. D. Hedger. Wed Jan 10 11:27:16 GMT 2018 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Wed Jan 10 11:27:16 GMT 2018 keithdhedger@gmail.com
 
  * This file (main.cpp) is part of LFSDesktop.
 

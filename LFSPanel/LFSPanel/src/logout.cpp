@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Sun 20 Sep 18:36:44 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Sun 20 Sep 18:36:44 BST 2015 keithdhedger@gmail.com
 
  * This file (logout.cpp) is part of LFSPanel.
 

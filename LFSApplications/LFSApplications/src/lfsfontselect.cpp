@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Sun  4 Sep 14:01:13 BST 2016 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Sun  4 Sep 14:01:13 BST 2016 keithdhedger@gmail.com
 
  * This file (lfsfontselect.cpp) is part of LFSApplications.
 

@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Sun 11 Oct 14:53:50 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Sun 11 Oct 14:53:50 BST 2015 keithdhedger@gmail.com
 
  * This file (cpu.cpp) is part of LFSPanel.
 

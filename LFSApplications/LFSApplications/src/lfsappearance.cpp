@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Tue 15 Aug 17:26:09 BST 2017 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Tue 15 Aug 17:26:09 BST 2017 keithdhedger@gmail.com
 
  * This file (lfsappearance.cpp) is part of LFSApplications.
 

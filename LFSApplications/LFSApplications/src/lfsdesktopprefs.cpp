@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Wed 16 Aug 13:55:27 BST 2017 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Wed 16 Aug 13:55:27 BST 2017 keithdhedger@gmail.com
 
  * This file (lfsdesktopprefs.cpp) is part of LFSApplications.
 

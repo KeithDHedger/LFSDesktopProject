@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Tue 15 Sep 20:20:50 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Tue 15 Sep 20:20:50 BST 2015 keithdhedger@gmail.com
 
  * This file (main.cpp) is part of LFSSetWallpaper.
 
@@ -116,7 +116,7 @@ void printhelp(void)
 	       " -y,--multimode		Multi monitor image mode 0=Single image,1=Multi image N\n"
 	       " -v,--version		output version information and exit\n"
 	       " -h,-?,--help		print this help\n\n"
-	       "Report bugs to kdhedger68713@gmail.com\n"
+	       "Report bugs to keithdhedger@gmail.com\n"
 	      );
 }
 

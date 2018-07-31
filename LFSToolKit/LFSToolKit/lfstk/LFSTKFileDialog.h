@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Tue 13 Sep 20:00:53 BST 2016 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Tue 13 Sep 20:00:53 BST 2016 keithdhedger@gmail.com
 
  * This file (LFSTKFileDialog.h) is part of LFSToolKit.
 

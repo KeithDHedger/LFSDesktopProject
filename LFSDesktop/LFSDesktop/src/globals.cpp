@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Wed Jan 10 11:33:09 GMT 2018 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Wed Jan 10 11:33:09 GMT 2018 keithdhedger@gmail.com
 
  * This file (globals.cpp) is part of LFSDesktop.
 

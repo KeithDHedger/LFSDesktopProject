@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Thu 23 Jul 16:14:48 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Thu 23 Jul 16:14:48 BST 2015 keithdhedger@gmail.com
 
  * This file (LFSTKwindow.cpp) is part of LFSToolKit.
 
@@ -37,11 +37,11 @@
 
 struct Hints
 {
-	unsigned long   flags;
-	unsigned long   functions;
-	unsigned long   decorations;
-	long            inputMode;
-	unsigned long   status;
+	unsigned long  flags;
+	unsigned long	functions;
+	unsigned long	decorations;
+	long			inputMode;
+	unsigned long	status;
 };
 
 /**

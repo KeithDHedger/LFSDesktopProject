@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Fri 18 Aug 16:52:24 BST 2017 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Fri 18 Aug 16:52:24 BST 2017 keithdhedger@gmail.com
 
  * This file (lfsbackdropprefs.cpp) is part of LFSApplications.
 

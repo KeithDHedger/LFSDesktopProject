@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Fri 24 Jul 10:55:09 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Fri 24 Jul 10:55:09 BST 2015 keithdhedger@gmail.com
 
  * This file (LFSTKMenuButton.cpp) is part of LFSToolKit.
 

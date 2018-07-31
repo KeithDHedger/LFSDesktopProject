@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Thu  5 Nov 16:40:48 GMT 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Thu  5 Nov 16:40:48 GMT 2015 keithdhedger@gmail.com
 
  * This file (LFSTKImage.cpp) is part of LFSToolKit.
 

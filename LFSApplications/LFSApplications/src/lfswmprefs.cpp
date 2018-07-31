@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Thu 17 Aug 15:46:21 BST 2017 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Thu 17 Aug 15:46:21 BST 2017 keithdhedger@gmail.com
 
  * This file (lfswmprefs.cpp) is part of LFSApplications.
 

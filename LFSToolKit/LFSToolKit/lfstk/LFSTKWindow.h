@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Thu 23 Jul 16:15:33 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Thu 23 Jul 16:15:33 BST 2015 keithdhedger@gmail.com
 
  * This file (LFSTKwindow.h) is part of LFSToolKit.
 

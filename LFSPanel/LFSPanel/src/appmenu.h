@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Sun 20 Sep 15:05:07 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Sun 20 Sep 15:05:07 BST 2015 keithdhedger@gmail.com
 
  * This file (appmenu.h) is part of LFSPanel.
 

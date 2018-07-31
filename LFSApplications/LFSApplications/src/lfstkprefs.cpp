@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Sun 13 Aug 18:33:35 BST 2017 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Sun 13 Aug 18:33:35 BST 2017 keithdhedger@gmail.com
 
  * This file (lfstkprefs.cpp) is part of LFSApplications.
 
