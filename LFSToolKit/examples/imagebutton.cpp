@@ -65,7 +65,7 @@ int main(int argc, char **argv)
 //image button toolbutton
 	imagebuttonT=new LFSTK_buttonClass(wc,"Tool Button",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*2,BUTTONGRAV);
 	imagebuttonT->LFSTK_setCallBack(NULL,buttonCB,(void*)0xdeadbeef0);
-	imagebuttonT->LFSTK_setImageFromPath("./casper2.JPG",TOOLBAR,true);
+	imagebuttonT->LFSTK_setImageFromPath("./AspellGUI.png",TOOLBAR,true);
 	sy+=YSPACING*2;
 
 //image button left

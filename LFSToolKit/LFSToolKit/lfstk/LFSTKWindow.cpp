@@ -885,6 +885,10 @@ const monitorStruct* LFSTK_windowClass::LFSTK_getMonitors(void)
 */
 void LFSTK_windowClass::LFSTK_setTile(const char *path,int size)
 {
+	cairo_surface_t	*tempimage;
+	cairo_status_t	cs=CAIRO_STATUS_SUCCESS;
+	char			*suffix=NULL;
+
 	if(this->pattern!=NULL)
 		{
 			cairo_pattern_destroy(this->pattern);
@@ -896,11 +900,15 @@ void LFSTK_windowClass::LFSTK_setTile(const char *path,int size)
 			return;
 		}
 
-	cairo_surface_t	*tempimage;
-	cairo_status_t	cs=CAIRO_STATUS_SUCCESS;
+	suffix=strrchr((char*)path,'.');
+	if((suffix!=NULL) && (strcasecmp(suffix,".png")==0))
+		{
+			tempimage=cairo_image_surface_create_from_png(path);
+			cs=cairo_surface_status(tempimage);
+		}
+	else
+		cs=CAIRO_STATUS_INVALID_FORMAT;
 
-	tempimage=cairo_image_surface_create_from_png(path);
-	cs=cairo_surface_status(tempimage);
 	if(cs!=CAIRO_STATUS_SUCCESS)
 		{
 			tempimage=this->globalLib->LFSTK_cairo_image_surface_create_from_jpeg(path);

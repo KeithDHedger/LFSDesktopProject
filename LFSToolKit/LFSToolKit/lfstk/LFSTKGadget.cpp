@@ -1280,7 +1280,7 @@ cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int or
 		return(CAIRO_STATUS_FILE_NOT_FOUND);
 
 	suffix=strrchr((char*)file,'.');
-	if((suffix!=NULL) && (strcmp(suffix,".png")==0))
+	if((suffix!=NULL) && (strcasecmp(suffix,".png")==0))
 		{
 			tempimage=cairo_image_surface_create_from_png(file);
 			cs=cairo_surface_status(tempimage);
@@ -1408,21 +1408,31 @@ int LFSTK_gadgetClass::LFSTK_gadgetOnMonitor(void)
 */
 void LFSTK_gadgetClass::LFSTK_setTile(const char *path,int size)
 {
+	cairo_surface_t	*tempimage;
+	cairo_status_t	cs=CAIRO_STATUS_SUCCESS;
+	char			*suffix=NULL;
+
 	if(this->pattern!=NULL)
 		{
 			cairo_pattern_destroy(this->pattern);
 			this->pattern=NULL;
 		}
+
 	if(path==NULL)
 		{
 			this->useTile=false;
 			return;
 		}
 
-	cairo_surface_t	*tempimage;
-	cairo_status_t	cs=CAIRO_STATUS_SUCCESS;
-	tempimage=cairo_image_surface_create_from_png(path);
-	cs=cairo_surface_status(tempimage);
+	suffix=strrchr((char*)path,'.');
+	if((suffix!=NULL) && (strcasecmp(suffix,".png")==0))
+		{
+			tempimage=cairo_image_surface_create_from_png(path);
+			cs=cairo_surface_status(tempimage);
+		}
+	else
+		cs=CAIRO_STATUS_INVALID_FORMAT;
+
 	if(cs==CAIRO_STATUS_SUCCESS)
 		{
 			this->pattern=cairo_pattern_create_for_surface(tempimage);
