@@ -1272,14 +1272,22 @@ cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int or
 	float			ratio;
 	float			width;
 	float			height;
+	char			*suffix=NULL;
 
 	this->useImage=false;
 	this->gotIcon=false;
 	if(file==NULL)
 		return(CAIRO_STATUS_FILE_NOT_FOUND);
 
-	tempimage=cairo_image_surface_create_from_png(file);
-	cs=cairo_surface_status(tempimage);
+	suffix=strrchr((char*)file,'.');
+	if((suffix!=NULL) && (strcmp(suffix,".png")==0))
+		{
+			tempimage=cairo_image_surface_create_from_png(file);
+			cs=cairo_surface_status(tempimage);
+		}
+	else
+		cs=CAIRO_STATUS_INVALID_FORMAT;
+	
 	if(cs!=CAIRO_STATUS_SUCCESS)
 		{
 			tempimage=this->wc->globalLib->LFSTK_cairo_image_surface_create_from_jpeg(file);

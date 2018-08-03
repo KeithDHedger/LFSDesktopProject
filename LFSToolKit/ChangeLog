@@ -1,4 +1,5 @@
 0.2.4
+Fixed segfault with cairo_image_surface_create_from_png when handed a jpg.
 Fixed not deleting gadget from window properly.
 Removed empty file preview from folder dialog.
 Fiile/folder dialogs can now save/restore last selected folder.
