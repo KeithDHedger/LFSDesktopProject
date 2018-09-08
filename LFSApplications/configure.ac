@@ -23,5 +23,14 @@ PKG_CHECK_MODULES(CAIRO, $CAIRO_MODULES)
 AC_SUBST(CAIRO_LIBS)
 AC_SUBST(CAIRO_CFLAGS)
 
+AC_MSG_CHECKING(whether to build dbug functions)
+AC_ARG_ENABLE(debug,AS_HELP_STRING([--enable-debug],[Enable debug code]),
+    [enable_debug=$enableval],
+    [enable_debug="no"])
+AC_MSG_RESULT($enable_debug)
+if test "$enable_debug" = "yes"; then
+	AC_DEFINE([_ENABLEDEBUG_], [], [Enable debug code])
+fi
+
 AC_OUTPUT(Makefile LFSApplications/app/Makefile)
 

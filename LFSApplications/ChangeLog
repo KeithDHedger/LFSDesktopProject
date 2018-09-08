@@ -1,4 +1,5 @@
 0.1.2
+Fixed lfsrunapplication not storing history properly.
 Force no use theme if theme part missing from tk prefs.
 Added msg's to appearence.
 Set correct title to WM prefs.

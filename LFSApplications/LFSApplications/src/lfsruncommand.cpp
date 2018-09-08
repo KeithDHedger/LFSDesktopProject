@@ -18,6 +18,7 @@
  * along with LFSApplications.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "config.h"
 #include "lfstk/LFSTKGlobals.h"
 
 #undef DIALOGWIDTH
@@ -53,7 +54,7 @@ bool doExecute(void *object,void* ud)
 			system(data);
 			free(data);
 
-			asprintf(&data,"echo %s >> %s",le->LFSTK_getBuffer()->c_str(),commandfile);
+			asprintf(&data,"echo \"%s\" >> %s",le->LFSTK_getBuffer()->c_str(),commandfile);
 			system(data);
 			free(data);
 			asprintf(&data,"tail -n %i %s|sort -u -o %s.tmp; mv %s.tmp %s",MAXHISTORY,commandfile,commandfile,commandfile,commandfile);

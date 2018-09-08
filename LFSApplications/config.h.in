@@ -26,3 +26,6 @@
 
 /* Version number of package */
 #undef VERSION
+
+/* Enable debug code */
+#undef _ENABLEDEBUG_
