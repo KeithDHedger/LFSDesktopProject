@@ -240,9 +240,9 @@ int main(int argc, char **argv)
 	wd=strdup(wc->configDir);
 	tileDialog=new LFSTK_fileDialogClass(wc,"Select File",wd,false);
 
-	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
+	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	sy+=HALFYSPACING;
-	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
+	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	personal->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
 
@@ -290,7 +290,7 @@ int main(int argc, char **argv)
 	sx=BORDER;
 
 //window
-	label=new LFSTK_labelClass(wc,"Window Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	label=new LFSTK_labelClass(wc,"Window Col",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sx+=BORDER+GADGETWIDTH;
 	windowColourEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEWINDOW),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 	sx+=BORDER+EDITBOXWIDTH;

@@ -242,9 +242,9 @@ int main(int argc, char **argv)
 	addGroup();
 
 	buffer=wc->globalLib->LFSTK_oneLiner("cat %s/lfsappearance.rc",wc->configDir);
-	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
+	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	sy+=HALFYSPACING;
-	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
+	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	personal->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
 
@@ -252,32 +252,28 @@ int main(int argc, char **argv)
 //wallpaper
 	launchButton=new LFSTK_buttonClass(wc,"Wallpaper Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	launchButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"WALLPAPERPREFS");
-	launchLabel=new LFSTK_labelClass(wc,"Launch Wallpaper Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,BUTTONGRAV);
-	launchLabel->LFSTK_setLabelGravity(LEFT);
+	launchLabel=new LFSTK_labelClass(wc,"Launch Wallpaper Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,LEFT);
 	sy+=YSPACING;
 //toolkit
 	launchButton=new LFSTK_buttonClass(wc,"Toolkit Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	launchButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"TOOLKITPREFS");
-	launchLabel=new LFSTK_labelClass(wc,"Launch Toolkit Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,BUTTONGRAV);
-	launchLabel->LFSTK_setLabelGravity(LEFT);
+	launchLabel=new LFSTK_labelClass(wc,"Launch Toolkit Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,LEFT);
 	sy+=YSPACING;
 //desktop
 	launchButton=new LFSTK_buttonClass(wc,"Desktop Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	launchButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"DESKTOPPREFS");
-	launchLabel=new LFSTK_labelClass(wc,"Launch Desktop Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,BUTTONGRAV);
-	launchLabel->LFSTK_setLabelGravity(LEFT);
+	launchLabel=new LFSTK_labelClass(wc,"Launch Desktop Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,LEFT);
 	sy+=YSPACING;
 //wmanager
 	launchButton=new LFSTK_buttonClass(wc,"WM Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	launchButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"WMPREFS");
-	launchLabel=new LFSTK_labelClass(wc,"Launch Window Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,BUTTONGRAV);
+	launchLabel=new LFSTK_labelClass(wc,"Launch Window Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,LEFT);
 	launchLabel->LFSTK_setLabelGravity(LEFT);
 	sy+=YSPACING;
 //panel
 	launchButton=new LFSTK_buttonClass(wc,"Panel Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	launchButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"PANELPREFS");
-	launchLabel=new LFSTK_labelClass(wc,"Launch Panel Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,BUTTONGRAV);
-	launchLabel->LFSTK_setLabelGravity(LEFT);
+	launchLabel=new LFSTK_labelClass(wc,"Launch Panel Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,LEFT);
 	sy+=YSPACING;
 
 //load set

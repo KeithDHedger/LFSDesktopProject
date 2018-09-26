@@ -22,8 +22,11 @@
 #include <getopt.h>
 
 #include "lfstk/LFSTKGlobals.h"
+
+#undef GADGETWIDTH
+#define GADGETWIDTH 128
 #undef DIALOGWIDTH
-#define DIALOGWIDTH (GADGETWIDTH*4)+(BORDER*3)
+#define DIALOGWIDTH (GADGETWIDTH*3)+(BORDER*3)
 
 LFSTK_windowClass			*wc=NULL;
 LFSTK_labelClass			*label=NULL;
@@ -303,9 +306,9 @@ int main(int argc, char **argv)
 	display=wc->display;
 	//wc->LFSTK_initDnD();
 
-	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
+	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	sy+=HALFYSPACING;
-	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
+	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	personal->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
 
@@ -350,7 +353,7 @@ int main(int argc, char **argv)
 	selectPanel->LFSTK_setCallBack(NULL,panelSelectCB,NULL);
 	selectPanel->LFSTK_addMenus(panelNames,numpanels);
 
-	panelNameEdit=new LFSTK_lineEditClass(wc,panelNames[0].label,BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*3,GADGETHITE,BUTTONGRAV);	
+	panelNameEdit=new LFSTK_lineEditClass(wc,panelNames[0].label,BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);	
 	sy+=YSPACING;
 
 //do prefs
@@ -366,13 +369,13 @@ int main(int argc, char **argv)
 			panelWidthMenu[j].userData=(void*)menuuserdata[j];
 		}
 	panelWidth->LFSTK_addMenus(panelWidthMenu,2);
-	panelWidthEdit=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*3,GADGETHITE,BUTTONGRAV);
+	panelWidthEdit=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	panelWidth->LFSTK_setCallBack(NULL,panelWidthCB,NULL);
 	sy+=YSPACING;
 
 //hite
-	label=new LFSTK_labelClass(wc,"Panel Height",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	panelHeightEdit=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*3,GADGETHITE,BUTTONGRAV);
+	label=new LFSTK_labelClass(wc,"Panel Height",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
+	panelHeightEdit=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
 //panel position
@@ -386,7 +389,7 @@ int main(int argc, char **argv)
 		}
 	panelPos->LFSTK_addMenus(panelPosMenu,3);
 
-	panelPosEdit=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*3,GADGETHITE,BUTTONGRAV);
+	panelPosEdit=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	panelPos->LFSTK_setCallBack(NULL,panelPositionCB,NULL);
 	sy+=YSPACING;
 
@@ -401,38 +404,38 @@ int main(int argc, char **argv)
 		}
 	panelGrav->LFSTK_addMenus(panelGravMenu,4);
 
-	panelGravEdit=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*3,GADGETHITE,BUTTONGRAV);
+	panelGravEdit=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	panelGrav->LFSTK_setCallBack(NULL,panelGravCB,NULL);
 	sy+=YSPACING;
 
 //on monitor
-	label=new LFSTK_labelClass(wc,"On Monitor",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	panelOnMonitor=new LFSTK_lineEditClass(wc,std::to_string(onMonitorPref).c_str(),BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*3,GADGETHITE,BUTTONGRAV);
+	label=new LFSTK_labelClass(wc,"On Monitor",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
+	panelOnMonitor=new LFSTK_lineEditClass(wc,std::to_string(onMonitorPref).c_str(),BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
 //term comm
-	label=new LFSTK_labelClass(wc,"Term command",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	termCommand=new LFSTK_lineEditClass(wc,terminalCommandPref,BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*3,GADGETHITE,BUTTONGRAV);
+	label=new LFSTK_labelClass(wc,"Term CMD",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
+	termCommand=new LFSTK_lineEditClass(wc,terminalCommandPref,BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 //logout
-	label=new LFSTK_labelClass(wc,"Logout",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	logout=new LFSTK_lineEditClass(wc,logoutCommandPref,BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*3,GADGETHITE,BUTTONGRAV);
+	label=new LFSTK_labelClass(wc,"Logout",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
+	logout=new LFSTK_lineEditClass(wc,logoutCommandPref,BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 //restart
-	label=new LFSTK_labelClass(wc,"Restart",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	restart=new LFSTK_lineEditClass(wc,restartCommandPref,BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*3,GADGETHITE,BUTTONGRAV);
+	label=new LFSTK_labelClass(wc,"Restart",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
+	restart=new LFSTK_lineEditClass(wc,restartCommandPref,BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 //shutdown
-	label=new LFSTK_labelClass(wc,"Shutdown",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	shutdown=new LFSTK_lineEditClass(wc,shutdownCommandPref,BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*3,GADGETHITE,BUTTONGRAV);
+	label=new LFSTK_labelClass(wc,"Shutdown",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
+	shutdown=new LFSTK_lineEditClass(wc,shutdownCommandPref,BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 //left gadgets
-	label=new LFSTK_labelClass(wc,"Left Gadgets",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	panelLeftGadgets=new LFSTK_lineEditClass(wc,leftGadgetsPref,BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*3,GADGETHITE,BUTTONGRAV);
+	label=new LFSTK_labelClass(wc,"Left Gadgets",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
+	panelLeftGadgets=new LFSTK_lineEditClass(wc,leftGadgetsPref,BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 //rite gadgets
-	label=new LFSTK_labelClass(wc,"Right Gadgets",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	panelrightGadgets=new LFSTK_lineEditClass(wc,rightGadgetsPref,BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*3,GADGETHITE,BUTTONGRAV);
+	label=new LFSTK_labelClass(wc,"Right Gadgets",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
+	panelrightGadgets=new LFSTK_lineEditClass(wc,rightGadgetsPref,BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
 	setEdits();

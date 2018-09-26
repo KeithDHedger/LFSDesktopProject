@@ -237,9 +237,9 @@ int main(int argc, char **argv)
 			placementMenus[j].userData=(void*)j;
 		}
 
-	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
+	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	sy+=HALFYSPACING;
-	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
+	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	personal->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
 
@@ -285,20 +285,20 @@ int main(int argc, char **argv)
 	sx=BORDER;
 
 //desks
-	label=new LFSTK_labelClass(wc,"Desktops",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	label=new LFSTK_labelClass(wc,"Desktops",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	sx+=GADGETWIDTH+BORDER;
 	deskCountEdit=new LFSTK_lineEditClass(wc,std::to_string(prefsDeskCnt).c_str(),sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 	sx=BORDER;
 //update
-	label=new LFSTK_labelClass(wc,"Update",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	label=new LFSTK_labelClass(wc,"Update",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	sx+=GADGETWIDTH+BORDER;
 	refreshEdit=new LFSTK_lineEditClass(wc,std::to_string(prefsRefresh).c_str(),sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 	sx=BORDER;
 
 //rescan prefs
-	label=new LFSTK_labelClass(wc,"Rescan Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	label=new LFSTK_labelClass(wc,"Rescan Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	sx+=GADGETWIDTH+BORDER;
 	rescanEdit=new LFSTK_lineEditClass(wc,std::to_string(prefsRescan).c_str(),sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
@@ -306,7 +306,7 @@ int main(int argc, char **argv)
 
 
 //term command
-	label=new LFSTK_labelClass(wc,"Term Command",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	label=new LFSTK_labelClass(wc,"Term CMD",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	sx+=GADGETWIDTH+BORDER;
 	terminalEdit=new LFSTK_lineEditClass(wc,prefsTermCommand,sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;

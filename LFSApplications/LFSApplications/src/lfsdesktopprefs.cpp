@@ -204,9 +204,9 @@ int main(int argc, char **argv)
 	asprintf(&envFile,"%s/lfsdesktop.rc",wc->configDir);
 	wc->globalLib->LFSTK_loadVarsFromFile(envFile,desktopPrefs);
 
-	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
+	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	sy+=HALFYSPACING;
-	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
+	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	personal->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
 //theme
@@ -224,48 +224,48 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //icon sizes
-	label=new LFSTK_labelClass(wc,"Icon Size",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	label=new LFSTK_labelClass(wc,"Icon Size",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	iconSizeEditBox=new LFSTK_lineEditClass(wc,(char*)std::to_string(prefsIconSize).c_str(),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
-	label=new LFSTK_labelClass(wc,"Grid Size",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	label=new LFSTK_labelClass(wc,"Grid Size",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	gridSizeEditBox=new LFSTK_lineEditClass(wc,(char*)std::to_string(prefsGridSize).c_str(),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
-	label=new LFSTK_labelClass(wc,"Borders",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	label=new LFSTK_labelClass(wc,"Borders",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	borderLeftEditBox=new LFSTK_lineEditClass(wc,(char*)std::to_string(prefsLeftBorder).c_str(),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	borderRightEditBox=new LFSTK_lineEditClass(wc,(char*)std::to_string(prefsRightBorder).c_str(),BORDER*2+GADGETWIDTH+GADGETWIDTH+BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
-	label=new LFSTK_labelClass(wc,"Refresh",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	label=new LFSTK_labelClass(wc,"Refresh",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	refreshEditBox=new LFSTK_lineEditClass(wc,(char*)std::to_string(prefsRefresh).c_str(),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
-	label=new LFSTK_labelClass(wc,"Label Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	label=new LFSTK_labelClass(wc,"Label Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	labelColurEditBox=new LFSTK_lineEditClass(wc,prefsLabelColour,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
-	label=new LFSTK_labelClass(wc,"Label Alpha",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	label=new LFSTK_labelClass(wc,"Label Alpha",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	labelAlphaColurEditBox=new LFSTK_lineEditClass(wc,prefsLabelAlpha,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
 //show suffix
-	label=new LFSTK_labelClass(wc,"Show Suffix",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	label=new LFSTK_labelClass(wc,"Show Suffix",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	showSuffixCheck=new LFSTK_toggleButtonClass(wc,"",BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	showSuffixCheck->LFSTK_setValue(prefsShowSuffix);
 	sy+=YSPACING;
 
 //terminal command
-	label=new LFSTK_labelClass(wc,"Term Command",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	label=new LFSTK_labelClass(wc,"Term Command",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	termCommandEditBox=new LFSTK_lineEditClass(wc,prefsTermCommand,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
 //include list
-	label=new LFSTK_labelClass(wc,"Include Disks",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	label=new LFSTK_labelClass(wc,"Include Disks",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	includeEditBox=new LFSTK_lineEditClass(wc,prefsIncludeSed,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 //exclude list
-	label=new LFSTK_labelClass(wc,"Exclude Disks",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	label=new LFSTK_labelClass(wc,"Exclude Disks",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	excludeEditBox=new LFSTK_lineEditClass(wc,prefsExcludeSed,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 

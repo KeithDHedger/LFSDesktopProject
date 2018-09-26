@@ -263,9 +263,9 @@ int main(int argc, char **argv)
 
 	wc->globalLib->LFSTK_loadVarsFromFile(mainPrefs,prefs);
 
-	copyrite=new LFSTK_labelClass(wc,COPYRITE,0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
+	copyrite=new LFSTK_labelClass(wc,COPYRITE,0,sy,DIALOGWIDTH,GADGETHITE);
 	sy+=HALFYSPACING;
-	personal=new LFSTK_labelClass(wc,PERSONAL,0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
+	personal=new LFSTK_labelClass(wc,PERSONAL,0,sy,DIALOGWIDTH,GADGETHITE);
 	personal->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
 
@@ -276,7 +276,7 @@ int main(int argc, char **argv)
 	dialogButton->LFSTK_setCallBack(NULL,selectFile,(void*)mainBackdropEdit);
 	sy+=YSPACING;
 //colour
-	label=new LFSTK_labelClass(wc,"Root Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	label=new LFSTK_labelClass(wc,"Root Colour",BORDER,sy,GADGETWIDTH,GADGETHITE);
 	rootColourEdit=new LFSTK_lineEditClass(wc,mainColour,(BORDER*2)+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 //mode
