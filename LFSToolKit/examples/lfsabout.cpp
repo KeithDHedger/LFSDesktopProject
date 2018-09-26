@@ -58,7 +58,7 @@ int main(int argc, char **argv)
 
 	for(int j=LNAME;j<LNOMORELABELS;j++)
 		{
-			labels[j]=new LFSTK_labelClass(wc,labelTexts[j],0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
+			labels[j]=new LFSTK_labelClass(wc,labelTexts[j],0,sy,DIALOGWIDTH,GADGETHITE);
 			sy+=SPACING;
 		}
 	labels[LNAME]->LFSTK_setCairoFontDataParts("sB",18);

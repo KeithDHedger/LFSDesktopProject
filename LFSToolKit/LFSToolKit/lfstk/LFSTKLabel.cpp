@@ -33,7 +33,9 @@ LFSTK_labelClass::~LFSTK_labelClass()
 * \param y Y pos.
 * \param w Width.
 * \param h Height.
-* \param gravity Button gravity.
+* \param gravity Label gravity
+* \note optional, label gravity defaults to CENTRE.
+* \note gadget gravity defaults to NorthWestGravity.
 */
 LFSTK_labelClass::LFSTK_labelClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity)
 {
@@ -42,7 +44,7 @@ LFSTK_labelClass::LFSTK_labelClass(LFSTK_windowClass* parentwc,const char* label
 
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 
-	wa.win_gravity=gravity;
+	wa.win_gravity=BUTTONGRAV;
 	wa.save_under=true;
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
 	this->gc=XCreateGC(this->display,this->window,0,NULL);
@@ -63,6 +65,7 @@ LFSTK_labelClass::LFSTK_labelClass(LFSTK_windowClass* parentwc,const char* label
 		this->useTile=false;
 
 	this->LFSTK_setFontColourName(0,this->wc->globalLib->LFSTK_getGlobalString(0,TYPEFONTCOLOUR),true);
-
 	gadgetDetails={&this->wc->windowColourNames[NORMALCOLOUR],BEVELNONE,NOINDICATOR,NULL,NORMALCOLOUR,0,false,{0,0,w,h},{0,0,0,0},false};
+	this->LFSTK_setLabelGravity(gravity);
 }
+
