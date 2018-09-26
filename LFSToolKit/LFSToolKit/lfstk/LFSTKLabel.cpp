@@ -37,14 +37,14 @@ LFSTK_labelClass::~LFSTK_labelClass()
 * \note optional, label gravity defaults to CENTRE.
 * \note gadget gravity defaults to NorthWestGravity.
 */
-LFSTK_labelClass::LFSTK_labelClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity)
+LFSTK_labelClass::LFSTK_labelClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity,int bgrav)
 {
 	XSetWindowAttributes	wa;
 	mappedListener			*ml=new mappedListener;
 
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 
-	wa.win_gravity=BUTTONGRAV;
+	wa.win_gravity=bgrav;
 	wa.save_under=true;
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
 	this->gc=XCreateGC(this->display,this->window,0,NULL);

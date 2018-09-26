@@ -1,6 +1,8 @@
-0.2.4
+0.3.0
 Updated examples.
 Changed label defaults to - button grav=northwest, label grav=centre.
+
+0.2.4
 Changed doxgen op files to *.xhtml.
 Fixed segfault with cairo_image_surface_create_from_png when handed a jpg.
 Fixed not deleting gadget from window properly.
