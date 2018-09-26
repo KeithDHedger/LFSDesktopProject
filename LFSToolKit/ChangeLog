@@ -1,4 +1,5 @@
 0.2.4
+Updated examples.
 Changed label defaults to - button grav=northwest, label grav=centre.
 Changed doxgen op files to *.xhtml.
 Fixed segfault with cairo_image_surface_create_from_png when handed a jpg.
