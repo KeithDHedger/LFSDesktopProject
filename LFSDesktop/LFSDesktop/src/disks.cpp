@@ -298,8 +298,9 @@ void addDiskData(diskDataStruct *dnode,const char *devname,int x,int y)
 			dnode->diskImage->LFSTK_setCallBack(NULL,diskUpCB,(void*)dnode);
 			dnode->diskImage->LFSTK_setContextWindow(diskWindow);
 
-			dnode->diskImage->LFSTK_setLabelBGColour(0.75,0.75,0.75,strtod(backAlpha,NULL));			
+			dnode->diskImage->LFSTK_setLabelBGColour(0.75,0.75,0.75,strtod(backAlpha,NULL));
 			wc->globalLib->LFSTK_setColourFromName(wc->display,wc->cm,&dnode->diskImage->labelBGColour,backCol);
+			dnode->diskImage->LFSTK_setFontColourName(NORMALCOLOUR,foreCol,false)	;	
 			dnode->diskImage->drawLabelBG=true;
 			dnode->diskImage->autoLabelBGColour=false;
 
@@ -315,9 +316,8 @@ void addDiskData(diskDataStruct *dnode,const char *devname,int x,int y)
 void checkForChanges(diskDataStruct *dnode)
 {
 	if(dnode->dataType==FILEDATATYPE)
-		{
-			return;
-		}
+		return;
+
 	if(setDiskData(dnode)==false)
 		{
 			if(dnode->diskImage!=NULL)
@@ -360,7 +360,10 @@ void updateDisks(void)
 	do
 		{
 			if(list->data==NULL)
-				continue;
+				{
+					list=list->next;
+					continue;
+				}
 			checkForChanges(list->data);
 			list=list->next;
 		}

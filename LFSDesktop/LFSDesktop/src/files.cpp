@@ -330,6 +330,7 @@ void addDeskData(diskDataStruct *dnode,const char *devname,int x,int y)
 
 	dnode->diskImage->LFSTK_setLabelBGColour(0.75,0.75,0.75,strtod(backAlpha,NULL));			
 	wc->globalLib->LFSTK_setColourFromName(wc->display,wc->cm,&dnode->diskImage->labelBGColour,backCol);
+	dnode->diskImage->LFSTK_setFontColourName(NORMALCOLOUR,foreCol,false)	;	
 	dnode->diskImage->drawLabelBG=true;
 	dnode->diskImage->autoLabelBGColour=false;
 

@@ -1,4 +1,6 @@
 0.1.3
+Added back cli options that fell off!
+Fixed endless loop when checking disk list.
 Added cleandesktoprcs command to messaging.
 Images (jpg/png) now show thumbnail on desktop.
 Dropping text on desktop now creates text clipping file containing dropped text.

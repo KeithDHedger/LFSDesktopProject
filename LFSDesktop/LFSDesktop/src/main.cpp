@@ -29,6 +29,17 @@
 struct option long_options[] =
 {
 	{"key",1,0,'k'},
+	{"clean",0,0,'c'},
+	{"tidy",0,0,'t'},
+	{"theme",1,0,'a'},
+	{"term-command",1,0,'x'},
+	{"fore-colour",1,0,'4'},
+	{"back-colour",1,0,'b'},
+	{"back-alpha",1,0,'A'},
+	{"ignore",1,0,'i'},
+	{"debug",0,0,'d'},
+	{"show-extension",0,0,'s'},
+	{"font",1,0,'f'},
 	{"version",0,0,'v'},
 	{"help",0,0,'?'},
 	{0, 0, 0, 0}
@@ -137,8 +148,9 @@ void doRefresh(void)
 //refresh disks
 	updateDisks();
 	ret=poll(&polldisks,POLLIN,20);		
-	if(ret!=0)
+	if(ret>0)
 		{
+			fprintf(stderr,"disks ret=%i\n",ret);
 			numRead=read(fhfordisks,buffer,MAXBUFFER);
 			if(numRead>0)
 				{
@@ -149,8 +161,9 @@ void doRefresh(void)
 
 //refresh desktop folder
 	ret=poll(&polldesktop,POLLIN,20);		
-	if(ret!=0)
+	if(ret>0)
 		{
+			fprintf(stderr,"desktopr et=%i\n",ret);
 			numRead=read(fhfordesktop,buffer,EVENT_BUF_LEN);
 			if(numRead>0)
 				{
@@ -181,7 +194,6 @@ void doRefresh(void)
 void  alarmCallBack(int sig)
 {
 	XExposeEvent	event;
-
 	if(isdragging==false)
 		{
 			needsRefresh=true;
@@ -189,7 +201,7 @@ void  alarmCallBack(int sig)
 			event.window=wc->window;
 			readMsg();
 			XSendEvent(wc->display,wc->window,false,ExposureMask,(XEvent*)&event);
-			XFlush(wc->display);
+			//XFlush(wc->display);
 			//XSync(wc->display,true);
 		}
 	alarm(refreshRate);
@@ -230,44 +242,48 @@ int main(int argc, char **argv)
 	int					sy;
 	LFSTK_buttonClass	*bc;
 
-	while(1)
-		{
-			int option_index=0;
-			c = getopt_long (argc, argv, "v?h:l:",long_options, &option_index);
-			if (c == -1)
-				break;
-
-			switch (c)
-				{
-				case 'l':
-					printf("Arg=%s\n",optarg);
-					break;
-
-				case 'v':
-					printf("lfsdesktop %s\n",VERSION);
-					return 0;
-					break;
-
-				case '?':
-				case 'h':
-					printhelp();
-					return 0;
-					break;
-
-				default:
-					fprintf(stderr,"?? Unknown argument ??\n");
-					return UNKNOWNARG;
-					break;
-				}
-		}
-
-	if (optind < argc)
-		{
-			printf("non-option ARGV-elements: ");
-			while (optind < argc)
-				printf("%s ",argv[optind++]);
-			printf("\n");
-		}
+//	while(1)
+//		{
+//			int option_index=0;
+//			c = getopt_long (argc, argv, "sv?h:",long_options, &option_index);
+//			if (c == -1)
+//				break;
+//
+//			switch (c)
+//				{
+//					case 's':
+//						showSuffix=true;
+//						break;
+//
+////				case 'l':
+////					printf("Arg=%s\n",optarg);
+////					break;
+//
+//				case 'v':
+//					printf("lfsdesktop %s\n",VERSION);
+//					return 0;
+//					break;
+//
+//				case '?':
+//				case 'h':
+//					printhelp();
+//					return 0;
+//					break;
+//
+//				default:
+//					fprintf(stderr,"?? Unknown argument ??\n");
+//					return UNKNOWNARG;
+//					break;
+//				}
+//		}
+//
+//	if (optind < argc)
+//		{
+//			printf("non-option ARGV-elements: ");
+//			while (optind < argc)
+//				printf("%s ",argv[optind++]);
+//			printf("\n");
+//		}
 
 	int key=666;
 
@@ -319,12 +335,129 @@ BACKUP:
 	showSuffix=false;
 	asprintf(&fontFace,"DejaVu Sans:size=10:bold");
 	asprintf(&backCol,"#000000");
+	asprintf(&foreCol,"#ffffff");
 	asprintf(&backAlpha,"0x00");
 	refreshRate=2;
 	includeList=NULL;
 	excludeList=NULL;
 
 	loadVarsFromFile(prefsPath,desktopPrefs);
+
+//TODO//
+	bool				dotidy=false;
+
+
+	while(1)
+		{
+			int option_index=0;
+			c = getopt_long (argc, argv, "stdcv?h:f:a:x:4:b:A:",long_options, &option_index);
+			if (c == -1)
+				break;
+
+			switch (c)
+				{
+					case 's':
+						showSuffix=true;
+						break;
+
+				case 'f':
+					if(fontFace!=NULL)
+						free(fontFace);
+					fontFace=strdup(optarg);
+					break;
+
+//TODO//
+//				case 't':
+//					dotidy=true;
+//					break;
+//
+//				case 'd':
+//					debugDeskFlag=true;
+//					break;
+//
+//				case 'c':
+//					asprintf(&command,"rm %s/*",diskInfoPath);
+//					system(command);
+//					free(command);
+//					asprintf(&command,"rm %s/*",cachePath);
+//					system(command);
+//					free(command);
+//					break;
+
+				case 'a':
+					if(iconTheme!=NULL)
+						free(iconTheme);
+					iconTheme=strdup(optarg);
+					break;
+
+				case 'x':
+					if(terminalCommand!=NULL)
+						free(terminalCommand);
+					terminalCommand=strdup(optarg);
+					break;
+
+				case '4':
+					if(foreCol!=NULL)
+						free(foreCol);
+					foreCol=strdup(optarg);
+					break;
+
+				case 'b':
+					if(backCol!=NULL)
+						free(backCol);
+					backCol=strdup(optarg);
+					break;
+
+				case 'A':
+					if(backAlpha!=NULL)
+						free(backAlpha);
+					backAlpha=strdup(optarg);
+					break;
+
+//				case 'i':
+//					if(ignores!=NULL)
+//						free(ignores);
+//					ignores=strdup(optarg);
+//					break;
+
+
+
+
+
+
+//				case 'l':
+//					printf("Arg=%s\n",optarg);
+//					break;
+
+				case 'v':
+					printf("lfsdesktop %s\n",VERSION);
+					return 0;
+					break;
+
+				case '?':
+				case 'h':
+					printhelp();
+					return 0;
+					break;
+
+				default:
+					fprintf(stderr,"?? Unknown argument ??\n");
+					return UNKNOWNARG;
+					break;
+				}
+		}
+
+	if (optind < argc)
+		{
+			printf("non-option ARGV-elements: ");
+			while (optind < argc)
+				printf("%s ",argv[optind++]);
+			printf("\n");
+		}
+
+
+
+
 
 	if(gridSize<1)
 		gridSize=1;
@@ -437,7 +570,7 @@ BACKUP:
 				{
 					case MotionNotify:
 						isdragging=true;
-						printf("released at xy= %i %i\n",event.xmotion.x,event.xmotion.y);
+						//printf("released at xy= %i %i\n",event.xmotion.x,event.xmotion.y);
 						if(ml!=NULL)
 							ml->gadget->LFSTK_clearWindow();
 						break;
@@ -489,6 +622,7 @@ BACKUP:
 									wc->LFSTK_hideWindow();
 									mainLoop=false;
 								}
+
 							if(wc->acceptDnd==true)
 								{
 									wc->LFSTK_handleDnD(&event);
