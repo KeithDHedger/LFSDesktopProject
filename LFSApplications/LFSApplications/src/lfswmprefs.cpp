@@ -306,7 +306,7 @@ int main(int argc, char **argv)
 
 
 //term command
-	label=new LFSTK_labelClass(wc,"Term CMD",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
+	label=new LFSTK_labelClass(wc,"Terminal CMD",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	sx+=GADGETWIDTH+BORDER;
 	terminalEdit=new LFSTK_lineEditClass(wc,prefsTermCommand,sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;

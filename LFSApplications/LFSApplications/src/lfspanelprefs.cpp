@@ -414,7 +414,7 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //term comm
-	label=new LFSTK_labelClass(wc,"Term CMD",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
+	label=new LFSTK_labelClass(wc,"Terminal CMD",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	termCommand=new LFSTK_lineEditClass(wc,terminalCommandPref,BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 //logout

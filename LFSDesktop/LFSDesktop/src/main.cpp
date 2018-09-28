@@ -50,6 +50,7 @@ struct msgBuffer
 	long	mType;
 	char	mText[MAX_MSG_SIZE];
 };
+enum {DESKTOP_MSG=1000,WMANAGER_MSG};
 
 const char			*diskLabelData[]={"Mount","Unmount","Eject","Open","Custom Icon","Remove Icon",NULL};
 const char			*diskThemeIconData[]={"drive-harddisk","media-eject","media-eject","document-open","list-add","list-remove"};
@@ -83,9 +84,9 @@ void readMsg(void)
 	FILE	*fd=NULL;
 	char	buff[2048];
 
-	retcode=msgrcv(queueID,&buffer,MAX_MSG_SIZE,1,IPC_NOWAIT);
+	retcode=msgrcv(queueID,&buffer,MAX_MSG_SIZE,DESKTOP_MSG,IPC_NOWAIT);
 
-	if(retcode>1)
+	if(retcode>0)
 		{
 			if(strcmp(buffer.mText,"reloadbg")==0)
 				reloadPixmap=true;
@@ -200,8 +201,8 @@ void  alarmCallBack(int sig)
 			event.type=Expose;
 			event.window=wc->window;
 			readMsg();
-			XSendEvent(wc->display,wc->window,false,ExposureMask,(XEvent*)&event);
-			//XFlush(wc->display);
+			XSendEvent(wc->display,wc->window,true,ExposureMask,(XEvent*)&event);
+			XFlush(wc->display);
 			//XSync(wc->display,true);
 		}
 	alarm(refreshRate);
@@ -241,54 +242,7 @@ int main(int argc, char **argv)
 	char				*iconpath=NULL;
 	int					sy;
 	LFSTK_buttonClass	*bc;
-
-//	while(1)
-//		{
-//			int option_index=0;
-//			c = getopt_long (argc, argv, "sv?h:",long_options, &option_index);
-//			if (c == -1)
-//				break;
-//
-//			switch (c)
-//				{
-//					case 's':
-//						showSuffix=true;
-//						break;
-//
-////				case 'l':
-////					printf("Arg=%s\n",optarg);
-////					break;
-//
-//				case 'v':
-//					printf("lfsdesktop %s\n",VERSION);
-//					return 0;
-//					break;
-//
-//				case '?':
-//				case 'h':
-//					printhelp();
-//					return 0;
-//					break;
-//
-//				default:
-//					fprintf(stderr,"?? Unknown argument ??\n");
-//					return UNKNOWNARG;
-//					break;
-//				}
-//		}
-//
-//	if (optind < argc)
-//		{
-//			printf("non-option ARGV-elements: ");
-//			while (optind < argc)
-//				printf("%s ",argv[optind++]);
-//			printf("\n");
-//		}
-
-	int key=666;
-
-	if((queueID=msgget(key,IPC_CREAT|0660))==-1)
-		fprintf(stderr,"Can't create message queue\n");
+	int					key=666;
 
 BACKUP:
 	windowInitStruct *wi=new windowInitStruct;
@@ -296,6 +250,14 @@ BACKUP:
 	wi->overRide=true;
 	wi->level=BELOWALL;
 	wc=new LFSTK_windowClass(wi);
+
+	command=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",wc->configDir);
+	key=atoi(command);
+	freeAndNull(&command);
+
+	if((queueID=msgget(key,IPC_CREAT|0660))==-1)
+		fprintf(stderr,"Can't create message queue\n");
+
 	display=wc->display;
 	wc->LFSTK_moveWindow(0,0,true);
 

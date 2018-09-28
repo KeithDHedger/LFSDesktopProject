@@ -49,9 +49,12 @@ LFSTK_labelClass				*launchLabel=NULL;
 LFSTK_menuButtonClass			*loadSet=NULL;
 LFSTK_lineEditClass				*currentSet=NULL;
 
+LFSTK_lineEditClass				*key=NULL;
+
 bool							mainLoop=true;
 Display							*display;
 int								parentWindow=-1;
+int								queueID=-1;
 
 std::map<int,char*>				groupNames;
 menuItemStruct					*groupNameMenuItems=NULL;
@@ -70,14 +73,79 @@ int fileExists(const char *name)
 	return (stat(name,&buffer));
 }
 
+
+
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+
+#define MAX_MSG_SIZE 256
+
+#define ALLOK 0
+#define UNKNOWNARG 1
+#define NOMAKEQUEUE 2
+#define NOSENDMSG 3
+#define WAIT_MSG 0
+
+#define MSGANY 0
+#define MSGSEND 1
+#define MSGRECEIVE 2
+struct msgBuffer
+{
+	long mType;
+	char mText[MAX_MSG_SIZE];
+};
+
+enum {DESKTOP_MSG=1000,WMANAGER_MSG};
+
 void updateDesktop(void)
 {
-	system("climsg -s 'reloaddesk' -k 666");
-	//system("killall lfsdesktop &>/dev/null &");
+	char	combuffer[256];
+	bool	flag=false;
+	int		retcode;
+	int		receiveType=IPC_NOWAIT;
+	msgBuffer	buffer;
+
+//flush message queue
+	while(flag==false)
+		{
+			retcode=msgrcv(queueID,&buffer,MAX_MSG_SIZE,MSGANY,receiveType);
+			if(retcode<=1)
+				flag=true;
+		}
+
+	buffer.mType=DESKTOP_MSG;
+	sprintf(buffer.mText,"reloaddesk");
+	if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
+		{
+			fprintf(stderr,"Can't send message :(\n");
+			exit(NOSENDMSG);
+		}
+
+	buffer.mType=WMANAGER_MSG;
+	sprintf(buffer.mText,"reloadtheme");
+	if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
+		{
+			fprintf(stderr,"Can't send message :(\n");
+			exit(NOSENDMSG);
+		}
+	
 	system("lfssetwallpaper &>/dev/null");
-//	system("killall lfswmanager &");
-	system("climsg -s 'reloadtheme' -k 667");
 	system("killall lfspanel &");
+	
+//	sprintf(combuffer,"climsg -s 'reloaddesk' -k %s",key->LFSTK_getCStr());
+//	system(combuffer);
+//	system("climsg -s 'reloaddesk' -k 666");
+	//system("killall lfsdesktop &>/dev/null &");
+//	system("lfssetwallpaper &>/dev/null");
+//	system("killall lfswmanager &");
+
+//	system("climsg -s 'reloadtheme' -k 667");
+
+
+//	sprintf(combuffer,"climsg -s 'reloadtheme' -k %s",key->LFSTK_getCStr());
+//	system(combuffer);
+	
 }
 
 void makeGroup(const char *grpname)
@@ -94,6 +162,9 @@ void makeGroup(const char *grpname)
 
 	free(command);
 	free(grp);
+	asprintf(&command,"echo -e \"%s\n%s\" > \"%s/lfsappearance.rc\"",currentSet->LFSTK_getCStr(),key->LFSTK_getCStr(),wc->configDir);
+	system(command);
+	free(command);
 }
 
 void setGroup(void)
@@ -110,7 +181,7 @@ void setGroup(void)
 		}
 	free(grp);
 
-	asprintf(&command,"echo \"%s\" > \"%s/lfsappearance.rc\"",currentSet->LFSTK_getBuffer()->c_str(),wc->configDir);
+	asprintf(&command,"echo -e \"%s\n%s\" > \"%s/lfsappearance.rc\"",currentSet->LFSTK_getCStr(),key->LFSTK_getCStr(),wc->configDir);
 	system(command);
 	free(command);
 }
@@ -241,7 +312,6 @@ int main(int argc, char **argv)
 	groupNames.clear();
 	addGroup();
 
-	buffer=wc->globalLib->LFSTK_oneLiner("cat %s/lfsappearance.rc",wc->configDir);
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	sy+=HALFYSPACING;
 	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
@@ -282,7 +352,15 @@ int main(int argc, char **argv)
 	loadSet->LFSTK_addMenus(groupNameMenuItems,groupNames.size());
 	loadSet->LFSTK_setLabelGravity(CENTRE);
 
+	buffer=wc->globalLib->LFSTK_oneLiner("sed -n '1p' %s/lfsappearance.rc",wc->configDir);
 	currentSet=new LFSTK_lineEditClass(wc,buffer,BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,BUTTONGRAV);
+	free(buffer);
+	sy+=YSPACING;
+
+//msg key
+	buffer=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",wc->configDir);
+	launchLabel=new LFSTK_labelClass(wc,"Msg Key",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
+	key=new LFSTK_lineEditClass(wc,buffer,BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,BUTTONGRAV);
 	free(buffer);
 	sy+=YSPACING;
 
@@ -311,7 +389,11 @@ int main(int argc, char **argv)
 	wc->LFSTK_showWindow();
 	wc->LFSTK_setKeepAbove(true);
 
-	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
+//	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
+
+	if((queueID=msgget(atoi(key->LFSTK_getCStr()),IPC_CREAT|0660))==-1)
+		fprintf(stderr,"Can't create message queue :( ...\n");
+
 	mainLoop=true;
 	while(mainLoop==true)
 		{

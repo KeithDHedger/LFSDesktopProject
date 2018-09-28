@@ -1,4 +1,6 @@
 0.1.2
+Going over to internal sysv msging.
+Now use global msg key from ~/.config/LFS/lfsappearance.rc
 Added rescan prefs option to prefs.
 Fixed reseting theme to colours from pixmap based,
 New event loop.

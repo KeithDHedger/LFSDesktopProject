@@ -93,6 +93,8 @@ struct msgBuffer
 	long		mType;
 	char		mText[MAX_MSG_SIZE];
 };
+enum {DESKTOP_MSG=1000,WMANAGER_MSG};
+
 int				queueID;
 msgBuffer		buffer;
 bool			needsRefresh=false;
@@ -110,6 +112,9 @@ const char		*xerror=NULL;
 Window 			root;
 
 sigset_t		sigmask;
+
+//lfstk
+LFSTK_lib		*lfstkLib=NULL;
 
 int errhandler(Display *dpy,XErrorEvent *e)
 {
@@ -454,9 +459,9 @@ bool readMsg(void)
 	char	*prefsfile;
 
 	buffer.mText[0]=0;
-	retcode=msgrcv(queueID,&buffer,MAX_MSG_SIZE,1,IPC_NOWAIT);
+	retcode=msgrcv(queueID,&buffer,MAX_MSG_SIZE,WMANAGER_MSG,IPC_NOWAIT);
 
-	if(retcode>1)
+	if(retcode>0)
 		{
 			if(strcmp(buffer.mText,"reloadtheme")==0)
 				{
@@ -500,8 +505,8 @@ int main(int argc,char *argv[])
 
 	runlevel=RL_STARTUP;
 
-	if((queueID=msgget(667,IPC_CREAT|0660))==-1)
-		fprintf(stderr,"Can't create message queue\n");
+//	if((queueID=msgget(667,IPC_CREAT|0660))==-1)
+//		fprintf(stderr,"Can't create message queue\n");
 
 	fontColours[ACTIVEFRAME]=strdup("rgb:00/00/00");
 	fontColours[ACTIVEFRAMEFILL]=strdup("rgb:00/ff/ff");
@@ -539,6 +544,19 @@ int main(int argc,char *argv[])
 
 	free(prefsfile);
 
+	int key=666;
+
+	lfstkLib=new LFSTK_lib(false);
+
+	prefsfile=lfstkLib->LFSTK_oneLiner("sed -n '2p' \"%s/.config/LFS/lfsappearance.rc\"",getenv("HOME"));
+	key=atoi(prefsfile);
+	
+	if((queueID=msgget(key,IPC_CREAT|0660))==-1)
+		fprintf(stderr,"Can't create message queue\n");
+
+	printf("key=%s key=%i\n",prefsfile,atoi(prefsfile));
+	free(prefsfile);
+	
 	ndesk=numberOfDesktops;
 
 	XSetErrorHandler(errhandler);
