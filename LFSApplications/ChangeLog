@@ -1,4 +1,5 @@
 0.1.2
+Updated to use pkg-config for lfstoolkit.
 Going over to internal sysv msging.
 Updated apps to updated toolkit.
 Fixed lfsrunapplication not storing history properly.
