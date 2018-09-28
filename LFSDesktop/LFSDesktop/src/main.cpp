@@ -24,7 +24,6 @@
 #include "globals.h"
 
 #define UNKNOWNARG -100
-#define MAX_MSG_SIZE 256
 
 struct option long_options[] =
 {
@@ -44,13 +43,6 @@ struct option long_options[] =
 	{"help",0,0,'?'},
 	{0, 0, 0, 0}
 };
-
-struct msgBuffer
-{
-	long	mType;
-	char	mText[MAX_MSG_SIZE];
-};
-enum {DESKTOP_MSG=1000,WMANAGER_MSG};
 
 const char			*diskLabelData[]={"Mount","Unmount","Eject","Open","Custom Icon","Remove Icon",NULL};
 const char			*diskThemeIconData[]={"drive-harddisk","media-eject","media-eject","document-open","list-add","list-remove"};

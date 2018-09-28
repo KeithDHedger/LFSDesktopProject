@@ -8,5 +8,5 @@ Description: Toolkit library for LFSDesktop Project
 URL: https://github.com/KeithDHedger/LFSDesktopProject
 Version: @VERSION@
 Requires: x11, xft, xinerama, libjpeg, cairo
-Libs: -L${libdir} -llfstoolkit-@LFSTOOLKIT_VERSION@ 
+Libs: -L${libdir} -llfstoolkit
 Cflags: -I${includedir}

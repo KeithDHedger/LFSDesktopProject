@@ -39,6 +39,11 @@ PKG_CHECK_MODULES(LIBUDEV, $LIBUDEV_MODULES)
 AC_SUBST(LIBUDEV_LIBS)
 AC_SUBST(LIBUDEV_CFLAGS)
 
+LFSTK_MODULES="lfstk >= 0.3.0"
+PKG_CHECK_MODULES(LFSTK, $LFSTK_MODULES)
+AC_SUBST(LFSTK_LIBS)
+AC_SUBST(LFSTK_CFLAGS)
+
 AC_MSG_CHECKING(Use SUID Helper)
 
 AC_ARG_ENABLE(suidhelper,AS_HELP_STRING([--enable-suidhelper],[Enable suid helper]),[enable_suidhelper=$enableval],[enable_suidhelper="yes"])

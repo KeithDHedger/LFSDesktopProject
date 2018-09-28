@@ -588,6 +588,8 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
+LFSTK_LIBS
+LFSTK_CFLAGS
 LIBUDEV_LIBS
 LIBUDEV_CFLAGS
 CAIRO_LIBS
@@ -728,7 +730,9 @@ XFT_LIBS
 CAIRO_CFLAGS
 CAIRO_LIBS
 LIBUDEV_CFLAGS
-LIBUDEV_LIBS'
+LIBUDEV_LIBS
+LFSTK_CFLAGS
+LFSTK_LIBS'
 
 
 # Initialize some variables set by options.
@@ -1385,6 +1389,9 @@ Some influential environment variables:
               C compiler flags for LIBUDEV, overriding pkg-config
   LIBUDEV_LIBS
               linker flags for LIBUDEV, overriding pkg-config
+  LFSTK_CFLAGS
+              C compiler flags for LFSTK, overriding pkg-config
+  LFSTK_LIBS  linker flags for LFSTK, overriding pkg-config
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -4514,8 +4521,8 @@ $as_echo "no" >&6; }
 fi
 
 pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for X11" >&5
-$as_echo_n "checking for X11... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $X11_MODULES" >&5
+$as_echo_n "checking for $X11_MODULES... " >&6; }
 
 if test -n "$X11_CFLAGS"; then
     pkg_cv_X11_CFLAGS="$X11_CFLAGS"
@@ -4555,7 +4562,7 @@ fi
 
 
 if test $pkg_failed = yes; then
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 
 if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
@@ -4582,7 +4589,7 @@ Alternatively, you may set the environment variables X11_CFLAGS
 and X11_LIBS to avoid the need to call pkg-config.
 See the pkg-config man page for more details." "$LINENO" 5
 elif test $pkg_failed = untried; then
-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
@@ -4609,8 +4616,8 @@ fi
 XINERAMA_MODULES="xinerama >= 1.1.3"
 
 pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for XINERAMA" >&5
-$as_echo_n "checking for XINERAMA... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $XINERAMA_MODULES" >&5
+$as_echo_n "checking for $XINERAMA_MODULES... " >&6; }
 
 if test -n "$XINERAMA_CFLAGS"; then
     pkg_cv_XINERAMA_CFLAGS="$XINERAMA_CFLAGS"
@@ -4650,7 +4657,7 @@ fi
 
 
 if test $pkg_failed = yes; then
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 
 if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
@@ -4677,7 +4684,7 @@ Alternatively, you may set the environment variables XINERAMA_CFLAGS
 and XINERAMA_LIBS to avoid the need to call pkg-config.
 See the pkg-config man page for more details." "$LINENO" 5
 elif test $pkg_failed = untried; then
-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
@@ -4704,8 +4711,8 @@ fi
 XEXT_MODULES="xext >= 1.3.2"
 
 pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for XEXT" >&5
-$as_echo_n "checking for XEXT... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $XEXT_MODULES" >&5
+$as_echo_n "checking for $XEXT_MODULES... " >&6; }
 
 if test -n "$XEXT_CFLAGS"; then
     pkg_cv_XEXT_CFLAGS="$XEXT_CFLAGS"
@@ -4745,7 +4752,7 @@ fi
 
 
 if test $pkg_failed = yes; then
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 
 if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
@@ -4772,7 +4779,7 @@ Alternatively, you may set the environment variables XEXT_CFLAGS
 and XEXT_LIBS to avoid the need to call pkg-config.
 See the pkg-config man page for more details." "$LINENO" 5
 elif test $pkg_failed = untried; then
-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
@@ -4799,8 +4806,8 @@ fi
 XFT_MODULES="xft >= 2.3.1"
 
 pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for XFT" >&5
-$as_echo_n "checking for XFT... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $XFT_MODULES" >&5
+$as_echo_n "checking for $XFT_MODULES... " >&6; }
 
 if test -n "$XFT_CFLAGS"; then
     pkg_cv_XFT_CFLAGS="$XFT_CFLAGS"
@@ -4840,7 +4847,7 @@ fi
 
 
 if test $pkg_failed = yes; then
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 
 if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
@@ -4867,7 +4874,7 @@ Alternatively, you may set the environment variables XFT_CFLAGS
 and XFT_LIBS to avoid the need to call pkg-config.
 See the pkg-config man page for more details." "$LINENO" 5
 elif test $pkg_failed = untried; then
-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
@@ -4894,8 +4901,8 @@ fi
 CAIRO_MODULES="cairo >= 1.12.16"
 
 pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for CAIRO" >&5
-$as_echo_n "checking for CAIRO... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $CAIRO_MODULES" >&5
+$as_echo_n "checking for $CAIRO_MODULES... " >&6; }
 
 if test -n "$CAIRO_CFLAGS"; then
     pkg_cv_CAIRO_CFLAGS="$CAIRO_CFLAGS"
@@ -4935,7 +4942,7 @@ fi
 
 
 if test $pkg_failed = yes; then
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 
 if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
@@ -4962,7 +4969,7 @@ Alternatively, you may set the environment variables CAIRO_CFLAGS
 and CAIRO_LIBS to avoid the need to call pkg-config.
 See the pkg-config man page for more details." "$LINENO" 5
 elif test $pkg_failed = untried; then
-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
@@ -4989,8 +4996,8 @@ fi
 LIBUDEV_MODULES="libudev >= 182"
 
 pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for LIBUDEV" >&5
-$as_echo_n "checking for LIBUDEV... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $LIBUDEV_MODULES" >&5
+$as_echo_n "checking for $LIBUDEV_MODULES... " >&6; }
 
 if test -n "$LIBUDEV_CFLAGS"; then
     pkg_cv_LIBUDEV_CFLAGS="$LIBUDEV_CFLAGS"
@@ -5030,7 +5037,7 @@ fi
 
 
 if test $pkg_failed = yes; then
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 
 if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
@@ -5057,7 +5064,7 @@ Alternatively, you may set the environment variables LIBUDEV_CFLAGS
 and LIBUDEV_LIBS to avoid the need to call pkg-config.
 See the pkg-config man page for more details." "$LINENO" 5
 elif test $pkg_failed = untried; then
-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
@@ -5074,6 +5081,101 @@ See \`config.log' for more details" "$LINENO" 5; }
 else
 	LIBUDEV_CFLAGS=$pkg_cv_LIBUDEV_CFLAGS
 	LIBUDEV_LIBS=$pkg_cv_LIBUDEV_LIBS
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+fi
+
+
+
+LFSTK_MODULES="lfstk >= 0.3.0"
+
+pkg_failed=no
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $LFSTK_MODULES" >&5
+$as_echo_n "checking for $LFSTK_MODULES... " >&6; }
+
+if test -n "$LFSTK_CFLAGS"; then
+    pkg_cv_LFSTK_CFLAGS="$LFSTK_CFLAGS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"\$LFSTK_MODULES\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "$LFSTK_MODULES") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_LFSTK_CFLAGS=`$PKG_CONFIG --cflags "$LFSTK_MODULES" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+if test -n "$LFSTK_LIBS"; then
+    pkg_cv_LFSTK_LIBS="$LFSTK_LIBS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"\$LFSTK_MODULES\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "$LFSTK_MODULES") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_LFSTK_LIBS=`$PKG_CONFIG --libs "$LFSTK_MODULES" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+
+
+
+if test $pkg_failed = yes; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+        _pkg_short_errors_supported=yes
+else
+        _pkg_short_errors_supported=no
+fi
+        if test $_pkg_short_errors_supported = yes; then
+	        LFSTK_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "$LFSTK_MODULES" 2>&1`
+        else
+	        LFSTK_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "$LFSTK_MODULES" 2>&1`
+        fi
+	# Put the nasty error message in config.log where it belongs
+	echo "$LFSTK_PKG_ERRORS" >&5
+
+	as_fn_error $? "Package requirements ($LFSTK_MODULES) were not met:
+
+$LFSTK_PKG_ERRORS
+
+Consider adjusting the PKG_CONFIG_PATH environment variable if you
+installed software in a non-standard prefix.
+
+Alternatively, you may set the environment variables LFSTK_CFLAGS
+and LFSTK_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details." "$LINENO" 5
+elif test $pkg_failed = untried; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "The pkg-config script could not be found or is too old.  Make sure it
+is in your PATH or set the PKG_CONFIG environment variable to the full
+path to pkg-config.
+
+Alternatively, you may set the environment variables LFSTK_CFLAGS
+and LFSTK_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details.
+
+To get pkg-config, see <http://pkg-config.freedesktop.org/>.
+See \`config.log' for more details" "$LINENO" 5; }
+else
+	LFSTK_CFLAGS=$pkg_cv_LFSTK_CFLAGS
+	LFSTK_LIBS=$pkg_cv_LFSTK_LIBS
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 

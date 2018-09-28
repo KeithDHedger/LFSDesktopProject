@@ -6,6 +6,7 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 			$(XFT_CFLAGS) \
 			$(LIBUDEV_CFLAGS) \
 			$(CAIRO_CFLAGS) \
+			$(LFSTK_CFLAGS) \
 			-Wall \
 			-DPREFIX=\""${prefix}\"" \
 			-DDATADIR=\""${pkgdatadir}"\" \
@@ -21,7 +22,6 @@ LIBS =		-lmagic \
 			$(XFT_LIBS) \
 			$(LIBUDEV_LIBS) \
 			$(CAIRO_LIBS) \
-			-llfstoolkit 
-
+			$(LFSTK_LIBS)
 
 
