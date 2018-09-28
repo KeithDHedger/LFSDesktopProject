@@ -10,6 +10,7 @@ AM_CPPFLAGS =	-I$(top_srcdir) \
 				$(XINERAMA_CFLAGS) \
 				$(CAIRO_CFLAGS) \
 				$(IMLIB_CFLAGS) \
+				$(LFSTK_CFLAGS) \
 				-DPREFIX=\""${prefix}\"" \
 				-DDATADIR=\""${pkgdatadir}"\" \
 				-DSYSCONFDIR=\""${sysconfdir}/${PACKAGE}"\" \
@@ -30,6 +31,6 @@ LIBS =			$(XEXT_LIBS) \
 				$(XINERAMA_LIBS) \
 				$(CAIRO_LIBS) \
 				$(IMLIB_LIBS) \
-				-llfstoolkit \
+				$(LFSTK_LIBS) \
 				 -lm
 

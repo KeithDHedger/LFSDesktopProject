@@ -59,6 +59,11 @@ PKG_CHECK_MODULES(IMLIB, $IMLIB_MODULES)
 AC_SUBST(IMLIB_LIBS)
 AC_SUBST(IMLIB_CFLAGS)
 
+LFSTK_MODULES="lfstk >= 0.3.0"
+PKG_CHECK_MODULES(LFSTK, $LFSTK_MODULES)
+AC_SUBST(LFSTK_LIBS)
+AC_SUBST(LFSTK_CFLAGS)
+
 AC_MSG_CHECKING(whether to build dbug functions)
 AC_ARG_ENABLE(debug,AS_HELP_STRING([--enable-debug],[Enable debug code]),
     [enable_debug=$enableval],
