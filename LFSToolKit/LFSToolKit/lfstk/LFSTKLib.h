@@ -47,7 +47,7 @@ class LFSTK_lib
 		void		LFSTK_setAutoLabelColour(bool toset);
 		bool		LFSTK_getUseTheme(void);
 		void		LFSTK_setUseTheme(bool use);
-	
+
 		const char	*bestFontColour(long pixel);
 		static bool	LFSTK_gadgetEvent(void *self,XEvent *e,int type);
 
@@ -67,6 +67,8 @@ class LFSTK_lib
 //colours
 		void		LFSTK_setColourFromName(Display *display,Colormap cm,colourStruct *colptr,const char *name);
 
+//messaging
+		
 //debug
 	private:
 		static int	callback(const char *fpath,const struct stat *sb,int typeflag);

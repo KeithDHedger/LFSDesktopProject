@@ -230,15 +230,9 @@ struct windowInitStruct
 
 //messaging
 #define MAX_MSG_SIZE 256
-//#define ALLOK 0
-//#define UNKNOWNARG 1
-//#define NOMAKEQUEUE 2
-//#define NOSENDMSG 3
 #define WAIT_MSG 0
 
 #define MSGANY 0
-//#define MSGSEND 1
-//#define MSGRECEIVE 2
 struct msgBuffer
 {
 	long mType;

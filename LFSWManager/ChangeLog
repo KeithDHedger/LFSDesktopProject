@@ -1,4 +1,5 @@
 0.1.2
+Updated to use pkg-config for lfstoolkit.
 Going over to internal sysv msging.
 Now use global msg key from ~/.config/LFS/lfsappearance.rc
 Added rescan prefs option to prefs.

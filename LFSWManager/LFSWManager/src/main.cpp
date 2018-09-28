@@ -47,9 +47,9 @@
 #include <X11/cursorfont.h>
 #include <X11/extensions/Xinerama.h>
 
-#include <Imlib2.h>
+//#include <Imlib2.h>
 
-#include <sys/msg.h>
+//#include <sys/msg.h>
 
 #include "config.h"
 #include <lfstk/LFSTKGlobals.h>
@@ -85,15 +85,15 @@ DEFINE_BITMAP(minodd);
 DEFINE_BITMAP(shadeeven);
 DEFINE_BITMAP(shadeodd);
 
-#define MAX_MSG_SIZE 256
+//#define MAX_MSG_SIZE 256
 enum {REFRESHTHEME,SHOWAPPMENU};
 
-struct msgBuffer
-{
-	long		mType;
-	char		mText[MAX_MSG_SIZE];
-};
-enum {DESKTOP_MSG=1000,WMANAGER_MSG};
+//struct msgBuffer
+//{
+//	long		mType;
+//	char		mText[MAX_MSG_SIZE];
+//};
+//enum {DESKTOP_MSG=1000,WMANAGER_MSG};
 
 int				queueID;
 msgBuffer		buffer;
