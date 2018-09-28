@@ -648,6 +648,7 @@ X11_CFLAGS
 PKG_CONFIG_LIBDIR
 PKG_CONFIG_PATH
 PKG_CONFIG
+LFSTOOLKIT_VERSION
 LFSTOOLKIT_LIBTOOL_VERSION
 CXXCPP
 LT_SYS_LIBRARY_PATH
@@ -15719,6 +15720,10 @@ LFSTOOLKIT_INTERFACE=$(( 0 + ${LFSTOOLKIT_MINOR} ))
 LFSTOOLKIT_REVISION=0
 LFSTOOLKIT_LIBTOOL_VERSION=$LFSTOOLKIT_INTERFACE:$LFSTOOLKIT_REVISION:$LFSTOOLKIT_MINOR
 
+LFSTOOLKIT_VERSION=0.3.0
+#$LFSTOOLKIT_INTERFACE.$LFSTOOLKIT_REVISION.$LFSTOOLKIT_MINOR
+
+
 
 
 X11_MODULES="x11 >= 1.6.2"
@@ -16300,6 +16305,9 @@ if test "$enable_debug" = "yes"; then
 $as_echo "#define _ENABLEDEBUG_ /**/" >>confdefs.h
 
 fi
+
+ac_config_files="$ac_config_files lfstk.pc"
+
 
 ac_config_files="$ac_config_files Makefile LFSToolKit/app/Makefile docs/Makefile"
 
@@ -17421,6 +17429,7 @@ do
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "docs/Doxyfile") CONFIG_FILES="$CONFIG_FILES docs/Doxyfile" ;;
+    "lfstk.pc") CONFIG_FILES="$CONFIG_FILES lfstk.pc" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "LFSToolKit/app/Makefile") CONFIG_FILES="$CONFIG_FILES LFSToolKit/app/Makefile" ;;
     "docs/Makefile") CONFIG_FILES="$CONFIG_FILES docs/Makefile" ;;
@@ -18859,5 +18868,4 @@ if test -n "$ac_unrecognized_opts" && test "$enable_option_checking" != no; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: unrecognized options: $ac_unrecognized_opts" >&5
 $as_echo "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
-
 

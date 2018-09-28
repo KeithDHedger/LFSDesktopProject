@@ -1,6 +1,11 @@
 
 SUBDIRS = LFSToolKit/app
 
+EXTRA_DIST = lfstk.pc.in
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = lfstk.pc
+DISTCLEANFILES = lfstk.pc
+
 .PHONY: docs
 
 docs:

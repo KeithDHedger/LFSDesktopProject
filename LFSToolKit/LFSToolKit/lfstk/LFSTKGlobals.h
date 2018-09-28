@@ -28,6 +28,10 @@
 #include <cairo.h>
 #include <cairo-xlib.h>
 
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+
 #define COPYRITE			"Copyright © 2013-2017 K.D.Hedger"
 #define PERSONAL			"keithdhedger@gmail.com"
 #define	MYWEBSITE			"http://keithhedger.freeddns.org/"
@@ -223,6 +227,25 @@ struct windowInitStruct
 	bool		decorated=true;
 	int			level=NORMAL;
 };
+
+//messaging
+#define MAX_MSG_SIZE 256
+//#define ALLOK 0
+//#define UNKNOWNARG 1
+//#define NOMAKEQUEUE 2
+//#define NOSENDMSG 3
+#define WAIT_MSG 0
+
+#define MSGANY 0
+//#define MSGSEND 1
+//#define MSGRECEIVE 2
+struct msgBuffer
+{
+	long mType;
+	char mText[MAX_MSG_SIZE];
+};
+
+enum {DESKTOP_MSG=1000,WMANAGER_MSG,PANEL_MSG,WALLPAPER_MSG,TOOLKIT_MSG,APPEARANCE_PREFS_MSG,BACKDROP_PREFS_MSG,DESKTOP_PREFS_MSG,PANEL_PREFS_MSG,TK_PREFS_MSG,WMANAGER_PREFS_MSG};
 
 #include "LFSTKLib.h"
 #include "LFSTKWindow.h"

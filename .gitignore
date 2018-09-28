@@ -38,3 +38,5 @@ LFSToolKit/examples/diskmenu
 */testdata
 LFSEdit/LFSEdit/app/lfsedit
 TEMPHOLD
+
+*.pc
