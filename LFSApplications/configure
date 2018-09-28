@@ -588,6 +588,8 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
+LFSTK_LIBS
+LFSTK_CFLAGS
 CAIRO_LIBS
 CAIRO_CFLAGS
 XFT_LIBS
@@ -715,7 +717,9 @@ X11_LIBS
 XFT_CFLAGS
 XFT_LIBS
 CAIRO_CFLAGS
-CAIRO_LIBS'
+CAIRO_LIBS
+LFSTK_CFLAGS
+LFSTK_LIBS'
 
 
 # Initialize some variables set by options.
@@ -1361,6 +1365,9 @@ Some influential environment variables:
   CAIRO_CFLAGS
               C compiler flags for CAIRO, overriding pkg-config
   CAIRO_LIBS  linker flags for CAIRO, overriding pkg-config
+  LFSTK_CFLAGS
+              C compiler flags for LFSTK, overriding pkg-config
+  LFSTK_LIBS  linker flags for LFSTK, overriding pkg-config
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -4765,6 +4772,101 @@ See \`config.log' for more details" "$LINENO" 5; }
 else
 	CAIRO_CFLAGS=$pkg_cv_CAIRO_CFLAGS
 	CAIRO_LIBS=$pkg_cv_CAIRO_LIBS
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+fi
+
+
+
+LFSTK_MODULES="lfstk >= 0.3.0"
+
+pkg_failed=no
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $LFSTK_MODULES" >&5
+$as_echo_n "checking for $LFSTK_MODULES... " >&6; }
+
+if test -n "$LFSTK_CFLAGS"; then
+    pkg_cv_LFSTK_CFLAGS="$LFSTK_CFLAGS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"\$LFSTK_MODULES\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "$LFSTK_MODULES") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_LFSTK_CFLAGS=`$PKG_CONFIG --cflags "$LFSTK_MODULES" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+if test -n "$LFSTK_LIBS"; then
+    pkg_cv_LFSTK_LIBS="$LFSTK_LIBS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"\$LFSTK_MODULES\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "$LFSTK_MODULES") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_LFSTK_LIBS=`$PKG_CONFIG --libs "$LFSTK_MODULES" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+
+
+
+if test $pkg_failed = yes; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+        _pkg_short_errors_supported=yes
+else
+        _pkg_short_errors_supported=no
+fi
+        if test $_pkg_short_errors_supported = yes; then
+	        LFSTK_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "$LFSTK_MODULES" 2>&1`
+        else
+	        LFSTK_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "$LFSTK_MODULES" 2>&1`
+        fi
+	# Put the nasty error message in config.log where it belongs
+	echo "$LFSTK_PKG_ERRORS" >&5
+
+	as_fn_error $? "Package requirements ($LFSTK_MODULES) were not met:
+
+$LFSTK_PKG_ERRORS
+
+Consider adjusting the PKG_CONFIG_PATH environment variable if you
+installed software in a non-standard prefix.
+
+Alternatively, you may set the environment variables LFSTK_CFLAGS
+and LFSTK_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details." "$LINENO" 5
+elif test $pkg_failed = untried; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "The pkg-config script could not be found or is too old.  Make sure it
+is in your PATH or set the PKG_CONFIG environment variable to the full
+path to pkg-config.
+
+Alternatively, you may set the environment variables LFSTK_CFLAGS
+and LFSTK_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details.
+
+To get pkg-config, see <http://pkg-config.freedesktop.org/>.
+See \`config.log' for more details" "$LINENO" 5; }
+else
+	LFSTK_CFLAGS=$pkg_cv_LFSTK_CFLAGS
+	LFSTK_LIBS=$pkg_cv_LFSTK_LIBS
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 
