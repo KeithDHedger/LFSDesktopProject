@@ -92,36 +92,15 @@ void updateDesktop(void)
 	buffer.mType=DESKTOP_MSG;
 	sprintf(buffer.mText,"reloaddesk");
 	if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
-		{
-			fprintf(stderr,"Can't send message :(\n");
-			//exit(NOSENDMSG);
-			
-		}
+		fprintf(stderr,"Can't send message :(\n");
 
 	buffer.mType=WMANAGER_MSG;
 	sprintf(buffer.mText,"reloadtheme");
 	if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
-		{
-			fprintf(stderr,"Can't send message :(\n");
-			//exit(NOSENDMSG);
-		}
+		fprintf(stderr,"Can't send message :(\n");
 	
 	system("lfssetwallpaper &>/dev/null");
-	system("killall lfspanel &");
-	
-//	sprintf(combuffer,"climsg -s 'reloaddesk' -k %s",key->LFSTK_getCStr());
-//	system(combuffer);
-//	system("climsg -s 'reloaddesk' -k 666");
-	//system("killall lfsdesktop &>/dev/null &");
-//	system("lfssetwallpaper &>/dev/null");
-//	system("killall lfswmanager &");
-
-//	system("climsg -s 'reloadtheme' -k 667");
-
-
-//	sprintf(combuffer,"climsg -s 'reloadtheme' -k %s",key->LFSTK_getCStr());
-//	system(combuffer);
-	
+	system("killall lfspanel &");	
 }
 
 void makeGroup(const char *grpname)
