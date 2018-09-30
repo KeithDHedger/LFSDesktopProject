@@ -138,7 +138,7 @@ void LFSTK_lineEditClass::sendUTF8(XSelectionRequestEvent *sev)
 
 /**
 * Selection Request callback.
-* \param e XButtonEvent passed from mainloop->listener.
+* \param e XSelectionRequestEvent passed from mainloop->listener.
 * \return Return true if event fully handeled or false to pass it on.
 */
 bool LFSTK_lineEditClass::selectionRequest(XSelectionRequestEvent *e)
