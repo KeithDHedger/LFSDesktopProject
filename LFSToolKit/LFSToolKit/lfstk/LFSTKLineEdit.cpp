@@ -63,7 +63,7 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	this->LFSTK_setFontString(this->monoFontString);
 	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_setCairoFontData();
-	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|FocusChangeMask|KeyReleaseMask);
+	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|FocusChangeMask|KeyReleaseMask|SelectionClear|SelectionRequest);
 
 	ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	ml->gadget=this;
@@ -83,6 +83,16 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	LFSTK_setColourName(NORMALCOLOUR,"white");
 	LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
 	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NULL,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
+
+
+//	this->sel=XInternAtom(this->display,"CLIPBOARD",false);
+//	//this->sel = XInternAtom(this->display, "SECONDARY", False);
+//	this->utf8 = XInternAtom(this->display, "UTF8_STRING", False);
+//
+//    /* Claim ownership of the clipboard. */
+//    XSetSelectionOwner(this->display, sel, this->window, CurrentTime);
+
+
 }
 
 /**
@@ -108,6 +118,36 @@ void LFSTK_lineEditClass::LFSTK_setFocus(void)
 	XSetInputFocus(this->display,this->window,RevertToParent,CurrentTime);
 	this->isFocused=true;
 	this->LFSTK_clearWindow();
+}
+
+void LFSTK_lineEditClass::sendUTF8(XSelectionRequestEvent *sev)
+{
+	XSelectionEvent	ssev;
+
+    XChangeProperty(this->display,sev->requestor,sev->property,this->clipUTF8,8,PropModeReplace,(unsigned char *)this->clipbuffer.c_str(),this->clipbuffer.length());
+
+    ssev.type=SelectionNotify;
+    ssev.requestor=sev->requestor;
+    ssev.selection=sev->selection;
+    ssev.target=sev->target;
+    ssev.property=sev->property;
+    ssev.time=sev->time;
+
+    XSendEvent(this->display,sev->requestor,True,NoEventMask,(XEvent *)&ssev);
+}
+
+/**
+* Selection Request callback.
+* \param e XButtonEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
+bool LFSTK_lineEditClass::selectionRequest(XSelectionRequestEvent *e)
+{
+//fprintf(stderr,"aname=%s\n",XGetAtomName(this->display,e->target));
+	if(XGetSelectionOwner(this->display,this->clipSelection)==this->window)
+		this->sendUTF8(e);
+
+	return(true);
 }
 
 /**
@@ -292,6 +332,18 @@ void LFSTK_lineEditClass::getClip(void)
 	XEvent			event;
 
 	selectionOwner=XGetSelectionOwner(this->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD));
+//TODO//HACK to paste into self!!
+	if(selectionOwner==this->window)
+		{
+			if(this->clipbuffer.length()>0)
+				{
+					this->buffer=this->buffer+this->clipbuffer;
+					this->cursorPos=this->buffer.length();
+					this->LFSTK_clearWindow();
+				}
+			return;
+		}
+
 	if (selectionOwner!=None)
 		{
 			XConvertSelection(this->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->wc->LFSTK_getDnDAtom(XA_UTF8_STRING),this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->window,CurrentTime);
@@ -299,6 +351,7 @@ void LFSTK_lineEditClass::getClip(void)
 
 			while (run==true)
 				{
+						printf(">>>>>>>>>>>>>>\n");
 					XNextEvent(this->display,&event);
 					switch(event.type)
 						{
@@ -362,11 +415,12 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 //TODO//
 			if(keysym_return==XK_c)
 				{
-					asprintf(&command,"echo \"%s\"|xclip  -selection clipboard",this->buffer.c_str());
-					system(command);
-					free(command);
+					this->clipSelection=XInternAtom(this->display,"CLIPBOARD",false);
+					this->clipUTF8=XInternAtom(this->display,"STRING",false);
+/* Claim ownership of the clipboard. */
+					XSetSelectionOwner(this->display,this->clipSelection,this->window,CurrentTime);
+					this->clipbuffer=this->buffer;
 				}
-
 
 			if(keysym_return==XK_Delete)
 				{

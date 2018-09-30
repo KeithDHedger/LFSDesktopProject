@@ -842,6 +842,16 @@ bool LFSTK_gadgetClass::clientMessage(XEvent *e)
 }
 
 /**
+* Selection Request callback.
+* \param e XEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
+bool LFSTK_gadgetClass::selectionRequest(XSelectionRequestEvent *e)
+{
+	return(true);
+}
+
+/**
 * Drop data.
 * \param data Data drooped on gadget as string.
 */

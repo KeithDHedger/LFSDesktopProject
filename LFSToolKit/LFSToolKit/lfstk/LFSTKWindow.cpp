@@ -979,6 +979,7 @@ void LFSTK_windowClass::LFSTK_initDnD(void)
 	dNdAtoms[XA_UTF8_STRING]=XInternAtom(this->display,"UTF8_STRING",false);
 	dNdAtoms[XA_TARGETS]=XInternAtom(this->display,"TARGETS",false);
 	dNdAtoms[PRIMARY]=XInternAtom(this->display,"PRIMARY",false);
+	dNdAtoms[SECONDARY]=XInternAtom(this->display,"SECONDARY",false);
 
 	this->acceptDnd=true;
 	this->toBeRequested=None;

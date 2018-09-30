@@ -551,6 +551,10 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 //				//printf("ClientMessage from lib\n");
 //				retval=gadget->clientMessage(e);
 				break;
+			case SelectionRequest:
+				//fprintf(stderr,"from SelectionRequest lib\n");
+				retval=gadget->selectionRequest((XSelectionRequestEvent*)e);
+				break;
 				
 		}
 	if(retval==false)

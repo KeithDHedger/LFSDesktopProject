@@ -48,6 +48,9 @@ class LFSTK_gadgetClass
 		virtual bool			gotFocus(XEvent *e);
 		virtual bool			lostFocus(XEvent *e);
 
+//other events
+		virtual bool			selectionRequest(XSelectionRequestEvent *e);
+
 //mouse events
 		void					LFSTK_setIgnoreCB(bool ignore);
 		virtual bool			mouseUp(XButtonEvent *e);
