@@ -53,7 +53,7 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		bool lostFocus(XEvent *e);
 		bool gotFocus(XEvent *e);
 		bool clientMessage(XEvent *e);
-		bool selectionRequest(XSelectionRequestEvent *e);
+//		bool selectionRequest(XSelectionRequestEvent *e);
 		void LFSTK_setFocus(void);
 
 		void LFSTK_dropData(propertyStruct* data);
@@ -62,11 +62,11 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		void sendUTF8(XSelectionRequestEvent *sev);
 		void drawLabel(void);
 		void getClip(void);
-		Atom clipSelection;
-		Atom clipUTF8;
+//		Atom clipSelection;
+//		Atom clipUTF8;
 
 		std::string	buffer;
-		std::string	clipbuffer;
+	//	std::string	clipbuffer;
 		unsigned	cursorPos;
 		bool		isFocused;
 };

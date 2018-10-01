@@ -553,7 +553,7 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				break;
 			case SelectionRequest:
 				//fprintf(stderr,"from SelectionRequest lib\n");
-				retval=gadget->selectionRequest((XSelectionRequestEvent*)e);
+				//retval=gadget->selectionRequest((XSelectionRequestEvent*)e);
 				break;
 				
 		}

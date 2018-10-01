@@ -122,18 +122,18 @@ void LFSTK_lineEditClass::LFSTK_setFocus(void)
 
 void LFSTK_lineEditClass::sendUTF8(XSelectionRequestEvent *sev)
 {
-	XSelectionEvent	ssev;
-
-    XChangeProperty(this->display,sev->requestor,sev->property,this->clipUTF8,8,PropModeReplace,(unsigned char *)this->clipbuffer.c_str(),this->clipbuffer.length());
-
-    ssev.type=SelectionNotify;
-    ssev.requestor=sev->requestor;
-    ssev.selection=sev->selection;
-    ssev.target=sev->target;
-    ssev.property=sev->property;
-    ssev.time=sev->time;
-
-    XSendEvent(this->display,sev->requestor,True,NoEventMask,(XEvent *)&ssev);
+//	XSelectionEvent	ssev;
+//
+//    XChangeProperty(this->display,sev->requestor,sev->property,this->clipUTF8,8,PropModeReplace,(unsigned char *)this->clipbuffer.c_str(),this->clipbuffer.length());
+//
+//    ssev.type=SelectionNotify;
+//    ssev.requestor=sev->requestor;
+//    ssev.selection=sev->selection;
+//    ssev.target=sev->target;
+//    ssev.property=sev->property;
+//    ssev.time=sev->time;
+//
+//    XSendEvent(this->display,sev->requestor,True,NoEventMask,(XEvent *)&ssev);
 }
 
 /**
@@ -141,14 +141,15 @@ void LFSTK_lineEditClass::sendUTF8(XSelectionRequestEvent *sev)
 * \param e XSelectionRequestEvent passed from mainloop->listener.
 * \return Return true if event fully handeled or false to pass it on.
 */
-bool LFSTK_lineEditClass::selectionRequest(XSelectionRequestEvent *e)
-{
+//bool LFSTK_lineEditClass::selectionRequest(XSelectionRequestEvent *e)
+//{
 //fprintf(stderr,"aname=%s\n",XGetAtomName(this->display,e->target));
-	if(XGetSelectionOwner(this->display,this->clipSelection)==this->window)
-		this->sendUTF8(e);
-
-	return(true);
-}
+////	if(XGetSelectionOwner(this->display,this->clipSelection)==this->wc->window)
+//	if(XGetSelectionOwner(this->display,this->clipSelection)==this->window)
+//		this->sendUTF8(e);
+//
+//	return(true);
+//}
 
 /**
 * Configure Message callback.
@@ -333,14 +334,18 @@ void LFSTK_lineEditClass::getClip(void)
 
 	selectionOwner=XGetSelectionOwner(this->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD));
 //TODO//HACK to paste into self!!
-	if(selectionOwner==this->window)
+//	if(selectionOwner==this->wc->window)
+
+printf("selectionOwner=%i this->wc->window=%i\n",selectionOwner,this->wc->window);
+
+	if(selectionOwner==this->wc->window)
 		{
-			if(this->clipbuffer.length()>0)
-				{
-					this->buffer=this->buffer+this->clipbuffer;
+			//if(this->clipbuffer.length()>0)
+			//	{
+					this->buffer=this->buffer+this->wc->clipBuffer;
 					this->cursorPos=this->buffer.length();
 					this->LFSTK_clearWindow();
-				}
+			//	}
 			return;
 		}
 
@@ -351,7 +356,6 @@ void LFSTK_lineEditClass::getClip(void)
 
 			while (run==true)
 				{
-						printf(">>>>>>>>>>>>>>\n");
 					XNextEvent(this->display,&event);
 					switch(event.type)
 						{
@@ -415,11 +419,14 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 //TODO//
 			if(keysym_return==XK_c)
 				{
-					this->clipSelection=XInternAtom(this->display,"CLIPBOARD",false);
-					this->clipUTF8=XInternAtom(this->display,"STRING",false);
+					////this->clipSelection=XInternAtom(this->display,"CLIPBOARD",false);
+					////this->clipUTF8=XInternAtom(this->display,"STRING",false);
 /* Claim ownership of the clipboard. */
-					XSetSelectionOwner(this->display,this->clipSelection,this->window,CurrentTime);
-					this->clipbuffer=this->buffer;
+					//XSetSelectionOwner(this->display,this->clipSelection,this->wc->window,CurrentTime);
+					////XSetSelectionOwner(this->display,this->clipSelection,this->window,CurrentTime);
+					//XSetSelectionOwner(this->display,this->clipUTF8,this->wc->window,CurrentTime);
+					this->wc->clipBuffer=this->buffer;
+					XSetSelectionOwner(this->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->wc->window,CurrentTime);
 				}
 
 			if(keysym_return==XK_Delete)

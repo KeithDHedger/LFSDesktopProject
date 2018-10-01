@@ -2,8 +2,8 @@
 
 #©keithhedger Sat 5 Aug 19:18:08 BST 2017 kdhedger68713@gmail.com
 
-g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2 -o lineeditexample||exit 1
-LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./lineeditexample "$@"
+g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2 -o geticonpath||exit 1
+LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./geticonpath "$@"
 retval=$?
 echo "Exit code $retval"
 exit $retval
@@ -31,7 +31,7 @@ bool doQuit(void *p,void* ud)
 	mainLoop=false;
 	XFlush(wc->display);
 	XSync(wc->display,true);
-	return(false);
+	return(true);
 }
 
 bool doKeyUp(void *p,void* ud)
@@ -39,7 +39,6 @@ bool doKeyUp(void *p,void* ud)
 	//printf(">>%s<<\n",mimeEdit->LFSTK_getBuffer()->c_str());
 	return(true);
 }
-
 
 bool getPath(void *p,void* ud)
 {
@@ -114,29 +113,9 @@ printf("quitx=%i quity=%i\n",DIALOGMIDDLE-HALFGADGETWIDTH,sy);
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();
 
-
-
-//	Atom XdndAware=XInternAtom(wc->display,"XdndAware",false);
-//	Atom version=5;
-//	XChangeProperty(wc->display,wc->window,XdndAware,XA_ATOM,32,PropModeReplace,(unsigned char*)&version,1);
-
-//	wc->LFSTK_initDnD();
-//	XEvent xev;
-//	XWindowAttributes wattr;
-//	memset(&xev,0,sizeof(xev));
-//	xev.type=ClientMessage;
-//	xev.xclient.display=wc->display;
-//	xev.xclient.window=editbox->window;
-//	xev.xclient.message_type=XInternAtom(wc->display,"_NET_ACTIVE_WINDOW",false);
-//	xev.xclient.format=32;
-//	xev.xclient.data.l[0]=2L;
-//	xev.xclient.data.l[1]=CurrentTime;
-//
-//	XGetWindowAttributes(wc->display,editbox->window,&wattr);
-//	XSendEvent(wc->display,wattr.screen->root,false,SubstructureNotifyMask|SubstructureRedirectMask,&xev);
-
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	mainLoop=true;
+	int	evret=0;
 	while(mainLoop==true)
 		{
 			XNextEvent(wc->display,&event);
@@ -146,47 +125,12 @@ printf("quitx=%i quity=%i\n",DIALOGMIDDLE-HALFGADGETWIDTH,sy);
 					ml->function(ml->gadget,&event,ml->type);
 				}
 
-			switch(event.type)
-				{
-					case ButtonRelease:
-						break;
-					case LeaveNotify:
-						break;
-					case Expose:
-					//printf("expose\n");
-						wc->LFSTK_clearWindow();
-						break;
+			evret=wc->LFSTK_handleWindowEvents(&event);
+			if(evret<0)
+				mainLoop=false;
 
-					case ConfigureNotify:
-						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
-						wc->globalLib->LFSTK_setCairoSurface(wc->display,wc->window,wc->visual,&wc->sfc,&wc->cr,event.xconfigurerequest.width,event.xconfigurerequest.height);
-						wc->LFSTK_clearWindow();
-						break;
-
-					case ClientMessage:
-					case SelectionNotify:
-						{
-							if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
-								{
-									wc->LFSTK_hideWindow();
-									mainLoop=false;
-								}
-//dnd for edit box
-							if(wc->acceptDnd==true)
-								{
-									wc->LFSTK_handleDnD(&event);
-									if((wc->droppedData.type!=-1) && (wc->acceptOnThis==true))
-										{
-											printf("dropped on window=>>%s<<\n",wc->droppedData.data);
-											wc->droppedData.type=DROPINVALID;
-											
-										}
-								}
-						}
-						break;
-				}
 		}
-
+	wc->LFSTK_hideWindow();
 	delete wc;
 	XCloseDisplay(display);
 	cairo_debug_reset_static_data();

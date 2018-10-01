@@ -736,7 +736,7 @@ void LFSTK_windowClass::windowClassInitCommon(windowInitStruct *wi)
 			this->window=XCreateWindow(this->display,this->rootWindow,wi->x,wi->y,wi->w,wi->h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWOverrideRedirect,&wa);
 		}
 
-	XSelectInput(this->display,this->window,SubstructureRedirectMask|StructureNotifyMask|ButtonPressMask | ButtonReleaseMask | ExposureMask|LeaveWindowMask|FocusChangeMask);
+	XSelectInput(this->display,this->window,SubstructureRedirectMask|StructureNotifyMask|ButtonPressMask | ButtonReleaseMask | ExposureMask|LeaveWindowMask|FocusChangeMask|SelectionClear|SelectionRequest);
 
 	XSetWMProtocols(this->display,this->window,&wm_delete_window,1);
 	xa=XInternAtom(this->display,"_NET_WM_ALLOWED_ACTIONS",False);
@@ -1317,4 +1317,79 @@ void LFSTK_windowClass::LFSTK_setDoubleClickTime(unsigned interval)
 {
 	this->dbClick=(interval);
 }
+
+/**
+* Send utf8 string
+* \note private
+*/
+void LFSTK_windowClass::sendUTF8(XSelectionRequestEvent *sev)
+{
+	XSelectionEvent	ssev;
+
+    XChangeProperty(this->display,sev->requestor,sev->property,this->LFSTK_getDnDAtom(XA_UTF8_STRING),8,PropModeReplace,(unsigned char *)this->clipBuffer.c_str(),this->clipBuffer.length());
+
+    ssev.type=SelectionNotify;
+    ssev.requestor=sev->requestor;
+    ssev.selection=sev->selection;
+    ssev.target=sev->target;
+    ssev.property=sev->property;
+    ssev.time=sev->time;
+
+    XSendEvent(this->display,sev->requestor,True,NoEventMask,(XEvent *)&ssev);
+}
+
+/**
+* Handle basic window events.
+* \param XEvent	*event.
+* \return 0=handled, 1=not handled, -1 close window
+*/
+int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent	*event)
+{
+	int	retval=0;
+
+	switch(event->type)
+		{
+			case LeaveNotify:
+				break;
+			case Expose:
+				this->LFSTK_clearWindow();
+				break;
+
+			case ConfigureNotify:
+				this->LFSTK_resizeWindow(event->xconfigurerequest.width,event->xconfigurerequest.height,false);
+				this->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,event->xconfigurerequest.width,event->xconfigurerequest.height);
+				this->LFSTK_clearWindow();
+				break;
+
+			case SelectionRequest:
+				//fprintf(stderr,">>>>>>%s>>>>>>>\n",this->clipBuffer.c_str());
+				if(XGetSelectionOwner(this->display,this->LFSTK_getDnDAtom(XA_CLIPBOARD))==this->window)
+					this->sendUTF8(&event->xselectionrequest);
+				break;
+
+			case ClientMessage:
+			case SelectionNotify:
+				{
+					if (event->xclient.message_type == XInternAtom(this->display, "WM_PROTOCOLS", 1) && (Atom)event->xclient.data.l[0] == XInternAtom(this->display, "WM_DELETE_WINDOW", 1))
+						{
+							retval=-1;
+							break;
+						}
+//dnd for edit box
+					if(this->acceptDnd==true)
+						{
+							this->LFSTK_handleDnD(event);
+							if((this->droppedData.type!=-1) && (this->acceptOnThis==true))
+								{
+									printf("dropped on window=>>%s<<\n",this->droppedData.data);
+									this->droppedData.type=DROPINVALID;
+								}
+						}
+				}
+				break;
+		}
+	return(retval);
+}
+
+
 

@@ -47,6 +47,22 @@ bool buttonCB(void *p,void* ud)
 	return(true);
 }
 
+void sendUTF8(XSelectionRequestEvent *sev)
+{
+	XSelectionEvent	ssev;
+
+    XChangeProperty(wc->display,sev->requestor,sev->property,wc->LFSTK_getDnDAtom(XA_UTF8_STRING),8,PropModeReplace,(unsigned char *)wc->clipBuffer.c_str(),wc->clipBuffer.length());
+
+    ssev.type=SelectionNotify;
+    ssev.requestor=sev->requestor;
+    ssev.selection=sev->selection;
+    ssev.target=sev->target;
+    ssev.property=sev->property;
+    ssev.time=sev->time;
+
+    XSendEvent(wc->display,sev->requestor,True,NoEventMask,(XEvent *)&ssev);
+}
+
 int main(int argc, char **argv)
 {
 	XEvent	event;
@@ -139,6 +155,12 @@ printf("quitx=%i quity=%i\n",DIALOGMIDDLE-HALFGADGETWIDTH,sy);
 						wc->LFSTK_clearWindow();
 						break;
 
+					case SelectionRequest:
+						fprintf(stderr,">>>>>>%s>>>>>>>\n",wc->clipBuffer.c_str());
+						if(XGetSelectionOwner(wc->display,wc->LFSTK_getDnDAtom(XA_CLIPBOARD))==wc->window)
+							sendUTF8(&event.xselectionrequest);
+
+						break;
 					case ClientMessage:
 					case SelectionNotify:
 						{

@@ -166,15 +166,19 @@ class LFSTK_windowClass
 		void					LFSTK_setDoubleClickTime(unsigned interval);
 		unsigned				dbClick=500;
 		bool					popupLoop=false;
+		int						LFSTK_handleWindowEvents(XEvent	*event);
 
+//copy/paste buffer etc
+		std::string				clipBuffer;
 	private:
+
 //window routines
 		void					windowClassInitCommon(windowInitStruct *wi);
 		void					initWindow(bool loadvars);
 		void					loadGlobalColours(void);
 		void					loadMonitorData(void);
+		void					sendUTF8(XSelectionRequestEvent *sev);
 
-//dnd routines
 //DnD routines
 		void					LFSTK_dropData(propertyStruct* data);
 		propertyStruct			*readProperty(Window src,Atom property);
@@ -192,7 +196,9 @@ class LFSTK_windowClass
 
 		std::map<int,mappedListener*> gadgetMap;
 
-//Atoms etc for Xdnd
+//Atoms etc for Xdnd/cut/opy/paste
+		Atom					clipSelection;
+		Atom					clipUTF8;
 		Atom					dNdAtoms[DNDATOMCOUNT];
 		std::map<std::string,int> dNdTypes;
 		Atom					toBeRequested;
