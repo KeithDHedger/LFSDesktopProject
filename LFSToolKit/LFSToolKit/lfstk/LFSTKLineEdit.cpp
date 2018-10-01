@@ -120,37 +120,6 @@ void LFSTK_lineEditClass::LFSTK_setFocus(void)
 	this->LFSTK_clearWindow();
 }
 
-void LFSTK_lineEditClass::sendUTF8(XSelectionRequestEvent *sev)
-{
-//	XSelectionEvent	ssev;
-//
-//    XChangeProperty(this->display,sev->requestor,sev->property,this->clipUTF8,8,PropModeReplace,(unsigned char *)this->clipbuffer.c_str(),this->clipbuffer.length());
-//
-//    ssev.type=SelectionNotify;
-//    ssev.requestor=sev->requestor;
-//    ssev.selection=sev->selection;
-//    ssev.target=sev->target;
-//    ssev.property=sev->property;
-//    ssev.time=sev->time;
-//
-//    XSendEvent(this->display,sev->requestor,True,NoEventMask,(XEvent *)&ssev);
-}
-
-/**
-* Selection Request callback.
-* \param e XSelectionRequestEvent passed from mainloop->listener.
-* \return Return true if event fully handeled or false to pass it on.
-*/
-//bool LFSTK_lineEditClass::selectionRequest(XSelectionRequestEvent *e)
-//{
-//fprintf(stderr,"aname=%s\n",XGetAtomName(this->display,e->target));
-////	if(XGetSelectionOwner(this->display,this->clipSelection)==this->wc->window)
-//	if(XGetSelectionOwner(this->display,this->clipSelection)==this->window)
-//		this->sendUTF8(e);
-//
-//	return(true);
-//}
-
 /**
 * Configure Message callback.
 * \param e XButtonEvent passed from mainloop->listener.
