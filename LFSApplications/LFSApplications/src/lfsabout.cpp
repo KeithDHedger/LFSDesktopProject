@@ -83,49 +83,21 @@ int main(int argc, char **argv)
 	wc->LFSTK_showWindow();
 	tux->LFSTK_clearWindow();
 
-	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	mainLoop=true;
 	while(mainLoop==true)
 		{
 			XNextEvent(wc->display,&event);
 			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
+
 			if(ml!=NULL)
-				{
-					ml->function(ml->gadget,&event,ml->type);
-				}
+				ml->function(ml->gadget,&event,ml->type);
 
-			switch(event.type)
-				{
-					case ButtonRelease:
-						break;
-					case LeaveNotify:
-						break;
-					case Expose:
-						wc->LFSTK_clearWindow();
-						break;
-
-					case ConfigureNotify:
-						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
-						wc->globalLib->LFSTK_setCairoSurface(wc->display,wc->window,wc->visual,&wc->sfc,&wc->cr,event.xconfigurerequest.width,event.xconfigurerequest.height);
-						wc->LFSTK_clearWindow();
-						break;
-
-					case ClientMessage:
-					case SelectionNotify:
-						{
-							if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
-								{
-									wc->LFSTK_hideWindow();
-									mainLoop=false;
-								}
-						}
-						break;
-				}
+			if(wc->LFSTK_handleWindowEvents(&event)<0)
+				mainLoop=false;
 		}
 
 	delete wc;
 	XCloseDisplay(display);
-//	cairo_debug_reset_static_data();
 
 	return 0;
 }

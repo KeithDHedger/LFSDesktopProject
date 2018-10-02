@@ -341,35 +341,14 @@ int main(int argc, char **argv)
 	mainLoop=true;
 	while(mainLoop==true)
 		{
-			XNextEvent(mainWindow->display,&event);
-			mappedListener *ml=mainWindow->LFSTK_getMappedListener(event.xany.window);
+			XNextEvent(wc->display,&event);
+			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
+
 			if(ml!=NULL)
 				ml->function(ml->gadget,&event,ml->type);
 
-			switch(event.type)
-				{
-				case KeyRelease:
-					if(ml->gadget==fontSizeEdit)
-						buildFontString();
-					break;
-					case LeaveNotify:
-						break;
-					case Expose:
-						mainWindow->LFSTK_clearWindow();
-						break;
-
-					case ConfigureNotify:
-						mainWindow->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
-						break;
-
-					case ClientMessage:
-					case SelectionNotify:
-						{
-							if(event.xclient.message_type==XInternAtom(mainWindow->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(mainWindow->display, "WM_DELETE_WINDOW", 1))
-							mainLoop=false;
-						}
-						break;
-				}
+			if(wc->LFSTK_handleWindowEvents(&event)<0)
+				mainLoop=false;
 		}
 
 	for(int j=0;j<maxFonts;j++)
