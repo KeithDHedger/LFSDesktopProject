@@ -329,15 +329,9 @@ int main(int argc,char **argv)
 					mappedListener *ml=mainwind->LFSTK_getMappedListener(event.xany.window);
 					if(ml!=NULL)
 						ml->function(ml->gadget,&event,ml->type);
-					switch(event.type)
-						{
-						case Expose:
-							mainwind->LFSTK_setActive(true);
-							break;
-						case ConfigureNotify:
-							mainwind->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
-							break;
-						}
+
+					if(mainwind->LFSTK_handleWindowEvents(&event)<0)
+						mainLoop=false;
 				}
 			else
 				{
