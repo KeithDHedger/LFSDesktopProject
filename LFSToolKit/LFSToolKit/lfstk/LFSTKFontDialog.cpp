@@ -263,7 +263,6 @@ void LFSTK_fontDialogClass::buildDialog(void)
 LFSTK_fontDialogClass::LFSTK_fontDialogClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity)
 {
 	XSetWindowAttributes	wa;
-	mappedListener			*ml=new mappedListener;
 
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 
@@ -275,9 +274,9 @@ LFSTK_fontDialogClass::LFSTK_fontDialogClass(LFSTK_windowClass* parentwc,const c
 	this->LFSTK_setCairoFontData();
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
-	ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
-	ml->gadget=this;
-	ml->type=BUTTONGADGET;
+	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
+	this->ml->gadget=this;
+	this->ml->type=BUTTONGADGET;
 	this->wc->LFSTK_addMappedListener(this->window,ml);
 
 	if(this->wc->globalLib->LFSTK_getUseTheme()==true)

@@ -422,7 +422,7 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 	unsigned				sy;
 
 	XSetWindowAttributes	wa;
-	mappedListener			*ml=new mappedListener;
+
 	this->LFSTK_setCommon(parentwc,label,x-1,y-1,w+2,h+2,gravity);
 
 	wa.win_gravity=gravity;
@@ -436,9 +436,9 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
-	ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
-	ml->gadget=this;
-	ml->type=LISTGADGET;
+	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
+	this->ml->gadget=this;
+	this->ml->type=LISTGADGET;
 	this->wc->LFSTK_addMappedListener(this->window,ml);
 
 	this->currentItem=0;

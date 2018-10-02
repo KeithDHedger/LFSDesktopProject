@@ -136,6 +136,7 @@ void LFSTK_windowClass::initWindow(bool loadvars)
 	this->loadGlobalColours();
 	this->isActive=true;
 	this->useTile=false;
+	this->gadgetMap.clear();
 }
 
 /**
@@ -189,17 +190,21 @@ LFSTK_windowClass::~LFSTK_windowClass()
 	delete this->globalLib;
 	free(this->monitors);
 
-	for (std::map<int,mappedListener*>::iterator it=this->gadgetMap.begin();it!=this->gadgetMap.end();++it)
+	if(!this->gadgetMap.empty())
 		{
-			mappedListener	*ml=it->second;
-			if (ml!=NULL)
+			for (std::map<int,mappedListener*>::iterator it=this->gadgetMap.begin();it!=this->gadgetMap.end();++it)
 				{
-					delete ml->gadget;
-					delete ml;
+					mappedListener	*ml=it->second;
+					if (ml!=NULL)
+						{
+//		fprintf(stderr,"cnt=%i ml=%p ml->gadget=%p ml->type=%i\n",cnt++,ml,ml->gadget,ml->type);
+							if(ml->gadget!=NULL)
+								delete ml->gadget;
+							delete ml;
+						}
 				}
+			this->gadgetMap.clear();
 		}
-
-	this->gadgetMap.clear();
 
 	free(this->configDir);
 	XFreeGC(this->display,this->gc);
@@ -214,7 +219,9 @@ LFSTK_windowClass::~LFSTK_windowClass()
 LFSTK_windowClass::LFSTK_windowClass()
 {
 	this->initWindow(false);
-	this->setWindowGeom(0,0,0,0,WINDSETALL);	
+	this->setWindowGeom(0,0,0,0,WINDSETALL);
+		this->gadgetMap.clear();
+
 }
 
 void LFSTK_windowClass::loadGlobalColours(void)
@@ -765,8 +772,6 @@ void LFSTK_windowClass::windowClassInitCommon(windowInitStruct *wi)
 	else
 		this->useTile=false;
 
-	this->gadgetMap.clear();
-
 	this->userHome=getenv("HOME");
 	asprintf(&this->configDir,"%s/.config/LFS",this->userHome);
 	this->closeDisplayOnExit=wi->shutDisplayOnExit;
@@ -782,6 +787,7 @@ void LFSTK_windowClass::windowClassInitCommon(windowInitStruct *wi)
 				XRaiseWindow(this->display,this->window);
 				break;
 		}
+	this->gadgetMap.clear();
 }
 
 /**
@@ -792,6 +798,8 @@ void LFSTK_windowClass::windowClassInitCommon(windowInitStruct *wi)
 LFSTK_windowClass::LFSTK_windowClass(windowInitStruct *wi)
 {
 	this->windowClassInitCommon(wi);
+	this->gadgetMap.clear();
+	
 }
 
 /**
@@ -817,6 +825,7 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 	wi->shutDisplayOnExit=shutdisplayonexit;
 
 	this->windowClassInitCommon(wi);
+	this->gadgetMap.clear();
 }
 
 /**
@@ -1343,7 +1352,7 @@ void LFSTK_windowClass::sendUTF8(XSelectionRequestEvent *sev)
 * \param XEvent	*event.
 * \return 0=handled, 1=not handled, -1 close window
 */
-int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent	*event)
+int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 {
 	int	retval=0;
 

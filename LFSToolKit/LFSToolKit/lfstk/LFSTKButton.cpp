@@ -80,7 +80,6 @@ bool LFSTK_buttonClass::LFSTK_getIgnoreCB(void)
 LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity)
 {
 	XSetWindowAttributes	wa;
-	mappedListener			*ml=new mappedListener;
 
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 
@@ -95,9 +94,9 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* lab
 
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|ButtonMotionMask);
 
-	ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
-	ml->gadget=this;
-	ml->type=BUTTONGADGET;
+	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
+	this->ml->gadget=this;
+	this->ml->type=BUTTONGADGET;
 	wc->LFSTK_addMappedListener(this->window,ml);
 
 	if(this->wc->globalLib->LFSTK_getUseTheme()==true)

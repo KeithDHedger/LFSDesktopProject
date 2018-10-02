@@ -154,7 +154,7 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* imagepath,int x,int y,unsigned w,unsigned h,int gravity,bool scale)
 {
 	XSetWindowAttributes	wa;
-	mappedListener			*ml=new mappedListener;
+
 	this->LFSTK_setCommon(parentwc,imagepath,x,y,w,h,gravity);
 
 	wa.win_gravity=gravity;
@@ -165,9 +165,9 @@ LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* image
 	this->LFSTK_setCairoFontData();
 	XSelectInput(this->display,this->window,ButtonPressMask|ButtonReleaseMask|ExposureMask|ButtonMotionMask);
 
-	ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
-	ml->gadget=this;
-	ml->type=IMAGEGADGET;
+	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
+	this->ml->gadget=this;
+	this->ml->type=IMAGEGADGET;
 	this->wc->LFSTK_addMappedListener(this->window,ml);
 
 	this->LFSTK_setImageFromPath(imagepath,gravity,scale);

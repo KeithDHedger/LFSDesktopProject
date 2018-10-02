@@ -1,4 +1,7 @@
 0.3.0
+Code clean.
+Updated examples.
+Fixed random crash at exit.
 Added basic window events to window class, see examples.
 CTRL+c now copies line edit data to clipboard ( without xclip ).
 Updated examples.

@@ -194,7 +194,7 @@ class	LFSTK_gadgetClass;
 struct	mappedListener
 {
 	bool				(*function)(void *,XEvent *,int);
-	LFSTK_gadgetClass	*gadget;
+	LFSTK_gadgetClass	*gadget=NULL;
 	int					type;
 };
 

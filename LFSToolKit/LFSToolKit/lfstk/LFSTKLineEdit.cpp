@@ -45,7 +45,6 @@ LFSTK_lineEditClass::LFSTK_lineEditClass()
 LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity)
 {
 	XSetWindowAttributes	wa;
-	mappedListener			*ml=new mappedListener;
 
 	if(label==NULL)
 		label="";
@@ -65,9 +64,9 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	this->LFSTK_setCairoFontData();
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|FocusChangeMask|KeyReleaseMask|SelectionClear|SelectionRequest);
 
-	ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
-	ml->gadget=this;
-	ml->type=LINEEDITGADGET;
+	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
+	this->ml->gadget=this;
+	this->ml->type=LINEEDITGADGET;
 	this->wc->LFSTK_addMappedListener(this->window,ml);
 
 	if(strlen(label)>0)
@@ -83,16 +82,6 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	LFSTK_setColourName(NORMALCOLOUR,"white");
 	LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
 	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NULL,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
-
-
-//	this->sel=XInternAtom(this->display,"CLIPBOARD",false);
-//	//this->sel = XInternAtom(this->display, "SECONDARY", False);
-//	this->utf8 = XInternAtom(this->display, "UTF8_STRING", False);
-//
-//    /* Claim ownership of the clipboard. */
-//    XSetSelectionOwner(this->display, sel, this->window, CurrentTime);
-
-
 }
 
 /**
@@ -111,10 +100,6 @@ void LFSTK_lineEditClass::LFSTK_clearWindow()
 */
 void LFSTK_lineEditClass::LFSTK_setFocus(void)
 {
-//return;
-
-	//XGrabKeyboard(this->display,this->window,true,GrabModeAsync,GrabModeAsync,CurrentTime);
-//	XMapRaised(this->display,this->window);
 	XSetInputFocus(this->display,this->window,RevertToParent,CurrentTime);
 	this->isFocused=true;
 	this->LFSTK_clearWindow();
@@ -303,18 +288,13 @@ void LFSTK_lineEditClass::getClip(void)
 
 	selectionOwner=XGetSelectionOwner(this->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD));
 //TODO//HACK to paste into self!!
-//	if(selectionOwner==this->wc->window)
-
-printf("selectionOwner=%i this->wc->window=%i\n",selectionOwner,this->wc->window);
+//printf("selectionOwner=%i this->wc->window=%i\n",selectionOwner,this->wc->window);
 
 	if(selectionOwner==this->wc->window)
 		{
-			//if(this->clipbuffer.length()>0)
-			//	{
-					this->buffer=this->buffer+this->wc->clipBuffer;
-					this->cursorPos=this->buffer.length();
-					this->LFSTK_clearWindow();
-			//	}
+			this->buffer=this->buffer+this->wc->clipBuffer;
+			this->cursorPos=this->buffer.length();
+			this->LFSTK_clearWindow();
 			return;
 		}
 

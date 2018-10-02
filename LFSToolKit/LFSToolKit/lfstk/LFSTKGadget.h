@@ -154,6 +154,7 @@ class LFSTK_gadgetClass
 		void					initGadget(void);
 
 	protected:
+		mappedListener			*ml=NULL;
 		void					drawBox(geometryStruct* g,gadgetState state,bevelType bevel);
 		void					drawIndicator(gadgetStruct* details);
 		bevelType				getActiveBevel(void);

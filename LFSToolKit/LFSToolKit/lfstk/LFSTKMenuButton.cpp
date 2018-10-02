@@ -27,7 +27,7 @@ void LFSTK_menuButtonClass::initMenuButton(void)
 	this->subwc=new LFSTK_windowClass(0,0,1,1,"menu window",true,true,false);
 	this->subwc->LFSTK_setWindowType("_NET_WM_WINDOW_TYPE_MENU");
 	this->builtMenu=false;
-
+	this->subwc->gadgetMap.clear();
 	if(this->wc->globalLib->LFSTK_getUseTheme()==true)
 		this->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),-1);
 	else
@@ -229,7 +229,6 @@ void LFSTK_menuButtonClass::LFSTK_addMenus(menuItemStruct* menus,int cnt)
 LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity)
 {
 	XSetWindowAttributes	wa;
-	mappedListener			*ml=new mappedListener;
 
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 
@@ -246,9 +245,9 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,const c
 	this->style=BEVELOUT;
 	this->LFSTK_setLabelGravity(LEFT);
 
-	ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
-	ml->gadget=this;
-	ml->type=MENUBUTTONGADGET;
+	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
+	this->ml->gadget=this;
+	this->ml->type=MENUBUTTONGADGET;
 	this->wc->LFSTK_addMappedListener(this->window,ml);
 
 	menuItemFont=this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);

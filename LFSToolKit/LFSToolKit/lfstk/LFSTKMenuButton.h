@@ -50,7 +50,6 @@ struct menuItemStruct
  * \note and MUST be freed by application.
  *
  */
-
 class LFSTK_menuButtonClass : public LFSTK_buttonClass
 {
 	public:

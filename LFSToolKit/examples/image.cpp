@@ -50,9 +50,7 @@ bool buttonCB(void *p,void* ud)
 				{
 					printf("was a double click\n");
 					sticky=!sticky;
-					//wc->LFSTK_hideWindow();
 					wc->LFSTK_setSticky(sticky);
-					//wc->LFSTK_showWindow();
 				}
 		}
 	return(true);
@@ -129,11 +127,8 @@ int main(int argc, char **argv)
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();
-	//wc->LFSTK_setKeepBelow(true);
-//	XSync(display,false);
 
 //disks
-
 	diskWindow=new LFSTK_windowClass(100,100,200,200,"xxx",true,true);
 	sy=0;
 	for(int j=BUTTONMOUNT;j<NOMOREBUTONS;j++)
@@ -145,12 +140,7 @@ int main(int argc, char **argv)
 			sy+=GADGETHITE;
 		}
 	diskWindow->LFSTK_resizeWindow(GADGETWIDTH,sy,true);
-	
-	//diskWindow->LFSTK_showWindow(true);
-	//diskWindow->LFSTK_hideWindow();
 	tux->LFSTK_setContextWindow(diskWindow);
-//	wc->LFSTK_resizeWindow(1000,400,true);
-//wc->LFSTK_setWindowPixmap(wc->globalLib->LFSTK_getWindowPixmap(display,wc->rootWindow),800,800);
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	mainLoop=true;
@@ -161,39 +151,16 @@ int main(int argc, char **argv)
 			if(ml!=NULL)
 				ml->function(ml->gadget,&event,ml->type);
 
+			if(wc->LFSTK_handleWindowEvents(&event)<0)
+				mainLoop=false;
+
 			switch(event.type)
 				{
-					case Expose:
-						wc->LFSTK_clearWindow();
-						break;
-
-					case ResizeRequest:
-					DEBUGFUNC("ResizeRequest","");
-						wc->LFSTK_resizeWindow(event.xresizerequest.width,event.xresizerequest.height,false);
-						wc->LFSTK_setWindowPixmap(wc->globalLib->LFSTK_getWindowPixmap(display,wc->rootWindow),event.xresizerequest.width,event.xresizerequest.height);
-//						XClearWindow(wc->display,wc->window);
-						wc->LFSTK_clearWindow();
-						//XSync(display,false);
-						break;
 					case ConfigureNotify:
-					DEBUGFUNC("ConfigureNotify","");
+						//DEBUGFUNC("ConfigureNotify","");
 						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
-						//wc->globalLib->LFSTK_setCairoSurface(wc->display,wc->window,wc->visual,&wc->sfc,&wc->cr,event.xconfigurerequest.width,event.xconfigurerequest.height);
 						wc->LFSTK_setWindowPixmap(wc->globalLib->LFSTK_getWindowPixmap(display,wc->rootWindow),event.xconfigurerequest.width,event.xconfigurerequest.height);
 						XClearWindow(wc->display,wc->window);
-						//wc->LFSTK_clearWindow();
-						//XSync(display,false);
-						break;
-
-					case ClientMessage:
-					case SelectionNotify:
-						{
-							if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
-								{
-									wc->LFSTK_hideWindow();
-									mainLoop=false;
-								}
-						}
 						break;
 				}
 		}
