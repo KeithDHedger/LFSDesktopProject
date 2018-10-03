@@ -196,7 +196,7 @@ class LFSTK_windowClass
 		geometryStruct			windowGeom;
 
 
-//Atoms etc for Xdnd/cut/opy/paste
+//Atoms etc for Xdnd/cut/copy/paste
 		Atom					dNdAtoms[DNDATOMCOUNT];
 		std::map<std::string,int> dNdTypes;
 		Atom					toBeRequested;

@@ -1333,6 +1333,49 @@ void LFSTK_windowClass::LFSTK_setDoubleClickTime(unsigned interval)
 */
 void LFSTK_windowClass::sendUTF8(XSelectionRequestEvent *sev)
 {
+	XEvent	res;
+	Window	cwin;
+	Window	win;
+	Atom	pty;
+
+/*	Thanks to xclip for this code.
+	Web:
+		https://github.com/astrand/xclip
+	Email:
+		astrand@lysator.liu.se
+*/
+
+/* set the window and property that is being used */
+	win=sev->requestor;
+	pty=sev->property;
+
+/* put the data into an property */
+	if (sev->target==this->LFSTK_getDnDAtom(XA_TARGETS))
+		{
+			Atom types[2]={this->LFSTK_getDnDAtom(XA_TARGETS),this->LFSTK_getDnDAtom(XA_UTF8_STRING)};
+/* send data all at once (not using INCR) */
+			XChangeProperty(this->display,win,pty,XA_ATOM,32,PropModeReplace,(unsigned char *)types,(int)(sizeof(types) / sizeof(Atom)));
+		}
+	else
+		{
+/* send data all at once (not using INCR) */
+			XChangeProperty(this->display,win,pty,this->LFSTK_getDnDAtom(XA_UTF8_STRING),8,PropModeReplace,(unsigned char *)this->clipBuffer.c_str(),(int)this->clipBuffer.length());
+		}
+
+/* set values for the response event */
+	res.xselection.property=pty;
+	res.xselection.type=SelectionNotify;
+	res.xselection.display=sev->display;
+	res.xselection.requestor=win;
+	res.xselection.selection=sev->selection;
+	res.xselection.target=sev->target;
+	res.xselection.time=sev->time;
+
+/* send the response event */
+		XSendEvent(this->display,sev->requestor,0,0,&res);
+		XFlush(this->display);
+
+#if 0
 	XSelectionEvent	ssev;
 
     XChangeProperty(this->display,sev->requestor,sev->property,this->LFSTK_getDnDAtom(XA_UTF8_STRING),8,PropModeReplace,(unsigned char *)this->clipBuffer.c_str(),this->clipBuffer.length());
@@ -1345,6 +1388,7 @@ void LFSTK_windowClass::sendUTF8(XSelectionRequestEvent *sev)
     ssev.time=sev->time;
 
     XSendEvent(this->display,sev->requestor,True,NoEventMask,(XEvent *)&ssev);
+#endif
 }
 
 /**
