@@ -149,31 +149,31 @@ bool buttonCB(void *p,void* ud)
 		{
 			if(strcmp((char*)ud,"WALLPAPERPREFS")==0)
 				{
-					asprintf(&command,"lfsbackdropprefs --window=%i",wc->window);
+					asprintf(&command,"lfsbackdropprefs --window=%i &",wc->window);
 					system(command);
 					free(command);
 				}
 			if(strcmp((char*)ud,"TOOLKITPREFS")==0)
 				{
-					asprintf(&command,"lfstkprefs --window=%i",wc->window);
+					asprintf(&command,"lfstkprefs --window=%i &",wc->window);
 					system(command);
 					free(command);
 				}
 			if(strcmp((char*)ud,"DESKTOPPREFS")==0)
 				{
-					asprintf(&command,"lfsdesktopprefs --window=%i",wc->window);
+					asprintf(&command,"lfsdesktopprefs --window=%i &",wc->window);
 					system(command);
 					free(command);
 				}
 			if(strcmp((char*)ud,"WMPREFS")==0)
 				{
-					asprintf(&command,"lfswmprefs --window=%i",wc->window);
+					asprintf(&command,"lfswmprefs --window=%i &",wc->window);
 					system(command);
 					free(command);
 				}
 			if(strcmp((char*)ud,"PANELPREFS")==0)
 				{
-					asprintf(&command,"lfspanelprefs --window=%i",wc->window);
+					asprintf(&command,"lfspanelprefs --window=%i &",wc->window);
 					system(command);
 					free(command);
 				}

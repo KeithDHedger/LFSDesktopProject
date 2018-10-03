@@ -1,4 +1,5 @@
 0.1.2
+Fixed copying/pasting between prefs.
 Updated to use LFSTK_handleWindowEvents.
 Updated to use pkg-config for lfstoolkit.
 Going over to internal sysv msging.
