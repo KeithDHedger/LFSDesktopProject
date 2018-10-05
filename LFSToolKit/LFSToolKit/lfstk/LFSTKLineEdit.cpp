@@ -276,6 +276,9 @@ void LFSTK_lineEditClass::drawLabel(void)
 	free(foward);
 }
 
+/**
+* Set contents to the clipboard.
+*/
 void LFSTK_lineEditClass::getClip(void)
 {
 	Window			selectionOwner;
@@ -292,8 +295,8 @@ void LFSTK_lineEditClass::getClip(void)
 
 	if(selectionOwner==this->wc->window)
 		{
-			this->buffer=this->buffer+this->wc->clipBuffer;
-			this->cursorPos=this->buffer.length();
+			//this->buffer=this->buffer+this->wc->clipBuffer;
+			this->LFSTK_setFormatedText(this->wc->clipBuffer.c_str(),false);
 			this->LFSTK_clearWindow();
 			return;
 		}
@@ -327,8 +330,7 @@ void LFSTK_lineEditClass::getClip(void)
 					result=XGetWindowProperty(this->display,this->window,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),0,bytesLeft,False,AnyPropertyType,&type,&format,&len,&dummy,&data);
 					if (result==Success)
 						{
-							this->buffer.insert(this->cursorPos,(char*)data);
-							this->cursorPos+=strlen((char*)data);
+							this->LFSTK_setFormatedText((const char*)data,false);
 							XFree(data);
 						}
 				}
@@ -450,7 +452,7 @@ void LFSTK_lineEditClass::LFSTK_dropData(propertyStruct* data)
 	int	endl;
 
 	if(strcasecmp(data->mimeType,"text/plain")==0)
-		this->LFSTK_setBuffer((const char*)data->data);
+		this->LFSTK_setFormatedText((const char*)data->data,true);
 
 	if(strcasecmp(data->mimeType,"text/uri-list")==0)
 		{
@@ -464,9 +466,54 @@ void LFSTK_lineEditClass::LFSTK_dropData(propertyStruct* data)
 					endl--;
 				}
 			ret=this->wc->globalLib->LFSTK_oneLiner("echo -n \"%s\"|sed 's|^file://||;s|%%20| |g'",d);
-			this->LFSTK_setBuffer(ret);
+			this->LFSTK_setFormatedText((const char*)ret,true);
 			free(ret);
 			free(d);
 		}
 }
+
+/**
+* Set formated txt.
+* \param const char* Text to be formated.
+* \param bool true=Replace contents, false=insert.
+*/
+void  LFSTK_lineEditClass::LFSTK_setFormatedText(const char *txt,bool replace)
+{
+	std::string	formtxt="";
+	int			len=0;
+
+	for(int j=0;j<strlen(txt);j++)
+		{
+			switch(txt[j])
+				{
+					case '\t':
+						formtxt.append("        ");
+						len+=8;
+						break;
+					case '\n':
+					case 0:
+					case '\r':
+						break;
+					default:
+						formtxt.append(1,txt[j]);
+						len++;
+						break;
+				}
+		}
+
+	if(replace==true)
+		{
+			this->buffer=formtxt;
+			this->cursorPos=this->buffer.length();
+			this->LFSTK_clearWindow();
+		}
+	else
+		{
+			this->buffer.insert(this->cursorPos,formtxt);
+			this->cursorPos+=len;
+			this->LFSTK_clearWindow();
+		}
+}
+
+
 

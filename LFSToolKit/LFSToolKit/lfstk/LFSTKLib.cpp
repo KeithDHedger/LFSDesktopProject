@@ -554,8 +554,7 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 			case SelectionRequest:
 				//fprintf(stderr,"from SelectionRequest lib\n");
 				//retval=gadget->selectionRequest((XSelectionRequestEvent*)e);
-				break;
-				
+				break;				
 		}
 	if(retval==false)
 		XSendEvent(gadget->wc->display,gadget->wc->window,False,0L,e);

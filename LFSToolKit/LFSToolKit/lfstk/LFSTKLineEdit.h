@@ -56,6 +56,7 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		void LFSTK_setFocus(void);
 
 		void LFSTK_dropData(propertyStruct* data);
+		void LFSTK_setFormatedText(const char *txt,bool replace);
 
 	private:
 		void drawLabel(void);
