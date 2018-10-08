@@ -1,0 +1,585 @@
+/*
+ *
+ * ©K. D. Hedger. Wed  5 Aug 12:36:15 BST 2015 keithdhedger@gmail.com
+
+ * This file (LFSTKLineEdit.cpp) is part of LFSToolKit.
+
+ * LFSToolKit is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation,either version 3 of the License,or
+ * at your option) any later version.
+
+ * LFSToolKit is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with LFSToolKit.  If not,see <http://www.gnu.org/licenses/>.
+ */
+
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+#include <math.h>
+#include <cairo.h>
+
+#include <vector>
+
+#include "lfstk/LFSTKGlobals.h"
+
+LFSTK_multiLineEditClass::~LFSTK_multiLineEditClass()
+{
+}
+
+LFSTK_multiLineEditClass::LFSTK_multiLineEditClass()
+{
+}
+
+/**
+* Main line edit constructor.
+*
+* \param parentwc Main parent window class.
+* \param label Displayed name.
+* \param x X pos.
+* \param y Y pos.
+* \param w Width.
+* \param h Height.
+* \param gravity Button gravity.
+*/
+LFSTK_multiLineEditClass::LFSTK_multiLineEditClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity)
+{
+	XSetWindowAttributes	wa;
+
+	if(label==NULL)
+		label="";
+
+	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
+	this->isFocused=false;
+	this->inWindow=false;
+
+	wa.win_gravity=gravity;
+	wa.bit_gravity=gravity;
+	wa.save_under=true;
+
+	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWBitGravity,&wa);
+	this->gc=XCreateGC(this->display,this->window,0,NULL);
+	this->LFSTK_setFontString(this->monoFontString);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+	this->LFSTK_setCairoFontData();
+	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|FocusChangeMask|KeyReleaseMask|SelectionClear|SelectionRequest);
+
+	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
+	this->ml->gadget=this;
+	this->ml->type=LINEEDITGADGET;
+	this->wc->LFSTK_addMappedListener(this->window,ml);
+
+	if(strlen(label)>0)
+		this->cursorPos=strlen(label);
+	else
+		this->cursorPos=0;
+	this->buffer=label;
+
+	this->wc->LFSTK_initDnD();
+	this->gadgetAcceptsDnD=true;
+	this->labelGravity=LEFT;
+
+	LFSTK_setColourName(NORMALCOLOUR,"white");
+	LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
+	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NULL,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
+
+	this->setDisplayLines();
+}
+
+/**
+* Clear the gadget window to the appropriate state.
+*/
+void LFSTK_multiLineEditClass::LFSTK_clearWindow()
+{
+	this->gadgetDetails.bevel=BEVELIN;
+	this->drawText();
+	this->drawBevel(&this->gadgetDetails.gadgetGeom,this->gadgetDetails.bevel);
+	return;
+}
+
+/**
+* Set this gadget to have the focus..
+*/
+void LFSTK_multiLineEditClass::LFSTK_setFocus(void)
+{
+	XSetInputFocus(this->display,this->window,RevertToParent,CurrentTime);
+	this->isFocused=true;
+	this->LFSTK_clearWindow();
+}
+
+/**
+* Configure Message callback.
+* \param e XButtonEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
+bool LFSTK_multiLineEditClass::clientMessage(XEvent *e)
+{
+printf("confmes from line edit\n");
+	return(true);
+}
+
+/**
+* Mouse enter callback.
+* \param e XButtonEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
+bool LFSTK_multiLineEditClass::mouseEnter(XButtonEvent *e)
+{
+	return(true);
+}
+
+/**
+* Mouse down callback.
+* \param e XButtonEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
+bool LFSTK_multiLineEditClass::mouseDown(XButtonEvent *e)
+{
+	if(this->isActive==false)
+		{
+			this->LFSTK_clearWindow();
+			return(true);
+		}
+
+	return(true);
+}
+
+void LFSTK_multiLineEditClass::LFSTK_resizeWindow(int w,int h)
+{
+	this->gadgetGeom.w=w-(pad*2);
+	this->gadgetGeom.h=h-(pad*2);
+	XResizeWindow(this->display,this->window,this->gadgetGeom.w,this->gadgetGeom.h);
+	this->LFSTK_clearWindow();
+}
+
+/**
+* Lost focus callback.
+* \param e XEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
+bool LFSTK_multiLineEditClass::lostFocus(XEvent *e)
+{
+	if(this->isFocused==true)
+		{
+			XUngrabKeyboard(this->display,CurrentTime);
+			this->isFocused=false;
+			this->LFSTK_clearWindow();
+		}
+	return(true);
+}
+
+/**
+* Got focus callback.
+* \param e XEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
+bool LFSTK_multiLineEditClass::gotFocus(XEvent *e)
+{
+	if(this->isFocused==false)
+		{
+			XGrabKeyboard(this->display,this->window,true,GrabModeAsync,GrabModeAsync,CurrentTime);
+			this->isFocused=true;
+			XSetInputFocus(this->display,this->window,RevertToParent,CurrentTime);
+			this->LFSTK_clearWindow();
+		}
+	return(true);
+}
+
+/**
+* Set the contents of the text buffer.
+* \param const char *str String to set.
+*/
+void LFSTK_multiLineEditClass::LFSTK_setBuffer(const char *str)
+{
+	const char	*bufferstr=str;
+
+	if(bufferstr==NULL)
+		bufferstr="";
+	this->buffer=bufferstr;
+	this->cursorPos=strlen(bufferstr);
+	this->LFSTK_clearWindow();
+}
+
+/**
+* Return the contents of the gadget.
+* \return Return's a std::string.
+* \note Don't free the returned string.
+*/
+const std::string* LFSTK_multiLineEditClass::LFSTK_getBuffer(void)
+{
+	return(const_cast<std::string*>(&(this->buffer)));
+}
+
+/**
+* Return the contents of the gadget.
+* \return Return's a c str.
+* \note Don't free the returned string.
+*/
+const char* LFSTK_multiLineEditClass::LFSTK_getCStr(void)
+{
+	return(this->buffer.c_str());
+}
+
+void LFSTK_multiLineEditClass::drawText(void)
+{
+	int			cursorwidth;
+	int			startchar=0;
+	int			len=this->cursorPos;
+	char		*buffer;
+	const char	*curs="";
+	double		yoffset=0;
+
+	cairo_save(this->cr);
+		cairo_reset_clip(this->cr);
+		cairo_set_source_rgba(this->cr,1.0,1.0,1.0,1.0);
+		cairo_paint(this->cr);
+	cairo_restore(this->cr);
+	
+	if(this->isFocused==true)
+		curs=CURSORCHAR;
+
+	if(this->buffer.length()>0)
+		asprintf(&buffer,"%s%s%s\n",this->buffer.substr(0,this->cursorPos).c_str(),curs,this->buffer.substr(this->cursorPos,this->buffer.length()-this->cursorPos).c_str());
+
+
+	cairo_save(this->cr);
+		cairo_select_font_face(this->cr,fontName,slant,weight);
+		cairo_set_font_size(this->cr,fontSize);
+		cairo_set_source_rgba(this->cr,0.0,0,0,1.0);
+		for (int j=0; j<this->lines.size(); j++)
+			{
+			yoffset+=this->textExtents.height;
+			cairo_move_to(this->cr,this->pad,yoffset);
+			cairo_show_text(this->cr,lines.at(j)->line);
+			}
+	cairo_restore(this->cr);
+
+	free(buffer);
+}
+
+/**
+* Set contents to the clipboard.
+*/
+void LFSTK_multiLineEditClass::getClip(void)
+{
+	Window			selectionOwner;
+	unsigned char	*data=NULL;
+	Atom			type;
+	int				format,result;
+	unsigned long	len=0,bytesLeft=0,dummy=0;
+	bool			run=true;
+	XEvent			event;
+
+	selectionOwner=XGetSelectionOwner(this->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD));
+//TODO//HACK to paste into self!!
+//printf("selectionOwner=%i this->wc->window=%i\n",selectionOwner,this->wc->window);
+
+	if(selectionOwner==this->wc->window)
+		{
+			//this->buffer=this->buffer+this->wc->clipBuffer;
+			this->LFSTK_setFormatedText(this->wc->clipBuffer.c_str(),false);
+			this->LFSTK_clearWindow();
+			return;
+		}
+
+	if (selectionOwner!=None)
+		{
+			XConvertSelection(this->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->wc->LFSTK_getDnDAtom(XA_UTF8_STRING),this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->window,CurrentTime);
+			XFlush(this->display);
+
+			while (run==true)
+				{
+					XNextEvent(this->display,&event);
+					switch(event.type)
+						{
+							case SelectionNotify:
+								if(event.xselection.requestor==this->window)
+									run=false;
+								break;
+						}
+				}
+
+			XGetWindowProperty(this->display,this->window,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),0,0,False,AnyPropertyType,&type,&format,&len,&bytesLeft,&data);
+			if(data!=NULL)
+				{
+					XFree(data);
+					data=NULL;
+				}
+
+			if(bytesLeft>0)
+				{
+					result=XGetWindowProperty(this->display,this->window,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),0,bytesLeft,False,AnyPropertyType,&type,&format,&len,&dummy,&data);
+					if (result==Success)
+						{
+							this->LFSTK_setFormatedText((const char*)data,false);
+							XFree(data);
+						}
+				}
+			XDeleteProperty(this->display,this->window,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD));
+		}
+}
+
+/**
+* Key release callback.
+* \param e XEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+* \note button down callback is used for "Return" key callback.
+* \note button up callback is used for key callback.
+* \note Keysyms here keysymdef.h
+*/
+bool LFSTK_multiLineEditClass::keyRelease(XKeyEvent *e)
+{
+	char	c[255];
+	KeySym	keysym_return;
+	char	*command;
+
+	if(this->isActive==false)
+		{
+			this->LFSTK_clearWindow();
+			return(true);
+		}
+
+	XLookupString(e,(char*)&c,255,&keysym_return,NULL);
+
+	if(this->isFocused==false)
+		return(true);
+
+	if(e->state==ControlMask)
+		{
+			if(keysym_return==XK_v)
+				this->getClip();
+//TODO//
+			if(keysym_return==XK_c)
+				{
+					////this->clipSelection=XInternAtom(this->display,"CLIPBOARD",false);
+					////this->clipUTF8=XInternAtom(this->display,"STRING",false);
+/* Claim ownership of the clipboard. */
+					//XSetSelectionOwner(this->display,this->clipSelection,this->wc->window,CurrentTime);
+					////XSetSelectionOwner(this->display,this->clipSelection,this->window,CurrentTime);
+					//XSetSelectionOwner(this->display,this->clipUTF8,this->wc->window,CurrentTime);
+					this->wc->clipBuffer=this->buffer;
+					XSetSelectionOwner(this->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->wc->window,CurrentTime);
+				}
+
+			if(keysym_return==XK_Delete)
+				{
+					this->LFSTK_setBuffer("");
+				}
+		}
+	else
+		{
+			switch(keysym_return)
+				{
+				case XK_Tab:
+					this->buffer.insert(this->cursorPos,8,' ');
+					this->cursorPos+=8;
+
+					break;
+				case XK_BackSpace:
+					if(this->cursorPos>0)
+						{
+							this->buffer.erase(this->cursorPos-1,1);
+							this->cursorPos--;
+						}
+					break;
+				case XK_Left:
+					if(this->cursorPos>0)
+						this->cursorPos--;
+					break;
+				case XK_Right:
+					if(this->cursorPos<this->buffer.length())
+						this->cursorPos++;
+					break;
+				case XK_End:
+				case XK_Page_Down:
+					this->cursorPos=this->buffer.length();
+					break;
+				case XK_Home:
+				case XK_Page_Up:
+					this->cursorPos=0;
+					break;
+				case XK_Down:
+				case XK_Up:
+				case XK_Select ... XK_Num_Lock:
+				case XK_F1 ... XK_R15:
+					break;
+				case XK_Return:
+					this->buffer.insert(this->cursorPos,1,'\n');
+					this->cursorPos++;
+					//if(this->callback.pressCallback!=NULL)
+					//	return(this->callback.pressCallback(this,this->callback.userData));
+				//	this->buffer.insert(this->cursorPos,1,c[0]);
+					break;
+
+				default:
+					if(c[0]==0)
+						break;
+					this->buffer.insert(this->cursorPos,1,c[0]);
+					this->cursorPos++;
+					break;
+				}
+		}
+
+	this->LFSTK_clearWindow();
+	if(this->callback.releaseCallback!=NULL)
+		return(this->callback.releaseCallback(this,this->callback.userData));
+
+	return(true);
+}
+
+/**
+* Drop data.
+* \param data Data drooped on gadget as string.
+*/
+void LFSTK_multiLineEditClass::LFSTK_dropData(propertyStruct* data)
+{
+	int	endl;
+
+	if(strcasecmp(data->mimeType,"text/plain")==0)
+		this->LFSTK_setFormatedText((const char*)data->data,true);
+
+	if(strcasecmp(data->mimeType,"text/uri-list")==0)
+		{
+			char	*d;
+			char	*ret;
+			asprintf(&d,"%s",(const char*)data->data);
+			endl=strlen(d)-1;
+			while ((endl >= 0) && (isspace(d[endl])) )
+				{
+					d[endl]=0;
+					endl--;
+				}
+			ret=this->wc->globalLib->LFSTK_oneLiner("echo -n \"%s\"|sed 's|^file://||;s|%%20| |g'",d);
+			this->LFSTK_setFormatedText((const char*)ret,true);
+			free(ret);
+			free(d);
+		}
+}
+
+/**
+* Set up lines for display.
+*/
+void  LFSTK_multiLineEditClass::setDisplayLines(void)
+{
+	cairo_text_extents_t	extents;
+	char					data[4096]={0,};
+	int						start;
+	int						len;
+	int						y;
+	geometryStruct			geom;
+	lineStruct				*newline;
+
+	this->LFSTK_getGeom(&geom);
+	start=0;
+	len=0;
+	y=0;
+
+	for (int i=0; i<lines.size(); i++)
+		{
+			free(lines.at(i)->line);
+			delete lines.at(i);
+		}
+	this->lines.clear();
+
+	for(int j=0;j<this->buffer.length();j++)
+		{
+			data[len]=this->buffer.c_str()[j];
+			data[len+1]=0;
+
+			cairo_select_font_face(this->cr,fontName,slant,weight);
+			cairo_set_font_size(this->cr,fontSize);
+			cairo_text_extents(this->cr,data,&extents);
+			if(((extents.x_advance)>geom.w) || (data[len]=='\n'))
+				{
+					if(data[len]!='\n')
+						j--;
+
+					data[len++]=0;
+					newline=new lineStruct;
+					asprintf(&newline->line,"%s",data);
+					newline->xpos=0;
+					newline->ypos=y;
+					newline->width=extents.width;
+					newline->height=extents.height;
+					lines.push_back(newline);
+					data[0]=0;
+					len=0;
+					start=j;
+					y+=extents.height;
+				}
+			else
+				{
+					len++;
+					data[len]=0;
+				}
+		}
+
+	if(strlen(data)>0)
+		{
+			newline=new lineStruct;
+			asprintf(&newline->line,"%s",data);
+			newline->xpos=0;
+			newline->ypos=y;
+			newline->width=extents.width;
+			newline->height=extents.height;
+			lines.push_back(newline);
+		}
+
+	this->LFSTK_clearWindow();
+}
+
+/**
+* Set formated txt.
+* \param const char* Text to be formated.
+* \param bool true=Replace contents, false=insert.
+*/
+void  LFSTK_multiLineEditClass::LFSTK_setFormatedText(const char *txt,bool replace)
+{
+	std::string	formtxt="";
+	int			len=0;
+
+	for(int j=0;j<strlen(txt);j++)
+		{
+			switch(txt[j])
+				{
+					case '\t':
+						formtxt.append("    ");
+						len+=4;
+						break;
+						break;
+					case 0:
+					case '\r':
+						break;
+					default:
+						formtxt.append(1,txt[j]);
+						len++;
+						break;
+				}
+		}
+
+	if(replace==true)
+		{
+			this->buffer=formtxt;
+			this->cursorPos=this->buffer.length();
+			this->LFSTK_clearWindow();
+		}
+	else
+		{
+			this->buffer.insert(this->cursorPos,formtxt);
+			this->cursorPos+=len;
+			this->LFSTK_clearWindow();
+		}
+
+DEBUGFUNC("<<<<<<<<<<<<<","");
+	this->setDisplayLines();
+}
+
+
+

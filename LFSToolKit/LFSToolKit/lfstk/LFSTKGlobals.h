@@ -99,6 +99,9 @@ static void debugFunc(const char *file,const char *func,int line,const char *fmt
 							case 'p':
 								sprintf(subbuffer,"%p",va_arg(ap,char*));
 								break;
+							case 'c':
+								sprintf(subbuffer,"%c",va_arg(ap,int));
+								break;
 							default:
 								sprintf(subbuffer,"%c",fmt[0]);
 								break;
@@ -253,5 +256,6 @@ enum {DESKTOP_MSG=1000,WMANAGER_MSG,PANEL_MSG,WALLPAPER_MSG,TOOLKIT_MSG,APPEARAN
 #include "LFSTKListGadget.h"
 #include "LFSTKFileDialog.h"
 #include "LFSTKFontDialog.h"
+#include "LFSTKMultiLineEdit.h"
 
 #endif
