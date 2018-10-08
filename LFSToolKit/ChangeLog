@@ -1,4 +1,6 @@
 0.3.0
+Added multi line edit to examples.
+Done cursor keys in multi line edit.
 Added multiline text gadget.
 Paste/drop in line edit now formats tabs=8 spaces, ignores new lines.
 Fixed line edit copy.

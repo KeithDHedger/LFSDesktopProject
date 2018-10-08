@@ -26,7 +26,7 @@
 #include <X11/Xatom.h>
 #include <vector>
 
-#define CURSORCHAR "█"
+#define BARCURSORCHAR '|'
 
 struct lineStruct
 {

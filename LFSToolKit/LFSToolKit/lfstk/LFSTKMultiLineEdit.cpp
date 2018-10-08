@@ -111,6 +111,7 @@ void LFSTK_multiLineEditClass::LFSTK_setFocus(void)
 {
 	XSetInputFocus(this->display,this->window,RevertToParent,CurrentTime);
 	this->isFocused=true;
+	this->setDisplayLines();
 	this->LFSTK_clearWindow();
 }
 
@@ -170,6 +171,7 @@ bool LFSTK_multiLineEditClass::lostFocus(XEvent *e)
 		{
 			XUngrabKeyboard(this->display,CurrentTime);
 			this->isFocused=false;
+			this->setDisplayLines();
 			this->LFSTK_clearWindow();
 		}
 	return(true);
@@ -187,6 +189,7 @@ bool LFSTK_multiLineEditClass::gotFocus(XEvent *e)
 			XGrabKeyboard(this->display,this->window,true,GrabModeAsync,GrabModeAsync,CurrentTime);
 			this->isFocused=true;
 			XSetInputFocus(this->display,this->window,RevertToParent,CurrentTime);
+			this->setDisplayLines();
 			this->LFSTK_clearWindow();
 		}
 	return(true);
@@ -242,11 +245,11 @@ void LFSTK_multiLineEditClass::drawText(void)
 		cairo_paint(this->cr);
 	cairo_restore(this->cr);
 	
-	if(this->isFocused==true)
-		curs=CURSORCHAR;
-
-	if(this->buffer.length()>0)
-		asprintf(&buffer,"%s%s%s\n",this->buffer.substr(0,this->cursorPos).c_str(),curs,this->buffer.substr(this->cursorPos,this->buffer.length()-this->cursorPos).c_str());
+//	if(this->isFocused==true)
+//		curs=CURSORCHAR;
+//
+//	if(this->buffer.length()>0)
+//		asprintf(&buffer,"%s%s%s\n",this->buffer.substr(0,this->cursorPos).c_str(),curs,this->buffer.substr(this->cursorPos,this->buffer.length()-this->cursorPos).c_str());
 
 
 	cairo_save(this->cr);
@@ -255,9 +258,9 @@ void LFSTK_multiLineEditClass::drawText(void)
 		cairo_set_source_rgba(this->cr,0.0,0,0,1.0);
 		for (int j=0; j<this->lines.size(); j++)
 			{
-			yoffset+=this->textExtents.height;
-			cairo_move_to(this->cr,this->pad,yoffset);
-			cairo_show_text(this->cr,lines.at(j)->line);
+				yoffset+=this->textExtents.height;
+				cairo_move_to(this->cr,this->pad,yoffset);
+				cairo_show_text(this->cr,lines.at(j)->line);
 			}
 	cairo_restore(this->cr);
 
@@ -358,12 +361,6 @@ bool LFSTK_multiLineEditClass::keyRelease(XKeyEvent *e)
 //TODO//
 			if(keysym_return==XK_c)
 				{
-					////this->clipSelection=XInternAtom(this->display,"CLIPBOARD",false);
-					////this->clipUTF8=XInternAtom(this->display,"STRING",false);
-/* Claim ownership of the clipboard. */
-					//XSetSelectionOwner(this->display,this->clipSelection,this->wc->window,CurrentTime);
-					////XSetSelectionOwner(this->display,this->clipSelection,this->window,CurrentTime);
-					//XSetSelectionOwner(this->display,this->clipUTF8,this->wc->window,CurrentTime);
 					this->wc->clipBuffer=this->buffer;
 					XSetSelectionOwner(this->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->wc->window,CurrentTime);
 				}
@@ -398,23 +395,45 @@ bool LFSTK_multiLineEditClass::keyRelease(XKeyEvent *e)
 						this->cursorPos++;
 					break;
 				case XK_End:
+					while((this->cursorPos<this->buffer.length()) && (this->buffer[this->cursorPos]!='\n'))
+						this->cursorPos++;
+					break;
 				case XK_Page_Down:
 					this->cursorPos=this->buffer.length();
 					break;
 				case XK_Home:
+					while((this->cursorPos>0) && (this->buffer[this->cursorPos]!='\n'))
+						this->cursorPos--;
+					if(this->cursorPos!=0)
+						this->cursorPos++;
+					break;
 				case XK_Page_Up:
 					this->cursorPos=0;
 					break;
 				case XK_Down:
+					if(this->cursorPos>this->buffer.length())
+						break;
+					do
+						this->cursorPos++;
+					while((this->cursorPos<this->buffer.length()) && (this->buffer[this->cursorPos]!='\n'));
+					if(this->cursorPos>this->buffer.length())
+						this->cursorPos=this->buffer.length();
+					break;
 				case XK_Up:
+					if(this->cursorPos==0)
+						break;
+					do
+						this->cursorPos--;
+					while((this->cursorPos>0) && (this->buffer[this->cursorPos]!='\n'));
+					break;
 				case XK_Select ... XK_Num_Lock:
 				case XK_F1 ... XK_R15:
 					break;
 				case XK_Return:
 					this->buffer.insert(this->cursorPos,1,'\n');
 					this->cursorPos++;
-					//if(this->callback.pressCallback!=NULL)
-					//	return(this->callback.pressCallback(this,this->callback.userData));
+					if(this->callback.pressCallback!=NULL)
+						return(this->callback.pressCallback(this,this->callback.userData));
 				//	this->buffer.insert(this->cursorPos,1,c[0]);
 					break;
 
@@ -427,6 +446,7 @@ bool LFSTK_multiLineEditClass::keyRelease(XKeyEvent *e)
 				}
 		}
 
+	this->setDisplayLines();
 	this->LFSTK_clearWindow();
 	if(this->callback.releaseCallback!=NULL)
 		return(this->callback.releaseCallback(this,this->callback.userData));
@@ -490,6 +510,11 @@ void  LFSTK_multiLineEditClass::setDisplayLines(void)
 
 	for(int j=0;j<this->buffer.length();j++)
 		{
+			if((this->cursorPos==j) && (this->isFocused==true))
+				{
+					data[len]=BARCURSORCHAR;
+					len++;
+				}
 			data[len]=this->buffer.c_str()[j];
 			data[len+1]=0;
 
@@ -524,7 +549,10 @@ void  LFSTK_multiLineEditClass::setDisplayLines(void)
 	if(strlen(data)>0)
 		{
 			newline=new lineStruct;
-			asprintf(&newline->line,"%s",data);
+			if((this->cursorPos==this->buffer.length()) && (this->isFocused==true))
+				asprintf(&newline->line,"%s|",data);
+			else
+				asprintf(&newline->line,"%s",data);
 			newline->xpos=0;
 			newline->ypos=y;
 			newline->width=extents.width;
