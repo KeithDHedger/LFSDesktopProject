@@ -1,4 +1,5 @@
 0.3.0
+Delete key now deletes forward in line edit and multi line edit.
 Added multi line edit to examples.
 Done cursor keys in multi line edit.
 Added multiline text gadget.

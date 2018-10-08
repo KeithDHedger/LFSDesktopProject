@@ -370,12 +370,6 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 //TODO//
 			if(keysym_return==XK_c)
 				{
-					////this->clipSelection=XInternAtom(this->display,"CLIPBOARD",false);
-					////this->clipUTF8=XInternAtom(this->display,"STRING",false);
-/* Claim ownership of the clipboard. */
-					//XSetSelectionOwner(this->display,this->clipSelection,this->wc->window,CurrentTime);
-					////XSetSelectionOwner(this->display,this->clipSelection,this->window,CurrentTime);
-					//XSetSelectionOwner(this->display,this->clipUTF8,this->wc->window,CurrentTime);
 					this->wc->clipBuffer=this->buffer;
 					XSetSelectionOwner(this->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->wc->window,CurrentTime);
 				}
@@ -400,6 +394,9 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 							this->buffer.erase(this->cursorPos-1,1);
 							this->cursorPos--;
 						}
+					break;
+				case XK_Delete:
+					this->buffer.erase(this->cursorPos,1);
 					break;
 				case XK_Left:
 					if(this->cursorPos>0)

@@ -375,8 +375,8 @@ bool LFSTK_multiLineEditClass::keyRelease(XKeyEvent *e)
 			switch(keysym_return)
 				{
 				case XK_Tab:
-					this->buffer.insert(this->cursorPos,8,' ');
-					this->cursorPos+=8;
+					this->buffer.insert(this->cursorPos,4,' ');
+					this->cursorPos+=4;
 
 					break;
 				case XK_BackSpace:
@@ -385,6 +385,9 @@ bool LFSTK_multiLineEditClass::keyRelease(XKeyEvent *e)
 							this->buffer.erase(this->cursorPos-1,1);
 							this->cursorPos--;
 						}
+					break;
+				case XK_Delete:
+					this->buffer.erase(this->cursorPos,1);
 					break;
 				case XK_Left:
 					if(this->cursorPos>0)
@@ -434,7 +437,6 @@ bool LFSTK_multiLineEditClass::keyRelease(XKeyEvent *e)
 					this->cursorPos++;
 					if(this->callback.pressCallback!=NULL)
 						return(this->callback.pressCallback(this,this->callback.userData));
-				//	this->buffer.insert(this->cursorPos,1,c[0]);
 					break;
 
 				default:
@@ -490,16 +492,12 @@ void  LFSTK_multiLineEditClass::setDisplayLines(void)
 {
 	cairo_text_extents_t	extents;
 	char					data[4096]={0,};
-	int						start;
 	int						len;
-	int						y;
 	geometryStruct			geom;
 	lineStruct				*newline;
 
 	this->LFSTK_getGeom(&geom);
-	start=0;
 	len=0;
-	y=0;
 
 	for (int i=0; i<lines.size(); i++)
 		{
@@ -530,14 +528,12 @@ void  LFSTK_multiLineEditClass::setDisplayLines(void)
 					newline=new lineStruct;
 					asprintf(&newline->line,"%s",data);
 					newline->xpos=0;
-					newline->ypos=y;
+					newline->ypos=0;
 					newline->width=extents.width;
 					newline->height=extents.height;
 					lines.push_back(newline);
 					data[0]=0;
 					len=0;
-					start=j;
-					y+=extents.height;
 				}
 			else
 				{
@@ -554,7 +550,7 @@ void  LFSTK_multiLineEditClass::setDisplayLines(void)
 			else
 				asprintf(&newline->line,"%s",data);
 			newline->xpos=0;
-			newline->ypos=y;
+			newline->ypos=0;
 			newline->width=extents.width;
 			newline->height=extents.height;
 			lines.push_back(newline);

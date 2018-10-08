@@ -30,11 +30,11 @@
 
 struct lineStruct
 {
-	char	*line;
-	double		xpos;
-	double		ypos;
-	double		width;
-	double		height;
+	char		*line;
+	double		xpos;//RESERVED
+	double		ypos;//RESERVED
+	double		width;//RESERVED
+	double		height;//RESERVED
 };
 
 /**
