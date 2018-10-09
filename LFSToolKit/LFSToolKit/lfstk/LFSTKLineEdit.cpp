@@ -221,6 +221,137 @@ const char* LFSTK_lineEditClass::LFSTK_getCStr(void)
 
 void LFSTK_lineEditClass::drawLabel(void)
 {
+//	int			cursorwidth;
+//	int			startchar=0;
+//	int			len=this->cursorPos;
+//	char		*buffer;
+//	const char	*curs="";
+//	char		*foward;
+
+	int						cursorwidth;
+	int						startchar=0;
+	int						len=this->cursorPos;
+	char					*buffer;
+	const char				*curs="";
+	double					yoffset=0;
+	cairo_text_extents_t	partextents;
+	cairo_text_extents_t	charextents;
+
+	cairo_save(this->cr);
+		cairo_reset_clip(this->cr);
+		cairo_set_source_rgba(this->cr,1.0,1.0,1.0,1.0);
+		cairo_paint(this->cr);
+	cairo_restore(this->cr);
+	
+	cairo_save(this->cr);
+		cairo_select_font_face(this->cr,fontName,slant,weight);
+		cairo_set_font_size(this->cr,fontSize);
+		cairo_set_source_rgba(this->cr,0.0,0,0,1.0);
+//		for (int j=0;j<this->lines.size();j++)
+			{
+				yoffset=(this->gadgetDetails.gadgetGeom.h/2)-(this->textExtents.y_bearing/2);
+				cairo_move_to(this->cr,this->pad,yoffset);
+				//cairo_move_to(this->cr,this->pad,(this->gadgetDetails.gadgetGeom.h/2)-(this->textExtents.y_bearing/2));
+//do cursor
+//				if(lines.at(j)->cursorPos!=-1)
+				if(this->isFocused==true)
+					{
+						char 	*data;
+						char	undercurs[2];
+						char	*aftercursor;
+						
+						asprintf(&data,"%s",this->buffer.c_str());
+						undercurs[0]=data[this->cursorPos];
+						undercurs[1]=0;
+						if(undercurs[0]==0)
+							undercurs[0]=' ';
+
+						data[this->cursorPos]=0;
+						aftercursor=&data[this->cursorPos+1];
+//1stbit
+						cairo_show_text(this->cr,data);
+						cairo_text_extents (this->cr,data,&partextents);
+						cairo_text_extents (this->cr,undercurs,&charextents);
+						cairo_set_source_rgba(this->cr,0.0,0.0,0.0,1.0);
+						cairo_rectangle(this->cr,partextents.x_advance,yoffset+this->fontExtents.descent,charextents.x_advance,-this->maxTextHeight);
+						cairo_fill(this->cr);
+//secondbit
+						cairo_move_to(this->cr,partextents.x_advance,yoffset);
+						cairo_set_source_rgba(this->cr,1.0,1.0,1.0,1.0);
+						cairo_show_text(this->cr,undercurs);
+//3rdbit
+						cairo_set_source_rgba(this->cr,0.0,0.0,0.0,1.0);
+						if(this->cursorPos<this->buffer.length())
+							cairo_show_text(this->cr,aftercursor);
+
+						free(data);
+					}
+				else
+			//		{
+			//			cairo_set_source_rgba(this->cr,0.0,0.0,0.0,1.0);
+						cairo_show_text(this->cr,this->buffer.c_str());
+			//		}
+			}
+	cairo_restore(this->cr);
+
+	free(buffer);
+
+
+return;
+#if 0
+	cursorwidth=this->LFSTK_getTextWidth(CURSORCHAR);
+	while(this->LFSTK_getTextWidth(this->buffer.substr(startchar,len).c_str())>this->gadgetGeom.w-cursorwidth)
+		{
+			startchar++;
+			len--;
+		}
+
+	cairo_save(this->cr);
+		cairo_reset_clip(this->cr);
+		cairo_set_source_rgba(this->cr,1.0,1.0,1.0,1.0);
+		cairo_paint(this->cr);
+	cairo_restore(this->cr);
+
+	
+	if(this->isFocused==true)
+		curs=CURSORCHAR;
+
+	startchar=0;
+	len=this->cursorPos-startchar;
+
+	while(this->LFSTK_getTextWidth(this->buffer.substr(startchar,len).c_str()) >= this->gadgetGeom.w-cursorwidth)
+		{
+			startchar++;
+			len=this->cursorPos-startchar;
+		}
+
+	if(this->isFocused==true)
+		curs=CURSORCHAR;
+
+	asprintf(&foward,"%s%s",this->buffer.substr(startchar,len).c_str(),curs);
+
+	if(this->LFSTK_getTextWidth(foward) >= this->gadgetGeom.w-cursorwidth-2)
+		asprintf(&buffer,"%s%s",this->buffer.substr(startchar,len).c_str(),curs);
+	else
+		asprintf(&buffer,"%s%s%s",this->buffer.substr(startchar,len).c_str(),curs,this->buffer.substr(this->cursorPos,this->buffer.length()).c_str());
+
+	cairo_save(this->cr);
+		cairo_select_font_face(this->cr,fontName,slant,weight);
+		cairo_set_font_size(this->cr,fontSize);
+		cairo_move_to(this->cr,this->pad,(this->gadgetDetails.gadgetGeom.h/2)-(this->textExtents.y_bearing/2));
+		cairo_set_source_rgba(this->cr,0.0,0,0,1.0);
+		cairo_show_text(this->cr,buffer);
+	cairo_restore(this->cr);
+
+	free(buffer);
+	free(foward);
+	
+#endif
+}
+
+#if 0
+void LFSTK_lineEditClass::drawLabel(void)
+{
 	int			cursorwidth;
 	int			startchar=0;
 	int			len=this->cursorPos;
@@ -275,6 +406,10 @@ void LFSTK_lineEditClass::drawLabel(void)
 	free(buffer);
 	free(foward);
 }
+#endif
+
+
+
 
 /**
 * Set contents to the clipboard.
