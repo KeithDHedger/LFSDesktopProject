@@ -27,10 +27,12 @@
 #include <vector>
 
 #define BARCURSORCHAR '|'
+#define STRBARCURSORCHAR "|"
 
 struct lineStruct
 {
 	char		*line;
+	int			cursorPos;
 	double		xpos;//RESERVED
 	double		ypos;//RESERVED
 	double		width;//RESERVED
@@ -77,8 +79,7 @@ class LFSTK_multiLineEditClass  : public  LFSTK_gadgetClass
 		unsigned	cursorPos;
 		bool		isFocused;
 		void		setDisplayLines(void);
-		int			linesCnt;
-		//lineStruct	lines;
+		int			topLine;
 		std::vector<lineStruct*> lines;
 };
 

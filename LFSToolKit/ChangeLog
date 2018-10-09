@@ -1,4 +1,5 @@
 0.3.0
+Cursor pos in multi line edit now shows inverse char.
 Delete key now deletes forward in line edit and multi line edit.
 Added multi line edit to examples.
 Done cursor keys in multi line edit.

@@ -21,28 +21,6 @@ LFSTK_buttonClass			*seperator=NULL;
 LFSTK_buttonClass			*quit=NULL;
 LFSTK_multiLineEditClass			*editbox=NULL;
 
-const char* test_stringnonl =
-    "Lorem ipsum dolor sit amet,consectetur "
-    "adipiscing elit.  Cras efficitur dui risus, "
-    "ac elementum orci rhoncus ac.  Praesent risus "
-    "lacus,pretium in enim at,ringilla viverra "
-    "eros. Ut non tincidunt quam. Donec aliquam "
-    "fermentum lectus,eget porttitor metus "
-    "fringilla quis. Duis nulla augue,commodo "
-    "mattis eros at."
-    ;
-
-const char* test_stringxx =
-    "Lorem ipsum dolor sit amet,consectetur\n"
-    "adipiscing elit.  Cras efficitur dui risus,\n"
-    "ac elementum orci rhoncus ac.  Praesent risus\n"
-    "lacus,pretium in enim at,ringilla viverra\n"
-    "eros. Ut non tincidunt quam. Donec aliquam\n"
-    "fermentum lectus,eget porttitor metus\n"
-    "fringilla quis. Duis nulla augue,commodo\n"
-    "mattis eros at."
-    ;
-
 const char* test_string =
     "Lorem ipsum dolor sit amet,consectetur "
     "adipiscing elit.\nCras efficitur dui risus, "
@@ -51,7 +29,7 @@ const char* test_string =
     "eros.\nUt non tincidunt quam. Donec aliquam "
     "fermentum lectus,eget porttitor metus "
     "fringilla quis.\nDuis nulla augue,commodo "
-    "mattis eros at."
+    "mattis eros at.\n"
     ;
 
 bool						mainLoop=true;
@@ -117,9 +95,8 @@ int main(int argc, char **argv)
 
 fprintf(stderr,"width=%i\n",DIALOGWIDTH-BORDER-BORDER);
 //line edit
-//	editbox=new LFSTK_multiLineEditClass(wc,"Hello World\nWorld Hello",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE*10,BUTTONGRAV);
 	editbox=new LFSTK_multiLineEditClass(wc,test_string,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE*10,BUTTONGRAV);
-	editbox->LFSTK_setCallBack(NULL,doKeyUp,USERDATA(12345));
+	//editbox->LFSTK_setCallBack(NULL,doKeyUp,USERDATA(12345));
 //	editbox->LFSTK_setCallBack(doKeyUp,NULL,USERDATA(12345));
 	sy+=YSPACING+(GADGETHITE*10);
 
@@ -154,6 +131,7 @@ printf("quitx=%i quity=%i\n",DIALOGMIDDLE-HALFGADGETWIDTH,sy);
 				mainLoop=false;
 		}
 
+	printf("%s\n",editbox->LFSTK_getCStr());
 	delete wc;
 	XCloseDisplay(display);
 	cairo_debug_reset_static_data();

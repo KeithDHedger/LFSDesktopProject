@@ -90,6 +90,7 @@ LFSTK_multiLineEditClass::LFSTK_multiLineEditClass(LFSTK_windowClass* parentwc,c
 	LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
 	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NULL,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
 
+	this->topLine=0;
 	this->setDisplayLines();
 }
 
@@ -232,12 +233,14 @@ const char* LFSTK_multiLineEditClass::LFSTK_getCStr(void)
 
 void LFSTK_multiLineEditClass::drawText(void)
 {
-	int			cursorwidth;
-	int			startchar=0;
-	int			len=this->cursorPos;
-	char		*buffer;
-	const char	*curs="";
-	double		yoffset=0;
+	int						cursorwidth;
+	int						startchar=0;
+	int						len=this->cursorPos;
+	char					*buffer;
+	const char				*curs="";
+	double					yoffset=0;
+	cairo_text_extents_t	partextents;
+	cairo_text_extents_t	charextents;
 
 	cairo_save(this->cr);
 		cairo_reset_clip(this->cr);
@@ -245,22 +248,52 @@ void LFSTK_multiLineEditClass::drawText(void)
 		cairo_paint(this->cr);
 	cairo_restore(this->cr);
 	
-//	if(this->isFocused==true)
-//		curs=CURSORCHAR;
-//
-//	if(this->buffer.length()>0)
-//		asprintf(&buffer,"%s%s%s\n",this->buffer.substr(0,this->cursorPos).c_str(),curs,this->buffer.substr(this->cursorPos,this->buffer.length()-this->cursorPos).c_str());
-
-
 	cairo_save(this->cr);
 		cairo_select_font_face(this->cr,fontName,slant,weight);
 		cairo_set_font_size(this->cr,fontSize);
 		cairo_set_source_rgba(this->cr,0.0,0,0,1.0);
-		for (int j=0; j<this->lines.size(); j++)
+		for (int j=0;j<this->lines.size();j++)
 			{
 				yoffset+=this->textExtents.height;
 				cairo_move_to(this->cr,this->pad,yoffset);
-				cairo_show_text(this->cr,lines.at(j)->line);
+//do cursor
+				if(lines.at(j)->cursorPos!=-1)
+					{
+						char 	*data;
+						char	undercurs[2];
+						char	*aftercursor;
+						
+						asprintf(&data,"%s",lines.at(j)->line);
+						undercurs[0]=data[lines.at(j)->cursorPos];
+						undercurs[1]=0;
+						if(undercurs[0]==0)
+							undercurs[0]=' ';
+
+						data[lines.at(j)->cursorPos]=0;
+						aftercursor=&data[lines.at(j)->cursorPos+1];
+//1stbit
+						cairo_show_text(this->cr,data);
+						cairo_text_extents (this->cr,data,&partextents);
+						cairo_text_extents (this->cr,undercurs,&charextents);
+						cairo_set_source_rgba(this->cr,0.0,0.0,0.0,1.0);
+						cairo_rectangle(this->cr,partextents.x_advance,yoffset+this->fontExtents.descent,charextents.x_advance,-this->maxTextHeight);
+						cairo_fill(this->cr);
+//secondbit
+						cairo_move_to(this->cr,partextents.x_advance,yoffset);
+						cairo_set_source_rgba(this->cr,1.0,1.0,1.0,1.0);
+						cairo_show_text(this->cr,undercurs);
+//3rdbit
+						cairo_set_source_rgba(this->cr,0.0,0.0,0.0,1.0);
+						if(lines.at(j)->cursorPos<strlen(lines.at(j)->line))
+							cairo_show_text(this->cr,aftercursor);
+
+						free(data);
+					}
+				else
+					{
+						cairo_set_source_rgba(this->cr,0.0,0.0,0.0,1.0);
+						cairo_show_text(this->cr,lines.at(j)->line);
+					}
 			}
 	cairo_restore(this->cr);
 
@@ -492,12 +525,13 @@ void  LFSTK_multiLineEditClass::setDisplayLines(void)
 {
 	cairo_text_extents_t	extents;
 	char					data[4096]={0,};
-	int						len;
+	int						len=0;
 	geometryStruct			geom;
 	lineStruct				*newline;
+	int						cursorpos=-1;
+	bool					donecurs=false;
 
 	this->LFSTK_getGeom(&geom);
-	len=0;
 
 	for (int i=0; i<lines.size(); i++)
 		{
@@ -510,9 +544,10 @@ void  LFSTK_multiLineEditClass::setDisplayLines(void)
 		{
 			if((this->cursorPos==j) && (this->isFocused==true))
 				{
-					data[len]=BARCURSORCHAR;
-					len++;
+					cursorpos=len;
+					donecurs=true;
 				}
+
 			data[len]=this->buffer.c_str()[j];
 			data[len+1]=0;
 
@@ -523,10 +558,10 @@ void  LFSTK_multiLineEditClass::setDisplayLines(void)
 				{
 					if(data[len]!='\n')
 						j--;
-
 					data[len++]=0;
 					newline=new lineStruct;
 					asprintf(&newline->line,"%s",data);
+					newline->cursorPos=cursorpos;
 					newline->xpos=0;
 					newline->ypos=0;
 					newline->width=extents.width;
@@ -534,6 +569,7 @@ void  LFSTK_multiLineEditClass::setDisplayLines(void)
 					lines.push_back(newline);
 					data[0]=0;
 					len=0;
+					cursorpos=-1;
 				}
 			else
 				{
@@ -541,21 +577,31 @@ void  LFSTK_multiLineEditClass::setDisplayLines(void)
 					data[len]=0;
 				}
 		}
-
+//last line
 	if(strlen(data)>0)
 		{
 			newline=new lineStruct;
-			if((this->cursorPos==this->buffer.length()) && (this->isFocused==true))
-				asprintf(&newline->line,"%s|",data);
-			else
-				asprintf(&newline->line,"%s",data);
+			asprintf(&newline->line,"%s",data);
+			if((donecurs==false) && (this->isFocused==true))
+				{
+					cursorpos=strlen(newline->line);
+					donecurs=true;
+				}
+			newline->cursorPos=cursorpos;
 			newline->xpos=0;
 			newline->ypos=0;
 			newline->width=extents.width;
 			newline->height=extents.height;
 			lines.push_back(newline);
 		}
-
+//special case last line is newline
+	if((donecurs==false) && (this->isFocused==true))
+		{
+			newline=new lineStruct;
+			asprintf(&newline->line," ");
+			newline->cursorPos=0;
+			lines.push_back(newline);
+		}
 	this->LFSTK_clearWindow();
 }
 
