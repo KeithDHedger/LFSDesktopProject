@@ -1,4 +1,6 @@
 0.3.0
+Added cursor colour to prefs.
+Added mono font to prefs.
 Fixed cursor movement in line edit.
 Saved mono text char width in linedit.
 Cursor pos in single line edit now shows inverse char.

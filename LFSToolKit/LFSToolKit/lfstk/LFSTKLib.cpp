@@ -34,6 +34,8 @@ enum {DEFNORMAL,DEFPRELIE,DEFACTIVE,DEFINACTIVE,DEFFONTNORMAL,DEFFONTPRELIE,DEFF
 const char	*defaultColourStrings[]={"grey50","grey80","grey40","grey90"};
 const char	*defaultFontColourStrings[]={"white","black","white","grey80"};
 const char	*defaultFontString="sans-serif:size=10";
+const char	*defaultMonoFontString="mono:size=12";
+const char	*defaultCursorColour="black";
 const char	*defaultThemePath="/usr/share/themes/Crux/xfwm4";
 const char	*defaultFrameStrings[]={"black","#00ffff","black","white","white"};
 const char	*defaultWindowTile="";
@@ -78,6 +80,9 @@ LFSTK_lib::~LFSTK_lib()
 
 	if(this->globalFontString!=NULL)
 		free(this->globalFontString);
+
+	if(this->globalMonoFontString!=NULL)
+		free(this->globalMonoFontString);
 }
 
 /**
@@ -153,6 +158,18 @@ void LFSTK_lib::LFSTK_setGlobalString(int state,int type,const char *str)
 					free((void*)ptr);
 				this->globalFontString=strdup(str);
 				break;
+			case TYPEMONOFONT:
+				ptr=this->globalMonoFontString;
+				if(ptr!=NULL)
+					free((void*)ptr);
+				this->globalMonoFontString=strdup(str);
+				break;
+			case TYPECURSORCOLOUR:
+				ptr=this->globalCursorColour;
+				if(ptr!=NULL)
+					free((void*)ptr);
+				this->globalCursorColour=strdup(str);
+				break;
 		}
 }
 
@@ -223,6 +240,16 @@ const char *LFSTK_lib::LFSTK_getGlobalString(int state,int type)
 				if(ptr==NULL)
 					ptr=defaultFontString;
 				break;
+			case TYPEMONOFONT:
+				ptr=this->globalMonoFontString;
+				if(ptr==NULL)
+					ptr=defaultMonoFontString;
+				break;
+			case TYPECURSORCOLOUR:
+				ptr=this->globalCursorColour;
+				if(ptr==NULL)
+					ptr=defaultCursorColour;
+				break;
 		}
 	return(ptr);
 }
@@ -267,6 +294,10 @@ LFSTK_lib::LFSTK_lib(bool loadvars)
 //other
 		{"autotextcolour",TYPEBOOL,&(this->autoLabelColour)},
 		{"usetheme",TYPEBOOL,&(this->useTheme)},
+//monofont
+		{"monofont",TYPESTRING,&(this->globalMonoFontString)},
+//cursor colour
+		{"cursorcolour",TYPESTRING,&(this->globalCursorColour)},
 		{NULL,0,NULL},
 	};
 
@@ -285,6 +316,7 @@ LFSTK_lib::LFSTK_lib(bool loadvars)
 		this->globalFontColourNames[j]=NULL;
 
 	this->globalFontString=NULL;
+	this->globalMonoFontString=NULL;
 	this->globalMenuItemFontString=NULL;
 	this->globalWindowTile=NULL;
 	this->globalButtonTile=NULL;

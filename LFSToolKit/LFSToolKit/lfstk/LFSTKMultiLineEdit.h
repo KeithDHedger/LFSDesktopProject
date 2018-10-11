@@ -46,7 +46,7 @@ struct lineStruct
  * Basic line editing class for LFSToolKit.
  *
  */
-class LFSTK_multiLineEditClass  : public  LFSTK_gadgetClass
+class LFSTK_multiLineEditClass  : public  LFSTK_lineEditClass
 {
 	public:
 		LFSTK_multiLineEditClass();

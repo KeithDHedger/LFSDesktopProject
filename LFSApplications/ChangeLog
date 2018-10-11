@@ -1,3 +1,7 @@
+0.1.3
+Added cursor colour pref to lfstk prefs.
+Added mono font pref to lfstk prefs.
+
 0.1.2
 Fixed copying/pasting between prefs.
 Updated to use LFSTK_handleWindowEvents.

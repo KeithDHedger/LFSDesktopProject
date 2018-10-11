@@ -1,4 +1,4 @@
-AC_INIT([LFSApplications],[0.1.2],[PROJ],[LFSApplications])
+AC_INIT([LFSApplications],[0.1.3],[PROJ],[LFSApplications])
 
 AC_CONFIG_HEADER([config.h])
 AC_PROG_CXX

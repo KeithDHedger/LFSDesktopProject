@@ -146,7 +146,7 @@ class LFSTK_gadgetClass
 		bool					isSubMenu;
 		bool					showIndicator;
 		gadgetStruct			gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NULL,NORMALCOLOUR,0,false,{0,0,0,0},{0,0,0,0},false,false};
-		char					*monoFontString=NULL;
+		const char				*monoFontString=NULL;
 
 //user data
 		void					*userData=NULL;

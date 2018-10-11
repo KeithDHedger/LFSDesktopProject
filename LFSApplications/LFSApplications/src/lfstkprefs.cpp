@@ -52,6 +52,13 @@ LFSTK_lineEditClass		*buttonFontEdit=NULL;
 LFSTK_fontDialogClass	*menuFontDialogButton=NULL;
 LFSTK_lineEditClass		*menuFontEdit=NULL;
 
+//mono font
+LFSTK_fontDialogClass	*monoFontDialogButton=NULL;
+LFSTK_lineEditClass		*monoFontEdit=NULL;
+
+//cursor prefs
+LFSTK_lineEditClass		*cursorColourEdit=NULL;
+
 //window stuff
 LFSTK_lineEditClass		*windowColourEdit=NULL;
 LFSTK_toggleButtonClass	*autoColourCheck=NULL;
@@ -104,7 +111,8 @@ void setVars(void)
 //fonts
 	wc->globalLib->LFSTK_setGlobalString(0,TYPEFONT,buttonFontEdit->LFSTK_getBuffer()->c_str());
 	wc->globalLib->LFSTK_setGlobalString(0,TYPEMENUITEMFONT,menuFontEdit->LFSTK_getBuffer()->c_str());
-
+	wc->globalLib->LFSTK_setGlobalString(0,TYPEMONOFONT,monoFontEdit->LFSTK_getBuffer()->c_str());
+	wc->globalLib->LFSTK_setGlobalString(0,TYPECURSORCOLOUR,cursorColourEdit->LFSTK_getBuffer()->c_str());
 }
 
 void setPreviewData(void)
@@ -140,6 +148,14 @@ void setPreviewData(void)
 			previewMenus[j]->LFSTK_setFontColourName(NORMALCOLOUR,previeMenuFontColourEdit[j]->LFSTK_getBuffer()->c_str(),false);
 			previewMenus[j]->LFSTK_clearWindow();
 		}
+
+	cursorColourEdit->LFSTK_setCursorColourName(cursorColourEdit->LFSTK_getBuffer()->c_str());
+	monoFontEdit->LFSTK_setFontString(monoFontEdit->LFSTK_getBuffer()->c_str(),true);
+	monoFontEdit->LFSTK_clearWindow();
+	buttonFontEdit->LFSTK_setFontString(buttonFontEdit->LFSTK_getBuffer()->c_str(),true);
+	buttonFontEdit->LFSTK_clearWindow();
+	menuFontEdit->LFSTK_setFontString(menuFontEdit->LFSTK_getBuffer()->c_str(),true);
+	menuFontEdit->LFSTK_clearWindow();
 }
 
 bool selectfile(void *object,void* ud)
@@ -184,6 +200,15 @@ bool buttonCB(void *p,void* ud)
 					return(true);
 				}
 
+			if(strcmp((char*)ud,"SELECTMONOFONT")==0)
+				{
+					monoFontDialogButton->LFSTK_showDialog("");
+					fd=monoFontDialogButton->LFSTK_getFontData(false);
+					if(fd->isValid==true)
+						monoFontEdit->LFSTK_setBuffer(fd->fontString);
+					return(true);
+				}
+
 			if(strcmp((char*)ud,"TEST")==0)
 				setPreviewData();
 
@@ -193,6 +218,7 @@ bool buttonCB(void *p,void* ud)
 					setVars();
 					asprintf(&prefsfile,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
 					wc->globalLib->LFSTK_saveVarsToFile(prefsfile,wc->globalLib->LFSTK_getTKArgs());
+					//fprintf(stderr,"%s\n",wc->globalLib->LFSTK_getTKArgs());
 					free(prefsfile);
 				}
 		}
@@ -261,7 +287,7 @@ int main(int argc, char **argv)
 
 	sx=BORDER;
 //button font
-	buttonFontDialogButton=new LFSTK_fontDialogClass(wc,"Select Font",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	buttonFontDialogButton=new LFSTK_fontDialogClass(wc,"Button Font",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	buttonFontDialogButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"SELECTBUTTONFONT");
 	sx+=GADGETWIDTH+BORDER;
 	buttonFontEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEFONT),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
@@ -282,10 +308,23 @@ int main(int argc, char **argv)
 		}
 	sx=BORDER;
 //menu font
-	menuFontDialogButton=new LFSTK_fontDialogClass(wc,"Select Font",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	menuFontDialogButton=new LFSTK_fontDialogClass(wc,"Menu Font",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	menuFontDialogButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"SELECTMENUFONT");
 	sx+=GADGETWIDTH+BORDER;
 	menuFontEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEMENUITEMFONT),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
+	sx=BORDER;
+//mono font
+	monoFontDialogButton=new LFSTK_fontDialogClass(wc,"Mono Font",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	monoFontDialogButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"SELECTMONOFONT");
+	sx+=GADGETWIDTH+BORDER;
+	monoFontEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEMONOFONT),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
+	sx=BORDER;
+//cursor prefs
+	label=new LFSTK_labelClass(wc,"Cursor Col",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	sx+=BORDER+GADGETWIDTH;
+	cursorColourEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(-1,TYPECURSORCOLOUR),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 	sx=BORDER;
 

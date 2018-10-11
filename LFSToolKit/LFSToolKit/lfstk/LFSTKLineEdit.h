@@ -57,7 +57,11 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 
 		void LFSTK_dropData(propertyStruct* data);
 		void LFSTK_setFormatedText(const char *txt,bool replace);
+		void LFSTK_setCursorColourName(const char* colour);
 
+	protected:
+		colourStruct	cursorColour={NULL,0,{0.0,0.0,0.0,0.8}};
+	
 	private:
 		void drawLabel(void);
 		void getClip(void);

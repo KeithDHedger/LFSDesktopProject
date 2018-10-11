@@ -25,7 +25,7 @@
 
 #define	MAXVARS 100
 #define MAXBUFFER 512
-enum	{TYPEWINDOW=0,TYPEWINDOWTILE,TYPEBUTTON,TYPEBUTTONTILE,TYPEMENUITEM,TYPEMENUITEMTILE,TYPEFONTCOLOUR,TYPEMENUITEMFONTCOLOUR,TYPEMENUITEMFONT,TYPEFONT};
+enum	{TYPEWINDOW=0,TYPEWINDOWTILE,TYPEBUTTON,TYPEBUTTONTILE,TYPEMENUITEM,TYPEMENUITEMTILE,TYPEFONTCOLOUR,TYPEMENUITEMFONTCOLOUR,TYPEMENUITEMFONT,TYPEFONT,TYPEMONOFONT,TYPECURSORCOLOUR};
 
 /**
  *
@@ -80,14 +80,16 @@ class LFSTK_lib
 		char		*globalButtonColours[MAXCOLOURS]={NULL,};
 		char		*globalMenuItemColours[MAXCOLOURS]={NULL,};
 		char		*globalFontString;
+		char		*globalMonoFontString;
 		char		*globalWindowTile;
 		char		*globalButtonTile;
 		char		*globalMenuItemTile;
 
 //gadget strings
 		char		*globalFontColourNames[MAXCOLOURS];
-		char		*globalMenuItemFontString;
+		char		*globalMenuItemFontString=NULL;
 		char		*globalMenuItemFontColourNames[MAXCOLOURS];
+		char		*globalCursorColour=NULL;
 //other
 		bool		autoLabelColour;
 		bool		useTheme;

@@ -25,6 +25,12 @@
 
 LFSTK_lineEditClass::~LFSTK_lineEditClass()
 {
+
+	if(this->cursorColour.name!=NULL)
+		{
+			free(this->cursorColour.name);
+			XFreeColors(this->display,this->cm,(long unsigned int*)&this->cursorColour.pixel,1,0);
+		}
 }
 
 LFSTK_lineEditClass::LFSTK_lineEditClass()
@@ -82,6 +88,7 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	LFSTK_setColourName(NORMALCOLOUR,"white");
 	LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
 	this->charWidth=LFSTK_getTextRealWidth("X");
+	this->LFSTK_setCursorColourName(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPECURSORCOLOUR));
 	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NULL,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
 }
 
@@ -267,7 +274,7 @@ void LFSTK_lineEditClass::drawLabel(void)
 		cairo_text_extents (this->cr,data,&partextents);
 		if(this->isFocused==true)
 			{
-				cairo_set_source_rgba(this->cr,0.0,0.0,0.0,1);
+				cairo_set_source_rgba(this->cr,this->cursorColour.RGBAColour.r,this->cursorColour.RGBAColour.g,this->cursorColour.RGBAColour.b,this->cursorColour.RGBAColour.a);
 				cairo_rectangle(this->cr,partextents.x_advance+0.5,yoffset+this->fontExtents.descent,this->charWidth-0.5,-this->maxTextHeight);
 				cairo_fill(this->cr);
 			}
@@ -284,7 +291,6 @@ void LFSTK_lineEditClass::drawLabel(void)
 	cairo_restore(this->cr);
 }
 
-#endif
 /**
 * Set contents to the clipboard.
 */
@@ -524,5 +530,25 @@ void  LFSTK_lineEditClass::LFSTK_setFormatedText(const char *txt,bool replace)
 		}
 }
 
+/**
+* Set the colour name for cursor.
+* \param colour Colour name.
+*/
+void LFSTK_lineEditClass::LFSTK_setCursorColourName(const char* colour)
+{
+	XColor			tc;
+	XColor			sc;
+
+	if(this->cursorColour.name!=NULL)
+		free(this->cursorColour.name);
+	this->cursorColour.name=strdup(colour);
+	XAllocNamedColor(this->display,this->cm,colour,&sc,&tc);
+	this->cursorColour.pixel=tc.pixel;
+
+	this->cursorColour.RGBAColour.r=((this->cursorColour.pixel>>16) & 0xff)/256.0;
+	this->cursorColour.RGBAColour.g=((this->cursorColour.pixel>>8) & 0xff)/256.0;
+	this->cursorColour.RGBAColour.b=((this->cursorColour.pixel>>0) & 0xff)/256.0;
+	this->cursorColour.RGBAColour.a=0.8;
+}
 
 

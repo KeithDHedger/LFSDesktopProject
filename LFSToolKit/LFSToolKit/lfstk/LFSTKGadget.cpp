@@ -50,8 +50,8 @@ LFSTK_gadgetClass::~LFSTK_gadgetClass()
 	if(this->fontString!=NULL)
 		free(this->fontString);
 
-	if(this->monoFontString!=NULL)
-		free(this->monoFontString);
+//	if(this->monoFontString!=NULL)
+//		free(this->monoFontString);
 
 	cairo_destroy(this->cr);
 
@@ -202,7 +202,7 @@ void LFSTK_gadgetClass::initGadget(void)
 		this->LFSTK_setFontColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEFONTCOLOUR),false);
 
 	this->LFSTK_setFontString(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEFONT));
-	this->monoFontString=strdup("mono:size=12");
+	this->monoFontString=this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMONOFONT);
 	this->LFSTK_setActive(true);
 	this->style=BEVELOUT;
 	this->labelGravity=CENTRE;

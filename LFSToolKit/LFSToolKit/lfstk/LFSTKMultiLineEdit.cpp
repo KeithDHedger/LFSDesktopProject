@@ -88,6 +88,7 @@ LFSTK_multiLineEditClass::LFSTK_multiLineEditClass(LFSTK_windowClass* parentwc,c
 
 	LFSTK_setColourName(NORMALCOLOUR,"white");
 	LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
+	this->LFSTK_setCursorColourName(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPECURSORCOLOUR));
 	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NULL,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
 
 	this->topLine=0;
@@ -275,7 +276,8 @@ void LFSTK_multiLineEditClass::drawText(void)
 						cairo_show_text(this->cr,data);
 						cairo_text_extents (this->cr,data,&partextents);
 						cairo_text_extents (this->cr,undercurs,&charextents);
-						cairo_set_source_rgba(this->cr,0.0,0.0,0.0,1.0);
+						cairo_set_source_rgba(this->cr,this->cursorColour.RGBAColour.r,this->cursorColour.RGBAColour.g,this->cursorColour.RGBAColour.b,this->cursorColour.RGBAColour.a);
+
 						cairo_rectangle(this->cr,partextents.x_advance,yoffset+this->fontExtents.descent,charextents.x_advance,-this->maxTextHeight);
 						cairo_fill(this->cr);
 //secondbit
