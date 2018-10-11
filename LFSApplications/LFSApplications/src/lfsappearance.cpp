@@ -127,10 +127,10 @@ void setGroup(void)
 	char	*command;
 	char	*grp;
 
-	asprintf(&grp,"%s/lfsgroupsprefs/%s",wc->configDir,currentSet->LFSTK_getBuffer()->c_str());
+	asprintf(&grp,"%s/lfsgroupsprefs/%s",wc->configDir,currentSet->LFSTK_getCStr());
 	if(fileExists(grp)==0)
 		{
-			asprintf(&command,"cp \"%s/lfsgroupsprefs/%s/\"lfs*.rc \"%s\"",wc->configDir,currentSet->LFSTK_getBuffer()->c_str(),wc->configDir);
+			asprintf(&command,"cp \"%s/lfsgroupsprefs/%s/\"lfs*.rc \"%s\"",wc->configDir,currentSet->LFSTK_getCStr(),wc->configDir);
 			system(command);
 			free(command);
 		}
@@ -179,7 +179,7 @@ bool buttonCB(void *p,void* ud)
 				}
 			if(strcmp((char*)ud,"UPDATE")==0)
 				{
-					makeGroup(currentSet->LFSTK_getBuffer()->c_str());
+					makeGroup(currentSet->LFSTK_getCStr());
 					updateDesktop();
 				}
 			if(strcmp((char*)ud,"APPLY")==0)
@@ -226,7 +226,7 @@ void addGroup(void)
 
 void doNewGroup(void)
 {
-	makeGroup(currentSet->LFSTK_getBuffer()->c_str());
+	makeGroup(currentSet->LFSTK_getCStr());
 	for(int j=0;j<groupNames.size();j++)
 		free(groupNames[j]);
 	delete[] groupNameMenuItems;

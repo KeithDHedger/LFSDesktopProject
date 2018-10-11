@@ -102,9 +102,9 @@ bool buttonCB(void *p,void* ud)
 			if(strcmp((char*)ud,"APPLY")==0)
 				{
 					free(wallpaperPath);
-					wallpaperPath=strdup(mainBackdropEdit->LFSTK_getBuffer()->c_str());
+					wallpaperPath=strdup(mainBackdropEdit->LFSTK_getCStr());
 					free(mainColour);
-					mainColour=strdup(rootColourEdit->LFSTK_getBuffer()->c_str());
+					mainColour=strdup(rootColourEdit->LFSTK_getCStr());
 					wc->globalLib->LFSTK_saveVarsToFile(mainPrefs,prefs);
 					fd=fopen(monitorPrefs,"w");
 					if(fd!=NULL)

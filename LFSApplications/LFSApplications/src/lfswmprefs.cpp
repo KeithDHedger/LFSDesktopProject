@@ -144,7 +144,7 @@ bool buttonCB(void *p,void* ud)
 						{
 							free(prefsColours[j]);
 							prefsColours[j]=strdup(previeColourEdit[j]->LFSTK_getCStr());
-							previewButtons[j]->LFSTK_setColourName(NORMALCOLOUR,previeColourEdit[j]->LFSTK_getBuffer()->c_str());
+							previewButtons[j]->LFSTK_setColourName(NORMALCOLOUR,previeColourEdit[j]->LFSTK_getCStr());
 							previewButtons[j]->LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
 							previewButtons[j]->LFSTK_clearWindow();
 						}

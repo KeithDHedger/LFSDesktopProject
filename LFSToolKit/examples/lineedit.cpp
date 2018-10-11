@@ -83,10 +83,10 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //line edit
-fprintf(stderr,"wid=%i\n",DIALOGWIDTH-BORDER-BORDER);
 	editbox=new LFSTK_lineEditClass(wc,"make[2]: Leaving directory '/media/LinuxData/Development64/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit/app",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
 	//editbox->LFSTK_setCallBack(NULL,doKeyUp,USERDATA(12345));
 //	editbox->LFSTK_setCallBack(doKeyUp,NULL,USERDATA(12345));
+	//editbox->LFSTK_setColourName(NORMALCOLOUR,"blue");
 	sy+=YSPACING;
 
 //line

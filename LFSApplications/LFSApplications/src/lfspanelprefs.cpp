@@ -111,21 +111,21 @@ bool doQuit(void *p,void* ud)
 
 void getEdits(void)
 {
-//printf("h=%i\n",atoi(panelHeightEdit->LFSTK_getBuffer()->c_str()));
-	panelHeightPref=atoi(panelHeightEdit->LFSTK_getBuffer()->c_str());
-	onMonitorPref=atoi(panelOnMonitor->LFSTK_getBuffer()->c_str());
-	terminalCommandPref=strdup(termCommand->LFSTK_getBuffer()->c_str());
-	logoutCommandPref=strdup(logout->LFSTK_getBuffer()->c_str());
-	restartCommandPref=strdup(restart->LFSTK_getBuffer()->c_str());
-	shutdownCommandPref=strdup(shutdown->LFSTK_getBuffer()->c_str());
-	leftGadgetsPref=strdup(panelLeftGadgets->LFSTK_getBuffer()->c_str());
-	rightGadgetsPref=strdup(panelrightGadgets->LFSTK_getBuffer()->c_str());
+//printf("h=%i\n",atoi(panelHeightEdit->LFSTK_getCStr()));
+	panelHeightPref=atoi(panelHeightEdit->LFSTK_getCStr());
+	onMonitorPref=atoi(panelOnMonitor->LFSTK_getCStr());
+	terminalCommandPref=strdup(termCommand->LFSTK_getCStr());
+	logoutCommandPref=strdup(logout->LFSTK_getCStr());
+	restartCommandPref=strdup(restart->LFSTK_getCStr());
+	shutdownCommandPref=strdup(shutdown->LFSTK_getCStr());
+	leftGadgetsPref=strdup(panelLeftGadgets->LFSTK_getCStr());
+	rightGadgetsPref=strdup(panelrightGadgets->LFSTK_getCStr());
 
-//	panelHeightPref=atoi(panelHeightEdit->LFSTK_getBuffer()->c_str());
-//	panelHeightPref=atoi(panelHeightEdit->LFSTK_getBuffer()->c_str());
-//	panelHeightPref=atoi(panelHeightEdit->LFSTK_getBuffer()->c_str());
-//	panelHeightPref=atoi(panelHeightEdit->LFSTK_getBuffer()->c_str());
-//	panelHeightPref=atoi(panelHeightEdit->LFSTK_getBuffer()->c_str());
+//	panelHeightPref=atoi(panelHeightEdit->LFSTK_getCStr());
+//	panelHeightPref=atoi(panelHeightEdit->LFSTK_getCStr());
+//	panelHeightPref=atoi(panelHeightEdit->LFSTK_getCStr());
+//	panelHeightPref=atoi(panelHeightEdit->LFSTK_getCStr());
+//	panelHeightPref=atoi(panelHeightEdit->LFSTK_getCStr());
 return;
 
 //	panelWidthEdit->LFSTK_setBuffer(panelWidthConvertToStr[panelWidthPref]);
@@ -151,24 +151,24 @@ bool applyCB(void *p,void* ud)
 	if(ud!=NULL)
 		{
 //panel width
-			if(isdigit(panelWidthEdit->LFSTK_getBuffer()->c_str()[0])==true)
-				panelWidthPref=atoi(panelWidthEdit->LFSTK_getBuffer()->c_str());
+			if(isdigit(panelWidthEdit->LFSTK_getCStr()[0])==true)
+				panelWidthPref=atoi(panelWidthEdit->LFSTK_getCStr());
 			else
 				{
-					if(strcmp(panelWidthEdit->LFSTK_getBuffer()->c_str(),"Fill")==0)
+					if(strcmp(panelWidthEdit->LFSTK_getCStr(),"Fill")==0)
 						panelWidthPref=-1;
 					else
 						panelWidthPref=-2;
 				}
 //panel pos
-			if(isdigit(panelPosEdit->LFSTK_getBuffer()->c_str()[0])==true)
-				panelPosPref=atoi(panelPosEdit->LFSTK_getBuffer()->c_str());
+			if(isdigit(panelPosEdit->LFSTK_getCStr()[0])==true)
+				panelPosPref=atoi(panelPosEdit->LFSTK_getCStr());
 			else
 				{
 					key=-1;
 					for(it=panelPosConvertToStr.begin();it != panelPosConvertToStr.end();++it)
 						{
-							if(strcmp(it->second,panelPosEdit->LFSTK_getBuffer()->c_str())==0)
+							if(strcmp(it->second,panelPosEdit->LFSTK_getCStr())==0)
 								{
 									panelPosPref=it->first;
 									break;
@@ -176,14 +176,14 @@ bool applyCB(void *p,void* ud)
 						}
 				}
 //panel grav
-			if(isdigit(panelGravEdit->LFSTK_getBuffer()->c_str()[0])==true)
-				panelGravityPref=atoi(panelGravEdit->LFSTK_getBuffer()->c_str());
+			if(isdigit(panelGravEdit->LFSTK_getCStr()[0])==true)
+				panelGravityPref=atoi(panelGravEdit->LFSTK_getCStr());
 			else
 				{
 					key=-1;
 					for(it=panelGravConvertToStr.begin();it != panelGravConvertToStr.end();++it)
 						{
-							if(strcmp(it->second,panelGravEdit->LFSTK_getBuffer()->c_str())==0)
+							if(strcmp(it->second,panelGravEdit->LFSTK_getCStr())==0)
 								{
 									panelGravityPref=it->first;
 									break;
@@ -192,7 +192,7 @@ bool applyCB(void *p,void* ud)
 				}
 
 			getEdits();
-			asprintf(&env,"%s/%s",wc->configDir,panelNameEdit->LFSTK_getBuffer()->c_str());
+			asprintf(&env,"%s/%s",wc->configDir,panelNameEdit->LFSTK_getCStr());
 			wc->globalLib->LFSTK_saveVarsToFile(env,panelPrefs);
 			free(env);
 		}
@@ -218,7 +218,7 @@ void getPrefs(void)
 {
 	char	*env=NULL;
 
-	asprintf(&env,"%s/%s",wc->configDir,panelNameEdit->LFSTK_getBuffer()->c_str());
+	asprintf(&env,"%s/%s",wc->configDir,panelNameEdit->LFSTK_getCStr());
 	wc->globalLib->LFSTK_loadVarsFromFile(env,panelPrefs);
 	free(env);
 }

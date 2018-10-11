@@ -91,34 +91,34 @@ void setVars(void)
 	for(int j=0;j<4;j++)
 		{
 //buttons
-			wc->globalLib->LFSTK_setGlobalString(j,TYPEBUTTON,previeBackColourEdit[j]->LFSTK_getBuffer()->c_str());
-			wc->globalLib->LFSTK_setGlobalString(j,TYPEFONTCOLOUR,previeFontColourEdit[j]->LFSTK_getBuffer()->c_str());
+			wc->globalLib->LFSTK_setGlobalString(j,TYPEBUTTON,previeBackColourEdit[j]->LFSTK_getCStr());
+			wc->globalLib->LFSTK_setGlobalString(j,TYPEFONTCOLOUR,previeFontColourEdit[j]->LFSTK_getCStr());
 //menus
-			wc->globalLib->LFSTK_setGlobalString(j,TYPEMENUITEM,previeMenuBackColourEdit[j]->LFSTK_getBuffer()->c_str());
-			wc->globalLib->LFSTK_setGlobalString(j,TYPEMENUITEMFONTCOLOUR,previeMenuFontColourEdit[j]->LFSTK_getBuffer()->c_str());
+			wc->globalLib->LFSTK_setGlobalString(j,TYPEMENUITEM,previeMenuBackColourEdit[j]->LFSTK_getCStr());
+			wc->globalLib->LFSTK_setGlobalString(j,TYPEMENUITEMFONTCOLOUR,previeMenuFontColourEdit[j]->LFSTK_getCStr());
 		}
 
-	wc->globalLib->LFSTK_setGlobalString(0,TYPEWINDOW,windowColourEdit->LFSTK_getBuffer()->c_str());
+	wc->globalLib->LFSTK_setGlobalString(0,TYPEWINDOW,windowColourEdit->LFSTK_getCStr());
 	wc->globalLib->LFSTK_setAutoLabelColour(autoColourCheck->LFSTK_getValue());
 
 	if(((strcmp(windowTileEdit->LFSTK_getCStr(),"")==0) || (strcmp(buttonTileEdit->LFSTK_getCStr(),"")==0) || (strcmp(menuTileEdit->LFSTK_getCStr(),"")==0))==true)
 		useTheme->LFSTK_setValue(false);
 	wc->globalLib->LFSTK_setUseTheme(useTheme->LFSTK_getValue());
 //tiles
-	wc->globalLib->LFSTK_setGlobalString(0,TYPEWINDOWTILE,windowTileEdit->LFSTK_getBuffer()->c_str());
-	wc->globalLib->LFSTK_setGlobalString(0,TYPEBUTTONTILE,buttonTileEdit->LFSTK_getBuffer()->c_str());
-	wc->globalLib->LFSTK_setGlobalString(0,TYPEMENUITEMTILE,menuTileEdit->LFSTK_getBuffer()->c_str());
+	wc->globalLib->LFSTK_setGlobalString(0,TYPEWINDOWTILE,windowTileEdit->LFSTK_getCStr());
+	wc->globalLib->LFSTK_setGlobalString(0,TYPEBUTTONTILE,buttonTileEdit->LFSTK_getCStr());
+	wc->globalLib->LFSTK_setGlobalString(0,TYPEMENUITEMTILE,menuTileEdit->LFSTK_getCStr());
 //fonts
-	wc->globalLib->LFSTK_setGlobalString(0,TYPEFONT,buttonFontEdit->LFSTK_getBuffer()->c_str());
-	wc->globalLib->LFSTK_setGlobalString(0,TYPEMENUITEMFONT,menuFontEdit->LFSTK_getBuffer()->c_str());
-	wc->globalLib->LFSTK_setGlobalString(0,TYPEMONOFONT,monoFontEdit->LFSTK_getBuffer()->c_str());
-	wc->globalLib->LFSTK_setGlobalString(0,TYPECURSORCOLOUR,cursorColourEdit->LFSTK_getBuffer()->c_str());
+	wc->globalLib->LFSTK_setGlobalString(0,TYPEFONT,buttonFontEdit->LFSTK_getCStr());
+	wc->globalLib->LFSTK_setGlobalString(0,TYPEMENUITEMFONT,menuFontEdit->LFSTK_getCStr());
+	wc->globalLib->LFSTK_setGlobalString(0,TYPEMONOFONT,monoFontEdit->LFSTK_getCStr());
+	wc->globalLib->LFSTK_setGlobalString(0,TYPECURSORCOLOUR,cursorColourEdit->LFSTK_getCStr());
 }
 
 void setPreviewData(void)
 {
 //	if(useTheme->LFSTK_getValue()==true)
-//		wc->LFSTK_setTile(windowTileEdit->LFSTK_getBuffer()->c_str(),0);
+//		wc->LFSTK_setTile(windowTileEdit->LFSTK_getCStr(),0);
 //	else
 //		wc->LFSTK_setTile(NULL,0);
 //	wc->LFSTK_clearWindow();
@@ -128,33 +128,34 @@ void setPreviewData(void)
 		{
 			previewButtons[j]->LFSTK_setLabelAutoColour(autoColourCheck->LFSTK_getValue());
 			if(useTheme->LFSTK_getValue()==true)
-				previewButtons[j]->LFSTK_setTile(buttonTileEdit->LFSTK_getBuffer()->c_str(),0);
+				previewButtons[j]->LFSTK_setTile(buttonTileEdit->LFSTK_getCStr(),0);
 			else
 				previewButtons[j]->LFSTK_setTile(NULL,0);
-			previewButtons[j]->LFSTK_setFontString(buttonFontEdit->LFSTK_getBuffer()->c_str());
+			previewButtons[j]->LFSTK_setFontString(buttonFontEdit->LFSTK_getCStr());
 			previewButtons[j]->LFSTK_setCairoFontData();
-			previewButtons[j]->LFSTK_setColourName(NORMALCOLOUR,previeBackColourEdit[j]->LFSTK_getBuffer()->c_str());
-			previewButtons[j]->LFSTK_setFontColourName(NORMALCOLOUR,previeFontColourEdit[j]->LFSTK_getBuffer()->c_str(),false);
+			previewButtons[j]->LFSTK_setColourName(NORMALCOLOUR,previeBackColourEdit[j]->LFSTK_getCStr());
+			previewButtons[j]->LFSTK_setFontColourName(NORMALCOLOUR,previeFontColourEdit[j]->LFSTK_getCStr(),false);
 			previewButtons[j]->LFSTK_clearWindow();
 
 			previewMenus[j]->LFSTK_setLabelAutoColour(autoColourCheck->LFSTK_getValue());
 			if(useTheme->LFSTK_getValue()==true)
-				previewMenus[j]->LFSTK_setTile(menuTileEdit->LFSTK_getBuffer()->c_str(),0);
+				previewMenus[j]->LFSTK_setTile(menuTileEdit->LFSTK_getCStr(),0);
 			else
 				previewMenus[j]->LFSTK_setTile(NULL,0);
-			previewMenus[j]->LFSTK_setFontString(menuFontEdit->LFSTK_getBuffer()->c_str());
+			previewMenus[j]->LFSTK_setFontString(menuFontEdit->LFSTK_getCStr());
 			previewMenus[j]->LFSTK_setCairoFontData();
-			previewMenus[j]->LFSTK_setColourName(NORMALCOLOUR,previeMenuBackColourEdit[j]->LFSTK_getBuffer()->c_str());
-			previewMenus[j]->LFSTK_setFontColourName(NORMALCOLOUR,previeMenuFontColourEdit[j]->LFSTK_getBuffer()->c_str(),false);
+			previewMenus[j]->LFSTK_setColourName(NORMALCOLOUR,previeMenuBackColourEdit[j]->LFSTK_getCStr());
+			previewMenus[j]->LFSTK_setFontColourName(NORMALCOLOUR,previeMenuFontColourEdit[j]->LFSTK_getCStr(),false);
 			previewMenus[j]->LFSTK_clearWindow();
 		}
 
-	cursorColourEdit->LFSTK_setCursorColourName(cursorColourEdit->LFSTK_getBuffer()->c_str());
-	monoFontEdit->LFSTK_setFontString(monoFontEdit->LFSTK_getBuffer()->c_str(),true);
+	cursorColourEdit->LFSTK_setColourName(NORMALCOLOUR,cursorColourEdit->LFSTK_getCStr());
+	cursorColourEdit->LFSTK_clearWindow();
+	monoFontEdit->LFSTK_setFontString(monoFontEdit->LFSTK_getCStr(),true);
 	monoFontEdit->LFSTK_clearWindow();
-	buttonFontEdit->LFSTK_setFontString(buttonFontEdit->LFSTK_getBuffer()->c_str(),true);
+	buttonFontEdit->LFSTK_setFontString(buttonFontEdit->LFSTK_getCStr(),true);
 	buttonFontEdit->LFSTK_clearWindow();
-	menuFontEdit->LFSTK_setFontString(menuFontEdit->LFSTK_getBuffer()->c_str(),true);
+	menuFontEdit->LFSTK_setFontString(menuFontEdit->LFSTK_getCStr(),true);
 	menuFontEdit->LFSTK_clearWindow();
 }
 
@@ -325,6 +326,7 @@ int main(int argc, char **argv)
 	label=new LFSTK_labelClass(wc,"Cursor Col",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sx+=BORDER+GADGETWIDTH;
 	cursorColourEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(-1,TYPECURSORCOLOUR),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+	cursorColourEdit->LFSTK_setCursorColourName("black");
 	sy+=YSPACING;
 	sx=BORDER;
 

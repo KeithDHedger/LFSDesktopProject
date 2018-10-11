@@ -25,7 +25,6 @@
 
 LFSTK_lineEditClass::~LFSTK_lineEditClass()
 {
-
 	if(this->cursorColour.name!=NULL)
 		{
 			free(this->cursorColour.name);
@@ -239,7 +238,7 @@ void LFSTK_lineEditClass::drawLabel(void)
 
 	cairo_save(this->cr);
 		cairo_reset_clip(this->cr);
-		cairo_set_source_rgba(this->cr,1.0,1.0,1.0,1.0);
+		cairo_set_source_rgba(this->cr,this->colourNames[NORMALCOLOUR].RGBAColour.r,this->colourNames[NORMALCOLOUR].RGBAColour.g,this->colourNames[NORMALCOLOUR].RGBAColour.b,this->colourNames[NORMALCOLOUR].RGBAColour.a);
 		cairo_paint(this->cr);
 	cairo_restore(this->cr);
 

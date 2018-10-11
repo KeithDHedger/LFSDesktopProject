@@ -48,13 +48,13 @@ bool doExecute(void *object,void* ud)
 {
 	char	*data;
 
-	asprintf(&data,"%s &",le->LFSTK_getBuffer()->c_str());
+	asprintf(&data,"%s &",le->LFSTK_getCStr());
 	if(strlen(data)>2)
 		{
 			system(data);
 			free(data);
 
-			asprintf(&data,"echo \"%s\" >> %s",le->LFSTK_getBuffer()->c_str(),commandfile);
+			asprintf(&data,"echo \"%s\" >> %s",le->LFSTK_getCStr(),commandfile);
 			system(data);
 			free(data);
 			asprintf(&data,"tail -n %i %s|sort -u -o %s.tmp; mv %s.tmp %s",MAXHISTORY,commandfile,commandfile,commandfile,commandfile);

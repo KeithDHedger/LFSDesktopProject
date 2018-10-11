@@ -109,7 +109,7 @@ void buildFontString(void)
 	if(isItalic==true)
 		italicstr=":italic";
 
-	fontSize=strdup(static_cast<const char*>(fontSizeEdit->LFSTK_getBuffer()->c_str()));
+	fontSize=strdup(static_cast<const char*>(fontSizeEdit->LFSTK_getCStr()));
 
 	if(finalFont!=NULL)
 		free(finalFont);
