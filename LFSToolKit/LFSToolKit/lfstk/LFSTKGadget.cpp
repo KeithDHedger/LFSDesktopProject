@@ -991,8 +991,11 @@ void LFSTK_gadgetClass::LFSTK_setCairoFontData(void)
 		cairo_select_font_face(this->cr,this->fontName,this->slant,this->weight);
 		cairo_set_font_size(this->cr,this->fontSize);
 		cairo_font_extents(this->cr,&this->fontExtents);
-		cairo_text_extents(this->cr,this->label,&this->textExtents);
-		this->maxTextHeight=this->fontExtents.descent+this->fontExtents.height;
+		if(strlen(this->label)>0)
+			cairo_text_extents(this->cr,this->label,&this->textExtents);
+		else
+			cairo_text_extents(this->cr,"X",&this->textExtents);
+		this->maxTextHeight=this->fontExtents.descent+this->fontExtents.height+this->fontExtents.ascent;
 	cairo_restore(this->cr);
 }
 
