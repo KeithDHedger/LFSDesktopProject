@@ -81,6 +81,7 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 
 	LFSTK_setColourName(NORMALCOLOUR,"white");
 	LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
+	this->charWidth=LFSTK_getTextRealWidth("X");
 	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NULL,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
 }
 
@@ -221,196 +222,69 @@ const char* LFSTK_lineEditClass::LFSTK_getCStr(void)
 
 void LFSTK_lineEditClass::drawLabel(void)
 {
-//	int			cursorwidth;
-//	int			startchar=0;
-//	int			len=this->cursorPos;
-//	char		*buffer;
-//	const char	*curs="";
-//	char		*foward;
-
-	int						cursorwidth;
 	int						startchar=0;
-	int						len=this->cursorPos;
-	char					*buffer;
-	const char				*curs="";
 	double					yoffset=0;
 	cairo_text_extents_t	partextents;
-	cairo_text_extents_t	charextents;
+	char				 	*data;
+	char					undercurs[2]={0,0};
+	char					*aftercursor;
+	int						maxchars;
 
 	cairo_save(this->cr);
 		cairo_reset_clip(this->cr);
 		cairo_set_source_rgba(this->cr,1.0,1.0,1.0,1.0);
 		cairo_paint(this->cr);
 	cairo_restore(this->cr);
-	
+
 	cairo_save(this->cr);
-		cairo_select_font_face(this->cr,fontName,slant,weight);
+		cairo_select_font_face(this->cr,this->fontName,this->slant,this->weight);
 		cairo_set_font_size(this->cr,fontSize);
 		cairo_set_source_rgba(this->cr,0.0,0,0,1.0);
-//		for (int j=0;j<this->lines.size();j++)
-			{
-				yoffset=(this->gadgetDetails.gadgetGeom.h/2)-(this->textExtents.y_bearing/2);
-				cairo_move_to(this->cr,this->pad,yoffset);
-				//cairo_move_to(this->cr,this->pad,(this->gadgetDetails.gadgetGeom.h/2)-(this->textExtents.y_bearing/2));
-//do cursor
-//				if(lines.at(j)->cursorPos!=-1)
-				if(this->isFocused==true)
-					{
-						char 	*data;
-						char	undercurs[2];
-						char	*aftercursor;
-						
-						asprintf(&data,"%s",this->buffer.c_str());
-						undercurs[0]=data[this->cursorPos];
-						undercurs[1]=0;
-						if(undercurs[0]==0)
-							undercurs[0]=' ';
 
-						data[this->cursorPos]=0;
-						aftercursor=&data[this->cursorPos+1];
+		maxchars=((this->gadgetGeom.w)/(int)((this->LFSTK_getTextRealWidth("X"))+0.5))-1;
+		if(maxchars>this->buffer.length())
+			maxchars=this->buffer.length();
+
+		startchar=(this->cursorPos)-maxchars;
+		yoffset=(this->gadgetDetails.gadgetGeom.h/2)-(this->textExtents.y_bearing/2);
+		cairo_move_to(this->cr,this->pad,yoffset);
+
+		if(startchar<0)
+			startchar=0;
+
+		asprintf(&data,"%s",this->buffer.substr(startchar,this->cursorPos-startchar).c_str());
+		undercurs[0]=this->buffer.c_str()[this->cursorPos];
+		if(undercurs[0]==0)
+			undercurs[0]=' ';
+
+		if(this->cursorPos-startchar>=maxchars)
+			asprintf(&aftercursor,"");
+		else
+			asprintf(&aftercursor,"%s",this->buffer.substr(this->cursorPos+1,(maxchars-this->cursorPos-startchar)).c_str());
+
 //1stbit
-						cairo_show_text(this->cr,data);
-						cairo_text_extents (this->cr,data,&partextents);
-						cairo_text_extents (this->cr,undercurs,&charextents);
-						cairo_set_source_rgba(this->cr,0.0,0.0,0.0,1.0);
-						cairo_rectangle(this->cr,partextents.x_advance,yoffset+this->fontExtents.descent,charextents.x_advance,-this->maxTextHeight);
-						cairo_fill(this->cr);
-//secondbit
-						cairo_move_to(this->cr,partextents.x_advance,yoffset);
-						cairo_set_source_rgba(this->cr,1.0,1.0,1.0,1.0);
-						cairo_show_text(this->cr,undercurs);
-//3rdbit
-						cairo_set_source_rgba(this->cr,0.0,0.0,0.0,1.0);
-						if(this->cursorPos<this->buffer.length())
-							cairo_show_text(this->cr,aftercursor);
-
-						free(data);
-					}
-				else
-			//		{
-			//			cairo_set_source_rgba(this->cr,0.0,0.0,0.0,1.0);
-						cairo_show_text(this->cr,this->buffer.c_str());
-			//		}
+		cairo_show_text(this->cr,data);
+		cairo_text_extents (this->cr,data,&partextents);
+		if(this->isFocused==true)
+			{
+				cairo_set_source_rgba(this->cr,0.0,0.0,0.0,1);
+				cairo_rectangle(this->cr,partextents.x_advance+0.5,yoffset+this->fontExtents.descent,this->charWidth-0.5,-this->maxTextHeight);
+				cairo_fill(this->cr);
 			}
-	cairo_restore(this->cr);
-
-	free(buffer);
-
-
-return;
-#if 0
-	cursorwidth=this->LFSTK_getTextWidth(CURSORCHAR);
-	while(this->LFSTK_getTextWidth(this->buffer.substr(startchar,len).c_str())>this->gadgetGeom.w-cursorwidth)
-		{
-			startchar++;
-			len--;
-		}
-
-	cairo_save(this->cr);
-		cairo_reset_clip(this->cr);
 		cairo_set_source_rgba(this->cr,1.0,1.0,1.0,1.0);
-		cairo_paint(this->cr);
+//secondbit
+		cairo_move_to(this->cr,partextents.x_advance,yoffset);
+		cairo_show_text(this->cr,undercurs);
+////3rdbit
+		cairo_set_source_rgba(this->cr,0.0,0.0,0.0,1.0);
+		cairo_show_text(this->cr,aftercursor);
+
+		free(data);
+		free(aftercursor);
 	cairo_restore(this->cr);
-
-	
-	if(this->isFocused==true)
-		curs=CURSORCHAR;
-
-	startchar=0;
-	len=this->cursorPos-startchar;
-
-	while(this->LFSTK_getTextWidth(this->buffer.substr(startchar,len).c_str()) >= this->gadgetGeom.w-cursorwidth)
-		{
-			startchar++;
-			len=this->cursorPos-startchar;
-		}
-
-	if(this->isFocused==true)
-		curs=CURSORCHAR;
-
-	asprintf(&foward,"%s%s",this->buffer.substr(startchar,len).c_str(),curs);
-
-	if(this->LFSTK_getTextWidth(foward) >= this->gadgetGeom.w-cursorwidth-2)
-		asprintf(&buffer,"%s%s",this->buffer.substr(startchar,len).c_str(),curs);
-	else
-		asprintf(&buffer,"%s%s%s",this->buffer.substr(startchar,len).c_str(),curs,this->buffer.substr(this->cursorPos,this->buffer.length()).c_str());
-
-	cairo_save(this->cr);
-		cairo_select_font_face(this->cr,fontName,slant,weight);
-		cairo_set_font_size(this->cr,fontSize);
-		cairo_move_to(this->cr,this->pad,(this->gadgetDetails.gadgetGeom.h/2)-(this->textExtents.y_bearing/2));
-		cairo_set_source_rgba(this->cr,0.0,0,0,1.0);
-		cairo_show_text(this->cr,buffer);
-	cairo_restore(this->cr);
-
-	free(buffer);
-	free(foward);
-	
-#endif
 }
 
-#if 0
-void LFSTK_lineEditClass::drawLabel(void)
-{
-	int			cursorwidth;
-	int			startchar=0;
-	int			len=this->cursorPos;
-	char		*buffer;
-	const char	*curs="";
-	char		*foward;
-
-	cursorwidth=this->LFSTK_getTextWidth(CURSORCHAR);
-	while(this->LFSTK_getTextWidth(this->buffer.substr(startchar,len).c_str())>this->gadgetGeom.w-cursorwidth)
-		{
-			startchar++;
-			len--;
-		}
-
-	cairo_save(this->cr);
-		cairo_reset_clip(this->cr);
-		cairo_set_source_rgba(this->cr,1.0,1.0,1.0,1.0);
-		cairo_paint(this->cr);
-	cairo_restore(this->cr);
-
-	
-	if(this->isFocused==true)
-		curs=CURSORCHAR;
-
-	startchar=0;
-	len=this->cursorPos-startchar;
-
-	while(this->LFSTK_getTextWidth(this->buffer.substr(startchar,len).c_str()) >= this->gadgetGeom.w-cursorwidth)
-		{
-			startchar++;
-			len=this->cursorPos-startchar;
-		}
-
-	if(this->isFocused==true)
-		curs=CURSORCHAR;
-
-	asprintf(&foward,"%s%s",this->buffer.substr(startchar,len).c_str(),curs);
-
-	if(this->LFSTK_getTextWidth(foward) >= this->gadgetGeom.w-cursorwidth-2)
-		asprintf(&buffer,"%s%s",this->buffer.substr(startchar,len).c_str(),curs);
-	else
-		asprintf(&buffer,"%s%s%s",this->buffer.substr(startchar,len).c_str(),curs,this->buffer.substr(this->cursorPos,this->buffer.length()).c_str());
-
-	cairo_save(this->cr);
-		cairo_select_font_face(this->cr,fontName,slant,weight);
-		cairo_set_font_size(this->cr,fontSize);
-		cairo_move_to(this->cr,this->pad,(this->gadgetDetails.gadgetGeom.h/2)-(this->textExtents.y_bearing/2));
-		cairo_set_source_rgba(this->cr,0.0,0,0,1.0);
-		cairo_show_text(this->cr,buffer);
-	cairo_restore(this->cr);
-
-	free(buffer);
-	free(foward);
-}
 #endif
-
-
-
-
 /**
 * Set contents to the clipboard.
 */
@@ -531,7 +405,10 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 						}
 					break;
 				case XK_Delete:
-					this->buffer.erase(this->cursorPos,1);
+					//	fprintf(stderr,"startdel\n");
+					if(this->cursorPos<this->buffer.length())
+						this->buffer.erase(this->cursorPos,1);
+					//fprintf(stderr,"delok\n");
 					break;
 				case XK_Left:
 					if(this->cursorPos>0)

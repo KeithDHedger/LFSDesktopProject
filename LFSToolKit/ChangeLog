@@ -1,4 +1,6 @@
 0.3.0
+Fixed cursor movement in line edit.
+Saved mono text char width in linedit.
 Cursor pos in single line edit now shows inverse char.
 Cursor pos in multi line edit now shows inverse char.
 Delete key now deletes forward in line edit and multi line edit.

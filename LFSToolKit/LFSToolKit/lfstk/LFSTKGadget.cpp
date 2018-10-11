@@ -998,7 +998,23 @@ void LFSTK_gadgetClass::LFSTK_setCairoFontData(void)
 
 /**
 * Get width of text.
-* \returns test width
+* \returns text width as double.
+*/
+double LFSTK_gadgetClass::LFSTK_getTextRealWidth(const char* text)
+{
+	cairo_text_extents_t returnextents;
+
+	cairo_save(this->cr);
+		cairo_select_font_face(this->cr,this->fontName,this->slant,this->weight);
+		cairo_set_font_size(this->cr,this->fontSize);
+		cairo_text_extents(this->cr,text,&returnextents);
+	cairo_restore(this->cr);
+	return(returnextents.x_advance);
+}
+
+/**
+* Get width of text.
+* \returns text width rounded down to int.
 */
 int LFSTK_gadgetClass::LFSTK_getTextWidth(const char* text)
 {
@@ -1009,8 +1025,9 @@ int LFSTK_gadgetClass::LFSTK_getTextWidth(const char* text)
 		cairo_set_font_size(this->cr,this->fontSize);
 		cairo_text_extents(this->cr,text,&returnextents);
 	cairo_restore(this->cr);
-	return(returnextents.width);
+	return((int)returnextents.x_advance);
 }
+
 
 /**
 * Get height of text.

@@ -114,6 +114,7 @@ class LFSTK_gadgetClass
 //geometry
 		void					LFSTK_getGlobalGeom(geometryStruct *geom);
 		void					LFSTK_getGeom(geometryStruct *geom);
+		double					LFSTK_getTextRealWidth(const char* text);
 		int						LFSTK_getTextWidth(const char* text);
 		int						LFSTK_getTextHeight(const char* text);
 		void					LFSTK_setGadgetSize(int width,int height);

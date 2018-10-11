@@ -65,6 +65,7 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		std::string	buffer;
 		unsigned	cursorPos;
 		bool		isFocused;
+		double		charWidth;
 };
 
 #endif

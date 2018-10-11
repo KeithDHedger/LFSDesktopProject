@@ -102,6 +102,9 @@ static void debugFunc(const char *file,const char *func,int line,const char *fmt
 							case 'c':
 								sprintf(subbuffer,"%c",va_arg(ap,int));
 								break;
+							case 'f':
+								sprintf(subbuffer,"%f",va_arg(ap,double));
+								break;
 							default:
 								sprintf(subbuffer,"%c",fmt[0]);
 								break;
