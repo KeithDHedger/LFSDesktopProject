@@ -271,6 +271,7 @@ void LFSTK_lineEditClass::drawLabel(void)
 //1stbit
 		cairo_show_text(this->cr,data);
 		cairo_text_extents (this->cr,data,&partextents);
+
 		if(this->isFocused==true)
 			{
 				cairo_set_source_rgba(this->cr,this->cursorColour.RGBAColour.r,this->cursorColour.RGBAColour.g,this->cursorColour.RGBAColour.b,this->cursorColour.RGBAColour.a);
