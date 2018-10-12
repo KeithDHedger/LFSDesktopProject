@@ -6,6 +6,7 @@ g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cfla
 LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./basicexample "$@"
 retval=$?
 echo "Exit code $retval"
+rm basicexample
 exit $retval
 #endif
 

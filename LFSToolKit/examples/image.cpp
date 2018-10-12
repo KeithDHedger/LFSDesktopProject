@@ -6,6 +6,7 @@ g++ "$0" -O0 -ggdb -D_ENABLEDEBUG_ -I../LFSToolKit -L../LFSToolKit/app/.libs $(p
 LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./imageexample "$@"
 retval=$?
 echo "Exit code $retval"
+rm imageexample
 exit $retval
 #endif
 
