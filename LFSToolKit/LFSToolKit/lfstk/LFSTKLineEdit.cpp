@@ -280,9 +280,8 @@ void LFSTK_lineEditClass::drawLabel(void)
 
 		if(this->isFocused==true)
 			{
+
 				cairo_set_source_rgba(this->cr,this->cursorColour.RGBAColour.r,this->cursorColour.RGBAColour.g,this->cursorColour.RGBAColour.b,this->cursorColour.RGBAColour.a);
-			//	cairo_rectangle(this->cr,partextents.x_advance+0.5,yoffset+this->fontExtents.descent,this->charWidth-0.5,-this->maxTextHeight);
-			//	cairo_rectangle(this->cr,partextents.x_advance+0.5,yoffset-this->fontExtents.ascent,this->charWidth-0.5,this->fontExtents.ascent+this->fontExtents.descent);
 				cairo_rectangle(this->cr,partextents.x_advance+0.5,yoffset-this->fontExtents.ascent,charextents.x_advance-0.5,this->fontExtents.ascent+this->fontExtents.descent);
 				cairo_fill(this->cr);
 			}
@@ -290,7 +289,7 @@ void LFSTK_lineEditClass::drawLabel(void)
 //secondbit
 		cairo_move_to(this->cr,partextents.x_advance,yoffset);
 		cairo_show_text(this->cr,undercurs);
-////3rdbit
+//3rdbit
 		cairo_set_source_rgba(this->cr,0.0,0.0,0.0,1.0);
 		cairo_show_text(this->cr,aftercursor);
 
@@ -419,10 +418,8 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 						}
 					break;
 				case XK_Delete:
-					//	fprintf(stderr,"startdel\n");
 					if(this->cursorPos<this->buffer.length())
 						this->buffer.erase(this->cursorPos,1);
-					//fprintf(stderr,"delok\n");
 					break;
 				case XK_Left:
 					if(this->cursorPos>0)
@@ -439,6 +436,7 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 				case XK_Home:
 				case XK_Page_Up:
 					this->cursorPos=0;
+					//this->drawLabel();
 					break;
 				case XK_Down:
 				case XK_Up:
