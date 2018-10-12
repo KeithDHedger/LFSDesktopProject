@@ -46,9 +46,9 @@ void LFSTK_fontDialogClass::buildFontString(void)
 
 	if(this->fontData.fontString!=NULL)
 		free(this->fontData.fontString);
-	asprintf(&this->fontData.fontString,"%s:size=%s%s%s",this->fontsAZ[this->selectedFontNumber],this->fontsize->LFSTK_getBuffer()->c_str(),boldstr,italicstr);
+	asprintf(&this->fontData.fontString,"%s:size=%s%s%s",this->fontsAZ[this->selectedFontNumber],this->fontsize->LFSTK_getCStr(),boldstr,italicstr);
 	asprintf(&formatstring,"ns%s%s",dobold,doitalic);
-	this->preview->LFSTK_setCairoFontDataParts(formatstring,this->fontsAZ[selectedFontNumber],atoi(this->fontsize->LFSTK_getBuffer()->c_str()));
+	this->preview->LFSTK_setCairoFontDataParts(formatstring,this->fontsAZ[selectedFontNumber],atoi(this->fontsize->LFSTK_getCStr()));
 	this->preview->LFSTK_clearWindow();
 
 	this->fontData.fontString;

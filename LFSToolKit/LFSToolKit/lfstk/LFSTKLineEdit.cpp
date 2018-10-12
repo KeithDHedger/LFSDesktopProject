@@ -235,6 +235,7 @@ void LFSTK_lineEditClass::drawLabel(void)
 	char					undercurs[2]={0,0};
 	char					*aftercursor;
 	int						maxchars;
+	cairo_text_extents_t	charextents;
 
 	cairo_save(this->cr);
 		cairo_reset_clip(this->cr);
@@ -247,7 +248,11 @@ void LFSTK_lineEditClass::drawLabel(void)
 		cairo_set_font_size(this->cr,fontSize);
 		cairo_set_source_rgba(this->cr,0.0,0,0,1.0);
 
-		maxchars=((this->gadgetGeom.w)/(int)((this->LFSTK_getTextRealWidth("X"))+0.5))-1;
+		if(this->LFSTK_getTextWidth("X")<=0)
+			maxchars=((this->gadgetGeom.w)/(int)((8)));
+		else
+			maxchars=(this->gadgetGeom.w/(int)(this->LFSTK_getTextRealWidth("X")+0.5))-1;
+
 		if(maxchars>this->buffer.length())
 			maxchars=this->buffer.length();
 
@@ -270,12 +275,15 @@ void LFSTK_lineEditClass::drawLabel(void)
 
 //1stbit
 		cairo_show_text(this->cr,data);
-		cairo_text_extents (this->cr,data,&partextents);
+		cairo_text_extents(this->cr,data,&partextents);
+		cairo_text_extents (this->cr,undercurs,&charextents);
 
 		if(this->isFocused==true)
 			{
 				cairo_set_source_rgba(this->cr,this->cursorColour.RGBAColour.r,this->cursorColour.RGBAColour.g,this->cursorColour.RGBAColour.b,this->cursorColour.RGBAColour.a);
-				cairo_rectangle(this->cr,partextents.x_advance+0.5,yoffset+this->fontExtents.descent,this->charWidth-0.5,-this->maxTextHeight);
+			//	cairo_rectangle(this->cr,partextents.x_advance+0.5,yoffset+this->fontExtents.descent,this->charWidth-0.5,-this->maxTextHeight);
+			//	cairo_rectangle(this->cr,partextents.x_advance+0.5,yoffset-this->fontExtents.ascent,this->charWidth-0.5,this->fontExtents.ascent+this->fontExtents.descent);
+				cairo_rectangle(this->cr,partextents.x_advance+0.5,yoffset-this->fontExtents.ascent,charextents.x_advance-0.5,this->fontExtents.ascent+this->fontExtents.descent);
 				cairo_fill(this->cr);
 			}
 		cairo_set_source_rgba(this->cr,1.0,1.0,1.0,1.0);

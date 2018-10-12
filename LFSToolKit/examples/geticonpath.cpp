@@ -36,7 +36,7 @@ bool doQuit(void *p,void* ud)
 
 bool doKeyUp(void *p,void* ud)
 {
-	//printf(">>%s<<\n",mimeEdit->LFSTK_getBuffer()->c_str());
+	//printf(">>%s<<\n",mimeEdit->LFSTK_getCStr());
 	return(true);
 }
 
@@ -47,7 +47,7 @@ bool getPath(void *p,void* ud)
 	char        *theme=NULL;
 
 	theme=wc->globalLib->LFSTK_oneLiner("head ~/.config/LFS/lfsdesktop2.rc|grep -i icontheme|awk '{print $2}'");
-	iconpath=(char*)wc->globalLib->LFSTK_findThemedIcon(theme,mimeEdit->LFSTK_getBuffer()->c_str(),catEdit->LFSTK_getBuffer()->c_str());
+	iconpath=(char*)wc->globalLib->LFSTK_findThemedIcon(theme,mimeEdit->LFSTK_getCStr(),catEdit->LFSTK_getCStr());
 
 	if(iconpath!=NULL)
 		printf("iconpath=%s\n",iconpath);

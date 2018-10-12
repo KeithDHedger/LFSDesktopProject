@@ -1,4 +1,5 @@
 0.3.0
+Fixed cursor size in line edits.
 Added cursor colour to prefs.
 Added mono font to prefs.
 Fixed cursor movement in line edit.

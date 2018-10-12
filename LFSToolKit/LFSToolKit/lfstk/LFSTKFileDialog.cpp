@@ -711,7 +711,7 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 										XLookupString(&event.xkey,(char*)&c,255,&keysym_return,NULL);
 										if(keysym_return==XK_Return)
 											{
-												this->doOpenDir(this->dirEdit->LFSTK_getBuffer()->c_str());
+												this->doOpenDir(this->dirEdit->LFSTK_getCStr());
 												lasttime=event.xkey.time-1000;
 											}
 									}

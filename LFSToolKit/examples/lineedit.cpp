@@ -47,22 +47,6 @@ bool buttonCB(void *p,void* ud)
 	return(true);
 }
 
-void sendUTF8(XSelectionRequestEvent *sev)
-{
-	XSelectionEvent	ssev;
-
-    XChangeProperty(wc->display,sev->requestor,sev->property,wc->LFSTK_getDnDAtom(XA_UTF8_STRING),8,PropModeReplace,(unsigned char *)wc->clipBuffer.c_str(),wc->clipBuffer.length());
-
-    ssev.type=SelectionNotify;
-    ssev.requestor=sev->requestor;
-    ssev.selection=sev->selection;
-    ssev.target=sev->target;
-    ssev.property=sev->property;
-    ssev.time=sev->time;
-
-    XSendEvent(wc->display,sev->requestor,True,NoEventMask,(XEvent *)&ssev);
-}
-
 int main(int argc, char **argv)
 {
 	XEvent	event;
