@@ -2,8 +2,12 @@
 
 #©keithhedger Thu 3 Aug 12:48:12 BST 2017 kdhedger68713@gmail.com
 
+if [ "X$1" != "X" ];then
+	USEVALGRIND="valgrind --leak-check=full"
+fi
+
 g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2 -o submenuexample||exit 1
-LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./submenuexample "$@"
+LD_LIBRARY_PATH=../LFSToolKit/app/.libs $USEVALGRIND ./submenuexample "$@"
 retval=$?
 echo "Exit code $retval"
 rm submenuexample

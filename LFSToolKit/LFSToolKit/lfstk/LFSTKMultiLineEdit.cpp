@@ -32,6 +32,16 @@
 
 LFSTK_multiLineEditClass::~LFSTK_multiLineEditClass()
 {
+	if(!this->lines.empty())
+		{
+			for (int j=0;j<this->lines.size();j++)
+				{
+					if(this->lines.at(j)->line!=NULL)
+						free(this->lines.at(j)->line);
+					free(this->lines.at(j));
+				}
+				this->lines.clear();
+		}
 }
 
 LFSTK_multiLineEditClass::LFSTK_multiLineEditClass()
@@ -649,7 +659,6 @@ void  LFSTK_multiLineEditClass::LFSTK_setFormatedText(const char *txt,bool repla
 			this->LFSTK_clearWindow();
 		}
 
-DEBUGFUNC("<<<<<<<<<<<<<","");
 	this->setDisplayLines();
 }
 

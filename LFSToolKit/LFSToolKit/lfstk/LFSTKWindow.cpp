@@ -197,7 +197,6 @@ LFSTK_windowClass::~LFSTK_windowClass()
 					mappedListener	*ml=it->second;
 					if (ml!=NULL)
 						{
-//		fprintf(stderr,"cnt=%i ml=%p ml->gadget=%p ml->type=%i\n",cnt++,ml,ml->gadget,ml->type);
 							if(ml->gadget!=NULL)
 								delete ml->gadget;
 							delete ml;
@@ -206,6 +205,8 @@ LFSTK_windowClass::~LFSTK_windowClass()
 			this->gadgetMap.clear();
 		}
 
+	this->clipBuffer.clear();
+	this->dNdTypes.clear();
 	free(this->configDir);
 	XFreeGC(this->display,this->gc);
 	XDestroyWindow(this->display,this->window);
@@ -826,6 +827,7 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 
 	this->windowClassInitCommon(wi);
 	this->gadgetMap.clear();
+	delete wi;
 }
 
 /**

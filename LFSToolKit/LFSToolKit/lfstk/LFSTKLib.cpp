@@ -997,7 +997,7 @@ cairo_surface_t* LFSTK_lib::LFSTK_cairo_image_surface_create_from_jpeg(const cha
 	close(infile);
 	if(flag==false)
 		{
-			printf("not a jpeg\n");
+			fprintf(stderr,"not a jpeg\n");
 			return(NULL);
 		}
 	return cairo_image_surface_create_from_jpeg_mem(data, stat.st_size);

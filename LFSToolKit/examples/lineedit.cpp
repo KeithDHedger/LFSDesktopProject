@@ -2,10 +2,15 @@
 
 #©keithhedger Sat 5 Aug 19:18:08 BST 2017 kdhedger68713@gmail.com
 
+if [ "X$1" != "X" ];then
+	USEVALGRIND="valgrind --leak-check=full"
+fi
+
 g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2 -o lineeditexample||exit 1
-LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./lineeditexample "$@"
+LD_LIBRARY_PATH=../LFSToolKit/app/.libs $USEVALGRIND ./lineeditexample "$@"
 retval=$?
 echo "Exit code $retval"
+rm lineeditexample
 exit $retval
 #endif
 

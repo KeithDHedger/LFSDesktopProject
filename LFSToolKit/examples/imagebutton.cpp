@@ -2,8 +2,12 @@
 
 #©keithhedger Fri 4 Aug 20:10:13 BST 2017 kdhedger68713@gmail.com
 
+if [ "X$1" != "X" ];then
+	USEVALGRIND="valgrind --leak-check=full"
+fi
+
 g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2 -o imagebuttonexample||exit 1
-LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./imagebuttonexample "$@"
+LD_LIBRARY_PATH=../LFSToolKit/app/.libs $USEVALGRIND ./imagebuttonexample "$@"
 retval=$?
 echo "Exit code $retval"
 rm imagebuttonexample

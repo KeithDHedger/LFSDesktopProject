@@ -1,4 +1,6 @@
 0.3.0
+Added optional valgrind check to examples.
+Fixed memory leaks from various classes.
 Fixed cursor size in line edits.
 Added cursor colour to prefs.
 Added mono font to prefs.
