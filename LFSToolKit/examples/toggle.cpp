@@ -2,11 +2,11 @@
 
 #©keithhedger Sat 29 Jul 17:18:27 BST 2017 kdhedger68713@gmail.com
 
-gif [ "X$1" != "X" ];then
+if [ "X$1" != "X" ];then
 	USEVALGRIND="valgrind --leak-check=full"
 fi
 
-++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2 -o toggleexample||exit 1
+g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2 -o toggleexample||exit 1
 LD_LIBRARY_PATH=../LFSToolKit/app/.libs $USEVALGRIND ./toggleexample "$@"
 retval=$?
 echo "Exit code $retval"
