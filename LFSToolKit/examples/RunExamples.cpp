@@ -111,39 +111,35 @@ int main(int argc, char **argv)
 
 //run examples
 //lineedit
-	button=new LFSTK_buttonClass(wc,"Line Edit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	button=new LFSTK_buttonClass(wc,"Line Edit",DIALOGMIDDLE-(GADGETWIDTH-BORDER)*2,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./lineedit.cpp");
-	sy+=YSPACING;
+//	sy+=YSPACING;
 //multi line
 	button=new LFSTK_buttonClass(wc,"Multi Line Edit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./multilineedit.cpp");
-	sy+=YSPACING;
 //get icon path
-	button=new LFSTK_buttonClass(wc,"Get Icon Path",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	button=new LFSTK_buttonClass(wc,"Get Icon Path",DIALOGMIDDLE+(BORDER*3),sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./geticonpath.cpp");
 	sy+=YSPACING;
 //basic buttons
-	button=new LFSTK_buttonClass(wc,"Buttons",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	button=new LFSTK_buttonClass(wc,"Buttons",DIALOGMIDDLE-GADGETWIDTH-BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./basic.cpp");
-	sy+=YSPACING;
 //toggles
-	button=new LFSTK_buttonClass(wc,"Toggles",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	button=new LFSTK_buttonClass(wc,"Toggles",DIALOGMIDDLE+BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./toggle.cpp");
 	sy+=YSPACING;
 //basic menus
-	button=new LFSTK_buttonClass(wc,"Basic Menu",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	button=new LFSTK_buttonClass(wc,"Basic Menu",DIALOGMIDDLE-GADGETWIDTH-BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./basicmenu.cpp");
-	sy+=YSPACING;
 //sub menus
-	button=new LFSTK_buttonClass(wc,"Sub Menus",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	button=new LFSTK_buttonClass(wc,"Sub Menus",DIALOGMIDDLE+BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./submenus.cpp");
 	sy+=YSPACING;
 //dialogs
-	button=new LFSTK_buttonClass(wc,"Dialogs",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	button=new LFSTK_buttonClass(wc,"Dialogs",DIALOGMIDDLE-GADGETWIDTH-BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./dialogs.cpp");
-	sy+=YSPACING;
 //fontdialog
-	button=new LFSTK_buttonClass(wc,"Font Dialog",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	button=new LFSTK_buttonClass(wc,"Font Dialog",DIALOGMIDDLE+BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./fontdialog.cpp");
 	sy+=YSPACING;
 //list
@@ -151,19 +147,17 @@ int main(int argc, char **argv)
 	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./list.cpp");
 	sy+=YSPACING;
 //window
-	button=new LFSTK_buttonClass(wc,"Window",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	button=new LFSTK_buttonClass(wc,"Window",DIALOGMIDDLE-GADGETWIDTH-BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./window.cpp");
-	sy+=YSPACING;
 //subwindow
-	button=new LFSTK_buttonClass(wc,"Sub Window",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	button=new LFSTK_buttonClass(wc,"Sub Window",DIALOGMIDDLE+BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./subwindowtest.cpp");
 	sy+=YSPACING;
 //image
-	button=new LFSTK_buttonClass(wc,"Image",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	button=new LFSTK_buttonClass(wc,"Image",DIALOGMIDDLE-GADGETWIDTH-BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./image.cpp");
-	sy+=YSPACING;
 //image buttons
-	button=new LFSTK_buttonClass(wc,"Image Buttons",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	button=new LFSTK_buttonClass(wc,"Image Buttons",DIALOGMIDDLE+BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./imagebutton.cpp");
 	sy+=YSPACING;
 //lfsabout
