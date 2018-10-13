@@ -1,4 +1,5 @@
 0.3.0
+Fixed memory leak on setting lab BG colour.
 Added optional valgrind check to examples.
 Fixed memory leaks from various classes.
 Fixed cursor size in line edits.

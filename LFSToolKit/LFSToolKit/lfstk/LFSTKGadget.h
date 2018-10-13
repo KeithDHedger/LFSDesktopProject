@@ -192,12 +192,12 @@ class LFSTK_gadgetClass
 		cairo_t					*cr=NULL;
 		cairo_surface_t 		*sfc=NULL;
 		cairo_surface_t			*cImage=NULL;
+		cairo_pattern_t			*pattern=NULL;
 		int						imageWidth=0;
 		int						imageHeight=0;
 		int						imageGravity;
 		float					ratio;
 		bool					useTile;
-		cairo_pattern_t			*pattern=NULL;
 
 		bevelType				newbevel=BEVELOUT;
 		gadgetState				state=NORMALCOLOUR;

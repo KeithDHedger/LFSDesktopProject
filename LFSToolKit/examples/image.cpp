@@ -82,8 +82,6 @@ int main(int argc, char **argv)
 	wi->h=DIALOGHITE;
 	wi->name="Draggaable Image Example";
 
-	DEBUGFUNC("Entering main ...","");
-
 	wc=new LFSTK_windowClass(wi);
 	display=wc->display;
 	delete	wi;
@@ -142,6 +140,7 @@ int main(int argc, char **argv)
 			diskButtons[j]->LFSTK_setCallBack(NULL,contextCB,(void*)(long)(j+1));
 			iconpath=diskWindow->globalLib->LFSTK_findThemedIcon("gnome",diskThemeIconData[j],"");
 			diskButtons[j]->LFSTK_setImageFromPath(iconpath,LEFT,true);
+			free(iconpath);
 			sy+=GADGETHITE;
 		}
 	diskWindow->LFSTK_resizeWindow(GADGETWIDTH,sy,true);

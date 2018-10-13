@@ -835,8 +835,12 @@ void LFSTK_lib::LFSTK_setColourFromName(Display *display,Colormap cm,colourStruc
 {
 	XColor tc,sc;
 	if(colptr->name!=NULL)
-		free(colptr->name);
-	colptr->name=strdup(name);
+		{
+			free(colptr->name);
+			colptr->name=strdup(name);
+
+			XFreeColors(display,cm,(long unsigned int*)&colptr->pixel,1,0);
+		}
 	XAllocNamedColor(display,cm,name,&sc,&tc);
 	colptr->pixel=sc.pixel;
 
@@ -878,13 +882,21 @@ unsigned long LFSTK_lib::LFSTK_getColourFromName(Display *display,Colormap cm,co
 */
 void LFSTK_lib::LFSTK_setCairoSurface(Display *display,Window window,Visual *visual,cairo_surface_t **sfc,cairo_t **cr,int width,int height)
 {
+
 	if(*sfc==NULL)
+	{
+//fprintf(stderr,"*sfc=%p\n",*sfc);
 		*sfc=cairo_xlib_surface_create(display,window,visual,width,height);
+		}
 	else
 		cairo_xlib_surface_set_size(*sfc,width,height);
 
 	if(*cr==NULL)
+	{
+//fprintf(stderr,"*cr=%p\n",*cr);
+	
 		*cr=cairo_create(*sfc);
+		}
 }
 
 /**

@@ -22,9 +22,10 @@
 
 LFSTK_imageClass::~LFSTK_imageClass()
 {
-	XFreePixmap(this->display,shape);
 	cairo_destroy(this->shapecr);
 	cairo_surface_destroy(this->shapesfc);
+	XFreePixmap(this->display,shape);
+	XSync(this->display,false);
 }
 
 LFSTK_imageClass::LFSTK_imageClass()
@@ -113,15 +114,12 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 	xoffset=(this->gadgetGeom.w/2)-(this->imageWidth/2);
 	yoffset=(this->gadgetGeom.h/2)-(this->imageHeight/2);
 
-
-
 	cairo_save(this->cr);
 		cairo_set_source_rgba (this->cr,1.0,1.0,1.0,this->alpha);
 		//cairo_set_operator(this->cr,CAIRO_OPERATOR_SOURCE);
 		cairo_rectangle(this->cr,0,0,this->gadgetGeom.w,this->gadgetGeom.h);
 		cairo_fill(this->cr);
 	cairo_restore(this->cr);
-
 
 	cairo_save(this->shapecr);
 		cairo_reset_clip(this->shapecr);

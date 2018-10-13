@@ -50,8 +50,11 @@ LFSTK_gadgetClass::~LFSTK_gadgetClass()
 	if(this->fontString!=NULL)
 		free(this->fontString);
 
-//	if(this->monoFontString!=NULL)
-//		free(this->monoFontString);
+	if(this->labelBGColour.name!=NULL)
+		{
+			free(this->labelBGColour.name);
+			XFreeColors(this->display,this->cm,(long unsigned int*)&this->labelBGColour.pixel,1,0);
+		}
 
 	cairo_destroy(this->cr);
 
