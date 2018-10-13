@@ -29,6 +29,7 @@ LFSTK_buttonClass			*seperator=NULL;
 LFSTK_buttonClass			*quit=NULL;
 LFSTK_buttonClass			*button=NULL;
 LFSTK_toggleButtonClass		*useDbg=NULL;
+LFSTK_toggleButtonClass		*openFile=NULL;
 
 bool						mainLoop=true;
 Display						*display;
@@ -50,6 +51,12 @@ bool buttonCB(void *p,void* ud)
 			asprintf(&command,"%s %s &",(const char*)ud,dbg);
 			system(command);
 			free(command);
+			if(openFile->LFSTK_getValue()==true)
+				{
+					asprintf(&command,"xdg-open %s &",(const char*)ud);
+					system(command);
+					free(command);
+				}
 		}
 	return(true);
 }
@@ -90,6 +97,9 @@ int main(int argc, char **argv)
 	useDbg=new LFSTK_toggleButtonClass(wc,"Use Valgrind",BORDER,sy,GADGETWIDTH,GADGETHITE,NorthWestGravity);
 	useDbg->LFSTK_setValue(false);
 	useDbg->LFSTK_setCallBack(NULL,doDbg,NULL);
+
+	openFile=new LFSTK_toggleButtonClass(wc,"Open File",BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthWestGravity);
+	openFile->LFSTK_setValue(false);
 	sy+=YSPACING;
 
 //line
