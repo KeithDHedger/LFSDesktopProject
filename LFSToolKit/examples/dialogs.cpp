@@ -44,14 +44,16 @@ bool doQuit(void *p,void* ud)
 //use wd =~
 bool selectfile(void *object,void* ud)
 {
+	char	*mimetype=NULL;
 	filedialogfile->LFSTK_showFileDialog(wd,"Select A File");
 	if(filedialogfile->LFSTK_isValid()==true)
 		{
 			printf("Selected File Path=%s\n",filedialogfile->LFSTK_getCurrentPath());
 			printf("Selected Dir Path=%s\n",filedialogfile->LFSTK_getCurrentDir());
 			printf("Selected File Name=%s\n",filedialogfile->LFSTK_getCurrentFile());
-			printf("File Mime-Type=%s\n",wc->globalLib->LFSTK_getMimeType(filedialogfile->LFSTK_getCurrentPath()));
-
+			mimetype=wc->globalLib->LFSTK_getMimeType(filedialogfile->LFSTK_getCurrentPath());
+			printf("File Mime-Type=%s\n",mimetype);
+			free(mimetype);
 			free(wd);
 			wd=strdup(filedialogfile->LFSTK_getCurrentDir());			
 		}
@@ -140,5 +142,6 @@ int main(int argc, char **argv)
 	delete wc;
 	XCloseDisplay(display);
 	cairo_debug_reset_static_data();
+	free(wd);
 	return 0;
 }

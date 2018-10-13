@@ -533,6 +533,7 @@ char* LFSTK_fileDialogClass::findThemedIconFromMime(const char *mimetype)
 				}
 		}
 breakReturn:
+	free(theme);
 	return(iconpath);
 }
 

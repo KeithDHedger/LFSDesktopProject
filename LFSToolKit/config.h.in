@@ -62,3 +62,6 @@
 
 /* Enable debug code */
 #undef _ENABLEDEBUG_
+
+/* Enable warn debug code */
+#undef _WARN_ENABLEDEBUG_

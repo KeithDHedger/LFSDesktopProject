@@ -49,7 +49,7 @@ bool getPath(void *p,void* ud)
 {
 
 	char	*iconpath=NULL;
-	char        *theme=NULL;
+	char	*theme=NULL;
 
 	theme=wc->globalLib->LFSTK_oneLiner("head ~/.config/LFS/lfsdesktop2.rc|grep -i icontheme|awk '{print $2}'");
 	iconpath=(char*)wc->globalLib->LFSTK_findThemedIcon(theme,mimeEdit->LFSTK_getCStr(),catEdit->LFSTK_getCStr());
@@ -57,6 +57,7 @@ bool getPath(void *p,void* ud)
 	if(iconpath!=NULL)
 		printf("iconpath=%s\n",iconpath);
 	free(iconpath);
+	free(theme);
 	return(true);
 }
 

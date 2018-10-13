@@ -22,6 +22,7 @@
 
 LFSTK_imageClass::~LFSTK_imageClass()
 {
+//DEBUGFUNC("destroy image","");
 	cairo_destroy(this->shapecr);
 	cairo_surface_destroy(this->shapesfc);
 	XFreePixmap(this->display,shape);

@@ -1,5 +1,7 @@
 0.3.0
-Fixed memory leak on setting lab BG colour.
+Fixed leak in dNd in line edit.
+Fixed various memory leaks.
+Fixed memory leak on setting label BG colour.
 Added optional valgrind check to examples.
 Fixed memory leaks from various classes.
 Fixed cursor size in line edits.

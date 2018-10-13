@@ -29,6 +29,7 @@
 */
 LFSTK_gadgetClass::~LFSTK_gadgetClass()
 {
+//DEBUGFUNC("destroy gadget","");
 	if(this->label!=NULL)
 		free(this->label);
 

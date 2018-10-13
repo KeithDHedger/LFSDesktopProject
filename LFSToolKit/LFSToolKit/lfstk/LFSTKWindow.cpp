@@ -1045,10 +1045,18 @@ propertyStruct* LFSTK_windowClass::readProperty(Window src,Atom property)
 //Convert an atom name in to a std::string
 std::string LFSTK_windowClass::getAtomName(Atom a)
 {
+	std::string retval;
+	char	*aname;
+
 	if(a == None)
-		return "None";
+		retval="None";
 	else
-		return XGetAtomName(this->display,a);
+		{
+			aname=XGetAtomName(this->display,a);
+			retval=aname;
+			XFree(aname);
+		}
+	return(retval);
 }
 
 // This function takes a list of targets which can be converted to (atom_list, nitems)
@@ -1058,11 +1066,13 @@ Atom LFSTK_windowClass::pickTargetFromList(Atom* atom_list,int nitems)
 {
 	Atom to_be_requested=None;
 	//This is higger than the maximum priority.
+
 	int priority=INT_MAX;
 
 	for(int i=0; i < nitems; i++)
 		{
-			std::string atom_name=this->getAtomName(atom_list[i]);
+			//aname=
+			std::string atom_name=this->getAtomName(atom_list[i]);;
 			//See if this data type is allowed and of higher priority (closer to zero) than the present one.
 			if(this->dNdTypes.find(atom_name)!= this->dNdTypes.end())
 				if(priority > this->dNdTypes[atom_name])
@@ -1070,6 +1080,7 @@ Atom LFSTK_windowClass::pickTargetFromList(Atom* atom_list,int nitems)
 						priority=this->dNdTypes[atom_name];
 						to_be_requested=atom_list[i];
 					}
+				atom_name.clear();
 		}
 	return to_be_requested;
 }
@@ -1175,11 +1186,13 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 							propertyStruct *props=this->readProperty(source,this->dNdAtoms[XDNDTYPELIST]);
 							this->toBeRequested=this->pickTargetFromTargets(props);
 							XFree(props->data);
+							XFree(props->mimeType);
+							delete props;
 						}
 					else
 						{
 							//Use the available list
-							this->toBeRequested=pickTargetFromAtoms(event->xclient.data.l[2],event->xclient.data.l[3],event->xclient.data.l[4]);
+							this->toBeRequested=this->pickTargetFromAtoms(event->xclient.data.l[2],event->xclient.data.l[3],event->xclient.data.l[4]);
 						}
 				}
 
@@ -1257,7 +1270,12 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 							this->toBeRequested=this->pickTargetFromTargets(myprops);
 
 							if(this->toBeRequested == None)
-								return;
+								{
+									XFree(myprops->data);
+									XFree(myprops->mimeType);
+									delete myprops;
+									return;
+								}
 							else //Request the data type we are able to select
 								XConvertSelection(this->display,dNdAtoms[XDNDSELECTION],this->toBeRequested,dNdAtoms[XDNDSELECTION],this->window, CurrentTime);
 						}
@@ -1288,6 +1306,7 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 
 					XFree(myprops->data);
 					XFree(myprops->mimeType);
+					delete myprops;
 				}
 		}
 }
