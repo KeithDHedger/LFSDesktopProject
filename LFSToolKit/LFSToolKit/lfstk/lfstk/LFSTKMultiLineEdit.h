@@ -1,1 +1,1 @@
-/media/LinuxData/Development64/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit/lfstk/LFSTKMultiLineEdit.h
+../LFSTKMultiLineEdit.h
