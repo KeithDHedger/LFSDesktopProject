@@ -19,8 +19,8 @@
  */
 
 
-#ifndef _LFSTKBUTTON_
-#define _LFSTKBUTTON_
+#ifndef _LFSTKSCROLLBAR_
+#define _LFSTKSCROLLBAR_
 
 /**
  *
@@ -28,14 +28,17 @@
  * Basic button class for LFSToolKit.
  *
  */
-class LFSTK_buttonClass : public LFSTK_gadgetClass
+class LFSTK_scrollBarClass : public LFSTK_gadgetClass
 {
 	public:
-		LFSTK_buttonClass();
-		~LFSTK_buttonClass();
-		LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity);
+		LFSTK_scrollBarClass();
+		~LFSTK_scrollBarClass();
+		LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity);
 
+		void *LFSTK_getCallbackUD(void);
 		void LFSTK_setStyle(bevelType s);
+		void LFSTK_setIgnoreCB(bool ignore);
+		bool LFSTK_getIgnoreCB(void);
 };
 
 #endif

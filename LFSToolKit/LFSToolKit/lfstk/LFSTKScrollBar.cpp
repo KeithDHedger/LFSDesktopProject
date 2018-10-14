@@ -22,21 +22,48 @@
 
 #include "lfstk/LFSTKGlobals.h"
 
-LFSTK_buttonClass::~LFSTK_buttonClass()
+LFSTK_scrollBarClass::~LFSTK_scrollBarClass()
 {
 }
 
-LFSTK_buttonClass::LFSTK_buttonClass()
+LFSTK_scrollBarClass::LFSTK_scrollBarClass()
 {
+}
+
+/**
+* Return callback user data.
+* \note Returns a void* so must be cast.
+* \note return value must not be freed.
+*/
+void* LFSTK_scrollBarClass::LFSTK_getCallbackUD()
+{
+	return(this->callback.userData);
 }
 
 /**
 * Set buton style.
 * \param s Button style.
 */
-void LFSTK_buttonClass::LFSTK_setStyle(bevelType s)
+void LFSTK_scrollBarClass::LFSTK_setStyle(bevelType s)
 {
 	this->style=s;
+}
+
+///**
+//* Ignore callbacks.
+//* \param ignore.
+//*/
+void LFSTK_scrollBarClass::LFSTK_setIgnoreCB(bool ignore)
+{
+	this->callback.ignoreCallback=ignore;
+}
+
+/**
+* Get the current ignore callbacks state.
+*/
+bool LFSTK_scrollBarClass::LFSTK_getIgnoreCB(void)
+{
+	return(this->callback.ignoreCallback);
 }
 
 /**
@@ -50,7 +77,7 @@ void LFSTK_buttonClass::LFSTK_setStyle(bevelType s)
 * \param h Height.
 * \param gravity Button gravity.
 */
-LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity)
+LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity)
 {
 	XSetWindowAttributes	wa;
 

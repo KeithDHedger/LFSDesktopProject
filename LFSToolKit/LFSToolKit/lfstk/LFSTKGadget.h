@@ -53,6 +53,9 @@ class LFSTK_gadgetClass
 
 //mouse events
 		void					LFSTK_setIgnoreCB(bool ignore);
+		bool					LFSTK_getIgnoreCB(void);
+		void					*LFSTK_getCallbackUD(void);
+
 		virtual bool			mouseUp(XButtonEvent *e);
 		virtual bool			mouseDown(XButtonEvent *e);
 		virtual bool			mouseExit(XButtonEvent *e);

@@ -106,7 +106,7 @@ int main(int argc, char **argv)
 	tux->LFSTK_setAlpha(0.5);
 	tux->userData=(void*)"tux image";
 //	tux->LFSTK_allowXMovement(false);
-	tux->LFSTK_allowYMovement(false);
+//	tux->LFSTK_allowYMovement(false);
 	tux->LFSTK_setCallBack(NULL,mouseUpCB,NULL);
 
 	sy+=YSPACING*3;

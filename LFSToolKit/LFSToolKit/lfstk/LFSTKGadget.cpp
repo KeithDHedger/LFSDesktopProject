@@ -1499,12 +1499,30 @@ void LFSTK_gadgetClass::LFSTK_setTile(const char *path,int size)
 }
 
 /**
+* Return callback user data.
+* \note Returns a void* so must be cast.
+* \note return value must not be freed.
+*/
+void* LFSTK_gadgetClass::LFSTK_getCallbackUD()
+{
+	return(this->callback.userData);
+}
+
+/**
 * Ignore callbacks.
 * \param ignore.
 */
 void LFSTK_gadgetClass::LFSTK_setIgnoreCB(bool ignore)
 {
 	this->callback.ignoreCallback=ignore;
+}
+
+/**
+* Get the current ignore callbacks state.
+*/
+bool LFSTK_gadgetClass::LFSTK_getIgnoreCB(void)
+{
+	return(this->callback.ignoreCallback);
 }
 
 /**

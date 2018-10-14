@@ -260,5 +260,6 @@ enum {DESKTOP_MSG=1000,WMANAGER_MSG,PANEL_MSG,WALLPAPER_MSG,TOOLKIT_MSG,APPEARAN
 #include "LFSTKFileDialog.h"
 #include "LFSTKFontDialog.h"
 #include "LFSTKMultiLineEdit.h"
+#include "LFSTKScrollBar.h"
 
 #endif

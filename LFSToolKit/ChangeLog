@@ -1,3 +1,7 @@
+0.3.1
+Moved callback routines from button class to gadgetclass.
+Added scrollbar class.
+
 0.3.0
 Moved movement constraints to main gadgetclass.
 Added movement constraints to image class.
