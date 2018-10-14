@@ -1,9 +1,10 @@
 0.3.0
+Added movement constarints to image class.
 Fixed leak in dNd in line edit.
 Fixed various memory leaks.
 Fixed memory leak on setting label BG colour.
 Added optional valgrind check to examples.
-Fixed memory leaks from various classes.
+cd examixed memory leaks from various classes.
 Fixed cursor size in line edits.
 Added cursor colour to prefs.
 Added mono font to prefs.

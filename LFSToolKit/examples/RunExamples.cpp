@@ -30,6 +30,7 @@ LFSTK_buttonClass			*quit=NULL;
 LFSTK_buttonClass			*button=NULL;
 LFSTK_toggleButtonClass		*useDbg=NULL;
 LFSTK_toggleButtonClass		*openFile=NULL;
+LFSTK_toggleButtonClass		*makeLib=NULL;
 
 bool						mainLoop=true;
 Display						*display;
@@ -48,6 +49,12 @@ bool buttonCB(void *p,void* ud)
 	char	*command;
 	if(ud!=NULL)
 		{
+			if(makeLib->LFSTK_getValue()==true)
+				{
+					asprintf(&command,"(cd ..;make)",(const char*)ud,dbg);
+					system(command);
+					free(command);
+				}
 			asprintf(&command,"%s %s &",(const char*)ud,dbg);
 			system(command);
 			free(command);
@@ -100,6 +107,10 @@ int main(int argc, char **argv)
 
 	openFile=new LFSTK_toggleButtonClass(wc,"Open File",BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthWestGravity);
 	openFile->LFSTK_setValue(false);
+
+	makeLib=new LFSTK_toggleButtonClass(wc,"Build Lib",BORDER*2+GADGETWIDTH*2,sy,GADGETWIDTH,GADGETHITE,NorthWestGravity);
+	makeLib->LFSTK_setValue(true);
+
 	sy+=YSPACING;
 
 //line

@@ -68,6 +68,24 @@ bool LFSTK_imageClass::mouseUp(XButtonEvent *e)
 }
 
 /**
+* Allow movement in X axis.
+* \param bool True=Allow movemen in X axis.
+*/
+void LFSTK_imageClass::LFSTK_allowXMovement(bool confine)
+{
+	this->allowX=confine;
+}
+
+/**
+* Allow movement in Y axis.
+* \param bool True=Allow movemen in Y axis.
+*/
+void LFSTK_imageClass::LFSTK_allowYMovement(bool confine)
+{
+	this->allowY=confine;
+}
+
+/**
 * Mouse drag callback.
 * \param e XMotionEvent passed from mainloop->listener.
 * \return Return true if event fully handeled or false to pass it on.
@@ -76,8 +94,10 @@ bool LFSTK_imageClass::mouseDrag(XMotionEvent *e)
 {
 	if(this->canDrag==true)
 		{
-			this->gadgetGeom.x+=e->x-this->mouseDownX;
-			this->gadgetGeom.y+=e->y-this->mouseDownY;
+			if(this->allowX==true)
+				this->gadgetGeom.x+=e->x-this->mouseDownX;
+			if(this->allowY==true)
+				this->gadgetGeom.y+=e->y-this->mouseDownY;
 			if(this->snap>1)
 				{
 					this->gadgetGeom.x=(this->gadgetGeom.x/this->snap)*this->snap;

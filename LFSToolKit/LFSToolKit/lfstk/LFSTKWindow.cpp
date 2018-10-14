@@ -1426,7 +1426,8 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 			case LeaveNotify:
 				break;
 			case Expose:
-				this->LFSTK_clearWindow();
+				if (event->xexpose.count==0)
+					this->LFSTK_clearWindow();
 				break;
 
 			case ConfigureNotify:
