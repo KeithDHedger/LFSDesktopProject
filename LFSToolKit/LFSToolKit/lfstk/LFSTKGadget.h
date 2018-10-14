@@ -63,6 +63,8 @@ class LFSTK_gadgetClass
 		bool					LFSTK_getCanDrag(void);
 		void					LFSTK_setCanDrag(bool candrag);
 		void					LFSTK_snapSize(int sze);
+		void					LFSTK_allowXMovement(bool confine);
+		void					LFSTK_allowYMovement(bool confine);
 
 //events etc
 		Time					lastTime=0;
@@ -214,6 +216,8 @@ class LFSTK_gadgetClass
 		int						mouseDownY=0;
 		int						snap=1;
 		double					alpha=1.0;
+		bool					allowX=true;
+		bool					allowY=true;
 
 //context
 		LFSTK_windowClass		*contextWC=NULL;

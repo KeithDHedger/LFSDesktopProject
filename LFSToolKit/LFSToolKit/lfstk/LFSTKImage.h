@@ -43,11 +43,7 @@ class LFSTK_imageClass  : public  LFSTK_gadgetClass
 		bool			mouseDown(XButtonEvent *e);
 		bool			mouseDrag(XMotionEvent *e);
 
-		void			LFSTK_allowXMovement(bool confine);
-		void			LFSTK_allowYMovement(bool confine);
-
 		void			LFSTK_clearWindow(void);
-
 
 		cairo_surface_t	*shapesfc;
 		cairo_t			*shapecr;
@@ -56,8 +52,6 @@ class LFSTK_imageClass  : public  LFSTK_gadgetClass
 	protected:
 		int				mouseDownX=0;
 		int				mouseDownY=0;
-		bool			allowX=true;
-		bool			allowY=true;
 };
 
 #endif

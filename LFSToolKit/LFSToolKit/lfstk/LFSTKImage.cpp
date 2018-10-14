@@ -68,24 +68,6 @@ bool LFSTK_imageClass::mouseUp(XButtonEvent *e)
 }
 
 /**
-* Allow movement in X axis.
-* \param bool True=Allow movemen in X axis.
-*/
-void LFSTK_imageClass::LFSTK_allowXMovement(bool confine)
-{
-	this->allowX=confine;
-}
-
-/**
-* Allow movement in Y axis.
-* \param bool True=Allow movemen in Y axis.
-*/
-void LFSTK_imageClass::LFSTK_allowYMovement(bool confine)
-{
-	this->allowY=confine;
-}
-
-/**
 * Mouse drag callback.
 * \param e XMotionEvent passed from mainloop->listener.
 * \return Return true if event fully handeled or false to pass it on.
@@ -128,7 +110,6 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 			XShapeCombineMask(this->display,this->window,ShapeBounding,0,0,cairo_xlib_surface_get_drawable(shapesfc),ShapeSet);
 			XFlush(this->display);
 			XSync(this->display,false);
-			//this->wc->LFSTK_clearWindow();
 			return;
 		}
 
@@ -137,7 +118,6 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 
 	cairo_save(this->cr);
 		cairo_set_source_rgba (this->cr,1.0,1.0,1.0,this->alpha);
-		//cairo_set_operator(this->cr,CAIRO_OPERATOR_SOURCE);
 		cairo_rectangle(this->cr,0,0,this->gadgetGeom.w,this->gadgetGeom.h);
 		cairo_fill(this->cr);
 	cairo_restore(this->cr);
@@ -145,7 +125,6 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 	cairo_save(this->shapecr);
 		cairo_reset_clip(this->shapecr);
 		cairo_set_source_surface(this->cr,this->cImage,xoffset,yoffset);
-//		cairo_paint(this->cr);
 		cairo_paint_with_alpha(this->cr,this->alpha);
 		cairo_set_operator(this->shapecr,CAIRO_OPERATOR_CLEAR);
 		cairo_rectangle(this->shapecr,0,0,this->gadgetGeom.w,this->gadgetGeom.h);
@@ -157,7 +136,6 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 	XShapeCombineMask(this->display,this->window,ShapeBounding,0,0,cairo_xlib_surface_get_drawable(shapesfc),ShapeSet);
 	XFlush(this->display);
 	XSync(this->display,false);
-	//this->wc->LFSTK_clearWindow();
 }
 
 /**

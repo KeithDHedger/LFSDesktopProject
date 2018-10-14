@@ -72,6 +72,16 @@ bool contextCB(void *p,void* ud)
 	return(true);
 }
 
+bool mouseUpCB(void *p,void* ud)
+{
+	geometryStruct	geom;
+	if(p!=NULL)
+		{
+			static_cast<LFSTK_imageClass*>(p)->LFSTK_getGeom(&geom);
+			fprintf(stderr,"x=%i y=%i\n",geom.x,geom.y);
+		}
+}
+
 int main(int argc, char **argv)
 {
 	XEvent	event;
@@ -87,8 +97,8 @@ int main(int argc, char **argv)
 	delete	wi;
 	wc->LFSTK_setWindowPixmap(wc->globalLib->LFSTK_getWindowPixmap(display,wc->rootWindow),DIALOGWIDTH,sy);
 
-	tux=new LFSTK_imageClass(wc,NULL,DIALOGMIDDLE-(IMAGESIZE/2),sy,IMAGESIZE,IMAGESIZE,NorthGravity,true);
-	tux->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",PRESERVEASPECT,true);
+	tux=new LFSTK_imageClass(wc,NULL,DIALOGMIDDLE-(IMAGESIZE/2),sy,IMAGESIZE,IMAGESIZE,BUTTONGRAV,true);
+	tux->LFSTK_setImageFromPath("./AspellGUI.png",PRESERVEASPECT,true);
 	tux->LFSTK_setCallBack(NULL,buttonCB,NULL);
 	tux->LFSTK_setCanDrag(true);
 	tux->LFSTK_snapSize(1);
@@ -96,7 +106,8 @@ int main(int argc, char **argv)
 	tux->LFSTK_setAlpha(0.5);
 	tux->userData=(void*)"tux image";
 //	tux->LFSTK_allowXMovement(false);
-//	tux->LFSTK_allowYMovement(false);
+	tux->LFSTK_allowYMovement(false);
+	tux->LFSTK_setCallBack(NULL,mouseUpCB,NULL);
 
 	sy+=YSPACING*3;
 
@@ -126,7 +137,7 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //quit
-	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);
+	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
 	sy+=YSPACING;
 

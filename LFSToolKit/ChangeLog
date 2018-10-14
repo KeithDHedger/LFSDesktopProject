@@ -1,5 +1,6 @@
 0.3.0
-Added movement constarints to image class.
+Moved movement constraints to main gadgetclass.
+Added movement constraints to image class.
 Fixed leak in dNd in line edit.
 Fixed various memory leaks.
 Fixed memory leak on setting label BG colour.
