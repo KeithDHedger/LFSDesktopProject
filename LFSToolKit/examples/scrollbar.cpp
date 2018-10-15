@@ -27,7 +27,8 @@ LFSTK_labelClass			*personal=NULL;
 LFSTK_labelClass			*copyrite=NULL;
 LFSTK_buttonClass			*seperator=NULL;
 LFSTK_buttonClass			*quit=NULL;
-LFSTK_scrollBarClass		*sb=NULL;
+LFSTK_scrollBarClass		*vsb=NULL;
+LFSTK_scrollBarClass		*hsb=NULL;
 
 bool						mainLoop=true;
 Display						*display;
@@ -40,31 +41,17 @@ bool doQuit(void *p,void* ud)
 	return(false);
 }
 
-bool buttonCB(void *p,void* ud)
-{
-	if(ud!=NULL)
-		{
-			printf(">>>%s<<<\n",(const char*)ud);
-		}
-	return(true);
-}
-
 bool valChanged(void *p,void* ud)
 {
 	LFSTK_scrollBarClass	*sb=NULL;
-//fprintf(stderr,">>>>>>>>>>>>>>>>>>>>>>\n");
 	if(p!=NULL)
 		{
 			sb=static_cast<LFSTK_scrollBarClass*>(p);
 			if(sb!=NULL)
-				{
-					printf(">>>%p<<<\n",(const char*)p);
-					fprintf(stderr,"value=%i\n",sb->value);
-				}
+				fprintf(stderr,"value=%i\n",sb->value);
 		}
 	return(true);
 }
-
 
 int main(int argc, char **argv)
 {
@@ -91,11 +78,17 @@ int main(int argc, char **argv)
 	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
 	sy+=YSPACING;
 
-//scrollbar
-	sb=new LFSTK_scrollBarClass(wc,"sb",DIALOGMIDDLE-200,sy,400,GADGETHITE/2,BUTTONGRAV);
-	sb->LFSTK_setCallBack(NULL,valChanged,NULL);
-	sb->LFSTK_setScale(200,400);
+//hscrollbar
+	hsb=new LFSTK_scrollBarClass(wc,false,DIALOGMIDDLE-200,sy,400,GADGETHITE/2,BUTTONGRAV);
+	hsb->LFSTK_setCallBack(NULL,valChanged,NULL);
+	hsb->LFSTK_setScale(200,400);
 	sy+=YSPACING;
+
+//hscrollbar
+	vsb=new LFSTK_scrollBarClass(wc,true,BORDER,sy,GADGETHITE/2,200,BUTTONGRAV);
+	vsb->LFSTK_setCallBack(NULL,valChanged,NULL);
+	vsb->LFSTK_setScale(200,400);
+	sy+=YSPACING+200;
 	
 //line
 	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);

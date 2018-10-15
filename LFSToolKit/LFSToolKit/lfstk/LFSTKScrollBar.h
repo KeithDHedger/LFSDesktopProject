@@ -33,7 +33,7 @@ class LFSTK_scrollBarClass : public LFSTK_gadgetClass
 	public:
 		LFSTK_scrollBarClass();
 		~LFSTK_scrollBarClass();
-		LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity);
+		LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vertical,int x,int y,unsigned w,unsigned h,int gravity);
 
 		bool				mouseUp(XButtonEvent *e);
 		bool				mouseEnter(XButtonEvent *e);
@@ -63,7 +63,7 @@ class LFSTK_scrollBarClass : public LFSTK_gadgetClass
 		double				maxScale=100.0;
 		double				scale=10.0;
 		int					lineScroll=10;
-		bool				verticalBar=true;
+		bool				verticalBar=false;
 		bool				noCallback=false;
 };
 
