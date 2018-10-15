@@ -40,8 +40,8 @@ class LFSTK_imageClass  : public  LFSTK_gadgetClass
 		LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* imagepath,int x,int y,unsigned w,unsigned h,int gravity,bool scale);
 
 		bool			mouseUp(XButtonEvent *e);
-		bool			mouseDown(XButtonEvent *e);
-		bool			mouseDrag(XMotionEvent *e);
+	//	bool			mouseDown(XButtonEvent *e);
+	//	bool			mouseDrag(XMotionEvent *e);
 
 		void			LFSTK_clearWindow(void);
 
@@ -50,8 +50,8 @@ class LFSTK_imageClass  : public  LFSTK_gadgetClass
 		Pixmap			shape;
 
 	protected:
-		int				mouseDownX=0;
-		int				mouseDownY=0;
+		//int				mouseDownX=0;
+		//int				mouseDownY=0;
 };
 
 #endif

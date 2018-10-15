@@ -101,12 +101,15 @@ int main(int argc, char **argv)
 	tux->LFSTK_setImageFromPath("./AspellGUI.png",PRESERVEASPECT,true);
 	tux->LFSTK_setCallBack(NULL,buttonCB,NULL);
 	tux->LFSTK_setCanDrag(true);
-	tux->LFSTK_snapSize(1);
+	//tux->LFSTK_snapSize(1);
 	tux->LFSTK_setTile(NULL,0);
 	tux->LFSTK_setAlpha(0.5);
 	tux->userData=(void*)"tux image";
 //	tux->LFSTK_allowXMovement(false);
 //	tux->LFSTK_allowYMovement(false);
+//	tux->LFSTK_setLimits(10,-1,440,-1);
+//	tux->LFSTK_setLimits(-1,10,-1,440);
+	tux->LFSTK_setLimits(10,10,440,120);
 	tux->LFSTK_setCallBack(NULL,mouseUpCB,NULL);
 
 	sy+=YSPACING*3;

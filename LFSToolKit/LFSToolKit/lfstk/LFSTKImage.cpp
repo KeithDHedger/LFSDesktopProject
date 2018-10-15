@@ -32,7 +32,7 @@ LFSTK_imageClass::~LFSTK_imageClass()
 LFSTK_imageClass::LFSTK_imageClass()
 {
 }
-
+#if 0
 /**
 * Mouse down callback.
 * \param e XButtonEvent passed from mainloop->listener.
@@ -44,6 +44,7 @@ bool LFSTK_imageClass::mouseDown(XButtonEvent *e)
 	this->mouseDownY=e->y;
 	return(true);
 }
+#endif
 
 /**
 * Mouse up callback.
@@ -67,6 +68,8 @@ bool LFSTK_imageClass::mouseUp(XButtonEvent *e)
 	return(true);
 }
 
+#if 0
+#if 0
 /**
 * Mouse drag callback.
 * \param e XMotionEvent passed from mainloop->listener.
@@ -89,7 +92,32 @@ bool LFSTK_imageClass::mouseDrag(XMotionEvent *e)
 		}
 	return(true);
 }
+#else
+bool LFSTK_imageClass::mouseDrag(XMotionEvent *e)
+{
+	if(this->canDrag==true)
+		{
+			if(this->allowX==true)
+				{
+					//if((e->x-this->mouseDownX>this->minX) && (e->x-this->mouseDownX<=this->maxX))
+						this->gadgetGeom.x+=e->x-this->mouseDownX;
+				}
+			if(this->allowY==true)
+				this->gadgetGeom.y+=e->y-this->mouseDownY;
+			if(this->snap>1)
+				{
+					this->gadgetGeom.x=(this->gadgetGeom.x/this->snap)*this->snap;
+					this->gadgetGeom.y=(this->gadgetGeom.y/this->snap)*this->snap;
+				}
+			XMoveWindow(this->display,this->window,this->gadgetGeom.x,this->gadgetGeom.y);
+		}
+	return(true);
 
+//	return(true);
+}
+
+#endif
+#endif
 /**
 * Clear the image window and set shape.
 */

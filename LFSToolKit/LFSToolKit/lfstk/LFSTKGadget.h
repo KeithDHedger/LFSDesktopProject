@@ -68,6 +68,8 @@ class LFSTK_gadgetClass
 		void					LFSTK_snapSize(int sze);
 		void					LFSTK_allowXMovement(bool confine);
 		void					LFSTK_allowYMovement(bool confine);
+		void					LFSTK_setLimits(int minx,int miny,int maxx,int maxy);
+		void					LFSTK_getLimits(rectStruct *rect);
 
 //events etc
 		Time					lastTime=0;
@@ -221,6 +223,10 @@ class LFSTK_gadgetClass
 		double					alpha=1.0;
 		bool					allowX=true;
 		bool					allowY=true;
+		int						minX=-1;
+		int						maxX=-1;
+		int						minY=-1;
+		int						maxY=-1;
 
 //context
 		LFSTK_windowClass		*contextWC=NULL;

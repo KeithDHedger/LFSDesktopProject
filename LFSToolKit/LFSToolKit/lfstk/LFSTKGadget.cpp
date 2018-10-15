@@ -821,9 +821,15 @@ bool LFSTK_gadgetClass::mouseDrag(XMotionEvent *e)
 	if(this->canDrag==true)
 		{
 			if(this->allowX==true)
-				this->gadgetGeom.x+=e->x-this->mouseDownX;
+				{
+					if((this->gadgetGeom.x+e->x-this->mouseDownX>this->minX) && (this->gadgetGeom.x+e->x-this->mouseDownX+this->gadgetGeom.w<=this->maxX))
+						this->gadgetGeom.x+=e->x-this->mouseDownX;
+				}
 			if(this->allowY==true)
-				this->gadgetGeom.y+=e->y-this->mouseDownY;
+				{
+					if((this->gadgetGeom.y+e->y-this->mouseDownY>this->minY) && (this->gadgetGeom.y+e->y-this->mouseDownY+this->gadgetGeom.h<=this->maxY))
+						this->gadgetGeom.y+=e->y-this->mouseDownY;
+				}
 			if(this->snap>1)
 				{
 					this->gadgetGeom.x=(this->gadgetGeom.x/this->snap)*this->snap;
@@ -1681,4 +1687,34 @@ void LFSTK_gadgetClass::LFSTK_setLabelBGColour(double r,double g,double b,double
 	this->labelBGColour.RGBAColour.g=g;
 	this->labelBGColour.RGBAColour.b=b;
 	this->labelBGColour.RGBAColour.a=a;
+}
+
+/**
+* Set movement limts.
+* \param int minx.
+* \param int miny.
+* \param int maxx.
+* \param int maxy.
+* \note To set no limit use -1.
+*/
+void LFSTK_gadgetClass::LFSTK_setLimits(int minx,int miny,int maxx,int maxy)
+{
+	this->minX=minx;
+	this->minY=miny;
+	this->maxX=maxx;
+	this->maxY=maxy;
+}
+
+/**
+* Get movement limts.
+* \param *rectStruct.
+* \note rect->x=minX, rect->w=this->maxX
+* \note rect->y=minY, rect->h=this->maxY
+*/
+void LFSTK_gadgetClass::LFSTK_getLimits(rectStruct *rect)
+{
+	rect->x=this->minX;
+	rect->w=this->maxX;
+	rect->y=this->minY;
+	rect->h=this->maxY;
 }

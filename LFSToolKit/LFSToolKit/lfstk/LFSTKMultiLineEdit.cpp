@@ -83,7 +83,7 @@ LFSTK_multiLineEditClass::LFSTK_multiLineEditClass(LFSTK_windowClass* parentwc,c
 
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;
-	this->ml->type=LINEEDITGADGET;
+	this->ml->type=MULTILINEGADGET;
 	this->wc->LFSTK_addMappedListener(this->window,ml);
 
 	if(strlen(label)>0)

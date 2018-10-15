@@ -1,4 +1,6 @@
 0.3.1
+Done scrollbar class.
+Added scrollbar example.
 Fixed broken symlinks.
 Moved callback routines from button class to gadgetclass.
 Added scrollbar class.

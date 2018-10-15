@@ -171,6 +171,10 @@ int main(int argc, char **argv)
 	button=new LFSTK_buttonClass(wc,"Image Buttons",DIALOGMIDDLE+BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./imagebutton.cpp");
 	sy+=YSPACING;
+//scrollbar
+	button=new LFSTK_buttonClass(wc,"Scrollbar",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./scrollbar.cpp");
+	sy+=YSPACING;
 //lfsabout
 	button=new LFSTK_buttonClass(wc,"LFS About",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./lfsabout.cpp");

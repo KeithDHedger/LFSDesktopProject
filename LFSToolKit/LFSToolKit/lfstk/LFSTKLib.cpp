@@ -83,6 +83,9 @@ LFSTK_lib::~LFSTK_lib()
 
 	if(this->globalMonoFontString!=NULL)
 		free(this->globalMonoFontString);
+
+	if(this->globalCursorColour!=NULL)
+		free(this->globalCursorColour);
 }
 
 /**
