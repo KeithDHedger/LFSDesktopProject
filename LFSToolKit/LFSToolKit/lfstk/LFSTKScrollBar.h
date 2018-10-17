@@ -48,6 +48,7 @@ class LFSTK_scrollBarClass : public LFSTK_gadgetClass
 		void				LFSTK_setScrollLine(int line);
 		
 		int					value=0;
+		double				scale=10.0;
 	private:
 		LFSTK_buttonClass	*thumb=NULL;
 		LFSTK_buttonClass	*upLeft=NULL;
@@ -61,7 +62,6 @@ class LFSTK_scrollBarClass : public LFSTK_gadgetClass
 		double				maxValue=100.0;
 		double				minScale=1.0;
 		double				maxScale=100.0;
-		double				scale=10.0;
 		int					lineScroll=10;
 		bool				verticalBar=false;
 		bool				noCallback=false;

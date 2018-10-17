@@ -256,6 +256,9 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 	this->listOffset=0;
 	this->currentItem=0;
 
+	this->scrollBar->LFSTK_setScale(1,numitems-this->maxShowing+1);
+	this->scrollBar->LFSTK_setScrollLine(1);
+
 	for(int j=0;j<this->maxShowing;j++)
 		{
 			this->data[j].userData=j;
@@ -285,17 +288,56 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 		}
 	this->currentItem=0;
 	this->setNavSensitive();
+
+}
+
+bool LFSTK_listGadgetClass::newscrollCB(void *object,void* userdata)
+{
+	LFSTK_listGadgetClass	*list;
+	int						start;
+
+	if((object==NULL) || (userdata==NULL))
+		return(true);
+
+	LFSTK_scrollBarClass	*sb=static_cast<LFSTK_scrollBarClass*>(object);
+	list=static_cast<LFSTK_listGadgetClass*>(userdata);
+
+	start=sb->value;
+	//list->setNavSensitive();
+	list->listOffset=start;
+	for(int j=0;j<list->maxShowing;j++)
+		{
+			if(j+list->listOffset<list->listCnt)
+				{
+					list->labels[j]->LFSTK_setLabel(list->listStrings[j+list->listOffset]);
+					if(list->listImages!=NULL)
+						list->labels[j]->LFSTK_setImageFromPath(list->listImages[j+list->listOffset],MENU,true);
+					list->data[j].userData=j+list->listOffset;
+					list->labels[j]->LFSTK_clearWindow();
+				}
+		}
+//	list->LFSTK_clearWindow();
+	return(true);
 }
 
 bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
 {
+return(true);
 	LFSTK_listGadgetClass	*list;
 	listData				*d=(listData*)userdata;
 	unsigned				datax;
 
+
+//LFSTK_scrollBarClass	*sb=static_cast<LFSTK_scrollBarClass*>(object);
+//fprintf(stderr,"val=%i\n",sb->value);
+//return(true);
+
 	int						start;
 	list=static_cast<LFSTK_listGadgetClass*>(d->mainObject);
 	datax=d->userData;
+//sb=static_cast<LFSTK_scrollBarClass*>(list->scrollBar);
+//if(sb!=NULL)
+//	fprintf(stderr,"val=%i\n",sb->value);
 
 	start=list->listOffset;
 	switch(datax)
@@ -340,6 +382,7 @@ bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
 
 void LFSTK_listGadgetClass::setNavSensitive(void)
 {
+#if 0
 	int fing;
 	if(this->listCnt==0)
 		{
@@ -400,6 +443,7 @@ void LFSTK_listGadgetClass::setNavSensitive(void)
 	this->buttonEnd->LFSTK_clearWindow();
 	XFlush(this->display);
 	XSync(this->display,false);
+#endif
 }
 
 /**
@@ -420,18 +464,19 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 {
 	unsigned				sx;
 	unsigned				sy;
-
 	XSetWindowAttributes	wa;
+	int						adjwidth=w-SCROLLBARWIDTH-2;
 
-	this->LFSTK_setCommon(parentwc,label,x-1,y-1,w+2,h+2,gravity);
+	//this->LFSTK_setCommon(parentwc,label,x-1,y-1,w+2,h+2,gravity);
+	this->LFSTK_setCommon(parentwc,label,x-1,y-1,adjwidth+2,h+2,gravity);
 
 	wa.win_gravity=gravity;
 	wa.save_under=true;
-	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
+	this->window=XCreateWindow(this->display,this->parent,x,y,adjwidth,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
 	this->gc=XCreateGC(this->display,this->window,0,NULL);
 
 	this->LFSTK_setFontString(this->monoFontString);
-	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,adjwidth,h);
 	this->LFSTK_setCairoFontData();
 
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
@@ -457,7 +502,7 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 
 	for(int j=0;j<this->maxShowing;j++)
 		{
-			this->labels[j]=new LFSTK_buttonClass(parentwc,"",sx,sy,w-2,LABELHITE-4,gravity);
+			this->labels[j]=new LFSTK_buttonClass(parentwc,"",sx,sy,adjwidth-2,LABELHITE-4,gravity);
 			this->labels[j]->LFSTK_setLabelAutoColour(true);
 			this->labels[j]->LFSTK_reloadColours();
 			this->labels[j]->LFSTK_setColourName(NORMALCOLOUR,"white");
@@ -484,6 +529,7 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 //navigate
 //line up/down
 //up
+#if 0
 	this->buttonUp=new LFSTK_buttonClass(parentwc,"▲",this->gadgetGeom.x+this->gadgetGeom.w+LGAP,this->gadgetGeom.y,NAVBUTTONSIZE,NAVBUTTONSIZE,NorthEastGravity);
 	this->buttonUp->LFSTK_setLabelGravity(CENTRE);
 	
@@ -515,15 +561,21 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 	this->buttonUp->gadgetDetails.state=NORMALCOLOUR;
 	this->buttonHome->gadgetDetails.state=NORMALCOLOUR;
 	this->buttonEnd->gadgetDetails.state=NORMALCOLOUR;
+#endif
+//newsb
+	this->scrollBar=new LFSTK_scrollBarClass(this->wc,true,x+w-SCROLLBARWIDTH,y,SCROLLBARWIDTH,h,gravity);
+	this->scrollBar->LFSTK_setScale(1,1);
+	this->scrollBar->LFSTK_setScrollLine(1);
+	this->scrollBar->LFSTK_setCallBack(NULL,newscrollCB,this);
 
 	this->style=BEVELIN;
 	if(newlist!=NULL)
 		this->LFSTK_setList(newlist,cnt);
-	this->setNavSensitive();
+//	this->setNavSensitive();
 
 	this->LFSTK_setColourName(NORMALCOLOUR,"white");
 	this->LFSTK_setColourName(INACTIVECOLOUR,"white");
-	this->gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NULL,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
+	this->gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NULL,NORMALCOLOUR,0,true,{0,0,adjwidth,h},{0,0,0,0},false};
 	this->clearBox(&this->gadgetDetails);
 }
 

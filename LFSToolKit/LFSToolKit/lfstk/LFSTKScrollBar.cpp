@@ -177,10 +177,10 @@ bool LFSTK_scrollBarClass::lineUpDown(void *object,void* userdata)
 	sbar->thumb->LFSTK_getLimits(&rect);
 
 	if((long)button->userData==1)
-		addval=-sbar->lineScroll;
+		addval=-(int)sbar->lineScroll*(sbar->scale+0.5);
 
 	if((long)button->userData==2)
-		addval=sbar->lineScroll;
+		addval=(int)sbar->lineScroll*(sbar->scale+0.5);
 
 	if(sbar->verticalBar==false)
 		{
@@ -231,8 +231,6 @@ bool LFSTK_scrollBarClass::mouseUp(XButtonEvent *e)
 			this->thumb->LFSTK_getGeom(&geom);
 			this->thumb->LFSTK_getLimits(&rect);
 			addval=(int)((this->maxValue/this->troughScroll)*this->scale);
-
-//fprintf(stderr,"addval=%i\n",addval);
 
 			if(this->verticalBar==false)
 				{

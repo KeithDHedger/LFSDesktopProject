@@ -31,7 +31,7 @@ LFSTK_listGadgetClass		*filelist=NULL;
 bool						mainLoop=true;
 Display						*display;
 
-const char	*lst[]={"item 1","item 2","item 3","item 4","item 5","item 6","food","water","attack","defense","666","999","10101010","ELP","last item",};
+const char	*lst[]={"item 1","item 2","item 3","item 4","item 5","item 6","7 food","8 water","9 attack","10 defense","11 666","12 999","13 10101010","14 ELP","15 last item",};
 const char	*images[]={"./AspellGUI.png",NULL,NULL,NULL,"./audio-speakers.png",NULL,"./casper2.JPG","./computer.png","./computer.png","./computer.png","./computer.png","./computer.png","./computer.png","./audio-speakers.png","./ManPageEditor.png"};
 
 bool doQuit(void *p,void* ud)

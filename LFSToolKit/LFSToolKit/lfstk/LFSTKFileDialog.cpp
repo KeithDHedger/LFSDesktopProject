@@ -80,21 +80,94 @@ void LFSTK_fileDialogClass::freeFileList(void)
 		}
 }
 
+//static int LFSTK_fileDialogClass::getFileCnt(const char *fpath,const struct stat *sb,int tflag,struct FTW *ftwbuf)
+//{
+//	if(tflag==FTW_F)
+//		{
+//			if(strcasecmp(fpath+ftwbuf->base,chkfname)==0)
+//				{
+//					initEditor();
+//					setTempEdFile(fpath);
+//					page->filePath=strdup(fpath);
+//					oneLiner(true,"cp %s %s/%s",page->filePath,tmpEdDir,tmpEdFile);
+//					openTheFile(tmpEdFilePath,hilite);
+//					page->topLine=0;
+//					page->currentLine=0;
+//					currentX=minX;
+//					currentY=minY;
+//					page->lineXCurs=0;
+//				}
+//		}
+//	return(0);
+//}
+
+//nftw(includepath,openInclude,20,FTW_PHYS);
+#include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+unsigned LFSTK_fileDialogClass::getFileListcnt(const char *dir)
+{
+//	nftw(dir,openInclude,20,FTW_PHYS);
+	unsigned		cnt=0;
+	DIR				*dirp=NULL;
+	struct dirent	*entry=NULL;
+	struct stat		statbuf;
+	char			*cwd=NULL;
+	if(dir==NULL)
+		return(0);
+
+	cwd=get_current_dir_name();
+	chdir(dir);
+	dirp=opendir(dir);
+
+	if(dirp!=NULL)
+		{
+			while((entry=readdir(dirp)) != NULL)
+				{
+					if(entry->d_type != DT_DIR)
+						{
+							if(entry->d_type==DT_LNK)
+								{
+									stat(entry->d_name,&statbuf);
+									if(((statbuf.st_mode & S_IFMT) !=S_IFDIR))
+										{
+											cnt++;
+										}
+								}
+							else
+								{
+									cnt++;
+								}
+						}
+				}
+			closedir(dirp);
+		}
+	if(cwd!=NULL)
+		{
+			chdir(cwd);
+			free(cwd);
+		}
+	return(cnt);
+}
+
 void LFSTK_fileDialogClass::getFileList(void)
 {
 	unsigned	filecnt=0;
+	unsigned	filecnt1=0;
 	FILE		*fp;
 	char		*command;
 	char		*out=NULL;
 	char		line[1024];
 	unsigned	cnt=0;
 	char		*imagepath;
-
+	
 	this->freeFileList();
 
 	asprintf(&command,"(cd \"%s\" ;find  -maxdepth 1 -mindepth 1 -follow ! -type d -print0 | xargs -0 -n 1 basename 2>/dev/null|sort|wc -l)",this->currentDir);
 	out=this->wc->globalLib->LFSTK_oneLiner("%s",command);
-
+fprintf(stderr,"command=%s\n",command);
 	if(out==NULL)
 		filecnt=0;
 	else
@@ -103,7 +176,9 @@ void LFSTK_fileDialogClass::getFileList(void)
 			free(out);
 		}
 	free(command);
-
+//fprintf(stderr,">>filecount=%i\n",filecnt);
+//filecnt1=this->getFileListcnt(this->currentDir);
+//fprintf(stderr,"<<filecount=%i\n",filecnt1);
 	if(filecnt>0)
 		{
 			this->fileList=new char*[filecnt];
@@ -116,6 +191,7 @@ void LFSTK_fileDialogClass::getFileList(void)
 						{
 							if(strlen(line)>0)
 								line[strlen(line)-1]=0;
+								
 							this->fileList[cnt]=strdup(line);
 							if((strcasecmp(&line[strlen(line)-4],".jpg")==0) || (strcasecmp(&line[strlen(line)-4],".png")==0))
 								asprintf(&imagepath,"%s/%s",this->currentDir,line);
@@ -489,7 +565,7 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(const char *dir,const char *tit
 			else
 				{
 					this->LFSTK_getLastFolder();
-		//			DEBUGFUNC("this->LFSTK_getLastFolder();=%s",this->currentDir);
+					//DEBUGFUNC("this->LFSTK_getLastFolder();=%s",this->currentDir);
 				}
 			this->LFSTK_showFileDialog();
 		}
@@ -688,7 +764,6 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 //				this->resizeWindow(DIALOGWIDTH+PREVIEWWIDTH,-1);
 //			else
 //				this->resizeWindow(DIALOGWIDTH,-1);
-
 			this->setPreviewData();
 			this->dialog->LFSTK_showWindow();
 			this->dialog->LFSTK_setKeepAbove(true);
@@ -717,10 +792,6 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 											}
 									}
 								break;
-
-//							case ButtonPress:
-//								printf(">>%s<<\n",this->fileListGadget->LFSTK_getListString(this->fileListGadget->LFSTK_getCurrentListItem()));
-//								break;
 
 							case ButtonRelease:
 								if((event.xbutton.time-lasttime<1000) && (event.xbutton.state & Button1Mask))
@@ -775,7 +846,8 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 								break;
 
 							case Expose:
-								this->dialog->LFSTK_clearWindow();
+								if (event.xexpose.count==0)
+									this->dialog->LFSTK_clearWindow();
 								break;
 
 							case ConfigureNotify:

@@ -84,7 +84,7 @@ int main(int argc, char **argv)
 	hsb->LFSTK_setScale(200,400);
 	sy+=YSPACING;
 
-//hscrollbar
+//vscrollbar
 	vsb=new LFSTK_scrollBarClass(wc,true,BORDER,sy,GADGETHITE/2,200,BUTTONGRAV);
 	vsb->LFSTK_setCallBack(NULL,valChanged,NULL);
 	vsb->LFSTK_setScale(200,400);

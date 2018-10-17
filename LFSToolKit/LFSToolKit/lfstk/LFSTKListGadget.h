@@ -27,6 +27,7 @@
 #define LGAP 4
 #define	NAVBUTTONSIZE 16
 #define LICONSIZE 20
+#define SCROLLBARWIDTH 16
 
 enum {LUP=0,LDOWN,LHOME,LEND};
 
@@ -63,15 +64,19 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		listData			*scrollData;
 
 		LFSTK_buttonClass	**labels;
-		LFSTK_buttonClass	*buttonUp;
-		LFSTK_buttonClass	*buttonDown;
-		LFSTK_buttonClass	*buttonHome;
-		LFSTK_buttonClass	*buttonEnd;
+//		LFSTK_buttonClass	*buttonUp;
+//		LFSTK_buttonClass	*buttonDown;
+//		LFSTK_buttonClass	*buttonHome;
+//		LFSTK_buttonClass	*buttonEnd;
+		
+		LFSTK_scrollBarClass	*scrollBar;
+
 		void 				setCurrentItem(int item);
 		void				setNavSensitive(void);
 
 		static bool			select(void *object,void* userdata);
 		static bool			scrollCB(void *object,void* userdata);
+		static bool			newscrollCB(void *object,void* userdata);
 };
 
 #endif

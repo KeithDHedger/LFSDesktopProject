@@ -1395,21 +1395,6 @@ void LFSTK_windowClass::sendUTF8(XSelectionRequestEvent *sev)
 /* send the response event */
 		XSendEvent(this->display,sev->requestor,0,0,&res);
 		XFlush(this->display);
-
-#if 0
-	XSelectionEvent	ssev;
-
-    XChangeProperty(this->display,sev->requestor,sev->property,this->LFSTK_getDnDAtom(XA_UTF8_STRING),8,PropModeReplace,(unsigned char *)this->clipBuffer.c_str(),this->clipBuffer.length());
-
-    ssev.type=SelectionNotify;
-    ssev.requestor=sev->requestor;
-    ssev.selection=sev->selection;
-    ssev.target=sev->target;
-    ssev.property=sev->property;
-    ssev.time=sev->time;
-
-    XSendEvent(this->display,sev->requestor,True,NoEventMask,(XEvent *)&ssev);
-#endif
 }
 
 /**
