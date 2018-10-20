@@ -289,7 +289,7 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 
 }
 
-bool LFSTK_listGadgetClass::newscrollCB(void *object,void* userdata)
+bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
 {
 	LFSTK_listGadgetClass	*list;
 	int						start;
@@ -406,7 +406,6 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 	XSetWindowAttributes	wa;
 	int						adjwidth=w-SCROLLBARWIDTH-2;
 
-	//this->LFSTK_setCommon(parentwc,label,x-1,y-1,w+2,h+2,gravity);
 	this->LFSTK_setCommon(parentwc,label,x-1,y-1,adjwidth+2,h+2,gravity);
 
 	wa.win_gravity=gravity;
@@ -466,46 +465,10 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 		}
 
 //navigate
-//line up/down
-//up
-#if 0
-	this->buttonUp=new LFSTK_buttonClass(parentwc,"▲",this->gadgetGeom.x+this->gadgetGeom.w+LGAP,this->gadgetGeom.y,NAVBUTTONSIZE,NAVBUTTONSIZE,NorthEastGravity);
-	this->buttonUp->LFSTK_setLabelGravity(CENTRE);
-	
-	this->scrollData[LUP].mainObject=this;
-	this->scrollData[LUP].userData=LUP;
-	
-	buttonUp->LFSTK_setCallBack(NULL,scrollCB,SCROLLDATA(LUP));
-//down
-	buttonDown=new LFSTK_buttonClass(parentwc,"▼",this->gadgetGeom.x+this->gadgetGeom.w+LGAP,this->gadgetGeom.y+this->gadgetGeom.h-NAVBUTTONSIZE,NAVBUTTONSIZE,NAVBUTTONSIZE,NorthEastGravity);
-	this->buttonDown->LFSTK_setLabelGravity(CENTRE);
-	this->scrollData[LDOWN].mainObject=this;
-	this->scrollData[LDOWN].userData=LDOWN;
-	buttonDown->LFSTK_setCallBack(NULL,scrollCB,SCROLLDATA(LDOWN));
-//page/updown
-//home
-	this->buttonHome=new LFSTK_buttonClass(parentwc,"◄",this->gadgetGeom.x+this->gadgetGeom.w+LGAP,this->gadgetGeom.y+NAVBUTTONSIZE+LGAP,NAVBUTTONSIZE,NAVBUTTONSIZE,NorthEastGravity);
-	this->buttonHome->LFSTK_setLabelGravity(CENTRE);
-	this->scrollData[LHOME].mainObject=this;
-	this->scrollData[LHOME].userData=LHOME;
-	buttonHome->LFSTK_setCallBack(NULL,scrollCB,SCROLLDATA(LHOME));
-//end
-	buttonEnd=new LFSTK_buttonClass(parentwc,"►",this->gadgetGeom.x+this->gadgetGeom.w+LGAP,this->gadgetGeom.y+this->gadgetGeom.h-(NAVBUTTONSIZE*2)-LGAP,NAVBUTTONSIZE,NAVBUTTONSIZE,NorthEastGravity);
-	this->buttonEnd->LFSTK_setLabelGravity(CENTRE);
-	this->scrollData[LEND].mainObject=this;
-	this->scrollData[LEND].userData=LEND;
-	buttonEnd->LFSTK_setCallBack(NULL,scrollCB,SCROLLDATA(LEND));
-
-	this->buttonDown->gadgetDetails.state=NORMALCOLOUR;
-	this->buttonUp->gadgetDetails.state=NORMALCOLOUR;
-	this->buttonHome->gadgetDetails.state=NORMALCOLOUR;
-	this->buttonEnd->gadgetDetails.state=NORMALCOLOUR;
-#endif
-//newsb
 	this->scrollBar=new LFSTK_scrollBarClass(this->wc,true,x+w-SCROLLBARWIDTH,y,SCROLLBARWIDTH,h,gravity);
 	this->scrollBar->LFSTK_setScale(1,1);
 	this->scrollBar->LFSTK_setLineScroll(1);
-	this->scrollBar->LFSTK_setCallBack(NULL,newscrollCB,this);
+	this->scrollBar->LFSTK_setCallBack(NULL,scrollCB,this);
 
 	this->style=BEVELIN;
 	if(newlist!=NULL)

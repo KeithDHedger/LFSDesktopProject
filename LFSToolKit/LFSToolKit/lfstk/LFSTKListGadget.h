@@ -37,15 +37,15 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		~LFSTK_listGadgetClass();
 		LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const char *label,int x,int y,unsigned w,unsigned h,int gravity,char **list,unsigned cnt);
 
-		int					LFSTK_getCurrentListItem(void);
-		const char			*LFSTK_getListString(int listnum);
-		void				LFSTK_setList(char **list,unsigned numitems);
-		void				LFSTK_setListFromFile(const char *filepath,bool includeempty);
-		void				LFSTK_setImageList(char **list,unsigned numitems);
-		int					currentItem;
+		int						LFSTK_getCurrentListItem(void);
+		const char				*LFSTK_getListString(int listnum);
+		void					LFSTK_setList(char **list,unsigned numitems);
+		void					LFSTK_setListFromFile(const char *filepath,bool includeempty);
+		void					LFSTK_setImageList(char **list,unsigned numitems);
+		int						currentItem;
 
-		bool				mouseExit(XButtonEvent *e) {return(true);};
-		bool				mouseEnter(XButtonEvent *e) {return(true);};
+		bool					mouseExit(XButtonEvent *e) {return(true);};
+		bool					mouseEnter(XButtonEvent *e) {return(true);};
 		unsigned			listCnt;
 
 	private:
@@ -54,29 +54,23 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 				LFSTK_listGadgetClass	*mainObject;
 				unsigned				userData;
 			};
-		char				**listStrings;
-		char				**listImages;
-		unsigned			listImageCnt;
-		unsigned			listOffset;
+		char					**listStrings;
+		char					**listImages;
+		unsigned				listImageCnt;
+		unsigned				listOffset;
 
-		unsigned			maxShowing;
-		listData			*data;
-		listData			*scrollData;
+		unsigned				maxShowing;
+		listData				*data;
+		listData				*scrollData;
 
-		LFSTK_buttonClass	**labels;
-//		LFSTK_buttonClass	*buttonUp;
-//		LFSTK_buttonClass	*buttonDown;
-//		LFSTK_buttonClass	*buttonHome;
-//		LFSTK_buttonClass	*buttonEnd;
-		
+		LFSTK_buttonClass		**labels;		
 		LFSTK_scrollBarClass	*scrollBar;
 
-		void 				setCurrentItem(int item);
-		void				setNavSensitive(void);
+		void 					setCurrentItem(int item);
+		void					setNavSensitive(void);
 
-		static bool			select(void *object,void* userdata);
-		//static bool			scrollCB(void *object,void* userdata);
-		static bool			newscrollCB(void *object,void* userdata);
+		static bool				select(void *object,void* userdata);
+		static bool				scrollCB(void *object,void* userdata);
 };
 
 #endif
