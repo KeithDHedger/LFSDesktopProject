@@ -256,9 +256,7 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 	this->listOffset=0;
 	this->currentItem=0;
 
-	this->scrollBar->LFSTK_setScale(1,numitems-this->maxShowing+1);
-	this->scrollBar->LFSTK_setScrollLine(1);
-
+	this->scrollBar->LFSTK_setScale(0,numitems-this->maxShowing);
 	for(int j=0;j<this->maxShowing;j++)
 		{
 			this->data[j].userData=j;
@@ -303,6 +301,7 @@ bool LFSTK_listGadgetClass::newscrollCB(void *object,void* userdata)
 	list=static_cast<LFSTK_listGadgetClass*>(userdata);
 
 	start=sb->value;
+
 	//list->setNavSensitive();
 	list->listOffset=start;
 	for(int j=0;j<list->maxShowing;j++)
@@ -316,67 +315,7 @@ bool LFSTK_listGadgetClass::newscrollCB(void *object,void* userdata)
 					list->labels[j]->LFSTK_clearWindow();
 				}
 		}
-//	list->LFSTK_clearWindow();
-	return(true);
-}
-
-bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
-{
-return(true);
-	LFSTK_listGadgetClass	*list;
-	listData				*d=(listData*)userdata;
-	unsigned				datax;
-
-
-//LFSTK_scrollBarClass	*sb=static_cast<LFSTK_scrollBarClass*>(object);
-//fprintf(stderr,"val=%i\n",sb->value);
-//return(true);
-
-	int						start;
-	list=static_cast<LFSTK_listGadgetClass*>(d->mainObject);
-	datax=d->userData;
-//sb=static_cast<LFSTK_scrollBarClass*>(list->scrollBar);
-//if(sb!=NULL)
-//	fprintf(stderr,"val=%i\n",sb->value);
-
-	start=list->listOffset;
-	switch(datax)
-		{
-			case LUP:
-				start-=list->maxShowing;
-				if(start<0)
-					list->listOffset=0;
-				else
-					list->listOffset=start;
-				
-				break;
-			case LDOWN:
-				start+=list->maxShowing;
-				
-				if((start+list->maxShowing) > (list->listCnt-list->maxShowing))
-					list->listOffset=list->listCnt-list->maxShowing;
-				else
-					list->listOffset=start;
-				break;
-
-			case LHOME:
-				list->listOffset=0;
-				break;
-			case LEND:
-				list->listOffset=list->listCnt-list->maxShowing;
-				break;
-		}
-
-	list->setNavSensitive();
-
-	for(int j=0;j<list->maxShowing;j++)
-		{
-			list->labels[j]->LFSTK_setLabel(list->listStrings[j+list->listOffset]);
-			if(list->listImages!=NULL)
-				list->labels[j]->LFSTK_setImageFromPath(list->listImages[j+list->listOffset],MENU,true);
-			list->data[j].userData=j+list->listOffset;
-			list->labels[j]->LFSTK_clearWindow();
-		}
+	list->LFSTK_clearWindow();
 	return(true);
 }
 
@@ -565,7 +504,7 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 //newsb
 	this->scrollBar=new LFSTK_scrollBarClass(this->wc,true,x+w-SCROLLBARWIDTH,y,SCROLLBARWIDTH,h,gravity);
 	this->scrollBar->LFSTK_setScale(1,1);
-	this->scrollBar->LFSTK_setScrollLine(1);
+	this->scrollBar->LFSTK_setLineScroll(1);
 	this->scrollBar->LFSTK_setCallBack(NULL,newscrollCB,this);
 
 	this->style=BEVELIN;

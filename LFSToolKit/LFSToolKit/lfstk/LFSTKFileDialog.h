@@ -96,8 +96,8 @@ class LFSTK_fileDialogClass
 		LFSTK_lineEditClass		*dirEdit;
 
 //files and folders
-		
-		unsigned						getFileListcnt(const char *dir);
+		FindClass				*fc=NULL;
+		unsigned				getFileListcnt(const char *dir);
 		void					getDirList(void);
 		void					getFileList(void);
 		void					freeDirList();

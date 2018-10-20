@@ -38,6 +38,7 @@ LFSTK_fileDialogClass::~LFSTK_fileDialogClass(void)
 	this->freeDirList();
 	this->freeFileList();
 	delete this->dialog;
+	delete this->fc;
 }
 
 void LFSTK_fileDialogClass::cleanDirPath(void)
@@ -152,6 +153,7 @@ unsigned LFSTK_fileDialogClass::getFileListcnt(const char *dir)
 	return(cnt);
 }
 
+#if 0
 void LFSTK_fileDialogClass::getFileList(void)
 {
 	unsigned	filecnt=0;
@@ -207,6 +209,89 @@ fprintf(stderr,"command=%s\n",command);
 		}
 	this->fileListCnt=filecnt;
 }
+#else
+void LFSTK_fileDialogClass::getFileList(void)
+{
+	char	*imagepath;
+
+	this->fc->setDepth(1,1);
+	this->fc->setFindType(FTW_F);
+	this->fc->setFollowLinks(true);
+	this->fc->setIncludeHidden(false);
+	this->fc->findFiles(this->currentDir);
+	this->fc->sortData();
+
+	this->fileListCnt=this->fc->getDataCount();
+	this->fileList=new char*[this->fileListCnt];
+	this->fileImageList=new char*[this->fileListCnt];
+
+	for(int j=0;j<this->fileListCnt;j++)
+		{
+			this->fileList[j]=strdup(this->fc->data.at(j).c_str());
+			if((strcasecmp(&this->fileList[j][strlen(this->fileList[j])-4],".jpg")==0) || (strcasecmp(&this->fileList[j][strlen(this->fileList[j])-4],".png")==0))
+				asprintf(&imagepath,"%s/%s",this->currentDir,this->fileList[j]);
+			else
+				asprintf(&imagepath,"%s",(char*)this->fileImage);
+			this->fileImageList[j]=strdup(imagepath);
+			free(imagepath);
+		}
+return;
+#if 0
+	unsigned	filecnt=0;
+	unsigned	filecnt1=0;
+	FILE		*fp;
+	char		*command;
+	char		*out=NULL;
+	char		line[1024];
+	unsigned	cnt=0;
+	char		*imagepath;
+	
+	this->freeFileList();
+
+	asprintf(&command,"(cd \"%s\" ;find  -maxdepth 1 -mindepth 1 -follow ! -type d -print0 | xargs -0 -n 1 basename 2>/dev/null|sort|wc -l)",this->currentDir);
+	out=this->wc->globalLib->LFSTK_oneLiner("%s",command);
+fprintf(stderr,"command=%s\n",command);
+	if(out==NULL)
+		filecnt=0;
+	else
+		{
+			filecnt=atoi(out);
+			free(out);
+		}
+	free(command);
+//fprintf(stderr,">>filecount=%i\n",filecnt);
+//filecnt1=this->getFileListcnt(this->currentDir);
+//fprintf(stderr,"<<filecount=%i\n",filecnt1);
+	if(filecnt>0)
+		{
+			this->fileList=new char*[filecnt];
+			this->fileImageList=new char*[filecnt];
+			asprintf(&command,"(cd \"%s\" ;find  -maxdepth 1 -mindepth 1 -follow ! -type d -print0 | xargs -0 -n 1 basename 2>/dev/null|sort)",this->currentDir);
+			fp=popen(command, "r");
+			if(fp!=NULL)
+				{
+					while(fgets(line,1024,fp))
+						{
+							if(strlen(line)>0)
+								line[strlen(line)-1]=0;
+								
+							this->fileList[cnt]=strdup(line);
+							if((strcasecmp(&line[strlen(line)-4],".jpg")==0) || (strcasecmp(&line[strlen(line)-4],".png")==0))
+								asprintf(&imagepath,"%s/%s",this->currentDir,line);
+							else
+								asprintf(&imagepath,"%s",(char*)this->fileImage);
+							this->fileImageList[cnt]=strdup(imagepath);
+							free(imagepath);
+							cnt++;
+						}
+					pclose(fp);
+				}
+			free(command);
+		}
+	this->fileListCnt=filecnt;
+#endif
+}
+#endif
 
 void LFSTK_fileDialogClass::getDirList(void)
 {
@@ -423,7 +508,8 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 
 	this->dialog=new LFSTK_windowClass(0,0,dwidth,hite,label,false,true,true);
 
-
+//find files
+	this->fc=new FindClass;
 	//this->dialog->closeDisplayOnExit=true;
 //TODO//?
 	XSizeHints sh;

@@ -1,4 +1,7 @@
 0.3.1
+Code clean.
+Fixed scrollbar visuals.
+Fixed scrollbar bugs.
 Added new scrollbar to lists/dialogs.
 Added vertical scrollbar.
 Done scrollbar class.

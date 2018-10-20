@@ -6,6 +6,10 @@ if [ "X$1" != "X" ];then
 	USEVALGRIND="valgrind --leak-check=full"
 fi
 
+if [ ! -e /tmp/biglist ];then
+	ls -1 /usr/bin|sort >/tmp/biglist
+fi
+
 g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2 -o listexample||exit 1
 LD_LIBRARY_PATH=../LFSToolKit/app/.libs $USEVALGRIND ./listexample "$@"
 retval=$?
@@ -77,7 +81,8 @@ int main(int argc, char **argv)
 
 //file list
 	filelist=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*3),GADGETHITE*5,BUTTONGRAV,NULL,0);
-	filelist->LFSTK_setListFromFile("/etc/fstab",false);
+	//filelist->LFSTK_setListFromFile("/etc/fstab",false);
+	filelist->LFSTK_setListFromFile("/tmp/biglist",false);
 	filelist->LFSTK_setCallBack(NULL,select,NULL);
 
 	sy+=GADGETHITE*6;

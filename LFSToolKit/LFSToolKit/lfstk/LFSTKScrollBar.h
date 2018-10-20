@@ -36,6 +36,7 @@ class LFSTK_scrollBarClass : public LFSTK_gadgetClass
 		LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vertical,int x,int y,unsigned w,unsigned h,int gravity);
 
 		bool				mouseUp(XButtonEvent *e);
+		bool				mouseDown(XButtonEvent *e);
 		bool				mouseEnter(XButtonEvent *e);
 		bool				mouseExit(XButtonEvent *e);
 
@@ -43,26 +44,29 @@ class LFSTK_scrollBarClass : public LFSTK_gadgetClass
 		void				LFSTK_setStyle(bevelType s);
 //set indexes
 		void				LFSTK_setScale(double min,double max);
-		void				LFSTK_setPageUp(int page);
-		void				LFSTK_setPageDown(int page);
-		void				LFSTK_setScrollLine(int line);
+		void				LFSTK_setPageScroll(int page);
+		void				LFSTK_setLineScroll(int line);
 		
 		int					value=0;
-		double				scale=10.0;
+		double				scale=1.0;
 	private:
 		LFSTK_buttonClass	*thumb=NULL;
 		LFSTK_buttonClass	*upLeft=NULL;
 		LFSTK_buttonClass	*downRight=NULL;
+		bool				startDrag=false;
 
 //calbacks
 		static bool			lineUpDown(void *object,void* userdata);
 		static bool			thumbClicked(void *object,void* userdata);
+		static bool			startThumbDrag(void *object,void* userdata);
+//private routines
+		void				setState(bool byvalue);
 
-		int					troughScroll=10;//for now set at 10%
+		int					pageScroll=5;
 		double				maxValue=100.0;
 		double				minScale=1.0;
 		double				maxScale=100.0;
-		int					lineScroll=10;
+		int					lineScroll=1;
 		bool				verticalBar=false;
 		bool				noCallback=false;
 };

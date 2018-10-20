@@ -79,16 +79,19 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //hscrollbar
-	hsb=new LFSTK_scrollBarClass(wc,false,DIALOGMIDDLE-200,sy,400,GADGETHITE/2,BUTTONGRAV);
+	hsb=new LFSTK_scrollBarClass(wc,false,DIALOGMIDDLE-200,sy,400+GADGETHITE,GADGETHITE/2,BUTTONGRAV);
 	hsb->LFSTK_setCallBack(NULL,valChanged,NULL);
-	hsb->LFSTK_setScale(200,400);
+	hsb->LFSTK_setScale(1,100);
 	sy+=YSPACING;
 
 //vscrollbar
-	vsb=new LFSTK_scrollBarClass(wc,true,BORDER,sy,GADGETHITE/2,200,BUTTONGRAV);
+fprintf(stderr,"sy=%i\n",sy);
+//	vsb=new LFSTK_scrollBarClass(wc,true,BORDER,sy,GADGETHITE/2,200+GADGETHITE,BUTTONGRAV);
+	vsb=new LFSTK_scrollBarClass(wc,true,BORDER,sy,SCROLLBARWIDTH,200+GADGETHITE,BUTTONGRAV);
 	vsb->LFSTK_setCallBack(NULL,valChanged,NULL);
-	vsb->LFSTK_setScale(200,400);
-	sy+=YSPACING+200-GADGETHITE;
+	vsb->LFSTK_setScale(0,1985);
+	vsb->LFSTK_setPageScroll(100);
+	sy+=YSPACING+200;
 	
 //line
 	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
@@ -112,7 +115,8 @@ int main(int argc, char **argv)
 			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
 
 			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
+				if(ml->function(ml->gadget,&event,ml->type)==true)
+					continue;
 
 			if(wc->LFSTK_handleWindowEvents(&event)<0)
 				mainLoop=false;

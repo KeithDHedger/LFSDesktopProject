@@ -75,7 +75,7 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		void				setNavSensitive(void);
 
 		static bool			select(void *object,void* userdata);
-		static bool			scrollCB(void *object,void* userdata);
+		//static bool			scrollCB(void *object,void* userdata);
 		static bool			newscrollCB(void *object,void* userdata);
 };
 

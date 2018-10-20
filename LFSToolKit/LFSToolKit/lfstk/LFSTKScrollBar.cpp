@@ -85,36 +85,100 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vert
 		{
 //thumb
 			this->thumb=new LFSTK_buttonClass(parentwc,"",x+h,y,h,h,gravity);
-			this->thumb->LFSTK_setCanDrag(true);
-			this->thumb->LFSTK_setLimits(x+h,-1,x+w-h,-1);
+			this->thumb->LFSTK_setLimits(x+h-1,-1,x+w-h,-1);
 			this->thumb->LFSTK_allowYMovement(false);
-			this->thumb->LFSTK_setCallBack(NULL,this->thumbClicked,(void*)this);
 //up
 			this->upLeft=new LFSTK_buttonClass(parentwc,"",x,y,h,h,gravity);
-			this->upLeft->LFSTK_setCallBack(NULL,this->lineUpDown,(void*)this);
-			this->upLeft->userData=(void*)1;
 //down
 			this->downRight=new LFSTK_buttonClass(parentwc,"",x+w-h,y,h,h,gravity);
-			this->downRight->LFSTK_setCallBack(NULL,this->lineUpDown,(void*)this);
-			this->downRight->userData=(void*)2;
 		}
 	else
 		{
 //thumb
 			this->thumb=new LFSTK_buttonClass(parentwc,"",x,y+w,w,w,gravity);
-			this->thumb->LFSTK_setCanDrag(true);
-			this->thumb->LFSTK_setLimits(-1,y+w,-1,y+h-w);
+			this->thumb->LFSTK_setLimits(-1,y+w-1,-1,y+h-w);
 			this->thumb->LFSTK_allowXMovement(false);
-			this->thumb->LFSTK_setCallBack(NULL,this->thumbClicked,(void*)this);
 //up
 			this->upLeft=new LFSTK_buttonClass(parentwc,"",x,y,w,w,gravity);
-			this->upLeft->LFSTK_setCallBack(NULL,this->lineUpDown,(void*)this);
-			this->upLeft->userData=(void*)1;
 //down
 			this->downRight=new LFSTK_buttonClass(parentwc,"",x,y+h-w,w,w,gravity);
-			this->downRight->LFSTK_setCallBack(NULL,this->lineUpDown,(void*)this);
-			this->downRight->userData=(void*)2;
 		}
+
+	this->thumb->LFSTK_setCanDrag(true);
+	this->thumb->LFSTK_setCallBack(this->startThumbDrag,this->thumbClicked,(void*)this);
+	this->upLeft->LFSTK_setCallBack(NULL,this->lineUpDown,(void*)this);
+	this->downRight->LFSTK_setCallBack(NULL,this->lineUpDown,(void*)this);
+	this->downRight->userData=(void*)2;
+	this->upLeft->userData=(void*)1;
+}
+
+/**
+* Set thumb position
+* \param bool byvalue.
+*/
+void LFSTK_scrollBarClass::setState(bool byvalue)
+{
+	geometryStruct	geom;
+	rectStruct		rect;
+	int				diff;
+
+	this->thumb->LFSTK_getGeom(&geom);
+	this->thumb->LFSTK_getLimits(&rect);
+
+	if(byvalue==true)
+		{
+			if(this->verticalBar==false)
+				{
+					geom.x=rect.x+(int)((this->value*this->scale)+0.5);
+					if(this->value<this->minScale)
+						{
+							geom.x=rect.x+1;
+							this->value=this->minScale;
+						}
+					if(this->value>this->maxScale)
+						{
+							geom.x=rect.w-geom.h;
+							this->value=this->maxScale;
+						}
+					if(geom.x==rect.x)
+						geom.x++;
+				}
+			else
+				{
+					geom.y=rect.y+(int)((this->value*this->scale)+0.5);
+					if(this->value<this->minScale)
+						{
+							geom.y=rect.y+1;
+							this->value=this->minScale;
+						}
+					if(this->value>this->maxScale)
+						{
+							geom.y=rect.h-geom.w;
+							this->value=this->maxScale;
+						}
+					if(geom.y==rect.y)
+						geom.y++;
+				}
+
+			this->thumb->LFSTK_moveGadget(geom.x,geom.y);
+		}
+	else
+		{
+			if(this->verticalBar==false)
+				diff=geom.x-1-rect.x;
+			else
+				diff=geom.y-1-rect.y;
+
+			this->value=(int)(double)((diff/this->scale)+0.5);
+
+			if(this->value<this->minScale)
+				this->value=this->minScale;
+			if(this->value>this->maxScale)
+				this->value=this->maxScale;
+			return;
+		}
+
+	this->LFSTK_clearWindow();
 }
 
 /**
@@ -122,21 +186,16 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vert
 */
 void LFSTK_scrollBarClass::LFSTK_clearWindow()
 {
-	geometryStruct	geom;
-
-	this->thumb->LFSTK_getGeom(&geom);
-	if(this->verticalBar==false)
-		this->value=(int)(((geom.x-this->gadgetGeom.x-this->gadgetGeom.h+1)/this->scale)+0.5);
-	else
-		this->value=(int)(((geom.y-this->gadgetGeom.y-this->gadgetGeom.w)/this->scale)+0.5);
-
+	if(this->startDrag==true)
+		this->setState(false);
 	this->clearBox(&this->gadgetDetails);
 
-	if(this->noCallback==false)
-		if(this->callback.releaseCallback!=NULL)
-			this->callback.releaseCallback(this,this->callback.userData);
+//	if(this->noCallback==false)???
+	if(this->callback.releaseCallback!=NULL)
+		this->callback.releaseCallback(this,this->callback.userData);
+
 	this->thumb->LFSTK_clearWindow();
-	this->noCallback=false;
+	//this->noCallback=false;????
 }
 
 /**
@@ -148,60 +207,46 @@ void LFSTK_scrollBarClass::LFSTK_setScale(double min,double max)
 {
 	this->minScale=min;
 	this->maxScale=max;
-	this->maxValue=this->maxScale-this->minScale;
+	this->maxValue=this->maxScale-this->minScale+1;
 	if(this->verticalBar==false)
-		this->scale=(this->gadgetGeom.w-this->gadgetGeom.h-this->gadgetGeom.h-this->gadgetGeom.h)/(max-min);
+		this->scale=(this->gadgetGeom.w-(this->gadgetGeom.h*3))/this->maxValue;
 	else
-		this->scale=(this->gadgetGeom.h-this->gadgetGeom.w-this->gadgetGeom.w-this->gadgetGeom.w)/(max-min);
+		this->scale=(this->gadgetGeom.h-(this->gadgetGeom.w*3))/this->maxValue;
 }
 
 /**
-* Set the line up value.
+* Set the line scroll value.
 * \param int line jump.
 */
-void LFSTK_scrollBarClass::LFSTK_setScrollLine(int line)
+void LFSTK_scrollBarClass::LFSTK_setLineScroll(int line)
 {
 	this->lineScroll=line;
 }
 
+/**
+* Set the page scroll value.
+* \param int page jump.
+*/
+void LFSTK_scrollBarClass::LFSTK_setPageScroll(int line)
+{
+	this->pageScroll=line;
+}
+
 bool LFSTK_scrollBarClass::lineUpDown(void *object,void* userdata)
 {
-	int						addval=0;
-	geometryStruct			geom;
-	rectStruct				rect;
-
 	LFSTK_buttonClass		*button=static_cast<LFSTK_buttonClass*>(object);
 	LFSTK_scrollBarClass	*sbar=static_cast<LFSTK_scrollBarClass*>(userdata);
 
-	sbar->thumb->LFSTK_getGeom(&geom);
-	sbar->thumb->LFSTK_getLimits(&rect);
+	sbar->startDrag=false;
 
 	if((long)button->userData==1)
-		addval=-(int)sbar->lineScroll*(sbar->scale+0.5);
+		sbar->value-=sbar->lineScroll;
 
 	if((long)button->userData==2)
-		addval=(int)sbar->lineScroll*(sbar->scale+0.5);
+		sbar->value+=sbar->lineScroll;
 
-	if(sbar->verticalBar==false)
-		{
-			geom.x+=addval;
-
-			if(geom.x<rect.x)
-				geom.x=rect.x+1;
-			if(geom.x+geom.w>rect.w)
-				geom.x=rect.w-geom.w-1;
-		}
-	else
-		{
-			geom.y+=addval;
-
-			if(geom.y<rect.y)
-				geom.y=rect.y+1;
-			if(geom.y+geom.h>rect.h)
-				geom.y=rect.h-geom.h;
-		}
-	sbar->noCallback=false;
-	sbar->thumb->LFSTK_moveGadget(geom.x,geom.y);
+	sbar->setState(true);
+//	sbar->noCallback=false;????
 	return(true);
 }
 
@@ -213,7 +258,6 @@ bool LFSTK_scrollBarClass::lineUpDown(void *object,void* userdata)
 bool LFSTK_scrollBarClass::mouseUp(XButtonEvent *e)
 {
 	geometryStruct	geom;
-	int				addval=0;
 	rectStruct		rect;
 
 	this->mouseDownX=e->x;
@@ -227,36 +271,25 @@ bool LFSTK_scrollBarClass::mouseUp(XButtonEvent *e)
 
 	if(this->inWindow==true)
 		{
-			this->noCallback=false;
+			//this->noCallback=false;?????
 			this->thumb->LFSTK_getGeom(&geom);
 			this->thumb->LFSTK_getLimits(&rect);
-			addval=(int)((this->maxValue/this->troughScroll)*this->scale);
 
 			if(this->verticalBar==false)
 				{
-					if(this->mouseDownX<(geom.x-rect.x+geom.h))
-						geom.x-=addval;
+					if((this->mouseDownX+geom.w)<geom.x-rect.y)
+						this->value-=this->pageScroll;
 					else
-						geom.x+=addval;
-
-					if(geom.x<rect.x)
-						geom.x=rect.x+1;
-					if(geom.x+geom.w>rect.w)
-						geom.x=rect.w-geom.w-1;
+						this->value+=this->pageScroll;
 				}
 			else
 				{
-					if(this->mouseDownY<(geom.y-rect.y+geom.w))
-						geom.y-=addval;
+					if((this->mouseDownY-geom.h)<geom.y-rect.y)
+						this->value-=this->pageScroll;
 					else
-						geom.y+=addval;
-
-					if(geom.y<rect.y)
-						geom.y=rect.y+1;
-					if(geom.y+geom.h>rect.h)
-						geom.y=rect.h-geom.h-1;
+						this->value+=this->pageScroll;
 				}
-			this->thumb->LFSTK_moveGadget(geom.x,geom.y);
+			this->setState(true);
 		}
 	return(true);
 }
@@ -268,8 +301,21 @@ bool LFSTK_scrollBarClass::thumbClicked(void *object,void* userdata)
 		{
 			sb=static_cast<LFSTK_scrollBarClass*>(userdata);
 			if(sb->callback.releaseCallback!=NULL)
-				return(sb->callback.releaseCallback(sb,sb->callback.userData));
+				sb->callback.releaseCallback(sb,sb->callback.userData);
+			sb->startDrag=false;
 		}
+	return(true);
+}
+
+bool LFSTK_scrollBarClass::startThumbDrag(void *object,void* userdata)
+{
+	LFSTK_scrollBarClass	*sb=NULL;
+	if(userdata!=NULL)
+		{
+			sb=static_cast<LFSTK_scrollBarClass*>(userdata);
+			sb->startDrag=true;
+		}
+	return(true);
 }
 
 /**
@@ -279,11 +325,12 @@ bool LFSTK_scrollBarClass::thumbClicked(void *object,void* userdata)
 */
 bool LFSTK_scrollBarClass::mouseEnter(XButtonEvent *e)
 {
-	this->noCallback=true;
+	//this->noCallback=true;????
 	this->inWindow=true;
+	this->startDrag=false;
 	return(true);
 }
-//
+
 /**
 * Mouse exit callback.
 * \param e XButtonEvent passed from mainloop->listener.
@@ -291,11 +338,23 @@ bool LFSTK_scrollBarClass::mouseEnter(XButtonEvent *e)
 */
 bool LFSTK_scrollBarClass::mouseExit(XButtonEvent *e)
 {
-	this->noCallback=true;
+	//this->noCallback=true;????
 	this->inWindow=false;
+	this->startDrag=false;
 	return(true);
 }
 
+bool LFSTK_scrollBarClass::mouseDown(XButtonEvent *e)
+{
+
+	if((this->isActive==false) || (this->callback.ignoreCallback==true))
+		return(true);
+
+//	this->noCallback=true;????
+	this->inWindow=true;
+	this->startDrag=false;
+	return(true);
+}
 
 
 
