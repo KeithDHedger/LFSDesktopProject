@@ -80,6 +80,7 @@ class LFSTK_fileDialogClass
 		bool					dialogType;
 		const char				*fileImage;
 		const char				*folderImage;
+		const char				*imageImage;
 		bool					showPreview=false;
 		LFSTK_imageClass		*tux=NULL;
 		LFSTK_labelClass		*previewMimeType;

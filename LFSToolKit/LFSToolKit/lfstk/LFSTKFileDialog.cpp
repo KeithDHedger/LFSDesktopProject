@@ -229,7 +229,8 @@ void LFSTK_fileDialogClass::getFileList(void)
 		{
 			this->fileList[j]=strdup(this->fc->data.at(j).c_str());
 			if((strcasecmp(&this->fileList[j][strlen(this->fileList[j])-4],".jpg")==0) || (strcasecmp(&this->fileList[j][strlen(this->fileList[j])-4],".png")==0))
-				asprintf(&imagepath,"%s/%s",this->currentDir,this->fileList[j]);
+				asprintf(&imagepath,"%s",(char*)this->imageImage);
+//				asprintf(&imagepath,"%s/%s",this->currentDir,this->fileList[j]);
 			else
 				asprintf(&imagepath,"%s",(char*)this->fileImage);
 			this->fileImageList[j]=strdup(imagepath);
@@ -480,6 +481,7 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	this->dirListCnt=0;
 	this->fileImage=LFSTKPIXMAPSDIR "/documents.png";
 	this->folderImage=LFSTKPIXMAPSDIR "/folder.png";
+	this->imageImage=LFSTKPIXMAPSDIR "/image.png";
 
 	if(recentname!=NULL)
 		this->recentsName=recentname;
