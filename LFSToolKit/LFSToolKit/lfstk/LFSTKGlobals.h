@@ -24,6 +24,7 @@
 #include <X11/Xft/Xft.h>
 #include <iostream>
 #include <map>
+#include <dirent.h>
 
 #include <cairo.h>
 #include <cairo-xlib.h>

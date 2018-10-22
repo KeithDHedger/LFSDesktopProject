@@ -631,20 +631,6 @@ void LFSTK_lib::LFSTK_setUseTheme(bool use)
 	this->useTheme=use;
 }
 
-int LFSTK_lib::callback(const char *fpath,const struct stat *sb,int typeflag)
-{
-	if(typeflag!=FTW_F)
-		return(0);
-
-//	retBuffer[0]=0;
-	if (fnmatch(filterBuffer,fpath,FNM_CASEFOLD)==0)
-		{
-			snprintf(retBuffer,511,"%s",fpath);
-			return 1;
-		}
-	return 0;
-}
-
 /**
 * Get path to themed icon.
 * \param theme Theme name ( case sensitive ).
@@ -719,35 +705,6 @@ char* LFSTK_lib::LFSTK_findThemedIcon(const char *theme,const char *icon,const c
 breakReturn:
 	free(holdicon);
 	return(iconpath);
-
-#if 0
-	char	dirbuffer[2048];
-
-	sprintf(dirbuffer,"/usr/share/icons/%s",theme);
-	sprintf(filterBuffer,"*%s*%s.png",catagory,icon);
-	retBuffer[0]=0;
-	if(ftw(dirbuffer,this->callback,16)==1)
-		return(retBuffer);
-
-	sprintf(dirbuffer,"%s/.icons/%s",getenv("HOME"),theme);
-	if(ftw(dirbuffer,this->callback,16)==1)
-		return(retBuffer);
-
-	sprintf(dirbuffer,"/usr/share/icons/hicolor");
-	if(ftw(dirbuffer,this->callback,16)==1)
-		return(retBuffer);
-
-	sprintf(dirbuffer,"/usr/share/icons/gnome");
-	if(ftw(dirbuffer,this->callback,16)==1)
-		return(retBuffer);
-
-	sprintf(dirbuffer,"/usr/share/pixmaps");
-	sprintf(filterBuffer,"*%s.png",icon);
-	if(ftw(dirbuffer,this->callback,16)==1)
-		return(retBuffer);
-
-	return(NULL);
-#endif
 }
 
 //synchronous only

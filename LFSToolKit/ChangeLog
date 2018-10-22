@@ -1,4 +1,6 @@
 0.3.1
+Redone file/folder dialogs.
+Fixed some memory leaks in file dialogs.
 Added generic image icon for lists.
 Removed ( temporarily ) thumbnails in file dialog list.
 Code clean.

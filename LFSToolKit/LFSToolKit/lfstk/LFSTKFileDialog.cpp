@@ -35,10 +35,9 @@ LFSTK_fileDialogClass::~LFSTK_fileDialogClass(void)
 		free(this->currentPath);
 
 	freeAndNull(&this->filter);
-	this->freeDirList();
 	this->freeFileList();
-	delete this->dialog;
 	delete this->fc;
+	delete this->dialog;
 }
 
 void LFSTK_fileDialogClass::cleanDirPath(void)
@@ -50,17 +49,6 @@ void LFSTK_fileDialogClass::cleanDirPath(void)
 		free(this->currentDir);
 	this->currentDir=this->wc->globalLib->LFSTK_oneLiner("%s",command);
 	free(command);
-}
-
-void LFSTK_fileDialogClass::freeDirList(void)
-{
-	if(this->dirList!=NULL)
-		{
-			for(int j=0;j<this->dirListCnt;j++)
-				free(this->dirList[j]);
-			delete[] this->dirList;
-		}
-	delete[] this->dirImageList;
 }
 
 void LFSTK_fileDialogClass::freeFileList(void)
@@ -81,274 +69,39 @@ void LFSTK_fileDialogClass::freeFileList(void)
 		}
 }
 
-//static int LFSTK_fileDialogClass::getFileCnt(const char *fpath,const struct stat *sb,int tflag,struct FTW *ftwbuf)
-//{
-//	if(tflag==FTW_F)
-//		{
-//			if(strcasecmp(fpath+ftwbuf->base,chkfname)==0)
-//				{
-//					initEditor();
-//					setTempEdFile(fpath);
-//					page->filePath=strdup(fpath);
-//					oneLiner(true,"cp %s %s/%s",page->filePath,tmpEdDir,tmpEdFile);
-//					openTheFile(tmpEdFilePath,hilite);
-//					page->topLine=0;
-//					page->currentLine=0;
-//					currentX=minX;
-//					currentY=minY;
-//					page->lineXCurs=0;
-//				}
-//		}
-//	return(0);
-//}
-
-//nftw(includepath,openInclude,20,FTW_PHYS);
-#include <dirent.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-
-unsigned LFSTK_fileDialogClass::getFileListcnt(const char *dir)
-{
-//	nftw(dir,openInclude,20,FTW_PHYS);
-	unsigned		cnt=0;
-	DIR				*dirp=NULL;
-	struct dirent	*entry=NULL;
-	struct stat		statbuf;
-	char			*cwd=NULL;
-	if(dir==NULL)
-		return(0);
-
-	cwd=get_current_dir_name();
-	chdir(dir);
-	dirp=opendir(dir);
-
-	if(dirp!=NULL)
-		{
-			while((entry=readdir(dirp)) != NULL)
-				{
-					if(entry->d_type != DT_DIR)
-						{
-							if(entry->d_type==DT_LNK)
-								{
-									stat(entry->d_name,&statbuf);
-									if(((statbuf.st_mode & S_IFMT) !=S_IFDIR))
-										{
-											cnt++;
-										}
-								}
-							else
-								{
-									cnt++;
-								}
-						}
-				}
-			closedir(dirp);
-		}
-	if(cwd!=NULL)
-		{
-			chdir(cwd);
-			free(cwd);
-		}
-	return(cnt);
-}
-
-#if 0
-void LFSTK_fileDialogClass::getFileList(void)
-{
-	unsigned	filecnt=0;
-	unsigned	filecnt1=0;
-	FILE		*fp;
-	char		*command;
-	char		*out=NULL;
-	char		line[1024];
-	unsigned	cnt=0;
-	char		*imagepath;
-	
-	this->freeFileList();
-
-	asprintf(&command,"(cd \"%s\" ;find  -maxdepth 1 -mindepth 1 -follow ! -type d -print0 | xargs -0 -n 1 basename 2>/dev/null|sort|wc -l)",this->currentDir);
-	out=this->wc->globalLib->LFSTK_oneLiner("%s",command);
-fprintf(stderr,"command=%s\n",command);
-	if(out==NULL)
-		filecnt=0;
-	else
-		{
-			filecnt=atoi(out);
-			free(out);
-		}
-	free(command);
-//fprintf(stderr,">>filecount=%i\n",filecnt);
-//filecnt1=this->getFileListcnt(this->currentDir);
-//fprintf(stderr,"<<filecount=%i\n",filecnt1);
-	if(filecnt>0)
-		{
-			this->fileList=new char*[filecnt];
-			this->fileImageList=new char*[filecnt];
-			asprintf(&command,"(cd \"%s\" ;find  -maxdepth 1 -mindepth 1 -follow ! -type d -print0 | xargs -0 -n 1 basename 2>/dev/null|sort)",this->currentDir);
-			fp=popen(command, "r");
-			if(fp!=NULL)
-				{
-					while(fgets(line,1024,fp))
-						{
-							if(strlen(line)>0)
-								line[strlen(line)-1]=0;
-								
-							this->fileList[cnt]=strdup(line);
-							if((strcasecmp(&line[strlen(line)-4],".jpg")==0) || (strcasecmp(&line[strlen(line)-4],".png")==0))
-								asprintf(&imagepath,"%s/%s",this->currentDir,line);
-							else
-								asprintf(&imagepath,"%s",(char*)this->fileImage);
-							this->fileImageList[cnt]=strdup(imagepath);
-							free(imagepath);
-							cnt++;
-						}
-					pclose(fp);
-				}
-			free(command);
-		}
-	this->fileListCnt=filecnt;
-}
-#else
 void LFSTK_fileDialogClass::getFileList(void)
 {
 	char	*imagepath;
 
 	this->fc->setDepth(1,1);
-	this->fc->setFindType(FTW_F);
+	if(this->dialogType==FOLDERDIALOG)
+		this->fc->setFindType(FTW_D);
+	else
+		this->fc->setFindType(-1);
 	this->fc->setFollowLinks(true);
 	this->fc->setIncludeHidden(false);
+	this->fc->setSort(false);
 	this->fc->findFiles(this->currentDir);
-	this->fc->sortData();
+	this->fc->sortByNameAndType();
 
-	this->fileListCnt=this->fc->getDataCount();
+	this->fileListCnt=this->fc->getDataCount()+1;
 	this->fileList=new char*[this->fileListCnt];
 	this->fileImageList=new char*[this->fileListCnt];
 
-	for(int j=0;j<this->fileListCnt;j++)
+	this->fileList[0]=strdup("..");
+	this->fileImageList[0]=strdup(folderImage);
+	for(int j=1;j<this->fileListCnt;j++)
 		{
-			this->fileList[j]=strdup(this->fc->data.at(j).c_str());
+			this->fileList[j]=strdup(this->fc->data.at(j-1).name.c_str());
 			if((strcasecmp(&this->fileList[j][strlen(this->fileList[j])-4],".jpg")==0) || (strcasecmp(&this->fileList[j][strlen(this->fileList[j])-4],".png")==0))
 				asprintf(&imagepath,"%s",(char*)this->imageImage);
-//				asprintf(&imagepath,"%s/%s",this->currentDir,this->fileList[j]);
+			else if(this->fc->data.at(j-1).fileType==FTW_D)
+				asprintf(&imagepath,"%s",(char*)this->folderImage);
 			else
 				asprintf(&imagepath,"%s",(char*)this->fileImage);
 			this->fileImageList[j]=strdup(imagepath);
 			free(imagepath);
 		}
-return;
-#if 0
-	unsigned	filecnt=0;
-	unsigned	filecnt1=0;
-	FILE		*fp;
-	char		*command;
-	char		*out=NULL;
-	char		line[1024];
-	unsigned	cnt=0;
-	char		*imagepath;
-	
-	this->freeFileList();
-
-	asprintf(&command,"(cd \"%s\" ;find  -maxdepth 1 -mindepth 1 -follow ! -type d -print0 | xargs -0 -n 1 basename 2>/dev/null|sort|wc -l)",this->currentDir);
-	out=this->wc->globalLib->LFSTK_oneLiner("%s",command);
-fprintf(stderr,"command=%s\n",command);
-	if(out==NULL)
-		filecnt=0;
-	else
-		{
-			filecnt=atoi(out);
-			free(out);
-		}
-	free(command);
-//fprintf(stderr,">>filecount=%i\n",filecnt);
-//filecnt1=this->getFileListcnt(this->currentDir);
-//fprintf(stderr,"<<filecount=%i\n",filecnt1);
-	if(filecnt>0)
-		{
-			this->fileList=new char*[filecnt];
-			this->fileImageList=new char*[filecnt];
-			asprintf(&command,"(cd \"%s\" ;find  -maxdepth 1 -mindepth 1 -follow ! -type d -print0 | xargs -0 -n 1 basename 2>/dev/null|sort)",this->currentDir);
-			fp=popen(command, "r");
-			if(fp!=NULL)
-				{
-					while(fgets(line,1024,fp))
-						{
-							if(strlen(line)>0)
-								line[strlen(line)-1]=0;
-								
-							this->fileList[cnt]=strdup(line);
-							if((strcasecmp(&line[strlen(line)-4],".jpg")==0) || (strcasecmp(&line[strlen(line)-4],".png")==0))
-								asprintf(&imagepath,"%s/%s",this->currentDir,line);
-							else
-								asprintf(&imagepath,"%s",(char*)this->fileImage);
-							this->fileImageList[cnt]=strdup(imagepath);
-							free(imagepath);
-							cnt++;
-						}
-					pclose(fp);
-				}
-			free(command);
-		}
-	this->fileListCnt=filecnt;
-#endif
-}
-#endif
-
-void LFSTK_fileDialogClass::getDirList(void)
-{
-	unsigned	dircnt=0;
-	FILE		*fp;
-	char		*command;
-	char		*out=NULL;
-	char		line[1024];
-	unsigned	cnt=0;
-	int			retval=0;
-	struct stat		buf;
-
-
-	retval=stat(this->currentDir,&buf);
-	if(retval==-1)
-		{
-			if(this->currentDir!=NULL)
-				free(this->currentDir);
-			this->currentDir=strdup(getenv("HOME"));
-		}
-
-	asprintf(&command,"(cd \"%s\" 2>/dev/null;find  -maxdepth 1 -mindepth 1 -follow -type d -print0| xargs -0 -n 1 basename 2>/dev/null|sort|wc -l)",this->currentDir);
-	out=this->wc->globalLib->LFSTK_oneLiner("%s",command);
-	if(out==NULL)
-		{
-			dircnt=0;
-		}
-	else
-		{
-			dircnt=atoi(out);
-			free(out);
-		}
-	free(command);
-	dircnt++;
-	this->freeDirList();
-	this->dirList=new char*[dircnt];
-	this->dirImageList=new char*[dircnt];
-	this->dirList[cnt]=strdup("..");
-	this->dirImageList[cnt]=(char*)this->folderImage;
-	cnt++;
-	asprintf(&command,"(cd \"%s\" 2>/dev/null ;find  -maxdepth 1 -mindepth 1 -follow -type d -print0| xargs -0 -n 1 basename 2>/dev/null|sort)",this->currentDir);
-	fp=popen(command, "r");
-	if(fp!=NULL)
-		{
-			while(fgets(line,1024,fp))
-				{
-					if(strlen(line)>0)
-						line[strlen(line)-1]=0;
-					this->dirList[cnt]=strdup(line);
-					this->dirImageList[cnt]=(char*)this->folderImage;
-					cnt++;
-				}
-			pclose(fp);
-		}
-	free(command);
-	this->dirListCnt=cnt;
 }
 
 /**
@@ -386,18 +139,11 @@ void LFSTK_fileDialogClass::LFSTK_setWorkingDir(const char *dir)
 
 	this->currentDir=strdup(dir);
 	this->cleanDirPath();
-//folders
-	this->getDirList();
-	this->dirListGadget->LFSTK_setImageList(this->dirImageList,this->dirListCnt);
-	this->dirListGadget->LFSTK_setList(this->dirList,this->dirListCnt);
-	this->dirEdit->LFSTK_setBuffer(this->currentDir);
-//files
-	if(this->dialogType==FILEDIALOG)
-		{
-			this->getFileList();
-			this->fileListGadget->LFSTK_setImageList(this->fileImageList,this->fileListCnt);
-			this->fileListGadget->LFSTK_setList(this->fileList,this->fileListCnt);
-		}
+
+	this->freeFileList();
+	this->getFileList();
+	this->fileListGadget->LFSTK_setImageList(this->fileImageList,this->fileListCnt);
+	this->fileListGadget->LFSTK_setList(this->fileList,this->fileListCnt);
 }
 
 /**
@@ -408,8 +154,6 @@ void LFSTK_fileDialogClass::LFSTK_setWorkingDir(const char *dir)
 */
 const char	*LFSTK_fileDialogClass::LFSTK_getCurrentDir(void)
 {
-//	if(this->currentDir==NULL)
-//		printf("this->apply=%i\n",this->apply);
 	return(this->currentDir);
 }
 
@@ -421,9 +165,6 @@ const char	*LFSTK_fileDialogClass::LFSTK_getCurrentDir(void)
 */
 const char	*LFSTK_fileDialogClass::LFSTK_getCurrentFile(void)
 {
-//	if(this->currentFile==NULL)
-//		this->apply=false;
-//		printf("this->apply=%i\n",this->apply);
 	return(this->currentFile);
 }
 
@@ -463,22 +204,19 @@ void LFSTK_fileDialogClass::LFSTK_setShowPreview(bool show)
 */
 LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const char *label,const char *startdir,bool type,const char *recentname)
 {
-	int					hite=DIALOGHITE;
+	int					hite=600;
 	LFSTK_labelClass	*spacer;
 	int					midprev;
 	int					yoffset=BORDER+PREVIEWWIDTH;
+	int					yspacing=0;
 
 	this->wc=parentwc;
 	this->dialog=NULL;
-	this->dirList=NULL;
-	this->dirImageList=NULL;
 	this->fileList=NULL;
 	this->fileImageList=NULL;
 	this->fileListCnt=0;
 	this->currentFile=NULL;
 	this->currentPath=NULL;
-	this->dirListGadget=NULL;
-	this->dirListCnt=0;
 	this->fileImage=LFSTKPIXMAPSDIR "/documents.png";
 	this->folderImage=LFSTKPIXMAPSDIR "/folder.png";
 	this->imageImage=LFSTKPIXMAPSDIR "/image.png";
@@ -492,27 +230,13 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 		this->currentDir=strdup(startdir);
 
 	this->dialogType=type;
-	//int dirlisthite=GADGETHITE*FDIRHITE;
-	int dirlistwid=DIALOGWIDTH-(FGAP*2)-FNAVBUTTONWID;
 	int dwidth=DIALOGWIDTH+PREVIEWWIDTH;
-
-	if(this->dialogType==FOLDERDIALOG)
-		{
-			this->dirlisthite=GADGETHITE*FDIRHITE;
-			hite=dirlisthite+(FGAP*7)+(GADGETHITE*2);
-			dwidth=DIALOGWIDTH;
-		}
-	else
-		{
-			this->dirlisthite=GADGETHITE*(FDIRHITE/2);
-			hite=dirlisthite+(FGAP*6)+GADGETHITE+(FFILEHITE*GADGETHITE)+FGAP+GADGETHITE+FGAP;
-		}
 
 	this->dialog=new LFSTK_windowClass(0,0,dwidth,hite,label,false,true,true);
 
 //find files
 	this->fc=new FindClass;
-	//this->dialog->closeDisplayOnExit=true;
+	this->dialog->closeDisplayOnExit=false;
 //TODO//?
 	XSizeHints sh;
 	sh.flags=PMinSize|PMaxSize|PSize|PResizeInc;
@@ -527,61 +251,44 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 
 	XSetWMNormalHints(this->wc->display,dialog->window,&sh);
 
-	this->getDirList();
 	this->getFileList();
+//file list
+	this->fileListGadget=new LFSTK_listGadgetClass(this->dialog,"",BORDER,BORDER,DIALOGWIDTH-FNAVBUTTONWID,(GADGETHITE*FFILEHITE),NorthWestGravity,NULL,0);
+	this->fileListGadget->LFSTK_setImageList(this->fileImageList,this->fileListCnt);
+	this->fileListGadget->LFSTK_setList(this->fileList,this->fileListCnt);
 
-	if(this->dialogType==FOLDERDIALOG)
-		{
-			this->dirListGadget=new LFSTK_listGadgetClass(this->dialog,"",FGAP,FGAP,dirlistwid,dirlisthite,NorthWestGravity,NULL,0);
-			this->dirEdit=new LFSTK_lineEditClass(this->dialog,this->currentDir,FGAP,dirlisthite+(FGAP*2),dirlistwid,GADGETHITE,NorthWestGravity);
-			this->dirListGadget->LFSTK_setImageList(this->dirImageList,this->dirListCnt);
-			this->dirListGadget->LFSTK_setList(this->dirList,this->dirListCnt);
+//edit box
+	yspacing+=GADGETHITE*(FFILEHITE+1);
+	this->dirEdit=new LFSTK_lineEditClass(this->dialog,this->currentDir,BORDER,yspacing,DIALOGWIDTH-(BORDER*2)+PREVIEWWIDTH,GADGETHITE,NorthWestGravity);
+	yspacing+=GADGETHITE+FGAP;
 
-			spacer=new LFSTK_labelClass(this->dialog,"--",0,dirlisthite+(FGAP*3)+GADGETHITE,DIALOGWIDTH,8,NorthWestGravity);
-			
-			this->buttonCancel=new LFSTK_buttonClass(this->dialog,"Cancel",BORDER,dirlisthite+(FGAP*6)+GADGETHITE,GADGETWIDTH,GADGETHITE,SouthWestGravity);
-			this->buttonApply=new LFSTK_buttonClass(this->dialog,"Apply",DIALOGWIDTH-BORDER-GADGETWIDTH,dirlisthite+(FGAP*6)+GADGETHITE,GADGETWIDTH,GADGETHITE,SouthEastGravity);
-			this->dirlisthite=dirlisthite+(FGAP*7)+GADGETHITE*2;
-		}
-	else
-		{
-			this->dirListGadget=new LFSTK_listGadgetClass(this->dialog,"",FGAP,FGAP,dirlistwid,dirlisthite,NorthWestGravity,NULL,0);
-			this->dirEdit=new LFSTK_lineEditClass(this->dialog,this->currentDir,FGAP,dirlisthite+(FGAP*2),dirlistwid,GADGETHITE,NorthWestGravity);
-			this->dirListGadget->LFSTK_setImageList(this->dirImageList,this->dirListCnt);
-			this->dirListGadget->LFSTK_setList(this->dirList,this->dirListCnt);
+//butons
+	spacer=new LFSTK_labelClass(this->dialog,"--",0,yspacing,DIALOGWIDTH+PREVIEWWIDTH,8,NorthWestGravity);
+	yspacing+=GADGETHITE;
+	this->buttonCancel=new LFSTK_buttonClass(this->dialog,"Cancel",BORDER,yspacing,GADGETWIDTH,GADGETHITE,SouthWestGravity);
+	this->buttonApply=new LFSTK_buttonClass(this->dialog,"Apply",DIALOGWIDTH-BORDER-GADGETWIDTH+PREVIEWWIDTH,yspacing,GADGETWIDTH,GADGETHITE,NorthWestGravity);
 
-			this->fileListGadget=new LFSTK_listGadgetClass(this->dialog,"",FGAP,dirlisthite+(FGAP*3)+GADGETHITE,DIALOGWIDTH-(FGAP*2)-FNAVBUTTONWID,(GADGETHITE*FFILEHITE),NorthWestGravity,NULL,0);
-			this->fileListGadget->LFSTK_setImageList(this->fileImageList,this->fileListCnt);
-			this->fileListGadget->LFSTK_setList(this->fileList,this->fileListCnt);
-
-			spacer=new LFSTK_labelClass(this->dialog,"--",0,dirlisthite+(FGAP*3)+GADGETHITE+(FFILEHITE*GADGETHITE)+FGAP,DIALOGWIDTH+PREVIEWWIDTH,8,NorthWestGravity);
-			
-			this->buttonCancel=new LFSTK_buttonClass(this->dialog,"Cancel",BORDER,dirlisthite+(FGAP*6)+GADGETHITE+(FFILEHITE*GADGETHITE)+FGAP,GADGETWIDTH,GADGETHITE,SouthWestGravity);
-			this->buttonApply=new LFSTK_buttonClass(this->dialog,"Apply",DIALOGWIDTH-BORDER-GADGETWIDTH+PREVIEWWIDTH,dirlisthite+(FGAP*6)+GADGETHITE+(FFILEHITE*GADGETHITE)+FGAP,GADGETWIDTH,GADGETHITE,NorthWestGravity);
-
-			midprev=DIALOGWIDTH+PREVIEWWIDTH-(PREVIEWWIDTH/2);
-			this->tux=new LFSTK_imageClass(this->dialog,NULL,midprev-(PREVIEWWIDTH/2)-(BORDER/4),BORDER,PREVIEWWIDTH,PREVIEWWIDTH,PRESERVEASPECT,true);
+	midprev=DIALOGWIDTH+PREVIEWWIDTH-(PREVIEWWIDTH/2);
+	this->tux=new LFSTK_imageClass(this->dialog,NULL,midprev-(PREVIEWWIDTH/2)-(BORDER/4),BORDER,PREVIEWWIDTH,PREVIEWWIDTH,PRESERVEASPECT,true);
 //filename
-			this->previewFileName=new LFSTK_labelClass(this->dialog,"",DIALOGWIDTH,yoffset,PREVIEWWIDTH,16,NorthWestGravity);
-			this->previewFileName->LFSTK_setFontString(this->previewFileName->monoFontString);
-			this->previewFileName->LFSTK_setCairoFontData();
-			yoffset+=GADGETHITE;
+	this->previewFileName=new LFSTK_labelClass(this->dialog,"",DIALOGWIDTH,yoffset,PREVIEWWIDTH,16,NorthWestGravity);
+	this->previewFileName->LFSTK_setFontString(this->previewFileName->monoFontString);
+	this->previewFileName->LFSTK_setCairoFontData();
+	yoffset+=GADGETHITE;
 //mime type
-			this->previewMimeType=new LFSTK_labelClass(this->dialog,"",DIALOGWIDTH,yoffset,PREVIEWWIDTH,16,NorthWestGravity);
-			this->previewMimeType->LFSTK_setFontString(this->previewMimeType->monoFontString);
-			this->previewMimeType->LFSTK_setCairoFontData();
-			yoffset+=GADGETHITE;
+	this->previewMimeType=new LFSTK_labelClass(this->dialog,"",DIALOGWIDTH,yoffset,PREVIEWWIDTH,16,NorthWestGravity);
+	this->previewMimeType->LFSTK_setFontString(this->previewMimeType->monoFontString);
+	this->previewMimeType->LFSTK_setCairoFontData();
+	yoffset+=GADGETHITE;
 //size
-			this->previewSize=new LFSTK_labelClass(this->dialog,"",DIALOGWIDTH,yoffset,PREVIEWWIDTH,16,NorthWestGravity);
-			this->previewSize->LFSTK_setFontString(this->previewSize->monoFontString);
-			this->previewSize->LFSTK_setCairoFontData();
-			yoffset+=GADGETHITE;
+	this->previewSize=new LFSTK_labelClass(this->dialog,"",DIALOGWIDTH,yoffset,PREVIEWWIDTH,16,NorthWestGravity);
+	this->previewSize->LFSTK_setFontString(this->previewSize->monoFontString);
+	this->previewSize->LFSTK_setCairoFontData();
+	yoffset+=GADGETHITE;
 //mode
-			this->previewMode=new LFSTK_labelClass(this->dialog,"",DIALOGWIDTH,yoffset,PREVIEWWIDTH,16,NorthWestGravity);
-			this->previewMode->LFSTK_setFontString(this->previewMode->monoFontString);
-			this->previewMode->LFSTK_setCairoFontData();
-			this->dirlisthite=dirlisthite+(FGAP*8)+GADGETHITE*2+(FFILEHITE*GADGETHITE);
-		}
+	this->previewMode=new LFSTK_labelClass(this->dialog,"",DIALOGWIDTH,yoffset,PREVIEWWIDTH,16,NorthWestGravity);
+	this->previewMode->LFSTK_setFontString(this->previewMode->monoFontString);
+	this->previewMode->LFSTK_setCairoFontData();
 }
 
 bool LFSTK_fileDialogClass::LFSTK_isValid(void)
@@ -604,29 +311,31 @@ bool LFSTK_fileDialogClass::LFSTK_isValid(void)
 void LFSTK_fileDialogClass::openDir(void)
 {
 	this->cleanDirPath();
-//folders
-	this->getDirList();
-	this->dirListGadget->LFSTK_setImageList(this->dirImageList,this->dirListCnt);
-	this->dirListGadget->LFSTK_setList(this->dirList,this->dirListCnt);
-	this->dirEdit->LFSTK_setBuffer(this->currentDir);
-//files
-	if(this->dialogType==FILEDIALOG)
-		{
-			this->getFileList();
-			this->fileListGadget->LFSTK_setImageList(this->fileImageList,this->fileListCnt);
-			this->fileListGadget->LFSTK_setList(this->fileList,this->fileListCnt);
-			this->freeFileList();
-		}
+	this->freeFileList();
+	this->getFileList();
+	this->fileListGadget->LFSTK_setImageList(this->fileImageList,this->fileListCnt);
+	this->fileListGadget->LFSTK_setList(this->fileList,this->fileListCnt);
 }
 
-void LFSTK_fileDialogClass::doOpenDir(void)
+bool LFSTK_fileDialogClass::doOpenDir(void)
 {
 	char	*newdir;
-	asprintf(&newdir,"%s/%s",this->currentDir,this->dirListGadget->LFSTK_getListString(-1));
-	if(this->currentDir!=NULL)
-		free(this->currentDir);
-	this->currentDir=newdir;
-	this->openDir();
+	struct stat	sb;
+	asprintf(&newdir,"%s/%s",this->currentDir,this->fileListGadget->LFSTK_getListString(-1));
+	stat(newdir,&sb);
+
+	if((sb.st_mode & S_IFMT)==S_IFDIR)
+		{
+			if(this->currentDir!=NULL)
+				free(this->currentDir);
+			this->currentDir=newdir;
+			this->openDir();
+			this->dirEdit->LFSTK_setBuffer(this->currentDir);
+			return(true);
+		}
+	else
+		free(newdir);
+	return(false);
 }
 
 void LFSTK_fileDialogClass::doOpenDir(const char *dir)
@@ -653,7 +362,6 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(const char *dir,const char *tit
 			else
 				{
 					this->LFSTK_getLastFolder();
-					//DEBUGFUNC("this->LFSTK_getLastFolder();=%s",this->currentDir);
 				}
 			this->LFSTK_showFileDialog();
 		}
@@ -687,7 +395,6 @@ char* LFSTK_fileDialogClass::findThemedIconFromMime(const char *mimetype)
 		{
 			for(int k=0;k<3;k++)
 				{
-				//printf(">>>find %s/\"%s\"/*/mime* -iname \"*%s.*\" 2>/dev/null|head -n1 2>/dev/null<<\n",iconfolders[j],iconthemes[k],mimetype);
 					iconpath=this->wc->globalLib->LFSTK_oneLiner("find %s/\"%s\"/*/mime* -iname \"*%s.*\" 2>/dev/null|sort -Vr|head -n1 2>/dev/null",iconfolders[j],iconthemes[k],mimetype);
 					if((iconpath!=NULL) && (strlen(iconpath)>1))
 						goto breakReturn;
@@ -752,6 +459,8 @@ void LFSTK_fileDialogClass::setPreviewData(void)
 			asprintf(&statdata,"Mode:%o",buf.st_mode & 07777);
 			this->previewMode->LFSTK_setLabel(statdata);
 			free(statdata);
+			if((buf.st_mode & S_IFMT)!=S_IFDIR)
+				this->dirEdit->LFSTK_setBuffer(mt);
 		}
 
 	for(int j=0;j<strlen(convmt);j++)
@@ -805,6 +514,7 @@ void LFSTK_fileDialogClass::LFSTK_getLastFolder(void)
 {
 	if(this->currentDir!=NULL)
 		free(this->currentDir);
+	DEBUGFUNC("grep -i '%s' '%s/dialoglast.rc'|awk -F= '{print $NF}'",this->recentsName,this->wc->configDir);
 	this->currentDir=this->wc->globalLib->LFSTK_oneLiner("grep -i '%s' '%s/dialoglast.rc'|awk -F= '{print $NF}'",this->recentsName,this->wc->configDir);
 	if(strlen(this->currentDir)==0)
 		{
@@ -824,10 +534,7 @@ void LFSTK_fileDialogClass::resizeWindow(int w,int h)
 {
 //	this->setWindowGeom(0,0,w,h,WINDSETWH);
 //	if(tellx==true)
-		XResizeWindow(this->dialog->display,this->dialog->window,w,this->dirlisthite);
-
-//	this->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,this->dirlisthite);
-//	this->LFSTK_clearWindow();
+		XResizeWindow(this->dialog->display,this->dialog->window,w,h);
 }
 
 /**
@@ -843,7 +550,6 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 	geometryStruct	geomfile;
 	pointStruct		pt;
 	char			*lastdir=NULL;
-//	int dwidth=DIALOGWIDTH+PREVIEWWIDTH;
 
 	this->apply=false;
 	if(this->dialog!=NULL)
@@ -864,6 +570,9 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 					mappedListener *ml=this->dialog->LFSTK_getMappedListener(event.xany.window);
 					if(ml!=NULL)
 						ml->function(ml->gadget,&event,ml->type);
+
+					if(this->dialog->LFSTK_handleWindowEvents(&event)<0)
+						mainLoop=false;
 
 					switch(event.type)
 						{
@@ -887,16 +596,17 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 										pt={event.xbutton.x_root,event.xbutton.y_root};
 										lasttime=event.xbutton.time-1000;
 
-										if(this->wc->globalLib->LFSTK_pointInRect(&pt,&geomdir)==true)
-											this->doOpenDir();
-
+										this->fileListGadget->LFSTK_getGlobalGeom(&geomfile);
 										if(this->wc->globalLib->LFSTK_pointInRect(&pt,&geomfile)==true)
 											{
-												this->apply=true;
-												if(this->currentFile!=NULL)
-													free(this->currentFile);
-												asprintf(&this->currentFile,"%s",this->fileListGadget->LFSTK_getListString(this->fileListGadget->LFSTK_getCurrentListItem()));
-												this->mainLoop=false;
+												if(this->doOpenDir()==false)
+													{
+														this->apply=true;
+														if(this->currentFile!=NULL)
+															free(this->currentFile);
+														asprintf(&this->currentFile,"%s",this->fileListGadget->LFSTK_getListString(this->fileListGadget->LFSTK_getCurrentListItem()));
+														this->mainLoop=false;
+													}
 											}
 									}
 								else
@@ -939,7 +649,6 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 								break;
 
 							case ConfigureNotify:
-								this->dirListGadget->LFSTK_getGlobalGeom(&geomdir);
 								if(this->dialogType==FILEDIALOG)
 									{
 										this->fileListGadget->LFSTK_getGlobalGeom(&geomfile);

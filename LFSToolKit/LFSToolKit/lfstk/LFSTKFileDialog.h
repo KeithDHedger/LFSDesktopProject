@@ -26,7 +26,7 @@
 #define FNAVBUTTONWID 24
 #define FNAVGADGETHITE 24
 #define FICONSIZE 22
-#define FFILEHITE 10
+#define FFILEHITE 20
 #define FDIRHITE 10
 #define IMAGESIZE 64
 
@@ -61,13 +61,9 @@ class LFSTK_fileDialogClass
 //TODO
 		void					resizeWindow(int w,int h);
 
-		int						dirlisthite=GADGETHITE*FDIRHITE;
 		const char				*recentsName="universal";
-		char					**dirList=NULL;
-		char					**dirImageList=NULL;
 		char					**fileList=NULL;
 		char					**fileImageList=NULL;
-		unsigned				dirListCnt=0;
 		unsigned				fileListCnt=0;
 		char					*currentDir=NULL;
 		char					*currentFile=NULL;
@@ -90,7 +86,6 @@ class LFSTK_fileDialogClass
 
 		LFSTK_windowClass		*wc;
 		LFSTK_windowClass		*dialog;
-		LFSTK_listGadgetClass	*dirListGadget;
 		LFSTK_listGadgetClass	*fileListGadget;
 		LFSTK_buttonClass		*buttonApply;
 		LFSTK_buttonClass		*buttonCancel;
@@ -98,14 +93,11 @@ class LFSTK_fileDialogClass
 
 //files and folders
 		FindClass				*fc=NULL;
-		unsigned				getFileListcnt(const char *dir);
-		void					getDirList(void);
 		void					getFileList(void);
-		void					freeDirList();
 		void					freeFileList();
 		void					cleanDirPath(void);
 		void					openDir(void);
-		void					doOpenDir(void);
+		bool					doOpenDir(void);
 		void					doOpenDir(const char *dir);
 };
 

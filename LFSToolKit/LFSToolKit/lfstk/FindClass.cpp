@@ -1,35 +1,46 @@
 /*
  *
- * ©K. D. Hedger. Wed 17 Oct 11:25:50 BST 2018 keithdhedger@gmail.com
+ * ©K. D. Hedger. Sun 21 Oct 13:08:54 BST 2018 keithdhedger@gmail.com
 
- * This file (findClass.cpp) is part of CScripts.
+ * This file (FindClass.cpp) is part of LFSToolKit.
 
- * CScripts is free software: you can redistribute it and/or modify
+ * LFSToolKit is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * at your option) any later version.
 
- * CScripts is distributed in the hope that it will be useful,
+ * LFSToolKit is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with CScripts.  If not, see <http://www.gnu.org/licenses/>.
+ * along with LFSToolKit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "FindClass.h"
 
 FindClass *fc;
+
+void FindClass::deleteData(void)
+{
+	if(!this->data.empty())
+		{
+			for(int j=0;j<this->data.size();j++)
+				{
+					this->data.at(j).path.clear();
+					this->data.at(j).name.clear();
+				}
+	this->data.clear();
+	}
+}
+
 /**
 * Find class destructor.
 */
 FindClass::~FindClass()
 {
-	for(int j=0;j<this->data.size();j++)
-		this->data.at(j).clear();
-	
-	this->data.clear();
+	this->deleteData();
 }
 
 /**
@@ -38,6 +49,7 @@ FindClass::~FindClass()
 */
 FindClass::FindClass()
 {
+	this->data.clear();
 }
 
 /**
@@ -124,13 +136,97 @@ bool FindClass::getIncludeHidden(void)
 	return(this->includeHidden);
 }
 
+/**
+* Set sort direction
+* \param bool down.
+*/
+void FindClass::setSort(bool down)
+{
+	this->sortDescending=down;
+}
 
 /**
-* Sort data
+* Get ignore boroken links
+* \return bool.
 */
-void FindClass::sortData(void)
+bool FindClass::getIgnoreBroken(void)
 {
-	std::sort(this->data.begin(),this->data.end());
+	return(this->ignoreBroken);
+}
+
+/**
+* Set ignore boroken links
+* \param bool ignore.
+*/
+void FindClass::setIgnoreBroken(bool ignore)
+{
+	this->ignoreBroken=ignore;
+}
+
+/**
+* Get sort direction
+* \return bool.
+*/
+bool FindClass::getSort(void)
+{
+	return(this->sortDescending);
+}
+
+static bool sortDataN(dataStruct i,dataStruct j)
+{
+	if(fc->getSort()==true)
+		return (i.name<j.name);
+	else
+		return (i.name>j.name);
+}
+
+static bool sortDataP(dataStruct i,dataStruct j)
+{
+	if(fc->getSort()==true)
+		return (i.path<j.path);
+	else
+		return (i.path>j.path);
+}
+
+static bool sortDataT(dataStruct i,dataStruct j)
+{
+	if(fc->getSort()==true)
+		return (i.fileType<j.fileType);
+	else
+		return (i.fileType>j.fileType);
+}
+
+/**
+* Sort data by name
+*/
+void FindClass::sortByName(void)
+{
+	std::sort(this->data.begin(),this->data.end(),sortDataN);
+}
+
+/**
+* Sort data by path
+*/
+void FindClass::sortByPath(void)
+{
+	std::sort(this->data.begin(),this->data.end(),sortDataP);
+}
+
+/**
+* Sort data by type
+*/
+void FindClass::sortByType(void)
+{
+	std::sort(this->data.begin(),this->data.end(),sortDataT);
+}
+
+/**
+* Sort data sortByNameAndType
+*/
+void FindClass::sortByNameAndType(void)
+{
+	std::sort(this->data.begin(),this->data.end(),sortDataN);
+	std::sort(this->data.begin(),this->data.end(),sortDataT);
 }
 
 /**
@@ -160,31 +256,43 @@ bool FindClass::getFullPath(void)
 	return(this->fullPath);
 }
 
-int getFiles(const char *fpath, const struct stat *sb,int tflag, struct FTW *ftwbuf)
+static int getFiles(const char *fpath, const struct stat *sb,int tflag, struct FTW *ftwbuf)
 {
+	dataStruct	d;
+
 	if((ftwbuf->level>=fc->getMinDepth()) && (ftwbuf->level<=fc->getMaxDepth()))
 		{
 			if((fc->getIncludeHidden()==false) && (*(fpath+ftwbuf->base)=='.'))
-				return FTW_CONTINUE;
-
-			if((tflag==FTW_DNR) && (fc->getFindType()==FTW_D))
-				{
-					if(fc->getFullPath()==true)
-						fc->data.push_back(fpath);
-					else
-						fc->data.push_back(fpath+ftwbuf->base);
 					return FTW_CONTINUE;
-				}
+
+			if((fc->getIgnoreBroken()==true) && (tflag==FTW_SLN))
+					return FTW_CONTINUE;
+
+			if(((tflag==FTW_DNR) || (tflag==FTW_SLN)) && (fc->getIgnoreBroken()==true))
+			//if((tflag==FTW_DNR) && (fc->getIgnoreBroken()==true))
+			//if(fc->getIgnoreBroken()==true)
+				return FTW_CONTINUE;
 
 			if((tflag==fc->getFindType()) || (fc->getFindType()==-1))
 				{
+					d.name=fpath+ftwbuf->base;
 					if(fc->getFullPath()==true)
-						fc->data.push_back(fpath);
+						{
+							char	*pth=NULL;
+							pth=realpath(fpath,NULL);
+							d.path=pth;
+							free(pth);
+						}
 					else
-						fc->data.push_back(fpath+ftwbuf->base);
+						d.path=fpath;
+					d.fileType=tflag;
+					fc->data.push_back(d);
+					d.name.clear();
+					d.path.clear();
 					return FTW_CONTINUE;
 				}
 		}
+
 	if(ftwbuf->level>fc->getMaxDepth())
 		return FTW_SKIP_SIBLINGS;
 
@@ -198,10 +306,7 @@ void FindClass::findFiles(const char *dir)
 {
 	int	flags=FTW_ACTIONRETVAL;
 
-	for(int j=0;j<this->data.size();j++)
-		this->data.at(j).clear();
-	
-	this->data.clear();
+	this->deleteData();
 
 	if(this->followLinks==false)
 		flags+=FTW_PHYS;

@@ -45,7 +45,7 @@ bool doQuit(void *p,void* ud)
 bool selectfile(void *object,void* ud)
 {
 	char	*mimetype=NULL;
-	filedialogfile->LFSTK_showFileDialog(wd,"Select A File");
+	filedialogfile->LFSTK_showFileDialog(NULL,"Select A File");
 	if(filedialogfile->LFSTK_isValid()==true)
 		{
 			printf("Selected File Path=%s\n",filedialogfile->LFSTK_getCurrentPath());
@@ -93,7 +93,8 @@ int main(int argc, char **argv)
 
 //files and folders
 	asprintf(&wd,"%s",wc->userHome);
-	filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",wd,FILEDIALOG);
+	//filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",wd,FILEDIALOG);
+	filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",NULL,FILEDIALOG);
 	filedialogdir=new LFSTK_fileDialogClass(wc,"Select Folder",NULL,FOLDERDIALOG,"dialogscpp");
 
 //	filedialogdir->LFSTK_setNameFilter("xfwm4");
@@ -139,6 +140,8 @@ int main(int argc, char **argv)
 				mainLoop=false;
 		}
 
+	delete filedialogfile;
+	//delete filedialogdir;
 	delete wc;
 	XCloseDisplay(display);
 	cairo_debug_reset_static_data();
