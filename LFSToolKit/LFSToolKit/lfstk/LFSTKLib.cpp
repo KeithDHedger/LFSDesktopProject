@@ -864,10 +864,14 @@ void LFSTK_lib::LFSTK_setCairoSurface(Display *display,Window window,Visual *vis
 * \param char *path.
 * \return char*.
 * \note Caller owns returned allocated string.
+* \note "application/octet-stream" returned if path doesn't exist.
 */
 char* LFSTK_lib::LFSTK_getMimeType(const char* path)
 {
-	return(this->LFSTK_oneLiner("file -L -b --mime-type \"%s\"",path));
+	if(access(path,F_OK)==0)
+		return(this->LFSTK_oneLiner("file -L -b --mime-type \"%s\"",path));
+	else
+		return(strdup("application/octet-stream"));
 }
 
 /*! This function decompresses a JPEG image from a memory buffer and creates a

@@ -1,4 +1,8 @@
 0.3.1
+Better file dialog path resolve.
+Added Hide/Show dot files in file/folder dialogs.
+Code clean.
+Fixed file/folder dialogs.
 Redone file/folder dialogs.
 Fixed some memory leaks in file dialogs.
 Added generic image icon for lists.

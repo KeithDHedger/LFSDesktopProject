@@ -93,8 +93,8 @@ int main(int argc, char **argv)
 
 //files and folders
 	asprintf(&wd,"%s",wc->userHome);
-	//filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",wd,FILEDIALOG);
-	filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",NULL,FILEDIALOG);
+	filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",wd,FILEDIALOG);
+	//filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",NULL,FILEDIALOG);
 	filedialogdir=new LFSTK_fileDialogClass(wc,"Select Folder",NULL,FOLDERDIALOG,"dialogscpp");
 
 //	filedialogdir->LFSTK_setNameFilter("xfwm4");

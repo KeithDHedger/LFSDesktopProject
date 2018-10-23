@@ -53,11 +53,10 @@ class LFSTK_fileDialogClass
 		void					LFSTK_setRequestType(bool type);
 		bool					LFSTK_getRequestType(void);
 //TODO
-		void					LFSTK_setShowPreview(bool);
 		void					LFSTK_setNameFilter(const char *filt);
 	private:
 		char					*findThemedIconFromMime(const char *mimetype);
-		void					setPreviewData(void);
+		void					setPreviewData(bool fromlist);
 //TODO
 		void					resizeWindow(int w,int h);
 
@@ -77,7 +76,7 @@ class LFSTK_fileDialogClass
 		const char				*fileImage;
 		const char				*folderImage;
 		const char				*imageImage;
-		bool					showPreview=false;
+		bool					showHidden=false;
 		LFSTK_imageClass		*tux=NULL;
 		LFSTK_labelClass		*previewMimeType;
 		LFSTK_labelClass		*previewSize;
@@ -89,6 +88,7 @@ class LFSTK_fileDialogClass
 		LFSTK_listGadgetClass	*fileListGadget;
 		LFSTK_buttonClass		*buttonApply;
 		LFSTK_buttonClass		*buttonCancel;
+		LFSTK_buttonClass		*buttonHidden;
 		LFSTK_lineEditClass		*dirEdit;
 
 //files and folders
@@ -98,7 +98,10 @@ class LFSTK_fileDialogClass
 		void					cleanDirPath(void);
 		void					openDir(void);
 		bool					doOpenDir(void);
-		void					doOpenDir(const char *dir);
+		bool					doOpenDir(const char *dir);
+
+		void					setFileData(void);
+		bool					isADir(const char *path);
 };
 
 #endif

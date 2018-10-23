@@ -65,7 +65,7 @@ class FindClass
 		void	sortByName(void);
 		void	sortByPath(void);
 		void	sortByType(void);
-		void	sortByNameAndType(void);
+		void	sortByTypeAndName(void);
 		int		getDataCount(void);
 
 		int		getMinDepth(void);

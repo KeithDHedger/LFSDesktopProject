@@ -404,7 +404,7 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 	unsigned				sx;
 	unsigned				sy;
 	XSetWindowAttributes	wa;
-	int						adjwidth=w-SCROLLBARWIDTH-2;
+	unsigned int			adjwidth=w-SCROLLBARWIDTH-2;
 
 	this->LFSTK_setCommon(parentwc,label,x-1,y-1,adjwidth+2,h+2,gravity);
 

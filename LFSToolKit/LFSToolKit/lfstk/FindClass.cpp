@@ -196,6 +196,29 @@ static bool sortDataT(dataStruct i,dataStruct j)
 		return (i.fileType>j.fileType);
 }
 
+static bool sortDataTN(dataStruct i,dataStruct j)
+{
+	if(fc->getSort()==true)
+		{
+			if(i.fileType<j.fileType)
+				return(true);
+
+			if((i.fileType==j.fileType) && (i.name<j.name))
+				return(true);
+			return(false);
+		}
+	else
+		{
+			if(i.fileType>j.fileType)
+				return(true);
+
+			if((i.fileType==j.fileType) && (i.name<j.name))
+				return(true);
+			return(false);
+		}
+	return(false);
+}
+
 /**
 * Sort data by name
 */
@@ -221,12 +244,11 @@ void FindClass::sortByType(void)
 }
 
 /**
-* Sort data sortByNameAndType
+* Sort data sortByTypeAndName
 */
-void FindClass::sortByNameAndType(void)
+void FindClass::sortByTypeAndName(void)
 {
-	std::sort(this->data.begin(),this->data.end(),sortDataN);
-	std::sort(this->data.begin(),this->data.end(),sortDataT);
+	std::sort(this->data.begin(),this->data.end(),sortDataTN);
 }
 
 /**
