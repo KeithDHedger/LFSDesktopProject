@@ -1,4 +1,7 @@
 0.3.1
+Added some sample themes ( installed in/usr/share/themes, move to ~/.themes to use ). 
+Exposed FindClass.
+Added file name filter to FindClass.
 Better file dialog path resolve.
 Added Hide/Show dot files in file/folder dialogs.
 Code clean.

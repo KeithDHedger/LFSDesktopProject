@@ -75,6 +75,9 @@ int						prefsDeskCnt=6;
 int						prefsRefresh=15;
 int						prefsRescan=4;
 
+//msg
+int						queueID=-1;
+
 args					lfsWMPrefs[]=
 {
 	{"wmactive_frame",TYPESTRING,&prefsColours[0]},
@@ -104,6 +107,7 @@ bool buttonCB(void *p,void* ud)
 {
 	const fontDataStruct	*fd;
 	char					*buffer;
+	msgBuffer				mbuffer;
 
 	if(ud!=NULL)
 		{
@@ -159,7 +163,11 @@ bool buttonCB(void *p,void* ud)
 					prefsRefresh=atoi(refreshEdit->LFSTK_getCStr());
 					prefsRescan=atoi(rescanEdit->LFSTK_getCStr());
 					wc->globalLib->LFSTK_saveVarsToFile(envFile,lfsWMPrefs);
-					system("climsg -s 'reloadtheme' -k 667");
+					mbuffer.mType=WMANAGER_MSG;
+					sprintf(mbuffer.mText,"reloadtheme");
+					if((msgsnd(queueID,&mbuffer,strlen(mbuffer.mText)+1,0))==-1)
+						fprintf(stderr,"Can't send message :(\n");
+
 					return(true);
 				}
 		}
@@ -187,6 +195,12 @@ int main(int argc, char **argv)
 	int			parentWindow=-1;
 	int			c=0;
 	int			option_index=0;
+	bool		flag=false;
+	int			retcode;
+	int			receiveType=IPC_NOWAIT;
+	msgBuffer	mbuffer;
+	char		*buffer=NULL;
+
 	const char	*shortOpts="h?w:";		
 	option		longOptions[]=
 		{
@@ -221,6 +235,17 @@ int main(int argc, char **argv)
 
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"LFS WM Prefs",false);
 	display=wc->display;
+
+	buffer=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",wc->configDir);
+	if((queueID=msgget(atoi(buffer),IPC_CREAT|0660))==-1)
+		fprintf(stderr,"Can't create message queue :( ...\n");
+	free(buffer);
+	while(flag==false)
+		{
+			retcode=msgrcv(queueID,&mbuffer,MAX_MSG_SIZE,MSGANY,receiveType);
+			if(retcode<=1)
+				flag=true;
+		}
 
 	asprintf(&envFile,"%s/lfswmanager.rc",wc->configDir);
 	wc->globalLib->LFSTK_loadVarsFromFile(envFile,lfsWMPrefs);

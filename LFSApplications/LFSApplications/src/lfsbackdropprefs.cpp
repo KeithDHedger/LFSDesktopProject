@@ -76,6 +76,9 @@ bool					multiMode=false;
 const char				*modeLabel[5]={"Stretch","Tile","Centre","Scale","Zoom"};
 menuItemStruct			*modeMenu=NULL;
 
+//msg
+int						queueID=-1;
+
 args					prefs[]=
 {
 	{"backdrop",TYPESTRING,&wallpaperPath},
@@ -96,6 +99,7 @@ bool doQuit(void *p,void* ud)
 bool buttonCB(void *p,void* ud)
 {
 	FILE	*fd=NULL;
+	msgBuffer	buffer;
 
 	if(ud!=NULL)
 		{
@@ -114,7 +118,10 @@ bool buttonCB(void *p,void* ud)
 							fclose(fd);
 						}
 					system("lfssetwallpaper");
-					system("climsg -s 'reloadbg' -k 666");
+					buffer.mType=DESKTOP_MSG;
+					sprintf(buffer.mText,"reloaddesk");
+					if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
+						fprintf(stderr,"Can't send message :(\n");
 				}
 
 			if(strcmp((char*)ud,"MULTIMODE")==0)
@@ -222,17 +229,20 @@ void loadMonitorInfo(void)
 
 int main(int argc, char **argv)
 {
-	XEvent	event;
-	int		sy=0;
-	int						c=0;
-	int						option_index=0;
-	const char				*shortOpts="h?w:";
-	option 					longOptions[]=
+	XEvent		event;
+	int			sy=0;
+	int			c=0;
+	int			option_index=0;
+	const char	*shortOpts="h?w:";
+	char		*buffer;
+
+	option 		longOptions[]=
 		{
-			{"window",1,0,'w'},
-			{"help",0,0,'h'},
-			{0, 0, 0, 0}
+				{"window",1,0,'w'},
+				{"help",0,0,'h'},
+				{0, 0, 0, 0}
 		};
+
 	while(1)
 		{
 			option_index=0;
@@ -348,6 +358,23 @@ int main(int argc, char **argv)
 	wc->LFSTK_setKeepAbove(true);
 	if(parentWindow!=-1)
 		wc->LFSTK_setTransientFor(parentWindow);
+
+	buffer=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",wc->configDir);
+	if((queueID=msgget(atoi(buffer),IPC_CREAT|0660))==-1)
+		fprintf(stderr,"Can't create message queue :( ...\n");
+	free(buffer);
+
+	bool	flag=false;
+	int		retcode;
+	int		receiveType=IPC_NOWAIT;
+	msgBuffer	mbuffer;
+
+	while(flag==false)
+		{
+			retcode=msgrcv(queueID,&mbuffer,MAX_MSG_SIZE,MSGANY,receiveType);
+			if(retcode<=1)
+				flag=true;
+		}
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	mainLoop=true;

@@ -41,6 +41,8 @@ void FindClass::deleteData(void)
 FindClass::~FindClass()
 {
 	this->deleteData();
+	if(this->fileTypes!=NULL)
+		free(this->fileTypes);
 }
 
 /**
@@ -146,6 +148,15 @@ void FindClass::setSort(bool down)
 }
 
 /**
+* Get sort direction
+* \return bool.
+*/
+bool FindClass::getSort(void)
+{
+	return(this->sortDescending);
+}
+
+/**
 * Get ignore boroken links
 * \return bool.
 */
@@ -164,16 +175,25 @@ void FindClass::setIgnoreBroken(bool ignore)
 }
 
 /**
-* Get sort direction
-* \return bool.
+* Set file types filter
+* \param const char *types.
 */
-bool FindClass::getSort(void)
+void FindClass::setFileTypes(const char *suffix)
 {
-	return(this->sortDescending);
+	this->fileTypes=strdup(suffix);
+}
+
+/**
+* Get file types filter
+* \return const char *.
+*/
+const char * FindClass::getFileTypes(void)
+{
+	return(this->fileTypes);
 }
 
 static bool sortDataN(dataStruct i,dataStruct j)
-{
+{	
 	if(fc->getSort()==true)
 		return (i.name<j.name);
 	else
@@ -290,9 +310,10 @@ static int getFiles(const char *fpath, const struct stat *sb,int tflag, struct F
 			if((fc->getIgnoreBroken()==true) && (tflag==FTW_SLN))
 					return FTW_CONTINUE;
 
+			if((fc->getFileTypes()!=NULL) && (strcasestr(fpath+ftwbuf->base,fc->getFileTypes())==NULL))
+				return FTW_CONTINUE;
+
 			if(((tflag==FTW_DNR) || (tflag==FTW_SLN)) && (fc->getIgnoreBroken()==true))
-			//if((tflag==FTW_DNR) && (fc->getIgnoreBroken()==true))
-			//if(fc->getIgnoreBroken()==true)
 				return FTW_CONTINUE;
 
 			if((tflag==fc->getFindType()) || (fc->getFindType()==-1))

@@ -23,55 +23,56 @@
 
 #include "lfstk/LFSTKGlobals.h"
 
+LFSTK_windowClass		*wc=NULL;
+LFSTK_labelClass		*label=NULL;
+LFSTK_labelClass		*personal=NULL;
+LFSTK_labelClass		*copyrite=NULL;
+LFSTK_buttonClass		*seperator=NULL;
+LFSTK_buttonClass		*quit=NULL;
+LFSTK_buttonClass		*apply=NULL;
+LFSTK_buttonClass		*button=NULL;
 
-LFSTK_windowClass			*wc=NULL;
-LFSTK_labelClass			*label=NULL;
-LFSTK_labelClass			*personal=NULL;
-LFSTK_labelClass			*copyrite=NULL;
-LFSTK_buttonClass			*seperator=NULL;
-LFSTK_buttonClass			*quit=NULL;
-LFSTK_buttonClass			*apply=NULL;
-LFSTK_buttonClass			*button=NULL;
+LFSTK_fileDialogClass	*themeDialog=NULL;
+LFSTK_lineEditClass		*themeEditBox=NULL;
 
-LFSTK_fileDialogClass		*themeDialog=NULL;
-LFSTK_lineEditClass			*themeEditBox=NULL;
+LFSTK_lineEditClass		*iconSizeEditBox=NULL;
+LFSTK_lineEditClass		*gridSizeEditBox=NULL;
+LFSTK_lineEditClass		*borderLeftEditBox=NULL;
+LFSTK_lineEditClass		*borderRightEditBox=NULL;
+LFSTK_lineEditClass		*refreshEditBox=NULL;
+LFSTK_lineEditClass		*labelColurEditBox=NULL;
+LFSTK_lineEditClass		*labelAlphaColurEditBox=NULL;
+LFSTK_toggleButtonClass	*showSuffixCheck=NULL;
+LFSTK_lineEditClass		*termCommandEditBox=NULL;
+LFSTK_lineEditClass		*fontEditBox=NULL;
+LFSTK_lineEditClass		*includeEditBox=NULL;
+LFSTK_lineEditClass		*excludeEditBox=NULL;
 
-LFSTK_lineEditClass			*iconSizeEditBox=NULL;
-LFSTK_lineEditClass			*gridSizeEditBox=NULL;
-LFSTK_lineEditClass			*borderLeftEditBox=NULL;
-LFSTK_lineEditClass			*borderRightEditBox=NULL;
-LFSTK_lineEditClass			*refreshEditBox=NULL;
-LFSTK_lineEditClass			*labelColurEditBox=NULL;
-LFSTK_lineEditClass			*labelAlphaColurEditBox=NULL;
-LFSTK_toggleButtonClass		*showSuffixCheck=NULL;
-LFSTK_lineEditClass			*termCommandEditBox=NULL;
-LFSTK_lineEditClass			*fontEditBox=NULL;
-LFSTK_lineEditClass			*includeEditBox=NULL;
-LFSTK_lineEditClass			*excludeEditBox=NULL;
+LFSTK_fontDialogClass	*fontButton=NULL;
 
-LFSTK_fontDialogClass		*fontButton=NULL;
-
-bool						mainLoop=true;
-Display						*display;
-char						*wd=NULL;
-char						*envFile=NULL;
+bool					mainLoop=true;
+Display					*display;
+char					*wd=NULL;
+char					*envFile=NULL;
 
 //prefs
-char						*prefsTheme=NULL;
-int							prefsIconSize=32;
-int							prefsGridSize=64;
-int							prefsLeftBorder=2;
-int							prefsRightBorder=16;
-int							prefsRefresh=2;
-char						*prefsTermCommand=NULL;
-bool						prefsShowSuffix=false;
-char						*prefsFont=NULL;
-char						*prefsLabelColour=NULL;
-char						*prefsLabelAlpha=NULL;
-char						*prefsIncludeSed=NULL;
-char						*prefsExcludeSed=NULL;
+char					*prefsTheme=NULL;
+int						prefsIconSize=32;
+int						prefsGridSize=64;
+int						prefsLeftBorder=2;
+int						prefsRightBorder=16;
+int						prefsRefresh=2;
+char					*prefsTermCommand=NULL;
+bool					prefsShowSuffix=false;
+char					*prefsFont=NULL;
+char					*prefsLabelColour=NULL;
+char					*prefsLabelAlpha=NULL;
+char					*prefsIncludeSed=NULL;
+char					*prefsExcludeSed=NULL;
+//msg
+int						queueID=-1;
 
-args						desktopPrefs[]=
+args					desktopPrefs[]=
 {
 	{"icontheme",TYPESTRING,&prefsTheme},
 	{"iconsize",TYPEINT,&prefsIconSize},
@@ -99,6 +100,8 @@ bool doQuit(void *p,void* ud)
 
 bool buttonCB(void *p,void* ud)
 {
+	msgBuffer	buffer;
+
 	free(prefsTheme);
 	free(prefsTermCommand);
 	free(prefsLabelColour);
@@ -124,6 +127,12 @@ bool buttonCB(void *p,void* ud)
 	prefsShowSuffix=showSuffixCheck->LFSTK_getValue();
 
 	wc->globalLib->LFSTK_saveVarsToFile(envFile,desktopPrefs);
+
+	buffer.mType=DESKTOP_MSG;
+	sprintf(buffer.mText,"reloaddesk");
+	if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
+		fprintf(stderr,"Can't send message :(\n");
+
 	return(true);
 }
 
@@ -168,7 +177,7 @@ int main(int argc, char **argv)
 	int			sy=0;
 	int			parentWindow=-1;
 	char		*sizes[32]={0,};
-
+	char		*buffer=NULL;
 	int			c=0;
 	int			option_index=0;
 	const char	*shortOpts="h?w:";		
@@ -292,6 +301,24 @@ int main(int argc, char **argv)
 		wc->LFSTK_setTransientFor(parentWindow);
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
+
+	buffer=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",wc->configDir);
+	if((queueID=msgget(atoi(buffer),IPC_CREAT|0660))==-1)
+		fprintf(stderr,"Can't create message queue :( ...\n");
+	free(buffer);
+
+	bool	flag=false;
+	int		retcode;
+	int		receiveType=IPC_NOWAIT;
+	msgBuffer	mbuffer;
+
+	while(flag==false)
+		{
+			retcode=msgrcv(queueID,&mbuffer,MAX_MSG_SIZE,MSGANY,receiveType);
+			if(retcode<=1)
+				flag=true;
+		}
+
 	mainLoop=true;
 	while(mainLoop==true)
 		{

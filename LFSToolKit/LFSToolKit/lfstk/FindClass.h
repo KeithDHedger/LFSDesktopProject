@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <ftw.h>
 #include <functional>   // std::function, std::negate
+#include <string.h>
 
 #ifndef _FINDCLASS_
 #define _FINDCLASS_
@@ -46,46 +47,48 @@ class FindClass
 		~FindClass();
 		FindClass();
 
-		void	setDepth(int min,int max);
-		void	setFindType(int type);
-		int		getFindType(void);
-		void	setFollowLinks(bool follow);
-		bool	getFollowlinks(void);
-		void	setIncludeHidden(bool hidden);
-		bool	getIncludeHidden(void);
-		void	setFullPath(bool usefull);
-		bool	getFullPath(void);
-		void	setSort(bool down);
-		bool	getSort(void);
-		void	setIgnoreBroken(bool ignore);
-		bool	getIgnoreBroken(void);
+		void		setDepth(int min,int max);
+		void		setFindType(int type);
+		int			getFindType(void);
+		void		setFollowLinks(bool follow);
+		bool		getFollowlinks(void);
+		void		setIncludeHidden(bool hidden);
+		bool		getIncludeHidden(void);
+		void		setFullPath(bool usefull);
+		bool		getFullPath(void);
+		void		setSort(bool down);
+		bool		getSort(void);
+		void		setIgnoreBroken(bool ignore);
+		bool		getIgnoreBroken(void);
+		void		setFileTypes(const char *suffix);
+		const char*	getFileTypes(void);
 
 
-		void	findFiles(const char *dir);
-		void	sortByName(void);
-		void	sortByPath(void);
-		void	sortByType(void);
-		void	sortByTypeAndName(void);
-		int		getDataCount(void);
+		void		findFiles(const char *dir);
+		void		sortByName(void);
+		void		sortByPath(void);
+		void		sortByType(void);
+		void		sortByTypeAndName(void);
+		int			getDataCount(void);
 
-		int		getMinDepth(void);
-		int		getMaxDepth(void);
+		int			getMinDepth(void);
+		int			getMaxDepth(void);
 
 		//std::vector<std::string> data;
 		std::vector<dataStruct> data;
 	private:
-		void	deleteData(void);
+		void		deleteData(void);
 
-		int		dataCnt=0;
-		int		minDepth=-1;
-		int		maxDepth=10000;
-		int		findType=FTW_F;
-		bool	followLinks=false;
-		bool	includeHidden=false;
-		bool	fullPath=false;
-		bool	sortDescending=true;
-		bool	ignoreBroken=true;
-
+		int			dataCnt=0;
+		int			minDepth=-1;
+		int			maxDepth=10000;
+		int			findType=FTW_F;
+		bool		followLinks=false;
+		bool		includeHidden=false;
+		bool		fullPath=false;
+		bool		sortDescending=true;
+		bool		ignoreBroken=true;
+		char		*fileTypes=NULL;
 		//bool	sortDescending (dataStruct *i,dataStruct *j);
 	//int getFiles(const char *fpath, const struct stat *sb,int tflag, struct FTW *ftwbuf);
 

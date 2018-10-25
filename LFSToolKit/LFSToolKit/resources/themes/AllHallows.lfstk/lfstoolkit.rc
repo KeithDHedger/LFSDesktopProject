@@ -1,0 +1,21 @@
+window_normal #AA6400
+button_normal #FF9600
+button_prelight #FFB600
+button_active #D98000
+button_inactive #945800
+menuitem_normal #976115
+menuitem_prelight #E88900
+menuitem_active #643b00
+menuitem_inactive #945800
+menuitem_font bloody:size=10
+menuitem_font_normal white
+menuitem_font_prelight orange
+menuitem_font_active black
+menuitem_font_inactive grey40
+font a lolita scorned:size=12
+font_normal white
+font_prelight orange
+font_active black
+font_inactive grey40
+monofont DejaVu Sans Mono:size=14
+cursorcolour red

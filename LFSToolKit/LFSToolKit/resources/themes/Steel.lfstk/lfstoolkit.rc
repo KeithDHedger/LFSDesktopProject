@@ -1,0 +1,21 @@
+window_normal grey40
+button_normal #A3A3A3
+button_prelight #7B7B7B
+button_active #676767
+button_inactive #D1D1D1
+menuitem_normal #979797
+menuitem_prelight #7b7b7b
+menuitem_active #676767
+menuitem_inactive #d1d1d1
+menuitem_font sans:size=8
+menuitem_font_normal black
+menuitem_font_prelight white
+menuitem_font_active grey20
+menuitem_font_inactive grey40
+font sans:size=8
+font_normal white
+font_prelight white
+font_active grey20
+font_inactive grey
+monofont Ubuntu Mono:size=16
+cursorcolour grey80
