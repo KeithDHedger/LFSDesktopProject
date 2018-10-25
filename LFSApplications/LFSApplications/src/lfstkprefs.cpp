@@ -299,7 +299,6 @@ void setPreviewData(void)
 					wc->LFSTK_setTile(NULL,0);
 					wc->LFSTK_setWindowColourName(0,windowColourEdit->LFSTK_getCStr());
 				}
-			wc->LFSTK_clearWindow();
 			
 			for (std::map<int,mappedListener*>::iterator it=ml->begin();it!=ml->end();++it)
 				{
@@ -339,7 +338,6 @@ void setPreviewData(void)
 											mls->gadget->LFSTK_setFontString(monoFontEdit->LFSTK_getCStr(),true);
 											static_cast<LFSTK_lineEditClass*>(mls->gadget)->LFSTK_setCursorColourName(cursorColourEdit->LFSTK_getCStr());
 										}
-									mls->gadget->LFSTK_clearWindow();
 								}
 						}
 				}
@@ -375,18 +373,11 @@ void setPreviewData(void)
 			previewMenus[1]->LFSTK_setFontColourName(NORMALCOLOUR,previeMenuFontColourEdit[PRELIGHTCOLOUR]->LFSTK_getCStr(),false);
 			previewMenus[2]->LFSTK_setFontColourName(NORMALCOLOUR,previeMenuFontColourEdit[ACTIVECOLOUR]->LFSTK_getCStr(),false);
 			previewMenus[3]->LFSTK_setFontColourName(NORMALCOLOUR,previeMenuFontColourEdit[INACTIVECOLOUR]->LFSTK_getCStr(),false);
-
-			for(int j=0;j<4;j++)
-				{
-					previewButtons[j]->LFSTK_clearWindow();
-					previewMenus[j]->LFSTK_clearWindow();
-				}
 		}
 
 	cursorColourEdit->LFSTK_setColourName(NORMALCOLOUR,cursorColourEdit->LFSTK_getCStr());
 	cursorColourEdit->LFSTK_setCursorColourName("#808080");
-	cursorColourEdit->LFSTK_clearWindow();
-
+	wc->LFSTK_clearWindow(true);
 	XFlush(wc->display);
 }
 

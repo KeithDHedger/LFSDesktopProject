@@ -299,15 +299,28 @@ void LFSTK_windowClass::LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h)
 
 /**
 * Clear the window to the appropriate state.
+* \param bool true=clear window on all gadgets.
+* \note param is optional defaults to false.
 */
-void LFSTK_windowClass::LFSTK_clearWindow(void)
+void LFSTK_windowClass::LFSTK_clearWindow(bool cleargadgets)
 {
-	if(this->usePixmap==true)
-		{
-			return;
-		}
-
 	int	state=NORMALCOLOUR;
+
+	if(this->usePixmap==true)
+		return;
+
+	if((!this->gadgetMap.empty()) && (cleargadgets==true))
+		{
+			for (std::map<int,mappedListener*>::iterator it=this->gadgetMap.begin();it!=this->gadgetMap.end();++it)
+				{
+					mappedListener	*ml=it->second;
+					if (ml!=NULL)
+						{
+							if(ml->gadget!=NULL)
+								ml->gadget->LFSTK_clearWindow();
+						}
+				}
+		}
 
 	if(this->isActive==false)
 		state=INACTIVECOLOUR;

@@ -82,7 +82,7 @@ class LFSTK_windowClass
 		void					LFSTK_hideWindow(void);
 		void					LFSTK_setWindowTitle(const char *title);
 
-		void 					LFSTK_clearWindow(void);
+		void 					LFSTK_clearWindow(bool cleargadgets=false);
 		void					LFSTK_resizeWindow(int w,int h,bool tellx=true);
 		void					LFSTK_moveWindow(int x,int y,bool tellx=true);
 		const geometryStruct	*LFSTK_getWindowGeom(void);
