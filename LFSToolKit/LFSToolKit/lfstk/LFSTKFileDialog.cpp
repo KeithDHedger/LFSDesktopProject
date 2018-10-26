@@ -76,6 +76,76 @@ void LFSTK_fileDialogClass::getFileList(void)
 
 	this->fc->setDepth(1,1);
 	if(this->dialogType==FOLDERDIALOG)
+		this->fc->setFindType(FOLDERTYPE);
+	else
+		this->fc->setFindType(-1);
+	this->fc->setFollowLinks(true);
+	this->fc->setIncludeHidden(this->showHidden);
+	this->fc->findFiles(this->currentDir);
+	if(this->dialogType==FILEDIALOG)
+		{
+			this->fc->setSort(false);
+			this->fc->sortByTypeAndName();
+		}
+	else
+		{
+			this->fc->setSort(true);
+			this->fc->sortByName();
+		}
+
+	this->fileListCnt=this->fc->getDataCount()+1;
+	this->fileList=new char*[this->fileListCnt];
+	this->fileImageList=new char*[this->fileListCnt];
+
+	this->fileList[0]=strdup("..");
+	this->fileImageList[0]=strdup(folderImage);
+	for(int j=1;j<this->fileListCnt;j++)
+		{
+			this->fileList[j]=strdup(this->fc->data.at(j-1).name.c_str());
+			if((strcasecmp(&this->fileList[j][strlen(this->fileList[j])-4],".jpg")==0) || (strcasecmp(&this->fileList[j][strlen(this->fileList[j])-4],".png")==0))
+				asprintf(&imagepath,"%s",(char*)this->imageImage);
+			else
+				{
+					switch(this->fc->data.at(j-1).fileType)
+						{
+							case FOLDERTYPE:
+								asprintf(&imagepath,"%s",(char*)this->folderImage);
+								break;
+							case FILETYPE:
+								asprintf(&imagepath,"%s",(char*)this->fileImage);
+								break;
+							case FOLDERLINKTYPE:
+								asprintf(&imagepath,"%s",(char*)this->folderImageLink);
+								break;
+							case FILELINKTYPE:
+									asprintf(&imagepath,"%s",(char*)this->fileImageLink);
+								break;
+							default:
+								asprintf(&imagepath,"%s",(char*)this->fileImage);
+								break;
+						}
+				}
+
+
+//
+//			else if((this->fc->data.at(j-1).fileType==FOLDERTYPE) || (this->fc->data.at(j-1).fileType==FOLDERLINKTYPE))
+//				asprintf(&imagepath,"%s",(char*)this->folderImage);
+//			else
+//				asprintf(&imagepath,"%s",(char*)this->fileImage);
+//
+//			if(this->fc->data.at(j-1).fileType==FILELINKTYPE)
+//				asprintf(&imagepath,"%s","/usr/share/LFSToolKit/Pixmaps/document.link.png");
+			this->fileImageList[j]=strdup(imagepath);
+			free(imagepath);
+		}
+}
+/*
+void LFSTK_fileDialogClass::getFileList(void)
+{
+	char	*imagepath;
+
+	this->fc->setDepth(1,1);
+	if(this->dialogType==FOLDERDIALOG)
 		this->fc->setFindType(FTW_D);
 	else
 		this->fc->setFindType(-1);
@@ -112,7 +182,7 @@ void LFSTK_fileDialogClass::getFileList(void)
 			free(imagepath);
 		}
 }
-
+*/
 /**
 * Set select dialog type.
 *
@@ -223,6 +293,8 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	this->currentPath=NULL;
 	this->fileImage=LFSTKPIXMAPSDIR "/documents.png";
 	this->folderImage=LFSTKPIXMAPSDIR "/folder.png";
+	this->fileImageLink=LFSTKPIXMAPSDIR "/document.link.png";
+	this->folderImageLink=LFSTKPIXMAPSDIR "/folder.link.png";
 	this->imageImage=LFSTKPIXMAPSDIR "/image.png";
 
 	if(recentname!=NULL)

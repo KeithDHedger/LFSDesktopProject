@@ -1,4 +1,7 @@
 0.3.1
+Added link images to file dialog.
+Redone FindClass.
+Added arrows to scrolbar line buttons.
 Added option to do clear window on all gadgets from window clear window.
 Added some sample themes ( installed in/usr/share/themes, move to ~/.themes to use ). 
 Exposed FindClass.

@@ -301,6 +301,189 @@ bool FindClass::getFullPath(void)
 static int getFiles(const char *fpath, const struct stat *sb,int tflag, struct FTW *ftwbuf)
 {
 	dataStruct	d;
+	struct stat lsb;
+	const struct stat *ptrtostat=sb;
+	//struct stat *ptrtolstat=sb;
+
+	if((ftwbuf->level>=fc->getMinDepth()) && (ftwbuf->level<=fc->getMaxDepth()))
+		{
+			if((fc->getIncludeHidden()==false) && (*(fpath+ftwbuf->base)=='.'))
+					return FTW_CONTINUE;
+
+//fprintf(stderr,"path=%s tflag=%i st_mode=%o\n",fpath,tflag,sb->st_mode);
+int retstat=stat(fpath,&lsb);
+
+if((fc->getIgnoreBroken()==true) && (retstat!=0))
+	return FTW_CONTINUE;
+//fprintf(stderr,"path=%s tflag=%i st_mode=%o retstat=%i\n",fpath,tflag,lsb.st_mode,retstat);
+
+//if(sb->
+
+			if((fc->getIgnoreBroken()==true) && (tflag==FTW_SLN))
+					return FTW_CONTINUE;
+//
+//			if((fc->getFileTypes()!=NULL) && (strcasestr(fpath+ftwbuf->base,fc->getFileTypes())==NULL))
+///				return FTW_CONTINUE;
+//
+//			if(((tflag==FTW_DNR) || (tflag==FTW_SLN)) && (fc->getIgnoreBroken()==true))
+//				return FTW_CONTINUE;
+
+//bool justdirs=false;
+
+//	if(fc->getFollowlinks()==true)
+//		ptrtostat=&lsb;
+//	else
+//		ptrtostat=sb;
+
+	switch(fc->getFindType())
+		{
+			case FOLDERTYPE:
+				d.fileType=FOLDERTYPE;
+				if(!S_ISDIR(lsb.st_mode))
+					return FTW_CONTINUE;
+				if(S_ISLNK(sb->st_mode)==true)
+					d.fileType=FOLDERLINKTYPE;
+				break;
+			case FILETYPE:
+				if(S_ISDIR(lsb.st_mode))
+					return FTW_CONTINUE;
+				d.fileType=FILETYPE;
+				if(S_ISLNK(sb->st_mode)==true)
+					d.fileType=FILELINKTYPE;
+				break;
+			default:
+				if(S_ISDIR(lsb.st_mode)==true)
+					{
+						d.fileType=FOLDERTYPE;
+						if(S_ISLNK(sb->st_mode)==true)
+							d.fileType=FOLDERLINKTYPE;
+					}
+				else
+					{
+						d.fileType=FILETYPE;
+						if(S_ISLNK(sb->st_mode)==true)
+							d.fileType=FILELINKTYPE;
+					}
+				break;
+		}
+/*
+	if(fc->getFindType()==FOLDERTYPE)
+		{
+			d.fileType=FOLDERTYPE;
+			if(!S_ISDIR(lsb.st_mode))
+				return FTW_CONTINUE;
+			if(S_ISLNK(sb->st_mode)==true)
+				d.fileType=FOLDERLINKTYPE;
+		}
+	else if(fc->getFindType()==ANYTYPE)
+		{
+			if(S_ISDIR(lsb.st_mode)==true)
+				{
+					d.fileType=FOLDERTYPE;
+					if(S_ISLNK(sb->st_mode)==true)
+						d.fileType=FOLDERLINKTYPE;
+				}
+			else
+				{
+					d.fileType=FILETYPE;
+					if(S_ISLNK(sb->st_mode)==true)
+						d.fileType=FILELINKTYPE;
+				}
+		}
+		
+*/
+d.name=fpath+ftwbuf->base;
+if(fc->getFullPath()==true)
+	d.path=fpath;
+//fprintf(stderr,"path=%s st_mode=%o retstat=%i\n",fpath,ptrtostat->st_mode,retstat);	
+					fc->data.push_back(d);
+					d.name.clear();
+					d.path.clear();
+return FTW_CONTINUE;
+if(fc->getFindType()==FOLDERTYPE)
+{
+//	if(!((tflag==1) || (tflag==4)))
+//		return FTW_CONTINUE;
+	stat(fpath,&lsb);
+	if(((lsb.st_mode & S_IFMT)!=S_IFDIR))
+		return FTW_CONTINUE;
+}
+						switch(tflag)
+							{
+								case FTW_D:
+									d.fileType=FOLDERTYPE;
+								break;
+							case FTW_F:
+								d.fileType=FILETYPE;
+								break;
+							default:
+								if(((sb->st_mode & S_IFMT)==S_IFLNK))
+									{
+										struct stat lsb;
+										stat(fpath,&lsb);
+										if(((lsb.st_mode & S_IFMT)==S_IFDIR))
+											d.fileType=FOLDERLINKTYPE;
+										else
+											d.fileType=FILELINKTYPE;
+									}
+								break;
+						}				
+
+				d.name=fpath+ftwbuf->base;
+				if(fc->getFullPath()==true)
+					d.path=fpath;
+
+
+#if 0
+			if((tflag==fc->getFindType()) || (fc->getFindType()==-1))
+				{
+					d.name=fpath+ftwbuf->base;
+					if(fc->getFullPath()==true)
+						{
+							char	*pth=NULL;
+							pth=realpath(fpath,NULL);
+							d.path=pth;
+							free(pth);
+						}
+					else
+						d.path=fpath;
+						switch(tflag)
+							{
+								case FTW_D:
+									d.fileType=FOLDERTYPE;
+								break;
+							case FTW_F:
+								d.fileType=FILETYPE;
+								break;
+							default:
+								if(((sb->st_mode & S_IFMT)==S_IFLNK))
+									{
+										struct stat lsb;
+										stat(fpath,&lsb);
+										if(((lsb.st_mode & S_IFMT)==S_IFDIR))
+											d.fileType=FOLDERLINKTYPE;
+										else
+											d.fileType=FILELINKTYPE;
+									}
+								break;
+						}				
+#endif
+					fc->data.push_back(d);
+					d.name.clear();
+					d.path.clear();
+					return FTW_CONTINUE;
+				//}
+		}
+
+	if(ftwbuf->level>fc->getMaxDepth())
+		return FTW_SKIP_SIBLINGS;
+
+	return FTW_CONTINUE;
+}
+/*
+static int getFiles(const char *fpath, const struct stat *sb,int tflag, struct FTW *ftwbuf)
+{
+	dataStruct	d;
 
 	if((ftwbuf->level>=fc->getMinDepth()) && (ftwbuf->level<=fc->getMaxDepth()))
 		{
@@ -342,6 +525,7 @@ static int getFiles(const char *fpath, const struct stat *sb,int tflag, struct F
 	return FTW_CONTINUE;
 }
 
+*/
 /**
 * Main search function.
 */
@@ -351,8 +535,16 @@ void FindClass::findFiles(const char *dir)
 
 	this->deleteData();
 
-	if(this->followLinks==false)
+	struct stat lsb;
+	lstat(dir,&lsb);
+	if(!((lsb.st_mode & S_IFMT)==S_IFLNK))
+											//d.fileType=FOLDERLINKTYPE;
+
+	//if(this->followLinks==false)
 		flags+=FTW_PHYS;
+	//else
+	//flags+=FTW_DEPTH;
+		
 	fc=this;
 	nftw(dir,getFiles,20,flags);
 	this->dataCnt=this->data.size();

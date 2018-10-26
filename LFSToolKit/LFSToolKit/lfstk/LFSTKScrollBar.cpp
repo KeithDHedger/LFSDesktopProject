@@ -87,10 +87,12 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vert
 			this->thumb=new LFSTK_buttonClass(parentwc,"",x+h,y,h,h,gravity);
 			this->thumb->LFSTK_setLimits(x+h-1,-1,x+w-h,-1);
 			this->thumb->LFSTK_allowYMovement(false);
-//up
+//left
 			this->upLeft=new LFSTK_buttonClass(parentwc,"",x,y,h,h,gravity);
-//down
+			this->upLeft->LFSTK_setImageFromPath(LFSTKPIXMAPSDIR "/left.png",CENTRE,true);
+//rite
 			this->downRight=new LFSTK_buttonClass(parentwc,"",x+w-h,y,h,h,gravity);
+			this->downRight->LFSTK_setImageFromPath(LFSTKPIXMAPSDIR "/rite.png",CENTRE,true);
 		}
 	else
 		{
@@ -100,8 +102,10 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vert
 			this->thumb->LFSTK_allowXMovement(false);
 //up
 			this->upLeft=new LFSTK_buttonClass(parentwc,"",x,y,w,w,gravity);
+			this->upLeft->LFSTK_setImageFromPath(LFSTKPIXMAPSDIR "/up.png",CENTRE,true);
 //down
 			this->downRight=new LFSTK_buttonClass(parentwc,"",x,y+h-w,w,w,gravity);
+			this->downRight->LFSTK_setImageFromPath(LFSTKPIXMAPSDIR "/down.png",CENTRE,true);
 		}
 
 	this->thumb->LFSTK_setCanDrag(true);

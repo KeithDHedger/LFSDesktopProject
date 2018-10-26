@@ -75,6 +75,8 @@ class LFSTK_fileDialogClass
 		bool					dialogType;
 		const char				*fileImage;
 		const char				*folderImage;
+		const char				*fileImageLink;
+		const char				*folderImageLink;
 		const char				*imageImage;
 		bool					showHidden=false;
 		LFSTK_imageClass		*tux=NULL;

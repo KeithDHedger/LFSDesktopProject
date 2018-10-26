@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //hscrollbar
-	hsb=new LFSTK_scrollBarClass(wc,false,DIALOGMIDDLE-200,sy,400+GADGETHITE,GADGETHITE/2,BUTTONGRAV);
+	hsb=new LFSTK_scrollBarClass(wc,false,DIALOGMIDDLE-200,sy,400+GADGETHITE,SCROLLBARWIDTH,BUTTONGRAV);
 	hsb->LFSTK_setCallBack(NULL,valChanged,NULL);
 	hsb->LFSTK_setScale(1,100);
 	sy+=YSPACING;

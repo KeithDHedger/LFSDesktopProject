@@ -299,7 +299,7 @@ void setPreviewData(void)
 					wc->LFSTK_setTile(NULL,0);
 					wc->LFSTK_setWindowColourName(0,windowColourEdit->LFSTK_getCStr());
 				}
-			
+
 			for (std::map<int,mappedListener*>::iterator it=ml->begin();it!=ml->end();++it)
 				{
 					mappedListener	*mls=it->second;

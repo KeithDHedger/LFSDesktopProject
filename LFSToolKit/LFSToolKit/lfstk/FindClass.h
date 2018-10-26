@@ -30,6 +30,8 @@
 #ifndef _FINDCLASS_
 #define _FINDCLASS_
 
+enum {FILELINKTYPE=0,FILETYPE,FOLDERLINKTYPE,FOLDERTYPE,ANYTYPE};
+
 struct	dataStruct
 {
 	std::string name;
