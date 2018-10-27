@@ -91,9 +91,8 @@ void addSet(void)
 
 	asprintf(&themeDir,"%s/.themes",getenv("HOME"));
 	fc->setDepth(1,1);
-	fc->setFindType(FTW_D);
-	fc->setFollowLinks(true);
-	fc->setIncludeHidden(false);
+	fc->setFindType(FOLDERTYPE);
+	fc->setIncludeHidden(true);
 	fc->setFileTypes(".lfstk");
 	fc->findFiles(themeDir);
 	fc->sortByName();

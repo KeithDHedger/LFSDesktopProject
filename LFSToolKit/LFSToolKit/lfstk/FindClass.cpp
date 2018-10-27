@@ -346,6 +346,8 @@ void FindClass::findFiles(const char *dir)
 						continue;
 					if((this->getIncludeHidden()==false) && ((strlen(entry->d_name)>2) && ((entry->d_name[0]=='.') && (entry->d_name[1]!='.') )))
 						continue;
+					if((this->getFileTypes()!=NULL) && (strcasestr(entry->d_name,this->getFileTypes())==NULL))
+						continue;
 					datas.name=entry->d_name;
 					sprintf(filepath,"%s/%s",dir,entry->d_name);
 					if(entry->d_type==DT_LNK)
