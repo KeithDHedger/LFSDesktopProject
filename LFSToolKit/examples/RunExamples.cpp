@@ -114,11 +114,11 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //line
-	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
+	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,2,BUTTONGRAV);
 	seperator->LFSTK_setStyle(BEVELNONE);
 	seperator->gadgetDetails.buttonTile=false;
 	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
-	sy+=YSPACING;
+	sy+=YSPACING/3;
 
 //run examples
 //lineedit
@@ -185,11 +185,11 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //line
-	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
+	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,2,BUTTONGRAV);
 	seperator->LFSTK_setStyle(BEVELNONE);
 	seperator->gadgetDetails.buttonTile=false;
 	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
-	sy+=YSPACING;
+	sy+=(YSPACING/3);
 
 //quit
 	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
