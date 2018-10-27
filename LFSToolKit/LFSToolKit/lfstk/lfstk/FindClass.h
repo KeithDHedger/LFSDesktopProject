@@ -1,1 +1,1 @@
-/media/LinuxData/Development64/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit/lfstk/FindClass.h
+../FindClass.h

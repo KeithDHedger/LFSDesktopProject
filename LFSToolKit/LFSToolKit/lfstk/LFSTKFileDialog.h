@@ -75,9 +75,11 @@ class LFSTK_fileDialogClass
 		bool					dialogType;
 		const char				*fileImage;
 		const char				*folderImage;
+		const char				*imageImage;
 		const char				*fileImageLink;
 		const char				*folderImageLink;
-		const char				*imageImage;
+		const char				*imageImageLink;
+		const char				*imageBrokenLink;
 		bool					showHidden=false;
 		LFSTK_imageClass		*tux=NULL;
 		LFSTK_labelClass		*previewMimeType;

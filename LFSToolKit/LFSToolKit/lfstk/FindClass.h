@@ -30,7 +30,7 @@
 #ifndef _FINDCLASS_
 #define _FINDCLASS_
 
-enum {FILELINKTYPE=0,FILETYPE,FOLDERLINKTYPE,FOLDERTYPE,ANYTYPE};
+enum {BROKENLINKTYPE=0,FILELINKTYPE,FILETYPE,FOLDERLINKTYPE,FOLDERTYPE,ANYTYPE};
 
 struct	dataStruct
 {
@@ -76,24 +76,21 @@ class FindClass
 		int			getMinDepth(void);
 		int			getMaxDepth(void);
 
-		//std::vector<std::string> data;
 		std::vector<dataStruct> data;
 	private:
 		void		deleteData(void);
+		bool		fileTypeTest(int filetype);
 
 		int			dataCnt=0;
 		int			minDepth=-1;
 		int			maxDepth=10000;
-		int			findType=FTW_F;
-		bool		followLinks=false;
+		int			findType=ANYTYPE;
+		bool		followLinks=true;
 		bool		includeHidden=false;
 		bool		fullPath=false;
 		bool		sortDescending=true;
-		bool		ignoreBroken=true;
+		bool		ignoreBroken=false;
 		char		*fileTypes=NULL;
-		//bool	sortDescending (dataStruct *i,dataStruct *j);
-	//int getFiles(const char *fpath, const struct stat *sb,int tflag, struct FTW *ftwbuf);
-
 };
 
 #endif

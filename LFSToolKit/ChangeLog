@@ -1,4 +1,6 @@
 0.3.1
+Better nav in filedialogs using entry bar.
+Added broken link image to file dialog.
 Added link images to file dialog.
 Redone FindClass.
 Added arrows to scrolbar line buttons.
