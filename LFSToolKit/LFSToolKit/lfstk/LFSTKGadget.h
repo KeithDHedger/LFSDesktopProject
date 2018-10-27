@@ -152,7 +152,7 @@ class LFSTK_gadgetClass
 		bool					gadgetAcceptsDnD;
 		bool					isSubMenu;
 		bool					showIndicator;
-		gadgetStruct			gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NULL,NORMALCOLOUR,0,false,{0,0,0,0},{0,0,0,0},false,false};
+		gadgetStruct			gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NORMALCOLOUR,0,false,{0,0,0,0},{0,0,0,0},false,false};
 		const char				*monoFontString=NULL;
 
 //user data

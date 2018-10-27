@@ -252,7 +252,31 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,const c
 
 	menuItemFont=this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
 
-	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,DISCLOSURE,NULL,NORMALCOLOUR,0,true,{0,0,w,h},{(int)(w-TRIANGLESIZE-(this->pad*2)),(int)((h/2)-(TRIANGLESIZE/2)+(this->pad/2)),TRIANGLESIZE,TRIANGLESIZE},true};
+/*
+	colourStruct	*colour;
+	bevelType		bevel;
+	indicatorType	indic;
+	geometryStruct	*indicGeom;
+	int				state;
+	int				reserveSpace;
+	bool			buttonTile;
+	geometryStruct	gadgetGeom;
+	geometryStruct	indicatorGeom;
+	bool			hasIndicator;
+	bool			useWindowPixmap;
+
+*/
+	gadgetDetails={&this->colourNames[NORMALCOLOUR],//colour
+	BEVELOUT,//bevel
+	DISCLOSURE,//indicator type
+	NORMALCOLOUR,//state
+	0,//res
+	true,//use tile
+	{0,0,w,h},//gadget geom
+	{(int)(w-TRIANGLESIZE-(this->pad*2)),(int)((h/2)-(TRIANGLESIZE/2)+(this->pad/2)),TRIANGLESIZE,TRIANGLESIZE},//indicator geom
+	true,//has indicator
+	false//useWindowPixmap
+	};
 }
 
 /**

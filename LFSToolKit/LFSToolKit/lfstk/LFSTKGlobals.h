@@ -216,7 +216,7 @@ struct gadgetStruct
 	colourStruct	*colour;
 	bevelType		bevel;
 	indicatorType	indic;
-	geometryStruct	*indicGeom;
+	//geometryStruct	*indicGeom;
 	int				state;
 	int				reserveSpace;
 	bool			buttonTile;

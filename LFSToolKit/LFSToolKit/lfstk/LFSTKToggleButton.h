@@ -51,7 +51,6 @@ class LFSTK_toggleButtonClass  : public  LFSTK_gadgetClass
 
 	private:
 		drawStyle		boxStyle;
-		geometryStruct	indicGeom={0,0,0,0};
 
 		bool toggleState;
 };

@@ -207,7 +207,7 @@ void LFSTK_fontDialogClass::buildDialog(void)
 	this->dialog->LFSTK_reloadGlobals();	
 	this->dialog->LFSTK_clearWindow();
 //list
-	this->fontlist=new LFSTK_listGadgetClass(this->dialog,"",BORDER,sy,DIALOGWIDTH-(BORDER*3),GADGETHITE*5,BUTTONGRAV,NULL,0);
+	this->fontlist=new LFSTK_listGadgetClass(this->dialog,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5,BUTTONGRAV,NULL,0);
 	this->loadFontStrings();
 	this->fontlist->LFSTK_setList(fontsAZ,maxFonts);
 	this->fontlist->LFSTK_setCallBack(NULL,select,(void*)this);
@@ -291,5 +291,5 @@ LFSTK_fontDialogClass::LFSTK_fontDialogClass(LFSTK_windowClass* parentwc,const c
 	fontData.isValid=false;
 
 	this->buildDialog();
-	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NULL,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
+	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
 }

@@ -82,14 +82,14 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //list
-	list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*3),GADGETHITE*5,BUTTONGRAV,NULL,0);
+	list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5,BUTTONGRAV,NULL,0);
 	list->LFSTK_setImageList((char**)&images,15);
 	list->LFSTK_setList((char**)&lst,15);
 	list->LFSTK_setCallBack(NULL,select,NULL);
 	sy+=GADGETHITE*6;
 
 //file list
-	filelist=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*3),GADGETHITE*5,BUTTONGRAV,NULL,0);
+	filelist=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5,BUTTONGRAV,NULL,0);
 	//filelist->LFSTK_setListFromFile("/etc/fstab",false);
 	filelist->LFSTK_setListFromFile("/tmp/biglist",false);
 	//filelist->LFSTK_setImageList((char**)&images2,104);

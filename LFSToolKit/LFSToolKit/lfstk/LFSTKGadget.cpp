@@ -454,6 +454,9 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 							}
 						else
 							labelx=((details->gadgetGeom.w-details->reserveSpace)/2)-(this->textExtents.width/2)+details->reserveSpace;
+
+						if(details->hasIndicator==true)
+							labelx-=(details->indicatorGeom.w/2);
 						break;
 					case RIGHT:
 						if(this->useImage==true)
@@ -461,7 +464,7 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 						else
 							labelx=details->gadgetGeom.w-this->textExtents.width-this->pad*2;
 						break;
-					case TOOLBAR:
+					case TOOLBAR://TODO//
 						labelx=((details->gadgetGeom.w)/2)-(this->textExtents.width/2);
 						labelrect={labelx,(int)(details->gadgetGeom.h-(int)this->maxTextHeight-1),(unsigned int)this->textExtents.width,(unsigned int)this->maxTextHeight};
 						labely=labelrect.y+(labelrect.h/2)+(0.5 - this->fontExtents.descent + this->fontExtents.height / 2);
@@ -1213,7 +1216,6 @@ void LFSTK_gadgetClass::LFSTK_reloadColours(void)
 * \param state Button state.
 * \param indic Indicator type CHECK=0,RADIO=1,PICTURE=2,NOINDICATOR=3.
 */
-//void LFSTK_gadgetClass::drawIndicator(geometryStruct* g,int state,indicatorType indic)
 void LFSTK_gadgetClass::drawIndicator(gadgetStruct* details)
 {
 	if(this->gadgetDetails.hasIndicator==false)

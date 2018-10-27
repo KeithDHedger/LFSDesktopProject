@@ -68,10 +68,9 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 	else
 		this->useTile=false;
 
-	this->indicGeom={0,0,CHECKBOXSIZE,CHECKBOXSIZE};
 	this->style=BEVELNONE;
 
-	gadgetDetails={&this->wc->windowColourNames[NORMALCOLOUR],BEVELOUT,CHECK,&this->indicGeom,NORMALCOLOUR,CHECKBOXSIZE,false,{0,0,w,h},{2,(int)((h/2)-(CHECKBOXSIZE/2)),CHECKBOXSIZE,CHECKBOXSIZE},true};
+	gadgetDetails={&this->wc->windowColourNames[NORMALCOLOUR],BEVELOUT,CHECK,NORMALCOLOUR,CHECKBOXSIZE,false,{0,0,w,h},{2,(int)((h/2)-(CHECKBOXSIZE/2)),CHECKBOXSIZE,CHECKBOXSIZE},true};
 	this->LFSTK_setFontColourName(0,this->wc->globalLib->LFSTK_getGlobalString(0,TYPEFONTCOLOUR),true);
 }
 

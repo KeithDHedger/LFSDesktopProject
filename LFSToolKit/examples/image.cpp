@@ -66,7 +66,6 @@ bool contextCB(void *p,void* ud)
 	if(p!=NULL)
 		{
 			wc->popupLoop=false;
-			DEBUGFUNC("gadget label=%s",(char*)wc->popupFromGadget->userData);
 			printf("data=%p\n",ud);
 		}
 	return(true);
@@ -177,7 +176,6 @@ int main(int argc, char **argv)
 			switch(event.type)
 				{
 					case ConfigureNotify:
-						//DEBUGFUNC("ConfigureNotify","");
 						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
 						wc->LFSTK_setWindowPixmap(wc->globalLib->LFSTK_getWindowPixmap(display,wc->rootWindow),event.xconfigurerequest.width,event.xconfigurerequest.height);
 						XClearWindow(wc->display,wc->window);

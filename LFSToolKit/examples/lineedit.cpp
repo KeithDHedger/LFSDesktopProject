@@ -74,9 +74,7 @@ int main(int argc, char **argv)
 //line edit
 	editbox=new LFSTK_lineEditClass(wc,"Basic line editing class for LFSToolKit.",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
 
-	//editbox->LFSTK_setCallBack(NULL,doKeyUp,USERDATA(12345));
-//	editbox->LFSTK_setCallBack(doKeyUp,NULL,USERDATA(12345));
-	//editbox->LFSTK_setColourName(NORMALCOLOUR,"blue");
+	editbox->LFSTK_setCallBack(NULL,doKeyUp,USERDATA(12345));
 	sy+=YSPACING;
 
 //line

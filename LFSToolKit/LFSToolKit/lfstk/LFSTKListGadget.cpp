@@ -477,7 +477,7 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 
 	this->LFSTK_setColourName(NORMALCOLOUR,"white");
 	this->LFSTK_setColourName(INACTIVECOLOUR,"white");
-	this->gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NULL,NORMALCOLOUR,0,true,{0,0,adjwidth,h},{0,0,0,0},false};
+	this->gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,adjwidth,h},{0,0,0,0},false};
 	this->clearBox(&this->gadgetDetails);
 }
 

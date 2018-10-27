@@ -99,7 +99,7 @@ LFSTK_multiLineEditClass::LFSTK_multiLineEditClass(LFSTK_windowClass* parentwc,c
 	LFSTK_setColourName(NORMALCOLOUR,"white");
 	LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
 	this->LFSTK_setCursorColourName(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPECURSORCOLOUR));
-	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NULL,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
+	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
 
 	this->topLine=0;
 	this->setDisplayLines();

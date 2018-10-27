@@ -64,7 +64,7 @@ LFSTK_labelClass::LFSTK_labelClass(LFSTK_windowClass* parentwc,const char* label
 		this->useTile=false;
 
 	this->LFSTK_setFontColourName(0,this->wc->globalLib->LFSTK_getGlobalString(0,TYPEFONTCOLOUR),true);
-	gadgetDetails={&this->wc->windowColourNames[NORMALCOLOUR],BEVELNONE,NOINDICATOR,NULL,NORMALCOLOUR,0,false,{0,0,w,h},{0,0,0,0},false};
+	gadgetDetails={&this->wc->windowColourNames[NORMALCOLOUR],BEVELNONE,NOINDICATOR,NORMALCOLOUR,0,false,{0,0,w,h},{0,0,0,0},false};
 	this->LFSTK_setLabelGravity(gravity);
 }
 
