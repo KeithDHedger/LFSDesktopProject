@@ -85,9 +85,9 @@ int main(int argc, char **argv)
 	display=wc->display;
 	//wc->LFSTK_initDnD();
 
-	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
+	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	sy+=HALFYSPACING;
-	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
+	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	personal->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
 
