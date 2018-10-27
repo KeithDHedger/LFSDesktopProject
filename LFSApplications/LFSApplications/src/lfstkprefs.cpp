@@ -101,7 +101,6 @@ void addSet(void)
 	for(int j=0;j<fc->data.size();j++)
 		setNameMenuItems[j].label=strdup(fc->data.at(j).name.c_str());
 	setCnt=fc->data.size();
-
 	delete fc;
 	free(themeDir);
 }
@@ -569,6 +568,9 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 	sx=BORDER;
 
+	if(setCnt==0)
+		loadSet->LFSTK_setActive(false);	
+
 //window tile
 	windowTile=new LFSTK_buttonClass(wc,"Window Tile",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sx+=GADGETWIDTH+BORDER;
@@ -602,7 +604,6 @@ int main(int argc, char **argv)
 	seperator->gadgetDetails.buttonTile=false;
 	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
 	sy+=YSPACING;
-
 
 //quit
 	quit=new LFSTK_buttonClass(wc,"Quit",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
