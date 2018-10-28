@@ -19,6 +19,7 @@
  */
 
 #include <dirent.h>
+#include <libgen.h>
 
 #include "FindClass.h"
 
@@ -241,6 +242,212 @@ static bool sortDataTN(dataStruct i,dataStruct j)
 	return(false);
 }
 
+#if 0
+static bool sortDataDN(dataStruct i,dataStruct j)
+{
+	char	*diribuffer=NULL;
+	char	*dirjbuffer=NULL;
+	char	*diriptr=NULL;
+	char	*dirjptr=NULL;
+	bool	retval=false;
+
+	diribuffer=strdup(i.path.c_str());
+	dirjbuffer=strdup(j.path.c_str());
+	diriptr=dirname(diribuffer);
+	dirjptr=dirname(dirjbuffer);
+
+	if(fc->getSort()==true)
+		{
+			if(strcmp(diriptr,dirjptr)<0)
+				{
+					retval=true;
+					//continue;
+				}
+			else
+				{
+					if((strcmp(diriptr,dirjptr)==0) && (i.name<j.name))
+						retval=true;
+				}
+		}
+	else
+		{
+			if(strcmp(diriptr,dirjptr)>0)
+				{
+					retval=true;
+				//	break;
+				}
+			else
+				{
+					if((strcmp(diriptr,dirjptr)==0) && (i.name<j.name))
+						retval=true;
+				}
+		}
+	free(diribuffer);
+	free(dirjbuffer);
+	return(retval);
+}
+#endif
+/*
+static bool sortDataD(dataStruct i,dataStruct j)
+{
+	char	*diribuffer=NULL;
+	char	*dirjbuffer=NULL;
+	char	*diriptr=NULL;
+	char	*dirjptr=NULL;
+	bool	retval=false;
+
+	diribuffer=strdup(i.path.c_str());
+	dirjbuffer=strdup(j.path.c_str());
+	diriptr=dirname(diribuffer);
+	dirjptr=dirname(dirjbuffer);
+
+	if(fc->getSort()==true)
+		{
+			if(strcmp(diriptr,dirjptr)<0)
+				goto OUTTRUE;
+
+			if((strcmp(diriptr,dirjptr)==0) && (i.name<j.name))
+				goto OUTTRUE;
+			goto OUTFALSE;
+		}
+	else
+		{
+			if(strcmp(diriptr,dirjptr)>0)
+				goto OUTTRUE;
+
+			if((strcmp(diriptr,dirjptr)==0) && (i.name<j.name))
+				goto OUTTRUE;
+			goto OUTFALSE;
+		}
+OUTTRUE:
+	return(true);
+OUTFALSE:
+	return(false);
+
+}
+*/
+#if 0
+static bool sortDataA(dataStruct i,dataStruct j)
+{
+#if 1
+	bool	retval=false;
+	bool	checktype=false;
+	bool	checkname=false;
+	bool	checkpath=false;
+	char	*diribuffer=NULL;
+	char	*dirjbuffer=NULL;
+	char	*diriptr=NULL;
+	char	*dirjptr=NULL;
+	bool	retpath=true;
+	bool	retname=true;
+
+//fprintf(stderr,"<<<<<<<<<<<<<<<<<<<<<<<<\n");
+//fprintf(stderr,"i.path.c_str()=%s j.path.c_str()=%s\n",i.path.c_str(),j.path.c_str());
+	diribuffer=strdup(i.path.c_str());
+	dirjbuffer=strdup(j.path.c_str());
+
+//fprintf(stderr,"diriptr=%p dirjptr=%p\n",diribuffer,dirjbuffer);
+
+	diriptr=dirname(diribuffer);
+	dirjptr=dirname(dirjbuffer);
+
+//fprintf(stderr,"diriptr=%p dirjptr=%p\n",diriptr,dirjptr);
+//	if(fc->getSort()==true)
+//		{
+			for(int q=0;q<strlen(fc->sortOrder);q++)
+				{
+					switch(fc->sortOrder[q])
+						{
+							case 't':
+								{
+									bool	type=true;
+									checktype=true;
+									if(checkname==true)
+										if(i.name!=j.name)
+											type=false;
+
+									if((i.fileType<j.fileType) && (type==true))
+										retval=true;
+								}
+								break;
+							case 'n':
+								{
+									//bool	type=true;
+									bool	path=true;
+									checkname=true;
+									//if(checktype==true)
+									//	if(i.fileType!=j.fileType)
+									//		type=false;
+								
+									if(checkpath==true)
+										if((strcmp(diriptr,dirjptr)==0) && (i.name<j.name))
+										{
+											retval=true;
+											goto OUTOFIT;
+										}
+											//return(true);
+									retval=false;
+											goto OUTOFIT;
+									//if((i.name<j.name) && (type==true) && (path==true))
+									//if((i.name<j.name)  && (path==true))
+									//	retname=true;
+									//else
+									//	retname=false;
+								}
+								break;
+							case 'p':
+								{
+									//bool	type=true;
+									bool	name=true;
+									checkpath=true;
+								//	if(checktype==true)
+								//		if(i.fileType!=j.fileType)
+								//			type=false;
+//									if(checkname==true)
+//										if(i.name!=j.name)
+//											name=false;
+								
+									//if((diriptr<dirjptr) && (type==true) && (name==true))
+									if((strcmp(diriptr,dirjptr)<0) )
+										{
+											retval=true;
+											goto OUTOFIT;
+										}
+										//return(true);
+									//else
+									//	retpath=false;
+								}
+								break;
+						}
+				}
+//	return(retval);
+OUTOFIT:
+	free(diribuffer);
+	free(dirjbuffer);
+//fprintf(stderr,">>>>>>>>>>>>>>>>>>>>>>>>\n");
+	return(retval);
+//	return(retname && retpath);
+//			if(i.fileType<j.fileType)
+//				return(true);
+//
+//			if((i.fileType==j.fileType) && (i.name<j.name))
+//				return(true);
+//			return(false);
+//		}
+//	else
+//		{
+//			if(i.fileType>j.fileType)
+//				return(true);
+//
+//			if((i.fileType==j.fileType) && (i.name<j.name))
+//				return(true);
+//			return(false);
+//		}
+	return(false);
+#endif
+}
+#endif
+
 /**
 * Sort data by name
 */
@@ -272,6 +479,26 @@ void FindClass::sortByTypeAndName(void)
 {
 	std::sort(this->data.begin(),this->data.end(),sortDataTN);
 }
+
+#if 0
+/**
+* Sort data sortByDirAndName
+*/
+void FindClass::sortByDirAndName(void)
+{
+	std::sort(this->data.begin(),this->data.end(),sortDataDN);
+}
+
+/**
+* Sort data sortAdvanced
+*/
+void FindClass::sortAdvanced(void)
+{
+	std::sort(this->data.begin(),this->data.end(),sortDataA);
+//	std::sort(this->data.begin(),this->data.end(),sortDataT);
+//	std::sort(this->data.begin(),this->data.end(),sortDataN);
+}
+#endif
 
 /**
 * Get number of items.
@@ -323,9 +550,10 @@ bool FindClass::fileTypeTest(int filetype)
 /**
 * Main search function.
 * \param const char *dir Path to search.
+* \param bool Tru=Add this search to last, False=New search.
 * \note If getIgnoreBroken()==true broken links not reported.
 */
-void FindClass::findFiles(const char *dir)
+void FindClass::findFiles(const char *dir,bool multi)
 {
 	DIR			*dirhandle;
 	dirent		*entry;
@@ -335,7 +563,8 @@ void FindClass::findFiles(const char *dir)
 	char		*filepath;
 
 	fc=this;
-	this->deleteData();
+	if(multi==false)
+		this->deleteData();
 	filepath=(char*)alloca(PATH_MAX);
 	dirhandle=opendir(dir);
 	if(dirhandle!=NULL)

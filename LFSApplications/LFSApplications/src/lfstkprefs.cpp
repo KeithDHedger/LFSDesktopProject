@@ -83,6 +83,7 @@ bool					mainLoop=true;
 Display					*display;
 char					*wd;
 int						parentWindow=-1;
+int						queueID=-1;
 
 void addSet(void)
 {
@@ -90,16 +91,24 @@ void addSet(void)
 	char			*themeDir=NULL;
 
 	asprintf(&themeDir,"%s/.themes",getenv("HOME"));
+	fc->setFullPath(true);
 	fc->setDepth(1,1);
 	fc->setFindType(FOLDERTYPE);
 	fc->setIncludeHidden(true);
 	fc->setFileTypes(".lfstk");
 	fc->findFiles(themeDir);
-	fc->sortByName();
+	fc->findFiles("/usr/share/themes",true);
+	fc->setSort(true);
+	fc->sortByPath();
+	for(int j=0;j<fc->data.size();j++)
+		{
+			fprintf(stderr,"j=%i name=%s path=%s type=%i\n",j,fc->data.at(j).name.c_str(),fc->data.at(j).path.c_str(),fc->data.at(j).fileType);
+		//	fprintf(stderr,"j=%i name=%s path=%s type=%i\n",j,fc->data.at(j)->name.c_str(),fc->data.at(j)->path.c_str(),fc->data.at(j)->fileType);
+		}
 
 	setNameMenuItems=new menuItemStruct[fc->data.size()];
 	for(int j=0;j<fc->data.size();j++)
-		setNameMenuItems[j].label=strdup(fc->data.at(j).name.c_str());
+		setNameMenuItems[j].label=strdup(fc->data.at(j).path.c_str());
 	setCnt=fc->data.size();
 	delete fc;
 	free(themeDir);
@@ -184,14 +193,18 @@ bool menuCB(void *p,void* ud)
 	if(ud==NULL)
 		return(true);
 
-	sprintf(buffer,"%s/.themes/%s/window.png",getenv("HOME"),menuitem->label);
+//	sprintf(buffer,"%s/.themes/%s/window.png",getenv("HOME"),menuitem->label);
+	sprintf(buffer,"%s/window.png",menuitem->label);
 	windowTileEdit->LFSTK_setBuffer(buffer);
-	sprintf(buffer,"%s/.themes/%s/button.png",getenv("HOME"),menuitem->label);
+//	sprintf(buffer,"%s/.themes/%s/button.png",getenv("HOME"),menuitem->label);
+	sprintf(buffer,"%s/button.png",menuitem->label);
 	buttonTileEdit->LFSTK_setBuffer(buffer);
-	sprintf(buffer,"%s/.themes/%s/menuitem.png",getenv("HOME"),menuitem->label);
+	//sprintf(buffer,"%s/.themes/%s/menuitem.png",getenv("HOME"),menuitem->label);
+	sprintf(buffer,"%s/menuitem.png",menuitem->label);
 	menuTileEdit->LFSTK_setBuffer(buffer);
 
-	sprintf(buffer,"%s/.themes/%s/lfstoolkit.rc",getenv("HOME"),menuitem->label);
+	//sprintf(buffer,"%s/.themes/%s/lfstoolkit.rc",getenv("HOME"),menuitem->label);
+	sprintf(buffer,"%s/lfstoolkit.rc",menuitem->label);
 	wc->globalLib->LFSTK_loadVarsFromFile(buffer,myargs);
 
 //button back
@@ -401,6 +414,11 @@ bool buttonCB(void *p,void* ud)
 {
 	char					*prefsfile;
 	const fontDataStruct	*fd;
+	int						receiveType=IPC_NOWAIT;
+	msgBuffer				buffer;
+	bool					flag=false;
+	int						retcode;
+
 	if(ud!=NULL)
 		{
 			if(strcmp((char*)ud,"SELECTBUTTONFONT")==0)
@@ -440,6 +458,19 @@ bool buttonCB(void *p,void* ud)
 					asprintf(&prefsfile,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
 					wc->globalLib->LFSTK_saveVarsToFile(prefsfile,wc->globalLib->LFSTK_getTKArgs());
 					free(prefsfile);
+//flush message queue
+					while(flag==false)
+						{
+							retcode=msgrcv(queueID,&buffer,MAX_MSG_SIZE,MSGANY,receiveType);
+							if(retcode<=1)
+								flag=true;
+						}
+
+					buffer.mType=DESKTOP_MSG;
+					sprintf(buffer.mText,"reloaddesk");
+					if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
+						fprintf(stderr,"Can't send message :(\n");
+					system("killall lfspanel &");	
 				}
 		}
 	return(true);
@@ -452,6 +483,8 @@ int main(int argc, char **argv)
 	int			sx=BORDER;
 	int			c=0;
 	int			option_index=0;
+	int			key=666;
+	char		*command;
 	const char	*shortOpts="h?w:";
 	option		longOptions[]=
 		{
@@ -481,6 +514,13 @@ int main(int argc, char **argv)
 	
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH-BORDER-BORDER-BORDER,DIALOGHITE,"LFS Toolkit Prefs",false);
 	display=wc->display;
+
+	command=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",wc->configDir);
+	key=atoi(command);
+	freeAndNull(&command);
+
+	if((queueID=msgget(key,IPC_CREAT|0660))==-1)
+		fprintf(stderr,"Can't create message queue\n");
 
 	wd=strdup(wc->configDir);
 	tileDialog=new LFSTK_fileDialogClass(wc,"Select File",wd,false);

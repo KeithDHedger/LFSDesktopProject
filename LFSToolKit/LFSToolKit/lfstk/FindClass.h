@@ -66,7 +66,7 @@ class FindClass
 		const char*	getFileTypes(void);
 
 
-		void		findFiles(const char *dir);
+		void		findFiles(const char *dir,bool multi=false);
 		void		sortByName(void);
 		void		sortByPath(void);
 		void		sortByType(void);
