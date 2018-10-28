@@ -554,7 +554,8 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				//gadget->LFSTK_clearWindow();
 				break;
 			case Expose:
-				gadget->LFSTK_clearWindow();
+				if (e->xexpose.count==0)
+					gadget->LFSTK_clearWindow();
 				break;
 
 			case FocusIn:

@@ -192,12 +192,15 @@ void LFSTK_scrollBarClass::LFSTK_clearWindow()
 {
 	if(this->startDrag==true)
 		this->setState(false);
-	this->clearBox(&this->gadgetDetails);
 
+	this->clearBox(&this->gadgetDetails);
 //	if(this->noCallback==false)???
 	if(this->callback.releaseCallback!=NULL)
 		this->callback.releaseCallback(this,this->callback.userData);
 
+//reduce flickering
+	if(this->startDrag==true)
+		XSync(this->display,true);
 	this->thumb->LFSTK_clearWindow();
 	//this->noCallback=false;????
 }

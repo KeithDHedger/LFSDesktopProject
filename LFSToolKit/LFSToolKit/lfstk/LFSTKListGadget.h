@@ -48,6 +48,7 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		bool					mouseEnter(XButtonEvent *e) {return(true);};
 		unsigned			listCnt;
 
+		LFSTK_scrollBarClass	*scrollBar;
 	private:
 		struct listData
 			{
@@ -56,6 +57,8 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 			};
 		char					**listStrings;
 		char					**listImages;
+		cairo_surface_t			**listCairoSurface;
+		unsigned				listCairoSurfaceCnt;
 		unsigned				listImageCnt;
 		unsigned				listOffset;
 
@@ -64,8 +67,8 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		listData				*scrollData;
 
 		LFSTK_buttonClass		**labels;		
-		LFSTK_scrollBarClass	*scrollBar;
 
+		void					setCairoSufaces(void);
 		void 					setCurrentItem(int item);
 		void					setNavSensitive(void);
 

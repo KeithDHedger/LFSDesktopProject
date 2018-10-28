@@ -98,7 +98,11 @@ void LFSTK_fileDialogClass::getFileList(void)
 								asprintf(&imagepath,"%s",(char*)this->folderImage);
 								break;
 							case FILETYPE:
-								asprintf(&imagepath,"%s",(char*)this->fileImage);
+								if((strcasecmp(&this->fileList[j][strlen(this->fileList[j])-4],".jpg")==0) || (strcasecmp(&this->fileList[j][strlen(this->fileList[j])-4],".png")==0))
+									asprintf(&imagepath,"%s",(char*)this->imageImage);
+									//asprintf(&imagepath,"%s/%s",this->currentDir,this->fileList[j]);
+								else
+									asprintf(&imagepath,"%s",(char*)this->fileImage);
 								break;
 							case FOLDERLINKTYPE:
 								asprintf(&imagepath,"%s",(char*)this->folderImageLink);
@@ -106,6 +110,7 @@ void LFSTK_fileDialogClass::getFileList(void)
 							case FILELINKTYPE:
 								if((strcasecmp(&this->fileList[j][strlen(this->fileList[j])-4],".jpg")==0) || (strcasecmp(&this->fileList[j][strlen(this->fileList[j])-4],".png")==0))
 									asprintf(&imagepath,"%s",(char*)this->imageImageLink);
+									//asprintf(&imagepath,"%s",this->fileList[j]);
 								else
 									asprintf(&imagepath,"%s",(char*)this->fileImageLink);
 								break;
@@ -117,6 +122,7 @@ void LFSTK_fileDialogClass::getFileList(void)
 								break;
 						}
 				//}
+			//fprintf(stderr,"%s\n",imagepath);
 			this->fileImageList[j]=strdup(imagepath);
 			free(imagepath);
 		}

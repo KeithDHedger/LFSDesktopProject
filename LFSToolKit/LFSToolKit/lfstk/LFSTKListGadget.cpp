@@ -227,6 +227,12 @@ void LFSTK_listGadgetClass::LFSTK_setListFromFile(const char *filepath,bool incl
 }
 
 /**
+* Set cairo srfc list.
+*/
+void LFSTK_listGadgetClass::setCairoSufaces(void)
+{
+}
+/**
 * Set new list.
 *
 * \param list char** list of strings.
@@ -252,7 +258,9 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 	this->listCnt=numitems;
 	for(int j=0;j<this->listCnt;j++)
 		this->listStrings[j]=strdup(list[j]);
-			
+
+	this->setCairoSufaces();
+
 	this->listOffset=0;
 	this->currentItem=0;
 
@@ -282,8 +290,9 @@ void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
 
 			this->labels[j]->gadgetDetails.colour=&this->labels[j]->colourNames[NORMALCOLOUR];
 			this->labels[j]->gadgetDetails.state=NORMALCOLOUR;
-			this->labels[j]->LFSTK_clearWindow();
+			//this->labels[j]->LFSTK_clearWindow();
 		}
+	this->wc->LFSTK_clearWindow(true);
 	this->currentItem=0;
 	this->setNavSensitive();
 
@@ -315,7 +324,8 @@ bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
 					list->labels[j]->LFSTK_clearWindow();
 				}
 		}
-	list->LFSTK_clearWindow();
+	//list->LFSTK_clearWindow();
+	//list->wc->LFSTK_clearWindow();
 	return(true);
 }
 

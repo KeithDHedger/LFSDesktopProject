@@ -7,6 +7,7 @@ if [ "X$1" != "X" ];then
 fi
 
 APPNAME=$(basename $0 .cpp)
+cd "$(dirname "$0")"
 
 g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2 -o $APPNAME||exit 1
 LD_LIBRARY_PATH=../LFSToolKit/app/.libs $USEVALGRIND ./$APPNAME "$@"
@@ -41,7 +42,7 @@ bool doQuit(void *p,void* ud)
 	mainLoop=false;
 	XFlush(wc->display);
 	XSync(wc->display,true);
-	return(false);
+	return(true);
 }
 
 bool buttonCB(void *p,void* ud)
