@@ -30,6 +30,20 @@
 #define SCROLLBARWIDTH 16
 
 enum {LUP=0,LDOWN,LHOME,LEND};
+enum {NOTHUMB=0,CAIROTHUMB,FILETHUMB};
+
+struct listLabelStruct
+{
+	char	*label;
+	int		imageType;
+	void	*userData;
+	int		listPos;
+	union	imageData
+		{
+			char			*imagePath;
+			cairo_surface_t	*surface;
+		} data;
+};
 
 class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 {
@@ -38,29 +52,28 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const char *label,int x,int y,unsigned w,unsigned h,int gravity,char **list,unsigned cnt);
 
 		int						LFSTK_getCurrentListItem(void);
-		const char				*LFSTK_getListString(int listnum);
-		void					LFSTK_setList(char **list,unsigned numitems);
+		//const char				*LFSTK_getListString(int listnum);
+		//void					LFSTK_setList(char **list,unsigned numitems);
+		void					LFSTK_setList(listLabelStruct **list,unsigned numitems);
 		void					LFSTK_setListFromFile(const char *filepath,bool includeempty);
-		void					LFSTK_setImageList(char **list,unsigned numitems);
+		//void					LFSTK_setImageList(char **list,unsigned numitems);
 		int						currentItem;
 
 		bool					mouseExit(XButtonEvent *e) {return(true);};
 		bool					mouseEnter(XButtonEvent *e) {return(true);};
-		unsigned			listCnt;
+		unsigned				listCnt;
 
-		LFSTK_scrollBarClass	*scrollBar;
+		//int						useThumbNail=NOTHUMB;
+		listLabelStruct			**labelData=NULL;
 	private:
-		struct listData
-			{
-				LFSTK_listGadgetClass	*mainObject;
-				unsigned				userData;
-			};
-		char					**listStrings;
-		char					**listImages;
-		cairo_surface_t			**listCairoSurface;
-		unsigned				listCairoSurfaceCnt;
-		unsigned				listImageCnt;
+		LFSTK_scrollBarClass	*scrollBar;
+		//char					**listStrings=NULL;
+		//char					**listImages=NULL;
+		//cairo_surface_t			**listCairoSurface=NULL;
+		//unsigned				listCairoSurfaceCnt=0;
+		//unsigned				listImageCnt;
 		unsigned				listOffset;
+
 
 		unsigned				maxShowing;
 		listData				*data;
@@ -68,7 +81,8 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 
 		LFSTK_buttonClass		**labels;		
 
-		void					setCairoSufaces(void);
+		void					freeList(void);
+		//void					setCairoSufaces(int numitems);
 		void 					setCurrentItem(int item);
 		void					setNavSensitive(void);
 

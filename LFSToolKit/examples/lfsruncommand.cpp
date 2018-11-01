@@ -60,7 +60,9 @@ bool doExecute(void *object,void* ud)
 
 bool select(void *object,void* ud)
 {
-	commandToRun=static_cast<LFSTK_listGadgetClass*>(object)->LFSTK_getListString(static_cast<LFSTK_listGadgetClass*>(object)->LFSTK_getCurrentListItem());
+	LFSTK_listGadgetClass	*list=static_cast<LFSTK_listGadgetClass*>(object);
+
+	commandToRun=list->labelData[list->LFSTK_getCurrentListItem()]->label;
 	le->LFSTK_setBuffer(commandToRun);
 	return(true);
 }

@@ -60,6 +60,15 @@ bool selectfile(void *object,void* ud)
 	return(true);
 }
 
+bool fbup(void *object,void* ud)
+{
+	LFSTK_fileDialogClass *fd=static_cast<LFSTK_fileDialogClass*>(ud);
+	LFSTK_listGadgetClass *list=static_cast<LFSTK_listGadgetClass*>(object);
+
+	
+	fprintf(stderr,"fbup=%p\n",ud);
+	return(true);
+}
 //get last used folder
 bool selectdir(void *object,void* ud)
 {
@@ -77,7 +86,7 @@ int main(int argc, char **argv)
 {
 	XEvent	event;
 	int		sy=BORDER;
-		FindClass *fc=new FindClass;
+		//FindClass *fc=new FindClass;
 
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"File/Folder Select",false);
 	display=wc->display;
@@ -97,7 +106,8 @@ int main(int argc, char **argv)
 	filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",wd,FILEDIALOG);
 	//filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",NULL,FILEDIALOG);
 	filedialogdir=new LFSTK_fileDialogClass(wc,"Select Folder",NULL,FOLDERDIALOG,"dialogscpp");
-
+//filedialogfile->LFSTK_setCallBack(NULL,fbup,(void*)filedialogfile);
+	
 //	filedialogdir->LFSTK_setNameFilter("xfwm4");
 //TODO
 //	filedialogfile->LFSTK_setShowPreview(false);
@@ -142,7 +152,7 @@ int main(int argc, char **argv)
 		}
 
 	delete filedialogfile;
-	//delete filedialogdir;
+	delete filedialogdir;
 	delete wc;
 	XCloseDisplay(display);
 	cairo_debug_reset_static_data();

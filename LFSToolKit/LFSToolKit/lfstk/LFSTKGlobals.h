@@ -210,6 +210,12 @@ struct	mappedListener
 	LFSTK_gadgetClass	*gadget=NULL;
 	int					type;
 };
+class	LFSTK_listGadgetClass;
+struct listData
+{
+	LFSTK_listGadgetClass	*mainObject;
+	unsigned				userData;
+};
 
 struct gadgetStruct
 {

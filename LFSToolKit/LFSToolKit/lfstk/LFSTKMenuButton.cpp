@@ -32,6 +32,7 @@ void LFSTK_menuButtonClass::initMenuButton(void)
 		this->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),-1);
 	else
 		this->useTile=false;
+	this->subwc->closeDisplayOnExit=true;
 }
 
 LFSTK_menuButtonClass::~LFSTK_menuButtonClass()

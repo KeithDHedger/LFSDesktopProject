@@ -215,6 +215,12 @@ LFSTK_windowClass::~LFSTK_windowClass()
 
 	if(this->closeDisplayOnExit==true)
 		XCloseDisplay(this->display);
+
+//	if(this->pattern!=NULL)
+//		cairo_pattern_destroy(this->pattern);
+//
+//	cairo_destroy(this->cr);
+//	cairo_surface_destroy(this->sfc);
 }
 
 LFSTK_windowClass::LFSTK_windowClass()

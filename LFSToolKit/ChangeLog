@@ -1,3 +1,8 @@
+0.4.0
+Converted Font dialog to new API's.
+Converted file dialog's to new API's.
+Changed list API's.
+
 0.3.1
 Fixed flickering when scrolling large list.
 Added cumulative search option to FindClass:findFiles.

@@ -45,8 +45,8 @@ class LFSTK_imageClass  : public  LFSTK_gadgetClass
 
 		void			LFSTK_clearWindow(void);
 
-		cairo_surface_t	*shapesfc;
-		cairo_t			*shapecr;
+		cairo_surface_t	*shapesfc=NULL;
+		cairo_t			*shapecr=NULL;
 		Pixmap			shape;
 
 	protected:

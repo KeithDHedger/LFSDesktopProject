@@ -39,6 +39,7 @@ Display						*display;
 
 const char	*lst[]={"item 1","item 2","item 3","item 4","item 5","item 6","7 food","8 water","9 attack","10 defense","11 666","12 999","13 10101010","14 ELP","15 last item",};
 const char	*images[]={"./AspellGUI.png",NULL,NULL,NULL,"./audio-speakers.png",NULL,"./casper2.JPG","./computer.png","./computer.png","./computer.png","./computer.png","./computer.png","./computer.png","./audio-speakers.png","./ManPageEditor.png"};
+listLabelStruct				**labelLst1=NULL;
 
 bool doQuit(void *p,void* ud)
 {
@@ -48,11 +49,15 @@ bool doQuit(void *p,void* ud)
 	return(false);
 }
 
-bool select(void *object,void* ud)
+bool select(void *object,void* userdata)
 {
-	printf("List item=%i\n",static_cast<LFSTK_listGadgetClass*>(object)->LFSTK_getCurrentListItem());
-	printf("List item 2 string=%s\n",static_cast<LFSTK_listGadgetClass*>(object)->LFSTK_getListString(2));
-	printf("Selected List item string=%s\n",static_cast<LFSTK_listGadgetClass*>(object)->LFSTK_getListString(-1));
+	LFSTK_listGadgetClass	*list=static_cast<LFSTK_listGadgetClass*>(object);
+
+	printf("List item=%i\n",list->LFSTK_getCurrentListItem());
+	printf("Selected List item string=%s\n",list->labelData[list->LFSTK_getCurrentListItem()]->label);
+	if(list->labelData[list->LFSTK_getCurrentListItem()]->imageType==FILETHUMB)
+		printf("Image path=%s\n",list->labelData[list->LFSTK_getCurrentListItem()]->data.imagePath);
+	printf("UserData=%p\n",userdata);
 	return(true);
 }
 
@@ -76,19 +81,25 @@ int main(int argc, char **argv)
 
 //list
 	list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5,BUTTONGRAV,NULL,0);
-	list->LFSTK_setImageList((char**)&images,15);
-	list->LFSTK_setList((char**)&lst,15);
+
+	labelLst1=new listLabelStruct*[15];
+	for(int j=0;j<15;j++)
+		{
+			labelLst1[j]=new listLabelStruct;
+			labelLst1[j]->label=strdup((char*)lst[j]);
+			labelLst1[j]->imageType=FILETHUMB;
+			if(images[j]!=NULL)
+				labelLst1[j]->data.imagePath=strdup(images[j]);
+			else
+				labelLst1[j]->data.imagePath=NULL;
+		}
+	list->LFSTK_setList(labelLst1,15);
 	list->LFSTK_setCallBack(NULL,select,NULL);
 	sy+=GADGETHITE*6;
-
 //file list
 	filelist=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*16,BUTTONGRAV,NULL,0);
-	//filelist->LFSTK_setListFromFile("/etc/fstab",false);
 	filelist->LFSTK_setListFromFile("/tmp/biglist",false);
-	//filelist->LFSTK_setImageList((char**)&images2,104);
-	//filelist->LFSTK_setList((char**)&lst2,104);
-//	filelist->LFSTK_setListFromFile("/home/keithhedger/Wallpapers",false);
-	filelist->LFSTK_setCallBack(NULL,select,NULL);
+	filelist->LFSTK_setCallBack(NULL,select,(void*)0xdeadbeaf);
 
 	sy+=GADGETHITE*17;
 

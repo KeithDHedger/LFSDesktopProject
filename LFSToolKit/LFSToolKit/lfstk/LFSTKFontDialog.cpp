@@ -27,9 +27,9 @@ void LFSTK_fontDialogClass::buildFontString(void)
 	const char	*dobold="b";
 	const char	*doitalic="i";
 	char		*formatstring=NULL;
-
 	this->fontData.bold=false;
 	this->fontData.italic=false;
+
 	if(this->boldcheck->LFSTK_getValue()==true)
 		{
 			boldstr=":bold";
@@ -57,11 +57,12 @@ void LFSTK_fontDialogClass::buildFontString(void)
 	free(formatstring);
 }
 
-bool select(void *object,void* ud)
+bool select(void *object,void* userdata)
 {
-	LFSTK_fontDialogClass	*fdata=static_cast<LFSTK_fontDialogClass*>(ud);
+	LFSTK_fontDialogClass	*fd=static_cast<LFSTK_fontDialogClass*>(userdata);
+	LFSTK_listGadgetClass	*list=static_cast<LFSTK_listGadgetClass*>(object);
 
-	fdata->LFSTK_getFontData(true);
+	fd->LFSTK_getFontData(true);
 	return(true);
 }
 
@@ -132,6 +133,8 @@ bool LFSTK_fontDialogClass::LFSTK_showDialog(const char* font)
 {
 	bool	mainLoop=true;
 	XEvent	event;
+	geometryStruct	geomfont;
+	pointStruct		pt;
 
 	this->dialog->LFSTK_showWindow(true);
 	this->dialog->LFSTK_setKeepAbove(true);
@@ -145,9 +148,14 @@ bool LFSTK_fontDialogClass::LFSTK_showDialog(const char* font)
 			XNextEvent(this->dialog->display,&event);
 			mappedListener *ml=this->dialog->LFSTK_getMappedListener(event.xany.window);
 			if(ml!=NULL)
-				{
-					ml->function(ml->gadget,&event,ml->type);
-				}
+				ml->function(ml->gadget,&event,ml->type);
+
+
+			if(this->dialog->LFSTK_handleWindowEvents(&event)<0)
+				mainLoop=false;
+
+			if(ml==NULL)
+				continue;
 
 			switch(event.type)
 				{
@@ -167,29 +175,6 @@ bool LFSTK_fontDialogClass::LFSTK_showDialog(const char* font)
 									}
 							}
 						break;
-					case LeaveNotify:
-						break;
-					case Expose:
-					//printf("expose\n");
-						this->dialog->LFSTK_clearWindow();
-						//if(ml->gadget==this->fontsize)
-						break;
-
-					case ConfigureNotify:
-						this->dialog->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
-						this->dialog->LFSTK_clearWindow();
-						break;
-
-					case ClientMessage:
-					case SelectionNotify:
-						{
-							if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(this->dialog->display, "WM_DELETE_WINDOW", 1))
-								{
-									this->dialog->LFSTK_hideWindow();
-									this->mainLoop=false;
-								}
-						}
-						break;
 				}
 		}
 	this->dialog->LFSTK_hideWindow();
@@ -198,8 +183,8 @@ bool LFSTK_fontDialogClass::LFSTK_showDialog(const char* font)
 
 void LFSTK_fontDialogClass::buildDialog(void)
 {
-	int		sy=BORDER;
-	char	*sizestr[4]={0,};
+	int				sy=BORDER;
+	char			*sizestr[4]={0,};
 
 	dialog=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Font Selector",false);
 	dialog->closeDisplayOnExit=true;
@@ -209,8 +194,16 @@ void LFSTK_fontDialogClass::buildDialog(void)
 //list
 	this->fontlist=new LFSTK_listGadgetClass(this->dialog,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5,BUTTONGRAV,NULL,0);
 	this->loadFontStrings();
-	this->fontlist->LFSTK_setList(fontsAZ,maxFonts);
-	this->fontlist->LFSTK_setCallBack(NULL,select,(void*)this);
+	labelLst=labelLst=new listLabelStruct*[this->maxFonts];
+	for(int j=0;j<this->maxFonts;j++)
+		{
+			labelLst[j]=new listLabelStruct;
+			labelLst[j]->label=strdup(this->fontsAZ[j]);
+			labelLst[j]->imageType=NOTHUMB;
+		}
+
+	this->fontlist->LFSTK_setList(labelLst,this->maxFonts);
+	this->fontlist->LFSTK_setCallBack(NULL,select,this);
 	sy+=GADGETHITE*5;
 
 //bold

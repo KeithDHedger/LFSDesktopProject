@@ -23,10 +23,10 @@
 LFSTK_imageClass::~LFSTK_imageClass()
 {
 //DEBUGFUNC("destroy image","");
-	cairo_destroy(this->shapecr);
 	cairo_surface_destroy(this->shapesfc);
-	XFreePixmap(this->display,shape);
-	XSync(this->display,false);
+	cairo_destroy(this->shapecr);
+	XFreePixmap(this->display,this->shape);
+	XSync(this->display,true);
 }
 
 LFSTK_imageClass::LFSTK_imageClass()
@@ -201,5 +201,10 @@ LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* image
 
 	this->shape=XCreatePixmap(this->display,this->window,w,h,1);
 	this->shapesfc=cairo_xlib_surface_create_for_bitmap(this->display,this->shape,DefaultScreenOfDisplay(this->display),w,h);
-	this->shapecr=cairo_create(shapesfc);
+	//this->shapesfc=
+	//this->shapesfc=cairo_image_surface_create_from_png(imagepath);
+	//this->shapecr=cairo_create(shapesfc);
+	//this->shapesfc=this->cImage;
+	this->shapecr=cairo_create(this->shapesfc);
+
 }

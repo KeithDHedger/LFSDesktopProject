@@ -52,7 +52,7 @@ bool buttonCB(void *p,void* ud)
 		{
 			if(makeLib->LFSTK_getValue()==true)
 				{
-					asprintf(&command,"(cd ..;make)",(const char*)ud,dbg);
+					asprintf(&command,"(cd ..;make -j4)",(const char*)ud,dbg);
 					system(command);
 					free(command);
 				}

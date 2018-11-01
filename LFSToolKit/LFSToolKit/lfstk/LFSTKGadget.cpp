@@ -1135,13 +1135,14 @@ void LFSTK_gadgetClass::LFSTK_setCairoFontDataParts(const char* fmt,...)
 * \param newlabel new label.
 * \note Label is copied.
 */
-void LFSTK_gadgetClass::LFSTK_setLabel(const char *newlabel)
+void LFSTK_gadgetClass::LFSTK_setLabel(const char *newlabel,bool clearwindow)
 {
 	if(this->label!=NULL)
 		free(this->label);
 	this->label=strdup(newlabel);
 	this->LFSTK_setCairoFontData();
-	this->LFSTK_clearWindow();
+	if(clearwindow==true)
+		this->LFSTK_clearWindow();
 }
 
 /**
@@ -1313,6 +1314,91 @@ void LFSTK_gadgetClass::drawBox(geometryStruct* g,gadgetState state,bevelType be
 			}
 	cairo_restore(this->cr);
 	XSync(this->display,false);
+}
+
+/**
+* Set image and render with cairo.
+* \param file Path to image file.
+* \param orient orientation of image ( LEFT,CENTRE,RIGHT ).
+* \param scale scale type for image.
+*/
+void LFSTK_gadgetClass::LFSTK_setImageFromSurface(cairo_surface_t *sfc,int orient,bool scale)
+{
+	cairo_status_t	cs=CAIRO_STATUS_SUCCESS;
+	cairo_t			*tcr;
+	float			scaleX=1.0;
+	float			scaleY=1.0;
+	int				txtx;
+	float			maxWidth;
+	float			maxHeight;
+	float			ratio;
+	float			width;
+	float			height;
+	char			*suffix=NULL;
+#if 1
+if(sfc==NULL)
+	return;
+	width=cairo_image_surface_get_width(sfc);
+	height=cairo_image_surface_get_height(sfc);
+
+	if(orient!=MENU)
+		{
+			txtx=this->LFSTK_getTextWidth(this->label);
+			maxWidth=this->gadgetGeom.w-txtx-8;
+			maxHeight=this->gadgetGeom.h-8;
+		}
+	else
+		{
+			maxWidth=this->gadgetGeom.h-(pad*4);
+			maxHeight=maxWidth;
+			this->gadgetDetails.reserveSpace=maxHeight;
+		}
+
+	if(orient==TOOLBAR)
+		{
+			maxWidth=this->gadgetGeom.w-(this->pad*2);
+			maxHeight=this->gadgetGeom.h-8-(this->textExtents.height+(this->pad*2));
+		}
+
+	if(maxWidth>=maxHeight)
+		ratio=maxHeight/height;
+	else
+		ratio=maxWidth/width;
+
+	if(orient==PRESERVEASPECT)
+		{
+			if(width>=height)
+				ratio=maxWidth/width;
+			else
+				ratio=maxHeight/height;
+		}
+
+	this->imageWidth=width*ratio;
+	this->imageHeight=height*ratio;
+
+	this->useImage=true;
+	this->imageGravity=orient;
+	this->labelGravity=orient;
+
+	if(scale==false)
+		{
+			this->imageWidth=this->gadgetGeom.w;
+			this->imageHeight=this->gadgetGeom.h;
+			ratio=1.0;
+		}
+
+	if(this->cImage!=NULL)
+		cairo_surface_destroy(this->cImage);
+	this->cImage=cairo_surface_create_similar_image(sfc,cairo_image_surface_get_format(sfc),this->imageWidth,this->imageHeight);
+	tcr=cairo_create(this->cImage);
+	cairo_reset_clip(tcr);
+	cairo_scale(tcr,ratio,ratio);
+	cairo_set_source_surface(tcr,sfc,0,0);
+	cairo_paint(tcr);
+	this->gadgetDetails.reserveSpace=this->imageWidth;
+	
+	cairo_destroy(tcr);
+#endif
 }
 
 /**
@@ -1720,3 +1806,4 @@ void LFSTK_gadgetClass::LFSTK_getLimits(rectStruct *rect)
 	rect->y=this->minY;
 	rect->h=this->maxY;
 }
+

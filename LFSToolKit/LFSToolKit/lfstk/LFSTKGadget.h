@@ -103,7 +103,7 @@ class LFSTK_gadgetClass
 		void					LFSTK_setLabelAutoColour(bool setauto);
 		void					LFSTK_setCairoFontDataParts(const char* fmt,...);
 
-		void					LFSTK_setLabel(const char *newlabel);
+		void					LFSTK_setLabel(const char *newlabel,bool clearwindow=true);
 		const char				*LFSTK_getLabel(void);
 		void					LFSTK_setLabelGravity(int orient);
 
@@ -111,6 +111,7 @@ class LFSTK_gadgetClass
 		void					drawImage();
 
 		cairo_status_t 			LFSTK_setImageFromPath(const char *file,int orient,bool scale);
+		void 					LFSTK_setImageFromSurface(cairo_surface_t *sfc,int orient,bool scale);
 
 		int						LFSTK_gadgetOnMonitor(void);
 		void					LFSTK_setTile(const char *path,int size);
