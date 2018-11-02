@@ -1002,3 +1002,48 @@ Pixmap LFSTK_lib::LFSTK_getWindowPixmap(Display *display,Window win)
 	return currentRootPixmap;
 }
 
+/**
+* Create a cairo sruface from file path.
+* \return cairo_surface_t*
+*/
+cairo_surface_t	*LFSTK_lib::LFSTK_createSurfaceFromPath(const char *path)
+{
+	cairo_status_t	cs=CAIRO_STATUS_SUCCESS;
+	cairo_surface_t	*tempimage=NULL;
+	char			*suffix=NULL;
+
+	if(path==NULL)
+		tempimage=NULL;
+	else
+		{
+			suffix=strrchr((char*)path,'.');
+			if((suffix!=NULL) && (strcasecmp(suffix,".png")==0))
+				{
+					tempimage=cairo_image_surface_create_from_png(path);
+					cs=cairo_surface_status(tempimage);
+				}
+			else
+				cs=CAIRO_STATUS_INVALID_FORMAT;
+
+			if(cs!=CAIRO_STATUS_SUCCESS)
+				{
+					if((suffix!=NULL) && (strcasecmp(suffix,".jpg")==0))
+						{
+							tempimage=this->LFSTK_cairo_image_surface_create_from_jpeg(path);
+							cs=cairo_surface_status(tempimage);
+						}
+					else
+						cs=CAIRO_STATUS_INVALID_FORMAT;
+				}
+		}
+
+	if(cs!=CAIRO_STATUS_SUCCESS)
+		tempimage=NULL;
+	return(tempimage);
+}
+
+
+
+
+
+

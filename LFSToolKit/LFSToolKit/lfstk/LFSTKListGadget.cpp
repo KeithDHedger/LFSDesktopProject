@@ -126,6 +126,8 @@ void LFSTK_listGadgetClass::LFSTK_setListFromFile(const char *filepath,bool incl
 							labelLst[j]=new listLabelStruct;
 							labelLst[j]->label=strings[j];
 							labelLst[j]->imageType=NOTHUMB;
+							//labelLst[j]->imageType=FILETHUMB;
+							//labelLst[j]->data.imagePath=strdup("/media/LinuxData/Development64/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit/resources/pixmaps/lfstkpngs/documents.png");
 						}
 					this->LFSTK_setList(labelLst,cnt);
 				}
@@ -148,7 +150,12 @@ void LFSTK_listGadgetClass::LFSTK_setList(listLabelStruct **list,unsigned numite
 	this->labelData=list;
 	this->listOffset=0;
 	this->currentItem=0;
-	this->scrollBar->LFSTK_setScale(0,numitems-this->maxShowing);
+
+	if(numitems>maxShowing)
+		this->scrollBar->LFSTK_setScale(0,numitems-this->maxShowing);
+	else
+		this->scrollBar->LFSTK_setScale(0,0);
+
 	this->listCnt=numitems;
 	for(int j=0;j<this->maxShowing;j++)
 		{
@@ -188,7 +195,6 @@ void LFSTK_listGadgetClass::LFSTK_setList(listLabelStruct **list,unsigned numite
 bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
 {
 	LFSTK_listGadgetClass	*list;
-	int						start;
 
 	if((object==NULL) || (userdata==NULL))
 		return(true);
@@ -196,10 +202,9 @@ bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
 	LFSTK_scrollBarClass	*sb=static_cast<LFSTK_scrollBarClass*>(object);
 	list=static_cast<LFSTK_listGadgetClass*>(userdata);
 
-	start=sb->value;
-
 	//list->setNavSensitive();
-	list->listOffset=start;
+
+	list->listOffset=sb->value;
 	for(int j=0;j<list->maxShowing;j++)
 		{
 			if(j+list->listOffset<list->listCnt)
@@ -214,6 +219,7 @@ bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
 					list->data[j].userData=j+list->listOffset;
 				}
 		}
+
 	for(int j=0;j<list->maxShowing;j++)
 		list->labels[j]->LFSTK_clearWindow();
 	return(true);
@@ -327,7 +333,7 @@ void LFSTK_listGadgetClass::freeList(void)
 					if(this->labelData[j]!=NULL)
 						{
 							free(this->labelData[j]->label);
-							if((this->labelData[j]->imageType==CAIROTHUMB) && (this->labelData[j]->data.surface!=NULL))
+							if((this->labelData[j]->imageType==CAIROTHUMB) && (this->labelData[j]->data.surface!=NULL) && (this->freeCairoImages==true))
 								cairo_surface_destroy(this->labelData[j]->data.surface);
 							if((this->labelData[j]->imageType==FILETHUMB) && (this->labelData[j]->data.imagePath!=NULL))
 								free(this->labelData[j]->data.imagePath);

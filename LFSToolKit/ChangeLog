@@ -1,4 +1,8 @@
 0.4.0
+Renamed Findclass.
+Fixed visual anomaly's in list box.
+Scrollbar now responds to scroll wheel properly.
+Speed tweaks for list gadgets.
 Code clean.
 Converted Font dialog to new API's.
 Converted file dialog's to new API's.
@@ -6,18 +10,18 @@ Changed list API's.
 
 0.3.1
 Fixed flickering when scrolling large list.
-Added cumulative search option to FindClass:findFiles.
+Added cumulative search option to LFSTK_FindClass:findFiles.
 Code clean.
 UI changes.
 Better nav in filedialogs using entry bar.
 Added broken link image to file dialog.
 Added link images to file dialog.
-Redone FindClass.
+Redone LFSTK_FindClass.
 Added arrows to scrolbar line buttons.
 Added option to do clear window on all gadgets from window clear window.
 Added some sample themes ( installed in/usr/share/themes, move to ~/.themes to use ). 
-Exposed FindClass.
-Added file name filter to FindClass.
+Exposed LFSTK_FindClass.
+Added file name filter to LFSTK_FindClass.
 Better file dialog path resolve.
 Added Hide/Show dot files in file/folder dialogs.
 Code clean.

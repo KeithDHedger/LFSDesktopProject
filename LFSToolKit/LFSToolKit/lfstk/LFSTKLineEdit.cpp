@@ -99,6 +99,7 @@ void LFSTK_lineEditClass::LFSTK_clearWindow()
 	this->gadgetDetails.bevel=BEVELIN;
 	this->drawLabel();
 	this->drawBevel(&this->gadgetDetails.gadgetGeom,this->gadgetDetails.bevel);
+	XSync(this->display,false);
 	return;
 }
 

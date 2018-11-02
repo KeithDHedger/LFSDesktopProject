@@ -82,13 +82,14 @@ class LFSTK_fileDialogClass
 		bool					mainLoop;
 		bool					apply;
 		bool					dialogType;
-//		const char				*fileImage;
-//		const char				*folderImage;
-//		const char				*imageImage;
-//		const char				*fileImageLink;
-//		const char				*folderImageLink;
-//		const char				*imageImageLink;
-//		const char				*imageBrokenLink;
+		cairo_surface_t			*fileImage;
+		cairo_surface_t			*folderImage;
+		cairo_surface_t			*imageImage;
+		cairo_surface_t			*fileImageLink;
+		cairo_surface_t			*folderImageLink;
+		cairo_surface_t			*imageImageLink;
+		cairo_surface_t			*brokenLink;
+
 		bool					showHidden=false;
 		LFSTK_imageClass		*tux=NULL;
 		LFSTK_labelClass		*previewMimeType;
@@ -105,7 +106,7 @@ class LFSTK_fileDialogClass
 		LFSTK_lineEditClass		*dirEdit;
 
 //files and folders
-		FindClass				*fc=NULL;
+		LFSTK_FindClass				*fc=NULL;
 		void					getFileList(void);
 		void					freeFileList();
 		void					cleanDirPath(void);

@@ -270,27 +270,35 @@ bool LFSTK_scrollBarClass::mouseUp(XButtonEvent *e)
 	if((this->isActive==false) || (this->callback.ignoreCallback==true))
 		return(true);
 
-	if(strcmp(this->label,"--")==0)
-		return(true);;
-
 	if(this->inWindow==true)
 		{
 			this->thumb->LFSTK_getGeom(&geom);
 			this->thumb->LFSTK_getLimits(&rect);
 
-			if(this->verticalBar==false)
+			switch(e->button)
 				{
-					if((this->mouseDownX+geom.w)<geom.x-rect.y)
+					case Button1:
+						if(this->verticalBar==false)
+							{
+								if((this->mouseDownX+geom.w)<geom.x-rect.y)
+									this->value-=this->pageScroll;
+								else
+									this->value+=this->pageScroll;
+							}
+						else
+							{
+								if((this->mouseDownY-geom.h)<geom.y-rect.y)
+									this->value-=this->pageScroll;
+								else
+									this->value+=this->pageScroll;
+							}
+						break;
+					case Button4:
 						this->value-=this->pageScroll;
-					else
+						break;
+					case Button5:
 						this->value+=this->pageScroll;
-				}
-			else
-				{
-					if((this->mouseDownY-geom.h)<geom.y-rect.y)
-						this->value-=this->pageScroll;
-					else
-						this->value+=this->pageScroll;
+						break;
 				}
 			this->setState(true);
 		}

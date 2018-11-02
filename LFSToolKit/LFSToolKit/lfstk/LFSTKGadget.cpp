@@ -365,7 +365,7 @@ void LFSTK_gadgetClass::clearBox(gadgetStruct* details)
 				cairo_paint(this->cr);
 			cairo_restore(this->cr);
 		}
-	XSync(this->display,false);
+	//XSync(this->display,false);
 }
 
 /**
@@ -408,10 +408,9 @@ void LFSTK_gadgetClass::drawBevel(geometryStruct* geom,bevelType bevel)
 		cairo_line_to(this->cr,geom->x+1,geom->y+geom->h);
 		cairo_stroke(this->cr);			
 	cairo_restore(this->cr);
-	XSync(this->display,false);
+	//XSync(this->display,false);
 }
 
-#if 1
 /**
 * Draw label.
 * \param p Button state.
@@ -526,119 +525,8 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 				cairo_stroke(this->cr);
 			cairo_restore(this->cr);
 		}
-	XSync(this->display,false);
+	//XSync(this->display,false);
 }
-#else
-void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
-{
-	int			labelx=0;
-	int			labely;
-	cairoColor	lcol;
-	cairoColor	*colptr=&this->labelBGColour.RGBAColour;
-	geometryStruct	labelrect;
-
-	if(this->isActive==false)
-		details->state=INACTIVECOLOUR;
-
-	labely=(details->gadgetGeom.h/2)-(extents.y_bearing/2);
-
-	if(strcmp(this->label,"--")!=0)
-		{
-			switch(this->labelGravity)
-				{
-					case MENU:
-						labelx=details->gadgetGeom.h+(this->pad*4);
-						break;
-					case LEFT:
-						if(this->useImage==true)
-							labelx=details->reserveSpace+pad*2;
-						else
-							labelx=details->reserveSpace+(this->pad*2);
-						break;
-					case CENTRE:
-						if(this->useImage==true)
-							{
-								if(this->imageGravity==RIGHT)
-									labelx=((details->gadgetGeom.w-this->imageWidth)/2)-(this->extents.width/2);
-								else
-									labelx=((details->gadgetGeom.w-details->reserveSpace)/2)-(this->extents.width/2)+details->reserveSpace;
-							}
-						else
-							labelx=((details->gadgetGeom.w-details->reserveSpace)/2)-(this->extents.width/2)+details->reserveSpace;
-						break;
-					case RIGHT:
-						if(this->useImage==true)
-							labelx=details->gadgetGeom.w-(this->extents.width)-pad*2;
-						else
-							labelx=details->gadgetGeom.w-this->extents.width-this->pad*2;
-						break;
-					case TOOLBAR:
-						labelx=((details->gadgetGeom.w)/2)-(this->extents.width/2);
-						labely=details->gadgetGeom.h-this->maxTextHeight+this->pad*2;
-						break;
-				}
-
-			cairo_save(this->cr);
-				cairo_select_font_face(this->cr,fontName,slant,weight);
-				cairo_set_font_size(this->cr,fontSize);
-
-				if(this->drawLabelBG==true)
-					{
-						int boxy=labely-this->maxTextHeight+this->pad*2;
-						if(this->autoLabelBGColour==true)
-							{
-								if(strcmp(this->wc->globalLib->bestFontColour(this->fontColourNames[details->state].pixel),"black")==0)
-									{
-										lcol.r=0;
-										lcol.g=0;
-										lcol.b=0;
-										lcol.a=this->labelBGColour.RGBAColour.a;
-									}
-								else
-									{
-										lcol.r=1;
-										lcol.g=1;
-										lcol.b=1;
-										lcol.a=this->labelBGColour.RGBAColour.a;
-									}
-								colptr=&lcol;
-							}
-
-						cairo_set_source_rgba(this->cr,colptr->r,colptr->g,colptr->b,colptr->a);
-						cairo_rectangle(this->cr,labelx,boxy,this->extents.width,this->maxTextHeight);
-						labely=boxy+this->maxTextHeight-(this->maxTextHeight/2)+this->pad;
-						labely++;
-						cairo_fill(this->cr);
-					}		
-
-				cairo_move_to(this->cr,labelx,labely);
-				cairo_set_source_rgba(this->cr,this->fontColourNames[details->state].RGBAColour.r,this->fontColourNames[details->state].RGBAColour.g,this->fontColourNames[details->state].RGBAColour.b,1.0);
-				cairo_show_text(this->cr,this->label); 
-			cairo_restore(this->cr);
-		}
-	else
-		{
-			cairoColor	tlcolour={0,0,0,1};
-			cairoColor	brcolour={1,1,1,1};
-
-			cairo_save(this->cr);
-				cairo_reset_clip (this->cr);
-				cairo_set_antialias (this->cr,CAIRO_ANTIALIAS_NONE);
-				cairo_set_line_width(this->cr,1.0);
-				cairo_set_source_rgba(this->cr,tlcolour.r,tlcolour.g,tlcolour.b,tlcolour.a);
-				cairo_move_to(this->cr,0,details->gadgetGeom.h/2);
-				cairo_line_to(this->cr,details->gadgetGeom.w,details->gadgetGeom.h/2);
-				cairo_stroke(this->cr);
-
-				cairo_set_source_rgba(this->cr,brcolour.r,brcolour.g,brcolour.b,brcolour.a);
-				cairo_move_to(this->cr,0,details->gadgetGeom.h/2+1);
-				cairo_line_to(this->cr,details->gadgetGeom.w,details->gadgetGeom.h/2+1);
-				cairo_stroke(this->cr);
-			cairo_restore(this->cr);
-		}
-	XSync(this->display,false);
-}
-#endif
 
 /**
 * Draw a button.
@@ -653,6 +541,7 @@ void LFSTK_gadgetClass::drawGagetDetails(void)
 		this->drawImage();
 	if(this->showIndicator==true)
 		this->drawIndicator(&this->gadgetDetails);
+	XSync(this->display,false);
 }
 
 /**
@@ -939,7 +828,7 @@ void LFSTK_gadgetClass::drawImage()
 		cairo_set_source_surface(this->cr,this->cImage,0,0);
 		cairo_paint_with_alpha(this->cr,this->alpha);
 	cairo_restore(this->cr);
-	XSync(this->display,false);
+	//XSync(this->display,false);
 }
 
 /**
@@ -1226,7 +1115,7 @@ void LFSTK_gadgetClass::drawIndicator(gadgetStruct* details)
 				
 				break;
 		}
-	XSync(this->display,false);
+	//XSync(this->display,false);
 }
 
 /**
@@ -1311,9 +1200,10 @@ void LFSTK_gadgetClass::LFSTK_setImageFromSurface(cairo_surface_t *sfc,int orien
 	float			width;
 	float			height;
 	char			*suffix=NULL;
-#if 1
-if(sfc==NULL)
-	return;
+
+	if(sfc==NULL)
+		return;
+
 	width=cairo_image_surface_get_width(sfc);
 	height=cairo_image_surface_get_height(sfc);
 
@@ -1362,6 +1252,15 @@ if(sfc==NULL)
 			this->imageHeight=this->gadgetGeom.h;
 			ratio=1.0;
 		}
+/*
+	if(this->cImage==NULL)
+		this->cImage=cairo_surface_create_similar_image(sfc,cairo_image_surface_get_format(sfc),this->imageWidth,this->imageHeight);
+	tcr=cairo_create(this->cImage);
+	cairo_reset_clip(tcr);
+	cairo_scale(tcr,ratio,ratio);
+	cairo_set_source_surface(tcr,sfc,0,0);
+	cairo_paint(tcr);
+*/
 
 	if(this->cImage!=NULL)
 		cairo_surface_destroy(this->cImage);
@@ -1371,10 +1270,10 @@ if(sfc==NULL)
 	cairo_scale(tcr,ratio,ratio);
 	cairo_set_source_surface(tcr,sfc,0,0);
 	cairo_paint(tcr);
+
 	this->gadgetDetails.reserveSpace=this->imageWidth;
 	
 	cairo_destroy(tcr);
-#endif
 }
 
 /**

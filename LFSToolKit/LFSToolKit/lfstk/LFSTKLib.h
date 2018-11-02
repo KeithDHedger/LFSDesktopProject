@@ -59,6 +59,7 @@ class LFSTK_lib
 
 //graphics
 		void			LFSTK_setCairoSurface(Display *display,Window window,Visual *visual,cairo_surface_t **sfc,cairo_t **cr,int width,int height);
+		cairo_surface_t	*LFSTK_createSurfaceFromPath(const char *path);
 		cairo_surface_t	*LFSTK_cairo_image_surface_create_from_jpeg(const char *filename);
 		Pixmap			LFSTK_getWindowPixmap(Display *display,Window win);
 
@@ -72,7 +73,6 @@ class LFSTK_lib
 //debug
 //
 	private:
-		cairo_surface_t	*createImageFromPath(const char *path);
 		cairo_surface_t	*cairo_image_surface_create_from_jpeg_mem(const unsigned char* data, size_t len);
 
 		args			*lfsToolKitGlobals;

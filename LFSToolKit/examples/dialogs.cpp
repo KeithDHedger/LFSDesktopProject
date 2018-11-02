@@ -86,7 +86,7 @@ int main(int argc, char **argv)
 {
 	XEvent	event;
 	int		sy=BORDER;
-		//FindClass *fc=new FindClass;
+		//LFSTK_FindClass *fc=new LFSTK_FindClass;
 
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"File/Folder Select",false);
 	display=wc->display;
@@ -104,6 +104,7 @@ int main(int argc, char **argv)
 //files and folders
 	asprintf(&wd,"%s",wc->userHome);
 	filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",wd,FILEDIALOG);
+	//filedialogfile->useThumbs=true;
 	//filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",NULL,FILEDIALOG);
 	filedialogdir=new LFSTK_fileDialogClass(wc,"Select Folder",NULL,FOLDERDIALOG,"dialogscpp");
 //filedialogfile->LFSTK_setCallBack(NULL,fbup,(void*)filedialogfile);

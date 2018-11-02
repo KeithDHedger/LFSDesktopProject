@@ -2,7 +2,7 @@
  *
  * ©K. D. Hedger. Sun 21 Oct 13:08:54 BST 2018 keithdhedger@gmail.com
 
- * This file (FindClass.cpp) is part of LFSToolKit.
+ * This file (LFSTK_FindClass.cpp) is part of LFSToolKit.
 
  * LFSToolKit is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,11 @@
 #include <dirent.h>
 #include <libgen.h>
 
-#include "FindClass.h"
+#include "LFSTK_FindClass.h"
 
-FindClass *fc;
+LFSTK_FindClass *fc;
 
-void FindClass::deleteData(void)
+void LFSTK_FindClass::deleteData(void)
 {
 	if(!this->data.empty())
 		{
@@ -41,7 +41,7 @@ void FindClass::deleteData(void)
 /**
 * Find class destructor.
 */
-FindClass::~FindClass()
+LFSTK_FindClass::~LFSTK_FindClass()
 {
 	this->deleteData();
 	if(this->fileTypes!=NULL)
@@ -52,7 +52,7 @@ FindClass::~FindClass()
 * Find class constructor.
 * \note NOT thread safe.
 */
-FindClass::FindClass()
+LFSTK_FindClass::LFSTK_FindClass()
 {
 	this->data.clear();
 }
@@ -61,7 +61,7 @@ FindClass::FindClass()
 * Set search depth
 * \param int,int min,max
 */
-void FindClass::setDepth(int min,int max)
+void LFSTK_FindClass::setDepth(int min,int max)
 {
 	this->minDepth=min;
 	this->maxDepth=max;
@@ -71,7 +71,7 @@ void FindClass::setDepth(int min,int max)
 * Get minimum search depth
 * \return int.
 */
-int FindClass::getMinDepth(void)
+int LFSTK_FindClass::getMinDepth(void)
 {
 	return(this->minDepth);
 }
@@ -80,7 +80,7 @@ int FindClass::getMinDepth(void)
 * Get maximum search depth
 * \return int.
 */
-int FindClass::getMaxDepth(void)
+int LFSTK_FindClass::getMaxDepth(void)
 {
 	return(this->maxDepth);
 }
@@ -90,7 +90,7 @@ int FindClass::getMaxDepth(void)
 * \param int type.
 * \note type is same as ntfw flags.
 */
-void FindClass::setFindType(int type)
+void LFSTK_FindClass::setFindType(int type)
 {
 	this->findType=type;
 }
@@ -100,7 +100,7 @@ void FindClass::setFindType(int type)
 * \return int type.
 * \note type is same as ntfw flags.
 */
-int FindClass::getFindType(void)
+int LFSTK_FindClass::getFindType(void)
 {
 	return(this->findType);
 }
@@ -109,7 +109,7 @@ int FindClass::getFindType(void)
 * Set follow links
 * \param bool follow.
 */
-void FindClass::setFollowLinks(bool follow)
+void LFSTK_FindClass::setFollowLinks(bool follow)
 {
 	this->followLinks=follow;
 }
@@ -118,7 +118,7 @@ void FindClass::setFollowLinks(bool follow)
 * Get follow links
 * \return bool.
 */
-bool FindClass::getFollowlinks(void)
+bool LFSTK_FindClass::getFollowlinks(void)
 {
 	return(this->followLinks);
 }
@@ -127,7 +127,7 @@ bool FindClass::getFollowlinks(void)
 * Set include hiiden files
 * \param bool hidden.
 */
-void FindClass::setIncludeHidden(bool hidden)
+void LFSTK_FindClass::setIncludeHidden(bool hidden)
 {
 	this->includeHidden=hidden;
 }
@@ -136,7 +136,7 @@ void FindClass::setIncludeHidden(bool hidden)
 * Get include hiiden files
 * \return bool.
 */
-bool FindClass::getIncludeHidden(void)
+bool LFSTK_FindClass::getIncludeHidden(void)
 {
 	return(this->includeHidden);
 }
@@ -145,7 +145,7 @@ bool FindClass::getIncludeHidden(void)
 * Set sort direction
 * \param bool down.
 */
-void FindClass::setSort(bool down)
+void LFSTK_FindClass::setSort(bool down)
 {
 	this->sortDescending=down;
 }
@@ -154,7 +154,7 @@ void FindClass::setSort(bool down)
 * Get sort direction
 * \return bool.
 */
-bool FindClass::getSort(void)
+bool LFSTK_FindClass::getSort(void)
 {
 	return(this->sortDescending);
 }
@@ -163,7 +163,7 @@ bool FindClass::getSort(void)
 * Get ignore boroken links
 * \return bool.
 */
-bool FindClass::getIgnoreBroken(void)
+bool LFSTK_FindClass::getIgnoreBroken(void)
 {
 	return(this->ignoreBroken);
 }
@@ -172,7 +172,7 @@ bool FindClass::getIgnoreBroken(void)
 * Set ignore boroken links
 * \param bool ignore.
 */
-void FindClass::setIgnoreBroken(bool ignore)
+void LFSTK_FindClass::setIgnoreBroken(bool ignore)
 {
 	this->ignoreBroken=ignore;
 }
@@ -181,7 +181,7 @@ void FindClass::setIgnoreBroken(bool ignore)
 * Set file types filter
 * \param const char *types.
 */
-void FindClass::setFileTypes(const char *suffix)
+void LFSTK_FindClass::setFileTypes(const char *suffix)
 {
 	this->fileTypes=strdup(suffix);
 }
@@ -190,7 +190,7 @@ void FindClass::setFileTypes(const char *suffix)
 * Get file types filter
 * \return const char *.
 */
-const char * FindClass::getFileTypes(void)
+const char * LFSTK_FindClass::getFileTypes(void)
 {
 	return(this->fileTypes);
 }
@@ -245,7 +245,7 @@ static bool sortDataTN(dataStruct i,dataStruct j)
 /**
 * Sort data by name
 */
-void FindClass::sortByName(void)
+void LFSTK_FindClass::sortByName(void)
 {
 	std::sort(this->data.begin(),this->data.end(),sortDataN);
 }
@@ -253,7 +253,7 @@ void FindClass::sortByName(void)
 /**
 * Sort data by path
 */
-void FindClass::sortByPath(void)
+void LFSTK_FindClass::sortByPath(void)
 {
 	std::sort(this->data.begin(),this->data.end(),sortDataP);
 }
@@ -261,7 +261,7 @@ void FindClass::sortByPath(void)
 /**
 * Sort data by type
 */
-void FindClass::sortByType(void)
+void LFSTK_FindClass::sortByType(void)
 {
 	std::sort(this->data.begin(),this->data.end(),sortDataT);
 }
@@ -269,7 +269,7 @@ void FindClass::sortByType(void)
 /**
 * Sort data sortByTypeAndName
 */
-void FindClass::sortByTypeAndName(void)
+void LFSTK_FindClass::sortByTypeAndName(void)
 {
 	std::sort(this->data.begin(),this->data.end(),sortDataTN);
 }
@@ -278,7 +278,7 @@ void FindClass::sortByTypeAndName(void)
 * Get number of items.
 * \return int.
 */
-int FindClass::getDataCount(void)
+int LFSTK_FindClass::getDataCount(void)
 {
 	return((int)this->dataCnt);
 }
@@ -287,7 +287,7 @@ int FindClass::getDataCount(void)
 * Use full path
 * \param bool.
 */
-void FindClass::setFullPath(bool usefull)
+void LFSTK_FindClass::setFullPath(bool usefull)
 {
 	this->fullPath=usefull;
 }
@@ -296,12 +296,12 @@ void FindClass::setFullPath(bool usefull)
 * Get use full path
 * \return bool.
 */
-bool FindClass::getFullPath(void)
+bool LFSTK_FindClass::getFullPath(void)
 {
 	return(this->fullPath);
 }
 
-bool FindClass::fileTypeTest(int filetype)
+bool LFSTK_FindClass::fileTypeTest(int filetype)
 {
 	if(this->getFindType()==ANYTYPE)
 		return(true);
@@ -327,7 +327,7 @@ bool FindClass::fileTypeTest(int filetype)
 * \param bool Tru=Add this search to last, False=New search.
 * \note If getIgnoreBroken()==true broken links not reported.
 */
-void FindClass::findFiles(const char *dir,bool multi)
+void LFSTK_FindClass::findFiles(const char *dir,bool multi)
 {
 	DIR			*dirhandle;
 	dirent		*entry;

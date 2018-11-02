@@ -36,6 +36,13 @@ LFSTK_fileDialogClass::~LFSTK_fileDialogClass(void)
 		free(this->currentPath);
 
 	freeAndNull(&this->filter);
+	cairo_surface_destroy(this->fileImage);
+	cairo_surface_destroy(this->folderImage);
+	cairo_surface_destroy(this->imageImage);
+	cairo_surface_destroy(this->fileImageLink);
+	cairo_surface_destroy(this->folderImageLink);
+	cairo_surface_destroy(this->imageImageLink);
+	cairo_surface_destroy(this->brokenLink);
 	delete this->fc;
 	delete this->dialog;
 }
@@ -69,51 +76,63 @@ void LFSTK_fileDialogClass::getFileList(void)
 
 	this->fileListCnt=this->fc->getDataCount();
 	labelLst=labelLst=new listLabelStruct*[this->fileListCnt];
+	this->fileListGadget->freeCairoImages=false;
+
 	for(int j=0;j<this->fileListCnt;j++)
 		{
 			labelLst[j]=new listLabelStruct;
 			labelLst[j]->label=strdup(this->fc->data.at(j).name.c_str());
+			labelLst[j]->imageType=CAIROTHUMB;
 			switch(this->fc->data.at(j).fileType)
 				{
 					case FOLDERTYPE:
-								labelLst[j]->data.imagePath=strdup(FOLDERPNG);
-								break;
-							case FILETYPE:
-								if((strcasestr(labelLst[j]->label,".jpg")!=NULL) || (strcasestr(labelLst[j]->label,".png")!=NULL))
-									{
-										if(this->useThumbs==true)
-											labelLst[j]->data.imagePath=strdup(this->fc->data.at(j).path.c_str());
-										else
-											labelLst[j]->data.imagePath=strdup(IMAGEPNG);
-									}
-								else
-									labelLst[j]->data.imagePath=strdup(DOCSPNG);
-								break;
-							case FOLDERLINKTYPE:
-								labelLst[j]->data.imagePath=strdup(FOLDERLINKPNG);
+								labelLst[j]->data.surface=this->folderImage;
 								break;
 
-							case FILELINKTYPE:
-								if((strcasestr(labelLst[j]->label,".jpg")!=NULL) || (strcasestr(labelLst[j]->label,".png")!=NULL))
+					case FILETYPE:
+						if((strcasestr(labelLst[j]->label,".jpg")!=NULL) || (strcasestr(labelLst[j]->label,".png")!=NULL))
+							{
+								if(this->useThumbs==true)
 									{
-										if(this->useThumbs==true)
-											labelLst[j]->data.imagePath=strdup(this->fc->data.at(j).path.c_str());
-										else
-											labelLst[j]->data.imagePath=strdup(IMAGELINKPNG);
+										labelLst[j]->imageType=FILETHUMB;
+										labelLst[j]->data.imagePath=strdup(this->fc->data.at(j).path.c_str());
 									}
 								else
-									labelLst[j]->data.imagePath=strdup(DOCLINKPNG);
-								break;
-							case BROKENLINKTYPE:
-								labelLst[j]->data.imagePath=strdup(BOKENLINKPNG);
-								break;
+									labelLst[j]->data.surface=this->imageImage;
+							}
+						else
+							labelLst[j]->data.surface=this->fileImage;
+						break;
+
+					case FOLDERLINKTYPE:
+						labelLst[j]->data.surface=this->folderImageLink;
+						break;
+
+					case FILELINKTYPE:
+						if((strcasestr(labelLst[j]->label,".jpg")!=NULL) || (strcasestr(labelLst[j]->label,".png")!=NULL))
+							{
+								if(this->useThumbs==true)
+									{
+										labelLst[j]->imageType=FILETHUMB;
+										labelLst[j]->data.imagePath=strdup(this->fc->data.at(j).path.c_str());
+									}
+								else
+									labelLst[j]->data.surface=this->imageImageLink;
+							}
+						else
+							labelLst[j]->data.surface=this->fileImageLink;
+						break;
+
+					case BROKENLINKTYPE:
+						labelLst[j]->data.surface=this->brokenLink;
+						break;
 				
-							default:
-								labelLst[j]->data.imagePath=strdup(DOCSPNG);
-								break;
+					default:
+						labelLst[j]->data.surface=this->fileImage;
+						break;
 				}
-			labelLst[j]->imageType=FILETHUMB;
 		}
+		fprintf(stderr,"cnt=%i\n",this->fileListCnt);
 	this->fileListGadget->LFSTK_setList(labelLst,this->fileListCnt);
 }
 
@@ -220,13 +239,13 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	this->fileListCnt=0;
 	this->currentFile=NULL;
 	this->currentPath=NULL;
-//	this->fileImage=LFSTKPIXMAPSDIR "/documents.png";
-//	this->folderImage=LFSTKPIXMAPSDIR "/folder.png";
-//	this->imageImage=LFSTKPIXMAPSDIR "/image.png";
-//	this->fileImageLink=LFSTKPIXMAPSDIR "/document.link.png";
-//	this->folderImageLink=LFSTKPIXMAPSDIR "/folder.link.png";
-//	this->imageImageLink=LFSTKPIXMAPSDIR "/image.link.png";
-//	this->imageBrokenLink=LFSTKPIXMAPSDIR "/document.link.broken.png";
+	this->fileImage=parentwc->globalLib->LFSTK_createSurfaceFromPath(DOCSPNG);
+	this->folderImage=parentwc->globalLib->LFSTK_createSurfaceFromPath(FOLDERPNG);
+	this->imageImage=parentwc->globalLib->LFSTK_createSurfaceFromPath(IMAGEPNG);
+	this->fileImageLink=parentwc->globalLib->LFSTK_createSurfaceFromPath(DOCLINKPNG);
+	this->folderImageLink=parentwc->globalLib->LFSTK_createSurfaceFromPath(FOLDERLINKPNG);
+	this->imageImageLink=parentwc->globalLib->LFSTK_createSurfaceFromPath(IMAGELINKPNG);
+	this->brokenLink=parentwc->globalLib->LFSTK_createSurfaceFromPath(BOKENLINKPNG);
 
 	if(recentname!=NULL)
 		this->recentsName=recentname;
@@ -244,7 +263,7 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	dialog->closeDisplayOnExit=true;
 
 //find files
-	this->fc=new FindClass;
+	this->fc=new LFSTK_FindClass;
 
 //TODO//?
 	XSizeHints sh;

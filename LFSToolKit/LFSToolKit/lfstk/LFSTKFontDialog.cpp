@@ -55,6 +55,7 @@ void LFSTK_fontDialogClass::buildFontString(void)
 	this->fontData.fontName=this->fontsAZ[selectedFontNumber];
 	this->fontData.isValid=true;
 	free(formatstring);
+	this->preview->LFSTK_clearWindow();
 }
 
 bool select(void *object,void* userdata)

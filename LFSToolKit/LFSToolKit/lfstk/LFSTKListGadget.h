@@ -59,10 +59,13 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 
 		bool					mouseExit(XButtonEvent *e) {return(true);};
 		bool					mouseEnter(XButtonEvent *e) {return(true);};
+		bool					mouseDown(XButtonEvent *e) {return(true);};
+		bool					mouseUp(XButtonEvent *e) {return(true);};
 		unsigned				listCnt;
 
 		//int						useThumbNail=NOTHUMB;
 		listLabelStruct			**labelData=NULL;
+		bool					freeCairoImages=true;
 	private:
 		LFSTK_scrollBarClass	*scrollBar;
 		unsigned				listOffset;
