@@ -1,1 +1,1 @@
-../FindClass.h
+../LFSTK_FindClass.h
