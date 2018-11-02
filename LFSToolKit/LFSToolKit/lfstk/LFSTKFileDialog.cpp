@@ -62,19 +62,19 @@ void LFSTK_fileDialogClass::getFileList(void)
 	char			imagepath[PATH_MAX];
 	listLabelStruct	**labelLst=NULL;
 
-	this->fc->setDepth(1,1);
+	this->fc->LFSTK_setDepth(1,1);
 	if(this->dialogType==FOLDERDIALOG)
-		this->fc->setFindType(FOLDERTYPE);
+		this->fc->LFSTK_setFindType(FOLDERTYPE);
 	else
-		this->fc->setFindType(ANYTYPE);
-	this->fc->setFullPath(true);
-	this->fc->setIgnoreBroken(false);
-	this->fc->setIncludeHidden(this->showHidden);
-	this->fc->findFiles(this->currentDir,false);
-	this->fc->setSort(false);
-	this->fc->sortByTypeAndName();
+		this->fc->LFSTK_setFindType(ANYTYPE);
+	this->fc->LFSTK_setFullPath(true);
+	this->fc->LFSTK_setIgnoreBroken(false);
+	this->fc->LFSTK_setIncludeHidden(this->showHidden);
+	this->fc->LFSTK_findFiles(this->currentDir,false);
+	this->fc->LFSTK_setSort(false);
+	this->fc->LFSTK_sortByTypeAndName();
 
-	this->fileListCnt=this->fc->getDataCount();
+	this->fileListCnt=this->fc->LFSTK_getDataCount();
 	labelLst=labelLst=new listLabelStruct*[this->fileListCnt];
 	this->fileListGadget->freeCairoImages=false;
 

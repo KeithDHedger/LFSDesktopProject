@@ -1,6 +1,5 @@
 {
 global: *LFSTK_*;
-		*FindClass*;
 
 local: *;
 

@@ -135,8 +135,8 @@ am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(AllHallowsdir)" \
 LTLIBRARIES = $(lib_LTLIBRARIES)
 liblfstoolkit_la_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
-am__objects_1 = ../lfstk/FindClass.lo ../lfstk/LFSTKButton.lo \
-	../lfstk/LFSTKFileDialog.lo ../lfstk/LFSTKFontDialog.lo \
+am__objects_1 = ../lfstk/LFSTKButton.lo ../lfstk/LFSTKFileDialog.lo \
+	../lfstk/LFSTK_FindClass.lo ../lfstk/LFSTKFontDialog.lo \
 	../lfstk/LFSTKGadget.lo ../lfstk/LFSTKImage.lo \
 	../lfstk/LFSTKLabel.lo ../lfstk/LFSTKLib.lo \
 	../lfstk/LFSTKLineEdit.lo ../lfstk/LFSTKListGadget.lo \
@@ -371,7 +371,7 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 				-DLIBDIR=\""${libdir}/${PACKAGE}"\" \
 				-DLFSTKPIXMAPSDIR=\""${pkgdatadir}/Pixmaps"\"
 
-COMMONSRC = ../lfstk/FindClass.cpp ../lfstk/LFSTKButton.cpp ../lfstk/LFSTKFileDialog.cpp ../lfstk/LFSTKFontDialog.cpp ../lfstk/LFSTKGadget.cpp ../lfstk/LFSTKImage.cpp ../lfstk/LFSTKLabel.cpp ../lfstk/LFSTKLib.cpp ../lfstk/LFSTKLineEdit.cpp ../lfstk/LFSTKListGadget.cpp ../lfstk/LFSTKMenuButton.cpp ../lfstk/LFSTKMultiLineEdit.cpp ../lfstk/LFSTKScrollBar.cpp ../lfstk/LFSTKToggleButton.cpp ../lfstk/LFSTKWindow.cpp
+COMMONSRC = ../lfstk/LFSTKButton.cpp ../lfstk/LFSTKFileDialog.cpp ../lfstk/LFSTK_FindClass.cpp ../lfstk/LFSTKFontDialog.cpp ../lfstk/LFSTKGadget.cpp ../lfstk/LFSTKImage.cpp ../lfstk/LFSTKLabel.cpp ../lfstk/LFSTKLib.cpp ../lfstk/LFSTKLineEdit.cpp ../lfstk/LFSTKListGadget.cpp ../lfstk/LFSTKMenuButton.cpp ../lfstk/LFSTKMultiLineEdit.cpp ../lfstk/LFSTKScrollBar.cpp ../lfstk/LFSTKToggleButton.cpp ../lfstk/LFSTKWindow.cpp
 lib_LTLIBRARIES = liblfstoolkit.la
 liblfstoolkit_la_SOURCES = $(COMMONSRC)
 pixfilesdir = ${prefix}/share/pixmaps
@@ -461,11 +461,11 @@ clean-libLTLIBRARIES:
 ../lfstk/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) ../lfstk/$(DEPDIR)
 	@: > ../lfstk/$(DEPDIR)/$(am__dirstamp)
-../lfstk/FindClass.lo: ../lfstk/$(am__dirstamp) \
-	../lfstk/$(DEPDIR)/$(am__dirstamp)
 ../lfstk/LFSTKButton.lo: ../lfstk/$(am__dirstamp) \
 	../lfstk/$(DEPDIR)/$(am__dirstamp)
 ../lfstk/LFSTKFileDialog.lo: ../lfstk/$(am__dirstamp) \
+	../lfstk/$(DEPDIR)/$(am__dirstamp)
+../lfstk/LFSTK_FindClass.lo: ../lfstk/$(am__dirstamp) \
 	../lfstk/$(DEPDIR)/$(am__dirstamp)
 ../lfstk/LFSTKFontDialog.lo: ../lfstk/$(am__dirstamp) \
 	../lfstk/$(DEPDIR)/$(am__dirstamp)
@@ -503,7 +503,6 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/FindClass.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKButton.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKFileDialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKFontDialog.Plo@am__quote@
@@ -518,6 +517,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKScrollBar.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKToggleButton.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTKWindow.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../lfstk/$(DEPDIR)/LFSTK_FindClass.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\

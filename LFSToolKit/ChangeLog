@@ -10,7 +10,7 @@ Changed list API's.
 
 0.3.1
 Fixed flickering when scrolling large list.
-Added cumulative search option to LFSTK_FindClass:findFiles.
+Added cumulative search option to LFSTK_FindClass:LFSTK_findFiles.
 Code clean.
 UI changes.
 Better nav in filedialogs using entry bar.

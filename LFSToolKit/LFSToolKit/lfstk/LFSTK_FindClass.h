@@ -49,31 +49,31 @@ class LFSTK_FindClass
 		~LFSTK_FindClass();
 		LFSTK_FindClass();
 
-		void		setDepth(int min,int max);
-		void		setFindType(int type);
-		int			getFindType(void);
-		void		setFollowLinks(bool follow);
-		bool		getFollowlinks(void);
-		void		setIncludeHidden(bool hidden);
-		bool		getIncludeHidden(void);
-		void		setFullPath(bool usefull);
-		bool		getFullPath(void);
-		void		setSort(bool down);
-		bool		getSort(void);
-		void		setIgnoreBroken(bool ignore);
-		bool		getIgnoreBroken(void);
-		void		setFileTypes(const char *suffix);
-		const char*	getFileTypes(void);
+		void		LFSTK_setDepth(int min,int max);
+		void		LFSTK_setFindType(int type);
+		int			LFSTK_getFindType(void);
+		void		LFSTK_setFollowLinks(bool follow);
+		bool		LFSTK_getFollowlinks(void);
+		void		LFSTK_setIncludeHidden(bool hidden);
+		bool		LFSTK_getIncludeHidden(void);
+		void		LFSTK_setFullPath(bool usefull);
+		bool		LFSTK_getFullPath(void);
+		void		LFSTK_setSort(bool down);
+		bool		LFSTK_getSort(void);
+		void		LFSTK_setIgnoreBroken(bool ignore);
+		bool		LFSTK_getIgnoreBroken(void);
+		void		LFSTK_setFileTypes(const char *suffix);
+		const char*	LFSTK_getFileTypes(void);
 
 
-		void		findFiles(const char *dir,bool multi=false);
-		void		sortByName(void);
-		void		sortByPath(void);
-		void		sortByType(void);
-		void		sortByTypeAndName(void);
-		int			getDataCount(void);
-		int			getMinDepth(void);
-		int			getMaxDepth(void);
+		void		LFSTK_findFiles(const char *dir,bool multi=false);
+		void		LFSTK_sortByName(void);
+		void		LFSTK_sortByPath(void);
+		void		LFSTK_sortByType(void);
+		void		LFSTK_sortByTypeAndName(void);
+		int			LFSTK_getDataCount(void);
+		int			LFSTK_getMinDepth(void);
+		int			LFSTK_getMaxDepth(void);
 
 		std::vector<dataStruct> data;
 	private:

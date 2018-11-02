@@ -87,19 +87,19 @@ int						queueID=-1;
 
 void addSet(void)
 {
-	FindClass		*fc=new FindClass;
+	LFSTK_FindClass	*fc=new LFSTK_FindClass;
 	char			*themeDir=NULL;
 
 	asprintf(&themeDir,"%s/.themes",getenv("HOME"));
-	fc->setFullPath(true);
-	fc->setDepth(1,1);
-	fc->setFindType(FOLDERTYPE);
-	fc->setIncludeHidden(true);
-	fc->setFileTypes(".lfstk");
-	fc->findFiles(themeDir);
-	fc->findFiles("/usr/share/themes",true);
-	fc->setSort(true);
-	fc->sortByPath();
+	fc->LFSTK_setFullPath(true);
+	fc->LFSTK_setDepth(1,1);
+	fc->LFSTK_setFindType(FOLDERTYPE);
+	fc->LFSTK_setIncludeHidden(true);
+	fc->LFSTK_setFileTypes(".lfstk");
+	fc->LFSTK_findFiles(themeDir);
+	fc->LFSTK_findFiles("/usr/share/themes",true);
+	fc->LFSTK_setSort(true);
+	fc->LFSTK_sortByPath();
 	for(int j=0;j<fc->data.size();j++)
 		{
 			fprintf(stderr,"j=%i name=%s path=%s type=%i\n",j,fc->data.at(j).name.c_str(),fc->data.at(j).path.c_str(),fc->data.at(j).fileType);
