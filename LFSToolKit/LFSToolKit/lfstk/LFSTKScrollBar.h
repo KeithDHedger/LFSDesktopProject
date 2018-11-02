@@ -68,7 +68,6 @@ class LFSTK_scrollBarClass : public LFSTK_gadgetClass
 		double				maxScale=100.0;
 		int					lineScroll=1;
 		bool				verticalBar=false;
-		bool				noCallback=false;
 };
 
 #endif

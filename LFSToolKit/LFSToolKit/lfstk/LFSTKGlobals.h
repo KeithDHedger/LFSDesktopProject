@@ -210,6 +210,7 @@ struct	mappedListener
 	LFSTK_gadgetClass	*gadget=NULL;
 	int					type;
 };
+
 class	LFSTK_listGadgetClass;
 struct listData
 {
@@ -222,7 +223,6 @@ struct gadgetStruct
 	colourStruct	*colour;
 	bevelType		bevel;
 	indicatorType	indic;
-	//geometryStruct	*indicGeom;
 	int				state;
 	int				reserveSpace;
 	bool			buttonTile;

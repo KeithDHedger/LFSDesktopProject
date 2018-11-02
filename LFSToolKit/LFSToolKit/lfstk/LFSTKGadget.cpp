@@ -540,20 +540,8 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 	if(this->isActive==false)
 		details->state=INACTIVECOLOUR;
 
-
-//	cairo_text_extents_t returnextents;
-//
-//	cairo_save(this->cr);
-//		cairo_select_font_face(this->cr,this->fontName,this->slant,this->weight);
-//		cairo_set_font_size(this->cr,this->fontSize);
-//		cairo_text_extents(this->cr,"`g",&returnextents);
-//	cairo_restore(this->cr);
-//
-//int th=(int)(long)returnextents.height+((int)(long)returnextents.height+(int)(long)returnextents.y_bearing);
-
-
 	labely=(details->gadgetGeom.h/2)-(extents.y_bearing/2);
-//labely=(details->gadgetGeom.h/2)-(th/2);
+
 	if(strcmp(this->label,"--")!=0)
 		{
 			switch(this->labelGravity)
@@ -587,8 +575,6 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 					case TOOLBAR:
 						labelx=((details->gadgetGeom.w)/2)-(this->extents.width/2);
 						labely=details->gadgetGeom.h-this->maxTextHeight+this->pad*2;
-					//	labely=details->gadgetGeom.h-(this->extents.height)+this->pad;
-					//	labely=details->gadgetGeom.h-((int)(long)this->extents.height+((int)(long)this->extents.height+(int)(long)this->extents.y_bearing));
 						break;
 				}
 
@@ -620,15 +606,9 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 
 						cairo_set_source_rgba(this->cr,colptr->r,colptr->g,colptr->b,colptr->a);
 						cairo_rectangle(this->cr,labelx,boxy,this->extents.width,this->maxTextHeight);
-					//	cairo_rectangle(this->cr,labelx,labely-this->maxTextHeight+this->pad*2,this->extents.width,this->maxTextHeight);
-						//cairo_rectangle(this->cr,labelx,labely-th+this->pad*2,this->extents.width,this->extents.height+this->pad*2);
-						//cairo_rectangle(this->cr,labelx,labely-(int)(long)this->extents.height+((int)(long)this->extents.height+(int)(long)this->extents.y_bearing),this->extents.width,this->extents.height);
-						//cairo_rectangle(this->cr,labelx,labely,this->extents.width,this->extents.height);
 						labely=boxy+this->maxTextHeight-(this->maxTextHeight/2)+this->pad;
-						//labely=-10;
 						labely++;
 						cairo_fill(this->cr);
-						//labely++;
 					}		
 
 				cairo_move_to(this->cr,labelx,labely);
@@ -841,8 +821,6 @@ bool LFSTK_gadgetClass::mouseDrag(XMotionEvent *e)
 			XMoveWindow(this->display,this->window,this->gadgetGeom.x,this->gadgetGeom.y);
 		}
 	return(true);
-
-//	return(true);
 }
 
 void LFSTK_gadgetClass::LFSTK_resizeWindow(int w,int h)
@@ -959,7 +937,6 @@ void LFSTK_gadgetClass::drawImage()
 		cairo_reset_clip (this->cr);
 		cairo_translate(this->cr,xoffset,yoffset);
 		cairo_set_source_surface(this->cr,this->cImage,0,0);
-//		cairo_paint(this->cr);
 		cairo_paint_with_alpha(this->cr,this->alpha);
 	cairo_restore(this->cr);
 	XSync(this->display,false);
@@ -1078,7 +1055,6 @@ int LFSTK_gadgetClass::LFSTK_getTextHeight(const char* text)
 		cairo_set_font_size(this->cr,this->fontSize);
 		cairo_text_extents(this->cr,text,&returnextents);
 	cairo_restore(this->cr);
-	//printf("hite=%f  y_bearing=%f,  %i\n",returnextents.height,returnextents.y_bearing,(int)(long)returnextents.height);
 	return((int)(long)returnextents.height);
 }
 
@@ -1749,10 +1725,6 @@ LFSTK_windowClass* LFSTK_gadgetClass::LFSTK_getContextWindow(void)
 */
 void LFSTK_gadgetClass::LFSTK_moveGadget(int x,int y)
 {
-//	this->setWindowGeom(x,y,0,0,WINDSETXY);
-//	if(tellx==true)
-//		XMoveWindow(this->display,this->window,x,y);
-//	this->LFSTK_clearWindow();
 	this->gadgetGeom.x=x;
 	this->gadgetGeom.y=y;
 	XMoveWindow(this->display,this->window,x,y);

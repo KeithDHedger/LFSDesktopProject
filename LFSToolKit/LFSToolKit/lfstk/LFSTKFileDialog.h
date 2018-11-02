@@ -64,9 +64,7 @@ class LFSTK_fileDialogClass
 //TODO
 		void					LFSTK_setNameFilter(const char *filt);
 		bool					useThumbs=false;
-//		listLabelStruct			**labelLst=NULL;
-//calbacks
-	//	void					LFSTK_setCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud);
+
 	private:
 		char					*findThemedIconFromMime(const char *mimetype);
 		void					setPreviewData(bool fromlist);
@@ -74,8 +72,6 @@ class LFSTK_fileDialogClass
 		void					resizeWindow(int w,int h);
 
 		const char				*recentsName="universal";
-	//	char					**fileList=NULL;
-	//	char					**fileImageList=NULL;
 		unsigned				fileListCnt=0;
 		char					*currentDir=NULL;
 		char					*currentFile=NULL;
@@ -114,17 +110,11 @@ class LFSTK_fileDialogClass
 		void					freeFileList();
 		void					cleanDirPath(void);
 		void					openDir(void);
-	//	bool					doOpenDir(void);
-	//	bool					doOpenDir(const char *dir);
 
 		void					setFileData(void);
 		bool					isADir(const char *path);
 //callbacks
-//		buttonCB				callback;
 		static bool				select(void *object,void* userdata);
-		//unsigned				lastTime=0;
-		//bool					isDoubleClick=false;
-
 };
 
 #endif

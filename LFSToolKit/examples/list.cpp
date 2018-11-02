@@ -54,7 +54,7 @@ bool select(void *object,void* userdata)
 	LFSTK_listGadgetClass	*list=static_cast<LFSTK_listGadgetClass*>(object);
 
 	printf("List item=%i\n",list->LFSTK_getCurrentListItem());
-	printf("Selected List item string=%s\n",list->labelData[list->LFSTK_getCurrentListItem()]->label);
+	printf("Selected List item string=%s\n",list->LFSTK_getSelectedLabel());
 	if(list->labelData[list->LFSTK_getCurrentListItem()]->imageType==FILETHUMB)
 		printf("Image path=%s\n",list->labelData[list->LFSTK_getCurrentListItem()]->data.imagePath);
 	printf("UserData=%p\n",userdata);

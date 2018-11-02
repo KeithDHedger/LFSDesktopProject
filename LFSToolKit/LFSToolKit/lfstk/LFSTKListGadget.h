@@ -52,11 +52,9 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const char *label,int x,int y,unsigned w,unsigned h,int gravity,char **list,unsigned cnt);
 
 		int						LFSTK_getCurrentListItem(void);
-		//const char				*LFSTK_getListString(int listnum);
-		//void					LFSTK_setList(char **list,unsigned numitems);
 		void					LFSTK_setList(listLabelStruct **list,unsigned numitems);
 		void					LFSTK_setListFromFile(const char *filepath,bool includeempty);
-		//void					LFSTK_setImageList(char **list,unsigned numitems);
+		const char				*LFSTK_getSelectedLabel(void);
 		int						currentItem;
 
 		bool					mouseExit(XButtonEvent *e) {return(true);};
@@ -67,22 +65,13 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		listLabelStruct			**labelData=NULL;
 	private:
 		LFSTK_scrollBarClass	*scrollBar;
-		//char					**listStrings=NULL;
-		//char					**listImages=NULL;
-		//cairo_surface_t			**listCairoSurface=NULL;
-		//unsigned				listCairoSurfaceCnt=0;
-		//unsigned				listImageCnt;
 		unsigned				listOffset;
-
-
 		unsigned				maxShowing;
 		listData				*data;
-		listData				*scrollData;
 
 		LFSTK_buttonClass		**labels;		
 
 		void					freeList(void);
-		//void					setCairoSufaces(int numitems);
 		void 					setCurrentItem(int item);
 		void					setNavSensitive(void);
 

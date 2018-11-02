@@ -26,23 +26,6 @@
 LFSTK_listGadgetClass::~LFSTK_listGadgetClass()
 {
 	delete[] this->data;
-	delete[] this->scrollData;
-//	if(this->listStrings!=NULL)
-//		{
-//			for(int j=0;j<this->listCnt;j++)
-//				free(this->listStrings[j]);
-//			delete[] this->listStrings;
-//		}
-//	if(this->listImages!=NULL)
-//		{
-//			for(int j=0;j<this->listImageCnt;j++)
-//				{
-//					if(this->listImages[j]!=NULL)
-//						free(this->listImages[j]);
-//				}
-//			delete[] this->listImages;
-//		}
-
 	this->freeList();
 	delete[] this->labels;
 }
@@ -86,57 +69,6 @@ int LFSTK_listGadgetClass::LFSTK_getCurrentListItem(void)
 {
 	return(this->currentItem);
 }
-
-#if 0
-/**
-* Get the string from the list number.
-*
-* \param listnum Number in list to get.
-* \return const char* to string.
-* \note String should not be freed.
-* If listnum<0 or >than max items in list then current item returned.
-* will always return a string.
-*/
-const char* LFSTK_listGadgetClass::LFSTK_getListString(int listnum)
-{
-	if((listnum>0) && (listnum<this->listCnt))
-		return(listStrings[listnum]);
-	else
-		{
-			if(this->currentItem<0)
-				this->currentItem=0;
-			if(this->currentItem>=this->listCnt)
-				this->currentItem=this->listCnt-1;
-			return(listStrings[this->currentItem]);
-		}
-}
-/**
-* Set new image list.
-*
-* \param list char** list of strings.
-* \param numitems Number of items in list.
-* \note Strings are copied so list can be disposed of by caller.
-* \note image list MUST be set before setting list.
-*/
-void LFSTK_listGadgetClass::LFSTK_setImageList(char **list,unsigned numitems)
-{
-	if(this->listImages!=NULL)
-		{
-			for(int j=0;j<this->listImageCnt;j++)
-				if(this->listImages[j]!=NULL)
-					free(this->listImages[j]);
-			delete[] this->listImages;
-		}
-
-	this->listImageCnt=numitems;
-	this->listImages=new char*[numitems];
-	for(int j=0;j<this->listImageCnt;j++)
-		if(list[j]!=NULL)
-			this->listImages[j]=strdup(list[j]);
-		else
-			this->listImages[j]=NULL;
-}
-#endif
 
 /**
 * Set new list from contents of file.
@@ -200,144 +132,6 @@ void LFSTK_listGadgetClass::LFSTK_setListFromFile(const char *filepath,bool incl
 			delete[] strings;
 		}
 }
-#if 0
-	FILE	*file=NULL;
-	char	*buffer;
-	int		cnt=0;
-	char	*lines=NULL;
-	int		linecnt=0;
-	char	**newlist=NULL;
-	size_t	linelen=0;
-	ssize_t read=0;
-
-	if(this->listStrings!=NULL)
-		{
-			for(int j=0;j<this->listCnt;j++)
-				free(this->listStrings[j]);
-			delete[] this->listStrings;
-		}
-	if(this->listImages!=NULL)
-		{
-			for(int j=0;j<this->listImageCnt;j++)
-				{
-					if(this->listImages[j]!=NULL)
-						free(this->listImages[j]);
-				}
-			delete[] this->listImages;
-		}
-	this->listStrings=NULL;
-	this->listImages=NULL;
-	this->listCnt=0;
-	this->listImageCnt=0;
-
-	lines=this->wc->globalLib->LFSTK_oneLiner("wc -l %s",filepath);
-	linecnt=atoi(lines)+1;
-	free(lines);
-
-	newlist=new char*[linecnt];
-
-	if(filepath!=NULL)
-		{
-			file=fopen(filepath,"r");
-			if(file!=NULL)
-				{
-					while(!feof(file))
-						{
-							buffer=NULL;
-							linelen=0;
-							read=getline(&buffer,&linelen,file);
-								if(read>0)
-									{
-										buffer[strlen(buffer)-1]=0;
-										if(includeempty==true)
-											{
-												newlist[cnt++]=buffer;
-											}
-										else
-											{
-												if(strlen(buffer)>0)
-													newlist[cnt++]=buffer;
-												else
-													free(buffer);
-											}
-									}
-								else
-									{
-										if(buffer!=NULL)
-											free(buffer);
-									}
-						}
-
-					fclose(file);
-					if(newlist!=NULL)
-						{
-							LFSTK_setList(newlist,cnt);
-							for(int j=0;j<cnt;j++)
-								if(newlist[j]!=NULL)
-									free(newlist[j]);
-							delete[] newlist;
-						}
-				}
-		}
-}
-
-/**
-* Set cairo srfc list.
-*/
-void LFSTK_listGadgetClass::setCairoSufaces(int numitems)
-{
-	cairo_status_t	cs=CAIRO_STATUS_SUCCESS;
-	cairo_surface_t	*tempimage=NULL;
-	//cairo_t			*tcr;
-	char			*suffix=NULL;
-	char			*file=NULL;
-
-	if(this->listImages==NULL)
-		{
-			this->listCairoSurface=NULL;
-			return;
-		}
-
-//	if(this->listCairoSurface!=NULL)
-//		{
-//			for(int j=0;j<this->listCairoSurfaceCnt;j++)
-//				{
-//					cairo_surface_destroy(this->listCairoSurface[j]);
-//				}
-//			delete[] this->listCairoSurface;
-//		}
-
-	this->listCairoSurface=new cairo_surface_t*[numitems];
-	for(int j=0;j<numitems;j++)
-		{
-			file=this->listImages[j];
-			if(file==NULL)
-				tempimage=NULL;
-			else
-				{
-					suffix=strrchr((char*)file,'.');
-					if((suffix!=NULL) && (strcasecmp(suffix,".png")==0))
-						{
-							tempimage=cairo_image_surface_create_from_png(file);
-							cs=cairo_surface_status(tempimage);
-						}
-					else
-						cs=CAIRO_STATUS_INVALID_FORMAT;
-
-					if(cs!=CAIRO_STATUS_SUCCESS)
-						{
-							tempimage=this->wc->globalLib->LFSTK_cairo_image_surface_create_from_jpeg(file);
-							cs=cairo_surface_status(tempimage);
-						}
-				}
-			if(cs!=CAIRO_STATUS_SUCCESS)
-				tempimage=NULL;
-			this->listCairoSurface[j]=tempimage;
-		}
-	this->listCairoSurfaceCnt=numitems;
-}
-
-#endif
 
 /**
 * Set new list.
@@ -391,88 +185,6 @@ void LFSTK_listGadgetClass::LFSTK_setList(listLabelStruct **list,unsigned numite
 
 }
 
-#if 0
-/**
-* Set new list.
-*
-* \param list char** list of strings.
-* \param numitems Number of items in list.
-* \note strings are copied so list can be disposed of by caller.
-*/
-void LFSTK_listGadgetClass::LFSTK_setList(char **list,unsigned numitems)
-{
-	int orient=LEFT;
-
-	if(this->listStrings!=NULL)
-		{
-			for(int j=0;j<this->listCnt;j++)
-				if(this->listStrings[j]!=NULL)
-					free(this->listStrings[j]);
-			delete[] this->listStrings;
-		}
-
-	if(this->listImages!=NULL)
-		orient=MENU;
-
-	this->listStrings=new char*[numitems];
-	this->listCnt=numitems;
-	for(int j=0;j<this->listCnt;j++)
-		this->listStrings[j]=strdup(list[j]);
-
-	if(this->useThumbNail==CAIROTHUMB)
-		this->setCairoSufaces(numitems);
-
-	this->listOffset=0;
-	this->currentItem=0;
-
-	this->scrollBar->LFSTK_setScale(0,numitems-this->maxShowing);
-	for(int j=0;j<this->maxShowing;j++)
-		{
-			this->data[j].userData=j;
-			if(j<this->listCnt)
-				{
-					this->labels[j]->LFSTK_setLabel(this->listStrings[j]);
-					this->labels[j]->LFSTK_setActive(true);
-					this->labels[j]->LFSTK_setLabelGravity(orient);
-
-					if(this->useThumbNail==CAIROTHUMB)
-						this->labels[j]->LFSTK_setImageFromSurface(this->listCairoSurface[j],MENU,true);
-
-					if(this->useThumbNail==FILETHUMB)
-						this->labels[j]->LFSTK_setImageFromPath(this->listImages[j],MENU,true);
-//					if((this->listImages!=NULL) && (this->listImages[j]!=NULL) && (this->useThumbNail!=NOTHUMB))
-//						{
-//							if(
-//							if(this->listImages!=NULL)
-//								//this->labels[j]->LFSTK_setImageFromPath(this->listImages[j],MENU,true);
-//								this->labels[j]->LFSTK_setImageFromSurface(this->listCairoSurface[j],MENU,true);
-//						}
-				}
-			else
-				{
-					this->labels[j]->LFSTK_setLabel("");
-					this->labels[j]->LFSTK_setActive(false);
-	//				if(this->useThumbNail==CAIROTHUMB)
-	//					this->labels[j]->LFSTK_setImageFromSurface(this->listCairoSurface[j],MENU,true);
-	//				if(this->useThumbNail==FILETHUMB)
-	//					this->labels[j]->LFSTK_setImageFromPath(this->listImages[j],MENU,true);
-//					if((this->listImages!=NULL) && (this->listImages[j]!=NULL) && (this->useThumbNail!=NOTHUMB))
-//					//this->labels[j]->LFSTK_setImageFromPath(NULL,MENU,true);//was LEFT
-//						this->labels[j]->LFSTK_setImageFromSurface(this->listCairoSurface[j],MENU,true);//was LEFT
-if(this->listImages!=NULL)
-this->labels[j]->LFSTK_setImageFromPath(NULL,MENU,true);
-				}
-
-			this->labels[j]->gadgetDetails.colour=&this->labels[j]->colourNames[NORMALCOLOUR];
-			this->labels[j]->gadgetDetails.state=NORMALCOLOUR;
-			this->labels[j]->LFSTK_clearWindow();
-		}
-	this->wc->LFSTK_clearWindow(true);
-	this->currentItem=0;
-	this->setNavSensitive();
-
-}
-#endif
 bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
 {
 	LFSTK_listGadgetClass	*list;
@@ -499,92 +211,19 @@ bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
 					if(list->labelData[j+list->listOffset]->imageType==FILETHUMB)
 						list->labels[j]->LFSTK_setImageFromPath(list->labelData[j+list->listOffset]->data.imagePath,MENU,true);
 
-					//list->labelData[j+list->listOffset]->listPos=j+list->listOffset;
-					//if(list->listCairoSurface!=NULL)
-						//list->labels[j]->LFSTK_setImageFromPath(list->listImages[j+list->listOffset],MENU,true);
-					//if(list->useThumbNail==CAIROTHUMB)
-					//	list->labels[j]->LFSTK_setImageFromSurface(list->listCairoSurface[j+list->listOffset],MENU,true);
-					//if(list->useThumbNail==FILETHUMB)
-					//	list->labels[j]->LFSTK_setImageFromPath(list->listImages[j+list->listOffset],MENU,true);
-
-//					if(list->listImages!=NULL)
-//						//list->labels[j]->LFSTK_setImageFromPath(list->listImages[j+list->listOffset],MENU,true);
-//						list->labels[j]->LFSTK_setImageFromSurface(list->listCairoSurface[j+list->listOffset],MENU,true);
 					list->data[j].userData=j+list->listOffset;
-					//list->labels[j]->LFSTK_clearWindow();
 				}
 		}
 	for(int j=0;j<list->maxShowing;j++)
 		list->labels[j]->LFSTK_clearWindow();
-	//list->LFSTK_clearWindow();
-	//list->wc->LFSTK_clearWindow();
 	return(true);
 }
 
 void LFSTK_listGadgetClass::setNavSensitive(void)
 {
-#if 0
-	int fing;
-	if(this->listCnt==0)
-		{
-			this->buttonDown->LFSTK_setActive(false);
-			this->buttonUp->LFSTK_setActive(false);
-			this->buttonHome->LFSTK_setActive(false);
-			this->buttonEnd->LFSTK_setActive(false);
-		}
-	else
-		{
-			this->buttonDown->LFSTK_setActive(true);
-			this->buttonUp->LFSTK_setActive(true);
-			this->buttonHome->LFSTK_setActive(true);
-			this->buttonEnd->LFSTK_setActive(true);
-
-			if(this->listOffset<=0)
-				{
-					this->buttonUp->LFSTK_setActive(false);
-					this->buttonHome->LFSTK_setActive(false);
-				}
-
-			if((this->listOffset>=this->listCnt-this->maxShowing) || (this->listCnt<=this->maxShowing))
-				{
-					this->buttonDown->LFSTK_setActive(false);
-					this->buttonEnd->LFSTK_setActive(false);
-				}
-
-			fing=this->currentItem-this->listOffset;
-			for(int j=0;j<this->maxShowing;j++)
-				{
-					if(j<this->listCnt)
-						{
-							this->labels[j]->LFSTK_setColourName(NORMALCOLOUR,"white");
-							this->labels[j]->LFSTK_clearWindow();
-						}
-				}
-
-			if((fing>=0) && (fing<this->maxShowing))
-				{
-					this->labels[fing]->LFSTK_setColourName(NORMALCOLOUR,this->labels[fing]->LFSTK_getColourName(ACTIVECOLOUR));
-					this->labels[fing]->LFSTK_clearWindow();
-				}
-
-			this->buttonDown->gadgetDetails.state=NORMALCOLOUR;
-			this->buttonUp->gadgetDetails.state=NORMALCOLOUR;
-			this->buttonHome->gadgetDetails.state=NORMALCOLOUR;
-			this->buttonEnd->gadgetDetails.state=NORMALCOLOUR;
-		}
-
-	this->buttonEnd->gadgetDetails.colour=&this->buttonEnd->colourNames[NORMALCOLOUR];
-	this->buttonUp->gadgetDetails.colour=&this->buttonUp->colourNames[NORMALCOLOUR];
-	this->buttonHome->gadgetDetails.colour=&this->buttonHome->colourNames[NORMALCOLOUR];
-	this->buttonDown->gadgetDetails.colour=&this->buttonDown->colourNames[NORMALCOLOUR];
-
-	this->buttonDown->LFSTK_clearWindow();
-	this->buttonUp->LFSTK_clearWindow();
-	this->buttonHome->LFSTK_clearWindow();
-	this->buttonEnd->LFSTK_clearWindow();
-	XFlush(this->display);
-	XSync(this->display,false);
-#endif
+//TODO//
+//	XFlush(this->display);
+//	XSync(this->display,false);
 }
 
 /**
@@ -627,12 +266,8 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 	this->wc->LFSTK_addMappedListener(this->window,ml);
 
 	this->currentItem=0;
-	this->scrollData=new listData[4];
 	this->listOffset=0;
-	//this->listStrings=NULL;
-	//this->listImages=NULL;
 	this->listCnt=0;
-	//this->listImageCnt=0;
 
 	sx=x+1;
 	sy=y+1;
@@ -656,7 +291,6 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 			this->labels[j]->LFSTK_setStyle(BEVELNONE);
 			this->labels[j]->LFSTK_setTile(NULL,0);
 			this->labels[j]->LFSTK_setCallBack(NULL,select,LISTDATA(j));
-			//this->labels[j]->LFSTK_setCallBack(NULL,select,(LFSTK_listGadgetClass*)this);
 			this->labels[j]->LFSTK_setFontString(this->monoFontString);
 			this->labels[j]->LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
 			this->labels[j]->LFSTK_setFontColourName(INACTIVECOLOUR,"black",false);
@@ -674,9 +308,6 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 	this->scrollBar->LFSTK_setCallBack(NULL,scrollCB,this);
 
 	this->style=BEVELIN;
-//	if(newlist!=NULL)
-	//	this->LFSTK_setList(newlist,cnt);
-//	this->setNavSensitive();
 
 	this->LFSTK_setColourName(NORMALCOLOUR,"white");
 	this->LFSTK_setColourName(INACTIVECOLOUR,"white");
@@ -708,4 +339,11 @@ void LFSTK_listGadgetClass::freeList(void)
 		}
 }
 
-
+/**
+* Get selected label.
+* \return const char *label;
+*/
+const char	*LFSTK_listGadgetClass::LFSTK_getSelectedLabel(void)
+{
+	return(this->labelData[this->currentItem]->label);
+}

@@ -32,19 +32,6 @@ LFSTK_imageClass::~LFSTK_imageClass()
 LFSTK_imageClass::LFSTK_imageClass()
 {
 }
-#if 0
-/**
-* Mouse down callback.
-* \param e XButtonEvent passed from mainloop->listener.
-* \return Return true if event fully handeled or false to pass it on.
-*/
-bool LFSTK_imageClass::mouseDown(XButtonEvent *e)
-{
-	this->mouseDownX=e->x;
-	this->mouseDownY=e->y;
-	return(true);
-}
-#endif
 
 /**
 * Mouse up callback.
@@ -68,56 +55,6 @@ bool LFSTK_imageClass::mouseUp(XButtonEvent *e)
 	return(true);
 }
 
-#if 0
-#if 0
-/**
-* Mouse drag callback.
-* \param e XMotionEvent passed from mainloop->listener.
-* \return Return true if event fully handeled or false to pass it on.
-*/
-bool LFSTK_imageClass::mouseDrag(XMotionEvent *e)
-{
-	if(this->canDrag==true)
-		{
-			if(this->allowX==true)
-				this->gadgetGeom.x+=e->x-this->mouseDownX;
-			if(this->allowY==true)
-				this->gadgetGeom.y+=e->y-this->mouseDownY;
-			if(this->snap>1)
-				{
-					this->gadgetGeom.x=(this->gadgetGeom.x/this->snap)*this->snap;
-					this->gadgetGeom.y=(this->gadgetGeom.y/this->snap)*this->snap;
-				}
-			XMoveWindow(this->display,this->window,this->gadgetGeom.x,this->gadgetGeom.y);
-		}
-	return(true);
-}
-#else
-bool LFSTK_imageClass::mouseDrag(XMotionEvent *e)
-{
-	if(this->canDrag==true)
-		{
-			if(this->allowX==true)
-				{
-					//if((e->x-this->mouseDownX>this->minX) && (e->x-this->mouseDownX<=this->maxX))
-						this->gadgetGeom.x+=e->x-this->mouseDownX;
-				}
-			if(this->allowY==true)
-				this->gadgetGeom.y+=e->y-this->mouseDownY;
-			if(this->snap>1)
-				{
-					this->gadgetGeom.x=(this->gadgetGeom.x/this->snap)*this->snap;
-					this->gadgetGeom.y=(this->gadgetGeom.y/this->snap)*this->snap;
-				}
-			XMoveWindow(this->display,this->window,this->gadgetGeom.x,this->gadgetGeom.y);
-		}
-	return(true);
-
-//	return(true);
-}
-
-#endif
-#endif
 /**
 * Clear the image window and set shape.
 */
@@ -201,10 +138,6 @@ LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* image
 
 	this->shape=XCreatePixmap(this->display,this->window,w,h,1);
 	this->shapesfc=cairo_xlib_surface_create_for_bitmap(this->display,this->shape,DefaultScreenOfDisplay(this->display),w,h);
-	//this->shapesfc=
-	//this->shapesfc=cairo_image_surface_create_from_png(imagepath);
-	//this->shapecr=cairo_create(shapesfc);
-	//this->shapesfc=this->cImage;
 	this->shapecr=cairo_create(this->shapesfc);
 
 }

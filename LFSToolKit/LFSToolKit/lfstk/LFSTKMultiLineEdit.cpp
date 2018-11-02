@@ -326,12 +326,9 @@ void LFSTK_multiLineEditClass::getClip(void)
 	XEvent			event;
 
 	selectionOwner=XGetSelectionOwner(this->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD));
-//TODO//HACK to paste into self!!
-//printf("selectionOwner=%i this->wc->window=%i\n",selectionOwner,this->wc->window);
 
 	if(selectionOwner==this->wc->window)
 		{
-			//this->buffer=this->buffer+this->wc->clipBuffer;
 			this->LFSTK_setFormatedText(this->wc->clipBuffer.c_str(),false);
 			this->LFSTK_clearWindow();
 			return;

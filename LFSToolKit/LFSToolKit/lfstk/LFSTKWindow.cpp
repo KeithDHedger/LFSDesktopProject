@@ -215,20 +215,13 @@ LFSTK_windowClass::~LFSTK_windowClass()
 
 	if(this->closeDisplayOnExit==true)
 		XCloseDisplay(this->display);
-
-//	if(this->pattern!=NULL)
-//		cairo_pattern_destroy(this->pattern);
-//
-//	cairo_destroy(this->cr);
-//	cairo_surface_destroy(this->sfc);
 }
 
 LFSTK_windowClass::LFSTK_windowClass()
 {
 	this->initWindow(false);
 	this->setWindowGeom(0,0,0,0,WINDSETALL);
-		this->gadgetMap.clear();
-
+	this->gadgetMap.clear();
 }
 
 void LFSTK_windowClass::loadGlobalColours(void)
@@ -548,7 +541,6 @@ void LFSTK_windowClass::LFSTK_setKeepAbove(bool set)
 		xclient.data.l[0] =_NET_WM_STATE_REMOVE;
 	xclient.data.l[1] =xa1;
 	xclient.data.l[2]=0;
-//	XSendEvent(this->display,this->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
 	XSendEvent(this->display,this->window,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
 }
 
@@ -576,7 +568,6 @@ void LFSTK_windowClass::LFSTK_setKeepBelow(bool set)
 		xclient.data.l[0] =_NET_WM_STATE_REMOVE;
 	xclient.data.l[1] =xa1;
 	xclient.data.l[2]=0;
-//	XSendEvent(this->display,this->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
 	XSendEvent(this->display,this->window,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
 }
 
@@ -702,7 +693,6 @@ void LFSTK_windowClass::windowClassInitCommon(windowInitStruct *wi)
 //	DEBUGFUNC("bool shutDisplayOnExit=%i",wi->shutDisplayOnExit);
 //	DEBUGFUNC("const char	*windowType=%s",wi->windowType);
 //showFileData=true;
-
 
 	XSetWindowAttributes	wa;
 	Atom					wm_delete_window;
@@ -1441,7 +1431,6 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 				break;
 
 			case SelectionRequest:
-				//fprintf(stderr,">>>>>>%s>>>>>>>\n",this->clipBuffer.c_str());
 				if(XGetSelectionOwner(this->display,this->LFSTK_getDnDAtom(XA_CLIPBOARD))==this->window)
 					this->sendUTF8(&event->xselectionrequest);
 				break;

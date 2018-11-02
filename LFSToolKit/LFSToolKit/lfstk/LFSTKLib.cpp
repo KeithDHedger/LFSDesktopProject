@@ -551,7 +551,6 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				if(gadget->currentButton==Button1)
 					retval=gadget->mouseDrag(&e->xmotion);
 				///printf("MotionNotify\n");
-				//gadget->LFSTK_clearWindow();
 				break;
 			case Expose:
 				if (e->xexpose.count==0)
@@ -577,19 +576,15 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				break;
 			case GravityNotify:
 //				printf("grav>>>>>>>>>>>\n");
-//				retval=true;
 				break;
 			case ResizeRequest:
-				//XCheckTypedWindowEvent
 //				printf("resize\n");
 				break;
 			case ClientMessage:
 //				//printf("ClientMessage from lib\n");
-//				retval=gadget->clientMessage(e);
 				break;
 			case SelectionRequest:
 				//fprintf(stderr,"from SelectionRequest lib\n");
-				//retval=gadget->selectionRequest((XSelectionRequestEvent*)e);
 				break;				
 		}
 	if(retval==false)

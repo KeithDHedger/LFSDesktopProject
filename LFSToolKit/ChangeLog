@@ -1,4 +1,5 @@
 0.4.0
+Code clean.
 Converted Font dialog to new API's.
 Converted file dialog's to new API's.
 Changed list API's.

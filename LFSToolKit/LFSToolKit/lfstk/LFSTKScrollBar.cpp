@@ -194,7 +194,6 @@ void LFSTK_scrollBarClass::LFSTK_clearWindow()
 		this->setState(false);
 
 	this->clearBox(&this->gadgetDetails);
-//	if(this->noCallback==false)???
 	if(this->callback.releaseCallback!=NULL)
 		this->callback.releaseCallback(this,this->callback.userData);
 
@@ -202,7 +201,6 @@ void LFSTK_scrollBarClass::LFSTK_clearWindow()
 	if(this->startDrag==true)
 		XSync(this->display,true);
 	this->thumb->LFSTK_clearWindow();
-	//this->noCallback=false;????
 }
 
 /**
@@ -253,7 +251,6 @@ bool LFSTK_scrollBarClass::lineUpDown(void *object,void* userdata)
 		sbar->value+=sbar->lineScroll;
 
 	sbar->setState(true);
-//	sbar->noCallback=false;????
 	return(true);
 }
 
@@ -278,7 +275,6 @@ bool LFSTK_scrollBarClass::mouseUp(XButtonEvent *e)
 
 	if(this->inWindow==true)
 		{
-			//this->noCallback=false;?????
 			this->thumb->LFSTK_getGeom(&geom);
 			this->thumb->LFSTK_getLimits(&rect);
 
@@ -357,7 +353,6 @@ bool LFSTK_scrollBarClass::mouseDown(XButtonEvent *e)
 	if((this->isActive==false) || (this->callback.ignoreCallback==true))
 		return(true);
 
-//	this->noCallback=true;????
 	this->inWindow=true;
 	this->startDrag=false;
 	return(true);

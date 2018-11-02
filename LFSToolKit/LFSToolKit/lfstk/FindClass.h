@@ -72,7 +72,6 @@ class FindClass
 		void		sortByType(void);
 		void		sortByTypeAndName(void);
 		int			getDataCount(void);
-
 		int			getMinDepth(void);
 		int			getMaxDepth(void);
 
