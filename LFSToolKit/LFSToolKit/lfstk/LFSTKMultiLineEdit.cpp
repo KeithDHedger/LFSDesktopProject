@@ -113,6 +113,7 @@ void LFSTK_multiLineEditClass::LFSTK_clearWindow()
 	this->gadgetDetails.bevel=BEVELIN;
 	this->drawText();
 	this->drawBevel(&this->gadgetDetails.gadgetGeom,this->gadgetDetails.bevel);
+	XSync(this->display,false);
 	return;
 }
 
@@ -125,6 +126,7 @@ void LFSTK_multiLineEditClass::LFSTK_setFocus(void)
 	this->isFocused=true;
 	this->setDisplayLines();
 	this->LFSTK_clearWindow();
+	XSync(this->display,false);
 }
 
 /**
@@ -155,11 +157,9 @@ bool LFSTK_multiLineEditClass::mouseEnter(XButtonEvent *e)
 */
 bool LFSTK_multiLineEditClass::mouseDown(XButtonEvent *e)
 {
+	this->LFSTK_setFocus();
 	if(this->isActive==false)
-		{
-			this->LFSTK_clearWindow();
-			return(true);
-		}
+		this->LFSTK_clearWindow();
 
 	return(true);
 }
