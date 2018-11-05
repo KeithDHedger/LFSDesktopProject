@@ -1417,7 +1417,11 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 
 	switch(event->type)
 		{
+			case EnterNotify:
+//				printf("enter\n");
+				break;
 			case LeaveNotify:
+//				printf("leav\n");
 				break;
 			case Expose:
 				if (event->xexpose.count==0)

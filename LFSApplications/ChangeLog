@@ -1,4 +1,5 @@
 0.1.3
+Added forground colour to lfsdesktopprefs.
 Lfstkprefs now updates desktop and panels immediately.
 Added search in /usr/share/themes as well as ~/.themes for sets.
 Fixed no sets instlled in ~/.themes.

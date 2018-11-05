@@ -110,6 +110,7 @@ LFSTK_multiLineEditClass::LFSTK_multiLineEditClass(LFSTK_windowClass* parentwc,c
 */
 void LFSTK_multiLineEditClass::LFSTK_clearWindow()
 {
+//this->setDisplayLines();
 	this->gadgetDetails.bevel=BEVELIN;
 	this->drawText();
 	this->drawBevel(&this->gadgetDetails.gadgetGeom,this->gadgetDetails.bevel);
@@ -140,29 +141,29 @@ printf("confmes from line edit\n");
 	return(true);
 }
 
-/**
-* Mouse enter callback.
-* \param e XButtonEvent passed from mainloop->listener.
-* \return Return true if event fully handeled or false to pass it on.
-*/
-bool LFSTK_multiLineEditClass::mouseEnter(XButtonEvent *e)
-{
-	return(true);
-}
-
-/**
-* Mouse down callback.
-* \param e XButtonEvent passed from mainloop->listener.
-* \return Return true if event fully handeled or false to pass it on.
-*/
-bool LFSTK_multiLineEditClass::mouseDown(XButtonEvent *e)
-{
-	this->LFSTK_setFocus();
-	if(this->isActive==false)
-		this->LFSTK_clearWindow();
-
-	return(true);
-}
+///**
+//* Mouse enter callback.
+//* \param e XButtonEvent passed from mainloop->listener.
+//* \return Return true if event fully handeled or false to pass it on.
+//*/
+//bool LFSTK_multiLineEditClass::mouseEnter(XButtonEvent *e)
+//{
+//	return(true);
+//}
+//
+///**
+//* Mouse down callback.
+//* \param e XButtonEvent passed from mainloop->listener.
+//* \return Return true if event fully handeled or false to pass it on.
+//*/
+//bool LFSTK_multiLineEditClass::mouseDown(XButtonEvent *e)
+//{
+//	this->LFSTK_setFocus();
+//	if(this->isActive==false)
+//		this->LFSTK_clearWindow();
+//
+//	return(true);
+//}
 
 void LFSTK_multiLineEditClass::LFSTK_resizeWindow(int w,int h)
 {

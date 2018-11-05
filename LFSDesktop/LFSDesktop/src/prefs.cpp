@@ -48,6 +48,7 @@ args	desktopPrefs[]=
 	{"showextension",TYPEBOOL,&showSuffix},
 	{"fontface",TYPESTRING,&fontFace},
 	{"labelbackground",TYPESTRING,&backCol},
+	{"labelforeground",TYPESTRING,&foreCol},
 	{"labelalpha",TYPESTRING,&backAlpha},
 	{"includelist",TYPESTRING,&includeList},
 	{"excludelist",TYPESTRING,&excludeList},

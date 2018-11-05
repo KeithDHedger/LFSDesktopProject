@@ -419,11 +419,13 @@ void LFSTK_gadgetClass::drawBevel(geometryStruct* geom,bevelType bevel)
 */
 void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 {
-	int			labelx=0;
-	int			labely;
-	cairoColor	lcol;
-	cairoColor	*colptr=&this->labelBGColour.RGBAColour;
+	int				labelx=0;
+	int				labely;
+	cairoColor		lcol;
+	cairoColor		*colptr=&this->labelBGColour.RGBAColour;
 	geometryStruct	labelrect;
+	int				labh;
+	int				laby;
 
 	if(this->isActive==false)
 		details->state=INACTIVECOLOUR;
@@ -465,8 +467,25 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 						break;
 					case TOOLBAR://TODO//
 						labelx=((details->gadgetGeom.w)/2)-(this->textExtents.width/2);
-						labelrect={labelx,(int)(details->gadgetGeom.h-(int)this->maxTextHeight-1),(unsigned int)this->textExtents.width,(unsigned int)this->maxTextHeight};
-						labely=labelrect.y+(labelrect.h/2)+(0.5 - this->fontExtents.descent + this->fontExtents.height / 2);
+					//	labelrect={labelx,(int)(details->gadgetGeom.h-(int)this->maxTextHeight-1),(unsigned int)this->textExtents.width,(unsigned int)this->maxTextHeight};
+						labelrect={labelx,(int)(details->gadgetGeom.h-(int)this->maxTextHeight-1),(unsigned int)this->textExtents.width,(unsigned int)this->LFSTK_getTextHeight(this->label)};
+					//	fprintf(stderr,"this->maxTextHeight=%f label=%s\n",this->maxTextHeight,this->label);
+					//	labely=labelrect.y+(labelrect.h/2)+(0.5 - this->fontExtents.descent + this->fontExtents.ascent / 2);
+					//	labely=labelrect.y+(labelrect.h/2)+(0.5 - (this->fontExtents.descent + this->fontExtents.ascent) / 2);
+						labely=labelrect.y+this->fontExtents.descent + this->fontExtents.ascent+2;
+						labelrect.y=labely-this->LFSTK_getTextHeight(this->label);
+						
+					//	labely=details->gadgetGeom.h-(gadgetGeom.h-this->imageHeight-this->LFSTK_getTextHeight(this->label))+this->pad*2+(this->LFSTK_getTextHeight(this->label)/2);
+
+						labh=details->gadgetGeom.h-this->imageHeight-(this->pad*2);
+						laby=details->gadgetGeom.h-(labh/2);
+
+//						labely=details->gadgetGeom.h-(gadgetGeom.h-this->imageHeight-this->maxTextHeight)+this->pad*2+(this->maxTextHeight/2);
+						labely=laby+(this->maxTextHeight/3);
+						//labely=details->gadgetGeom.h-this->pad;
+						labelrect.y=details->gadgetGeom.h-(gadgetGeom.h-this->imageHeight)+this->pad*2;
+						//labelrect.h=details->gadgetGeom.h-labelrect.y;
+						labelrect.h=labh;
 						break;
 				}
 
@@ -894,7 +913,8 @@ void LFSTK_gadgetClass::LFSTK_setCairoFontData(void)
 			cairo_text_extents(this->cr,this->label,&this->textExtents);
 		else
 			cairo_text_extents(this->cr,"X",&this->textExtents);
-		this->maxTextHeight=this->fontExtents.descent+this->fontExtents.height+this->fontExtents.ascent;
+		//this->maxTextHeight=this->fontExtents.descent+this->fontExtents.height+this->fontExtents.ascent;
+		this->maxTextHeight=this->fontExtents.descent+this->fontExtents.ascent;
 	cairo_restore(this->cr);
 }
 
@@ -991,7 +1011,8 @@ void LFSTK_gadgetClass::LFSTK_setCairoFontDataParts(const char* fmt,...)
 		cairo_set_font_size(this->cr,this->fontSize);
 		cairo_font_extents(this->cr,&this->fontExtents);
 		cairo_text_extents(this->cr,this->label,&this->textExtents);
-		this->maxTextHeight=this->fontExtents.descent+this->fontExtents.height;
+		this->maxTextHeight=this->fontExtents.descent+this->fontExtents.ascent;
+	//	printf("descent=%f ascent=%f maxTextHeight=%f\n",this->fontExtents.descent,this->fontExtents.ascent,this->maxTextHeight);
 	cairo_restore(this->cr);
 }
 

@@ -185,6 +185,11 @@ int main(int argc, char **argv)
 	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./lfsruncommand.cpp");
 	sy+=YSPACING;
 
+//run newlist
+	button=new LFSTK_buttonClass(wc,"New Menu",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./newmenutest.cpp");
+	sy+=YSPACING;
+
 //line
 	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,2,BUTTONGRAV);
 	seperator->LFSTK_setStyle(BEVELNONE);

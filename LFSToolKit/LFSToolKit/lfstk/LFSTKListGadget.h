@@ -57,8 +57,8 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		const char				*LFSTK_getSelectedLabel(void);
 		int						currentItem;
 
-		bool					mouseExit(XButtonEvent *e) {return(true);};
-		bool					mouseEnter(XButtonEvent *e) {return(true);};
+		bool					mouseExit(XButtonEvent *e) {printf("exit list\n");return(true);};
+		bool					mouseEnter(XButtonEvent *e) {printf("enter list\n");return(true);};
 		bool					mouseDown(XButtonEvent *e) {return(true);};
 		bool					mouseUp(XButtonEvent *e) {return(true);};
 		unsigned				listCnt;

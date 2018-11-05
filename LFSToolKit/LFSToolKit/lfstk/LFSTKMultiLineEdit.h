@@ -60,8 +60,8 @@ class LFSTK_multiLineEditClass  : public  LFSTK_lineEditClass
 		void LFSTK_setBuffer(const char *str);
 		const char *LFSTK_getCStr(void);
 
-		bool mouseDown(XButtonEvent *e);
-		bool mouseEnter(XButtonEvent *e);
+		//bool mouseDown(XButtonEvent *e);
+		//bool mouseEnter(XButtonEvent *e);
 		bool keyRelease(XKeyEvent *e);
 		bool lostFocus(XEvent *e);
 		bool gotFocus(XEvent *e);

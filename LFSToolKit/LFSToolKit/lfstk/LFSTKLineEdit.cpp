@@ -141,6 +141,7 @@ bool LFSTK_lineEditClass::mouseEnter(XButtonEvent *e)
 */
 bool LFSTK_lineEditClass::mouseDown(XButtonEvent *e)
 {
+	this->LFSTK_setFocus();
 	if(this->isActive==false)
 		{
 			this->LFSTK_clearWindow();
@@ -468,7 +469,6 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 void LFSTK_lineEditClass::LFSTK_dropData(propertyStruct* data)
 {
 	int	endl;
-
 	if(strcasecmp(data->mimeType,"text/plain")==0)
 		this->LFSTK_setFormatedText((const char*)data->data,true);
 

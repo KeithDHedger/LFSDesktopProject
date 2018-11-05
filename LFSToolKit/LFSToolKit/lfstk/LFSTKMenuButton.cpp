@@ -147,7 +147,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	XRaiseWindow(this->display,this->subwc->window);
 	XSync(this->display,false);
 	subwindowgeom=this->subwc->LFSTK_getWindowGeom();
-
+//XSetInputFocus(subwc->display,subwc->window,RevertToParent,CurrentTime);
 	while (run==true)
 		{
 			XNextEvent(subwc->display,&event);
@@ -158,6 +158,19 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 
 			switch(event.type)
 				{
+//					case FocusIn:
+//						XSetInputFocus(subwc->display,subwc->window,RevertToParent,CurrentTime);
+//printf("focus in\n");
+//					//	return(true);
+//						break;
+//
+//					case FocusOut:
+//						printf("foc out\n");
+//						subwc->LFSTK_hideWindow();
+//						this->inWindow=false;
+//						this->mouseExit(&event.xbutton);
+//						return(true);
+//						break;
 					case LeaveNotify:
 					
 						if(event.xany.window==subwc->window)
