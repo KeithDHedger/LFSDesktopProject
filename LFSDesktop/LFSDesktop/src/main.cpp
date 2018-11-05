@@ -298,7 +298,7 @@ BACKUP:
 	loadVarsFromFile(prefsPath,desktopPrefs);
 
 //TODO//
-	bool				dotidy=false;
+//	bool				dotidy=false;
 
 
 	while(1)

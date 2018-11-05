@@ -282,7 +282,7 @@ void addDiskData(diskDataStruct *dnode,const char *devname,int x,int y)
 			customIcon=false;
 			free(diskfile);
 
-			dnode->diskImage=new LFSTK_buttonClass(wc,dnode->label,dnode->posx,dnode->posy,iconSize,iconSize,NorthWestGravity);
+			dnode->diskImage=new LFSTK_buttonClass(wc,dnode->label,dnode->posx,dnode->posy,iconSize,iconSize,BUTTONGRAV);
 
 			dnode->diskImage->LFSTK_setFontString(fontFace,true);
 			setImageSize(dnode);
