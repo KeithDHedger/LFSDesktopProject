@@ -100,11 +100,11 @@ void addSet(void)
 	fc->LFSTK_findFiles("/usr/share/themes",true);
 	fc->LFSTK_setSort(true);
 	fc->LFSTK_sortByPath();
-	for(int j=0;j<fc->data.size();j++)
-		{
-			fprintf(stderr,"j=%i name=%s path=%s type=%i\n",j,fc->data.at(j).name.c_str(),fc->data.at(j).path.c_str(),fc->data.at(j).fileType);
-		//	fprintf(stderr,"j=%i name=%s path=%s type=%i\n",j,fc->data.at(j)->name.c_str(),fc->data.at(j)->path.c_str(),fc->data.at(j)->fileType);
-		}
+//	for(int j=0;j<fc->data.size();j++)
+//		{
+//			fprintf(stderr,"j=%i name=%s path=%s type=%i\n",j,fc->data.at(j).name.c_str(),fc->data.at(j).path.c_str(),fc->data.at(j).fileType);
+//		//	fprintf(stderr,"j=%i name=%s path=%s type=%i\n",j,fc->data.at(j)->name.c_str(),fc->data.at(j)->path.c_str(),fc->data.at(j)->fileType);
+//		}
 
 	setNameMenuItems=new menuItemStruct[fc->data.size()];
 	for(int j=0;j<fc->data.size();j++)

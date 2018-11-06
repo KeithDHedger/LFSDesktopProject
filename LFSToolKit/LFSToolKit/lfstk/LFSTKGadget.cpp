@@ -465,12 +465,9 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 						else
 							labelx=details->gadgetGeom.w-this->textExtents.width-this->pad*2;
 						break;
-					case TOOLBAR://TODO//
+					case TOOLBAR:
 						labelx=((details->gadgetGeom.w)/2)-(this->textExtents.width/2);
 						labelrect={labelx,(int)(details->gadgetGeom.h-(int)this->maxTextHeight-1),(unsigned int)this->textExtents.width,(unsigned int)this->LFSTK_getTextHeight(this->label)};
-
-//						labely=labelrect.y+this->fontExtents.descent + this->fontExtents.ascent+2;
-//						labelrect.y=labely-this->LFSTK_getTextHeight(this->label);
 
 						labh=details->gadgetGeom.h-this->imageHeight-(this->pad*2);
 						laby=details->gadgetGeom.h-(labh/2);

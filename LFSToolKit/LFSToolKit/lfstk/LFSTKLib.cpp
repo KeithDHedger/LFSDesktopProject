@@ -558,11 +558,11 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				break;
 
 			case FocusIn:
-				printf("focus in libev\n");
+				//printf("focus in libev\n");
 				retval=gadget->gotFocus(e);
 				break;
 			case FocusOut:
-				printf("focus out libev\n");
+				//printf("focus out libev\n");
 				retval=gadget->lostFocus(e);
 				break;
 

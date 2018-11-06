@@ -437,24 +437,24 @@ void LFSTK_windowClass::LFSTK_setWindowColourName(int p,const char* colour)
 	XAllocNamedColor(this->display,this->cm,colour,&sc,&tc);
 	this->windowColourNames[p].pixel=tc.pixel;
 
-	if(this->autoLabelColour==true)
-		{
-			if(strcmp(this->globalLib->bestFontColour(this->windowColourNames[p].pixel),"black")==0)
-				{
-					this->windowColourNames[p].RGBAColour.r=0;
-					this->windowColourNames[p].RGBAColour.g=0;
-					this->windowColourNames[p].RGBAColour.b=0;
-					this->windowColourNames[p].RGBAColour.a=1.0;
-				}
-			else
-				{
-					this->windowColourNames[p].RGBAColour.r=1;
-					this->windowColourNames[p].RGBAColour.g=1;
-					this->windowColourNames[p].RGBAColour.b=1;
-					this->windowColourNames[p].RGBAColour.a=1.0;
-				}
-		}
-	else
+//	if(this->autoLabelColour==true)
+//		{
+//			if(strcmp(this->globalLib->bestFontColour(this->windowColourNames[p].pixel),"black")==0)
+//				{
+//					this->windowColourNames[p].RGBAColour.r=0;
+//					this->windowColourNames[p].RGBAColour.g=0;
+//					this->windowColourNames[p].RGBAColour.b=0;
+//					this->windowColourNames[p].RGBAColour.a=1.0;
+//				}
+//			else
+//				{
+//					this->windowColourNames[p].RGBAColour.r=1;
+//					this->windowColourNames[p].RGBAColour.g=1;
+//					this->windowColourNames[p].RGBAColour.b=1;
+//					this->windowColourNames[p].RGBAColour.a=1.0;
+//				}
+//		}
+//	else
 		{
 			this->windowColourNames[p].RGBAColour.r=((this->windowColourNames[p].pixel>>16) & 0xff)/256.0;
 			this->windowColourNames[p].RGBAColour.g=((this->windowColourNames[p].pixel>>8) & 0xff)/256.0;
