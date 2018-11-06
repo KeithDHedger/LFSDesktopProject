@@ -914,7 +914,8 @@ void LFSTK_windowClass::LFSTK_setTile(const char *path,int size)
 			cairo_pattern_destroy(this->pattern);
 			this->pattern=NULL;
 		}
-	if(path==NULL)
+
+	if((path==NULL) || (access(path,F_OK)!=0))
 		{
 			this->useTile=false;
 			return;

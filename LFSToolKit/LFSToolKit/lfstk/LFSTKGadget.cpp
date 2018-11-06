@@ -1451,7 +1451,7 @@ void LFSTK_gadgetClass::LFSTK_setTile(const char *path,int size)
 			this->pattern=NULL;
 		}
 
-	if(path==NULL)
+	if((path==NULL) || (access(path,F_OK)!=0))
 		{
 			this->useTile=false;
 			return;

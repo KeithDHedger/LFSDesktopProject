@@ -100,11 +100,6 @@ void addSet(void)
 	fc->LFSTK_findFiles("/usr/share/themes",true);
 	fc->LFSTK_setSort(true);
 	fc->LFSTK_sortByPath();
-//	for(int j=0;j<fc->data.size();j++)
-//		{
-//			fprintf(stderr,"j=%i name=%s path=%s type=%i\n",j,fc->data.at(j).name.c_str(),fc->data.at(j).path.c_str(),fc->data.at(j).fileType);
-//		//	fprintf(stderr,"j=%i name=%s path=%s type=%i\n",j,fc->data.at(j)->name.c_str(),fc->data.at(j)->path.c_str(),fc->data.at(j)->fileType);
-//		}
 
 	setNameMenuItems=new menuItemStruct[fc->data.size()];
 	for(int j=0;j<fc->data.size();j++)
@@ -146,20 +141,18 @@ bool menuCB(void *p,void* ud)
 	char	*mfont=NULL;
 	char	*monofont=NULL;
 
+	bool	usetheme=0;
+	bool	autocol=0;
+
 	args myargs[]=
 	{
 //window
 		{"window_normal",TYPESTRING,&wnormal},
-//		{"window_prelight",TYPESTRING,&bpre},
-//		{"window_active",TYPESTRING,&bactive},
-//		{"window_inactive",TYPESTRING,&binactive},
-//		{"windowtile",TYPESTRING,&wtile},
 //button
 		{"button_normal",TYPESTRING,&bnormal},
 		{"button_prelight",TYPESTRING,&bpre},
 		{"button_active",TYPESTRING,&bactive},
 		{"button_inactive",TYPESTRING,&binactive},
-//		{"buttontile",TYPESTRING,&(this->globalButtonTile)},
 ////menu button
 		{"menuitem_normal",TYPESTRING,&mnormal},
 		{"menuitem_prelight",TYPESTRING,&mpre},
@@ -171,7 +164,6 @@ bool menuCB(void *p,void* ud)
 		{"menuitem_font_prelight",TYPESTRING,&mfpre},
 		{"menuitem_font_active",TYPESTRING,&mfactive},
 		{"menuitem_font_inactive",TYPESTRING,&mfinactive},
-//		{"menuitemtile",TYPESTRING,&(this->globalMenuItemTile)},
 //
 ////font
 		{"font",TYPESTRING,&bfont},
@@ -180,8 +172,8 @@ bool menuCB(void *p,void* ud)
 		{"font_active",TYPESTRING,&bfactive},
 		{"font_inactive",TYPESTRING,&bfinactive},
 ////other
-//		{"autotextcolour",TYPEBOOL,&(this->autoLabelColour)},
-//		{"usetheme",TYPEBOOL,&(this->useTheme)},
+		{"autotextcolour",TYPEBOOL,&autocol},
+		{"usetheme",TYPEBOOL,&usetheme},
 //monofont
 		{"monofont",TYPESTRING,&monofont},
 //cursor colour
@@ -193,17 +185,13 @@ bool menuCB(void *p,void* ud)
 	if(ud==NULL)
 		return(true);
 
-//	sprintf(buffer,"%s/.themes/%s/window.png",getenv("HOME"),menuitem->label);
 	sprintf(buffer,"%s/window.png",menuitem->label);
 	windowTileEdit->LFSTK_setBuffer(buffer);
-//	sprintf(buffer,"%s/.themes/%s/button.png",getenv("HOME"),menuitem->label);
 	sprintf(buffer,"%s/button.png",menuitem->label);
 	buttonTileEdit->LFSTK_setBuffer(buffer);
-	//sprintf(buffer,"%s/.themes/%s/menuitem.png",getenv("HOME"),menuitem->label);
 	sprintf(buffer,"%s/menuitem.png",menuitem->label);
 	menuTileEdit->LFSTK_setBuffer(buffer);
 
-	//sprintf(buffer,"%s/.themes/%s/lfstoolkit.rc",getenv("HOME"),menuitem->label);
 	sprintf(buffer,"%s/lfstoolkit.rc",menuitem->label);
 	wc->globalLib->LFSTK_loadVarsFromFile(buffer,myargs);
 
@@ -235,6 +223,9 @@ bool menuCB(void *p,void* ud)
 	buttonFontEdit->LFSTK_setBuffer(bfont);
 	menuFontEdit->LFSTK_setBuffer(mfont);
 	monoFontEdit->LFSTK_setBuffer(monofont);
+//odds
+	autoColourCheck->LFSTK_setValue(autocol);
+	useTheme->LFSTK_setValue(usetheme);
 
 	free(bnormal);
 	free(bpre);
@@ -323,10 +314,9 @@ void setPreviewData(void)
 //button
 											mls->gadget->LFSTK_setFontString(buttonFontEdit->LFSTK_getCStr(),true);	
 											mls->gadget-> LFSTK_setLabelAutoColour(autoColourCheck->LFSTK_getValue());
-											mls->gadget->LFSTK_setColourName(NORMALCOLOUR,previeBackColourEdit[NORMALCOLOUR]->LFSTK_getCStr());
-											mls->gadget->LFSTK_setColourName(PRELIGHTCOLOUR,previeBackColourEdit[PRELIGHTCOLOUR]->LFSTK_getCStr());
-											mls->gadget->LFSTK_setColourName(ACTIVECOLOUR ,previeBackColourEdit[ACTIVECOLOUR]->LFSTK_getCStr());
-											mls->gadget->LFSTK_setColourName(INACTIVECOLOUR,previeBackColourEdit[INACTIVECOLOUR]->LFSTK_getCStr());
+											for(int j=0;j<4;j++)
+												mls->gadget->LFSTK_setColourName(j,previeBackColourEdit[j]->LFSTK_getCStr());
+
 											if(useTheme->LFSTK_getValue()==true)
 												{
 													if(mls->type==MENUBUTTONGADGET)
@@ -339,10 +329,8 @@ void setPreviewData(void)
 											if(mls->type==MENUBUTTONGADGET)
 												mls->gadget->LFSTK_setFontString(menuFontEdit->LFSTK_getCStr(),true);
 //font
-											mls->gadget->LFSTK_setFontColourName(NORMALCOLOUR,previeFontColourEdit[NORMALCOLOUR]->LFSTK_getCStr(),false);
-											mls->gadget->LFSTK_setFontColourName(PRELIGHTCOLOUR,previeFontColourEdit[PRELIGHTCOLOUR]->LFSTK_getCStr(),false);
-											mls->gadget->LFSTK_setFontColourName(ACTIVECOLOUR,previeFontColourEdit[ACTIVECOLOUR]->LFSTK_getCStr(),false);
-											mls->gadget->LFSTK_setFontColourName(INACTIVECOLOUR,previeFontColourEdit[INACTIVECOLOUR]->LFSTK_getCStr(),false);
+											for(int j=0;j<4;j++)
+												mls->gadget->LFSTK_setFontColourName(j,previeFontColourEdit[j]->LFSTK_getCStr(),false);
 										}
 									else
 										{
@@ -354,36 +342,27 @@ void setPreviewData(void)
 				}
 //set examples
 //buttons
-			previewButtons[0]->LFSTK_setColourName(NORMALCOLOUR,previeBackColourEdit[NORMALCOLOUR]->LFSTK_getCStr());
-			previewButtons[1]->LFSTK_setColourName(NORMALCOLOUR,previeBackColourEdit[PRELIGHTCOLOUR]->LFSTK_getCStr());
-			previewButtons[2]->LFSTK_setColourName(NORMALCOLOUR,previeBackColourEdit[ACTIVECOLOUR]->LFSTK_getCStr());
-			previewButtons[3]->LFSTK_setColourName(NORMALCOLOUR,previeBackColourEdit[INACTIVECOLOUR]->LFSTK_getCStr());
+			for(int j=0;j<4;j++)
+				previewButtons[j]->LFSTK_setColourName(NORMALCOLOUR,previeBackColourEdit[j]->LFSTK_getCStr());
 //menuitems
-			previewMenus[0]->LFSTK_setColourName(NORMALCOLOUR,previeMenuBackColourEdit[NORMALCOLOUR]->LFSTK_getCStr());
-			previewMenus[1]->LFSTK_setColourName(NORMALCOLOUR,previeMenuBackColourEdit[PRELIGHTCOLOUR]->LFSTK_getCStr());
-			previewMenus[2]->LFSTK_setColourName(NORMALCOLOUR,previeMenuBackColourEdit[ACTIVECOLOUR]->LFSTK_getCStr());
-			previewMenus[3]->LFSTK_setColourName(NORMALCOLOUR,previeMenuBackColourEdit[INACTIVECOLOUR]->LFSTK_getCStr());
+			for(int j=0;j<4;j++)
+				previewMenus[j]->LFSTK_setColourName(NORMALCOLOUR,previeMenuBackColourEdit[j]->LFSTK_getCStr());
+
 			for(int j=0;j<4;j++)
 				previewMenus[j]->LFSTK_setFontString(menuFontEdit->LFSTK_getCStr(),true);
 			if(useTheme->LFSTK_getValue()==true)
 				{
-					previewMenus[0]->LFSTK_setTile(menuTileEdit->LFSTK_getCStr(),-1);
-					previewMenus[1]->LFSTK_setTile(menuTileEdit->LFSTK_getCStr(),-1);
-					previewMenus[2]->LFSTK_setTile(menuTileEdit->LFSTK_getCStr(),-1);
-					previewMenus[3]->LFSTK_setTile(menuTileEdit->LFSTK_getCStr(),-1);
+					for(int j=0;j<4;j++)
+						previewMenus[j]->LFSTK_setTile(menuTileEdit->LFSTK_getCStr(),-1);
 				}
 			
 //buttons font
-			previewButtons[0]->LFSTK_setFontColourName(NORMALCOLOUR,previeFontColourEdit[NORMALCOLOUR]->LFSTK_getCStr(),false);
-			previewButtons[1]->LFSTK_setFontColourName(NORMALCOLOUR,previeFontColourEdit[PRELIGHTCOLOUR]->LFSTK_getCStr(),false);
-			previewButtons[2]->LFSTK_setFontColourName(NORMALCOLOUR,previeFontColourEdit[ACTIVECOLOUR]->LFSTK_getCStr(),false);
-			previewButtons[3]->LFSTK_setFontColourName(NORMALCOLOUR,previeFontColourEdit[INACTIVECOLOUR]->LFSTK_getCStr(),false);
+			for(int j=0;j<4;j++)
+				previewButtons[j]->LFSTK_setFontColourName(NORMALCOLOUR,previeFontColourEdit[j]->LFSTK_getCStr(),false);
 
 //menuitems font
-			previewMenus[0]->LFSTK_setFontColourName(NORMALCOLOUR,previeMenuFontColourEdit[NORMALCOLOUR]->LFSTK_getCStr(),false);
-			previewMenus[1]->LFSTK_setFontColourName(NORMALCOLOUR,previeMenuFontColourEdit[PRELIGHTCOLOUR]->LFSTK_getCStr(),false);
-			previewMenus[2]->LFSTK_setFontColourName(NORMALCOLOUR,previeMenuFontColourEdit[ACTIVECOLOUR]->LFSTK_getCStr(),false);
-			previewMenus[3]->LFSTK_setFontColourName(NORMALCOLOUR,previeMenuFontColourEdit[INACTIVECOLOUR]->LFSTK_getCStr(),false);
+			for(int j=0;j<4;j++)
+				previewMenus[j]->LFSTK_setFontColourName(NORMALCOLOUR,previeMenuFontColourEdit[j]->LFSTK_getCStr(),false);
 		}
 
 	cursorColourEdit->LFSTK_setColourName(NORMALCOLOUR,cursorColourEdit->LFSTK_getCStr());
@@ -683,7 +662,6 @@ int main(int argc, char **argv)
 	for(int j=0;j<setCnt;j++)
 		{
 			free(setNameMenuItems[j].label);
-		//	delete setNameMenuItems[j];
 		}
 
 	delete[] setNameMenuItems;

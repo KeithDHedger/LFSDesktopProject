@@ -1,4 +1,7 @@
 window_normal #C2A679
+window_prelight #6B4C26
+window_active #412502
+window_inactive #808080
 button_normal #93560F
 button_prelight #BE6E13
 button_active #87500D
@@ -17,5 +20,7 @@ font_normal white
 font_prelight yellow
 font_active white
 font_inactive grey
+autotextcolour 0
+usetheme 1
 monofont Ubuntu Mono:size=16
 cursorcolour #4D2F0B
