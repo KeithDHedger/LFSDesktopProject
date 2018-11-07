@@ -41,17 +41,15 @@ LFSTK_menuClass::LFSTK_menuClass(LFSTK_windowClass* parentwc,const char* label,i
 {
 	XSetWindowAttributes	wa;
 
-	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
+	this->LFSTK_setCommon(parentwc,label,x,y,1,1,gravity);
 
 	wa.win_gravity=bgrav;
 	wa.save_under=true;
-	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
+	this->window=XCreateWindow(this->display,this->parent,x,y,1,1,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
 	this->gc=XCreateGC(this->display,this->window,0,NULL);
-	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,1,1);
 	this->LFSTK_setCairoFontData();
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
-
-	//this->style=BEVELNONE;
 
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;
@@ -65,8 +63,30 @@ LFSTK_menuClass::LFSTK_menuClass(LFSTK_windowClass* parentwc,const char* label,i
 
 	this->LFSTK_setFontColourName(0,this->wc->globalLib->LFSTK_getGlobalString(0,TYPEMENUITEMFONTCOLOUR),true);
 	gadgetDetails={&this->wc->windowColourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
-//	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
-
-//	this->LFSTK_setLabelGravity(gravity);
 }
+
+/**
+* Add main menus to class.
+* \param menuStruct **menus, Pointer to array of prefilled menuStruct's.
+* \param int menucnt, Number of main menus.
+* \note User owns array and must free.
+*/
+void LFSTK_menuClass::LFSTK_addMainMenus(menuStruct **menus,int menucnt)
+{
+	LFSTK_menuItemClass	*label;
+	int					sy=0;
+
+	this->mainMenuCnt=menucnt;
+	this->mainMenu=menus;
+	for(int j=0;j<this->mainMenuCnt;j++)
+		{
+			label=new LFSTK_menuItemClass(this->wc,this->mainMenu[j]->label,0,sy,GADGETWIDTH,GADGETHITE,this->mainMenu[j],LEFT);
+			label->LFSTK_setCallBack(this->callback.pressCallback,this->callback.releaseCallback,(void*)(this->mainMenu[j]->userData));
+			if(this->mainMenu[j]->imageType==FILETHUMB)
+				label->LFSTK_setImageFromPath(this->mainMenu[j]->data.imagePath,MENU,true);
+			sy+=GADGETHITE;
+		}
+}
+
+
 

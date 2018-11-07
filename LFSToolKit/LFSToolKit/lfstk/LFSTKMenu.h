@@ -32,11 +32,14 @@ class LFSTK_menuClass : public LFSTK_gadgetClass
 		LFSTK_menuClass();
 		~LFSTK_menuClass();
 
-		LFSTK_menuClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity=CENTRE,int bgrav=BUTTONGRAV);
-		bool			mouseUp(XButtonEvent *e) {return(true);};
-		bool			mouseDown(XButtonEvent *e) {return(true);};
+		LFSTK_menuClass(LFSTK_windowClass *parentwc,const char *label,int x,int y,unsigned w,unsigned h,int gravity=CENTRE,int bgrav=BUTTONGRAV);
 		bool			mouseExit(XButtonEvent *e) {return(true);};
 		bool			mouseEnter(XButtonEvent *e) {return(true);};
+		void			LFSTK_addMainMenus(menuStruct **menus,int menucnt);
+
+	private:		
+		menuStruct		**mainMenu=NULL;
+		int				mainMenuCnt=0;
 };
 
 

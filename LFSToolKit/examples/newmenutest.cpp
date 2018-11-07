@@ -2,8 +2,9 @@
 
 #©keithhedger Sat 3 Nov 14:40:06 GMT 2018 kdhedger68713@gmail.com
 
-if [ "X$1" != "X" ];then
-	USEVALGRIND="valgrind --leak-check=full"
+if [ "X$1" != "X" ];
+then
+USEVALGRIND="valgrind --leak-check=full"
 fi
 
 APPNAME=$(basename $0 .cpp)
@@ -19,26 +20,23 @@ exit $retval
 
 #include "lfstk/LFSTKGlobals.h"
 
-#define BOXLABEL			"Basic Window"
+#define BOXLABEL				"New Menu Example"
+#define NUMMENUS				16
 
-LFSTK_windowClass			*wc=NULL;
-LFSTK_labelClass			*label=NULL;
-LFSTK_labelClass			*personal=NULL;
-LFSTK_labelClass			*copyrite=NULL;
-LFSTK_buttonClass			*seperator=NULL;
-LFSTK_buttonClass			*quit=NULL;
-LFSTK_windowClass	*subwc;
-LFSTK_listGadgetClass		*list=NULL;
+LFSTK_windowClass				*wc=NULL;
+LFSTK_labelClass				*label=NULL;
+LFSTK_labelClass				*personal=NULL;
+LFSTK_labelClass				*copyrite=NULL;
+LFSTK_buttonClass				*seperator=NULL;
+LFSTK_buttonClass				*quit=NULL;
+LFSTK_windowClass				*subwc;
+LFSTK_listGadgetClass			*list=NULL;
 
-const char	*lst[]={"menu 1","menu 2","menu 3","menu 4","menu 5","menu 6"};
-listLabelStruct				**labelLst1=NULL;
-
-bool						mainLoop=true;
-Display						*display;
-//LFSTK_windowClass			*subwindows;
-std::vector<LFSTK_windowClass*>		subwindows;
-std::vector<int>					xoffset;
-std::vector<int>					yoffset;
+bool							mainLoop=true;
+Display							*display;
+std::vector<LFSTK_windowClass*>	subwindows;
+std::vector<int>				xoffset;
+std::vector<int>				yoffset;
 
 bool doQuit(void *p,void* ud)
 {
@@ -48,26 +46,17 @@ bool doQuit(void *p,void* ud)
 	return(false);
 }
 
+bool menuCB(void *p,void* ud)
+{
+	printf("p=%p ud=%i\n",p,ud);
+	printf("Label=%s\n",static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel());
+	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
+}
+
 bool buttonCB(void *p,void* ud)
 {
 	subwc->LFSTK_showWindow();
 	XSetInputFocus(subwc->display,subwc->window,RevertToParent,CurrentTime);
-	if(ud!=NULL)
-		{
-			printf(">>>%s<<<\n",(const char*)ud);
-		}
-	return(true);
-}
-
-bool select(void *object,void* userdata)
-{
-	LFSTK_listGadgetClass	*list=static_cast<LFSTK_listGadgetClass*>(object);
-
-	printf("List item=%i\n",list->LFSTK_getCurrentListItem());
-	printf("Selected List item string=%s\n",list->LFSTK_getSelectedLabel());
-	if(list->labelData[list->LFSTK_getCurrentListItem()]->imageType==FILETHUMB)
-		printf("Image path=%s\n",list->labelData[list->LFSTK_getCurrentListItem()]->data.imagePath);
-	printf("UserData=%p\n",userdata);
 	return(true);
 }
 
@@ -75,7 +64,7 @@ int main(int argc, char **argv)
 {
 	XEvent	event;
 	int		sy=BORDER;
-	int		hsy;		
+	int		hsy;
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Gadgets",false);
 	display=wc->display;
 
@@ -107,88 +96,71 @@ int main(int argc, char **argv)
 	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
 	sy+=YSPACING;
 
-
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	mainLoop=true;
-	//LFSTK_windowClass *subw=new LFSTK_windowClass
+	subwindows.clear();
 
-//	XSetWindowAttributes	wa;
-//	wa.win_gravity=BUTTONGRAV;
-//	wa.save_under=true;
-//	Window w=XCreateWindow(wc->display,wc->window,0,100,100,800,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
-//	//this->gc=XCreateGC(this->display,this->window,0,NULL);
-//	wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
-//	//this->LFSTK_setCairoFontData();
-//	XSelectInput(wc->display,w,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
-subwindows.clear();
+	subwc=new LFSTK_windowClass(0,0,GADGETWIDTH,GADGETHITE*NUMMENUS,"menu window",true,true,false);
+	subwc->LFSTK_setWindowType("_NET_WM_WINDOW_TYPE_MENU");
 
-//XWindowAttributes xwa;
-//const geometryStruct	*geom=wc->LFSTK_getWindowGeom();
-//
-//	XGetWindowAttributes(display,wc->window,&xwa);
-//	
-//	printf("x=%i y=%i\n",xwa.x,xwa.y);
-//
-//	subwc=new LFSTK_windowClass(0,0,400,GADGETHITE*16,"menu window",true,true,false);
-//	//subwc=new LFSTK_windowClass(geom->x,geom->y,100,300,"menu window",false);
-//	subwc->LFSTK_setWindowType("_NET_WM_WINDOW_TYPE_MENU");
-//	//subwc->display=wc->display;
-//	//this->builtMenu=false;
-//	//subwc->gadgetMap.clear();
-//	if(wc->globalLib->LFSTK_getUseTheme()==true)
-//		subwc->LFSTK_setTile(wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMTILE),-1);
-//	else
-//		subwc->useTile=false;
-//	//subwc->LFSTK_showWindow();
-//	subwc->closeDisplayOnExit=false;
-//	list=new LFSTK_listGadgetClass(subwc,"list",0,0,400,GADGETHITE*16,BUTTONGRAV,NULL,0);
-////	filelist->LFSTK_setListFromFile("/etc/fstab",false);
-//
-//
-//	labelLst1=new listLabelStruct*[6];
-//	for(int j=0;j<6;j++)
-//		{
-//			labelLst1[j]=new listLabelStruct;
-//			labelLst1[j]->label=strdup((char*)lst[j]);
-//			labelLst1[j]->imageType=NOTHUMB;
-//		}
-//	list->LFSTK_setList(labelLst1,6);
-//	list->LFSTK_setCallBack(NULL,select,NULL);
-//
-//
-//
-//
-////	filelist->LFSTK_setCallBack(NULL,select,(void*)0xdeadbeaf);
-//	subwc->LFSTK_clearWindow(true);
-//	wc->LFSTK_clearWindow(true);
-//	sy+=YSPACING+GADGETHITE*16;
-
-LFSTK_menuClass *mc=new LFSTK_menuClass(wc,"Test Menu",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
-sy+=YSPACING;
-
+	LFSTK_menuClass *mc=new LFSTK_menuClass(subwc,"Test Menu",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
+	mc->LFSTK_setCallBack(NULL,menuCB,(void*)0xdeadbeef);
+	sy+=YSPACING;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();
 	wc->LFSTK_clearWindow(true);
-//
-//								Window dw;
-//								int x;
-//								int y;
-//								unsigned int w,h,dump;
-//								XGetWindowAttributes(display,wc->window,&xwa);
-//								 XGetGeometry(display,wc->window,&dw,&x,&y,&w,&h,&dump,&dump);
-//								 XTranslateCoordinates( display, wc->window,wc->rootWindow, 0, 0, &x, &y, &dw );
-//								subwc->LFSTK_moveWindow(x,y,true);
 
-//	XMapWindow(wc->display,subwc->window);
-//XReparentWindow(subwc->display,subwc->window, wc->window, 0, 0);
-//Display *mdisplay=XOpenDisplay(NULL);
+	subwindows.push_back(subwc);
+	xoffset.push_back(DIALOGMIDDLE-HALFGADGETWIDTH+((subwindows.size()-1)*GADGETWIDTH));
+	yoffset.push_back(((subwindows.size())*GADGETHITE));
 
-	//subwindows.push_back(subwc);
-	//xoffset.push_back(DIALOGMIDDLE-HALFGADGETWIDTH+((subwindows.size()-1)*GADGETWIDTH));
-	//yoffset.push_back(((subwindows.size())*GADGETHITE));
+	menuStruct	**mms=new menuStruct*[NUMMENUS];
 
+	for (int j=0; j<NUMMENUS; j++)
+		{
+			mms[j]=new menuStruct;
+			asprintf(&mms[j]->label,"menu %i",j);
+			mms[j]->hasSubMenu=false;
+			mms[j]->subMenus=NULL;
+			mms[j]->userData=(void*)(j+1);
+			mms[j]->imageType=NOTHUMB;
+		}
 
+	mms[0]->imageType=FILETHUMB;
+	mms[0]->data.imagePath="./AspellGUI.png";
+	mms[10]->imageType=FILETHUMB;
+	mms[10]->data.imagePath="./casper2.JPG";
+	mms[2]->hasSubMenu=true;
+	mms[2]->subMenuCnt=NUMMENUS;
+
+	mms[2]->subMenus=new menuStruct*[NUMMENUS];
+	for (int j=0; j<NUMMENUS; j++)
+		{
+			mms[2]->subMenus[j]=new menuStruct;
+			asprintf(&mms[2]->subMenus[j]->label,"sub menu -2 %i",j);
+			mms[2]->subMenus[j]->hasSubMenu=false;
+			mms[2]->subMenus[j]->subMenus=NULL;
+			mms[2]->subMenus[j]->userData=(void*)((j+1)*100);
+			mms[2]->subMenus[j]->imageType=NOTHUMB;
+		}
+
+	mms[6]->hasSubMenu=true;
+	mms[6]->subMenuCnt=NUMMENUS;
+
+	mms[6]->subMenus=new menuStruct*[NUMMENUS];
+	for (int j=0; j<NUMMENUS; j++)
+		{
+			mms[6]->subMenus[j]=new menuStruct;
+			asprintf(&mms[6]->subMenus[j]->label,"sub menu 6 - %i",j);
+			mms[6]->subMenus[j]->hasSubMenu=false;
+			mms[6]->subMenus[j]->subMenus=NULL;
+			mms[6]->subMenus[j]->userData=(void*)((j+1)*10000);
+			mms[6]->subMenus[j]->imageType=FILETHUMB;
+			mms[6]->subMenus[j]->data.imagePath="./computer.png";
+		}
+
+	mc->LFSTK_addMainMenus(mms,NUMMENUS);
 
 	while(mainLoop==true)
 		{
@@ -204,72 +176,70 @@ sy+=YSPACING;
 						mainLoop=false;
 					switch(event.type)
 						{
-							case ConfigureNotify:
-							case Expose:
-//								if(event.xany.window==wc->window)
-//									{
-//									for(int j=0;j<subwindows.size();j++)
-//										{
-//										Window dw;
-//										int x;
-//										int y;
-//										unsigned int w,h,dump;
-//										 XTranslateCoordinates( display, wc->window,wc->rootWindow, 0, 0, &x, &y, &dw );
-//										subwindows.at(j)->LFSTK_moveWindow(x+xoffset.at(j),y+hsy+yoffset.at(j),true);
-//										}
-//									}
-									break;
-							case ButtonRelease:
-								printf("ButtonRelease...\n");
-								break;
+						case ConfigureNotify:
+						case Expose:
+							if(event.xany.window==wc->window)
+								{
+									for(int j=0; j<subwindows.size(); j++)
+										{
+											Window dw;
+											int x;
+											int y;
+											unsigned int w,h,dump;
+											XTranslateCoordinates( display, wc->window,wc->rootWindow, 0, 0, &x, &y, &dw );
+											subwindows.at(j)->LFSTK_moveWindow(x+xoffset.at(j),y+hsy+yoffset.at(j),true);
+										}
+								}
+							break;
 						}
 				}
 
-			for(int j=0;j<subwindows.size();j++)
-			{
-			if(XPending(subwindows.at(j)->display))
+			for(int j=0; j<subwindows.size(); j++)
 				{
-					XNextEvent(subwindows.at(j)->display,&event);
-//					XNextEvent(wc->display,&event);
-					mappedListener *ml=subwindows.at(j)->LFSTK_getMappedListener(event.xany.window);
+					if(XPending(subwindows.at(j)->display))
+						{
+							XNextEvent(subwindows.at(j)->display,&event);
+							mappedListener *ml=subwindows.at(j)->LFSTK_getMappedListener(event.xany.window);
 
-					if(ml!=NULL)
-						ml->function(ml->gadget,&event,ml->type);
-						
-					subwindows.at(j)->LFSTK_handleWindowEvents(&event);
+							if(ml!=NULL)
+								ml->function(ml->gadget,&event,ml->type);
 
-					switch(event.type)
-						{	
-							case Expose:
-								//subwindows.at(j)->LFSTK_clearWindow(true);
-								break;
+							subwindows.at(j)->LFSTK_handleWindowEvents(&event);
 
-							case ButtonPress:
-								//XSetInputFocus(subwindows.at(j)->display,subwindows.at(j)->window,RevertToParent,CurrentTime);
-								break;
-							case ButtonRelease:
-								printf("ButtonRelease...\n");
-								break;
-							case EnterNotify:
-								printf("enter...\n");
-								break;
-							case LeaveNotify:
-								printf("leave...\n");
-								break;
-							case FocusOut:
-								subwindows.at(j)->LFSTK_hideWindow();
-								printf("focus out\n");
-								break;
-							case FocusIn:
-								printf("focus in\n");
-								break;
+							switch(event.type)
+								{
+								case Expose:
+
+									subwindows.at(j)->LFSTK_clearWindow(true);
+									break;
+
+								case FocusOut:
+									subwindows.at(j)->LFSTK_hideWindow();
+									printf("focus out\n");
+									break;
+								}
 						}
-				}
 				}
 		}
 
 	delete wc;
 	XCloseDisplay(display);
+	for(int j=0; j<NUMMENUS; j++)
+		{
+			free(mms[6]->subMenus[j]->label);
+			free(mms[2]->subMenus[j]->label);
+			delete mms[6]->subMenus[j];
+			delete mms[2]->subMenus[j];
+		}
+	delete[] mms[6]->subMenus;
+	delete[] mms[2]->subMenus;
+	for(int j=0; j<NUMMENUS; j++)
+		{
+			free(mms[j]->label);
+			delete mms[j];
+		}
+	delete[] mms;
+
 	cairo_debug_reset_static_data();
 	return 0;
 }

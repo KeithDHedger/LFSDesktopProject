@@ -26,17 +26,21 @@
  * \brief Label class for LFSToolKit gadgets.
  *
  */
-class LFSTK_menuItemClass : public LFSTK_gadgetClass
+class LFSTK_menuItemClass : public LFSTK_buttonClass
 {
 	public:
 		LFSTK_menuItemClass();
 		~LFSTK_menuItemClass();
 
-		LFSTK_menuItemClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity=CENTRE,int bgrav=BUTTONGRAV);
-		bool			mouseUp(XButtonEvent *e) {return(true);};
-		bool			mouseDown(XButtonEvent *e) {return(true);};
-		bool			mouseExit(XButtonEvent *e) {return(true);};
-		bool			mouseEnter(XButtonEvent *e) {return(true);};
+		LFSTK_menuItemClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,menuStruct *menu,int gravity=CENTRE,int bgrav=BUTTONGRAV);
+		//bool			mouseUp(XButtonEvent *e) {return(true);};
+		//bool			mouseDown(XButtonEvent *e) {return(true);};
+		bool			mouseExit(XButtonEvent *e);// {return(true);};
+		bool			mouseEnter(XButtonEvent *e);// {return(true);};
+		menuStruct		*menuData=NULL;
+		LFSTK_windowClass	*subwc=NULL;
+		bool				mainLoop=false;
+
 };
 
 

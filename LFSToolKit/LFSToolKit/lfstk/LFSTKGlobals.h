@@ -251,10 +251,18 @@ struct windowInitStruct
 class	LFSTK_menuClass;
 struct menuStruct
 {
-	char			*label;
-	bool			hasSubMenu;
-	LFSTK_menuClass	*subMenu;
-	void			*userData;
+	char				*label;
+	int					imageType;
+	union				imageData
+		{
+			char			*imagePath;
+			cairo_surface_t	*surface;
+		}				data;
+
+	bool				hasSubMenu;
+	menuStruct			**subMenus;
+	int					subMenuCnt;
+	void				*userData;
 };
 
 //messaging
