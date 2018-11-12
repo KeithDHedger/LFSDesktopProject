@@ -32,15 +32,20 @@ class LFSTK_menuItemClass : public LFSTK_buttonClass
 		LFSTK_menuItemClass();
 		~LFSTK_menuItemClass();
 
-		LFSTK_menuItemClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,menuStruct *menu,int gravity=CENTRE,int bgrav=BUTTONGRAV);
+//		LFSTK_menuItemClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,menuStruct *menu,int gravity=CENTRE,int bgrav=BUTTONGRAV);
+		LFSTK_menuItemClass(LFSTK_toolWindowClass* parentwc,LFSTK_menuClass *mainmenu,const char* label,int x,int y,unsigned w,unsigned h,menuStruct *menu,std::vector<LFSTK_toolWindowClass*> *windows=NULL);
 		//bool			mouseUp(XButtonEvent *e) {return(true);};
 		//bool			mouseDown(XButtonEvent *e) {return(true);};
 		bool			mouseExit(XButtonEvent *e);// {return(true);};
 		bool			mouseEnter(XButtonEvent *e);// {return(true);};
+		bool			lostFocus(XEvent *e);// {return(true);};
 		menuStruct		*menuData=NULL;
-		LFSTK_windowClass	*subwc=NULL;
-		bool				mainLoop=false;
-
+		LFSTK_toolWindowClass	*subwc=NULL;
+		//bool				mainLoop=false;
+		std::vector<LFSTK_toolWindowClass*>	*subwindows;
+		bool			leaveSub=false;
+		bool			leaveThis=false;
+		LFSTK_menuClass	*menu=NULL;
 };
 
 

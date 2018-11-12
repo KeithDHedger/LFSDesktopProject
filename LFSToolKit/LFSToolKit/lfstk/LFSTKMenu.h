@@ -26,20 +26,35 @@
  * \brief Label class for LFSToolKit gadgets.
  *
  */
-class LFSTK_menuClass : public LFSTK_gadgetClass
+class LFSTK_menuClass
 {
 	public:
-		LFSTK_menuClass();
 		~LFSTK_menuClass();
+		LFSTK_menuClass(LFSTK_windowClass *wc,int x,int y,unsigned w,unsigned h);
 
-		LFSTK_menuClass(LFSTK_windowClass *parentwc,const char *label,int x,int y,unsigned w,unsigned h,int gravity=CENTRE,int bgrav=BUTTONGRAV);
-		bool			mouseExit(XButtonEvent *e) {return(true);};
-		bool			mouseEnter(XButtonEvent *e) {return(true);};
-		void			LFSTK_addMainMenus(menuStruct **menus,int menucnt);
+//		LFSTK_menuClass(LFSTK_windowClass *parentwc,const char *label,int x,int y,unsigned w,unsigned h,int gravity=CENTRE,int bgrav=BUTTONGRAV);
+//		bool			mouseExit(XButtonEvent *e) {return(true);};
+//		bool			mouseEnter(XButtonEvent *e) {return(true);};
+		void								LFSTK_addMainMenus(menuStruct **menus,int menucnt);
+		void								LFSTK_showMenu(void);
 
+		int									x;
+		int									y;
+		unsigned							w;
+		unsigned							h;
+		LFSTK_windowClass					*parentwc;
+		Display								*display;
+		
+		void								LFSTK_setCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud);
+		void								LFSTK_freeMenus(menuStruct **menus,int menucnt);
+
+		LFSTK_toolWindowClass				*mainMenuWindow=NULL;
+		bool								mainLoop=false;
+		std::vector<LFSTK_toolWindowClass*>	*subwindows;
 	private:		
-		menuStruct		**mainMenu=NULL;
-		int				mainMenuCnt=0;
+		menuStruct							**mainMenu=NULL;
+		int									mainMenuCnt=0;
+		buttonCB							callback;
 };
 
 

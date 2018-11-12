@@ -232,19 +232,22 @@ struct gadgetStruct
 	bool			useWindowPixmap;
 };
 
+class LFSTK_windowClass;
 struct windowInitStruct
 {
-	int			x=0;
-	int			y=0;
-	int			w=1;
-	int			h=1;
-	const char	*name="";
-	bool		overRide=false;
-	bool		loadVars=true;
-	bool		shutDisplayOnExit=false;
-	const char	*windowType="_NET_WM_WINDOW_TYPE_NORMAL";
-	bool		decorated=true;
-	int			level=NORMAL;
+	int					x=0;
+	int					y=0;
+	int					w=1;
+	int					h=1;
+	const char			*name="";
+	bool				overRide=false;
+	bool				loadVars=true;
+	bool				shutDisplayOnExit=false;
+	const char			*windowType="_NET_WM_WINDOW_TYPE_NORMAL";
+	bool				decorated=true;
+	int					level=NORMAL;
+	Display				*display;
+	LFSTK_windowClass	*wc;
 };
 
 //menus
@@ -293,7 +296,8 @@ enum {DESKTOP_MSG=1000,WMANAGER_MSG,PANEL_MSG,WALLPAPER_MSG,TOOLKIT_MSG,APPEARAN
 #include "LFSTKFileDialog.h"
 #include "LFSTKFontDialog.h"
 #include "LFSTKMultiLineEdit.h"
-#include "LFSTKMenuItem.h"
+#include "LFSTKToolWindow.h"
 #include "LFSTKMenu.h"
+#include "LFSTKMenuItem.h"
 
 #endif

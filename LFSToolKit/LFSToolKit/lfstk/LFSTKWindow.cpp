@@ -133,7 +133,8 @@ void LFSTK_windowClass::initWindow(bool loadvars)
 	this->windowColourNames[INACTIVECOLOUR].name=strdup("grey90");
 
 	this->globalLib=new LFSTK_lib(loadvars);
-	this->loadGlobalColours();
+	if(loadvars==true)
+		this->loadGlobalColours();
 	this->isActive=true;
 	this->useTile=false;
 	this->gadgetMap.clear();
@@ -161,6 +162,9 @@ void LFSTK_windowClass::LFSTK_reloadGlobals(void)
  */
 LFSTK_windowClass::~LFSTK_windowClass()
 {
+//if(this->destroy==false)
+//	return;
+	//printf("LFSTK_windowClass::~LFSTK_windowClass()\n");
 	this->LFSTK_hideWindow();
 
 	if(this->pattern!=NULL)
@@ -219,6 +223,8 @@ LFSTK_windowClass::~LFSTK_windowClass()
 
 LFSTK_windowClass::LFSTK_windowClass()
 {
+return;
+printf(">>>>>>>>>>>>>LFSTK_windowClass::LFSTK_windowClass() %p\n",this);
 	this->initWindow(false);
 	this->setWindowGeom(0,0,0,0,WINDSETALL);
 	this->gadgetMap.clear();
@@ -510,7 +516,7 @@ void LFSTK_windowClass::LFSTK_setWindowType(const char *type)
 	Atom	xa;
 	Atom	xa_prop[1];
 
-	xa=XInternAtom(display,"_NET_WM_WINDOW_TYPE",False);
+	xa=XInternAtom(this->display,"_NET_WM_WINDOW_TYPE",False);
 	xa_prop[0]=XInternAtom(display,type,False);
 
 	if(xa!=None)
@@ -807,6 +813,7 @@ void LFSTK_windowClass::windowClassInitCommon(windowInitStruct *wi)
 */
 LFSTK_windowClass::LFSTK_windowClass(windowInitStruct *wi)
 {
+printf("LFSTK_windowClass::LFSTK_windowClass(windowInitStruct *wi)\n");
 	this->windowClassInitCommon(wi);
 	this->gadgetMap.clear();
 	
@@ -824,6 +831,7 @@ LFSTK_windowClass::LFSTK_windowClass(windowInitStruct *wi)
 */
 LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bool override,bool loadvars,bool shutdisplayonexit)
 {
+//printf("LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bool override,bool loadvars,bool shutdisplayonexit)\n");
 	windowInitStruct *wi=new windowInitStruct;
 	wi->x=x;
 	wi->y=y;
@@ -863,6 +871,8 @@ void LFSTK_windowClass::LFSTK_showWindow(bool all)
 
 	XGetWindowAttributes(this->display,this->window,&wattr);
 	XSendEvent(this->display,wattr.screen->root,false,SubstructureNotifyMask|SubstructureRedirectMask,&xev);
+//	XSetInputFocus(this->display,this->window,None,CurrentTime);
+	this->isVisible=true;
 }
 
 /**
@@ -871,8 +881,12 @@ void LFSTK_windowClass::LFSTK_showWindow(bool all)
 void LFSTK_windowClass::LFSTK_hideWindow(void)
 {
 	XUnmapWindow(this->display,this->window);
+	this->mainLoop=false;
 	XFlush(this->display);
-	XSync(this->display,true);
+	//XSync(this->display,true);
+	XSync(this->display,false);
+	//XSetInputFocus(this->display,PointerRoot,RevertToParent,CurrentTime);
+	this->isVisible=false;
 }
 
 /**
@@ -1418,6 +1432,13 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 
 	switch(event->type)
 		{
+			case FocusOut:
+				//printf("focus out from LFSTK_handleWindowEvents\n");
+										//this->subwc->LFSTK_hideWindow();
+										//this->wc->LFSTK_hideWindow();
+				//this->mainLoop=false;
+				break;
+
 			case EnterNotify:
 //				printf("enter\n");
 				break;

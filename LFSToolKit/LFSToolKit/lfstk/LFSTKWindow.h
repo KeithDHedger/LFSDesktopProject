@@ -167,17 +167,25 @@ class LFSTK_windowClass
 		unsigned				dbClick=500;
 		bool					popupLoop=false;
 		int						LFSTK_handleWindowEvents(XEvent *event);
+		bool					mainLoop=false;
+		bool					mainLoopQuit=false;
+		bool					isVisible=false;
 
 //copy/paste buffer etc
 		std::string				clipBuffer;
 		std::map<int,mappedListener*> gadgetMap;
+
+	protected:
+		bool					isActive;
+		char					*windowName;
+		void					loadMonitorData(void);
+		void					initWindow(bool loadvars);
+	
 	private:
 
 //window routines
 		void					windowClassInitCommon(windowInitStruct *wi);
-		void					initWindow(bool loadvars);
 		void					loadGlobalColours(void);
-		void					loadMonitorData(void);
 		void					sendUTF8(XSelectionRequestEvent *sev);
 
 //DnD routines
@@ -188,8 +196,6 @@ class LFSTK_windowClass
 		Atom					pickTargetFromTargets(propertyStruct* p);
 		Atom					pickTargetFromAtoms(Atom t1, Atom t2, Atom t3);
 
-		char					*windowName;
-		bool					isActive;
 		bool					isSticky;
 		int						monitorCount;
 		monitorStruct			*monitors;
