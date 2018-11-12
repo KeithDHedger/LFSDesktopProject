@@ -173,5 +173,4 @@ LFSTK_toolWindowClass::LFSTK_toolWindowClass(Display *disp,LFSTK_windowClass *wc
 
 LFSTK_toolWindowClass::LFSTK_toolWindowClass()
 {
-
 }

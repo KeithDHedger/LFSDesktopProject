@@ -30,8 +30,6 @@ class LFSTK_toolWindowClass : public LFSTK_windowClass
 		LFSTK_toolWindowClass();
 		LFSTK_toolWindowClass(Display *disp,LFSTK_windowClass *wc,const char *windowtype,int x,int y,int w,int h,const char* name);
 
-		bool	inWindow=false;
-		bool	topLevel=false;
 	protected:
 	private:
 		void	windowClassInitCommon(windowInitStruct *wi);

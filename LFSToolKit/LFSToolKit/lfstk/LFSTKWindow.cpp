@@ -162,9 +162,6 @@ void LFSTK_windowClass::LFSTK_reloadGlobals(void)
  */
 LFSTK_windowClass::~LFSTK_windowClass()
 {
-//if(this->destroy==false)
-//	return;
-	//printf("LFSTK_windowClass::~LFSTK_windowClass()\n");
 	this->LFSTK_hideWindow();
 
 	if(this->pattern!=NULL)
@@ -221,10 +218,12 @@ LFSTK_windowClass::~LFSTK_windowClass()
 		XCloseDisplay(this->display);
 }
 
+/**
+ * Dummy init.
+ */
 LFSTK_windowClass::LFSTK_windowClass()
 {
-return;
-printf(">>>>>>>>>>>>>LFSTK_windowClass::LFSTK_windowClass() %p\n",this);
+	return;
 	this->initWindow(false);
 	this->setWindowGeom(0,0,0,0,WINDSETALL);
 	this->gadgetMap.clear();
@@ -443,31 +442,10 @@ void LFSTK_windowClass::LFSTK_setWindowColourName(int p,const char* colour)
 	XAllocNamedColor(this->display,this->cm,colour,&sc,&tc);
 	this->windowColourNames[p].pixel=tc.pixel;
 
-//	if(this->autoLabelColour==true)
-//		{
-//			if(strcmp(this->globalLib->bestFontColour(this->windowColourNames[p].pixel),"black")==0)
-//				{
-//					this->windowColourNames[p].RGBAColour.r=0;
-//					this->windowColourNames[p].RGBAColour.g=0;
-//					this->windowColourNames[p].RGBAColour.b=0;
-//					this->windowColourNames[p].RGBAColour.a=1.0;
-//				}
-//			else
-//				{
-//					this->windowColourNames[p].RGBAColour.r=1;
-//					this->windowColourNames[p].RGBAColour.g=1;
-//					this->windowColourNames[p].RGBAColour.b=1;
-//					this->windowColourNames[p].RGBAColour.a=1.0;
-//				}
-//		}
-//	else
-		{
-			this->windowColourNames[p].RGBAColour.r=((this->windowColourNames[p].pixel>>16) & 0xff)/256.0;
-			this->windowColourNames[p].RGBAColour.g=((this->windowColourNames[p].pixel>>8) & 0xff)/256.0;
-			this->windowColourNames[p].RGBAColour.b=((this->windowColourNames[p].pixel>>0) & 0xff)/256.0;
-			this->windowColourNames[p].RGBAColour.a=1.0;
-		}
-	
+	this->windowColourNames[p].RGBAColour.r=((this->windowColourNames[p].pixel>>16) & 0xff)/256.0;
+	this->windowColourNames[p].RGBAColour.g=((this->windowColourNames[p].pixel>>8) & 0xff)/256.0;
+	this->windowColourNames[p].RGBAColour.b=((this->windowColourNames[p].pixel>>0) & 0xff)/256.0;
+	this->windowColourNames[p].RGBAColour.a=1.0;
 }
 
 /**
@@ -1433,10 +1411,6 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 	switch(event->type)
 		{
 			case FocusOut:
-				//printf("focus out from LFSTK_handleWindowEvents\n");
-										//this->subwc->LFSTK_hideWindow();
-										//this->wc->LFSTK_hideWindow();
-				//this->mainLoop=false;
 				break;
 
 			case EnterNotify:

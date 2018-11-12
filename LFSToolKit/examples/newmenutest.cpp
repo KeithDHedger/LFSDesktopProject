@@ -152,6 +152,9 @@ int main(int argc, char **argv)
 			mms[j]->userData=(void*)(j+1);
 			mms[j]->imageType=NOTHUMB;
 		}
+	free(mms[12]->label);
+	mms[12]->label=strdup("--");
+	
 #if 1
 	mms[0]->imageType=FILETHUMB;
 	mms[0]->data.imagePath="./AspellGUI.png";
