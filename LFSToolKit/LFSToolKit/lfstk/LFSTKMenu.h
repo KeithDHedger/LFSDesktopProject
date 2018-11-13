@@ -43,6 +43,7 @@ class LFSTK_menuClass
 		
 		void								LFSTK_setCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud);
 		void								LFSTK_freeMenus(menuStruct **menus,int menucnt);
+		int									LFSTK_getTextWidthForFont(const char *text);
 
 		bool								mainLoop=false;
 		LFSTK_toolWindowClass				*mainMenuWindow=NULL;
@@ -52,6 +53,12 @@ class LFSTK_menuClass
 		menuStruct							**mainMenu=NULL;
 		int									mainMenuCnt=0;
 		buttonCB							callback;
+
+		cairo_font_weight_t		weight=CAIRO_FONT_WEIGHT_NORMAL;
+		cairo_font_slant_t		slant=CAIRO_FONT_SLANT_NORMAL;
+		int						fontSize=10;
+		char					*fontName=NULL;
+		const char				*fontDesc=NULL;
 };
 
 

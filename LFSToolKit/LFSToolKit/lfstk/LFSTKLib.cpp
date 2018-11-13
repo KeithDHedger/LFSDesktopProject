@@ -1041,9 +1041,3 @@ cairo_surface_t	*LFSTK_lib::LFSTK_createSurfaceFromPath(const char *path)
 		tempimage=NULL;
 	return(tempimage);
 }
-
-
-
-
-
-

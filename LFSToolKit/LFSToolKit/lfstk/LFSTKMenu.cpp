@@ -40,6 +40,7 @@ LFSTK_menuClass::LFSTK_menuClass(LFSTK_windowClass *wc,int x,int y,unsigned w,un
 	this->y=y;
 	this->w=w;
 	this->h=h;
+	this->fontDesc=this->parentwc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEMENUITEMFONT);
 }
 
 /**
@@ -101,7 +102,7 @@ void LFSTK_menuClass::LFSTK_showMenu(void)
 				{
 					case ConfigureNotify:
 					case Expose:
-						XTranslateCoordinates(this->display,this->parentwc->window,this->parentwc->rootWindow,this->x,this->y, &x, &y, &dw );
+						XTranslateCoordinates(this->display,this->parentwc->window,this->parentwc->rootWindow,this->x,this->y,&x,&y,&dw );
 						this->mainMenuWindow->LFSTK_moveWindow(x,y,true);
 						break;
 
@@ -124,13 +125,28 @@ void LFSTK_menuClass::LFSTK_addMainMenus(menuStruct **menus,int menucnt)
 {
 	LFSTK_menuItemClass		*label;
 	int						sy=0;
+	double					txtwid=0;
+	double					maxtxtwid=0;
+	int						finaltxtwid;
+	int						gotsubmenu=8;
 
 	this->mainMenuCnt=menucnt;
 	this->mainMenu=menus;
-	this->mainMenuWindow=new LFSTK_toolWindowClass(this->display,this->parentwc,"_NET_WM_WINDOW_TYPE_MENU",this->x,this->y,GADGETWIDTH,GADGETHITE*this->mainMenuCnt,"menu window");
+
+	for(int j=0;j<menucnt;j++)
+		{
+			txtwid=this->LFSTK_getTextWidthForFont(this->mainMenu[j]->label);
+			if(txtwid>maxtxtwid)
+				maxtxtwid=txtwid;
+			if(this->mainMenu[j]->hasSubMenu==true)
+				gotsubmenu=GADGETHITE;
+		}
+
+	maxtxtwid+=GADGETHITE+gotsubmenu;
+	this->mainMenuWindow=new LFSTK_toolWindowClass(this->display,this->parentwc,"_NET_WM_WINDOW_TYPE_MENU",this->x,this->y,maxtxtwid,GADGETHITE*this->mainMenuCnt,"menu window");
 	for(int j=0;j<this->mainMenuCnt;j++)
 		{
-			label=new LFSTK_menuItemClass(this->mainMenuWindow,this,this->mainMenu[j]->label,0,sy,GADGETWIDTH,GADGETHITE,this->mainMenu[j],this->subwindows);
+			label=new LFSTK_menuItemClass(this->mainMenuWindow,this,this->mainMenu[j]->label,0,sy,maxtxtwid,GADGETHITE,this->mainMenu[j],this->subwindows);
 			label->LFSTK_setCallBack(this->callback.pressCallback,this->callback.releaseCallback,(void*)(this->mainMenu[j]->userData));
 			if(this->mainMenu[j]->imageType==FILETHUMB)
 				label->LFSTK_setImageFromPath(this->mainMenu[j]->data.imagePath,MENU,true);
@@ -158,6 +174,69 @@ void LFSTK_menuClass::LFSTK_freeMenus(menuStruct **menus,int menucnt)
 	delete[] menus;
 }
 
+/**
+* Return text width for font description.
+* \param const char *text.
+* \param const char *fontstring.
+* \return int text width rounded to nearest int.
+*/
+int	LFSTK_menuClass::LFSTK_getTextWidthForFont(const char *text)
+{
+	cairo_text_extents_t	returnextents;
+	cairo_t					*cr=NULL;
+	cairo_surface_t			*sfc=NULL;
+	char					*string=strdup(this->fontDesc);
+	char					*str;
+	bool					found=false;
 
+	weight=CAIRO_FONT_WEIGHT_NORMAL;
+	slant=CAIRO_FONT_SLANT_NORMAL;
+	fontSize=10;
 
+	if(this->fontName!=NULL)
+		free(this->fontName);
+
+	this->fontName=strdup("sans");
+	str=strtok(string,":");
+	while(1)
+		{
+			found=false;
+			if(str==NULL)
+				break;
+			if(strcasecmp(str,"bold")==0)
+				{
+					this->weight=CAIRO_FONT_WEIGHT_BOLD;
+					found=true;
+				}
+			if(strcasecmp(str,"italic")==0)
+				{
+					this->slant=CAIRO_FONT_SLANT_ITALIC;
+					found=true;
+				}
+			if(strcasestr(str,"size=")!=NULL)
+				{
+					this->fontSize=atoi(&str[5]);
+					found=true;
+				}
+
+			if(found==false)
+				{
+					if(this->fontName!=NULL)
+						free(this->fontName);
+					this->fontName=strdup(str);
+				}
+			str=strtok(NULL,":");
+		}
+	free(string);
+
+	this->parentwc->globalLib->LFSTK_setCairoSurface(this->parentwc->display,this->parentwc->window,this->parentwc->visual,&sfc,&cr,1,1);
+	cairo_select_font_face(cr,this->fontName,this->slant,this->weight);
+	cairo_set_font_size(cr,this->fontSize);
+	cairo_text_extents(cr,text,&returnextents);
+
+	cairo_destroy(cr);
+	cairo_surface_destroy(sfc);
+	return((int)(returnextents.x_advance+0.5));
+
+}
 

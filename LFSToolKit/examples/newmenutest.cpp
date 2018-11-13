@@ -154,7 +154,9 @@ int main(int argc, char **argv)
 		}
 	free(mms[12]->label);
 	mms[12]->label=strdup("--");
-	
+	free(mms[2]->label);
+	mms[2]->label=strdup("A really long label that will over flow");
+
 #if 1
 	mms[0]->imageType=FILETHUMB;
 	mms[0]->data.imagePath="./AspellGUI.png";

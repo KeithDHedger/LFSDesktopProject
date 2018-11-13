@@ -101,6 +101,11 @@ bool LFSTK_menuItemClass::mouseExit(XButtonEvent *e)
 */
 bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 {
+	double	txtwid=0;
+	double	maxtxtwid=0;
+	int		finaltxtwid;
+	int		gotsubmenu=this->pad*4;
+
 	if((this->isActive==false) || (this->callback.ignoreCallback==true))
 		return(true);
 
@@ -116,17 +121,27 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 	if(this->menuData->hasSubMenu==true)
 		{
 			LFSTK_menuItemClass	*label;
-			int					sy=0;
+			int		sy=0;
 			XEvent	event;
 			XEvent	lookevent;
 			bool	gotlooked=false;
 	
 			if(this->subwc==NULL)
 				{
-					this->subwc=new LFSTK_toolWindowClass(this->display,this->wc,"_NET_WM_WINDOW_TYPE_MENU",this->gadgetGeom.x,this->gadgetGeom.y,GADGETWIDTH,GADGETHITE*this->menuData->subMenuCnt,"menu window");
+					for(int j=0;j<this->menuData->subMenuCnt;j++)
+						{
+							txtwid=this->menu->LFSTK_getTextWidthForFont(this->menuData->subMenus[j]->label);
+
+							if(txtwid>maxtxtwid)
+								maxtxtwid=txtwid;
+							if(this->menuData->subMenus[j]->hasSubMenu==true)
+								gotsubmenu=GADGETHITE;
+						}
+					maxtxtwid+=GADGETHITE+gotsubmenu;
+					this->subwc=new LFSTK_toolWindowClass(this->display,this->wc,"_NET_WM_WINDOW_TYPE_MENU",this->gadgetGeom.x,this->gadgetGeom.y,maxtxtwid,GADGETHITE*this->menuData->subMenuCnt,"menu window");
 					for(int j=0; j<this->menuData->subMenuCnt; j++)
 						{
-							label=new LFSTK_menuItemClass(this->subwc,this->menu,this->menuData->subMenus[j]->label,0,sy,GADGETWIDTH,GADGETHITE,this->menuData->subMenus[j],this->subwindows);
+							label=new LFSTK_menuItemClass(this->subwc,this->menu,this->menuData->subMenus[j]->label,0,sy,maxtxtwid,GADGETHITE,this->menuData->subMenus[j],this->subwindows);
 							label->LFSTK_setCallBack(this->callback.pressCallback,this->callback.releaseCallback,this->menuData->subMenus[j]->userData);
 							if(this->menuData->subMenus[j]->imageType==FILETHUMB)
 								label->LFSTK_setImageFromPath(this->menuData->subMenus[j]->data.imagePath,MENU,true);
@@ -182,8 +197,10 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 										int x;
 										int y;
 										unsigned int w,h,dump;
-										XTranslateCoordinates(this->subwc->display,this->wc->window,this->subwc->rootWindow, 0, 0, &x, &y, &dw );
-										this->subwc->LFSTK_moveWindow(x+GADGETWIDTH,y+this->gadgetGeom.y,true);
+										XTranslateCoordinates(this->subwc->display,this->wc->window,this->subwc->rootWindow,0,0,&x,&y,&dw );
+										//this->subwc->LFSTK_moveWindow(x+GADGETWIDTH,y+this->gadgetGeom.y,true);
+										//this->subwc->LFSTK_moveWindow(x+maxtxtwid,y+this->gadgetGeom.y,true);
+										this->subwc->LFSTK_moveWindow(x+this->gadgetGeom.w,y+this->gadgetGeom.y,true);
 									}
 								break;
 						}
