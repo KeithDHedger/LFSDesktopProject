@@ -24,25 +24,24 @@ LFSTK_menuItemClass::~LFSTK_menuItemClass()
 {
 }
 
+
 /**
 * Main Label constructor.
 *
 * \param parentwc Main parent window class.
-* \param label Displayed name.
 * \param x X pos.
 * \param y Y pos.
 * \param w Width.
 * \param h Height.
 * \param menu menuStruct array.
-* \param gravity Label gravity
-* \note optional, label gravity defaults to CENTRE.
+* \note optional, label gravity defaults to LEFT.
 * \note gadget gravity defaults to NorthWestGravity.
 */
-LFSTK_menuItemClass::LFSTK_menuItemClass(LFSTK_toolWindowClass* parentwc,LFSTK_menuClass *mainmenu,const char* label,int x,int y,unsigned w,unsigned h,menuStruct *menu,std::vector<LFSTK_toolWindowClass*> *windows)
+LFSTK_menuItemClass::LFSTK_menuItemClass(LFSTK_toolWindowClass* parentwc,LFSTK_menuClass *mainmenu,int x,int y,unsigned w,unsigned h,menuStruct *menu,int labelgrav)
 {
 	XSetWindowAttributes	wa;
 
-	this->LFSTK_setCommon(parentwc,label,x,y,w,h,BUTTONGRAV);
+	this->LFSTK_setCommon(parentwc,menu->label,x,y,w,h,BUTTONGRAV);
 
 	wa.win_gravity=BUTTONGRAV;
 	wa.save_under=true;
@@ -67,9 +66,8 @@ LFSTK_menuItemClass::LFSTK_menuItemClass(LFSTK_toolWindowClass* parentwc,LFSTK_m
 	this->LFSTK_setFontColourName(NORMALCOLOUR,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEMENUITEMFONTCOLOUR),true);
 	this->LFSTK_setFontString(this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEMENUITEMFONT),true);
 	gadgetDetails= {&this->colourNames[NORMALCOLOUR],BEVELNONE,DISCLOSURE,NORMALCOLOUR,0,true,{0,0,w,h},{(int)(w-TRIANGLESIZE-(this->pad*2)),(int)((h/2)-(TRIANGLESIZE/2)+(this->pad/2)),TRIANGLESIZE,TRIANGLESIZE},menu->hasSubMenu};
-	this->LFSTK_setLabelGravity(MENU);
+	this->LFSTK_setLabelGravity(labelgrav);
 	this->menuData=menu;
-	this->subwindows=windows;
 	this->menu=mainmenu;
 }
 
@@ -105,6 +103,7 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 	double	maxtxtwid=0;
 	int		finaltxtwid;
 	int		gotsubmenu=this->pad*4;
+	int		gotthumb=LEFT;
 
 	if((this->isActive==false) || (this->callback.ignoreCallback==true))
 		return(true);
@@ -136,12 +135,18 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 								maxtxtwid=txtwid;
 							if(this->menuData->subMenus[j]->hasSubMenu==true)
 								gotsubmenu=GADGETHITE;
+							if(this->menuData->subMenus[j]->imageType!=NOTHUMB)
+								gotthumb=MENU;
 						}
-					maxtxtwid+=GADGETHITE+gotsubmenu;
+					if(gotthumb==MENU)
+						maxtxtwid+=GADGETHITE+gotsubmenu;
+					else
+						maxtxtwid+=gotsubmenu;
+					
 					this->subwc=new LFSTK_toolWindowClass(this->display,this->wc,"_NET_WM_WINDOW_TYPE_MENU",this->gadgetGeom.x,this->gadgetGeom.y,maxtxtwid,GADGETHITE*this->menuData->subMenuCnt,"menu window");
 					for(int j=0; j<this->menuData->subMenuCnt; j++)
 						{
-							label=new LFSTK_menuItemClass(this->subwc,this->menu,this->menuData->subMenus[j]->label,0,sy,maxtxtwid,GADGETHITE,this->menuData->subMenus[j],this->subwindows);
+							label=new LFSTK_menuItemClass(this->subwc,this->menu,0,sy,maxtxtwid,GADGETHITE,this->menuData->subMenus[j],gotthumb);
 							label->LFSTK_setCallBack(this->callback.pressCallback,this->callback.releaseCallback,this->menuData->subMenus[j]->userData);
 							if(this->menuData->subMenus[j]->imageType==FILETHUMB)
 								label->LFSTK_setImageFromPath(this->menuData->subMenus[j]->data.imagePath,MENU,true);
@@ -161,10 +166,10 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 					switch(event.type)
 						{
 							case FocusOut:
-								for(int j=0;j<this->subwindows->size();j++)
+								for(int j=0;j<this->menu->subwindows->size();j++)
 									{
-										this->subwindows->at(j)->LFSTK_hideWindow();
-										this->subwindows->at(j)->mainLoop=false;
+										this->menu->subwindows->at(j)->LFSTK_hideWindow();
+										this->menu->subwindows->at(j)->mainLoop=false;
 									}
 								this->menu->mainMenuWindow->LFSTK_hideWindow();
 								this->menu->mainLoop=false;
@@ -181,10 +186,10 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 					switch(event.type)
 						{
 							case ButtonRelease:
-								for(int j=0;j<this->subwindows->size();j++)
+								for(int j=0;j<this->menu->subwindows->size();j++)
 									{
-										this->subwindows->at(j)->LFSTK_hideWindow();
-										this->subwindows->at(j)->mainLoop=false;
+										this->menu->subwindows->at(j)->LFSTK_hideWindow();
+										this->menu->subwindows->at(j)->mainLoop=false;
 									}
 								this->menu->mainMenuWindow->LFSTK_hideWindow();
 								this->menu->mainLoop=false;
@@ -198,8 +203,6 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 										int y;
 										unsigned int w,h,dump;
 										XTranslateCoordinates(this->subwc->display,this->wc->window,this->subwc->rootWindow,0,0,&x,&y,&dw );
-										//this->subwc->LFSTK_moveWindow(x+GADGETWIDTH,y+this->gadgetGeom.y,true);
-										//this->subwc->LFSTK_moveWindow(x+maxtxtwid,y+this->gadgetGeom.y,true);
 										this->subwc->LFSTK_moveWindow(x+this->gadgetGeom.w,y+this->gadgetGeom.y,true);
 									}
 								break;

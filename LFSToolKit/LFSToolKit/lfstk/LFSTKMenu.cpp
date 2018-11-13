@@ -28,6 +28,7 @@ LFSTK_menuClass::~LFSTK_menuClass()
 
 	delete this->subwindows;
 	LFSTK_freeMenus(this->mainMenu,this->mainMenuCnt);
+	free(this->fontName);
 }
 
 LFSTK_menuClass::LFSTK_menuClass(LFSTK_windowClass *wc,int x,int y,unsigned w,unsigned h)
@@ -129,6 +130,7 @@ void LFSTK_menuClass::LFSTK_addMainMenus(menuStruct **menus,int menucnt)
 	double					maxtxtwid=0;
 	int						finaltxtwid;
 	int						gotsubmenu=8;
+	int						gotthumb=LEFT;
 
 	this->mainMenuCnt=menucnt;
 	this->mainMenu=menus;
@@ -140,13 +142,18 @@ void LFSTK_menuClass::LFSTK_addMainMenus(menuStruct **menus,int menucnt)
 				maxtxtwid=txtwid;
 			if(this->mainMenu[j]->hasSubMenu==true)
 				gotsubmenu=GADGETHITE;
+			if(this->mainMenu[j]->imageType!=NOTHUMB)
+				gotthumb=MENU;
 		}
 
-	maxtxtwid+=GADGETHITE+gotsubmenu;
+	if(gotthumb==MENU)
+		maxtxtwid+=GADGETHITE+gotsubmenu;
+	else
+		maxtxtwid+=gotsubmenu;
 	this->mainMenuWindow=new LFSTK_toolWindowClass(this->display,this->parentwc,"_NET_WM_WINDOW_TYPE_MENU",this->x,this->y,maxtxtwid,GADGETHITE*this->mainMenuCnt,"menu window");
 	for(int j=0;j<this->mainMenuCnt;j++)
 		{
-			label=new LFSTK_menuItemClass(this->mainMenuWindow,this,this->mainMenu[j]->label,0,sy,maxtxtwid,GADGETHITE,this->mainMenu[j],this->subwindows);
+			label=new LFSTK_menuItemClass(this->mainMenuWindow,this,0,sy,maxtxtwid,GADGETHITE,this->mainMenu[j],gotthumb);
 			label->LFSTK_setCallBack(this->callback.pressCallback,this->callback.releaseCallback,(void*)(this->mainMenu[j]->userData));
 			if(this->mainMenu[j]->imageType==FILETHUMB)
 				label->LFSTK_setImageFromPath(this->mainMenu[j]->data.imagePath,MENU,true);
@@ -164,6 +171,9 @@ void LFSTK_menuClass::LFSTK_freeMenus(menuStruct **menus,int menucnt)
 		{
 			if(menus[j]->imageType==CAIROTHUMB)
 				cairo_surface_destroy(menus[j]->data.surface);
+			if(menus[j]->imageType==FILETHUMB)
+				free(menus[j]->data.imagePath);
+
 			free(menus[j]->label);
 			if(menus[j]->hasSubMenu==true)
 				{
@@ -175,9 +185,8 @@ void LFSTK_menuClass::LFSTK_freeMenus(menuStruct **menus,int menucnt)
 }
 
 /**
-* Return text width for font description.
+* Return text width.
 * \param const char *text.
-* \param const char *fontstring.
 * \return int text width rounded to nearest int.
 */
 int	LFSTK_menuClass::LFSTK_getTextWidthForFont(const char *text)

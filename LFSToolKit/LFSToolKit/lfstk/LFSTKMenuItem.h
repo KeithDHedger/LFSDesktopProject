@@ -32,14 +32,14 @@ class LFSTK_menuItemClass : public LFSTK_buttonClass
 		LFSTK_menuItemClass();
 		~LFSTK_menuItemClass();
 
-		LFSTK_menuItemClass(LFSTK_toolWindowClass* parentwc,LFSTK_menuClass *mainmenu,const char* label,int x,int y,unsigned w,unsigned h,menuStruct *menu,std::vector<LFSTK_toolWindowClass*> *windows=NULL);
+		//LFSTK_menuItemClass(LFSTK_toolWindowClass* parentwc,LFSTK_menuClass *mainmenu,const char* label,int x,int y,unsigned w,unsigned h,menuStruct *menu);
+		LFSTK_menuItemClass(LFSTK_toolWindowClass* parentwc,LFSTK_menuClass *mainmenu,int x,int y,unsigned w,unsigned h,menuStruct *menu,int labelgrav=LEFT);
 		bool			mouseExit(XButtonEvent *e);
 		bool			mouseEnter(XButtonEvent *e);
 
 		LFSTK_menuClass	*menu=NULL;
 
 	private:
-		std::vector<LFSTK_toolWindowClass*>	*subwindows;
 		LFSTK_toolWindowClass				*subwc=NULL;
 		menuStruct							*menuData=NULL;
 };

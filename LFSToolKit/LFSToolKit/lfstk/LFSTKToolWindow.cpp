@@ -31,18 +31,6 @@ LFSTK_toolWindowClass::~LFSTK_toolWindowClass()
 */
 void LFSTK_toolWindowClass::windowClassInitCommon(windowInitStruct *wi)
 {
-//	DEBUGFUNC("int x=%i",wi->x);
-//showFileData=false;
-//	DEBUGFUNC("int y=%i",wi->y);
-//	DEBUGFUNC("int w=%i",wi->w);
-//	DEBUGFUNC("int h=%i",wi->h);
-//	DEBUGFUNC("const char	*name=%s",wi->name);
-//	DEBUGFUNC("bool override=%i",wi->overRide);
-//	DEBUGFUNC("bool loadVars=%i",wi->loadVars);
-//	DEBUGFUNC("bool shutDisplayOnExit=%i",wi->shutDisplayOnExit);
-//	DEBUGFUNC("const char	*windowType=%s",wi->windowType);
-//showFileData=true;
-
 	XSetWindowAttributes	wa;
 	Atom					wm_delete_window;
 	XClassHint				classHint;

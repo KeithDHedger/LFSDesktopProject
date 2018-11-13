@@ -159,9 +159,9 @@ int main(int argc, char **argv)
 
 #if 1
 	mms[0]->imageType=FILETHUMB;
-	mms[0]->data.imagePath="./AspellGUI.png";
+	mms[0]->data.imagePath=strdup("./AspellGUI.png");
 	mms[10]->imageType=FILETHUMB;
-	mms[10]->data.imagePath="./casper2.JPG";
+	mms[10]->data.imagePath=strdup("./casper2.JPG");
 	mms[12]->imageType=CAIROTHUMB;
 	mms[12]->data.surface=wc->globalLib->LFSTK_createSurfaceFromPath("./ManPageEditor.png");
 
@@ -191,7 +191,7 @@ int main(int argc, char **argv)
 			mms[6]->subMenus[j]->userData=(void*)((j+1)*10000);
 			mms[6]->subMenus[j]->imageType=FILETHUMB;
 			//mms[6]->subMenus[j]->imageType=NOTHUMB;
-			mms[6]->subMenus[j]->data.imagePath="./computer.png";
+			mms[6]->subMenus[j]->data.imagePath=strdup("./computer.png");
 		}
 
 	mms[6]->subMenus[4]->hasSubMenu=true;
@@ -207,7 +207,7 @@ int main(int argc, char **argv)
 			mms[6]->subMenus[4]->subMenus[j]->userData=(void*)((j+1)*100000);
 			mms[6]->subMenus[4]->subMenus[j]->imageType=FILETHUMB;
 		//	mms[6]->subMenus[4]->subMenus[j]->imageType=NOTHUMB;
-			mms[6]->subMenus[4]->subMenus[j]->data.imagePath="./audio-speakers.png";
+			mms[6]->subMenus[4]->subMenus[j]->data.imagePath=strdup("./audio-speakers.png");
 		}
 #endif
 #if 0
