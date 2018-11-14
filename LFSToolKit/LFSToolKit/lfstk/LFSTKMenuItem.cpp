@@ -24,7 +24,6 @@ LFSTK_menuItemClass::~LFSTK_menuItemClass()
 {
 }
 
-
 /**
 * Main Label constructor.
 *
@@ -104,6 +103,7 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 	int		finaltxtwid;
 	int		gotsubmenu=this->pad*4;
 	int		gotthumb=LEFT;
+	int		winshrink=0;
 
 	if((this->isActive==false) || (this->callback.ignoreCallback==true))
 		return(true);
@@ -137,22 +137,31 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 								gotsubmenu=GADGETHITE;
 							if(this->menuData->subMenus[j]->imageType!=NOTHUMB)
 								gotthumb=MENU;
+							if(strcmp(this->menuData->subMenus[j]->label,"--")==0)
+								winshrink+=(GADGETHITE-4);
 						}
 					if(gotthumb==MENU)
 						maxtxtwid+=GADGETHITE+gotsubmenu;
 					else
 						maxtxtwid+=gotsubmenu;
 					
-					this->subwc=new LFSTK_toolWindowClass(this->display,this->wc,"_NET_WM_WINDOW_TYPE_MENU",this->gadgetGeom.x,this->gadgetGeom.y,maxtxtwid,GADGETHITE*this->menuData->subMenuCnt,"menu window");
+					this->subwc=new LFSTK_toolWindowClass(this->display,this->wc,"_NET_WM_WINDOW_TYPE_MENU",this->gadgetGeom.x,this->gadgetGeom.y,maxtxtwid,GADGETHITE*this->menuData->subMenuCnt-winshrink,"menu window");
 					for(int j=0; j<this->menuData->subMenuCnt; j++)
 						{
-							label=new LFSTK_menuItemClass(this->subwc,this->menu,0,sy,maxtxtwid,GADGETHITE,this->menuData->subMenus[j],gotthumb);
+							int hite=GADGETHITE;
+							printf(">>>%s<<<\n",this->menuData->subMenus[j]->label);
+							if(strcmp(this->menuData->subMenus[j]->label,"--")==0)
+								{
+								hite=4;
+printf(">>>>>>>>>>>>>>>>\n");
+}
+							label=new LFSTK_menuItemClass(this->subwc,this->menu,0,sy,maxtxtwid,hite,this->menuData->subMenus[j],gotthumb);
 							label->LFSTK_setCallBack(this->callback.pressCallback,this->callback.releaseCallback,this->menuData->subMenus[j]->userData);
 							if(this->menuData->subMenus[j]->imageType==FILETHUMB)
 								label->LFSTK_setImageFromPath(this->menuData->subMenus[j]->data.imagePath,MENU,true);
 							if(this->menuData->subMenus[j]->imageType==CAIROTHUMB)
 								label->LFSTK_setImageFromSurface(this->menuData->subMenus[j]->data.surface,MENU,true);
-							sy+=GADGETHITE;
+							sy+=hite;
 						}
 					this->menu->subwindows->push_back(this->subwc);
 				}

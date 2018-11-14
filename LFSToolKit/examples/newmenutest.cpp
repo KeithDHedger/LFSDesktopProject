@@ -194,6 +194,11 @@ int main(int argc, char **argv)
 			mms[6]->subMenus[j]->data.imagePath=strdup("./computer.png");
 		}
 
+	free(mms[6]->subMenus[12]->label);
+	mms[6]->subMenus[12]->label=strdup("--");
+	free(mms[6]->subMenus[5]->label);
+	mms[6]->subMenus[5]->label=strdup("--");
+
 	mms[6]->subMenus[4]->hasSubMenu=true;
 	mms[6]->subMenus[4]->subMenuCnt=NUMMENUS;
 

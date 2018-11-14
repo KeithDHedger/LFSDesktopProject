@@ -131,6 +131,15 @@ void LFSTK_menuClass::LFSTK_addMainMenus(menuStruct **menus,int menucnt)
 	int						finaltxtwid;
 	int						gotsubmenu=8;
 	int						gotthumb=LEFT;
+	int						winshrink=0;
+
+	if(this->mainMenu!=NULL)
+		{
+			for(int j=0;j<this->subwindows->size();j++)
+				delete this->subwindows->at(j);
+			this->subwindows->clear();
+			LFSTK_freeMenus(this->mainMenu,this->mainMenuCnt);
+		}
 
 	this->mainMenuCnt=menucnt;
 	this->mainMenu=menus;
@@ -144,22 +153,32 @@ void LFSTK_menuClass::LFSTK_addMainMenus(menuStruct **menus,int menucnt)
 				gotsubmenu=GADGETHITE;
 			if(this->mainMenu[j]->imageType!=NOTHUMB)
 				gotthumb=MENU;
+			if(strcmp(this->mainMenu[j]->label,"--")==0)
+				winshrink+=(GADGETHITE-4);
 		}
 
 	if(gotthumb==MENU)
 		maxtxtwid+=GADGETHITE+gotsubmenu;
 	else
 		maxtxtwid+=gotsubmenu;
-	this->mainMenuWindow=new LFSTK_toolWindowClass(this->display,this->parentwc,"_NET_WM_WINDOW_TYPE_MENU",this->x,this->y,maxtxtwid,GADGETHITE*this->mainMenuCnt,"menu window");
+	this->mainMenuWindow=new LFSTK_toolWindowClass(this->display,this->parentwc,"_NET_WM_WINDOW_TYPE_MENU",this->x,this->y,maxtxtwid,GADGETHITE*this->mainMenuCnt-winshrink,"menu window");
 	for(int j=0;j<this->mainMenuCnt;j++)
 		{
-			label=new LFSTK_menuItemClass(this->mainMenuWindow,this,0,sy,maxtxtwid,GADGETHITE,this->mainMenu[j],gotthumb);
+									int hite=GADGETHITE;
+							printf(">>>%s<<<\n",this->mainMenu[j]->label);
+							if(strcmp(this->mainMenu[j]->label,"--")==0)
+								{
+								hite=4;
+printf(">>>>>>>>>>>>>>>>\n");
+}
+
+			label=new LFSTK_menuItemClass(this->mainMenuWindow,this,0,sy,maxtxtwid,hite,this->mainMenu[j],gotthumb);
 			label->LFSTK_setCallBack(this->callback.pressCallback,this->callback.releaseCallback,(void*)(this->mainMenu[j]->userData));
 			if(this->mainMenu[j]->imageType==FILETHUMB)
 				label->LFSTK_setImageFromPath(this->mainMenu[j]->data.imagePath,MENU,true);
 			if(this->mainMenu[j]->imageType==CAIROTHUMB)
 				label->LFSTK_setImageFromSurface(this->mainMenu[j]->data.surface,MENU,true);
-			sy+=GADGETHITE;
+			sy+=hite;
 		}
 
 	this->subwindows->push_back(this->mainMenuWindow);

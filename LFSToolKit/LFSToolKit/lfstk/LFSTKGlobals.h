@@ -255,17 +255,17 @@ class	LFSTK_menuClass;
 struct menuStruct
 {
 	char				*label;
-	int					imageType;
+	int					imageType=0;
 	union				imageData
 		{
 			char			*imagePath;
 			cairo_surface_t	*surface;
-		}				data;
+		}				data={NULL};
 
-	bool				hasSubMenu;
-	menuStruct			**subMenus;
-	int					subMenuCnt;
-	void				*userData;
+	bool				hasSubMenu=false;
+	menuStruct			**subMenus=NULL;
+	int					subMenuCnt=0;
+	void				*userData=NULL;
 };
 
 //messaging

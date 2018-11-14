@@ -46,7 +46,8 @@ LFSTK_buttonClass				*update=NULL;
 LFSTK_buttonClass				*launchButton=NULL;
 LFSTK_labelClass				*launchLabel=NULL;
 
-LFSTK_menuButtonClass			*loadSet=NULL;
+LFSTK_menuClass					*setMenu=NULL;
+LFSTK_buttonClass				*loadSet=NULL;
 LFSTK_lineEditClass				*currentSet=NULL;
 
 LFSTK_lineEditClass				*key=NULL;
@@ -56,8 +57,8 @@ Display							*display;
 int								parentWindow=-1;
 int								queueID=-1;
 
-std::map<int,char*>				groupNames;
-menuItemStruct					*groupNameMenuItems=NULL;
+menuStruct						**groupNameMenuItems=NULL;
+LFSTK_FindClass					*find;
 
 bool doQuit(void *p,void* ud)
 {
@@ -187,39 +188,36 @@ bool buttonCB(void *p,void* ud)
 					setGroup();
 					updateDesktop();
 				}
+			if(strcmp((char*)ud,"SHOWGROUPS")==0)
+				{
+					setMenu->LFSTK_showMenu();
+				}
+
 		}
 	return(true);
 }
 
 void addGroup(void)
 {
-	FILE*			fp=NULL;
-	char			*buffer=NULL;
-	char			*command;
-	size_t			numchars;
-	int				mapcnt=0;
+	char	*command;
+	int		menucnt;
 
-	groupNames[mapcnt++]=strdup("Add Group");
-	groupNames[mapcnt++]=strdup("--");
+	asprintf(&command,"%s/lfsgroupsprefs",wc->configDir);
 
-	asprintf(&command,"find %s/lfsgroupsprefs -mindepth 1 -maxdepth 1 -type d -printf \"%%f\\n\"|sort",wc->configDir);
-	fp=popen(command,"r");
-	if(fp!=NULL)
+	find->LFSTK_findFiles(command,false);
+	find->LFSTK_sortByName();
+	menucnt=find->LFSTK_getDataCount()-1+2;
+
+	groupNameMenuItems=new menuStruct*[menucnt];
+		groupNameMenuItems[0]=new menuStruct;
+		groupNameMenuItems[0]->label=strdup("Add Group");
+		groupNameMenuItems[1]=new menuStruct;
+		groupNameMenuItems[1]->label=strdup("--");
+	
+	for(int j=2;j<menucnt;j++)
 		{
-			buffer=NULL;
-			numchars=0;
-			while(getline(&buffer,&numchars,fp)!=-1)
-				{
-					buffer[strlen(buffer)-1]=0;
-					groupNames[mapcnt++]=buffer;
-					buffer=NULL;
-					numchars=0;
-				}
-			free(buffer);
-			pclose(fp);
-			groupNameMenuItems=new menuItemStruct[mapcnt];
-			for(int j=0;j<mapcnt;j++)
-				groupNameMenuItems[j].label=groupNames[j];
+			groupNameMenuItems[j]=new menuStruct;
+			groupNameMenuItems[j]->label=strdup(find->data[j-1].name.c_str());
 		}
 	free(command);
 }
@@ -227,29 +225,20 @@ void addGroup(void)
 void doNewGroup(void)
 {
 	makeGroup(currentSet->LFSTK_getCStr());
-	for(int j=0;j<groupNames.size();j++)
-		free(groupNames[j]);
-	delete[] groupNameMenuItems;
-	groupNames.clear();
 	addGroup();
-	loadSet->LFSTK_updateMenus(groupNameMenuItems,groupNames.size());
+	setMenu->LFSTK_addMainMenus(groupNameMenuItems,find->LFSTK_getDataCount()+1);
 }
 
 bool menuCB(void *p,void* ud)
 {
-	menuItemStruct	*menuitem=(menuItemStruct*)ud;
-
-	if(ud==NULL)
-		return(true);
-
-	if(strcmp(menuitem->label,"Add Group")==0)
+	if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Add Group")==0)
 		{
 			doNewGroup();
 			return(true);
 		}
+	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
+	currentSet->LFSTK_setBuffer(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel());
 
-	printf("Selected Menu Label:%s\n",menuitem->label);
-	currentSet->LFSTK_setBuffer(menuitem->label);
 	return(true);
 }
 
@@ -262,9 +251,13 @@ int main(int argc, char **argv)
 
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"LFS Appearance",false);
 	display=wc->display;
-//	wc->LFSTK_initDnD();
 
-	groupNames.clear();
+	find=new LFSTK_FindClass;
+	find->LFSTK_setFindType(FOLDERTYPE);
+	find->LFSTK_setFullPath(true);
+	find->LFSTK_setIgnoreBroken(false);
+	find->LFSTK_setSort(true);
+
 	addGroup();
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
@@ -302,10 +295,12 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //load set
-	loadSet=new LFSTK_menuButtonClass(wc,"Load Set",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	loadSet->LFSTK_setCallBack(NULL,menuCB,NULL);
-	loadSet->LFSTK_addMenus(groupNameMenuItems,groupNames.size());
-	loadSet->LFSTK_setLabelGravity(CENTRE);
+	loadSet=new LFSTK_buttonClass(wc,"Load Set",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	loadSet->LFSTK_setCallBack(NULL,buttonCB,(void*)"SHOWGROUPS");
+
+	setMenu=new LFSTK_menuClass(wc,BORDER,sy+GADGETHITE,1,1);
+	setMenu->LFSTK_setCallBack(NULL,menuCB,NULL);
+	setMenu->LFSTK_addMainMenus(groupNameMenuItems,find->LFSTK_getDataCount()+1);
 
 	buffer=wc->globalLib->LFSTK_oneLiner("sed -n '1p' %s/lfsappearance.rc",wc->configDir);
 	currentSet=new LFSTK_lineEditClass(wc,buffer,BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,BUTTONGRAV);
@@ -344,8 +339,6 @@ int main(int argc, char **argv)
 	wc->LFSTK_showWindow();
 	wc->LFSTK_setKeepAbove(true);
 
-//	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
-
 	if((queueID=msgget(atoi(key->LFSTK_getCStr()),IPC_CREAT|0660))==-1)
 		fprintf(stderr,"Can't create message queue :( ...\n");
 
@@ -363,12 +356,9 @@ int main(int argc, char **argv)
 		}
 
 	delete wc;
-	XCloseDisplay(display);
+	delete setMenu;
 
-	for(int j=0;j<groupNames.size();j++)
-		free(groupNames[j]);
-	delete[] groupNameMenuItems;
-	groupNames.clear();
+	XCloseDisplay(display);
 
 	cairo_debug_reset_static_data();
 	return 0;
