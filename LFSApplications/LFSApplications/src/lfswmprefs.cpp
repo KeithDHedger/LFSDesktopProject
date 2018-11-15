@@ -59,10 +59,11 @@ Display					*display;
 char					*envFile=NULL;
 
 //placement
-LFSTK_menuButtonClass	*placeWindowMenu=NULL;
+LFSTK_buttonClass		*placeWindowMenu=NULL;
 LFSTK_lineEditClass		*placeWindowEdit=NULL;
-menuItemStruct			*placementMenus;
+menuStruct				**placementMenus;
 const char				*placementMenuNames[]={"Smart Place On Screen","Under Mouse","Centre On Monitor With Mouse","Centre On Screen","Smart Place On Monitor With Mouse"};
+LFSTK_menuClass			*placeMenu=NULL;
 
 //prefs
 char					*prefsColours[5]={NULL,};
@@ -111,6 +112,11 @@ bool buttonCB(void *p,void* ud)
 
 	if(ud!=NULL)
 		{
+			if(strcmp((char*)ud,"SHOWPLACEMENU")==0)
+				{
+					placeMenu->LFSTK_showMenu();
+				}
+
 			if(strcmp((char*)ud,"SELECTFONT")==0)
 				{
 					fontSelector->LFSTK_showDialog("");
@@ -176,14 +182,9 @@ bool buttonCB(void *p,void* ud)
 
 bool menuCB(void *p,void* ud)
 {
-	menuItemStruct	*menuitem=(menuItemStruct*)ud;
-
-	if(ud==NULL)
-		return(true);
-
-	placeWindowEdit->LFSTK_setBuffer(menuitem->label);
-	prefsPlacementTemp=(int)(long)menuitem->userData;
-	printf("Selected Menu Label:%s num=%i\n",menuitem->label,prefsPlacement);
+	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
+	placeWindowEdit->LFSTK_setBuffer(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel());
+	prefsPlacementTemp=(int)(long)ud;
 	return(true);
 }
 
@@ -251,15 +252,14 @@ int main(int argc, char **argv)
 	wc->globalLib->LFSTK_loadVarsFromFile(envFile,lfsWMPrefs);
 	prefsPlacementTemp=prefsPlacement;
 
-	themeFolder=new LFSTK_fileDialogClass(wc,"Select File",NULL,true,"lfswmprefstheme");
+	themeFolder=new LFSTK_fileDialogClass(wc,"Select File",NULL,FOLDERDIALOG,"lfswmprefstheme");
 
-	placementMenus=new menuItemStruct[MAXMENUS];
-
+	placementMenus=new menuStruct*[MAXMENUS];
 	for(long j=0;j<MAXMENUS;j++)
 		{
-			placementMenus[j].label=(char*)placementMenuNames[j];
-			placementMenus[j].imagePath=NULL;
-			placementMenus[j].userData=(void*)j;
+			placementMenus[j]=new menuStruct;
+			placementMenus[j]->label=strdup(placementMenuNames[j]);
+			placementMenus[j]->userData=(void*)j;
 		}
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
@@ -300,10 +300,12 @@ int main(int argc, char **argv)
 	sx=BORDER;
 
 //placement
-	placeWindowMenu=new LFSTK_menuButtonClass(wc,"Placement",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	placeWindowMenu->LFSTK_setCallBack(NULL,menuCB,NULL);
-	placeWindowMenu->LFSTK_addMenus(placementMenus,MAXMENUS);
-	placeWindowMenu->LFSTK_setLabelGravity(CENTRE);
+	placeWindowMenu=new LFSTK_buttonClass(wc,"Placement",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	placeWindowMenu->LFSTK_setCallBack(NULL,buttonCB,(void*)"SHOWPLACEMENU");
+	placeMenu=new LFSTK_menuClass(wc,BORDER+GADGETWIDTH,sy,1,1);
+	placeMenu->LFSTK_setCallBack(NULL,menuCB,NULL);
+	placeMenu->LFSTK_addMainMenus(placementMenus,MAXMENUS);
+
 	sx+=GADGETWIDTH+BORDER;
 	placeWindowEdit=new LFSTK_lineEditClass(wc,placementMenuNames[prefsPlacement],sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
@@ -378,14 +380,17 @@ int main(int argc, char **argv)
 		}
 
 	delete wc;
-	XCloseDisplay(display);
+	delete themeFolder;
+	delete placeMenu;
 	free(envFile);
 	for(int j=0;j<5;j++)
 		free(prefsColours[j]);
 	free(prefsFont);
 	free(prefsTheme);
 	free(prefsTermCommand);
-	delete placementMenus;
 
+	XSync(display,true);
+	XCloseDisplay(display);
+	cairo_debug_reset_static_data();
 	return 0;
 }

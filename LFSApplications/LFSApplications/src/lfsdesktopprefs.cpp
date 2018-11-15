@@ -225,7 +225,7 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 //theme
 	asprintf(&wd,"%s/.icons",wc->userHome);
-	themeDialog=new LFSTK_fileDialogClass(wc,"Select Theme",wd,true);
+	themeDialog=new LFSTK_fileDialogClass(wc,"Select Theme",wd,FOLDERDIALOG);
 	button=new LFSTK_buttonClass(wc,"Select Theme",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	themeEditBox=new LFSTK_lineEditClass(wc,prefsTheme,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setCallBack(NULL,selectThemeFolder,(void*)themeEditBox);

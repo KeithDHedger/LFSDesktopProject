@@ -281,7 +281,7 @@ int main(int argc, char **argv)
 	asprintf(&mainPrefs,"%s/lfssetwallpaper.rc",wc->configDir);
 	asprintf(&monitorPrefs,"%s/lfsmonitors.rc",wc->configDir);
 
-	fileDialog=new LFSTK_fileDialogClass(wc,"Select File",NULL,false,"lfsbackdropprefs");
+	fileDialog=new LFSTK_fileDialogClass(wc,"Select File",NULL,FILEDIALOG,"lfsbackdropprefs");
 
 	wc->globalLib->LFSTK_loadVarsFromFile(mainPrefs,prefs);
 
