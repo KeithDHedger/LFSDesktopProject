@@ -87,7 +87,7 @@ int						queueID=-1;
 
 void addSet(void)
 {
-	LFSTK_FindClass	*fc=new LFSTK_FindClass;
+	LFSTK_findClass	*fc=new LFSTK_findClass;
 	char			*themeDir=NULL;
 
 	asprintf(&themeDir,"%s/.themes",getenv("HOME"));

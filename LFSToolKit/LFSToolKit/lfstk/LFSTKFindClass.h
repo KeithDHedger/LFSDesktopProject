@@ -2,7 +2,7 @@
  *
  * ©K. D. Hedger. Sun 21 Oct 13:09:07 BST 2018 keithdhedger@gmail.com
 
- * This file (LFSTK_FindClass.h) is part of LFSToolKit.
+ * This file (LFSTKFindClass.h) is part of LFSToolKit.
 
  * LFSToolKit is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,11 +43,11 @@ struct	dataStruct
  *
  * \brief Find files etc.
  */
-class LFSTK_FindClass
+class LFSTK_findClass
 {
 	public:
-		~LFSTK_FindClass();
-		LFSTK_FindClass();
+		~LFSTK_findClass();
+		LFSTK_findClass();
 
 		void		LFSTK_setDepth(int min,int max);
 		void		LFSTK_setFindType(int type);

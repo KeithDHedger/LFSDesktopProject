@@ -1,3 +1,6 @@
+0.4.1
+Renamed find class.
+
 0.4.0
 Fixed height of menu separator.
 Fixed menu labels with images and sub menus.
@@ -21,18 +24,18 @@ Changed list API's.
 
 0.3.1
 Fixed flickering when scrolling large list.
-Added cumulative search option to LFSTK_FindClass:LFSTK_findFiles.
+Added cumulative search option to LFSTK_findClass:LFSTK_findFiles.
 Code clean.
 UI changes.
 Better nav in filedialogs using entry bar.
 Added broken link image to file dialog.
 Added link images to file dialog.
-Redone LFSTK_FindClass.
+Redone LFSTK_findClass.
 Added arrows to scrolbar line buttons.
 Added option to do clear window on all gadgets from window clear window.
 Added some sample themes ( installed in/usr/share/themes, move to ~/.themes to use ). 
-Exposed LFSTK_FindClass.
-Added file name filter to LFSTK_FindClass.
+Exposed LFSTK_findClass.
+Added file name filter to LFSTK_findClass.
 Better file dialog path resolve.
 Added Hide/Show dot files in file/folder dialogs.
 Code clean.

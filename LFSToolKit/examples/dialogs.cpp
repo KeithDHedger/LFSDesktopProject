@@ -86,7 +86,7 @@ int main(int argc, char **argv)
 {
 	XEvent	event;
 	int		sy=BORDER;
-		//LFSTK_FindClass *fc=new LFSTK_FindClass;
+		//LFSTK_findClass *fc=new LFSTK_findClass;
 
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"File/Folder Select",false);
 	display=wc->display;

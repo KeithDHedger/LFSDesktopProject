@@ -209,10 +209,10 @@ void addGroup(void)
 	menucnt=find->LFSTK_getDataCount()-1+2;
 
 	groupNameMenuItems=new menuStruct*[menucnt];
-		groupNameMenuItems[0]=new menuStruct;
-		groupNameMenuItems[0]->label=strdup("Add Group");
-		groupNameMenuItems[1]=new menuStruct;
-		groupNameMenuItems[1]->label=strdup("--");
+	groupNameMenuItems[0]=new menuStruct;
+	groupNameMenuItems[0]->label=strdup("Add Group");
+	groupNameMenuItems[1]=new menuStruct;
+	groupNameMenuItems[1]->label=strdup("--");
 	
 	for(int j=2;j<menucnt;j++)
 		{

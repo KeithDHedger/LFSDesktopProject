@@ -263,7 +263,7 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	dialog->closeDisplayOnExit=true;
 
 //find files
-	this->fc=new LFSTK_FindClass;
+	this->fc=new LFSTK_findClass;
 
 //TODO//?
 	XSizeHints sh;
