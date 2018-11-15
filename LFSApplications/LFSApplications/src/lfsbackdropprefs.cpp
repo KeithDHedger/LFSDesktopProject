@@ -58,7 +58,8 @@ menuStruct				**monitorsMenu=NULL;
 LFSTK_lineEditClass		*monitorModeEdit=NULL;
 LFSTK_lineEditClass		*monitorBackdropEdit=NULL;
 LFSTK_buttonClass		*monitorMode=NULL;
-menuStruct				**monitoeModeMenu=NULL;
+menuStruct				**monitorModes=NULL;
+LFSTK_menuClass			*monitorModeMenu=NULL;
 
 char					*monitorBackdrops[20]={NULL,};
 monitorInfo				monitors[20]={{NULL,0},};
@@ -80,7 +81,6 @@ bool					multiMode=false;
 
 //modes
 const char				*modeLabel[5]={"Stretch","Tile","Centre","Scale","Zoom"};
-//menuStruct				*modeMenu=NULL;
 
 //msg
 int						queueID=-1;
@@ -109,9 +109,17 @@ bool buttonCB(void *p,void* ud)
 
 	if(ud!=NULL)
 		{
+			if(strcmp((char*)ud,"SHOWMONITORMODESMENU")==0)
+				{
+					monitorModeMenu->LFSTK_showMenu();
+				}
 			if(strcmp((char*)ud,"SHOWROOTMENU")==0)
 				{
 					rootMenu->LFSTK_showMenu();
+				}
+			if(strcmp((char*)ud,"SHOWMONITORMENU")==0)
+				{
+					monitorSelectMenu->LFSTK_showMenu();
 				}
 
 			if(strcmp((char*)ud,"APPLY")==0)
@@ -165,46 +173,25 @@ bool mainModeCB(void *p,void* ud)
 	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
 	mainModeEdit->LFSTK_setBuffer(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel());
 	backdropMode=(int)(long)ud;
-	printf(">>>>%p<<<<\n",ud);
-	return(true);
-
-#if 0
-	menuItemStruct	*menuitem=(menuItemStruct*)ud;
-
-	if(ud==NULL)
-		return(true);
-	mainModeEdit->LFSTK_setBuffer(menuitem->label);
-	backdropMode=(int)(long)menuitem->userData;
-#endif
 	return(true);
 }
 
 bool monitorModeCB(void *p,void* ud)
 {
-#if 0
-	menuItemStruct	*menuitem=(menuItemStruct*)ud;
-
-	if(ud==NULL)
-		return(true);
-
-	monitorModeEdit->LFSTK_setBuffer(menuitem->label);
-	monitors[selectedMonitor].mode=(int)(long)menuitem->userData;
-#endif
+	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
+	monitorModeEdit->LFSTK_setBuffer(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel());
+	monitors[selectedMonitor].mode=(int)(long)ud;
 	return(true);
 }
 
 bool monitorMenuCB(void *p,void* ud)
 {
-#if 0
-	menuItemStruct	*menuitem=(menuItemStruct*)ud;
 
-	if(ud==NULL)
-		return(true);
-	monitorsMenuButton->LFSTK_setLabel(menuitem->label);
-	selectedMonitor=(int)(long)menuitem->userData;
-	monitorBackdropEdit->LFSTK_setBuffer(monitors[selectedMonitor].path);
+	monitorsMenuButton->LFSTK_setLabel(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel());
+	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
+	selectedMonitor=(int)(long)ud;
 	monitorModeEdit->LFSTK_setBuffer(modeLabel[monitors[selectedMonitor].mode]);
-#endif	
+	monitorBackdropEdit->LFSTK_setBuffer(monitors[selectedMonitor].path);
 	return(true);
 }
 
@@ -236,6 +223,8 @@ void loadMonitorInfo(void)
 							monitors[monnum].path=buffer;
 							monnum++;
 						}
+					else
+						free(buffer);
 				}
 			fclose(fd);
 		}
@@ -247,6 +236,7 @@ void loadMonitorInfo(void)
 					monitors[j].path=strdup("");
 				}
 		}
+	free(monitorrc);
 }
 
 int main(int argc, char **argv)
@@ -306,6 +296,8 @@ int main(int argc, char **argv)
 	dialogButton=new LFSTK_buttonClass(wc,"Select File",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	mainBackdropEdit=new LFSTK_lineEditClass(wc,wallpaperPath,(BORDER*2)+GADGETWIDTH,sy,DIALOGWIDTH-(BORDER*3)-GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	dialogButton->LFSTK_setCallBack(NULL,selectFile,(void*)mainBackdropEdit);
+	//dialogButton->LFSTK_setIndicator(DISCLOSURE);
+
 	sy+=YSPACING;
 //colour
 	label=new LFSTK_labelClass(wc,"Root Colour",BORDER,sy,GADGETWIDTH,GADGETHITE);
@@ -321,8 +313,9 @@ int main(int argc, char **argv)
 		}
 
 	mainMode=new LFSTK_buttonClass(wc,"Main Mode",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	mainMode->LFSTK_setIndicator(DISCLOSURE);
 	mainMode->LFSTK_setCallBack(NULL,buttonCB,(void*)"SHOWROOTMENU");
-	rootMenu=new LFSTK_menuClass(wc,BORDER,sy+GADGETHITE,1,1);
+	rootMenu=new LFSTK_menuClass(wc,BORDER+GADGETWIDTH,sy,1,1);
 	rootMenu->LFSTK_setCallBack(NULL,mainModeCB,NULL);
 	rootMenu->LFSTK_addMainMenus(rootModeMenu,5);
 
@@ -330,7 +323,6 @@ int main(int argc, char **argv)
 	mainModeEdit->gadgetAcceptsDnD=false;
 	//mainMode->LFSTK_setCallBack(NULL,mainModeCB,NULL);
 	sy+=YSPACING;
-#if 0
 //multi mode
 	multipleMonitors=new LFSTK_toggleButtonClass(wc,"Multiple Monitors",BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	multipleMonitors->LFSTK_setValue(multiMode);
@@ -338,34 +330,52 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //monitors
-	monitorsMenu=new menuItemStruct[wc->LFSTK_getMonitorCount()];
+	monitorsMenu=new menuStruct*[wc->LFSTK_getMonitorCount()];
 	for(long j=0;j<wc->LFSTK_getMonitorCount();j++)
 		{
-			char	*lab;
-			asprintf(&lab,"Monitor %i",j);
-			monitorsMenu[j].label=lab;
-			monitorsMenu[j].userData=(void*)j;
+			monitorsMenu[j]=new menuStruct;
+			asprintf(&monitorsMenu[j]->label,"Monitor %i",j);
+			monitorsMenu[j]->userData=(void*)j;
 		}
-	monitorsMenuButton=new LFSTK_menuButtonClass(wc,"Monitor 0",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	monitorsMenuButton->LFSTK_addMenus(monitorsMenu,wc->LFSTK_getMonitorCount());
-	monitorsMenuButton->LFSTK_setCallBack(NULL,monitorMenuCB,NULL);
+	monitorsMenuButton=new LFSTK_buttonClass(wc,"Monitor 0",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+
+	monitorsMenuButton->LFSTK_setShowIndicator	(true)	;
+	monitorsMenuButton->LFSTK_setIndicator(DISCLOSURE);
+
+	monitorsMenuButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"SHOWMONITORMENU");
+	monitorSelectMenu=new LFSTK_menuClass(wc,BORDER+GADGETWIDTH,sy,1,1);
+	monitorSelectMenu->LFSTK_setCallBack(NULL,monitorMenuCB,NULL);
+	monitorSelectMenu->LFSTK_addMainMenus(monitorsMenu,wc->LFSTK_getMonitorCount());
+
 	loadMonitorInfo();
 	sy+=YSPACING;
 
 //monitor info
 //backdrop
 	dialogButton=new LFSTK_buttonClass(wc,"Select File",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	//dialogButton->LFSTK_setIndicator(DISCLOSURE);
 	monitorBackdropEdit=new LFSTK_lineEditClass(wc,monitors[0].path,(BORDER*2)+GADGETWIDTH,sy,DIALOGWIDTH-(BORDER*3)-GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	dialogButton->LFSTK_setCallBack(NULL,selectFile,(void*)monitorBackdropEdit);
 	sy+=YSPACING;
 //mode
-	monitorMode=new LFSTK_menuButtonClass(wc,"Monitor Mode",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	monitorMode->LFSTK_addMenus(modeMenu,5);
+	monitorMode=new LFSTK_buttonClass(wc,"Monitor Mode",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	monitorMode->LFSTK_setIndicator(DISCLOSURE);
+	monitorMode->LFSTK_setCallBack(NULL,buttonCB,(void*)"SHOWMONITORMODESMENU");
+	monitorModes=new menuStruct*[5];
+	for(long j=0;j<5;j++)
+		{
+			monitorModes[j]=new menuStruct;
+			monitorModes[j]->label=strdup(modeLabel[j]);
+			monitorModes[j]->userData=(void*)j;
+		}
+	monitorModeMenu=new LFSTK_menuClass(wc,BORDER+GADGETWIDTH,sy,1,1);
+	monitorModeMenu->LFSTK_setCallBack(NULL,monitorModeCB,NULL);
+	monitorModeMenu->LFSTK_addMainMenus(rootModeMenu,5);
+
 	monitorModeEdit=new LFSTK_lineEditClass(wc,modeLabel[monitors[selectedMonitor].mode],(BORDER*2)+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	monitorModeEdit->gadgetAcceptsDnD=false;
-	monitorMode->LFSTK_setCallBack(NULL,monitorModeCB,NULL);
 	sy+=YSPACING;
-#endif
+
 //line
 	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
 	seperator->LFSTK_setStyle(BEVELNONE);
@@ -424,6 +434,13 @@ int main(int argc, char **argv)
 	free(wd);
 	free(mainPrefs);
 	free(monitorPrefs);
+	for(int j=0;j<20;j++)
+		{
+			if(monitors[j].path!=NULL)
+				free(monitors[j].path);
+		}
+	cairo_debug_reset_static_data();
+	
 	return 0;
 }
 

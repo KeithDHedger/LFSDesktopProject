@@ -1,4 +1,5 @@
 0.4.1
+Added manual addition of indicator to gadget.
 Added opt to ignore "./.." to find class.
 Renamed find class.
 

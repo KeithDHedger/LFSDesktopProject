@@ -22,7 +22,6 @@
 #ifndef _LFSTKMENUBUTTON_
 #define _LFSTKMENUBUTTON_
 
-#define TRIANGLESIZE 8u
 /**
  *
  * Menu structure for menuItemClass.

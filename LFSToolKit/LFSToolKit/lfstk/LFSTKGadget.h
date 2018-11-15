@@ -109,7 +109,7 @@ class LFSTK_gadgetClass
 
 //grahics
 		void					drawImage();
-
+		void					LFSTK_setIndicator(indicatorType indictype);
 		cairo_status_t 			LFSTK_setImageFromPath(const char *file,int orient,bool scale);
 		void 					LFSTK_setImageFromSurface(cairo_surface_t *sfc,int orient,bool scale);
 

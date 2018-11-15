@@ -1688,3 +1688,36 @@ void LFSTK_gadgetClass::LFSTK_getLimits(rectStruct *rect)
 	rect->h=this->maxY;
 }
 
+/**
+* Manually set indicator.
+* \param int
+*\note type is one of CHECK,RADIO,PICTURE,DISCLOSURE,NOINDICATOR.
+*/
+void LFSTK_gadgetClass::LFSTK_setIndicator(indicatorType indictype)
+{
+	unsigned int indicsize;
+
+	this->gadgetDetails.indic=indictype;
+	if(indictype!=NOINDICATOR)
+		{
+			switch(indictype)
+				{
+					case CHECK:
+						indicsize=CHECKBOXSIZE;
+						break;
+					case DISCLOSURE:
+						indicsize=TRIANGLESIZE;
+						break;
+				}
+			this->gadgetDetails.hasIndicator=true;
+			this->gadgetDetails.indicatorGeom={(int)(this->gadgetGeom.w-indicsize-(this->pad*2)),(int)((this->gadgetGeom.h/2)-(indicsize/2)+(this->pad/2)),indicsize,indicsize};
+		}
+	else
+		{
+			this->gadgetDetails.hasIndicator=false;
+			this->gadgetDetails.indicatorGeom={0,0,0,0};
+		}
+
+//{(int)(w-TRIANGLESIZE-(this->pad*2)),(int)((h/2)-(TRIANGLESIZE/2)+(this->pad/2)),TRIANGLESIZE,TRIANGLESIZE},//indicator geom
+//	true,//has indicator
+}

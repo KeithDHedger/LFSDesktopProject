@@ -1,4 +1,6 @@
 0.1.3
+Fixed  memory leak in lfsappearance.
+Changed lfsbackdropprefs to use new menu classes.
 Changed lfsappearance to use new menu and find classes.
 Added forground colour to lfsdesktopprefs.
 Lfstkprefs now updates desktop and panels immediately.

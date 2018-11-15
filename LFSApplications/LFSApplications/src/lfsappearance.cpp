@@ -58,7 +58,7 @@ int								parentWindow=-1;
 int								queueID=-1;
 
 menuStruct						**groupNameMenuItems=NULL;
-LFSTK_FindClass					*find;
+LFSTK_findClass					*find;
 
 bool doQuit(void *p,void* ud)
 {
@@ -206,7 +206,7 @@ void addGroup(void)
 
 	find->LFSTK_findFiles(command,false);
 	find->LFSTK_sortByName();
-	menucnt=find->LFSTK_getDataCount()-1+2;
+	menucnt=find->LFSTK_getDataCount()+2;
 
 	groupNameMenuItems=new menuStruct*[menucnt];
 	groupNameMenuItems[0]=new menuStruct;
@@ -217,7 +217,7 @@ void addGroup(void)
 	for(int j=2;j<menucnt;j++)
 		{
 			groupNameMenuItems[j]=new menuStruct;
-			groupNameMenuItems[j]->label=strdup(find->data[j-1].name.c_str());
+			groupNameMenuItems[j]->label=strdup(find->data[j-2].name.c_str());
 		}
 	free(command);
 }
@@ -226,7 +226,7 @@ void doNewGroup(void)
 {
 	makeGroup(currentSet->LFSTK_getCStr());
 	addGroup();
-	setMenu->LFSTK_addMainMenus(groupNameMenuItems,find->LFSTK_getDataCount()+1);
+	setMenu->LFSTK_addMainMenus(groupNameMenuItems,find->LFSTK_getDataCount()+2);
 }
 
 bool menuCB(void *p,void* ud)
@@ -252,11 +252,12 @@ int main(int argc, char **argv)
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"LFS Appearance",false);
 	display=wc->display;
 
-	find=new LFSTK_FindClass;
+	find=new LFSTK_findClass;
 	find->LFSTK_setFindType(FOLDERTYPE);
 	find->LFSTK_setFullPath(true);
 	find->LFSTK_setIgnoreBroken(false);
 	find->LFSTK_setSort(true);
+	find->LFSTK_setIgnoreNavLinks(true);
 
 	addGroup();
 
@@ -300,7 +301,7 @@ int main(int argc, char **argv)
 
 	setMenu=new LFSTK_menuClass(wc,BORDER,sy+GADGETHITE,1,1);
 	setMenu->LFSTK_setCallBack(NULL,menuCB,NULL);
-	setMenu->LFSTK_addMainMenus(groupNameMenuItems,find->LFSTK_getDataCount()+1);
+	setMenu->LFSTK_addMainMenus(groupNameMenuItems,find->LFSTK_getDataCount()+2);
 
 	buffer=wc->globalLib->LFSTK_oneLiner("sed -n '1p' %s/lfsappearance.rc",wc->configDir);
 	currentSet=new LFSTK_lineEditClass(wc,buffer,BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,BUTTONGRAV);

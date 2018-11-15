@@ -132,7 +132,7 @@ void LFSTK_fileDialogClass::getFileList(void)
 						break;
 				}
 		}
-		fprintf(stderr,"cnt=%i\n",this->fileListCnt);
+		//fprintf(stderr,"cnt=%i\n",this->fileListCnt);
 	this->fileListGadget->LFSTK_setList(labelLst,this->fileListCnt);
 }
 
