@@ -322,6 +322,24 @@ bool LFSTK_findClass::fileTypeTest(int filetype)
 }
 
 /**
+* Set ignore hard folder links (".", "..").
+* \param bool true=ignore.
+*/
+void LFSTK_findClass::LFSTK_setIgnoreNavLinks(bool ignore)
+{
+	this->ignoreNavLinks=ignore;
+}
+
+/**
+* Get ignore hard folder links (".", "..").
+* \return bool.
+*/
+bool LFSTK_findClass::LFSTK_getIgnoreNavLinks(void)
+{
+	return(this->ignoreNavLinks);
+}
+
+/**
 * Main search function.
 * \param const char *dir Path to search.
 * \param bool Tru=Add this search to last, False=New search.
@@ -351,6 +369,9 @@ void LFSTK_findClass::LFSTK_findFiles(const char *dir,bool multi)
 						continue;
 					if((this->LFSTK_getFileTypes()!=NULL) && (strcasestr(entry->d_name,this->LFSTK_getFileTypes())==NULL))
 						continue;
+					if((this->ignoreNavLinks==true) && ((strcmp(entry->d_name,".")==0) || (strcmp(entry->d_name,"..")==0)))
+						continue;
+
 					datas.name=entry->d_name;
 					sprintf(filepath,"%s/%s",dir,entry->d_name);
 					if(entry->d_type==DT_LNK)

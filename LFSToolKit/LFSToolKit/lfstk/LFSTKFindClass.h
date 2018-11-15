@@ -19,12 +19,12 @@
  */
 
 #include <stdio.h>
-#include <iostream>     // std::cout
-#include <algorithm>    // std::sort
-#include <vector>       // std::vector
+#include <iostream>
+#include <algorithm>
+#include <vector>
 #include <stdlib.h>
 #include <ftw.h>
-#include <functional>   // std::function, std::negate
+#include <functional>
 #include <string.h>
 
 #ifndef _FINDCLASS_
@@ -64,6 +64,8 @@ class LFSTK_findClass
 		bool		LFSTK_getIgnoreBroken(void);
 		void		LFSTK_setFileTypes(const char *suffix);
 		const char*	LFSTK_getFileTypes(void);
+		void		LFSTK_setIgnoreNavLinks(bool ignore);
+		bool		LFSTK_getIgnoreNavLinks(void);
 
 
 		void		LFSTK_findFiles(const char *dir,bool multi=false);
@@ -90,6 +92,7 @@ class LFSTK_findClass
 		bool		sortDescending=true;
 		bool		ignoreBroken=false;
 		char		*fileTypes=NULL;
+		bool		ignoreNavLinks=false;
 };
 
 #endif
