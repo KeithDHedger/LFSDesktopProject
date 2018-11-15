@@ -21,6 +21,7 @@
 #ifndef _LFSTKMENUITEM_
 #define _LFSTKMENUITEM_
 
+#define SEPARATORHITE 4
 /**
  *
  * \brief Label class for LFSToolKit gadgets.

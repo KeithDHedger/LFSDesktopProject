@@ -124,14 +124,15 @@ void LFSTK_menuClass::LFSTK_showMenu(void)
 */
 void LFSTK_menuClass::LFSTK_addMainMenus(menuStruct **menus,int menucnt)
 {
-	LFSTK_menuItemClass		*label;
-	int						sy=0;
-	double					txtwid=0;
-	double					maxtxtwid=0;
-	int						finaltxtwid;
-	int						gotsubmenu=8;
-	int						gotthumb=LEFT;
-	int						winshrink=0;
+	LFSTK_menuItemClass	*label;
+	int					sy=0;
+	double				txtwid=0;
+	double				maxtxtwid=0;
+	int					finaltxtwid;
+	int					gotsubmenu=8;
+	int					gotthumb=LEFT;
+	int					winshrink=0;
+	int					hite=GADGETHITE;
 
 	if(this->mainMenu!=NULL)
 		{
@@ -154,23 +155,20 @@ void LFSTK_menuClass::LFSTK_addMainMenus(menuStruct **menus,int menucnt)
 			if(this->mainMenu[j]->imageType!=NOTHUMB)
 				gotthumb=MENU;
 			if(strcmp(this->mainMenu[j]->label,"--")==0)
-				winshrink+=(GADGETHITE-4);
+				winshrink+=(GADGETHITE-SEPARATORHITE);
 		}
 
 	if(gotthumb==MENU)
 		maxtxtwid+=GADGETHITE+gotsubmenu;
 	else
 		maxtxtwid+=gotsubmenu;
+
 	this->mainMenuWindow=new LFSTK_toolWindowClass(this->display,this->parentwc,"_NET_WM_WINDOW_TYPE_MENU",this->x,this->y,maxtxtwid,GADGETHITE*this->mainMenuCnt-winshrink,"menu window");
 	for(int j=0;j<this->mainMenuCnt;j++)
 		{
-									int hite=GADGETHITE;
-							printf(">>>%s<<<\n",this->mainMenu[j]->label);
-							if(strcmp(this->mainMenu[j]->label,"--")==0)
-								{
-								hite=4;
-printf(">>>>>>>>>>>>>>>>\n");
-}
+			hite=GADGETHITE;
+			if(strcmp(this->mainMenu[j]->label,"--")==0)
+				hite=SEPARATORHITE;
 
 			label=new LFSTK_menuItemClass(this->mainMenuWindow,this,0,sy,maxtxtwid,hite,this->mainMenu[j],gotthumb);
 			label->LFSTK_setCallBack(this->callback.pressCallback,this->callback.releaseCallback,(void*)(this->mainMenu[j]->userData));

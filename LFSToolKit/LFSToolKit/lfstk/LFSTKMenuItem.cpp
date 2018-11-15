@@ -104,6 +104,7 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 	int		gotsubmenu=this->pad*4;
 	int		gotthumb=LEFT;
 	int		winshrink=0;
+	int		hite=GADGETHITE;
 
 	if((this->isActive==false) || (this->callback.ignoreCallback==true))
 		return(true);
@@ -138,7 +139,7 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 							if(this->menuData->subMenus[j]->imageType!=NOTHUMB)
 								gotthumb=MENU;
 							if(strcmp(this->menuData->subMenus[j]->label,"--")==0)
-								winshrink+=(GADGETHITE-4);
+								winshrink+=(GADGETHITE-SEPARATORHITE);
 						}
 					if(gotthumb==MENU)
 						maxtxtwid+=GADGETHITE+gotsubmenu;
@@ -148,13 +149,10 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 					this->subwc=new LFSTK_toolWindowClass(this->display,this->wc,"_NET_WM_WINDOW_TYPE_MENU",this->gadgetGeom.x,this->gadgetGeom.y,maxtxtwid,GADGETHITE*this->menuData->subMenuCnt-winshrink,"menu window");
 					for(int j=0; j<this->menuData->subMenuCnt; j++)
 						{
-							int hite=GADGETHITE;
-							printf(">>>%s<<<\n",this->menuData->subMenus[j]->label);
+							hite=GADGETHITE;
 							if(strcmp(this->menuData->subMenus[j]->label,"--")==0)
-								{
-								hite=4;
-printf(">>>>>>>>>>>>>>>>\n");
-}
+								hite=SEPARATORHITE;
+
 							label=new LFSTK_menuItemClass(this->subwc,this->menu,0,sy,maxtxtwid,hite,this->menuData->subMenus[j],gotthumb);
 							label->LFSTK_setCallBack(this->callback.pressCallback,this->callback.releaseCallback,this->menuData->subMenus[j]->userData);
 							if(this->menuData->subMenus[j]->imageType==FILETHUMB)
