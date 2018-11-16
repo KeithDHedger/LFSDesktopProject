@@ -12,23 +12,19 @@ exit $retval
 
 #include "lfstk/LFSTKGlobals.h"
 
-#define WINDOWWIDTH			320
-#define WINDOWHITE			10
-#define WINDOWMIDDLE		WINDOWWIDTH/2
+#define WINDOWWIDTH 320
+#define WINDOWHITE 10
+#define WINDOWMIDDLE WINDOWWIDTH/2
+#define SPACING 24
+#define HALFSPACING SPACING/2
 
-#define SPACING				24
-#define HALFSPACING			SPACING/2
-
-enum		{LNAME,LDESCRIPTION,LCOPYRITE,LEMAIL,LWEBSITE,LGPL,LNOMORELABELS};
+enum {LNAME,LDESCRIPTION,LCOPYRITE,LEMAIL,LWEBSITE,LGPL,LNOMORELABELS};
 
 const char	*labelTexts[]={"LFS Desktop Project","Low resource/dependency desktop for LFS",COPYRITE,PERSONAL,MYWEBSITE,"Released under GPLv3"};
 
 #define IMAGESIZE		64
 
 LFSTK_windowClass		*wc=NULL;
-LFSTK_labelClass		*label=NULL;
-LFSTK_labelClass		*personal=NULL;
-LFSTK_labelClass		*copyrite=NULL;
 LFSTK_buttonClass		*seperator=NULL;
 LFSTK_buttonClass		*quit=NULL;
 LFSTK_imageClass		*tux;

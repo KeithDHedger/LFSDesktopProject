@@ -78,7 +78,6 @@ int main(int argc, char **argv)
 {
 	XEvent				event;
 	int 				sy=0;
-	LFSTK_windowClass	*wc;
 	LFSTK_buttonClass	*quit;
 	LFSTK_buttonClass	*run;
 

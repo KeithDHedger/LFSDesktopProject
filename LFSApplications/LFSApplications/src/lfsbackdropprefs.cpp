@@ -61,9 +61,7 @@ LFSTK_buttonClass		*monitorMode=NULL;
 menuStruct				**monitorModes=NULL;
 LFSTK_menuClass			*monitorModeMenu=NULL;
 
-char					*monitorBackdrops[20]={NULL,};
 monitorInfo				monitors[20]={{NULL,0},};
-
 int						selectedMonitor=0;
 
 bool					mainLoop=true;
