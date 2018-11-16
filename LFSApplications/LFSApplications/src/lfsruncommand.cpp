@@ -81,11 +81,9 @@ int main(int argc, char **argv)
 	LFSTK_windowClass	*wc;
 	LFSTK_buttonClass	*quit;
 	LFSTK_buttonClass	*run;
-	LFSTK_labelClass	*label;
 
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Run Command",false);
 	display=wc->display;
-	//wc->LFSTK_initDnD();
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	sy+=HALFYSPACING;
@@ -103,7 +101,6 @@ int main(int argc, char **argv)
 //command
 	le=new LFSTK_lineEditClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE,BUTTONGRAV);
 	sy+=GADGETHITE+8;
-//le->labelGravity=CENTRE;
 	quit=new LFSTK_buttonClass(wc,"Quit",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
 

@@ -181,7 +181,6 @@ int main(int argc, char **argv)
 	XEvent		event;
 	int			sy=0;
 	int			parentWindow=-1;
-	char		*sizes[32]={0,};
 	char		*buffer=NULL;
 	int			c=0;
 	int			option_index=0;
@@ -213,7 +212,6 @@ int main(int argc, char **argv)
 
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"LFS Desktop Prefs",false);
 	display=wc->display;
-	//wc->LFSTK_initDnD();
 
 	asprintf(&envFile,"%s/lfsdesktop.rc",wc->configDir);
 	wc->globalLib->LFSTK_loadVarsFromFile(envFile,desktopPrefs);

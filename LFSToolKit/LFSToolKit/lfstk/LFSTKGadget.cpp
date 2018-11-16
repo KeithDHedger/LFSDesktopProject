@@ -894,6 +894,23 @@ void LFSTK_gadgetClass::LFSTK_setCairoFontData(void)
 		}
 	free(string);
 
+//
+////cairo_font_face_t *ff;
+//	cairo_save(this->cr);
+//		//cairo_select_font_face(this->cr,this->fontName,this->slant,this->weight);
+//		ff=cairo_toy_font_face_create (this->fontName,this->slant,this->weight);
+//		cairo_set_font_face (this->cr,ff);
+//		cairo_set_font_size(this->cr,this->fontSize);
+//		if(strlen(this->label)>0)
+//			cairo_text_extents(this->cr,this->label,&this->textExtents);
+//		else
+//			cairo_text_extents(this->cr,"X",&this->textExtents);
+//		//this->maxTextHeight=this->fontExtents.descent+this->fontExtents.height+this->fontExtents.ascent;
+//		this->maxTextHeight=this->fontExtents.descent+this->fontExtents.ascent;
+//	cairo_restore(this->cr);
+//		cairo_font_face_destroy (ff);
+//
+
 	cairo_save(this->cr);
 		cairo_select_font_face(this->cr,this->fontName,this->slant,this->weight);
 		cairo_set_font_size(this->cr,this->fontSize);
@@ -965,7 +982,7 @@ int LFSTK_gadgetClass::LFSTK_getTextHeight(const char* text)
 void LFSTK_gadgetClass::LFSTK_setCairoFontDataParts(const char* fmt,...)
 {
 	va_list	ap;
-	va_start(ap, fmt);
+	va_start(ap,fmt);
 	while (*fmt)
 		{
 			switch(*fmt)
@@ -991,18 +1008,21 @@ void LFSTK_gadgetClass::LFSTK_setCairoFontDataParts(const char* fmt,...)
 						this->fontSize=va_arg(ap,int);
 						break;
 				}
-
 			fmt++;
 		}
 	va_end(ap);
+//cairo_font_face_t *ff;
 	cairo_save(this->cr);
 		cairo_select_font_face(this->cr,this->fontName,this->slant,this->weight);
+	//	ff=cairo_toy_font_face_create (this->fontName,this->slant,this->weight);
+		//cairo_set_font_face (this->cr,ff);
 		cairo_set_font_size(this->cr,this->fontSize);
 		cairo_font_extents(this->cr,&this->fontExtents);
 		cairo_text_extents(this->cr,this->label,&this->textExtents);
 		this->maxTextHeight=this->fontExtents.descent+this->fontExtents.ascent;
 	//	printf("descent=%f ascent=%f maxTextHeight=%f\n",this->fontExtents.descent,this->fontExtents.ascent,this->maxTextHeight);
 	cairo_restore(this->cr);
+		//cairo_font_face_destroy (ff);
 }
 
 /**

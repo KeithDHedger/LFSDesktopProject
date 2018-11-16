@@ -75,8 +75,10 @@ LFSTK_lineEditClass		*windowTileEdit=NULL;
 LFSTK_lineEditClass		*buttonTileEdit=NULL;
 LFSTK_lineEditClass		*menuTileEdit=NULL;
 LFSTK_fileDialogClass	*tileDialog=NULL;
-LFSTK_menuButtonClass	*loadSet=NULL;
-menuItemStruct			*setNameMenuItems=NULL;
+LFSTK_buttonClass		*loadSet=NULL;
+menuStruct				**setNameMenuItems=NULL;
+LFSTK_menuClass			*setMenu=NULL;
+
 int						setCnt;
 
 bool					mainLoop=true;
@@ -101,9 +103,12 @@ void addSet(void)
 	fc->LFSTK_setSort(true);
 	fc->LFSTK_sortByPath();
 
-	setNameMenuItems=new menuItemStruct[fc->data.size()];
+	setNameMenuItems=new menuStruct*[fc->data.size()];
 	for(int j=0;j<fc->data.size();j++)
-		setNameMenuItems[j].label=strdup(fc->data.at(j).path.c_str());
+		{
+			setNameMenuItems[j]=new menuStruct;
+			setNameMenuItems[j]->label=strdup(fc->data.at(j).path.c_str());
+		}
 	setCnt=fc->data.size();
 	delete fc;
 	free(themeDir);
@@ -112,8 +117,10 @@ void addSet(void)
 bool menuCB(void *p,void* ud)
 {
 	char	*buffer=(char*)alloca(PATH_MAX);
-	menuItemStruct	*menuitem=(menuItemStruct*)ud;
-	char *env=NULL;
+
+	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
+	const char *label=static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel();
+
 //temp theme stuff
 	char	*bnormal=NULL;
 	char	*bpre=NULL;
@@ -181,20 +188,15 @@ bool menuCB(void *p,void* ud)
 		{NULL,0,NULL},
 	};
 
-
-	if(ud==NULL)
-		return(true);
-
-	sprintf(buffer,"%s/window.png",menuitem->label);
+	sprintf(buffer,"%s/window.png",label);
 	windowTileEdit->LFSTK_setBuffer(buffer);
-	sprintf(buffer,"%s/button.png",menuitem->label);
+	sprintf(buffer,"%s/button.png",label);
 	buttonTileEdit->LFSTK_setBuffer(buffer);
-	sprintf(buffer,"%s/menuitem.png",menuitem->label);
+	sprintf(buffer,"%s/menuitem.png",label);
 	menuTileEdit->LFSTK_setBuffer(buffer);
 
-	sprintf(buffer,"%s/lfstoolkit.rc",menuitem->label);
+	sprintf(buffer,"%s/lfstoolkit.rc",label);
 	wc->globalLib->LFSTK_loadVarsFromFile(buffer,myargs);
-
 //button back
 	previeBackColourEdit[0]->LFSTK_setBuffer(bnormal);
 	previeBackColourEdit[1]->LFSTK_setBuffer(bpre);
@@ -291,7 +293,7 @@ void setVars(void)
 void setPreviewData(void)
 {
 	std::map<int,mappedListener*>	*ml=wc->LFSTK_getGadgets();
-	int cnt=0;
+//	int cnt=0;
 	if((!ml->empty()) )
 		{
 			if(useTheme->LFSTK_getValue()==true)
@@ -400,6 +402,12 @@ bool buttonCB(void *p,void* ud)
 
 	if(ud!=NULL)
 		{
+			if(strcmp((char*)ud,"SHOWSETMENU")==0)
+				{
+					setMenu->LFSTK_showMenu();
+					return(true);
+				}
+
 			if(strcmp((char*)ud,"SELECTBUTTONFONT")==0)
 				{
 					buttonFontDialogButton->LFSTK_showDialog("");
@@ -580,10 +588,12 @@ int main(int argc, char **argv)
 //load set
 	addSet();
 
-	loadSet=new LFSTK_menuButtonClass(wc,"Load Theme",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	loadSet->LFSTK_setCallBack(NULL,menuCB,NULL);
-	loadSet->LFSTK_addMenus(setNameMenuItems,setCnt);
-	loadSet->LFSTK_setLabelGravity(CENTRE);
+	loadSet=new LFSTK_buttonClass(wc,"Load Theme",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	loadSet->LFSTK_setCallBack(NULL,buttonCB,(void*)"SHOWSETMENU");
+	loadSet->LFSTK_setIndicator(DISCLOSURE);
+	setMenu=new LFSTK_menuClass(wc,(BORDER+GADGETWIDTH)*2,sy,1,1);
+	setMenu->LFSTK_setCallBack(NULL,menuCB,NULL);
+	setMenu->LFSTK_addMainMenus(setNameMenuItems,setCnt);
 	sy+=YSPACING;
 	sx=BORDER;
 
@@ -658,13 +668,8 @@ int main(int argc, char **argv)
 		}
 
 	delete wc;
-	XCloseDisplay(display);
-	for(int j=0;j<setCnt;j++)
-		{
-			free(setNameMenuItems[j].label);
-		}
-
-	delete[] setNameMenuItems;
+	delete setMenu;
 	cairo_debug_reset_static_data();
+	XCloseDisplay(display);
 	return 0;
 }

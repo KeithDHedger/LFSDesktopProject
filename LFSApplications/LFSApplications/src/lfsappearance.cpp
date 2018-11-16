@@ -35,7 +35,6 @@
 #define DIALOGMIDDLE			DIALOGWIDTH/2
 
 LFSTK_windowClass				*wc=NULL;
-LFSTK_labelClass				*label=NULL;
 LFSTK_labelClass				*personal=NULL;
 LFSTK_labelClass				*copyrite=NULL;
 LFSTK_buttonClass				*seperator=NULL;
@@ -54,7 +53,6 @@ LFSTK_lineEditClass				*key=NULL;
 
 bool							mainLoop=true;
 Display							*display;
-int								parentWindow=-1;
 int								queueID=-1;
 
 menuStruct						**groupNameMenuItems=NULL;
@@ -76,7 +74,6 @@ int fileExists(const char *name)
 
 void updateDesktop(void)
 {
-	char	combuffer[256];
 	bool	flag=false;
 	int		retcode;
 	int		receiveType=IPC_NOWAIT;
@@ -298,8 +295,9 @@ int main(int argc, char **argv)
 //load set
 	loadSet=new LFSTK_buttonClass(wc,"Load Set",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	loadSet->LFSTK_setCallBack(NULL,buttonCB,(void*)"SHOWGROUPS");
+	loadSet->LFSTK_setIndicator(DISCLOSURE);
 
-	setMenu=new LFSTK_menuClass(wc,BORDER,sy+GADGETHITE,1,1);
+	setMenu=new LFSTK_menuClass(wc,BORDER+GADGETWIDTH,sy,1,1);
 	setMenu->LFSTK_setCallBack(NULL,menuCB,NULL);
 	setMenu->LFSTK_addMainMenus(groupNameMenuItems,find->LFSTK_getDataCount()+2);
 
