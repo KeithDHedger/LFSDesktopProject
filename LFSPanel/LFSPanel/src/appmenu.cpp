@@ -56,9 +56,9 @@ bool menuCB(void *p,void* ud)
 			return(true);
 		}
 
-//	printf("\n\np=%p ud=%i\n",p,ud);
-//	printf("Label=%s\n",static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel());
-//	printf("Name=%s Exec=%s inTerm=%i\n",entrydata.at(entry)->name,entrydata.at(entry)->exec,entrydata.at(entry)->inTerm);
+	printf("\n\np=%p ud=%i\n",p,ud);
+	printf("Label=%s\n",static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel());
+	printf("Name=%s Exec=%s inTerm=%i\n",entrydata.at(entry)->name,entrydata.at(entry)->exec,entrydata.at(entry)->inTerm);
 	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
 
 	if(entrydata.at(entry)->inTerm==false)
@@ -159,7 +159,8 @@ void addDesktopFiles(int catnum,const char *catname)
 	std::regex			exp;
 	std::regex			expname("Name=(.*)");
 	std::regex			expicon("Icon=(.*)");
-	std::regex			expexec("Exec=([a-z]*).*");
+//	std::regex			expexec("Exec=([a-z]*).*");
+	std::regex			expexec("Exec=\([^[:space:]]*\).*");
 	std::regex			expnodisplay("NoDisplay=(.*)");
 	std::regex			expterm("Terminal=true");
 	std::vector<int>	fname;
