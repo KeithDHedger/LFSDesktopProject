@@ -26,224 +26,50 @@
 
 #include "appmenu.h"
 
-const char				*myCats[]= {"Settings","Utility","Development","Education","Graphics","Network","AudioVideo","Office","Shell","Game","System",NULL};
-const char				*catImageNames[]={"preferences-desktop","applications-utilities","applications-development","applications-science","applications-graphics","applications-internet","applications-multimedia","applications-office","applications-engineering","applications-games","applications-system",NULL};
+const char			*myCats[]= {"Settings","Utility","Development","Education","Graphics","Network","AudioVideo","Office","Shell","Game","System",NULL};
+const char			*catImageNames[]={"preferences-desktop","applications-utilities","applications-development","applications-science","applications-graphics","applications-internet","applications-multimedia","applications-office","applications-engineering","applications-games","applications-system",NULL};
 
-LFSTK_menuButtonClass	*appButton=NULL;
-menuItemStruct			*catagoryMenus;
-menuItemStruct			*catagorySubMenus[MAXCATS];
-int						subMenusCnt[MAXCATS];
-int						catPtr[MAXCATS];
-const char				*currentCatName=NULL;
-int						catagoryCnt=0;
-int						catcnt=0;
+LFSTK_findClass		*find;
 
-bool callback(void *p,void* ud)
+LFSTK_buttonClass	*appButton=NULL;
+menuStruct			**catagoryMenus;
+LFSTK_menuClass		*appMenu=NULL;
+
+int					catPtr[MAXCATS];
+const char			*currentCatName=NULL;
+int					catagoryCnt=0;
+
+bool buttonCB(void *p,void* ud)
 {
-	menuEntryStruct	*menu;
-	char			*command;
+	appMenu->LFSTK_showMenu();
+	return(true);
+}
 
-	if(ud==NULL)
-		return(true);;
+bool menuCB(void *p,void* ud)
+{
+	char	*command;
+	int		entry=(int)(long)ud;
 
-	if((long)((menuItemStruct*)ud)->userData==-1)
+	if(entry==-1)
 		{
 			system("lfsabout &");
 			return(true);
 		}
-	
-	menu=(menuEntryStruct*)((menuItemStruct*)ud)->userData;
-	if(menu==NULL)
-		return(true);;
 
-	if(menu->inTerm==false)
-		asprintf(&command,"%s &",menu->exec);
+//	printf("\n\np=%p ud=%i\n",p,ud);
+//	printf("Label=%s\n",static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel());
+//	printf("Name=%s Exec=%s inTerm=%i\n",entrydata.at(entry)->name,entrydata.at(entry)->exec,entrydata.at(entry)->inTerm);
+	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
+
+	if(entrydata.at(entry)->inTerm==false)
+		asprintf(&command,"%s &",entrydata.at(entry)->exec);
 	else
-		asprintf(&command,"%s %s &",terminalCommand,menu->exec);
+		asprintf(&command,"%s %s &",terminalCommand,entrydata.at(entry)->exec);
 
 	system(command);
 	free(command);
+
 	return(true);
-}
-
-int ftwCallback(const char *fpath,const struct stat *sb,int typeflag)
-{
-	char	command[512];
-	char	*splitstr=NULL;
-	FILE	*fp=NULL;
-	bool	interm=false;
-	int		mycatcnt=0;
-	bool	gotcat;
-	bool	gotname;
-	bool	goticon;
-	bool	gotexec;
-	char	*holdname=NULL;
-	char	*holdicon=NULL;
-	char	*holdexec=NULL;
-	bool	nodisplay=false;
-	char	*testpercent=NULL;
-
-	if(typeflag!=FTW_F)
-		return(0);
-
-	sprintf(command,"cat %s",fpath);
-	gotcat=false;
-	gotname=false;
-	goticon=false;
-	gotexec=false;
-	interm=false;
-	fp=popen(command,"r");
-	if(fp!=NULL)
-		{
-			while(fgets(command,512,fp))
-				{
-					if(command[strlen(command)-1]=='\n')
-						command[strlen(command)-1]=0;
-					splitstr=NULL;
-					splitstr=strtok(command,"=");
-					if(splitstr!=NULL)
-						{
-							if(strncmp(splitstr,"Categories",10)==0)
-								{
-									mycatcnt=0;
-									splitstr=strtok(NULL,"=");
-									while(myCats[mycatcnt]!=NULL)
-										{
-											if(strcasestr(splitstr,myCats[mycatcnt])!=NULL)
-												{
-													gotcat=true;
-													break;
-												}
-											mycatcnt++;
-										}
-									}
-
-							if(strcmp(splitstr,"Name")==0)
-								{
-									splitstr=strtok(NULL,"=");
-									gotname=true;
-									holdname=strdup(splitstr);
-								}
-
-							if(strcmp(splitstr,"Icon")==0)
-								{
-									splitstr=strtok(NULL,"=");
-									holdicon=strdup(splitstr);
-								}
-							if(strcmp(splitstr,"Exec")==0)
-								{
-									splitstr=strtok(NULL,"=");
-									testpercent=strchr(splitstr,'%');
-									if(testpercent!=NULL)
-										*testpercent=0;
-									holdexec=strdup(splitstr);
-								}
-							if(strcmp(splitstr,"NoDisplay")==0)
-								{
-									splitstr=strtok(NULL,"=");
-									if(strcasecmp(splitstr,"true")==0)
-										nodisplay=true;
-								}
-							if(strcmp(splitstr,"Terminal")==0)
-								{
-									splitstr=strtok(NULL,"=");
-									if(strcasecmp(splitstr,"true")==0)
-										interm=true;
-									else
-										interm=false;
-								}
-						}
-				}
-
-			if((gotcat==true) && (nodisplay==false))
-				{
-					menuEntryStruct	*ms=new menuEntryStruct;
-
-					catagorySubMenus[catPtr[mycatcnt]][subMenusCnt[catPtr[mycatcnt]]].userData=(void*)ms;
-					if(gotname==true)
-						{
-							catagorySubMenus[catPtr[mycatcnt]][subMenusCnt[catPtr[mycatcnt]]].label=holdname;
-							ms->name=holdname;
-						}
-
-					if(holdicon!=NULL)
-						{
-							const char *iconpath=NULL;
-							iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,holdicon,"");
-							free(holdicon);
-							holdicon=NULL;
-							if(iconpath!=NULL)
-								{
-									catagorySubMenus[catPtr[mycatcnt]][subMenusCnt[catPtr[mycatcnt]]].imagePath=(char*)strdup(iconpath);
-								}
-							else
-								{
-									catagorySubMenus[catPtr[mycatcnt]][subMenusCnt[catPtr[mycatcnt]]].imagePath=NULL;
-								}
-						}
-
-					if(holdexec!=NULL)
-						ms->exec=holdexec;
-					if(interm==true)
-						ms->inTerm=true;
-					else
-						ms->inTerm=false;
-					subMenusCnt[catPtr[mycatcnt]]++;
-				}
-
-			pclose(fp);
-		}
-	return(0);
-}
-
-void sortEntries(void)
-{
-	bool			flag=true;
-	menuItemStruct	thold;
-
-	for(int catagory=0;catagory<catagoryCnt;catagory++)
-		{
-			flag=true;
-			while(flag==true)
-				{
-					flag=false;
-					for(int cnt=0;cnt<subMenusCnt[catagory]-1;cnt++)
-						{
-							if(strcmp(catagorySubMenus[catagory][cnt].label,catagorySubMenus[catagory][cnt+1].label)>0)
-								{
-									flag=true;
-									thold=catagorySubMenus[catagory][cnt+1];
-									catagorySubMenus[catagory][cnt+1]=catagorySubMenus[catagory][cnt];
-									catagorySubMenus[catagory][cnt]=thold;
-									break;
-								}
-						}
-				}
-		}
-}
-
-void addEntries(void)
-{
-	for(int j=0;j<catagoryCnt;j++)
-		{
-			subMenusCnt[j]=0;
-			for(int k=0;k<MAXENTRYS;k++)
-				{
-					catagorySubMenus[j][k].label=NULL;
-					catagorySubMenus[j][k].userData=NULL;
-					catagorySubMenus[j][k].bc=NULL;
-					catagorySubMenus[j][k].subMenus=NULL;
-					catagorySubMenus[j][k].imagePath=NULL;
-				}
-		}
-
-	ftw("/usr/share/applications",ftwCallback,16);
-	for(int j=0;j<MAXCATS;j++)
-		{
-			catagoryMenus[j].subMenus=catagorySubMenus[j];
-			catagoryMenus[j].subMenuCnt=subMenusCnt[j];
-		}
-	sortEntries();
 }
 
 int ftwCatCallback(const char *fpath,const struct stat *sb,int typeflag)
@@ -300,70 +126,169 @@ int ftwCatCallback(const char *fpath,const struct stat *sb,int typeflag)
 	return(0);
 }
 
+#include <regex>
+#include <sstream>
+#include <fstream>
+#include <iostream>
+
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdio.h>
+#include <iostream>     // std::cout
+#include <algorithm>    // std::sort
+#include <vector>       // std::vector
+#include <stdlib.h>
+#include <ftw.h>
+
+#include <iostream>     // std::cout
+#include <fstream> 
+#include <string> 
+#include <iostream>     // std::cout
+#include <sstream>
+#include <regex>
+
+std::map<int,menuEntryStruct*>	entrydata;
+
+void addDesktopFiles(int catnum,const char *catname)
+{
+	std::ifstream		file;
+	std::stringstream	ss;
+	std::string			cat=".*Categorie.*";
+	std::regex			exp;
+	std::regex			expname("Name=(.*)");
+	std::regex			expicon("Icon=(.*)");
+	std::regex			expexec("Exec=([a-z]*).*");
+	std::regex			expnodisplay("NoDisplay=(.*)");
+	std::regex			expterm("Terminal=true");
+	std::vector<int>	fname;
+	std::smatch			m;
+	char				*iconpath;
+
+	find->LFSTK_setFindType(FILETYPE);
+	find->LFSTK_setFullPath(true);
+	find->LFSTK_setIgnoreBroken(false);
+	find->LFSTK_setSort(true);
+	find->LFSTK_setIgnoreNavLinks(true);
+	find->LFSTK_setFileTypes(".desktop");	
+	find->LFSTK_findFiles("/usr/share/applications",false);
+	find->LFSTK_sortByPath();
+
+	int	numfiles=find->LFSTK_getDataCount();
+
+	for(int j=0;j<catagoryCnt;j++)
+		{
+			cat=".*Categorie.*";
+			cat+=catagoryMenus[j]->label;
+			exp=cat;
+			fname.clear();
+			for(int entries=0;entries<numfiles;entries++)
+				{
+					ss.str("");
+					file.open(find->data[entries].path.c_str(),std::ifstream::in);
+					ss<<file.rdbuf();
+					file.close();
+					if(std::regex_search(ss.str(),exp))
+						{
+							menuEntryStruct *me=new menuEntryStruct;
+							std::string holsss=ss.str();
+							//name
+							std::regex_search(holsss,m,expname,std::regex_constants::match_not_eol|std::regex_constants::match_not_bol );
+							me->name=strdup(m.str(1).c_str());
+							//exec
+							std::regex_search(holsss,m,expexec,std::regex_constants::match_not_eol|std::regex_constants::match_not_bol);
+							me->exec=strdup(m.str(1).c_str());
+							//interm
+							if(std::regex_search(holsss,m,expterm,std::regex_constants::match_not_eol|std::regex_constants::match_not_bol))
+								me->inTerm=true;
+							else
+								me->inTerm=false;
+							//icon
+							if(std::regex_search(holsss,m,expicon,std::regex_constants::match_not_eol|std::regex_constants::match_not_bol))
+								me->icon=strdup(m.str(1).c_str());
+							else
+								me->icon=strdup("empty");
+							entrydata[entries]=me;
+							fname.push_back(entries);
+						}
+				}
+
+			if(fname.size()>0)
+				{
+					catagoryMenus[j]->subMenus=new menuStruct*[fname.size()];
+					catagoryMenus[j]->hasSubMenu=true;
+					catagoryMenus[j]->subMenuCnt=fname.size();
+					for(int k=0;k<fname.size();k++)
+						{
+							catagoryMenus[j]->subMenus[k]=new menuStruct;
+							catagoryMenus[j]->subMenus[k]->label=strdup(entrydata.at(fname[k])->name);
+							catagoryMenus[j]->subMenus[k]->userData=(void*)(fname[k]);
+							iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,entrydata.at(fname[k])->icon,"");
+							if(iconpath!=NULL)
+								{
+									catagoryMenus[j]->subMenus[k]->imageType=FILETHUMB;
+									catagoryMenus[j]->subMenus[k]->data.imagePath=iconpath;
+								}
+						}
+					}
+		}
+}
+
 void addCatagories(void)
 {
 	const char	*iconpath=NULL;
+	int			catcnt=0;
 
 	catagoryCnt=0;
 	catcnt=0;
-	catagoryMenus=new menuItemStruct[MAXCATS];
+	catagoryMenus=new menuStruct*[MAXCATS];
 	while(myCats[catcnt]!=NULL)
 		{
 			currentCatName=myCats[catcnt];
 			if(ftw("/usr/share/applications",ftwCatCallback,16)==1)
 				{
-					catagorySubMenus[catagoryCnt]=new menuItemStruct[MAXENTRYS];
-					catagoryMenus[catagoryCnt].label=(char*)myCats[catcnt];
-					catagoryMenus[catagoryCnt].userData=NULL;
-					catagoryMenus[catagoryCnt].bc=NULL;
-					catagoryMenus[catagoryCnt].subMenus=NULL;
-					catagoryMenus[catagoryCnt].subMenuCnt=0;
-					catPtr[catcnt]=catagoryCnt;
+					catagoryMenus[catagoryCnt]=new menuStruct;
+					catagoryMenus[catagoryCnt]->label=strdup(myCats[catcnt]);
+					catagoryMenus[catagoryCnt]->userData=(void*)(catcnt);
 					iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,catImageNames[catcnt],"");
 					if(iconpath!=NULL)
 						{
-							catagoryMenus[catagoryCnt].imagePath=(char*)strdup(iconpath);
+							catagoryMenus[catagoryCnt]->imageType=FILETHUMB;
+							catagoryMenus[catagoryCnt]->data.imagePath=strdup(iconpath);
 						}
-
+					catPtr[catcnt]=catagoryCnt;
 					catagoryCnt++;
 				}
 			catcnt++;
 		}
+	addDesktopFiles(catagoryCnt,myCats[catagoryCnt]);
 }
 
 void addExtras(void)
 {
-	const char	*iconpath=NULL;
+	char	*iconpath=NULL;
 
-	catagoryMenus[catagoryCnt].label=(char*)"--";
-	catagoryMenus[catagoryCnt].userData=NULL;
-	catagoryMenus[catagoryCnt].bc=NULL;
-	catagoryMenus[catagoryCnt].subMenus=NULL;
-	catagoryMenus[catagoryCnt].subMenuCnt=0;
-	catagoryMenus[catagoryCnt].imagePath=NULL;
+	catagoryMenus[catagoryCnt]=new menuStruct;
+	catagoryMenus[catagoryCnt]->label=strdup("--");
+	catagoryMenus[catagoryCnt]->userData=NULL;
 	catagoryCnt++;
 
-	catagoryMenus[catagoryCnt].label=(char*)"About LFS Desktop";
-	catagoryMenus[catagoryCnt].userData=(void*)-1;
-	catagoryMenus[catagoryCnt].bc=NULL;
-	catagoryMenus[catagoryCnt].subMenus=NULL;
-	catagoryMenus[catagoryCnt].subMenuCnt=0;
-	catagoryMenus[catagoryCnt].imagePath=NULL;
-
+	catagoryMenus[catagoryCnt]=new menuStruct;
+	catagoryMenus[catagoryCnt]->label=strdup("LFS About");
+	catagoryMenus[catagoryCnt]->userData=(void*)-1;
 	iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"help-about","");
-
 	if(iconpath!=NULL)
 		{
-			catagoryMenus[catagoryCnt].imagePath=(char*)strdup(iconpath);
+			catagoryMenus[catagoryCnt]->data.imagePath=iconpath;
+			catagoryMenus[catagoryCnt]->imageType=FILETHUMB;
 		}
 	catagoryCnt++;
+
 }
 
 int addAppmenu(int x,int y,int grav,bool fromleft)
 {
-	int maxwid=0;
-	int	catnum=0;
-	int	retval;
 	int	xpos=x;
 	int	ypos=y;
 	int	width=0;
@@ -377,17 +302,19 @@ int addAppmenu(int x,int y,int grav,bool fromleft)
 			return(0);
 		}
 
+	find=new LFSTK_findClass;
 	setSizes(&xpos,&ypos,&width,&height,&iconsize,&thisgrav,fromleft);
 
-	appButton=new LFSTK_menuButtonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
+	appButton=new LFSTK_buttonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
 	appButton->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",LEFT,true);
+	appButton->LFSTK_setCallBack(NULL,buttonCB,NULL);
+	appMenu=new LFSTK_menuClass(mainwind,xpos,ypos+panelHeight,1,1);
+	
 	addCatagories();
-	addEntries();
 	addExtras();
-	appButton->LFSTK_addMenus(catagoryMenus,catagoryCnt);
-	appButton->LFSTK_setShowIndicator(false);
+	appMenu->LFSTK_setCallBack(NULL,menuCB,NULL);
+	appMenu->LFSTK_addMainMenus(catagoryMenus,catagoryCnt);
 	XMapWindow(mainwind->display,appButton->LFSTK_getWindow());
-	appButton->LFSTK_setCallBack(NULL,callback,NULL);
 	appButton->LFSTK_clearWindow();
 	return(width);
 }

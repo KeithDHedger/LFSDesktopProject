@@ -24,7 +24,7 @@ LFSTK_menuButtonClass	*windowMenu=NULL;
 LFSTK_menuButtonClass	*windowDeskMenu=NULL;
 menuItemStruct			windowList[MAXWINDOWSINLIST];
 menuItemStruct			windowDeskList[MAXWINDOWSINLIST];
-char					windowBuffer[4096];
+//char					windowBuffer[4096];
 int						windowDeskListCnt=0;
 int						windowListCnt=0;
 int						updateWindowCnt=0;
@@ -55,7 +55,7 @@ bool windowDeskMenuCB(void *p,void* ud)
 {
 	menuItemStruct	*menu=(menuItemStruct*)ud;
 	Window			winid=0;
-	unsigned long	desktop=0;
+//	unsigned long	desktop=0;
 
 	if(menu==NULL)
 		return(true);
@@ -100,7 +100,7 @@ bool hasProp(Display *dpy,Window win,Atom atom)
 
 bool hasWindowProp(Window wind,Atom atom,Atom atomtype)
 {
-	int				n;
+//	int				n;
 	unsigned char	*data;
 	Atom			*atoms;
 	int				status,real_format;

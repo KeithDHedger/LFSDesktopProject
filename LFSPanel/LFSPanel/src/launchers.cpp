@@ -141,7 +141,7 @@ int addLaunchers(int x,int y,int grav,bool fromleft)
 	char			*launchers;
 	launcherList	*loopll;
 	ll=NULL;
-	const char		*themedicon=NULL;
+	//const char		*themedicon=NULL;
 	const char		*icon=NULL;
 	int				xpos=x;
 	int				ypos=y;

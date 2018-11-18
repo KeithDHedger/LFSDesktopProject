@@ -28,7 +28,6 @@
 #define _GLOBALS_
 
 #define WINHELPER DATADIR "/scripts/PanelHelperWinList"
-//#define WINHELPER "/media/LinuxData/Development/Projects/LFSDesktopProject/LFSPanel/LFSPanel/resources/scripts/PanelHelperWinList"
 #define BWIDTH 64
 #define SPACING 10
 #define WINDOWREFRESH 2
@@ -37,6 +36,14 @@ enum PANELXPOS {PANELLEFT=-1,PANELCENTRE=-2,PANELRIGHT=-3};
 enum PANELYPOS {PANELTOP=-1,PANELBOTTOM=-3};
 enum PANELSIZE {PANELFULL=-1,PANELSHRINK=-2};
 enum PANELGRAVITY {PANELABS=0,PANELNORTH,PANELEAST,PANELSOUTH,PANELWEST};
+
+struct menuEntryStruct
+{
+	char					*name;
+	char					*exec;
+	bool					inTerm;
+	char					*icon;
+};
 
 //prefs
 extern char					*terminalCommand;

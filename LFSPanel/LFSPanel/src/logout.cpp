@@ -26,8 +26,8 @@ const char				*logoutLabels[]={"Logout","Restart","Shutdown"};
 const char				*logoutImages[]={DATADIR "/pixmaps/logout.png",DATADIR "/pixmaps/reboot.png",DATADIR "/pixmaps/shutdown.png"};
 const char				*logoutIconNames[]={"system-log-out","system-restart","system-shutdown","application-exit"};
 
-Pixmap					pix[3][2];
-char					*logoutIcons[NUMLOGOUTENTRYS+1];
+//Pixmap					pix[3][2];
+//char					*logoutIcons[NUMLOGOUTENTRYS+1];
 
 bool logoutCB(void *p,void* ud)
 {

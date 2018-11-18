@@ -23,18 +23,13 @@
 
 #include "globals.h"
 
-#define MAXCATS 14
+#define MAXCATS 32
 #define MAXENTRYS 500
 
-struct menuEntryStruct
-{
-	char				*name;
-	char				*exec;
-	bool				inTerm;
-};
-
-extern LFSTK_menuButtonClass	*appButton;
+extern LFSTK_menuClass			*appMenu;
+extern LFSTK_buttonClass	*appButton;
 
 int addAppmenu(int x,int y,int grav,bool fromleft);
+extern std::map<int,menuEntryStruct*>	entrydata;
 
 #endif

@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/time.h>
+#include <sys/msg.h>
 
 #include "globals.h"
 #include "appmenu.h"
@@ -34,9 +35,11 @@
 
 #define RCNAME "lfspanel"
 
-bool	mainLoop=true;
+bool		mainLoop=true;
+int			queueID;
+msgBuffer	buffer;
 
-args	panelPrefs[]=
+args		panelPrefs[]=
 {
 	{"panelheight",TYPEINT,&panelHeight},
 	{"panelwidth",TYPEINT,&panelWidth},
@@ -51,6 +54,20 @@ args	panelPrefs[]=
 	{"panelgrav",TYPEINT,&panelGravity},
 	{NULL,0,NULL}
 };
+
+void readMsg(void)
+{
+	int		retcode;
+
+	retcode=msgrcv(queueID,&buffer,MAX_MSG_SIZE,PANEL_MSG,IPC_NOWAIT);
+
+	if(retcode>0)
+		{
+			if(strcmp(buffer.mText,"quitpanel")==0)
+				mainLoop=false;
+		}
+	buffer.mText[0]=0;
+}
 
 void addLeftGadgets(void)
 {
@@ -149,6 +166,8 @@ void printError(const char *err)
 
 void  alarmCallBack(void)
 {
+	readMsg();
+
 	if(clockButton!=NULL)
 		updateClock();
 
@@ -189,11 +208,12 @@ int main(int argc,char **argv)
 {
 	char			*env;
 	XEvent			event;
-	const char		*itemfont;
+//	const char		*itemfont;
 	int				psize;
 	int				thold;
 	int				px,py;
 	timeval			tv={0,0};
+	int				key=666;
 
 	useAlarm=false;
 	terminalCommand=strdup("xterm -e ");
@@ -214,6 +234,13 @@ int main(int argc,char **argv)
 	NET_WM_DESKTOP=XInternAtom(mainwind->display,"_NET_WM_DESKTOP",False);
 	NET_WM_WINDOW_TYPE=XInternAtom(mainwind->display,"_NET_WM_WINDOW_TYPE",False);
 	NET_WM_STATE=XInternAtom(mainwind->display,"_NET_WM_STATE",False);
+
+	env=mainwind->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",mainwind->configDir);
+	key=atoi(env);
+	freeAndNull(&env);
+
+	if((queueID=msgget(key,IPC_CREAT|0660))==-1)
+		fprintf(stderr,"Can't create message queue\n");
 
 //TODO//
 	//itemfont=mainwind->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
@@ -362,6 +389,26 @@ int main(int argc,char **argv)
 			delete freell;
 		}
 
+	if(!entrydata.empty())
+		{
+			for (std::map<int,menuEntryStruct*>::iterator it=entrydata.begin();it!=entrydata.end();++it)
+				{
+					menuEntryStruct	*me=it->second;
+					if (me!=NULL)
+						{
+							if(me->name!=NULL)
+								delete me->name;
+							if(me->exec!=NULL)
+								delete me->exec;
+							if(me->icon!=NULL)
+								delete me->icon;
+							delete me;
+						}
+				}
+			entrydata.clear();
+		}
+
 	delete mainwind;
+	delete appMenu;
 	return 0;
 }

@@ -1,3 +1,8 @@
+0.1.4
+Fixed appmenu exec regex.
+Added messaging.
+Canged appmenu to new menu/find class.
+
 0.1.3
 Updated to use pkg-config for toolkit.
 Updated for tool kit update.
