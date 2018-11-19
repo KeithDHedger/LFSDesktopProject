@@ -56,9 +56,9 @@ bool menuCB(void *p,void* ud)
 			return(true);
 		}
 
-	printf("\n\np=%p ud=%i\n",p,ud);
-	printf("Label=%s\n",static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel());
-	printf("Name=%s Exec=%s inTerm=%i\n",entrydata.at(entry)->name,entrydata.at(entry)->exec,entrydata.at(entry)->inTerm);
+//	printf("\n\np=%p ud=%i\n",p,ud);
+//	printf("Label=%s\n",static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel());
+//	printf("Name=%s Exec=%s inTerm=%i\n",entrydata.at(entry)->name,entrydata.at(entry)->exec,entrydata.at(entry)->inTerm);
 	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
 
 	if(entrydata.at(entry)->inTerm==false)
@@ -126,27 +126,12 @@ int ftwCatCallback(const char *fpath,const struct stat *sb,int typeflag)
 	return(0);
 }
 
-#include <regex>
-#include <sstream>
-#include <fstream>
-#include <iostream>
-
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdio.h>
-#include <iostream>     // std::cout
-#include <algorithm>    // std::sort
-#include <vector>       // std::vector
-#include <stdlib.h>
 #include <ftw.h>
 
-#include <iostream>     // std::cout
 #include <fstream> 
-#include <string> 
-#include <iostream>     // std::cout
-#include <sstream>
 #include <regex>
 
 std::map<int,menuEntryStruct*>	entrydata;
@@ -157,12 +142,11 @@ void addDesktopFiles(int catnum,const char *catname)
 	std::stringstream	ss;
 	std::string			cat=".*Categorie.*";
 	std::regex			exp;
-	std::regex			expname("Name=(.*)");
-	std::regex			expicon("Icon=(.*)");
-//	std::regex			expexec("Exec=([a-z]*).*");
-	std::regex			expexec("Exec=\([^[:space:]]*\).*");
-	std::regex			expnodisplay("NoDisplay=(.*)");
-	std::regex			expterm("Terminal=true");
+	const std::regex	expname("Name=(.*)");
+	const std::regex	expicon("Icon=([^[:space:]]*).*");
+	const std::regex	expexec("Exec=([^[:space:]]*).*");
+	const std::regex	expnodisplay("NoDisplay=([^[:space:]]*).*");
+	const std::regex	expterm("Terminal=true");
 	std::vector<int>	fname;
 	std::smatch			m;
 	char				*iconpath;

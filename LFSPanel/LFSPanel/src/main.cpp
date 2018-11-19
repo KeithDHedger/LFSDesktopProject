@@ -34,6 +34,7 @@
 #include "launchers.h"
 
 #define RCNAME "lfspanel"
+#define REFRESHMULTI 4
 
 bool		mainLoop=true;
 int			queueID;
@@ -58,13 +59,32 @@ args		panelPrefs[]=
 void readMsg(void)
 {
 	int		retcode;
-
+	char	*comstring=NULL;
+	char	*forwhom;
+	char	*command;
 	retcode=msgrcv(queueID,&buffer,MAX_MSG_SIZE,PANEL_MSG,IPC_NOWAIT);
 
 	if(retcode>0)
 		{
-			if(strcmp(buffer.mText,"quitpanel")==0)
+			comstring=strdup(buffer.mText);
+			command=strtok(comstring," ");
+			forwhom=strtok(NULL," ");
+
+			if(forwhom==NULL)
+				return;
+
+			if(strcmp(forwhom,panelID)!=0)
+				{
+					if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
+						fprintf(stderr,"Can't send message :(\n");
+					free(comstring);
+					sleep(4);
+					return;
+				}
+
+			if((command!=NULL) && (strcmp(command,"quitpanel")==0))
 				mainLoop=false;
+			free(comstring);
 		}
 	buffer.mText[0]=0;
 }
@@ -208,12 +228,12 @@ int main(int argc,char **argv)
 {
 	char			*env;
 	XEvent			event;
-//	const char		*itemfont;
 	int				psize;
 	int				thold;
 	int				px,py;
 	timeval			tv={0,0};
 	int				key=666;
+	int				refreshmulti=0;
 
 	useAlarm=false;
 	terminalCommand=strdup("xterm -e ");
@@ -366,6 +386,12 @@ int main(int argc,char **argv)
 					tv.tv_usec=0;
 					if(useAlarm==true)
 						alarmCallBack();
+					else
+						{
+							refreshmulti=(refreshmulti+1) % REFRESHMULTI;
+							if(refreshmulti==0)
+								readMsg();
+						}
 				}
 		}
 

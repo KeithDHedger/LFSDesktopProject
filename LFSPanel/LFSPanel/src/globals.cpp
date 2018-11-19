@@ -38,6 +38,7 @@ char				*desktopTheme=NULL;
 const char			*panelID="";
 
 int					refreshRate=1;
+
 int					iconSize=16;
 bool				useAlarm=false;
 

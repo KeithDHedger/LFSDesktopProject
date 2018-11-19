@@ -1,4 +1,5 @@
 0.1.4
+Fixed messaging for multiple panels.
 Fixed appmenu exec regex.
 Added messaging.
 Canged appmenu to new menu/find class.

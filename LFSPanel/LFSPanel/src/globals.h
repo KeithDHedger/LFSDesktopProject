@@ -62,6 +62,7 @@ extern char					*desktopTheme;
 extern const char			*panelID;
 
 extern int					refreshRate;
+
 extern int					iconSize;
 extern bool					useAlarm;
 
