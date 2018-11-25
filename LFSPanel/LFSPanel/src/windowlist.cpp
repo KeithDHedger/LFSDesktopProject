@@ -20,16 +20,21 @@
 
 #include "windowlist.h"
 
-LFSTK_menuButtonClass	*windowMenu=NULL;
-LFSTK_menuButtonClass	*windowDeskMenu=NULL;
-menuItemStruct			windowList[MAXWINDOWSINLIST];
-menuItemStruct			windowDeskList[MAXWINDOWSINLIST];
-//char					windowBuffer[4096];
-int						windowDeskListCnt=0;
-int						windowListCnt=0;
-int						updateWindowCnt=0;
-const char				*possibleError="Unknown";
-int						currentDesktop;
+//all windows
+LFSTK_buttonClass	*windowAll=NULL;
+menuStruct			**windowAllList=NULL;
+LFSTK_menuClass		*windowAllMenu=NULL;
+int					windowAllListCnt=0;
+
+//this desktop list
+LFSTK_buttonClass	*windowDesk=NULL;
+menuStruct			**windowDeskList=NULL;
+LFSTK_menuClass		*windowDeskMenu=NULL;
+int					windowDeskListCnt=0;
+
+int					updateWindowCnt=0;
+const char			*possibleError="Unknown";
+int					currentDesktop;
 
 void sendClientMessage(Window win,const char *msg,unsigned long data0,unsigned long data1,unsigned long data2,unsigned long data3,unsigned long data4)
 {
@@ -51,29 +56,29 @@ void sendClientMessage(Window win,const char *msg,unsigned long data0,unsigned l
 	XSendEvent(mainwind->display,mainwind->rootWindow,False,mask,&event);
 }
 
-bool windowDeskMenuCB(void *p,void* ud)
+//all windows
+bool windowAllCB(void *p,void* ud)
 {
-	menuItemStruct	*menu=(menuItemStruct*)ud;
-	Window			winid=0;
-//	unsigned long	desktop=0;
+	geometryStruct geom;
 
-	if(menu==NULL)
-		return(true);
-	winid=(Window)(menu->userData);
-	possibleError="Can't activate window";
-	sendClientMessage(winid,"_NET_ACTIVE_WINDOW",0,0,0,0,0);
+	static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getGeom(&geom);
+
+	static_cast<LFSTK_menuClass*>(ud)->x=geom.x;
+	static_cast<LFSTK_menuClass*>(ud)->LFSTK_showMenu();
 	return(true);
 }
 
-void resetMenus(void)
+bool windowAllMenuCB(void *p,void* ud)
 {
-	for(int j=0; j<MAXWINDOWSINLIST; j++)
-		if(windowList[j].label!=NULL)
-			{
-				free((char*)windowList[j].label);
-				windowList[j].label=NULL;
-			}
-	windowListCnt=-1;
+	Window			winid=0;
+	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
+
+	winid=(Window)(ud);
+	possibleError="Can't activate window";
+	sendClientMessage(winid,"_NET_ACTIVE_WINDOW",0,0,0,0,0);
+	updateWindowCnt=WINDOWREFRESH+100;
+	updateWindowMenu();
+	return(true);
 }
 
 /*
@@ -100,7 +105,6 @@ bool hasProp(Display *dpy,Window win,Atom atom)
 
 bool hasWindowProp(Window wind,Atom atom,Atom atomtype)
 {
-//	int				n;
 	unsigned char	*data;
 	Atom			*atoms;
 	int				status,real_format;
@@ -154,7 +158,6 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 	int				i;
 	unsigned long	winid;
 	char			*wname;
-	unsigned long	desktop;
 	void			*ptr=NULL;
 	unsigned long	count=32;
 	Atom			rtype;
@@ -173,7 +176,7 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 	thewin=None;
 	wname=NULL;
 	winid=-1;
-	desktop=-1;
+
 	for (int j=n_children-1; j>=0; j--)
 		{
 			if((thisdesktop==true) && (isVisible(mainwind->display, children[j])==false))
@@ -222,34 +225,26 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 			ptr=NULL;
 			count=32;
 			n=0;
-			if(XGetWindowProperty(mainwind->display,winid,NET_WM_DESKTOP,0L,count,false,XA_CARDINAL,&rtype,&rfmt,&n,&rafter,(unsigned char **)&ptr)==Success)
-				desktop=(long)(*(char*)ptr);
+			XGetWindowProperty(mainwind->display,winid,NET_WM_DESKTOP,0L,count,false,XA_CARDINAL,&rtype,&rfmt,&n,&rafter,(unsigned char **)&ptr);
 
 			if(thisdesktop==true)
 				{
-					windowDeskList[windowDeskListCnt].bc=NULL;
-					windowDeskList[windowDeskListCnt].subMenus=NULL;
-					windowDeskList[windowDeskListCnt].subMenuCnt=desktop;
-					windowDeskList[windowDeskListCnt].label=strdup(wname);
-					windowDeskList[windowDeskListCnt].userData=(void*)winid;
-					windowDeskList[windowDeskListCnt].imagePath=NULL;
-					windowDeskListCnt++;
+					windowDeskList[windowDeskListCnt]=new menuStruct;
+					windowDeskList[windowDeskListCnt]->label=strdup(wname);
+					windowDeskList[windowDeskListCnt++]->userData=(void*)winid;
 				}
 			else
 				{
-					windowList[windowListCnt].bc=NULL;
-					windowList[windowListCnt].subMenus=NULL;
-					windowList[windowListCnt].subMenuCnt=desktop;
-					windowList[windowListCnt].label=strdup(wname);
-					windowList[windowListCnt].userData=(void*)winid;
-					windowDeskList[windowDeskListCnt].imagePath=NULL;
-					windowListCnt++;
+					windowAllList[windowAllListCnt]=new menuStruct;
+					windowAllList[windowAllListCnt]->label=strdup(wname);
+					windowAllList[windowAllListCnt++]->userData=(void*)winid;
 				}
 		}
 
 	if(wname!=NULL)
 		XFree(wname);
 
+	XFree(ptr);
 	XFree(children);
 	return thewin;
 
@@ -279,13 +274,11 @@ void updateWindowMenu(void)
 	else
 		return;
 
-	if(windowListCnt>-1)
-		resetMenus();
-
 	getCurrentDesktop();
 
-	if(windowDeskMenu!=NULL)
+	if(windowDesk!=NULL)
 		{
+			windowDeskList=new menuStruct*[MAXWINDOWSINLIST];
 			win=mainwind->rootWindow;
 			windowDeskListCnt=0;
 			while(win!=None)
@@ -293,52 +286,39 @@ void updateWindowMenu(void)
 
 			if(windowDeskListCnt>0)
 				{
-					windowDeskMenu->LFSTK_updateMenus(windowDeskList,windowDeskListCnt);
-					windowDeskMenu->LFSTK_setActive(true);
+					windowDeskMenu->LFSTK_addMainMenus(windowDeskList,windowDeskListCnt);
+					windowDesk->LFSTK_setActive(true);
 				}
 			else
-				windowDeskMenu->LFSTK_setActive(false);
+				windowDesk->LFSTK_setActive(false);
 		}
 
-	if(windowMenu!=NULL)
+	if(windowAll!=NULL)
 		{
-			windowListCnt=0;
+			windowAllList=new menuStruct*[MAXWINDOWSINLIST];
+			windowAllListCnt=0;
 			win=mainwind->rootWindow;
 			while(win!=None)
 				win=doTreeWalk(win,false);
-			windowMenu->LFSTK_updateMenus(windowList,windowListCnt);
+			if(windowAllListCnt>0)
+				{
+					windowAllMenu->LFSTK_addMainMenus(windowAllList,windowAllListCnt);
+					windowAll->LFSTK_setActive(true);
+				}
+			else
+				windowAll->LFSTK_setActive(false);
 		}
-}
-
-bool windowMenuCB(void *p,void* ud)
-{
-	menuItemStruct	*menu=(menuItemStruct*)ud;
-	Window			winid=0;
-	unsigned long	desktop=0;
-
-	if(menu==NULL)
-		return(true);
-	winid=(Window)(menu->userData);
-	desktop=(unsigned long)menu->subMenuCnt;
-	possibleError="Can't switch desktop";
-	sendClientMessage(mainwind->rootWindow,"_NET_CURRENT_DESKTOP",desktop,0,0,0,0);
-	possibleError="Can't activate window";
-	sendClientMessage(winid,"_NET_ACTIVE_WINDOW",0,0,0,0,0);
-	updateWindowCnt=WINDOWREFRESH+100;
-	updateWindowMenu();
-	return(true);
 }
 
 int addWindowDeskMenu(int x,int y,int grav,bool fromleft)
 {
-	const char	*icon=NULL;
-	int			xpos=x;
-	int			ypos=y;
-	int			width=0;
-	int			height=0;
-	int			thisgrav=grav;
-	int			iconsize=16;
-
+	char	*icon=NULL;
+	int		xpos=x;
+	int		ypos=y;
+	int		width=0;
+	int		height=0;
+	int		thisgrav=grav;
+	int		iconsize=16;
 
 	if(windowDeskMenu!=NULL)
 		{
@@ -348,34 +328,40 @@ int addWindowDeskMenu(int x,int y,int grav,bool fromleft)
 
 	setSizes(&xpos,&ypos,&width,&height,&iconsize,&thisgrav,fromleft);
 
-	windowDeskMenu=new LFSTK_menuButtonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
+	windowDesk=new LFSTK_buttonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
 	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"remote-desktop","");
 	if(icon!=NULL)
-		windowDeskMenu->LFSTK_setImageFromPath(icon,LEFT,true);
+		{
+			windowDesk->LFSTK_setImageFromPath(icon,LEFT,true);
+			free(icon);
+		}
 	else
-		windowDeskMenu->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",LEFT,true);
-	windowDeskMenu->LFSTK_setCallBack(NULL,windowDeskMenuCB,NULL);
-	windowDeskMenu->LFSTK_setShowIndicator(false);
+		windowDesk->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",LEFT,true);
 
+	windowDeskMenu=new LFSTK_menuClass(mainwind,xpos,ypos+panelHeight,1,1);
+
+	windowDesk->LFSTK_setCallBack(NULL,windowAllCB,(void*)windowDeskMenu);
+	windowDeskMenu->LFSTK_setCallBack(NULL,windowAllMenuCB,NULL);
 	windowDeskListCnt=-1;
-	windowListCnt=-1;
+	windowAllListCnt=-1;
 	updateWindowCnt=WINDOWREFRESH;
 	updateWindowMenu();
+	
 	useAlarm=true;
 	return(width);
 }
 
 int addWindowMenu(int x,int y,int grav,bool fromleft)
 {
-	const char	*icon=NULL;
-	int			xpos=x;
-	int			ypos=y;
-	int			width=0;
-	int			height=0;
-	int			thisgrav=grav;
-	int			iconsize=16;
+	char	*icon=NULL;
+	int		xpos=x;
+	int		ypos=y;
+	int		width=0;
+	int		height=0;
+	int		thisgrav=grav;
+	int		iconsize=16;
 
-	if(windowMenu!=NULL)
+	if(windowAll!=NULL)
 		{
 			printError("Duplicate window selector");
 			return(0);
@@ -383,20 +369,25 @@ int addWindowMenu(int x,int y,int grav,bool fromleft)
 
 	setSizes(&xpos,&ypos,&width,&height,&iconsize,&thisgrav,fromleft);
 
-	windowMenu=new LFSTK_menuButtonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
+	windowAll=new LFSTK_buttonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
 	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"computer","");
 	if(icon!=NULL)
-		windowMenu->LFSTK_setImageFromPath(icon,LEFT,true);
+		{
+			windowAll->LFSTK_setImageFromPath(icon,LEFT,true);
+			free(icon);
+		}
 	else
-		windowMenu->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",LEFT,true);
-	windowMenu->LFSTK_setCallBack(NULL,windowMenuCB,NULL);
-	windowMenu->LFSTK_setShowIndicator(false);
+		windowAll->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",LEFT,true);
+
+	windowAllMenu=new LFSTK_menuClass(mainwind,xpos,ypos+panelHeight,1,1);
+
+	windowAll->LFSTK_setCallBack(NULL,windowAllCB,(void*)windowAllMenu);
+	windowAllMenu->LFSTK_setCallBack(NULL,windowAllMenuCB,NULL);
 
 	windowDeskListCnt=-1;
-	windowListCnt=-1;
+	windowAllListCnt=-1;
 	updateWindowCnt=WINDOWREFRESH;
 	updateWindowMenu();
 	useAlarm=true;
 	return(width);
 }
-

@@ -1,4 +1,6 @@
 0.1.4
+Redone windowlists to use new menus.
+Redone logout to use new menus.
 Fixed messaging for multiple panels.
 Fixed appmenu exec regex.
 Added messaging.
@@ -30,7 +32,7 @@ Removed need for external script to get window lists.
 Changed to using imlib2 image for button icons.
 Fixed not showing empty catagory.
 Lowered xft version.
-Added show about box to appmenu.
+Added show about box to appmenu.Fixed messaging for multiple panels.
 Clock, disk and CPU usage now use window background.
 Panel now uses window tile image if available.
 Added intermediate file so no just do ./configure instead of ./autogen.s

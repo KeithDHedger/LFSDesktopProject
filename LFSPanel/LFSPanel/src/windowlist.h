@@ -52,13 +52,14 @@ typedef struct
 } MyXWindowAttributes;
 
 
-extern LFSTK_menuButtonClass	*windowMenu;
-extern LFSTK_menuButtonClass	*windowDeskMenu;
-extern const char				*possibleError;
+extern LFSTK_buttonClass	*windowAll;
+extern LFSTK_buttonClass	*windowDesk;
+extern const char			*possibleError;
+extern LFSTK_menuClass		*windowAllMenu;
+extern LFSTK_menuClass		*windowDeskMenu;
 
 int addWindowDeskMenu(int x,int y,int grav,bool fromleft);
 int addWindowMenu(int x,int y,int grav,bool fromleft);
 void updateWindowMenu(void);
-void resetMenus(void);
 
 #endif

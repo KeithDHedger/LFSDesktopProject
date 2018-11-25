@@ -197,7 +197,7 @@ void  alarmCallBack(void)
 	if(cpuButton!=NULL)
 		updateCpuStats();
 
-	if((windowMenu!=NULL) || (windowDeskMenu!=NULL))
+	if((windowAll!=NULL) || (windowDesk!=NULL))
 		updateWindowMenu();
 
 	XFlush(mainwind->display);
@@ -436,5 +436,10 @@ int main(int argc,char **argv)
 
 	delete mainwind;
 	delete appMenu;
+	delete logoutMenu;
+	delete windowAllMenu;
+	delete windowDeskMenu;
+
+	cairo_debug_reset_static_data();
 	return 0;
 }
