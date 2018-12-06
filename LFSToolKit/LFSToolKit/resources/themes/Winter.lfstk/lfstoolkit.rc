@@ -1,4 +1,4 @@
-window_normal #AA6400
+window_normal #AA6402
 window_prelight #6B4C26
 window_active #412502
 window_inactive #808080
@@ -10,14 +10,14 @@ menuitem_normal #976115
 menuitem_prelight #E88900
 menuitem_active #643b00
 menuitem_inactive #945800
-menuitem_font bloody:size=10
+menuitem_font Verdana:size=10:bold
 menuitem_font_normal white
-menuitem_font_prelight orange
+menuitem_font_prelight red
 menuitem_font_active black
 menuitem_font_inactive grey40
-font a lolita scorned:size=12
-font_normal white
-font_prelight orange
+font Santas Big Secret BB:size=12
+font_normal black
+font_prelight red
 font_active black
 font_inactive grey40
 autotextcolour 0
