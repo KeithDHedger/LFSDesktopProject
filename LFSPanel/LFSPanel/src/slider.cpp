@@ -56,9 +56,6 @@ bool sliderCB(void *p,void* ud)
 				{
 					bc->LFSTK_getGeom(&geom);
 					XTranslateCoordinates(bc->display,bc->window,bc->rootWindow,geom.x,geom.y,&x,&y,&dw);
-					fprintf(stderr,"x=%i y=%i\n",x,y);
-					fprintf(stderr,"x=%i y=%i\n",geom.x,geom.y);
-					fprintf(stderr,"x=%i y=%i\n",x-geom.x,y+geom.h);
 					switch(panelGravity)
 						{
 							case PANELNORTH:
@@ -151,13 +148,4 @@ int addSlider(int x,int y,int grav,bool fromleft)
 
 	return(width);
 }
-
-
-
-
-
-
-
-
-
 
