@@ -48,7 +48,7 @@ bool valChanged(void *p,void* ud)
 		{
 			sb=static_cast<LFSTK_scrollBarClass*>(p);
 			if(sb!=NULL)
-				fprintf(stderr,"value=%i\n",sb->value);
+				fprintf(stderr,"value=%i\n",sb->LFSTK_getValue());
 		}
 	return(true);
 }
@@ -82,6 +82,7 @@ int main(int argc, char **argv)
 	hsb=new LFSTK_scrollBarClass(wc,false,DIALOGMIDDLE-200,sy,400+GADGETHITE,SCROLLBARWIDTH,BUTTONGRAV);
 	hsb->LFSTK_setCallBack(NULL,valChanged,NULL);
 	hsb->LFSTK_setScale(1,100);
+	hsb->LFSTK_setValue(50);
 	sy+=YSPACING;
 
 //vscrollbar
@@ -91,6 +92,7 @@ fprintf(stderr,"sy=%i\n",sy);
 	vsb->LFSTK_setCallBack(NULL,valChanged,NULL);
 	vsb->LFSTK_setScale(0,1985);
 	vsb->LFSTK_setPageScroll(100);
+	vsb->LFSTK_setValue(500);
 	sy+=YSPACING+200;
 	
 //line

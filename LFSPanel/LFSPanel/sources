@@ -1,1 +1,1 @@
-COMMONSRC = ../src/appmenu.cpp ../src/clock.cpp ../src/cpu.cpp ../src/disks.cpp ../src/globals.cpp ../src/launchers.cpp ../src/logout.cpp ../src/main.cpp ../src/windowlist.cpp
+COMMONSRC = ../src/appmenu.cpp ../src/clock.cpp ../src/cpu.cpp ../src/disks.cpp ../src/globals.cpp ../src/launchers.cpp ../src/logout.cpp ../src/main.cpp ../src/slider.cpp ../src/windowlist.cpp

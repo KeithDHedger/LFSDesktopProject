@@ -32,6 +32,7 @@
 #include "cpu.h"
 #include "windowlist.h"
 #include "launchers.h"
+#include "slider.h"
 
 #define RCNAME "lfspanel"
 #define REFRESHMULTI 4
@@ -124,6 +125,9 @@ void addLeftGadgets(void)
 				case 'l':
 					offset+=addLaunchers(offset,mons->y,panelGravity,true);
 					break;
+				case 's':
+					offset+=addSlider(offset,mons->y,panelGravity,true);
+					break;
 				}
 		}
 	offset++;
@@ -164,6 +168,9 @@ void addRightGadgets(void)
 				case 'l':
 					offset+=addLaunchers(offset,mons->y,panelGravity,true);
 					break;
+//				case 'Q':
+//					offset+=addSlider(offset,mons->y,panelGravity,false);
+//					break;
 				}
 		}
 	rightOffset=offset;
@@ -366,6 +373,8 @@ int main(int argc,char **argv)
 	mainwind->LFSTK_setKeepAbove(true);
 
 	mainLoop=true;
+	int	oldVolVal=-1;
+
 	while(mainLoop==true)
 		{
 			if (XNextEventTimed(mainwind->display,&event,&tv) == True)
@@ -379,6 +388,33 @@ int main(int argc,char **argv)
 
 					if(mainwind->LFSTK_handleWindowEvents(&event)<0)
 						mainLoop=false;
+
+					if(scwindow!=NULL)
+						{
+							ml=scwindow->LFSTK_getMappedListener(event.xany.window);
+							if(ml!=NULL)
+								{
+									ml->function(ml->gadget,&event,ml->type);
+								}
+							else
+								{
+									char	*vol;
+									char	*label;
+
+									vol=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print $3}'");
+									if(oldVolVal!=atoi(vol))
+										{
+											label=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"Volume \" $4}'|tr -d '[]'");
+											volumeButton->LFSTK_setLabel(label);
+											free(label);
+											vsb->LFSTK_setValue(atoi(vol));
+											oldVolVal=vsb->LFSTK_getValue();
+											setIcon();
+										}							
+									free(vol);
+								}
+							scwindow->LFSTK_handleWindowEvents(&event);
+						}
 				}
 			else
 				{
@@ -440,6 +476,9 @@ int main(int argc,char **argv)
 	delete windowAllMenu;
 	delete windowDeskMenu;
 
+	free(iconL);
+	free(iconM);
+	free(iconH);
 	cairo_debug_reset_static_data();
 	return 0;
 }

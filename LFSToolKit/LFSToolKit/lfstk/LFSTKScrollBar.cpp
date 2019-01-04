@@ -186,6 +186,25 @@ void LFSTK_scrollBarClass::setState(bool byvalue)
 }
 
 /**
+* Set Value and move thumb.
+* \param int val New Value.
+*/
+void LFSTK_scrollBarClass::LFSTK_setValue(int val)
+{
+	this->value=val;
+	this->setState(true);
+}
+
+/**
+* Get Value.
+* \return int val.
+*/
+int LFSTK_scrollBarClass::LFSTK_getValue(void)
+{
+	return(this->value);
+}
+
+/**
 * Clear the gadget window to the appropriate state.
 */
 void LFSTK_scrollBarClass::LFSTK_clearWindow()

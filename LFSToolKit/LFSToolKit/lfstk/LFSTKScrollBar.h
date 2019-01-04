@@ -46,10 +46,12 @@ class LFSTK_scrollBarClass : public LFSTK_gadgetClass
 		void				LFSTK_setScale(double min,double max);
 		void				LFSTK_setPageScroll(int page);
 		void				LFSTK_setLineScroll(int line);
-		
-		int					value=0;
+		void				LFSTK_setValue(int val);
+		int					LFSTK_getValue(void);
+
 		double				scale=1.0;
 	private:
+		int					value=0;
 		LFSTK_buttonClass	*thumb=NULL;
 		LFSTK_buttonClass	*upLeft=NULL;
 		LFSTK_buttonClass	*downRight=NULL;

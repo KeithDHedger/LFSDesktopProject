@@ -204,7 +204,7 @@ bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
 
 	//list->setNavSensitive();
 
-	list->listOffset=sb->value;
+	list->listOffset=sb->LFSTK_getValue();
 	for(int j=0;j<list->maxShowing;j++)
 		{
 			if(j+list->listOffset<list->listCnt)

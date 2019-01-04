@@ -1,4 +1,7 @@
 0.4.1
+Made value in scrollbar class private.
+Added LFSTK_getValue to scrollbar class.
+Added LFSTK_setValue to scrollbar class, now updates thumb position.
 Added manual addition of indicator to gadget.
 Added opt to ignore "./.." to find class.
 Renamed find class.

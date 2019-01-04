@@ -106,7 +106,7 @@ am__objects_1 = ../src/appmenu.$(OBJEXT) ../src/clock.$(OBJEXT) \
 	../src/cpu.$(OBJEXT) ../src/disks.$(OBJEXT) \
 	../src/globals.$(OBJEXT) ../src/launchers.$(OBJEXT) \
 	../src/logout.$(OBJEXT) ../src/main.$(OBJEXT) \
-	../src/windowlist.$(OBJEXT)
+	../src/slider.$(OBJEXT) ../src/windowlist.$(OBJEXT)
 am_lfspanel_OBJECTS = $(am__objects_1)
 lfspanel_OBJECTS = $(am_lfspanel_OBJECTS)
 lfspanel_LDADD = $(LDADD)
@@ -317,7 +317,7 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 				-DSYSCONFDIR=\""${sysconfdir}/${PACKAGE}"\" \
 				-DLIBDIR=\""${libdir}/${PACKAGE}"\"
 
-COMMONSRC = ../src/appmenu.cpp ../src/clock.cpp ../src/cpu.cpp ../src/disks.cpp ../src/globals.cpp ../src/launchers.cpp ../src/logout.cpp ../src/main.cpp ../src/windowlist.cpp
+COMMONSRC = ../src/appmenu.cpp ../src/clock.cpp ../src/cpu.cpp ../src/disks.cpp ../src/globals.cpp ../src/launchers.cpp ../src/logout.cpp ../src/main.cpp ../src/slider.cpp ../src/windowlist.cpp
 lfspanel_SOURCES = $(COMMONSRC)
 man1_MANS = ../resources/man/lfspanel.1
 pixfilesdir = $(pkgdatadir)/pixmaps
@@ -420,6 +420,8 @@ clean-binPROGRAMS:
 	../src/$(DEPDIR)/$(am__dirstamp)
 ../src/main.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
+../src/slider.$(OBJEXT): ../src/$(am__dirstamp) \
+	../src/$(DEPDIR)/$(am__dirstamp)
 ../src/windowlist.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
 
@@ -442,6 +444,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/launchers.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/logout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/slider.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/windowlist.Po@am__quote@
 
 .cpp.o:
