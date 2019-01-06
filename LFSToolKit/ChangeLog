@@ -1,4 +1,6 @@
 0.4.1
+Fixed reversed scrollbar get value.
+Added reverse to scrollbar class.
 Made value in scrollbar class private.
 Added LFSTK_getValue to scrollbar class.
 Added LFSTK_setValue to scrollbar class, now updates thumb position.

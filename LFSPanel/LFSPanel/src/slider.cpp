@@ -87,7 +87,7 @@ bool valChanged(void *p,void* ud)
 {
 	LFSTK_scrollBarClass	*sb=NULL;
 	char					*command;
-
+	char					*vol;
 	if(p!=NULL)
 		{
 			sb=static_cast<LFSTK_scrollBarClass*>(p);
@@ -96,7 +96,7 @@ bool valChanged(void *p,void* ud)
 					asprintf(&command,"amixer set Master %i &>/dev/null",sb->LFSTK_getValue());
 					system(command);
 					free(command);
-					char	*vol=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"%s \" $4}'|tr -d '[]'",SLIDERLABEL);
+					vol=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"%s \" $4}'|tr -d '[]'",SLIDERLABEL);
 					volumeButton->LFSTK_setLabel(vol);
 					free(vol);
 					volumeButton->LFSTK_clearWindow();
@@ -131,11 +131,13 @@ int addSlider(int x,int y,int grav,bool fromleft)
 		{
 			scwindow=new LFSTK_toolWindowClass(mainwind->display,mainwind,"_NET_WM_WINDOW_TYPE_MENU",0,0,SCROLLBARWIDTH,SLIDERWIDTH,"VOL");
 			vsb=new LFSTK_scrollBarClass(scwindow,true,0,0,SCROLLBARWIDTH,SLIDERWIDTH,BUTTONGRAV);
+			vsb->reverse=true;
 		}
 	else
 		{
 			scwindow=new LFSTK_toolWindowClass(mainwind->display,mainwind,"_NET_WM_WINDOW_TYPE_MENU",0,0,SLIDERWIDTH,SCROLLBARWIDTH,"VOL");
 			vsb=new LFSTK_scrollBarClass(scwindow,false,0,0,SLIDERWIDTH,SCROLLBARWIDTH,BUTTONGRAV);
+			vsb->reverse=false;
 		}
 
 	vsb->LFSTK_setCallBack(NULL,valChanged,NULL);

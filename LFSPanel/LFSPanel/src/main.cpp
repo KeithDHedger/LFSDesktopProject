@@ -404,7 +404,7 @@ int main(int argc,char **argv)
 									vol=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print $3}'");
 									if(oldVolVal!=atoi(vol))
 										{
-											label=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"Volume \" $4}'|tr -d '[]'");
+											label=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"%s \" $4}'|tr -d '[]'",SLIDERLABEL);
 											volumeButton->LFSTK_setLabel(label);
 											free(label);
 											vsb->LFSTK_setValue(atoi(vol));

@@ -191,8 +191,18 @@ void LFSTK_scrollBarClass::setState(bool byvalue)
 */
 void LFSTK_scrollBarClass::LFSTK_setValue(int val)
 {
-	this->value=val;
-	this->setState(true);
+	if(this->reverse==false)
+		{
+			this->value=val;
+			this->setState(true);
+		}
+	else
+		{
+			this->value=val;
+			this->setState(true);
+			this->value=this->maxScale-this->value+this->minScale;
+			this->setState(true);
+		}
 }
 
 /**
@@ -201,7 +211,9 @@ void LFSTK_scrollBarClass::LFSTK_setValue(int val)
 */
 int LFSTK_scrollBarClass::LFSTK_getValue(void)
 {
-	return(this->value);
+	if(this->reverse==false)
+		return(this->value);
+	return(this->maxScale-this->value+this->minScale);
 }
 
 /**

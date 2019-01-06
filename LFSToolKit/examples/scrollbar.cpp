@@ -27,8 +27,10 @@ LFSTK_labelClass			*personal=NULL;
 LFSTK_labelClass			*copyrite=NULL;
 LFSTK_buttonClass			*seperator=NULL;
 LFSTK_buttonClass			*quit=NULL;
+LFSTK_buttonClass			*test=NULL;
 LFSTK_scrollBarClass		*vsb=NULL;
 LFSTK_scrollBarClass		*hsb=NULL;
+LFSTK_toggleButtonClass		*reverse=NULL;
 
 bool						mainLoop=true;
 Display						*display;
@@ -39,6 +41,26 @@ bool doQuit(void *p,void* ud)
 	XFlush(wc->display);
 	XSync(wc->display,true);
 	return(false);
+}
+
+bool setval(void *p,void* ud)
+{
+	hsb->LFSTK_setValue(10);
+	return(true);
+}
+
+bool doReverse(void *p,void* ud)
+{
+	int holdval;
+	holdval=hsb->LFSTK_getValue();
+	hsb->reverse=static_cast<LFSTK_toggleButtonClass*>(p)->LFSTK_getValue();
+	fprintf(stderr,"true=%i %i\n",true,static_cast<LFSTK_toggleButtonClass*>(p)->LFSTK_getValue());
+	hsb->LFSTK_setValue(holdval);
+
+	holdval=vsb->LFSTK_getValue();
+	vsb->reverse=static_cast<LFSTK_toggleButtonClass*>(p)->LFSTK_getValue();;
+	vsb->LFSTK_setValue(holdval);
+	return(true);
 }
 
 bool valChanged(void *p,void* ud)
@@ -82,7 +104,8 @@ int main(int argc, char **argv)
 	hsb=new LFSTK_scrollBarClass(wc,false,DIALOGMIDDLE-200,sy,400+GADGETHITE,SCROLLBARWIDTH,BUTTONGRAV);
 	hsb->LFSTK_setCallBack(NULL,valChanged,NULL);
 	hsb->LFSTK_setScale(1,100);
-	hsb->LFSTK_setValue(50);
+//	hsb->reverse=true;
+	hsb->LFSTK_setValue(25);
 	sy+=YSPACING;
 
 //vscrollbar
@@ -92,7 +115,8 @@ fprintf(stderr,"sy=%i\n",sy);
 	vsb->LFSTK_setCallBack(NULL,valChanged,NULL);
 	vsb->LFSTK_setScale(0,1985);
 	vsb->LFSTK_setPageScroll(100);
-	vsb->LFSTK_setValue(500);
+//	vsb->reverse=true;
+	vsb->LFSTK_setValue(250);
 	sy+=YSPACING+200;
 	
 //line
@@ -105,6 +129,14 @@ fprintf(stderr,"sy=%i\n",sy);
 	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
 	sy+=YSPACING;
+
+//reverse
+	reverse=new LFSTK_toggleButtonClass(wc,"Reverse",DIALOGMIDDLE-HALFGADGETWIDTH,DIALOGMIDDLE,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	reverse->LFSTK_setToggleStyle(TOGGLENORMAL);
+	reverse->LFSTK_setCallBack(NULL,doReverse,NULL);
+//test setval
+	test=new LFSTK_buttonClass(wc,"Set to 10",DIALOGMIDDLE-HALFGADGETWIDTH,DIALOGMIDDLE+GADGETHITE*2,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	test->LFSTK_setCallBack(NULL,setval,NULL);
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();

@@ -50,6 +50,8 @@ class LFSTK_scrollBarClass : public LFSTK_gadgetClass
 		int					LFSTK_getValue(void);
 
 		double				scale=1.0;
+		bool				reverse=false;
+
 	private:
 		int					value=0;
 		LFSTK_buttonClass	*thumb=NULL;
