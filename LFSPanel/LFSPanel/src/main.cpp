@@ -207,6 +207,9 @@ void  alarmCallBack(void)
 	if((windowAll!=NULL) || (windowDesk!=NULL))
 		updateWindowMenu();
 
+	if(scwindow!=NULL)
+		updateSlider();
+
 	XFlush(mainwind->display);
 }
 
@@ -373,7 +376,6 @@ int main(int argc,char **argv)
 	mainwind->LFSTK_setKeepAbove(true);
 
 	mainLoop=true;
-	int	oldVolVal=-1;
 
 	while(mainLoop==true)
 		{
@@ -409,6 +411,7 @@ int main(int argc,char **argv)
 											free(label);
 											vsb->LFSTK_setValue(atoi(vol));
 											oldVolVal=vsb->LFSTK_getValue();
+											fprintf(stderr,"vol=%s\n",vol);
 											setIcon();
 										}							
 									free(vol);

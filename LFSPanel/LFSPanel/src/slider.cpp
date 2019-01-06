@@ -31,6 +31,7 @@ LFSTK_toggleButtonClass	*volumeButton;
 char					*iconH=NULL;
 char					*iconM=NULL;
 char					*iconL=NULL;
+int						oldVolVal=-1;
 
 void setIcon(void)
 {
@@ -105,6 +106,26 @@ bool valChanged(void *p,void* ud)
 	return(true);
 }
 
+void updateSlider(void)
+{
+		{
+			char	*vol;
+			char	*label;
+
+			vol=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print $3}'");
+			if(oldVolVal!=atoi(vol))
+				{
+					label=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"%s \" $4}'|tr -d '[]'",SLIDERLABEL);
+					volumeButton->LFSTK_setLabel(label);
+					free(label);
+					vsb->LFSTK_setValue(atoi(vol));
+					oldVolVal=vsb->LFSTK_getValue();
+					setIcon();
+				}							
+			free(vol);
+		}
+}
+
 int addSlider(int x,int y,int grav,bool fromleft)
 {
 	int						xpos=x;
@@ -147,6 +168,7 @@ int addSlider(int x,int y,int grav,bool fromleft)
 	setIcon();
 	free(vol);
 	free(label);
+	useAlarm=true;
 
 	return(width);
 }

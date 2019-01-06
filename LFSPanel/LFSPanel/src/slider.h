@@ -33,8 +33,10 @@ extern LFSTK_scrollBarClass		*vsb;
 extern char						*iconH;
 extern char						*iconM;
 extern char						*iconL;
+extern int						oldVolVal;
 
 void setIcon(void);
 int addSlider(int x,int y,int grav,bool fromleft);
+void updateSlider(void);
 
 #endif
