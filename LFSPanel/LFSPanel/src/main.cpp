@@ -168,9 +168,6 @@ void addRightGadgets(void)
 				case 'l':
 					offset+=addLaunchers(offset,mons->y,panelGravity,true);
 					break;
-//				case 'Q':
-//					offset+=addSlider(offset,mons->y,panelGravity,false);
-//					break;
 				}
 		}
 	rightOffset=offset;
@@ -395,27 +392,7 @@ int main(int argc,char **argv)
 						{
 							ml=scwindow->LFSTK_getMappedListener(event.xany.window);
 							if(ml!=NULL)
-								{
-									ml->function(ml->gadget,&event,ml->type);
-								}
-							else
-								{
-									char	*vol;
-									char	*label;
-
-									vol=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print $3}'");
-									if(oldVolVal!=atoi(vol))
-										{
-											label=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"%s \" $4}'|tr -d '[]'",SLIDERLABEL);
-											volumeButton->LFSTK_setLabel(label);
-											free(label);
-											vsb->LFSTK_setValue(atoi(vol));
-											oldVolVal=vsb->LFSTK_getValue();
-											fprintf(stderr,"vol=%s\n",vol);
-											setIcon();
-										}							
-									free(vol);
-								}
+								ml->function(ml->gadget,&event,ml->type);
 							scwindow->LFSTK_handleWindowEvents(&event);
 						}
 				}

@@ -594,6 +594,8 @@ CAIRO_LIBS
 CAIRO_CFLAGS
 XFT_LIBS
 XFT_CFLAGS
+ALSA_LIBS
+ALSA_CFLAGS
 X11_LIBS
 X11_CFLAGS
 PKG_CONFIG_LIBDIR
@@ -713,6 +715,8 @@ PKG_CONFIG_PATH
 PKG_CONFIG_LIBDIR
 X11_CFLAGS
 X11_LIBS
+ALSA_CFLAGS
+ALSA_LIBS
 XFT_CFLAGS
 XFT_LIBS
 CAIRO_CFLAGS
@@ -1358,6 +1362,8 @@ Some influential environment variables:
               path overriding pkg-config's built-in search path
   X11_CFLAGS  C compiler flags for X11, overriding pkg-config
   X11_LIBS    linker flags for X11, overriding pkg-config
+  ALSA_CFLAGS C compiler flags for ALSA, overriding pkg-config
+  ALSA_LIBS   linker flags for ALSA, overriding pkg-config
   XFT_CFLAGS  C compiler flags for XFT, overriding pkg-config
   XFT_LIBS    linker flags for XFT, overriding pkg-config
   CAIRO_CFLAGS
@@ -4580,6 +4586,101 @@ See \`config.log' for more details" "$LINENO" 5; }
 else
 	X11_CFLAGS=$pkg_cv_X11_CFLAGS
 	X11_LIBS=$pkg_cv_X11_LIBS
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+fi
+
+
+
+ALSA_MODULES="alsa >= 1.1.5"
+
+pkg_failed=no
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ALSA_MODULES" >&5
+$as_echo_n "checking for $ALSA_MODULES... " >&6; }
+
+if test -n "$ALSA_CFLAGS"; then
+    pkg_cv_ALSA_CFLAGS="$ALSA_CFLAGS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"\$ALSA_MODULES\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "$ALSA_MODULES") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_ALSA_CFLAGS=`$PKG_CONFIG --cflags "$ALSA_MODULES" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+if test -n "$ALSA_LIBS"; then
+    pkg_cv_ALSA_LIBS="$ALSA_LIBS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"\$ALSA_MODULES\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "$ALSA_MODULES") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_ALSA_LIBS=`$PKG_CONFIG --libs "$ALSA_MODULES" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+
+
+
+if test $pkg_failed = yes; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+        _pkg_short_errors_supported=yes
+else
+        _pkg_short_errors_supported=no
+fi
+        if test $_pkg_short_errors_supported = yes; then
+	        ALSA_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "$ALSA_MODULES" 2>&1`
+        else
+	        ALSA_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "$ALSA_MODULES" 2>&1`
+        fi
+	# Put the nasty error message in config.log where it belongs
+	echo "$ALSA_PKG_ERRORS" >&5
+
+	as_fn_error $? "Package requirements ($ALSA_MODULES) were not met:
+
+$ALSA_PKG_ERRORS
+
+Consider adjusting the PKG_CONFIG_PATH environment variable if you
+installed software in a non-standard prefix.
+
+Alternatively, you may set the environment variables ALSA_CFLAGS
+and ALSA_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details." "$LINENO" 5
+elif test $pkg_failed = untried; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "The pkg-config script could not be found or is too old.  Make sure it
+is in your PATH or set the PKG_CONFIG environment variable to the full
+path to pkg-config.
+
+Alternatively, you may set the environment variables ALSA_CFLAGS
+and ALSA_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details.
+
+To get pkg-config, see <http://pkg-config.freedesktop.org/>.
+See \`config.log' for more details" "$LINENO" 5; }
+else
+	ALSA_CFLAGS=$pkg_cv_ALSA_CFLAGS
+	ALSA_LIBS=$pkg_cv_ALSA_LIBS
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 

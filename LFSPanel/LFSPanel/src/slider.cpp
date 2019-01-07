@@ -21,6 +21,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <alsa/asoundlib.h>
 
 #include "slider.h"
 
@@ -32,6 +33,45 @@ char					*iconH=NULL;
 char					*iconM=NULL;
 char					*iconL=NULL;
 int						oldVolVal=-1;
+char					label[32];
+
+void setLabel(void)
+{
+	int	value=(int)(((double)vsb->LFSTK_getValue()/64.0)*100.0);
+	sprintf(label,"Vol %i%%",value);
+	volumeButton->LFSTK_setLabel((const char*)label);
+	setIcon();
+	volumeButton->LFSTK_clearWindow();
+}
+
+int getAlsaVolume(bool setvol,int volume)
+{
+	long					value=-1;
+	snd_mixer_t				*handle;
+	snd_mixer_selem_id_t	*sid;
+	snd_mixer_elem_t		*elem;
+	const char				*card="default";
+	const char				*selem_name="Master";
+
+	snd_mixer_open(&handle,0);
+	snd_mixer_attach(handle,card);
+	snd_mixer_selem_register(handle,NULL,NULL);
+	snd_mixer_load(handle);
+
+	snd_mixer_selem_id_alloca(&sid);
+	snd_mixer_selem_id_set_index(sid,0);
+	snd_mixer_selem_id_set_name(sid,selem_name);
+	elem=snd_mixer_find_selem(handle,sid);
+
+	if(setvol==true)
+	   snd_mixer_selem_set_playback_volume_all(elem,volume);
+	else
+		snd_mixer_selem_get_playback_volume(elem,SND_MIXER_SCHN_UNKNOWN,&value);
+
+	snd_mixer_close(handle);
+
+	return(value);
+}
 
 void setIcon(void)
 {
@@ -89,18 +129,15 @@ bool valChanged(void *p,void* ud)
 	LFSTK_scrollBarClass	*sb=NULL;
 	char					*command;
 	char					*vol;
+	int						volume=-1;
+
 	if(p!=NULL)
 		{
 			sb=static_cast<LFSTK_scrollBarClass*>(p);
 			if(sb!=NULL)
 				{
-					asprintf(&command,"amixer set Master %i &>/dev/null",sb->LFSTK_getValue());
-					system(command);
-					free(command);
-					vol=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"%s \" $4}'|tr -d '[]'",SLIDERLABEL);
-					volumeButton->LFSTK_setLabel(vol);
-					free(vol);
-					volumeButton->LFSTK_clearWindow();
+					getAlsaVolume(true,sb->LFSTK_getValue());
+					setLabel();
 				}
 		}
 	return(true);
@@ -108,22 +145,15 @@ bool valChanged(void *p,void* ud)
 
 void updateSlider(void)
 {
-		{
-			char	*vol;
-			char	*label;
+	int		volume;
 
-			vol=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print $3}'");
-			if(oldVolVal!=atoi(vol))
-				{
-					label=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"%s \" $4}'|tr -d '[]'",SLIDERLABEL);
-					volumeButton->LFSTK_setLabel(label);
-					free(label);
-					vsb->LFSTK_setValue(atoi(vol));
-					oldVolVal=vsb->LFSTK_getValue();
-					setIcon();
-				}							
-			free(vol);
-		}
+	volume=getAlsaVolume(false,-1);
+	if(oldVolVal!=volume)
+		{
+			vsb->LFSTK_setValue(volume);
+			oldVolVal=vsb->LFSTK_getValue();
+			setLabel();
+		}							
 }
 
 int addSlider(int x,int y,int grav,bool fromleft)
@@ -136,6 +166,7 @@ int addSlider(int x,int y,int grav,bool fromleft)
 	int						iconsize=16;
 	char					*label=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"%s \" $4}'|tr -d '[]'",SLIDERLABEL);
 
+	getAlsaVolume(false,-1);
 	setSizes(&xpos,&ypos,&width,&height,&iconsize,&thisgrav,fromleft);
 	
 	volumeButton=new LFSTK_toggleButtonClass(mainwind,label,xpos,ypos,width,height,thisgrav);

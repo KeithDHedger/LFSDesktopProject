@@ -1,4 +1,5 @@
 0.1.4
+Added alsa dependency.
 Fixed updating vol slider.
 Reversed vol slider on vertical panels.
 Added Volume control.

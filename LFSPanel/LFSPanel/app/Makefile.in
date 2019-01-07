@@ -200,6 +200,8 @@ am__DIST_COMMON = $(srcdir)/../flagsandlibs $(srcdir)/../sources \
 	$(srcdir)/Makefile.in $(top_srcdir)/depcomp
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
+ALSA_CFLAGS = @ALSA_CFLAGS@
+ALSA_LIBS = @ALSA_LIBS@
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AUTOCONF = @AUTOCONF@
@@ -235,6 +237,7 @@ LFSTK_CFLAGS = @LFSTK_CFLAGS@
 LFSTK_LIBS = @LFSTK_LIBS@
 LIBOBJS = @LIBOBJS@
 LIBS = $(X11_LIBS) \
+				$(ALSA_LIBS) \
 				$(XFT_LIBS) \
 				$(CAIRO_LIBS) \
 				$(LFSTK_LIBS) \
@@ -308,6 +311,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = subdir-objects
 AM_CPPFLAGS = -I$(top_srcdir) \
+				$(ALSA_CFLAGS) \
 				$(X11_CFLAGS) \
 				$(XFT_CFLAGS) \
 				$(CAIRO_CFLAGS) \

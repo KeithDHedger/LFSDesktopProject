@@ -38,5 +38,6 @@ extern int						oldVolVal;
 void setIcon(void);
 int addSlider(int x,int y,int grav,bool fromleft);
 void updateSlider(void);
+int getAlsaVolume(bool setvol,int volume);
 
 #endif

@@ -37,7 +37,7 @@ int					panelGravity=PANELNORTH;
 char				*desktopTheme=NULL;
 const char			*panelID="";
 
-int					refreshRate=1;
+int					refreshRate=4;
 
 int					iconSize=16;
 bool				useAlarm=false;
