@@ -130,7 +130,8 @@ am__uninstall_files_from_dir = { \
   }
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(AllHallowsdir)" \
 	"$(DESTDIR)$(OldBrownWooddir)" "$(DESTDIR)$(Steeldir)" \
-	"$(DESTDIR)$(lfstkpxmapsdir)" "$(DESTDIR)$(pixfilesdir)" \
+	"$(DESTDIR)$(Winterdir)" "$(DESTDIR)$(lfstkpxmapsdir)" \
+	"$(DESTDIR)$(pixfilesdir)" \
 	"$(DESTDIR)$(lfstoolkit_includedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 liblfstoolkit_la_LIBADD =
@@ -192,7 +193,7 @@ am__can_run_installinfo = \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
 DATA = $(AllHallows_DATA) $(OldBrownWood_DATA) $(Steel_DATA) \
-	$(lfstkpxmaps_DATA) $(pixfiles_DATA)
+	$(Winter_DATA) $(lfstkpxmaps_DATA) $(pixfiles_DATA)
 HEADERS = $(lfstoolkit_include_HEADERS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 # Read a list of newline-separated strings from the standard input,
@@ -384,9 +385,11 @@ lfstoolkit_include_HEADERS = ../lfstk/lfstk/*.h
 AllHallowsdir = ${prefix}/share/themes/AllHallows.lfstk
 OldBrownWooddir = ${prefix}/share/themes/OldBrownWood.lfstk
 Steeldir = ${prefix}/share/themes/Steel.lfstk
+Winterdir = ${prefix}/share/themes/Winter.lfstk
 AllHallows_DATA = ../resources/themes/AllHallows.lfstk/*.*
 OldBrownWood_DATA = ../resources/themes/OldBrownWood.lfstk/*.*
 Steel_DATA = ../resources/themes/Steel.lfstk/*.*
+Winter_DATA = ../resources/themes/Winter.lfstk/*.*
 all: all-am
 
 .SUFFIXES:
@@ -622,6 +625,27 @@ uninstall-SteelDATA:
 	@list='$(Steel_DATA)'; test -n "$(Steeldir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	dir='$(DESTDIR)$(Steeldir)'; $(am__uninstall_files_from_dir)
+install-WinterDATA: $(Winter_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(Winter_DATA)'; test -n "$(Winterdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(Winterdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(Winterdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(Winterdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(Winterdir)" || exit $$?; \
+	done
+
+uninstall-WinterDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(Winter_DATA)'; test -n "$(Winterdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(Winterdir)'; $(am__uninstall_files_from_dir)
 install-lfstkpxmapsDATA: $(lfstkpxmaps_DATA)
 	@$(NORMAL_INSTALL)
 	@list='$(lfstkpxmaps_DATA)'; test -n "$(lfstkpxmapsdir)" || list=; \
@@ -772,7 +796,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(LTLIBRARIES) $(DATA) $(HEADERS)
 installdirs:
-	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(AllHallowsdir)" "$(DESTDIR)$(OldBrownWooddir)" "$(DESTDIR)$(Steeldir)" "$(DESTDIR)$(lfstkpxmapsdir)" "$(DESTDIR)$(pixfilesdir)" "$(DESTDIR)$(lfstoolkit_includedir)"; do \
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(AllHallowsdir)" "$(DESTDIR)$(OldBrownWooddir)" "$(DESTDIR)$(Steeldir)" "$(DESTDIR)$(Winterdir)" "$(DESTDIR)$(lfstkpxmapsdir)" "$(DESTDIR)$(pixfilesdir)" "$(DESTDIR)$(lfstoolkit_includedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -831,7 +855,7 @@ info: info-am
 info-am:
 
 install-data-am: install-AllHallowsDATA install-OldBrownWoodDATA \
-	install-SteelDATA install-lfstkpxmapsDATA \
+	install-SteelDATA install-WinterDATA install-lfstkpxmapsDATA \
 	install-lfstoolkit_includeHEADERS install-pixfilesDATA
 
 install-dvi: install-dvi-am
@@ -879,9 +903,9 @@ ps: ps-am
 ps-am:
 
 uninstall-am: uninstall-AllHallowsDATA uninstall-OldBrownWoodDATA \
-	uninstall-SteelDATA uninstall-lfstkpxmapsDATA \
-	uninstall-lfstoolkit_includeHEADERS uninstall-libLTLIBRARIES \
-	uninstall-pixfilesDATA
+	uninstall-SteelDATA uninstall-WinterDATA \
+	uninstall-lfstkpxmapsDATA uninstall-lfstoolkit_includeHEADERS \
+	uninstall-libLTLIBRARIES uninstall-pixfilesDATA
 
 .MAKE: install-am install-strip
 
@@ -890,20 +914,21 @@ uninstall-am: uninstall-AllHallowsDATA uninstall-OldBrownWoodDATA \
 	ctags-am distclean distclean-compile distclean-generic \
 	distclean-libtool distclean-tags distdir dvi dvi-am html \
 	html-am info info-am install install-AllHallowsDATA \
-	install-OldBrownWoodDATA install-SteelDATA install-am \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-lfstkpxmapsDATA \
-	install-lfstoolkit_includeHEADERS install-libLTLIBRARIES \
-	install-man install-pdf install-pdf-am install-pixfilesDATA \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
+	install-OldBrownWoodDATA install-SteelDATA install-WinterDATA \
+	install-am install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am \
+	install-lfstkpxmapsDATA install-lfstoolkit_includeHEADERS \
+	install-libLTLIBRARIES install-man install-pdf install-pdf-am \
+	install-pixfilesDATA install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	tags tags-am uninstall uninstall-AllHallowsDATA \
-	uninstall-OldBrownWoodDATA uninstall-SteelDATA uninstall-am \
-	uninstall-lfstkpxmapsDATA uninstall-lfstoolkit_includeHEADERS \
-	uninstall-libLTLIBRARIES uninstall-pixfilesDATA
+	uninstall-OldBrownWoodDATA uninstall-SteelDATA \
+	uninstall-WinterDATA uninstall-am uninstall-lfstkpxmapsDATA \
+	uninstall-lfstoolkit_includeHEADERS uninstall-libLTLIBRARIES \
+	uninstall-pixfilesDATA
 
 .PRECIOUS: Makefile
 

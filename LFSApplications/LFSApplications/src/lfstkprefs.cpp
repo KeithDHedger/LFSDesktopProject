@@ -86,6 +86,7 @@ Display					*display;
 char					*wd;
 int						parentWindow=-1;
 int						queueID=-1;
+char					*themePath=NULL;
 
 void addSet(void)
 {
@@ -120,7 +121,11 @@ bool menuCB(void *p,void* ud)
 
 	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
 	const char *label=static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel();
+	freeAndNull(&themePath);
+	themePath=strdup(label);
+	
 
+//fprintf(stderr,label);
 //temp theme stuff
 	char	*bnormal=NULL;
 	char	*bpre=NULL;
@@ -279,6 +284,7 @@ void setVars(void)
 	if(((strcmp(windowTileEdit->LFSTK_getCStr(),"")==0) || (strcmp(buttonTileEdit->LFSTK_getCStr(),"")==0) || (strcmp(menuTileEdit->LFSTK_getCStr(),"")==0))==true)
 		useTheme->LFSTK_setValue(false);
 	wc->globalLib->LFSTK_setUseTheme(useTheme->LFSTK_getValue());
+	wc->globalLib->LFSTK_setThemePath(themePath);
 //tiles
 	wc->globalLib->LFSTK_setGlobalString(0,TYPEWINDOWTILE,windowTileEdit->LFSTK_getCStr());
 	wc->globalLib->LFSTK_setGlobalString(0,TYPEBUTTONTILE,buttonTileEdit->LFSTK_getCStr());
@@ -288,6 +294,7 @@ void setVars(void)
 	wc->globalLib->LFSTK_setGlobalString(0,TYPEMENUITEMFONT,menuFontEdit->LFSTK_getCStr());
 	wc->globalLib->LFSTK_setGlobalString(0,TYPEMONOFONT,monoFontEdit->LFSTK_getCStr());
 	wc->globalLib->LFSTK_setGlobalString(0,TYPECURSORCOLOUR,cursorColourEdit->LFSTK_getCStr());
+	
 }
 
 void setPreviewData(void)
@@ -588,10 +595,10 @@ int main(int argc, char **argv)
 //load set
 	addSet();
 
-	loadSet=new LFSTK_buttonClass(wc,"Load Theme",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	loadSet=new LFSTK_buttonClass(wc,"Load Theme",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH+HALFGADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	loadSet->LFSTK_setCallBack(NULL,buttonCB,(void*)"SHOWSETMENU");
 	loadSet->LFSTK_setIndicator(DISCLOSURE);
-	setMenu=new LFSTK_menuClass(wc,(BORDER+GADGETWIDTH)*2,sy,1,1);
+	setMenu=new LFSTK_menuClass(wc,BORDER+GADGETWIDTH+BORDER+GADGETWIDTH+HALFGADGETWIDTH,sy,1,1);
 	setMenu->LFSTK_setCallBack(NULL,menuCB,NULL);
 	setMenu->LFSTK_addMainMenus(setNameMenuItems,setCnt);
 	sy+=YSPACING;
@@ -628,7 +635,7 @@ int main(int argc, char **argv)
 
 	sx=EDITBOXWIDTH*2+(BORDER*4)+GADGETWIDTH;
 //line
-	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
+	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH+BORDER,GADGETHITE,BUTTONGRAV);
 	seperator->LFSTK_setStyle(BEVELNONE);
 	seperator->gadgetDetails.buttonTile=false;
 	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];

@@ -314,6 +314,7 @@ LFSTK_lib::LFSTK_lib(bool loadvars)
 //other
 		{"autotextcolour",TYPEBOOL,&(this->autoLabelColour)},
 		{"usetheme",TYPEBOOL,&(this->useTheme)},
+		{"themepath",TYPESTRING,&(this->themePath)},
 //monofont
 		{"monofont",TYPESTRING,&(this->globalMonoFontString)},
 //cursor colour
@@ -1060,3 +1061,23 @@ cairo_surface_t	*LFSTK_lib::LFSTK_createSurfaceFromPath(const char *path)
 		tempimage=NULL;
 	return(tempimage);
 }
+
+/**
+* Get path to theme.
+* \return const char* path. 
+*/
+const char* LFSTK_lib::LFSTK_getThemePath(void)
+{
+	return(this->themePath);
+}
+
+/**
+* Set path to theme.
+* \param char* path. 
+*/
+void LFSTK_lib::LFSTK_setThemePath(char *path)
+{
+	freeAndNull(&this->themePath);
+	this->themePath=strdup(path);
+}
+

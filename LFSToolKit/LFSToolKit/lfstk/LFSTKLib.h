@@ -48,6 +48,8 @@ class LFSTK_lib
 		void			LFSTK_setAutoLabelColour(bool toset);
 		bool			LFSTK_getUseTheme(void);
 		void			LFSTK_setUseTheme(bool use);
+		const char		*LFSTK_getThemePath(void);
+		void			LFSTK_setThemePath(char *path);
 
 		const char		*bestFontColour(long pixel);
 		static bool		LFSTK_gadgetEvent(void *self,XEvent *e,int type);
@@ -95,6 +97,7 @@ class LFSTK_lib
 //other
 		bool			autoLabelColour;
 		bool			useTheme;
+		char			*themePath=NULL;
 };
 #endif
 

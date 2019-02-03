@@ -1,4 +1,7 @@
 0.4.2
+Added theme path to lfstkprefs.
+Added support for arrow pngs in themes for scrollbars.
+Fixed install themes.
 Fixed copyright.
 Fixed line edit visual anomaly.
 Fixed unfocused line edit.

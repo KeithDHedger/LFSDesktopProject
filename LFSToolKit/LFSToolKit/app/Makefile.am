@@ -18,6 +18,9 @@ lfstoolkit_include_HEADERS = ../lfstk/lfstk/*.h
 AllHallowsdir = ${prefix}/share/themes/AllHallows.lfstk
 OldBrownWooddir = ${prefix}/share/themes/OldBrownWood.lfstk
 Steeldir = ${prefix}/share/themes/Steel.lfstk
+Winterdir = ${prefix}/share/themes/Winter.lfstk
+
 AllHallows_DATA = ../resources/themes/AllHallows.lfstk/*.*
 OldBrownWood_DATA = ../resources/themes/OldBrownWood.lfstk/*.*
 Steel_DATA = ../resources/themes/Steel.lfstk/*.*
+Winter_DATA = ../resources/themes/Winter.lfstk/*.*

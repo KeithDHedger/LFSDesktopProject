@@ -53,7 +53,7 @@ void LFSTK_scrollBarClass::LFSTK_setStyle(bevelType s)
 LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vertical,int x,int y,unsigned w,unsigned h,int gravity)
 {
 	XSetWindowAttributes	wa;
-
+	
 	this->LFSTK_setCommon(parentwc,NULL,x,y,w,h,gravity);
 
 	wa.win_gravity=gravity;
@@ -72,19 +72,11 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vert
 	this->ml->type=SCROLLBARGADGET;
 	wc->LFSTK_addMappedListener(this->window,ml);
 
-//	if(this->wc->globalLib->LFSTK_getUseTheme()==true)
-//		this->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),-1);
-//	else
-//		this->useTile=false;
-
-	//gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
-//	if(globalSBTroughColour==NULL)
-		this->LFSTK_setColourName(NORMALCOLOUR,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPESBTROUGHCOLOUR));
-//	else
-//		this->LFSTK_setColourName(NORMALCOLOUR,globalSBTroughColour);
+	this->LFSTK_setColourName(NORMALCOLOUR,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPESBTROUGHCOLOUR));
 	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
 
 	this->verticalBar=vertical;
+	char	*pathtobit;
 
 	if(this->verticalBar==false)
 		{
@@ -94,10 +86,20 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vert
 			this->thumb->LFSTK_allowYMovement(false);
 //left
 			this->upLeft=new LFSTK_buttonClass(parentwc,"",x,y,h,h,gravity);
-			this->upLeft->LFSTK_setImageFromPath(LFSTKPIXMAPSDIR "/left.png",CENTRE,true);
+			asprintf(&pathtobit,"%s/left.png",this->wc->globalLib->LFSTK_getThemePath());
+			if(access(pathtobit,F_OK)==0)
+				this->upLeft->LFSTK_setImageFromPath(pathtobit,CENTRE,true);
+			else
+				this->upLeft->LFSTK_setImageFromPath(LFSTKPIXMAPSDIR "/left.png",CENTRE,true);
+			free(pathtobit);
 //rite
 			this->downRight=new LFSTK_buttonClass(parentwc,"",x+w-h,y,h,h,gravity);
-			this->downRight->LFSTK_setImageFromPath(LFSTKPIXMAPSDIR "/rite.png",CENTRE,true);
+			asprintf(&pathtobit,"%s/rite.png",this->wc->globalLib->LFSTK_getThemePath());
+			if(access(pathtobit,F_OK)==0)
+				this->downRight->LFSTK_setImageFromPath(pathtobit,CENTRE,true);
+			else
+				this->downRight->LFSTK_setImageFromPath(LFSTKPIXMAPSDIR "/rite.png",CENTRE,true);
+			free(pathtobit);
 		}
 	else
 		{
@@ -107,10 +109,20 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vert
 			this->thumb->LFSTK_allowXMovement(false);
 //up
 			this->upLeft=new LFSTK_buttonClass(parentwc,"",x,y,w,w,gravity);
-			this->upLeft->LFSTK_setImageFromPath(LFSTKPIXMAPSDIR "/up.png",CENTRE,true);
+			asprintf(&pathtobit,"%s/up.png",this->wc->globalLib->LFSTK_getThemePath());
+			if(access(pathtobit,F_OK)==0)
+				this->upLeft->LFSTK_setImageFromPath(pathtobit,CENTRE,true);
+			else
+				this->upLeft->LFSTK_setImageFromPath(LFSTKPIXMAPSDIR "/up.png",CENTRE,true);
+			free(pathtobit);
 //down
 			this->downRight=new LFSTK_buttonClass(parentwc,"",x,y+h-w,w,w,gravity);
-			this->downRight->LFSTK_setImageFromPath(LFSTKPIXMAPSDIR "/down.png",CENTRE,true);
+			asprintf(&pathtobit,"%s/down.png",this->wc->globalLib->LFSTK_getThemePath());
+			if(access(pathtobit,F_OK)==0)
+				this->downRight->LFSTK_setImageFromPath(pathtobit,CENTRE,true);
+			else
+				this->downRight->LFSTK_setImageFromPath(LFSTKPIXMAPSDIR "/down.png",CENTRE,true);
+			free(pathtobit);
 		}
 
 	this->thumb->LFSTK_setCanDrag(true);
