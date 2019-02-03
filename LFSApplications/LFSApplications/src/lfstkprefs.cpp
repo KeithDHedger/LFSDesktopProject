@@ -86,7 +86,8 @@ Display					*display;
 char					*wd;
 int						parentWindow=-1;
 int						queueID=-1;
-char					*themePath=NULL;
+char					*themePath=strdup("");
+char					*sbTroughColour=strdup("grey50");
 
 void addSet(void)
 {
@@ -155,6 +156,7 @@ bool menuCB(void *p,void* ud)
 
 	bool	usetheme=0;
 	bool	autocol=0;
+	char	*sbtrough=NULL;
 
 	args myargs[]=
 	{
@@ -186,6 +188,7 @@ bool menuCB(void *p,void* ud)
 ////other
 		{"autotextcolour",TYPEBOOL,&autocol},
 		{"usetheme",TYPEBOOL,&usetheme},
+		{"sbtroughcolour",TYPESTRING,&sbTroughColour},
 //monofont
 		{"monofont",TYPESTRING,&monofont},
 //cursor colour
@@ -285,6 +288,10 @@ void setVars(void)
 		useTheme->LFSTK_setValue(false);
 	wc->globalLib->LFSTK_setUseTheme(useTheme->LFSTK_getValue());
 	wc->globalLib->LFSTK_setThemePath(themePath);
+	wc->globalLib->LFSTK_setGlobalString(0,TYPESBTROUGHCOLOUR,sbTroughColour);
+
+//fprintf(stderr,sbTroughColour);
+
 //tiles
 	wc->globalLib->LFSTK_setGlobalString(0,TYPEWINDOWTILE,windowTileEdit->LFSTK_getCStr());
 	wc->globalLib->LFSTK_setGlobalString(0,TYPEBUTTONTILE,buttonTileEdit->LFSTK_getCStr());
@@ -450,7 +457,18 @@ bool buttonCB(void *p,void* ud)
 					setPreviewData();
 					setVars();
 					asprintf(&prefsfile,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
+//				int cnt=0;
+//				const args* dataptr=wc->globalLib->LFSTK_getTKArgs();
+//				while(dataptr[cnt].name!=NULL)
+//				{
+//					fprintf(stderr,"%s-",dataptr[cnt].name);
+//					if(dataptr[cnt].type==TYPESTRING)
+//						fprintf(stderr,">>%s<<\n",*(char**)(dataptr[cnt].data));
+//					cnt++;
+//				}
+
 					wc->globalLib->LFSTK_saveVarsToFile(prefsfile,wc->globalLib->LFSTK_getTKArgs());
+					
 					free(prefsfile);
 //flush message queue
 					while(flag==false)
@@ -676,6 +694,7 @@ int main(int argc, char **argv)
 
 	delete wc;
 	delete setMenu;
+	freeAndNull(&sbTroughColour);
 	cairo_debug_reset_static_data();
 	XCloseDisplay(display);
 	return 0;

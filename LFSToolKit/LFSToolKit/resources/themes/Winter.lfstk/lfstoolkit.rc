@@ -15,7 +15,7 @@ menuitem_font_normal white
 menuitem_font_prelight red
 menuitem_font_active black
 menuitem_font_inactive grey40
-font Santas Big Secret BB:size=12
+font DejaVu Sans:size=10
 font_normal black
 font_prelight red
 font_active black

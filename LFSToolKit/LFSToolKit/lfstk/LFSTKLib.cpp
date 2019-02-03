@@ -173,6 +173,12 @@ void LFSTK_lib::LFSTK_setGlobalString(int state,int type,const char *str)
 					free((void*)ptr);
 				this->globalCursorColour=strdup(str);
 				break;
+			case TYPESBTROUGHCOLOUR:
+				ptr=this->globalSBTroughColour;
+				if(ptr!=NULL)
+					free((void*)ptr);
+				this->globalSBTroughColour=strdup(str);
+				break;
 		}
 }
 
@@ -321,7 +327,7 @@ LFSTK_lib::LFSTK_lib(bool loadvars)
 		{"cursorcolour",TYPESTRING,&(this->globalCursorColour)},
 //individual gadget colours
 		{"sbtroughcolour",TYPESTRING,&(this->globalSBTroughColour)},
-		{NULL,0,NULL},
+		{NULL,0,NULL}
 	};
 
 	this->lfsToolKitGlobals=(args*)calloc(1,sizeof(myargs));
@@ -346,6 +352,7 @@ LFSTK_lib::LFSTK_lib(bool loadvars)
 	this->globalMenuItemTile=NULL;
 	this->autoLabelColour=false;
 	this->useTheme=false;
+	this->globalCursorColour=NULL;
 
 	if(loadvars==true)
 		{
