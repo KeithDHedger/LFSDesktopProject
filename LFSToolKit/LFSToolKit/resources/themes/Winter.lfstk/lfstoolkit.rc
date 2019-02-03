@@ -23,4 +23,5 @@ font_inactive grey40
 autotextcolour 0
 usetheme 1
 monofont DejaVu Sans Mono:size=14
-cursorcolour red
+cursorcolour blue
+sbtroughcolour light blue

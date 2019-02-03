@@ -189,7 +189,8 @@ void LFSTK_lib::LFSTK_setGlobalString(int state,int type,const char *str)
 const char *LFSTK_lib::LFSTK_getGlobalString(int state,int type)
 {
 	const char	*ptr=NULL;
-	
+	bool		isfontcolour=false;
+
 	switch(type)
 		{
 			case TYPEWINDOW:
@@ -224,11 +225,13 @@ const char *LFSTK_lib::LFSTK_getGlobalString(int state,int type)
 					ptr=defaultMenuItemTile;
 				break;
 			case TYPEFONTCOLOUR:
+				isfontcolour=true;
 				ptr=this->globalFontColourNames[state];
 				if(ptr==NULL)
 					ptr=defaultFontColourStrings[state];
 				break;
 			case TYPEMENUITEMFONTCOLOUR:
+				isfontcolour=true;
 				ptr=this->globalMenuItemFontColourNames[state];
 				if(ptr==NULL)
 					ptr=defaultFontColourStrings[state];
@@ -253,7 +256,21 @@ const char *LFSTK_lib::LFSTK_getGlobalString(int state,int type)
 				if(ptr==NULL)
 					ptr=defaultCursorColour;
 				break;
+			case TYPESBTROUGHCOLOUR:
+				ptr=this->globalSBTroughColour;
+				if(ptr==NULL)
+					ptr=globalButtonColours[state];
+				break;
 		}
+
+	if(ptr==NULL)
+		{
+			if(isfontcolour==false)
+				ptr=defaultColourStrings[state];
+			else
+				ptr=defaultFontColourStrings[state];
+		}
+
 	return(ptr);
 }
 
@@ -301,6 +318,8 @@ LFSTK_lib::LFSTK_lib(bool loadvars)
 		{"monofont",TYPESTRING,&(this->globalMonoFontString)},
 //cursor colour
 		{"cursorcolour",TYPESTRING,&(this->globalCursorColour)},
+//individual gadget colours
+		{"sbtroughcolour",TYPESTRING,&(this->globalSBTroughColour)},
 		{NULL,0,NULL},
 	};
 
