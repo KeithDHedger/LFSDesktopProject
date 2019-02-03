@@ -282,14 +282,14 @@ void LFSTK_lineEditClass::drawLabel(void)
 
 		if(this->isFocused==true)
 			{
-
 				cairo_set_source_rgba(this->cr,this->cursorColour.RGBAColour.r,this->cursorColour.RGBAColour.g,this->cursorColour.RGBAColour.b,this->cursorColour.RGBAColour.a);
-				cairo_rectangle(this->cr,partextents.x_advance+0.5,yoffset-this->fontExtents.ascent,charextents.x_advance-0.5,this->fontExtents.ascent+this->fontExtents.descent);
+				//cairo_rectangle(this->cr,partextents.x_advance+0.5,yoffset-this->fontExtents.ascent,charextents.x_advance-0.5,this->fontExtents.ascent+this->fontExtents.descent);
+				cairo_rectangle(this->cr,partextents.x_advance+this->pad,yoffset-this->fontExtents.ascent,charextents.x_advance-0.5,this->fontExtents.ascent+this->fontExtents.descent);
 				cairo_fill(this->cr);
+				cairo_set_source_rgba(this->cr,1.0,1.0,1.0,1.0);
 			}
-		cairo_set_source_rgba(this->cr,1.0,1.0,1.0,1.0);
 //secondbit
-		cairo_move_to(this->cr,partextents.x_advance,yoffset);
+		cairo_move_to(this->cr,partextents.x_advance+this->pad,yoffset);
 		cairo_show_text(this->cr,undercurs);
 //3rdbit
 		cairo_set_source_rgba(this->cr,0.0,0.0,0.0,1.0);

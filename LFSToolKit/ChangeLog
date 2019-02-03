@@ -1,4 +1,6 @@
 0.4.2
+Fixed line edit visual anomaly.
+Fixed unfocused line edit.
 Updated Winter theme.
 Added scrollbar trough colour to lfstkprefs.
 
