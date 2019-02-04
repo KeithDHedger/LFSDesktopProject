@@ -321,7 +321,7 @@ int main(int argc, char **argv)
 	mainModeEdit->gadgetAcceptsDnD=false;
 	sy+=YSPACING;
 //multi mode
-	multipleMonitors=new LFSTK_toggleButtonClass(wc,"Multiple Monitors",BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
+	multipleMonitors=new LFSTK_toggleButtonClass(wc,"Multiple Monitors",BORDER,sy,GADGETWIDTH*2,CHECKBOXSIZE,BUTTONGRAV);
 	multipleMonitors->LFSTK_setValue(multiMode);
 	multipleMonitors->LFSTK_setCallBack(NULL,buttonCB,(void*)"MULTIMODE");
 	sy+=YSPACING;

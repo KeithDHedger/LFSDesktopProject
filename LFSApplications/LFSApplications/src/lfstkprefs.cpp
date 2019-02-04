@@ -605,11 +605,11 @@ int main(int argc, char **argv)
 	sx+=BORDER+GADGETWIDTH;
 	windowColourEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEWINDOW),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 	sx+=BORDER+EDITBOXWIDTH;
-	autoColourCheck=new LFSTK_toggleButtonClass(wc,"Auto Colour",sx,sy,GADGETWIDTH,GADGETHITE,NorthWestGravity);
+	autoColourCheck=new LFSTK_toggleButtonClass(wc,"Auto Colour",sx,sy,GADGETWIDTH,CHECKBOXSIZE,NorthWestGravity);
 	sy+=YSPACING;
 
 //themes
-	useTheme=new LFSTK_toggleButtonClass(wc,"Use Theme",BORDER,sy,GADGETWIDTH,GADGETHITE,NorthWestGravity);
+	useTheme=new LFSTK_toggleButtonClass(wc,"Use Theme",BORDER,sy,GADGETWIDTH,CHECKBOXSIZE,NorthWestGravity);
 //load set
 	addSet();
 
