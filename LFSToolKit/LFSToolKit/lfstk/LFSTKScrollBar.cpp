@@ -53,6 +53,7 @@ void LFSTK_scrollBarClass::LFSTK_setStyle(bevelType s)
 LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vertical,int x,int y,unsigned w,unsigned h,int gravity)
 {
 	XSetWindowAttributes	wa;
+	char					*pathtobit;
 	
 	this->LFSTK_setCommon(parentwc,NULL,x,y,w,h,gravity);
 
@@ -76,7 +77,6 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vert
 	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
 
 	this->verticalBar=vertical;
-	char	*pathtobit;
 
 	if(this->verticalBar==false)
 		{

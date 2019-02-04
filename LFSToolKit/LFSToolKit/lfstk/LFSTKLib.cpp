@@ -179,6 +179,12 @@ void LFSTK_lib::LFSTK_setGlobalString(int state,int type,const char *str)
 					free((void*)ptr);
 				this->globalSBTroughColour=strdup(str);
 				break;
+			case TYPELISTTROUGHCOLOUR:
+				ptr=this->globalListTroughColour;
+				if(ptr!=NULL)
+					free((void*)ptr);
+				this->globalListTroughColour=strdup(str);
+				break;
 		}
 }
 
@@ -267,6 +273,11 @@ const char *LFSTK_lib::LFSTK_getGlobalString(int state,int type)
 				if(ptr==NULL)
 					ptr=globalButtonColours[state];
 				break;
+			case TYPELISTTROUGHCOLOUR:
+				ptr=this->globalListTroughColour;
+				if(ptr==NULL)
+					ptr=globalButtonColours[state];
+				break;
 		}
 
 	if(ptr==NULL)
@@ -327,6 +338,7 @@ LFSTK_lib::LFSTK_lib(bool loadvars)
 		{"cursorcolour",TYPESTRING,&(this->globalCursorColour)},
 //individual gadget colours
 		{"sbtroughcolour",TYPESTRING,&(this->globalSBTroughColour)},
+		{"listtroughcolour",TYPESTRING,&(this->globalListTroughColour)},
 		{NULL,0,NULL}
 	};
 

@@ -43,7 +43,7 @@ bool LFSTK_listGadgetClass::select(void *object,void* userdata)
 	list->setCurrentItem(datax);
 	for(int j=0;j<list->maxShowing;j++)
 		{
-			list->labels[j]->LFSTK_setColourName(NORMALCOLOUR,"white");
+			list->labels[j]->LFSTK_setColourName(NORMALCOLOUR,list->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPELISTTROUGHCOLOUR));
 			list->labels[j]->LFSTK_clearWindow();
 		}
 	label->LFSTK_setColourName(NORMALCOLOUR,label->LFSTK_getColourName(ACTIVECOLOUR));
@@ -253,7 +253,7 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 	XSetWindowAttributes	wa;
 	unsigned int			adjwidth=w-SCROLLBARWIDTH-2;
 
-	this->LFSTK_setCommon(parentwc,label,x-1,y-1,adjwidth+2,h+2,gravity);
+	this->LFSTK_setCommon(parentwc,"",x-1,y-1,adjwidth+2,h+2,gravity);
 
 	wa.win_gravity=gravity;
 	wa.save_under=true;
@@ -286,9 +286,12 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 			this->labels[j]=new LFSTK_buttonClass(parentwc,"",sx,sy,adjwidth-2,LABELHITE-4,gravity);
 			this->labels[j]->LFSTK_setLabelAutoColour(true);
 			this->labels[j]->LFSTK_reloadColours();
-			this->labels[j]->LFSTK_setColourName(NORMALCOLOUR,"white");
-			this->labels[j]->LFSTK_setColourName(INACTIVECOLOUR,"white");
+//			this->labels[j]->LFSTK_setColourName(NORMALCOLOUR,"white");
+//			this->labels[j]->LFSTK_setColourName(INACTIVECOLOUR,"white");
+			this->labels[j]->LFSTK_setColourName(NORMALCOLOUR,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPELISTTROUGHCOLOUR));
+			this->labels[j]->LFSTK_setColourName(INACTIVECOLOUR,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPELISTTROUGHCOLOUR));
 
+//			this->labels[j]->gadgetDetails.colour=&this->labels[j]->colourNames[NORMALCOLOUR];
 			this->labels[j]->gadgetDetails.colour=&this->labels[j]->colourNames[NORMALCOLOUR];
 			this->labels[j]->gadgetDetails.state=NORMALCOLOUR;
 			this->labels[j]->gadgetDetails.bevel=BEVELNONE;
@@ -308,15 +311,17 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 		}
 
 //navigate
-	this->scrollBar=new LFSTK_scrollBarClass(this->wc,true,x+w-SCROLLBARWIDTH,y,SCROLLBARWIDTH,h,gravity);
+	this->scrollBar=new LFSTK_scrollBarClass(this->wc,true,x+w-SCROLLBARWIDTH-2,y,SCROLLBARWIDTH,h,gravity);
 	this->scrollBar->LFSTK_setScale(1,1);
 	this->scrollBar->LFSTK_setLineScroll(1);
 	this->scrollBar->LFSTK_setCallBack(NULL,scrollCB,this);
 
 	this->style=BEVELIN;
 
-	this->LFSTK_setColourName(NORMALCOLOUR,"white");
-	this->LFSTK_setColourName(INACTIVECOLOUR,"white");
+	this->LFSTK_setColourName(NORMALCOLOUR,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPELISTTROUGHCOLOUR));
+	this->LFSTK_setColourName(INACTIVECOLOUR,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPELISTTROUGHCOLOUR));
+//	this->LFSTK_setColourName(NORMALCOLOUR,"white");
+//	this->LFSTK_setColourName(INACTIVECOLOUR,"white");
 	this->gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,adjwidth,h},{0,0,0,0},false};
 	this->clearBox(&this->gadgetDetails);
 }

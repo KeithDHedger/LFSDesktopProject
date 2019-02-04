@@ -2,10 +2,10 @@ window_normal #AA6402
 window_prelight #6B4C26
 window_active #412502
 window_inactive #808080
-button_normal #FF9600
-button_prelight #FFB600
-button_active #D98000
-button_inactive #945800
+button_normal #BBCEEC
+button_prelight #DAEAFD
+button_active #71A9CC
+button_inactive #A7BAC6
 menuitem_normal #976115
 menuitem_prelight #E88900
 menuitem_active #643b00
@@ -25,3 +25,4 @@ usetheme 1
 monofont DejaVu Sans Mono:size=14
 cursorcolour blue
 sbtroughcolour light blue
+listtroughcolour #639DC5

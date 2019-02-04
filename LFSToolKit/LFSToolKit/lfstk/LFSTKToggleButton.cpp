@@ -17,7 +17,9 @@
  * You should have received a copy of the GNU General Public License
  * along with LFSToolKit.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
+#include <unistd.h>
+
 #include "lfstk/LFSTKGlobals.h"
 
 LFSTK_toggleButtonClass::~LFSTK_toggleButtonClass()
@@ -42,6 +44,7 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass()
 LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity)
 {
 	XSetWindowAttributes	wa;
+	char					*pathtobit;
 
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 
@@ -70,6 +73,16 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 
 	this->style=BEVELNONE;
 
+	asprintf(&pathtobit,"%s/check.png",this->wc->globalLib->LFSTK_getThemePath());
+	if(access(pathtobit,F_OK)==0)
+		{
+			if(this->LFSTK_setImageFromPath(pathtobit,LEFT,false)==CAIRO_STATUS_SUCCESS)
+				this->useImage=false;
+		}
+
+	this->showIndicator=true;
+	free(pathtobit);
+
 	gadgetDetails={&this->wc->windowColourNames[NORMALCOLOUR],BEVELOUT,CHECK,NORMALCOLOUR,CHECKBOXSIZE,false,{0,0,w,h},{2,(int)((h/2)-(CHECKBOXSIZE/2)),CHECKBOXSIZE,CHECKBOXSIZE},true};
 	this->LFSTK_setFontColourName(0,this->wc->globalLib->LFSTK_getGlobalString(0,TYPEFONTCOLOUR),true);
 }
@@ -85,20 +98,11 @@ bool LFSTK_toggleButtonClass::mouseEnter(XButtonEvent *e)
 		{
 			this->gadgetDetails.colour=&this->colourNames[PRELIGHTCOLOUR];
 			this->gadgetDetails.state=PRELIGHTCOLOUR;
-			if(this->toggleState==true)
-				this->gadgetDetails.bevel=BEVELIN;
-			else
-				this->gadgetDetails.bevel=BEVELOUT;
 		}
 	else
 		{
-			this->gadgetDetails.indic=CHECK;
 			this->gadgetDetails.colour=&this->wc->windowColourNames[NORMALCOLOUR];
 			this->gadgetDetails.state=PRELIGHTCOLOUR;
-			if(this->toggleState==true)
-				this->gadgetDetails.bevel=BEVELIN;
-			else
-				this->gadgetDetails.bevel=BEVELOUT;
 		}
 
 	this->inWindow=true;
@@ -114,24 +118,19 @@ bool LFSTK_toggleButtonClass::mouseEnter(XButtonEvent *e)
 */
 bool LFSTK_toggleButtonClass::mouseExit(XButtonEvent *e)
 {
-	if(this->boxStyle==TOGGLENORMAL)
+	if(this->toggleState==true)
 		{
-			this->gadgetDetails.colour=&this->colourNames[NORMALCOLOUR];
-			this->gadgetDetails.state=NORMALCOLOUR;
-			if(this->toggleState==true)
-				this->gadgetDetails.bevel=BEVELIN;
-			else
-				this->gadgetDetails.bevel=BEVELOUT;
+			if(this->boxStyle==TOGGLENORMAL)
+				this->gadgetDetails.colour=&this->colourNames[ACTIVECOLOUR];
+			this->gadgetDetails.state=ACTIVECOLOUR;
+			this->gadgetDetails.bevel=BEVELIN;
 		}
 	else
 		{
-			this->gadgetDetails.indic=CHECK;
-			this->gadgetDetails.colour=&this->wc->windowColourNames[NORMALCOLOUR];
+			if(this->boxStyle==TOGGLENORMAL)
+				this->gadgetDetails.colour=&this->colourNames[NORMALCOLOUR];
 			this->gadgetDetails.state=NORMALCOLOUR;
-			if(this->toggleState==true)
-				this->gadgetDetails.bevel=BEVELIN;
-			else
-				this->gadgetDetails.bevel=BEVELOUT;
+			this->gadgetDetails.bevel=BEVELOUT;
 		}
 
 	this->inWindow=false;
@@ -151,20 +150,17 @@ bool LFSTK_toggleButtonClass::mouseDown(XButtonEvent *e)
 		{
 			this->gadgetDetails.colour=&this->colourNames[ACTIVECOLOUR];
 			this->gadgetDetails.state=ACTIVECOLOUR;
-			if(this->toggleState==true)
-				this->gadgetDetails.bevel=BEVELOUT;
-			else
-				this->gadgetDetails.bevel=BEVELIN;
 		}
 	else
 		{
 			this->gadgetDetails.colour=&this->wc->windowColourNames[NORMALCOLOUR];
 			this->gadgetDetails.state=ACTIVECOLOUR;
-			if(this->toggleState==true)
-				this->gadgetDetails.bevel=BEVELIN;
-			else
-				this->gadgetDetails.bevel=BEVELOUT;
 		}
+
+	if(this->toggleState==true)
+		this->gadgetDetails.bevel=BEVELOUT;
+	else
+		this->gadgetDetails.bevel=BEVELIN;
 
 	XSync(this->display,false);
 	LFSTK_gadgetClass::LFSTK_clearWindow();
@@ -188,24 +184,10 @@ bool LFSTK_toggleButtonClass::mouseUp(XButtonEvent *e)
 			col=PRELIGHTCOLOUR;
 		}
 
-	if(this->boxStyle==TOGGLENORMAL)
-		{
-			this->gadgetDetails.colour=&this->colourNames[col];
-			this->gadgetDetails.state=col;
-			if(this->toggleState==true)
-				this->gadgetDetails.bevel=BEVELIN;
-			else
-				this->gadgetDetails.bevel=BEVELOUT;
-		}
+	if(this->toggleState==true)
+		this->gadgetDetails.state=ACTIVECOLOUR;
 	else
-		{
-			this->gadgetDetails.colour=&this->wc->windowColourNames[NORMALCOLOUR];
-			this->gadgetDetails.state=col;
-			if(this->toggleState==true)
-				this->gadgetDetails.bevel=BEVELIN;
-			else
-				this->gadgetDetails.bevel=BEVELOUT;
-		}
+		this->gadgetDetails.state=NORMALCOLOUR;
 
 	LFSTK_gadgetClass::LFSTK_clearWindow();
 	XSync(this->display,false);
@@ -221,6 +203,7 @@ bool LFSTK_toggleButtonClass::mouseUp(XButtonEvent *e)
 /**
 * Set the toggle button style.
 * \param drawStyle Style=TOGGLECHECK=0,TOGGLERADIO=1,TOGGLENORMAL=2.
+* \note TOGGLERADIO not implemented yet.
 */
 void LFSTK_toggleButtonClass::LFSTK_setToggleStyle(drawStyle ds)
 {
@@ -236,6 +219,7 @@ void LFSTK_toggleButtonClass::LFSTK_setToggleStyle(drawStyle ds)
 			gadgetDetails.colour=&this->colourNames[NORMALCOLOUR];
 			gadgetDetails.reserveSpace=0;
 			gadgetDetails.buttonTile=true;
+			this->showIndicator=false;
 		}
 	else
 		{
@@ -243,6 +227,7 @@ void LFSTK_toggleButtonClass::LFSTK_setToggleStyle(drawStyle ds)
 			this->LFSTK_setLabelGravity(LEFT);
 			gadgetDetails.hasIndicator=true;
 			gadgetDetails.buttonTile=false;
+			this->showIndicator=true;
 		}
 }
 
@@ -254,9 +239,16 @@ void LFSTK_toggleButtonClass::LFSTK_setValue(bool val)
 {
 	this->toggleState=val;
 	if(this->toggleState==true)
-		this->gadgetDetails.bevel=BEVELIN;
+		{
+		
+			this->gadgetDetails.bevel=BEVELIN;
+			this->gadgetDetails.state=ACTIVECOLOUR;
+		}
 	else
-		this->gadgetDetails.bevel=BEVELOUT;
+		{
+			this->gadgetDetails.bevel=BEVELOUT;
+			this->gadgetDetails.state=NORMALCOLOUR;
+		}
 
 	this->LFSTK_clearWindow();
 }

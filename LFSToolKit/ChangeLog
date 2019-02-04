@@ -1,4 +1,8 @@
 0.4.2
+Cleaned toggle class code.
+Added check box png support.
+Added listtroughcolour to prefs.
+Started adding more theme parts.
 Fixed minor faults.
 Added theme path to lfstkprefs.
 Added support for arrow pngs in themes for scrollbars.

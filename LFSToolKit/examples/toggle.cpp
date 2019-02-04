@@ -66,7 +66,7 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //check button	
-	check=new LFSTK_toggleButtonClass(wc,"Check Box",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthWestGravity);
+	check=new LFSTK_toggleButtonClass(wc,"Check Box",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,CHECKBOXSIZE,NorthWestGravity);
 	check->LFSTK_setValue(true);
 	check->LFSTK_setCallBack(NULL,buttonCB,(void*)check->LFSTK_getLabel());
 	sy+=YSPACING;

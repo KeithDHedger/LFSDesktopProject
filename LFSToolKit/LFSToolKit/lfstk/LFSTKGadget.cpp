@@ -365,7 +365,6 @@ void LFSTK_gadgetClass::clearBox(gadgetStruct* details)
 				cairo_paint(this->cr);
 			cairo_restore(this->cr);
 		}
-	//XSync(this->display,false);
 }
 
 /**
@@ -1122,9 +1121,15 @@ void LFSTK_gadgetClass::drawIndicator(gadgetStruct* details)
 			case CHECK:
 				cairo_save(this->cr);
 					cairo_reset_clip (this->cr);
-					cairo_set_source_rgba(this->cr,this->colourNames[details->state].RGBAColour.r,colourNames[details->state].RGBAColour.g,colourNames[details->state].RGBAColour.b,colourNames[details->state].RGBAColour.a);
-					cairo_rectangle(this->cr,details->indicatorGeom.x,details->indicatorGeom.y,details->indicatorGeom.w,details->indicatorGeom.h);
-					cairo_fill(this->cr);
+						cairo_set_source_rgba(this->cr,this->colourNames[details->state].RGBAColour.r,colourNames[details->state].RGBAColour.g,colourNames[details->state].RGBAColour.b,colourNames[details->state].RGBAColour.a);
+						cairo_rectangle(this->cr,details->indicatorGeom.x,details->indicatorGeom.y,details->indicatorGeom.w,details->indicatorGeom.h);
+						cairo_fill(this->cr);
+						if(this->cImage!=NULL)
+							{
+								cairo_translate(this->cr,details->indicatorGeom.x,details->indicatorGeom.y);
+								cairo_set_source_surface(this->cr,this->cImage,0,0);
+								cairo_paint_with_alpha(this->cr,this->alpha);
+							}
 				cairo_restore(this->cr);
 				this->drawBevel(&this->gadgetDetails.indicatorGeom,this->gadgetDetails.bevel);
 				break;
