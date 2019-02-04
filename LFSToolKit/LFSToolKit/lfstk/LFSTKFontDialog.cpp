@@ -208,16 +208,18 @@ void LFSTK_fontDialogClass::buildDialog(void)
 	sy+=GADGETHITE*5;
 
 //bold
-	this->boldcheck=new LFSTK_toggleButtonClass(this->dialog,"Bold",BORDER,sy,GADGETWIDTH,GADGETHITE,NorthWestGravity);
+	sy+=GADGETHITE;
+	this->boldcheck=new LFSTK_toggleButtonClass(this->dialog,"Bold",BORDER,sy,GADGETWIDTH,CHECKBOXSIZE,NorthWestGravity);
 	this->boldcheck->LFSTK_setCallBack(NULL,select,(void*)this);
 
 //italic
-	this->italiccheck=new LFSTK_toggleButtonClass(this->dialog,"Italic",BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthWestGravity);
+	this->italiccheck=new LFSTK_toggleButtonClass(this->dialog,"Italic",BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,CHECKBOXSIZE,NorthWestGravity);
 	this->italiccheck->LFSTK_setCallBack(NULL,select,(void*)this);
+	//sy-=CHECKBOXSIZE;
 
 //font size
 	snprintf((char*)&sizestr,3,"%i",size);
-	fontsize=new LFSTK_lineEditClass(this->dialog,(const char*)sizestr,BORDER*2+GADGETWIDTH+BORDER*2+GADGETWIDTH,sy,GADGETHITE,GADGETHITE,BUTTONGRAV);
+	fontsize=new LFSTK_lineEditClass(this->dialog,(const char*)sizestr,BORDER*2+GADGETWIDTH+BORDER*2+GADGETWIDTH,sy-CHECKBOXSIZE/2,GADGETHITE,GADGETHITE,BUTTONGRAV);
 	this->fontsize->LFSTK_setCallBack(select,NULL,(void*)this);
 	sy+=YSPACING;
 
