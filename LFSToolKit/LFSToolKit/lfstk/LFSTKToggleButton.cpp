@@ -24,6 +24,11 @@
 
 LFSTK_toggleButtonClass::~LFSTK_toggleButtonClass()
 {
+	if(this->checkOn!=NULL)
+		cairo_surface_destroy(this->checkOn);
+	if(this->checkOff!=NULL)
+		cairo_surface_destroy(this->checkOff);
+	this->cImage=NULL;
 }
 
 LFSTK_toggleButtonClass::LFSTK_toggleButtonClass()
@@ -73,11 +78,26 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 
 	this->style=BEVELNONE;
 
-	asprintf(&pathtobit,"%s/check.png",this->wc->globalLib->LFSTK_getThemePath());
+//	asprintf(&pathtobit,"%s/check.png",this->wc->globalLib->LFSTK_getThemePath());
+	asprintf(&pathtobit,"%s/checkon.png",this->wc->globalLib->LFSTK_getThemePath());
 	if(access(pathtobit,F_OK)==0)
 		{
-			if(this->LFSTK_setImageFromPath(pathtobit,LEFT,false)==CAIRO_STATUS_SUCCESS)
+			this->checkOn=this->wc->globalLib->LFSTK_createSurfaceFromPath(pathtobit);
+			free(pathtobit);
+			asprintf(&pathtobit,"%s/checkoff.png",this->wc->globalLib->LFSTK_getThemePath());
+			this->checkOff=this->wc->globalLib->LFSTK_createSurfaceFromPath(pathtobit);
+
+
+			if((this->checkOn==NULL) || (this->checkOff==NULL))
 				this->useImage=false;
+			else
+				{
+					this->useImage=true;
+					this->cImage=this->checkOn;
+				}
+		//	if(this->LFSTK_setImageFromPath(pathtobit,LEFT,false)==CAIRO_STATUS_SUCCESS)
+		//	if(this->LFSTK_setImageFromPath(pathtobit,LEFT,false)==CAIRO_STATUS_SUCCESS)
+		//		this->useImage=false;
 		}
 
 	this->showIndicator=true;
@@ -185,9 +205,17 @@ bool LFSTK_toggleButtonClass::mouseUp(XButtonEvent *e)
 		}
 
 	if(this->toggleState==true)
-		this->gadgetDetails.state=ACTIVECOLOUR;
+		{
+			if(this->useImage==true)
+				this->cImage=this->checkOn;
+			this->gadgetDetails.state=ACTIVECOLOUR;
+		}
 	else
-		this->gadgetDetails.state=NORMALCOLOUR;
+		{
+			if(this->useImage==true)
+				this->cImage=this->checkOff;
+			this->gadgetDetails.state=NORMALCOLOUR;
+		}
 
 	LFSTK_gadgetClass::LFSTK_clearWindow();
 	XSync(this->display,false);
@@ -220,6 +248,11 @@ void LFSTK_toggleButtonClass::LFSTK_setToggleStyle(drawStyle ds)
 			gadgetDetails.reserveSpace=0;
 			gadgetDetails.buttonTile=true;
 			this->showIndicator=false;
+			if(this->useImage==true)
+				{
+					this->cImage=NULL;
+					this->useImage=false;
+				}
 		}
 	else
 		{
@@ -228,6 +261,8 @@ void LFSTK_toggleButtonClass::LFSTK_setToggleStyle(drawStyle ds)
 			gadgetDetails.hasIndicator=true;
 			gadgetDetails.buttonTile=false;
 			this->showIndicator=true;
+			if(this->useImage==true)
+				this->cImage=this->checkOff;
 		}
 }
 
@@ -243,11 +278,15 @@ void LFSTK_toggleButtonClass::LFSTK_setValue(bool val)
 		
 			this->gadgetDetails.bevel=BEVELIN;
 			this->gadgetDetails.state=ACTIVECOLOUR;
+			if(this->useImage==true)
+				this->cImage=this->checkOn;
 		}
 	else
 		{
 			this->gadgetDetails.bevel=BEVELOUT;
 			this->gadgetDetails.state=NORMALCOLOUR;
+			if(this->useImage==true)
+				this->cImage=this->checkOff;
 		}
 
 	this->LFSTK_clearWindow();

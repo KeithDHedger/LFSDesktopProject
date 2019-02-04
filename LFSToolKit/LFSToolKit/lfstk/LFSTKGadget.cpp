@@ -1128,6 +1128,7 @@ void LFSTK_gadgetClass::drawIndicator(gadgetStruct* details)
 							{
 								cairo_translate(this->cr,details->indicatorGeom.x,details->indicatorGeom.y);
 								cairo_set_source_surface(this->cr,this->cImage,0,0);
+								//cairo_set_source_surface(this->cr,this->checkup,0,0);
 								cairo_paint_with_alpha(this->cr,this->alpha);
 							}
 				cairo_restore(this->cr);
