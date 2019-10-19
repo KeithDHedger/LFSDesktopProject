@@ -24,7 +24,7 @@
 #define SEPARATORHITE 4
 /**
  *
- * \brief Label class for LFSToolKit gadgets.
+ * \brief Menu item class for LFSToolKit gadgets.
  *
  */
 class LFSTK_menuItemClass : public LFSTK_buttonClass
@@ -43,6 +43,5 @@ class LFSTK_menuItemClass : public LFSTK_buttonClass
 		LFSTK_toolWindowClass				*subwc=NULL;
 		menuStruct							*menuData=NULL;
 };
-
 
 #endif

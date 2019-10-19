@@ -1,3 +1,7 @@
+0.4.3
+Fixed hiding menu windows when clicking in root window.
+LFSTK_menuButtonClass deprecated, to be removed.
+
 0.4.2
 Fixed font dialog layout.
 Added sepearte on/off pngs for checkbox.

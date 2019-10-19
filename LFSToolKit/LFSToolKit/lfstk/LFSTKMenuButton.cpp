@@ -21,7 +21,7 @@
 #include <stdlib.h>
 
 #include "lfstk/LFSTKGlobals.h"
-
+#if 1
 void LFSTK_menuButtonClass::initMenuButton(void)
 {
 	this->subwc=new LFSTK_windowClass(0,0,1,1,"menu window",true,true,false);
@@ -303,4 +303,4 @@ void LFSTK_menuButtonClass::LFSTK_updateMenus(menuItemStruct* menus,int cnt)
 	this->menus=menus;
 	this->menuCount=cnt;
 }
-
+#endif

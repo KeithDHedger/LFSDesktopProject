@@ -19,7 +19,6 @@
  */
 
 #include "lfstk/LFSTKGlobals.h"
-
 LFSTK_menuItemClass::~LFSTK_menuItemClass()
 {
 }
@@ -98,13 +97,18 @@ bool LFSTK_menuItemClass::mouseExit(XButtonEvent *e)
 */
 bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 {
-	double	txtwid=0;
-	double	maxtxtwid=0;
-	int		finaltxtwid;
-	int		gotsubmenu=this->pad*4;
-	int		gotthumb=LEFT;
-	int		winshrink=0;
-	int		hite=GADGETHITE;
+	double			txtwid=0;
+	double			maxtxtwid=0;
+	int				finaltxtwid;
+	int				gotsubmenu=this->pad*4;
+	int				gotthumb=LEFT;
+	int				winshrink=0;
+	int				hite=GADGETHITE;
+	Window			sink;
+	Window			childwindow;
+	int				sinkx;
+	int				sinky;
+	unsigned int	buttonmask;
 
 	if((this->isActive==false) || (this->callback.ignoreCallback==true))
 		return(true);
@@ -168,7 +172,26 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
  
 			while(this->subwc->mainLoop==true)
 				{
-					XNextEvent(this->display,&event);
+					if(XPending(this->display))
+						{
+							XNextEvent(this->display,&event);
+						}
+					else
+						{
+							XQueryPointer(this->display,this->subwc->rootWindow,&sink,&childwindow,&sinkx,&sinky,&sinkx,&sinky,&buttonmask);
+							if((childwindow!=this->subwc->window) && (buttonmask!=0))
+								{
+									for(int j=0;j<this->menu->subwindows->size();j++)
+										{
+											this->menu->subwindows->at(j)->LFSTK_hideWindow();
+											this->menu->subwindows->at(j)->mainLoop=false;
+										}
+									this->menu->mainMenuWindow->LFSTK_hideWindow();
+									this->menu->mainLoop=false;
+								}
+							continue;
+						}
+
 					mappedListener *ml=this->subwc->LFSTK_getMappedListener(event.xany.window);
 					switch(event.type)
 						{

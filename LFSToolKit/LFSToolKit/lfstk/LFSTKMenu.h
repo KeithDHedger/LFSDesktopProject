@@ -20,7 +20,7 @@
 
 #ifndef _LFSTKMENU_
 #define _LFSTKMENU_
-
+#if 1
 /**
  *
  * \brief Label class for LFSToolKit gadgets.
@@ -62,4 +62,5 @@ class LFSTK_menuClass
 };
 
 
+#endif
 #endif

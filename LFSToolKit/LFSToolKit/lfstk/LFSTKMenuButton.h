@@ -21,7 +21,7 @@
 
 #ifndef _LFSTKMENUBUTTON_
 #define _LFSTKMENUBUTTON_
-
+#if 1
 /**
  *
  * Menu structure for menuItemClass.
@@ -69,4 +69,5 @@ class LFSTK_menuButtonClass : public LFSTK_buttonClass
 		const char			*menuItemFont=NULL;
 };
 
+#endif
 #endif

@@ -70,6 +70,11 @@ void LFSTK_menuClass::LFSTK_showMenu(void)
 	int				x;
 	int				y;
 	unsigned int	w,h,dump;
+	Window			sink;
+	Window			childwindow;
+	int				sinkx;
+	int				sinky;
+	unsigned int	buttonmask;
 
 	this->mainMenuWindow->LFSTK_showWindow(true);
 	this->mainLoop=true;
@@ -90,7 +95,22 @@ void LFSTK_menuClass::LFSTK_showMenu(void)
 
 	while(this->mainLoop==true)
 		{
-			XNextEvent(this->mainMenuWindow->display,&event);
+			if(XPending(this->display))
+				{
+					XNextEvent(this->mainMenuWindow->display,&event);
+				}
+			else
+				{
+					XQueryPointer(this->display,this->parentwc->rootWindow,&sink,&childwindow,&sinkx,&sinky,&sinkx,&sinky,&buttonmask);
+					if((childwindow!=this->mainMenuWindow->window) && (buttonmask!=0))
+						{
+							this->mainMenuWindow->LFSTK_hideWindow();
+							this->mainMenuWindow->mainLoop=false;
+							this->mainLoop=false;
+						}
+					continue;
+				}
+
 			mappedListener *ml=this->mainMenuWindow->LFSTK_getMappedListener(event.xany.window);
 
 			if(ml!=NULL)
@@ -98,7 +118,7 @@ void LFSTK_menuClass::LFSTK_showMenu(void)
 
 			if(this->mainMenuWindow->LFSTK_handleWindowEvents(&event)<0)
 				mainLoop=false;
-
+	
 			switch(event.type)
 				{
 					case ConfigureNotify:
@@ -108,6 +128,7 @@ void LFSTK_menuClass::LFSTK_showMenu(void)
 						break;
 
 					case FocusOut:
+					case FocusIn:
 						this->mainMenuWindow->LFSTK_hideWindow();
 						this->mainMenuWindow->mainLoop=false;
 						this->mainLoop=false;
@@ -265,4 +286,3 @@ int	LFSTK_menuClass::LFSTK_getTextWidthForFont(const char *text)
 	return((int)(returnextents.x_advance+0.5));
 
 }
-
