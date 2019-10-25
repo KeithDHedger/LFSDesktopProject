@@ -100,13 +100,13 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
-am__objects_1 = ../src/appmenu.$(OBJEXT) ../src/atoms.$(OBJEXT) \
-	../src/button.$(OBJEXT) ../src/client.$(OBJEXT) \
-	../src/dragger.$(OBJEXT) ../src/ewmh.$(OBJEXT) \
-	../src/frame.$(OBJEXT) ../src/lib.$(OBJEXT) \
-	../src/main.$(OBJEXT) ../src/mwm.$(OBJEXT) \
-	../src/prefs.$(OBJEXT) ../src/root.$(OBJEXT) \
-	../src/wind.$(OBJEXT) ../src/xftfont.$(OBJEXT)
+am__objects_1 = ../src/atoms.$(OBJEXT) ../src/button.$(OBJEXT) \
+	../src/client.$(OBJEXT) ../src/dragger.$(OBJEXT) \
+	../src/ewmh.$(OBJEXT) ../src/frame.$(OBJEXT) \
+	../src/lib.$(OBJEXT) ../src/main.$(OBJEXT) \
+	../src/mwm.$(OBJEXT) ../src/prefs.$(OBJEXT) \
+	../src/root.$(OBJEXT) ../src/wind.$(OBJEXT) \
+	../src/xftfont.$(OBJEXT)
 am_lfswmanager_OBJECTS = $(am__objects_1)
 lfswmanager_OBJECTS = $(am_lfswmanager_OBJECTS)
 lfswmanager_LDADD = $(LDADD)
@@ -349,7 +349,7 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 				-DHELPERDIR=\""${libdir}"\" \
 				-DMAINMENUAPP=\""${libexecdir}/${PACKAGE}/appmenu"\"
 
-COMMONSRC = ../src/appmenu.cpp ../src/atoms.cpp ../src/button.cpp ../src/client.cpp ../src/dragger.cpp ../src/ewmh.cpp ../src/frame.cpp ../src/lib.cpp ../src/main.cpp ../src/mwm.cpp ../src/prefs.cpp ../src/root.cpp ../src/wind.cpp ../src/xftfont.cpp
+COMMONSRC = ../src/atoms.cpp ../src/button.cpp ../src/client.cpp ../src/dragger.cpp ../src/ewmh.cpp ../src/frame.cpp ../src/lib.cpp ../src/main.cpp ../src/mwm.cpp ../src/prefs.cpp ../src/root.cpp ../src/wind.cpp ../src/xftfont.cpp
 lfswmanager_SOURCES = $(COMMONSRC)
 man1_MANS = ../resources/man/lfswmanager.1
 all: all-am
@@ -434,8 +434,6 @@ clean-binPROGRAMS:
 ../src/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) ../src/$(DEPDIR)
 	@: > ../src/$(DEPDIR)/$(am__dirstamp)
-../src/appmenu.$(OBJEXT): ../src/$(am__dirstamp) \
-	../src/$(DEPDIR)/$(am__dirstamp)
 ../src/atoms.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
 ../src/button.$(OBJEXT): ../src/$(am__dirstamp) \
@@ -474,7 +472,6 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/appmenu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/atoms.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/button.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/client.Po@am__quote@

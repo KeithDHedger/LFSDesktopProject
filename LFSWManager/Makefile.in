@@ -316,7 +316,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-SUBDIRS = LFSWManager/app LFSWManager/helper
+SUBDIRS = LFSWManager/app
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

@@ -65,7 +65,6 @@
 #include "prefs.h"
 #include "button.h"
 #include "atoms.h"
-#include "appmenu.h"
 
 #include "deleven.xbm"
 #include "delodd.xbm"
@@ -86,7 +85,7 @@ DEFINE_BITMAP(shadeeven);
 DEFINE_BITMAP(shadeodd);
 
 //#define MAX_MSG_SIZE 256
-enum {REFRESHTHEME,SHOWAPPMENU};
+enum {REFRESHTHEME};
 
 //struct msgBuffer
 //{
@@ -468,11 +467,6 @@ bool readMsg(void)
 					whatMsg=REFRESHTHEME;
 					return(true);
 				}
-			if(strcmp(buffer.mText,"showappmenu")==0)
-				{
-					whatMsg=SHOWAPPMENU;
-					return(true);
-				}
 		}
 	return(false);
 }
@@ -760,29 +754,6 @@ int main(int argc,char *argv[])
 					needsRefresh=false;
 				}
 
-			if(XQueryPointer(dpy,DefaultRootWindow(dpy),&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
-					{
-						if(((mask_return & Button3Mask) && (mask_return & ControlMask)) || ((needsRefresh==true) && (whatMsg==SHOWAPPMENU)))
-							{
-								isdesktop=false;		
-								if(child_return!=0)
-									{
-										types=(Atom*)getprop(child_return,NET_WM_WINDOW_TYPE,XA_ATOM,32,&n);
-										if (types != NULL)
-											{
-												if (types[0]==NET_WM_WINDOW_TYPE_DESKTOP)
-													isdesktop=true;
-												XFree(types);
-											}
-									}
-								
-								if((isdesktop==true) || (child_return==0))
-									{
-										sprintf(buffer,"%s \"%s\"",MAINMENUAPP,terminalCommand);
-										system(buffer);
-									}
-							}
-					}
 			if (redirect(&e,e.xany.window)==-1)
 				{
 					/*

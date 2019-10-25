@@ -1,5 +1,5 @@
 
-AC_INIT([LFSWManager],[0.1.2],[PROJ],[LFSWManager])
+AC_INIT([LFSWManager],[0.1.3],[PROJ],[LFSWManager])
 
 AC_CONFIG_HEADER([config.h])
 AC_PROG_CXX
@@ -73,5 +73,5 @@ if test "$enable_debug" = "yes"; then
 	AC_DEFINE([_ENABLEDEBUG_], [], [Enable debug code])
 fi
 
-AC_OUTPUT(Makefile LFSWManager/app/Makefile LFSWManager/helper/Makefile)
+AC_OUTPUT(Makefile LFSWManager/app/Makefile)
 
