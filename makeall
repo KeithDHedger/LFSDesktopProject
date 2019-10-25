@@ -46,14 +46,15 @@ runCommand ()
 if [ "X$action" = "Xdeploy" ];then
 	runCommand 	"make distclean"
 	runCommand 	"./configure --prefix=/usr"
-	runCommand 	"sudo make install"
+	runCommand 	"sudo make uninstall"
+	runCommand 	"sudo make -j4 install"
 	exit 0
 fi
 
 if [ "X$action" = "Xdeploy-test" ];then
 	runCommand 	"make distclean"
 	runCommand 	"./configure --prefix=/usr"
-	runCommand 	"make install DESTDIR=/tmp/lfsdesktop"
+	runCommand 	"make -j4 install DESTDIR=/tmp/lfsdesktop"
 	exit 0
 fi
 
