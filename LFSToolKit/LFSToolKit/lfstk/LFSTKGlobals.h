@@ -291,7 +291,7 @@ enum {DESKTOP_MSG=1000,WMANAGER_MSG,PANEL_MSG,WALLPAPER_MSG,TOOLKIT_MSG,APPEARAN
 #include "LFSTKLabel.h"
 #include "LFSTKImage.h"
 #include "LFSTKButton.h"
-#include "LFSTKMenuButton.h"
+//#include "LFSTKMenuButton.h"
 #include "LFSTKLineEdit.h"
 #include "LFSTKToggleButton.h"
 #include "LFSTKScrollBar.h"

@@ -20,7 +20,7 @@ exit $retval
 
 #include "lfstk/LFSTKGlobals.h"
 
-#define BOXLABEL				"New Menu Example"
+#define BOXLABEL				"Menu Example"
 #define NUMMENUS				16
 
 LFSTK_windowClass				*wc=NULL;

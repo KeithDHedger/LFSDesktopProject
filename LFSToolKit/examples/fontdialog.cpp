@@ -30,7 +30,6 @@ LFSTK_toggleButtonClass		*boldcheck=NULL;
 LFSTK_toggleButtonClass		*italiccheck=NULL;
 LFSTK_lineEditClass			*fontsize=NULL;
 LFSTK_lineEditClass			*preview=NULL;
-LFSTK_menuButtonClass		*sizemenu=NULL;
 LFSTK_fontDialogClass		*fontdialog=NULL;
 
 bool						mainLoop=true;
@@ -40,7 +39,6 @@ char						**fontsAZ=NULL;
 unsigned					size=10;
 const char					*fontname=NULL;
 unsigned					selectnumber=0;
-menuItemStruct				*mainMenus;
 const char					*mainMenuNames[]={"6","7","8","9","10","11","12","13","14","15","16","17","18","20","22","24","26","28","32","36","40","48","56","64","72"};
 
 bool doQuit(void *p,void* ud)

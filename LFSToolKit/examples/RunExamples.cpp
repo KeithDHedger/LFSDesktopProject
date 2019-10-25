@@ -140,13 +140,19 @@ int main(int argc, char **argv)
 	button=new LFSTK_buttonClass(wc,"Toggles",DIALOGMIDDLE+BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./toggle.cpp");
 	sy+=YSPACING;
-//basic menus
-	button=new LFSTK_buttonClass(wc,"Basic Menu",DIALOGMIDDLE-GADGETWIDTH-BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./basicmenu.cpp");
-//sub menus
-	button=new LFSTK_buttonClass(wc,"Sub Menus",DIALOGMIDDLE+BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./submenus.cpp");
+//menus
+	button=new LFSTK_buttonClass(wc,"Menus",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./menus.cpp");
 	sy+=YSPACING;
+//
+//
+//
+//	button=new LFSTK_buttonClass(wc,"Basic Menu",DIALOGMIDDLE-GADGETWIDTH-BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+//	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./basicmenu.cpp");
+////sub menus
+//	button=new LFSTK_buttonClass(wc,"Sub Menus",DIALOGMIDDLE+BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+//	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./submenus.cpp");
+//	sy+=YSPACING;
 //dialogs
 	button=new LFSTK_buttonClass(wc,"Dialogs",DIALOGMIDDLE-GADGETWIDTH-BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./dialogs.cpp");
@@ -183,11 +189,6 @@ int main(int argc, char **argv)
 //run command
 	button=new LFSTK_buttonClass(wc,"Run Command",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./lfsruncommand.cpp");
-	sy+=YSPACING;
-
-//run newlist
-	button=new LFSTK_buttonClass(wc,"New Menu",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	button->LFSTK_setCallBack(NULL,buttonCB,(void*)"./newmenutest.cpp");
 	sy+=YSPACING;
 
 //line

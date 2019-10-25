@@ -1,3 +1,6 @@
+0.4.4
+Removed LFSTK_menuButtonClass.
+
 0.4.3
 Fixed hiding menu windows when clicking in root window.
 LFSTK_menuButtonClass deprecated, to be removed.
