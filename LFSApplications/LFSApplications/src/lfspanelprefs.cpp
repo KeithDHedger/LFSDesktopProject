@@ -126,6 +126,7 @@ bool buttonCB(void *p,void* ud)
 			if(strcmp((char*)ud,"SHOWGRAVMENU")==0)
 				gravMenu->LFSTK_showMenu();
 		}
+	return(true);
 }
 
 void getEdits(void)
