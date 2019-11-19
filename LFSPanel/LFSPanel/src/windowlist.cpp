@@ -250,11 +250,11 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 
 }
 
-int getCurrentDesktop(void)
+void getCurrentDesktop(void)
 {
 	char	*desknum=NULL;
 
-	desknum=mainwind->globalLib->LFSTK_oneLiner("%s","xprop -root |grep '_NET_CURRENT_DESKTOP(CARDINAL)'|head -n1|awk -F'=' '{print $2}'");
+	desknum=mainwind->globalLib->LFSTK_oneLiner("%s","/usr/bin/xprop -root |/bin/grep '_NET_CURRENT_DESKTOP(CARDINAL)'|/bin/head -n1|/usr/bin/awk -F'=' '{print $2}'");
 	if(desknum!=NULL)
 		{
 			currentDesktop=atoi(desknum);
@@ -366,11 +366,11 @@ int addWindowMenu(int x,int y,int grav,bool fromleft)
 			printError("Duplicate window selector");
 			return(0);
 		}
-
 	setSizes(&xpos,&ypos,&width,&height,&iconsize,&thisgrav,fromleft);
 
 	windowAll=new LFSTK_buttonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
 	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"computer","");
+
 	if(icon!=NULL)
 		{
 			windowAll->LFSTK_setImageFromPath(icon,LEFT,true);
@@ -378,6 +378,7 @@ int addWindowMenu(int x,int y,int grav,bool fromleft)
 		}
 	else
 		windowAll->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",LEFT,true);
+
 
 	windowAllMenu=new LFSTK_menuClass(mainwind,xpos,ypos+panelHeight,1,1);
 
