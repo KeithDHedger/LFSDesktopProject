@@ -168,7 +168,7 @@ bool LFSTK_lineEditClass::lostFocus(XEvent *e)
 {
 	if(this->isFocused==true)
 		{
-			XUngrabKeyboard(this->display,CurrentTime);
+//			XUngrabKeyboard(this->display,CurrentTime);
 			this->isFocused=false;
 			this->LFSTK_clearWindow();
 		}
@@ -184,13 +184,14 @@ bool LFSTK_lineEditClass::gotFocus(XEvent *e)
 {
 	if(this->isFocused==false)
 		{
-			XGrabKeyboard(this->display,this->window,true,GrabModeAsync,GrabModeAsync,CurrentTime);
+//			XGrabKeyboard(this->display,this->window,true,GrabModeAsync,GrabModeAsync,CurrentTime);
 			this->isFocused=true;
-			XSetInputFocus(this->display,this->window,RevertToParent,CurrentTime);
+//			//XSetInputFocus(this->display,this->window,RevertToParent,CurrentTime);
 			this->LFSTK_clearWindow();
 		}
 	return(true);
 }
+
 
 /**
 * Set the contents of the text buffer.
