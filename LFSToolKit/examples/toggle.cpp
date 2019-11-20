@@ -26,6 +26,9 @@ LFSTK_toggleButtonClass	*check=NULL;
 LFSTK_toggleButtonClass	*toggle=NULL;
 LFSTK_buttonClass		*seperator=NULL;
 LFSTK_buttonClass		*quit=NULL;
+char					*iconH=NULL;
+char					*iconM=NULL;
+char					*iconL=NULL;
 
 bool					mainLoop=true;
 Display					*display;
@@ -72,10 +75,13 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //toggle button	
-	toggle=new LFSTK_toggleButtonClass(wc,"Toggle",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthWestGravity);
+	toggle=new LFSTK_toggleButtonClass(wc,"Toggle",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETWIDTH,NorthWestGravity);
 	toggle->LFSTK_setCallBack(NULL,buttonCB,(void*)toggle->LFSTK_getLabel());
 	toggle->LFSTK_setToggleStyle(TOGGLENORMAL);
-	sy+=YSPACING;
+
+	iconH=wc->globalLib->LFSTK_findThemedIcon("gnome","volume-high","");
+	toggle->LFSTK_setImageFromPath(iconH,TOOLBAR,true);
+	sy+=YSPACING*3;
 
 //line
 	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);

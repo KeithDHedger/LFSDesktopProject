@@ -118,6 +118,7 @@ bool sliderCB(void *p,void* ud)
 			else
 				{
 					scwindow->LFSTK_hideWindow();
+					bc->LFSTK_clearWindow();
 					windowVisible=false;
 				}
 		}

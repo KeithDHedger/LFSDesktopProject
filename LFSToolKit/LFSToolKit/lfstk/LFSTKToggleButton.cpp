@@ -204,17 +204,20 @@ bool LFSTK_toggleButtonClass::mouseUp(XButtonEvent *e)
 			col=PRELIGHTCOLOUR;
 		}
 
-	if(this->toggleState==true)
+	if(this->boxStyle==TOGGLECHECK)
 		{
-			if(this->useImage==true)
-				this->cImage=this->checkOn;
-			this->gadgetDetails.state=ACTIVECOLOUR;
-		}
-	else
-		{
-			if(this->useImage==true)
-				this->cImage=this->checkOff;
-			this->gadgetDetails.state=NORMALCOLOUR;
+			if(this->toggleState==true)
+				{
+					if(this->useImage==true)
+						this->cImage=this->checkOn;
+					this->gadgetDetails.state=ACTIVECOLOUR;
+				}
+			else
+				{
+					if(this->useImage==true)
+						this->cImage=this->checkOff;
+					this->gadgetDetails.state=NORMALCOLOUR;
+				}
 		}
 
 	LFSTK_gadgetClass::LFSTK_clearWindow();
