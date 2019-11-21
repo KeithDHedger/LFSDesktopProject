@@ -24,3 +24,5 @@ autotextcolour 0
 usetheme 0
 monofont mono:size=12
 cursorcolour red
+sbtroughcolour red
+listtroughcolour red

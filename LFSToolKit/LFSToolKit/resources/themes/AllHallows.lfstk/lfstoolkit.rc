@@ -24,3 +24,5 @@ autotextcolour 0
 usetheme 1
 monofont DejaVu Sans Mono:size=14
 cursorcolour red
+sbtroughcolour #BE6E13
+listtroughcolour red

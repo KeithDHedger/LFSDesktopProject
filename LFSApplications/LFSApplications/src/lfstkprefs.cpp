@@ -88,6 +88,7 @@ int						parentWindow=-1;
 int						queueID=-1;
 char					*themePath=strdup("");
 char					*sbTroughColour=strdup("grey50");
+char					*listTroughColour=strdup("grey50");
 
 void addSet(void)
 {
@@ -157,6 +158,7 @@ bool menuCB(void *p,void* ud)
 	bool	usetheme=0;
 	bool	autocol=0;
 	char	*sbtrough=NULL;
+	char	*listtrough=NULL;
 
 	args myargs[]=
 	{
@@ -189,6 +191,7 @@ bool menuCB(void *p,void* ud)
 		{"autotextcolour",TYPEBOOL,&autocol},
 		{"usetheme",TYPEBOOL,&usetheme},
 		{"sbtroughcolour",TYPESTRING,&sbTroughColour},
+		{"listtroughcolour",TYPESTRING,&listTroughColour},
 //monofont
 		{"monofont",TYPESTRING,&monofont},
 //cursor colour
@@ -288,7 +291,9 @@ void setVars(void)
 		useTheme->LFSTK_setValue(false);
 	wc->globalLib->LFSTK_setUseTheme(useTheme->LFSTK_getValue());
 	wc->globalLib->LFSTK_setThemePath(themePath);
+//troughs
 	wc->globalLib->LFSTK_setGlobalString(0,TYPESBTROUGHCOLOUR,sbTroughColour);
+	wc->globalLib->LFSTK_setGlobalString(0,TYPELISTTROUGHCOLOUR,listTroughColour);
 
 //fprintf(stderr,sbTroughColour);
 

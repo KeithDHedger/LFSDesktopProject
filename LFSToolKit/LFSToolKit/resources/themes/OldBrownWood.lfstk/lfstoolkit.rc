@@ -24,3 +24,5 @@ autotextcolour 0
 usetheme 1
 monofont Ubuntu Mono:size=16
 cursorcolour #4D2F0B
+sbtroughcolour #BE6E13
+listtroughcolour #925108
