@@ -1,4 +1,5 @@
 0.1.3
+Added option to set number of saved commands in lfsruncommand.
 Changed lfstkprefs to use new menu and find classes.
 Changed lfspanelprefs to use new menu and find classes.
 Changed lfswmprefs to use new menu and find classes.

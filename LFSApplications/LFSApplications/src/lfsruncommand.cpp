@@ -24,7 +24,7 @@
 #undef DIALOGWIDTH
 #define DIALOGWIDTH		800
 #define LISTHITE		GADGETHITE * 8
-#define MAXHISTORY		40
+#define MAXHISTORY		60
 
 LFSTK_windowClass		*wc=NULL;
 LFSTK_listGadgetClass	*list=NULL;
@@ -34,6 +34,7 @@ LFSTK_labelClass		*copyrite=NULL;
 
 const char				*commandToRun=NULL;
 char					*commandfile;
+int						maxHistory=MAXHISTORY;
 
 bool					mainLoop=true;
 Display					*display;
@@ -57,11 +58,11 @@ bool doExecute(void *object,void* ud)
 			asprintf(&data,"echo \"%s\" >> %s",le->LFSTK_getCStr(),commandfile);
 			system(data);
 			free(data);
-			asprintf(&data,"tail -n %i %s|sort -u -o %s.tmp; mv %s.tmp %s",MAXHISTORY,commandfile,commandfile,commandfile,commandfile);
+			asprintf(&data,"tail -n %i %s|sort -u -o %s.tmp; mv %s.tmp %s",maxHistory,commandfile,commandfile,commandfile,commandfile);
 			system(data);
 		}
 	free(data);
-	mainLoop=false;
+	mainLoop=(bool)ud;
 	return(true);
 }
 
@@ -79,7 +80,9 @@ int main(int argc, char **argv)
 	XEvent				event;
 	int 				sy=0;
 	LFSTK_buttonClass	*quit;
+	LFSTK_buttonClass	*execute;
 	LFSTK_buttonClass	*run;
+	char				*thist=NULL;
 
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Run Command",false);
 	display=wc->display;
@@ -92,6 +95,18 @@ int main(int argc, char **argv)
 
 	list=list=new LFSTK_listGadgetClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2)-LGAP,LISTHITE,NorthWestGravity,NULL,0);
 
+	thist=wc->globalLib->LFSTK_oneLiner("head -n1 '%s/%s'",wc->configDir,"command.max");
+
+	maxHistory=MAXHISTORY;
+	if((thist!=NULL) && (thist[0]!=0))
+		maxHistory=atoi(thist);
+	free(thist);
+	thist=getenv("MAXLFSRUNHIST");
+	if(thist!=NULL)
+		maxHistory=atoi(thist);
+	if(argv[1]!=NULL)
+		maxHistory=atoi(argv[1]);
+
 	asprintf(&commandfile,"%s/%s",wc->configDir,"command.hist");
 	list->LFSTK_setListFromFile(commandfile,false);
 	list->LFSTK_setCallBack(NULL,select,NULL);
@@ -103,8 +118,11 @@ int main(int argc, char **argv)
 	quit=new LFSTK_buttonClass(wc,"Quit",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
 
-	run=new LFSTK_buttonClass(wc,"Execute",DIALOGWIDTH-BORDER-GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthEastGravity);
-	run->LFSTK_setCallBack(NULL,doExecute,NULL);
+	execute=new LFSTK_buttonClass(wc,"Run",BORDER+((DIALOGWIDTH-(BORDER*2))/2)-(GADGETWIDTH/2),sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	execute->LFSTK_setCallBack(NULL,doExecute,(void*)true);
+
+	run=new LFSTK_buttonClass(wc,"Run And Quit",DIALOGWIDTH-BORDER-GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthEastGravity);
+	run->LFSTK_setCallBack(NULL,doExecute,(void*)false);
 	sy+=GADGETHITE+BORDER;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
