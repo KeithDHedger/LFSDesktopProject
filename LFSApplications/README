@@ -1,0 +1,16 @@
+
+Max history in lfsruncommand:
+
+The maximum number of commands saved when running lfsruncommand is set ( in order of preference ) by:
+On command line eg:
+lfsruncommand 50
+
+Via env eg:
+MAXLFSRUNHIST=100 lfsruncommand
+
+Via config file eg:
+echo "50" >  ~/.config/LFS/command.max
+lfsruncommand
+
+Compiled in ( 60 )eg:
+lfsruncommand
