@@ -40,36 +40,38 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		~LFSTK_lineEditClass();
 		LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity);
 
-		void LFSTK_clearWindow(void);
-		void LFSTK_resizeWindow(int w,int h);
+		void				LFSTK_clearWindow(void);
+		void				LFSTK_resizeWindow(int w,int h);
 
-		const std::string* LFSTK_getBuffer(void);
-		void LFSTK_setBuffer(const char *str);
-		const char *LFSTK_getCStr(void);
+		const std::string	*LFSTK_getBuffer(void);
+		void				LFSTK_setBuffer(const char *str);
+		const char			*LFSTK_getCStr(void);
 
-		bool mouseDown(XButtonEvent *e);
-		bool mouseEnter(XButtonEvent *e);
-		bool keyRelease(XKeyEvent *e);
-		bool lostFocus(XEvent *e);
-		bool gotFocus(XEvent *e);
-		bool clientMessage(XEvent *e);
-		void LFSTK_setFocus(void);
+		bool				mouseDown(XButtonEvent *e);
+		bool				mouseEnter(XButtonEvent *e);
+		bool				keyRelease(XKeyEvent *e);
+		bool				lostFocus(XEvent *e);
+		bool				gotFocus(XEvent *e);
+		bool				clientMessage(XEvent *e);
+		void				LFSTK_setFocus(void);
 
-		void LFSTK_dropData(propertyStruct* data);
-		void LFSTK_setFormatedText(const char *txt,bool replace);
-		void LFSTK_setCursorColourName(const char* colour);
+		void				LFSTK_dropData(propertyStruct* data);
+		void				LFSTK_setFormatedText(const char *txt,bool replace);
+		void				LFSTK_setCursorColourName(const char* colour);
 
 	protected:
-		colourStruct	cursorColour={NULL,0,{0.0,0.0,0.0,0.8}};
-		double			charWidth;
+		colourStruct		cursorColour={NULL,0,{0.0,0.0,0.0,0.8}};
+		double				charWidth;
 	
 	private:
-		void drawLabel(void);
-		void getClip(void);
-
-		std::string	buffer;
-		unsigned	cursorPos;
-		bool		isFocused;
+		void				drawLabel(void);
+		void				getClip(void);
+		void				setOffsetcurs(int step);
+		std::string			buffer;
+		int					cursorPos=0;
+		int					visCursorPos=0;
+		bool				isFocused;
+		int					offsetCurs=0;
 };
 
 #endif

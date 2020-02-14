@@ -74,11 +74,12 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	this->ml->type=LINEEDITGADGET;
 	this->wc->LFSTK_addMappedListener(this->window,ml);
 
-	if(strlen(label)>0)
-		this->cursorPos=strlen(label);
-	else
-		this->cursorPos=0;
-	this->buffer=label;
+//	if(strlen(label)>0)
+//		this->cursorPos=strlen(label);
+//	else
+//		this->cursorPos=0;
+//	this->buffer=label;
+	this->LFSTK_setBuffer(label);
 
 	this->wc->LFSTK_initDnD();
 	this->gadgetAcceptsDnD=true;
@@ -205,6 +206,8 @@ void LFSTK_lineEditClass::LFSTK_setBuffer(const char *str)
 		bufferstr="";
 	this->buffer=bufferstr;
 	this->cursorPos=strlen(bufferstr);
+	this->setOffsetcurs(strlen(bufferstr));
+	this->setOffsetcurs(1);
 	this->LFSTK_clearWindow();
 }
 
@@ -227,7 +230,6 @@ const char* LFSTK_lineEditClass::LFSTK_getCStr(void)
 {
 	return(this->buffer.c_str());
 }
-
 
 void LFSTK_lineEditClass::drawLabel(void)
 {
@@ -258,8 +260,7 @@ void LFSTK_lineEditClass::drawLabel(void)
 
 		if(maxchars>this->buffer.length())
 			maxchars=this->buffer.length();
-
-		startchar=(this->cursorPos)-maxchars;
+		startchar=this->offsetCurs;
 		yoffset=(this->gadgetDetails.gadgetGeom.h/2)-(this->textExtents.y_bearing/2);
 		cairo_move_to(this->cr,this->pad,yoffset);
 
@@ -274,8 +275,12 @@ void LFSTK_lineEditClass::drawLabel(void)
 		if(this->cursorPos-startchar>=maxchars)
 			asprintf(&aftercursor,"");
 		else
-			asprintf(&aftercursor,"%s",this->buffer.substr(this->cursorPos+1,(maxchars-this->cursorPos-startchar)).c_str());
-
+			{
+				if(this->cursorPos+1<this->buffer.length())
+					asprintf(&aftercursor,"%s",this->buffer.substr(this->cursorPos+1,(maxchars-this->visCursorPos)).c_str());
+				else
+					asprintf(&aftercursor,"");
+			}
 //1stbit
 		cairo_show_text(this->cr,data);
 		cairo_text_extents(this->cr,data,&partextents);
@@ -284,7 +289,6 @@ void LFSTK_lineEditClass::drawLabel(void)
 		if(this->isFocused==true)
 			{
 				cairo_set_source_rgba(this->cr,this->cursorColour.RGBAColour.r,this->cursorColour.RGBAColour.g,this->cursorColour.RGBAColour.b,this->cursorColour.RGBAColour.a);
-				//cairo_rectangle(this->cr,partextents.x_advance+0.5,yoffset-this->fontExtents.ascent,charextents.x_advance-0.5,this->fontExtents.ascent+this->fontExtents.descent);
 				cairo_rectangle(this->cr,partextents.x_advance+this->pad,yoffset-this->fontExtents.ascent,charextents.x_advance-0.5,this->fontExtents.ascent+this->fontExtents.descent);
 				cairo_fill(this->cr);
 				cairo_set_source_rgba(this->cr,1.0,1.0,1.0,1.0);
@@ -408,34 +412,36 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 				case XK_Tab:
 					this->buffer.insert(this->cursorPos,8,' ');
 					this->cursorPos+=8;
-
 					break;
 				case XK_BackSpace:
 					if(this->cursorPos>0)
 						{
 							this->buffer.erase(this->cursorPos-1,1);
-							this->cursorPos--;
+							this->setOffsetcurs(-1);
 						}
 					break;
 				case XK_Delete:
 					if(this->cursorPos<this->buffer.length())
 						this->buffer.erase(this->cursorPos,1);
+					this->setOffsetcurs(0);
 					break;
 				case XK_Left:
-					if(this->cursorPos>0)
-						this->cursorPos--;
+					this->setOffsetcurs(-1);
 					break;
 				case XK_Right:
-					if(this->cursorPos<this->buffer.length())
-						this->cursorPos++;
+					this->setOffsetcurs(1);
 					break;
 				case XK_End:
 				case XK_Page_Down:
-					this->cursorPos=this->buffer.length();
+					this->setOffsetcurs(1000);
+					this->setOffsetcurs(1);
 					break;
 				case XK_Home:
 				case XK_Page_Up:
+					this->offsetCurs=0;
 					this->cursorPos=0;
+					this->visCursorPos=0;
+
 					break;
 				case XK_Down:
 				case XK_Up:
@@ -451,7 +457,8 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 					if(c[0]==0)
 						break;
 					this->buffer.insert(this->cursorPos,1,c[0]);
-					this->cursorPos++;
+					this->setOffsetcurs(-1);
+					this->setOffsetcurs(2);
 					break;
 				}
 		}
@@ -554,5 +561,57 @@ void LFSTK_lineEditClass::LFSTK_setCursorColourName(const char* colour)
 	this->cursorColour.RGBAColour.b=((this->cursorColour.pixel>>0) & 0xff)/256.0;
 	this->cursorColour.RGBAColour.a=0.8;
 }
+
+void LFSTK_lineEditClass::setOffsetcurs(int step)
+{
+	unsigned	maxchars=0;
+	unsigned	realmaxchars=0;
+
+	if(this->LFSTK_getTextWidth("X")<=0)
+		maxchars=((this->gadgetGeom.w)/(int)((8)));
+	else
+		maxchars=(this->gadgetGeom.w/(int)(this->LFSTK_getTextRealWidth("X")+0.5))-1;
+
+	realmaxchars=maxchars;
+	if(maxchars>this->buffer.length()-1)
+		maxchars=this->buffer.length()-1;
+
+	if((this->cursorPos>=this->buffer.length()) && (step==1))
+		return;
+
+	this->visCursorPos+=step;
+	this->cursorPos+=step;
+	if(this->visCursorPos<0)
+		{
+			this->visCursorPos=0;
+			this->offsetCurs--;
+		}
+
+	if(this->visCursorPos>maxchars)
+		{
+			this->visCursorPos=maxchars;
+			if(this->buffer.length()>realmaxchars)
+				this->offsetCurs++;
+		}
+
+	if(this->offsetCurs<0)
+		this->offsetCurs=0;
+
+	if(this->cursorPos<0)
+		this->cursorPos=0;
+
+	if(this->cursorPos>this->buffer.length())
+		{
+			this->cursorPos=this->buffer.length()-1;
+			this->offsetCurs=this->buffer.length()-maxchars-1;
+			this->visCursorPos=maxchars;
+		}
+}
+
+
+
+
+
+
 
 
