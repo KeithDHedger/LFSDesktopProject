@@ -1,4 +1,6 @@
 0.1.4
+Added ~/.local/share/applications to search path for application menu.
+Fixed parsing Exec in desktop files.
 Added alsa dependency.
 Fixed updating vol slider.
 Reversed vol slider on vertical panels.

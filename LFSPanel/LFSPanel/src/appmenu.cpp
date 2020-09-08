@@ -144,13 +144,16 @@ void addDesktopFiles(int catnum,const char *catname)
 	std::regex			exp;
 	const std::regex	expname("Name=(.*)");
 	const std::regex	expicon("Icon=([^[:space:]]*).*");
-	const std::regex	expexec("Exec=([^[:space:]]*).*");
+//	const std::regex	expexec("Exec=([^[:space:]]*).*");
+	const std::regex	expexec("Exec=(.*)");
 	const std::regex	expnodisplay("NoDisplay=([^[:space:]]*).*");
 	const std::regex	expterm("Terminal=true");
 	std::vector<int>	fname;
 	std::smatch			m;
 	char				*iconpath;
+	char				*homeapps;
 
+	asprintf(&homeapps,"%s/.local/share/applications",getenv("HOME"));
 	find->LFSTK_setFindType(FILETYPE);
 	find->LFSTK_setFullPath(true);
 	find->LFSTK_setIgnoreBroken(false);
@@ -158,6 +161,7 @@ void addDesktopFiles(int catnum,const char *catname)
 	find->LFSTK_setIgnoreNavLinks(true);
 	find->LFSTK_setFileTypes(".desktop");	
 	find->LFSTK_findFiles("/usr/share/applications",false);
+	find->LFSTK_findFiles(homeapps,true);
 	find->LFSTK_sortByPath();
 
 	int	numfiles=find->LFSTK_getDataCount();
@@ -218,6 +222,7 @@ void addDesktopFiles(int catnum,const char *catname)
 						}
 					}
 		}
+	free(homeapps);
 }
 
 void addCatagories(void)
