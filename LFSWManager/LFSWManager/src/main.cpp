@@ -114,6 +114,7 @@ sigset_t		sigmask;
 
 //lfstk
 LFSTK_lib		*lfstkLib=NULL;
+bool			useTheme=true;
 
 int errhandler(Display *dpy,XErrorEvent *e)
 {
@@ -602,13 +603,22 @@ int main(int argc,char *argv[])
 			asprintf(&themercpath,"%s/xfwm4/themerc",theme.pathToTheme);
 			loadVarsFromFile(themercpath,themeRC,"=");
 			free(themercpath);
+			useTheme=true;
 		}
 	else
-		theme.useTheme=false;
+		{
+			theme.useTheme=false;
+			useTheme=false;
+		}
 
-	while ((opt=getopt(argc,argv,"?hp:B:b:F:f:X:n:t:l:T:w:x:")) != -1)
+	while ((opt=getopt(argc,argv,"?hNp:B:b:F:f:X:n:t:l:T:w:x:")) != -1)
 		switch (opt)
 			{
+			case 'N':
+				useTheme=false;
+				theme.useTheme=false;
+				break;
+
 			case 'B':
 				free(fontColours[ACTIVEFRAMEFILL]);
 				fontColours[ACTIVEFRAMEFILL]=strdup(optarg);
