@@ -404,10 +404,6 @@ BACKUP:
 			printf("\n");
 		}
 
-
-
-
-
 	if(gridSize<1)
 		gridSize=1;
 

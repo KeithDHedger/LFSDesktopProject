@@ -214,7 +214,8 @@ bool deskUpCB(void *p,void* ud)
 				launchDesktopFile(dnode->devName);
 			if(dnode->diskType==DESKFILE)
 				{
-					filename=wc->globalLib->LFSTK_oneLiner("xdg-open '%s/%s' &",desktopPath,dnode->devName);
+					asprintf(&filename,"xdg-open '%s/%s' &",desktopPath,dnode->devName);
+					system(filename);
 					free(filename);
 				}
 			return(true);

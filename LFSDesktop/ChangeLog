@@ -1,4 +1,5 @@
 0.1.3
+Fixed hang on double clicking some desktop items.
 Added forground label colour to prefs.
 Updated to use pkg-config for lfstoolkit.
 Going over to internal sysv msging.
