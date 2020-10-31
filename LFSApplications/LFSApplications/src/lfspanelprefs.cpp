@@ -79,7 +79,7 @@ Display						*display;
 
 int							panelHeightPref=32;
 int							panelWidthPref=-2;
-int							onMonitorPref=1;
+int							onMonitorPref=0;
 int							panelPosPref=-2;
 int							panelGravityPref=1;
 char						*leftGadgetsPref=strdup("AWw");
@@ -295,6 +295,12 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //panel menus
+//temp fix
+	char	*touchpanel;
+	asprintf(&touchpanel,"touch %s/lfspanel.rc",wc->configDir);
+	system(touchpanel);
+	free(touchpanel);
+
 	find=new LFSTK_findClass;
 	find->LFSTK_setFindType(FILETYPE);
 	find->LFSTK_setIgnoreBroken(true);
