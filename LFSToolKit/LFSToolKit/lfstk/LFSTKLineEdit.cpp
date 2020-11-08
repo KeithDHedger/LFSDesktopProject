@@ -457,8 +457,9 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 					if(c[0]==0)
 						break;
 					this->buffer.insert(this->cursorPos,1,c[0]);
-					this->setOffsetcurs(-1);
-					this->setOffsetcurs(2);
+					this->setOffsetcurs(1);
+				//	this->setOffsetcurs(2);
+				//	this->setOffsetcurs(2);
 					break;
 				}
 		}
