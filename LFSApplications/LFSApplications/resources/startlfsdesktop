@@ -90,9 +90,9 @@ excludelist
 EOF
 fi
 
+lfssetwallpaper
 lfswmanager &
 lfspanel &
-lfssetwallpaper &
 lfsdesktop &
 
 file=`mktemp -u`
