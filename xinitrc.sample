@@ -1,0 +1,57 @@
+#!/bin/sh
+#
+#©K. D. Hedger. Sat 21 Nov 20:30:14 GMT 2020 keithdhedger@gmail.com
+#
+#This file (xinitrc.sample) is part of LFSDesktopProject.
+#
+#LFSDesktopProject is free software: you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#at your option) any later version.
+#
+#LFSDesktopProject is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License
+#along with LFSDesktopProject.  If not, see <http://www.gnu.org/licenses/>.
+#
+#Copy this file to ~/.xinitrc and alter as needed.
+#
+#Basic merge of X resources
+usermodmap=$HOME/.Xmodmap
+sysresources=/etc/X11/app-defaults/.Xresources
+sysmodmap=/etc/X11/app-defaults/.Xmodmap
+xcursorsfile=$HOME/xinits/XDefaults/XCursorsfile
+customcolours=$HOME/xinits/XDefaults/XDefaults
+
+LFSVERSION="9.0"
+
+# merge in defaults and keymaps
+
+if [ -f $xcursorsfile ]; then
+    xrdb -merge $xcursorsfile
+fi
+
+if [ -f $sysresources ]; then
+    xrdb -merge $sysresources
+fi
+
+if [ -f $sysmodmap ]; then
+    xmodmap $sysmodmap
+fi
+
+if [ -f $customcolours ]; then
+    xrdb -merge $customcolours
+fi
+
+if [ -f "$usermodmap" ]; then
+    xmodmap "$usermodmap"
+fi
+
+#For multi head uncomment and change to suit
+#xrandr --output VGA-0 --below DVI-0
+
+#Start window manager desktop panels etc, uncomment --reset to restore all lfs prefs to default, old .config/LFS is moved aside.
+startlfsdesktop # --reset

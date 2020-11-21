@@ -20,7 +20,8 @@
 #
 
 if [ "X$1" = "X--reset" ];then
-	rm -rf ~/.config/LFS &>/dev/null
+	mv ~/.config/LFS ~/.config/LFS.$(date +%y%m%d-%H%M)
+	rm ~/Desktop/{.computer.desktop,.home.desktop}
 fi
 
 mkdir -p ~/Desktop &>/dev/null
