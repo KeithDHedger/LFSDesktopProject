@@ -1,0 +1,111 @@
+#!/bin/bash
+
+#
+#©K. D. Hedger. Sat 21 Nov 17:47:25 GMT 2020 keithdhedger@gmail.com
+#
+#This file (startlfsdesktop) is part of lfsdesktop.
+#
+#lfsdesktop is free software: you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#at your option) any later version.
+#
+#lfsdesktop is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License
+#along with lfsdesktop.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+if [ "X$1" = "X--reset" ];then
+	rm -rf ~/.config/LFS &>/dev/null
+fi
+
+mkdir -p ~/Desktop &>/dev/null
+
+if [ ! -e ~/.config/LFS ];then
+	mkdir -vp ~/.config/LFS
+fi
+
+if [ ! -e ~/.config/LFS/lfswmanager.rc ];then
+	cat > ~/.config/LFS/lfswmanager.rc <<EOF
+wmactive_frame black
+wmactive_fill cyan
+wminactive_frame black
+wminactive_fill white
+widgetcolour black
+titlefont sans:size=12
+theme 
+termcommand 
+placement 2
+desktops 6
+liveupdate 15
+rescanprefs 4
+EOF
+fi
+
+if [ ! -e ~/.config/LFS/lfspanel.rc ];then
+	cat > ~/.config/LFS/lfspanel.rc <<EOF
+panelheight 32
+panelwidth -2
+onmonitor 0
+panelpos -2
+panelgrav 1
+termcommand xterm -e 
+logoutcommand rm /tmp/${USER}-lfssession.pid
+restartcommand sudo reboot
+shutdowncommand sudo shutdown -h now
+gadgetsright MDCL
+gadgetsleft AWw
+EOF
+fi
+
+if [ ! -e ~/.config/LFS/lfssetwallpaper.rc ];then
+	cat > ~/.config/LFS/lfssetwallpaper.rc <<EOF
+backdrop
+mainmode	0
+colour	440000
+multimode	0
+EOF
+fi
+
+if [ ! -e ~/.config/LFS/lfsdesktop.rc ];then
+	cat > ~/.config/LFS/lfsdesktop.rc <<EOF
+icontheme 
+iconsize 48
+gridsize 64
+gridborderleft 1
+gridborderrite 1
+refreshrate 2
+termcommand xterm -e
+showextension 0
+fontface sans:12
+labelforeground black
+labelbackground white
+labelalpha 100
+includelist .*
+excludelist 
+EOF
+fi
+
+lfswmanager &
+lfspanel &
+lfssetwallpaper &
+lfsdesktop &
+
+file=`mktemp -u`
+cat > $file << EOF
+#!/bin/bash
+touch /tmp/${USER}-lfssession.pid
+while [ -e /tmp/${USER}-lfssession.pid ]
+	do
+		sleep 5
+	done
+EOF
+
+chmod +x $file
+$file
+
+rm $file

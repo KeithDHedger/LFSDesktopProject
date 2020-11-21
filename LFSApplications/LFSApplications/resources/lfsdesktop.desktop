@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Name=LFSDesktop Session
+Comment=Use this session to run LFS as your desktop environment
+Exec=startlfsdesktop
+Icon=
+Type=Application
+DesktopNames=LFSDesktop
