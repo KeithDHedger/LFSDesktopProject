@@ -20,6 +20,9 @@
 
 #include <lfstk/LFSTKGlobals.h>
 
+#include <fcntl.h>
+#include <unistd.h>
+
 #define LISTHITE		GADGETHITE * 16
 
 LFSTK_windowClass		*wc=NULL;
@@ -103,7 +106,8 @@ int main(int argc, char **argv)
 {
 	XEvent	event;
 	int		sy=BORDER;
-		
+	char	*command;
+	
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Mime Type Editor",false);
 	display=wc->display;
 
@@ -116,7 +120,12 @@ int main(int argc, char **argv)
 //mime type list
 	list=list=new LFSTK_listGadgetClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2)-LGAP,LISTHITE,NorthWestGravity,NULL,0);
 	asprintf(&mimeTypesFile,"%s/.config/mimeapps.list",getenv("HOME"));
-
+	if(access(mimeTypesFile,F_OK)!=0)
+		{
+			asprintf(&command,"echo -e \"[Default Applications]\n[Added Associations]\" > \"%s\"",mimeTypesFile);
+			system(command);
+			free(command);
+		}
 	list->LFSTK_setListFromFile(mimeTypesFile,true);
 	list->LFSTK_setCallBack(NULL,select,NULL);
 	sy+=LISTHITE+8;
