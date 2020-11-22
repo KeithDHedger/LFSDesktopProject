@@ -82,7 +82,6 @@ bool doDelete(void *p,void* ud)
 		return(true);
 
 	asprintf(&command,"sed -i '%id' \"%s\"",list->LFSTK_getCurrentListItem()+1,mimeTypesFile);
-	printf(">>%s<<\n",command);
 	system(command);
 	list->LFSTK_setListFromFile(mimeTypesFile,true);
 	list->currentItem=holdnum;
