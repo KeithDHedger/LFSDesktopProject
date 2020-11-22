@@ -33,9 +33,9 @@
 #include <sys/ipc.h>
 #include <sys/msg.h>
 
-#define COPYRITE			"Copyright © 2013-2019 K.D.Hedger"
+#define COPYRITE			"Copyright © 2013-2020 K.D.Hedger"
 #define PERSONAL			"keithdhedger@gmail.com"
-#define	MYWEBSITE			"http://keithhedger.freeddns.org/"
+#define	MYWEBSITE			"https://keithhedger.co.uk"
 
 #define DEFAULTFONT			"sans:size=10"
 #define DISCLOSURESIZE		6
