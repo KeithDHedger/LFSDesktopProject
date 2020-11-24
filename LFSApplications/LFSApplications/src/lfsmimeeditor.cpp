@@ -293,9 +293,9 @@ int main(int argc, char **argv)
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH*2,DIALOGHITE,"Mime Type Editor",false);
 	display=wc->display;
 
-	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
+	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,2*DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	sy+=HALFYSPACING;
-	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
+	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,2*DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	personal->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
 
