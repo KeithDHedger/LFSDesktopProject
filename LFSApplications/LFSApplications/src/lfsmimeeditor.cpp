@@ -24,6 +24,8 @@
 #include <unistd.h>
 
 #define LISTHITE		GADGETHITE * 16
+#define MIMETYPESLABEL	"Mime Type"
+#define APPLABEL		"Default Application"
 
 LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass		*label=NULL;
@@ -286,6 +288,7 @@ int main(int argc, char **argv)
 	int		sy=BORDER;
 	char	*command;
 	char	*tempfolder=(char*)alloca(256);
+	LFSTK_labelClass	*infolabel;
 
 	sprintf(tempfolder,"/tmp/lfsmimedir-XXXXXX");
 	workDir=mkdtemp(tempfolder);
@@ -297,6 +300,13 @@ int main(int argc, char **argv)
 	sy+=HALFYSPACING;
 	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,2*DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	personal->LFSTK_setCairoFontDataParts("B");
+	sy+=YSPACING;
+
+	infolabel=new LFSTK_labelClass(wc,MIMETYPESLABEL,BORDER,sy,GADGETWIDTH*4,GADGETHITE,LEFT);
+	infolabel->LFSTK_setCairoFontDataParts("sB",16);
+
+	infolabel=new LFSTK_labelClass(wc,APPLABEL,BORDER+DIALOGWIDTH,sy,GADGETWIDTH*4,GADGETHITE,LEFT);
+	infolabel->LFSTK_setCairoFontDataParts("sB",16);
 	sy+=YSPACING;
 
 	command=wc->globalLib->LFSTK_oneLiner("cp %s/.config/mimeapps.list %s",getenv("HOME"),workDir);
