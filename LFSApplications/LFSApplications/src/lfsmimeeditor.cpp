@@ -31,15 +31,23 @@ LFSTK_labelClass		*personal=NULL;
 LFSTK_labelClass		*copyrite=NULL;
 LFSTK_buttonClass		*seperator=NULL;
 LFSTK_buttonClass		*cancel=NULL;
-LFSTK_buttonClass		*apply=NULL;
 LFSTK_buttonClass		*insert=NULL;
 LFSTK_buttonClass		*delentry=NULL;
-LFSTK_listGadgetClass	*list=NULL;
-LFSTK_lineEditClass		*editline=NULL;
+LFSTK_buttonClass		*apply=NULL;
+LFSTK_listGadgetClass	*mimeList=NULL;
+LFSTK_listGadgetClass	*appsList=NULL;
+LFSTK_lineEditClass		*editLine=NULL;
+LFSTK_lineEditClass		*appLine=NULL;
 
 bool					mainLoop=true;
 Display					*display;
 char					*mimeTypesFile=NULL;
+char					*lastBitPath;
+char					*mimeTypesPath;
+char					*appsPath;
+char					*tmpOutFile;
+listLabelStruct			**labelLst=NULL;
+char					*workDir;
 
 bool doQuit(void *p,void* ud)
 {
@@ -49,27 +57,156 @@ bool doQuit(void *p,void* ud)
 	return(false);
 }
 
-bool doApply(void *p,void* ud)
+void setMimeTypesList(char *filepath)
 {
-	char	*command;
+	FILE	*file=NULL;
+	char	*buffer;
+	int		cnt=0;
+	size_t	linelen=0;
+	ssize_t	read=0;
+	int		linecnt=0;
+	char	*lines=NULL;
+	listLabelStruct listit;
+	std::vector<listLabelStruct> thelist;
 
-	asprintf(&command,"sed -i '%is@.*@%s@' \"%s\"",list->LFSTK_getCurrentListItem()+1,editline->LFSTK_getCStr(),mimeTypesFile);
-	system(command);
-	free(command);
-	asprintf(&command,"awk -i inplace '/^$/ {print; next} {if ($1 in a) next; a[$1]=$0; print}' \"%s\"",mimeTypesFile);
-	system(command);
-	free(command);
-	list->LFSTK_setListFromFile(mimeTypesFile,true);
+	if(filepath!=NULL)
+		{
+			file=fopen(mimeTypesPath,"r");
+			if(file!=NULL)
+				{
+					while(!feof(file))
+						{
+							buffer=NULL;
+							linelen=0;
+							read=getline(&buffer,&linelen,file);
+							if(read>0)
+								{
+									buffer[strlen(buffer)-1]=0;
+									if(strlen(buffer)>0)
+										{
+											listit.label=strdup(buffer);
+											listit.imageType=NOTHUMB;
+											thelist.push_back(listit);
+										}
+								}
+							free(buffer);
+						}
+					fclose(file);
+					labelLst=new listLabelStruct*[thelist.size()];
+					for(int j=0;j<thelist.size();j++)
+						{
+							labelLst[j]=new listLabelStruct;
+							labelLst[j]->label=thelist[j].label;
+							if(labelLst[j]->label[strlen(labelLst[j]->label)-1]==';')
+								labelLst[j]->label[strlen(labelLst[j]->label)-1]=0;
+							char	*ptr=strchr(labelLst[j]->label,'=');
+							*ptr=0;
+							ptr++;
+							labelLst[j]->userData=ptr;
+							labelLst[j]->imageType=NOTHUMB;
+						}
+					mimeList->LFSTK_setList(labelLst,thelist.size());
+				}
+		}
+}
+
+void splitFile(char *path)
+{
+	char	*lastbit;
+	char	*firstbit;
+	char	*appslist;
+
+	asprintf(&lastbit,"sed -n -e '/\\[Added Associations]/,$p' \"%s\" > \"%s\"",path,lastBitPath);
+	system(lastbit);
+	asprintf(&firstbit,"sed '/\\[Added Associations]/Q;s/\\[Default Applications]//' \"%s\"|sort -u  > \"%s\"",path,mimeTypesPath);
+	system(firstbit);
+	asprintf(&appslist,"find /usr/share/applications ~/.local/share/applications -iname \"*.desktop\"|sed 's@.*/@@;s@\\.desktop$@@'|sort -u > \"%s\"",appsPath);
+	system(appslist);
+}
+
+void reWriteMimeFile(void)
+{
+	char	*lab;
+	FILE	*file=NULL;
+	char	*command;
+	char	*ptr;
+
+	file=fopen(tmpOutFile,"w");
+	if(file!=NULL)
+		{
+			fprintf(file,"[Default Applications]\n");
+			for(int j=0;j<mimeList->listCnt;j++)
+				{
+					if(j!=mimeList->currentItem)
+						{
+							ptr=mimeList->labelData[j]->label;
+							ptr+=strlen(mimeList->labelData[j]->label);
+							ptr++;
+							fprintf(file,"%s=%s;\n",mimeList->labelData[j]->label,ptr);
+						}
+				}
+
+			fclose(file);
+			asprintf(&command,"cat \"%s\" \"%s\" > \"%s\"",tmpOutFile,lastBitPath,mimeTypesFile);
+			system(command);
+			free(command);
+			asprintf(&command,"awk -i inplace '/^$/ {print; next} {if ($1 in a) next; a[$1]=$0; print}' \"%s\"",mimeTypesFile);
+			system(command);
+			free(command);
+		}
+	splitFile(mimeTypesFile);
+	setMimeTypesList(mimeTypesFile);
+}
+
+bool doUpdate(void *p,void* ud)
+{
+	char	*lab;
+	FILE	*file=NULL;
+	char	*command;
+	char	*ptr;
+
+	file=fopen(tmpOutFile,"w");
+	if(file!=NULL)
+		{
+			fprintf(file,"[Default Applications]\n");
+			for(int j=0;j<mimeList->listCnt;j++)
+				{
+					if(j==mimeList->currentItem)
+						{
+							fprintf(file,"%s=%s.desktop;\n",mimeList->labelData[mimeList->currentItem]->label,appLine->LFSTK_getCStr());
+						}
+					else
+						{
+							ptr=mimeList->labelData[j]->label;
+							ptr+=strlen(mimeList->labelData[j]->label);
+							ptr++;
+							fprintf(file,"%s=%s;\n",mimeList->labelData[j]->label,ptr);
+						}
+				}
+			fprintf(file,"%s=%s.desktop;\n",editLine->LFSTK_getCStr(),appLine->LFSTK_getCStr());
+			fclose(file);
+			asprintf(&command,"cat \"%s\" \"%s\" > \"%s\"",tmpOutFile,lastBitPath,mimeTypesFile);
+			system(command);
+			free(command);
+			asprintf(&command,"awk -i inplace '/^$/ {print; next} {if ($1 in a) next; a[$1]=$0; print}' \"%s\"",mimeTypesFile);
+			system(command);
+			free(command);
+		}
+	splitFile(mimeTypesFile);
+	setMimeTypesList(mimeTypesFile);
+
 	return(true);
 }
 
 bool doInsert(void *p,void* ud)
 {
-	char	*command;
+	char		*command;
+	const char	*data=mimeList->labelData[mimeList->currentItem]->label;
 
-	asprintf(&command,"sed -i '%iG' \"%s\"",list->LFSTK_getCurrentListItem()+1,mimeTypesFile);
+	asprintf(&command,"sed -i 's@\\(%s.*\\)@\\1\\n%s=Custom.desktop@' \"%s\"",data,data,mimeTypesFile);
 	system(command);
-	list->LFSTK_setListFromFile(mimeTypesFile,true);
+	splitFile(mimeTypesFile);
+	setMimeTypesList(mimeTypesFile);
 	free(command);
 	return(true);
 }
@@ -77,38 +214,83 @@ bool doInsert(void *p,void* ud)
 bool doDelete(void *p,void* ud)
 {
 	char	*command;
-	int holdnum=list->currentItem;
+	int		holdnum=mimeList->currentItem;
 
-	if(holdnum>=list->listCnt)
+	if(holdnum>=mimeList->listCnt)
 		return(true);
-	if(list->LFSTK_getSelectedLabel()[0]=='[')
+	if(mimeList->LFSTK_getSelectedLabel()[0]=='[')
 		return(true);
 
-	asprintf(&command,"sed -i '%id' \"%s\"",list->LFSTK_getCurrentListItem()+1,mimeTypesFile);
+	asprintf(&command,"sed -i '%id' \"%s\"",mimeList->LFSTK_getCurrentListItem()+2,mimeTypesFile);
 	system(command);
-	list->LFSTK_setListFromFile(mimeTypesFile,true);
-	list->currentItem=holdnum;
+	reWriteMimeFile();
+	fflush(NULL);
+	splitFile(mimeTypesFile);
+	setMimeTypesList(mimeTypesFile);
+
+	mimeList->currentItem=holdnum;
 	free(command);
 	return(true);
 }
 
-bool select(void *object,void* ud)
+bool doApply(void *p,void* ud)
+{
+	char		*command;
+	const char	*data=mimeList->labelData[mimeList->currentItem]->label;
+
+	asprintf(&command,"cp \"%s\" \"%s/.config\"",mimeTypesFile,getenv("HOME"));
+	system(command);
+	free(command);
+	splitFile(mimeTypesFile);
+	setMimeTypesList(mimeTypesFile);
+	return(true);
+}
+
+bool selectMime(void *object,void* ud)
+{
+	char	*app;
+	LFSTK_listGadgetClass	*list=static_cast<LFSTK_listGadgetClass*>(object);
+
+	if(list->LFSTK_getSelectedLabel()[0]=='[')
+		return(true);
+
+	asprintf(&app,"%s",list->labelData[list->LFSTK_getCurrentListItem()]->userData);
+	*(strrchr(app,'.'))=0;
+	editLine->LFSTK_setBuffer(list->LFSTK_getSelectedLabel());
+	appLine->LFSTK_setBuffer((const char*)app);
+	free(app);
+	return(true);
+}
+
+bool selectApp(void *object,void* ud)
 {
 	LFSTK_listGadgetClass	*list=static_cast<LFSTK_listGadgetClass*>(object);
 
 	if(list->LFSTK_getSelectedLabel()[0]=='[')
 		return(true);
-	editline->LFSTK_setBuffer(list->LFSTK_getSelectedLabel());
+	appLine->LFSTK_setBuffer(list->LFSTK_getSelectedLabel());
+	doUpdate(NULL,NULL);
 	return(true);
 }
+
+bool returnKeyPressed(void *p,void* ud)
+{
+	doUpdate(NULL,NULL);
+	return(true);
+}
+
 
 int main(int argc, char **argv)
 {
 	XEvent	event;
 	int		sy=BORDER;
 	char	*command;
-	
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Mime Type Editor",false);
+	char	*tempfolder=(char*)alloca(256);
+
+	sprintf(tempfolder,"/tmp/lfsmimedir-XXXXXX");
+	workDir=mkdtemp(tempfolder);
+
+	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH*2,DIALOGHITE,"Mime Type Editor",false);
 	display=wc->display;
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
@@ -116,46 +298,69 @@ int main(int argc, char **argv)
 	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	personal->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
-	
-//mime type list
-	list=list=new LFSTK_listGadgetClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2)-LGAP,LISTHITE,NorthWestGravity,NULL,0);
-	asprintf(&mimeTypesFile,"%s/.config/mimeapps.list",getenv("HOME"));
+
+	command=wc->globalLib->LFSTK_oneLiner("cp %s/.config/mimeapps.list %s",getenv("HOME"),workDir);
+	free(command);
+	asprintf(&mimeTypesFile,"%s/mimeapps.list",workDir);
 	if(access(mimeTypesFile,F_OK)!=0)
 		{
 			asprintf(&command,"echo -e \"[Default Applications]\n[Added Associations]\" > \"%s\"",mimeTypesFile);
 			system(command);
 			free(command);
 		}
-	list->LFSTK_setListFromFile(mimeTypesFile,true);
-	list->LFSTK_setCallBack(NULL,select,NULL);
+
+	asprintf(&lastBitPath,"%s/lfslastbit",workDir);
+	asprintf(&mimeTypesPath,"%s/lfsmimetypeslist",workDir);
+	asprintf(&appsPath,"%s/lfsappslist",workDir);
+	asprintf(&tmpOutFile,"%s/tmpoutfile",workDir);
+
+//split file
+	splitFile(mimeTypesFile);
+
+//mime type list
+	mimeList=new LFSTK_listGadgetClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2)-LGAP,LISTHITE,NorthWestGravity,NULL,0);
+	setMimeTypesList(mimeTypesFile);
+	mimeList->LFSTK_setCallBack(NULL,selectMime,NULL);
+	
+//apps list
+	appsList=new LFSTK_listGadgetClass(wc,"",BORDER+DIALOGWIDTH,sy,DIALOGWIDTH-(BORDER*2)-LGAP,LISTHITE,NorthWestGravity,NULL,0);
+	appsList->LFSTK_setListFromFile(appsPath,false);
+	appsList->LFSTK_setCallBack(NULL,selectApp,NULL);
 	sy+=LISTHITE+8;
 
 //command
-	editline=new LFSTK_lineEditClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE,BUTTONGRAV);
+	editLine=new LFSTK_lineEditClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE,BUTTONGRAV);
+	editLine->LFSTK_setCallBack(returnKeyPressed,NULL,NULL);
+//app to use
+	appLine=new LFSTK_lineEditClass(wc,"",BORDER+DIALOGWIDTH,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE,BUTTONGRAV);
+	appLine->LFSTK_setCallBack(returnKeyPressed,NULL,NULL);
 	sy+=YSPACING;
 
 //line
-	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
+	seperator=new LFSTK_buttonClass(wc,"--",0,sy,2*DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
 	seperator->LFSTK_setStyle(BEVELNONE);
 	seperator->gadgetDetails.buttonTile=false;
 	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
 	sy+=YSPACING;
 
-//cancel/quit
-	cancel=new LFSTK_buttonClass(wc,"Cancel",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	cancel->LFSTK_setCallBack(NULL,doQuit,NULL);
-
-	insert=new LFSTK_buttonClass(wc,"Insert",DIALOGMIDDLE-BORDER-GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	insert=new LFSTK_buttonClass(wc,"Duplicate",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	insert->LFSTK_setCallBack(NULL,doInsert,NULL);
 
-	delentry=new LFSTK_buttonClass(wc,"Remove",DIALOGMIDDLE+BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	delentry=new LFSTK_buttonClass(wc,"Remove",2*BORDER+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	delentry->LFSTK_setCallBack(NULL,doDelete,NULL);
 
-	apply=new LFSTK_buttonClass(wc,"Apply",DIALOGWIDTH-GADGETWIDTH-BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+//aply changes
+	apply=new LFSTK_buttonClass(wc,"Apply",2*DIALOGWIDTH-2*GADGETWIDTH-2*BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	apply->LFSTK_setCallBack(NULL,doApply,NULL);
-	sy+=YSPACING;
 
-	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
+//cancel/quit
+	cancel=new LFSTK_buttonClass(wc,"Quit",2*DIALOGWIDTH-GADGETWIDTH-BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	cancel->LFSTK_setCallBack(NULL,doQuit,NULL);
+
+	sy+=YSPACING;
+	sy+=(YSPACING/2);
+
+	wc->LFSTK_resizeWindow(DIALOGWIDTH*2,sy,true);
 	wc->LFSTK_showWindow();
 
 	mainLoop=true;
@@ -171,9 +376,15 @@ int main(int argc, char **argv)
 				mainLoop=false;
 		}
 
+	command=wc->globalLib->LFSTK_oneLiner("rm -r %s",workDir);
+	free(command);
 	delete wc;
 	XCloseDisplay(display);
 	cairo_debug_reset_static_data();
+	free(tmpOutFile);
+	free(lastBitPath);
+	free(appsPath);
+	free(mimeTypesPath);
 	free(mimeTypesFile);
 	return 0;
 }
