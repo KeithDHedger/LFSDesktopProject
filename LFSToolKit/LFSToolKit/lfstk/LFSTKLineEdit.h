@@ -59,6 +59,10 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		void				LFSTK_setFormatedText(const char *txt,bool replace);
 		void				LFSTK_setCursorColourName(const char* colour);
 
+		KeySym				LFSTK_getKey(void);
+		unsigned int		LFSTK_getModifier(void);
+		const char			*LFSTK_getKeySym(void);
+
 	protected:
 		colourStruct		cursorColour={NULL,0,{0.0,0.0,0.0,0.8}};
 		double				charWidth;
@@ -72,6 +76,8 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		int					visCursorPos=0;
 		bool				isFocused;
 		int					offsetCurs=0;
+		KeySym				keysym_return;
+		unsigned int		state;
 };
 
 #endif

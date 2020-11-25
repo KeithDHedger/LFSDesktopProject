@@ -1,3 +1,6 @@
+0.4.5
+Added LFSTK_getKey/LFSTK_getModifier/LFSTK_getKeySym to line edit class.
+
 0.4.4
 Fixed line edit 1st char bug.
 Line edit visual tweaks.

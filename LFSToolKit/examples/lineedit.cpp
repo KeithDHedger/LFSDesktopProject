@@ -39,7 +39,15 @@ bool doQuit(void *p,void* ud)
 
 bool doKeyUp(void *p,void* ud)
 {
-	printf(">>%s<<\n",editbox->LFSTK_getCStr());
+	if(editbox->LFSTK_getKey()!=XK_VoidSymbol)
+		{
+			printf(">>%s<<\n",editbox->LFSTK_getCStr());
+			printf("Keycode=0x%x\n",editbox->LFSTK_getKey());
+			printf("Keysym=XK_%s\n",editbox->LFSTK_getKeySym());
+			printf("Modifier=0x%x\n",editbox->LFSTK_getModifier());
+		}
+//	else
+//		printf("Modifier=0x%x\n",editbox->LFSTK_getModifier());
 	return(true);
 }
 

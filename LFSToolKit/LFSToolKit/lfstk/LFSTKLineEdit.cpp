@@ -365,6 +365,40 @@ void LFSTK_lineEditClass::getClip(void)
 }
 
 /**
+* Get last pressed key.
+* \return Return Keysym or XK_VoidSymbol if only modifier pressed.
+* \note Keysyms here keysymdef.h
+*/
+KeySym LFSTK_lineEditClass::LFSTK_getKey(void)
+{
+	if(!(this->keysym_return>XK_Shift_L) && (this->keysym_return<XK_Hyper_R))
+		return(this->keysym_return);
+else
+	return(XK_VoidSymbol);
+}
+
+/**
+* Get last pressed modifer key.
+* \return Return int.
+* \note Keysyms here keysymdef.h
+*/
+unsigned int LFSTK_lineEditClass::LFSTK_getModifier(void)
+{
+	return(this->state);
+}
+
+/**
+* Get last pressed keysym ( - XK_ ).
+* \return const char*.
+* \note DO NOT FREE.
+* \note Keysyms here keysymdef.h
+*/
+const char* LFSTK_lineEditClass::LFSTK_getKeySym(void)
+{
+	return(XKeysymToString(this->keysym_return));
+}
+
+/**
 * Key release callback.
 * \param e XEvent passed from mainloop->listener.
 * \return Return true if event fully handeled or false to pass it on.
@@ -375,7 +409,6 @@ void LFSTK_lineEditClass::getClip(void)
 bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 {
 	char	c[255];
-	KeySym	keysym_return;
 	char	*command;
 
 	if(this->isActive==false)
@@ -389,6 +422,7 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 	if(this->isFocused==false)
 		return(true);
 
+	this->state=e->state;
 	if(e->state==ControlMask)
 		{
 			if(keysym_return==XK_v)
@@ -458,8 +492,6 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 						break;
 					this->buffer.insert(this->cursorPos,1,c[0]);
 					this->setOffsetcurs(1);
-				//	this->setOffsetcurs(2);
-				//	this->setOffsetcurs(2);
 					break;
 				}
 		}
