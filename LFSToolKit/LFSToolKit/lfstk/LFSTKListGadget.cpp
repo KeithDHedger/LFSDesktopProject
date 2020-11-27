@@ -392,7 +392,6 @@ const char	*LFSTK_listGadgetClass::LFSTK_getSelectedLabel(void)
 */
 bool LFSTK_listGadgetClass::mouseUp(XButtonEvent *e)
 {
-//printf("bool LFSTK_listGadgetClass::mouseUp(XButtonEvent *e)\n");
 	if(e->button==Button5)
 		this->scrollBar->LFSTK_scrollByLine(false);
 	if(e->button==Button4)
