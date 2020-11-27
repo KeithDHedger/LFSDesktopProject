@@ -1,4 +1,8 @@
 0.4.5
+Fixed doxygen documentaion.
+Added scrolling lists via keyboard ( page up/down line up/down ).
+Added scrolling list via scroll wheel ( button 5/4 ).
+Added programatically scroll scroll bar.
 Added LFSTK_getKey/LFSTK_getModifier/LFSTK_getKeySym to line edit class.
 
 0.4.4

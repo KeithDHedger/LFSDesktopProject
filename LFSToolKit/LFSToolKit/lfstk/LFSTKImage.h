@@ -26,12 +26,8 @@
 #include <X11/extensions/shape.h>
 
 /**
- *
- * \brief Image edit class for LFSToolKit.
- *
- * Basic Image gadget.
- *
- */
+ * \brief Image class for LFSToolKit.
+*/
 class LFSTK_imageClass  : public  LFSTK_gadgetClass
 {
 	public:

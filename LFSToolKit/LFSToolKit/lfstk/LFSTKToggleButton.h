@@ -25,12 +25,8 @@
 enum drawStyle {TOGGLECHECK=0,TOGGLERADIO,TOGGLENORMAL};
 
 /**
- *
- * \brief Line edit class for LFSToolKit.
- *
- * Basic line editing class for LFSToolKit.
- *
- */
+ * \brief Toglle button class for LFSToolKit.
+*/
 class LFSTK_toggleButtonClass  : public  LFSTK_gadgetClass
 {
 	public:

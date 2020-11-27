@@ -44,6 +44,9 @@
 #define IMAGELINKPNG LFSTKPIXMAPSDIR "/image.link.png"
 #define BOKENLINKPNG LFSTKPIXMAPSDIR "/document.link.broken.png"
 
+/**
+ * \brief File dialog class for LFSToolKit.
+*/
 class LFSTK_fileDialogClass
 {
 	public:

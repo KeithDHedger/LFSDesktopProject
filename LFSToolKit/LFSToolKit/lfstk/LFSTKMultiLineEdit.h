@@ -40,12 +40,8 @@ struct lineStruct
 };
 
 /**
- *
- * \brief Line edit class for LFSToolKit.
- *
- * Basic line editing class for LFSToolKit.
- *
- */
+ * \brief Mult-Line edit class for LFSToolKit.
+*/
 class LFSTK_multiLineEditClass  : public  LFSTK_lineEditClass
 {
 	public:

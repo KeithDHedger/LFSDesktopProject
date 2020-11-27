@@ -22,6 +22,9 @@
 #ifndef _LFSTKTOOLWINDOW_
 #define _LFSTKTOOLWINDOW_
 
+/**
+ * \brief Tool window class for LFSToolKit.
+*/
 class LFSTK_toolWindowClass : public LFSTK_windowClass
 {
 	public:

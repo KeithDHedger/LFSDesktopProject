@@ -40,9 +40,8 @@ struct	dataStruct
 };
 
 /**
- *
  * \brief Find files etc.
- */
+*/
 class LFSTK_findClass
 {
 	public:

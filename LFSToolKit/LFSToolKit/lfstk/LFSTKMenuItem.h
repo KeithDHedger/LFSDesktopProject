@@ -23,9 +23,7 @@
 
 #define SEPARATORHITE 4
 /**
- *
- * \brief Menu item class for LFSToolKit gadgets.
- *
+ * \brief Menu item class for LFSToolKit.
  */
 class LFSTK_menuItemClass : public LFSTK_buttonClass
 {

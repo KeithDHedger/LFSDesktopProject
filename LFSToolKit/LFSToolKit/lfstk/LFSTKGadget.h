@@ -26,12 +26,8 @@
 #include <Imlib2.h>
 
 /**
- *
  * \brief Base class for LFSToolKit gadgets.
- *
- * Base class for LFSToolKit gadgets.
- *
- */
+*/
 class LFSTK_gadgetClass
 {
 	public:
@@ -158,6 +154,8 @@ class LFSTK_gadgetClass
 
 //user data
 		void					*userData=NULL;
+		XButtonEvent			*mouseUpEvent;
+		XKeyEvent				*keyEvent;
 
 	private:
 		void					initGadget(void);

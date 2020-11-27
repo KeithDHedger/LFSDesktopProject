@@ -586,13 +586,14 @@ bool LFSTK_gadgetClass::LFSTK_getCanDrag(void)
 */
 bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 {
+	this->keyEvent=NULL;
 	if((this->isActive==false) || (this->callback.ignoreCallback==true))
 		return(true);
 
 	if(strcmp(this->label,"--")==0)
 		return(true);;
 
-
+	this->mouseUpEvent=e;
 	this->gadgetDetails.colour=&this->colourNames[NORMALCOLOUR];
 	this->gadgetDetails.state=NORMALCOLOUR;
 	this->gadgetDetails.bevel=BEVELOUT;
@@ -614,6 +615,7 @@ bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 {
 	this->mouseDownX=e->x;
 	this->mouseDownY=e->y;
+	this->keyEvent=NULL;
 
 	if((this->isActive==false) || (this->callback.ignoreCallback==true))
 		return(true);
@@ -637,6 +639,8 @@ bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 */
 bool LFSTK_gadgetClass::mouseExit(XButtonEvent *e)
 {
+	this->keyEvent=NULL;
+
 	if((this->isActive==false) || (this->callback.ignoreCallback==true))
 		return(true);
 
@@ -658,6 +662,7 @@ bool LFSTK_gadgetClass::mouseExit(XButtonEvent *e)
 */
 bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 {
+	this->keyEvent=NULL;
 	if((this->isActive==false) || (this->callback.ignoreCallback==true))
 		return(true);
 
@@ -697,6 +702,7 @@ void LFSTK_gadgetClass::LFSTK_allowYMovement(bool confine)
 */
 bool LFSTK_gadgetClass::mouseDrag(XMotionEvent *e)
 {
+	this->keyEvent=NULL;
 	if(this->canDrag==true)
 		{
 			if(this->allowX==true)
@@ -735,6 +741,15 @@ void LFSTK_gadgetClass::LFSTK_resizeWindow(int w,int h)
 */
 bool LFSTK_gadgetClass::keyRelease(XKeyEvent *e)
 {
+//printf("000000000000\n");
+//	if(this->callback.pressCallback!=NULL)
+//	{
+//printf("5555555555555\n");
+//		return(this->callback.pressCallback(this,this->callback.userData));
+//	}
+//printf("99999999999999\n");
+//
+	this->keyEvent=NULL;
 	return(true);
 }
 
@@ -745,6 +760,7 @@ bool LFSTK_gadgetClass::keyRelease(XKeyEvent *e)
 */
 bool LFSTK_gadgetClass::clientMessage(XEvent *e)
 {
+	this->keyEvent=NULL;
 	return(true);
 }
 
@@ -755,6 +771,7 @@ bool LFSTK_gadgetClass::clientMessage(XEvent *e)
 */
 bool LFSTK_gadgetClass::selectionRequest(XSelectionRequestEvent *e)
 {
+	this->keyEvent=NULL;
 	return(true);
 }
 
@@ -774,6 +791,7 @@ void LFSTK_gadgetClass::LFSTK_dropData(propertyStruct* data)
 */
 bool LFSTK_gadgetClass::lostFocus(XEvent *e)
 {
+	this->keyEvent=NULL;
 	return(true);
 }
 
@@ -784,6 +802,7 @@ bool LFSTK_gadgetClass::lostFocus(XEvent *e)
 */
 bool LFSTK_gadgetClass::gotFocus(XEvent *e)
 {
+	this->keyEvent=NULL;
 	return(true);
 }
 

@@ -23,10 +23,8 @@
 #define _LFSTKLABEL_
 
 /**
- *
  * \brief Label class for LFSToolKit gadgets.
- *
- */
+*/
 class LFSTK_labelClass : public LFSTK_gadgetClass
 {
 	public:

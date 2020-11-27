@@ -45,6 +45,9 @@ struct listLabelStruct
 		} data;
 };
 
+/**
+ * \brief List class for LFSToolKit.
+*/
 class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 {
 	public:
@@ -60,7 +63,9 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		bool					mouseExit(XButtonEvent *e) {return(true);};
 		bool					mouseEnter(XButtonEvent *e) {return(true);};
 		bool					mouseDown(XButtonEvent *e) {return(true);};
-		bool					mouseUp(XButtonEvent *e) {return(true);};
+		bool					mouseUp(XButtonEvent *e);
+		bool					keyRelease(XKeyEvent *e);
+
 		unsigned				listCnt;
 
 		//int						useThumbNail=NOTHUMB;
@@ -79,7 +84,9 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		void					setNavSensitive(void);
 
 		static bool				select(void *object,void* userdata);
+		static bool				selectKey(void *object,void* userdata);
 		static bool				scrollCB(void *object,void* userdata);
+		static bool				scrollListCB(void *object,void* userdata);
 };
 
 #endif

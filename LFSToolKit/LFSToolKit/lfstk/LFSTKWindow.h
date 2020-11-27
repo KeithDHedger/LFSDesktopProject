@@ -61,15 +61,9 @@ enum {XDNDENTER=0,XDNDPOSITION,XDNDSTATUS,XDNDTYPELIST,XDNDACTIONCOPY,XDNDDROP,X
 enum setWindowGeomFlags {WINDSETXY,WINDSETWH,WINDSETALL};
 
 /**
- *
  * \brief Window class for LFSToolKit.
- *
- * Basic window class for LFSToolKit.
- *
  * \note The main window class MUST be passed to child widgets.
- *
- */
-
+*/
 class LFSTK_windowClass
 {
 	public:

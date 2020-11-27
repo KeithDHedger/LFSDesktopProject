@@ -285,6 +285,25 @@ void LFSTK_scrollBarClass::LFSTK_setPageScroll(int line)
 	this->pageScroll=line;
 }
 
+
+bool LFSTK_scrollBarClass::pageUpDown(void *object,void* userdata)
+{
+	LFSTK_buttonClass		*button=static_cast<LFSTK_buttonClass*>(object);
+	LFSTK_scrollBarClass	*sbar=static_cast<LFSTK_scrollBarClass*>(userdata);
+
+	sbar->startDrag=false;
+
+	if((long)button->userData==1)
+		sbar->value-=sbar->pageScroll;
+
+	if((long)button->userData==2)
+		sbar->value+=sbar->pageScroll;
+
+	sbar->setState(true);
+	return(true);
+}
+
+
 bool LFSTK_scrollBarClass::lineUpDown(void *object,void* userdata)
 {
 	LFSTK_buttonClass		*button=static_cast<LFSTK_buttonClass*>(object);
@@ -414,6 +433,30 @@ bool LFSTK_scrollBarClass::mouseDown(XButtonEvent *e)
 	return(true);
 }
 
+/**
+* Programatically press up/left down/right button.
+* \param bool true= scroll up/left, false=down/right.
+*/
+void LFSTK_scrollBarClass::LFSTK_scrollByLine(bool up)
+{
+	if(up==true)
+		this->lineUpDown(this->upLeft,this);
+	else
+		this->lineUpDown(this->downRight,this);
+	return;
+}
 
+/**
+* Programatically press pageup/left pagedown/right button.
+* \param bool true= scroll up/left, false=down/right.
+*/
+void LFSTK_scrollBarClass::LFSTK_scrollByPage(bool up)
+{
+	if(up==true)
+		this->pageUpDown(this->upLeft,this);
+	else
+		this->pageUpDown(this->downRight,this);
+	return;
+}
 
 

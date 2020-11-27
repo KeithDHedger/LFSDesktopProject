@@ -23,11 +23,8 @@
 #define _LFSTKBUTTON_
 
 /**
- *
- * \brief Button class for LFSToolKit.
- * Basic button class for LFSToolKit.
- *
- */
+ * \brief Basic button class for LFSToolKit.
+*/
 class LFSTK_buttonClass : public LFSTK_gadgetClass
 {
 	public:
@@ -35,7 +32,9 @@ class LFSTK_buttonClass : public LFSTK_gadgetClass
 		~LFSTK_buttonClass();
 		LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity);
 
-		void LFSTK_setStyle(bevelType s);
+		bool	keyRelease(XKeyEvent *e);
+
+		void	LFSTK_setStyle(bevelType s);
 };
 
 #endif

@@ -23,11 +23,8 @@
 #define _LFSTKSCROLLBAR_
 
 /**
- *
- * \brief Button class for LFSToolKit.
- * Basic button class for LFSToolKit.
- *
- */
+ * \brief Scrollbar class for LFSToolKit.
+*/
 class LFSTK_scrollBarClass : public LFSTK_gadgetClass
 {
 	public:
@@ -48,9 +45,12 @@ class LFSTK_scrollBarClass : public LFSTK_gadgetClass
 		void				LFSTK_setLineScroll(int line);
 		void				LFSTK_setValue(int val);
 		int					LFSTK_getValue(void);
+		void				LFSTK_scrollByLine(bool up);
+		void				LFSTK_scrollByPage(bool up);
 
 		double				scale=1.0;
 		bool				reverse=false;
+		double				maxValue=100.0;
 
 	private:
 		int					value=0;
@@ -61,13 +61,13 @@ class LFSTK_scrollBarClass : public LFSTK_gadgetClass
 
 //calbacks
 		static bool			lineUpDown(void *object,void* userdata);
+		static bool			pageUpDown(void *object,void* userdata);
 		static bool			thumbClicked(void *object,void* userdata);
 		static bool			startThumbDrag(void *object,void* userdata);
 //private routines
 		void				setState(bool byvalue);
 
 		int					pageScroll=5;
-		double				maxValue=100.0;
 		double				minScale=1.0;
 		double				maxScale=100.0;
 		int					lineScroll=1;

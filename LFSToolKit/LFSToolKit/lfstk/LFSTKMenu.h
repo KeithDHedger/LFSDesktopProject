@@ -22,10 +22,8 @@
 #define _LFSTKMENU_
 #if 1
 /**
- *
- * \brief Label class for LFSToolKit gadgets.
- *
- */
+ * \brief Menu class for LFSToolKit.
+*/
 class LFSTK_menuClass
 {
 	public:

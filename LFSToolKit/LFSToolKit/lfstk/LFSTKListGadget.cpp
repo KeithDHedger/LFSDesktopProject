@@ -39,8 +39,22 @@ bool LFSTK_listGadgetClass::select(void *object,void* userdata)
 
 	label=static_cast<LFSTK_labelClass*>(object);
 	list=static_cast<LFSTK_listGadgetClass*>(d->mainObject);
+
 	datax=d->userData;
 	list->setCurrentItem(datax);
+
+	if(list->labels[list->currentItem-list->listOffset]->mouseUpEvent!=NULL)
+		{
+			if((list->labels[list->currentItem-list->listOffset]->mouseUpEvent->button==Button5) || (list->labels[list->currentItem-list->listOffset]->mouseUpEvent->button==Button4))
+				{
+					if(list->labels[list->currentItem-list->listOffset]->mouseUpEvent->button==Button5)
+						list->scrollBar->LFSTK_scrollByLine(false);
+					else
+						list->scrollBar->LFSTK_scrollByLine(true);
+					return(true);	
+				}
+		}
+
 	for(int j=0;j<list->maxShowing;j++)
 		{
 			list->labels[j]->LFSTK_setColourName(NORMALCOLOUR,list->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPELISTTROUGHCOLOUR));
@@ -135,6 +149,11 @@ void LFSTK_listGadgetClass::LFSTK_setListFromFile(const char *filepath,bool incl
 		}
 }
 
+bool LFSTK_listGadgetClass::scrollListCB(void *object,void* userdata)
+{
+	return(true);
+}
+
 /**
 * Set new list.
 *
@@ -164,6 +183,7 @@ void LFSTK_listGadgetClass::LFSTK_setList(listLabelStruct **list,unsigned numite
 				{
 					this->labels[j]->LFSTK_setLabel(this->labelData[j]->label);
 					this->labels[j]->LFSTK_setActive(true);
+					//this->labels[j]->LFSTK_setCallBack(scrollListCB,NULL,NULL);
 					if(this->labelData[j]->imageType==NOTHUMB)
 						this->labels[j]->LFSTK_setLabelGravity(LEFT);
 					else
@@ -189,7 +209,6 @@ void LFSTK_listGadgetClass::LFSTK_setList(listLabelStruct **list,unsigned numite
 	this->wc->LFSTK_clearWindow(true);
 	this->currentItem=0;
 	this->setNavSensitive();
-
 }
 
 bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
@@ -264,7 +283,7 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,adjwidth,h);
 	this->LFSTK_setCairoFontData();
 
-	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
+	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|FocusChangeMask|KeyReleaseMask);
 
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;
@@ -290,6 +309,7 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 //			this->labels[j]->LFSTK_setColourName(INACTIVECOLOUR,"white");
 			this->labels[j]->LFSTK_setColourName(NORMALCOLOUR,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPELISTTROUGHCOLOUR));
 			this->labels[j]->LFSTK_setColourName(INACTIVECOLOUR,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPELISTTROUGHCOLOUR));
+//			this->labels[j]->LFSTK_setCallBack();
 
 //			this->labels[j]->gadgetDetails.colour=&this->labels[j]->colourNames[NORMALCOLOUR];
 			this->labels[j]->gadgetDetails.colour=&this->labels[j]->colourNames[NORMALCOLOUR];
@@ -299,7 +319,9 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 			this->labels[j]->LFSTK_setActive(false);
 			this->labels[j]->LFSTK_setStyle(BEVELNONE);
 			this->labels[j]->LFSTK_setTile(NULL,0);
-			this->labels[j]->LFSTK_setCallBack(NULL,select,LISTDATA(j));
+
+			this->labels[j]->LFSTK_setCallBack(selectKey,select,LISTDATA(j));
+
 			this->labels[j]->LFSTK_setFontString(this->monoFontString);
 			this->labels[j]->LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
 			this->labels[j]->LFSTK_setFontColourName(INACTIVECOLOUR,"black",false);
@@ -314,6 +336,7 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 	this->scrollBar=new LFSTK_scrollBarClass(this->wc,true,x+w-SCROLLBARWIDTH-2,y,SCROLLBARWIDTH,h,gravity);
 	this->scrollBar->LFSTK_setScale(1,1);
 	this->scrollBar->LFSTK_setLineScroll(1);
+	this->scrollBar->LFSTK_setPageScroll(maxShowing-1);
 	this->scrollBar->LFSTK_setCallBack(NULL,scrollCB,this);
 
 	this->style=BEVELIN;
@@ -358,3 +381,88 @@ const char	*LFSTK_listGadgetClass::LFSTK_getSelectedLabel(void)
 {
 	return(this->labelData[this->currentItem]->label);
 }
+
+/**
+* Private scroll if bewtween list items.
+* \return true;
+*/
+bool LFSTK_listGadgetClass::mouseUp(XButtonEvent *e)
+{
+	if(e->button==Button5)
+		this->scrollBar->LFSTK_scrollByLine(false);
+	if(e->button==Button4)
+		this->scrollBar->LFSTK_scrollByLine(true);
+	return(true);
+}
+
+/**
+* Private scroll if bewtween list items.
+* \return true;
+*/
+bool LFSTK_listGadgetClass::keyRelease(XKeyEvent *e)
+{
+	char	c[255];
+	KeySym	keysym_return;
+
+	XLookupString(e,(char*)&c,255,&keysym_return,NULL);
+	switch(keysym_return)
+		{
+			case XK_Prior:
+				this->scrollBar->LFSTK_scrollByPage(true);
+				break;
+			case XK_Next:
+				this->scrollBar->LFSTK_scrollByPage(false);
+				break;
+			case XK_Up:
+				this->scrollBar->LFSTK_scrollByLine(true);
+				break;
+			case XK_Down:
+				this->scrollBar->LFSTK_scrollByLine(false);
+				break;
+		}
+
+	return(true);
+}
+
+/**
+* Private scroll by key.
+* \return true;
+*/
+bool LFSTK_listGadgetClass::selectKey(void *object,void* userdata)
+{
+	listData				*d=(listData*)userdata;
+	LFSTK_listGadgetClass	*list;
+	char					c[255];
+	KeySym					keysym_return;
+
+	LFSTK_buttonClass	*button=static_cast<LFSTK_buttonClass*>(object);
+	list=dynamic_cast<LFSTK_listGadgetClass*>(d->mainObject);
+
+	if(button==NULL)
+		return(true);
+
+	if(button->keyEvent!=NULL)
+		{
+			XLookupString(button->keyEvent,(char*)&c,255,&keysym_return,NULL);
+			switch(keysym_return)
+				{
+					case XK_Prior:
+						list->scrollBar->LFSTK_scrollByPage(true);
+						break;
+					case XK_Next:
+						list->scrollBar->LFSTK_scrollByPage(false);
+						break;
+					case XK_Up:
+						list->scrollBar->LFSTK_scrollByLine(true);
+						break;
+					case XK_Down:
+						list->scrollBar->LFSTK_scrollByLine(false);
+						break;
+
+				}
+		}
+
+	return(true);
+}
+
+

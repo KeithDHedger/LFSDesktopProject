@@ -36,11 +36,8 @@ struct fontDataStruct
 
 /**
  *
- * \brief Button class for LFSToolKit.
- *
- * Basic button class for LFSToolKit.
- *
- */
+ * \brief Font dialog class for LFSToolKit.
+*/
 class LFSTK_fontDialogClass : public LFSTK_gadgetClass
 {
 	public:
