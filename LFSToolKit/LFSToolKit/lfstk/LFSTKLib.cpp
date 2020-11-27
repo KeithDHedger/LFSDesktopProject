@@ -536,7 +536,7 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 //printf("---%i---\n",type);
 //printf("===type=%i====\n",e->type);
 	gadget=static_cast<LFSTK_gadgetClass*>(self);
-
+//DEBUGFUNC("gadget=%p",gadget);
 	switch (e->type)
 		{
 			case EnterNotify:
@@ -546,6 +546,7 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				retval=gadget->mouseExit(&e->xbutton);
 				break;
 			case ButtonRelease:
+			//DEBUGFUNC("gadget=%p",gadget);
 				if(gadget->firstClick==false)
 					{
 						gadget->isDoubleClick=false;
@@ -620,11 +621,13 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 //				printf("resize\n");
 				break;
 			case ClientMessage:
-//				//printf("ClientMessage from lib\n");
+				//printf("ClientMessage from lib\n");
 				break;
 			case SelectionRequest:
 				//fprintf(stderr,"from SelectionRequest lib\n");
-				break;				
+				break;
+		//	default:
+				//	printf("default\n");		
 		}
 	if(retval==false)
 		XSendEvent(gadget->wc->display,gadget->wc->window,False,0L,e);

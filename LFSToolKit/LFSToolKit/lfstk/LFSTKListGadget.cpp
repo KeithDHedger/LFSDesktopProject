@@ -45,13 +45,16 @@ bool LFSTK_listGadgetClass::select(void *object,void* userdata)
 
 	if(list->labels[list->currentItem-list->listOffset]->mouseUpEvent!=NULL)
 		{
-			if((list->labels[list->currentItem-list->listOffset]->mouseUpEvent->button==Button5) || (list->labels[list->currentItem-list->listOffset]->mouseUpEvent->button==Button4))
+			switch(list->labels[list->currentItem-list->listOffset]->mouseUpEvent->button)
 				{
-					if(list->labels[list->currentItem-list->listOffset]->mouseUpEvent->button==Button5)
+					case Button5:
 						list->scrollBar->LFSTK_scrollByLine(false);
-					else
+						return(true);
+						break;
+					case Button4:
 						list->scrollBar->LFSTK_scrollByLine(true);
-					return(true);	
+						return(true);
+						break;
 				}
 		}
 
@@ -151,6 +154,7 @@ void LFSTK_listGadgetClass::LFSTK_setListFromFile(const char *filepath,bool incl
 
 bool LFSTK_listGadgetClass::scrollListCB(void *object,void* userdata)
 {
+	//printf("bool LFSTK_listGadgetClass::scrollListCB(void *object,void* userdata)\n");
 	return(true);
 }
 
@@ -252,7 +256,7 @@ void LFSTK_listGadgetClass::setNavSensitive(void)
 }
 
 /**
-* Main button constructor.
+* Main Gadget constructor.
 *
 * \param parentwc Main parent window class.
 * \param label Displayed name.
@@ -388,6 +392,7 @@ const char	*LFSTK_listGadgetClass::LFSTK_getSelectedLabel(void)
 */
 bool LFSTK_listGadgetClass::mouseUp(XButtonEvent *e)
 {
+//printf("bool LFSTK_listGadgetClass::mouseUp(XButtonEvent *e)\n");
 	if(e->button==Button5)
 		this->scrollBar->LFSTK_scrollByLine(false);
 	if(e->button==Button4)
@@ -403,8 +408,8 @@ bool LFSTK_listGadgetClass::keyRelease(XKeyEvent *e)
 {
 	char	c[255];
 	KeySym	keysym_return;
-
 	XLookupString(e,(char*)&c,255,&keysym_return,NULL);
+
 	switch(keysym_return)
 		{
 			case XK_Prior:
