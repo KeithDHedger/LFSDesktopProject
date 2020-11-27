@@ -1,0 +1,16 @@
+<map id="LFSTK_scrollBarClass" name="LFSTK_scrollBarClass">
+<area shape="rect" id="node1" title="Scrollbar class for LFSToolKit." alt="" coords="625,549,780,577"/>
+<area shape="rect" id="node2" href="$class_l_f_s_t_k__gadget_class.xhtml" title="Base class for LFSToolKit gadgets." alt="" coords="605,317,750,345"/>
+<area shape="rect" id="node7" href="$class_l_f_s_t_k__window_class.xhtml" title="Window class for LFSToolKit." alt="" coords="254,425,402,453"/>
+<area shape="rect" id="node12" href="$structmapped_listener.xhtml" title=" " alt="" coords="719,425,836,453"/>
+<area shape="rect" id="node14" href="$class_l_f_s_t_k__button_class.xhtml" title="Basic button class for LFSToolKit." alt="" coords="860,425,1001,453"/>
+<area shape="rect" id="node3" href="$structgadget_struct.xhtml" title=" " alt="" coords="484,215,580,243"/>
+<area shape="rect" id="node4" href="$structgeometry_struct.xhtml" title=" " alt="" coords="199,97,311,125"/>
+<area shape="rect" id="node5" href="$structcolour_struct.xhtml" title=" " alt="" coords="486,97,578,125"/>
+<area shape="rect" id="node6" href="$structcairo_color.xhtml" title=" " alt="" coords="491,5,573,33"/>
+<area shape="rect" id="node8" href="$structmonitor_struct.xhtml" title=" " alt="" coords="30,317,130,345"/>
+<area shape="rect" id="node9" href="$structdrop_data_struct.xhtml" title=" " alt="" coords="154,317,265,345"/>
+<area shape="rect" id="node10" href="$class_l_f_s_t_k__lib.xhtml" title="Library of useful routines for LFSToolKit." alt="" coords="289,317,372,345"/>
+<area shape="rect" id="node11" href="$structargs.xhtml" title=" " alt="" coords="107,215,154,243"/>
+<area shape="rect" id="node13" href="$structbutton_c_b.xhtml" title=" " alt="" coords="803,215,880,243"/>
+</map>
