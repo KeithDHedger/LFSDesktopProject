@@ -60,7 +60,6 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		const char				*LFSTK_getSelectedLabel(void);
 		void					LFSTK_freeList(void);
 		void					LFSTK_appendToList(listLabelStruct data);
-		int						currentItem;
 
 		bool					mouseExit(XButtonEvent *e) {return(true);};
 		bool					mouseEnter(XButtonEvent *e) {return(true);};
@@ -69,6 +68,7 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		bool					keyRelease(XKeyEvent *e);
 
 		unsigned				listCntNew=0;
+		int						currentItem;
 
 		std::vector <listLabelStruct>	*listDataArray;
 

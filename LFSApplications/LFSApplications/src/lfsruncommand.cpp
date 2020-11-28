@@ -70,7 +70,6 @@ bool select(void *object,void* ud)
 {
 	LFSTK_listGadgetClass	*list=static_cast<LFSTK_listGadgetClass*>(object);
 
-	//commandToRun=list->labelData[list->LFSTK_getCurrentListItem()]->label;
 	commandToRun=list->LFSTK_getSelectedLabel();
 	le->LFSTK_setBuffer(commandToRun);
 	return(true);
