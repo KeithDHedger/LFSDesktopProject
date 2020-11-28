@@ -1,4 +1,22 @@
+/*
+ *
+ * ©K. D. Hedger. Sat 28 Nov 15:08:39 GMT 2020 keithdhedger@gmail.com
 
+ * This file (LFSTKFontDialog.cpp) is part of LFSToolKit.
+
+ * LFSToolKit is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * at your option) any later version.
+
+ * LFSToolKit is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with LFSToolKit.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "lfstk/LFSTKGlobals.h"
 
@@ -184,8 +202,10 @@ bool LFSTK_fontDialogClass::LFSTK_showDialog(const char* font)
 
 void LFSTK_fontDialogClass::buildDialog(void)
 {
-	int				sy=BORDER;
-	char			*sizestr[4]={0,};
+	int								sy=BORDER;
+	char							*sizestr[4]={0,};
+	//std::vector <listLabelStruct>	*lsstruct;
+	listLabelStruct					ls;
 
 	dialog=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Font Selector",false);
 	dialog->closeDisplayOnExit=true;
@@ -195,15 +215,16 @@ void LFSTK_fontDialogClass::buildDialog(void)
 //list
 	this->fontlist=new LFSTK_listGadgetClass(this->dialog,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5,BUTTONGRAV,NULL,0);
 	this->loadFontStrings();
-	labelLst=labelLst=new listLabelStruct*[this->maxFonts];
+	
+	//lsstruct=new std::vector <listLabelStruct>;
 	for(int j=0;j<this->maxFonts;j++)
 		{
-			labelLst[j]=new listLabelStruct;
-			labelLst[j]->label=strdup(this->fontsAZ[j]);
-			labelLst[j]->imageType=NOTHUMB;
+			ls.label=strdup(this->fontsAZ[j]);
+			ls.imageType=NOTHUMB;
+			fontlist->LFSTK_appendToList(ls);
 		}
 
-	this->fontlist->LFSTK_setList(labelLst,this->maxFonts);
+	this->fontlist->LFSTK_updateList();
 	this->fontlist->LFSTK_setCallBack(NULL,select,this);
 	sy+=GADGETHITE*5;
 
@@ -215,7 +236,6 @@ void LFSTK_fontDialogClass::buildDialog(void)
 //italic
 	this->italiccheck=new LFSTK_toggleButtonClass(this->dialog,"Italic",BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,CHECKBOXSIZE,NorthWestGravity);
 	this->italiccheck->LFSTK_setCallBack(NULL,select,(void*)this);
-	//sy-=CHECKBOXSIZE;
 
 //font size
 	snprintf((char*)&sizestr,3,"%i",size);

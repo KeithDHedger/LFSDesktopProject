@@ -1,4 +1,11 @@
 0.4.5
+Changes in lfsapps for new API's.
+Added append to list to list gadget.
+Fixed list gadget leak.
+Fixed focus on line edit.
+Fixed list gadget scrollbar not resetting on update list.
+Fixed fontdialog list not getting keybaord focus.
+Code clean.
 Fixed doxygen documentaion.
 Added scrolling lists via keyboard ( page up/down line up/down ).
 Added scrolling list via scroll wheel ( button 5/4 ).

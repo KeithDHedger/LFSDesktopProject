@@ -109,7 +109,7 @@ class LFSTK_fileDialogClass
 		LFSTK_lineEditClass		*dirEdit;
 
 //files and folders
-		LFSTK_findClass				*fc=NULL;
+		LFSTK_findClass			*fc=NULL;
 		void					getFileList(void);
 		void					freeFileList();
 		void					cleanDirPath(void);

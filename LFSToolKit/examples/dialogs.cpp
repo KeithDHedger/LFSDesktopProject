@@ -46,6 +46,7 @@ bool selectfile(void *object,void* ud)
 {
 	char	*mimetype=NULL;
 	filedialogfile->LFSTK_showFileDialog(NULL,"Select A File");
+
 	if(filedialogfile->LFSTK_isValid()==true)
 		{
 			printf("Selected File Path=%s\n",filedialogfile->LFSTK_getCurrentPath());

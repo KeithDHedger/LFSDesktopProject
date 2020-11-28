@@ -55,9 +55,11 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const char *label,int x,int y,unsigned w,unsigned h,int gravity,char **list,unsigned cnt);
 
 		int						LFSTK_getCurrentListItem(void);
-		void					LFSTK_setList(listLabelStruct **list,unsigned numitems);
+		void					LFSTK_updateList(void);
 		void					LFSTK_setListFromFile(const char *filepath,bool includeempty);
 		const char				*LFSTK_getSelectedLabel(void);
+		void					LFSTK_freeList(void);
+		void					LFSTK_appendToList(listLabelStruct data);
 		int						currentItem;
 
 		bool					mouseExit(XButtonEvent *e) {return(true);};
@@ -66,10 +68,10 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		bool					mouseUp(XButtonEvent *e);
 		bool					keyRelease(XKeyEvent *e);
 
-		unsigned				listCnt;
+		unsigned				listCntNew=0;
 
-		//int						useThumbNail=NOTHUMB;
-		listLabelStruct			**labelData=NULL;
+		std::vector <listLabelStruct>	*listDataArray;
+
 		bool					freeCairoImages=true;
 	private:
 		LFSTK_scrollBarClass	*scrollBar;

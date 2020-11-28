@@ -69,7 +69,7 @@ void setMimeTypesList(char *filepath)
 	int		linecnt=0;
 	char	*lines=NULL;
 	listLabelStruct listit;
-	std::vector<listLabelStruct> thelist;
+	//std::vector<listLabelStruct> thelist;/
 
 	if(filepath!=NULL)
 		{
@@ -88,26 +88,34 @@ void setMimeTypesList(char *filepath)
 										{
 											listit.label=strdup(buffer);
 											listit.imageType=NOTHUMB;
-											thelist.push_back(listit);
+											if(listit.label[strlen(listit.label)-1]==';')
+												listit.label[strlen(listit.label)-1]=0;
+											char	*ptr=strchr(listit.label,'=');
+											*ptr=0;
+											ptr++;
+											listit.userData=ptr;
+											mimeList->LFSTK_appendToList(listit);
+											//thelist.push_back(listit);
 										}
 								}
 							free(buffer);
 						}
+					mimeList->LFSTK_updateList();
 					fclose(file);
-					labelLst=new listLabelStruct*[thelist.size()];
-					for(int j=0;j<thelist.size();j++)
-						{
-							labelLst[j]=new listLabelStruct;
-							labelLst[j]->label=thelist[j].label;
-							if(labelLst[j]->label[strlen(labelLst[j]->label)-1]==';')
-								labelLst[j]->label[strlen(labelLst[j]->label)-1]=0;
-							char	*ptr=strchr(labelLst[j]->label,'=');
-							*ptr=0;
-							ptr++;
-							labelLst[j]->userData=ptr;
-							labelLst[j]->imageType=NOTHUMB;
-						}
-					mimeList->LFSTK_setList(labelLst,thelist.size());
+					//labelLst=new listLabelStruct*[thelist.size()];
+//					for(int j=0;j<thelist.size();j++)
+//						{
+//							labelLst[j]=new listLabelStruct;
+//							labelLst[j]->label=thelist[j].label;
+//							if(labelLst[j]->label[strlen(labelLst[j]->label)-1]==';')
+//								labelLst[j]->label[strlen(labelLst[j]->label)-1]=0;
+//							char	*ptr=strchr(labelLst[j]->label,'=');
+//							*ptr=0;
+//							ptr++;
+//							labelLst[j]->userData=ptr;
+//							labelLst[j]->imageType=NOTHUMB;
+//						}
+//					mimeList->LFSTK_setList(labelLst,thelist.size());
 				}
 		}
 }
@@ -137,14 +145,14 @@ void reWriteMimeFile(void)
 	if(file!=NULL)
 		{
 			fprintf(file,"[Default Applications]\n");
-			for(int j=0;j<mimeList->listCnt;j++)
+			for(int j=0;j<mimeList->listCntNew;j++)
 				{
 					if(j!=mimeList->currentItem)
 						{
-							ptr=mimeList->labelData[j]->label;
-							ptr+=strlen(mimeList->labelData[j]->label);
+							ptr=mimeList->listDataArray->at(j).label;
+							ptr+=strlen(mimeList->listDataArray->at(j).label);
 							ptr++;
-							fprintf(file,"%s=%s;\n",mimeList->labelData[j]->label,ptr);
+							fprintf(file,"%s=%s;\n",mimeList->listDataArray->at(j).label,ptr);
 						}
 				}
 
@@ -171,18 +179,18 @@ bool doUpdate(void *p,void* ud)
 	if(file!=NULL)
 		{
 			fprintf(file,"[Default Applications]\n");
-			for(int j=0;j<mimeList->listCnt;j++)
+			for(int j=0;j<mimeList->listCntNew;j++)
 				{
 					if(j==mimeList->currentItem)
 						{
-							fprintf(file,"%s=%s.desktop;\n",mimeList->labelData[mimeList->currentItem]->label,appLine->LFSTK_getCStr());
+							fprintf(file,"%s=%s.desktop;\n",mimeList->listDataArray->at(mimeList->currentItem).label,appLine->LFSTK_getCStr());
 						}
 					else
 						{
-							ptr=mimeList->labelData[j]->label;
-							ptr+=strlen(mimeList->labelData[j]->label);
+							ptr=mimeList->listDataArray->at(j).label;
+							ptr+=strlen(mimeList->listDataArray->at(j).label);
 							ptr++;
-							fprintf(file,"%s=%s;\n",mimeList->labelData[j]->label,ptr);
+							fprintf(file,"%s=%s;\n",mimeList->listDataArray->at(j).label,ptr);
 						}
 				}
 			fprintf(file,"%s=%s.desktop;\n",editLine->LFSTK_getCStr(),appLine->LFSTK_getCStr());
@@ -203,7 +211,7 @@ bool doUpdate(void *p,void* ud)
 bool doInsert(void *p,void* ud)
 {
 	char		*command;
-	const char	*data=mimeList->labelData[mimeList->currentItem]->label;
+	const char	*data=mimeList->listDataArray->at(mimeList->currentItem).label;
 
 	asprintf(&command,"sed -i 's@\\(%s.*\\)@\\1\\n%s=Custom.desktop@' \"%s\"",data,data,mimeTypesFile);
 	system(command);
@@ -218,7 +226,7 @@ bool doDelete(void *p,void* ud)
 	char	*command;
 	int		holdnum=mimeList->currentItem;
 
-	if(holdnum>=mimeList->listCnt)
+	if(holdnum>=mimeList->listCntNew)
 		return(true);
 	if(mimeList->LFSTK_getSelectedLabel()[0]=='[')
 		return(true);
@@ -238,7 +246,7 @@ bool doDelete(void *p,void* ud)
 bool doApply(void *p,void* ud)
 {
 	char		*command;
-	const char	*data=mimeList->labelData[mimeList->currentItem]->label;
+	const char	*data=mimeList->listDataArray->at(mimeList->currentItem).label;
 
 	asprintf(&command,"cp \"%s\" \"%s/.config\"",mimeTypesFile,getenv("HOME"));
 	system(command);
@@ -256,7 +264,7 @@ bool selectMime(void *object,void* ud)
 	if(list->LFSTK_getSelectedLabel()[0]=='[')
 		return(true);
 
-	asprintf(&app,"%s",list->labelData[list->LFSTK_getCurrentListItem()]->userData);
+	asprintf(&app,"%s",list->listDataArray->at(list->LFSTK_getCurrentListItem()).userData);
 	*(strrchr(app,'.'))=0;
 	editLine->LFSTK_setBuffer(list->LFSTK_getSelectedLabel());
 	appLine->LFSTK_setBuffer((const char*)app);

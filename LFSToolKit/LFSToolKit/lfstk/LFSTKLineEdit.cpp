@@ -169,7 +169,8 @@ bool LFSTK_lineEditClass::lostFocus(XEvent *e)
 {
 	if(this->isFocused==true)
 		{
-//			XUngrabKeyboard(this->display,CurrentTime);
+	//		XSetInputFocus(this->display,this->window,false,CurrentTime);
+			XUngrabKeyboard(this->display,CurrentTime);
 			this->isFocused=false;
 			this->LFSTK_clearWindow();
 		}

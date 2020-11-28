@@ -55,9 +55,9 @@ bool select(void *object,void* userdata)
 
 	printf("List item=%i\n",list->LFSTK_getCurrentListItem());
 	printf("Selected List item string=%s\n",list->LFSTK_getSelectedLabel());
-	if(list->labelData[list->LFSTK_getCurrentListItem()]->imageType==FILETHUMB)
-		printf("Image path=%s\n",list->labelData[list->LFSTK_getCurrentListItem()]->data.imagePath);
-	printf("UserData=%p\n",userdata);
+	if(list->listDataArray->at(list->LFSTK_getCurrentListItem()).imageType==FILETHUMB)
+		printf("Image path=%s\n",list->listDataArray->at(list->LFSTK_getCurrentListItem()).data.imagePath);
+	printf("UserData=%p\n",list->listDataArray->at(list->LFSTK_getCurrentListItem()).userData);
 	return(true);
 }
 
@@ -81,26 +81,27 @@ int main(int argc, char **argv)
 
 //list
 	list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5,BUTTONGRAV,NULL,0);
-
-	labelLst1=new listLabelStruct*[15];
+	listLabelStruct ls;
 	for(int j=0;j<15;j++)
 		{
-			labelLst1[j]=new listLabelStruct;
-			labelLst1[j]->label=strdup((char*)lst[j]);
-			labelLst1[j]->imageType=FILETHUMB;
+			ls.label=strdup((char*)lst[j]);
+			ls.imageType=FILETHUMB;
 			if(images[j]!=NULL)
-				labelLst1[j]->data.imagePath=strdup(images[j]);
+				ls.data.imagePath=strdup(images[j]);
 			else
-				labelLst1[j]->data.imagePath=NULL;
+				ls.data.imagePath=NULL;
+			ls.userData=(void*)(long)j+0x1000;
+			list->LFSTK_appendToList(ls);
 		}
-	list->LFSTK_setList(labelLst1,15);
+
+	list->LFSTK_updateList();
 	list->LFSTK_setCallBack(NULL,select,NULL);
 	sy+=GADGETHITE*6;
+
 //file list
 	filelist=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*16,BUTTONGRAV,NULL,0);
 	filelist->LFSTK_setListFromFile("/tmp/biglist",false);
 	filelist->LFSTK_setCallBack(NULL,select,(void*)0xdeadbeaf);
-
 	sy+=GADGETHITE*17;
 
 //line

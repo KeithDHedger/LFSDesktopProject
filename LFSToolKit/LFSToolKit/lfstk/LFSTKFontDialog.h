@@ -63,7 +63,6 @@ class LFSTK_fontDialogClass : public LFSTK_gadgetClass
 		LFSTK_buttonClass		*apply=NULL;
 		LFSTK_buttonClass		*cancel=NULL;
 
-		listLabelStruct			**labelLst=NULL;
 		unsigned				selectedFontNumber=0;
 		bool					mainLoop;
 		unsigned				maxFonts=0;

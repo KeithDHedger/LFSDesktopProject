@@ -50,7 +50,6 @@ LFSTK_fileDialogClass::~LFSTK_fileDialogClass(void)
 void LFSTK_fileDialogClass::cleanDirPath(void)
 {
 	char	*rp;
-
 	rp=this->wc->globalLib->LFSTK_oneLiner("realpath -s '%s'",this->currentDir);
 	if(this->currentDir!=NULL)
 		free(this->currentDir);
@@ -59,9 +58,8 @@ void LFSTK_fileDialogClass::cleanDirPath(void)
 
 void LFSTK_fileDialogClass::getFileList(void)
 {
-	char			imagepath[PATH_MAX];
-	listLabelStruct	**labelLst=NULL;
-
+	char							imagepath[PATH_MAX];
+	listLabelStruct					ls;
 	this->fc->LFSTK_setDepth(1,1);
 	if(this->dialogType==FOLDERDIALOG)
 		this->fc->LFSTK_setFindType(FOLDERTYPE);
@@ -75,65 +73,64 @@ void LFSTK_fileDialogClass::getFileList(void)
 	this->fc->LFSTK_sortByTypeAndName();
 
 	this->fileListCnt=this->fc->LFSTK_getDataCount();
-	labelLst=labelLst=new listLabelStruct*[this->fileListCnt];
 	this->fileListGadget->freeCairoImages=false;
-
+	this->fileListGadget->LFSTK_freeList();
 	for(int j=0;j<this->fileListCnt;j++)
 		{
-			labelLst[j]=new listLabelStruct;
-			labelLst[j]->label=strdup(this->fc->data.at(j).name.c_str());
-			labelLst[j]->imageType=CAIROTHUMB;
+			ls.label=strdup(this->fc->data.at(j).name.c_str());
+			ls.imageType=CAIROTHUMB;
 			switch(this->fc->data.at(j).fileType)
 				{
 					case FOLDERTYPE:
-								labelLst[j]->data.surface=this->folderImage;
+								ls.data.surface=this->folderImage;
 								break;
 
 					case FILETYPE:
-						if((strcasestr(labelLst[j]->label,".jpg")!=NULL) || (strcasestr(labelLst[j]->label,".png")!=NULL))
+						if((strcasestr(ls.label,".jpg")!=NULL) || (strcasestr(ls.label,".png")!=NULL))
 							{
 								if(this->useThumbs==true)
 									{
-										labelLst[j]->imageType=FILETHUMB;
-										labelLst[j]->data.imagePath=strdup(this->fc->data.at(j).path.c_str());
+										ls.imageType=FILETHUMB;
+										ls.data.imagePath=strdup(this->fc->data.at(j).path.c_str());
 									}
 								else
-									labelLst[j]->data.surface=this->imageImage;
+									ls.data.surface=this->imageImage;
 							}
 						else
-							labelLst[j]->data.surface=this->fileImage;
+							ls.data.surface=this->fileImage;
 						break;
 
 					case FOLDERLINKTYPE:
-						labelLst[j]->data.surface=this->folderImageLink;
+						ls.data.surface=this->folderImageLink;
 						break;
 
 					case FILELINKTYPE:
-						if((strcasestr(labelLst[j]->label,".jpg")!=NULL) || (strcasestr(labelLst[j]->label,".png")!=NULL))
+						if((strcasestr(ls.label,".jpg")!=NULL) || (strcasestr(ls.label,".png")!=NULL))
 							{
 								if(this->useThumbs==true)
 									{
-										labelLst[j]->imageType=FILETHUMB;
-										labelLst[j]->data.imagePath=strdup(this->fc->data.at(j).path.c_str());
+										ls.imageType=FILETHUMB;
+										ls.data.imagePath=strdup(this->fc->data.at(j).path.c_str());
 									}
 								else
-									labelLst[j]->data.surface=this->imageImageLink;
+									ls.data.surface=this->imageImageLink;
 							}
 						else
-							labelLst[j]->data.surface=this->fileImageLink;
+							ls.data.surface=this->fileImageLink;
 						break;
 
 					case BROKENLINKTYPE:
-						labelLst[j]->data.surface=this->brokenLink;
+						ls.data.surface=this->brokenLink;
 						break;
 				
 					default:
-						labelLst[j]->data.surface=this->fileImage;
+						ls.data.surface=this->fileImage;
 						break;
 				}
+			//ls.userData=(void*)j;
+			fileListGadget->LFSTK_appendToList(ls);
 		}
-		//fprintf(stderr,"cnt=%i\n",this->fileListCnt);
-	this->fileListGadget->LFSTK_setList(labelLst,this->fileListCnt);
+	this->fileListGadget->LFSTK_updateList();
 }
 
 /**
@@ -604,8 +601,9 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 									{
 										char	*buf;
 										char	*rp;
-											
-										asprintf(&buf,"%s/%s",this->dirEdit->LFSTK_getCStr(),this->fileListGadget->labelData[this->fileListGadget->LFSTK_getCurrentListItem()]->label);
+									//	asprintf(&buf,"%s/%s",this->dirEdit->LFSTK_getCStr(),this->fileListGadget->listDataArray->at(this->fileListGadget->LFSTK_getCurrentListItem()).label);
+										asprintf(&buf,"%s/%s",this->dirEdit->LFSTK_getCStr(),this->fileListGadget->LFSTK_getSelectedLabel());
+									printf(">>buf=%p\n");
 										if((this->isADir(buf)==true) && (this->dialogType==FILEDIALOG))
 											{
 												this->apply=false;
@@ -616,6 +614,7 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 										
 										if(this->dialogType==FOLDERDIALOG)
 											{
+											printf(">>buf=%p FOLDEr\n");
 												this->apply=true;
 												this->mainLoop=false;
 												this->setFileData();
@@ -713,13 +712,13 @@ bool LFSTK_fileDialogClass::select(void *object,void* userdata)
 	LFSTK_fileDialogClass *fd=static_cast<LFSTK_fileDialogClass*>(userdata);
 	LFSTK_listGadgetClass *list=static_cast<LFSTK_listGadgetClass*>(object);
 	
-	asprintf(&buf,"%s/%s",fd->LFSTK_getCurrentDir(),list->labelData[list->LFSTK_getCurrentListItem()]->label);
+	asprintf(&buf,"%s/%s",fd->LFSTK_getCurrentDir(),list->LFSTK_getSelectedLabel());
 	rp=fd->wc->globalLib->LFSTK_oneLiner("realpath -s '%s'",buf);
 	if(fd->isADir(buf)==false)
 	fd->dirEdit->LFSTK_setBuffer(rp);
 	fd->setPreviewData(true);
 	if(list->isDoubleClick==true)
-		{												
+		{											
 			fd->dirEdit->LFSTK_setBuffer(rp);
 			if(fd->isADir(fd->dirEdit->LFSTK_getCStr())==true)
 				{
@@ -733,8 +732,8 @@ bool LFSTK_fileDialogClass::select(void *object,void* userdata)
 					fd->mainLoop=false;
 				}
 		}
-	free(buf);
-	free(rp);
+	freeAndNull(&buf);
+	freeAndNull(&rp);
 	return(true);
 }
 
