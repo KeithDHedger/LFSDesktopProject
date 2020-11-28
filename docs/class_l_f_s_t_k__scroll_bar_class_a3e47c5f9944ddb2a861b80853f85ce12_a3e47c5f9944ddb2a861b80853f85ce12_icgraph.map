@@ -1,16 +1,25 @@
 <map id="LFSTK_scrollBarClass::setState" name="LFSTK_scrollBarClass::setState">
-<area shape="rect" id="node1" title=" " alt="" coords="850,108,1006,152"/>
-<area shape="rect" id="node2" href="$class_l_f_s_t_k__scroll_bar_class_a6a4b0d2c9217779bb3bc0b4c936130ce.xhtml#a6a4b0d2c9217779bb3bc0b4c936130ce" title=" " alt="" coords="647,5,802,49"/>
-<area shape="rect" id="node3" href="$class_l_f_s_t_k__scroll_bar_class_a955c2789a3ce6d849a3d00a3bf4911e7.xhtml#a955c2789a3ce6d849a3d00a3bf4911e7" title=" " alt="" coords="647,73,802,117"/>
-<area shape="rect" id="node4" href="$class_l_f_s_t_k__scroll_bar_class_aa1ce7f61248cfa6eeef3e8573e327d8f.xhtml#aa1ce7f61248cfa6eeef3e8573e327d8f" title=" " alt="" coords="647,141,802,185"/>
-<area shape="rect" id="node12" href="$class_l_f_s_t_k__scroll_bar_class_a72b11062708e9db06d05162734b5555b.xhtml#a72b11062708e9db06d05162734b5555b" title=" " alt="" coords="647,277,802,321"/>
-<area shape="rect" id="node13" href="$class_l_f_s_t_k__scroll_bar_class_a04c7fd897a3f2e5d496962cc7d80d4e3.xhtml#a04c7fd897a3f2e5d496962cc7d80d4e3" title=" " alt="" coords="647,209,802,253"/>
-<area shape="rect" id="node5" href="$class_l_f_s_t_k__scroll_bar_class_a3da4281c24ac345ba32a4636ce2af38b.xhtml#a3da4281c24ac345ba32a4636ce2af38b" title=" " alt="" coords="436,141,599,185"/>
-<area shape="rect" id="node6" href="$class_l_f_s_t_k__scroll_bar_class_a690ed010fb6760b5ee112df392076df5.xhtml#a690ed010fb6760b5ee112df392076df5" title=" " alt="" coords="440,73,595,117"/>
-<area shape="rect" id="node7" href="$class_l_f_s_t_k__list_gadget_class_afd92ab070d0d68863589669cb73404cf.xhtml#afd92ab070d0d68863589669cb73404cf" title=" " alt="" coords="224,141,388,185"/>
-<area shape="rect" id="node8" href="$class_l_f_s_t_k__list_gadget_class_ad54eba5a5dc2bac69eeb6a1e40b563d7.xhtml#ad54eba5a5dc2bac69eeb6a1e40b563d7" title=" " alt="" coords="224,73,388,117"/>
-<area shape="rect" id="node9" href="$class_l_f_s_t_k__list_gadget_class_ad9b006620b5e9712da9b0ee3ead405de.xhtml#ad9b006620b5e9712da9b0ee3ead405de" title=" " alt="" coords="224,5,388,49"/>
-<area shape="rect" id="node11" href="$class_l_f_s_t_k__list_gadget_class_acf5ccc1d522f0d8a3b23e392b7ce30a5.xhtml#acf5ccc1d522f0d8a3b23e392b7ce30a5" title=" " alt="" coords="224,209,388,253"/>
-<area shape="rect" id="node10" href="$class_l_f_s_t_k__list_gadget_class_ae3518016f28ec3cd261ad927c5691826.xhtml#ae3518016f28ec3cd261ad927c5691826" title=" " alt="" coords="5,108,176,152"/>
-<area shape="rect" id="node14" href="$class_l_f_s_t_k__scroll_bar_class_a1aa54518e56118cc5f92890b7269c3d1.xhtml#a1aa54518e56118cc5f92890b7269c3d1" title=" " alt="" coords="440,209,595,253"/>
+<area shape="rect" id="node1" title=" " alt="" coords="1286,176,1441,220"/>
+<area shape="rect" id="node2" href="$class_l_f_s_t_k__scroll_bar_class_a6a4b0d2c9217779bb3bc0b4c936130ce.xhtml#a6a4b0d2c9217779bb3bc0b4c936130ce" title=" " alt="" coords="1082,73,1238,117"/>
+<area shape="rect" id="node3" href="$class_l_f_s_t_k__scroll_bar_class_a955c2789a3ce6d849a3d00a3bf4911e7.xhtml#a955c2789a3ce6d849a3d00a3bf4911e7" title=" " alt="" coords="1082,141,1238,185"/>
+<area shape="rect" id="node13" href="$class_l_f_s_t_k__scroll_bar_class_aa1ce7f61248cfa6eeef3e8573e327d8f.xhtml#aa1ce7f61248cfa6eeef3e8573e327d8f" title=" " alt="" coords="1082,277,1238,321"/>
+<area shape="rect" id="node21" href="$class_l_f_s_t_k__scroll_bar_class_a72b11062708e9db06d05162734b5555b.xhtml#a72b11062708e9db06d05162734b5555b" title=" " alt="" coords="1082,345,1238,389"/>
+<area shape="rect" id="node22" href="$class_l_f_s_t_k__scroll_bar_class_a04c7fd897a3f2e5d496962cc7d80d4e3.xhtml#a04c7fd897a3f2e5d496962cc7d80d4e3" title=" " alt="" coords="1082,209,1238,253"/>
+<area shape="rect" id="node4" href="$class_l_f_s_t_k__list_gadget_class_a7b9a3f3a749e622fdd46da8f72da2002.xhtml#a7b9a3f3a749e622fdd46da8f72da2002" title=" " alt="" coords="871,108,1034,152"/>
+<area shape="rect" id="node5" href="$class_l_f_s_t_k__font_dialog_class_af866eb2b1ba8178c9cf3e751716fcc8e.xhtml#af866eb2b1ba8178c9cf3e751716fcc8e" title=" " alt="" coords="657,5,820,49"/>
+<area shape="rect" id="node7" href="$class_l_f_s_t_k__file_dialog_class_a0a6b4f1db71031bf35a7636b736e8698.xhtml#a0a6b4f1db71031bf35a7636b736e8698" title=" " alt="" coords="659,73,818,117"/>
+<area shape="rect" id="node12" href="$class_l_f_s_t_k__list_gadget_class_addcdb5ba330fd8dd36beb94ea2081dd3.xhtml#addcdb5ba330fd8dd36beb94ea2081dd3" title=" " alt="" coords="654,141,823,185"/>
+<area shape="rect" id="node6" href="$class_l_f_s_t_k__font_dialog_class_ab7b6a4bca99713646ab6ac77dc34827c.xhtml#ab7b6a4bca99713646ab6ac77dc34827c" title=" " alt="" coords="435,5,606,49"/>
+<area shape="rect" id="node8" href="$class_l_f_s_t_k__file_dialog_class_a553ce8e885b0d60cbf515b7b3d1e8b65.xhtml#a553ce8e885b0d60cbf515b7b3d1e8b65" title=" " alt="" coords="5,69,171,113"/>
+<area shape="rect" id="node9" href="$class_l_f_s_t_k__file_dialog_class_aa8804989d381def9acb2c99d47d6dc3d.xhtml#aa8804989d381def9acb2c99d47d6dc3d" title=" " alt="" coords="440,73,601,117"/>
+<area shape="rect" id="node10" href="$class_l_f_s_t_k__file_dialog_class_aacf1d4b61cbb5b40d06f591ea96f9ea7.xhtml#aacf1d4b61cbb5b40d06f591ea96f9ea7" title=" " alt="" coords="219,73,387,117"/>
+<area shape="rect" id="node11" href="$class_l_f_s_t_k__file_dialog_class_a789cade9437906181e31a243c85d52e5.xhtml#a789cade9437906181e31a243c85d52e5" title=" " alt="" coords="224,5,382,49"/>
+<area shape="rect" id="node14" href="$class_l_f_s_t_k__scroll_bar_class_a3da4281c24ac345ba32a4636ce2af38b.xhtml#a3da4281c24ac345ba32a4636ce2af38b" title=" " alt="" coords="871,277,1034,321"/>
+<area shape="rect" id="node15" href="$class_l_f_s_t_k__scroll_bar_class_a690ed010fb6760b5ee112df392076df5.xhtml#a690ed010fb6760b5ee112df392076df5" title=" " alt="" coords="875,345,1030,389"/>
+<area shape="rect" id="node16" href="$class_l_f_s_t_k__list_gadget_class_afd92ab070d0d68863589669cb73404cf.xhtml#afd92ab070d0d68863589669cb73404cf" title=" " alt="" coords="657,209,820,253"/>
+<area shape="rect" id="node17" href="$class_l_f_s_t_k__list_gadget_class_ad54eba5a5dc2bac69eeb6a1e40b563d7.xhtml#ad54eba5a5dc2bac69eeb6a1e40b563d7" title=" " alt="" coords="657,413,820,457"/>
+<area shape="rect" id="node18" href="$class_l_f_s_t_k__list_gadget_class_ad9b006620b5e9712da9b0ee3ead405de.xhtml#ad9b006620b5e9712da9b0ee3ead405de" title=" " alt="" coords="657,345,820,389"/>
+<area shape="rect" id="node20" href="$class_l_f_s_t_k__list_gadget_class_acf5ccc1d522f0d8a3b23e392b7ce30a5.xhtml#acf5ccc1d522f0d8a3b23e392b7ce30a5" title=" " alt="" coords="657,277,820,321"/>
+<area shape="rect" id="node19" href="$class_l_f_s_t_k__list_gadget_class_ae3518016f28ec3cd261ad927c5691826.xhtml#ae3518016f28ec3cd261ad927c5691826" title=" " alt="" coords="435,311,606,355"/>
+<area shape="rect" id="node23" href="$class_l_f_s_t_k__scroll_bar_class_a1aa54518e56118cc5f92890b7269c3d1.xhtml#a1aa54518e56118cc5f92890b7269c3d1" title=" " alt="" coords="875,209,1030,253"/>
 </map>

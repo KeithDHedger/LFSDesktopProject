@@ -597,10 +597,10 @@ var sectionId = 'dynsection-0';
 <!-- Node31 -->
 <g id="node31" class="node">
 <title>Node31</title>
-<g id="a_node31"><a xlink:href="class_l_f_s_t_k__list_gadget_class_abc8e7de85afdd0ddd7639668e579cd4e.xhtml#abc8e7de85afdd0ddd7639668e579cd4e" target="_top" xlink:title=" ">
+<g id="a_node31"><a xlink:href="class_l_f_s_t_k__list_gadget_class_a7b9a3f3a749e622fdd46da8f72da2002.xhtml#a7b9a3f3a749e622fdd46da8f72da2002" target="_top" xlink:title=" ">
 <polygon fill="none" stroke="#000000" points="827.8385,-102.5 827.8385,-134.5 950.5205,-134.5 950.5205,-102.5 827.8385,-102.5"/>
 <text text-anchor="start" x="835.8385" y="-121.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">LFSTK_listGadgetClass</text>
-<text text-anchor="middle" x="889.1795" y="-109.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">::LFSTK_setList</text>
+<text text-anchor="middle" x="889.1795" y="-109.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">::LFSTK_updateList</text>
 </a>
 </g>
 </g>

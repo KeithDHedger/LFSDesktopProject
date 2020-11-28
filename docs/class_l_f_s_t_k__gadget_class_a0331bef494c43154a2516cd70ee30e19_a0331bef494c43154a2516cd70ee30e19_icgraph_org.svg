@@ -21,10 +21,10 @@
 <!-- Node2 -->
 <g id="node2" class="node">
 <title>Node2</title>
-<g id="a_node2"><a xlink:href="class_l_f_s_t_k__list_gadget_class_abc8e7de85afdd0ddd7639668e579cd4e.xhtml#abc8e7de85afdd0ddd7639668e579cd4e" target="_top" xlink:title=" ">
+<g id="a_node2"><a xlink:href="class_l_f_s_t_k__list_gadget_class_a7b9a3f3a749e622fdd46da8f72da2002.xhtml#a7b9a3f3a749e622fdd46da8f72da2002" target="_top" xlink:title=" ">
 <polygon fill="none" stroke="#000000" points="650.827,-95.5 650.827,-127.5 773.509,-127.5 773.509,-95.5 650.827,-95.5"/>
 <text text-anchor="start" x="658.827" y="-114.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">LFSTK_listGadgetClass</text>
-<text text-anchor="middle" x="712.168" y="-102.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">::LFSTK_setList</text>
+<text text-anchor="middle" x="712.168" y="-102.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">::LFSTK_updateList</text>
 </a>
 </g>
 </g>

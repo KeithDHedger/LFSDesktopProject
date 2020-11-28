@@ -37,10 +37,10 @@
 <!-- Node3 -->
 <g id="node3" class="node">
 <title>Node3</title>
-<g id="a_node3"><a xlink:href="class_l_f_s_t_k__list_gadget_class_abc8e7de85afdd0ddd7639668e579cd4e.xhtml#abc8e7de85afdd0ddd7639668e579cd4e" target="_top" xlink:title=" ">
+<g id="a_node3"><a xlink:href="class_l_f_s_t_k__list_gadget_class_a7b9a3f3a749e622fdd46da8f72da2002.xhtml#a7b9a3f3a749e622fdd46da8f72da2002" target="_top" xlink:title=" ">
 <polygon fill="none" stroke="#000000" points="659.161,-76.5 659.161,-108.5 781.843,-108.5 781.843,-76.5 659.161,-76.5"/>
 <text text-anchor="start" x="667.161" y="-95.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">LFSTK_listGadgetClass</text>
-<text text-anchor="middle" x="720.502" y="-83.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">::LFSTK_setList</text>
+<text text-anchor="middle" x="720.502" y="-83.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">::LFSTK_updateList</text>
 </a>
 </g>
 </g>
