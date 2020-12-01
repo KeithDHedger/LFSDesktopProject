@@ -1,5 +1,5 @@
 0.4.5
-Added sepearate mouse/jey callbacks to gadget class.
+Added sepearate mouse/key callbacks to gadget class.
 Fixed ignore mod keys pressed alone in line edit.
 Changes in lfsapps for new API's.
 Added append to list to list gadget.
