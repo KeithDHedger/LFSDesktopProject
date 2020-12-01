@@ -58,6 +58,7 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		void					LFSTK_updateList(void);
 		void					LFSTK_setListFromFile(const char *filepath,bool includeempty);
 		const char				*LFSTK_getSelectedLabel(void);
+		const char				*LFSTK_getLabelAtIndex(int index);
 		void					LFSTK_freeList(void);
 		void					LFSTK_appendToList(listLabelStruct data);
 

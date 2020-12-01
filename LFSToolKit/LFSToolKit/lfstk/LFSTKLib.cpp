@@ -537,6 +537,7 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 //printf("===type=%i====\n",e->type);
 	gadget=static_cast<LFSTK_gadgetClass*>(self);
 //DEBUGFUNC("gadget=%p",gadget);
+	gadget->xEvent=e;
 	switch (e->type)
 		{
 			case EnterNotify:
@@ -610,6 +611,10 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				retval=gadget->keyRelease(&e->xkey);
 				//printf("KeyRelease\n");
 				break;
+			case KeyPress:
+				retval=gadget->keyPress(&e->xkey);
+				//printf("KeyPress\n");
+				break;
 	
 			case ConfigureNotify:
 //				printf("conf>>>>>>>>>\n");
@@ -629,6 +634,8 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 		//	default:
 				//	printf("default\n");		
 		}
+
+	gadget->xEvent=NULL;
 	if(retval==false)
 		XSendEvent(gadget->wc->display,gadget->wc->window,False,0L,e);
 	return(retval);

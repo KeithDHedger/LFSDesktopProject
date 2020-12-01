@@ -297,12 +297,12 @@ int addAppmenu(int x,int y,int grav,bool fromleft)
 
 	appButton=new LFSTK_buttonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
 	appButton->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",LEFT,true);
-	appButton->LFSTK_setCallBack(NULL,buttonCB,NULL);
+	appButton->LFSTK_setMouseCallBack(NULL,buttonCB,NULL);
 	appMenu=new LFSTK_menuClass(mainwind,xpos,ypos+panelHeight,1,1);
 	
 	addCatagories();
 	addExtras();
-	appMenu->LFSTK_setCallBack(NULL,menuCB,NULL);
+	appMenu->LFSTK_setMouseCallBack(NULL,menuCB,NULL);
 	appMenu->LFSTK_addMainMenus(catagoryMenus,catagoryCnt);
 	XMapWindow(mainwind->display,appButton->LFSTK_getWindow());
 	appButton->LFSTK_clearWindow();

@@ -293,7 +293,7 @@ int main(int argc, char **argv)
 //backdrop
 	dialogButton=new LFSTK_buttonClass(wc,"Select File",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	mainBackdropEdit=new LFSTK_lineEditClass(wc,wallpaperPath,(BORDER*2)+GADGETWIDTH,sy,DIALOGWIDTH-(BORDER*3)-GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	dialogButton->LFSTK_setCallBack(NULL,selectFile,(void*)mainBackdropEdit);
+	dialogButton->LFSTK_setMouseCallBack(NULL,selectFile,(void*)mainBackdropEdit);
 	//dialogButton->LFSTK_setIndicator(DISCLOSURE);
 
 	sy+=YSPACING;
@@ -312,9 +312,9 @@ int main(int argc, char **argv)
 
 	mainMode=new LFSTK_buttonClass(wc,"Main Mode",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	mainMode->LFSTK_setIndicator(DISCLOSURE);
-	mainMode->LFSTK_setCallBack(NULL,buttonCB,(void*)"SHOWROOTMENU");
+	mainMode->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SHOWROOTMENU");
 	rootMenu=new LFSTK_menuClass(wc,BORDER+GADGETWIDTH,sy,1,1);
-	rootMenu->LFSTK_setCallBack(NULL,mainModeCB,NULL);
+	rootMenu->LFSTK_setMouseCallBack(NULL,mainModeCB,NULL);
 	rootMenu->LFSTK_addMainMenus(rootModeMenu,5);
 
 	mainModeEdit=new LFSTK_lineEditClass(wc,modeLabel[backdropMode],(BORDER*2)+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
@@ -323,7 +323,7 @@ int main(int argc, char **argv)
 //multi mode
 	multipleMonitors=new LFSTK_toggleButtonClass(wc,"Multiple Monitors",BORDER,sy,GADGETWIDTH*2,CHECKBOXSIZE,BUTTONGRAV);
 	multipleMonitors->LFSTK_setValue(multiMode);
-	multipleMonitors->LFSTK_setCallBack(NULL,buttonCB,(void*)"MULTIMODE");
+	multipleMonitors->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"MULTIMODE");
 	sy+=YSPACING;
 
 //monitors
@@ -338,9 +338,9 @@ int main(int argc, char **argv)
 
 	monitorsMenuButton->LFSTK_setIndicator(DISCLOSURE);
 
-	monitorsMenuButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"SHOWMONITORMENU");
+	monitorsMenuButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SHOWMONITORMENU");
 	monitorSelectMenu=new LFSTK_menuClass(wc,BORDER+GADGETWIDTH,sy,1,1);
-	monitorSelectMenu->LFSTK_setCallBack(NULL,monitorMenuCB,NULL);
+	monitorSelectMenu->LFSTK_setMouseCallBack(NULL,monitorMenuCB,NULL);
 	monitorSelectMenu->LFSTK_addMainMenus(monitorsMenu,wc->LFSTK_getMonitorCount());
 
 	loadMonitorInfo();
@@ -351,12 +351,12 @@ int main(int argc, char **argv)
 	dialogButton=new LFSTK_buttonClass(wc,"Select File",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	//dialogButton->LFSTK_setIndicator(DISCLOSURE);
 	monitorBackdropEdit=new LFSTK_lineEditClass(wc,monitors[0].path,(BORDER*2)+GADGETWIDTH,sy,DIALOGWIDTH-(BORDER*3)-GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	dialogButton->LFSTK_setCallBack(NULL,selectFile,(void*)monitorBackdropEdit);
+	dialogButton->LFSTK_setMouseCallBack(NULL,selectFile,(void*)monitorBackdropEdit);
 	sy+=YSPACING;
 //mode
 	monitorMode=new LFSTK_buttonClass(wc,"Monitor Mode",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	monitorMode->LFSTK_setIndicator(DISCLOSURE);
-	monitorMode->LFSTK_setCallBack(NULL,buttonCB,(void*)"SHOWMONITORMODESMENU");
+	monitorMode->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SHOWMONITORMODESMENU");
 	monitorModes=new menuStruct*[5];
 	for(long j=0;j<5;j++)
 		{
@@ -365,7 +365,7 @@ int main(int argc, char **argv)
 			monitorModes[j]->userData=(void*)j;
 		}
 	monitorModeMenu=new LFSTK_menuClass(wc,BORDER+GADGETWIDTH,sy,1,1);
-	monitorModeMenu->LFSTK_setCallBack(NULL,monitorModeCB,NULL);
+	monitorModeMenu->LFSTK_setMouseCallBack(NULL,monitorModeCB,NULL);
 	monitorModeMenu->LFSTK_addMainMenus(rootModeMenu,5);
 
 	monitorModeEdit=new LFSTK_lineEditClass(wc,modeLabel[monitors[selectedMonitor].mode],(BORDER*2)+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
@@ -381,10 +381,10 @@ int main(int argc, char **argv)
 
 //quit
 	quit=new LFSTK_buttonClass(wc,"Quit",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
+	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 //apply
 	apply=new LFSTK_buttonClass(wc,"Apply",DIALOGWIDTH-GADGETWIDTH-BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	apply->LFSTK_setCallBack(NULL,buttonCB,(void*)"APPLY");
+	apply->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"APPLY");
 
 	sy+=YSPACING;
 

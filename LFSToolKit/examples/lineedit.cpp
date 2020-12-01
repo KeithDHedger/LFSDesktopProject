@@ -83,7 +83,8 @@ int main(int argc, char **argv)
 	editbox=new LFSTK_lineEditClass(wc,"Basic line editing class for LFSToolKit.",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
 //	editbox=new LFSTK_lineEditClass(wc,"A123456789012345678901234567890123456789012345678901234567890123456789012345678Z",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
 
-	editbox->LFSTK_setCallBack(NULL,doKeyUp,USERDATA(12345));
+	editbox->LFSTK_setKeyCallBack(NULL,doKeyUp,USERDATA(12345));
+	editbox->LFSTK_setCallbackOnReturn(false);
 	sy+=YSPACING;
 
 //line
@@ -95,8 +96,7 @@ int main(int argc, char **argv)
 
 //quit
 	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-printf("quitx=%i quity=%i\n",DIALOGMIDDLE-HALFGADGETWIDTH,sy);
-	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
+	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 	sy+=YSPACING;
 
 	wc->acceptOnThis=false;

@@ -90,7 +90,7 @@ int main(int argc, char **argv)
 //show
 	quit=new LFSTK_buttonClass(wc,"Show",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	hsy=sy;
-	quit->LFSTK_setCallBack(NULL,buttonCB,NULL);
+	quit->LFSTK_setMouseCallBack(NULL,buttonCB,NULL);
 	sy+=YSPACING;
 
 //line
@@ -103,7 +103,7 @@ int main(int argc, char **argv)
 //quit
 //	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	quit=new LFSTK_buttonClass(wc,"Quit",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
+	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 	sy+=YSPACING;
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
@@ -310,7 +310,7 @@ int main(int argc, char **argv)
 	mc->LFSTK_addMainMenus(mms,NUMMENUS);
 #endif
 //	menu->LFSTK_setCallBack(NULL,buttonCB,NULL);
-	menu->LFSTK_setCallBack(NULL,menuCB,NULL);
+	menu->LFSTK_setMouseCallBack(NULL,menuCB,NULL);
 	menu->LFSTK_addMainMenus(mms,NUMMENUS);
 
 //	subwindows.push_back(menu->mainMenuWindow);

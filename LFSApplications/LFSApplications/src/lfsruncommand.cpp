@@ -109,20 +109,20 @@ int main(int argc, char **argv)
 
 	asprintf(&commandfile,"%s/%s",wc->configDir,"command.hist");
 	list->LFSTK_setListFromFile(commandfile,false);
-	list->LFSTK_setCallBack(NULL,select,NULL);
+	list->LFSTK_setMouseCallBack(NULL,select,NULL);
 	sy+=LISTHITE+8;
 
 //command
 	le=new LFSTK_lineEditClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE,BUTTONGRAV);
 	sy+=GADGETHITE+8;
 	quit=new LFSTK_buttonClass(wc,"Quit",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
+	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 
 	execute=new LFSTK_buttonClass(wc,"Run",BORDER+((DIALOGWIDTH-(BORDER*2))/2)-(GADGETWIDTH/2),sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	execute->LFSTK_setCallBack(NULL,doExecute,(void*)true);
+	execute->LFSTK_setMouseCallBack(NULL,doExecute,(void*)true);
 
 	run=new LFSTK_buttonClass(wc,"Run And Quit",DIALOGWIDTH-BORDER-GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthEastGravity);
-	run->LFSTK_setCallBack(NULL,doExecute,(void*)false);
+	run->LFSTK_setMouseCallBack(NULL,doExecute,(void*)false);
 	sy+=GADGETHITE+BORDER;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);

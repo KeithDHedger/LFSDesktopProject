@@ -163,7 +163,7 @@ int addLaunchers(int x,int y,int grav,bool fromleft)
 	while(loopll!=NULL)
 		{
 			loopll->bc=new LFSTK_buttonClass(mainwind,"",sx,sy,width,height,thisgrav);
-			loopll->bc->LFSTK_setCallBack(NULL,launcherCB,(void*)loopll);
+			loopll->bc->LFSTK_setMouseCallBack(NULL,launcherCB,(void*)loopll);
 			if(loopll->icon!=NULL)
 				icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,loopll->icon,"");
 			if(icon!=NULL)

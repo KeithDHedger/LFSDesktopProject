@@ -52,12 +52,13 @@ LFSTK_menuClass::LFSTK_menuClass(LFSTK_windowClass *wc,int x,int y,unsigned w,un
 * \note First param passed to callback is pointer to object.
 * \note Second param passed to callback is user data.
 */
-void LFSTK_menuClass::LFSTK_setCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud)
+void LFSTK_menuClass::LFSTK_setMouseCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud)
 {
-	this->callback.pressCallback=downcb;
-	this->callback.releaseCallback=releasecb;
-	this->callback.userData=ud;
-	this->callback.ignoreCallback=false;
+	this->mouseCB.pressCallback=downcb;
+	this->mouseCB.releaseCallback=releasecb;
+	this->mouseCB.userData=ud;
+	this->mouseCB.runTheCallback=true;
+	this->mouseCB.ignoreOrphanModKeys=true;
 }
 
 /**
@@ -192,7 +193,7 @@ void LFSTK_menuClass::LFSTK_addMainMenus(menuStruct **menus,int menucnt)
 				hite=SEPARATORHITE;
 
 			label=new LFSTK_menuItemClass(this->mainMenuWindow,this,0,sy,maxtxtwid,hite,this->mainMenu[j],gotthumb);
-			label->LFSTK_setCallBack(this->callback.pressCallback,this->callback.releaseCallback,(void*)(this->mainMenu[j]->userData));
+			label->LFSTK_setMouseCallBack(this->mouseCB.pressCallback,this->mouseCB.releaseCallback,(void*)(this->mainMenu[j]->userData));
 			if(this->mainMenu[j]->imageType==FILETHUMB)
 				label->LFSTK_setImageFromPath(this->mainMenu[j]->data.imagePath,MENU,true);
 			if(this->mainMenu[j]->imageType==CAIROTHUMB)

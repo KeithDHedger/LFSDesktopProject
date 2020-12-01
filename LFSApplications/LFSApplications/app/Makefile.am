@@ -2,13 +2,13 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 include ../flagsandlibs
 
+lfsappearance_SOURCES = ../src/lfsappearance.cpp
+
 lfstkprefs_SOURCES = ../src/lfstkprefs.cpp
 
 lfswmprefs_SOURCES = ../src/lfswmprefs.cpp
 
 lfsdesktopprefs_SOURCES = ../src/lfsdesktopprefs.cpp
-
-lfsappearance_SOURCES = ../src/lfsappearance.cpp
 
 lfsbackdropprefs_SOURCES = ../src/lfsbackdropprefs.cpp
 
@@ -20,7 +20,8 @@ lfsruncommand_SOURCES = ../src/lfsruncommand.cpp
 
 lfsmimeeditor_SOURCES = ../src/lfsmimeeditor.cpp
 
+#lfsfontselect_SOURCES = ../src/lfsfontselect.cpp
+
 man1_MANS = ../resources/man/lfsapplications.1
 
-bin_PROGRAMS = lfstkprefs lfsappearance lfsdesktopprefs lfsabout lfswmprefs lfsruncommand lfsbackdropprefs lfspanelprefs lfsmimeeditor
-
+bin_PROGRAMS =  lfsappearance lfstkprefs lfswmprefs lfsdesktopprefs lfsbackdropprefs lfspanelprefs lfsabout lfsruncommand lfsmimeeditor #lfsfontselect

@@ -43,6 +43,14 @@ bool doQuit(void *p,void* ud)
 
 bool buttonCB(void *p,void* ud)
 {
+	LFSTK_toggleButtonClass	*t=NULL;
+	if(p!=NULL)
+		{
+			t=static_cast<LFSTK_toggleButtonClass*>(p);
+			if(t!=NULL)
+				printf("Value=%i\n",t->LFSTK_getValue());
+		}
+
 	if(ud!=NULL)
 		{
 			printf(">>>%s<<<\n",(const char*)ud);
@@ -71,12 +79,12 @@ int main(int argc, char **argv)
 //check button	
 	check=new LFSTK_toggleButtonClass(wc,"Check Box",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,CHECKBOXSIZE,NorthWestGravity);
 	check->LFSTK_setValue(true);
-	check->LFSTK_setCallBack(NULL,buttonCB,(void*)check->LFSTK_getLabel());
+	check->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)check->LFSTK_getLabel());
 	sy+=YSPACING;
 
 //toggle button	
 	toggle=new LFSTK_toggleButtonClass(wc,"Toggle",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETWIDTH,NorthWestGravity);
-	toggle->LFSTK_setCallBack(NULL,buttonCB,(void*)toggle->LFSTK_getLabel());
+	toggle->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)toggle->LFSTK_getLabel());
 	toggle->LFSTK_setToggleStyle(TOGGLENORMAL);
 
 	iconH=wc->globalLib->LFSTK_findThemedIcon("gnome","volume-high","");
@@ -92,7 +100,7 @@ int main(int argc, char **argv)
 
 //quit
 	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);
-	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
+	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 	sy+=YSPACING;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);

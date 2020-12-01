@@ -44,6 +44,9 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		void				LFSTK_setBuffer(const char *str);
 		const char			*LFSTK_getCStr(void);
 
+		void				LFSTK_setCallbackOnReturn(bool onreturn);
+		bool				LFSTK_getCallbackOnReturn(void);
+
 		bool				mouseDown(XButtonEvent *e);
 		bool				mouseEnter(XButtonEvent *e);
 		bool				keyRelease(XKeyEvent *e);
@@ -65,6 +68,7 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		double				charWidth;
 	
 	private:
+		bool				callbackOnReturn=true;
 		void				drawLabel(void);
 		void				getClip(void);
 		void				setOffsetcurs(int step);

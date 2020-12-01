@@ -90,7 +90,7 @@ int  addLogout(int x,int y,int grav,bool fromleft)
 	else
 		logoutButton->LFSTK_setImageFromPath(DATADIR "/pixmaps/exit.png",LEFT,true);
 
-	logoutButton->LFSTK_setCallBack(NULL,logoutCB,NULL);
+	logoutButton->LFSTK_setMouseCallBack(NULL,logoutCB,NULL);
 	logoutMenu=new LFSTK_menuClass(mainwind,xpos,ypos+panelHeight,1,1);
 
 	logoutMenus=new menuStruct*[NUMLOGOUTENTRYS];
@@ -114,7 +114,7 @@ int  addLogout(int x,int y,int grav,bool fromleft)
 			logoutMenus[j]->imageType=FILETHUMB;
 		}
 
-	logoutMenu->LFSTK_setCallBack(NULL,logoutMenuCB,NULL);
+	logoutMenu->LFSTK_setMouseCallBack(NULL,logoutMenuCB,NULL);
 	logoutMenu->LFSTK_addMainMenus(logoutMenus,NUMLOGOUTENTRYS);
 	return(width);
 }

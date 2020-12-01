@@ -478,8 +478,8 @@ bool LFSTK_multiLineEditClass::keyRelease(XKeyEvent *e)
 				case XK_Return:
 					this->buffer.insert(this->cursorPos,1,'\n');
 					this->cursorPos++;
-					if(this->callback.pressCallback!=NULL)
-						return(this->callback.pressCallback(this,this->callback.userData));
+					//if(this->callback.pressCallback!=NULL)
+					//	return(this->callback.pressCallback(this,this->callback.userData));
 					break;
 
 				default:
@@ -493,8 +493,9 @@ bool LFSTK_multiLineEditClass::keyRelease(XKeyEvent *e)
 
 	this->setDisplayLines();
 	this->LFSTK_clearWindow();
-	if(this->callback.releaseCallback!=NULL)
-		return(this->callback.releaseCallback(this,this->callback.userData));
+//	if(this->callback.releaseCallback!=NULL)
+//		return(this->callback.releaseCallback(this,this->callback.userData));
+//TODO//
 
 	return(true);
 }

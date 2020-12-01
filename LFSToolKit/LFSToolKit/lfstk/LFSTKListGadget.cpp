@@ -43,19 +43,16 @@ bool LFSTK_listGadgetClass::select(void *object,void* userdata)
 	list->setCurrentItem(datax);
 	XSetInputFocus(list->display,list->window,RevertToParent,CurrentTime);
 
-	if(list->labels[list->currentItem-list->listOffset]->mouseUpEvent!=NULL)
+	switch(list->labels[list->currentItem-list->listOffset]->xEvent->xbutton.button)
 		{
-			switch(list->labels[list->currentItem-list->listOffset]->mouseUpEvent->button)
-				{
-					case Button5:
-						list->scrollBar->LFSTK_scrollByLine(false);
-						return(true);
-						break;
-					case Button4:
-						list->scrollBar->LFSTK_scrollByLine(true);
-						return(true);
-						break;
-				}
+			case Button5:
+				list->scrollBar->LFSTK_scrollByLine(false);
+				return(true);
+				break;
+			case Button4:
+				list->scrollBar->LFSTK_scrollByLine(true);
+				return(true);
+				break;
 		}
 
 	for(int j=0;j<list->maxShowing;j++)
@@ -67,10 +64,9 @@ bool LFSTK_listGadgetClass::select(void *object,void* userdata)
 	label->LFSTK_clearWindow();
 
 	list->isDoubleClick=label->isDoubleClick;
-	if(list->callback.releaseCallback!=NULL)
-		{
-			return(list->callback.releaseCallback(list,list->callback.userData));
-		}
+
+	if(list->runCallback(MOUSERELEASECB)==true)
+		return(list->mouseCB.releaseCallback(list,list->mouseCB.userData));
 
 
 	return(true);
@@ -280,7 +276,7 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,adjwidth,h);
 	this->LFSTK_setCairoFontData();
 
-	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|FocusChangeMask|KeyReleaseMask);
+	XSelectInput(this->display,this->window,this->gadgetEventMask);
 
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;
@@ -313,7 +309,8 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 			this->labels[j]->LFSTK_setStyle(BEVELNONE);
 			this->labels[j]->LFSTK_setTile(NULL,0);
 
-			this->labels[j]->LFSTK_setCallBack(selectKey,select,LISTDATA(j));
+			//this->labels[j]->LFSTK_setCallBack(selectKey,select,LISTDATA(j));
+			this->labels[j]->LFSTK_setMouseCallBack(NULL,select,LISTDATA(j));
 
 			this->labels[j]->LFSTK_setFontString(this->monoFontString);
 			this->labels[j]->LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
@@ -330,7 +327,8 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 	this->scrollBar->LFSTK_setScale(1,1);
 	this->scrollBar->LFSTK_setLineScroll(1);
 	this->scrollBar->LFSTK_setPageScroll(maxShowing-1);
-	this->scrollBar->LFSTK_setCallBack(NULL,scrollCB,this);
+	//this->scrollBar->LFSTK_setCallBack(NULL,scrollCB,this);
+	this->scrollBar->LFSTK_setMouseCallBack(NULL,scrollCB,this);
 
 	this->style=BEVELIN;
 
@@ -372,6 +370,19 @@ void LFSTK_listGadgetClass::LFSTK_freeList(void)
 const char	*LFSTK_listGadgetClass::LFSTK_getSelectedLabel(void)
 {
 	return(this->listDataArray->at(this->currentItem).label);
+}
+
+/**
+* Get label at index.
+* \param int Index.
+* \return const char *label;
+*/
+const char	*LFSTK_listGadgetClass::LFSTK_getLabelAtIndex(int index)
+{
+	if((index>this->listDataArray->size()-1) || (index<0))
+		return(NULL);
+
+	return(this->listDataArray->at(index).label);
 }
 
 /**

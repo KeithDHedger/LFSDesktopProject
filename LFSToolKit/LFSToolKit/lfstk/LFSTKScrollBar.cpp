@@ -66,8 +66,8 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vert
 	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_setCairoFontData();
 
-	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|ButtonMotionMask);
-
+	//XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|ButtonMotionMask);
+	XSelectInput(this->display,this->window,this->gadgetEventMask);
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;
 	this->ml->type=SCROLLBARGADGET;
@@ -126,9 +126,11 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vert
 		}
 
 	this->thumb->LFSTK_setCanDrag(true);
-	this->thumb->LFSTK_setCallBack(this->startThumbDrag,this->thumbClicked,(void*)this);
-	this->upLeft->LFSTK_setCallBack(NULL,this->lineUpDown,(void*)this);
-	this->downRight->LFSTK_setCallBack(NULL,this->lineUpDown,(void*)this);
+	this->thumb->LFSTK_setMouseCallBack(this->startThumbDrag,this->thumbClicked,(void*)this);
+	this->upLeft->LFSTK_setMouseCallBack(NULL,this->lineUpDown,(void*)this);
+	this->upLeft->LFSTK_setKeyCallBack(NULL,this->lineUpDown,(void*)this);
+	this->downRight->LFSTK_setMouseCallBack(NULL,this->lineUpDown,(void*)this);
+	this->downRight->LFSTK_setKeyCallBack(NULL,this->lineUpDown,(void*)this);
 	this->downRight->userData=(void*)2;
 	this->upLeft->userData=(void*)1;
 }
@@ -234,6 +236,24 @@ int LFSTK_scrollBarClass::LFSTK_getValue(void)
 }
 
 /**
+* Set allow keyboard control ( default=true ).
+* \param bool allow.
+*/
+void LFSTK_scrollBarClass::LFSTK_setAllowKBControl(bool allow)
+{
+	this->allowKBControl=allow;
+}
+
+/**
+* Get allow keyboard control ( default=true ).
+* \return bool.
+*/
+bool LFSTK_scrollBarClass::LFSTK_getAllowKBControl(void)
+{
+	return(this->allowKBControl);
+}
+
+/**
 * Clear the gadget window to the appropriate state.
 */
 void LFSTK_scrollBarClass::LFSTK_clearWindow()
@@ -242,8 +262,10 @@ void LFSTK_scrollBarClass::LFSTK_clearWindow()
 		this->setState(false);
 
 	this->clearBox(&this->gadgetDetails);
-	if(this->callback.releaseCallback!=NULL)
-		this->callback.releaseCallback(this,this->callback.userData);
+	//if(this->callback.releaseCallback!=NULL)
+	//	this->callback.releaseCallback(this,this->callback.userData);
+	if(this->runCallback(MOUSERELEASECB)==true)
+		this->mouseCB.releaseCallback(this,this->mouseCB.userData);
 
 //reduce flickering
 	if(this->startDrag==true)
@@ -303,7 +325,6 @@ bool LFSTK_scrollBarClass::pageUpDown(void *object,void* userdata)
 	return(true);
 }
 
-
 bool LFSTK_scrollBarClass::lineUpDown(void *object,void* userdata)
 {
 	LFSTK_buttonClass		*button=static_cast<LFSTK_buttonClass*>(object);
@@ -322,6 +343,39 @@ bool LFSTK_scrollBarClass::lineUpDown(void *object,void* userdata)
 }
 
 /**
+* Key up callback.
+* \param e XButtonEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
+bool LFSTK_scrollBarClass::keyRelease(XKeyEvent *e)
+{
+	char	c[255];
+	KeySym	keysym_return;
+
+	if(this->LFSTK_getAllowKBControl()==false)
+		return(true);
+
+	XLookupString(e,(char*)&c,255,&keysym_return,NULL);
+	switch(keysym_return)
+		{
+			case XK_Prior:
+				this->LFSTK_scrollByPage(true);
+				break;
+			case XK_Next:
+				this->LFSTK_scrollByPage(false);
+				break;
+			case XK_Up:
+				this->LFSTK_scrollByLine(true);
+				break;
+			case XK_Down:
+				this->LFSTK_scrollByLine(false);
+				break;
+		}
+	this->setState(true);
+	return(true);
+}
+
+/**
 * Mouse up callback.
 * \param e XButtonEvent passed from mainloop->listener.
 * \return Return true if event fully handeled or false to pass it on.
@@ -334,7 +388,7 @@ bool LFSTK_scrollBarClass::mouseUp(XButtonEvent *e)
 	this->mouseDownX=e->x;
 	this->mouseDownY=e->y;
 
-	if((this->isActive==false) || (this->callback.ignoreCallback==true))
+	if(this->runCallback(MOUSERELEASECB)==false)
 		return(true);
 
 	if(this->inWindow==true)
@@ -378,8 +432,10 @@ bool LFSTK_scrollBarClass::thumbClicked(void *object,void* userdata)
 	if(userdata!=NULL)
 		{
 			sb=static_cast<LFSTK_scrollBarClass*>(userdata);
-			if(sb->callback.releaseCallback!=NULL)
-				sb->callback.releaseCallback(sb,sb->callback.userData);
+//			if(sb->callback.releaseCallback!=NULL)
+//				sb->callback.releaseCallback(sb,sb->callback.userData);
+			if(sb->mouseCB.releaseCallback!=NULL)
+				sb->mouseCB.releaseCallback(sb,sb->mouseCB.userData);
 			sb->startDrag=false;
 		}
 	return(true);
@@ -403,9 +459,9 @@ bool LFSTK_scrollBarClass::startThumbDrag(void *object,void* userdata)
 */
 bool LFSTK_scrollBarClass::mouseEnter(XButtonEvent *e)
 {
-	//this->noCallback=true;????
 	this->inWindow=true;
 	this->startDrag=false;
+//DEBUGFUNC("%p %p\n",true,this->inWindow);	//this->noCallback=true;????
 	return(true);
 }
 
@@ -416,7 +472,7 @@ bool LFSTK_scrollBarClass::mouseEnter(XButtonEvent *e)
 */
 bool LFSTK_scrollBarClass::mouseExit(XButtonEvent *e)
 {
-	//this->noCallback=true;????
+//DEBUG	//this->noCallback=true;????
 	this->inWindow=false;
 	this->startDrag=false;
 	return(true);
@@ -424,8 +480,7 @@ bool LFSTK_scrollBarClass::mouseExit(XButtonEvent *e)
 
 bool LFSTK_scrollBarClass::mouseDown(XButtonEvent *e)
 {
-
-	if((this->isActive==false) || (this->callback.ignoreCallback==true))
+	if(this->runCallback(MOUSEPRESSCB)==false)
 		return(true);
 
 	this->inWindow=true;

@@ -226,13 +226,13 @@ int main(int argc, char **argv)
 	themeDialog=new LFSTK_fileDialogClass(wc,"Select Theme",wd,FOLDERDIALOG);
 	button=new LFSTK_buttonClass(wc,"Select Theme",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	themeEditBox=new LFSTK_lineEditClass(wc,prefsTheme,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
-	button->LFSTK_setCallBack(NULL,selectThemeFolder,(void*)themeEditBox);
+	button->LFSTK_setMouseCallBack(NULL,selectThemeFolder,(void*)themeEditBox);
 	sy+=YSPACING;
 
 //font
 	fontButton=new LFSTK_fontDialogClass(wc,"Select Font",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	fontEditBox=new LFSTK_lineEditClass(wc,prefsFont,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
-	fontButton->LFSTK_setCallBack(NULL,selectFontCB,(void*)fontEditBox);
+	fontButton->LFSTK_setMouseCallBack(NULL,selectFontCB,(void*)fontEditBox);
 	sy+=YSPACING;
 
 //icon sizes
@@ -294,11 +294,11 @@ int main(int argc, char **argv)
 
 //quit
 	quit=new LFSTK_buttonClass(wc,"Quit",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
+	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 
 //apply
 	apply=new LFSTK_buttonClass(wc,"Apply",DIALOGWIDTH-BORDER-GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	apply->LFSTK_setCallBack(NULL,buttonCB,NULL);
+	apply->LFSTK_setMouseCallBack(NULL,buttonCB,NULL);
 	sy+=YSPACING;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);

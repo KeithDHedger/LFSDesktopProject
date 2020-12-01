@@ -62,7 +62,7 @@ bool select(void *object,void* ud)
 {
 	LFSTK_listGadgetClass	*list=static_cast<LFSTK_listGadgetClass*>(object);
 
-	commandToRun=list->labelData[list->LFSTK_getCurrentListItem()]->label;
+	commandToRun=list->LFSTK_getSelectedLabel();
 	le->LFSTK_setBuffer(commandToRun);
 	return(true);
 }
@@ -89,7 +89,7 @@ int main(int argc, char **argv)
 
 	asprintf(&commandfile,"%s/%s",wc->configDir,"command.hist");
 	list->LFSTK_setListFromFile(commandfile,false);
-	list->LFSTK_setCallBack(NULL,select,NULL);
+	list->LFSTK_setMouseCallBack(NULL,select,NULL);
 	sy+=LISTHITE+8;
 
 //command
@@ -97,10 +97,10 @@ int main(int argc, char **argv)
 	sy+=GADGETHITE+8;
 
 	quit=new LFSTK_buttonClass(wc,"Quit",BORDER,sy,GADGETWIDTH,GADGETHITE,NorthWestGravity);
-	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
+	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 
 	run=new LFSTK_buttonClass(wc,"Execute",DIALOGWIDTH-BORDER-GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthEastGravity);
-	run->LFSTK_setCallBack(NULL,doExecute,NULL);
+	run->LFSTK_setMouseCallBack(NULL,doExecute,NULL);
 	sy+=GADGETHITE+BORDER;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);

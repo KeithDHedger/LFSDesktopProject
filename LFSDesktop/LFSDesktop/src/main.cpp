@@ -419,7 +419,7 @@ BACKUP:
 	for(int j=MOUNTDISK;j<NOMOREBUTONS;j++)
 		{
 			diskButtons[j]=new LFSTK_buttonClass(diskWindow,diskLabelData[j],0,sy,GADGETWIDTH,24,NorthWestGravity);
-			diskButtons[j]->LFSTK_setCallBack(NULL,doDiskMenuSelect,(void*)(long)(j));
+			diskButtons[j]->LFSTK_setMouseCallBack(NULL,doDiskMenuSelect,(void*)(long)(j));
 			iconpath=diskWindow->globalLib->LFSTK_findThemedIcon(iconTheme,diskThemeIconData[j],"");
 			diskButtons[j]->LFSTK_setImageFromPath(iconpath,LEFT,true);
 			sy+=GADGETHITE;
@@ -434,7 +434,7 @@ BACKUP:
 	for(int j=OPENDISK;j<NOMOREBUTONS;j++)
 		{
 			fileButtons[j]=new LFSTK_buttonClass(fileWindow,diskLabelData[j],0,sy,GADGETWIDTH,24,NorthWestGravity);
-			fileButtons[j]->LFSTK_setCallBack(NULL,doDeskItemMenuSelect,(void*)(long)(j));
+			fileButtons[j]->LFSTK_setMouseCallBack(NULL,doDeskItemMenuSelect,(void*)(long)(j));
 			iconpath=diskWindow->globalLib->LFSTK_findThemedIcon(iconTheme,diskThemeIconData[j],"");
 			fileButtons[j]->LFSTK_setImageFromPath(iconpath,LEFT,true);
 			sy+=GADGETHITE;
@@ -459,9 +459,9 @@ BACKUP:
 	sy+=GADGETHITE;
 
 	bc=new LFSTK_buttonClass(iconChooser,"Apply",BORDER,sy,GADGETWIDTH,GADGETHITE,NorthWestGravity);
-	bc->LFSTK_setCallBack(NULL,dialogCB,(void*)DIALOGRETAPPLY);
+	bc->LFSTK_setMouseCallBack(NULL,dialogCB,(void*)DIALOGRETAPPLY);
 	bc=new LFSTK_buttonClass(iconChooser,"Cancel",DIALOGWIDTH-BORDER-GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthWestGravity);
-	bc->LFSTK_setCallBack(NULL,dialogCB,(void*)DIALOGRETCANCEL);
+	bc->LFSTK_setMouseCallBack(NULL,dialogCB,(void*)DIALOGRETCANCEL);
 	sy+=GADGETHITE;
 	sy+=HALFYSPACING;
 	iconChooser->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);

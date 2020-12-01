@@ -1,5 +1,6 @@
 #if 0
-
+echo "TO BE FIXED"
+exit 100
 #©keithhedger Sat 5 Aug 19:18:08 BST 2017 kdhedger68713@gmail.com
 
 if [ "X$1" != "X" ];then

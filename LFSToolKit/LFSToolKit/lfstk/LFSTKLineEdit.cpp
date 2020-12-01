@@ -67,20 +67,14 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	this->LFSTK_setFontString(this->monoFontString);
 	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_setCairoFontData();
-	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|FocusChangeMask|KeyReleaseMask|SelectionClear|SelectionRequest);
+	XSelectInput(this->display,this->window,this->gadgetEventMask);
 
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;
 	this->ml->type=LINEEDITGADGET;
 	this->wc->LFSTK_addMappedListener(this->window,ml);
 
-//	if(strlen(label)>0)
-//		this->cursorPos=strlen(label);
-//	else
-//		this->cursorPos=0;
-//	this->buffer=label;
 	this->LFSTK_setBuffer(label);
-
 	this->wc->LFSTK_initDnD();
 	this->gadgetAcceptsDnD=true;
 	this->labelGravity=LEFT;
@@ -372,7 +366,7 @@ void LFSTK_lineEditClass::getClip(void)
 */
 KeySym LFSTK_lineEditClass::LFSTK_getKey(void)
 {
-	if(!(this->keysym_return>XK_Shift_L) && (this->keysym_return<XK_Hyper_R))
+	if(!(this->keysym_return>=XK_Shift_L) && (this->keysym_return<=XK_Hyper_R))
 		return(this->keysym_return);
 else
 	return(XK_VoidSymbol);
@@ -484,8 +478,8 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 				case XK_F1 ... XK_R15:
 					break;
 				case XK_Return:
-					if(this->callback.pressCallback!=NULL)
-						return(this->callback.pressCallback(this,this->callback.userData));
+					if(this->keyCB.releaseCallback!=NULL)
+						return(this->keyCB.releaseCallback(this,this->keyCB.userData));
 					break;
 
 				default:
@@ -498,8 +492,8 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 		}
 
 	this->LFSTK_clearWindow();
-	if(this->callback.releaseCallback!=NULL)
-		return(this->callback.releaseCallback(this,this->callback.userData));
+	if((this->keyCB.releaseCallback!=NULL) && (this->callbackOnReturn==false))
+		return(this->keyCB.releaseCallback(this,this->keyCB.userData));
 
 	return(true);
 }
@@ -642,6 +636,23 @@ void LFSTK_lineEditClass::setOffsetcurs(int step)
 		}
 }
 
+/**
+* Set only run callback when return key pressed ( defualt=true ).
+* \param bool
+*/
+void LFSTK_lineEditClass::LFSTK_setCallbackOnReturn(bool onreturn)
+{
+	this->callbackOnReturn=onreturn;
+}
+
+/**
+* Return whether to only run callback on return pressed.
+* \return bool
+*/
+bool LFSTK_lineEditClass::LFSTK_getCallbackOnReturn(void)
+{
+	return(this->callbackOnReturn);
+}
 
 
 

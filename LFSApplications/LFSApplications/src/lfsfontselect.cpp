@@ -295,24 +295,24 @@ int main(int argc, char **argv)
 			previews[j]->LFSTK_setColourName(INACTIVECOLOUR,"white");
 			previews[j]->LFSTK_setFontColourName(INACTIVECOLOUR,"black");
 			previews[j]->LFSTK_setFontString(fontsAZ[j+fontOffset]);
-			previews[j]->LFSTK_setCallBack(NULL,selectFontCB,USERDATA((j)));
+			previews[j]->LFSTK_setMouseCallBack(NULL,selectFontCB,USERDATA((j)));
 			buttony+=GADGETHITE+GAP;
 		}
 //style buttons
 	gadgetwidth=mainWindow->globalLib->LFSTK_getTextwidth(mainWindow->display,lfstkfontstruct->data,"Bold")+GADGETHITE;
 	toggle=new LFSTK_toggleButtonClass(mainWindow,"Bold",BORDER,buttony,gadgetwidth,GADGETHITE,NorthWestGravity);
 	toggle->LFSTK_setValue(isBold);
-	toggle->LFSTK_setCallBack(NULL,styleCB,USERDATA(BOLD));
+	toggle->LFSTK_setMouseCallBack(NULL,styleCB,USERDATA(BOLD));
 	gadgetwidth=mainWindow->globalLib->LFSTK_getTextwidth(mainWindow->display,lfstkfontstruct->data,"Italic")+GADGETHITE;
 	toggle=new LFSTK_toggleButtonClass(mainWindow,"Italic",BORDER+GADGETWIDTH+GAP,buttony,gadgetwidth,GADGETHITE,NorthWestGravity);
 	toggle->LFSTK_setValue(isItalic);
-	toggle->LFSTK_setCallBack(NULL,styleCB,USERDATA(ITALIC));
+	toggle->LFSTK_setMouseCallBack(NULL,styleCB,USERDATA(ITALIC));
 
 //navigate
 	button=new LFSTK_buttonClass(mainWindow,"↑",WIDTH-BORDER-(GADGETWIDTH/4),buttony,GADGETWIDTH/4,GADGETHITE,NorthEastGravity);
-	button->LFSTK_setCallBack(NULL,scrollCB,USERDATA(0));
+	button->LFSTK_setMouseCallBack(NULL,scrollCB,USERDATA(0));
 	button=new LFSTK_buttonClass(mainWindow,"↓",WIDTH-BORDER-((GADGETWIDTH/4)*2)-GAP,buttony,GADGETWIDTH/4,GADGETHITE,NorthEastGravity);
-	button->LFSTK_setCallBack(NULL,scrollCB,USERDATA(1));
+	button->LFSTK_setMouseCallBack(NULL,scrollCB,USERDATA(1));
 	buttony+=GADGETHITE+GAP;
 
 //size
@@ -328,9 +328,9 @@ int main(int argc, char **argv)
 
 //dialog buttons
 	button=new LFSTK_buttonClass(mainWindow,"Cancel",BORDER,HITE-BORDER-GADGETHITE,GADGETWIDTH,GADGETHITE,SouthWestGravity);
-	button->LFSTK_setCallBack(NULL,dialogCB,USERDATA(CANCEL));
+	button->LFSTK_setMouseCallBack(NULL,dialogCB,USERDATA(CANCEL));
 	button=new LFSTK_buttonClass(mainWindow,"Apply",WIDTH-BORDER-GADGETWIDTH,HITE-BORDER-GADGETHITE,GADGETWIDTH,GADGETHITE,SouthEastGravity);
-	button->LFSTK_setCallBack(NULL,dialogCB,USERDATA(APPLY));
+	button->LFSTK_setMouseCallBack(NULL,dialogCB,USERDATA(APPLY));
 
 	buildFontString();
 	mainWindow->LFSTK_showWindow();

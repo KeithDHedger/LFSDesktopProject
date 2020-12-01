@@ -49,8 +49,8 @@ bool LFSTK_imageClass::mouseUp(XButtonEvent *e)
 
 	if(this->wc->globalLib->LFSTK_pointInRect(&pt,&(this->gadgetGeom))==true)
 		{
-			if(this->callback.releaseCallback!=NULL)
-				return(this->callback.releaseCallback(this,this->callback.userData));
+			if(this->runCallback(MOUSERELEASECB)==true)
+				return(this->mouseCB.releaseCallback(this,this->mouseCB.userData));
 		}
 	return(true);
 }

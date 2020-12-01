@@ -338,20 +338,20 @@ int main(int argc, char **argv)
 //mime type list
 	mimeList=new LFSTK_listGadgetClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2)-LGAP,LISTHITE,NorthWestGravity,NULL,0);
 	setMimeTypesList(mimeTypesFile);
-	mimeList->LFSTK_setCallBack(NULL,selectMime,NULL);
+	mimeList->LFSTK_setMouseCallBack(NULL,selectMime,NULL);
 	
 //apps list
 	appsList=new LFSTK_listGadgetClass(wc,"",BORDER+DIALOGWIDTH,sy,DIALOGWIDTH-(BORDER*2)-LGAP,LISTHITE,NorthWestGravity,NULL,0);
 	appsList->LFSTK_setListFromFile(appsPath,false);
-	appsList->LFSTK_setCallBack(NULL,selectApp,NULL);
+	appsList->LFSTK_setMouseCallBack(NULL,selectApp,NULL);
 	sy+=LISTHITE+8;
 
 //command
 	editLine=new LFSTK_lineEditClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE,BUTTONGRAV);
-	editLine->LFSTK_setCallBack(returnKeyPressed,NULL,NULL);
+	editLine->LFSTK_setMouseCallBack(returnKeyPressed,NULL,NULL);
 //app to use
 	appLine=new LFSTK_lineEditClass(wc,"",BORDER+DIALOGWIDTH,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE,BUTTONGRAV);
-	appLine->LFSTK_setCallBack(returnKeyPressed,NULL,NULL);
+	appLine->LFSTK_setMouseCallBack(returnKeyPressed,NULL,NULL);
 	sy+=YSPACING;
 
 //line
@@ -362,18 +362,18 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 	insert=new LFSTK_buttonClass(wc,"Duplicate",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	insert->LFSTK_setCallBack(NULL,doInsert,NULL);
+	insert->LFSTK_setMouseCallBack(NULL,doInsert,NULL);
 
 	delentry=new LFSTK_buttonClass(wc,"Remove",2*BORDER+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	delentry->LFSTK_setCallBack(NULL,doDelete,NULL);
+	delentry->LFSTK_setMouseCallBack(NULL,doDelete,NULL);
 
 //aply changes
 	apply=new LFSTK_buttonClass(wc,"Apply",2*DIALOGWIDTH-2*GADGETWIDTH-2*BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	apply->LFSTK_setCallBack(NULL,doApply,NULL);
+	apply->LFSTK_setMouseCallBack(NULL,doApply,NULL);
 
 //cancel/quit
 	cancel=new LFSTK_buttonClass(wc,"Quit",2*DIALOGWIDTH-GADGETWIDTH-BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	cancel->LFSTK_setCallBack(NULL,doQuit,NULL);
+	cancel->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 
 	sy+=YSPACING;
 	sy+=(YSPACING/2);

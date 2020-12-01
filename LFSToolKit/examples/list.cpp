@@ -95,13 +95,14 @@ int main(int argc, char **argv)
 		}
 
 	list->LFSTK_updateList();
-	list->LFSTK_setCallBack(NULL,select,NULL);
+	list->LFSTK_setMouseCallBack(NULL,select,NULL);
 	sy+=GADGETHITE*6;
 
 //file list
 	filelist=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*16,BUTTONGRAV,NULL,0);
 	filelist->LFSTK_setListFromFile("/tmp/biglist",false);
-	filelist->LFSTK_setCallBack(NULL,select,(void*)0xdeadbeaf);
+	filelist->LFSTK_setMouseCallBack(NULL,select,(void*)0xdeadbeaf);
+	//filelist->LFSTK_setCallBack(NULL,select,(void*)0xdeadbeaf);
 	sy+=GADGETHITE*17;
 
 //line
@@ -113,7 +114,7 @@ int main(int argc, char **argv)
 
 //quit
 	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
+	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 	sy+=YSPACING;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);

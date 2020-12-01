@@ -65,7 +65,7 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* lab
 	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_setCairoFontData();
 
-	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|ButtonMotionMask|FocusChangeMask|KeyReleaseMask);
+	XSelectInput(this->display,this->window,this->gadgetEventMask);
 
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;
@@ -87,10 +87,21 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* lab
 */
 bool LFSTK_buttonClass::keyRelease(XKeyEvent *e)
 {
-	if(this->callback.pressCallback!=NULL)
-		{
-			this->keyEvent=e;
-			return(this->callback.pressCallback(this,this->callback.userData));
-		}
+	if(this->runCallback(KEYRELEASECB)==true)
+		return(this->keyCB.releaseCallback(this,this->keyCB.userData));
+
+	return(true);
+}
+
+/**
+* Key press callback.
+* \param e XKeyEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
+bool LFSTK_buttonClass::keyPress(XKeyEvent *e)
+{
+	if(this->runCallback(KEYPRESSCB)==true)
+		return(this->keyCB.pressCallback(this,this->keyCB.userData));
+
 	return(true);
 }

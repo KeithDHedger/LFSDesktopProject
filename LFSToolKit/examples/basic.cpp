@@ -14,7 +14,8 @@ rm basicexample
 exit $retval
 #endif
 
-#include "lfstk/LFSTKGlobals.h"
+#include "../config.h"
+#include "../LFSToolKit/lfstk/LFSTKGlobals.h"
 
 #define BOXLABEL			"Basic Button Window"
 
@@ -61,6 +62,34 @@ bool buttonCB(void *p,void* ud)
 	return(true);
 }
 
+bool keyCB(void *p,void* ud)
+{
+	LFSTK_buttonClass	*b=NULL;
+	if(p!=NULL)
+		{
+			b=static_cast<LFSTK_buttonClass*>(p);
+			if(b!=NULL)
+				DEBUGKEY((XKeyEvent*)b->xEvent)
+		}
+
+	if(ud!=NULL)
+		{
+			printf(">>>%s<<<\n",(const char*)ud);
+		}
+	return(true);
+}
+
+bool mouseCB(void *p,void* ud)
+{
+	DEBUG
+	if(ud!=NULL)
+		{
+			printf(">>>%s<<<\n",(const char*)ud);
+		}
+	return(true);
+}
+
+
 int main(int argc, char **argv)
 {
 	XEvent	event;
@@ -100,12 +129,12 @@ int main(int argc, char **argv)
 
 //normal button
 	normalbutton=new LFSTK_buttonClass(wc,"Show/Hide",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);
-	normalbutton->LFSTK_setCallBack(NULL,buttonCB,(void*)"Active");
+	normalbutton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"Active");
 	sy+=YSPACING;
 
 //ignoredButton button
 	ignoredButton=new LFSTK_buttonClass(wc,"Ignore CB",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);
-	ignoredButton->LFSTK_setIgnoreCB(true);
+	ignoredButton->LFSTK_setIgnores(&ignoredButton->mouseCB,false,true);
 	sy+=YSPACING;
 
 //line
@@ -118,17 +147,21 @@ int main(int argc, char **argv)
 //left
 	leftButton=new LFSTK_buttonClass(wc,"Label Left",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);
 	leftButton->LFSTK_setLabelGravity(LEFT);
-	leftButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"Left");
+	//leftButton->LFSTK_setCallBack(NULL,mouseCB,(void*)"Left");
+	leftButton->LFSTK_setKeyCallBack(NULL,keyCB,(void*)"Key Left");
+	leftButton->LFSTK_setMouseCallBack(NULL,mouseCB,(void*)"Mouse Left");
+	//leftButton->LFSTK_setIgnores(&leftButton->mouseCB,false,true);
+	//leftButton->LFSTK_setIgnores(&leftButton->keyCB,false,true);
 	sy+=YSPACING;
 //centre
 	centreButton=new LFSTK_buttonClass(wc,"Label Centre",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);
 	centreButton->LFSTK_setLabelGravity(CENTRE);
-	centreButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"Centre");
+	centreButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"Centre");
 	sy+=YSPACING;
 //rite
 	rightButton=new LFSTK_buttonClass(wc,"Label Right",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);
 	rightButton->LFSTK_setLabelGravity(RIGHT);
-	rightButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"Right");
+	rightButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"Right");
 	sy+=YSPACING;
 
 //line
@@ -141,22 +174,22 @@ int main(int argc, char **argv)
 //left image
 	leftButton=new LFSTK_buttonClass(wc,"Left Label+Image",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE,NorthGravity);
 	leftButton->LFSTK_setImageFromPath("./casper2.JPG",LEFT,true);
-	leftButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"Left Label+Image");
+	leftButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"Left Label+Image");
 	sy+=YSPACING;
 //centre image
 	centreButton=new LFSTK_buttonClass(wc,"Centre Label+Image",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE,NorthGravity);
 	centreButton->LFSTK_setImageFromPath("./casper2.JPG",LEFT,true);
 	centreButton->LFSTK_setLabelGravity(CENTRE);
-	centreButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"Centre Label+Image");
+	centreButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"Centre Label+Image");
 	sy+=YSPACING;
 //rite image
 	rightButton=new LFSTK_buttonClass(wc,"Right Label+Image",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE,NorthGravity);
 	rightButton->LFSTK_setImageFromPath("./casper2.JPG",LEFT,true);
 	rightButton->LFSTK_setLabelGravity(RIGHT);
-	rightButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"Right Label+Image");
+	rightButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"Right Label+Image");
 	sy+=YSPACING;
 
-//line image
+//line
 	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
 	seperator->LFSTK_setStyle(BEVELNONE);
 	seperator->gadgetDetails.buttonTile=false;
@@ -165,7 +198,7 @@ int main(int argc, char **argv)
 
 //quit
 	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);
-	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
+	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 	sy+=YSPACING;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);

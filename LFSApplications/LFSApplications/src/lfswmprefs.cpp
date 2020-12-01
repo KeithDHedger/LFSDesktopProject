@@ -276,7 +276,7 @@ int main(int argc, char **argv)
 			previewButtons[j]->LFSTK_setTile(NULL,0);
 			previewButtons[j]->LFSTK_setColourName(NORMALCOLOUR,prefsColours[j]);
 			previewButtons[j]->LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
-			previewButtons[j]->LFSTK_setIgnoreCB(true);
+			previewButtons[j]->LFSTK_setIgnores(&previewButtons[j]->mouseCB,false,true);
 			sx+=GADGETWIDTH+BORDER;
 			previeColourEdit[j]=new LFSTK_lineEditClass(wc,prefsColours[j],sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 			sy+=YSPACING;
@@ -285,7 +285,7 @@ int main(int argc, char **argv)
 
 //font
 	fontSelector=new LFSTK_fontDialogClass(wc,"Select Font",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	fontSelector->LFSTK_setCallBack(NULL,buttonCB,(void*)"SELECTFONT");
+	fontSelector->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SELECTFONT");
 	sx+=GADGETWIDTH+BORDER;
 	fontEdit=new LFSTK_lineEditClass(wc,prefsFont,sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
@@ -293,7 +293,7 @@ int main(int argc, char **argv)
 
 //theme
 	themeButton=new LFSTK_buttonClass(wc,"Select Theme",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	themeButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"SELECTTHEME");
+	themeButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SELECTTHEME");
 	sx+=GADGETWIDTH+BORDER;
 	themeEdit=new LFSTK_lineEditClass(wc,prefsTheme,sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
@@ -301,9 +301,9 @@ int main(int argc, char **argv)
 
 //placement
 	placeWindowMenu=new LFSTK_buttonClass(wc,"Placement",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	placeWindowMenu->LFSTK_setCallBack(NULL,buttonCB,(void*)"SHOWPLACEMENU");
+	placeWindowMenu->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SHOWPLACEMENU");
 	placeMenu=new LFSTK_menuClass(wc,BORDER+GADGETWIDTH,sy,1,1);
-	placeMenu->LFSTK_setCallBack(NULL,menuCB,NULL);
+	placeMenu->LFSTK_setMouseCallBack(NULL,menuCB,NULL);
 	placeMenu->LFSTK_addMainMenus(placementMenus,MAXMENUS);
 
 	sx+=GADGETWIDTH+BORDER;
@@ -348,15 +348,15 @@ int main(int argc, char **argv)
 
 //quit
 	quit=new LFSTK_buttonClass(wc,"Quit",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
+	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 
 //test
 	test=new LFSTK_buttonClass(wc,"Test Colours",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	test->LFSTK_setCallBack(NULL,buttonCB,(void*)"TEST");
+	test->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"TEST");
 
 //apply
 	apply=new LFSTK_buttonClass(wc,"Apply",DIALOGWIDTH-BORDER-GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	apply->LFSTK_setCallBack(NULL,buttonCB,(void*)"APPLY");
+	apply->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"APPLY");
 	sy+=YSPACING;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);

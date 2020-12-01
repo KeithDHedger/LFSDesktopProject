@@ -99,7 +99,7 @@ int main(int argc, char **argv)
 
 //get path to icon
 	getIconPath=new LFSTK_buttonClass(wc,"Get Path",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	getIconPath->LFSTK_setCallBack(NULL,getPath,NULL);
+	getIconPath->LFSTK_setMouseCallBack(NULL,getPath,NULL);
 	sy+=YSPACING;
 
 //line
@@ -111,8 +111,7 @@ int main(int argc, char **argv)
 
 //quit
 	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-printf("quitx=%i quity=%i\n",DIALOGMIDDLE-HALFGADGETWIDTH,sy);
-	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
+	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 	sy+=YSPACING;
 
 	wc->acceptOnThis=false;

@@ -116,12 +116,12 @@ int main(int argc, char **argv)
 
 //file button
 	filebutton=new LFSTK_buttonClass(wc,"Select File",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
-	filebutton->LFSTK_setCallBack(NULL,selectfile,NULL);
+	filebutton->LFSTK_setMouseCallBack(NULL,selectfile,NULL);
 	sy+=YSPACING;
 
 //folder button
 	folderbutton=new LFSTK_buttonClass(wc,"Select Folder",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
-	folderbutton->LFSTK_setCallBack(NULL,selectdir,NULL);
+	folderbutton->LFSTK_setMouseCallBack(NULL,selectdir,NULL);
 	sy+=YSPACING;
 
 //line
@@ -133,7 +133,7 @@ int main(int argc, char **argv)
 
 //quit
 	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
+	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 	sy+=YSPACING;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);

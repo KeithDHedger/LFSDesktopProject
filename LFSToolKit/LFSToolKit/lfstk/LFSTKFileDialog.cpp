@@ -277,7 +277,7 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	XSetWMNormalHints(this->wc->display,dialog->window,&sh);
 //file list
 	this->fileListGadget=new LFSTK_listGadgetClass(this->dialog,"",BORDER,BORDER,DIALOGWIDTH-FNAVBUTTONWID,(GADGETHITE*FFILEHITE),NorthWestGravity,NULL,0);
-	this->fileListGadget->LFSTK_setCallBack(NULL,this->select,this);
+	this->fileListGadget->LFSTK_setMouseCallBack(NULL,this->select,this);
 	this->getFileList();
 
 //edit box

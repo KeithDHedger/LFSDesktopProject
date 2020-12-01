@@ -267,38 +267,38 @@ int main(int argc, char **argv)
 //launch sub-prefs
 //wallpaper
 	launchButton=new LFSTK_buttonClass(wc,"Wallpaper Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	launchButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"WALLPAPERPREFS");
+	launchButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"WALLPAPERPREFS");
 	launchLabel=new LFSTK_labelClass(wc,"Launch Wallpaper Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,LEFT);
 	sy+=YSPACING;
 //toolkit
 	launchButton=new LFSTK_buttonClass(wc,"Toolkit Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	launchButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"TOOLKITPREFS");
+	launchButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"TOOLKITPREFS");
 	launchLabel=new LFSTK_labelClass(wc,"Launch Toolkit Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,LEFT);
 	sy+=YSPACING;
 //desktop
 	launchButton=new LFSTK_buttonClass(wc,"Desktop Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	launchButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"DESKTOPPREFS");
+	launchButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"DESKTOPPREFS");
 	launchLabel=new LFSTK_labelClass(wc,"Launch Desktop Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,LEFT);
 	sy+=YSPACING;
 //wmanager
 	launchButton=new LFSTK_buttonClass(wc,"WM Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	launchButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"WMPREFS");
+	launchButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"WMPREFS");
 	launchLabel=new LFSTK_labelClass(wc,"Launch Window Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,LEFT);
 	launchLabel->LFSTK_setLabelGravity(LEFT);
 	sy+=YSPACING;
 //panel
 	launchButton=new LFSTK_buttonClass(wc,"Panel Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	launchButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"PANELPREFS");
+	launchButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"PANELPREFS");
 	launchLabel=new LFSTK_labelClass(wc,"Launch Panel Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,LEFT);
 	sy+=YSPACING;
 
 //load set
 	loadSet=new LFSTK_buttonClass(wc,"Load Set",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	loadSet->LFSTK_setCallBack(NULL,buttonCB,(void*)"SHOWGROUPS");
+	loadSet->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SHOWGROUPS");
 	loadSet->LFSTK_setIndicator(DISCLOSURE);
 
 	setMenu=new LFSTK_menuClass(wc,BORDER+GADGETWIDTH,sy,1,1);
-	setMenu->LFSTK_setCallBack(NULL,menuCB,NULL);
+	setMenu->LFSTK_setMouseCallBack(NULL,menuCB,NULL);
 	setMenu->LFSTK_addMainMenus(groupNameMenuItems,find->LFSTK_getDataCount()+2);
 
 	buffer=wc->globalLib->LFSTK_oneLiner("sed -n '1p' %s/lfsappearance.rc",wc->configDir);
@@ -322,15 +322,15 @@ int main(int argc, char **argv)
 
 //quit
 	quit=new LFSTK_buttonClass(wc,"Quit",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
+	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 	sx+=GADGETWIDTH+BORDER;
 //update
 	update=new LFSTK_buttonClass(wc,"Update",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	update->LFSTK_setCallBack(NULL,buttonCB,(void*)"UPDATE");
+	update->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"UPDATE");
 	sx+=GADGETWIDTH+BORDER;
 //apply
 	apply=new LFSTK_buttonClass(wc,"Apply",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	apply->LFSTK_setCallBack(NULL,buttonCB,(void*)"APPLY");
+	apply->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"APPLY");
 
 	sy+=YSPACING;
 

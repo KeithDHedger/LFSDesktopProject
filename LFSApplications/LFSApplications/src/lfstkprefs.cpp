@@ -552,7 +552,8 @@ int main(int argc, char **argv)
 	for(int j=0;j<4;j++)
 		{
 			previewButtons[j]=new LFSTK_buttonClass(wc,previewButtonLabels[j],sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-			previewButtons[j]->LFSTK_setIgnoreCB(true);
+//			previewButtons[j]->LFSTK_setIgnoreCB(true);
+			previewButtons[j]->LFSTK_setIgnores(&previewButtons[j]->mouseCB,false,true);
 			sx+=GADGETWIDTH+BORDER;
 			previeBackColourEdit[j]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 			sx+=EDITBOXWIDTH+BORDER;
@@ -564,7 +565,7 @@ int main(int argc, char **argv)
 
 //button font
 	buttonFontDialogButton=new LFSTK_fontDialogClass(wc,"Button Font",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	buttonFontDialogButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"SELECTBUTTONFONT");
+	buttonFontDialogButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SELECTBUTTONFONT");
 	sx+=GADGETWIDTH+BORDER;
 	buttonFontEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEFONT),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
@@ -574,7 +575,8 @@ int main(int argc, char **argv)
 	for(int j=0;j<4;j++)
 		{
 			previewMenus[j]=new LFSTK_buttonClass(wc,previewMenuLabels[j],sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-			previewMenus[j]->LFSTK_setIgnoreCB(true);
+			//previewMenus[j]->LFSTK_setIgnoreCB(true);
+			previewMenus[j]->LFSTK_setIgnores(&previewMenus[j]->mouseCB,false,true);
 			sx+=GADGETWIDTH+BORDER;
 			previeMenuBackColourEdit[j]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEM),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 			sx+=EDITBOXWIDTH+BORDER;
@@ -585,14 +587,14 @@ int main(int argc, char **argv)
 	sx=BORDER;
 //menu font
 	menuFontDialogButton=new LFSTK_fontDialogClass(wc,"Menu Font",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	menuFontDialogButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"SELECTMENUFONT");
+	menuFontDialogButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SELECTMENUFONT");
 	sx+=GADGETWIDTH+BORDER;
 	menuFontEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEMENUITEMFONT),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 	sx=BORDER;
 //mono font
 	monoFontDialogButton=new LFSTK_fontDialogClass(wc,"Mono Font",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	monoFontDialogButton->LFSTK_setCallBack(NULL,buttonCB,(void*)"SELECTMONOFONT");
+	monoFontDialogButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SELECTMONOFONT");
 	sx+=GADGETWIDTH+BORDER;
 	monoFontEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEMONOFONT),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
@@ -619,10 +621,10 @@ int main(int argc, char **argv)
 	addSet();
 
 	loadSet=new LFSTK_buttonClass(wc,"Load Theme",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH+HALFGADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	loadSet->LFSTK_setCallBack(NULL,buttonCB,(void*)"SHOWSETMENU");
+	loadSet->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SHOWSETMENU");
 	loadSet->LFSTK_setIndicator(DISCLOSURE);
 	setMenu=new LFSTK_menuClass(wc,BORDER+GADGETWIDTH+BORDER+GADGETWIDTH+HALFGADGETWIDTH,sy,1,1);
-	setMenu->LFSTK_setCallBack(NULL,menuCB,NULL);
+	setMenu->LFSTK_setMouseCallBack(NULL,menuCB,NULL);
 	setMenu->LFSTK_addMainMenus(setNameMenuItems,setCnt);
 	sy+=YSPACING;
 	sx=BORDER;
@@ -634,21 +636,21 @@ int main(int argc, char **argv)
 	windowTile=new LFSTK_buttonClass(wc,"Window Tile",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sx+=GADGETWIDTH+BORDER;
 	windowTileEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEWINDOWTILE),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
-	windowTile->LFSTK_setCallBack(NULL,selectfile,(void*)windowTileEdit);
+	windowTile->LFSTK_setMouseCallBack(NULL,selectfile,(void*)windowTileEdit);
 	sy+=YSPACING;
 	sx=BORDER;
 //button tile
 	buttonTile=new LFSTK_buttonClass(wc,"Button Tile",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sx+=GADGETWIDTH+BORDER;
 	buttonTileEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEBUTTONTILE),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
-	buttonTile->LFSTK_setCallBack(NULL,selectfile,(void*)buttonTileEdit);
+	buttonTile->LFSTK_setMouseCallBack(NULL,selectfile,(void*)buttonTileEdit);
 	sy+=YSPACING;
 	sx=BORDER;
 //menu tile
 	menuTile=new LFSTK_buttonClass(wc,"Menu Tile",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sx+=GADGETWIDTH+BORDER;
 	menuTileEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEMENUITEMTILE),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
-	menuTile->LFSTK_setCallBack(NULL,selectfile,(void*)menuTileEdit);
+	menuTile->LFSTK_setMouseCallBack(NULL,selectfile,(void*)menuTileEdit);
 	sy+=YSPACING;
 
 	autoColourCheck->LFSTK_setValue(wc->autoLabelColour);
@@ -666,15 +668,15 @@ int main(int argc, char **argv)
 
 //quit
 	quit=new LFSTK_buttonClass(wc,"Quit",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
+	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 
 //test
 	test=new LFSTK_buttonClass(wc,"Test",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	test->LFSTK_setCallBack(NULL,buttonCB,(void*)"TEST");
+	test->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"TEST");
 
 //apply
 	apply=new LFSTK_buttonClass(wc,"Apply",sx-GADGETWIDTH-BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	apply->LFSTK_setCallBack(NULL,buttonCB,(void*)"APPLY");
+	apply->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"APPLY");
 	sy+=YSPACING;
 
 	setPreviewData();

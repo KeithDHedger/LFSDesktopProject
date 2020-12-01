@@ -25,6 +25,8 @@
 #include <X11/Xlib.h>
 #include <Imlib2.h>
 
+enum {KEYPRESSCB,KEYRELEASECB,ANYKEYCB,MOUSEPRESSCB,MOUSERELEASECB,ANYMOUSECB};
+
 /**
  * \brief Base class for LFSToolKit gadgets.
 */
@@ -48,16 +50,15 @@ class LFSTK_gadgetClass
 		virtual bool			selectionRequest(XSelectionRequestEvent *e);
 
 //mouse events
-		void					LFSTK_setIgnoreCB(bool ignore);
-		bool					LFSTK_getIgnoreCB(void);
-		void					*LFSTK_getCallbackUD(void);
-
 		virtual bool			mouseUp(XButtonEvent *e);
 		virtual bool			mouseDown(XButtonEvent *e);
 		virtual bool			mouseExit(XButtonEvent *e);
 		virtual bool			mouseEnter(XButtonEvent *e);
 		virtual bool			mouseDrag(XMotionEvent *e);
+
+//key events
 		virtual bool			keyRelease(XKeyEvent *e);
+		virtual bool			keyPress(XKeyEvent *e) {return(true);};
 
 		bool					LFSTK_getCanDrag(void);
 		void					LFSTK_setCanDrag(bool candrag);
@@ -72,6 +73,8 @@ class LFSTK_gadgetClass
 		bool					firstClick=false;
 		bool					isDoubleClick=false;
 		unsigned int			currentButton=-1;
+		long					gadgetEventMask=(ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|ButtonMotionMask|FocusChangeMask|KeyReleaseMask|KeyPressMask);
+		XEvent					*xEvent=NULL;
 
 //context window
 		void					LFSTK_doPopUp(int x,int y);
@@ -83,7 +86,15 @@ class LFSTK_gadgetClass
 
 		Window					LFSTK_getWindow(void);
 		void					LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned int w,unsigned int h,int gravity);
-		void					LFSTK_setCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud);
+
+//callbacks
+		void					LFSTK_setIgnores(callbackStruct *cb,bool runcb,bool ignoreorphanmod);
+		//bool					LFSTK_getIgnoreCB(void);//TODO//
+		void					*LFSTK_getCallbackUD(void);
+		void					LFSTK_setMouseCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud);
+		void					LFSTK_setKeyCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud);
+		callbackStruct			mouseCB;
+		callbackStruct			keyCB;
 
 //colours
 		colourStruct			fontColourNames[MAXCOLOURS]={NULL,};
@@ -154,13 +165,13 @@ class LFSTK_gadgetClass
 
 //user data
 		void					*userData=NULL;
-		XButtonEvent			*mouseUpEvent;
-		XKeyEvent				*keyEvent;
-
+		XButtonEvent			*mouseUpEvent=NULL;
+		XKeyEvent				*keyEvent=NULL;
 	private:
 		void					initGadget(void);
 
 	protected:
+		bool					runCallback(int cbtype);
 		mappedListener			*ml=NULL;
 		void					drawBox(geometryStruct* g,gadgetState state,bevelType bevel);
 		void					drawIndicator(gadgetStruct* details);
@@ -171,7 +182,11 @@ class LFSTK_gadgetClass
 		int						blackColour;
 		int						whiteColour;
 
-		buttonCB				callback;
+//events and callbacks
+//		buttonCB				callback;
+//		callbackStruct			mouseCB;
+//		callbackStruct			keyCB;
+
 		geometryStruct			gadgetGeom;
 
 //font and label stuff

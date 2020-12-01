@@ -76,7 +76,7 @@ LFSTK_menuItemClass::LFSTK_menuItemClass(LFSTK_toolWindowClass* parentwc,LFSTK_m
 */
 bool LFSTK_menuItemClass::mouseExit(XButtonEvent *e)
 {
-	if((this->isActive==false) || (this->callback.ignoreCallback==true))
+	if(this->runCallback(MOUSERELEASECB)==false)
 		return(true);
 
 	if(strcmp(this->label,"--")==0)
@@ -110,7 +110,7 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 	int				sinky;
 	unsigned int	buttonmask;
 
-	if((this->isActive==false) || (this->callback.ignoreCallback==true))
+	if(this->runCallback(MOUSERELEASECB)==false)
 		return(true);
 
 	if(strcmp(this->label,"--")==0)
@@ -158,7 +158,7 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 								hite=SEPARATORHITE;
 
 							label=new LFSTK_menuItemClass(this->subwc,this->menu,0,sy,maxtxtwid,hite,this->menuData->subMenus[j],gotthumb);
-							label->LFSTK_setCallBack(this->callback.pressCallback,this->callback.releaseCallback,this->menuData->subMenus[j]->userData);
+							label->LFSTK_setMouseCallBack(this->mouseCB.pressCallback,this->mouseCB.releaseCallback,this->menuData->subMenus[j]->userData);
 							if(this->menuData->subMenus[j]->imageType==FILETHUMB)
 								label->LFSTK_setImageFromPath(this->menuData->subMenus[j]->data.imagePath,MENU,true);
 							if(this->menuData->subMenus[j]->imageType==CAIROTHUMB)

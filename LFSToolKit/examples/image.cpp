@@ -98,7 +98,7 @@ int main(int argc, char **argv)
 
 	tux=new LFSTK_imageClass(wc,NULL,DIALOGMIDDLE-(IMAGESIZE/2),sy,IMAGESIZE,IMAGESIZE,BUTTONGRAV,true);
 	tux->LFSTK_setImageFromPath("./AspellGUI.png",PRESERVEASPECT,true);
-	tux->LFSTK_setCallBack(NULL,buttonCB,NULL);
+	tux->LFSTK_setMouseCallBack(NULL,buttonCB,NULL);
 	tux->LFSTK_setCanDrag(true);
 	//tux->LFSTK_snapSize(1);
 	tux->LFSTK_setTile(NULL,0);
@@ -109,7 +109,7 @@ int main(int argc, char **argv)
 //	tux->LFSTK_setLimits(10,-1,440,-1);
 //	tux->LFSTK_setLimits(-1,10,-1,440);
 	tux->LFSTK_setLimits(10,10,440,120);
-	tux->LFSTK_setCallBack(NULL,mouseUpCB,NULL);
+	tux->LFSTK_setMouseCallBack(NULL,mouseUpCB,NULL);
 
 	sy+=YSPACING*3;
 
@@ -140,7 +140,7 @@ int main(int argc, char **argv)
 
 //quit
 	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
+	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 	sy+=YSPACING;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
@@ -152,7 +152,7 @@ int main(int argc, char **argv)
 	for(int j=BUTTONMOUNT;j<NOMOREBUTONS;j++)
 		{
 			diskButtons[j]=new LFSTK_buttonClass(diskWindow,diskLabelData[j],0,sy,GADGETWIDTH,24,NorthWestGravity);
-			diskButtons[j]->LFSTK_setCallBack(NULL,contextCB,(void*)(long)(j+1));
+			diskButtons[j]->LFSTK_setMouseCallBack(NULL,contextCB,(void*)(long)(j+1));
 			iconpath=diskWindow->globalLib->LFSTK_findThemedIcon("gnome",diskThemeIconData[j],"");
 			diskButtons[j]->LFSTK_setImageFromPath(iconpath,LEFT,true);
 			free(iconpath);

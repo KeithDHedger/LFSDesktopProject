@@ -17,6 +17,7 @@ exit $retval
 
 #endif
 
+#include "../config.h"
 #include "lfstk/LFSTKGlobals.h"
 
 #define BOXLABEL			"Scrollbar"
@@ -102,7 +103,7 @@ int main(int argc, char **argv)
 
 //hscrollbar
 	hsb=new LFSTK_scrollBarClass(wc,false,DIALOGMIDDLE-200,sy,400+GADGETHITE,SCROLLBARWIDTH,BUTTONGRAV);
-	hsb->LFSTK_setCallBack(NULL,valChanged,NULL);
+	hsb->LFSTK_setMouseCallBack(NULL,valChanged,NULL);
 	hsb->LFSTK_setScale(1,100);
 //	hsb->reverse=true;
 	hsb->LFSTK_setValue(25);
@@ -112,7 +113,8 @@ int main(int argc, char **argv)
 fprintf(stderr,"sy=%i\n",sy);
 //	vsb=new LFSTK_scrollBarClass(wc,true,BORDER,sy,GADGETHITE/2,200+GADGETHITE,BUTTONGRAV);
 	vsb=new LFSTK_scrollBarClass(wc,true,BORDER,sy,SCROLLBARWIDTH,200+GADGETHITE,BUTTONGRAV);
-	vsb->LFSTK_setCallBack(NULL,valChanged,NULL);
+	vsb->LFSTK_setMouseCallBack(NULL,valChanged,NULL);
+	//vsb->LFSTK_setAllowKBControl(false);
 	vsb->LFSTK_setScale(0,1985);
 	vsb->LFSTK_setPageScroll(100);
 //	vsb->reverse=true;
@@ -127,16 +129,16 @@ fprintf(stderr,"sy=%i\n",sy);
 	sy+=YSPACING;
 //quit
 	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
+	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 	sy+=YSPACING;
 
 //reverse
 	reverse=new LFSTK_toggleButtonClass(wc,"Reverse",DIALOGMIDDLE-HALFGADGETWIDTH,DIALOGMIDDLE,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	reverse->LFSTK_setToggleStyle(TOGGLENORMAL);
-	reverse->LFSTK_setCallBack(NULL,doReverse,NULL);
+	reverse->LFSTK_setMouseCallBack(NULL,doReverse,NULL);
 //test setval
 	test=new LFSTK_buttonClass(wc,"Set to 10",DIALOGMIDDLE-HALFGADGETWIDTH,DIALOGMIDDLE+GADGETHITE*2,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	test->LFSTK_setCallBack(NULL,setval,NULL);
+	test->LFSTK_setMouseCallBack(NULL,setval,NULL);
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();

@@ -81,7 +81,7 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 	fontdialog=new LFSTK_fontDialogClass(wc,"Select Font",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	fontdialog->LFSTK_setCallBack(NULL,buttonCB,(void*)"SELECT");
+	fontdialog->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SELECT");
 	sy+=YSPACING;
 
 //line
@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 
 //quit
 	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
+	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 	sy+=YSPACING;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);

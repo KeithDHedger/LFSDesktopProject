@@ -86,10 +86,11 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = lfstkprefs$(EXEEXT) lfsappearance$(EXEEXT) \
-	lfsdesktopprefs$(EXEEXT) lfsabout$(EXEEXT) lfswmprefs$(EXEEXT) \
-	lfsruncommand$(EXEEXT) lfsbackdropprefs$(EXEEXT) \
-	lfspanelprefs$(EXEEXT) lfsmimeeditor$(EXEEXT)
+bin_PROGRAMS = lfsappearance$(EXEEXT) lfstkprefs$(EXEEXT) \
+	lfswmprefs$(EXEEXT) lfsdesktopprefs$(EXEEXT) \
+	lfsbackdropprefs$(EXEEXT) lfspanelprefs$(EXEEXT) \
+	lfsabout$(EXEEXT) lfsruncommand$(EXEEXT) \
+	lfsmimeeditor$(EXEEXT)
 subdir = LFSApplications/app
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -352,15 +353,17 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 				-DSYSCONFDIR=\""${sysconfdir}/${PACKAGE}"\" \
 				-DLIBDIR=\""${libdir}/${PACKAGE}"\"
 
+lfsappearance_SOURCES = ../src/lfsappearance.cpp
 lfstkprefs_SOURCES = ../src/lfstkprefs.cpp
 lfswmprefs_SOURCES = ../src/lfswmprefs.cpp
 lfsdesktopprefs_SOURCES = ../src/lfsdesktopprefs.cpp
-lfsappearance_SOURCES = ../src/lfsappearance.cpp
 lfsbackdropprefs_SOURCES = ../src/lfsbackdropprefs.cpp
 lfspanelprefs_SOURCES = ../src/lfspanelprefs.cpp
 lfsabout_SOURCES = ../src/lfsabout.cpp
 lfsruncommand_SOURCES = ../src/lfsruncommand.cpp
 lfsmimeeditor_SOURCES = ../src/lfsmimeeditor.cpp
+
+#lfsfontselect_SOURCES = ../src/lfsfontselect.cpp
 man1_MANS = ../resources/man/lfsapplications.1
 all: all-am
 

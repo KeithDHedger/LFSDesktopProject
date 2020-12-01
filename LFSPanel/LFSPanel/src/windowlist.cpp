@@ -340,8 +340,8 @@ int addWindowDeskMenu(int x,int y,int grav,bool fromleft)
 
 	windowDeskMenu=new LFSTK_menuClass(mainwind,xpos,ypos+panelHeight,1,1);
 
-	windowDesk->LFSTK_setCallBack(NULL,windowAllCB,(void*)windowDeskMenu);
-	windowDeskMenu->LFSTK_setCallBack(NULL,windowAllMenuCB,NULL);
+	windowDesk->LFSTK_setMouseCallBack(NULL,windowAllCB,(void*)windowDeskMenu);
+	windowDeskMenu->LFSTK_setMouseCallBack(NULL,windowAllMenuCB,NULL);
 	windowDeskListCnt=-1;
 	windowAllListCnt=-1;
 	updateWindowCnt=WINDOWREFRESH;
@@ -382,8 +382,8 @@ int addWindowMenu(int x,int y,int grav,bool fromleft)
 
 	windowAllMenu=new LFSTK_menuClass(mainwind,xpos,ypos+panelHeight,1,1);
 
-	windowAll->LFSTK_setCallBack(NULL,windowAllCB,(void*)windowAllMenu);
-	windowAllMenu->LFSTK_setCallBack(NULL,windowAllMenuCB,NULL);
+	windowAll->LFSTK_setMouseCallBack(NULL,windowAllCB,(void*)windowAllMenu);
+	windowAllMenu->LFSTK_setMouseCallBack(NULL,windowAllMenuCB,NULL);
 
 	windowDeskListCnt=-1;
 	windowAllListCnt=-1;

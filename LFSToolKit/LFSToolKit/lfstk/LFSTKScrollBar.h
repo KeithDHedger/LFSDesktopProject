@@ -36,6 +36,7 @@ class LFSTK_scrollBarClass : public LFSTK_gadgetClass
 		bool				mouseDown(XButtonEvent *e);
 		bool				mouseEnter(XButtonEvent *e);
 		bool				mouseExit(XButtonEvent *e);
+		bool				keyRelease(XKeyEvent *e);
 
 		void				LFSTK_clearWindow(void);
 		void				LFSTK_setStyle(bevelType s);
@@ -45,6 +46,8 @@ class LFSTK_scrollBarClass : public LFSTK_gadgetClass
 		void				LFSTK_setLineScroll(int line);
 		void				LFSTK_setValue(int val);
 		int					LFSTK_getValue(void);
+		void				LFSTK_setAllowKBControl(bool allow);
+		bool				LFSTK_getAllowKBControl(void);
 		void				LFSTK_scrollByLine(bool up);
 		void				LFSTK_scrollByPage(bool up);
 
@@ -53,6 +56,7 @@ class LFSTK_scrollBarClass : public LFSTK_gadgetClass
 		double				maxValue=100.0;
 
 	private:
+		bool				allowKBControl=true;
 		int					value=0;
 		LFSTK_buttonClass	*thumb=NULL;
 		LFSTK_buttonClass	*upLeft=NULL;

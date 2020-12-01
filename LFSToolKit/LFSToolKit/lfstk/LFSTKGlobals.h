@@ -97,6 +97,9 @@ static void debugFunc(const char *file,const char *func,int line,const char *fmt
 							case 's':
 								sprintf(subbuffer,"%s",va_arg(ap,char*));
 								break;
+							case 'x':
+								sprintf(subbuffer,"%x",va_arg(ap,int));
+								break;
 							case 'i':
 								sprintf(subbuffer,"%i",va_arg(ap,int));
 								break;
@@ -131,9 +134,32 @@ static void debugFunc(const char *file,const char *func,int line,const char *fmt
 			printf("%s\n",buffer);
 		}
 }
-#define DEBUGFUNC(x,...) debugFunc(__FILE__,__func__,__LINE__,(const char*)x,__VA_ARGS__)
+
+static void simpleDebug(const char *file,const char *func,int line)
+{
+	printf("\nFile: %s\nFunc: %s\nLine: %i\n",basename(file),func,line);
+}
+
+static void debugKey(const char *file,const char *func,int line,XKeyEvent *e)
+{
+	char		c[255];
+	KeySym		keysym_return;
+	const char	*typestr="XKeyPressedEvent";
+
+	printf("\nFile: %s\nFunc: %s\nLine: %i\n",basename(file),func,line);
+	XLookupString(e,(char*)&c,255,&keysym_return,NULL);
+	if(e->type==KeyRelease)
+		typestr="XKeyReleasedEvent";
+	printf("Key=XK_%s, Type=%s\n",XKeysymToString(keysym_return),typestr);
+}
+
+#define DEBUGFUNC(x,...) debugFunc(__FILE__,__func__,__LINE__,(const char*)x,__VA_ARGS__);
+#define DEBUG simpleDebug(__FILE__,__func__,__LINE__);
+#define DEBUGKEY(e) debugKey(__FILE__,__func__,__LINE__,e);
 #else
 #define DEBUGFUNC(...) printf("Remove debug code here: %s:%i\n",__FILE__,__LINE__);
+#define DEBUG(...) printf("Remove debug code here: %s:%i\n",__FILE__,__LINE__);
+#define DEBUGKEY(...) printf("Remove debug code here: %s:%i\n",__FILE__,__LINE__);
 #endif
 
 static bool	xLibErrorTK=false;
@@ -168,12 +194,13 @@ struct args
 	void*					data;
 };
 
-struct buttonCB
+struct callbackStruct
 {
-	bool					(*pressCallback)(void *,void*);
-	bool					(*releaseCallback)(void *,void*);
-	void					*userData;
-	bool					ignoreCallback;
+	bool					(*pressCallback)(void *,void*)=NULL;
+	bool					(*releaseCallback)(void *,void*)=NULL;
+	void					*userData=NULL;
+	bool					runTheCallback=true;
+	bool					ignoreOrphanModKeys=true;
 };
 
 struct geometryStruct

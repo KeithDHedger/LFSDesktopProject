@@ -125,12 +125,12 @@ int main(int argc, char **argv)
 
 //test
 	test=new LFSTK_buttonClass(wc,"Sub-Window",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	test->LFSTK_setCallBack(NULL,buttonCB,(void*)0xdeadbeef);
+	test->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)0xdeadbeef);
 	sy+=YSPACING;
 
 //quit
 	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
+	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 	sy+=YSPACING;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);

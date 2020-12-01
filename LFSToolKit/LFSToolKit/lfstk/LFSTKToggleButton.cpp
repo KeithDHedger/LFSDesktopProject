@@ -59,7 +59,7 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 	this->gc=XCreateGC(this->display,this->window,0,NULL);
 	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_setCairoFontData();
-	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
+	XSelectInput(this->display,this->window,this->gadgetEventMask);
 
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;
@@ -78,7 +78,6 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 
 	this->style=BEVELNONE;
 
-//	asprintf(&pathtobit,"%s/check.png",this->wc->globalLib->LFSTK_getThemePath());
 	asprintf(&pathtobit,"%s/checkon.png",this->wc->globalLib->LFSTK_getThemePath());
 	if(access(pathtobit,F_OK)==0)
 		{
@@ -95,9 +94,6 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 					this->useImage=true;
 					this->cImage=this->checkOn;
 				}
-		//	if(this->LFSTK_setImageFromPath(pathtobit,LEFT,false)==CAIRO_STATUS_SUCCESS)
-		//	if(this->LFSTK_setImageFromPath(pathtobit,LEFT,false)==CAIRO_STATUS_SUCCESS)
-		//		this->useImage=false;
 		}
 
 	this->showIndicator=true;
@@ -114,6 +110,9 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 */
 bool LFSTK_toggleButtonClass::mouseEnter(XButtonEvent *e)
 {
+	if(this->runCallback(ANYMOUSECB)==false)
+		return(true);
+
 	if(this->boxStyle==TOGGLENORMAL)
 		{
 			this->gadgetDetails.colour=&this->colourNames[PRELIGHTCOLOUR];
@@ -138,6 +137,9 @@ bool LFSTK_toggleButtonClass::mouseEnter(XButtonEvent *e)
 */
 bool LFSTK_toggleButtonClass::mouseExit(XButtonEvent *e)
 {
+	if(this->runCallback(ANYMOUSECB)==false)
+		return(true);
+
 	if(this->toggleState==true)
 		{
 			if(this->boxStyle==TOGGLENORMAL)
@@ -166,6 +168,9 @@ bool LFSTK_toggleButtonClass::mouseExit(XButtonEvent *e)
 */
 bool LFSTK_toggleButtonClass::mouseDown(XButtonEvent *e)
 {
+	if(this->runCallback(ANYMOUSECB)==false)
+		return(true);
+
 	if(this->boxStyle==TOGGLENORMAL)
 		{
 			this->gadgetDetails.colour=&this->colourNames[ACTIVECOLOUR];
@@ -184,8 +189,9 @@ bool LFSTK_toggleButtonClass::mouseDown(XButtonEvent *e)
 
 	XSync(this->display,false);
 	LFSTK_gadgetClass::LFSTK_clearWindow();
-	if(this->callback.pressCallback!=NULL)
-		return(this->callback.pressCallback(this,this->callback.userData));
+
+	if(this->runCallback(MOUSEPRESSCB)==true)
+		return(this->mouseCB.pressCallback(this,this->mouseCB.userData));
 	return(true);
 }
 
@@ -197,6 +203,9 @@ bool LFSTK_toggleButtonClass::mouseDown(XButtonEvent *e)
 bool LFSTK_toggleButtonClass::mouseUp(XButtonEvent *e)
 {
 	gadgetState col=NORMALCOLOUR;
+
+	if(this->runCallback(ANYMOUSECB)==false)
+		return(true);
 
 	if(this->inWindow==true)
 		{
@@ -225,8 +234,8 @@ bool LFSTK_toggleButtonClass::mouseUp(XButtonEvent *e)
 
 	if(this->inWindow==true)
 		{
-			if(this->callback.releaseCallback!=NULL)
-				return(this->callback.releaseCallback(this,this->callback.userData));
+			if(this->runCallback(MOUSERELEASECB)==true)
+				return(this->mouseCB.releaseCallback(this,this->mouseCB.userData));
 		}
 	return(true);
 }

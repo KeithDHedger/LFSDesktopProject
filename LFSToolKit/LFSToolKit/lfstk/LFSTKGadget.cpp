@@ -256,24 +256,104 @@ void LFSTK_gadgetClass::LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* 
  	this->blackColour=BlackPixel(this->display,this->screen);
 	this->whiteColour=WhitePixel(this->display,this->screen);
 
-	this->LFSTK_setCallBack(NULL,NULL,(void*)-1);
 	this->ml=new mappedListener;
 }
 
 /**
-* Set callback for widget.
-* \param downcb Mouse down callback.
-* \param releasecb Mouse up callback.
+* Set key callback for widget.
+* \param downcb key down callback.
+* \param releasecb key up callback.
 * \note Format for callback is "bool functioname(void *p,void* ud)"
 * \note First param passed to callback is pointer to object.
 * \note Second param passed to callback is user data.
 */
-void LFSTK_gadgetClass::LFSTK_setCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud)
+void LFSTK_gadgetClass::LFSTK_setKeyCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud)
 {
-	this->callback.pressCallback=downcb;
-	this->callback.releaseCallback=releasecb;
-	this->callback.userData=ud;
-	this->callback.ignoreCallback=false;
+	this->keyCB.pressCallback=downcb;
+	this->keyCB.releaseCallback=releasecb;
+	this->keyCB.userData=ud;
+	this->keyCB.runTheCallback=true;
+	this->keyCB.ignoreOrphanModKeys=true;
+}
+
+/**
+* Set mouse callback for widget.
+* \param downcb mouse down callback.
+* \param releasecb mouse up callback.
+* \note Format for callback is "bool functioname(void *p,void* ud)"
+* \note First param passed to callback is pointer to object.
+* \note Second param passed to callback is user data.
+*/
+void LFSTK_gadgetClass::LFSTK_setMouseCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud)
+{
+	this->mouseCB.pressCallback=downcb;
+	this->mouseCB.releaseCallback=releasecb;
+	this->mouseCB.userData=ud;
+	this->mouseCB.runTheCallback=true;
+	this->mouseCB.ignoreOrphanModKeys=true;
+}
+
+/**
+* Check whether to run callback.
+* \param downcb mouse down callback.
+* \param releasecb mouse up callback.
+* \note Format for callback is "bool functioname(void *p,void* ud)"
+* \note First param passed to callback is pointer to object.
+* \note Second param passed to callback is user data.
+*/
+bool LFSTK_gadgetClass::runCallback(int cbtype)
+{
+	char		c[255];
+	KeySym		keysym_return;
+	bool		retval=false;
+
+	if(this->isActive==false)
+		return(false);
+//TODO// ANYMOUSECB ANYKEYCB and 
+	switch(cbtype)
+		{
+			case ANYKEYCB:
+				retval=this->keyCB.runTheCallback;
+				break;
+
+			case KEYPRESSCB:
+				if(this->keyCB.pressCallback!=NULL)
+					{
+						retval=this->keyCB.runTheCallback;
+						if(this->keyCB.ignoreOrphanModKeys==true)
+							{
+								XLookupString(&(this->xEvent->xkey),(char*)&c,255,&keysym_return,NULL);
+								if((keysym_return>=XK_Shift_L) && (keysym_return<=XK_Hyper_R))
+									retval=false;
+							}
+					}
+				break;
+			case KEYRELEASECB:
+				if(this->keyCB.releaseCallback!=NULL)
+					{
+						retval=this->keyCB.runTheCallback;
+						if(this->keyCB.ignoreOrphanModKeys==true)
+							{
+								XLookupString(&(this->xEvent->xkey),(char*)&c,255,&keysym_return,NULL);
+								if((keysym_return>=XK_Shift_L) && (keysym_return<=XK_Hyper_R))
+									retval=false;
+							}
+					}
+				break;
+
+			case ANYMOUSECB:
+				retval=this->mouseCB.runTheCallback;
+				break;
+			case MOUSEPRESSCB:
+				if(this->mouseCB.pressCallback!=NULL)
+					retval=this->mouseCB.runTheCallback;
+				break;
+			case MOUSERELEASECB:
+				if(this->mouseCB.releaseCallback!=NULL)
+					retval=this->mouseCB.runTheCallback;
+				break;
+		}
+	return(retval);
 }
 
 /**
@@ -587,7 +667,8 @@ bool LFSTK_gadgetClass::LFSTK_getCanDrag(void)
 bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 {
 	this->keyEvent=NULL;
-	if((this->isActive==false) || (this->callback.ignoreCallback==true))
+
+	if(this->runCallback(ANYMOUSECB)==false)
 		return(true);
 
 	if(strcmp(this->label,"--")==0)
@@ -600,8 +681,8 @@ bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 	this->LFSTK_clearWindow();
 	if(this->inWindow==true)
 		{
-			if(this->callback.releaseCallback!=NULL)
-				return(this->callback.releaseCallback(this,this->callback.userData));
+			if(this->runCallback(MOUSERELEASECB)==true)
+				return(this->mouseCB.releaseCallback(this,this->mouseCB.userData));
 		}
 	return(true);
 }
@@ -617,7 +698,7 @@ bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 	this->mouseDownY=e->y;
 	this->keyEvent=NULL;
 
-	if((this->isActive==false) || (this->callback.ignoreCallback==true))
+	if(this->runCallback(ANYMOUSECB)==false)
 		return(true);
 
 	if(strcmp(this->label,"--")==0)
@@ -627,8 +708,9 @@ bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 	this->gadgetDetails.state=ACTIVECOLOUR;
 	this->gadgetDetails.bevel=BEVELIN;
 	this->LFSTK_clearWindow();
-	if(this->callback.pressCallback!=NULL)
-		return(this->callback.pressCallback(this,this->callback.userData));
+
+	if(this->runCallback(MOUSEPRESSCB)==true)
+		return(this->mouseCB.pressCallback(this,this->mouseCB.userData));
 	return(true);
 }
 
@@ -641,7 +723,7 @@ bool LFSTK_gadgetClass::mouseExit(XButtonEvent *e)
 {
 	this->keyEvent=NULL;
 
-	if((this->isActive==false) || (this->callback.ignoreCallback==true))
+	if(this->runCallback(ANYMOUSECB)==false)
 		return(true);
 
 	if(strcmp(this->label,"--")==0)
@@ -663,7 +745,8 @@ bool LFSTK_gadgetClass::mouseExit(XButtonEvent *e)
 bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 {
 	this->keyEvent=NULL;
-	if((this->isActive==false) || (this->callback.ignoreCallback==true))
+
+	if(this->runCallback(ANYMOUSECB)==false)
 		return(true);
 
 	if(strcmp(this->label,"--")==0)
@@ -741,14 +824,6 @@ void LFSTK_gadgetClass::LFSTK_resizeWindow(int w,int h)
 */
 bool LFSTK_gadgetClass::keyRelease(XKeyEvent *e)
 {
-//printf("000000000000\n");
-//	if(this->callback.pressCallback!=NULL)
-//	{
-//printf("5555555555555\n");
-//		return(this->callback.pressCallback(this,this->callback.userData));
-//	}
-//printf("99999999999999\n");
-//
 	this->keyEvent=NULL;
 	return(true);
 }
@@ -1528,24 +1603,20 @@ void LFSTK_gadgetClass::LFSTK_setTile(const char *path,int size)
 */
 void* LFSTK_gadgetClass::LFSTK_getCallbackUD()
 {
-	return(this->callback.userData);
+//TODO//
+	//return(this->callback.userData);
+	return(this->mouseCB.userData);
 }
 
 /**
-* Ignore callbacks.
-* \param ignore.
+* Ignore orphaned mod keys and callbacks.
+* \param bool runcb true=run callback,false=don't run.
+* \param bool ignoreorphanmod ignore mod keys without 'normal' key.
 */
-void LFSTK_gadgetClass::LFSTK_setIgnoreCB(bool ignore)
+void LFSTK_gadgetClass::LFSTK_setIgnores(callbackStruct *cb,bool runcb,bool ignoreorphanmod)
 {
-	this->callback.ignoreCallback=ignore;
-}
-
-/**
-* Get the current ignore callbacks state.
-*/
-bool LFSTK_gadgetClass::LFSTK_getIgnoreCB(void)
-{
-	return(this->callback.ignoreCallback);
+	cb->ignoreOrphanModKeys=ignoreorphanmod;
+	cb->runTheCallback=runcb;
 }
 
 /**
