@@ -86,7 +86,7 @@ int main(int argc, char **argv)
 	sy+=GADGETHITE;
 
 	mimeEdit=new LFSTK_lineEditClass(wc,"drive-harddisk",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
-	mimeEdit->LFSTK_setCallBack(NULL,doKeyUp,USERDATA(12345));
+	mimeEdit->LFSTK_setMouseCallBack(NULL,doKeyUp,USERDATA(12345));
 	sy+=YSPACING;
 
 //catagory edit
@@ -94,7 +94,7 @@ int main(int argc, char **argv)
 	label->LFSTK_setCairoFontDataParts("B");
 	sy+=GADGETHITE;
 	catEdit=new LFSTK_lineEditClass(wc,"devices",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
-	catEdit->LFSTK_setCallBack(NULL,doKeyUp,USERDATA(12345));
+	catEdit->LFSTK_setMouseCallBack(NULL,doKeyUp,USERDATA(12345));
 	sy+=YSPACING;
 
 //get path to icon

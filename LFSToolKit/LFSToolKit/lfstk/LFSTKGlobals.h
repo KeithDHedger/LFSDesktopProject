@@ -158,7 +158,7 @@ static void debugKey(const char *file,const char *func,int line,XKeyEvent *e)
 #define DEBUGKEY(e) debugKey(__FILE__,__func__,__LINE__,e);
 #else
 #define DEBUGFUNC(...) printf("Remove debug code here: %s:%i\n",__FILE__,__LINE__);
-#define DEBUG(...) printf("Remove debug code here: %s:%i\n",__FILE__,__LINE__);
+#define DEBUG printf("Remove debug code here: %s:%i\n",__FILE__,__LINE__);
 #define DEBUGKEY(...) printf("Remove debug code here: %s:%i\n",__FILE__,__LINE__);
 #endif
 
