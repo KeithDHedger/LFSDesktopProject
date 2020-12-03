@@ -48,7 +48,6 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		bool				LFSTK_getCallbackOnReturn(void);
 
 		bool				mouseDown(XButtonEvent *e);
-		bool				mouseEnter(XButtonEvent *e);
 		bool				keyRelease(XKeyEvent *e);
 		bool				lostFocus(XEvent *e);
 		bool				gotFocus(XEvent *e);
@@ -66,16 +65,17 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 	protected:
 		colourStruct		cursorColour={NULL,0,{0.0,0.0,0.0,0.8}};
 		double				charWidth;
+		bool				startUpMDFlag=false;
+		bool				callbackOnReturn=true;
 	
 	private:
-		bool				callbackOnReturn=true;
 		void				drawLabel(void);
 		void				getClip(void);
 		void				setOffsetcurs(int step);
 		std::string			buffer;
 		int					cursorPos=0;
 		int					visCursorPos=0;
-		bool				isFocused;
+		bool				isFocused=false;
 		int					offsetCurs=0;
 		KeySym				keysym_return;
 		unsigned int		state;

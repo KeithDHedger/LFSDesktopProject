@@ -79,7 +79,7 @@ LFSTK_multiLineEditClass::LFSTK_multiLineEditClass(LFSTK_windowClass* parentwc,c
 	this->LFSTK_setFontString(this->monoFontString);
 	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_setCairoFontData();
-	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|FocusChangeMask|KeyReleaseMask|SelectionClear|SelectionRequest);
+	XSelectInput(this->display,this->window,this->gadgetEventMask|SelectionClear|SelectionRequest);
 
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;
@@ -123,47 +123,32 @@ void LFSTK_multiLineEditClass::LFSTK_clearWindow()
 */
 void LFSTK_multiLineEditClass::LFSTK_setFocus(void)
 {
-	XSetInputFocus(this->display,this->window,RevertToParent,CurrentTime);
 	this->isFocused=true;
 	this->setDisplayLines();
-	this->LFSTK_clearWindow();
-	XSync(this->display,false);
 }
 
 /**
-* Configure Message callback.
+* Mouse down callback.
 * \param e XButtonEvent passed from mainloop->listener.
 * \return Return true if event fully handeled or false to pass it on.
 */
-bool LFSTK_multiLineEditClass::clientMessage(XEvent *e)
+bool LFSTK_multiLineEditClass::mouseDown(XButtonEvent *e)
 {
-printf("confmes from line edit\n");
+	this->startUpMDFlag=true;
+	this->LFSTK_setFocus();
+	if(this->isActive==false)
+		this->LFSTK_clearWindow();
+
+	return(true);
+
+
+
+	this->LFSTK_setFocus();
+	if(this->isActive==false)
+		this->LFSTK_clearWindow();
+
 	return(true);
 }
-
-///**
-//* Mouse enter callback.
-//* \param e XButtonEvent passed from mainloop->listener.
-//* \return Return true if event fully handeled or false to pass it on.
-//*/
-//bool LFSTK_multiLineEditClass::mouseEnter(XButtonEvent *e)
-//{
-//	return(true);
-//}
-//
-///**
-//* Mouse down callback.
-//* \param e XButtonEvent passed from mainloop->listener.
-//* \return Return true if event fully handeled or false to pass it on.
-//*/
-//bool LFSTK_multiLineEditClass::mouseDown(XButtonEvent *e)
-//{
-//	this->LFSTK_setFocus();
-//	if(this->isActive==false)
-//		this->LFSTK_clearWindow();
-//
-//	return(true);
-//}
 
 void LFSTK_multiLineEditClass::LFSTK_resizeWindow(int w,int h)
 {
@@ -184,9 +169,8 @@ bool LFSTK_multiLineEditClass::lostFocus(XEvent *e)
 		{
 			XUngrabKeyboard(this->display,CurrentTime);
 			this->isFocused=false;
-			this->setDisplayLines();
-			this->LFSTK_clearWindow();
 		}
+	this->setDisplayLines();
 	return(true);
 }
 
@@ -197,14 +181,13 @@ bool LFSTK_multiLineEditClass::lostFocus(XEvent *e)
 */
 bool LFSTK_multiLineEditClass::gotFocus(XEvent *e)
 {
+	if(this->startUpMDFlag==false)
+		return(true);
+
 	if(this->isFocused==false)
-		{
-			XGrabKeyboard(this->display,this->window,true,GrabModeAsync,GrabModeAsync,CurrentTime);
-			this->isFocused=true;
-			XSetInputFocus(this->display,this->window,RevertToParent,CurrentTime);
-			this->setDisplayLines();
-			this->LFSTK_clearWindow();
-		}
+		this->isFocused=true;
+
+	this->setDisplayLines();
 	return(true);
 }
 
@@ -385,7 +368,6 @@ bool LFSTK_multiLineEditClass::keyRelease(XKeyEvent *e)
 	char	c[255];
 	KeySym	keysym_return;
 	char	*command;
-
 	if(this->isActive==false)
 		{
 			this->LFSTK_clearWindow();
@@ -478,6 +460,8 @@ bool LFSTK_multiLineEditClass::keyRelease(XKeyEvent *e)
 				case XK_Return:
 					this->buffer.insert(this->cursorPos,1,'\n');
 					this->cursorPos++;
+					if(this->keyCB.releaseCallback!=NULL)
+						this->keyCB.releaseCallback(this,this->keyCB.userData);
 					//if(this->callback.pressCallback!=NULL)
 					//	return(this->callback.pressCallback(this,this->callback.userData));
 					break;
@@ -493,6 +477,9 @@ bool LFSTK_multiLineEditClass::keyRelease(XKeyEvent *e)
 
 	this->setDisplayLines();
 	this->LFSTK_clearWindow();
+	if((this->keyCB.releaseCallback!=NULL) && (this->callbackOnReturn==false))
+		return(this->keyCB.releaseCallback(this,this->keyCB.userData));
+
 //	if(this->callback.releaseCallback!=NULL)
 //		return(this->callback.releaseCallback(this,this->callback.userData));
 //TODO//

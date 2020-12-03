@@ -1170,7 +1170,7 @@ void LFSTK_windowClass::LFSTK_dropData(propertyStruct* data)
  */
 void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 {
-	int res;
+	//int res=0;
 
 	if(event->type == ClientMessage)
 		{
@@ -1201,6 +1201,8 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 			if(event->xclient.message_type == dNdAtoms[XDNDPOSITION])
 				{
 					//Xdnd: reply with an XDND status message
+					int res=0;
+
 					this->dropGadget=this->LFSTK_findGadgetByPos(event->xclient.data.l[2] >> 16,event->xclient.data.l[2] & 0xffff);
 					this->droppedData.x=event->xclient.data.l[2] >> 16;
 					this->droppedData.y=event->xclient.data.l[2] & 0xffff;
@@ -1213,21 +1215,19 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 					m.message_type=dNdAtoms[XDNDSTATUS];
 					m.format=32;
 					m.data.l[0]=this->window;
-					res=0;
-					res+=((this->dropGadget!=NULL) && (this->dropGadget->gadgetAcceptsDnD==true));
-					res+=((this->dropGadget==NULL) && (this->acceptOnThis==true));
+					//res=0;
+					res+=((this->dropGadget!=NULL) && (this->dropGadget->gadgetAcceptsDnD));
+					res+=((this->dropGadget==NULL) && (this->acceptOnThis));
 					m.data.l[1]=res;
 					m.data.l[2]=0; //Specify an empty rectangle
 					m.data.l[3]=0;
 					m.data.l[4]=dNdAtoms[XDNDACTIONCOPY]; //We only accept copying anyway.
-
 					XSendEvent(this->display,event->xclient.data.l[0], False, NoEventMask, (XEvent*)&m);
-					XFlush(this->display);
 				}
 
 			if(event->xclient.message_type == dNdAtoms[XDNDDROP])
 				{
-					if((this->toBeRequested == None) || (res==0))
+					if((this->toBeRequested == None))
 						{
 							//It's sending anyway, despite instructions to the contrary.
 							//So reply that we're not interested.
@@ -1253,6 +1253,7 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 						}
 				}
 		}
+
 	if(event->type == SelectionNotify)
 		{
 			Atom target=event->xselection.target;
@@ -1299,9 +1300,7 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 							m.data.l[0]=this->window;//w;
 							m.data.l[1]=1;
 							m.data.l[2]=dNdAtoms[XDNDACTIONCOPY]; //We only ever copy.
-
 							XSendEvent(this->display,this->sourceWindow, False, NoEventMask, (XEvent*)&m);
-							XSync(this->display, False);
 						}
 					else
 						return;
@@ -1311,6 +1310,7 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 					delete myprops;
 				}
 		}
+	XSync(this->display,false);
 }
 
 /**
@@ -1449,7 +1449,6 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 							this->LFSTK_handleDnD(event);
 							if((this->droppedData.type!=-1) && (this->acceptOnThis==true))
 								{
-									printf("dropped on window=>>%s<<\n",this->droppedData.data);
 									this->droppedData.type=DROPINVALID;
 								}
 						}

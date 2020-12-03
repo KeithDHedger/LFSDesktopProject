@@ -56,12 +56,10 @@ class LFSTK_multiLineEditClass  : public  LFSTK_lineEditClass
 		void LFSTK_setBuffer(const char *str);
 		const char *LFSTK_getCStr(void);
 
-		//bool mouseDown(XButtonEvent *e);
-		//bool mouseEnter(XButtonEvent *e);
+		bool mouseDown(XButtonEvent *e);
 		bool keyRelease(XKeyEvent *e);
 		bool lostFocus(XEvent *e);
 		bool gotFocus(XEvent *e);
-		bool clientMessage(XEvent *e);
 		void LFSTK_setFocus(void);
 
 		void LFSTK_dropData(propertyStruct* data);
@@ -73,7 +71,7 @@ class LFSTK_multiLineEditClass  : public  LFSTK_lineEditClass
 
 		std::string	buffer;
 		unsigned	cursorPos;
-		bool		isFocused;
+		bool		isFocused=false;
 		void		setDisplayLines(void);
 		int			topLine;
 		std::vector<lineStruct*> lines;

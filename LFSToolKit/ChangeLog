@@ -1,4 +1,5 @@
 0.4.5
+Fixed DandD on line/multiline edit.
 Added sepearate mouse/key callbacks to gadget class.
 Fixed ignore mod keys pressed alone in line edit.
 Changes in lfsapps for new API's.

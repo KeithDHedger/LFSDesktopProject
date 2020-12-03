@@ -1,6 +1,4 @@
 #if 0
-echo "TO BE FIXED"
-exit 100
 #©keithhedger Sat 5 Aug 19:18:08 BST 2017 kdhedger68713@gmail.com
 
 if [ "X$1" != "X" ];then
@@ -17,7 +15,7 @@ exit $retval
 
 #include "lfstk/LFSTKGlobals.h"
 
-#define BOXLABEL			"Line Edit"
+#define BOXLABEL			"Multi-Line Edit"
 
 LFSTK_windowClass			*wc=NULL;
 LFSTK_labelClass			*label=NULL;
@@ -25,7 +23,7 @@ LFSTK_labelClass			*personal=NULL;
 LFSTK_labelClass			*copyrite=NULL;
 LFSTK_buttonClass			*seperator=NULL;
 LFSTK_buttonClass			*quit=NULL;
-LFSTK_multiLineEditClass			*editbox=NULL;
+LFSTK_multiLineEditClass	*editbox=NULL;
 
 const char* test_string =
     "Lorem ipsum dolor sit amet,consectetur "
@@ -99,11 +97,9 @@ int main(int argc, char **argv)
 	personal->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
 
-fprintf(stderr,"width=%i\n",DIALOGWIDTH-BORDER-BORDER);
 //line edit
 	editbox=new LFSTK_multiLineEditClass(wc,test_string,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE*10,BUTTONGRAV);
-	//editbox->LFSTK_setCallBack(NULL,doKeyUp,USERDATA(12345));
-//	editbox->LFSTK_setCallBack(doKeyUp,NULL,USERDATA(12345));
+	editbox->LFSTK_setKeyCallBack(NULL,doKeyUp,USERDATA(12345));
 	sy+=YSPACING+(GADGETHITE*10);
 
 //line
@@ -115,8 +111,7 @@ fprintf(stderr,"width=%i\n",DIALOGWIDTH-BORDER-BORDER);
 
 //quit
 	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-printf("quitx=%i quity=%i\n",DIALOGMIDDLE-HALFGADGETWIDTH,sy);
-	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
+	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 	sy+=YSPACING;
 
 	wc->acceptOnThis=false;

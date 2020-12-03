@@ -568,6 +568,8 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 					}
 
 				retval=gadget->mouseUp(&e->xbutton);
+				if((type!=LINEEDITGADGET) && (type!=MULTILINEGADGET))
+					XSetInputFocus(gadget->wc->display,gadget->wc->window,RevertToParent,CurrentTime);
 				break;
 			case ButtonPress:
 				//DEBUGFUNC("gadget=%p",gadget);
@@ -583,7 +585,7 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				else
 					gadget->wc->popupFromGadget=NULL;
 
-				if(type==LINEEDITGADGET)
+				if((type==LINEEDITGADGET) || (type==MULTILINEGADGET))
 					XSetInputFocus(gadget->wc->display,e->xbutton.window,RevertToNone,CurrentTime);
 				retval=gadget->mouseDown(&e->xbutton);
 				break;

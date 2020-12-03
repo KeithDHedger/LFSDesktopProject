@@ -83,7 +83,11 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
 	this->charWidth=LFSTK_getTextRealWidth("X");
 	this->LFSTK_setCursorColourName(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPECURSORCOLOUR));
-	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};
+	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false};	
+
+	this->isFocused=false;
+	this->inWindow=false;
+
 }
 
 /**
@@ -120,28 +124,16 @@ printf("confmes from line edit\n");
 }
 
 /**
-* Mouse enter callback.
-* \param e XButtonEvent passed from mainloop->listener.
-* \return Return true if event fully handeled or false to pass it on.
-*/
-bool LFSTK_lineEditClass::mouseEnter(XButtonEvent *e)
-{
-	return(true);
-}
-
-/**
 * Mouse down callback.
 * \param e XButtonEvent passed from mainloop->listener.
 * \return Return true if event fully handeled or false to pass it on.
 */
 bool LFSTK_lineEditClass::mouseDown(XButtonEvent *e)
 {
+	this->startUpMDFlag=true;
 	this->LFSTK_setFocus();
 	if(this->isActive==false)
-		{
-			this->LFSTK_clearWindow();
-			return(true);
-		}
+		this->LFSTK_clearWindow();
 
 	return(true);
 }
@@ -163,7 +155,6 @@ bool LFSTK_lineEditClass::lostFocus(XEvent *e)
 {
 	if(this->isFocused==true)
 		{
-	//		XSetInputFocus(this->display,this->window,false,CurrentTime);
 			XUngrabKeyboard(this->display,CurrentTime);
 			this->isFocused=false;
 			this->LFSTK_clearWindow();
@@ -178,16 +169,15 @@ bool LFSTK_lineEditClass::lostFocus(XEvent *e)
 */
 bool LFSTK_lineEditClass::gotFocus(XEvent *e)
 {
+	if(this->startUpMDFlag==false)
+		return(true);
 	if(this->isFocused==false)
 		{
-//			XGrabKeyboard(this->display,this->window,true,GrabModeAsync,GrabModeAsync,CurrentTime);
 			this->isFocused=true;
-//			//XSetInputFocus(this->display,this->window,RevertToParent,CurrentTime);
 			this->LFSTK_clearWindow();
 		}
 	return(true);
 }
-
 
 /**
 * Set the contents of the text buffer.

@@ -120,7 +120,6 @@ int main(int argc, char **argv)
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	mainLoop=true;
-
 	while(mainLoop==true)
 		{
 			XNextEvent(wc->display,&event);

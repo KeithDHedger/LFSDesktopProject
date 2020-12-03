@@ -105,6 +105,7 @@ int main(int argc, char **argv)
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	mainLoop=true;
+//wc->acceptOnThis=true;
 	while(mainLoop==true)
 		{
 			XNextEvent(wc->display,&event);
@@ -115,6 +116,39 @@ int main(int argc, char **argv)
 
 			if(wc->LFSTK_handleWindowEvents(&event)<0)
 				mainLoop=false;
+
+//
+//			switch(event.type)
+//				{
+//
+//					case ClientMessage:
+//					case SelectionNotify:
+//						{
+//							if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
+//								{
+//									wc->LFSTK_hideWindow();
+//									mainLoop=false;
+//								}
+////dnd for edit box
+//							if(wc->acceptDnd==true)
+//								{
+//									wc->LFSTK_handleDnD(&event);
+//								
+//									if((wc->droppedData.type!=(dropDataType)-1) && (wc->acceptOnThis==true))
+//										{
+//					printf("ZZZZZZZZZZZZZZ\n");
+//											printf("dropped on window=>>%s<<\n",wc->droppedData.data);
+//											wc->droppedData.type=(dropDataType)-1;
+//											
+//										}
+//								}
+//						}
+//						break;
+//				}
+
+
+
+
 		}
 
 	delete wc;
