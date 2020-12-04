@@ -147,7 +147,6 @@ int main(int argc, char **argv)
 //left
 	leftButton=new LFSTK_buttonClass(wc,"Label Left",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);
 	leftButton->LFSTK_setLabelGravity(LEFT);
-	//leftButton->LFSTK_setCallBack(NULL,mouseCB,(void*)"Left");
 	leftButton->LFSTK_setKeyCallBack(NULL,keyCB,(void*)"Key Left");
 	leftButton->LFSTK_setMouseCallBack(NULL,mouseCB,(void*)"Mouse Left");
 	//leftButton->LFSTK_setIgnores(&leftButton->mouseCB,false,true);

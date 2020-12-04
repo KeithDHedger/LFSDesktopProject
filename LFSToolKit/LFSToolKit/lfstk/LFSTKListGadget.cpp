@@ -309,7 +309,6 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 			this->labels[j]->LFSTK_setStyle(BEVELNONE);
 			this->labels[j]->LFSTK_setTile(NULL,0);
 
-			//this->labels[j]->LFSTK_setCallBack(selectKey,select,LISTDATA(j));
 			this->labels[j]->LFSTK_setMouseCallBack(NULL,select,LISTDATA(j));
 
 			this->labels[j]->LFSTK_setFontString(this->monoFontString);
@@ -327,7 +326,6 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 	this->scrollBar->LFSTK_setScale(1,1);
 	this->scrollBar->LFSTK_setLineScroll(1);
 	this->scrollBar->LFSTK_setPageScroll(maxShowing-1);
-	//this->scrollBar->LFSTK_setCallBack(NULL,scrollCB,this);
 	this->scrollBar->LFSTK_setMouseCallBack(NULL,scrollCB,this);
 
 	this->style=BEVELIN;

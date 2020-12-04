@@ -182,11 +182,6 @@ class LFSTK_gadgetClass
 		int						blackColour;
 		int						whiteColour;
 
-//events and callbacks
-//		buttonCB				callback;
-//		callbackStruct			mouseCB;
-//		callbackStruct			keyCB;
-
 		geometryStruct			gadgetGeom;
 
 //font and label stuff

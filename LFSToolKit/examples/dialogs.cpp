@@ -108,7 +108,6 @@ int main(int argc, char **argv)
 	//filedialogfile->useThumbs=true;
 	//filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",NULL,FILEDIALOG);
 	filedialogdir=new LFSTK_fileDialogClass(wc,"Select Folder",NULL,FOLDERDIALOG,"dialogscpp");
-//filedialogfile->LFSTK_setCallBack(NULL,fbup,(void*)filedialogfile);
 	
 //	filedialogdir->LFSTK_setNameFilter("xfwm4");
 //TODO

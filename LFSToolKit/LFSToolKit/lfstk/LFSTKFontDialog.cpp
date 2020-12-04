@@ -20,6 +20,9 @@
 
 #include "lfstk/LFSTKGlobals.h"
 
+const char	*fontTest=
+	"0123456789\nThe quick brown fox jumped over the lazy dog\nTHE QUICK BROWN FOX JUMPED OVER THE LAZY DOG\n";
+
 LFSTK_fontDialogClass::~LFSTK_fontDialogClass()
 {
 	for(int j=0;j<this->maxFonts;j++)
@@ -67,7 +70,7 @@ void LFSTK_fontDialogClass::buildFontString(void)
 	asprintf(&this->fontData.fontString,"%s:size=%s%s%s",this->fontsAZ[this->selectedFontNumber],this->fontsize->LFSTK_getCStr(),boldstr,italicstr);
 	asprintf(&formatstring,"ns%s%s",dobold,doitalic);
 	this->preview->LFSTK_setCairoFontDataParts(formatstring,this->fontsAZ[selectedFontNumber],atoi(this->fontsize->LFSTK_getCStr()));
-	this->preview->LFSTK_clearWindow();
+	this->preview->LFSTK_upDateText();
 
 	this->fontData.fontString;
 	this->fontData.fontName=this->fontsAZ[selectedFontNumber];
@@ -244,9 +247,10 @@ void LFSTK_fontDialogClass::buildDialog(void)
 	sy+=YSPACING;
 
 //preview
-	this->preview=new LFSTK_lineEditClass(this->dialog,"ABCDEFGHIJKabcdefjhijk1234567890",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*3,BUTTONGRAV);
-	sy+=YSPACING;
-	sy+=GADGETHITE*2;
+//	this->preview=new LFSTK_multiLineEditClass(this->dialog,"ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\n0123456789",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*4,BUTTONGRAV);
+	this->preview=new LFSTK_multiLineEditClass(this->dialog,fontTest,BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*6,BUTTONGRAV);
+	//sy+=YSPACING;
+	sy+=GADGETHITE*6;
 
 //line
 	seperator=new LFSTK_buttonClass(this->dialog,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);

@@ -1,4 +1,7 @@
 0.4.5
+Update preview text in font dialog when changing size etc.
+Fixed minor visual bg in multiline edit.
+Added scrolling in multiline edit.
 Fixed DandD on line/multiline edit.
 Added sepearate mouse/key callbacks to gadget class.
 Fixed ignore mod keys pressed alone in line edit.

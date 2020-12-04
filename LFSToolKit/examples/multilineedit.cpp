@@ -97,10 +97,13 @@ int main(int argc, char **argv)
 	personal->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
 
+//printf("%i %i\n",GADGETHITE,GADGETHITE*10);
+//exit(7);
 //line edit
 	editbox=new LFSTK_multiLineEditClass(wc,test_string,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE*10,BUTTONGRAV);
 	editbox->LFSTK_setKeyCallBack(NULL,doKeyUp,USERDATA(12345));
 	sy+=YSPACING+(GADGETHITE*10);
+
 
 //line
 	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);

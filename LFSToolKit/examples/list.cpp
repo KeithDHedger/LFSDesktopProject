@@ -102,7 +102,6 @@ int main(int argc, char **argv)
 	filelist=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*16,BUTTONGRAV,NULL,0);
 	filelist->LFSTK_setListFromFile("/tmp/biglist",false);
 	filelist->LFSTK_setMouseCallBack(NULL,select,(void*)0xdeadbeaf);
-	//filelist->LFSTK_setCallBack(NULL,select,(void*)0xdeadbeaf);
 	sy+=GADGETHITE*17;
 
 //line

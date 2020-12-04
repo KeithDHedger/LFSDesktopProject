@@ -110,7 +110,7 @@ LFSTK_multiLineEditClass::LFSTK_multiLineEditClass(LFSTK_windowClass* parentwc,c
 */
 void LFSTK_multiLineEditClass::LFSTK_clearWindow()
 {
-//this->setDisplayLines();
+	//this->setDisplayLines();
 	this->gadgetDetails.bevel=BEVELIN;
 	this->drawText();
 	this->drawBevel(&this->gadgetDetails.gadgetGeom,this->gadgetDetails.bevel);
@@ -119,11 +119,19 @@ void LFSTK_multiLineEditClass::LFSTK_clearWindow()
 }
 
 /**
-* Set this gadget to have the focus..
+* Set this gadget to have the focus.
 */
 void LFSTK_multiLineEditClass::LFSTK_setFocus(void)
 {
 	this->isFocused=true;
+	this->setDisplayLines();
+}
+
+/**
+* Update the text.
+*/
+void LFSTK_multiLineEditClass::LFSTK_upDateText(void)
+{
 	this->setDisplayLines();
 }
 
@@ -135,14 +143,6 @@ void LFSTK_multiLineEditClass::LFSTK_setFocus(void)
 bool LFSTK_multiLineEditClass::mouseDown(XButtonEvent *e)
 {
 	this->startUpMDFlag=true;
-	this->LFSTK_setFocus();
-	if(this->isActive==false)
-		this->LFSTK_clearWindow();
-
-	return(true);
-
-
-
 	this->LFSTK_setFocus();
 	if(this->isActive==false)
 		this->LFSTK_clearWindow();
@@ -171,6 +171,7 @@ bool LFSTK_multiLineEditClass::lostFocus(XEvent *e)
 			this->isFocused=false;
 		}
 	this->setDisplayLines();
+	//this->drawText();
 	return(true);
 }
 
@@ -236,6 +237,10 @@ void LFSTK_multiLineEditClass::drawText(void)
 	double					yoffset=0;
 	cairo_text_extents_t	partextents;
 	cairo_text_extents_t	charextents;
+	int						offline=0;
+	long					maxlines=0;
+	int						calcmax=0;
+	int						linewithcursor=0;
 
 	cairo_save(this->cr);
 		cairo_reset_clip(this->cr);
@@ -247,9 +252,37 @@ void LFSTK_multiLineEditClass::drawText(void)
 		cairo_select_font_face(this->cr,fontName,slant,weight);
 		cairo_set_font_size(this->cr,fontSize);
 		cairo_set_source_rgba(this->cr,0.0,0,0,1.0);
-		for (int j=0;j<this->lines.size();j++)
+
+		if(this->isFocused==true)
+			{
+				for(int j=0;j<this->lines.size();j++)
+					{
+						if(calcmax+this->textExtents.height<this->gadgetGeom.h-this->textExtents.height)
+							{
+								calcmax+=this->textExtents.height;
+								maxlines++;
+							}
+						if(lines.at(j)->cursorPos!=-1)
+							linewithcursor=j;
+					}
+				if(linewithcursor>maxlines)
+					offline=linewithcursor-maxlines;
+
+				if(offline<this->topLine)
+					offline=this->topLine;
+
+				if(linewithcursor<offline)
+					offline=linewithcursor;
+				this->topLine=offline;
+			}
+		else
+			offline=this->topLine;
+
+		for (int j=0+offline;j<this->lines.size();j++)
 			{
 				yoffset+=this->textExtents.height;
+				if(yoffset>this->gadgetGeom.h-this->textExtents.height)
+					continue;
 				cairo_move_to(this->cr,this->pad,yoffset);
 //do cursor
 				if(lines.at(j)->cursorPos!=-1)
@@ -272,10 +305,10 @@ void LFSTK_multiLineEditClass::drawText(void)
 						cairo_text_extents (this->cr,undercurs,&charextents);
 						cairo_set_source_rgba(this->cr,this->cursorColour.RGBAColour.r,this->cursorColour.RGBAColour.g,this->cursorColour.RGBAColour.b,this->cursorColour.RGBAColour.a);
 
-						cairo_rectangle(this->cr,partextents.x_advance+0.5,yoffset-this->fontExtents.ascent,charextents.x_advance-0.5,this->fontExtents.ascent+this->fontExtents.descent);
+						cairo_rectangle(this->cr,partextents.x_advance+0.5+this->pad,yoffset-this->fontExtents.ascent,charextents.x_advance-0.5,this->fontExtents.ascent+this->fontExtents.descent);
 						cairo_fill(this->cr);
 //secondbit
-						cairo_move_to(this->cr,partextents.x_advance,yoffset);
+						cairo_move_to(this->cr,partextents.x_advance+this->pad,yoffset);
 						cairo_set_source_rgba(this->cr,1.0,1.0,1.0,1.0);
 						cairo_show_text(this->cr,undercurs);
 //3rdbit
@@ -479,10 +512,6 @@ bool LFSTK_multiLineEditClass::keyRelease(XKeyEvent *e)
 	this->LFSTK_clearWindow();
 	if((this->keyCB.releaseCallback!=NULL) && (this->callbackOnReturn==false))
 		return(this->keyCB.releaseCallback(this,this->keyCB.userData));
-
-//	if(this->callback.releaseCallback!=NULL)
-//		return(this->callback.releaseCallback(this,this->callback.userData));
-//TODO//
 
 	return(true);
 }

@@ -64,17 +64,19 @@ class LFSTK_multiLineEditClass  : public  LFSTK_lineEditClass
 
 		void LFSTK_dropData(propertyStruct* data);
 		void LFSTK_setFormatedText(const char *txt,bool replace);
+		void LFSTK_upDateText(void);
 
 	private:
 		void drawText(void);
 		void getClip(void);
 
-		std::string	buffer;
-		unsigned	cursorPos;
-		bool		isFocused=false;
-		void		setDisplayLines(void);
-		int			topLine;
-		std::vector<lineStruct*> lines;
+		std::string					buffer;
+		unsigned					cursorPos;
+		bool						isFocused=false;
+		void						setDisplayLines(void);
+		int							topLine;
+		std::vector<lineStruct*>	lines;
+		bool						fromlf=false;
 };
 
 #endif

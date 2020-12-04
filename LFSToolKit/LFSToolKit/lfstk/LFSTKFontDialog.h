@@ -58,7 +58,7 @@ class LFSTK_fontDialogClass : public LFSTK_gadgetClass
 		LFSTK_toggleButtonClass	*boldcheck=NULL;
 		LFSTK_toggleButtonClass	*italiccheck=NULL;
 		LFSTK_lineEditClass		*fontsize=NULL;
-		LFSTK_lineEditClass		*preview=NULL;
+		LFSTK_multiLineEditClass	*preview=NULL;
 		LFSTK_buttonClass		*seperator=NULL;
 		LFSTK_buttonClass		*apply=NULL;
 		LFSTK_buttonClass		*cancel=NULL;
