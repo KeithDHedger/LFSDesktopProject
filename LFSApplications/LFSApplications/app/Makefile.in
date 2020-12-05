@@ -90,7 +90,7 @@ bin_PROGRAMS = lfsappearance$(EXEEXT) lfstkprefs$(EXEEXT) \
 	lfswmprefs$(EXEEXT) lfsdesktopprefs$(EXEEXT) \
 	lfsbackdropprefs$(EXEEXT) lfspanelprefs$(EXEEXT) \
 	lfsabout$(EXEEXT) lfsruncommand$(EXEEXT) \
-	lfsmimeeditor$(EXEEXT)
+	lfsmimeeditor$(EXEEXT) lfsfontselect$(EXEEXT)
 subdir = LFSApplications/app
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -116,6 +116,9 @@ lfsbackdropprefs_LDADD = $(LDADD)
 am_lfsdesktopprefs_OBJECTS = ../src/lfsdesktopprefs.$(OBJEXT)
 lfsdesktopprefs_OBJECTS = $(am_lfsdesktopprefs_OBJECTS)
 lfsdesktopprefs_LDADD = $(LDADD)
+am_lfsfontselect_OBJECTS = ../src/lfsfontselect.$(OBJEXT)
+lfsfontselect_OBJECTS = $(am_lfsfontselect_OBJECTS)
+lfsfontselect_LDADD = $(LDADD)
 am_lfsmimeeditor_OBJECTS = ../src/lfsmimeeditor.$(OBJEXT)
 lfsmimeeditor_OBJECTS = $(am_lfsmimeeditor_OBJECTS)
 lfsmimeeditor_LDADD = $(LDADD)
@@ -150,6 +153,7 @@ am__depfiles_remade = ../src/$(DEPDIR)/lfsabout.Po \
 	../src/$(DEPDIR)/lfsappearance.Po \
 	../src/$(DEPDIR)/lfsbackdropprefs.Po \
 	../src/$(DEPDIR)/lfsdesktopprefs.Po \
+	../src/$(DEPDIR)/lfsfontselect.Po \
 	../src/$(DEPDIR)/lfsmimeeditor.Po \
 	../src/$(DEPDIR)/lfspanelprefs.Po \
 	../src/$(DEPDIR)/lfsruncommand.Po \
@@ -170,14 +174,14 @@ am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(lfsabout_SOURCES) $(lfsappearance_SOURCES) \
 	$(lfsbackdropprefs_SOURCES) $(lfsdesktopprefs_SOURCES) \
-	$(lfsmimeeditor_SOURCES) $(lfspanelprefs_SOURCES) \
-	$(lfsruncommand_SOURCES) $(lfstkprefs_SOURCES) \
-	$(lfswmprefs_SOURCES)
+	$(lfsfontselect_SOURCES) $(lfsmimeeditor_SOURCES) \
+	$(lfspanelprefs_SOURCES) $(lfsruncommand_SOURCES) \
+	$(lfstkprefs_SOURCES) $(lfswmprefs_SOURCES)
 DIST_SOURCES = $(lfsabout_SOURCES) $(lfsappearance_SOURCES) \
 	$(lfsbackdropprefs_SOURCES) $(lfsdesktopprefs_SOURCES) \
-	$(lfsmimeeditor_SOURCES) $(lfspanelprefs_SOURCES) \
-	$(lfsruncommand_SOURCES) $(lfstkprefs_SOURCES) \
-	$(lfswmprefs_SOURCES)
+	$(lfsfontselect_SOURCES) $(lfsmimeeditor_SOURCES) \
+	$(lfspanelprefs_SOURCES) $(lfsruncommand_SOURCES) \
+	$(lfstkprefs_SOURCES) $(lfswmprefs_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -362,8 +366,7 @@ lfspanelprefs_SOURCES = ../src/lfspanelprefs.cpp
 lfsabout_SOURCES = ../src/lfsabout.cpp
 lfsruncommand_SOURCES = ../src/lfsruncommand.cpp
 lfsmimeeditor_SOURCES = ../src/lfsmimeeditor.cpp
-
-#lfsfontselect_SOURCES = ../src/lfsfontselect.cpp
+lfsfontselect_SOURCES = ../src/lfsfontselect.cpp
 man1_MANS = ../resources/man/lfsapplications.1
 all: all-am
 
@@ -471,6 +474,12 @@ lfsbackdropprefs$(EXEEXT): $(lfsbackdropprefs_OBJECTS) $(lfsbackdropprefs_DEPEND
 lfsdesktopprefs$(EXEEXT): $(lfsdesktopprefs_OBJECTS) $(lfsdesktopprefs_DEPENDENCIES) $(EXTRA_lfsdesktopprefs_DEPENDENCIES) 
 	@rm -f lfsdesktopprefs$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(lfsdesktopprefs_OBJECTS) $(lfsdesktopprefs_LDADD) $(LIBS)
+../src/lfsfontselect.$(OBJEXT): ../src/$(am__dirstamp) \
+	../src/$(DEPDIR)/$(am__dirstamp)
+
+lfsfontselect$(EXEEXT): $(lfsfontselect_OBJECTS) $(lfsfontselect_DEPENDENCIES) $(EXTRA_lfsfontselect_DEPENDENCIES) 
+	@rm -f lfsfontselect$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(lfsfontselect_OBJECTS) $(lfsfontselect_LDADD) $(LIBS)
 ../src/lfsmimeeditor.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
 
@@ -513,6 +522,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfsappearance.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfsbackdropprefs.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfsdesktopprefs.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfsfontselect.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfsmimeeditor.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfspanelprefs.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfsruncommand.Po@am__quote@ # am--include-marker
@@ -715,6 +725,7 @@ distclean: distclean-am
 	-rm -f ../src/$(DEPDIR)/lfsappearance.Po
 	-rm -f ../src/$(DEPDIR)/lfsbackdropprefs.Po
 	-rm -f ../src/$(DEPDIR)/lfsdesktopprefs.Po
+	-rm -f ../src/$(DEPDIR)/lfsfontselect.Po
 	-rm -f ../src/$(DEPDIR)/lfsmimeeditor.Po
 	-rm -f ../src/$(DEPDIR)/lfspanelprefs.Po
 	-rm -f ../src/$(DEPDIR)/lfsruncommand.Po
@@ -769,6 +780,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ../src/$(DEPDIR)/lfsappearance.Po
 	-rm -f ../src/$(DEPDIR)/lfsbackdropprefs.Po
 	-rm -f ../src/$(DEPDIR)/lfsdesktopprefs.Po
+	-rm -f ../src/$(DEPDIR)/lfsfontselect.Po
 	-rm -f ../src/$(DEPDIR)/lfsmimeeditor.Po
 	-rm -f ../src/$(DEPDIR)/lfspanelprefs.Po
 	-rm -f ../src/$(DEPDIR)/lfsruncommand.Po

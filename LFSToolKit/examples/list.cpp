@@ -102,6 +102,10 @@ int main(int argc, char **argv)
 	filelist=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*16,BUTTONGRAV,NULL,0);
 	filelist->LFSTK_setListFromFile("/tmp/biglist",false);
 	filelist->LFSTK_setMouseCallBack(NULL,select,(void*)0xdeadbeaf);
+//goto end
+//	filelist->LFSTK_selectByIndex(1000000);
+	if(filelist->LFSTK_findByLabel("zcat",false)==-1)
+		printf("Not found\n");
 	sy+=GADGETHITE*17;
 
 //line

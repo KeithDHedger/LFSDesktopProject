@@ -61,10 +61,12 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		const char				*LFSTK_getLabelAtIndex(int index);
 		void					LFSTK_freeList(void);
 		void					LFSTK_appendToList(listLabelStruct data);
+		void					LFSTK_selectByIndex(int index);
+		int						LFSTK_findByLabel(const char *needle,bool select=true);
 
 		bool					mouseExit(XButtonEvent *e) {return(true);};
 		bool					mouseEnter(XButtonEvent *e) {return(true);};
-		bool					mouseDown(XButtonEvent *e) {return(true);};
+		bool					mouseDown(XButtonEvent *e) {return(true);};//{XSetInputFocus(this->display,this->window,RevertToParent,CurrentTime);return(true);};
 		bool					mouseUp(XButtonEvent *e);
 		bool					keyRelease(XKeyEvent *e);
 
@@ -87,6 +89,7 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		void					setNavSensitive(void);
 
 		static bool				select(void *object,void* userdata);
+		static bool				setFocusToList(void *object,void* userdata);
 		static bool				selectKey(void *object,void* userdata);
 		static bool				scrollCB(void *object,void* userdata);
 		static bool				scrollListCB(void *object,void* userdata);

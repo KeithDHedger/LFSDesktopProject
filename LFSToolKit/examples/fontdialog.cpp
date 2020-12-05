@@ -51,12 +51,14 @@ bool doQuit(void *p,void* ud)
 bool buttonCB(void *p,void* ud)
 {
 	const fontDataStruct	*fd;
+	const char				*bools[]={"false","true"};
 	if(ud!=NULL)
 		{
-			fontdialog->LFSTK_showDialog("");
+		
+			fontdialog->LFSTK_showDialog("Helvetica:size=18:bold:italic");
 			fd=fontdialog->LFSTK_getFontData(false);
 			if(fd->isValid==true)
-				printf("fontString=%s\n",fd->fontString);
+				printf("Font String:%s\nFont:%s\nSize:%i\nBold:%s\nItalic:%s\n",fd->fontString,fd->fontName,fd->fontSize,bools[fd->bold],bools[fd->italic]);
 		}
 	return(true);
 }

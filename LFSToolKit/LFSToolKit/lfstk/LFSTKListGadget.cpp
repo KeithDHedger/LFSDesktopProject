@@ -30,18 +30,27 @@ LFSTK_listGadgetClass::~LFSTK_listGadgetClass()
 	delete[] this->labels;
 }
 
+bool LFSTK_listGadgetClass::setFocusToList(void *object,void* userdata)
+{
+	LFSTK_listGadgetClass	*list;
+	listData				*d=(listData*)userdata;	
+
+	list=static_cast<LFSTK_listGadgetClass*>(d->mainObject);
+	XSetInputFocus(list->display,list->window,RevertToParent,CurrentTime);
+	return(true);
+}
+
 bool LFSTK_listGadgetClass::select(void *object,void* userdata)
 {
 	LFSTK_listGadgetClass	*list;
-	LFSTK_labelClass		*label;
+	LFSTK_buttonClass		*label;
 	listData				*d=(listData*)userdata;
 	unsigned				datax;
 
-	label=static_cast<LFSTK_labelClass*>(object);
+	label=static_cast<LFSTK_buttonClass*>(object);
 	list=static_cast<LFSTK_listGadgetClass*>(d->mainObject);
 	datax=d->userData;
 	list->setCurrentItem(datax);
-	XSetInputFocus(list->display,list->window,RevertToParent,CurrentTime);
 
 	switch(list->labels[list->currentItem-list->listOffset]->xEvent->xbutton.button)
 		{
@@ -67,7 +76,6 @@ bool LFSTK_listGadgetClass::select(void *object,void* userdata)
 
 	if(list->runCallback(MOUSERELEASECB)==true)
 		return(list->mouseCB.releaseCallback(list,list->mouseCB.userData));
-
 
 	return(true);
 }
@@ -309,7 +317,8 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 			this->labels[j]->LFSTK_setStyle(BEVELNONE);
 			this->labels[j]->LFSTK_setTile(NULL,0);
 
-			this->labels[j]->LFSTK_setMouseCallBack(NULL,select,LISTDATA(j));
+			this->labels[j]->LFSTK_setMouseCallBack(setFocusToList,select,LISTDATA(j));
+			this->labels[j]->LFSTK_setKeyCallBack(setFocusToList,select,LISTDATA(j));
 
 			this->labels[j]->LFSTK_setFontString(this->monoFontString);
 			this->labels[j]->LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
@@ -475,3 +484,41 @@ void LFSTK_listGadgetClass::LFSTK_appendToList(listLabelStruct data)
 {
 	this->listDataArray->push_back(data);
 }
+
+/**
+* Select list by index.
+* \param int index
+* \note index<0 selects 1st item, index>max items selects last item.
+*/
+void LFSTK_listGadgetClass::LFSTK_selectByIndex(int index)
+{
+	this->currentItem=index;
+	this->scrollBar->LFSTK_setValue(index);
+}
+
+/**
+* Find item by label and ( optionally select );
+* \param const char *needle.
+* \param bool select ( default =true ).
+*/
+int LFSTK_listGadgetClass::LFSTK_findByLabel(const char *needle,bool select)
+{
+	for(int j=0;j<this->listDataArray->size();j++)
+		{
+			if(strcmp(this->listDataArray->at(j).label,needle)==0)
+				{
+					if(select==true)
+						this->LFSTK_selectByIndex(j);
+					return(j);
+				}
+		}
+	return(-1);
+}
+
+
+
+
+
+
+
+

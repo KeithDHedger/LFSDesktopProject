@@ -63,6 +63,8 @@ void LFSTK_fontDialogClass::buildFontString(void)
 			doitalic="I";
 			this->fontData.italic=true;
 		}
+
+	this->fontData.fontSize=atoi(this->fontsize->LFSTK_getCStr());
 	this->selectedFontNumber=fontlist->LFSTK_getCurrentListItem();
 
 	if(this->fontData.fontString!=NULL)
@@ -151,20 +153,85 @@ void LFSTK_fontDialogClass::loadFontStrings(void)
 	free(command);
 }
 
-bool LFSTK_fontDialogClass::LFSTK_showDialog(const char* font)
+/*
+* Private parse fontstring.
+*/
+void LFSTK_fontDialogClass::parseFontString(const char *fontstr)
+{
+	char	*string=strdup(fontstr);
+	char	*str=NULL;
+	char	*fontsize=NULL;
+	bool	found=false;
+	char	*font=NULL;
+	bool	bold=false;
+	bool	italic=false;;
+
+	str=strtok(string,":");
+	while(1)
+		{
+			if(str==NULL)
+				break;
+			if(strcasecmp(str,"bold")==0)
+				{
+					bold=true;
+					found=true;
+				}
+			if(strcasecmp(str,"italic")==0)
+				{
+					italic=true;
+					found=true;
+				}
+			if(strcasestr(str,"size=")!=NULL)
+				{
+					fontsize=strndup(&str[5],strlen(str)-5);
+					found=true;
+				}
+			if(found==false)
+				{
+					font=strdup(str);
+					found=true;
+				}
+
+			str=strtok(NULL,":");
+		}
+
+	if(found==true)
+		{
+			if(font!=NULL)
+				{
+					this->fontlist->LFSTK_findByLabel(font);
+					free(font);
+				}
+			if(fontsize!=NULL)
+				{
+					this->fontsize->LFSTK_setBuffer(fontsize);
+					free(fontsize);
+				}
+			this->boldcheck->LFSTK_setValue(bold);
+			this->italiccheck->LFSTK_setValue(italic);
+		}
+	this->LFSTK_getFontData(true);
+	free(string);
+}
+
+/*
+* Show the dialog.
+* \param const char* fontstring
+* \note Set font options, fontstring should be of the form:Helvetica:size=18:bold:italic
+*/
+bool LFSTK_fontDialogClass::LFSTK_showDialog(const char* fontstring)
 {
 	bool	mainLoop=true;
 	XEvent	event;
 	geometryStruct	geomfont;
 	pointStruct		pt;
 
+	this->parseFontString(fontstring);
 	this->dialog->LFSTK_showWindow(true);
 	this->dialog->LFSTK_setKeepAbove(true);
 	this->dialog->LFSTK_setTransientFor(this->wc->window);
 	this->mainLoop=true;
 
-//TODO//
-	//this->fontsize->LFSTK_setFocus();
 	while(this->mainLoop==true)
 		{
 			XNextEvent(this->dialog->display,&event);

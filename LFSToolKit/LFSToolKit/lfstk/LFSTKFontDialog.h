@@ -31,6 +31,7 @@ struct fontDataStruct
 	const char	*fontName;
 	bool		bold;
 	bool		italic;
+	int			fontSize;
 	bool		isValid;
 };
 
@@ -45,31 +46,32 @@ class LFSTK_fontDialogClass : public LFSTK_gadgetClass
 		~LFSTK_fontDialogClass();
 		LFSTK_fontDialogClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity);
 
-		bool					LFSTK_showDialog(const char* font);
-		const fontDataStruct	*LFSTK_getFontData(bool rebuild);
+		bool						LFSTK_showDialog(const char* fontstring);
+		const fontDataStruct		*LFSTK_getFontData(bool rebuild);
 
 	private:
-		void					buildFontString(void);
-		void					loadFontStrings(void);
-		void					buildDialog(void);
+		void						buildFontString(void);
+		void						loadFontStrings(void);
+		void						buildDialog(void);
+		void						parseFontString(const char *fontstr);
 
-		LFSTK_windowClass		*dialog=NULL;
-		LFSTK_listGadgetClass	*fontlist=NULL;
-		LFSTK_toggleButtonClass	*boldcheck=NULL;
-		LFSTK_toggleButtonClass	*italiccheck=NULL;
-		LFSTK_lineEditClass		*fontsize=NULL;
+		LFSTK_windowClass			*dialog=NULL;
+		LFSTK_listGadgetClass		*fontlist=NULL;
+		LFSTK_toggleButtonClass		*boldcheck=NULL;
+		LFSTK_toggleButtonClass		*italiccheck=NULL;
+		LFSTK_lineEditClass			*fontsize=NULL;
 		LFSTK_multiLineEditClass	*preview=NULL;
-		LFSTK_buttonClass		*seperator=NULL;
-		LFSTK_buttonClass		*apply=NULL;
-		LFSTK_buttonClass		*cancel=NULL;
+		LFSTK_buttonClass			*seperator=NULL;
+		LFSTK_buttonClass			*apply=NULL;
+		LFSTK_buttonClass			*cancel=NULL;
 
-		unsigned				selectedFontNumber=0;
-		bool					mainLoop;
-		unsigned				maxFonts=0;
-		char					**fontsAZ=NULL;
-		unsigned				size=10;
-		const char				*fontname=NULL;
-		fontDataStruct			fontData;
+		unsigned					selectedFontNumber=0;
+		bool						mainLoop;
+		unsigned					maxFonts=0;
+		char						**fontsAZ=NULL;
+		unsigned					size=10;
+		const char					*fontname=NULL;
+		fontDataStruct				fontData;
 };
 
 #endif
