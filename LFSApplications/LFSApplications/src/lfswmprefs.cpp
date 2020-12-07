@@ -119,7 +119,7 @@ bool buttonCB(void *p,void* ud)
 
 			if(strcmp((char*)ud,"SELECTFONT")==0)
 				{
-					fontSelector->LFSTK_showDialog("");
+					fontSelector->LFSTK_showDialog(fontEdit->LFSTK_getCStr());
 					fd=fontSelector->LFSTK_getFontData(false);
 					if(fd->isValid==true)
 						fontEdit->LFSTK_setBuffer(fd->fontString);

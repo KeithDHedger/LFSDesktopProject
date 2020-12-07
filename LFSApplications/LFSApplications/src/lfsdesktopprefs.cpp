@@ -166,7 +166,7 @@ bool selectFontCB(void *p,void* ud)
 
 	if(ud!=NULL)
 		{
-			fontButton->LFSTK_showDialog("");
+			fontButton->LFSTK_showDialog(edbox->LFSTK_getCStr());
 			fd=fontButton->LFSTK_getFontData(false);
 			if(fd->isValid==true)
 				{

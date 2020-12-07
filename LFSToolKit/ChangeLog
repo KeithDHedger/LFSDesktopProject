@@ -1,5 +1,5 @@
 0.4.5
-Added set font options when showing font dialog.
+Added setting font options when showing font dialog.
 Fixed keyboard focus in lists.
 Added LFSTK_selectByIndex to list class.
 Update preview text in font dialog when changing size etc.

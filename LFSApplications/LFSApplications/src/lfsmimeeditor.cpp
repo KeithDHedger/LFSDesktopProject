@@ -69,8 +69,8 @@ void setMimeTypesList(char *filepath)
 	int		linecnt=0;
 	char	*lines=NULL;
 	listLabelStruct listit;
-	//std::vector<listLabelStruct> thelist;/
 
+	mimeList->LFSTK_freeList();
 	if(filepath!=NULL)
 		{
 			file=fopen(mimeTypesPath,"r");
@@ -102,20 +102,6 @@ void setMimeTypesList(char *filepath)
 						}
 					mimeList->LFSTK_updateList();
 					fclose(file);
-					//labelLst=new listLabelStruct*[thelist.size()];
-//					for(int j=0;j<thelist.size();j++)
-//						{
-//							labelLst[j]=new listLabelStruct;
-//							labelLst[j]->label=thelist[j].label;
-//							if(labelLst[j]->label[strlen(labelLst[j]->label)-1]==';')
-//								labelLst[j]->label[strlen(labelLst[j]->label)-1]=0;
-//							char	*ptr=strchr(labelLst[j]->label,'=');
-//							*ptr=0;
-//							ptr++;
-//							labelLst[j]->userData=ptr;
-//							labelLst[j]->imageType=NOTHUMB;
-//						}
-//					mimeList->LFSTK_setList(labelLst,thelist.size());
 				}
 		}
 }
@@ -268,6 +254,7 @@ bool selectMime(void *object,void* ud)
 	*(strrchr(app,'.'))=0;
 	editLine->LFSTK_setBuffer(list->LFSTK_getSelectedLabel());
 	appLine->LFSTK_setBuffer((const char*)app);
+	appsList->LFSTK_findByLabel(app);
 	free(app);
 	return(true);
 }

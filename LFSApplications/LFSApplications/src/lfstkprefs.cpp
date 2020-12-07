@@ -62,6 +62,12 @@ LFSTK_lineEditClass		*monoFontEdit=NULL;
 //cursor prefs
 LFSTK_lineEditClass		*cursorColourEdit=NULL;
 
+//troughs lists and scrollbars
+LFSTK_lineEditClass		*scrollTroughColourEdit=NULL;
+LFSTK_lineEditClass		*listTroughColourEdit=NULL;
+LFSTK_buttonClass		*scrollTrough=NULL;
+LFSTK_buttonClass		*listTrough=NULL;
+
 //window stuff
 LFSTK_lineEditClass		*windowColourEdit=NULL;
 LFSTK_toggleButtonClass	*autoColourCheck=NULL;
@@ -147,6 +153,11 @@ bool menuCB(void *p,void* ud)
 	char	*mfactive=NULL;
 	char	*mfinactive=NULL;
 
+//	char	*strough=NULL;
+//	char	*lsttrough=NULL;
+	char	*sbtrough=NULL;
+	char	*listtrough=NULL;
+
 	char	*wnormal=NULL;
 
 	char	*ccolour=NULL;
@@ -157,8 +168,7 @@ bool menuCB(void *p,void* ud)
 
 	bool	usetheme=0;
 	bool	autocol=0;
-	char	*sbtrough=NULL;
-	char	*listtrough=NULL;
+
 
 	args myargs[]=
 	{
@@ -190,8 +200,8 @@ bool menuCB(void *p,void* ud)
 ////other
 		{"autotextcolour",TYPEBOOL,&autocol},
 		{"usetheme",TYPEBOOL,&usetheme},
-		{"sbtroughcolour",TYPESTRING,&sbTroughColour},
-		{"listtroughcolour",TYPESTRING,&listTroughColour},
+		{"sbtroughcolour",TYPESTRING,&sbtrough},
+		{"listtroughcolour",TYPESTRING,&listtrough},
 //monofont
 		{"monofont",TYPESTRING,&monofont},
 //cursor colour
@@ -228,6 +238,11 @@ bool menuCB(void *p,void* ud)
 	previeMenuFontColourEdit[1]->LFSTK_setBuffer(mfpre);
 	previeMenuFontColourEdit[2]->LFSTK_setBuffer(mfactive);
 	previeMenuFontColourEdit[3]->LFSTK_setBuffer(mfinactive);
+
+//troughs
+	scrollTroughColourEdit->LFSTK_setBuffer(sbtrough);
+	listTroughColourEdit->LFSTK_setBuffer(listtrough);
+
 //window
 	windowColourEdit->LFSTK_setBuffer(wnormal);
 //cursor
@@ -295,8 +310,6 @@ void setVars(void)
 	wc->globalLib->LFSTK_setGlobalString(0,TYPESBTROUGHCOLOUR,sbTroughColour);
 	wc->globalLib->LFSTK_setGlobalString(0,TYPELISTTROUGHCOLOUR,listTroughColour);
 
-//fprintf(stderr,sbTroughColour);
-
 //tiles
 	wc->globalLib->LFSTK_setGlobalString(0,TYPEWINDOWTILE,windowTileEdit->LFSTK_getCStr());
 	wc->globalLib->LFSTK_setGlobalString(0,TYPEBUTTONTILE,buttonTileEdit->LFSTK_getCStr());
@@ -306,6 +319,8 @@ void setVars(void)
 	wc->globalLib->LFSTK_setGlobalString(0,TYPEMENUITEMFONT,menuFontEdit->LFSTK_getCStr());
 	wc->globalLib->LFSTK_setGlobalString(0,TYPEMONOFONT,monoFontEdit->LFSTK_getCStr());
 	wc->globalLib->LFSTK_setGlobalString(0,TYPECURSORCOLOUR,cursorColourEdit->LFSTK_getCStr());
+	wc->globalLib->LFSTK_setGlobalString(0,TYPESBTROUGHCOLOUR,scrollTroughColourEdit->LFSTK_getCStr());
+	wc->globalLib->LFSTK_setGlobalString(0,TYPELISTTROUGHCOLOUR,listTroughColourEdit->LFSTK_getCStr());
 	
 }
 
@@ -388,6 +403,13 @@ void setPreviewData(void)
 
 	cursorColourEdit->LFSTK_setColourName(NORMALCOLOUR,cursorColourEdit->LFSTK_getCStr());
 	cursorColourEdit->LFSTK_setCursorColourName("#808080");
+	scrollTroughColourEdit->LFSTK_setColourName(NORMALCOLOUR,scrollTroughColourEdit->LFSTK_getCStr());
+	scrollTroughColourEdit->LFSTK_setCursorColourName("#808080");
+	listTroughColourEdit->LFSTK_setColourName(NORMALCOLOUR,listTroughColourEdit->LFSTK_getCStr());
+	listTroughColourEdit->LFSTK_setCursorColourName("#808080");
+	windowColourEdit->LFSTK_setColourName(NORMALCOLOUR,windowColourEdit->LFSTK_getCStr());
+	windowColourEdit->LFSTK_setCursorColourName("#808080");
+
 	wc->LFSTK_clearWindow(true);
 	XFlush(wc->display);
 }
@@ -429,7 +451,7 @@ bool buttonCB(void *p,void* ud)
 
 			if(strcmp((char*)ud,"SELECTBUTTONFONT")==0)
 				{
-					buttonFontDialogButton->LFSTK_showDialog("");
+					buttonFontDialogButton->LFSTK_showDialog(buttonFontEdit->LFSTK_getCStr());
 					fd=buttonFontDialogButton->LFSTK_getFontData(false);
 					if(fd->isValid==true)
 						buttonFontEdit->LFSTK_setBuffer(fd->fontString);
@@ -438,7 +460,7 @@ bool buttonCB(void *p,void* ud)
 
 			if(strcmp((char*)ud,"SELECTMENUFONT")==0)
 				{
-					menuFontDialogButton->LFSTK_showDialog("");
+					menuFontDialogButton->LFSTK_showDialog(menuFontEdit->LFSTK_getCStr());
 					fd=menuFontDialogButton->LFSTK_getFontData(false);
 					if(fd->isValid==true)
 						menuFontEdit->LFSTK_setBuffer(fd->fontString);
@@ -447,7 +469,7 @@ bool buttonCB(void *p,void* ud)
 
 			if(strcmp((char*)ud,"SELECTMONOFONT")==0)
 				{
-					monoFontDialogButton->LFSTK_showDialog("");
+					monoFontDialogButton->LFSTK_showDialog(monoFontEdit->LFSTK_getCStr());
 					fd=monoFontDialogButton->LFSTK_getFontData(false);
 					if(fd->isValid==true)
 						monoFontEdit->LFSTK_setBuffer(fd->fontString);
@@ -462,16 +484,6 @@ bool buttonCB(void *p,void* ud)
 					setPreviewData();
 					setVars();
 					asprintf(&prefsfile,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
-//				int cnt=0;
-//				const args* dataptr=wc->globalLib->LFSTK_getTKArgs();
-//				while(dataptr[cnt].name!=NULL)
-//				{
-//					fprintf(stderr,"%s-",dataptr[cnt].name);
-//					if(dataptr[cnt].type==TYPESTRING)
-//						fprintf(stderr,">>%s<<\n",*(char**)(dataptr[cnt].data));
-//					cnt++;
-//				}
-
 					wc->globalLib->LFSTK_saveVarsToFile(prefsfile,wc->globalLib->LFSTK_getTKArgs());
 					
 					free(prefsfile);
@@ -575,7 +587,6 @@ int main(int argc, char **argv)
 	for(int j=0;j<4;j++)
 		{
 			previewMenus[j]=new LFSTK_buttonClass(wc,previewMenuLabels[j],sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-			//previewMenus[j]->LFSTK_setIgnoreCB(true);
 			previewMenus[j]->LFSTK_setIgnores(&previewMenus[j]->mouseCB,false,true);
 			sx+=GADGETWIDTH+BORDER;
 			previeMenuBackColourEdit[j]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEM),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
@@ -599,6 +610,24 @@ int main(int argc, char **argv)
 	monoFontEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEMONOFONT),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 	sx=BORDER;
+
+//scroll trough prefs
+	LFSTK_labelClass		*label=NULL;
+	label=new LFSTK_labelClass(wc,"Scroll Trough Col",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	sx+=BORDER+GADGETWIDTH;
+	scrollTroughColourEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(-1,TYPESBTROUGHCOLOUR),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+	scrollTroughColourEdit->LFSTK_setCursorColourName("grey80");
+	sy+=YSPACING;
+	sx=BORDER;
+	
+//list trough prefs
+	label=new LFSTK_labelClass(wc,"List Trough Col",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	sx+=BORDER+GADGETWIDTH;
+	listTroughColourEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(-1,TYPELISTTROUGHCOLOUR),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+	listTroughColourEdit->LFSTK_setCursorColourName("grey80");
+	sy+=YSPACING;
+	sx=BORDER;
+
 //cursor prefs
 	cursorlabel=new LFSTK_labelClass(wc,"Cursor Col",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sx+=BORDER+GADGETWIDTH;

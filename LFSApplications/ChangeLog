@@ -1,4 +1,7 @@
 0.1.3
+Added scroll/list trough colours to lfstkprefs.
+Fixed prefs font select.
+Fixed mime list editor apply.
 Added font selector to apps.
 Added mime type editor to apps
 Added option to set number of saved commands in lfsruncommand, see README for details.
