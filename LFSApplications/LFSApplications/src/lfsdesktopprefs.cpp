@@ -329,8 +329,6 @@ int main(int argc, char **argv)
 	if(parentWindow!=-1)
 		wc->LFSTK_setTransientFor(parentWindow);
 
-	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
-
 	buffer=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",wc->configDir);
 	if((queueID=msgget(atoi(buffer),IPC_CREAT|0660))==-1)
 		fprintf(stderr,"Can't create message queue :( ...\n");

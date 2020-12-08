@@ -229,13 +229,13 @@ int main(int argc, char **argv)
 	if(argv[optind]!=NULL)
 		setSliders(argv[optind]);
 
-	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
-	wc->LFSTK_showWindow();
 	if(parentWindow!=-1)
 		{
 			wc->LFSTK_setKeepAbove(true);
 			wc->LFSTK_setTransientFor(parentWindow);
 		}
+	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
+	wc->LFSTK_showWindow();
 
 	mainLoop=true;
 	while(mainLoop==true)
