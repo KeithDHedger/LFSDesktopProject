@@ -22,6 +22,8 @@ lfsmimeeditor_SOURCES = ../src/lfsmimeeditor.cpp
 
 lfsfontselect_SOURCES = ../src/lfsfontselect.cpp
 
+lfscolourchooser_SOURCES = ../src/lfscolourchooser.cpp
+
 man1_MANS = ../resources/man/lfsapplications.1
 
-bin_PROGRAMS =  lfsappearance lfstkprefs lfswmprefs lfsdesktopprefs lfsbackdropprefs lfspanelprefs lfsabout lfsruncommand lfsmimeeditor lfsfontselect
+bin_PROGRAMS =  lfsappearance lfstkprefs lfswmprefs lfsdesktopprefs lfsbackdropprefs lfspanelprefs lfsabout lfsruncommand lfsmimeeditor lfsfontselect lfscolourchooser

@@ -176,6 +176,24 @@ bool selectFontCB(void *p,void* ud)
 	return(true);
 }
 
+bool coleditCB(void *p,void* ud)
+{
+	LFSTK_lineEditClass	*ed=static_cast<LFSTK_lineEditClass*>(p);
+	if(ed==NULL)
+		return(true);
+
+	if(strcmp(ed->LFSTK_getKeySym(),"Control_L")==0)
+		{
+			char *col=NULL;
+			col=wc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%s\"",wc->window,ed->LFSTK_getCStr());
+			if(strlen(col)>0)
+				ed->LFSTK_setBuffer(col);
+			free(col);
+		}	
+
+	return(true);
+}
+
 int main(int argc, char **argv)
 {
 	XEvent		event;
@@ -255,10 +273,14 @@ int main(int argc, char **argv)
 
 	label=new LFSTK_labelClass(wc,"Fore Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	labelColurFEditBox=new LFSTK_lineEditClass(wc,prefsLabelFColour,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	labelColurFEditBox->LFSTK_setKeyCallBack(NULL,coleditCB,NULL);
+	labelColurFEditBox->LFSTK_setCallbackOnReturn(false);
 	sy+=YSPACING;
 	
 	label=new LFSTK_labelClass(wc,"Back Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	labelColurBEditBox=new LFSTK_lineEditClass(wc,prefsLabelBColour,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	labelColurBEditBox->LFSTK_setKeyCallBack(NULL,coleditCB,NULL);
+	labelColurBEditBox->LFSTK_setCallbackOnReturn(false);
 	sy+=YSPACING;
 
 	label=new LFSTK_labelClass(wc,"Label Alpha",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);

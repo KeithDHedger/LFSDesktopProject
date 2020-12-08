@@ -79,7 +79,8 @@ static void debugFunc(const char *file,const char *func,int line,const char *fmt
 {
 	va_list	ap;
 	char	*buffer,*subbuffer;
-
+const char				*bools[]={"false","true"};
+//bools[fd->italic]
 	buffer=(char*)alloca(512);
 	subbuffer=(char*)alloca(512);
 
@@ -111,6 +112,9 @@ static void debugFunc(const char *file,const char *func,int line,const char *fmt
 								break;
 							case 'f':
 								sprintf(subbuffer,"%f",va_arg(ap,double));
+								break;
+							case 'b':
+								sprintf(subbuffer,"%s",bools[va_arg(ap,int)]);
 								break;
 							default:
 								sprintf(subbuffer,"%c",fmt[0]);

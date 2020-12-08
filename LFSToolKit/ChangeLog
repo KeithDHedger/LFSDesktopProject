@@ -1,4 +1,6 @@
 0.4.5
+Added setting scrollbar value without running CB.
+Added colour chooser to examples.
 Added setting font options when showing font dialog.
 Fixed keyboard focus in lists.
 Added LFSTK_selectByIndex to list class.

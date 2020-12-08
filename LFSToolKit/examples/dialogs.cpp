@@ -26,6 +26,7 @@ LFSTK_buttonClass			*seperator=NULL;
 LFSTK_buttonClass			*quit=NULL;
 LFSTK_buttonClass			*filebutton;
 LFSTK_buttonClass			*folderbutton;
+LFSTK_buttonClass			*colourbutton;
 LFSTK_fileDialogClass		*filedialogfile;
 LFSTK_fileDialogClass		*filedialogdir;
 
@@ -39,6 +40,12 @@ bool doQuit(void *p,void* ud)
 	XFlush(wc->display);
 	XSync(wc->display,true);
 	return(false);
+}
+
+bool selectcol(void *object,void* ud)
+{
+	//system("pwd");
+	system("./colorchooser.cpp;echo");
 }
 
 //use wd =~
@@ -121,6 +128,11 @@ int main(int argc, char **argv)
 //folder button
 	folderbutton=new LFSTK_buttonClass(wc,"Select Folder",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	folderbutton->LFSTK_setMouseCallBack(NULL,selectdir,NULL);
+	sy+=YSPACING;
+
+//colour button
+	colourbutton=new LFSTK_buttonClass(wc,"Select Colour",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
+	colourbutton->LFSTK_setMouseCallBack(NULL,selectcol,NULL);
 	sy+=YSPACING;
 
 //line

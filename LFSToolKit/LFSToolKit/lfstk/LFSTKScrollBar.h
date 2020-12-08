@@ -39,12 +39,13 @@ class LFSTK_scrollBarClass : public LFSTK_gadgetClass
 		bool				keyRelease(XKeyEvent *e);
 
 		void				LFSTK_clearWindow(void);
+		void				LFSTK_clearWindow(bool ignorecb);
 		void				LFSTK_setStyle(bevelType s);
 //set indexes
 		void				LFSTK_setScale(double min,double max);
 		void				LFSTK_setPageScroll(int page);
 		void				LFSTK_setLineScroll(int line);
-		void				LFSTK_setValue(int val);
+		void				LFSTK_setValue(int val,bool ignore=false);
 		int					LFSTK_getValue(void);
 		void				LFSTK_setAllowKBControl(bool allow);
 		bool				LFSTK_getAllowKBControl(void);
@@ -62,14 +63,13 @@ class LFSTK_scrollBarClass : public LFSTK_gadgetClass
 		LFSTK_buttonClass	*upLeft=NULL;
 		LFSTK_buttonClass	*downRight=NULL;
 		bool				startDrag=false;
-
 //calbacks
 		static bool			lineUpDown(void *object,void* userdata);
 		static bool			pageUpDown(void *object,void* userdata);
 		static bool			thumbClicked(void *object,void* userdata);
 		static bool			startThumbDrag(void *object,void* userdata);
 //private routines
-		void				setState(bool byvalue);
+		void				setState(bool byvalue,bool ignorecb=false);
 
 		int					pageScroll=5;
 		double				minScale=1.0;
