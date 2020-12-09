@@ -20,7 +20,7 @@ exit $retval
 
 #include "lfstk/LFSTKGlobals.h"
 
-#define BOXLABEL			"Basic Window"
+#define BOXLABEL			"Examples"
 
 LFSTK_windowClass			*wc=NULL;
 LFSTK_labelClass			*label=NULL;
