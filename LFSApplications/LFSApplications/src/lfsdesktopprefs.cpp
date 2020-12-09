@@ -55,6 +55,7 @@ bool					mainLoop=true;
 Display					*display;
 char					*wd=NULL;
 char					*envFile=NULL;
+int						parentWindow=-1;
 
 //prefs
 char					*prefsTheme=NULL;
@@ -178,19 +179,22 @@ bool selectFontCB(void *p,void* ud)
 
 bool coleditCB(void *p,void* ud)
 {
+	int					pw=parentWindow;
 	LFSTK_lineEditClass	*ed=static_cast<LFSTK_lineEditClass*>(p);
+
 	if(ed==NULL)
 		return(true);
 
-	if(strcmp(ed->LFSTK_getKeySym(),"Control_L")==0)
+	if(pw==-1)
+		pw=wc->window;
+	if((ed->mouseEvent->state & Button3Mask)!=0)
 		{
 			char *col=NULL;
-			col=wc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%s\"",wc->window,ed->LFSTK_getCStr());
+			col=wc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr());
 			if(strlen(col)>0)
 				ed->LFSTK_setBuffer(col);
 			free(col);
-		}	
-
+		}
 	return(true);
 }
 
@@ -198,7 +202,6 @@ int main(int argc, char **argv)
 {
 	XEvent		event;
 	int			sy=0;
-	int			parentWindow=-1;
 	char		*buffer=NULL;
 	int			c=0;
 	int			option_index=0;
@@ -221,6 +224,7 @@ int main(int argc, char **argv)
 					case '?':
 						printf("-?,-h,--help\t\tPrint this help\n");
 						printf("-w,--window\t\tSet transient for window\n");
+						printf("Right click in a colour edit box for a colour chooser.\n");
 						exit(0);
 					case 'w':
 						parentWindow=atoi(optarg);
@@ -273,14 +277,12 @@ int main(int argc, char **argv)
 
 	label=new LFSTK_labelClass(wc,"Fore Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	labelColurFEditBox=new LFSTK_lineEditClass(wc,prefsLabelFColour,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	labelColurFEditBox->LFSTK_setKeyCallBack(NULL,coleditCB,NULL);
-	labelColurFEditBox->LFSTK_setCallbackOnReturn(false);
+	labelColurFEditBox->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
 	sy+=YSPACING;
 	
 	label=new LFSTK_labelClass(wc,"Back Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	labelColurBEditBox=new LFSTK_lineEditClass(wc,prefsLabelBColour,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	labelColurBEditBox->LFSTK_setKeyCallBack(NULL,coleditCB,NULL);
-	labelColurBEditBox->LFSTK_setCallbackOnReturn(false);
+	labelColurBEditBox->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
 	sy+=YSPACING;
 
 	label=new LFSTK_labelClass(wc,"Label Alpha",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);

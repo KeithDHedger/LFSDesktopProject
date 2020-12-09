@@ -667,6 +667,7 @@ bool LFSTK_gadgetClass::LFSTK_getCanDrag(void)
 bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 {
 	this->keyEvent=NULL;
+	this->mouseEvent=NULL;
 
 	if(this->runCallback(ANYMOUSECB)==false)
 		return(true);
@@ -674,13 +675,13 @@ bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 	if(strcmp(this->label,"--")==0)
 		return(true);;
 
-	this->mouseUpEvent=e;
 	this->gadgetDetails.colour=&this->colourNames[NORMALCOLOUR];
 	this->gadgetDetails.state=NORMALCOLOUR;
 	this->gadgetDetails.bevel=BEVELOUT;
 	this->LFSTK_clearWindow();
 	if(this->inWindow==true)
 		{
+			this->mouseEvent=e;
 			if(this->runCallback(MOUSERELEASECB)==true)
 				return(this->mouseCB.releaseCallback(this,this->mouseCB.userData));
 		}

@@ -165,7 +165,7 @@ class LFSTK_gadgetClass
 
 //user data
 		void					*userData=NULL;
-		XButtonEvent			*mouseUpEvent=NULL;
+		XButtonEvent			*mouseEvent=NULL;
 		XKeyEvent				*keyEvent=NULL;
 	private:
 		void					initGadget(void);

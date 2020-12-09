@@ -46,8 +46,12 @@ bool doKeyUp(void *p,void* ud)
 			printf("Keysym=XK_%s\n",editbox->LFSTK_getKeySym());
 			printf("Modifier=0x%x\n",editbox->LFSTK_getModifier());
 		}
-//	else
-//		printf("Modifier=0x%x\n",editbox->LFSTK_getModifier());
+	return(true);
+}
+
+bool doMouseUp(void *p,void* ud)
+{
+	printf("button=%X state=%X\n",editbox->mouseEvent->button,editbox->mouseEvent->state & ControlMask);
 	return(true);
 }
 
@@ -85,6 +89,7 @@ int main(int argc, char **argv)
 
 	editbox->LFSTK_setKeyCallBack(NULL,doKeyUp,USERDATA(12345));
 	editbox->LFSTK_setCallbackOnReturn(false);
+	editbox->LFSTK_setMouseCallBack(NULL,doMouseUp,NULL);
 	sy+=YSPACING;
 
 //line

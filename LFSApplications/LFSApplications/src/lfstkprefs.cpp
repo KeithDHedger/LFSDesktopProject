@@ -507,20 +507,23 @@ bool buttonCB(void *p,void* ud)
 
 bool coleditCB(void *p,void* ud)
 {
+	int					pw=parentWindow;
 	LFSTK_lineEditClass	*ed=static_cast<LFSTK_lineEditClass*>(p);
+
 	if(ed==NULL)
 		return(true);
 
-	if(strcmp(ed->LFSTK_getKeySym(),"Control_L")==0)
+	if(pw==-1)
+		pw=wc->window;
+	if((ed->mouseEvent->state & Button3Mask)!=0)
 		{
 			char *col=NULL;
-			col=wc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%s\"",wc->window,ed->LFSTK_getCStr());
+			col=wc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr());
 			if(strlen(col)>0)
 				ed->LFSTK_setBuffer(col);
 			free(col);
 			setPreviewData();
-		}	
-
+		}
 	return(true);
 }
 
@@ -553,6 +556,7 @@ int main(int argc, char **argv)
 					case '?':
 						printf("-?,-h,--help\t\tPrint this help\n");
 						printf("-w,--window\t\tSet transient for window\n");
+						printf("Right click in a colour edit box for a colour chooser.\n");
 						exit(0);
 					case 'w':
 						parentWindow=atoi(optarg);
@@ -586,12 +590,10 @@ int main(int argc, char **argv)
 			previewButtons[j]->LFSTK_setIgnores(&previewButtons[j]->mouseCB,false,true);
 			sx+=GADGETWIDTH+BORDER;
 			previeBackColourEdit[j]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
-			previeBackColourEdit[j]->LFSTK_setKeyCallBack(NULL,coleditCB,NULL);
-			previeBackColourEdit[j]->LFSTK_setCallbackOnReturn(false);
+			previeBackColourEdit[j]->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
 			sx+=EDITBOXWIDTH+BORDER;
 			previeFontColourEdit[j]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(j,TYPEFONTCOLOUR),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
-			previeFontColourEdit[j]->LFSTK_setKeyCallBack(NULL,coleditCB,NULL);
-			previeFontColourEdit[j]->LFSTK_setCallbackOnReturn(false);
+			previeFontColourEdit[j]->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
 			sy+=YSPACING;
 			sx=BORDER;
 		}
@@ -614,10 +616,8 @@ int main(int argc, char **argv)
 			previeMenuBackColourEdit[j]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEM),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 			sx+=EDITBOXWIDTH+BORDER;
 			previeMenuFontColourEdit[j]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEMFONTCOLOUR),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
-			previeMenuBackColourEdit[j]->LFSTK_setKeyCallBack(NULL,coleditCB,NULL);
-			previeMenuBackColourEdit[j]->LFSTK_setCallbackOnReturn(false);
-			previeMenuFontColourEdit[j]->LFSTK_setKeyCallBack(NULL,coleditCB,NULL);
-			previeMenuFontColourEdit[j]->LFSTK_setCallbackOnReturn(false);
+			previeMenuBackColourEdit[j]->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
+			previeMenuFontColourEdit[j]->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
 			sy+=YSPACING;
 			sx=BORDER;
 		}
@@ -643,8 +643,7 @@ int main(int argc, char **argv)
 	sx+=BORDER+GADGETWIDTH;
 	scrollTroughColourEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(-1,TYPESBTROUGHCOLOUR),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 	scrollTroughColourEdit->LFSTK_setCursorColourName("grey80");
-	scrollTroughColourEdit->LFSTK_setKeyCallBack(NULL,coleditCB,NULL);
-	scrollTroughColourEdit->LFSTK_setCallbackOnReturn(false);
+	scrollTroughColourEdit->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
 	sy+=YSPACING;
 	sx=BORDER;
 	
@@ -653,8 +652,7 @@ int main(int argc, char **argv)
 	sx+=BORDER+GADGETWIDTH;
 	listTroughColourEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(-1,TYPELISTTROUGHCOLOUR),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 	listTroughColourEdit->LFSTK_setCursorColourName("grey80");
-	listTroughColourEdit->LFSTK_setKeyCallBack(NULL,coleditCB,NULL);
-	listTroughColourEdit->LFSTK_setCallbackOnReturn(false);
+	listTroughColourEdit->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
 	sy+=YSPACING;
 	sx=BORDER;
 
@@ -663,8 +661,7 @@ int main(int argc, char **argv)
 	sx+=BORDER+GADGETWIDTH;
 	cursorColourEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(-1,TYPECURSORCOLOUR),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 	cursorColourEdit->LFSTK_setCursorColourName("black");
-	cursorColourEdit->LFSTK_setKeyCallBack(NULL,coleditCB,NULL);
-	cursorColourEdit->LFSTK_setCallbackOnReturn(false);
+	cursorColourEdit->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
 	sy+=YSPACING;
 	sx=BORDER;
 
@@ -672,8 +669,7 @@ int main(int argc, char **argv)
 	label=new LFSTK_labelClass(wc,"Window Col",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sx+=BORDER+GADGETWIDTH;
 	windowColourEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEWINDOW),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
-	windowColourEdit->LFSTK_setKeyCallBack(NULL,coleditCB,NULL);
-	windowColourEdit->LFSTK_setCallbackOnReturn(false);
+	windowColourEdit->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
 	sx+=BORDER+EDITBOXWIDTH;
 	autoColourCheck=new LFSTK_toggleButtonClass(wc,"Auto Colour",sx,sy,GADGETWIDTH,CHECKBOXSIZE,NorthWestGravity);
 	sy+=YSPACING;
