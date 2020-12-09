@@ -233,8 +233,8 @@ bool menuCB(void *p,void* ud)
 			doNewGroup();
 			return(true);
 		}
-	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
 	currentSet->LFSTK_setBuffer(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel());
+	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
 
 	return(true);
 }

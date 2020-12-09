@@ -858,6 +858,8 @@ void LFSTK_windowClass::LFSTK_showWindow(bool all)
 */
 void LFSTK_windowClass::LFSTK_hideWindow(void)
 {
+	//XSetInputFocus(this->display,None,RevertToParent,CurrentTime);
+
 	XUnmapWindow(this->display,this->window);
 	this->mainLoop=false;
 	XFlush(this->display);

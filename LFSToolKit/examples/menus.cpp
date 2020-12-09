@@ -65,7 +65,7 @@ bool buttonCB(void *p,void* ud)
 	return(true);
 	menu->mainMenuWindow->LFSTK_showWindow(true);
 //	subwc->LFSTK_showWindow(true);
-	XSetInputFocus(menu->mainMenuWindow->display,menu->mainMenuWindow->window,RevertToParent,CurrentTime);
+//	XSetInputFocus(menu->mainMenuWindow->display,menu->mainMenuWindow->window,RevertToParent,CurrentTime);
 	return(true);
 }
 
