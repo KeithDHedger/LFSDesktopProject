@@ -569,6 +569,7 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 
 				retval=gadget->mouseUp(&e->xbutton);
 				//if((type!=LINEEDITGADGET) && (type!=MULTILINEGADGET))
+				//	XSetInputFocus(gadget->wc->display,e->xbutton.window,RevertToPointerRoot,CurrentTime);
 				//	XSetInputFocus(gadget->wc->display,gadget->wc->window,RevertToParent,CurrentTime);
 				break;
 			case ButtonPress:
