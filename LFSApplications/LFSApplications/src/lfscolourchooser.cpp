@@ -149,6 +149,7 @@ int main(int argc, char **argv)
 				{
 					case 'h':
 					case '?':
+						printf("Usage:\nlfscolourchooser [ARG] - Where ARG is a colour definition either e.g. \"#ff0080\" or \"darkgreen\"\n");
 						printf("-?,-h,--help\t\tPrint this help\n");
 						printf("-w,--window\t\tSet transient for window\n");
 						exit(0);
