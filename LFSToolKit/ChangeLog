@@ -1,4 +1,5 @@
 0.4.5
+Removed debug code.
 Set gadget mouse event on mouseup.
 Added setting scrollbar value without running CB.
 Added colour chooser to examples.

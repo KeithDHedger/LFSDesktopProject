@@ -24,6 +24,7 @@
 LFSTK_windowClass	*wc=NULL;
 bool				mainLoop=true;
 Display				*display;
+bool				isDragging=false;
 
 //list
 diskLinkedList		*diskLL=NULL;

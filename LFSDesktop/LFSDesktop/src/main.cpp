@@ -50,7 +50,6 @@ const char			*diskThemeIconData[]={"drive-harddisk","media-eject","media-eject",
 LFSTK_labelClass	*label;
 
 bool				needsRefresh=true;
-bool				isdragging=false;
 pollfd				polldisks;
 int					fhfordisks;
 pollfd				polldesktop;
@@ -187,7 +186,7 @@ void doRefresh(void)
 void  alarmCallBack(int sig)
 {
 	XExposeEvent	event;
-	if(isdragging==false)
+	if(isDragging==false)
 		{
 			needsRefresh=true;
 			event.type=Expose;
@@ -514,13 +513,13 @@ BACKUP:
 			switch(event.type)
 				{
 					case MotionNotify:
-						isdragging=true;
+						isDragging=true;
 						//printf("released at xy= %i %i\n",event.xmotion.x,event.xmotion.y);
 						if(ml!=NULL)
 							ml->gadget->LFSTK_clearWindow();
 						break;
 					case ButtonRelease:
-						isdragging=false;
+						isDragging=false;
 					case ButtonPress:
 						if(ml==NULL)
 							{
@@ -635,7 +634,7 @@ BACKUP:
 			reloadPrefsFlag=false;
 			reloadDeskFlag=false;
 			needsRefresh=true;
-			isdragging=false;
+			isDragging=false;
 			goto BACKUP;
 		}
 	return 0;

@@ -220,6 +220,9 @@ bool deskUpCB(void *p,void* ud)
 				}
 			return(true);
 		}
+
+	if(isDragging==false)
+		return(true);
 	dnode->diskImage->LFSTK_getGeom(&geom);
 
 	asprintf(&diskfile,"%s/%s.rc",cacheDeskPath,dnode->devName);

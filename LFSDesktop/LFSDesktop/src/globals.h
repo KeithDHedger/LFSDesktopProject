@@ -87,6 +87,7 @@ enum {DIALOGRETERROR=0,DIALOGRETAPPLY,DIALOGRETCANCEL};
 extern LFSTK_windowClass	*wc;
 extern bool					mainLoop;
 extern Display				*display;
+extern bool					isDragging;
 
 //list
 extern diskLinkedList		*diskLL;

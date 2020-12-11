@@ -81,7 +81,7 @@ bool keyCB(void *p,void* ud)
 
 bool mouseCB(void *p,void* ud)
 {
-	DEBUG
+	//DEBUG
 	if(ud!=NULL)
 		{
 			printf(">>>%s<<<\n",(const char*)ud);

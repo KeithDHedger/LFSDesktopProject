@@ -558,7 +558,11 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 					{
 						gadget->firstClick=false;
 						if(e->xbutton.time-gadget->lastTime<gadget->wc->dbClick)
+
+{
 							gadget->isDoubleClick=true;
+				//	DEBUGFUNC("double click=%b",gadget->isDoubleClick);
+							}
 						else
 							{
 								gadget->lastTime=e->xbutton.time;
@@ -594,7 +598,7 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 			case MotionNotify:
 				if(gadget->currentButton==Button1)
 					retval=gadget->mouseDrag(&e->xmotion);
-				///printf("MotionNotify\n");
+				//printf("MotionNotify\n");
 				break;
 			case Expose:
 				if (e->xexpose.count==0)

@@ -144,7 +144,6 @@ bool diskUpCB(void *p,void* ud)
 
 	if(dnode->diskImage->currentButton!=Button1)
 		return(true);
-
 	if(dnode->diskImage->isDoubleClick==true)
 		{
 			wc->popupFromGadget=dnode->diskImage;
@@ -152,6 +151,9 @@ bool diskUpCB(void *p,void* ud)
 			wc->popupFromGadget=NULL;
 			return(true);
 		}
+
+	if(isDragging==false)
+		return(true);
 
 	dnode->diskImage->LFSTK_getGeom(&geom);
 

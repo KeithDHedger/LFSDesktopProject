@@ -791,7 +791,6 @@ void LFSTK_windowClass::windowClassInitCommon(windowInitStruct *wi)
 */
 LFSTK_windowClass::LFSTK_windowClass(windowInitStruct *wi)
 {
-printf("LFSTK_windowClass::LFSTK_windowClass(windowInitStruct *wi)\n");
 	this->windowClassInitCommon(wi);
 	this->gadgetMap.clear();
 	
