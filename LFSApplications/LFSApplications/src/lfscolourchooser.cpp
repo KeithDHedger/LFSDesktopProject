@@ -18,6 +18,7 @@
  * along with LFSApplications.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "config.h"
 #include <getopt.h>
 
 #include <lfstk/LFSTKGlobals.h>
@@ -100,28 +101,13 @@ bool scrollCB(void *p,void* ud)
 
 void setSliders(const char *colour)
 {
-	char	redbuf[3];
-	char	greenbuf[3];
-	char	bluebuf[3];
-	XColor	ex,scr;
+	colourStruct	colptr;
+	colptr.name=NULL;
 
-	if(colour[0]=='#')
-		{
-			snprintf(redbuf,3,"%s",&colour[1]);
-			snprintf(greenbuf,3,"%s",&colour[3]);
-			snprintf(bluebuf,3,"%s",&colour[5]);
-
-			red->LFSTK_setValue(strtol(redbuf,NULL,16),true);
-			green->LFSTK_setValue(strtol(greenbuf,NULL,16),true);
-			blue->LFSTK_setValue(strtol(bluebuf,NULL,16),true);
-		}
-	else
-		{
-			XLookupColor(wc->display,wc->cm,colour, &ex, &scr);
-			red->LFSTK_setValue(ex.red & 0xff,true);
-			green->LFSTK_setValue(ex.green & 0xff,true);
-			blue->LFSTK_setValue(ex.blue & 0xff,true);
-		}
+	wc->globalLib->LFSTK_setColourFromName(wc->display,wc->cm,&colptr,colour);
+	red->LFSTK_setValue(colptr.RGBAColour.r*256,true);
+	green->LFSTK_setValue(colptr.RGBAColour.g*256,true);
+	blue->LFSTK_setValue(colptr.RGBAColour.b*256,true);
 }
 
 int main(int argc, char **argv)
