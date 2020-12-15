@@ -538,15 +538,53 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 	gadget=static_cast<LFSTK_gadgetClass*>(self);
 //DEBUGFUNC("gadget=%p",gadget);
 	gadget->xEvent=e;
+
+
+
+//			if(gadget->toParent==true)
+//{
+//DEBUG
+////e->xbutton.window=gadget->parent;
+////e->xbutton.send_event=true;
+//XSendEvent(gadget->wc->display,gadget->parent,FALSE,0L,(XEvent*)e);
+////return(true);
+//retval=true;
+//}
+
 	switch (e->type)
 		{
 			case EnterNotify:
+//				if(gadget->toParent==true)
+//					{
+//						e->xbutton.window=gadget->parent;
+//						e->xbutton.send_event=true;
+//						XSendEvent(gadget->wc->display,gadget->parent,true,0xffff,(XEvent*)e);
+//						retval=true;
+//						break;
+//					}
 				retval=gadget->mouseEnter(&e->xbutton);
 				break;
 			case LeaveNotify:
+//				if(gadget->toParent==true)
+//					{
+//						e->xbutton.window=gadget->parent;
+//						e->xbutton.send_event=true;
+//						XSendEvent(gadget->wc->display,gadget->parent,true,0xffff,(XEvent*)e);
+//						retval=true;
+//						break;
+//					}
 				retval=gadget->mouseExit(&e->xbutton);
 				break;
 			case ButtonRelease:
+//				if(gadget->toParent==true)
+//					{
+//						e->xbutton.window=gadget->parent;
+//						e->xbutton.send_event=true;
+//						XSendEvent(gadget->wc->display,gadget->parent,true,0xffff,(XEvent*)e);
+//						retval=true;
+//						break;
+//					}
+//
 			//DEBUGFUNC("gadget=%p",gadget);
 				if(gadget->firstClick==false)
 					{
@@ -577,12 +615,30 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				//	XSetInputFocus(gadget->wc->display,gadget->wc->window,RevertToParent,CurrentTime);
 				break;
 			case ButtonPress:
+//				if(gadget->toParent==true)
+//					{
+//						e->xbutton.window=gadget->parent;
+//						e->xbutton.send_event=true;
+//						XSendEvent(gadget->wc->display,gadget->parent,true,0xffff,(XEvent*)e);
+//						retval=true;
+//						break;
+//					}
+
+//			if(gadget->toParent==true)
+//{
+//DEBUG
+//e->xbutton.window=gadget->parent;
+//e->xbutton.send_event=true;
+//XSendEvent(gadget->wc->display,gadget->parent,true,ButtonPressMask,(XEvent*)e);
+//return(true);
+//}
+
 				//DEBUGFUNC("gadget=%p",gadget);
 				gadget->currentButton=e->xbutton.button;
 				if((gadget->LFSTK_getContextWindow()!=NULL) && (gadget->currentButton==Button3))
 					{
 						gadget->wc->popupFromGadget=gadget;
-						gadget->LFSTK_getGlobalGeom(&geom);
+						gadget->LFSTK_getGeomWindowRelative(&geom,gadget->rootWindow);
 						gadget->LFSTK_doPopUp(geom.x+(geom.w/2),geom.y+(geom.h/4));
 						retval=true;
 						break;
@@ -624,13 +680,13 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				break;
 	
 			case ConfigureNotify:
-//				printf("conf>>>>>>>>>\n");
+				printf("conf>>>>>>>>>\n");
 				break;
 			case GravityNotify:
 //				printf("grav>>>>>>>>>>>\n");
 				break;
 			case ResizeRequest:
-//				printf("resize\n");
+				printf("resize\n");
 				break;
 			case ClientMessage:
 				//printf("ClientMessage from lib\n");
@@ -644,7 +700,28 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 
 	gadget->xEvent=NULL;
 	if(retval==false)
-		XSendEvent(gadget->wc->display,gadget->wc->window,False,0L,e);
+		{
+			switch (e->type)
+				{
+					case EnterNotify:
+					case LeaveNotify:
+					case ButtonPress:
+					case ButtonRelease:
+					case KeyPress:
+					case KeyRelease:
+						if(gadget->toParent==true)
+							{
+								e->xbutton.window=gadget->parent;
+								e->xbutton.subwindow=gadget->window;
+								e->xbutton.send_event=true;
+								XSendEvent(gadget->wc->display,gadget->parent,true,0xffff,(XEvent*)e);
+								retval=false;
+							}
+						break;
+				}
+		}
+
+//		XSendEvent(gadget->wc->display,gadget->wc->window,False,0L,e);
 	return(retval);
 }
 
@@ -896,19 +973,12 @@ void LFSTK_lib::LFSTK_setCairoSurface(Display *display,Window window,Visual *vis
 {
 
 	if(*sfc==NULL)
-	{
-//fprintf(stderr,"*sfc=%p\n",*sfc);
 		*sfc=cairo_xlib_surface_create(display,window,visual,width,height);
-		}
 	else
 		cairo_xlib_surface_set_size(*sfc,width,height);
 
 	if(*cr==NULL)
-	{
-//fprintf(stderr,"*cr=%p\n",*cr);
-	
 		*cr=cairo_create(*sfc);
-		}
 }
 
 /**

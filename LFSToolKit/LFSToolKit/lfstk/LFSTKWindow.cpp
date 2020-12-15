@@ -87,7 +87,7 @@ LFSTK_gadgetClass* LFSTK_windowClass::LFSTK_findGadgetByPos(int x, int y)
 			ml=it->second;
 			if( (ml!=NULL) && (ml->gadget!=NULL) )
 				{
-					ml->gadget->LFSTK_getGlobalGeom(&geom);
+					ml->gadget->LFSTK_getGeomWindowRelative(&geom,ml->gadget->rootWindow);
 //TODO//
 					if((x>geom.x) && (x<geom.x+geom.w) && (y>geom.y) && (y<geom.y+geom.h) )
 						return(ml->gadget);
@@ -1426,9 +1426,34 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 				break;
 
 			case ConfigureNotify:
-				this->LFSTK_resizeWindow(event->xconfigurerequest.width,event->xconfigurerequest.height,false);
-				this->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,event->xconfigurerequest.width,event->xconfigurerequest.height);
-				this->LFSTK_clearWindow();
+				{
+					geometryStruct	oldwindowGeom=this->windowGeom;
+
+					this->LFSTK_resizeWindow(event->xconfigurerequest.width,event->xconfigurerequest.height,false);
+					this->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,event->xconfigurerequest.width,event->xconfigurerequest.height);
+					this->LFSTK_clearWindow(true);
+					if((this->windowGeom.w!=oldwindowGeom.w) ||(this->windowGeom.h!=oldwindowGeom.h))
+						{
+							if(!this->gadgetMap.empty())
+								{
+									for (std::map<int,mappedListener*>::iterator it=this->gadgetMap.begin();it!=this->gadgetMap.end();++it)
+										{
+											mappedListener	*ml=it->second;
+											if((ml!=NULL) && (ml->gadget!=NULL))
+												{
+													//if(ml->gadget!=NULL)
+													//	{
+															if(ml->type==MULTIGADGET)
+																{
+																	LFSTK_MultiGadgetClass *gadget=static_cast<LFSTK_MultiGadgetClass*>(ml->gadget);
+																	gadget->LFSTK_updateGadget(oldwindowGeom);
+																}
+														//}
+												}
+										}
+								}
+						}
+				}
 				break;
 
 			case SelectionRequest:

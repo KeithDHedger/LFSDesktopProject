@@ -30,7 +30,7 @@ class LFSTK_buttonClass : public LFSTK_gadgetClass
 	public:
 		LFSTK_buttonClass();
 		~LFSTK_buttonClass();
-		LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity);
+		LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity=NorthWestGravity);
 
 		bool	keyRelease(XKeyEvent *e);
 		bool	keyPress(XKeyEvent *e);

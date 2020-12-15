@@ -133,13 +133,20 @@ int main(int argc, char **argv)
 	button=new LFSTK_buttonClass(wc,"Get Icon Path",DIALOGMIDDLE+(BORDER*3),sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./geticonpath.cpp");
 	sy+=YSPACING;
+
 //basic buttons
-	button=new LFSTK_buttonClass(wc,"Buttons",DIALOGMIDDLE-GADGETWIDTH-BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	button=new LFSTK_buttonClass(wc,"Buttons",DIALOGMIDDLE-(GADGETWIDTH-BORDER)*2,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./basic.cpp");
 //toggles
-	button=new LFSTK_buttonClass(wc,"Toggles",DIALOGMIDDLE+BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	button=new LFSTK_buttonClass(wc,"Toggles",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./toggle.cpp");
+//multi gadgetAcceptsDnD
+	button=new LFSTK_buttonClass(wc,"Multi",DIALOGMIDDLE+(BORDER*3),sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	button->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./multigadget.cpp");
 	sy+=YSPACING;
+
+
+
 //menus
 	button=new LFSTK_buttonClass(wc,"Menus",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./menus.cpp");

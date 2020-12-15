@@ -85,7 +85,7 @@ class LFSTK_gadgetClass
 		virtual void			LFSTK_dropData(propertyStruct* data);
 
 		Window					LFSTK_getWindow(void);
-		void					LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned int w,unsigned int h,int gravity);
+		void					LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned int w,unsigned int h,int gravity=NorthWestGravity);
 
 //callbacks
 		void					LFSTK_setIgnores(callbackStruct *cb,bool runcb,bool ignoreorphanmod);
@@ -127,8 +127,8 @@ class LFSTK_gadgetClass
 		void					LFSTK_setAlpha(double alph);
 
 //geometry
-		void					LFSTK_getGlobalGeom(geometryStruct *geom);
 		void					LFSTK_getGeom(geometryStruct *geom);
+		void					LFSTK_getGeomWindowRelative(geometryStruct *geom,Window win);
 		double					LFSTK_getTextRealWidth(const char* text);
 		int						LFSTK_getTextWidth(const char* text);
 		int						LFSTK_getTextHeight(const char* text);
@@ -160,15 +160,18 @@ class LFSTK_gadgetClass
 		bool					gadgetAcceptsDnD;
 		bool					isSubMenu;
 		bool					showIndicator;
-		gadgetStruct			gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NORMALCOLOUR,0,false,{0,0,0,0},{0,0,0,0},false,false};
+		gadgetStruct			gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NORMALCOLOUR,0,false,{0,0,0,0},{0,0,0,0},false,false,false};
 		const char				*monoFontString=NULL;
 
 //user data
 		void					*userData=NULL;
 		XButtonEvent			*mouseEvent=NULL;
 		XKeyEvent				*keyEvent=NULL;
+		bool					toParent=false;
+
 	private:
 		void					initGadget(void);
+		void					selectBevel(bool mousedown);
 
 	protected:
 		bool					runCallback(int cbtype);

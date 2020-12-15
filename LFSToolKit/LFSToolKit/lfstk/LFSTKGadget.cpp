@@ -309,6 +309,8 @@ bool LFSTK_gadgetClass::runCallback(int cbtype)
 
 	if(this->isActive==false)
 		return(false);
+//if(this->toParent==true)
+//		return(true);
 //TODO// ANYMOUSECB ANYKEYCB and 
 	switch(cbtype)
 		{
@@ -413,6 +415,8 @@ void LFSTK_gadgetClass::clearBox(gadgetStruct* details)
 {
 	cairo_pattern_t	*patt;
 	colourStruct	*usecolour;
+	geometryStruct	geom;
+	this->LFSTK_getGeom(&geom);
 
 	if(details->useWindowPixmap==true)
 		{
@@ -428,11 +432,17 @@ void LFSTK_gadgetClass::clearBox(gadgetStruct* details)
 			if(details->buttonTile==true)
 					patt=this->pattern;
 			else
+				{
 					patt=this->wc->pattern;
-				
+				}
+
+			if(details->geomRelativeToMainWindow==true)
+				this->LFSTK_getGeomWindowRelative(&geom,this->wc->window);
+			
 			cairo_save(this->cr);
 				cairo_reset_clip(this->cr);
-				cairo_translate(this->cr,-this->gadgetGeom.x,-this->gadgetGeom.y);
+				if(details->geomRelativeToMainWindow==true)
+					cairo_translate(this->cr,-geom.x,-geom.y);
 				cairo_set_source(this->cr,patt);
 				cairo_paint(this->cr);
 			cairo_restore(this->cr);
@@ -659,6 +669,24 @@ bool LFSTK_gadgetClass::LFSTK_getCanDrag(void)
 	return(this->canDrag);
 }
 
+
+/**
+* Private select which bevel to use.
+* \param bool mousedown true bevel for mousedown, false bevel for mouse up.
+*/
+void LFSTK_gadgetClass::selectBevel(bool mousedown)
+{
+	if((this->gadgetDetails.bevel==BEVELIN) || (this->gadgetDetails.bevel==BEVELOUT))
+		{
+			if(mousedown==true)
+				this->gadgetDetails.bevel=BEVELIN;
+			else
+				this->gadgetDetails.bevel=BEVELOUT;
+			return;
+		}
+	this->gadgetDetails.bevel=BEVELNONE;
+}
+
 /**
 * Mouse up callback.
 * \param e XButtonEvent passed from mainloop->listener.
@@ -669,6 +697,7 @@ bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 	this->keyEvent=NULL;
 	this->mouseEvent=NULL;
 
+//no callbacks
 	if(this->runCallback(ANYMOUSECB)==false)
 		return(true);
 
@@ -677,11 +706,16 @@ bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 
 	this->gadgetDetails.colour=&this->colourNames[NORMALCOLOUR];
 	this->gadgetDetails.state=NORMALCOLOUR;
-	this->gadgetDetails.bevel=BEVELOUT;
+	this->selectBevel(false);
 	this->LFSTK_clearWindow();
+
 	if(this->inWindow==true)
 		{
 			this->mouseEvent=e;
+			
+			if(this->toParent==true)
+				return(false);
+
 			if(this->runCallback(MOUSERELEASECB)==true)
 				return(this->mouseCB.releaseCallback(this,this->mouseCB.userData));
 		}
@@ -699,6 +733,7 @@ bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 	this->mouseDownY=e->y;
 	this->keyEvent=NULL;
 
+//no callbacks
 	if(this->runCallback(ANYMOUSECB)==false)
 		return(true);
 
@@ -707,11 +742,15 @@ bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 
 	this->gadgetDetails.colour=&this->colourNames[ACTIVECOLOUR];
 	this->gadgetDetails.state=ACTIVECOLOUR;
-	this->gadgetDetails.bevel=BEVELIN;
+	this->selectBevel(true);
 	this->LFSTK_clearWindow();
+	
+	if(this->toParent==true)
+		return(false);
 
 	if(this->runCallback(MOUSEPRESSCB)==true)
 		return(this->mouseCB.pressCallback(this,this->mouseCB.userData));
+
 	return(true);
 }
 
@@ -724,6 +763,7 @@ bool LFSTK_gadgetClass::mouseExit(XButtonEvent *e)
 {
 	this->keyEvent=NULL;
 
+//no callbacks
 	if(this->runCallback(ANYMOUSECB)==false)
 		return(true);
 
@@ -732,9 +772,10 @@ bool LFSTK_gadgetClass::mouseExit(XButtonEvent *e)
 
 	this->gadgetDetails.colour=&this->colourNames[NORMALCOLOUR];
 	this->gadgetDetails.state=NORMALCOLOUR;
-	this->gadgetDetails.bevel=BEVELOUT;
 	this->LFSTK_clearWindow();
 	this->inWindow=false;
+	if(this->toParent==true)
+		return(false);
 	return(true);
 }
 
@@ -747,6 +788,7 @@ bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 {
 	this->keyEvent=NULL;
 
+//no callbacks
 	if(this->runCallback(ANYMOUSECB)==false)
 		return(true);
 
@@ -755,9 +797,10 @@ bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 
 	this->gadgetDetails.colour=&this->colourNames[PRELIGHTCOLOUR];
 	this->gadgetDetails.state=PRELIGHTCOLOUR;
-	this->gadgetDetails.bevel=BEVELOUT;
 	this->LFSTK_clearWindow();
 	this->inWindow=true;
+	if(this->toParent==true)
+		return(false);
 	return(true);
 }
 
@@ -813,8 +856,11 @@ void LFSTK_gadgetClass::LFSTK_resizeWindow(int w,int h)
 {
 	this->gadgetGeom.w=w;
 	this->gadgetGeom.h=h;
+	this->gadgetDetails.gadgetGeom.w=w;
+	this->gadgetDetails.gadgetGeom.h=h;
 	XResizeWindow(this->display,this->window,this->gadgetGeom.w,this->gadgetGeom.h);
-	this->wc->setWindowGeom(0,0,this->gadgetGeom.w,this->gadgetGeom.h,WINDSETWH);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+
 	this->LFSTK_clearWindow();
 }
 
@@ -1154,16 +1200,17 @@ void LFSTK_gadgetClass::LFSTK_setLabelGravity(int orient)
 }
 
 /**
-* Get gadget geometry in global co-ords.
+* Get gadget geometry relative to window.
 * \param geometry structure.
+* \param Window win geometry relative to window 'win'.
 */
-void LFSTK_gadgetClass::LFSTK_getGlobalGeom(geometryStruct *geom)
+void LFSTK_gadgetClass::LFSTK_getGeomWindowRelative(geometryStruct *geom,Window win)
 {
 	int					x,y;
 	Window				child;
 	XWindowAttributes	xwa;
 
-	XTranslateCoordinates(this->display,this->window,this->rootWindow,0,0,&x,&y,&child );
+	XTranslateCoordinates(this->display,this->window,win,0,0,&x,&y,&child );
 	XGetWindowAttributes(this->display,this->window,&xwa);
 
 	geom->x=x;
@@ -1588,6 +1635,7 @@ void LFSTK_gadgetClass::LFSTK_setTile(const char *path,int size)
 
 	if(cs==CAIRO_STATUS_SUCCESS)
 		{
+			//cairo_translate(this->cr,-this->gadgetGeom.x,-this->gadgetGeom.y);
 			this->pattern=cairo_pattern_create_for_surface(tempimage);
 			cairo_surface_destroy(tempimage);
 			cairo_pattern_set_extend(pattern,CAIRO_EXTEND_REPEAT);
@@ -1750,11 +1798,19 @@ LFSTK_windowClass* LFSTK_gadgetClass::LFSTK_getContextWindow(void)
 */
 void LFSTK_gadgetClass::LFSTK_moveGadget(int x,int y)
 {
+//	if(strcmp("Label Gadget",this->LFSTK_getLabel())==0)
+//	{
+//	geometryStruct geom;
+//	this->LFSTK_getGeomInMain(&geom);
+//		printf("---x=%i global=%i\n",x,geom.x);
+//}
 	this->gadgetGeom.x=x;
 	this->gadgetGeom.y=y;
 	XMoveWindow(this->display,this->window,x,y);
+	//this->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
+	//this->wc->LFSTK_clearWindow(true);
+	this->LFSTK_clearWindow();
 	
-	this->wc->LFSTK_clearWindow();
 }
 
 /**

@@ -63,7 +63,7 @@ enum {CANCEL=0,APPLY};
 enum {NONE=0,LEFT,CENTRE,RIGHT,AUTO,MENU,PRESERVEASPECT,TOOLBAR};
 enum gadgetState {NORMALCOLOUR=0,PRELIGHTCOLOUR,ACTIVECOLOUR,INACTIVECOLOUR,MAXCOLOURS};
 
-enum {BUTTONGADGET=1,MENUBUTTONGADGET,LINEEDITGADGET,LABELGADGET,TOGGLEGADGET,IMAGEGADGET,LISTGADGET,DIALOGGADGET,MULTILINEGADGET,SCROLLBARGADGET,MENUGADGET,MENUITEMGADGET};
+enum {BUTTONGADGET=1,MENUBUTTONGADGET,LINEEDITGADGET,LABELGADGET,TOGGLEGADGET,IMAGEGADGET,LISTGADGET,DIALOGGADGET,MULTILINEGADGET,SCROLLBARGADGET,MENUGADGET,MENUITEMGADGET,MULTIGADGET};
 enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
 enum {NORMAL=0,ABOVEALL,BELOWALL};
 
@@ -254,16 +254,17 @@ struct listData
 
 struct gadgetStruct
 {
-	colourStruct	*colour;
-	bevelType		bevel;
-	indicatorType	indic;
-	int				state;
-	int				reserveSpace;
-	bool			buttonTile;
-	geometryStruct	gadgetGeom;
-	geometryStruct	indicatorGeom;
-	bool			hasIndicator;
-	bool			useWindowPixmap;
+	colourStruct	*colour=NULL;
+	bevelType		bevel=BEVELNONE;
+	indicatorType	indic=NOINDICATOR;
+	int				state=NORMALCOLOUR;
+	int				reserveSpace=0;
+	bool			buttonTile=false;
+	geometryStruct	gadgetGeom={0,0,1,1};
+	geometryStruct	indicatorGeom={0,0,1,1};
+	bool			hasIndicator=false;
+	bool			useWindowPixmap=false;
+	bool			geomRelativeToMainWindow=false;
 };
 
 class LFSTK_windowClass;
@@ -332,5 +333,6 @@ enum {DESKTOP_MSG=1000,WMANAGER_MSG,PANEL_MSG,WALLPAPER_MSG,TOOLKIT_MSG,APPEARAN
 #include "LFSTKToolWindow.h"
 #include "LFSTKMenu.h"
 #include "LFSTKMenuItem.h"
+#include "LFSTKMultiGadget.h"
 
 #endif

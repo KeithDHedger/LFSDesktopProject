@@ -1,4 +1,10 @@
 0.4.5
+Added multigadget example to RunApps.cpp
+Fixed scrollbar thumb pixmap.
+Fixed pixmap offsets when moving gadget.
+Fixed pixmap offsets on labels, checkboxes,menus and seperators.
+Fixed resizing gadget.
+Added resizing gadget (LFSTK_MultiGadgetClass).
 Removed debug code.
 Set gadget mouse event on mouseup.
 Added setting scrollbar value without running CB.

@@ -99,7 +99,7 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 	this->showIndicator=true;
 	free(pathtobit);
 
-	gadgetDetails={&this->wc->windowColourNames[NORMALCOLOUR],BEVELOUT,CHECK,NORMALCOLOUR,CHECKBOXSIZE,false,{0,0,w,h},{2,(int)((h/2)-(CHECKBOXSIZE/2)),CHECKBOXSIZE,CHECKBOXSIZE},true};
+	gadgetDetails={&this->wc->windowColourNames[NORMALCOLOUR],BEVELOUT,CHECK,NORMALCOLOUR,CHECKBOXSIZE,false,{0,0,w,h},{2,(int)((h/2)-(CHECKBOXSIZE/2)),CHECKBOXSIZE,CHECKBOXSIZE},true,false,true};
 	this->LFSTK_setFontColourName(0,this->wc->globalLib->LFSTK_getGlobalString(0,TYPEFONTCOLOUR),true);
 }
 
@@ -265,6 +265,7 @@ void LFSTK_toggleButtonClass::LFSTK_setToggleStyle(drawStyle ds)
 					this->cImage=NULL;
 					this->useImage=false;
 				}
+			this->gadgetDetails.geomRelativeToMainWindow=false;
 		}
 	else
 		{
@@ -275,6 +276,7 @@ void LFSTK_toggleButtonClass::LFSTK_setToggleStyle(drawStyle ds)
 			this->showIndicator=true;
 			if(this->useImage==true)
 				this->cImage=this->checkOff;
+			this->gadgetDetails.geomRelativeToMainWindow=true;
 		}
 }
 

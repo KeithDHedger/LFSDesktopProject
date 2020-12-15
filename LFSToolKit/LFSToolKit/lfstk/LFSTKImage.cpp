@@ -134,7 +134,7 @@ LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* image
 
 	this->LFSTK_setImageFromPath(imagepath,gravity,scale);
 	this->useTile=this->wc->useTile;
-	this->gadgetDetails={&this->wc->windowColourNames[NORMALCOLOUR],BEVELNONE,NOINDICATOR,NORMALCOLOUR,0,false,{0,0,w,h},{0,0,0,0},false};
+	this->gadgetDetails={&this->wc->windowColourNames[NORMALCOLOUR],BEVELNONE,NOINDICATOR,NORMALCOLOUR,0,false,{0,0,w,h},{0,0,0,0},false,false,false};
 
 	this->shape=XCreatePixmap(this->display,this->window,w,h,1);
 	this->shapesfc=cairo_xlib_surface_create_for_bitmap(this->display,this->shape,DefaultScreenOfDisplay(this->display),w,h);
