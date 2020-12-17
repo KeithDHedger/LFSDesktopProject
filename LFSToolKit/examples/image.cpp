@@ -79,6 +79,7 @@ bool mouseUpCB(void *p,void* ud)
 			static_cast<LFSTK_imageClass*>(p)->LFSTK_getGeom(&geom);
 			fprintf(stderr,"x=%i y=%i\n",geom.x,geom.y);
 		}
+	return(true);
 }
 
 int main(int argc, char **argv)

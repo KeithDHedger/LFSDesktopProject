@@ -22,7 +22,6 @@ exit $retval
 LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass		*label=NULL;
 LFSTK_MultiGadgetClass	*multi=NULL;
-LFSTK_MultiGadgetClass	*multi1=NULL;
 
 bool					mainLoop=true;
 Display					*display;
@@ -56,52 +55,46 @@ int main(int argc, char **argv)
 {
 	XEvent					event;
 	int						sy=0;
-	//cairo_surface_t			*surfaceto,*surfacefrom;
 	std::vector<hitRect>	hrs;
-	std::vector<hitRect>	hrs1;
 	
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,BOXLABEL,false);
 	display=wc->display;
 
-	multi1=new LFSTK_MultiGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*3);
-	multi1->stretchX=false;
-	multi1->stretchY=false;
-	multi1->lockY=LOCKTOTOP;
-	multi1->lockX=LOCKTOCENTRE;
-	multi1->gadgetStretch=MOVE;
+	multi=new LFSTK_MultiGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*3);
+	multi->stretchX=false;
+	multi->stretchY=false;
+	multi->lockY=LOCKTOTOP;
+	multi->lockX=LOCKTOCENTRE;
+	multi->gadgetStretch=MOVE;
 
-	hrs1.push_back({0,sy,DIALOGWIDTH,GADGETHITE,NULL});
-	hrs1.back().gadget=new LFSTK_labelClass(wc,BOXLABEL,0,0,1,1);
-	hrs1.back().gadget->LFSTK_setLabelGravity(CENTRE);
-	hrs1.back().gadget->LFSTK_setCairoFontDataParts("sB",20);
+	hrs.push_back({0,sy,DIALOGWIDTH,GADGETHITE,NULL});
+	hrs.back().gadget=new LFSTK_labelClass(wc,BOXLABEL,0,0,1,1);
+	hrs.back().gadget->LFSTK_setLabelGravity(CENTRE);
+	hrs.back().gadget->LFSTK_setCairoFontDataParts("sB",20);
 	sy+=YSPACING;
 
-	hrs1.push_back({0,sy,DIALOGWIDTH,GADGETHITE,NULL});
-	hrs1.back().gadget=new LFSTK_labelClass(wc,COPYRITE,0,0,1,1);
-	hrs1.back().gadget->LFSTK_setLabelGravity(CENTRE);
+	hrs.push_back({0,sy,DIALOGWIDTH,GADGETHITE,NULL});
+	hrs.back().gadget=new LFSTK_labelClass(wc,COPYRITE,0,0,1,1);
+	hrs.back().gadget->LFSTK_setLabelGravity(CENTRE);
 	sy+=HALFYSPACING;
 
-	hrs1.push_back({0,sy,DIALOGWIDTH,GADGETHITE,NULL});
-	hrs1.back().gadget=new LFSTK_labelClass(wc,PERSONAL,0,0,1,1);
-	hrs1.back().gadget->LFSTK_setLabelGravity(CENTRE);
-	hrs1.back().gadget->LFSTK_setCairoFontDataParts("B");
+	hrs.push_back({0,sy,DIALOGWIDTH,GADGETHITE,NULL});
+	hrs.back().gadget=new LFSTK_labelClass(wc,PERSONAL,0,0,1,1);
+	hrs.back().gadget->LFSTK_setLabelGravity(CENTRE);
+	hrs.back().gadget->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
 
-	multi1->LFSTK_setHitRects(hrs1);
+	multi->LFSTK_setHitRects(hrs);
 
+	hrs.clear();
 
 	multi=new LFSTK_MultiGadgetClass(wc,"",DIALOGMIDDLE-GADGETWIDTH*2,sy,GADGETWIDTH*4,GADGETHITE);
 	multi->LFSTK_setMouseCallBack(NULL,mouseparentCB,NULL);
 	multi->stretchX=true;
 	multi->stretchY=true;
-	multi->lockY=LOCKTOCENTRE;
+	multi->lockY=LOCKTOBOTTOM;
 	multi->lockX=LOCKTOCENTRE;
 	multi->gadgetStretch=STRETCH;
-
-//	geometryStruct geom;
-//	multi->LFSTK_getGeom(&geom);
-
-///	std::vector<hitRect>	hrs;
 
 //vertical
 //	hrs.push_back({0,0,GADGETWIDTH*2,GADGETHITE,NULL});
