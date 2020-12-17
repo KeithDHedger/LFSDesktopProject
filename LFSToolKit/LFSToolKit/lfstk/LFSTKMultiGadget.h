@@ -41,18 +41,27 @@ class LFSTK_MultiGadgetClass : public LFSTK_gadgetClass
 		~LFSTK_MultiGadgetClass();
 		LFSTK_MultiGadgetClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity=NorthWestGravity);
 
-		void		LFSTK_setHitRects(std::vector<hitRect> hr);
-		void		LFSTK_updateGadget(geometryStruct oldgeom);
-		void		updateInternalGadgets(geometryStruct oldgadggeom);
+		void					LFSTK_setHitRects(std::vector<hitRect> hr);
+		void					LFSTK_updateGadget(geometryStruct oldgeom);
 
-		bool		stretchX=true;
-		bool		stretchY=true;
-		lockType	lockX=LOCKTOLEFT;
-		lockType	lockY=ABSOLUTE;
-		stretchType	gadgetStretch=STRETCH;
-		
+//Not normally used by user.
+		void					LFSTK_resetHitRects(void);
+
+		bool					mouseExit(XButtonEvent *e) {this->inWindow=false;return(false);};
+		bool					mouseEnter(XButtonEvent *e) {this->inWindow=true;return(false);};
+		bool					mouseDown(XButtonEvent *e) {this->inWindow=true;return(false);};
+
+		bool					stretchX=true;
+		bool					stretchY=true;
+		lockType				lockX=LOCKTOLEFT;
+		lockType				lockY=ABSOLUTE;
+		stretchType				gadgetStretch=STRETCH;
+		int						spacing=BORDER;
+		bool					done=false;
 		std::vector<hitRect>	hitRects;
+
 	private:
+		void					updateInternalGadgets(geometryStruct oldgadggeom);
 
 };
 

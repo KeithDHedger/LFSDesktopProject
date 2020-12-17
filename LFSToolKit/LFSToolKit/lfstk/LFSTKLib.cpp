@@ -615,25 +615,6 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				//	XSetInputFocus(gadget->wc->display,gadget->wc->window,RevertToParent,CurrentTime);
 				break;
 			case ButtonPress:
-//				if(gadget->toParent==true)
-//					{
-//						e->xbutton.window=gadget->parent;
-//						e->xbutton.send_event=true;
-//						XSendEvent(gadget->wc->display,gadget->parent,true,0xffff,(XEvent*)e);
-//						retval=true;
-//						break;
-//					}
-
-//			if(gadget->toParent==true)
-//{
-//DEBUG
-//e->xbutton.window=gadget->parent;
-//e->xbutton.send_event=true;
-//XSendEvent(gadget->wc->display,gadget->parent,true,ButtonPressMask,(XEvent*)e);
-//return(true);
-//}
-
-				//DEBUGFUNC("gadget=%p",gadget);
 				gadget->currentButton=e->xbutton.button;
 				if((gadget->LFSTK_getContextWindow()!=NULL) && (gadget->currentButton==Button3))
 					{
@@ -680,7 +661,7 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				break;
 	
 			case ConfigureNotify:
-				printf("conf>>>>>>>>>\n");
+				//printf("conf>>>>>>>>>\n");
 				break;
 			case GravityNotify:
 //				printf("grav>>>>>>>>>>>\n");
@@ -717,11 +698,12 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 								XSendEvent(gadget->wc->display,gadget->parent,true,0xffff,(XEvent*)e);
 								retval=false;
 							}
+						else
+							retval=true;
 						break;
 				}
 		}
 
-//		XSendEvent(gadget->wc->display,gadget->wc->window,False,0L,e);
 	return(retval);
 }
 

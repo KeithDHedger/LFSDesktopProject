@@ -74,14 +74,21 @@ LFSTK_MultiGadgetClass::LFSTK_MultiGadgetClass(LFSTK_windowClass* parentwc,const
 }
 
 /**
-* Set hit rects and resize/move gadgets.
+* Set hit rects.
 *
 * \param std::vector<hitRect> hr
-* \note must be used AFTER main window shown.
 */
 void LFSTK_MultiGadgetClass::LFSTK_setHitRects(std::vector<hitRect> hr)
 {
 	this->hitRects=hr;
+}
+
+/**
+* Set hit rects and resize/move gadgets.
+* \note Not normally used by user.
+*/
+void LFSTK_MultiGadgetClass::LFSTK_resetHitRects(void)
+{
 	for(int j=0;j<this->hitRects.size();j++)
 		if(this->hitRects.at(j).gadget!=NULL)
 			{
@@ -149,22 +156,19 @@ void LFSTK_MultiGadgetClass::LFSTK_updateGadget(geometryStruct oldgeom)
 	this->updateInternalGadgets(oldgadggeom);
 }
 
-
+/**
+* Private updateInternalGadgets.
+* \param geometryStruct oldgadggeom.
+* \note Move not really useful
+*/
 void LFSTK_MultiGadgetClass::updateInternalGadgets(geometryStruct oldgadggeom)
 {
 	geometryStruct	newgeom;
-	int				diffw;
-	int				diffh;
 
 	this->LFSTK_getGeom(&newgeom);
-	diffw=newgeom.w-oldgadggeom.w;
-	diffh=newgeom.h+(oldgadggeom.h/this->hitRects.size());
-	diffh=(newgeom.h-oldgadggeom.h)/this->hitRects.size();
 
-double	multiy=(double)newgeom.h+(double)((double)oldgadggeom.h/(double)this->hitRects.size());
-multiy=(double)oldgadggeom.h/(double)newgeom.h;
-multiy=(double)newgeom.h/(double)oldgadggeom.h;
-//DEBUGFUNC("multi=%f",multiy);
+	double	multiy=(double)newgeom.h/(double)oldgadggeom.h;
+	double	multix=(double)newgeom.w/(double)oldgadggeom.w;
 
 	for(int j=0;j<this->hitRects.size();j++)
 		{
@@ -172,25 +176,27 @@ multiy=(double)newgeom.h/(double)oldgadggeom.h;
 				{
 					switch(this->gadgetStretch)
 						{
-							case STRETCH:
-								
+							case STRETCH:								
 								this->hitRects.at(j).rect.y=(int)(double)((double)this->hitRects.at(j).rect.y*multiy+0.5);
 								this->hitRects.at(j).rect.h=(int)(double)((double)this->hitRects.at(j).rect.h*multiy+0.5);
-								//this->hitRects.at(j).rect.y*=(multiy);
-							//DEBUGFUNC("oldh=%i newh=%i diffh=%f",oldgadggeom.h,newgeom.h,multiy);
-//								this->hitRects.at(j).rect.w+=diffw;
-								//this->hitRects.at(j).rect.h=(this->hitRects.at(j).rect.h/multiy);
-//								this->hitRects.at(j).rect.y+=diffh;
-//	if(strcmp("Label Gadget",this->hitRects.at(j).gadget->LFSTK_getLabel())==0)
-//		printf("->>>--x=%i\n",this->hitRects.at(j).rect.x);
+								this->hitRects.at(j).rect.x=(int)(double)((double)this->hitRects.at(j).rect.x*multix+0.5);
+								this->hitRects.at(j).rect.w=(int)(double)((double)this->hitRects.at(j).rect.w*multix+0.5);
 
 								this->hitRects.at(j).gadget->LFSTK_resizeWindow(this->hitRects.at(j).rect.w,this->hitRects.at(j).rect.h);
 								this->hitRects.at(j).gadget->LFSTK_moveGadget(this->hitRects.at(j).rect.x,this->hitRects.at(j).rect.y);
-								//this->hitRects.at(j).gadget->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
 								break;
+
 							case MOVE:
+								{
+									double	perc=(double)this->hitRects.at(j).rect.x/(double)oldgadggeom.w;
+									this->hitRects.at(j).rect.x=(int)(((double)newgeom.w*perc)+0.5);
+									perc=(double)this->hitRects.at(j).rect.y/(double)oldgadggeom.h;
+									this->hitRects.at(j).rect.y=(int)(((double)newgeom.h*perc)+0.5);
+									this->hitRects.at(j).gadget->LFSTK_moveGadget(this->hitRects.at(j).rect.x,this->hitRects.at(j).rect.y);
+								}
 								break;
 							case SPACE:
+								//TODO//
 								break;
 						}
 				}

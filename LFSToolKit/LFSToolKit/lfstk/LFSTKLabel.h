@@ -34,6 +34,7 @@ class LFSTK_labelClass : public LFSTK_gadgetClass
 		LFSTK_labelClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity=CENTRE,int bgrav=BUTTONGRAV);
 		bool			mouseExit(XButtonEvent *e) {this->inWindow=false;return(false);};
 		bool			mouseEnter(XButtonEvent *e) {this->inWindow=true;return(false);};
+		bool			mouseDown(XButtonEvent *e) {this->inWindow=true;return(false);};
 };
 
 #endif

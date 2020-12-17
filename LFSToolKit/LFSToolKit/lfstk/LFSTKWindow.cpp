@@ -1423,6 +1423,27 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 			case Expose:
 				if (event->xexpose.count==0)
 					this->LFSTK_clearWindow();
+
+				if(!this->gadgetMap.empty())
+					{
+						for (std::map<int,mappedListener*>::iterator it=this->gadgetMap.begin();it!=this->gadgetMap.end();++it)
+							{
+								mappedListener	*ml=it->second;
+								if((ml!=NULL) && (ml->gadget!=NULL))
+									{
+										if(ml->type==MULTIGADGET)
+											{	
+												geometryStruct	oldwindowGeom=this->windowGeom;
+
+												LFSTK_MultiGadgetClass *gadget=static_cast<LFSTK_MultiGadgetClass*>(ml->gadget);
+												if(gadget->done==true)
+													break;
+												gadget->done=true;
+												gadget->LFSTK_resetHitRects();
+											}
+									}
+								}
+						}
 				break;
 
 			case ConfigureNotify:
@@ -1441,14 +1462,11 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 											mappedListener	*ml=it->second;
 											if((ml!=NULL) && (ml->gadget!=NULL))
 												{
-													//if(ml->gadget!=NULL)
-													//	{
-															if(ml->type==MULTIGADGET)
-																{
-																	LFSTK_MultiGadgetClass *gadget=static_cast<LFSTK_MultiGadgetClass*>(ml->gadget);
-																	gadget->LFSTK_updateGadget(oldwindowGeom);
-																}
-														//}
+													if(ml->type==MULTIGADGET)
+														{
+															LFSTK_MultiGadgetClass *gadget=static_cast<LFSTK_MultiGadgetClass*>(ml->gadget);
+															gadget->LFSTK_updateGadget(oldwindowGeom);
+														}
 												}
 										}
 								}

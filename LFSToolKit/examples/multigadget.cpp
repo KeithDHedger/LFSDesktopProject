@@ -22,6 +22,7 @@ exit $retval
 LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass		*label=NULL;
 LFSTK_MultiGadgetClass	*multi=NULL;
+LFSTK_MultiGadgetClass	*multi1=NULL;
 
 bool					mainLoop=true;
 Display					*display;
@@ -35,6 +36,10 @@ bool mouseparentCB(void *p,void* ud)
 		{
 			if(gadg->hitRects.at(j).gadget->window==gadg->xEvent->xbutton.subwindow)
 				{
+					if(j==0)
+						gadg->gadgetStretch=STRETCH;
+					if(j==2)
+						gadg->gadgetStretch=MOVE;
 					printf("Gadget No. %i Label=\"%s\" found\n",j,gadg->hitRects.at(j).gadget->LFSTK_getLabel());
 				}
 		}
@@ -49,52 +54,87 @@ bool mouseCB(void *p,void* ud)
 
 int main(int argc, char **argv)
 {
-	XEvent	event;
-	int		sy=0;
-	cairo_surface_t	*surfaceto,*surfacefrom;
-		
+	XEvent					event;
+	int						sy=0;
+	//cairo_surface_t			*surfaceto,*surfacefrom;
+	std::vector<hitRect>	hrs;
+	std::vector<hitRect>	hrs1;
+	
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,BOXLABEL,false);
 	display=wc->display;
 
-	label=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
+	multi1=new LFSTK_MultiGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*3);
+	multi1->stretchX=false;
+	multi1->stretchY=false;
+	multi1->lockY=LOCKTOTOP;
+	multi1->lockX=LOCKTOCENTRE;
+	multi1->gadgetStretch=MOVE;
+
+	hrs1.push_back({0,sy,DIALOGWIDTH,GADGETHITE,NULL});
+	hrs1.back().gadget=new LFSTK_labelClass(wc,BOXLABEL,0,0,1,1);
+	hrs1.back().gadget->LFSTK_setLabelGravity(CENTRE);
+	hrs1.back().gadget->LFSTK_setCairoFontDataParts("sB",20);
+	sy+=YSPACING;
+
+	hrs1.push_back({0,sy,DIALOGWIDTH,GADGETHITE,NULL});
+	hrs1.back().gadget=new LFSTK_labelClass(wc,COPYRITE,0,0,1,1);
+	hrs1.back().gadget->LFSTK_setLabelGravity(CENTRE);
 	sy+=HALFYSPACING;
-	label=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
-	label->LFSTK_setCairoFontDataParts("B");
+
+	hrs1.push_back({0,sy,DIALOGWIDTH,GADGETHITE,NULL});
+	hrs1.back().gadget=new LFSTK_labelClass(wc,PERSONAL,0,0,1,1);
+	hrs1.back().gadget->LFSTK_setLabelGravity(CENTRE);
+	hrs1.back().gadget->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
 
-	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
-	label->LFSTK_setCairoFontDataParts("sB",20);
-	sy+=YSPACING;
+	multi1->LFSTK_setHitRects(hrs1);
 
-	multi=new LFSTK_MultiGadgetClass(wc,"",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*4);
+
+	multi=new LFSTK_MultiGadgetClass(wc,"",DIALOGMIDDLE-GADGETWIDTH*2,sy,GADGETWIDTH*4,GADGETHITE);
 	multi->LFSTK_setMouseCallBack(NULL,mouseparentCB,NULL);
-	multi->stretchX=false;
+	multi->stretchX=true;
 	multi->stretchY=true;
 	multi->lockY=LOCKTOCENTRE;
 	multi->lockX=LOCKTOCENTRE;
+	multi->gadgetStretch=STRETCH;
 
-	geometryStruct geom;
-	multi->LFSTK_getGeom(&geom);
+//	geometryStruct geom;
+//	multi->LFSTK_getGeom(&geom);
 
-	std::vector<hitRect>	hrs;
+///	std::vector<hitRect>	hrs;
 
-	hrs.push_back({0,0,GADGETWIDTH*2,GADGETHITE,NULL});
-	hrs.back().gadget=new LFSTK_buttonClass(wc,"Normal",0,0,10,10);
-	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,mouseCB,(void*)multi);
+//vertical
+//	hrs.push_back({0,0,GADGETWIDTH*2,GADGETHITE,NULL});
+//	hrs.back().gadget=new LFSTK_buttonClass(wc,"Normal",0,0,10,10);
+//	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,mouseCB,(void*)multi);
+//
+//	hrs.push_back({0,GADGETHITE*3,GADGETWIDTH*2,GADGETHITE,NULL});
+//	hrs.back().gadget=new LFSTK_labelClass(wc,"Label Gadget",0,0,1,1);
+//	hrs.back().gadget->toParent=true;
+//
+//	hrs.push_back({0,GADGETHITE*2,GADGETWIDTH*2,GADGETHITE,NULL});
+//	hrs.back().gadget=new LFSTK_buttonClass(wc,"Button Gadget",0,0,1,1);
+//	hrs.back().gadget->toParent=true;
 
-	hrs.push_back({0,GADGETHITE*3,GADGETWIDTH*2,GADGETHITE,NULL});
-	hrs.back().gadget=new LFSTK_labelClass(wc,"Label Gadget",0,0,1,1);
+//horizontal
+	hrs.push_back({0,0,GADGETWIDTH,GADGETHITE,NULL});
+	hrs.back().gadget=new LFSTK_buttonClass(wc,"Stretch",0,0,10,10);
 	hrs.back().gadget->toParent=true;
 
-	hrs.push_back({0,GADGETHITE*2,GADGETWIDTH*2,GADGETHITE,NULL});
-	hrs.back().gadget=new LFSTK_buttonClass(wc,"Button Gadget",0,0,1,1);
+	hrs.push_back({(GADGETWIDTH*2)-HALFGADGETWIDTH,0,GADGETWIDTH,GADGETHITE,NULL});
+	hrs.back().gadget=new LFSTK_labelClass(wc,"LockToBottom",0,0,1,1);
 	hrs.back().gadget->toParent=true;
 
-	sy+=YSPACING+GADGETHITE*4;
+	hrs.push_back({(GADGETWIDTH*3)-1,0,GADGETWIDTH,GADGETHITE,NULL});
+	hrs.back().gadget=new LFSTK_buttonClass(wc,"Move",0,0,10,10);
+	hrs.back().gadget->toParent=true;
+
+	multi->LFSTK_setHitRects(hrs);
+
+	sy+=YSPACING;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();
-	multi->LFSTK_setHitRects(hrs);
 
 	fprintf(stderr,"%s\n",wc->globalLib->LFSTK_getGlobalString(-1,TYPEMONOFONT));
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
