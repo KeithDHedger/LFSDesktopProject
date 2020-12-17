@@ -193,6 +193,7 @@ void LFSTK_menuClass::LFSTK_addMainMenus(menuStruct **menus,int menucnt)
 				hite=SEPARATORHITE;
 
 			label=new LFSTK_menuItemClass(this->mainMenuWindow,this,0,sy,maxtxtwid,hite,this->mainMenu[j],gotthumb);
+			//label->LFSTK_setColourName(NORMALCOLOUR,"#808080");
 			label->LFSTK_setMouseCallBack(this->mouseCB.pressCallback,this->mouseCB.releaseCallback,(void*)(this->mainMenu[j]->userData));
 			if(this->mainMenu[j]->imageType==FILETHUMB)
 				label->LFSTK_setImageFromPath(this->mainMenu[j]->data.imagePath,MENU,true);
