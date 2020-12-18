@@ -1,4 +1,5 @@
 0.4.5
+Added various layouts to multi gadget class.
 Fixed menu colours.
 Added passing mouse/key events to gadget parent window.
 Added multigadget example to RunApps.cpp

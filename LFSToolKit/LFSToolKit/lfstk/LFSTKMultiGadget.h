@@ -28,8 +28,16 @@ struct	hitRect
 	LFSTK_gadgetClass	*gadget=NULL;
 };
 
+/**
+ * \brief lockType.
+ * \note Affects gadget as a whole.
+*/
 enum lockType			{LOCKTOLEFT,LOCKTORIGHT,LOCKTOTOP,LOCKTOBOTTOM,LOCKTOCENTRE,ABSOLUTE};
-enum stretchType		{STRETCH,MOVE,SPACE};
+/**
+ * \brief stretchType.
+ * \note Affects sub gadgets.
+*/
+enum stretchType		{STRETCH,MOVE,SPACESPREADX,SPACESPREADY,SPACELEFT,SPACERIGHT};
 
 /**
  * \brief Multi gadget class for LFSToolKit.
@@ -45,7 +53,7 @@ class LFSTK_MultiGadgetClass : public LFSTK_gadgetClass
 		void					LFSTK_updateGadget(geometryStruct oldgeom);
 
 //Not normally used by user.
-		void					LFSTK_resetHitRects(void);
+		void					LFSTK_resetGadgets(void);
 
 		bool					mouseExit(XButtonEvent *e) {this->inWindow=false;return(false);};
 		bool					mouseEnter(XButtonEvent *e) {this->inWindow=true;return(false);};
@@ -59,9 +67,11 @@ class LFSTK_MultiGadgetClass : public LFSTK_gadgetClass
 		int						spacing=BORDER;
 		bool					done=false;
 		std::vector<hitRect>	hitRects;
+		int						spacePad=16;
 
 	private:
 		void					updateInternalGadgets(geometryStruct oldgadggeom);
+		void					justifyHitRects(bool rezizeandmove);
 
 };
 

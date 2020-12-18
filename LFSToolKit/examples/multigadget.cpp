@@ -62,10 +62,10 @@ int main(int argc, char **argv)
 
 	multi=new LFSTK_MultiGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*3);
 	multi->stretchX=false;
-	multi->stretchY=false;
-	multi->lockY=LOCKTOTOP;
+	multi->stretchY=true;
+	multi->lockY=LOCKTOCENTRE;
 	multi->lockX=LOCKTOCENTRE;
-	multi->gadgetStretch=MOVE;
+	multi->gadgetStretch=SPACESPREADY;
 
 	hrs.push_back({0,sy,DIALOGWIDTH,GADGETHITE,NULL});
 	hrs.back().gadget=new LFSTK_labelClass(wc,BOXLABEL,0,0,1,1);
@@ -91,10 +91,10 @@ int main(int argc, char **argv)
 	multi=new LFSTK_MultiGadgetClass(wc,"",DIALOGMIDDLE-GADGETWIDTH*2,sy,GADGETWIDTH*4,GADGETHITE);
 	multi->LFSTK_setMouseCallBack(NULL,mouseparentCB,NULL);
 	multi->stretchX=true;
-	multi->stretchY=true;
+	multi->stretchY=false;
 	multi->lockY=LOCKTOBOTTOM;
 	multi->lockX=LOCKTOCENTRE;
-	multi->gadgetStretch=STRETCH;
+	multi->gadgetStretch=SPACESPREADX;
 
 //vertical
 //	hrs.push_back({0,0,GADGETWIDTH*2,GADGETHITE,NULL});
@@ -121,6 +121,10 @@ int main(int argc, char **argv)
 	hrs.push_back({(GADGETWIDTH*3)-1,0,GADGETWIDTH,GADGETHITE,NULL});
 	hrs.back().gadget=new LFSTK_buttonClass(wc,"Move",0,0,10,10);
 	hrs.back().gadget->toParent=true;
+
+//	hrs.push_back({(GADGETWIDTH*3)-1,0,GADGETWIDTH,GADGETHITE,NULL});
+//	hrs.back().gadget=new LFSTK_buttonClass(wc,"Move2",0,0,1,1);
+//	hrs.back().gadget->toParent=true;
 
 	multi->LFSTK_setHitRects(hrs);
 

@@ -1439,7 +1439,7 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 												if(gadget->done==true)
 													break;
 												gadget->done=true;
-												gadget->LFSTK_resetHitRects();
+												gadget->LFSTK_resetGadgets();
 											}
 									}
 								}

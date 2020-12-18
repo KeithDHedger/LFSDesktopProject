@@ -539,53 +539,15 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 //DEBUGFUNC("gadget=%p",gadget);
 	gadget->xEvent=e;
 
-
-
-//			if(gadget->toParent==true)
-//{
-//DEBUG
-////e->xbutton.window=gadget->parent;
-////e->xbutton.send_event=true;
-//XSendEvent(gadget->wc->display,gadget->parent,FALSE,0L,(XEvent*)e);
-////return(true);
-//retval=true;
-//}
-
 	switch (e->type)
 		{
 			case EnterNotify:
-//				if(gadget->toParent==true)
-//					{
-//						e->xbutton.window=gadget->parent;
-//						e->xbutton.send_event=true;
-//						XSendEvent(gadget->wc->display,gadget->parent,true,0xffff,(XEvent*)e);
-//						retval=true;
-//						break;
-//					}
 				retval=gadget->mouseEnter(&e->xbutton);
 				break;
 			case LeaveNotify:
-//				if(gadget->toParent==true)
-//					{
-//						e->xbutton.window=gadget->parent;
-//						e->xbutton.send_event=true;
-//						XSendEvent(gadget->wc->display,gadget->parent,true,0xffff,(XEvent*)e);
-//						retval=true;
-//						break;
-//					}
 				retval=gadget->mouseExit(&e->xbutton);
 				break;
 			case ButtonRelease:
-//				if(gadget->toParent==true)
-//					{
-//						e->xbutton.window=gadget->parent;
-//						e->xbutton.send_event=true;
-//						XSendEvent(gadget->wc->display,gadget->parent,true,0xffff,(XEvent*)e);
-//						retval=true;
-//						break;
-//					}
-//
-			//DEBUGFUNC("gadget=%p",gadget);
 				if(gadget->firstClick==false)
 					{
 						gadget->isDoubleClick=false;
@@ -596,10 +558,8 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 					{
 						gadget->firstClick=false;
 						if(e->xbutton.time-gadget->lastTime<gadget->wc->dbClick)
-
-{
-							gadget->isDoubleClick=true;
-				//	DEBUGFUNC("double click=%b",gadget->isDoubleClick);
+							{
+								gadget->isDoubleClick=true;
 							}
 						else
 							{
@@ -610,10 +570,8 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 					}
 
 				retval=gadget->mouseUp(&e->xbutton);
-				//if((type!=LINEEDITGADGET) && (type!=MULTILINEGADGET))
-				//	XSetInputFocus(gadget->wc->display,e->xbutton.window,RevertToPointerRoot,CurrentTime);
-				//	XSetInputFocus(gadget->wc->display,gadget->wc->window,RevertToParent,CurrentTime);
 				break;
+
 			case ButtonPress:
 				gadget->currentButton=e->xbutton.button;
 				if((gadget->LFSTK_getContextWindow()!=NULL) && (gadget->currentButton==Button3))

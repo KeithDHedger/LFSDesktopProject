@@ -84,20 +84,92 @@ void LFSTK_MultiGadgetClass::LFSTK_setHitRects(std::vector<hitRect> hr)
 }
 
 /**
-* Set hit rects and resize/move gadgets.
-* \note Not normally used by user.
+* Private Set hit rects and resize/move gadgets.
+* \param bool rezizeandmove true=resize and move gadgets.
 */
-void LFSTK_MultiGadgetClass::LFSTK_resetHitRects(void)
+void LFSTK_MultiGadgetClass::justifyHitRects(bool rezizeandmove)
 {
+	geometryStruct	newgeom;
+	int				sx=0;
+	int				gapsize=0;
+
+	this->LFSTK_getGeom(&newgeom);
+
+	if(this->gadgetStretch==SPACESPREADX)
+		{
+			int totalw=0;
+			int gaps=this->hitRects.size()+1;
+			for(int k=0;k<this->hitRects.size();k++)
+				totalw+=this->hitRects.at(k).rect.w;
+			gapsize=(newgeom.w-totalw)/gaps;
+			sx=gapsize;
+		}
+
+	if(this->gadgetStretch==SPACESPREADY)
+		{
+			int totalh=0;
+			int gaps=this->hitRects.size()+1;
+			for(int k=0;k<this->hitRects.size();k++)
+				totalh+=this->hitRects.at(k).rect.h;
+			gapsize=(newgeom.h-totalh)/gaps;
+			sx=gapsize;
+		}
+
+	if(this->gadgetStretch==SPACERIGHT)
+		sx=newgeom.w;
+
 	for(int j=0;j<this->hitRects.size();j++)
 		if(this->hitRects.at(j).gadget!=NULL)
 			{
-				this->hitRects.at(j).gadget->LFSTK_resizeWindow(this->hitRects.at(j).rect.w,this->hitRects.at(j).rect.h);
+				switch(this->gadgetStretch)
+					{
+						case SPACESPREADX:
+							this->hitRects.at(j).rect.x=sx;
+							sx+=this->hitRects.at(j).rect.w+gapsize;
+							break;
+						case SPACESPREADY:
+							this->hitRects.at(j).rect.y=sx;
+							sx+=this->hitRects.at(j).rect.h+gapsize;
+							break;
+						case SPACELEFT:
+							this->hitRects.at(j).rect.x=sx;
+							sx+=this->hitRects.at(j).rect.w+spacePad;
+							break;
+						case SPACERIGHT:	
+							sx-=(this->hitRects.at(this->hitRects.size()-j-1).rect.w+spacePad);
+							this->hitRects.at(this->hitRects.size()-j-1).rect.x=sx;
+							break;
+					}
+				if(rezizeandmove==true)
+					{
+						this->hitRects.at(j).gadget->LFSTK_resizeWindow(this->hitRects.at(j).rect.w,this->hitRects.at(j).rect.h);
+						this->hitRects.at(j).gadget->LFSTK_moveGadget(this->hitRects.at(j).rect.x,this->hitRects.at(j).rect.y);
+					}
+			}
+}
+
+/**
+* Set hit rects and resize/move gadgets.
+* \note Not normally used by user.
+* \note Called from expose event from main window.
+*/
+void LFSTK_MultiGadgetClass::LFSTK_resetGadgets(void)
+{
+	this->justifyHitRects(true);
+
+	for(int j=0;j<this->hitRects.size();j++)
+		if(this->hitRects.at(j).gadget!=NULL)
+			{
 				XReparentWindow(this->display,this->hitRects.at(j).gadget->window,this->window,this->hitRects.at(j).rect.x,this->hitRects.at(j).rect.y);
 				this->hitRects.at(j).gadget->parent=this->window;
 			}
 }
 
+/**
+* Set hit rects and resize/move gadgets.
+* \note Not normally used by user.
+* \note Called from ConfigureNotify event from main window.
+*/
 void LFSTK_MultiGadgetClass::LFSTK_updateGadget(geometryStruct oldgeom)
 {
 	geometryStruct			oldgadggeom;
@@ -195,17 +267,14 @@ void LFSTK_MultiGadgetClass::updateInternalGadgets(geometryStruct oldgadggeom)
 									this->hitRects.at(j).gadget->LFSTK_moveGadget(this->hitRects.at(j).rect.x,this->hitRects.at(j).rect.y);
 								}
 								break;
-							case SPACE:
-								//TODO//
+
+							case SPACESPREADX:
+							case SPACESPREADY:
+							case SPACELEFT:
+							case SPACERIGHT:
+								this->justifyHitRects(true);
 								break;
 						}
 				}
 		}
 }
-
-
-
-
-
-
-
