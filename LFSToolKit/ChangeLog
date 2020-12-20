@@ -1,5 +1,6 @@
 0.4.5
-
+Updated run examples.
+Cleaned menu example.
 Added various layouts to multi gadget class.
 Fixed menu colours.
 Added passing mouse/key events to gadget parent window.

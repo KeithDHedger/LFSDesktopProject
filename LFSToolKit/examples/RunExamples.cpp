@@ -32,6 +32,7 @@ LFSTK_buttonClass			*button=NULL;
 LFSTK_toggleButtonClass		*useDbg=NULL;
 LFSTK_toggleButtonClass		*openFile=NULL;
 LFSTK_toggleButtonClass		*makeLib=NULL;
+LFSTK_MultiGadgetClass		*multi=NULL;
 
 bool						mainLoop=true;
 Display						*display;
@@ -84,131 +85,199 @@ bool doDbg(void *p,void* ud)
 
 int main(int argc, char **argv)
 {
-	XEvent	event;
-	int		sy=BORDER;
-
+	XEvent					event;
+	int						sy=0;
+	std::vector<hitRect>	hrs;
 	dbg="";
 
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Gadgets",false);
 	display=wc->display;
 
-	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
-	label->LFSTK_setCairoFontDataParts("sB",20);
+//info
+	multi=new LFSTK_MultiGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*4);
+	multi->stretchX=false;
+	multi->stretchY=false;
+	multi->lockY=LOCKTOTOP;
+	multi->lockX=LOCKTOCENTRE;
+	multi->gadgetStretch=MOVE;
+
+	hrs.push_back({0,sy,DIALOGWIDTH,GADGETHITE,NULL});
+	hrs.back().gadget=new LFSTK_labelClass(wc,BOXLABEL,0,0,1,1);
+	hrs.back().gadget->LFSTK_setLabelGravity(CENTRE);
+	hrs.back().gadget->LFSTK_setCairoFontDataParts("sB",20);
 	sy+=YSPACING;
 
-	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
+	hrs.push_back({0,sy,DIALOGWIDTH,GADGETHITE,NULL});
+	hrs.back().gadget=new LFSTK_labelClass(wc,COPYRITE,0,0,1,1);
+	hrs.back().gadget->LFSTK_setLabelGravity(CENTRE);
 	sy+=HALFYSPACING;
-	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
-	personal->LFSTK_setCairoFontDataParts("B");
+
+	hrs.push_back({0,sy,DIALOGWIDTH,GADGETHITE,NULL});
+	hrs.back().gadget=new LFSTK_labelClass(wc,PERSONAL,0,0,1,1);
+	hrs.back().gadget->LFSTK_setLabelGravity(CENTRE);
+	hrs.back().gadget->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
 
-	useDbg=new LFSTK_toggleButtonClass(wc,"Use Valgrind",BORDER,sy,GADGETWIDTH,GADGETHITE,NorthWestGravity);
+	multi->LFSTK_setHitRects(hrs);
+
+	hrs.clear();
+
+//options
+	multi=new LFSTK_MultiGadgetClass(wc,"",0,sy,DIALOGWIDTH,GADGETHITE);
+	multi->stretchX=true;
+	multi->stretchY=false;
+	multi->lockY=LOCKTOTOP;
+	multi->lockX=LOCKTOCENTRE;
+	multi->gadgetStretch=SPACESPREADX;
+
+	hrs.push_back({0,0,GADGETWIDTH,GADGETHITE,NULL});
+	useDbg=new LFSTK_toggleButtonClass(wc,"Use Valgrind",0,0,GADGETWIDTH,GADGETHITE,NorthWestGravity);
 	useDbg->LFSTK_setValue(false);
 	useDbg->LFSTK_setMouseCallBack(NULL,doDbg,NULL);
+	hrs.back().gadget=useDbg;
 
-	openFile=new LFSTK_toggleButtonClass(wc,"Open File",BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthWestGravity);
+	hrs.push_back({0,0,GADGETWIDTH,GADGETHITE,NULL});
+	openFile=new LFSTK_toggleButtonClass(wc,"Open File",0,0,GADGETWIDTH,GADGETHITE,NorthWestGravity);
 	openFile->LFSTK_setValue(false);
+	hrs.back().gadget=openFile;
 
-	makeLib=new LFSTK_toggleButtonClass(wc,"Build Lib",BORDER*2+GADGETWIDTH*2,sy,GADGETWIDTH,GADGETHITE,NorthWestGravity);
+	hrs.push_back({0,0,GADGETWIDTH,GADGETHITE,NULL});
+	makeLib=new LFSTK_toggleButtonClass(wc,"Build Lib",0,0,GADGETWIDTH,GADGETHITE,NorthWestGravity);
 	makeLib->LFSTK_setValue(true);
+	hrs.back().gadget=makeLib;
 
-	sy+=YSPACING;
-
+	multi->LFSTK_setHitRects(hrs);
+	hrs.clear();
 //line
-	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,2,BUTTONGRAV);
-	seperator->LFSTK_setStyle(BEVELNONE);
-	seperator->gadgetDetails.buttonTile=false;
-	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
-	sy+=YSPACING/3;
+	sy+=HALFYSPACING+12;
+	multi=new LFSTK_MultiGadgetClass(wc,"",0,sy,DIALOGWIDTH,GADGETHITE-11);
+	multi->stretchX=true;
+	multi->stretchY=false;
+	multi->lockY=LOCKTOTOP;
+	multi->lockX=LOCKTOCENTRE;
+	multi->gadgetStretch=STRETCH;
 
-//run examples
+	hrs.push_back({0,0,DIALOGWIDTH,2,NULL});
+	hrs.back().gadget=new LFSTK_buttonClass(wc,"--",0,0,DIALOGWIDTH,2,BUTTONGRAV);
+	hrs.back().gadget->gadgetDetails.bevel=BEVELNONE;
+	hrs.back().gadget->gadgetDetails.buttonTile=false;
+	hrs.back().gadget->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
+
+	multi->LFSTK_setHitRects(hrs);
+	hrs.clear();
+
+	sy+=HALFYSPACING-4;
+
+//run examples - middle bit
+	int	internalsy=0;
+	multi=new LFSTK_MultiGadgetClass(wc,"",GADGETWIDTH+BORDER/2,sy,GADGETWIDTH*3+BORDER*2,GADGETHITE*13);
+	multi->stretchX=true;
+	multi->stretchY=true;
+	multi->lockY=LOCKTOTOP;
+	multi->lockX=LOCKTOCENTRE;
+	multi->gadgetStretch=STRETCH;
+
 //lineedit
-	button=new LFSTK_buttonClass(wc,"Line Edit",DIALOGMIDDLE-(GADGETWIDTH-BORDER)*2,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	button->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./lineedit.cpp");
-//	sy+=YSPACING;
+	hrs.push_back({0,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Line Edit",0,0,1,1)});
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./lineedit.cpp");
 //multi line
-	button=new LFSTK_buttonClass(wc,"Multi Line Edit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	button->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./multilineedit.cpp");
+	hrs.push_back({GADGETWIDTH+multi->spacePad,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Multi Line Edit",0,0,1,1)});
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./multilineedit.cpp");
 //get icon path
-	button=new LFSTK_buttonClass(wc,"Get Icon Path",DIALOGMIDDLE+(BORDER*3),sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	button->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./geticonpath.cpp");
-	sy+=YSPACING;
+	hrs.push_back({(GADGETWIDTH+multi->spacePad)*2,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Get Icon Path",0,0,1,1)});
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./geticonpath.cpp");
 
+	internalsy+=YSPACING;
 //basic buttons
-	button=new LFSTK_buttonClass(wc,"Buttons",DIALOGMIDDLE-(GADGETWIDTH-BORDER)*2,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	button->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./basic.cpp");
+	hrs.push_back({0,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Buttons",0,0,1,1)});
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./basic.cpp");
 //toggles
-	button=new LFSTK_buttonClass(wc,"Toggles",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	button->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./toggle.cpp");
-//multi gadgetAcceptsDnD
-	button=new LFSTK_buttonClass(wc,"Multi",DIALOGMIDDLE+(BORDER*3),sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	button->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./multigadget.cpp");
-	sy+=YSPACING;
+	hrs.push_back({GADGETWIDTH+multi->spacePad,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Toggles",0,0,1,1)});
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./toggle.cpp");
+//multi
+	hrs.push_back({(GADGETWIDTH+multi->spacePad)*2,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Multi",0,0,1,1)});
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./multigadget.cpp");
 
-
+	internalsy+=YSPACING;
 
 //menus
-	button=new LFSTK_buttonClass(wc,"Menus",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	button->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./menus.cpp");
-	sy+=YSPACING;
-//
-//
-//
-//	button=new LFSTK_buttonClass(wc,"Basic Menu",DIALOGMIDDLE-GADGETWIDTH-BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-//	button->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./basicmenu.cpp");
-////sub menus
-//	button=new LFSTK_buttonClass(wc,"Sub Menus",DIALOGMIDDLE+BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-//	button->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./submenus.cpp");
-//	sy+=YSPACING;
+	hrs.push_back({GADGETWIDTH+multi->spacePad,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Menus",0,0,1,1)});
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./menus.cpp");
+	internalsy+=YSPACING;
+
 //dialogs
-	button=new LFSTK_buttonClass(wc,"Dialogs",DIALOGMIDDLE-GADGETWIDTH-BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	button->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./dialogs.cpp");
+	hrs.push_back({0,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Dialogs",0,0,1,1)});
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./dialogs.cpp");
 //fontdialog
-	button=new LFSTK_buttonClass(wc,"Font Dialog",DIALOGMIDDLE+BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	button->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./fontdialog.cpp");
-	sy+=YSPACING;
+	hrs.push_back({(GADGETWIDTH+multi->spacePad)*2,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Font Dialog",0,0,1,1)});
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./fontdialog.cpp");
+	internalsy+=YSPACING;
+
 //list
-	button=new LFSTK_buttonClass(wc,"List",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	button->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./list.cpp");
-	sy+=YSPACING;
+	hrs.push_back({GADGETWIDTH+multi->spacePad,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"List",0,0,1,1)});
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./list.cpp");
+	internalsy+=YSPACING;
+
 //window
-	button=new LFSTK_buttonClass(wc,"Window",DIALOGMIDDLE-GADGETWIDTH-BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	button->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./window.cpp");
+	hrs.push_back({0,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Window",0,0,1,1)});
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./window.cpp");
 //subwindow
-	button=new LFSTK_buttonClass(wc,"Sub Window",DIALOGMIDDLE+BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	button->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./subwindowtest.cpp");
-	sy+=YSPACING;
+	hrs.push_back({(GADGETWIDTH+multi->spacePad)*2,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Sub Window",0,0,1,1)});
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./subwindowtest.cpp");
+	internalsy+=YSPACING;
+
 //image
-	button=new LFSTK_buttonClass(wc,"Image",DIALOGMIDDLE-GADGETWIDTH-BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	button->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./image.cpp");
+	hrs.push_back({0,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Image",0,0,1,1)});
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./image.cpp");
 //image buttons
-	button=new LFSTK_buttonClass(wc,"Image Buttons",DIALOGMIDDLE+BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	button->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./imagebutton.cpp");
-	sy+=YSPACING;
+	hrs.push_back({(GADGETWIDTH+multi->spacePad)*2,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Image Buttons",0,0,1,1)});
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./imagebutton.cpp");
+	internalsy+=YSPACING;
+
 //scrollbar
-	button=new LFSTK_buttonClass(wc,"Scrollbar",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	button->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./scrollbar.cpp");
-	sy+=YSPACING;
+	hrs.push_back({GADGETWIDTH+multi->spacePad,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Scrollbar",0,0,1,1)});
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./scrollbar.cpp");
+	internalsy+=YSPACING;
+
 //lfsabout
-	button=new LFSTK_buttonClass(wc,"LFS About",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	button->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./lfsabout.cpp");
-	sy+=YSPACING;
+	hrs.push_back({GADGETWIDTH+multi->spacePad,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"LFS About",0,0,1,1)});
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./lfsabout.cpp");
+	internalsy+=YSPACING;
+
 //run command
-	button=new LFSTK_buttonClass(wc,"Run Command",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	button->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./lfsruncommand.cpp");
-	sy+=YSPACING;
+	hrs.push_back({GADGETWIDTH+multi->spacePad,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Run Command",0,0,1,1)});
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./lfsruncommand.cpp");
+	internalsy+=YSPACING;
+
+	multi->LFSTK_setHitRects(hrs);
+	hrs.clear();
+
+	sy+=YSPACING*10;
+
+//bottom bit
+	multi=new LFSTK_MultiGadgetClass(wc,"",0,sy,DIALOGWIDTH,GADGETHITE+12);
+	multi->stretchX=true;
+	multi->stretchY=false;
+	multi->lockY=LOCKTOBOTTOM;
+	multi->lockX=LOCKTOCENTRE;
+	multi->gadgetStretch=STRETCH;
 
 //line
-	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,2,BUTTONGRAV);
-	seperator->LFSTK_setStyle(BEVELNONE);
-	seperator->gadgetDetails.buttonTile=false;
-	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
-	sy+=(YSPACING/3);
+	hrs.push_back({0,0,DIALOGWIDTH,2,NULL});
+	hrs.back().gadget=new LFSTK_buttonClass(wc,"--",0,0,DIALOGWIDTH,2,BUTTONGRAV);
+	hrs.back().gadget->gadgetDetails.bevel=BEVELNONE;
+	hrs.back().gadget->gadgetDetails.buttonTile=false;
+	hrs.back().gadget->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
 
 //quit
-	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
-	sy+=YSPACING;
+	hrs.push_back({DIALOGWIDTH/2-HALFGADGETWIDTH,12,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Quit",0,0,1,1)});
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
+	internalsy+=YSPACING;
+
+	multi->LFSTK_setHitRects(hrs);
+	hrs.clear();
+
+	sy+=YSPACING+14;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();

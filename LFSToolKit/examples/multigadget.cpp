@@ -62,10 +62,10 @@ int main(int argc, char **argv)
 
 	multi=new LFSTK_MultiGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*3);
 	multi->stretchX=false;
-	multi->stretchY=true;
-	multi->lockY=LOCKTOCENTRE;
+	multi->stretchY=false;
+	multi->lockY=LOCKTOTOP;
 	multi->lockX=LOCKTOCENTRE;
-	multi->gadgetStretch=SPACESPREADY;
+	multi->gadgetStretch=MOVE;
 
 	hrs.push_back({0,sy,DIALOGWIDTH,GADGETHITE,NULL});
 	hrs.back().gadget=new LFSTK_labelClass(wc,BOXLABEL,0,0,1,1);
@@ -94,7 +94,7 @@ int main(int argc, char **argv)
 	multi->stretchY=false;
 	multi->lockY=LOCKTOBOTTOM;
 	multi->lockX=LOCKTOCENTRE;
-	multi->gadgetStretch=SPACESPREADX;
+	multi->gadgetStretch=STRETCH;
 
 //vertical
 //	hrs.push_back({0,0,GADGETWIDTH*2,GADGETHITE,NULL});
