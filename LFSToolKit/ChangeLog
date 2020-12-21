@@ -1,4 +1,7 @@
 0.4.5
+Updated lineedit example.
+Fixed dAndD onto multi gadget.
+Set sensible defaults for multigadget.
 Updated run examples.
 Cleaned menu example.
 Added various layouts to multi gadget class.

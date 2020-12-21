@@ -16,18 +16,11 @@ exit $retval
 
 #include "lfstk/LFSTKGlobals.h"
 
-#define BOXLABEL			"Line Edit"
+#define BOXLABEL	"Line Edit"
 
-LFSTK_windowClass			*wc=NULL;
-LFSTK_labelClass			*label=NULL;
-LFSTK_labelClass			*personal=NULL;
-LFSTK_labelClass			*copyrite=NULL;
-LFSTK_buttonClass			*seperator=NULL;
-LFSTK_buttonClass			*quit=NULL;
-LFSTK_lineEditClass			*editbox=NULL;
-
-bool						mainLoop=true;
-Display						*display;
+LFSTK_windowClass	*wc=NULL;
+bool				mainLoop=true;
+Display				*display;
 
 bool doQuit(void *p,void* ud)
 {
@@ -39,28 +32,25 @@ bool doQuit(void *p,void* ud)
 
 bool doKeyUp(void *p,void* ud)
 {
-	if(editbox->LFSTK_getKey()!=XK_VoidSymbol)
+	LFSTK_lineEditClass	*gadg=NULL;
+	gadg=static_cast<LFSTK_lineEditClass*>(p);
+
+	if(gadg->LFSTK_getKey()!=XK_VoidSymbol)
 		{
-			printf(">>%s<<\n",editbox->LFSTK_getCStr());
-			printf("Keycode=0x%x\n",editbox->LFSTK_getKey());
-			printf("Keysym=XK_%s\n",editbox->LFSTK_getKeySym());
-			printf("Modifier=0x%x\n",editbox->LFSTK_getModifier());
+			printf(">>%s<<\n",gadg->LFSTK_getCStr());
+			printf("Keycode=0x%x\n",gadg->LFSTK_getKey());
+			printf("Keysym=XK_%s\n",gadg->LFSTK_getKeySym());
+			printf("Modifier=0x%x\n",gadg->LFSTK_getModifier());
 		}
 	return(true);
 }
 
 bool doMouseUp(void *p,void* ud)
 {
-	printf("button=%X state=%X\n",editbox->mouseEvent->button,editbox->mouseEvent->state & ControlMask);
-	return(true);
-}
+	LFSTK_lineEditClass	*gadg=NULL;
+	gadg=static_cast<LFSTK_lineEditClass*>(p);
 
-bool buttonCB(void *p,void* ud)
-{
-	if(ud!=NULL)
-		{
-			printf(">>>%s<<<\n",(const char*)ud);
-		}
+	printf("button=%X state=%X\n",gadg->mouseEvent->button,gadg->mouseEvent->state & ControlMask);
 	return(true);
 }
 
@@ -68,41 +58,69 @@ int main(int argc, char **argv)
 {
 	XEvent	event;
 	int		sy=BORDER;
-		
+	std::vector<hitRect>	hrs;
+	LFSTK_MultiGadgetClass	*multi=NULL;
+
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,BOXLABEL,false);
 
 	display=wc->display;
 
-	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
-	label->LFSTK_setCairoFontDataParts("sB",20);
-	sy+=YSPACING;
+	multi=new LFSTK_MultiGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*3);
+	multi->gadgetStretch=SPACESPREADY;
 
-	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
-	sy+=HALFYSPACING;
-	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
-	personal->LFSTK_setCairoFontDataParts("B");
-	sy+=YSPACING;
+	hrs.push_back({0,0,DIALOGWIDTH,GADGETHITE,new LFSTK_labelClass(wc,BOXLABEL,0,0,1,1)});
+	hrs.back().gadget->LFSTK_setCairoFontDataParts("sB",20);
+	hrs.push_back({0,0,DIALOGWIDTH,GADGETHITE,new LFSTK_labelClass(wc,COPYRITE,0,0,1,1)});
+	hrs.push_back({0,0,DIALOGWIDTH,GADGETHITE,new LFSTK_labelClass(wc,PERSONAL,0,0,1,1)});
+	hrs.back().gadget->LFSTK_setCairoFontDataParts("B");
+	multi->LFSTK_setHitRects(hrs);
+	hrs.clear();
+
+	sy+=YSPACING*2;
 
 //line edit
-	editbox=new LFSTK_lineEditClass(wc,"Basic line editing class for LFSToolKit.",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
-//	editbox=new LFSTK_lineEditClass(wc,"A123456789012345678901234567890123456789012345678901234567890123456789012345678Z",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
+	multi=new LFSTK_MultiGadgetClass(wc,"",BORDER,sy,DIALOGWIDTH-BORDER*2,GADGETHITE);
+	multi->stretchX=true;
+	multi->gadgetStretch=STRETCH;
+	multi->gadgetAcceptsDnD=true;
 
-	editbox->LFSTK_setKeyCallBack(NULL,doKeyUp,USERDATA(12345));
-	editbox->LFSTK_setCallbackOnReturn(false);
-	editbox->LFSTK_setMouseCallBack(NULL,doMouseUp,NULL);
+	hrs.push_back({0,0,DIALOGWIDTH,GADGETHITE,new LFSTK_lineEditClass(wc,"Basic line editing class for LFSToolKit.",0,0,1,1)});
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,doMouseUp,NULL);
+	hrs.back().gadget->LFSTK_setKeyCallBack(NULL,doKeyUp,USERDATA(12345));
+	static_cast<LFSTK_lineEditClass*>(hrs.back().gadget)->LFSTK_setCallbackOnReturn(false);
+
+	multi->LFSTK_setHitRects(hrs);
+	hrs.clear();
+
 	sy+=YSPACING;
+
+//bottom bit
+	multi=new LFSTK_MultiGadgetClass(wc,"",0,sy,DIALOGWIDTH,6);
+	multi->stretchX=true;
+	multi->lockY=LOCKTOBOTTOM;
+	multi->gadgetStretch=STRETCH;
 
 //line
-	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
-	seperator->LFSTK_setStyle(BEVELNONE);
-	seperator->gadgetDetails.buttonTile=false;
-	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
-	sy+=YSPACING;
+	hrs.push_back({0,0,DIALOGWIDTH,2,NULL});
+	hrs.back().gadget=new LFSTK_buttonClass(wc,"--",0,0,DIALOGWIDTH,2,BUTTONGRAV);
+	hrs.back().gadget->gadgetDetails.bevel=BEVELNONE;
+	hrs.back().gadget->gadgetDetails.buttonTile=false;
+	hrs.back().gadget->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
+
+	multi->LFSTK_setHitRects(hrs);
+	hrs.clear();
 
 //quit
-	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
-	sy+=YSPACING;
+	multi=new LFSTK_MultiGadgetClass(wc,"",DIALOGMIDDLE-HALFGADGETWIDTH,sy+12,GADGETWIDTH,GADGETHITE);
+	multi->lockY=LOCKTOBOTTOM;
+
+	hrs.push_back({0,0,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Quit",0,0,1,1)});
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
+
+	multi->LFSTK_setHitRects(hrs);
+	hrs.clear();
+
+	sy+=YSPACING+16;
 
 	wc->acceptOnThis=false;
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
@@ -110,7 +128,6 @@ int main(int argc, char **argv)
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	mainLoop=true;
-//wc->acceptOnThis=true;
 	while(mainLoop==true)
 		{
 			XNextEvent(wc->display,&event);
@@ -121,39 +138,6 @@ int main(int argc, char **argv)
 
 			if(wc->LFSTK_handleWindowEvents(&event)<0)
 				mainLoop=false;
-
-//
-//			switch(event.type)
-//				{
-//
-//					case ClientMessage:
-//					case SelectionNotify:
-//						{
-//							if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
-//								{
-//									wc->LFSTK_hideWindow();
-//									mainLoop=false;
-//								}
-////dnd for edit box
-//							if(wc->acceptDnd==true)
-//								{
-//									wc->LFSTK_handleDnD(&event);
-//								
-//									if((wc->droppedData.type!=(dropDataType)-1) && (wc->acceptOnThis==true))
-//										{
-//					printf("ZZZZZZZZZZZZZZ\n");
-//											printf("dropped on window=>>%s<<\n",wc->droppedData.data);
-//											wc->droppedData.type=(dropDataType)-1;
-//											
-//										}
-//								}
-//						}
-//						break;
-//				}
-
-
-
-
 		}
 
 	delete wc;

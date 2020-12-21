@@ -23,12 +23,6 @@ exit $retval
 #define BOXLABEL			"Examples"
 
 LFSTK_windowClass			*wc=NULL;
-LFSTK_labelClass			*label=NULL;
-LFSTK_labelClass			*personal=NULL;
-LFSTK_labelClass			*copyrite=NULL;
-LFSTK_buttonClass			*seperator=NULL;
-LFSTK_buttonClass			*quit=NULL;
-LFSTK_buttonClass			*button=NULL;
 LFSTK_toggleButtonClass		*useDbg=NULL;
 LFSTK_toggleButtonClass		*openFile=NULL;
 LFSTK_toggleButtonClass		*makeLib=NULL;
@@ -52,11 +46,8 @@ bool buttonCB(void *p,void* ud)
 	if(ud!=NULL)
 		{
 			if(makeLib->LFSTK_getValue()==true)
-				{
-					asprintf(&command,"(cd ..;make -j4)",(const char*)ud,dbg);
-					system(command);
-					free(command);
-				}
+				system("(cd ..;make -j4)");
+
 			asprintf(&command,"%s %s &",(const char*)ud,dbg);
 			system(command);
 			free(command);
@@ -95,11 +86,6 @@ int main(int argc, char **argv)
 
 //info
 	multi=new LFSTK_MultiGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*4);
-	multi->stretchX=false;
-	multi->stretchY=false;
-	multi->lockY=LOCKTOTOP;
-	multi->lockX=LOCKTOCENTRE;
-	multi->gadgetStretch=MOVE;
 
 	hrs.push_back({0,sy,DIALOGWIDTH,GADGETHITE,NULL});
 	hrs.back().gadget=new LFSTK_labelClass(wc,BOXLABEL,0,0,1,1);
@@ -125,9 +111,6 @@ int main(int argc, char **argv)
 //options
 	multi=new LFSTK_MultiGadgetClass(wc,"",0,sy,DIALOGWIDTH,GADGETHITE);
 	multi->stretchX=true;
-	multi->stretchY=false;
-	multi->lockY=LOCKTOTOP;
-	multi->lockX=LOCKTOCENTRE;
 	multi->gadgetStretch=SPACESPREADX;
 
 	hrs.push_back({0,0,GADGETWIDTH,GADGETHITE,NULL});
@@ -148,13 +131,11 @@ int main(int argc, char **argv)
 
 	multi->LFSTK_setHitRects(hrs);
 	hrs.clear();
+
 //line
 	sy+=HALFYSPACING+12;
 	multi=new LFSTK_MultiGadgetClass(wc,"",0,sy,DIALOGWIDTH,GADGETHITE-11);
 	multi->stretchX=true;
-	multi->stretchY=false;
-	multi->lockY=LOCKTOTOP;
-	multi->lockX=LOCKTOCENTRE;
 	multi->gadgetStretch=STRETCH;
 
 	hrs.push_back({0,0,DIALOGWIDTH,2,NULL});
@@ -173,8 +154,6 @@ int main(int argc, char **argv)
 	multi=new LFSTK_MultiGadgetClass(wc,"",GADGETWIDTH+BORDER/2,sy,GADGETWIDTH*3+BORDER*2,GADGETHITE*13);
 	multi->stretchX=true;
 	multi->stretchY=true;
-	multi->lockY=LOCKTOTOP;
-	multi->lockX=LOCKTOCENTRE;
 	multi->gadgetStretch=STRETCH;
 
 //lineedit
@@ -197,7 +176,6 @@ int main(int argc, char **argv)
 //multi
 	hrs.push_back({(GADGETWIDTH+multi->spacePad)*2,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Multi",0,0,1,1)});
 	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./multigadget.cpp");
-
 	internalsy+=YSPACING;
 
 //menus
@@ -255,11 +233,9 @@ int main(int argc, char **argv)
 	sy+=YSPACING*10;
 
 //bottom bit
-	multi=new LFSTK_MultiGadgetClass(wc,"",0,sy,DIALOGWIDTH,GADGETHITE+12);
+	multi=new LFSTK_MultiGadgetClass(wc,"",0,sy,DIALOGWIDTH,6);
 	multi->stretchX=true;
-	multi->stretchY=false;
 	multi->lockY=LOCKTOBOTTOM;
-	multi->lockX=LOCKTOCENTRE;
 	multi->gadgetStretch=STRETCH;
 
 //line
@@ -269,8 +245,14 @@ int main(int argc, char **argv)
 	hrs.back().gadget->gadgetDetails.buttonTile=false;
 	hrs.back().gadget->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
 
+	multi->LFSTK_setHitRects(hrs);
+	hrs.clear();
+
 //quit
-	hrs.push_back({DIALOGWIDTH/2-HALFGADGETWIDTH,12,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Quit",0,0,1,1)});
+	multi=new LFSTK_MultiGadgetClass(wc,"",DIALOGMIDDLE-HALFGADGETWIDTH,sy+12,GADGETWIDTH,GADGETHITE);
+	multi->lockY=LOCKTOBOTTOM;
+
+	hrs.push_back({0,0,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Quit",0,0,1,1)});
 	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 	internalsy+=YSPACING;
 

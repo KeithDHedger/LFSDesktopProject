@@ -140,9 +140,12 @@ bool LFSTK_lineEditClass::mouseDown(XButtonEvent *e)
 
 void LFSTK_lineEditClass::LFSTK_resizeWindow(int w,int h)
 {
-	this->gadgetGeom.w=w-(pad*2);
-	this->gadgetGeom.h=h-(pad*2);
+	this->gadgetGeom.w=w;
+	this->gadgetGeom.h=h;
+	this->gadgetDetails.gadgetGeom.w=this->gadgetGeom.w;
+	this->gadgetDetails.gadgetGeom.h=this->gadgetGeom.h;
 	XResizeWindow(this->display,this->window,this->gadgetGeom.w,this->gadgetGeom.h);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_clearWindow();
 }
 

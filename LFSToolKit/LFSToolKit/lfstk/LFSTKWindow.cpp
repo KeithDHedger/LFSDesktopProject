@@ -1171,8 +1171,6 @@ void LFSTK_windowClass::LFSTK_dropData(propertyStruct* data)
  */
 void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 {
-	//int res=0;
-
 	if(event->type == ClientMessage)
 		{
 			if(event->xclient.message_type==this->dNdAtoms[XDNDENTER])

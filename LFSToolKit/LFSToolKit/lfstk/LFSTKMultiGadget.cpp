@@ -274,7 +274,33 @@ void LFSTK_MultiGadgetClass::updateInternalGadgets(geometryStruct oldgadggeom)
 							case SPACERIGHT:
 								this->justifyHitRects(true);
 								break;
+
+							default:
+								break;
 						}
 				}
 		}
 }
+
+/**
+* Drop data.
+* \param data Data drooped on gadget as string.
+*/
+void LFSTK_MultiGadgetClass::LFSTK_dropData(propertyStruct* data)
+{
+	for(int j=0;j<this->hitRects.size();j++)
+		{
+			if((this->hitRects.at(j).gadget!=NULL) && (this->hitRects.at(j).gadget->gadgetAcceptsDnD==true))
+				{
+					pointStruct point={this->wc->droppedData.x,this->wc->droppedData.y};
+					geometryStruct geom;
+		
+					this->hitRects.at(j).gadget->LFSTK_getGeomWindowRelative(&geom,this->rootWindow);
+					if(this->wc->globalLib->LFSTK_pointInRect(&point,&geom)==true)
+						{
+							this->hitRects.at(j).gadget->LFSTK_dropData(data);
+						}
+			}
+		}
+}
+

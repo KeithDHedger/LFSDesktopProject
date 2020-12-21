@@ -37,7 +37,7 @@ enum lockType			{LOCKTOLEFT,LOCKTORIGHT,LOCKTOTOP,LOCKTOBOTTOM,LOCKTOCENTRE,ABSO
  * \brief stretchType.
  * \note Affects sub gadgets.
 */
-enum stretchType		{STRETCH,MOVE,SPACESPREADX,SPACESPREADY,SPACELEFT,SPACERIGHT};
+enum stretchType		{STRETCH,MOVE,NOCHANGE,SPACESPREADX,SPACESPREADY,SPACELEFT,SPACERIGHT};
 
 /**
  * \brief Multi gadget class for LFSToolKit.
@@ -54,16 +54,18 @@ class LFSTK_MultiGadgetClass : public LFSTK_gadgetClass
 
 //Not normally used by user.
 		void					LFSTK_resetGadgets(void);
+		void					LFSTK_dropData(propertyStruct* data);
 
+#ifndef _ENABLEDEBUG_
 		bool					mouseExit(XButtonEvent *e) {this->inWindow=false;return(false);};
 		bool					mouseEnter(XButtonEvent *e) {this->inWindow=true;return(false);};
 		bool					mouseDown(XButtonEvent *e) {this->inWindow=true;return(false);};
-
-		bool					stretchX=true;
-		bool					stretchY=true;
-		lockType				lockX=LOCKTOLEFT;
-		lockType				lockY=ABSOLUTE;
-		stretchType				gadgetStretch=STRETCH;
+#endif
+		bool					stretchX=false;
+		bool					stretchY=false;
+		lockType				lockX=LOCKTOCENTRE;
+		lockType				lockY=LOCKTOTOP;
+		stretchType				gadgetStretch=NOCHANGE;
 		int						spacing=BORDER;
 		bool					done=false;
 		std::vector<hitRect>	hitRects;
