@@ -323,21 +323,21 @@ int main(int argc, char **argv)
 	splitFile(mimeTypesFile);
 
 //mime type list
-	mimeList=new LFSTK_listGadgetClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2)-LGAP,LISTHITE,NorthWestGravity,NULL,0);
+	mimeList=new LFSTK_listGadgetClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2)-LGAP,LISTHITE);
 	setMimeTypesList(mimeTypesFile);
 	mimeList->LFSTK_setMouseCallBack(NULL,selectMime,NULL);
 	
 //apps list
-	appsList=new LFSTK_listGadgetClass(wc,"",BORDER+DIALOGWIDTH,sy,DIALOGWIDTH-(BORDER*2)-LGAP,LISTHITE,NorthWestGravity,NULL,0);
+	appsList=new LFSTK_listGadgetClass(wc,"",BORDER+DIALOGWIDTH,sy,DIALOGWIDTH-(BORDER*2)-LGAP,LISTHITE);
 	appsList->LFSTK_setListFromFile(appsPath,false);
 	appsList->LFSTK_setMouseCallBack(NULL,selectApp,NULL);
 	sy+=LISTHITE+8;
 
 //command
-	editLine=new LFSTK_lineEditClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE,BUTTONGRAV);
+	editLine=new LFSTK_lineEditClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE,NorthGravity);
 	editLine->LFSTK_setMouseCallBack(returnKeyPressed,NULL,NULL);
 //app to use
-	appLine=new LFSTK_lineEditClass(wc,"",BORDER+DIALOGWIDTH,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE,BUTTONGRAV);
+	appLine=new LFSTK_lineEditClass(wc,"",BORDER+DIALOGWIDTH,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE,NorthGravity);
 	appLine->LFSTK_setMouseCallBack(returnKeyPressed,NULL,NULL);
 	sy+=YSPACING;
 

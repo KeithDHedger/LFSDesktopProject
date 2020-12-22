@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 	personal->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
 
-	list=list=new LFSTK_listGadgetClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2)-LGAP,LISTHITE,NorthWestGravity,NULL,0);
+	list=list=new LFSTK_listGadgetClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2)-LGAP,LISTHITE);
 
 	thist=wc->globalLib->LFSTK_oneLiner("head -n1 '%s/%s'",wc->configDir,"command.max");
 
@@ -113,12 +113,12 @@ int main(int argc, char **argv)
 	sy+=LISTHITE+8;
 
 //command
-	le=new LFSTK_lineEditClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE,BUTTONGRAV);
+	le=new LFSTK_lineEditClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE,NorthGravity);
 	sy+=GADGETHITE+8;
 	quit=new LFSTK_buttonClass(wc,"Quit",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 
-	execute=new LFSTK_buttonClass(wc,"Run",BORDER+((DIALOGWIDTH-(BORDER*2))/2)-(GADGETWIDTH/2),sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	execute=new LFSTK_buttonClass(wc,"Run",BORDER+((DIALOGWIDTH-(BORDER*2))/2)-(GADGETWIDTH/2),sy,GADGETWIDTH,GADGETHITE,NorthGravity);
 	execute->LFSTK_setMouseCallBack(NULL,doExecute,(void*)true);
 
 	run=new LFSTK_buttonClass(wc,"Run And Quit",DIALOGWIDTH-BORDER-GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthEastGravity);
