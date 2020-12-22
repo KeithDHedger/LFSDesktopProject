@@ -73,6 +73,14 @@ enum indicatorType {CHECK=0,RADIO,PICTURE,DISCLOSURE,NOINDICATOR};
 //dropdata
 enum dropDataType {DROPINVALID=0,DROPTEXT,DROPURI};
 
+struct geometryStruct
+{
+	int						x,y;
+	unsigned				w,h;
+	unsigned				monitor;
+};
+
+
 #ifdef _ENABLEDEBUG_
 static bool	showFileData=true;
 static void debugFunc(const char *file,const char *func,int line,const char *fmt, ...)
@@ -115,6 +123,12 @@ const char				*bools[]={"false","true"};
 								break;
 							case 'b':
 								sprintf(subbuffer,"%s",bools[va_arg(ap,int)]);
+								break;
+							case 'r':
+								{
+									geometryStruct gs=va_arg(ap,geometryStruct);
+									sprintf(subbuffer,"x=%i, y=%i, w=%i, h=%i",gs.x,gs.y,gs.w,gs.h);
+								}
 								break;
 							default:
 								sprintf(subbuffer,"%c",fmt[0]);
@@ -207,13 +221,13 @@ struct callbackStruct
 	bool					ignoreOrphanModKeys=true;
 };
 
-struct geometryStruct
-{
-	int						x,y;
-	unsigned				w,h;
-	unsigned				monitor;
-};
-
+//struct geometryStruct
+//{
+//	int						x,y;
+//	unsigned				w,h;
+//	unsigned				monitor;
+//};
+//
 struct pointStruct
 {
 	int						x,y;
@@ -320,6 +334,7 @@ enum {DESKTOP_MSG=1000,WMANAGER_MSG,PANEL_MSG,WALLPAPER_MSG,TOOLKIT_MSG,APPEARAN
 #include "LFSTKFindClass.h"
 #include "LFSTKWindow.h"
 #include "LFSTKGadget.h"
+#include "LFSTKExpanderGadget.h"
 #include "LFSTKLabel.h"
 #include "LFSTKImage.h"
 #include "LFSTKButton.h"
@@ -333,6 +348,5 @@ enum {DESKTOP_MSG=1000,WMANAGER_MSG,PANEL_MSG,WALLPAPER_MSG,TOOLKIT_MSG,APPEARAN
 #include "LFSTKToolWindow.h"
 #include "LFSTKMenu.h"
 #include "LFSTKMenuItem.h"
-#include "LFSTKMultiGadget.h"
 
 #endif

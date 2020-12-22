@@ -1,4 +1,5 @@
 0.4.5
+Renamed multi gadget to expander.
 Updated lineedit example.
 Fixed dAndD onto multi gadget.
 Set sensible defaults for multigadget.
@@ -12,7 +13,7 @@ Fixed scrollbar thumb pixmap.
 Fixed pixmap offsets when moving gadget.
 Fixed pixmap offsets on labels, checkboxes,menus and seperators.
 Fixed resizing gadget.
-Added resizing gadget (LFSTK_MultiGadgetClass).
+Added resizing gadget (LFSTK_ExpanderGadgetClass).
 Removed debug code.
 Set gadget mouse event on mouseup.
 Added setting scrollbar value without running CB.

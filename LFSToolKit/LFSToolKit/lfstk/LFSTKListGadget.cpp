@@ -343,6 +343,7 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 	this->LFSTK_setColourName(INACTIVECOLOUR,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPELISTTROUGHCOLOUR));
 	this->gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,adjwidth,h},{0,0,0,0},false,false,false};
 	this->clearBox(&this->gadgetDetails);
+	//DEBUGFUNC("%r",this->gadgetGeom);
 }
 
 /**

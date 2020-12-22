@@ -59,13 +59,13 @@ int main(int argc, char **argv)
 	XEvent	event;
 	int		sy=BORDER;
 	std::vector<hitRect>	hrs;
-	LFSTK_MultiGadgetClass	*multi=NULL;
+	LFSTK_ExpanderGadgetClass	*multi=NULL;
 
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,BOXLABEL,false);
 
 	display=wc->display;
 
-	multi=new LFSTK_MultiGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*3);
+	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*3);
 	multi->gadgetStretch=SPACESPREADY;
 
 	hrs.push_back({0,0,DIALOGWIDTH,GADGETHITE,new LFSTK_labelClass(wc,BOXLABEL,0,0,1,1)});
@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 	sy+=YSPACING*2;
 
 //line edit
-	multi=new LFSTK_MultiGadgetClass(wc,"",BORDER,sy,DIALOGWIDTH-BORDER*2,GADGETHITE);
+	multi=new LFSTK_ExpanderGadgetClass(wc,"",BORDER,sy,DIALOGWIDTH-BORDER*2,GADGETHITE);
 	multi->stretchX=true;
 	multi->gadgetStretch=STRETCH;
 	multi->gadgetAcceptsDnD=true;
@@ -95,7 +95,7 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //bottom bit
-	multi=new LFSTK_MultiGadgetClass(wc,"",0,sy,DIALOGWIDTH,6);
+	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,sy,DIALOGWIDTH,6);
 	multi->stretchX=true;
 	multi->lockY=LOCKTOBOTTOM;
 	multi->gadgetStretch=STRETCH;
@@ -111,7 +111,7 @@ int main(int argc, char **argv)
 	hrs.clear();
 
 //quit
-	multi=new LFSTK_MultiGadgetClass(wc,"",DIALOGMIDDLE-HALFGADGETWIDTH,sy+12,GADGETWIDTH,GADGETHITE);
+	multi=new LFSTK_ExpanderGadgetClass(wc,"",DIALOGMIDDLE-HALFGADGETWIDTH,sy+12,GADGETWIDTH,GADGETHITE);
 	multi->lockY=LOCKTOBOTTOM;
 
 	hrs.push_back({0,0,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Quit",0,0,1,1)});

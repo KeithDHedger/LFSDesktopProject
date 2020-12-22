@@ -21,15 +21,15 @@ exit $retval
 
 LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass		*label=NULL;
-LFSTK_MultiGadgetClass	*multi=NULL;
+LFSTK_ExpanderGadgetClass	*multi=NULL;
 
 bool					mainLoop=true;
 Display					*display;
 
 bool mouseparentCB(void *p,void* ud)
 {
-	LFSTK_MultiGadgetClass	*gadg=NULL;
-	gadg=static_cast<LFSTK_MultiGadgetClass*>(p);
+	LFSTK_ExpanderGadgetClass	*gadg=NULL;
+	gadg=static_cast<LFSTK_ExpanderGadgetClass*>(p);
 
 	for(int j=0;j<gadg->hitRects.size();j++)
 		{
@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,BOXLABEL,false);
 	display=wc->display;
 
-	multi=new LFSTK_MultiGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*3);
+	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*3);
 	multi->stretchX=false;
 	multi->stretchY=false;
 	multi->lockY=LOCKTOTOP;
@@ -88,7 +88,7 @@ int main(int argc, char **argv)
 
 	hrs.clear();
 
-	multi=new LFSTK_MultiGadgetClass(wc,"",DIALOGMIDDLE-GADGETWIDTH*2,sy,GADGETWIDTH*4,GADGETHITE);
+	multi=new LFSTK_ExpanderGadgetClass(wc,"",DIALOGMIDDLE-GADGETWIDTH*2,sy,GADGETWIDTH*4,GADGETHITE);
 	multi->LFSTK_setMouseCallBack(NULL,mouseparentCB,NULL);
 	multi->stretchX=true;
 	multi->stretchY=false;

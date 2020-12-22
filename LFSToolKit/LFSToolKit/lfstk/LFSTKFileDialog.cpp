@@ -275,6 +275,26 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	sh.base_width=hite;
 
 	XSetWMNormalHints(this->wc->display,dialog->window,&sh);
+	/*
+	std::vector<hitRect>	hrs;
+	LFSTK_ExpanderGadgetClass	*multi=NULL;
+	int						internalsy=BORDER;
+
+	multi=new LFSTK_ExpanderGadgetClass(this->dialog,"",0,0,dwidth,hite);
+	multi->stretchX=true;
+	multi->stretchY=true;
+	multi->gadgetStretch=STRETCH;
+
+//file list
+this->fileListGadget=new LFSTK_listGadgetClass(this->dialog,"",BORDER,BORDER,DIALOGWIDTH-FNAVBUTTONWID,(GADGETHITE*FFILEHITE),NorthWestGravity,NULL,0);
+//	hrs.push_back({BORDER,internalsy,DIALOGWIDTH-FNAVBUTTONWID,(GADGETHITE*FFILEHITE),new LFSTK_listGadgetClass(this->dialog,"",0,0,1,1,NorthWestGravity,NULL,0)});//TODO//
+	hrs.push_back({BORDER,internalsy,DIALOGWIDTH-FNAVBUTTONWID,(GADGETHITE*FFILEHITE),this->fileListGadget});//TODO//
+	//hrs.back().gadget->LFSTK_setMouseCallBack(NULL,this->select,this);
+
+	multi->LFSTK_setHitRects(hrs);
+	hrs.clear();
+
+	*/
 //file list
 	this->fileListGadget=new LFSTK_listGadgetClass(this->dialog,"",BORDER,BORDER,DIALOGWIDTH-FNAVBUTTONWID,(GADGETHITE*FFILEHITE),NorthWestGravity,NULL,0);
 	this->fileListGadget->LFSTK_setMouseCallBack(NULL,this->select,this);

@@ -20,14 +20,14 @@
 
 #include "lfstk/LFSTKGlobals.h"
 
-LFSTK_MultiGadgetClass::~LFSTK_MultiGadgetClass()
+LFSTK_ExpanderGadgetClass::~LFSTK_ExpanderGadgetClass()
 {
 	for(int j=0;j<this->hitRects.size();j++)
 		if(this->hitRects.at(j).gadget!=NULL)
 			XReparentWindow(this->display,this->hitRects.at(j).gadget->window,this->wc->window,0,0);
 }
 
-LFSTK_MultiGadgetClass::LFSTK_MultiGadgetClass()
+LFSTK_ExpanderGadgetClass::LFSTK_ExpanderGadgetClass()
 {
 }
 
@@ -42,7 +42,7 @@ LFSTK_MultiGadgetClass::LFSTK_MultiGadgetClass()
 * \param h Height.
 * \param gravity Button gravity.
 */
-LFSTK_MultiGadgetClass::LFSTK_MultiGadgetClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity)
+LFSTK_ExpanderGadgetClass::LFSTK_ExpanderGadgetClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity)
 {
 	XSetWindowAttributes	wa;
 
@@ -78,7 +78,7 @@ LFSTK_MultiGadgetClass::LFSTK_MultiGadgetClass(LFSTK_windowClass* parentwc,const
 *
 * \param std::vector<hitRect> hr
 */
-void LFSTK_MultiGadgetClass::LFSTK_setHitRects(std::vector<hitRect> hr)
+void LFSTK_ExpanderGadgetClass::LFSTK_setHitRects(std::vector<hitRect> hr)
 {
 	this->hitRects=hr;
 }
@@ -87,7 +87,7 @@ void LFSTK_MultiGadgetClass::LFSTK_setHitRects(std::vector<hitRect> hr)
 * Private Set hit rects and resize/move gadgets.
 * \param bool rezizeandmove true=resize and move gadgets.
 */
-void LFSTK_MultiGadgetClass::justifyHitRects(bool rezizeandmove)
+void LFSTK_ExpanderGadgetClass::justifyHitRects(bool rezizeandmove)
 {
 	geometryStruct	newgeom;
 	int				sx=0;
@@ -153,7 +153,7 @@ void LFSTK_MultiGadgetClass::justifyHitRects(bool rezizeandmove)
 * \note Not normally used by user.
 * \note Called from expose event from main window.
 */
-void LFSTK_MultiGadgetClass::LFSTK_resetGadgets(void)
+void LFSTK_ExpanderGadgetClass::LFSTK_resetGadgets(void)
 {
 	this->justifyHitRects(true);
 
@@ -170,7 +170,7 @@ void LFSTK_MultiGadgetClass::LFSTK_resetGadgets(void)
 * \note Not normally used by user.
 * \note Called from ConfigureNotify event from main window.
 */
-void LFSTK_MultiGadgetClass::LFSTK_updateGadget(geometryStruct oldgeom)
+void LFSTK_ExpanderGadgetClass::LFSTK_updateGadget(geometryStruct oldgeom)
 {
 	geometryStruct			oldgadggeom;
 	const geometryStruct	*wgeom=this->wc->LFSTK_getWindowGeom();
@@ -233,7 +233,7 @@ void LFSTK_MultiGadgetClass::LFSTK_updateGadget(geometryStruct oldgeom)
 * \param geometryStruct oldgadggeom.
 * \note Move not really useful
 */
-void LFSTK_MultiGadgetClass::updateInternalGadgets(geometryStruct oldgadggeom)
+void LFSTK_ExpanderGadgetClass::updateInternalGadgets(geometryStruct oldgadggeom)
 {
 	geometryStruct	newgeom;
 
@@ -284,9 +284,9 @@ void LFSTK_MultiGadgetClass::updateInternalGadgets(geometryStruct oldgadggeom)
 
 /**
 * Drop data.
-* \param data Data drooped on gadget as string.
+* \param data Data droped on gadget as string.
 */
-void LFSTK_MultiGadgetClass::LFSTK_dropData(propertyStruct* data)
+void LFSTK_ExpanderGadgetClass::LFSTK_dropData(propertyStruct* data)
 {
 	for(int j=0;j<this->hitRects.size();j++)
 		{

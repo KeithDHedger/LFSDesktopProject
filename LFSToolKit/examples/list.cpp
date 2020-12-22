@@ -21,6 +21,7 @@ exit $retval
 
 #endif
 
+#include "../config.h"
 #include "lfstk/LFSTKGlobals.h"
 
 #define BOXLABEL			"List Window"
@@ -65,7 +66,7 @@ int main(int argc, char **argv)
 {
 	XEvent	event;
 	int		sy=BORDER;
-		
+
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"List Example",false);
 	display=wc->display;
 
@@ -78,6 +79,23 @@ int main(int argc, char **argv)
 	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	personal->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
+//TODO//
+//	std::vector<hitRect>	hrs;
+//	LFSTK_ExpanderGadgetClass		*multi=NULL;
+//
+//
+//
+//	multi=new LFSTK_ExpanderGadgetClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5);
+//multi->stretchX=true;
+//multi->stretchY=true;
+//multi->gadgetStretch=STRETCH;
+//
+//	hrs.push_back({0,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5,NULL});
+//	list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5,BUTTONGRAV,NULL,0);
+//	hrs.back().gadget=list;
+//
+//
+//
 
 //list
 	list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5,BUTTONGRAV,NULL,0);
@@ -92,11 +110,16 @@ int main(int argc, char **argv)
 				ls.data.imagePath=NULL;
 			ls.userData=(void*)(long)j+0x1000;
 			list->LFSTK_appendToList(ls);
+			//hrs.back().gadget->LFSTK_appendToList(ls);
 		}
 
+//hrs.back().gadget->LFSTK_updateList();
 	list->LFSTK_updateList();
 	list->LFSTK_setMouseCallBack(NULL,select,NULL);
 	sy+=GADGETHITE*6;
+
+//	multi->LFSTK_setHitRects(hrs);
+//	hrs.clear();
 
 //file list
 	filelist=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*16,BUTTONGRAV,NULL,0);

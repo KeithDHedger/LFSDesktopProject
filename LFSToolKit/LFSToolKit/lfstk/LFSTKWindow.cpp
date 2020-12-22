@@ -1433,7 +1433,7 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 											{	
 												geometryStruct	oldwindowGeom=this->windowGeom;
 
-												LFSTK_MultiGadgetClass *gadget=static_cast<LFSTK_MultiGadgetClass*>(ml->gadget);
+												LFSTK_ExpanderGadgetClass *gadget=static_cast<LFSTK_ExpanderGadgetClass*>(ml->gadget);
 												if(gadget->done==true)
 													break;
 												gadget->done=true;
@@ -1462,7 +1462,7 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 												{
 													if(ml->type==MULTIGADGET)
 														{
-															LFSTK_MultiGadgetClass *gadget=static_cast<LFSTK_MultiGadgetClass*>(ml->gadget);
+															LFSTK_ExpanderGadgetClass *gadget=static_cast<LFSTK_ExpanderGadgetClass*>(ml->gadget);
 															gadget->LFSTK_updateGadget(oldwindowGeom);
 														}
 												}

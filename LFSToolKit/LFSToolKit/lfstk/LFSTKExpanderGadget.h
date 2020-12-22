@@ -42,12 +42,12 @@ enum stretchType		{STRETCH,MOVE,NOCHANGE,SPACESPREADX,SPACESPREADY,SPACELEFT,SPA
 /**
  * \brief Multi gadget class for LFSToolKit.
 */
-class LFSTK_MultiGadgetClass : public LFSTK_gadgetClass
+class LFSTK_ExpanderGadgetClass : public LFSTK_gadgetClass
 {
 	public:
-		LFSTK_MultiGadgetClass();
-		~LFSTK_MultiGadgetClass();
-		LFSTK_MultiGadgetClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity=NorthWestGravity);
+		LFSTK_ExpanderGadgetClass();
+		~LFSTK_ExpanderGadgetClass();
+		LFSTK_ExpanderGadgetClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity=NorthWestGravity);
 
 		void					LFSTK_setHitRects(std::vector<hitRect> hr);
 		void					LFSTK_updateGadget(geometryStruct oldgeom);
@@ -56,11 +56,10 @@ class LFSTK_MultiGadgetClass : public LFSTK_gadgetClass
 		void					LFSTK_resetGadgets(void);
 		void					LFSTK_dropData(propertyStruct* data);
 
-#ifndef _ENABLEDEBUG_
 		bool					mouseExit(XButtonEvent *e) {this->inWindow=false;return(false);};
 		bool					mouseEnter(XButtonEvent *e) {this->inWindow=true;return(false);};
 		bool					mouseDown(XButtonEvent *e) {this->inWindow=true;return(false);};
-#endif
+
 		bool					stretchX=false;
 		bool					stretchY=false;
 		lockType				lockX=LOCKTOCENTRE;

@@ -26,7 +26,7 @@ LFSTK_windowClass			*wc=NULL;
 LFSTK_toggleButtonClass		*useDbg=NULL;
 LFSTK_toggleButtonClass		*openFile=NULL;
 LFSTK_toggleButtonClass		*makeLib=NULL;
-LFSTK_MultiGadgetClass		*multi=NULL;
+LFSTK_ExpanderGadgetClass	*multi=NULL;
 
 bool						mainLoop=true;
 Display						*display;
@@ -85,7 +85,7 @@ int main(int argc, char **argv)
 	display=wc->display;
 
 //info
-	multi=new LFSTK_MultiGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*4);
+	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*4);
 
 	hrs.push_back({0,sy,DIALOGWIDTH,GADGETHITE,NULL});
 	hrs.back().gadget=new LFSTK_labelClass(wc,BOXLABEL,0,0,1,1);
@@ -109,7 +109,7 @@ int main(int argc, char **argv)
 	hrs.clear();
 
 //options
-	multi=new LFSTK_MultiGadgetClass(wc,"",0,sy,DIALOGWIDTH,GADGETHITE);
+	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,sy,DIALOGWIDTH,GADGETHITE);
 	multi->stretchX=true;
 	multi->gadgetStretch=SPACESPREADX;
 
@@ -134,7 +134,7 @@ int main(int argc, char **argv)
 
 //line
 	sy+=HALFYSPACING+12;
-	multi=new LFSTK_MultiGadgetClass(wc,"",0,sy,DIALOGWIDTH,GADGETHITE-11);
+	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,sy,DIALOGWIDTH,GADGETHITE-11);
 	multi->stretchX=true;
 	multi->gadgetStretch=STRETCH;
 
@@ -151,7 +151,7 @@ int main(int argc, char **argv)
 
 //run examples - middle bit
 	int	internalsy=0;
-	multi=new LFSTK_MultiGadgetClass(wc,"",GADGETWIDTH+BORDER/2,sy,GADGETWIDTH*3+BORDER*2,GADGETHITE*13);
+	multi=new LFSTK_ExpanderGadgetClass(wc,"",GADGETWIDTH+BORDER/2,sy,GADGETWIDTH*3+BORDER*2,GADGETHITE*13);
 	multi->stretchX=true;
 	multi->stretchY=true;
 	multi->gadgetStretch=STRETCH;
@@ -173,9 +173,9 @@ int main(int argc, char **argv)
 //toggles
 	hrs.push_back({GADGETWIDTH+multi->spacePad,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Toggles",0,0,1,1)});
 	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./toggle.cpp");
-//multi
-	hrs.push_back({(GADGETWIDTH+multi->spacePad)*2,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Multi",0,0,1,1)});
-	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./multigadget.cpp");
+//expander
+	hrs.push_back({(GADGETWIDTH+multi->spacePad)*2,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Expander",0,0,1,1)});
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./expander.cpp");
 	internalsy+=YSPACING;
 
 //menus
@@ -233,7 +233,7 @@ int main(int argc, char **argv)
 	sy+=YSPACING*10;
 
 //bottom bit
-	multi=new LFSTK_MultiGadgetClass(wc,"",0,sy,DIALOGWIDTH,6);
+	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,sy,DIALOGWIDTH,6);
 	multi->stretchX=true;
 	multi->lockY=LOCKTOBOTTOM;
 	multi->gadgetStretch=STRETCH;
@@ -249,7 +249,7 @@ int main(int argc, char **argv)
 	hrs.clear();
 
 //quit
-	multi=new LFSTK_MultiGadgetClass(wc,"",DIALOGMIDDLE-HALFGADGETWIDTH,sy+12,GADGETWIDTH,GADGETHITE);
+	multi=new LFSTK_ExpanderGadgetClass(wc,"",DIALOGMIDDLE-HALFGADGETWIDTH,sy+12,GADGETWIDTH,GADGETHITE);
 	multi->lockY=LOCKTOBOTTOM;
 
 	hrs.push_back({0,0,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Quit",0,0,1,1)});
