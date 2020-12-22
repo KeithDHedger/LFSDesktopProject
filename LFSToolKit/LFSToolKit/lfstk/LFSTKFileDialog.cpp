@@ -296,7 +296,7 @@ this->fileListGadget=new LFSTK_listGadgetClass(this->dialog,"",BORDER,BORDER,DIA
 
 	*/
 //file list
-	this->fileListGadget=new LFSTK_listGadgetClass(this->dialog,"",BORDER,BORDER,DIALOGWIDTH-FNAVBUTTONWID,(GADGETHITE*FFILEHITE),NorthWestGravity,NULL,0);
+	this->fileListGadget=new LFSTK_listGadgetClass(this->dialog,"",BORDER,BORDER,DIALOGWIDTH-FNAVBUTTONWID,(GADGETHITE*FFILEHITE));
 	this->fileListGadget->LFSTK_setMouseCallBack(NULL,this->select,this);
 	this->getFileList();
 
@@ -621,9 +621,7 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 									{
 										char	*buf;
 										char	*rp;
-									//	asprintf(&buf,"%s/%s",this->dirEdit->LFSTK_getCStr(),this->fileListGadget->listDataArray->at(this->fileListGadget->LFSTK_getCurrentListItem()).label);
 										asprintf(&buf,"%s/%s",this->dirEdit->LFSTK_getCStr(),this->fileListGadget->LFSTK_getSelectedLabel());
-									printf(">>buf=%p\n");
 										if((this->isADir(buf)==true) && (this->dialogType==FILEDIALOG))
 											{
 												this->apply=false;
@@ -634,7 +632,6 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 										
 										if(this->dialogType==FOLDERDIALOG)
 											{
-											printf(">>buf=%p FOLDEr\n");
 												this->apply=true;
 												this->mainLoop=false;
 												this->setFileData();

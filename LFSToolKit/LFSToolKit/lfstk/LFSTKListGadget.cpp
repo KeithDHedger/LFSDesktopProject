@@ -262,11 +262,8 @@ void LFSTK_listGadgetClass::setNavSensitive(void)
 * \param w Width.
 * \param h Height.
 * \param gravity Button gravity.
-* \param newlist Ptr->List of strings (char**).
-* \param cnt Number of items in list.
-* \note newlist owned by caller dont free till after object destroyed ( TODO ).
 */
-LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const char *label,int x,int y,unsigned w,unsigned h,int gravity,char **newlist,unsigned cnt)
+LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const char *label,int x,int y,unsigned w,unsigned h,int gravity)
 {
 	unsigned				sx;
 	unsigned				sy;

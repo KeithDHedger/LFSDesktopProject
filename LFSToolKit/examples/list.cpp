@@ -98,7 +98,7 @@ int main(int argc, char **argv)
 //
 
 //list
-	list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5,BUTTONGRAV,NULL,0);
+	list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5);
 	listLabelStruct ls;
 	for(int j=0;j<15;j++)
 		{
@@ -122,7 +122,7 @@ int main(int argc, char **argv)
 //	hrs.clear();
 
 //file list
-	filelist=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*16,BUTTONGRAV,NULL,0);
+	filelist=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*16);
 	filelist->LFSTK_setListFromFile("/tmp/biglist",false);
 	filelist->LFSTK_setMouseCallBack(NULL,select,(void*)0xdeadbeaf);
 //goto end

@@ -272,21 +272,20 @@ bool LFSTK_fontDialogClass::LFSTK_showDialog(const char* fontstring)
 
 void LFSTK_fontDialogClass::buildDialog(void)
 {
-	int								sy=BORDER;
-	char							*sizestr[4]={0,};
-	//std::vector <listLabelStruct>	*lsstruct;
-	listLabelStruct					ls;
+	int				sy=BORDER;
+	char			*sizestr[4]={0,};
+	listLabelStruct	ls;
 
 	dialog=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Font Selector",false);
 	dialog->closeDisplayOnExit=true;
+
 	this->dialog->autoLabelColour=false;
 	this->dialog->LFSTK_reloadGlobals();	
 	this->dialog->LFSTK_clearWindow();
 //list
-	this->fontlist=new LFSTK_listGadgetClass(this->dialog,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5,BUTTONGRAV,NULL,0);
+	this->fontlist=new LFSTK_listGadgetClass(this->dialog,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5);
 	this->loadFontStrings();
 	
-	//lsstruct=new std::vector <listLabelStruct>;
 	for(int j=0;j<this->maxFonts;j++)
 		{
 			ls.label=strdup(this->fontsAZ[j]);
@@ -300,23 +299,21 @@ void LFSTK_fontDialogClass::buildDialog(void)
 
 //bold
 	sy+=GADGETHITE;
-	this->boldcheck=new LFSTK_toggleButtonClass(this->dialog,"Bold",BORDER,sy,GADGETWIDTH,CHECKBOXSIZE,NorthWestGravity);
+	this->boldcheck=new LFSTK_toggleButtonClass(this->dialog,"Bold",BORDER,sy,GADGETWIDTH,CHECKBOXSIZE,NorthGravity);
 	this->boldcheck->LFSTK_setMouseCallBack(NULL,select,(void*)this);
 
 //italic
-	this->italiccheck=new LFSTK_toggleButtonClass(this->dialog,"Italic",BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,CHECKBOXSIZE,NorthWestGravity);
+	this->italiccheck=new LFSTK_toggleButtonClass(this->dialog,"Italic",BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,CHECKBOXSIZE,NorthGravity);
 	this->italiccheck->LFSTK_setMouseCallBack(NULL,select,(void*)this);
 
 //font size
 	snprintf((char*)&sizestr,3,"%i",size);
-	this->fontsize=new LFSTK_lineEditClass(this->dialog,(const char*)sizestr,BORDER*2+GADGETWIDTH+BORDER*2+GADGETWIDTH,sy-CHECKBOXSIZE/2,GADGETHITE,GADGETHITE,BUTTONGRAV);
+	this->fontsize=new LFSTK_lineEditClass(this->dialog,(const char*)sizestr,BORDER*2+GADGETWIDTH+BORDER*2+GADGETWIDTH,sy-CHECKBOXSIZE/2,GADGETHITE,GADGETHITE,NorthGravity);
 	this->fontsize->LFSTK_setKeyCallBack(NULL,select,(void*)this);
 	sy+=YSPACING;
 
 //preview
-//	this->preview=new LFSTK_multiLineEditClass(this->dialog,"ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\n0123456789",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*4,BUTTONGRAV);
-	this->preview=new LFSTK_multiLineEditClass(this->dialog,fontTest,BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*6,BUTTONGRAV);
-	//sy+=YSPACING;
+	this->preview=new LFSTK_multiLineEditClass(this->dialog,fontTest,BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*6,NorthGravity);
 	sy+=GADGETHITE*6;
 
 //line
@@ -334,6 +331,19 @@ void LFSTK_fontDialogClass::buildDialog(void)
 	sy+=YSPACING;
 
 	this->dialog->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
+
+	XSizeHints sh;
+	sh.flags=PMinSize|PMaxSize|PSize|PResizeInc;
+	sh.min_width=DIALOGWIDTH;
+	sh.min_height=sy;
+	sh.max_width=DIALOGWIDTH;
+	sh.max_height=sy;
+	sh.width_inc=0;
+	sh.height_inc=0;
+	sh.base_width=DIALOGWIDTH;
+	sh.base_width=sy;
+
+	XSetWMNormalHints(this->wc->display,dialog->window,&sh);
 }
 
 /**

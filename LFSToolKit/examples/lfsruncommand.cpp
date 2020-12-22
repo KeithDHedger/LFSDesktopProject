@@ -85,7 +85,7 @@ int main(int argc, char **argv)
 	label->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
 
-	list=list=new LFSTK_listGadgetClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2)-LGAP,LISTHITE,NorthWestGravity,NULL,0);
+	list=list=new LFSTK_listGadgetClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2)-LGAP,LISTHITE);
 
 	asprintf(&commandfile,"%s/%s",wc->configDir,"command.hist");
 	list->LFSTK_setListFromFile(commandfile,false);

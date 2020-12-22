@@ -1,3 +1,8 @@
+0.4.6
+Made font dialog window not resizable.
+Removed redundant params from list creation.
+Changed default gravity of list gadget to NorthGravity.
+
 0.4.5
 Renamed multi gadget to expander.
 Updated lineedit example.
