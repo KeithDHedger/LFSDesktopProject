@@ -104,9 +104,11 @@ int main(int argc, char **argv)
 
 	wc=new LFSTK_windowClass(0,0,1,1,"",false);
 	display=wc->display;
-	wc->LFSTK_showWindow();
 
 	fontdialog=new LFSTK_fontDialogClass(wc,"Select Font",DIALOGMIDDLE-HALFGADGETWIDTH,100,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	wc->LFSTK_setWindowType("_NET_WM_WINDOW_TYPE_DOCK");
+	wc->LFSTK_showWindow();
+
 	if(argv[optind]!=NULL)
 		fontdialog->LFSTK_showDialog(argv[optind]);
 	else
@@ -119,7 +121,6 @@ int main(int argc, char **argv)
 			else
 				printf("Font String:%s\nFont:%s\nSize:%i\nBold:%s\nItalic:%s\n",fd->fontString,fd->fontName,fd->fontSize,bools[fd->bold],bools[fd->italic]);
 		}
-
 
 	delete wc;
 	XCloseDisplay(display);
