@@ -92,7 +92,8 @@ void readMsg(void)
 
 void addLeftGadgets(void)
 {
-	int	offset=mons->x+leftOffset;
+//	int	offset=mons->x+leftOffset;
+	int	offset=leftOffset;
 
 	for(int j=0; j<strlen(leftGadgets); j++)
 		{

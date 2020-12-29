@@ -1,4 +1,5 @@
 0.1.4
+Fixed panel size on multiple monitors.
 Added ~/.local/share/applications to search path for application menu.
 Fixed parsing Exec in desktop files.
 Added alsa dependency.
