@@ -278,6 +278,7 @@ void LFSTK_ExpanderGadgetClass::updateInternalGadgets(geometryStruct oldgadggeom
 							default:
 								break;
 						}
+					//this->hitRects.at(j).gadget->LFSTK_clearWindow();
 				}
 		}
 }

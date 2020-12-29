@@ -81,11 +81,11 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 //TODO//
 //	std::vector<hitRect>	hrs;
-//	LFSTK_ExpanderGadgetClass		*multi=NULL;
+//	LFSTK_MultiGadgetClass		*multi=NULL;
 //
 //
 //
-//	multi=new LFSTK_ExpanderGadgetClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5);
+//	multi=new LFSTK_MultiGadgetClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5);
 //multi->stretchX=true;
 //multi->stretchY=true;
 //multi->gadgetStretch=STRETCH;

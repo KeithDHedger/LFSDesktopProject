@@ -263,6 +263,7 @@ int main(int argc, char **argv)
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();
+	wc->LFSTK_setKeepAbove(true);
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	mainLoop=true;

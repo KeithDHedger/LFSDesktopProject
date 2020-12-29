@@ -628,7 +628,8 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				printf("resize\n");
 				break;
 			case ClientMessage:
-				//printf("ClientMessage from lib\n");
+				printf("ClientMessage from lib\n");
+				//return(true);
 				break;
 			case SelectionRequest:
 				//fprintf(stderr,"from SelectionRequest lib\n");

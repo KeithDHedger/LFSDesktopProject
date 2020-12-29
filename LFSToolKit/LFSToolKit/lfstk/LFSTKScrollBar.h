@@ -41,6 +41,8 @@ class LFSTK_scrollBarClass : public LFSTK_gadgetClass
 		void				LFSTK_clearWindow(void);
 		void				LFSTK_clearWindow(bool ignorecb);
 		void				LFSTK_setStyle(bevelType s);
+		void				LFSTK_restickWindow(void);
+
 //set indexes
 		void				LFSTK_setScale(double min,double max);
 		void				LFSTK_setPageScroll(int page);
@@ -55,6 +57,8 @@ class LFSTK_scrollBarClass : public LFSTK_gadgetClass
 		double				scale=1.0;
 		bool				reverse=false;
 		double				maxValue=100.0;
+		bool				lockToWindow=false;
+		Window				lockToWindowRight=-1;
 
 	private:
 		bool				allowKBControl=true;

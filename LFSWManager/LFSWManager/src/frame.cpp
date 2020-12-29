@@ -76,7 +76,7 @@ int		lastbuttonx;
 
 void moveresize(struct frame *f,int x,int y,int w,int h)
 {
-		int		offset;
+	int		offset;
 	bool	left;
 	int		newd=-1;
 	Desk	d;
@@ -90,13 +90,11 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 	unsigned int	mask_return;
 	int				flipborder=10;
 	int				flippedoffset=flipborder;
-	int				monitorwidth;
 
 	if (x==f->x && y==f->y && w==f->width && h==f->height)
 		return;
 
 	doswapdesk=-1;
-	monitorwidth=monitorData[getMouseMonitor(f->client)].monW;
 
 	XQueryPointer(dpy,DefaultRootWindow(dpy),&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return);
 	flippedoffset=win_x_return-x;
@@ -112,15 +110,15 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 	if(mynew.height<0)
 		mynew.height=0;
 
-	if((win_x_return>flipborder) && (win_x_return<monitorwidth-flipborder))
+	if((win_x_return>flipborder) && (win_x_return<displayWidth-flipborder))
 		swapdesk=false;
 	if(swapdesk==false)
 		nx=x;
 
-	if(((win_x_return<flipborder) || (win_x_return>(monitorwidth-flipborder))) && (swapdesk==false))
+	if(((win_x_return<flipborder) || (win_x_return>(displayWidth-flipborder))) && (swapdesk==false))
 		{
 
-			if(win_x_return>(monitorwidth-flipborder))
+			if(win_x_return>(displayWidth-flipborder))
 				{
 					left=false;
 					offset=flipborder-flippedoffset;
@@ -128,7 +126,7 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 			else
 				{
 					left=true;
-					offset=monitorwidth-flippedoffset;
+					offset=displayWidth-flippedoffset;
 				}
 			mynew.x=offset;
 			swapdesk=true;
@@ -190,10 +188,10 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 
 	if(newd!=-1)
 		{
-			if(win_x_return>(monitorwidth-flipborder))
-				XWarpPointer(dpy,None,None,0,0,0,0,0-monitorwidth+flipborder,0);
+			if(win_x_return>(displayWidth-flipborder))
+				XWarpPointer(dpy,None,None,0,0,0,0,0-displayWidth+flipborder,0);
 			else
-				XWarpPointer(dpy,None,None,0,0,0,0,monitorwidth-flipborder,0);
+				XWarpPointer(dpy,None,None,0,0,0,0,displayWidth-flipborder,0);
 		}
 }
 

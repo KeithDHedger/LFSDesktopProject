@@ -525,7 +525,7 @@ void LFSTK_windowClass::LFSTK_setKeepAbove(bool set)
 		xclient.data.l[0] =_NET_WM_STATE_REMOVE;
 	xclient.data.l[1] =xa1;
 	xclient.data.l[2]=0;
-	XSendEvent(this->display,this->window,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
+	XSendEvent(this->display,this->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
 }
 
 /**
@@ -552,9 +552,8 @@ void LFSTK_windowClass::LFSTK_setKeepBelow(bool set)
 		xclient.data.l[0] =_NET_WM_STATE_REMOVE;
 	xclient.data.l[1] =xa1;
 	xclient.data.l[2]=0;
-	XSendEvent(this->display,this->window,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
+	XSendEvent(this->display,this->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
 }
-
 
 /**
 * Set transient for window.
@@ -564,7 +563,6 @@ void LFSTK_windowClass::LFSTK_setTransientFor(Window w)
 {
 	XSetTransientForHint(this->display,this->window,w);
 }
-
 
 /**
 * Set window active.
@@ -1464,6 +1462,11 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 														{
 															LFSTK_ExpanderGadgetClass *gadget=static_cast<LFSTK_ExpanderGadgetClass*>(ml->gadget);
 															gadget->LFSTK_updateGadget(oldwindowGeom);
+														}
+													if(ml->type==SCROLLBARGADGET)
+														{
+															if(static_cast<LFSTK_scrollBarClass*>(ml->gadget)->lockToWindow==true)
+																static_cast<LFSTK_scrollBarClass*>(ml->gadget)->LFSTK_restickWindow();
 														}
 												}
 										}

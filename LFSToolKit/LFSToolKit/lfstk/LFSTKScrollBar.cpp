@@ -255,6 +255,26 @@ bool LFSTK_scrollBarClass::LFSTK_getAllowKBControl(void)
 */
 void LFSTK_scrollBarClass::LFSTK_clearWindow()
 {
+//				this->hitRects.at(j).gadget->parent=this->window;
+// geometryStruct  geom;
+// this->LFSTK_getGeom
+ XWindowAttributes   xwa;
+ XGetWindowAttributes(this->display,this->parent,&xwa);
+ //geom->x=xwa.x;
+// geom->y=xwa.y;
+// geom->w=xwa.width;
+// geom->h=xwa.height;
+//if(this->gadgetDetails.gadgetGeom.h<xwa.height)
+//{
+//	this->gadgetGeom.w=this->gadgetDetails.gadgetGeom.w;
+//	this->gadgetGeom.h=xwa.height;
+//	this->gadgetDetails.gadgetGeom.w=this->gadgetGeom.w;
+//	this->gadgetDetails.gadgetGeom.h=this->gadgetGeom.h;
+//	XResizeWindow(this->display,this->window,this->gadgetGeom.w,this->gadgetGeom.h);
+//	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,this->gadgetGeom.w,this->gadgetGeom.h);
+//
+//	//this->LFSTK_resizeWindow(this->gadgetDetails.gadgetGeom.w,xwa.height);
+//}
 	if(this->startDrag==true)
 		this->setState(false);
 
@@ -533,4 +553,33 @@ void LFSTK_scrollBarClass::LFSTK_scrollByPage(bool up)
 		this->pageUpDown(this->downRight,this);
 	return;
 }
+
+/**
+* Repositon scrollbar.
+*/
+void LFSTK_scrollBarClass::LFSTK_restickWindow(void)
+{
+	Window				child;
+	XWindowAttributes	xwa;
+	geometryStruct	geom;
+	int					x,y;
+
+	//this->LFSTK_getGeomWindowRelative(&geom,this->lockToWindowRight);
+	//this->LFSTK_resizeWindow(SCROLLBARWIDTH,geom.h);
+	//XGetWindowAttributes(this->display,this->lockToWindowRight,&xwa);
+	//XTranslateCoordinates(this->display,this->window,this->lockToWindowRight,xwa.x,xwa.y,&x,&y,&child );
+	//DEBUGFUNC("lockToWindowRight x=%i y=%i w=%i h=%i x=%i y=%i win=%i",xwa.x,xwa.y,xwa.width,xwa.height,x,y,this->lockToWindowRight);
+
+	//this->LFSTK_moveGadget(xwa.x,xwa.y);
+
+
+this->LFSTK_getGeomWindowRelative(&geom,this->parent);
+this->LFSTK_moveGadget(geom.x,geom.y);
+this->LFSTK_resizeWindow(SCROLLBARWIDTH,geom.h);
+	DEBUGFUNC("scroll rect %r win=%i",geom,this->parent);
+}
+
+
+
+
 
