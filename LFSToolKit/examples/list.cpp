@@ -52,8 +52,8 @@ bool doQuit(void *p,void* ud)
 
 bool select(void *object,void* userdata)
 {
+DEBUGFUNC("%p",object)
 	LFSTK_listGadgetClass	*list=static_cast<LFSTK_listGadgetClass*>(object);
-
 	printf("List item=%i\n",list->LFSTK_getCurrentListItem());
 	printf("Selected List item string=%s\n",list->LFSTK_getSelectedLabel());
 	if(list->listDataArray->at(list->LFSTK_getCurrentListItem()).imageType==FILETHUMB)

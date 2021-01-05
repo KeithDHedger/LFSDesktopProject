@@ -42,6 +42,7 @@ class LFSTK_gadgetClass
 		virtual void			LFSTK_moveGadget(int w,int h);
 		void					LFSTK_showGadget(void);
 		void					LFSTK_hideGadget(void);
+		void					LFSTK_reParentWindow(Window win,int newx,int newy);
 		virtual bool			clientMessage(XEvent *e);
 		virtual bool			gotFocus(XEvent *e);
 		virtual bool			lostFocus(XEvent *e);

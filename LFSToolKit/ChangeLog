@@ -1,4 +1,6 @@
 0.4.6
+Internal changes.
+Fixed scrollbar visual.
 Made font dialog window not resizable.
 Removed redundant params from list creation.
 Changed default gravity of list gadget to NorthGravity.

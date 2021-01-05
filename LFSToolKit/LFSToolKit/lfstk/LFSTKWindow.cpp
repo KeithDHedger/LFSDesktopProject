@@ -1406,7 +1406,7 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 	int	retval=0;
 
 	switch(event->type)
-		{
+		{			
 			case FocusOut:
 				break;
 

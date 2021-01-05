@@ -207,7 +207,6 @@ int main(int argc, char **argv)
 							switch(event.type)
 								{
 									case FocusOut:
-										printf("foc out>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 										break;
 									case ConfigureNotify:
 									case Expose:

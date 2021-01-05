@@ -90,10 +90,15 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* lab
 */
 bool LFSTK_buttonClass::keyRelease(XKeyEvent *e)
 {
-	if(this->runCallback(KEYRELEASECB)==true)
-		return(this->keyCB.releaseCallback(this,this->keyCB.userData));
+	bool retval=false;
 
-	return(true);
+	if(this->runCallback(KEYRELEASECB)==true)
+		retval=this->keyCB.releaseCallback(this,this->keyCB.userData);
+
+	if(this->toParent==true)
+		return(false);
+
+	return(retval);
 }
 
 /**
@@ -103,8 +108,13 @@ bool LFSTK_buttonClass::keyRelease(XKeyEvent *e)
 */
 bool LFSTK_buttonClass::keyPress(XKeyEvent *e)
 {
-	if(this->runCallback(KEYPRESSCB)==true)
-		return(this->keyCB.pressCallback(this,this->keyCB.userData));
+	bool retval=false;
 
-	return(true);
+	if(this->runCallback(KEYPRESSCB)==true)
+		retval=this->keyCB.pressCallback(this,this->keyCB.userData);
+
+	if(this->toParent==true)
+		return(false);
+
+	return(retval);
 }

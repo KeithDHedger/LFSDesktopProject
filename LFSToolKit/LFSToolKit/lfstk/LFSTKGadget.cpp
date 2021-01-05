@@ -694,6 +694,7 @@ void LFSTK_gadgetClass::selectBevel(bool mousedown)
 */
 bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 {
+	bool retval=true;
 	this->keyEvent=NULL;
 	this->mouseEvent=NULL;
 
@@ -713,13 +714,13 @@ bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 		{
 			this->mouseEvent=e;
 			
+			if(this->runCallback(MOUSERELEASECB)==true)
+				retval=this->mouseCB.releaseCallback(this,this->mouseCB.userData);
+
 			if(this->toParent==true)
 				return(false);
-
-			if(this->runCallback(MOUSERELEASECB)==true)
-				return(this->mouseCB.releaseCallback(this,this->mouseCB.userData));
 		}
-	return(true);
+	return(retval);
 }
 
 /**
@@ -729,10 +730,11 @@ bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 */
 bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 {
+	bool retval=true;
+
 	this->mouseDownX=e->x;
 	this->mouseDownY=e->y;
 	this->keyEvent=NULL;
-
 //no callbacks
 	if(this->runCallback(ANYMOUSECB)==false)
 		return(true);
@@ -745,13 +747,14 @@ bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 	this->selectBevel(true);
 	this->LFSTK_clearWindow();
 	
+
+	if(this->runCallback(MOUSEPRESSCB)==true)
+		retval=this->mouseCB.pressCallback(this,this->mouseCB.userData);
+
 	if(this->toParent==true)
 		return(false);
 
-	if(this->runCallback(MOUSEPRESSCB)==true)
-		return(this->mouseCB.pressCallback(this,this->mouseCB.userData));
-
-	return(true);
+	return(retval);
 }
 
 /**
@@ -1892,4 +1895,17 @@ void LFSTK_gadgetClass::LFSTK_setIndicator(indicatorType indictype)
 
 //{(int)(w-TRIANGLESIZE-(this->pad*2)),(int)((h/2)-(TRIANGLESIZE/2)+(this->pad/2)),TRIANGLESIZE,TRIANGLESIZE},//indicator geom
 //	true,//has indicator
+}
+
+/**
+* Re Parent the gadget window.
+* \param Window win New parent window.
+* \param int newx,int newy New position.
+*/
+void LFSTK_gadgetClass::LFSTK_reParentWindow(Window win,int newx,int newy)
+{
+	XMapWindow(this->display,win);
+	XMapWindow(this->display,this->window);
+	XReparentWindow(this->display,this->window,win,newx,newy);
+	this->parent=win;
 }

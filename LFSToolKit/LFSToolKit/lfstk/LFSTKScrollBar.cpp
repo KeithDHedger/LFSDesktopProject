@@ -24,6 +24,9 @@
 
 LFSTK_scrollBarClass::~LFSTK_scrollBarClass()
 {
+	this->thumb->LFSTK_reParentWindow(this->wc->window,0,0);
+	this->upLeft->LFSTK_reParentWindow(this->wc->window,0,0);
+	this->downRight->LFSTK_reParentWindow(this->wc->window,0,0);
 }
 
 LFSTK_scrollBarClass::LFSTK_scrollBarClass()
@@ -73,18 +76,20 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vert
 	wc->LFSTK_addMappedListener(this->window,ml);
 
 	this->LFSTK_setColourName(NORMALCOLOUR,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPESBTROUGHCOLOUR));
-	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false,false,false};
+	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false,false,false};
 
 	this->verticalBar=vertical;
 
 	if(this->verticalBar==false)
 		{
 //thumb
-			this->thumb=new LFSTK_buttonClass(parentwc,"",x+h,y,h,h,gravity);
-			this->thumb->LFSTK_setLimits(x+h-1,-1,x+w-h,-1);
+			this->thumb=new LFSTK_buttonClass(parentwc,"",0,0,h,h,NorthWestGravity);
+			this->thumb->LFSTK_reParentWindow(this->window,h,0);			
+			this->thumb->LFSTK_setLimits(h-1,-1,w-h,-1);
 			this->thumb->LFSTK_allowYMovement(false);
 //left
-			this->upLeft=new LFSTK_buttonClass(parentwc,"",x,y,h,h,gravity);
+			this->upLeft=new LFSTK_buttonClass(parentwc,"",0,0,h,h,gravity);
+			this->upLeft->LFSTK_reParentWindow(this->window,0,0);
 			asprintf(&pathtobit,"%s/left.png",this->wc->globalLib->LFSTK_getThemePath());
 			if(access(pathtobit,F_OK)==0)
 				this->upLeft->LFSTK_setImageFromPath(pathtobit,CENTRE,true);
@@ -92,7 +97,8 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vert
 				this->upLeft->LFSTK_setImageFromPath(LFSTKPIXMAPSDIR "/left.png",CENTRE,true);
 			free(pathtobit);
 //rite
-			this->downRight=new LFSTK_buttonClass(parentwc,"",x+w-h,y,h,h,gravity);
+			this->downRight=new LFSTK_buttonClass(parentwc,"",0,0,h,h,gravity);
+			this->downRight->LFSTK_reParentWindow(this->window,w-h,0);
 			asprintf(&pathtobit,"%s/rite.png",this->wc->globalLib->LFSTK_getThemePath());
 			if(access(pathtobit,F_OK)==0)
 				this->downRight->LFSTK_setImageFromPath(pathtobit,CENTRE,true);
@@ -103,11 +109,13 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vert
 	else
 		{
 //thumb
-			this->thumb=new LFSTK_buttonClass(parentwc,"",x,y+w,w,w,gravity);
-			this->thumb->LFSTK_setLimits(-1,y+w-1,-1,y+h-w);
+			this->thumb=new LFSTK_buttonClass(parentwc,"",0,0,w,w,NorthWestGravity);
+			this->thumb->LFSTK_reParentWindow(this->window,0,0);
+			this->thumb->LFSTK_setLimits(-1,w-1,-1,h-w);
 			this->thumb->LFSTK_allowXMovement(false);
 //up
-			this->upLeft=new LFSTK_buttonClass(parentwc,"",x,y,w,w,gravity);
+			this->upLeft=new LFSTK_buttonClass(parentwc,"",0,0,w,w,gravity);
+			this->upLeft->LFSTK_reParentWindow(this->window,0,0);
 			asprintf(&pathtobit,"%s/up.png",this->wc->globalLib->LFSTK_getThemePath());
 			if(access(pathtobit,F_OK)==0)
 				this->upLeft->LFSTK_setImageFromPath(pathtobit,CENTRE,true);
@@ -116,6 +124,7 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vert
 			free(pathtobit);
 //down
 			this->downRight=new LFSTK_buttonClass(parentwc,"",x,y+h-w,w,w,gravity);
+			this->downRight->LFSTK_reParentWindow(this->window,0,h-w);
 			asprintf(&pathtobit,"%s/down.png",this->wc->globalLib->LFSTK_getThemePath());
 			if(access(pathtobit,F_OK)==0)
 				this->downRight->LFSTK_setImageFromPath(pathtobit,CENTRE,true);
@@ -255,30 +264,13 @@ bool LFSTK_scrollBarClass::LFSTK_getAllowKBControl(void)
 */
 void LFSTK_scrollBarClass::LFSTK_clearWindow()
 {
-//				this->hitRects.at(j).gadget->parent=this->window;
-// geometryStruct  geom;
-// this->LFSTK_getGeom
- XWindowAttributes   xwa;
- XGetWindowAttributes(this->display,this->parent,&xwa);
- //geom->x=xwa.x;
-// geom->y=xwa.y;
-// geom->w=xwa.width;
-// geom->h=xwa.height;
-//if(this->gadgetDetails.gadgetGeom.h<xwa.height)
-//{
-//	this->gadgetGeom.w=this->gadgetDetails.gadgetGeom.w;
-//	this->gadgetGeom.h=xwa.height;
-//	this->gadgetDetails.gadgetGeom.w=this->gadgetGeom.w;
-//	this->gadgetDetails.gadgetGeom.h=this->gadgetGeom.h;
-//	XResizeWindow(this->display,this->window,this->gadgetGeom.w,this->gadgetGeom.h);
-//	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,this->gadgetGeom.w,this->gadgetGeom.h);
-//
-//	//this->LFSTK_resizeWindow(this->gadgetDetails.gadgetGeom.w,xwa.height);
-//}
 	if(this->startDrag==true)
 		this->setState(false);
 
 	this->clearBox(&this->gadgetDetails);
+	if(this->style!=BEVELNONE)
+		this->drawBevel(&this->gadgetDetails.gadgetGeom,this->gadgetDetails.bevel);
+
 	if(this->runCallback(MOUSERELEASECB)==true)
 		this->mouseCB.releaseCallback(this,this->mouseCB.userData);
 
@@ -300,6 +292,8 @@ void LFSTK_scrollBarClass::LFSTK_clearWindow(bool ignorecb)
 				this->setState(false);
 
 			this->clearBox(&this->gadgetDetails);
+			if(this->style!=BEVELNONE)
+				this->drawBevel(&this->gadgetDetails.gadgetGeom,this->gadgetDetails.bevel);
 			if(this->runCallback(MOUSERELEASECB)==true)
 				this->mouseCB.releaseCallback(this,this->mouseCB.userData);
 
@@ -312,6 +306,8 @@ void LFSTK_scrollBarClass::LFSTK_clearWindow(bool ignorecb)
 		{
 			XSync(this->display,true);
 			this->clearBox(&this->gadgetDetails);
+			if(this->style!=BEVELNONE)
+				this->drawBevel(&this->gadgetDetails.gadgetGeom,this->gadgetDetails.bevel);
 			this->thumb->LFSTK_clearWindow();
 			XSync(this->display,true);
 		}

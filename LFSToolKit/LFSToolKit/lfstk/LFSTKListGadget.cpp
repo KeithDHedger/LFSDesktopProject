@@ -25,6 +25,11 @@
 
 LFSTK_listGadgetClass::~LFSTK_listGadgetClass()
 {
+	for(int j=0;j<this->maxShowing;j++)
+		this->labels[j]->LFSTK_reParentWindow(this->wc->window,1,1);
+
+	this->scrollBar->LFSTK_reParentWindow(this->wc->window,1,1);
+
 	delete[] this->data;
 	this->freeList();
 	delete[] this->labels;
@@ -34,7 +39,6 @@ bool LFSTK_listGadgetClass::setFocusToList(void *object,void* userdata)
 {
 	LFSTK_listGadgetClass	*list;
 	listData				*d=(listData*)userdata;	
-
 	list=static_cast<LFSTK_listGadgetClass*>(d->mainObject);
 	XSetInputFocus(list->display,list->window,RevertToParent,CurrentTime);
 	return(true);
@@ -46,7 +50,6 @@ bool LFSTK_listGadgetClass::select(void *object,void* userdata)
 	LFSTK_buttonClass		*label;
 	listData				*d=(listData*)userdata;
 	unsigned				datax;
-
 	label=static_cast<LFSTK_buttonClass*>(object);
 	list=static_cast<LFSTK_listGadgetClass*>(d->mainObject);
 	datax=d->userData;
@@ -62,6 +65,8 @@ bool LFSTK_listGadgetClass::select(void *object,void* userdata)
 				list->scrollBar->LFSTK_scrollByLine(true);
 				return(true);
 				break;
+			default:
+				break;				
 		}
 
 	for(int j=0;j<list->maxShowing;j++)
@@ -269,10 +274,10 @@ void LFSTK_listGadgetClass::setNavSensitive(void)
 LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const char *label,int x,int y,unsigned w,unsigned h,int gravity)
 {
 	unsigned				sx;
-	unsigned				sy;
 	XSetWindowAttributes	wa;
 	unsigned int			adjwidth=w-SCROLLBARWIDTH-2;
-
+	int						sy=1;
+adjwidth=w;
 	this->LFSTK_setCommon(parentwc,"",x-1,y-1,adjwidth+2,h+2,gravity);
 
 	wa.win_gravity=gravity;
@@ -295,15 +300,15 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 	this->listOffset=0;
 
 	sx=x+1;
-	sy=y+1;
 	this->maxShowing=((h)/LABELHITE);
 	this->labels=new LFSTK_buttonClass*[this->maxShowing];
 	this->data=new listData[this->maxShowing];
 	this->listDataArray=new std::vector <listLabelStruct>;
-
 	for(int j=0;j<this->maxShowing;j++)
 		{
-			this->labels[j]=new LFSTK_buttonClass(parentwc,"",sx,sy,adjwidth-2,LABELHITE-4,gravity);
+			this->labels[j]=new LFSTK_buttonClass(parentwc,"",0,0,adjwidth-2,LABELHITE-4,gravity);
+			this->labels[j]->LFSTK_reParentWindow(this->window,1,sy);
+			this->labels[j]->toParent=true;
 			this->labels[j]->LFSTK_setLabelAutoColour(true);
 			this->labels[j]->LFSTK_reloadColours();
 			this->labels[j]->LFSTK_setColourName(NORMALCOLOUR,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPELISTTROUGHCOLOUR));
@@ -318,7 +323,7 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 			this->labels[j]->LFSTK_setTile(NULL,0);
 
 			this->labels[j]->LFSTK_setMouseCallBack(setFocusToList,select,LISTDATA(j));
-			this->labels[j]->LFSTK_setKeyCallBack(setFocusToList,select,LISTDATA(j));
+			this->labels[j]->LFSTK_setKeyCallBack(setFocusToList,NULL,LISTDATA(j));
 
 			this->labels[j]->LFSTK_setFontString(this->monoFontString);
 			this->labels[j]->LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
@@ -331,7 +336,9 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 		}
 
 //navigate
-	this->scrollBar=new LFSTK_scrollBarClass(this->wc,true,x+w-SCROLLBARWIDTH-2,y,SCROLLBARWIDTH,h,gravity);
+	this->scrollBar=new LFSTK_scrollBarClass(this->wc,true,0,0,SCROLLBARWIDTH,h,gravity);
+	this->scrollBar->LFSTK_reParentWindow(this->window,w-SCROLLBARWIDTH,0);
+	this->scrollBar->toParent=true;	
 	this->scrollBar->LFSTK_setScale(1,1);
 	this->scrollBar->LFSTK_setLineScroll(1);
 	this->scrollBar->LFSTK_setPageScroll(maxShowing-1);
@@ -343,7 +350,6 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 	this->LFSTK_setColourName(INACTIVECOLOUR,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPELISTTROUGHCOLOUR));
 	this->gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,adjwidth,h},{0,0,0,0},false,false,false};
 	this->clearBox(&this->gadgetDetails);
-	//DEBUGFUNC("%r",this->gadgetGeom);
 }
 
 /**

@@ -30,7 +30,7 @@ class LFSTK_scrollBarClass : public LFSTK_gadgetClass
 	public:
 		LFSTK_scrollBarClass();
 		~LFSTK_scrollBarClass();
-		LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vertical,int x,int y,unsigned w,unsigned h,int gravity);
+		LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vertical,int x,int y,unsigned w,unsigned h,int gravity=NorthWestGravity);
 
 		bool				mouseUp(XButtonEvent *e);
 		bool				mouseDown(XButtonEvent *e);
