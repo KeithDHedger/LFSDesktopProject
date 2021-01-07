@@ -65,7 +65,7 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		int						LFSTK_findByLabel(const char *needle,bool select=true);
 
 		bool					mouseExit(XButtonEvent *e) {return(true);};
-		bool					mouseEnter(XButtonEvent *e) {return(true);};
+		bool					mouseEnter(XButtonEvent *e) {XSetInputFocus(this->display,this->window,RevertToParent,CurrentTime);return(true);};
 		bool					mouseDown(XButtonEvent *e) {return(true);};//{XSetInputFocus(this->display,this->window,RevertToParent,CurrentTime);return(true);};
 		bool					mouseUp(XButtonEvent *e);
 		bool					keyRelease(XKeyEvent *e);

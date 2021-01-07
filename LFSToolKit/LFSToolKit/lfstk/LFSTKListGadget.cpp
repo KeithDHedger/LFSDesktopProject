@@ -179,6 +179,12 @@ void LFSTK_listGadgetClass::LFSTK_updateList(void)
 		this->scrollBar->LFSTK_setScale(0,0);
 	this->listCntNew=this->labelsArray->size();
 
+	for(int j=0;j<this->maxShowing;j++)
+		{
+			this->labelsArray->at(j)->LFSTK_setColourName(NORMALCOLOUR,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPELISTTROUGHCOLOUR));
+			this->labelsArray->at(j)->LFSTK_clearWindow();
+		}
+
 	for(int j=0;j<this->labelsArray->size();j++)
 		{
 			this->labelsArray->at(j)->LFSTK_hideGadget();
