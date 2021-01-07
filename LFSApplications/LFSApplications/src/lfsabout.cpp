@@ -10,7 +10,7 @@ exit $retval
 
 #endif
 
-#include "lfstk/LFSTKGlobals.h"
+#include <lfstk/LFSTKGlobals.h>
 
 #define WINDOWWIDTH 320
 #define WINDOWHITE 10

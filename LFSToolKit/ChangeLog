@@ -1,4 +1,5 @@
 0.4.6
+Fixed website address in about box.
 Fixed input focus on list gadgets.
 Fixed list gadget expanding/shrinking in both x/y.
 Can now add list gadget to expander.

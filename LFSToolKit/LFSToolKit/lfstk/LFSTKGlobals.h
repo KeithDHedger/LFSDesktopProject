@@ -35,7 +35,7 @@
 
 #define COPYRITE			"Copyright © 2013-2020 K.D.Hedger"
 #define PERSONAL			"keithdhedger@gmail.com"
-#define	MYWEBSITE			"https://keithhedger.co.uk"
+#define	MYWEBSITE			"https://keithdhedger.github.io/"
 
 #define DEFAULTFONT			"sans:size=10"
 #define DISCLOSURESIZE		6
