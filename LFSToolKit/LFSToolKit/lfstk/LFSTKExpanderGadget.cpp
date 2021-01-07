@@ -248,17 +248,34 @@ void LFSTK_ExpanderGadgetClass::updateInternalGadgets(geometryStruct oldgadggeom
 				{
 					switch(this->gadgetStretch)
 						{
-							case STRETCH:								
-								this->hitRects.at(j).rect.y=(int)(double)((double)this->hitRects.at(j).rect.y*multiy+0.5);
-								this->hitRects.at(j).rect.h=(int)(double)((double)this->hitRects.at(j).rect.h*multiy+0.5);
-								this->hitRects.at(j).rect.x=(int)(double)((double)this->hitRects.at(j).rect.x*multix+0.5);
-								this->hitRects.at(j).rect.w=(int)(double)((double)this->hitRects.at(j).rect.w*multix+0.5);
+							case STRETCH:
+								{
+									this->hitRects.at(j).rect.y=(int)(double)((double)this->hitRects.at(j).rect.y*multiy+0.5);
+									this->hitRects.at(j).rect.h=(int)(double)((double)this->hitRects.at(j).rect.h*multiy+0.5);
+									this->hitRects.at(j).rect.x=(int)(double)((double)this->hitRects.at(j).rect.x*multix+0.5);
+									this->hitRects.at(j).rect.w=(int)(double)((double)this->hitRects.at(j).rect.w*multix+0.5);
 
-								this->hitRects.at(j).gadget->LFSTK_resizeWindow(this->hitRects.at(j).rect.w,this->hitRects.at(j).rect.h);
-								this->hitRects.at(j).gadget->LFSTK_moveGadget(this->hitRects.at(j).rect.x,this->hitRects.at(j).rect.y);
+									this->hitRects.at(j).gadget->LFSTK_resizeWindow(this->hitRects.at(j).rect.w,this->hitRects.at(j).rect.h);
+									this->hitRects.at(j).gadget->LFSTK_moveGadget(this->hitRects.at(j).rect.x,this->hitRects.at(j).rect.y);
+									mappedListener	*ml=this->hitRects.at(j).gadget->wc->LFSTK_getMappedListener(this->hitRects.at(j).gadget->window);
+									if(ml->type==LISTGADGET)
+										{
+											LFSTK_listGadgetClass	*list=static_cast<LFSTK_listGadgetClass*>(this->hitRects.at(j).gadget);
+											list->LFSTK_resetListHeight(this->hitRects.at(j).rect.h);
+											list->LFSTK_updateList();
+
+											for(int i=0;i<list->maxShowing;i++)
+												{
+													list->labelsArray->at(i)->LFSTK_resizeWindow(this->hitRects.at(j).rect.w-SCROLLBARWIDTH-1,list->labelsArray->at(i)->gadgetDetails.gadgetGeom.h);
+													list->labelsArray->at(i)->LFSTK_moveGadget(1,1+LABELHITE*i);
+												}
+											list->scrollBar->LFSTK_resizeWindow(SCROLLBARWIDTH,this->hitRects.at(j).rect.h);
+											list->scrollBar->LFSTK_moveGadget(this->hitRects.at(j).rect.w-SCROLLBARWIDTH,0);
+										}
+								}
 								break;
 
-							case MOVE:
+							case MOVE://TODO/MOVE list
 								{
 									double	perc=(double)this->hitRects.at(j).rect.x/(double)oldgadggeom.w;
 									this->hitRects.at(j).rect.x=(int)(((double)newgeom.w*perc)+0.5);

@@ -1,4 +1,6 @@
 0.4.6
+Fixed list gadget expanding/shrinking in both x/y.
+Can now add list gadget to expander.
 Internal changes.
 Fixed scrollbar visual.
 Made font dialog window not resizable.

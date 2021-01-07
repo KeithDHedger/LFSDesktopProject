@@ -175,6 +175,7 @@ class LFSTK_gadgetClass
 		void					selectBevel(bool mousedown);
 
 	protected:
+		bool					isMapped=false;
 		bool					runCallback(int cbtype);
 		mappedListener			*ml=NULL;
 		void					drawBox(geometryStruct* g,gadgetState state,bevelType bevel);

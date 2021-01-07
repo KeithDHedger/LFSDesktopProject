@@ -52,7 +52,7 @@ bool doQuit(void *p,void* ud)
 
 bool select(void *object,void* userdata)
 {
-DEBUGFUNC("%p",object)
+//DEBUGFUNC("%p",object)
 	LFSTK_listGadgetClass	*list=static_cast<LFSTK_listGadgetClass*>(object);
 	printf("List item=%i\n",list->LFSTK_getCurrentListItem());
 	printf("Selected List item string=%s\n",list->LFSTK_getSelectedLabel());
@@ -61,87 +61,111 @@ DEBUGFUNC("%p",object)
 	printf("UserData=%p\n",list->listDataArray->at(list->LFSTK_getCurrentListItem()).userData);
 	return(true);
 }
-
+LFSTK_ExpanderGadgetClass	*multi=NULL;
 int main(int argc, char **argv)
 {
 	XEvent	event;
-	int		sy=BORDER;
+	int		sy=0;
+	std::vector<hitRect>	hrs;
 
 	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"List Example",false);
 	display=wc->display;
 
-	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
-	label->LFSTK_setCairoFontDataParts("sB",20);
+	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*3);
+	multi->stretchX=false;
+	multi->stretchY=false;
+	multi->lockY=LOCKTOTOP;
+	multi->lockX=LOCKTOCENTRE;
+	multi->gadgetStretch=MOVE;
+
+	hrs.push_back({0,sy,DIALOGWIDTH,GADGETHITE,NULL});
+	hrs.back().gadget=new LFSTK_labelClass(wc,BOXLABEL,0,0,1,1);
+	hrs.back().gadget->LFSTK_setLabelGravity(CENTRE);
+	hrs.back().gadget->LFSTK_setCairoFontDataParts("sB",20);
 	sy+=YSPACING;
 
-	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
+	hrs.push_back({0,sy,DIALOGWIDTH,GADGETHITE,NULL});
+	hrs.back().gadget=new LFSTK_labelClass(wc,COPYRITE,0,0,1,1);
+	hrs.back().gadget->LFSTK_setLabelGravity(CENTRE);
 	sy+=HALFYSPACING;
-	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
-	personal->LFSTK_setCairoFontDataParts("B");
+
+	hrs.push_back({0,sy,DIALOGWIDTH,GADGETHITE,NULL});
+	hrs.back().gadget=new LFSTK_labelClass(wc,PERSONAL,0,0,1,1);
+	hrs.back().gadget->LFSTK_setLabelGravity(CENTRE);
+	hrs.back().gadget->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
-//TODO//
-//	std::vector<hitRect>	hrs;
-//	LFSTK_MultiGadgetClass		*multi=NULL;
-//
-//
-//
-//	multi=new LFSTK_MultiGadgetClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5);
-//multi->stretchX=true;
-//multi->stretchY=true;
-//multi->gadgetStretch=STRETCH;
-//
-//	hrs.push_back({0,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5,NULL});
-//	list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5,BUTTONGRAV,NULL,0);
-//	hrs.back().gadget=list;
-//
-//
-//
+
+	multi->LFSTK_setHitRects(hrs);
+	hrs.clear();
+
+	multi=new LFSTK_ExpanderGadgetClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5);
+	multi->stretchX=true;
+	multi->stretchY=true;
+	multi->lockY=LOCKTOTOP;
+	multi->lockX=LOCKTOCENTRE;
+	multi->gadgetStretch=STRETCH;
 
 //list
 	list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5);
+	hrs.push_back({0,0,DIALOGWIDTH-(BORDER*2),GADGETHITE*5,NULL});
+	hrs.back().gadget=list;
+	hrs.back().gadget->toParent=true;
+	multi->LFSTK_setHitRects(hrs);
+	hrs.clear();
+
 	listLabelStruct ls;
 	for(int j=0;j<15;j++)
 		{
 			ls.label=strdup((char*)lst[j]);
 			ls.imageType=FILETHUMB;
+			//ls.imageType=NOTHUMB;
 			if(images[j]!=NULL)
 				ls.data.imagePath=strdup(images[j]);
 			else
 				ls.data.imagePath=NULL;
 			ls.userData=(void*)(long)j+0x1000;
 			list->LFSTK_appendToList(ls);
-			//hrs.back().gadget->LFSTK_appendToList(ls);
 		}
 
-//hrs.back().gadget->LFSTK_updateList();
 	list->LFSTK_updateList();
 	list->LFSTK_setMouseCallBack(NULL,select,NULL);
-	sy+=GADGETHITE*6;
-
-//	multi->LFSTK_setHitRects(hrs);
-//	hrs.clear();
+	sy+=GADGETHITE*11;
 
 //file list
-	filelist=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*16);
+	filelist=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*16,SouthGravity);
 	filelist->LFSTK_setListFromFile("/tmp/biglist",false);
 	filelist->LFSTK_setMouseCallBack(NULL,select,(void*)0xdeadbeaf);
 //goto end
-//	filelist->LFSTK_selectByIndex(1000000);
 	if(filelist->LFSTK_findByLabel("zcat",false)==-1)
 		printf("Not found\n");
-	sy+=GADGETHITE*17;
+
+	sy+=GADGETHITE*13;
 
 //line
-	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
-	seperator->LFSTK_setStyle(BEVELNONE);
-	seperator->gadgetDetails.buttonTile=false;
-	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
-	sy+=YSPACING;
+	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,sy,DIALOGWIDTH,6);
+	multi->stretchX=true;
+	multi->lockY=LOCKTOBOTTOM;
+	multi->gadgetStretch=STRETCH;
+
+	hrs.push_back({0,0,DIALOGWIDTH,2,new LFSTK_buttonClass(wc,"--",0,0,DIALOGWIDTH,2)});
+	hrs.back().gadget->gadgetDetails.bevel=BEVELNONE;
+	hrs.back().gadget->gadgetDetails.buttonTile=false;
+
+	multi->LFSTK_setHitRects(hrs);
+	hrs.clear();
 
 //quit
-	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
+	multi=new LFSTK_ExpanderGadgetClass(wc,"",DIALOGMIDDLE-HALFGADGETWIDTH,sy+12,GADGETWIDTH,GADGETHITE);
+	multi->lockY=LOCKTOBOTTOM;
+
+	hrs.push_back({0,0,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Quit",0,0,1,1)});
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
+
+	multi->LFSTK_setHitRects(hrs);
+	hrs.clear();
+
 	sy+=YSPACING;
+	sy+=YSPACING/2;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();

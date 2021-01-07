@@ -1463,11 +1463,12 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 															LFSTK_ExpanderGadgetClass *gadget=static_cast<LFSTK_ExpanderGadgetClass*>(ml->gadget);
 															gadget->LFSTK_updateGadget(oldwindowGeom);
 														}
-													if(ml->type==SCROLLBARGADGET)
-														{
-															if(static_cast<LFSTK_scrollBarClass*>(ml->gadget)->lockToWindow==true)
-																static_cast<LFSTK_scrollBarClass*>(ml->gadget)->LFSTK_restickWindow();
-														}
+													//if(ml->type==SCROLLBARGADGET)
+													//	{
+													//	printf("<<<<<<<<<<<<<\n");
+													//		if(static_cast<LFSTK_scrollBarClass*>(ml->gadget)->lockToWindow==true)
+													//			static_cast<LFSTK_scrollBarClass*>(ml->gadget)->LFSTK_restickWindow();
+													//	}
 												}
 										}
 								}

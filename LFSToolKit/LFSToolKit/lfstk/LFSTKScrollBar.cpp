@@ -24,6 +24,7 @@
 
 LFSTK_scrollBarClass::~LFSTK_scrollBarClass()
 {
+	this->LFSTK_reParentWindow(this->wc->window,0,0);
 	this->thumb->LFSTK_reParentWindow(this->wc->window,0,0);
 	this->upLeft->LFSTK_reParentWindow(this->wc->window,0,0);
 	this->downRight->LFSTK_reParentWindow(this->wc->window,0,0);
@@ -40,6 +41,23 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass()
 void LFSTK_scrollBarClass::LFSTK_setStyle(bevelType s)
 {
 	this->style=s;
+}
+
+/**
+* Reset bar height.
+* \param int newheight.
+*/
+void LFSTK_scrollBarClass::LFSTK_resetHeight(int newheight)
+{
+	if(this->verticalBar==false)
+		{
+		//TODO//
+		}
+	else
+		{
+			this->thumb->LFSTK_setLimits(-1,SCROLLBARWIDTH-1,-1,newheight-SCROLLBARWIDTH);
+			this->downRight->LFSTK_moveGadget(0,newheight-SCROLLBARWIDTH);
+		}
 }
 
 /**

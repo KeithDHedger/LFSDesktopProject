@@ -70,19 +70,22 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		bool					mouseUp(XButtonEvent *e);
 		bool					keyRelease(XKeyEvent *e);
 
-		unsigned				listCntNew=0;
-		int						currentItem;
+		void					LFSTK_resetListHeight(int newheight);
 
+		unsigned				listCntNew=0;
+		int						currentItem=0;
+
+		std::vector <LFSTK_buttonClass*> *labelsArray;
 		std::vector <listLabelStruct>	*listDataArray;
 
 		bool					freeCairoImages=true;
-	private:
-		LFSTK_scrollBarClass	*scrollBar;
-		unsigned				listOffset;
 		unsigned				maxShowing;
+		//LFSTK_buttonClass		**labels;		
+		LFSTK_scrollBarClass	*scrollBar=NULL;
+	private:
+		unsigned				listOffset=0;
 		listData				*data;
 
-		LFSTK_buttonClass		**labels;		
 
 		void					freeList(void);
 		void 					setCurrentItem(int item);

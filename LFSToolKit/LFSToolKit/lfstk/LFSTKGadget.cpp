@@ -1723,6 +1723,7 @@ void LFSTK_gadgetClass::LFSTK_setAlpha(double alph)
 void LFSTK_gadgetClass::LFSTK_showGadget(void)
 {
 	XMapWindow(this->display,this->window);
+	this->isMapped=true;
 }
 
 /**
@@ -1731,6 +1732,7 @@ void LFSTK_gadgetClass::LFSTK_showGadget(void)
 void LFSTK_gadgetClass::LFSTK_hideGadget(void)
 {
 	XUnmapWindow(this->display,this->window);
+	this->isMapped=false;
 }
 
 /**

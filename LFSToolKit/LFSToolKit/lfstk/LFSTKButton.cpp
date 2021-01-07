@@ -24,6 +24,8 @@
 
 LFSTK_buttonClass::~LFSTK_buttonClass()
 {
+	if(this->isMapped==true)
+		this->LFSTK_reParentWindow(this->wc->window,0,0);
 }
 
 LFSTK_buttonClass::LFSTK_buttonClass()
