@@ -20,6 +20,9 @@
  
 #include "lfstk/LFSTKGlobals.h"
 
+/**
+* Destructor.
+*/
 LFSTK_applicationClass::~LFSTK_applicationClass()
 {
 	for(int j=0;j<this->windows->size();j++)
@@ -130,7 +133,6 @@ void LFSTK_applicationClass::LFSTK_addWindow(windowInitStruct *wi,const char *na
 * \paramw indowInitStruct *wi window init structure.
 * \param const char *name window name.
 * \note wi can be NULL, defaults are used.
-* \note name can be NULL, if window is set to 1px size and type to _NET_WM_WINDOW_TYPE_DOCK.
 * \note class takes ownership of wi don't delete.
 */
 void LFSTK_applicationClass::LFSTK_addToolWindow(windowInitStruct *wi)
@@ -154,6 +156,11 @@ void LFSTK_applicationClass::LFSTK_addToolWindow(windowInitStruct *wi)
 	delete win;
 }
 
+/**
+* Set timer callback for main loop,
+* \param bool functionname (LFSTK_applicationClass *p,void* ud)
+* \param void* ud User data passed to function.
+*/
 void LFSTK_applicationClass::LFSTK_setTimerCallBack(bool (*timer)(LFSTK_applicationClass*,void*),void* ud)
 {
 	this->callBacks.validCallbacks|=TIMERCB;
@@ -163,6 +170,10 @@ void LFSTK_applicationClass::LFSTK_setTimerCallBack(bool (*timer)(LFSTK_applicat
 	this->callBacks.ignoreOrphanModKeys=true;
 }
 
+/**
+* Run main loop,
+* \note default to this->mainWindow.
+*/
 int LFSTK_applicationClass::LFSTK_runApp(void)
 {
 	XEvent	event;
@@ -232,6 +243,11 @@ int LFSTK_applicationClass::LFSTK_runApp(void)
 	return(this->exitValue);
 }
 
+/**
+* Run blocking loop,
+* \param int window Window number to run
+* \note Window numbers are numbered from 0 and are in order of creation.
+*/
 int LFSTK_applicationClass::LFSTK_runWindowLoop(int window)
 {
 	XEvent	event;
@@ -279,6 +295,11 @@ int LFSTK_applicationClass::LFSTK_runWindowLoop(int window)
 	return(this->exitValue);
 }
 
+/**
+* Run blocking loop,
+* \param LFSTK_windowClass *win Window to run
+* \note Window is found by object.
+*/
 int LFSTK_applicationClass::LFSTK_runWindowLoop(LFSTK_windowClass *win)
 {
 	XEvent	event;
@@ -291,6 +312,11 @@ int LFSTK_applicationClass::LFSTK_runWindowLoop(LFSTK_windowClass *win)
 	return(this->exitValue);
 }
 
+/**
+* Find window.
+* \param LFSTK_windowClass *win Window to find.
+* \return Window number.
+*/
 int LFSTK_applicationClass::LFSTK_findWindow(LFSTK_windowClass *win)
 {
 	for(int j=0;j<this->windows->size();j++)
