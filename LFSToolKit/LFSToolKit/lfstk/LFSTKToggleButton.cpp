@@ -28,7 +28,6 @@ LFSTK_toggleButtonClass::~LFSTK_toggleButtonClass()
 		cairo_surface_destroy(this->checkOn);
 	if(this->checkOff!=NULL)
 		cairo_surface_destroy(this->checkOff);
-	this->cImage=NULL;
 }
 
 LFSTK_toggleButtonClass::LFSTK_toggleButtonClass()
@@ -55,11 +54,11 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 
 	wa.win_gravity=gravity;
 	wa.save_under=true;
-	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
-	this->gc=XCreateGC(this->display,this->window,0,NULL);
-	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+	this->window=XCreateWindow(this->wc->app->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
+	this->gc=XCreateGC(this->wc->app->display,this->window,0,NULL);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->window,this->wc->app->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_setCairoFontData();
-	XSelectInput(this->display,this->window,this->gadgetEventMask);
+	XSelectInput(this->wc->app->display,this->window,this->gadgetEventMask);
 
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;
@@ -86,9 +85,11 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 			asprintf(&pathtobit,"%s/checkoff.png",this->wc->globalLib->LFSTK_getThemePath());
 			this->checkOff=this->wc->globalLib->LFSTK_createSurfaceFromPath(pathtobit);
 
-
 			if((this->checkOn==NULL) || (this->checkOff==NULL))
-				this->useImage=false;
+				{
+					this->useImage=false;
+					this->cImage=NULL;
+				}
 			else
 				{
 					this->useImage=true;
@@ -110,7 +111,7 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 */
 bool LFSTK_toggleButtonClass::mouseEnter(XButtonEvent *e)
 {
-	if(this->runCallback(ANYMOUSECB)==false)
+	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
 		return(true);
 
 	if(this->boxStyle==TOGGLENORMAL)
@@ -125,7 +126,7 @@ bool LFSTK_toggleButtonClass::mouseEnter(XButtonEvent *e)
 		}
 
 	this->inWindow=true;
-	XSync(this->display,false);
+	XSync(this->wc->app->display,false);
 	LFSTK_gadgetClass::LFSTK_clearWindow();
 	return(true);
 }
@@ -137,7 +138,7 @@ bool LFSTK_toggleButtonClass::mouseEnter(XButtonEvent *e)
 */
 bool LFSTK_toggleButtonClass::mouseExit(XButtonEvent *e)
 {
-	if(this->runCallback(ANYMOUSECB)==false)
+	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
 		return(true);
 
 	if(this->toggleState==true)
@@ -156,7 +157,7 @@ bool LFSTK_toggleButtonClass::mouseExit(XButtonEvent *e)
 		}
 
 	this->inWindow=false;
-	XSync(this->display,false);
+	XSync(this->wc->app->display,false);
 	LFSTK_gadgetClass::LFSTK_clearWindow();
 	return(true);
 }
@@ -168,7 +169,7 @@ bool LFSTK_toggleButtonClass::mouseExit(XButtonEvent *e)
 */
 bool LFSTK_toggleButtonClass::mouseDown(XButtonEvent *e)
 {
-	if(this->runCallback(ANYMOUSECB)==false)
+	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
 		return(true);
 
 	if(this->boxStyle==TOGGLENORMAL)
@@ -187,11 +188,12 @@ bool LFSTK_toggleButtonClass::mouseDown(XButtonEvent *e)
 	else
 		this->gadgetDetails.bevel=BEVELIN;
 
-	XSync(this->display,false);
+	XSync(this->wc->app->display,false);
 	LFSTK_gadgetClass::LFSTK_clearWindow();
 
-	if(this->runCallback(MOUSEPRESSCB)==true)
-		return(this->mouseCB.pressCallback(this,this->mouseCB.userData));
+	if(this->callBacks.validCallbacks & MOUSEPRESSCB)
+		return(this->callBacks.mousePressCallback(this,this->callBacks.mouseUserData));
+
 	return(true);
 }
 
@@ -204,7 +206,7 @@ bool LFSTK_toggleButtonClass::mouseUp(XButtonEvent *e)
 {
 	gadgetState col=NORMALCOLOUR;
 
-	if(this->runCallback(ANYMOUSECB)==false)
+	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
 		return(true);
 
 	if(this->inWindow==true)
@@ -230,12 +232,12 @@ bool LFSTK_toggleButtonClass::mouseUp(XButtonEvent *e)
 		}
 
 	LFSTK_gadgetClass::LFSTK_clearWindow();
-	XSync(this->display,false);
+	XSync(this->wc->app->display,false);
 
 	if(this->inWindow==true)
 		{
-			if(this->runCallback(MOUSERELEASECB)==true)
-				return(this->mouseCB.releaseCallback(this,this->mouseCB.userData));
+			if(this->callBacks.validCallbacks & MOUSERELEASECB)
+				return(this->callBacks.mouseReleaseCallback(this,this->callBacks.mouseUserData));
 		}
 	return(true);
 }

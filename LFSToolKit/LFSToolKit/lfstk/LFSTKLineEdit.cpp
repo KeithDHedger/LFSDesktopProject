@@ -25,10 +25,13 @@
 
 LFSTK_lineEditClass::~LFSTK_lineEditClass()
 {
+//	if(this->isMapped==true)
+//		this->LFSTK_reParentWindow(this->wc->window,0,0);
+
 	if(this->cursorColour.name!=NULL)
 		{
 			free(this->cursorColour.name);
-			XFreeColors(this->display,this->cm,(long unsigned int*)&this->cursorColour.pixel,1,0);
+			XFreeColors(this->wc->app->display,this->wc->app->cm,(long unsigned int*)&this->cursorColour.pixel,1,0);
 		}
 }
 
@@ -62,12 +65,12 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	wa.bit_gravity=gravity;
 	wa.save_under=true;
 
-	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWBitGravity,&wa);
-	this->gc=XCreateGC(this->display,this->window,0,NULL);
+	this->window=XCreateWindow(this->wc->app->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWBitGravity,&wa);
+	this->gc=XCreateGC(this->wc->app->display,this->window,0,NULL);
 	this->LFSTK_setFontString(this->monoFontString);
-	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->window,this->wc->app->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_setCairoFontData();
-	XSelectInput(this->display,this->window,this->gadgetEventMask);
+	XSelectInput(this->wc->app->display,this->window,this->gadgetEventMask);
 
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;
@@ -98,7 +101,7 @@ void LFSTK_lineEditClass::LFSTK_clearWindow()
 	this->gadgetDetails.bevel=BEVELIN;
 	this->drawLabel();
 	this->drawBevel(&this->gadgetDetails.gadgetGeom,this->gadgetDetails.bevel);
-	XSync(this->display,false);
+	XSync(this->wc->app->display,false);
 	return;
 }
 
@@ -107,7 +110,7 @@ void LFSTK_lineEditClass::LFSTK_clearWindow()
 */
 void LFSTK_lineEditClass::LFSTK_setFocus(void)
 {
-	XSetInputFocus(this->display,this->window,RevertToParent,CurrentTime);
+	XSetInputFocus(this->wc->app->display,this->window,RevertToParent,CurrentTime);
 	this->isFocused=true;
 	this->LFSTK_clearWindow();
 }
@@ -144,8 +147,8 @@ void LFSTK_lineEditClass::LFSTK_resizeWindow(int w,int h)
 	this->gadgetGeom.h=h;
 	this->gadgetDetails.gadgetGeom.w=this->gadgetGeom.w;
 	this->gadgetDetails.gadgetGeom.h=this->gadgetGeom.h;
-	XResizeWindow(this->display,this->window,this->gadgetGeom.w,this->gadgetGeom.h);
-	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+	XResizeWindow(this->wc->app->display,this->window,this->gadgetGeom.w,this->gadgetGeom.h);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->window,this->wc->app->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_clearWindow();
 }
 
@@ -158,7 +161,7 @@ bool LFSTK_lineEditClass::lostFocus(XEvent *e)
 {
 	if(this->isFocused==true)
 		{
-			XUngrabKeyboard(this->display,CurrentTime);
+			XUngrabKeyboard(this->wc->app->display,CurrentTime);
 			this->isFocused=false;
 			this->LFSTK_clearWindow();
 		}
@@ -193,9 +196,17 @@ void LFSTK_lineEditClass::LFSTK_setBuffer(const char *str)
 	if(bufferstr==NULL)
 		bufferstr="";
 	this->buffer=bufferstr;
-	this->cursorPos=strlen(bufferstr);
-	this->setOffsetcurs(strlen(bufferstr));
+	//printf("cp=%i\n",this->cursorPos);
+	//this->cursorPos=strlen(bufferstr);
+	//this->setOffsetcurs(strlen(bufferstr));
+	//this->setOffsetcurs(1);
+//	this->offsetCurs=0;
+	this->cursorPos=strlen(bufferstr)-1;
+	this->setOffsetcurs(1000);
 	this->setOffsetcurs(1);
+//	printf("setOffsetcurs=%i\n",strlen(bufferstr));
+	if(this->cursorPos<0)
+		this->cursorPos=0;
 	this->LFSTK_clearWindow();
 }
 
@@ -254,7 +265,6 @@ void LFSTK_lineEditClass::drawLabel(void)
 
 		if(startchar<0)
 			startchar=0;
-
 		asprintf(&data,"%s",this->buffer.substr(startchar,this->cursorPos-startchar).c_str());
 		undercurs[0]=this->buffer.c_str()[this->cursorPos];
 		if(undercurs[0]==0)
@@ -306,7 +316,7 @@ void LFSTK_lineEditClass::getClip(void)
 	bool			run=true;
 	XEvent			event;
 
-	selectionOwner=XGetSelectionOwner(this->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD));
+	selectionOwner=XGetSelectionOwner(this->wc->app->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD));
 
 	if(selectionOwner==this->wc->window)
 		{
@@ -317,22 +327,12 @@ void LFSTK_lineEditClass::getClip(void)
 
 	if (selectionOwner!=None)
 		{
-			XConvertSelection(this->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->wc->LFSTK_getDnDAtom(XA_UTF8_STRING),this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->window,CurrentTime);
-			XFlush(this->display);
+			XConvertSelection(this->wc->app->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->wc->LFSTK_getDnDAtom(XA_UTF8_STRING),this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->window,CurrentTime);
+			XFlush(this->wc->app->display);
+			if(XPending(this->wc->app->display)>-1)
+				XNextEvent(this->wc->app->display,&event);
 
-			while (run==true)
-				{
-					XNextEvent(this->display,&event);
-					switch(event.type)
-						{
-							case SelectionNotify:
-								if(event.xselection.requestor==this->window)
-									run=false;
-								break;
-						}
-				}
-
-			XGetWindowProperty(this->display,this->window,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),0,0,False,AnyPropertyType,&type,&format,&len,&bytesLeft,&data);
+			XGetWindowProperty(this->wc->app->display,this->window,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),0,0,False,AnyPropertyType,&type,&format,&len,&bytesLeft,&data);
 			if(data!=NULL)
 				{
 					XFree(data);
@@ -341,14 +341,14 @@ void LFSTK_lineEditClass::getClip(void)
 
 			if(bytesLeft>0)
 				{
-					result=XGetWindowProperty(this->display,this->window,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),0,bytesLeft,False,AnyPropertyType,&type,&format,&len,&dummy,&data);
+					result=XGetWindowProperty(this->wc->app->display,this->window,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),0,bytesLeft,False,AnyPropertyType,&type,&format,&len,&dummy,&data);
 					if (result==Success)
 						{
 							this->LFSTK_setFormatedText((const char*)data,false);
 							XFree(data);
 						}
 				}
-			XDeleteProperty(this->display,this->window,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD));
+			XDeleteProperty(this->wc->app->display,this->window,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD));
 		}
 }
 
@@ -404,9 +404,7 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 			this->LFSTK_clearWindow();
 			return(true);
 		}
-
 	XLookupString(e,(char*)&c,255,&keysym_return,NULL);
-
 	if(this->isFocused==false)
 		return(true);
 
@@ -419,7 +417,7 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 			if(keysym_return==XK_c)
 				{
 					this->wc->clipBuffer=this->buffer;
-					XSetSelectionOwner(this->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->wc->window,CurrentTime);
+					XSetSelectionOwner(this->wc->app->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->wc->window,CurrentTime);
 				}
 
 			if(keysym_return==XK_Delete)
@@ -471,8 +469,8 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 				case XK_F1 ... XK_R15:
 					break;
 				case XK_Return:
-					if(this->keyCB.releaseCallback!=NULL)
-						return(this->keyCB.releaseCallback(this,this->keyCB.userData));
+					if(this->callBacks.validCallbacks & KEYRELEASECB)
+						return(this->callBacks.keyReleaseCallback(this,this->callBacks.keyUserData));
 					break;
 
 				default:
@@ -485,18 +483,21 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 		}
 
 	this->LFSTK_clearWindow();
-	if((this->keyCB.releaseCallback!=NULL) && (this->callbackOnReturn==false))
-		return(this->keyCB.releaseCallback(this,this->keyCB.userData));
+
+	if((this->callBacks.validCallbacks & KEYRELEASECB) && (this->callbackOnReturn==false))
+		return(this->callBacks.keyReleaseCallback(this,this->callBacks.keyUserData));
 
 	return(true);
 }
 
 /**
 * Drop data.
-* \param data Data drooped on gadget as string.
+* \param data Data dropped on gadget as string.
+* \note I callback is enabled user data is set to propertyStruct* data.
 */
 void LFSTK_lineEditClass::LFSTK_dropData(propertyStruct* data)
 {
+
 	int	endl;
 	if(strcasecmp(data->mimeType,"text/plain")==0)
 		this->LFSTK_setFormatedText((const char*)data->data,true);
@@ -517,6 +518,9 @@ void LFSTK_lineEditClass::LFSTK_dropData(propertyStruct* data)
 			free(ret);
 			free(d);
 		}
+
+	if(this->callBacks.validCallbacks & MOUSERELEASECB)
+		this->callBacks.droppedGadgetCallback(this,USERDATA(data));
 }
 
 /**
@@ -574,7 +578,7 @@ void LFSTK_lineEditClass::LFSTK_setCursorColourName(const char* colour)
 	if(this->cursorColour.name!=NULL)
 		free(this->cursorColour.name);
 	this->cursorColour.name=strdup(colour);
-	XAllocNamedColor(this->display,this->cm,colour,&sc,&tc);
+	XAllocNamedColor(this->wc->app->display,this->wc->app->cm,colour,&sc,&tc);
 	this->cursorColour.pixel=tc.pixel;
 
 	this->cursorColour.RGBAColour.r=((this->cursorColour.pixel>>16) & 0xff)/256.0;

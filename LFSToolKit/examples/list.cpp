@@ -26,6 +26,7 @@ exit $retval
 
 #define BOXLABEL			"List Window"
 
+LFSTK_applicationClass		*apc=NULL;
 LFSTK_windowClass			*wc=NULL;
 LFSTK_labelClass			*label=NULL;
 LFSTK_labelClass			*personal=NULL;
@@ -34,9 +35,7 @@ LFSTK_buttonClass			*seperator=NULL;
 LFSTK_buttonClass			*quit=NULL;
 LFSTK_listGadgetClass		*list=NULL;
 LFSTK_listGadgetClass		*filelist=NULL;
-
-bool						mainLoop=true;
-Display						*display;
+LFSTK_ExpanderGadgetClass	*multi=NULL;
 
 const char	*lst[]={"item 1","item 2","item 3","item 4","item 5","item 6","7 food","8 water","9 attack","10 defense","11 666","12 999","13 10101010","14 ELP","15 last item",};
 const char	*images[]={"./AspellGUI.png",NULL,NULL,NULL,"./audio-speakers.png",NULL,"./casper2.JPG","./computer.png","./computer.png","./computer.png","./computer.png","./computer.png","./computer.png","./audio-speakers.png","./ManPageEditor.png"};
@@ -44,15 +43,12 @@ listLabelStruct				**labelLst1=NULL;
 
 bool doQuit(void *p,void* ud)
 {
-	mainLoop=false;
-	XFlush(wc->display);
-	XSync(wc->display,true);
+	apc->mainLoop=false;
 	return(false);
 }
 
 bool select(void *object,void* userdata)
 {
-//DEBUGFUNC("%p",object)
 	LFSTK_listGadgetClass	*list=static_cast<LFSTK_listGadgetClass*>(object);
 	printf("List item=%i\n",list->LFSTK_getCurrentListItem());
 	printf("Selected List item string=%s\n",list->LFSTK_getSelectedLabel());
@@ -61,15 +57,15 @@ bool select(void *object,void* userdata)
 	printf("UserData=%p\n",list->listDataArray->at(list->LFSTK_getCurrentListItem()).userData);
 	return(true);
 }
-LFSTK_ExpanderGadgetClass	*multi=NULL;
+
 int main(int argc, char **argv)
 {
-	XEvent	event;
-	int		sy=0;
+	int						sy=0;
 	std::vector<hitRect>	hrs;
 
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"List Example",false);
-	display=wc->display;
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,BOXLABEL);
+	wc=apc->mainWindow;
 
 	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*3);
 	multi->stretchX=false;
@@ -123,23 +119,25 @@ int main(int argc, char **argv)
 				ls.data.imagePath=strdup(images[j]);
 			else
 				ls.data.imagePath=NULL;
-			ls.userData=(void*)(long)j+0x1000;
+			ls.userData=USERDATA(j+0x1000);
 			list->LFSTK_appendToList(ls);
 		}
 
 	list->LFSTK_updateList();
 	list->LFSTK_setMouseCallBack(NULL,select,NULL);
-	sy+=GADGETHITE*11;
-
+	sy+=GADGETHITE*6;
+//TODO//
 //file list
-	filelist=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*16,SouthGravity);
+//	filelist=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*16,SouthGravity);
+	filelist=new LFSTK_listGadgetClass(wc,"list",0-(DIALOGWIDTH/2)+BORDER,0-(sy+GADGETHITE*10),DIALOGWIDTH-(BORDER*2),GADGETHITE*16,SouthGravity);
+	//filelist=new LFSTK_listGadgetClass(wc,"list",BORDER,-sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*16,SouthGravity);
 	filelist->LFSTK_setListFromFile("/tmp/biglist",false);
 	filelist->LFSTK_setMouseCallBack(NULL,select,(void*)0xdeadbeaf);
 //goto end
 	if(filelist->LFSTK_findByLabel("zcat",false)==-1)
 		printf("Not found\n");
 
-	sy+=GADGETHITE*13;
+	sy+=GADGETHITE*17;
 
 //line
 	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,sy,DIALOGWIDTH,6);
@@ -171,21 +169,8 @@ int main(int argc, char **argv)
 	wc->LFSTK_showWindow();
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
-	mainLoop=true;
-	while(mainLoop==true)
-		{
-			XNextEvent(wc->display,&event);
-			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
-
-			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
-
-			if(wc->LFSTK_handleWindowEvents(&event)<0)
-				mainLoop=false;
-		}
-
-	delete wc;
-	XCloseDisplay(display);
+	int retval=apc->LFSTK_runApp();
+	delete apc;
 	cairo_debug_reset_static_data();
-	return 0;
+	return(retval);
 }

@@ -66,30 +66,30 @@ class LFSTK_lib
 //files
 		char			*LFSTK_getMimeType(const char* path);
 
-//colours
+//colours and prefs
 		void			LFSTK_setColourFromName(Display *display,Colormap cm,colourStruct *colptr,const char *name);
-
+		void			LFSTK_reloadPrefs(void);
 //messaging		
 //debug
 //
 	private:
 		cairo_surface_t	*cairo_image_surface_create_from_jpeg_mem(const unsigned char* data, size_t len);
 
-		args			*lfsToolKitGlobals;
+		args			*lfsToolKitGlobals=NULL;
 //window strings
 		char			*globalWindowColours[MAXCOLOURS]={NULL,};
 		char			*globalButtonColours[MAXCOLOURS]={NULL,};
 		char			*globalMenuItemColours[MAXCOLOURS]={NULL,};
-		char			*globalFontString;
-		char			*globalMonoFontString;
-		char			*globalWindowTile;
-		char			*globalButtonTile;
-		char			*globalMenuItemTile;
+		char			*globalFontString=NULL;
+		char			*globalMonoFontString=NULL;
+		char			*globalWindowTile=NULL;
+		char			*globalButtonTile=NULL;
+		char			*globalMenuItemTile=NULL;
 
 //gadget strings
-		char			*globalFontColourNames[MAXCOLOURS];
+		char			*globalFontColourNames[MAXCOLOURS]={NULL,};
 		char			*globalMenuItemFontString=NULL;
-		char			*globalMenuItemFontColourNames[MAXCOLOURS];
+		char			*globalMenuItemFontColourNames[MAXCOLOURS]={NULL,};
 
 //theme parts
 		char			*globalCursorColour=NULL;
@@ -97,8 +97,8 @@ class LFSTK_lib
 		char			*globalListTroughColour=NULL;
 
 //other
-		bool			autoLabelColour;
-		bool			useTheme;
+		bool			autoLabelColour=false;
+		bool			useTheme=false;
 		char			*themePath=NULL;
 };
 #endif

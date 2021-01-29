@@ -22,7 +22,7 @@
 
 LFSTK_menuClass::~LFSTK_menuClass()
 {
-	XSync(this->display,true);
+	XSync(this->parentwc->app->display,true);
 	for(int j=0;j<this->subwindows->size();j++)
 		delete this->subwindows->at(j);
 
@@ -36,12 +36,12 @@ LFSTK_menuClass::LFSTK_menuClass(LFSTK_windowClass *wc,int x,int y,unsigned w,un
 	subwindows=new std::vector<LFSTK_toolWindowClass*>;
 	subwindows->clear();
 	this->parentwc=wc;
-	this->display=wc->display;
+	//this->display=wc->display;
 	this->x=x;
 	this->y=y;
 	this->w=w;
 	this->h=h;
-	this->fontDesc=this->parentwc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEMENUITEMFONT);
+	this->fontDesc=this->parentwc->app->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEMENUITEMFONT);
 }
 
 /**
@@ -54,11 +54,14 @@ LFSTK_menuClass::LFSTK_menuClass(LFSTK_windowClass *wc,int x,int y,unsigned w,un
 */
 void LFSTK_menuClass::LFSTK_setMouseCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud)
 {
-	this->mouseCB.pressCallback=downcb;
-	this->mouseCB.releaseCallback=releasecb;
-	this->mouseCB.userData=ud;
-	this->mouseCB.runTheCallback=true;
-	this->mouseCB.ignoreOrphanModKeys=true;
+
+	if(downcb!=NULL)
+		this->callBacks.validCallbacks|=MOUSEPRESSCB;
+	if(releasecb!=NULL)
+		this->callBacks.validCallbacks|=MOUSERELEASECB;
+	this->callBacks.mousePressCallback=downcb;
+	this->callBacks.mouseReleaseCallback=releasecb;
+	this->callBacks.mouseUserData=ud;
 }
 
 /**
@@ -76,33 +79,39 @@ void LFSTK_menuClass::LFSTK_showMenu(void)
 	int				sinkx;
 	int				sinky;
 	unsigned int	buttonmask;
-
+//printf("000000000000000000000000000\n");
 	this->mainMenuWindow->LFSTK_showWindow(true);
 	this->mainLoop=true;
 
-	XTranslateCoordinates(this->display,this->parentwc->window,this->parentwc->rootWindow,this->x,this->y,&x,&y,&dw);
+	XTranslateCoordinates(this->parentwc->app->display,this->parentwc->window,this->parentwc->app->rootWindow,this->x,this->y,&x,&y,&dw);
 	this->mainMenuWindow->LFSTK_moveWindow(x,y,true);
-	XSetInputFocus(this->mainMenuWindow->display,this->mainMenuWindow->window,RevertToNone,CurrentTime);
-	XSync(display,false);
+	XSetInputFocus(this->parentwc->app->display,this->mainMenuWindow->window,RevertToNone,CurrentTime);
+//printf("33333333333333333333\n");
+//printf("app=%p disp=%p\n",this->parentwc->app,this->parentwc->app->display);
+	XSync(this->parentwc->app->display,false);
 
-	while(XPending(this->display))
+//printf("55555555555555555555555555\n");
+	while(XPending(this->parentwc->app->display))
 		{
-			XNextEvent(this->mainMenuWindow->display,&event);
+//printf("6666666666666666\n");
+			XNextEvent(this->parentwc->app->display,&event);
 			mappedListener *ml=this->mainMenuWindow->LFSTK_getMappedListener(event.xany.window);
 
 			if(ml!=NULL)
 				ml->function(ml->gadget,&event,ml->type);
+//printf("7777777777777777\n");
 		}
 
 	while(this->mainLoop==true)
 		{
-			if(XPending(this->display))
+//printf("8888888888888888888888888888\n");
+			if(XPending(this->parentwc->app->display))
 				{
-					XNextEvent(this->mainMenuWindow->display,&event);
+					XNextEvent(this->parentwc->app->display,&event);
 				}
 			else
 				{
-					XQueryPointer(this->display,this->parentwc->rootWindow,&sink,&childwindow,&sinkx,&sinky,&sinkx,&sinky,&buttonmask);
+					XQueryPointer(this->parentwc->app->display,this->parentwc->app->rootWindow,&sink,&childwindow,&sinkx,&sinky,&sinkx,&sinky,&buttonmask);
 					if((childwindow!=this->mainMenuWindow->window) && (buttonmask!=0))
 						{
 							this->mainMenuWindow->LFSTK_hideWindow();
@@ -124,7 +133,7 @@ void LFSTK_menuClass::LFSTK_showMenu(void)
 				{
 					case ConfigureNotify:
 					case Expose:
-						XTranslateCoordinates(this->display,this->parentwc->window,this->parentwc->rootWindow,this->x,this->y,&x,&y,&dw );
+						XTranslateCoordinates(this->parentwc->app->display,this->parentwc->window,this->parentwc->app->rootWindow,this->x,this->y,&x,&y,&dw );
 						this->mainMenuWindow->LFSTK_moveWindow(x,y,true);
 						break;
 
@@ -135,6 +144,7 @@ void LFSTK_menuClass::LFSTK_showMenu(void)
 						this->mainLoop=false;
 						break;
 				}
+//printf("9999999999999999999999999\n");
 		}
 }
 
@@ -185,7 +195,29 @@ void LFSTK_menuClass::LFSTK_addMainMenus(menuStruct **menus,int menucnt)
 	else
 		maxtxtwid+=gotsubmenu;
 
-	this->mainMenuWindow=new LFSTK_toolWindowClass(this->display,this->parentwc,"_NET_WM_WINDOW_TYPE_MENU",this->x,this->y,maxtxtwid,GADGETHITE*this->mainMenuCnt-winshrink,"menu window");
+	windowInitStruct	*win;
+
+	win=new windowInitStruct;
+	win->app=this->parentwc->app;
+	win->name="xx";
+	win->loadVars=true;
+	win->x=this->x;
+	win->y=this->y;
+	win->w=maxtxtwid;
+	win->h=GADGETHITE*this->mainMenuCnt-winshrink;
+	win->wc=this->parentwc;
+	win->windowType="_NET_WM_WINDOW_TYPE_MENU";
+	win->decorated=false;
+	win->overRide=true;
+	win->level=ABOVEALL;
+
+
+
+//	this->mainMenuWindow=(LFSTK_toolWindowClass*)new LFSTK_windowClass(win,this->parentwc->app);
+	this->mainMenuWindow=new LFSTK_toolWindowClass(win,this->parentwc->app);
+	delete win;
+
+//	this->mainMenuWindow=new LFSTK_toolWindowClass(this->parentwc->app->display,this->parentwc,"_NET_WM_WINDOW_TYPE_MENU",this->x,this->y,maxtxtwid,GADGETHITE*this->mainMenuCnt-winshrink,"menu window",this->parentwc->app);
 	for(int j=0;j<this->mainMenuCnt;j++)
 		{
 			hite=GADGETHITE;
@@ -193,7 +225,7 @@ void LFSTK_menuClass::LFSTK_addMainMenus(menuStruct **menus,int menucnt)
 				hite=SEPARATORHITE;
 
 			label=new LFSTK_menuItemClass(this->mainMenuWindow,this,0,sy,maxtxtwid,hite,this->mainMenu[j],gotthumb);
-			label->LFSTK_setMouseCallBack(this->mouseCB.pressCallback,this->mouseCB.releaseCallback,(void*)(this->mainMenu[j]->userData));
+			label->LFSTK_setMouseCallBack(this->callBacks.mousePressCallback,this->callBacks.mouseReleaseCallback,(void*)(this->mainMenu[j]->userData));
 			if(this->mainMenu[j]->imageType==FILETHUMB)
 				label->LFSTK_setImageFromPath(this->mainMenu[j]->data.imagePath,MENU,true);
 			if(this->mainMenu[j]->imageType==CAIROTHUMB)
@@ -212,8 +244,8 @@ void LFSTK_menuClass::LFSTK_freeMenus(menuStruct **menus,int menucnt)
 				cairo_surface_destroy(menus[j]->data.surface);
 			if(menus[j]->imageType==FILETHUMB)
 				free(menus[j]->data.imagePath);
-
-			free(menus[j]->label);
+			if(menus[j]->label!=NULL)
+				free(menus[j]->label);
 			if(menus[j]->hasSubMenu==true)
 				{
 					this->LFSTK_freeMenus(menus[j]->subMenus,menus[j]->subMenuCnt);
@@ -251,6 +283,7 @@ int	LFSTK_menuClass::LFSTK_getTextWidthForFont(const char *text)
 			found=false;
 			if(str==NULL)
 				break;
+
 			if(strcasecmp(str,"bold")==0)
 				{
 					this->weight=CAIRO_FONT_WEIGHT_BOLD;
@@ -277,7 +310,7 @@ int	LFSTK_menuClass::LFSTK_getTextWidthForFont(const char *text)
 		}
 	free(string);
 
-	this->parentwc->globalLib->LFSTK_setCairoSurface(this->parentwc->display,this->parentwc->window,this->parentwc->visual,&sfc,&cr,1,1);
+	this->parentwc->globalLib->LFSTK_setCairoSurface(this->parentwc->app->display,this->parentwc->window,this->parentwc->app->visual,&sfc,&cr,1,1);
 	cairo_select_font_face(cr,this->fontName,this->slant,this->weight);
 	cairo_set_font_size(cr,this->fontSize);
 	cairo_text_extents(cr,text,&returnextents);

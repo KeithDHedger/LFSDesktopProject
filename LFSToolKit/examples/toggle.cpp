@@ -14,10 +14,12 @@ rm toggleexample
 exit $retval
 #endif
 
+#include "../config.h"
 #include "lfstk/LFSTKGlobals.h"
 
-#define BOXLABEL		"Toggle Buttons"
+#define BOXLABEL		"Toggle/Check Buttons"
 
+LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass		*label=NULL;
 LFSTK_labelClass		*personal=NULL;
@@ -30,14 +32,14 @@ char					*iconH=NULL;
 char					*iconM=NULL;
 char					*iconL=NULL;
 
-bool					mainLoop=true;
-Display					*display;
+
+LFSTK_windowClass *scwindow;
+LFSTK_scrollBarClass	*vsb;
 
 bool doQuit(void *p,void* ud)
 {
-	mainLoop=false;
-	XFlush(wc->display);
-	XSync(wc->display,true);
+	apc->exitValue=0;
+	apc->mainLoop=false;
 	return(false);
 }
 
@@ -48,23 +50,49 @@ bool buttonCB(void *p,void* ud)
 		{
 			t=static_cast<LFSTK_toggleButtonClass*>(p);
 			if(t!=NULL)
-				printf("Value=%i\n",t->LFSTK_getValue());
+				{
+					printf("Value=%i\n",t->LFSTK_getValue());
+					if(t->userData!=NULL)
+					{
+					if(t->LFSTK_getValue()==1)
+						{
+							geometryStruct		geom;
+
+						printf("shere\n");
+							t->gadgetDetails.showBroken=true;
+							t->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);
+							scwindow->LFSTK_moveWindow(geom.x+geom.w,geom.y,true);
+							scwindow->LFSTK_showWindow(true);
+							scwindow->LFSTK_redrawAllGadgets();
+							apc->windows->at(apc->LFSTK_findWindow(scwindow)).showing=true;
+						}
+					else
+						{
+							t->gadgetDetails.showBroken=false;
+							scwindow->LFSTK_hideWindow();
+							apc->windows->at(apc->LFSTK_findWindow(scwindow)).showing=false;
+					}
+					t->LFSTK_clearWindow();
+					}
+				}
 		}
 
 	if(ud!=NULL)
 		{
 			printf(">>>%s<<<\n",(const char*)ud);
+			
 		}
 	return(true);
 }
 
+
 int main(int argc, char **argv)
 {
-	XEvent	event;
-	int		sy=BORDER;
+	int	sy=BORDER;
 		
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Toggle/Check Example",false);
-	display=wc->display;
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,BOXLABEL);
+	wc=apc->mainWindow;
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	label->LFSTK_setCairoFontDataParts("sB",20);
@@ -77,19 +105,46 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //check button	
-	check=new LFSTK_toggleButtonClass(wc,"Check Box",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,CHECKBOXSIZE,NorthWestGravity);
+	check=new LFSTK_toggleButtonClass(wc,"Check Box",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,CHECKBOXSIZE);
 	check->LFSTK_setValue(true);
 	check->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)check->LFSTK_getLabel());
 	sy+=YSPACING;
 
 //toggle button	
-	toggle=new LFSTK_toggleButtonClass(wc,"Toggle",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETWIDTH,NorthWestGravity);
+	toggle=new LFSTK_toggleButtonClass(wc,"Toggle",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETWIDTH);
 	toggle->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)toggle->LFSTK_getLabel());
 	toggle->LFSTK_setToggleStyle(TOGGLENORMAL);
+	toggle->userData=USERDATA(1);
 
-	iconH=wc->globalLib->LFSTK_findThemedIcon("gnome","volume-high","");
+	iconH=apc->globalLib->LFSTK_findThemedIcon("gnome","volume-high","");
 	toggle->LFSTK_setImageFromPath(iconH,TOOLBAR,true);
+	//toggle->gadgetDetails.showBroken=true;
+	//toggle->gadgetDetails.showLink=true;
+	free(iconH);
 	sy+=YSPACING*3;
+
+	windowInitStruct	*win;
+
+	win=new windowInitStruct;
+	win->x=100;
+	win->y=100;
+	win->w=16;
+	win->h=100;
+	//win->wc=wc;
+//	win->windowType="_NET_WM_WINDOW_TYPE_DOCK";
+//	win->decorated=true;
+//	win->overRide=true;
+//	win->level=ABOVEALL;
+
+	apc->LFSTK_addToolWindow(win);
+	scwindow=apc->windows->back().window;
+	//XReparentWindow(apc->display,scwindow->window,wc->window,20,20);
+	
+	vsb=new LFSTK_scrollBarClass(scwindow,true,0,0,16,100);
+
+	vsb->LFSTK_setValue(1);
+
+//toggle->LFSTK_setContextWindow(scwindow);
 
 //line
 	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
@@ -99,7 +154,7 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //quit
-	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);
+	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE);
 	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 	sy+=YSPACING;
 
@@ -107,21 +162,8 @@ int main(int argc, char **argv)
 	wc->LFSTK_showWindow();
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
-	mainLoop=true;
-	while(mainLoop==true)
-		{
-			XNextEvent(wc->display,&event);
-			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
-
-			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
-
-			if(wc->LFSTK_handleWindowEvents(&event)<0)
-				mainLoop=false;
-		}
-
-	delete wc;
-	XCloseDisplay(display);
+	int retval=apc->LFSTK_runApp();
+	delete apc;
 	cairo_debug_reset_static_data();
-	return 0;
+	return(retval);
 }

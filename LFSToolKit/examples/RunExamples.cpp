@@ -6,38 +6,42 @@ if [ "X$1" != "X" ];then
 	USEVALGRIND="valgrind --leak-check=full"
 fi
 
+(
+	cd ..
+	make -j4
+)
+
 APPNAME=$(basename $0 .cpp)
 cd "$(dirname "$0")"
 
 g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2 -o $APPNAME||exit 1
 LD_LIBRARY_PATH=../LFSToolKit/app/.libs $USEVALGRIND ./$APPNAME "$@"
-
 retval=$?
 rm $APPNAME
 exit $retval
 
 #endif
 
+#include "../config.h"
 #include "lfstk/LFSTKGlobals.h"
 
 #define BOXLABEL			"Examples"
 
+LFSTK_applicationClass		*apc=NULL;
 LFSTK_windowClass			*wc=NULL;
 LFSTK_toggleButtonClass		*useDbg=NULL;
 LFSTK_toggleButtonClass		*openFile=NULL;
 LFSTK_toggleButtonClass		*makeLib=NULL;
 LFSTK_ExpanderGadgetClass	*multi=NULL;
 
-bool						mainLoop=true;
-Display						*display;
 const char					*dbg;
+int							retValOfCommand=0;
 
 bool doQuit(void *p,void* ud)
 {
-	mainLoop=false;
-	XFlush(wc->display);
-	XSync(wc->display,true);
-	return(true);
+	apc->exitValue=0;
+	apc->mainLoop=false;
+	return(false);
 }
 
 bool buttonCB(void *p,void* ud)
@@ -49,7 +53,7 @@ bool buttonCB(void *p,void* ud)
 				system("(cd ..;make -j4)");
 
 			asprintf(&command,"%s %s &",(const char*)ud,dbg);
-			system(command);
+			retValOfCommand=system(command);
 			free(command);
 			if(openFile->LFSTK_getValue()==true)
 				{
@@ -81,8 +85,12 @@ int main(int argc, char **argv)
 	std::vector<hitRect>	hrs;
 	dbg="";
 
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Gadgets",false);
-	display=wc->display;
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,BOXLABEL);
+	wc=apc->mainWindow;
+
+//	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Gadgets",false);
+//	display=wc->display;
 
 //info
 	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*4);
@@ -266,21 +274,8 @@ int main(int argc, char **argv)
 	wc->LFSTK_setKeepAbove(true);
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
-	mainLoop=true;
-	while(mainLoop==true)
-		{
-			XNextEvent(wc->display,&event);
-			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
+	int retval=apc->LFSTK_runApp();
+	delete apc;
+	return(retval);
 
-			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
-
-			if(wc->LFSTK_handleWindowEvents(&event)<0)
-				mainLoop=false;
-		}
-
-	delete wc;
-	XCloseDisplay(display);
-	cairo_debug_reset_static_data();
-	return 0;
 }

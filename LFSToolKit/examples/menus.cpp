@@ -18,34 +18,31 @@ exit $retval
 
 #endif
 
+#include "../config.h"
 #include "lfstk/LFSTKGlobals.h"
 
-#define BOXLABEL				"Menu Example"
-#define NUMMENUS				16
+#define BOXLABEL			"Menu Example"
+#define NUMMENUS			16
 
-LFSTK_windowClass				*wc=NULL;
-LFSTK_labelClass				*label=NULL;
-LFSTK_labelClass				*personal=NULL;
-LFSTK_labelClass				*copyrite=NULL;
-LFSTK_buttonClass				*seperator=NULL;
-LFSTK_buttonClass				*quit=NULL;
-LFSTK_listGadgetClass			*list=NULL;
-LFSTK_menuClass					*menu=NULL;
-
-bool							mainLoop=true;
-Display							*display;
+LFSTK_applicationClass		*apc=NULL;
+LFSTK_windowClass			*wc=NULL;
+LFSTK_labelClass			*label=NULL;
+LFSTK_labelClass			*personal=NULL;
+LFSTK_labelClass			*copyrite=NULL;
+LFSTK_buttonClass			*seperator=NULL;
+LFSTK_buttonClass			*quit=NULL;
+LFSTK_listGadgetClass		*list=NULL;
+LFSTK_menuClass				*menu=NULL;
 
 bool doQuit(void *p,void* ud)
 {
-	mainLoop=false;
-	XFlush(wc->display);
-	XSync(wc->display,true);
+	apc->exitValue=0;
+	apc->mainLoop=false;
 	return(false);
 }
 
 bool menuCB(void *p,void* ud)
 {
-	//printf("\n\np=%p ud=%i\n",p,ud);
 	printf("Label=%s Userdata=%i\n",static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),ud);
 	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
 	return(true);	
@@ -59,13 +56,14 @@ bool buttonCB(void *p,void* ud)
 	return(true);
 }
 
-int main(int argc, char **argv)
+int main(int argc, char **argv)//TODO//
 {
-	XEvent	event;
-	int		sy=BORDER;
-	int		hsy;
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Gadgets",false);
-	display=wc->display;
+	int	sy=BORDER;
+	int	hsy;
+
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,BOXLABEL);
+	wc=apc->mainWindow;
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	label->LFSTK_setCairoFontDataParts("sB",20);
@@ -96,7 +94,6 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
-	mainLoop=true;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();
@@ -116,7 +113,7 @@ int main(int argc, char **argv)
 			asprintf(&mms[j]->label,"menu %i",j);
 			mms[j]->hasSubMenu=false;
 			mms[j]->subMenus=NULL;
-			mms[j]->userData=(void*)(long)(j+1);
+			mms[j]->userData=USERDATA(j+1);
 			mms[j]->imageType=NOTHUMB;
 		}
 	free(mms[12]->label);
@@ -140,7 +137,7 @@ int main(int argc, char **argv)
 			asprintf(&mms[2]->subMenus[j]->label,"sub menu -2 %i",j);
 			mms[2]->subMenus[j]->hasSubMenu=false;
 			mms[2]->subMenus[j]->subMenus=NULL;
-			mms[2]->subMenus[j]->userData=(void*)(long)((j+1)*100);
+			mms[2]->subMenus[j]->userData=USERDATA((j+1)*100);
 			mms[2]->subMenus[j]->imageType=NOTHUMB;
 		}
 
@@ -154,7 +151,7 @@ int main(int argc, char **argv)
 			asprintf(&mms[6]->subMenus[j]->label,"sub menu 6 - %i",j);
 			mms[6]->subMenus[j]->hasSubMenu=false;
 			mms[6]->subMenus[j]->subMenus=NULL;
-			mms[6]->subMenus[j]->userData=(void*)(long)((j+1)*10000);
+			mms[6]->subMenus[j]->userData=USERDATA((j+1)*10000);
 			mms[6]->subMenus[j]->imageType=FILETHUMB;
 			mms[6]->subMenus[j]->data.imagePath=strdup("./computer.png");
 		}
@@ -182,45 +179,10 @@ int main(int argc, char **argv)
 	menu->LFSTK_setMouseCallBack(NULL,menuCB,NULL);
 	menu->LFSTK_addMainMenus(mms,NUMMENUS);
 
-	while(mainLoop==true)
-		{
-			if(XPending(wc->display))
-				{
-					XNextEvent(wc->display,&event);
-					mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
+	int retval=apc->LFSTK_runApp();
 
-					if(ml!=NULL)
-						ml->function(ml->gadget,&event,ml->type);
-
-					if(wc->LFSTK_handleWindowEvents(&event)<0)
-						mainLoop=false;
-
-					while(0)
-						{
-							XNextEvent(menu->mainMenuWindow->display,&event);
-							if(menu->mainMenuWindow->LFSTK_handleWindowEvents(&event)<0)
-								mainLoop=false;
-							ml=menu->mainMenuWindow->LFSTK_getMappedListener(event.xany.window);
-							if(ml!=NULL)
-								ml->function(ml->gadget,&event,ml->type);
-
-							switch(event.type)
-								{
-									case FocusOut:
-										break;
-									case ConfigureNotify:
-									case Expose:
-										break;
-								}
-						}
-				}
-		}
-
-	delete wc;
 	delete menu;
-
-	XSync(display,true);
-	XCloseDisplay(display);
+	delete apc;
 	cairo_debug_reset_static_data();
-	return 0;
+	return(retval);
 }

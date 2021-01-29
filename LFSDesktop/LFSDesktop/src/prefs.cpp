@@ -57,16 +57,17 @@ args	desktopPrefs[]=
 
 void reloadPrefs(void)
 {
-	diskLinkedList	*dll=diskLL;
-
+	apc->globalLib->LFSTK_reloadPrefs();
 	loadVarsFromFile(prefsPath,desktopPrefs);
-
-	while(dll!=NULL)
+	for(unsigned j=0;j<desktopItems.size();j++)
 		{
-			setIconImage(dll->data);
-			dll->data->diskImage->LFSTK_setImageFromPath(dll->data->pathToIcon,TOOLBAR,true);
-			dll->data->diskImage->LFSTK_clearWindow();
-			dll=dll->next;
+			freeAndNull(&desktopItems.at(j).iconPath);
+			setIconImage(&desktopItems.at(j));
+			desktopItems.at(j).item->LFSTK_setImageFromPath(desktopItems.at(j).iconPath,TOOLBAR,true);
+			desktopItems.at(j).item->LFSTK_setLabelBGColour(0.75,0.75,0.75,strtod(backAlpha,NULL));
+			apc->globalLib->LFSTK_setColourFromName(apc->display,apc->cm,&desktopItems.at(j).item->labelBGColour,backCol);
+			desktopItems.at(j).item->LFSTK_setFontColourName(NORMALCOLOUR,foreCol,false)	;	
+			desktopItems.at(j).item->LFSTK_clearWindow();
 		}
 }
 
@@ -152,22 +153,4 @@ bool loadVarsFromFile(char* filepath,args* dataptr)
 			return(true);
 		}
 	return(false);
-}
-
-void freePrefs(void)
-{
-	if(iconTheme!=NULL)
-		freeAndNull(&iconTheme);
-	if(terminalCommand!=NULL)
-		freeAndNull(&terminalCommand);
-	if(fontFace!=NULL)
-		freeAndNull(&fontFace);
-	if(backCol!=NULL)
-		freeAndNull(&backCol);
-	if(backAlpha!=NULL)
-		freeAndNull(&backAlpha);
-	if(includeList!=NULL)
-		freeAndNull(&includeList);
-	if(excludeList!=NULL)
-		freeAndNull(&excludeList);
 }

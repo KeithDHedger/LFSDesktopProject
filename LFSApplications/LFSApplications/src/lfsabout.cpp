@@ -10,6 +10,7 @@ exit $retval
 
 #endif
 
+#include "config.h"
 #include <lfstk/LFSTKGlobals.h>
 
 #define WINDOWWIDTH 320
@@ -24,20 +25,17 @@ const char	*labelTexts[]={"LFS Desktop Project","Low resource/dependency desktop
 
 #define IMAGESIZE		64
 
+LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*wc=NULL;
 LFSTK_buttonClass		*seperator=NULL;
 LFSTK_buttonClass		*quit=NULL;
 LFSTK_imageClass		*tux;
 LFSTK_labelClass		*labels[LNOMORELABELS];
 
-bool					mainLoop=true;
-Display					*display;
-
 bool doQuit(void *p,void* ud)
 {
-	mainLoop=false;
-	XFlush(wc->display);
-	XSync(wc->display,true);
+	apc->exitValue=0;
+	apc->mainLoop=false;
 	return(false);
 }
 
@@ -46,8 +44,9 @@ int main(int argc, char **argv)
 	XEvent	event;
 	int		sy=BORDER;
 		
-	wc=new LFSTK_windowClass(0,0,WINDOWWIDTH,WINDOWHITE,"LFS Desktop Project",false);
-	display=wc->display;
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,"LFSTKPrefs");
+	wc=apc->mainWindow;
 
 	tux=new LFSTK_imageClass(wc,NULL,WINDOWMIDDLE-(IMAGESIZE/2),sy,IMAGESIZE,IMAGESIZE,BUTTONGRAV,true);
 	tux->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",AUTO,true);
@@ -79,21 +78,8 @@ int main(int argc, char **argv)
 	wc->LFSTK_showWindow();
 	tux->LFSTK_clearWindow();
 
-	mainLoop=true;
-	while(mainLoop==true)
-		{
-			XNextEvent(wc->display,&event);
-			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
+	int retval=apc->LFSTK_runApp();
 
-			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
-
-			if(wc->LFSTK_handleWindowEvents(&event)<0)
-				mainLoop=false;
-		}
-
-	delete wc;
-	XCloseDisplay(display);
-
-	return 0;
+	delete apc;
+	return(retval);
 }

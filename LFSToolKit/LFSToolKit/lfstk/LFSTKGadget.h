@@ -25,8 +25,6 @@
 #include <X11/Xlib.h>
 #include <Imlib2.h>
 
-enum {KEYPRESSCB,KEYRELEASECB,ANYKEYCB,MOUSEPRESSCB,MOUSERELEASECB,ANYMOUSECB};
-
 /**
  * \brief Base class for LFSToolKit gadgets.
 */
@@ -58,7 +56,7 @@ class LFSTK_gadgetClass
 		virtual bool			mouseDrag(XMotionEvent *e);
 
 //key events
-		virtual bool			keyRelease(XKeyEvent *e);
+		virtual bool			keyRelease(XKeyEvent *e) {this->keyEvent=NULL;return(true);};
 		virtual bool			keyPress(XKeyEvent *e) {return(true);};
 
 		bool					LFSTK_getCanDrag(void);
@@ -78,24 +76,27 @@ class LFSTK_gadgetClass
 		XEvent					*xEvent=NULL;
 
 //context window
-		void					LFSTK_doPopUp(int x,int y);
+		void					LFSTK_doPopUpx(int x,int y);
 		LFSTK_windowClass 		*LFSTK_getContextWindow(void);
 		void					LFSTK_setContextWindow(LFSTK_windowClass *wc);
+		int						windowNumber=-1;
 
-//DnD routines
+//DnD routines etc
 		virtual void			LFSTK_dropData(propertyStruct* data);
 
+		dropDataStruct			droppedData={DROPINVALID,NULL,-1,-1};
+
+//odds
 		Window					LFSTK_getWindow(void);
 		void					LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned int w,unsigned int h,int gravity=NorthWestGravity);
 
 //callbacks
-		void					LFSTK_setIgnores(callbackStruct *cb,bool runcb,bool ignoreorphanmod);
-		//bool					LFSTK_getIgnoreCB(void);//TODO//
-		void					*LFSTK_getCallbackUD(void);
-		void					LFSTK_setMouseCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud);
+		void					LFSTK_setIgnores(bool runcb,bool ignoreorphanmod);
+		void					LFSTK_setMouseCallBack(bool (*downcb)(void*,void*),bool (*releasecb)(void*,void*),void* ud);
 		void					LFSTK_setKeyCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud);
-		callbackStruct			mouseCB;
-		callbackStruct			keyCB;
+		void					LFSTK_setGadgetDropCallBack(bool (*dropped)(void*,void*),void* ud=NULL);
+		void					LFSTK_setCallBacks(callbackStruct cbs);
+		callbackStruct			callBacks;
 
 //colours
 		colourStruct			fontColourNames[MAXCOLOURS]={NULL,};
@@ -140,19 +141,13 @@ class LFSTK_gadgetClass
 
 		LFSTK_windowClass		*wc;
 
-		Display					*display;
 		Window					parent;
 		GC						gc;
 		Window					window;
 
-		int						screen;
-		Visual					*visual;
-		Window					rootWindow;		
-		Colormap				cm;
-
 		bool					drawLabelBG=false;
 		bool					autoLabelBGColour=false;
-		colourStruct			labelBGColour={NULL,0,{1.0,1.0,1.0,1.0}};
+		colourStruct			labelBGColour={NULL,0,{1.0,1.0,1.0,1.0}};//TODO//Hmmmmmm
 		void					LFSTK_setLabelBGColour(double r,double g,double b,double a);
 
 		void					LFSTK_setShowIndicator(bool show);
@@ -161,7 +156,7 @@ class LFSTK_gadgetClass
 		bool					gadgetAcceptsDnD;
 		bool					isSubMenu;
 		bool					showIndicator;
-		gadgetStruct			gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NORMALCOLOUR,0,false,{0,0,0,0},{0,0,0,0},false,false,false};
+		gadgetStruct			gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NORMALCOLOUR,0,false,{0,0,0,0},{0,0,0,0},false,false,false,false,false};
 		const char				*monoFontString=NULL;
 
 //user data
@@ -173,20 +168,17 @@ class LFSTK_gadgetClass
 	private:
 		void					initGadget(void);
 		void					selectBevel(bool mousedown);
+		cairo_surface_t			*link=NULL;
+		cairo_surface_t			*broken=NULL;
 
 	protected:
 		bool					isMapped=false;
-		bool					runCallback(int cbtype);
 		mappedListener			*ml=NULL;
 		void					drawBox(geometryStruct* g,gadgetState state,bevelType bevel);
 		void					drawIndicator(gadgetStruct* details);
 		bevelType				getActiveBevel(void);
 
 		unsigned				pad;
-
-		int						blackColour;
-		int						whiteColour;
-
 		geometryStruct			gadgetGeom;
 
 //font and label stuff
@@ -210,10 +202,14 @@ class LFSTK_gadgetClass
 		int						labelOffset;
 		unsigned int			iconSize;
 
+//graphics
 		cairo_t					*cr=NULL;
 		cairo_surface_t 		*sfc=NULL;
 		cairo_surface_t			*cImage=NULL;
 		cairo_pattern_t			*pattern=NULL;
+//		cairo_surface_t			*link=NULL;
+//		cairo_surface_t			*broken=NULL;
+		
 		int						imageWidth=0;
 		int						imageHeight=0;
 		int						imageGravity;

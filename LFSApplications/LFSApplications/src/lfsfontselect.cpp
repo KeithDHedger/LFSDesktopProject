@@ -18,14 +18,14 @@
  * along with LFSApplications.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
+#include "config.h"
 #include <lfstk/LFSTKGlobals.h>
 #include <getopt.h>
 
 #define BOXLABEL			"Font Dialog"
 #define MAXMAINMENUS		25
 
+LFSTK_applicationClass		*apc=NULL;
 LFSTK_windowClass			*wc=NULL;
 LFSTK_labelClass			*label=NULL;
 LFSTK_labelClass			*personal=NULL;
@@ -39,16 +39,14 @@ LFSTK_lineEditClass			*fontsize=NULL;
 LFSTK_lineEditClass			*preview=NULL;
 LFSTK_fontDialogClass		*fontdialog=NULL;
 
-bool						mainLoop=true;
-Display						*display;
 unsigned					maxFonts=0;
 char						**fontsAZ=NULL;
 unsigned					size=10;
 const char					*fontname=NULL;
 unsigned					selectnumber=0;
 
-bool				useDetail=false;
-int					parentWindow=-1;
+bool						useDetail=false;
+int							parentWindow=-1;
 
 void printHelp(void)
 {
@@ -102,27 +100,24 @@ int main(int argc, char **argv)
 				}
 		}
 
-	wc=new LFSTK_windowClass(0,0,1,1,"",false);
-	display=wc->display;
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,NULL);
+	wc=apc->mainWindow;
 
-	fontdialog=new LFSTK_fontDialogClass(wc,"Select Font",DIALOGMIDDLE-HALFGADGETWIDTH,100,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	wc->LFSTK_setWindowType("_NET_WM_WINDOW_TYPE_DOCK");
-	wc->LFSTK_showWindow();
+	fontdialog=new LFSTK_fontDialogClass(wc,"Select Font",0,0,1,1,BUTTONGRAV);
 
 	if(argv[optind]!=NULL)
 		fontdialog->LFSTK_showDialog(argv[optind]);
 	else
 		fontdialog->LFSTK_showDialog("");
+
 	fd=fontdialog->LFSTK_getFontData(false);
 	if(fd->isValid==true)
-		{
-			if(useDetail==false)
-				printf("fontString=%s\n",fd->fontString);
-			else
-				printf("Font String:%s\nFont:%s\nSize:%i\nBold:%s\nItalic:%s\n",fd->fontString,fd->fontName,fd->fontSize,bools[fd->bold],bools[fd->italic]);
-		}
-
-	delete wc;
-	XCloseDisplay(display);
-	return 0;
+		if(useDetail==false)
+			printf("fontString=%s\n",fd->fontString);
+		else
+			printf("Font String:%s\nFont:%s\nSize:%i\nBold:%s\nItalic:%s\n",fd->fontString,fd->fontName,fd->fontSize,bools[fd->bold],bools[fd->italic]);
+		
+	delete apc;
+	return(0);
 }

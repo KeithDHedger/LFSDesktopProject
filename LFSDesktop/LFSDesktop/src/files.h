@@ -24,10 +24,7 @@
 
 #include "globals.h"
 
-void loadDesktopItems(void);
-void addDeskItem(const char *name);
-void deleteDeskItem(const char *name);
-void launchDesktopFile(const char *name);
-bool doDeskItemMenuSelect(void *p,void* ud);
+const char*	getSuffix(const char *path);
+void makeFileButtons(bool skipvirtuals);
 
 #endif

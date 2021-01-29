@@ -33,18 +33,21 @@ LFSTK_gadgetClass::~LFSTK_gadgetClass()
 	if(this->label!=NULL)
 		free(this->label);
 
+	if(this->isMapped==true)
+		this->LFSTK_reParentWindow(this->wc->window,0,0);
+
 	for(int j=NORMALCOLOUR;j<MAXCOLOURS;j++)
 		{
 			if(this->fontColourNames[j].name!=NULL)
 				{
 					free(this->fontColourNames[j].name);
-					XFreeColors(this->display,this->cm,(long unsigned int*)&this->fontColourNames[j].pixel,1,0);
+					XFreeColors(this->wc->app->display,this->wc->app->cm,(long unsigned int*)&this->fontColourNames[j].pixel,1,0);
 				}
 
 			if(this->colourNames[j].name!=NULL)
 				{
 					free(this->colourNames[j].name);
-					XFreeColors(this->display,this->cm,(long unsigned int*)&this->colourNames[j].pixel,1,0);
+					XFreeColors(this->wc->app->display,this->wc->app->cm,(long unsigned int*)&this->colourNames[j].pixel,1,0);
 				}
 		}
 
@@ -54,23 +57,29 @@ LFSTK_gadgetClass::~LFSTK_gadgetClass()
 	if(this->labelBGColour.name!=NULL)
 		{
 			free(this->labelBGColour.name);
-			XFreeColors(this->display,this->cm,(long unsigned int*)&this->labelBGColour.pixel,1,0);
+			XFreeColors(this->wc->app->display,this->wc->app->cm,(long unsigned int*)&this->labelBGColour.pixel,1,0);
 		}
 
 	cairo_destroy(this->cr);
 
 	if(this->cImage!=NULL)
 		cairo_surface_destroy(this->cImage);
+
 	if(this->pattern!=NULL)
 		cairo_pattern_destroy(this->pattern);
+
+	if(this->link!=NULL)
+		cairo_surface_destroy(this->link);
+
+	if(this->broken!=NULL)
+		cairo_surface_destroy(this->broken);
 
 	cairo_surface_destroy(this->sfc);
 
 	if(this->fontName!=NULL)
 		free(this->fontName);
 
-	XFreeGC(this->display,this->gc);
-	XDestroyWindow(this->display,this->window);
+	XFreeGC(this->wc->app->display,this->gc);
 }
 
 LFSTK_gadgetClass::LFSTK_gadgetClass()
@@ -95,7 +104,7 @@ void LFSTK_gadgetClass::LFSTK_setFontColourName(int p,const char* colour,bool us
 	if(this->fontColourNames[p].name!=NULL)
 		free(this->fontColourNames[p].name);
 	this->fontColourNames[p].name=strdup(colour);
-	XAllocNamedColor(this->display,this->cm,colour,&sc,&tc);
+	XAllocNamedColor(this->wc->app->display,this->wc->app->cm,colour,&sc,&tc);
 	this->fontColourNames[p].pixel=tc.pixel;
 
 	if(usewindow==true)
@@ -166,7 +175,7 @@ void LFSTK_gadgetClass::LFSTK_setColourName(int p,const char* colour)
 	if(this->colourNames[p].name!=NULL)
 		free(this->colourNames[p].name);
 	this->colourNames[p].name=strdup(colour);
-	XAllocNamedColor(this->display,this->cm,colour,&sc,&tc);
+	XAllocNamedColor(this->wc->app->display,this->wc->app->cm,colour,&sc,&tc);
 	this->colourNames[p].pixel=sc.pixel;
 
 	this->colourNames[p].RGBAColour.r=((this->colourNames[p].pixel>>16) & 0xff)/256.0;
@@ -199,6 +208,8 @@ void LFSTK_gadgetClass::initGadget(void)
 	this->fontString=NULL;
 	this->autoLabelColour=this->wc->autoLabelColour;
 
+//DEBUGFUNC("%p",this->wc->globalLib)
+//this->wc->globalLib=new LFSTK_lib(true);
 	for(int j=0;j<MAXCOLOURS;j++)
 		this->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON));
 
@@ -234,7 +245,7 @@ void LFSTK_gadgetClass::initGadget(void)
 void LFSTK_gadgetClass::LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned int w,unsigned int h,int gravity)
 {
 	this->wc=parentwc;
-	this->display=this->wc->display;
+	this->wc->app->display=this->wc->app->display;
 	this->parent=this->wc->window;
 
 	this->gadgetGeom.x=x;
@@ -242,19 +253,12 @@ void LFSTK_gadgetClass::LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* 
 	this->gadgetGeom.w=w;
 	this->gadgetGeom.h=h;
 
-	this->screen=this->wc->screen;
-	this->visual=this->wc->visual;
-	this->rootWindow=this->wc->rootWindow;
-	this->cm=this->wc->cm;
-
 	if(label!=NULL)
 		this->label=strdup(label);
 	else
 		this->label=strdup("");
 
 	this->initGadget();
- 	this->blackColour=BlackPixel(this->display,this->screen);
-	this->whiteColour=WhitePixel(this->display,this->screen);
 
 	this->ml=new mappedListener;
 }
@@ -269,11 +273,32 @@ void LFSTK_gadgetClass::LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* 
 */
 void LFSTK_gadgetClass::LFSTK_setKeyCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud)
 {
-	this->keyCB.pressCallback=downcb;
-	this->keyCB.releaseCallback=releasecb;
-	this->keyCB.userData=ud;
-	this->keyCB.runTheCallback=true;
-	this->keyCB.ignoreOrphanModKeys=true;
+	if(downcb!=NULL)
+		this->callBacks.validCallbacks|=KEYPRESSCB;
+	if(releasecb!=NULL)
+		this->callBacks.validCallbacks|=KEYRELEASECB;
+	this->callBacks.keyPressCallback=downcb;
+	this->callBacks.keyReleaseCallback=releasecb;
+	this->callBacks.keyUserData=ud;
+	this->callBacks.runTheCallback=true;
+	this->callBacks.ignoreOrphanModKeys=true;
+}
+
+/**
+* Set drop callback for widget.
+* \param dropped drop callback.
+* \param ud user data.
+* \note Format for callback is "bool functioname(void *p,void* ud)"
+* \note First param passed to callback is pointer to object.
+* \note Second param passed to callback is user data.
+*/
+void LFSTK_gadgetClass::LFSTK_setGadgetDropCallBack(bool (*dropped)(void*,void*),void* ud)
+{
+	this->callBacks.validCallbacks|=GADGETDROPCB;
+	this->callBacks.droppedGadgetCallback=dropped;
+	this->callBacks.mouseUserData=ud;
+	this->callBacks.runTheCallback=true;
+	this->callBacks.ignoreOrphanModKeys=true;
 }
 
 /**
@@ -284,78 +309,17 @@ void LFSTK_gadgetClass::LFSTK_setKeyCallBack(bool (*downcb)(void *,void*),bool (
 * \note First param passed to callback is pointer to object.
 * \note Second param passed to callback is user data.
 */
-void LFSTK_gadgetClass::LFSTK_setMouseCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud)
+void LFSTK_gadgetClass::LFSTK_setMouseCallBack(bool (*downcb)(void*,void*),bool (*releasecb)(void*,void*),void* ud)
 {
-	this->mouseCB.pressCallback=downcb;
-	this->mouseCB.releaseCallback=releasecb;
-	this->mouseCB.userData=ud;
-	this->mouseCB.runTheCallback=true;
-	this->mouseCB.ignoreOrphanModKeys=true;
-}
-
-/**
-* Check whether to run callback.
-* \param downcb mouse down callback.
-* \param releasecb mouse up callback.
-* \note Format for callback is "bool functioname(void *p,void* ud)"
-* \note First param passed to callback is pointer to object.
-* \note Second param passed to callback is user data.
-*/
-bool LFSTK_gadgetClass::runCallback(int cbtype)
-{
-	char		c[255];
-	KeySym		keysym_return;
-	bool		retval=false;
-
-	if(this->isActive==false)
-		return(false);
-//if(this->toParent==true)
-//		return(true);
-//TODO// ANYMOUSECB ANYKEYCB and 
-	switch(cbtype)
-		{
-			case ANYKEYCB:
-				retval=this->keyCB.runTheCallback;
-				break;
-
-			case KEYPRESSCB:
-				if(this->keyCB.pressCallback!=NULL)
-					{
-						retval=this->keyCB.runTheCallback;
-						if(this->keyCB.ignoreOrphanModKeys==true)
-							{
-								XLookupString(&(this->xEvent->xkey),(char*)&c,255,&keysym_return,NULL);
-								if((keysym_return>=XK_Shift_L) && (keysym_return<=XK_Hyper_R))
-									retval=false;
-							}
-					}
-				break;
-			case KEYRELEASECB:
-				if(this->keyCB.releaseCallback!=NULL)
-					{
-						retval=this->keyCB.runTheCallback;
-						if(this->keyCB.ignoreOrphanModKeys==true)
-							{
-								XLookupString(&(this->xEvent->xkey),(char*)&c,255,&keysym_return,NULL);
-								if((keysym_return>=XK_Shift_L) && (keysym_return<=XK_Hyper_R))
-									retval=false;
-							}
-					}
-				break;
-
-			case ANYMOUSECB:
-				retval=this->mouseCB.runTheCallback;
-				break;
-			case MOUSEPRESSCB:
-				if(this->mouseCB.pressCallback!=NULL)
-					retval=this->mouseCB.runTheCallback;
-				break;
-			case MOUSERELEASECB:
-				if(this->mouseCB.releaseCallback!=NULL)
-					retval=this->mouseCB.runTheCallback;
-				break;
-		}
-	return(retval);
+	if(downcb!=NULL)
+		this->callBacks.validCallbacks|=MOUSEPRESSCB;
+	if(releasecb!=NULL)
+		this->callBacks.validCallbacks|=MOUSERELEASECB;
+	this->callBacks.mousePressCallback=downcb;
+	this->callBacks.mouseReleaseCallback=releasecb;
+	this->callBacks.mouseUserData=ud;
+	this->callBacks.runTheCallback=true;
+	this->callBacks.ignoreOrphanModKeys=true;
 }
 
 /**
@@ -397,7 +361,7 @@ void LFSTK_gadgetClass::LFSTK_setUseWindowPixmap(bool usepixmap)
 {
 	if((this->wc->px!=None) && (usepixmap==true))
 		{
-			XSetWindowBackgroundPixmap(display,this->window,ParentRelative);
+			XSetWindowBackgroundPixmap(this->wc->app->display,this->window,ParentRelative);
 			this->gadgetDetails.useWindowPixmap=usepixmap;
 		}
 	else
@@ -420,7 +384,7 @@ void LFSTK_gadgetClass::clearBox(gadgetStruct* details)
 
 	if(details->useWindowPixmap==true)
 		{
-			XClearWindow(wc->display,this->window);
+			XClearWindow(this->wc->app->display,this->window);
 			return;
 		}
 
@@ -497,7 +461,7 @@ void LFSTK_gadgetClass::drawBevel(geometryStruct* geom,bevelType bevel)
 		cairo_line_to(this->cr,geom->x+1,geom->y+geom->h);
 		cairo_stroke(this->cr);			
 	cairo_restore(this->cr);
-	//XSync(this->display,false);
+	//XSync(this->wc->app->display,false);
 }
 
 /**
@@ -622,7 +586,7 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 				cairo_stroke(this->cr);
 			cairo_restore(this->cr);
 		}
-	//XSync(this->display,false);
+	//XSync(this->wc->app->display,false);
 }
 
 /**
@@ -638,7 +602,7 @@ void LFSTK_gadgetClass::drawGagetDetails(void)
 		this->drawImage();
 	if(this->showIndicator==true)
 		this->drawIndicator(&this->gadgetDetails);
-	XSync(this->display,false);
+	XSync(this->wc->app->display,false);
 }
 
 /**
@@ -699,7 +663,9 @@ bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 	this->mouseEvent=NULL;
 
 //no callbacks
-	if(this->runCallback(ANYMOUSECB)==false)
+//	if(this->runCallback(ANYMOUSECB)==false)
+//		return(true);
+	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
 		return(true);
 
 	if(strcmp(this->label,"--")==0)
@@ -714,8 +680,8 @@ bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 		{
 			this->mouseEvent=e;
 			
-			if(this->runCallback(MOUSERELEASECB)==true)
-				retval=this->mouseCB.releaseCallback(this,this->mouseCB.userData);
+			if(this->callBacks.validCallbacks & MOUSERELEASECB)
+				retval=this->callBacks.mouseReleaseCallback(this,this->callBacks.mouseUserData);
 
 			if(this->toParent==true)
 				return(false);
@@ -736,7 +702,9 @@ bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 	this->mouseDownY=e->y;
 	this->keyEvent=NULL;
 //no callbacks
-	if(this->runCallback(ANYMOUSECB)==false)
+//	if(this->runCallback(ANYMOUSECB)==false)
+//		return(true);
+	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
 		return(true);
 
 	if(strcmp(this->label,"--")==0)
@@ -747,9 +715,8 @@ bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 	this->selectBevel(true);
 	this->LFSTK_clearWindow();
 	
-
-	if(this->runCallback(MOUSEPRESSCB)==true)
-		retval=this->mouseCB.pressCallback(this,this->mouseCB.userData);
+	if(this->callBacks.validCallbacks & MOUSEPRESSCB)
+		retval=this->callBacks.mousePressCallback(this,this->callBacks.mouseUserData);
 
 	if(this->toParent==true)
 		return(false);
@@ -767,7 +734,7 @@ bool LFSTK_gadgetClass::mouseExit(XButtonEvent *e)
 	this->keyEvent=NULL;
 
 //no callbacks
-	if(this->runCallback(ANYMOUSECB)==false)
+	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
 		return(true);
 
 	if(strcmp(this->label,"--")==0)
@@ -792,7 +759,7 @@ bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 	this->keyEvent=NULL;
 
 //no callbacks
-	if(this->runCallback(ANYMOUSECB)==false)
+	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
 		return(true);
 
 	if(strcmp(this->label,"--")==0)
@@ -850,7 +817,9 @@ bool LFSTK_gadgetClass::mouseDrag(XMotionEvent *e)
 					this->gadgetGeom.x=(this->gadgetGeom.x/this->snap)*this->snap;
 					this->gadgetGeom.y=(this->gadgetGeom.y/this->snap)*this->snap;
 				}
-			XMoveWindow(this->display,this->window,this->gadgetGeom.x,this->gadgetGeom.y);
+			//XMoveWindow(this->wc->app->display,this->window,this->gadgetGeom.x,this->gadgetGeom.y);
+			this->LFSTK_moveGadget(this->gadgetGeom.x,this->gadgetGeom.y);
+			this->wc->app->isDragging=true;
 		}
 	return(true);
 }
@@ -861,23 +830,23 @@ void LFSTK_gadgetClass::LFSTK_resizeWindow(int w,int h)
 	this->gadgetGeom.h=h;
 	this->gadgetDetails.gadgetGeom.w=w;
 	this->gadgetDetails.gadgetGeom.h=h;
-	XResizeWindow(this->display,this->window,this->gadgetGeom.w,this->gadgetGeom.h);
-	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+	XResizeWindow(this->wc->app->display,this->window,this->gadgetGeom.w,this->gadgetGeom.h);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->window,this->wc->app->visual,&this->sfc,&this->cr,w,h);
 
 	this->LFSTK_clearWindow();
 }
-
-/**
-* Key release callback.
-* \param e XKeyEvent passed from mainloop->listener.
-* \return Return true if event fully handeled or false to pass it on.
-*/
-bool LFSTK_gadgetClass::keyRelease(XKeyEvent *e)
-{
-	this->keyEvent=NULL;
-	return(true);
-}
-
+//
+///**
+//* Key release callback.
+//* \param e XKeyEvent passed from mainloop->listener.
+//* \return Return true if event fully handeled or false to pass it on.
+//*/
+//bool LFSTK_gadgetClass::keyRelease(XKeyEvent *e)
+//{
+//	this->keyEvent=NULL;
+//	return(true);
+//}
+//
 /**
 * Client Message callback.
 * \param e XEvent passed from mainloop->listener.
@@ -906,6 +875,28 @@ bool LFSTK_gadgetClass::selectionRequest(XSelectionRequestEvent *e)
 */
 void LFSTK_gadgetClass::LFSTK_dropData(propertyStruct* data)
 {
+DEBUG
+	int	endl;
+//	if(strcasecmp(data->mimeType,"text/plain")==0)
+//		this->LFSTK_setFormatedText((const char*)data->data,true);
+//
+//	if(strcasecmp(data->mimeType,"text/uri-list")==0)
+//		{
+//			char	*d;
+//			char	*ret;
+//			asprintf(&d,"%s",(const char*)data->data);
+//			endl=strlen(d)-1;
+//			while ((endl >= 0) && (isspace(d[endl])) )
+//				{
+//					d[endl]=0;
+//					endl--;
+//				}
+//			ret=this->wc->globalLib->LFSTK_oneLiner("echo -n \"%s\"|sed 's|^file://||;s|%%20| |g'",d);
+//			this->LFSTK_setFormatedText((const char*)ret,true);
+//			free(ret);
+//			free(d);
+//		}
+
 	return;
 }
 
@@ -978,8 +969,25 @@ void LFSTK_gadgetClass::drawImage()
 		cairo_translate(this->cr,xoffset,yoffset);
 		cairo_set_source_surface(this->cr,this->cImage,0,0);
 		cairo_paint_with_alpha(this->cr,this->alpha);
+
+		if(this->gadgetDetails.showLink==true)
+			{
+				cairo_save(this->cr);
+					cairo_translate(this->cr,this->imageWidth-16,this->imageHeight-16);
+					cairo_set_source_surface(this->cr,this->link,0,0);
+					cairo_paint_with_alpha(this->cr,this->alpha);
+				cairo_restore(this->cr);
+				
+			}
+		if(this->gadgetDetails.showBroken==true)
+			{
+				cairo_translate(this->cr,0,this->imageHeight-16);
+				cairo_set_source_surface(this->cr,this->broken,0,0);
+				cairo_paint_with_alpha(this->cr,this->alpha);
+			}
+
 	cairo_restore(this->cr);
-	//XSync(this->display,false);
+	//XSync(this->wc->app->display,false);
 }
 
 /**
@@ -1213,8 +1221,8 @@ void LFSTK_gadgetClass::LFSTK_getGeomWindowRelative(geometryStruct *geom,Window 
 	Window				child;
 	XWindowAttributes	xwa;
 
-	XTranslateCoordinates(this->display,this->window,win,0,0,&x,&y,&child );
-	XGetWindowAttributes(this->display,this->window,&xwa);
+	XTranslateCoordinates(this->wc->app->display,this->window,win,0,0,&x,&y,&child );
+	XGetWindowAttributes(this->wc->app->display,this->window,&xwa);
 
 	geom->x=x;
 	geom->y=y;
@@ -1230,7 +1238,7 @@ void LFSTK_gadgetClass::LFSTK_getGeom(geometryStruct *geom)
 {
 	XWindowAttributes	xwa;
 
-	XGetWindowAttributes(this->display,this->window,&xwa);
+	XGetWindowAttributes(this->wc->app->display,this->window,&xwa);
 	geom->x=xwa.x;
 	geom->y=xwa.y;
 	geom->w=xwa.width;
@@ -1295,7 +1303,7 @@ void LFSTK_gadgetClass::drawIndicator(gadgetStruct* details)
 				
 				break;
 		}
-	//XSync(this->display,false);
+	//XSync(this->wc->app->display,false);
 }
 
 /**
@@ -1358,7 +1366,7 @@ void LFSTK_gadgetClass::drawBox(geometryStruct* g,gadgetState state,bevelType be
 				cairo_stroke(this->cr);			
 			}
 	cairo_restore(this->cr);
-	XSync(this->display,false);
+	XSync(this->wc->app->display,false);
 }
 
 /**
@@ -1454,6 +1462,12 @@ void LFSTK_gadgetClass::LFSTK_setImageFromSurface(cairo_surface_t *sfc,int orien
 	this->gadgetDetails.reserveSpace=this->imageWidth;
 	
 	cairo_destroy(tcr);
+
+	if(link==NULL)
+		{
+			this->link=cairo_image_surface_create_from_png (DATADIR "/Pixmaps/symbolic-link.png");
+			this->broken=cairo_image_surface_create_from_png (DATADIR "/Pixmaps/unreadable.png");
+		}
 }
 
 /**
@@ -1564,6 +1578,13 @@ cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int or
 	cairo_destroy(tcr);
 	cairo_surface_destroy(tempimage);
 
+	if(this->link==NULL)
+		{
+			this->link=cairo_image_surface_create_from_png (DATADIR "/Pixmaps/symbolic-link.png");
+			this->broken=cairo_image_surface_create_from_png (DATADIR "/Pixmaps/unreadable.png");
+		}
+//	printf("datadir=%s\n", DATADIR "/Pixmaps/symbolic-link.png");
+
 	return(cs);
 }
 
@@ -1649,26 +1670,14 @@ void LFSTK_gadgetClass::LFSTK_setTile(const char *path,int size)
 }
 
 /**
-* Return callback user data.
-* \note Returns a void* so must be cast.
-* \note return value must not be freed.
-*/
-void* LFSTK_gadgetClass::LFSTK_getCallbackUD()
-{
-//TODO//
-	//return(this->callback.userData);
-	return(this->mouseCB.userData);
-}
-
-/**
 * Ignore orphaned mod keys and callbacks.
 * \param bool runcb true=run callback,false=don't run.
 * \param bool ignoreorphanmod ignore mod keys without 'normal' key.
 */
-void LFSTK_gadgetClass::LFSTK_setIgnores(callbackStruct *cb,bool runcb,bool ignoreorphanmod)
+void LFSTK_gadgetClass::LFSTK_setIgnores(bool runcb,bool ignoreorphanmod)
 {
-	cb->ignoreOrphanModKeys=ignoreorphanmod;
-	cb->runTheCallback=runcb;
+	this->callBacks.ignoreOrphanModKeys=ignoreorphanmod;
+	this->callBacks.runTheCallback=runcb;
 }
 
 /**
@@ -1689,12 +1698,12 @@ void LFSTK_gadgetClass::LFSTK_setShowIndicator(bool show)
 */
 void LFSTK_gadgetClass::LFSTK_setGadgetSize(int width,int height)
 {
-	XResizeWindow(this->display,this->window,width,height);
+	XResizeWindow(this->wc->app->display,this->window,width,height);
 	this->gadgetDetails.gadgetGeom.w=width;
 	this->gadgetDetails.gadgetGeom.h=height;
 	this->gadgetGeom.w=width;
 	this->gadgetGeom.h=height;
-	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,width,height);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->window,this->wc->app->visual,&this->sfc,&this->cr,width,height);
 }
 
 /**
@@ -1722,7 +1731,7 @@ void LFSTK_gadgetClass::LFSTK_setAlpha(double alph)
 */
 void LFSTK_gadgetClass::LFSTK_showGadget(void)
 {
-	XMapWindow(this->display,this->window);
+	XMapWindow(this->wc->app->display,this->window);
 	this->isMapped=true;
 }
 
@@ -1731,16 +1740,17 @@ void LFSTK_gadgetClass::LFSTK_showGadget(void)
 */
 void LFSTK_gadgetClass::LFSTK_hideGadget(void)
 {
-	XUnmapWindow(this->display,this->window);
+	XUnmapWindow(this->wc->app->display,this->window);
 	this->isMapped=false;
 }
 
+#if 0
 /**
 * Run context window event loop.
 * \param int x.
 * \param int y.
 */
-void LFSTK_gadgetClass::LFSTK_doPopUp(int x,int y)
+void LFSTK_gadgetClass::LFSTK_doPopUpx(int x,int y)
 {
 	XEvent	event;
 
@@ -1751,9 +1761,9 @@ void LFSTK_gadgetClass::LFSTK_doPopUp(int x,int y)
 
 	while(this->wc->popupLoop==true)
 		{
-			while (XPending(display) && (this->wc->popupLoop==true))
+			while (XPending(this->wc->app->display) && (this->wc->popupLoop==true))
 				{
-					XNextEvent(this->contextWC->display,&event);
+					XNextEvent(this->contextWC->app->display,&event);
 					mappedListener *ml=this->contextWC->LFSTK_getMappedListener(event.xany.window);
 					if(ml!=NULL)
 							ml->function(ml->gadget,&event,ml->type);
@@ -1776,6 +1786,7 @@ void LFSTK_gadgetClass::LFSTK_doPopUp(int x,int y)
 		}
 	this->contextWC->LFSTK_hideWindow();
 }
+#endif
 
 /**
 * Set context window for gadget.
@@ -1811,7 +1822,7 @@ void LFSTK_gadgetClass::LFSTK_moveGadget(int x,int y)
 //}
 	this->gadgetGeom.x=x;
 	this->gadgetGeom.y=y;
-	XMoveWindow(this->display,this->window,x,y);
+	XMoveWindow(this->wc->app->display,this->window,x,y);
 	//this->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
 	//this->wc->LFSTK_clearWindow(true);
 	this->LFSTK_clearWindow();
@@ -1906,8 +1917,19 @@ void LFSTK_gadgetClass::LFSTK_setIndicator(indicatorType indictype)
 */
 void LFSTK_gadgetClass::LFSTK_reParentWindow(Window win,int newx,int newy)
 {
-	XMapWindow(this->display,win);
-	XMapWindow(this->display,this->window);
-	XReparentWindow(this->display,this->window,win,newx,newy);
+	XMapWindow(this->wc->app->display,win);
+	XMapWindow(this->wc->app->display,this->window);
+	XReparentWindow(this->wc->app->display,this->window,win,newx,newy);
 	this->parent=win;
 }
+
+/**
+* Set callbacks for gadget.
+* \param callbackStruct cbs.
+*/
+void LFSTK_gadgetClass::LFSTK_setCallBacks(callbackStruct cbs)
+{
+	this->callBacks=cbs;
+}
+
+

@@ -19,13 +19,14 @@
  */
 
 #include "config.h"
-#include "lfstk/LFSTKGlobals.h"
+#include <lfstk/LFSTKGlobals.h>
 
 #undef DIALOGWIDTH
 #define DIALOGWIDTH		800
 #define LISTHITE		GADGETHITE * 8
 #define MAXHISTORY		60
 
+LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*wc=NULL;
 LFSTK_listGadgetClass	*list=NULL;
 LFSTK_lineEditClass		*le=NULL;
@@ -36,12 +37,9 @@ const char				*commandToRun=NULL;
 char					*commandfile;
 int						maxHistory=MAXHISTORY;
 
-bool					mainLoop=true;
-Display					*display;
-
 bool doQuit(void *p,void* ud)
 {
-	mainLoop=false;
+	apc->mainLoop=false;
 	return(false);
 }
 
@@ -62,7 +60,7 @@ bool doExecute(void *object,void* ud)
 			system(data);
 		}
 	free(data);
-	mainLoop=(bool)ud;
+	apc->mainLoop=(bool)ud;
 	return(true);
 }
 
@@ -84,8 +82,9 @@ int main(int argc, char **argv)
 	LFSTK_buttonClass	*run;
 	char				*thist=NULL;
 
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Run Command",false);
-	display=wc->display;
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,"LFSTKPrefs");
+	wc=apc->mainWindow;
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	sy+=HALFYSPACING;
@@ -113,15 +112,15 @@ int main(int argc, char **argv)
 	sy+=LISTHITE+8;
 
 //command
-	le=new LFSTK_lineEditClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE,NorthGravity);
+	le=new LFSTK_lineEditClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE);
 	sy+=GADGETHITE+8;
-	quit=new LFSTK_buttonClass(wc,"Quit",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	quit=new LFSTK_buttonClass(wc,"Quit",BORDER,sy,GADGETWIDTH,GADGETHITE);
 	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 
-	execute=new LFSTK_buttonClass(wc,"Run",BORDER+((DIALOGWIDTH-(BORDER*2))/2)-(GADGETWIDTH/2),sy,GADGETWIDTH,GADGETHITE,NorthGravity);
+	execute=new LFSTK_buttonClass(wc,"Run",BORDER+((DIALOGWIDTH-(BORDER*2))/2)-(GADGETWIDTH/2),sy,GADGETWIDTH,GADGETHITE);
 	execute->LFSTK_setMouseCallBack(NULL,doExecute,(void*)true);
 
-	run=new LFSTK_buttonClass(wc,"Run And Quit",DIALOGWIDTH-BORDER-GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthEastGravity);
+	run=new LFSTK_buttonClass(wc,"Run And Quit",DIALOGWIDTH-BORDER-GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE);
 	run->LFSTK_setMouseCallBack(NULL,doExecute,(void*)false);
 	sy+=GADGETHITE+BORDER;
 
@@ -129,22 +128,9 @@ int main(int argc, char **argv)
 	wc->LFSTK_showWindow();
 	wc->LFSTK_setKeepAbove(true);
 
-	mainLoop=true;
-	while(mainLoop==true)
-		{
-			XNextEvent(wc->display,&event);
-			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
-
-			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
-
-			if(wc->LFSTK_handleWindowEvents(&event)<0)
-				mainLoop=false;
-		}
+	int retval=apc->LFSTK_runApp();
 
 	free(commandfile);
-	delete wc;
-	XCloseDisplay(display);
-	
-	return 0;
+	delete apc;
+	return(retval);
 }

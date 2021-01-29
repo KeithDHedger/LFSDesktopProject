@@ -21,272 +21,194 @@
 #include "globals.h"
 
 //main window
-LFSTK_windowClass	*wc=NULL;
-bool				mainLoop=true;
-Display				*display;
-bool				isDragging=false;
-
-//list
-diskLinkedList		*diskLL=NULL;
-int					nextXPos=2;
-int					nextYPos=2;
+LFSTK_applicationClass			*apc=NULL;
+LFSTK_windowClass				*wc=NULL;
 
 //paths
-char				*diskInfoPath;
-char				*cacheDisksPath;
-char				*cacheDeskPath;
-char				*prefsPath;
-char				*desktopPath;
+char							*cachePath;
+char							*prefsPath;
+char							*desktopPath;
 
-//save data
-char				*diskUUID=NULL;
-char				*iconPath=NULL;
-int					xPos=-1;
-int					yPos=-1;
-bool				customIcon=false;
-int					dataType=TYPENONE;
-
-args				diskData[]=
+args	cacheFileDataPrefs[]=
 {
-	{"uuid",TYPESTRING,&diskUUID},
-	{"icon",TYPESTRING,&iconPath},
-	{"xpos",TYPEINT,&xPos},
-	{"ypos",TYPEINT,&yPos},
-	{"datatype",TYPEINT,&dataType},
-	{"customicon",TYPEBOOL,&customIcon},
+	{"uuid",TYPESTRING,&cacheFileData.uuid},
+	{"posx",TYPEINT,&cacheFileData.posx},
+	{"posy",TYPEINT,&cacheFileData.posy},
+	{"hascustomicon",TYPEBOOL,&cacheFileData.hasCustomIcon},
+	{"pathtocustomicon",TYPESTRING,&cacheFileData.pathToCustomIcon},
 	{NULL,0,NULL}
 };
+std::vector<desktopItemStruct>	desktopItems;
+desktopItemStruct				cacheFileData;
+char							*documentsPath=NULL;
+char							*homePath=NULL;
+char							*diskWatch=NULL;
+char							*desktopWatch=NULL;
+
+//newstuff <<<<<<<<<<<<<<<<<<<<<<<<<
 
 //prefs
-bool				showSuffix=false;
-int					maxXSlots;
-int					maxYSlots;
-geometryStruct		oldPos;
+bool							showSuffix=false;//TODO//
 
 //dialogs
-LFSTK_windowClass	*diskWindow=NULL;
-LFSTK_windowClass	*fileWindow=NULL;
-LFSTK_windowClass	*iconChooser=NULL;
-LFSTK_lineEditClass *iconChooserEdit=NULL;
-LFSTK_buttonClass	*diskButtons[NOMOREBUTONS];
-LFSTK_buttonClass	*fileButtons[3];
-bool				dialogLoop=false;
-int					dialogRetVal=DIALOGRETERROR;
+LFSTK_windowClass				*diskWindow=NULL;
+LFSTK_windowClass				*fileWindow=NULL;
+//LFSTK_windowClass	*iconChooser=NULL;//TODO//
+//LFSTK_lineEditClass *iconChooserEdit=NULL;
+//bool				dialogLoop=false;
+//int					dialogRetVal=DIALOGRETERROR;
 
-diskLinkedList* isInList(const char *devname)
-{
-	diskLinkedList	*list=diskLL;
-
-	if(list==NULL)
-		return(NULL);
-
-	do
-		{
-			if(list->data==NULL)
-				continue;
-			if(strcmp(list->data->devName,devname)==0)
-				return(list);
-			list=list->next;
-		}
-	while(list!=NULL);
-	return(NULL);
-}
-
-void newNode(void)
-{
-	diskLinkedList	*node;
-
-	if(diskLL==NULL)
-		{
-			diskLL=(diskLinkedList*)malloc(sizeof(diskLinkedList));
-			diskLL->data=(diskDataStruct*)calloc(1,sizeof(diskDataStruct));
-			diskLL->next=NULL;
-			diskLL->prev=NULL;
-			return;
-		}
-
-	node=(diskLinkedList*)malloc(sizeof(diskLinkedList));
-	diskLL->prev=node;
-	node->next=diskLL;
-	node->prev=NULL;
-	node->data=(diskDataStruct*)calloc(1,sizeof(diskDataStruct));
-	diskLL=node;
-}
-
-void printDiskData(diskDataStruct *diskstruct)
-{
-	if(diskstruct->label!=NULL)
-		printf("diskstruct->label=%s\n",diskstruct->label);
-	if(diskstruct->devName!=NULL)
-		printf("diskstruct->devName=%s\n",diskstruct->devName);
-	if(diskstruct->uuid!=NULL)
-		printf("diskstruct->uuid=%s\n",diskstruct->uuid);
-	if(diskstruct->pathToIcon!=NULL)
-		printf("diskstruct->pathToIcon=%s\n",diskstruct->pathToIcon);
-
-	printf("diskstruct->diskType=%i\n",diskstruct->diskType);
-	printf("diskstruct->posx=%i\n",diskstruct->posx);
-	printf("diskstruct->posy=%i\n",diskstruct->posy);
-	printf("diskstruct->mounted=%i\n",diskstruct->mounted);
-	printf("diskstruct->driveHasMedia=%i\n",diskstruct->driveHasMedia);
-	printf("diskstruct->hasCustomIcon=%i\n",diskstruct->hasCustomIcon);
-	printf("\n");
-}
-
-//round to nearest int
-int toNearestInt(int left,int rite)
-{
-	return((int)(((float)left/(float)rite)+0.5));
-}
-
-//set icon
-void setIconImage(diskDataStruct *dnode)
-{
-	char			*out=NULL;
-	char			*ticon=NULL;
-	struct stat		st;
-	const char		*dot=NULL;
-
-	if(dnode->hasCustomIcon==true)
-		{
-			stat(dnode->pathToIcon,&st);
-			if(!S_ISREG(st.st_mode))
-				{
-					freeAndNull(&dnode->pathToIcon);
-					dnode->hasCustomIcon=false;
-				}
-		}
-
-	if(dnode->hasCustomIcon==false)
-		{
-			dot=strrchr(dnode->devName,'.');
-			if(dot!=0)
-				{
-					if((strcasecmp(dot+1,"jpg")==0) || (strcasecmp(dot+1,"png")==0))
-						{
-							asprintf(&dnode->pathToIcon,"%s/Desktop/%s",wc->userHome,dnode->devName);
-							return;
-						}
-				}
-		}
-
-	switch(dnode->diskType)
-		{
-			case HDDDISK:
-				ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,"-harddisk","devices");
-				break;
-			case CDROM:
-				ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,"-cdrom","devices");
-				break;
-			case THUMBDISK:
-				ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,"-removable","devices");
-				break;
-			case USBHDD:
-				ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,"-usb","devices");
-				break;
-			case DESKTOPFILE:
-				out=wc->globalLib->LFSTK_oneLiner("sed -n 's/^icon=\\(.*\\)$/\\1/Ip' '%s/%s'",desktopPath,dnode->devName);
-				if(strlen(out)>0)
-					ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,out,"");
-				free(out);
-				break;
-			case DESKFILE:
-				out=wc->globalLib->LFSTK_oneLiner("file -bL --mime-type '%s/%s'|awk -F/ '{print \"-\" $2}'",desktopPath,dnode->devName);
-				if(strcmp(out,"-directory")==0)
-					ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,out,"places");
-				else
-					ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,out,"mimetypes");
-				free(out);
-				break;
-		}
-
-	if(ticon==NULL)
-		ticon=wc->globalLib->LFSTK_findThemedIcon(iconTheme,"text-x-generic","mimetypes");
-
-	if((ticon!=NULL) && (dnode->hasCustomIcon==false))
-		{
-			freeAndNull(&dnode->pathToIcon);
-			dnode->pathToIcon=strdup(ticon);
-		}
-
-	freeAndNull(&ticon);
-}
-
-//set icon size
-void setImageSize(diskDataStruct *dnode)
+void setItemSize(desktopItemStruct	*cf)
 {
 	int textwid=0;
 
-	dnode->gadgetSize=iconSize;
-	if(dnode->diskImage!=NULL)
+	if(cf->item!=NULL)
 		{
-			textwid=dnode->diskImage->LFSTK_getTextWidth(dnode->label);
+			textwid=cf->item->LFSTK_getTextWidth(cf->label);
 			if(textwid>iconSize)
-				{
-					dnode->diskImage->LFSTK_setGadgetSize(textwid,iconSize);
-					dnode->gadgetSize=textwid;
-				}
-			else
-				dnode->gadgetSize=iconSize;
+				cf->item->LFSTK_setGadgetSize(textwid,iconSize);
 		}
-
 }
 
-//slots
-void setGridXY(diskDataStruct *dnode,int x,int y)
+void createDesktopGadget(LFSTK_windowClass *window)
 {
-	int	addx=0;
+	desktopItemStruct	cf;
 
-	if(dnode->gadgetSize>gridSize)
-		addx=1;
-	dnode->posx=addx+toNearestInt(x,gridSize);
-	dnode->posy=toNearestInt(y,gridSize);
-}
+	cf=cacheFileData;
+	setIconImage(&cf);
 
-void getRealXY(diskDataStruct *dnode,int *x,int *y)
-{
-	*x=(dnode->posx*gridSize)-(dnode->gadgetSize/2);
-	*y=(dnode->posy*gridSize)-(iconSize/2)+1;
-}
-
-void getFreeGridXY(int *px,int *py)
-{
-	diskLinkedList	*list=diskLL;
-
-	if(list==NULL)
+	cf.item=new LFSTK_buttonClass(wc,cacheFileData.label,cacheFileData.posx,cacheFileData.posy,iconSize,iconSize);
+	cf.item->LFSTK_setCanDrag(true);
+	cf.item->LFSTK_moveGadget(cacheFileData.posx,cacheFileData.posy);
+	cf.item->LFSTK_setStyle(BEVELNONE);
+	if(cf.hasCustomIcon==false)
+		cf.item->LFSTK_setImageFromPath(cf.iconPath,TOOLBAR,true);
+	else
 		{
-			*px=gridBorderLeft;
-			*py=gridBorderRight;
+			//TODO//
+		}
+	cf.item->LFSTK_setUseWindowPixmap(true);
+	cf.item->LFSTK_setMouseCallBack(NULL,mouseUpCB,USERDATA(desktopItems.size()));
+	cf.item->userData=USERDATA(desktopItems.size());
+	cf.item->LFSTK_setContextWindow(window);
+
+	cf.item->LFSTK_setLabelBGColour(0.75,0.75,0.75,strtod(backAlpha,NULL));//TODO//???
+	apc->globalLib->LFSTK_setColourFromName(apc->display,apc->cm,&cf.item->labelBGColour,backCol);
+	cf.item->LFSTK_setFontColourName(NORMALCOLOUR,foreCol,false)	;	
+	cf.item->drawLabelBG=true;
+	cf.item->autoLabelBGColour=false;
+	setItemSize(&cf);
+	cf.item->gadgetDetails.showLink=cf.isSymLink;
+	if(access(cf.itemPath,F_OK)!=F_OK)
+		cf.item->gadgetDetails.showBroken=true;
+
+	desktopItems.push_back(cf);
+	asprintf(&desktopItems.back().uuid,"%s",cacheFileData.uuid);
+	asprintf(&desktopItems.back().itemPath,"%s",cacheFileData.itemPath);
+	asprintf(&desktopItems.back().label,"%s",cacheFileData.label);
+//	asprintf(&desktopItems.back().pathToCustomIcon,"%s",cacheFileData.pathToCustomIcon);
+}
+
+//set icon
+void setIconImage(desktopItemStruct	*cf)
+{
+	char	*ticon=NULL;
+	char	*out=NULL;
+
+	if(cf->hasCustomIcon==true)
+		{
+			//TODO//
 			return;
 		}
 
-	do
+	switch(cf->type)
 		{
-			if((list->data->posx==nextXPos) && (list->data->posy==nextYPos))
+			case ISHDDDISK:
+				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-harddisk","devices");
+				break;
+			case ISUSBHDD:
+				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-usb","devices");
+				break;
+			case ISTHUMBDISK:
+				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-removable","devices");
+				break;
+			case ISCDROM:
+				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-cdrom","devices");
+				break;
+			case ISDVDROM:
+				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-dvd","devices");
+				break;
+			case ISDESKTOPFILE:
 				{
-					nextXPos++;
-					if(nextXPos>(maxXSlots-gridBorderRight))
+					GKeyFile	*gkf=g_key_file_new();
+					char		*icon=NULL;
+					if(g_key_file_load_from_file(gkf,cf->itemPath,G_KEY_FILE_NONE,NULL)==true)
 						{
-							nextXPos=gridBorderLeft;
-							nextYPos++;
+							icon=g_key_file_get_string(gkf,"Desktop Entry",G_KEY_FILE_DESKTOP_KEY_ICON,NULL);
 						}
+					g_key_file_free(gkf);
+					ticon=wc->app->globalLib->LFSTK_findThemedIcon(iconTheme,icon,"");
+					free(icon);
 				}
-			list=list->next;
-		}			
-		while(list!=NULL);
-	*px=nextXPos;
-	*py=nextYPos;
+				break;
+			case ISDOCUMENTSFOLDER:
+				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-documents","places");
+				break;
+			case ISHOMEFOLDER:
+				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"user-home","places");
+				break;
+			case ISCOMPUTER:
+				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"computer","devices");
+				break;
+			case ISIMAGEFILE:
+				ticon=strdup(cf->itemPath);
+				break;
+			default:
+				cf->isSymLink=false;
+				out=apc->globalLib->LFSTK_oneLiner("mimetype '%s'|sed 's/^.*\\///'",cf->itemPath);
+				if(strcmp(out,"symlink")==0)
+					{
+						cf->isSymLink=true;
+						char *rp=NULL;
+						rp=realpath(cf->itemPath,rp);
+						if(rp!=NULL)
+							{
+								free(out);
+								out=apc->globalLib->LFSTK_oneLiner("mimetype '%s'|sed 's/^.*\\///'",rp);
+								ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,out,"");
+								free(rp);
+							}
+						else
+							ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"application-octet-stream","mimetypes");
+					}
+				else
+					{
+						if(out!=NULL)
+							{
+								ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,out,"");
+							}
+					}
+				if(ticon==NULL)
+					ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"text-x-generic","mimetypes");
+				if(out!=NULL)
+					free(out);
+				break;
+		}
+
+	cf->iconPath=strdup(ticon);
+	free(ticon);
 }
 
-bool dialogCB(void *p,void* ud)
+bool dialogCB(void *p,void* ud)//TODO//
 {
-	dialogRetVal=(int)(long)ud;
-	dialogLoop=false;
+//	dialogRetVal=(int)(long)ud;
+//	dialogLoop=false;
 	return(true);
 }
 
-void dialogRun(LFSTK_windowClass *dialog)
+void dialogRun(LFSTK_windowClass *dialog)//TODO//
 {
+#if 0
 	XEvent				event;
 
 	dialog->LFSTK_showWindow();
@@ -294,9 +216,9 @@ void dialogRun(LFSTK_windowClass *dialog)
 	dialog->LFSTK_setTransientFor(wc->window);
 	while(dialogLoop==true)
 		{
-			while (XPending(display) && (dialogLoop==true))
+			while (XPending(dialog->app->display) && (dialogLoop==true))
 				{
-					XNextEvent(dialog->display,&event);
+					XNextEvent(dialog->app->display,&event);
 					mappedListener *ml=dialog->LFSTK_getMappedListener(event.xany.window);
 					if(ml!=NULL)
 						ml->function(ml->gadget,&event,ml->type);
@@ -310,7 +232,7 @@ void dialogRun(LFSTK_windowClass *dialog)
 							case ClientMessage:
 							case SelectionNotify:
 								{
-									if (event.xclient.message_type == XInternAtom(dialog->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(dialog->display, "WM_DELETE_WINDOW", 1))
+									if (event.xclient.message_type == XInternAtom(dialog->app->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(dialog->app->display, "WM_DELETE_WINDOW", 1))
 										{
 											dialog->LFSTK_hideWindow();
 											dialogLoop=false;
@@ -327,4 +249,5 @@ void dialogRun(LFSTK_windowClass *dialog)
 				}
 		}
 	dialog->LFSTK_hideWindow();
+#endif
 }

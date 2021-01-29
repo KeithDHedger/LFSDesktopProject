@@ -24,7 +24,7 @@ LFSTK_ExpanderGadgetClass::~LFSTK_ExpanderGadgetClass()
 {
 	for(int j=0;j<this->hitRects.size();j++)
 		if(this->hitRects.at(j).gadget!=NULL)
-			XReparentWindow(this->display,this->hitRects.at(j).gadget->window,this->wc->window,0,0);
+			XReparentWindow(this->wc->app->display,this->hitRects.at(j).gadget->window,this->wc->window,0,0);
 }
 
 LFSTK_ExpanderGadgetClass::LFSTK_ExpanderGadgetClass()
@@ -51,13 +51,13 @@ LFSTK_ExpanderGadgetClass::LFSTK_ExpanderGadgetClass(LFSTK_windowClass* parentwc
 	wa.win_gravity=gravity;
 	wa.save_under=true;
 
-	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWSaveUnder,&wa);
-	this->gc=XCreateGC(this->display,this->window,0,NULL);
+	this->window=XCreateWindow(this->wc->app->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWSaveUnder,&wa);
+	this->gc=XCreateGC(this->wc->app->display,this->window,0,NULL);
 
-	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->window,this->wc->app->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_setCairoFontData();
 
-	XSelectInput(this->display,this->window,this->gadgetEventMask);
+	XSelectInput(this->wc->app->display,this->window,this->gadgetEventMask);
 
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;
@@ -160,7 +160,7 @@ void LFSTK_ExpanderGadgetClass::LFSTK_resetGadgets(void)
 	for(int j=0;j<this->hitRects.size();j++)
 		if(this->hitRects.at(j).gadget!=NULL)
 			{
-				XReparentWindow(this->display,this->hitRects.at(j).gadget->window,this->window,this->hitRects.at(j).rect.x,this->hitRects.at(j).rect.y);
+				XReparentWindow(this->wc->app->display,this->hitRects.at(j).gadget->window,this->window,this->hitRects.at(j).rect.x,this->hitRects.at(j).rect.y);
 				this->hitRects.at(j).gadget->parent=this->window;
 			}
 }
@@ -313,7 +313,7 @@ void LFSTK_ExpanderGadgetClass::LFSTK_dropData(propertyStruct* data)
 					pointStruct point={this->wc->droppedData.x,this->wc->droppedData.y};
 					geometryStruct geom;
 		
-					this->hitRects.at(j).gadget->LFSTK_getGeomWindowRelative(&geom,this->rootWindow);
+					this->hitRects.at(j).gadget->LFSTK_getGeomWindowRelative(&geom,this->wc->app->rootWindow);
 					if(this->wc->globalLib->LFSTK_pointInRect(&point,&geom)==true)
 						{
 							this->hitRects.at(j).gadget->LFSTK_dropData(data);

@@ -28,18 +28,18 @@ LFSTK_listGadgetClass::~LFSTK_listGadgetClass()
 	for(int j=0;j<this->labelsArray->size();j++)
 		this->labelsArray->at(j)->LFSTK_reParentWindow(this->wc->window,1,1);
 
-	this->scrollBar->LFSTK_reParentWindow(this->wc->window,1,1);
-
-	delete[] this->data;
 	this->freeList();
+	delete this->labelsArray;
+	delete this->listDataArray;
+	delete[] this->data;
 }
 
 bool LFSTK_listGadgetClass::setFocusToList(void *object,void* userdata)
 {
 	LFSTK_listGadgetClass	*list;
-	listData				*d=(listData*)userdata;	
+	listData				*d=(listData*)userdata;
 	list=static_cast<LFSTK_listGadgetClass*>(d->mainObject);
-	XSetInputFocus(list->display,list->window,RevertToParent,CurrentTime);
+	XSetInputFocus(list->wc->app->display,list->window,RevertToParent,CurrentTime);
 	return(true);
 }
 
@@ -79,8 +79,8 @@ bool LFSTK_listGadgetClass::select(void *object,void* userdata)
 
 	list->isDoubleClick=label->isDoubleClick;
 
-	if(list->runCallback(MOUSERELEASECB)==true)
-		return(list->mouseCB.releaseCallback(list,list->mouseCB.userData));
+	if(list->callBacks.validCallbacks & MOUSERELEASECB)
+		return(list->callBacks.mouseReleaseCallback(list,list->callBacks.mouseUserData));
 
 	return(true);
 }
@@ -139,7 +139,7 @@ void LFSTK_listGadgetClass::LFSTK_setListFromFile(const char *filepath,bool incl
 										if(includeempty==true)
 											{
 												ls.label=strdup(buffer);
-												ls.userData=(void*)userdata;
+												ls.userData=USERDATA(userdata);
 												this->LFSTK_appendToList(ls);
 											}
 										else
@@ -147,7 +147,7 @@ void LFSTK_listGadgetClass::LFSTK_setListFromFile(const char *filepath,bool incl
 												if(strlen(buffer)>0)
 													{
 														ls.label=strdup(buffer);
-														ls.userData=(void*)userdata;
+														ls.userData=USERDATA(userdata);
 														this->LFSTK_appendToList(ls);
 													}
 											}
@@ -193,7 +193,7 @@ void LFSTK_listGadgetClass::LFSTK_updateList(void)
 					if(j<this->maxShowing)
 						{
 							this->labelsArray->at(j)->LFSTK_setLabel(this->listDataArray->at(j+this->listOffset).label);
-							this->labelsArray->at(j)->userData=(void*)(long)j+this->listOffset;
+							this->labelsArray->at(j)->userData=USERDATA(j+this->listOffset);
 							this->labelsArray->at(j)->LFSTK_setActive(true);
 							if(this->listDataArray->at(j+this->listOffset).imageType==NOTHUMB)
 								this->labelsArray->at(j)->LFSTK_setLabelGravity(LEFT);
@@ -236,8 +236,8 @@ bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
 void LFSTK_listGadgetClass::setNavSensitive(void)
 {
 //TODO//
-//	XFlush(this->display);
-//	XSync(this->display,false);
+//	XFlush(this->wc->app->display);
+//	XSync(this->wc->app->display,false);
 }
 
 /**
@@ -249,7 +249,6 @@ void LFSTK_listGadgetClass::LFSTK_resetListHeight(int newheight)
 	LFSTK_buttonClass	*button;
 	int					sy=1;
 	this->maxShowing=((newheight)/LABELHITE);
-	this->data=new listData[this->maxShowing];
 
 	if(this->labelsArray->size()<this->maxShowing)
 		{
@@ -264,18 +263,26 @@ void LFSTK_listGadgetClass::LFSTK_resetListHeight(int newheight)
 					button->gadgetDetails.state=NORMALCOLOUR;
 					button->gadgetDetails.bevel=BEVELNONE;			
 					button->LFSTK_setTile(NULL,0);
-					button->LFSTK_setMouseCallBack(setFocusToList,select,LISTDATA(j));
-					button->LFSTK_setKeyCallBack(setFocusToList,NULL,LISTDATA(j));
 					button->LFSTK_setFontString(this->monoFontString);
 					button->LFSTK_setCairoFontData();
 
 					this->labelsArray->push_back(button);
-
-					this->data[j].mainObject=this;
-					this->data[j].userData=j;
 					sy+=LABELHITE;
 				}
 		}
+
+	if(this->data!=NULL)
+		delete[] this->data;
+
+	this->data=new listData[this->maxShowing];
+	for(int j=0;j<this->maxShowing;j++)
+		{
+			this->data[j].mainObject=this;
+			this->data[j].userData=j;
+			this->labelsArray->at(j)->LFSTK_setKeyCallBack(setFocusToList,NULL,LISTDATA(j));
+			this->labelsArray->at(j)->LFSTK_setMouseCallBack(setFocusToList,select,LISTDATA(j));
+		}
+
 	if(this->scrollBar!=NULL)
 		this->scrollBar->LFSTK_resetHeight(newheight);
 }
@@ -304,14 +311,14 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 
 	wa.win_gravity=gravity;
 	wa.save_under=true;
-	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
-	this->gc=XCreateGC(this->display,this->window,0,NULL);
+	this->window=XCreateWindow(this->wc->app->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
+	this->gc=XCreateGC(this->wc->app->display,this->window,0,NULL);
 
 	this->LFSTK_setFontString(this->monoFontString);
-	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->window,this->wc->app->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_setCairoFontData();
 
-	XSelectInput(this->display,this->window,this->gadgetEventMask);
+	XSelectInput(this->wc->app->display,this->window,this->gadgetEventMask);
 
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;
@@ -357,7 +364,7 @@ void LFSTK_listGadgetClass::freeList(void)
 			if((this->listDataArray->at(j).imageType==FILETHUMB) && (this->listDataArray->at(j).data.imagePath!=NULL))
 				free(this->listDataArray->at(j).data.imagePath);
 		}
-			this->listDataArray->clear();
+	this->listDataArray->clear();
 }
 
 /**
@@ -372,9 +379,12 @@ void LFSTK_listGadgetClass::LFSTK_freeList(void)
 * Get selected label.
 * \return const char *label;
 */
-const char	*LFSTK_listGadgetClass::LFSTK_getSelectedLabel(void)
+const char *LFSTK_listGadgetClass::LFSTK_getSelectedLabel(void)
 {
-	return(this->listDataArray->at(this->currentItem).label);
+	if(this->listDataArray->size()>this->currentItem)
+		return(this->listDataArray->at(this->currentItem).label);
+
+	return("");
 }
 
 /**
@@ -396,7 +406,7 @@ const char	*LFSTK_listGadgetClass::LFSTK_getLabelAtIndex(int index)
 */
 bool LFSTK_listGadgetClass::mouseUp(XButtonEvent *e)
 {
-	XSetInputFocus(this->display,this->window,RevertToParent,CurrentTime);
+	XSetInputFocus(this->wc->app->display,this->window,RevertToParent,CurrentTime);
 	if(e->button==Button5)
 		this->scrollBar->LFSTK_scrollByLine(false);
 	if(e->button==Button4)

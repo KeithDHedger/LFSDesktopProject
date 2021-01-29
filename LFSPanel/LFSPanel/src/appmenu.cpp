@@ -304,7 +304,7 @@ int addAppmenu(int x,int y,int grav,bool fromleft)
 	addExtras();
 	appMenu->LFSTK_setMouseCallBack(NULL,menuCB,NULL);
 	appMenu->LFSTK_addMainMenus(catagoryMenus,catagoryCnt);
-	XMapWindow(mainwind->display,appButton->LFSTK_getWindow());
+	XMapWindow(mainwind->app->display,appButton->LFSTK_getWindow());
 	appButton->LFSTK_clearWindow();
 	return(width);
 }

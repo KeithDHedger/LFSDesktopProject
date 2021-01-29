@@ -19,12 +19,15 @@
  */
 
 #include <getopt.h>
-#include <lfstk/LFSTKGlobals.h>
 #include <alloca.h>
 #include <limits.h>
 
+#include "config.h"
+#include <lfstk/LFSTKGlobals.h>
+
 #define EDITBOXWIDTH	GADGETWIDTH*2
 
+LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass		*label=NULL;
 LFSTK_labelClass		*cursorlabel=NULL;
@@ -86,9 +89,6 @@ menuStruct				**setNameMenuItems=NULL;
 LFSTK_menuClass			*setMenu=NULL;
 
 int						setCnt;
-
-bool					mainLoop=true;
-Display					*display;
 char					*wd;
 int						parentWindow=-1;
 int						queueID=-1;
@@ -190,7 +190,6 @@ bool menuCB(void *p,void* ud)
 		{"menuitem_font_prelight",TYPESTRING,&mfpre},
 		{"menuitem_font_active",TYPESTRING,&mfactive},
 		{"menuitem_font_inactive",TYPESTRING,&mfinactive},
-//
 ////font
 		{"font",TYPESTRING,&bfont},
 		{"font_normal",TYPESTRING,&bfnormal},
@@ -217,7 +216,7 @@ bool menuCB(void *p,void* ud)
 	menuTileEdit->LFSTK_setBuffer(buffer);
 
 	sprintf(buffer,"%s/lfstoolkit.rc",label);
-	wc->globalLib->LFSTK_loadVarsFromFile(buffer,myargs);
+	apc->globalLib->LFSTK_loadVarsFromFile(buffer,myargs);
 //button back
 	previeBackColourEdit[0]->LFSTK_setBuffer(bnormal);
 	previeBackColourEdit[1]->LFSTK_setBuffer(bpre);
@@ -281,9 +280,8 @@ bool menuCB(void *p,void* ud)
 
 bool doQuit(void *p,void* ud)
 {
-	mainLoop=false;
-	XFlush(wc->display);
-	XSync(wc->display,true);
+	apc->exitValue=0;
+	apc->mainLoop=false;
 	return(false);
 }
 
@@ -292,42 +290,40 @@ void setVars(void)
 	for(int j=0;j<4;j++)
 		{
 //buttons
-			wc->globalLib->LFSTK_setGlobalString(j,TYPEBUTTON,previeBackColourEdit[j]->LFSTK_getCStr());
-			wc->globalLib->LFSTK_setGlobalString(j,TYPEFONTCOLOUR,previeFontColourEdit[j]->LFSTK_getCStr());
+			apc->globalLib->LFSTK_setGlobalString(j,TYPEBUTTON,previeBackColourEdit[j]->LFSTK_getCStr());
+			apc->globalLib->LFSTK_setGlobalString(j,TYPEFONTCOLOUR,previeFontColourEdit[j]->LFSTK_getCStr());
 //menus
-			wc->globalLib->LFSTK_setGlobalString(j,TYPEMENUITEM,previeMenuBackColourEdit[j]->LFSTK_getCStr());
-			wc->globalLib->LFSTK_setGlobalString(j,TYPEMENUITEMFONTCOLOUR,previeMenuFontColourEdit[j]->LFSTK_getCStr());
+			apc->globalLib->LFSTK_setGlobalString(j,TYPEMENUITEM,previeMenuBackColourEdit[j]->LFSTK_getCStr());
+			apc->globalLib->LFSTK_setGlobalString(j,TYPEMENUITEMFONTCOLOUR,previeMenuFontColourEdit[j]->LFSTK_getCStr());
 		}
 
-	wc->globalLib->LFSTK_setGlobalString(0,TYPEWINDOW,windowColourEdit->LFSTK_getCStr());
-	wc->globalLib->LFSTK_setAutoLabelColour(autoColourCheck->LFSTK_getValue());
+	apc->globalLib->LFSTK_setGlobalString(0,TYPEWINDOW,windowColourEdit->LFSTK_getCStr());
+	apc->globalLib->LFSTK_setAutoLabelColour(autoColourCheck->LFSTK_getValue());
 
 	if(((strcmp(windowTileEdit->LFSTK_getCStr(),"")==0) || (strcmp(buttonTileEdit->LFSTK_getCStr(),"")==0) || (strcmp(menuTileEdit->LFSTK_getCStr(),"")==0))==true)
 		useTheme->LFSTK_setValue(false);
-	wc->globalLib->LFSTK_setUseTheme(useTheme->LFSTK_getValue());
-	wc->globalLib->LFSTK_setThemePath(themePath);
+	apc->globalLib->LFSTK_setUseTheme(useTheme->LFSTK_getValue());
+	apc->globalLib->LFSTK_setThemePath(themePath);
 //troughs
-	wc->globalLib->LFSTK_setGlobalString(0,TYPESBTROUGHCOLOUR,sbTroughColour);
-	wc->globalLib->LFSTK_setGlobalString(0,TYPELISTTROUGHCOLOUR,listTroughColour);
+	apc->globalLib->LFSTK_setGlobalString(0,TYPESBTROUGHCOLOUR,sbTroughColour);
+	apc->globalLib->LFSTK_setGlobalString(0,TYPELISTTROUGHCOLOUR,listTroughColour);
 
 //tiles
-	wc->globalLib->LFSTK_setGlobalString(0,TYPEWINDOWTILE,windowTileEdit->LFSTK_getCStr());
-	wc->globalLib->LFSTK_setGlobalString(0,TYPEBUTTONTILE,buttonTileEdit->LFSTK_getCStr());
-	wc->globalLib->LFSTK_setGlobalString(0,TYPEMENUITEMTILE,menuTileEdit->LFSTK_getCStr());
+	apc->globalLib->LFSTK_setGlobalString(0,TYPEWINDOWTILE,windowTileEdit->LFSTK_getCStr());
+	apc->globalLib->LFSTK_setGlobalString(0,TYPEBUTTONTILE,buttonTileEdit->LFSTK_getCStr());
+	apc->globalLib->LFSTK_setGlobalString(0,TYPEMENUITEMTILE,menuTileEdit->LFSTK_getCStr());
 //fonts
-	wc->globalLib->LFSTK_setGlobalString(0,TYPEFONT,buttonFontEdit->LFSTK_getCStr());
-	wc->globalLib->LFSTK_setGlobalString(0,TYPEMENUITEMFONT,menuFontEdit->LFSTK_getCStr());
-	wc->globalLib->LFSTK_setGlobalString(0,TYPEMONOFONT,monoFontEdit->LFSTK_getCStr());
-	wc->globalLib->LFSTK_setGlobalString(0,TYPECURSORCOLOUR,cursorColourEdit->LFSTK_getCStr());
-	wc->globalLib->LFSTK_setGlobalString(0,TYPESBTROUGHCOLOUR,scrollTroughColourEdit->LFSTK_getCStr());
-	wc->globalLib->LFSTK_setGlobalString(0,TYPELISTTROUGHCOLOUR,listTroughColourEdit->LFSTK_getCStr());
-	
+	apc->globalLib->LFSTK_setGlobalString(0,TYPEFONT,buttonFontEdit->LFSTK_getCStr());
+	apc->globalLib->LFSTK_setGlobalString(0,TYPEMENUITEMFONT,menuFontEdit->LFSTK_getCStr());
+	apc->globalLib->LFSTK_setGlobalString(0,TYPEMONOFONT,monoFontEdit->LFSTK_getCStr());
+	apc->globalLib->LFSTK_setGlobalString(0,TYPECURSORCOLOUR,cursorColourEdit->LFSTK_getCStr());
+	apc->globalLib->LFSTK_setGlobalString(0,TYPESBTROUGHCOLOUR,scrollTroughColourEdit->LFSTK_getCStr());
+	apc->globalLib->LFSTK_setGlobalString(0,TYPELISTTROUGHCOLOUR,listTroughColourEdit->LFSTK_getCStr());
 }
 
 void setPreviewData(void)
 {
 	std::map<int,mappedListener*>	*ml=wc->LFSTK_getGadgets();
-//	int cnt=0;
 	if((!ml->empty()) )
 		{
 			if(useTheme->LFSTK_getValue()==true)
@@ -411,7 +407,7 @@ void setPreviewData(void)
 	windowColourEdit->LFSTK_setCursorColourName("#808080");
 
 	wc->LFSTK_clearWindow(true);
-	XFlush(wc->display);
+	XFlush(apc->display);
 }
 
 bool selectfile(void *object,void* ud)
@@ -484,7 +480,7 @@ bool buttonCB(void *p,void* ud)
 					setPreviewData();
 					setVars();
 					asprintf(&prefsfile,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
-					wc->globalLib->LFSTK_saveVarsToFile(prefsfile,wc->globalLib->LFSTK_getTKArgs());
+					apc->globalLib->LFSTK_saveVarsToFile(prefsfile,apc->globalLib->LFSTK_getTKArgs());
 					
 					free(prefsfile);
 //flush message queue
@@ -518,7 +514,11 @@ bool coleditCB(void *p,void* ud)
 	if((ed->mouseEvent->state & Button3Mask)!=0)
 		{
 			char *col=NULL;
-			col=wc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr());
+#ifdef _ENABLEDEBUG_
+			col=apc->globalLib->LFSTK_oneLiner("LD_LIBRARY_PATH=../LFSToolKit/LFSToolKit/app/.libs LFSApplications/app/lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr());
+#else
+			col=apc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr());
+#endif
 			if(strlen(col)>0)
 				ed->LFSTK_setBuffer(col);
 			free(col);
@@ -563,11 +563,12 @@ int main(int argc, char **argv)
 						break;
 				}
 		}
-	
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH-BORDER-BORDER-BORDER,DIALOGHITE,"LFS Toolkit Prefs",false);
-	display=wc->display;
 
-	command=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",wc->configDir);
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,"LFSTKPrefs");
+	wc=apc->mainWindow;
+
+	command=apc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",wc->configDir);
 	key=atoi(command);
 	freeAndNull(&command);
 
@@ -587,12 +588,12 @@ int main(int argc, char **argv)
 	for(int j=0;j<4;j++)
 		{
 			previewButtons[j]=new LFSTK_buttonClass(wc,previewButtonLabels[j],sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-			previewButtons[j]->LFSTK_setIgnores(&previewButtons[j]->mouseCB,false,true);
+			previewButtons[j]->LFSTK_setIgnores(false,true);
 			sx+=GADGETWIDTH+BORDER;
-			previeBackColourEdit[j]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+			previeBackColourEdit[j]=new LFSTK_lineEditClass(wc,apc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 			previeBackColourEdit[j]->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
 			sx+=EDITBOXWIDTH+BORDER;
-			previeFontColourEdit[j]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(j,TYPEFONTCOLOUR),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+			previeFontColourEdit[j]=new LFSTK_lineEditClass(wc,apc->globalLib->LFSTK_getGlobalString(j,TYPEFONTCOLOUR),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 			previeFontColourEdit[j]->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
 			sy+=YSPACING;
 			sx=BORDER;
@@ -603,7 +604,7 @@ int main(int argc, char **argv)
 	buttonFontDialogButton=new LFSTK_fontDialogClass(wc,"Button Font",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	buttonFontDialogButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SELECTBUTTONFONT");
 	sx+=GADGETWIDTH+BORDER;
-	buttonFontEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEFONT),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
+	buttonFontEdit=new LFSTK_lineEditClass(wc,apc->globalLib->LFSTK_getGlobalString(0,TYPEFONT),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
 	sx=BORDER;
@@ -611,11 +612,11 @@ int main(int argc, char **argv)
 	for(int j=0;j<4;j++)
 		{
 			previewMenus[j]=new LFSTK_buttonClass(wc,previewMenuLabels[j],sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-			previewMenus[j]->LFSTK_setIgnores(&previewMenus[j]->mouseCB,false,true);
+			previewMenus[j]->LFSTK_setIgnores(false,true);
 			sx+=GADGETWIDTH+BORDER;
-			previeMenuBackColourEdit[j]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEM),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+			previeMenuBackColourEdit[j]=new LFSTK_lineEditClass(wc,apc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEM),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 			sx+=EDITBOXWIDTH+BORDER;
-			previeMenuFontColourEdit[j]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEMFONTCOLOUR),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+			previeMenuFontColourEdit[j]=new LFSTK_lineEditClass(wc,apc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEMFONTCOLOUR),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 			previeMenuBackColourEdit[j]->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
 			previeMenuFontColourEdit[j]->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
 			sy+=YSPACING;
@@ -626,14 +627,14 @@ int main(int argc, char **argv)
 	menuFontDialogButton=new LFSTK_fontDialogClass(wc,"Menu Font",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	menuFontDialogButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SELECTMENUFONT");
 	sx+=GADGETWIDTH+BORDER;
-	menuFontEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEMENUITEMFONT),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
+	menuFontEdit=new LFSTK_lineEditClass(wc,apc->globalLib->LFSTK_getGlobalString(0,TYPEMENUITEMFONT),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 	sx=BORDER;
 //mono font
 	monoFontDialogButton=new LFSTK_fontDialogClass(wc,"Mono Font",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	monoFontDialogButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SELECTMONOFONT");
 	sx+=GADGETWIDTH+BORDER;
-	monoFontEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEMONOFONT),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
+	monoFontEdit=new LFSTK_lineEditClass(wc,apc->globalLib->LFSTK_getGlobalString(0,TYPEMONOFONT),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 	sx=BORDER;
 
@@ -641,7 +642,7 @@ int main(int argc, char **argv)
 	LFSTK_labelClass		*label=NULL;
 	label=new LFSTK_labelClass(wc,"Scroll Trough Col",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sx+=BORDER+GADGETWIDTH;
-	scrollTroughColourEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(-1,TYPESBTROUGHCOLOUR),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+	scrollTroughColourEdit=new LFSTK_lineEditClass(wc,apc->globalLib->LFSTK_getGlobalString(-1,TYPESBTROUGHCOLOUR),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 	scrollTroughColourEdit->LFSTK_setCursorColourName("grey80");
 	scrollTroughColourEdit->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
 	sy+=YSPACING;
@@ -650,7 +651,7 @@ int main(int argc, char **argv)
 //list trough prefs
 	label=new LFSTK_labelClass(wc,"List Trough Col",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sx+=BORDER+GADGETWIDTH;
-	listTroughColourEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(-1,TYPELISTTROUGHCOLOUR),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+	listTroughColourEdit=new LFSTK_lineEditClass(wc,apc->globalLib->LFSTK_getGlobalString(-1,TYPELISTTROUGHCOLOUR),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 	listTroughColourEdit->LFSTK_setCursorColourName("grey80");
 	listTroughColourEdit->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
 	sy+=YSPACING;
@@ -659,7 +660,7 @@ int main(int argc, char **argv)
 //cursor prefs
 	cursorlabel=new LFSTK_labelClass(wc,"Cursor Col",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sx+=BORDER+GADGETWIDTH;
-	cursorColourEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(-1,TYPECURSORCOLOUR),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+	cursorColourEdit=new LFSTK_lineEditClass(wc,apc->globalLib->LFSTK_getGlobalString(-1,TYPECURSORCOLOUR),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 	cursorColourEdit->LFSTK_setCursorColourName("black");
 	cursorColourEdit->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
 	sy+=YSPACING;
@@ -668,7 +669,7 @@ int main(int argc, char **argv)
 //window
 	label=new LFSTK_labelClass(wc,"Window Col",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sx+=BORDER+GADGETWIDTH;
-	windowColourEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEWINDOW),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+	windowColourEdit=new LFSTK_lineEditClass(wc,apc->globalLib->LFSTK_getGlobalString(0,TYPEWINDOW),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 	windowColourEdit->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
 	sx+=BORDER+EDITBOXWIDTH;
 	autoColourCheck=new LFSTK_toggleButtonClass(wc,"Auto Colour",sx,sy,GADGETWIDTH,CHECKBOXSIZE,NorthWestGravity);
@@ -694,26 +695,26 @@ int main(int argc, char **argv)
 //window tile
 	windowTile=new LFSTK_buttonClass(wc,"Window Tile",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sx+=GADGETWIDTH+BORDER;
-	windowTileEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEWINDOWTILE),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
+	windowTileEdit=new LFSTK_lineEditClass(wc,apc->globalLib->LFSTK_getGlobalString(0,TYPEWINDOWTILE),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
 	windowTile->LFSTK_setMouseCallBack(NULL,selectfile,(void*)windowTileEdit);
 	sy+=YSPACING;
 	sx=BORDER;
 //button tile
 	buttonTile=new LFSTK_buttonClass(wc,"Button Tile",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sx+=GADGETWIDTH+BORDER;
-	buttonTileEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEBUTTONTILE),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
+	buttonTileEdit=new LFSTK_lineEditClass(wc,apc->globalLib->LFSTK_getGlobalString(0,TYPEBUTTONTILE),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
 	buttonTile->LFSTK_setMouseCallBack(NULL,selectfile,(void*)buttonTileEdit);
 	sy+=YSPACING;
 	sx=BORDER;
 //menu tile
 	menuTile=new LFSTK_buttonClass(wc,"Menu Tile",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sx+=GADGETWIDTH+BORDER;
-	menuTileEdit=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(0,TYPEMENUITEMTILE),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
+	menuTileEdit=new LFSTK_lineEditClass(wc,apc->globalLib->LFSTK_getGlobalString(0,TYPEMENUITEMTILE),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
 	menuTile->LFSTK_setMouseCallBack(NULL,selectfile,(void*)menuTileEdit);
 	sy+=YSPACING;
 
 	autoColourCheck->LFSTK_setValue(wc->autoLabelColour);
-	useTheme->LFSTK_setValue(wc->globalLib->LFSTK_getUseTheme());
+	useTheme->LFSTK_setValue(apc->globalLib->LFSTK_getUseTheme());
 
 	sx=BORDER;
 
@@ -745,23 +746,11 @@ int main(int argc, char **argv)
 	if(parentWindow!=-1)
 		wc->LFSTK_setTransientFor(parentWindow);
 
-	mainLoop=true;
-	while(mainLoop==true)
-		{
-			XNextEvent(wc->display,&event);
-			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
+	int retval=apc->LFSTK_runApp();
 
-			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
-
-			if(wc->LFSTK_handleWindowEvents(&event)<0)
-				mainLoop=false;
-		}
-
-	delete wc;
+	delete tileDialog;
 	delete setMenu;
+	delete apc;
 	freeAndNull(&sbTroughColour);
-	cairo_debug_reset_static_data();
-	XCloseDisplay(display);
-	return 0;
+	return(retval);
 }

@@ -34,13 +34,12 @@ LFSTK_multiLineEditClass::~LFSTK_multiLineEditClass()
 {
 	if(!this->lines.empty())
 		{
-			for (int j=0;j<this->lines.size();j++)
+			for (int i=0; i<lines.size(); i++)
 				{
-					if(this->lines.at(j)->line!=NULL)
-						free(this->lines.at(j)->line);
-					free(this->lines.at(j));
+					free(lines.at(i)->line);
+					delete lines.at(i);
 				}
-				this->lines.clear();
+			this->lines.clear();
 		}
 }
 
@@ -74,12 +73,12 @@ LFSTK_multiLineEditClass::LFSTK_multiLineEditClass(LFSTK_windowClass* parentwc,c
 	wa.bit_gravity=gravity;
 	wa.save_under=true;
 
-	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWBitGravity,&wa);
-	this->gc=XCreateGC(this->display,this->window,0,NULL);
+	this->window=XCreateWindow(this->wc->app->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWBitGravity,&wa);
+	this->gc=XCreateGC(this->wc->app->display,this->window,0,NULL);
 	this->LFSTK_setFontString(this->monoFontString);
-	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->window,this->wc->app->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_setCairoFontData();
-	XSelectInput(this->display,this->window,this->gadgetEventMask|SelectionClear|SelectionRequest);
+	XSelectInput(this->wc->app->display,this->window,this->gadgetEventMask|SelectionClear|SelectionRequest);
 
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;
@@ -114,7 +113,7 @@ void LFSTK_multiLineEditClass::LFSTK_clearWindow()
 	this->gadgetDetails.bevel=BEVELIN;
 	this->drawText();
 	this->drawBevel(&this->gadgetDetails.gadgetGeom,this->gadgetDetails.bevel);
-	XSync(this->display,false);
+	XSync(this->wc->app->display,false);
 	return;
 }
 
@@ -154,7 +153,7 @@ void LFSTK_multiLineEditClass::LFSTK_resizeWindow(int w,int h)
 {
 	this->gadgetGeom.w=w-(pad*2);
 	this->gadgetGeom.h=h-(pad*2);
-	XResizeWindow(this->display,this->window,this->gadgetGeom.w,this->gadgetGeom.h);
+	XResizeWindow(this->wc->app->display,this->window,this->gadgetGeom.w,this->gadgetGeom.h);
 	this->LFSTK_clearWindow();
 }
 
@@ -167,7 +166,7 @@ bool LFSTK_multiLineEditClass::lostFocus(XEvent *e)
 {
 	if(this->isFocused==true)
 		{
-			XUngrabKeyboard(this->display,CurrentTime);
+			XUngrabKeyboard(this->wc->app->display,CurrentTime);
 			this->isFocused=false;
 		}
 	this->setDisplayLines();
@@ -342,7 +341,7 @@ void LFSTK_multiLineEditClass::getClip(void)
 	bool			run=true;
 	XEvent			event;
 
-	selectionOwner=XGetSelectionOwner(this->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD));
+	selectionOwner=XGetSelectionOwner(this->wc->app->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD));
 
 	if(selectionOwner==this->wc->window)
 		{
@@ -353,12 +352,12 @@ void LFSTK_multiLineEditClass::getClip(void)
 
 	if (selectionOwner!=None)
 		{
-			XConvertSelection(this->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->wc->LFSTK_getDnDAtom(XA_UTF8_STRING),this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->window,CurrentTime);
-			XFlush(this->display);
+			XConvertSelection(this->wc->app->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->wc->LFSTK_getDnDAtom(XA_UTF8_STRING),this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->window,CurrentTime);
+			XFlush(this->wc->app->display);
 
 			while (run==true)
 				{
-					XNextEvent(this->display,&event);
+					XNextEvent(this->wc->app->display,&event);
 					switch(event.type)
 						{
 							case SelectionNotify:
@@ -368,7 +367,7 @@ void LFSTK_multiLineEditClass::getClip(void)
 						}
 				}
 
-			XGetWindowProperty(this->display,this->window,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),0,0,False,AnyPropertyType,&type,&format,&len,&bytesLeft,&data);
+			XGetWindowProperty(this->wc->app->display,this->window,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),0,0,False,AnyPropertyType,&type,&format,&len,&bytesLeft,&data);
 			if(data!=NULL)
 				{
 					XFree(data);
@@ -377,14 +376,14 @@ void LFSTK_multiLineEditClass::getClip(void)
 
 			if(bytesLeft>0)
 				{
-					result=XGetWindowProperty(this->display,this->window,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),0,bytesLeft,False,AnyPropertyType,&type,&format,&len,&dummy,&data);
+					result=XGetWindowProperty(this->wc->app->display,this->window,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),0,bytesLeft,False,AnyPropertyType,&type,&format,&len,&dummy,&data);
 					if (result==Success)
 						{
 							this->LFSTK_setFormatedText((const char*)data,false);
 							XFree(data);
 						}
 				}
-			XDeleteProperty(this->display,this->window,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD));
+			XDeleteProperty(this->wc->app->display,this->window,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD));
 		}
 }
 
@@ -420,7 +419,7 @@ bool LFSTK_multiLineEditClass::keyRelease(XKeyEvent *e)
 			if(keysym_return==XK_c)
 				{
 					this->wc->clipBuffer=this->buffer;
-					XSetSelectionOwner(this->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->wc->window,CurrentTime);
+					XSetSelectionOwner(this->wc->app->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->wc->window,CurrentTime);
 				}
 
 			if(keysym_return==XK_Delete)
@@ -493,10 +492,8 @@ bool LFSTK_multiLineEditClass::keyRelease(XKeyEvent *e)
 				case XK_Return:
 					this->buffer.insert(this->cursorPos,1,'\n');
 					this->cursorPos++;
-					if(this->keyCB.releaseCallback!=NULL)
-						this->keyCB.releaseCallback(this,this->keyCB.userData);
-					//if(this->callback.pressCallback!=NULL)
-					//	return(this->callback.pressCallback(this,this->callback.userData));
+					if(this->callBacks.validCallbacks & KEYRELEASECB)
+						return(this->callBacks.keyReleaseCallback(this,this->callBacks.keyUserData));
 					break;
 
 				default:
@@ -510,8 +507,9 @@ bool LFSTK_multiLineEditClass::keyRelease(XKeyEvent *e)
 
 	this->setDisplayLines();
 	this->LFSTK_clearWindow();
-	if((this->keyCB.releaseCallback!=NULL) && (this->callbackOnReturn==false))
-		return(this->keyCB.releaseCallback(this,this->keyCB.userData));
+
+	if((this->callBacks.validCallbacks & KEYRELEASECB) && (this->callbackOnReturn==false))
+		return(this->callBacks.keyReleaseCallback(this,this->callBacks.keyUserData));
 
 	return(true);
 }

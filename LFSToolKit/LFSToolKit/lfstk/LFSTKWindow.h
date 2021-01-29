@@ -42,6 +42,8 @@ struct propertyStruct
 	int				nitems;
 	Atom			type;
 	char			*mimeType;
+	int				dropX=-1;
+	int				dropY=-1;
 };
 
 /**
@@ -54,6 +56,7 @@ struct dropDataStruct
 	dropDataType	type;
 	char			*data;
 	int				x,y;
+	LFSTK_gadgetClass	*gadget=NULL;
 };
 
 enum {XDNDENTER=0,XDNDPOSITION,XDNDSTATUS,XDNDTYPELIST,XDNDACTIONCOPY,XDNDDROP,XDNDLEAVE,XDNDFINISHED,XDNDSELECTION,XDNDPROXY,XA_CLIPBOARD,XA_COMPOUND_TEXT,XA_UTF8_STRING,XA_TARGETS,PRIMARY,SECONDARY,DNDATOMCOUNT};
@@ -71,6 +74,8 @@ class LFSTK_windowClass
 		~LFSTK_windowClass();
 		LFSTK_windowClass(int x,int y,int w,int h,const char* name,bool override,bool loadvars=true,bool shutdisplayonexit=false);
 		LFSTK_windowClass(windowInitStruct *wi);
+	
+		LFSTK_windowClass(windowInitStruct *wi,LFSTK_applicationClass *app);
 
 		void					LFSTK_showWindow(bool all=true);
 		void					LFSTK_hideWindow(void);
@@ -111,29 +116,27 @@ class LFSTK_windowClass
 		void					LFSTK_addMappedListener(int mapwindow,mappedListener* ml);
 		mappedListener			*LFSTK_getMappedListener(int window);
 		int						LFSTK_gadgetCount(void);
-		LFSTK_gadgetClass		*LFSTK_findGadgetByPos(int x, int y);
+		LFSTK_gadgetClass		*LFSTK_findGadgetByPos(int x,int y);
+		bool					LFSTK_deleteGadget(LFSTK_gadgetClass *gadget);
+		void					LFSTK_redrawAllGadgets(void);
 
 //dnd
-		void					LFSTK_initDnD(void);
+		void					LFSTK_initDnD(bool acceptwindowdrops=false);
 		Atom					LFSTK_getDnDAtom(int atomnum);
 		void					LFSTK_handleDnD(XEvent *event);
 		dropDataStruct			droppedData={DROPINVALID,NULL,-1,-1};
 		bool					acceptOnThis=false;
 		LFSTK_gadgetClass		*dropGadget;
+		void					LFSTK_setWindowDropCallBack(bool (*dropped)(LFSTK_windowClass*,void*),void* ud);
+		//callbackStruct			dropCB;//TODO//multipl dropped files
+		callbackStruct			callBacks;//TODO//multipl dropped files
 
 //window graphics
-		void					LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h);
+		void					LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h,bool updategadgets=false);
 		Pixmap					px=None;
 		bool					usePixmap=false;
-		Display					*display;
-		bool					closeDisplayOnExit=false;
 		Window					window;
 		GC						gc;
-		int						screen;
-		Visual					*visual;
-		Window					rootWindow;		
-		Colormap				cm;
-		int						depth;
 		cairo_surface_t 		*sfc=NULL;
 		cairo_t					*cr=NULL;
 		cairo_pattern_t			*pattern=NULL;
@@ -164,10 +167,14 @@ class LFSTK_windowClass
 		bool					mainLoop=false;
 		bool					mainLoopQuit=false;
 		bool					isVisible=false;
+		bool					passEventToRoot=false;
 
 //copy/paste buffer etc
 		std::string				clipBuffer;
 		std::map<int,mappedListener*> gadgetMap;
+
+//app
+		LFSTK_applicationClass	*app=NULL;
 
 	protected:
 		bool					isActive;
@@ -176,7 +183,6 @@ class LFSTK_windowClass
 		void					initWindow(bool loadvars);
 	
 	private:
-
 //window routines
 		void					windowClassInitCommon(windowInitStruct *wi);
 		void					loadGlobalColours(void);

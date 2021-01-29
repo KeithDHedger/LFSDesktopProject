@@ -44,7 +44,7 @@ void sendClientMessage(Window win,const char *msg,unsigned long data0,unsigned l
 	event.xclient.type=ClientMessage;
 	event.xclient.serial=0;
 	event.xclient.send_event=True;
-	event.xclient.message_type=XInternAtom(mainwind->display,msg,False);
+	event.xclient.message_type=XInternAtom(mainwind->app->display,msg,False);
 	event.xclient.window=win;
 	event.xclient.format=32;
 	event.xclient.data.l[0]=data0;
@@ -53,7 +53,7 @@ void sendClientMessage(Window win,const char *msg,unsigned long data0,unsigned l
 	event.xclient.data.l[3]=data3;
 	event.xclient.data.l[4]=data4;
 
-	XSendEvent(mainwind->display,mainwind->rootWindow,False,mask,&event);
+	XSendEvent(mainwind->app->display,mainwind->app->rootWindow,False,mask,&event);
 }
 
 //all windows
@@ -112,7 +112,7 @@ bool hasWindowProp(Window wind,Atom atom,Atom atomtype)
 	unsigned long	items_read,items_left;
 	bool			result=false;
 
-	status=XGetWindowProperty(mainwind->display,wind,atomtype,0L,1L,false,XA_ATOM,&real_type,&real_format,&items_read,&items_left,&data);
+	status=XGetWindowProperty(mainwind->app->display,wind,atomtype,0L,1L,false,XA_ATOM,&real_type,&real_format,&items_read,&items_left,&data);
 	if(status==Success)
 		{
 			atoms=(Atom *)data;
@@ -166,7 +166,7 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 	unsigned long	n=0;
 	XTextProperty	textpropreturn;
 
-	if (!XQueryTree(mainwind->display,wind,&root,&parent,&children,&n_children))
+	if (!XQueryTree(mainwind->app->display,wind,&root,&parent,&children,&n_children))
 		return None;
 
 	if (!children)
@@ -179,12 +179,12 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 
 	for (int j=n_children-1; j>=0; j--)
 		{
-			if((thisdesktop==true) && (isVisible(mainwind->display, children[j])==false))
+			if((thisdesktop==true) && (isVisible(mainwind->app->display, children[j])==false))
 				{
 					children[j]=None; /* Don't bother descending into this one */
 					continue;
 				}
-			if (!hasProp(mainwind->display, children[j],WM_STATE))
+			if (!hasProp(mainwind->app->display, children[j],WM_STATE))
 				continue;
 
 			if (!hasWindowProp(children[j],NET_WM_WINDOW_TYPE_NORMAL,NET_WM_WINDOW_TYPE))
@@ -193,10 +193,10 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 			/* Got one */
 			thewin=children[j];
 			winid=children[j];
-			XFetchName(mainwind->display,children[j],&wname);
+			XFetchName(mainwind->app->display,children[j],&wname);
 			if(wname==NULL)
 				{
-					if(XGetWMName(mainwind->display,children[j],&textpropreturn)!=0)
+					if(XGetWMName(mainwind->app->display,children[j],&textpropreturn)!=0)
 						wname=strdup((char*)textpropreturn.value);
 					else
 						{
@@ -225,7 +225,7 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 			ptr=NULL;
 			count=32;
 			n=0;
-			XGetWindowProperty(mainwind->display,winid,NET_WM_DESKTOP,0L,count,false,XA_CARDINAL,&rtype,&rfmt,&n,&rafter,(unsigned char **)&ptr);
+			XGetWindowProperty(mainwind->app->display,winid,NET_WM_DESKTOP,0L,count,false,XA_CARDINAL,&rtype,&rfmt,&n,&rafter,(unsigned char **)&ptr);
 
 			if(thisdesktop==true)
 				{
@@ -278,8 +278,10 @@ void updateWindowMenu(void)
 
 	if(windowDesk!=NULL)
 		{
+			//if(windowDeskList!=NULL)//TODO//
+			//	delete[] windowDeskList;
 			windowDeskList=new menuStruct*[MAXWINDOWSINLIST];
-			win=mainwind->rootWindow;
+			win=mainwind->app->rootWindow;
 			windowDeskListCnt=0;
 			while(win!=None)
 				win=doTreeWalk(win,true);
@@ -295,9 +297,25 @@ void updateWindowMenu(void)
 
 	if(windowAll!=NULL)
 		{
+//			if(windowAllList!=NULL)
+//				{
+//					for(unsigned j=0;j<MAXWINDOWSINLIST;j++)
+//						{
+//							if(windowAllList[j]!=NULL)
+//							{
+//								//if(windowAllList[j]->label!=NULL)
+//								//	{
+//								//		printf("windowAllList[j]=%s\n",windowAllList[j]->label);
+//								//		free(windowAllList[j]->label);
+//								//	}
+//				//	delete windowAllList[j];
+//							}
+//						}
+//				}
+
 			windowAllList=new menuStruct*[MAXWINDOWSINLIST];
 			windowAllListCnt=0;
-			win=mainwind->rootWindow;
+			win=mainwind->app->rootWindow;
 			while(win!=None)
 				win=doTreeWalk(win,false);
 			if(windowAllListCnt>0)

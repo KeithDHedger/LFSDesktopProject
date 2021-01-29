@@ -14,10 +14,12 @@ rm geticonpathexample
 exit $retval
 #endif
 
+#include "../config.h"
 #include "lfstk/LFSTKGlobals.h"
 
 #define BOXLABEL			"Get Path To Themed Icon"
 
+LFSTK_applicationClass		*apc=NULL;
 LFSTK_windowClass			*wc=NULL;
 LFSTK_labelClass			*label=NULL;
 LFSTK_labelClass			*personal=NULL;
@@ -28,31 +30,20 @@ LFSTK_buttonClass			*getIconPath=NULL;
 LFSTK_lineEditClass			*mimeEdit=NULL;
 LFSTK_lineEditClass			*catEdit=NULL;
 
-bool						mainLoop=true;
-Display						*display;
-
 bool doQuit(void *p,void* ud)
 {
-	mainLoop=false;
-	XFlush(wc->display);
-	XSync(wc->display,true);
-	return(true);
-}
-
-bool doKeyUp(void *p,void* ud)
-{
-	//printf(">>%s<<\n",mimeEdit->LFSTK_getCStr());
+	apc->exitValue=0;
+	apc->mainLoop=false;
 	return(true);
 }
 
 bool getPath(void *p,void* ud)
 {
-
 	char	*iconpath=NULL;
 	char	*theme=NULL;
 
-	theme=wc->globalLib->LFSTK_oneLiner("head ~/.config/LFS/lfsdesktop2.rc|grep -i icontheme|awk '{print $2}'");
-	iconpath=(char*)wc->globalLib->LFSTK_findThemedIcon(theme,mimeEdit->LFSTK_getCStr(),catEdit->LFSTK_getCStr());
+	theme=apc->globalLib->LFSTK_oneLiner("head ~/.config/LFS/lfsdesktop.rc|grep -i icontheme|awk '{print $2}'");
+	iconpath=(char*)apc->globalLib->LFSTK_findThemedIcon(theme,mimeEdit->LFSTK_getCStr(),catEdit->LFSTK_getCStr());
 
 	if(iconpath!=NULL)
 		printf("iconpath=%s\n",iconpath);
@@ -63,12 +54,12 @@ bool getPath(void *p,void* ud)
 
 int main(int argc, char **argv)
 {
-	XEvent	event;
-	int		sy=BORDER;
-		
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,BOXLABEL,false);
-
-	display=wc->display;
+	int				sy=BORDER;
+	callbackStruct	cbs;
+	
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,BOXLABEL);
+	wc=apc->mainWindow;
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	label->LFSTK_setCairoFontDataParts("sB",20);
@@ -86,7 +77,6 @@ int main(int argc, char **argv)
 	sy+=GADGETHITE;
 
 	mimeEdit=new LFSTK_lineEditClass(wc,"drive-harddisk",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
-	mimeEdit->LFSTK_setMouseCallBack(NULL,doKeyUp,USERDATA(12345));
 	sy+=YSPACING;
 
 //catagory edit
@@ -94,12 +84,13 @@ int main(int argc, char **argv)
 	label->LFSTK_setCairoFontDataParts("B");
 	sy+=GADGETHITE;
 	catEdit=new LFSTK_lineEditClass(wc,"devices",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
-	catEdit->LFSTK_setMouseCallBack(NULL,doKeyUp,USERDATA(12345));
 	sy+=YSPACING;
 
 //get path to icon
 	getIconPath=new LFSTK_buttonClass(wc,"Get Path",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	getIconPath->LFSTK_setMouseCallBack(NULL,getPath,NULL);
+	cbs.mouseReleaseCallback=getPath;
+	cbs.validCallbacks=(MOUSERELEASECB);
+	getIconPath->LFSTK_setCallBacks(cbs);
 	sy+=YSPACING;
 
 //line
@@ -111,7 +102,8 @@ int main(int argc, char **argv)
 
 //quit
 	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
+	cbs.mouseReleaseCallback=doQuit;
+	quit->LFSTK_setCallBacks(cbs);
 	sy+=YSPACING;
 
 	wc->acceptOnThis=false;
@@ -119,20 +111,8 @@ int main(int argc, char **argv)
 	wc->LFSTK_showWindow();
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
-	mainLoop=true;
-	while(mainLoop==true)
-		{
-			XNextEvent(wc->display,&event);
-			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
-
-			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
-
-			if(wc->LFSTK_handleWindowEvents(&event)<0)
-				mainLoop=false;
-		}
-	delete wc;
-	XCloseDisplay(display);
+	int retval=apc->LFSTK_runApp();
+	delete apc;
 	cairo_debug_reset_static_data();
-	return 0;
+	return(retval);
 }

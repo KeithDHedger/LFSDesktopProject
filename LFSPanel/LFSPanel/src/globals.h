@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "config.h"
 #include <lfstk/LFSTKGlobals.h>
 
 #ifndef _GLOBALS_
@@ -67,6 +68,7 @@ extern int					iconSize;
 extern bool					useAlarm;
 
 //panel window
+extern LFSTK_applicationClass	*apc;
 extern LFSTK_windowClass	*mainwind;
 extern int					rightOffset;
 extern int					leftOffset;

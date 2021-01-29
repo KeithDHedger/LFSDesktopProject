@@ -19,10 +19,13 @@
  */
 
 #include <getopt.h>
-#include <libgen.h>
 
+#include "config.h"
 #include "lfstk/LFSTKGlobals.h"
 
+#include <libgen.h>
+
+LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass		*label=NULL;
 LFSTK_labelClass		*personal=NULL;
@@ -51,8 +54,6 @@ LFSTK_lineEditClass		*excludeEditBox=NULL;
 
 LFSTK_fontDialogClass	*fontButton=NULL;
 
-bool					mainLoop=true;
-Display					*display;
 char					*wd=NULL;
 char					*envFile=NULL;
 int						parentWindow=-1;
@@ -96,9 +97,8 @@ args					desktopPrefs[]=
 
 bool doQuit(void *p,void* ud)
 {
-	mainLoop=false;
-	XFlush(wc->display);
-	XSync(wc->display,true);
+	apc->exitValue=0;
+	apc->mainLoop=false;
 	return(false);
 }
 
@@ -190,7 +190,11 @@ bool coleditCB(void *p,void* ud)
 	if((ed->mouseEvent->state & Button3Mask)!=0)
 		{
 			char *col=NULL;
-			col=wc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr());
+#ifdef _ENABLEDEBUG_
+			col=apc->globalLib->LFSTK_oneLiner("LD_LIBRARY_PATH=../LFSToolKit/LFSToolKit/app/.libs LFSApplications/app/lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr());
+#else
+			col=apc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr());
+#endif
 			if(strlen(col)>0)
 				ed->LFSTK_setBuffer(col);
 			free(col);
@@ -232,8 +236,9 @@ int main(int argc, char **argv)
 				}
 		}
 
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"LFS Desktop Prefs",false);
-	display=wc->display;
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,"LFSTKPrefs");
+	wc=apc->mainWindow;
 
 	asprintf(&envFile,"%s/lfsdesktop.rc",wc->configDir);
 	wc->globalLib->LFSTK_loadVarsFromFile(envFile,desktopPrefs);
@@ -348,21 +353,9 @@ int main(int argc, char **argv)
 				flag=true;
 		}
 
-	mainLoop=true;
-	while(mainLoop==true)
-		{
-			XNextEvent(wc->display,&event);
-			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
+	int retval=apc->LFSTK_runApp();
 
-			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
-
-			if(wc->LFSTK_handleWindowEvents(&event)<0)
-				mainLoop=false;
-		}
-
-	delete wc;
-	XCloseDisplay(display);
+	delete apc;
 	free(wd);
 	free(envFile);
 	free(prefsTheme);
@@ -374,5 +367,5 @@ int main(int argc, char **argv)
 	free(prefsExcludeSed);
 	free(prefsFont);
 
-	return 0;
+	return(retval);
 }

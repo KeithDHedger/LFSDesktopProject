@@ -14,24 +14,35 @@ rm windowexample
 exit $retval
 #endif
 
+#include "../config.h"
 #include "lfstk/LFSTKGlobals.h"
 
 #define BOXLABEL			"Basic Window"
 
+
+LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass		*label=NULL;
 
-bool					mainLoop=true;
-Display					*display;
+bool windowDrop(LFSTK_windowClass *lwc,void* ud)
+{
+	if(lwc!=NULL)
+		printf("dropped %s on window @x/y %i %i\n",lwc->droppedData.data,lwc->droppedData.x,lwc->droppedData.y);
+	return(true);
+}
 
 int main(int argc, char **argv)
 {
-	XEvent	event;
-	int		sy=0;
-	cairo_surface_t	*surfaceto,*surfacefrom;
-		
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,BOXLABEL,false);
-	display=wc->display;
+	int	sy=0;
+
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,BOXLABEL);
+	wc=apc->mainWindow;
+	wc->passEventToRoot=true;
+
+	wc->LFSTK_initDnD(true);
+	wc->LFSTK_setWindowDropCallBack(windowDrop,(void*)0xdeadbeef);
+	//wc->dropCB.runTheCallback=false;
 
 	label=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	sy+=HALFYSPACING;
@@ -42,27 +53,14 @@ int main(int argc, char **argv)
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	label->LFSTK_setCairoFontDataParts("sB",20);
 	sy+=YSPACING;
+	sy+=200;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();
-
-	fprintf(stderr,"%s\n",wc->globalLib->LFSTK_getGlobalString(-1,TYPEMONOFONT));
+	//fprintf(stderr,"%s\n",wc->globalLib->LFSTK_getGlobalString(-1,TYPEMONOFONT));
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
-	mainLoop=true;
-	while(mainLoop==true)
-		{
-			XNextEvent(wc->display,&event);
-			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
-
-			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
-
-			if(wc->LFSTK_handleWindowEvents(&event)<0)
-				mainLoop=false;
-		}
-
-	delete wc;
-	XCloseDisplay(display);
+	int retval=apc->LFSTK_runApp();
+	delete apc;
 	cairo_debug_reset_static_data();
-	return 0;
+	return(retval);
 }

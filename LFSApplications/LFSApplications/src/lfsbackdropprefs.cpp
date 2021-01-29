@@ -19,9 +19,11 @@
  */
 
 #include <getopt.h>
-#include <libgen.h>
 
-#include "lfstk/LFSTKGlobals.h"
+#include "config.h"
+#include <lfstk/LFSTKGlobals.h>
+
+#include <libgen.h>
 
 struct					monitorInfo
 {
@@ -29,6 +31,7 @@ struct					monitorInfo
 	int		mode;
 };
 
+LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass		*label=NULL;
 LFSTK_labelClass		*personal=NULL;
@@ -94,9 +97,8 @@ args					prefs[]=
 
 bool doQuit(void *p,void* ud)
 {
-	mainLoop=false;
-	XFlush(wc->display);
-	XSync(wc->display,true);
+	apc->exitValue=0;
+	apc->mainLoop=false;
 	return(false);
 }
 
@@ -272,8 +274,9 @@ int main(int argc, char **argv)
 				}
 		}
 
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Backdrop Prefs",false);
-	display=wc->display;
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,"LFSTKPrefs");
+	wc=apc->mainWindow;
 
 	asprintf(&wd,"%s",wc->userHome);
 	asprintf(&mainPrefs,"%s/lfssetwallpaper.rc",wc->configDir);
@@ -412,21 +415,8 @@ int main(int argc, char **argv)
 		}
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
-	mainLoop=true;
-	while(mainLoop==true)
-		{
-			XNextEvent(wc->display,&event);
-			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
-
-			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
-
-			if(wc->LFSTK_handleWindowEvents(&event)<0)
-				mainLoop=false;
-		}
-
-	delete wc;
-	XCloseDisplay(display);
+	int retval=apc->LFSTK_runApp();
+	delete apc;
 	free(wd);
 	free(mainPrefs);
 	free(monitorPrefs);
@@ -435,8 +425,7 @@ int main(int argc, char **argv)
 			if(monitors[j].path!=NULL)
 				free(monitors[j].path);
 		}
-	cairo_debug_reset_static_data();
-	
-	return 0;
+
+	return(retval);
 }
 

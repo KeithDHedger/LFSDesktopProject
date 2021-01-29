@@ -17,14 +17,12 @@ exit $retval
 #include "../config.h"
 #include "../LFSToolKit/lfstk/LFSTKGlobals.h"
 
-#define BOXLABEL			"Multi Hitpoint Gadget"
+#define BOXLABEL			"Expander Gadget"
 
-LFSTK_windowClass		*wc=NULL;
-LFSTK_labelClass		*label=NULL;
+LFSTK_applicationClass		*apc=NULL;
+LFSTK_windowClass			*wc=NULL;
+LFSTK_labelClass			*label=NULL;
 LFSTK_ExpanderGadgetClass	*multi=NULL;
-
-bool					mainLoop=true;
-Display					*display;
 
 bool mouseparentCB(void *p,void* ud)
 {
@@ -53,12 +51,12 @@ bool mouseCB(void *p,void* ud)
 
 int main(int argc, char **argv)
 {
-	XEvent					event;
 	int						sy=0;
 	std::vector<hitRect>	hrs;
 	
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,BOXLABEL,false);
-	display=wc->display;
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,BOXLABEL);
+	wc=apc->mainWindow;
 
 	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*3);
 	multi->stretchX=false;
@@ -135,21 +133,8 @@ int main(int argc, char **argv)
 
 	fprintf(stderr,"%s\n",wc->globalLib->LFSTK_getGlobalString(-1,TYPEMONOFONT));
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
-	mainLoop=true;
-	while(mainLoop==true)
-		{
-			XNextEvent(wc->display,&event);
-			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
-
-			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
-
-			if(wc->LFSTK_handleWindowEvents(&event)<0)
-				mainLoop=false;
-		}
-	delete wc;	
-
-	XCloseDisplay(display);
+	int retval=apc->LFSTK_runApp();
+	delete apc;	
 	cairo_debug_reset_static_data();
-	return 0;
+	return(retval);
 }

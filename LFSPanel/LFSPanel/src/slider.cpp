@@ -26,7 +26,7 @@
 #include "slider.h"
 
 LFSTK_scrollBarClass	*vsb=NULL;
-LFSTK_toolWindowClass	*scwindow=NULL;
+LFSTK_windowClass		*scwindow=NULL;
 bool					windowVisible=false;
 LFSTK_toggleButtonClass	*volumeButton;
 char					*iconH=NULL;
@@ -58,7 +58,7 @@ int getAlsaVolume(bool setvol,int volume)
 	snd_mixer_selem_register(handle,NULL,NULL);
 	snd_mixer_load(handle);
 
-	snd_mixer_selem_id_alloca(&sid);
+	snd_mixer_selem_id_malloc(&sid);
 	snd_mixer_selem_id_set_index(sid,0);
 	snd_mixer_selem_id_set_name(sid,selem_name);
 	elem=snd_mixer_find_selem(handle,sid);
@@ -68,7 +68,9 @@ int getAlsaVolume(bool setvol,int volume)
 	else
 		snd_mixer_selem_get_playback_volume(elem,SND_MIXER_SCHN_UNKNOWN,&value);
 
+	snd_mixer_detach(handle,card);
 	snd_mixer_close(handle);
+	snd_mixer_selem_id_free(sid);
 
 	return(value);
 }
@@ -95,32 +97,32 @@ bool sliderCB(void *p,void* ud)
 		{
 			if(bc->LFSTK_getValue()==1)
 				{
-					bc->LFSTK_getGeom(&geom);
-					XTranslateCoordinates(bc->display,bc->window,bc->rootWindow,geom.x,geom.y,&x,&y,&dw);
+					bc->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);
 					switch(panelGravity)
 						{
 							case PANELNORTH:
-								scwindow->LFSTK_moveWindow(x-geom.x,y+geom.h,true);
+								scwindow->LFSTK_moveWindow(geom.x,geom.y+geom.h,true);
 								break;
 							case PANELSOUTH:
-								scwindow->LFSTK_moveWindow(x-geom.x,y-SCROLLBARWIDTH,true);
+								scwindow->LFSTK_moveWindow(geom.x,geom.y-SCROLLBARWIDTH,true);
 								break;
 							case PANELEAST:
-								scwindow->LFSTK_moveWindow(x-SCROLLBARWIDTH,y-geom.y,true);
+								scwindow->LFSTK_moveWindow(geom.x-SCROLLBARWIDTH,geom.y,true);
 								break;
 							case PANELWEST:
-								scwindow->LFSTK_moveWindow(x+geom.w,y-geom.y,true);
+								scwindow->LFSTK_moveWindow(geom.x+geom.w,geom.y,true);
 								break;
 						}
 					scwindow->LFSTK_showWindow(true);
-					windowVisible=true;
+					scwindow->LFSTK_redrawAllGadgets();
+					apc->windows->at(apc->LFSTK_findWindow(scwindow)).showing=true;
 				}
 			else
 				{
 					scwindow->LFSTK_hideWindow();
-					bc->LFSTK_clearWindow();
-					windowVisible=false;
+					apc->windows->at(apc->LFSTK_findWindow(scwindow)).showing=false;
 				}
+			bc->LFSTK_clearWindow();
 		}
 	return(true);
 }
@@ -180,19 +182,34 @@ int addSlider(int x,int y,int grav,bool fromleft)
 
 	char	*vol=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print $3}'");
 
+	windowInitStruct	*win;
+	int					w,h;
+	
+	win=new windowInitStruct;
+	win->x=100;
+	win->y=100;
+	bool direction=false;
+
 	if((panelGravity==PANELWEST) || (panelGravity==PANELEAST))
 		{
-			scwindow=new LFSTK_toolWindowClass(mainwind->display,mainwind,"_NET_WM_WINDOW_TYPE_MENU",0,0,SCROLLBARWIDTH,SLIDERWIDTH,"VOL");
-			vsb=new LFSTK_scrollBarClass(scwindow,true,0,0,SCROLLBARWIDTH,SLIDERWIDTH,BUTTONGRAV);
-			vsb->reverse=true;
+			w=16;
+			h=100;
+			direction=true;
 		}
 	else
 		{
-			scwindow=new LFSTK_toolWindowClass(mainwind->display,mainwind,"_NET_WM_WINDOW_TYPE_MENU",0,0,SLIDERWIDTH,SCROLLBARWIDTH,"VOL");
-			vsb=new LFSTK_scrollBarClass(scwindow,false,0,0,SLIDERWIDTH,SCROLLBARWIDTH,BUTTONGRAV);
-			vsb->reverse=false;
+			w=100;
+			h=16;
+			direction=false;
 		}
 
+	win->w=w;
+	win->h=h;
+	apc->LFSTK_addToolWindow(win);
+	scwindow=apc->windows->back().window;
+
+	vsb=new LFSTK_scrollBarClass(scwindow,direction,0,0,w,h,BUTTONGRAV);
+	
 	vsb->LFSTK_setMouseCallBack(NULL,valChanged,NULL);
 	vsb->LFSTK_setScale(0,64);
 	vsb->LFSTK_setValue(atoi(vol));

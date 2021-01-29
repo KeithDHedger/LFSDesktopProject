@@ -43,9 +43,10 @@ int					iconSize=16;
 bool				useAlarm=false;
 
 //panel window
-LFSTK_windowClass	*mainwind=NULL;
-int					rightOffset=0;
-int					leftOffset=0;
+LFSTK_applicationClass	*apc=NULL;
+LFSTK_windowClass		*mainwind=NULL;
+int						rightOffset=0;
+int						leftOffset=0;
 
 //atoms
 Atom				WM_STATE=None;

@@ -14,19 +14,21 @@ rm lfsaboutexample
 exit $retval
 #endif
 
+#include "../config.h"
 #include "lfstk/LFSTKGlobals.h"
 
 #undef DIALOGWIDTH
 #define DIALOGWIDTH		320
 #define SPACING			24
 #define HALFSPACING		SPACING/2
-
+#define BOXLABEL		"LFS About"
 enum		{LNAME,LDESCRIPTION,LCOPYRITE,LEMAIL,LWEBSITE,LGPL,LNOMORELABELS};
 
 const char	*labelTexts[]={"LFS Desktop Project","Low resource/dependency desktop for LFS",COPYRITE,PERSONAL,MYWEBSITE,"Released under GPLv3"};
 
 #define IMAGESIZE		64
 
+LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass		*label=NULL;
 LFSTK_labelClass		*personal=NULL;
@@ -36,24 +38,20 @@ LFSTK_buttonClass		*quit=NULL;
 LFSTK_imageClass		*tux;
 LFSTK_labelClass		*labels[LNOMORELABELS];
 
-bool					mainLoop=true;
-Display					*display;
-
 bool doQuit(void *p,void* ud)
 {
-	mainLoop=false;
-	XFlush(wc->display);
-	XSync(wc->display,true);
+	apc->exitValue=0;
+	apc->mainLoop=false;
 	return(false);
 }
 
 int main(int argc, char **argv)
 {
-	XEvent	event;
-	int		sy=BORDER;
+	int	sy=BORDER;
 		
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"LFS Desktop Project",false);
-	display=wc->display;
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,BOXLABEL);
+	wc=apc->mainWindow;
 
 	tux=new LFSTK_imageClass(wc,NULL,DIALOGMIDDLE-(IMAGESIZE/2),sy,IMAGESIZE,IMAGESIZE,BUTTONGRAV,true);
 	tux->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",AUTO,true);
@@ -86,21 +84,8 @@ int main(int argc, char **argv)
 	tux->LFSTK_clearWindow();
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
-	mainLoop=true;
-	while(mainLoop==true)
-		{
-			XNextEvent(wc->display,&event);
-			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
-
-			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
-
-			if(wc->LFSTK_handleWindowEvents(&event)<0)
-				mainLoop=false;
-		}
-
-	delete wc;
-	XCloseDisplay(display);
+	int retval=apc->LFSTK_runApp();
+	delete apc;
 	cairo_debug_reset_static_data();
-	return 0;
+	return(retval);
 }

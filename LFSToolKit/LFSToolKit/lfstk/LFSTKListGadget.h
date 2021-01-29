@@ -40,7 +40,7 @@ struct listLabelStruct
 	int		listPos;
 	union	imageData
 		{
-			char			*imagePath;
+			char			*imagePath=NULL;
 			cairo_surface_t	*surface;
 		} data;
 };
@@ -52,7 +52,7 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 {
 	public:
 		~LFSTK_listGadgetClass();
-		LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const char *label,int x,int y,unsigned w,unsigned h,int gravity=NorthGravity);
+		LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const char *label,int x,int y,unsigned w,unsigned h,int gravity=NorthWestGravity);
 
 		int						LFSTK_getCurrentListItem(void);
 		void					LFSTK_updateList(void);
@@ -65,8 +65,8 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		int						LFSTK_findByLabel(const char *needle,bool select=true);
 
 		bool					mouseExit(XButtonEvent *e) {return(true);};
-		bool					mouseEnter(XButtonEvent *e) {XSetInputFocus(this->display,this->window,RevertToParent,CurrentTime);return(true);};
-		bool					mouseDown(XButtonEvent *e) {return(true);};//{XSetInputFocus(this->display,this->window,RevertToParent,CurrentTime);return(true);};
+		bool					mouseEnter(XButtonEvent *e) {XSetInputFocus(this->wc->app->display,this->window,RevertToParent,CurrentTime);return(true);};
+		bool					mouseDown(XButtonEvent *e) {return(true);};//{XSetInputFocus(this->wc->app->display,this->window,RevertToParent,CurrentTime);return(true);};
 		bool					mouseUp(XButtonEvent *e);
 		bool					keyRelease(XKeyEvent *e);
 
@@ -80,11 +80,10 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 
 		bool					freeCairoImages=true;
 		unsigned				maxShowing;
-		//LFSTK_buttonClass		**labels;		
 		LFSTK_scrollBarClass	*scrollBar=NULL;
 	private:
 		unsigned				listOffset=0;
-		listData				*data;
+		listData				*data=NULL;
 
 
 		void					freeList(void);

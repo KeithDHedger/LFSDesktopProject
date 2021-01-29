@@ -26,7 +26,7 @@
 #define SLIDERWIDTH 100
 #define SLIDERLABEL "Vol"
 
-extern LFSTK_toolWindowClass	*scwindow;
+extern LFSTK_windowClass		*scwindow;
 extern bool						windowVisible;
 extern LFSTK_toggleButtonClass	*volumeButton;
 extern LFSTK_scrollBarClass		*vsb;

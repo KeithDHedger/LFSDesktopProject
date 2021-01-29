@@ -25,8 +25,8 @@ LFSTK_imageClass::~LFSTK_imageClass()
 //DEBUGFUNC("destroy image","");
 	cairo_surface_destroy(this->shapesfc);
 	cairo_destroy(this->shapecr);
-	XFreePixmap(this->display,this->shape);
-	XSync(this->display,true);
+	XFreePixmap(this->wc->app->display,this->shape);
+	XSync(this->wc->app->display,true);
 }
 
 LFSTK_imageClass::LFSTK_imageClass()
@@ -49,8 +49,8 @@ bool LFSTK_imageClass::mouseUp(XButtonEvent *e)
 
 	if(this->wc->globalLib->LFSTK_pointInRect(&pt,&(this->gadgetGeom))==true)
 		{
-			if(this->runCallback(MOUSERELEASECB)==true)
-				return(this->mouseCB.releaseCallback(this,this->mouseCB.userData));
+			if(this->callBacks.validCallbacks & MOUSERELEASECB)
+				return(this->callBacks.mouseReleaseCallback(this,this->callBacks.mouseUserData));
 		}
 	return(true);
 }
@@ -72,9 +72,9 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 				cairo_fill(this->shapecr);
 			cairo_restore(this->shapecr);
 
-			XShapeCombineMask(this->display,this->window,ShapeBounding,0,0,cairo_xlib_surface_get_drawable(shapesfc),ShapeSet);
-			XFlush(this->display);
-			XSync(this->display,false);
+			XShapeCombineMask(this->wc->app->display,this->window,ShapeBounding,0,0,cairo_xlib_surface_get_drawable(shapesfc),ShapeSet);
+			XFlush(this->wc->app->display);
+			XSync(this->wc->app->display,false);
 			return;
 		}
 
@@ -98,9 +98,9 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 		cairo_mask_surface(this->shapecr,this->cImage,xoffset,yoffset);
 	cairo_restore(this->shapecr);
 
-	XShapeCombineMask(this->display,this->window,ShapeBounding,0,0,cairo_xlib_surface_get_drawable(shapesfc),ShapeSet);
-	XFlush(this->display);
-	XSync(this->display,false);
+	XShapeCombineMask(this->wc->app->display,this->window,ShapeBounding,0,0,cairo_xlib_surface_get_drawable(shapesfc),ShapeSet);
+	XFlush(this->wc->app->display);
+	XSync(this->wc->app->display,false);
 }
 
 /**
@@ -121,11 +121,11 @@ LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* image
 
 	wa.win_gravity=gravity;
 	wa.save_under=true;
-	this->window=XCreateWindow(this->display,this->parent,x,y,w,this->gadgetGeom.h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWSaveUnder,&wa);
-	this->gc=XCreateGC(this->display,this->window,0,NULL);
-	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+	this->window=XCreateWindow(this->wc->app->display,this->parent,x,y,w,this->gadgetGeom.h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWSaveUnder,&wa);
+	this->gc=XCreateGC(this->wc->app->display,this->window,0,NULL);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->window,this->wc->app->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_setCairoFontData();
-	XSelectInput(this->display,this->window,ButtonPressMask|ButtonReleaseMask|ExposureMask|ButtonMotionMask);
+	XSelectInput(this->wc->app->display,this->window,ButtonPressMask|ButtonReleaseMask|ExposureMask|ButtonMotionMask);
 
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;
@@ -136,8 +136,8 @@ LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* image
 	this->useTile=this->wc->useTile;
 	this->gadgetDetails={&this->wc->windowColourNames[NORMALCOLOUR],BEVELNONE,NOINDICATOR,NORMALCOLOUR,0,false,{0,0,w,h},{0,0,0,0},false,false,false};
 
-	this->shape=XCreatePixmap(this->display,this->window,w,h,1);
-	this->shapesfc=cairo_xlib_surface_create_for_bitmap(this->display,this->shape,DefaultScreenOfDisplay(this->display),w,h);
+	this->shape=XCreatePixmap(this->wc->app->display,this->window,w,h,1);
+	this->shapesfc=cairo_xlib_surface_create_for_bitmap(this->wc->app->display,this->shape,DefaultScreenOfDisplay(this->wc->app->display),w,h);
 	this->shapecr=cairo_create(this->shapesfc);
 
 }

@@ -19,6 +19,7 @@ exit $retval
 
 #define BOXLABEL			"Basic Button Window"
 
+LFSTK_applicationClass		*apc=NULL;
 LFSTK_windowClass			*wc=NULL;
 LFSTK_labelClass			*label=NULL;
 LFSTK_labelClass			*personal=NULL;
@@ -32,15 +33,12 @@ LFSTK_buttonClass			*leftButton=NULL;
 LFSTK_buttonClass			*centreButton=NULL;
 LFSTK_buttonClass			*rightButton=NULL;
 
-bool						mainLoop=true;
-Display						*display;
 bool						show=true;
 
 bool doQuit(void *p,void* ud)
 {
-	mainLoop=false;
-	XFlush(wc->display);
-	XSync(wc->display,true);
+	apc->exitValue=0;
+	apc->mainLoop=false;
 	return(false);
 }
 
@@ -81,7 +79,6 @@ bool keyCB(void *p,void* ud)
 
 bool mouseCB(void *p,void* ud)
 {
-	//DEBUG
 	if(ud!=NULL)
 		{
 			printf(">>>%s<<<\n",(const char*)ud);
@@ -89,28 +86,25 @@ bool mouseCB(void *p,void* ud)
 	return(true);
 }
 
+int cnt=1;
+bool timerCB(LFSTK_applicationClass *p,void* ud)
+{
+	printf("Timer callback number %i of 4\n",cnt);
+	cnt++;
+	if(cnt<5)
+		return(true);
+	else
+		return(false);
+}
+
 
 int main(int argc, char **argv)
 {
-	XEvent	event;
-	int		sy=BORDER;
-	windowInitStruct	*wi;
+	int	sy=BORDER;
 
-	wi=new windowInitStruct;
-	wi->x=100;
-	wi->y=100;
-	wi->w=DIALOGWIDTH;
-	wi->h=DIALOGHITE;
-	wi->name=BOXLABEL;
-//tests
-//	wi->decorated=true;
-//	wi->windowType="_NET_WM_WINDOW_TYPE_NORMAL";
-//	wi->overRide=true;
-//	wi->level=BELOWALL;
-
-	wc=new LFSTK_windowClass(wi);
-	display=wc->display;
-	delete wi;
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,BOXLABEL);
+	wc=apc->mainWindow;
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,NorthGravity);
 	label->LFSTK_setCairoFontDataParts("sB",20);
@@ -123,18 +117,18 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //inactivebutton
-	inactivebutton=new LFSTK_buttonClass(wc,"Inactive",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);
+	inactivebutton=new LFSTK_buttonClass(wc,"Inactive",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE);
 	inactivebutton->LFSTK_setActive(false);
 	sy+=YSPACING;
 
 //normal button
-	normalbutton=new LFSTK_buttonClass(wc,"Show/Hide",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);
+	normalbutton=new LFSTK_buttonClass(wc,"Show/Hide",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE);
 	normalbutton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"Active");
 	sy+=YSPACING;
 
 //ignoredButton button
-	ignoredButton=new LFSTK_buttonClass(wc,"Ignore CB",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);
-	ignoredButton->LFSTK_setIgnores(&ignoredButton->mouseCB,false,true);
+	ignoredButton=new LFSTK_buttonClass(wc,"Ignore CB",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE);
+	ignoredButton->LFSTK_setIgnores(false,true);
 	sy+=YSPACING;
 
 //line
@@ -145,20 +139,19 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //left
-	leftButton=new LFSTK_buttonClass(wc,"Label Left",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);
+	leftButton=new LFSTK_buttonClass(wc,"Label Left",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE);
 	leftButton->LFSTK_setLabelGravity(LEFT);
 	leftButton->LFSTK_setKeyCallBack(NULL,keyCB,(void*)"Key Left");
 	leftButton->LFSTK_setMouseCallBack(NULL,mouseCB,(void*)"Mouse Left");
-	//leftButton->LFSTK_setIgnores(&leftButton->mouseCB,false,true);
-	//leftButton->LFSTK_setIgnores(&leftButton->keyCB,false,true);
+
 	sy+=YSPACING;
 //centre
-	centreButton=new LFSTK_buttonClass(wc,"Label Centre",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);
+	centreButton=new LFSTK_buttonClass(wc,"Label Centre",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE);
 	centreButton->LFSTK_setLabelGravity(CENTRE);
 	centreButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"Centre");
 	sy+=YSPACING;
 //rite
-	rightButton=new LFSTK_buttonClass(wc,"Label Right",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);
+	rightButton=new LFSTK_buttonClass(wc,"Label Right",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE);
 	rightButton->LFSTK_setLabelGravity(RIGHT);
 	rightButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"Right");
 	sy+=YSPACING;
@@ -171,18 +164,18 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //left image
-	leftButton=new LFSTK_buttonClass(wc,"Left Label+Image",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE,NorthGravity);
+	leftButton=new LFSTK_buttonClass(wc,"Left Label+Image",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE);
 	leftButton->LFSTK_setImageFromPath("./casper2.JPG",LEFT,true);
 	leftButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"Left Label+Image");
 	sy+=YSPACING;
 //centre image
-	centreButton=new LFSTK_buttonClass(wc,"Centre Label+Image",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE,NorthGravity);
+	centreButton=new LFSTK_buttonClass(wc,"Centre Label+Image",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE);
 	centreButton->LFSTK_setImageFromPath("./casper2.JPG",LEFT,true);
 	centreButton->LFSTK_setLabelGravity(CENTRE);
 	centreButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"Centre Label+Image");
 	sy+=YSPACING;
 //rite image
-	rightButton=new LFSTK_buttonClass(wc,"Right Label+Image",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE,NorthGravity);
+	rightButton=new LFSTK_buttonClass(wc,"Right Label+Image",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE);
 	rightButton->LFSTK_setImageFromPath("./casper2.JPG",LEFT,true);
 	rightButton->LFSTK_setLabelGravity(RIGHT);
 	rightButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"Right Label+Image");
@@ -196,28 +189,17 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //quit
-	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthGravity);
+	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE);
 	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 	sy+=YSPACING;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
-	wc->LFSTK_showWindow();
+	//wc->LFSTK_showWindow();
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
-	mainLoop=true;
-	while(mainLoop==true)
-		{
-			XNextEvent(wc->display,&event);
-			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
-
-			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
-
-			if(wc->LFSTK_handleWindowEvents(&event)<0)
-				mainLoop=false;
-		}
-
-	delete wc;
-	XCloseDisplay(display);
+//	apc->LFSTK_setTimer(2);
+//	apc->LFSTK_setTimerCallBack(timerCB,NULL);
+	int retval=apc->LFSTK_runApp();
+	delete apc;
 	cairo_debug_reset_static_data();
-	return 0;
+	return(retval);
 }

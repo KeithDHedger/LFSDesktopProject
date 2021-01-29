@@ -70,7 +70,7 @@ class LFSTK_ExpanderGadgetClass : public LFSTK_gadgetClass
 		bool					done=false;
 		std::vector<hitRect>	hitRects;
 		int						spacePad=16;
-
+		bool					liveUpdate=false;
 	private:
 		void					updateInternalGadgets(geometryStruct oldgadggeom);
 		void					justifyHitRects(bool rezizeandmove);

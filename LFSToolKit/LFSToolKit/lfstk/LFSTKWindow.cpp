@@ -87,7 +87,7 @@ LFSTK_gadgetClass* LFSTK_windowClass::LFSTK_findGadgetByPos(int x, int y)
 			ml=it->second;
 			if( (ml!=NULL) && (ml->gadget!=NULL) )
 				{
-					ml->gadget->LFSTK_getGeomWindowRelative(&geom,ml->gadget->rootWindow);
+					ml->gadget->LFSTK_getGeomWindowRelative(&geom,ml->gadget->wc->app->rootWindow);
 //TODO//
 					if((x>geom.x) && (x<geom.x+geom.w) && (y>geom.y) && (y<geom.y+geom.h) )
 						return(ml->gadget);
@@ -113,7 +113,7 @@ void LFSTK_windowClass::LFSTK_setWindowTitle(const char *title)
 	if(this->windowName!=NULL)
 		free(this->windowName);
 	this->windowName=strdup(title);
-	XStoreName(this->display,this->window,this->windowName);
+	XStoreName(this->app->display,this->window,this->windowName);
 }
 
 /**
@@ -132,7 +132,11 @@ void LFSTK_windowClass::initWindow(bool loadvars)
 	this->windowColourNames[ACTIVECOLOUR].name=strdup("grey40");
 	this->windowColourNames[INACTIVECOLOUR].name=strdup("grey90");
 
-	this->globalLib=new LFSTK_lib(loadvars);
+	if(this->app==NULL)
+		this->globalLib=new LFSTK_lib(loadvars);
+	else
+		this->globalLib=this->app->globalLib;
+//	this->globalLib=new LFSTK_lib(loadvars);
 	if(loadvars==true)
 		this->loadGlobalColours();
 	this->isActive=true;
@@ -164,6 +168,7 @@ LFSTK_windowClass::~LFSTK_windowClass()
 {
 	this->LFSTK_hideWindow();
 
+//DEBUGFUNC("%s",this->windowName)
 	if(this->pattern!=NULL)
 		cairo_pattern_destroy(this->pattern);
 
@@ -181,14 +186,16 @@ LFSTK_windowClass::~LFSTK_windowClass()
 			if(this->windowColourNames[j].name!=NULL)
 				{
 					free(this->windowColourNames[j].name);
-					XFreeColors(this->display,this->cm,(long unsigned int*)&this->windowColourNames[j].pixel,1,0);
+					XFreeColors(this->app->display,this->app->cm,(long unsigned int*)&this->windowColourNames[j].pixel,1,0);
 				}
 		}
 
 	if(this->windowName!=NULL)
 		free(this->windowName);
 
-	delete this->globalLib;
+	if(this->app==NULL)
+		delete this->globalLib;
+
 	free(this->monitors);
 
 	if(!this->gadgetMap.empty())
@@ -209,13 +216,14 @@ LFSTK_windowClass::~LFSTK_windowClass()
 	this->clipBuffer.clear();
 	this->dNdTypes.clear();
 	free(this->configDir);
-	XFreeGC(this->display,this->gc);
-	XDestroyWindow(this->display,this->window);
+	XFreeGC(this->app->display,this->gc);
 	if(this->px!=None)
-		XFreePixmap(this->display,this->px);
+		XFreePixmap(this->app->display,this->px);
 
-	if(this->closeDisplayOnExit==true)
-		XCloseDisplay(this->display);
+	XDestroyWindow(this->app->display,this->window);
+//	if(this->closeDisplayOnExit==true)
+//		XCloseDisplay(this->app->display);
+//DEBUGFUNC("display=%p",this->app->display)
 }
 
 /**
@@ -245,8 +253,10 @@ void LFSTK_windowClass::loadGlobalColours(void)
 * \param Pixmap Source pixmap.
 * \param w Width.
 * \param h Height.
+* \bool updategadgets Update all gadgets ( default=false ).
+* \note Set updategadgets=true when changing pixmap.
 */
-void LFSTK_windowClass::LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h)
+void LFSTK_windowClass::LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h,bool updategadgets)
 {
 	cairo_surface_t	*surfaceto=NULL;
 	cairo_surface_t	*surfacefrom=NULL;
@@ -260,15 +270,15 @@ void LFSTK_windowClass::LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h)
 		}
 	xLibErrorTK=false;
 	XSetErrorHandler(xErrHandler);
-	XSynchronize(this->display,true);
+	XSynchronize(this->app->display,true);
 
 	if(this->px!=None)
-		XFreePixmap(this->display,this->px);
-	this->px=XCreatePixmap(display,this->window,w,h,this->depth);
+		XFreePixmap(this->app->display,this->px);
+	this->px=XCreatePixmap(this->app->display,this->window,w,h,this->app->depth);
 
 //HMMmmmmmm??
-	surfaceto=cairo_xlib_surface_create(display,this->px,this->visual,w,h);
-	surfacefrom=cairo_xlib_surface_create(display,pixmap,DefaultVisual(display,this->screen),w,h);
+	surfaceto=cairo_xlib_surface_create(this->app->display,this->px,this->app->visual,w,h);
+	surfacefrom=cairo_xlib_surface_create(this->app->display,pixmap,DefaultVisual(this->app->display,this->app->screen),w,h);
 	cr=cairo_create(surfaceto);
 
 	if(status==CAIRO_STATUS_SUCCESS)
@@ -279,41 +289,52 @@ void LFSTK_windowClass::LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h)
 				cairo_paint(cr);
 			cairo_restore(cr);
 
-			XSetWindowBackgroundPixmap(this->display,this->window,this->px);
-			XClearWindow(display,this->window);
-			XSync(display,false);
+			XSetWindowBackgroundPixmap(this->app->display,this->window,this->px);
+			XClearWindow(this->app->display,this->window);
+			XSync(this->app->display,false);
 			this->usePixmap=true;
 		}
+
+	if(updategadgets==true)
+		{
+			if(!this->gadgetMap.empty())
+				{
+					for (std::map<int,mappedListener*>::iterator it=this->gadgetMap.begin();it!=this->gadgetMap.end();++it)
+						{
+							mappedListener	*ml=it->second;
+							if (ml!=NULL)
+								{
+									if(ml->gadget!=NULL)
+										ml->gadget->LFSTK_clearWindow();
+								}
+						}
+				}
+		}
+
 	cairo_surface_destroy(surfaceto);
 	cairo_surface_destroy(surfacefrom);
 	cairo_destroy(cr);
 	XSetErrorHandler(NULL);
-	XSynchronize(this->display,false);
+	XSynchronize(this->app->display,false);
 
 	if(xLibErrorTK==true)
 		{
 			xLibErrorTK=false;
 			this->usePixmap=false;
 			this->useTile=false;
-			XSetWindowBackgroundPixmap(this->display,this->window,None);
-			XClearWindow(display,this->window);
+			XSetWindowBackgroundPixmap(this->app->display,this->window,None);
+			XClearWindow(this->app->display,this->window);
 		}
-	XSync(display,false);
+	XSync(this->app->display,false);
 }
 
+
 /**
-* Clear the window to the appropriate state.
-* \param bool true=clear window on all gadgets.
-* \note param is optional defaults to false.
+* Forc redraw of all gadgets..
 */
-void LFSTK_windowClass::LFSTK_clearWindow(bool cleargadgets)
+void LFSTK_windowClass::LFSTK_redrawAllGadgets(void)
 {
-	int	state=NORMALCOLOUR;
-
-	if(this->usePixmap==true)
-		return;
-
-	if((!this->gadgetMap.empty()) && (cleargadgets==true))
+	if(!this->gadgetMap.empty())
 		{
 			for (std::map<int,mappedListener*>::iterator it=this->gadgetMap.begin();it!=this->gadgetMap.end();++it)
 				{
@@ -325,6 +346,23 @@ void LFSTK_windowClass::LFSTK_clearWindow(bool cleargadgets)
 						}
 				}
 		}
+	XSync(this->app->display,false);
+}
+
+/**
+* Clear the window to the appropriate state.
+* \param bool true=clear window on all gadgets.
+* \note param is optional defaults to false.
+*/
+void LFSTK_windowClass::LFSTK_clearWindow(bool cleargadgets)
+{
+	int	state=NORMALCOLOUR;
+
+	if(cleargadgets==true)
+		this->LFSTK_redrawAllGadgets();
+
+	if(this->usePixmap==true)
+		return;
 
 	if(this->isActive==false)
 		state=INACTIVECOLOUR;
@@ -357,9 +395,9 @@ void LFSTK_windowClass::LFSTK_resizeWindow(int w,int h,bool tellx)
 {
 	this->setWindowGeom(0,0,w,h,WINDSETWH);
 	if(tellx==true)
-		XResizeWindow(this->display,this->window,w,h);
+		XResizeWindow(this->app->display,this->window,w,h);
 
-	this->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+	this->globalLib->LFSTK_setCairoSurface(this->app->display,this->window,this->app->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_clearWindow();
 }
 
@@ -374,7 +412,7 @@ void LFSTK_windowClass::LFSTK_moveWindow(int x,int y,bool tellx)
 {
 	this->setWindowGeom(x,y,0,0,WINDSETXY);
 	if(tellx==true)
-		XMoveWindow(this->display,this->window,x,y);
+		XMoveWindow(this->app->display,this->window,x,y);
 	this->LFSTK_clearWindow();
 }
 
@@ -407,8 +445,8 @@ void LFSTK_windowClass::LFSTK_setDecorated(bool isDecorated)
 			hints.functions=0;
 			hints.inputMode=0;
 			hints.status=0;
-			xa_prop[9]=XInternAtom(display,"_MOTIF_WM_HINTS",True);
-			XChangeProperty(this->display,this->window,xa_prop[9],xa_prop[9],32,PropModeReplace,(unsigned char *)&hints,5);
+			xa_prop[9]=XInternAtom(this->app->display,"_MOTIF_WM_HINTS",True);
+			XChangeProperty(this->app->display,this->window,xa_prop[9],xa_prop[9],32,PropModeReplace,(unsigned char *)&hints,5);
 		}
 }
 
@@ -439,7 +477,7 @@ void LFSTK_windowClass::LFSTK_setWindowColourName(int p,const char* colour)
 		free(this->windowColourNames[p].name);
 
 	this->windowColourNames[p].name=strdup(colour);
-	XAllocNamedColor(this->display,this->cm,colour,&sc,&tc);
+	XAllocNamedColor(this->app->display,this->app->cm,colour,&sc,&tc);
 	this->windowColourNames[p].pixel=tc.pixel;
 
 	this->windowColourNames[p].RGBAColour.r=((this->windowColourNames[p].pixel>>16) & 0xff)/256.0;
@@ -468,8 +506,8 @@ void LFSTK_windowClass::LFSTK_setSticky(bool set)
 	Atom				xa,xa1;
 
 	memset(&xclient,0,sizeof(xclient) );
-	xa=XInternAtom(this->display,"_NET_WM_STATE",False);
-	xa1=XInternAtom(display,"_NET_WM_STATE_STICKY",False);
+	xa=XInternAtom(this->app->display,"_NET_WM_STATE",False);
+	xa1=XInternAtom(this->app->display,"_NET_WM_STATE_STICKY",False);
 
 	xclient.type=ClientMessage;
 	xclient.window=this->window;
@@ -481,7 +519,7 @@ void LFSTK_windowClass::LFSTK_setSticky(bool set)
 		xclient.data.l[0] =_NET_WM_STATE_REMOVE;
 	xclient.data.l[1] =xa1;
 	xclient.data.l[2]=0;
-	XSendEvent(this->display,this->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
+	XSendEvent(this->app->display,this->app->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
 	this->isSticky=set;
 }
 
@@ -494,11 +532,11 @@ void LFSTK_windowClass::LFSTK_setWindowType(const char *type)
 	Atom	xa;
 	Atom	xa_prop[1];
 
-	xa=XInternAtom(this->display,"_NET_WM_WINDOW_TYPE",False);
-	xa_prop[0]=XInternAtom(display,type,False);
+	xa=XInternAtom(this->app->display,"_NET_WM_WINDOW_TYPE",False);
+	xa_prop[0]=XInternAtom(this->app->display,type,False);
 
 	if(xa!=None)
-		XChangeProperty(this->display,this->window,xa,XA_ATOM,32,PropModeReplace,(unsigned char *)&xa_prop,1);
+		XChangeProperty(this->app->display,this->window,xa,XA_ATOM,32,PropModeReplace,(unsigned char *)&xa_prop,1);
 }
 
 /**
@@ -512,8 +550,8 @@ void LFSTK_windowClass::LFSTK_setKeepAbove(bool set)
 	Atom				xa,xa1;
 
 	memset(&xclient,0,sizeof(xclient) );
-	xa=XInternAtom(this->display,"_NET_WM_STATE",False);
-	xa1=XInternAtom(display,"_NET_WM_STATE_ABOVE",False);
+	xa=XInternAtom(this->app->display,"_NET_WM_STATE",False);
+	xa1=XInternAtom(this->app->display,"_NET_WM_STATE_ABOVE",False);
 
 	xclient.type=ClientMessage;
 	xclient.window=this->window;
@@ -525,7 +563,7 @@ void LFSTK_windowClass::LFSTK_setKeepAbove(bool set)
 		xclient.data.l[0] =_NET_WM_STATE_REMOVE;
 	xclient.data.l[1] =xa1;
 	xclient.data.l[2]=0;
-	XSendEvent(this->display,this->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
+	XSendEvent(this->app->display,this->app->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
 }
 
 /**
@@ -539,8 +577,8 @@ void LFSTK_windowClass::LFSTK_setKeepBelow(bool set)
 	Atom				xa,xa1;
 
 	memset(&xclient,0,sizeof(xclient) );
-	xa=XInternAtom(this->display,"_NET_WM_STATE",False);
-	xa1=XInternAtom(display,"_NET_WM_STATE_BELOW",False);
+	xa=XInternAtom(this->app->display,"_NET_WM_STATE",False);
+	xa1=XInternAtom(this->app->display,"_NET_WM_STATE_BELOW",False);
 
 	xclient.type=ClientMessage;
 	xclient.window=this->window;
@@ -552,7 +590,7 @@ void LFSTK_windowClass::LFSTK_setKeepBelow(bool set)
 		xclient.data.l[0] =_NET_WM_STATE_REMOVE;
 	xclient.data.l[1] =xa1;
 	xclient.data.l[2]=0;
-	XSendEvent(this->display,this->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
+	XSendEvent(this->app->display,this->app->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
 }
 
 /**
@@ -561,7 +599,7 @@ void LFSTK_windowClass::LFSTK_setKeepBelow(bool set)
 */
 void LFSTK_windowClass::LFSTK_setTransientFor(Window w)
 {
-	XSetTransientForHint(this->display,this->window,w);
+	XSetTransientForHint(this->app->display,this->window,w);
 }
 
 /**
@@ -591,8 +629,8 @@ void LFSTK_windowClass::loadMonitorData(void)
 	int					cnt=-1;
 	XineramaScreenInfo	*p=NULL;
 
-	cnt=ScreenCount(display);
-	p=XineramaQueryScreens(this->display,&cnt);
+	cnt=ScreenCount(this->app->display);
+	p=XineramaQueryScreens(this->app->display,&cnt);
 	if(p!=NULL)
 		{
 			if(cnt>0)
@@ -686,75 +724,75 @@ void LFSTK_windowClass::windowClassInitCommon(windowInitStruct *wi)
 	XVisualInfo				*visual_list=NULL;
 	int						nxvisuals=0;
 
-	this->display=XOpenDisplay(NULL);
-	if(this->display==NULL)
+	this->app->display=XOpenDisplay(NULL);
+	if(this->app->display==NULL)
 		exit(1);
 
-	this->depth=32;
+	this->app->depth=32;
 	this->setWindowGeom(wi->x,wi->y,wi->w,wi->h,WINDSETALL);
 
 	this->fontString=NULL;
 	this->isActive=false;
 	this->acceptDnd=false;
 
-	this->screen=DefaultScreen(this->display);
-	this->visual=DefaultVisual(this->display,this->screen);
-	this->rootWindow=DefaultRootWindow(this->display);
+	this->app->screen=DefaultScreen(this->app->display);
+	this->app->visual=DefaultVisual(this->app->display,this->app->screen);
+	this->app->rootWindow=DefaultRootWindow(this->app->display);
 	this->loadMonitorData();
 
 	wa.win_gravity=NorthWestGravity;
 	wa.override_redirect=wi->overRide;
-	wm_delete_window=XInternAtom(this->display,"WM_DELETE_WINDOW",0);
+	wm_delete_window=XInternAtom(this->app->display,"WM_DELETE_WINDOW",0);
 
-	visual_template.screen=this->screen;
-	visual_list=XGetVisualInfo(this->display,0,&visual_template,&nxvisuals);
+	visual_template.screen=this->app->screen;
+	visual_list=XGetVisualInfo(this->app->display,0,&visual_template,&nxvisuals);
 	gotargb=false;
 	for(int i=0;i<nxvisuals;i++)
 		{
 			if(visual_list[i].depth==32 && (visual_list[i].red_mask==0xff0000 && visual_list[i].green_mask==0x00ff00 && visual_list[i].blue_mask==0x0000ff ))
 				{
-					this->visual=visual_list[i].visual;
-					this->depth=visual_list[i].depth;
+					this->app->visual=visual_list[i].visual;
+					this->app->depth=visual_list[i].depth;
 					gotargb=true;
 					break;
 				}
 		}
 	XFree(visual_list);
 
-	this->cm=XCreateColormap(this->display,this->rootWindow,this->visual,AllocNone);
+	this->app->cm=XCreateColormap(this->app->display,this->app->rootWindow,this->app->visual,AllocNone);
 	if(gotargb==true)
 		{
-			wa.colormap=this->cm;
+			wa.colormap=this->app->cm;
 			wa.border_pixel=0;
 			wa.background_pixel=0;
 
-			this->window=XCreateWindow(this->display,this->rootWindow,wi->x,wi->y,wi->w,wi->h,0,this->depth,InputOutput,this->visual,CWColormap | CWBorderPixel |CWWinGravity|CWOverrideRedirect,&wa);
+			this->window=XCreateWindow(this->app->display,this->app->rootWindow,wi->x,wi->y,wi->w,wi->h,0,this->app->depth,InputOutput,this->app->visual,CWColormap | CWBorderPixel |CWWinGravity|CWOverrideRedirect,&wa);
 		}
 	else
 		{
-			this->window=XCreateWindow(this->display,this->rootWindow,wi->x,wi->y,wi->w,wi->h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWOverrideRedirect,&wa);
+			this->window=XCreateWindow(this->app->display,this->app->rootWindow,wi->x,wi->y,wi->w,wi->h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWOverrideRedirect,&wa);
 		}
 
-	XSelectInput(this->display,this->window,SubstructureRedirectMask|StructureNotifyMask|ButtonPressMask | ButtonReleaseMask | ExposureMask|LeaveWindowMask|FocusChangeMask|SelectionClear|SelectionRequest);
+	XSelectInput(this->app->display,this->window,SubstructureRedirectMask|StructureNotifyMask|ButtonPressMask | ButtonReleaseMask | ExposureMask|LeaveWindowMask|FocusChangeMask|SelectionClear|SelectionRequest);
 
-	XSetWMProtocols(this->display,this->window,&wm_delete_window,1);
-	xa=XInternAtom(this->display,"_NET_WM_ALLOWED_ACTIONS",False);
-	xa_prop[0]=XInternAtom(this->display,"_NET_WM_STATE_STICKY",False);
-	xa_prop[1]=XInternAtom(this->display,"_NET_WM_STATE_ABOVE",False);
-	xa_prop[2]=XInternAtom(this->display,"_NET_WM_STATE_BELOW",False);
-	xa_prop[3]=XInternAtom(this->display,"_NET_WM_ACTION_CHANGE_DESKTOP",False);
+	XSetWMProtocols(this->app->display,this->window,&wm_delete_window,1);
+	xa=XInternAtom(this->app->display,"_NET_WM_ALLOWED_ACTIONS",False);
+	xa_prop[0]=XInternAtom(this->app->display,"_NET_WM_STATE_STICKY",False);
+	xa_prop[1]=XInternAtom(this->app->display,"_NET_WM_STATE_ABOVE",False);
+	xa_prop[2]=XInternAtom(this->app->display,"_NET_WM_STATE_BELOW",False);
+	xa_prop[3]=XInternAtom(this->app->display,"_NET_WM_ACTION_CHANGE_DESKTOP",False);
 
 	if(xa!=None)
-		XChangeProperty(this->display,this->window,xa,XA_ATOM,32,PropModeAppend,(unsigned char *)&xa_prop,4);
+		XChangeProperty(this->app->display,this->window,xa,XA_ATOM,32,PropModeAppend,(unsigned char *)&xa_prop,4);
 
 	this->LFSTK_setWindowType(wi->windowType);
 	this->windowName=strdup(wi->name);
-	XStoreName(this->display,this->window,this->windowName);
+	XStoreName(this->app->display,this->window,this->windowName);
 	classHint.res_name=this->windowName;
 	classHint.res_class=(char*)"LFSToolKit";
-	XSetClassHint(this->display,this->window,&classHint);
+	XSetClassHint(this->app->display,this->window,&classHint);
 
-	this->gc=XCreateGC(this->display,this->window,0,NULL);
+	this->gc=XCreateGC(this->app->display,this->window,0,NULL);
 	this->LFSTK_setFontString((char*)DEFAULTFONT);
 	this->LFSTK_setDecorated(wi->decorated);
 	this->initWindow(wi->loadVars);
@@ -766,17 +804,119 @@ void LFSTK_windowClass::windowClassInitCommon(windowInitStruct *wi)
 
 	this->userHome=getenv("HOME");
 	asprintf(&this->configDir,"%s/.config/LFS",this->userHome);
-	this->closeDisplayOnExit=wi->shutDisplayOnExit;
+	//this->closeDisplayOnExit=wi->shutDisplayOnExit;
 
-	this->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,wi->w,wi->h);
+	this->globalLib->LFSTK_setCairoSurface(this->app->display,this->window,this->app->visual,&this->sfc,&this->cr,wi->w,wi->h);
 
 	switch(wi->level)
 		{
 			case BELOWALL:
-				XLowerWindow(this->display,this->window);
+				XLowerWindow(this->app->display,this->window);
 				break;
 			case ABOVEALL:
-				XRaiseWindow(this->display,this->window);
+				XRaiseWindow(this->app->display,this->window);
+				break;
+		}
+	this->gadgetMap.clear();
+}
+
+///////////////////////////////////////////
+/**
+* Main window constructor.
+* \param windowInitStruct *wi.
+* \note wi contains startup window params.
+*/
+LFSTK_windowClass::LFSTK_windowClass(windowInitStruct *wi,LFSTK_applicationClass *app)
+{
+	XSetWindowAttributes	wa;
+	Atom					wm_delete_window;
+	XClassHint				classHint;
+	Atom					xa;
+	Atom					xa_prop[3];
+	bool					gotargb;
+	XVisualInfo				visual_template;
+	XVisualInfo				*visual_list=NULL;
+	int						nxvisuals=0;
+
+	this->app=app;
+	//this->app->display=wi->app->display;
+	//if(this->app->display==NULL)
+	//	exit(1);
+
+	//this->app->depth=wi->app->depth;
+	this->setWindowGeom(wi->x,wi->y,wi->w,wi->h,WINDSETALL);
+
+	this->fontString=NULL;
+	this->isActive=false;
+	this->acceptDnd=false;
+
+	//this->app->screen=wi->app->screen;
+	//this->app->visual=wi->app->visual;
+	//this->app->rootWindow=wi->app->rootWindow;
+	this->loadMonitorData();
+
+	wa.win_gravity=NorthWestGravity;
+	wa.override_redirect=wi->overRide;
+	wm_delete_window=XInternAtom(this->app->display,"WM_DELETE_WINDOW",0);
+
+	//this->app->visual=wi->app->visual;
+	//this->app->cm=wi->app->cm;
+	if(wi->app->gotARGB==true)
+		{
+			wa.colormap=this->app->cm;
+			wa.border_pixel=0;
+			wa.background_pixel=0;
+
+			this->window=XCreateWindow(this->app->display,this->app->rootWindow,wi->x,wi->y,wi->w,wi->h,0,this->app->depth,InputOutput,this->app->visual,CWColormap | CWBorderPixel |CWWinGravity|CWOverrideRedirect,&wa);
+		}
+	else
+		{
+			this->window=XCreateWindow(this->app->display,this->app->rootWindow,wi->x,wi->y,wi->w,wi->h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWOverrideRedirect,&wa);
+		}
+//(ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|ButtonMotionMask|FocusChangeMask|KeyReleaseMask|KeyPressMask);
+//	XSelectInput(this->app->display,this->window,SubstructureRedirectMask|StructureNotifyMask|ButtonPressMask | ButtonReleaseMask | ExposureMask|LeaveWindowMask|FocusChangeMask|SelectionClear|SelectionRequest);
+	XSelectInput(this->app->display,this->window,SubstructureRedirectMask|StructureNotifyMask|ButtonPressMask | ButtonReleaseMask|ButtonMotionMask | ExposureMask | EnterWindowMask|LeaveWindowMask|FocusChangeMask|SelectionClear|SelectionRequest|KeyReleaseMask|KeyPressMask);
+
+	XSetWMProtocols(this->app->display,this->window,&wm_delete_window,1);
+	xa=XInternAtom(this->app->display,"_NET_WM_ALLOWED_ACTIONS",False);
+	xa_prop[0]=XInternAtom(this->app->display,"_NET_WM_STATE_STICKY",False);
+	xa_prop[1]=XInternAtom(this->app->display,"_NET_WM_STATE_ABOVE",False);
+	xa_prop[2]=XInternAtom(this->app->display,"_NET_WM_STATE_BELOW",False);
+	xa_prop[3]=XInternAtom(this->app->display,"_NET_WM_ACTION_CHANGE_DESKTOP",False);
+
+	if(xa!=None)
+		XChangeProperty(this->app->display,this->window,xa,XA_ATOM,32,PropModeAppend,(unsigned char *)&xa_prop,4);
+
+	this->LFSTK_setWindowType(wi->windowType);
+	this->windowName=strdup(wi->name);
+	XStoreName(this->app->display,this->window,this->windowName);
+	classHint.res_name=this->windowName;
+	classHint.res_class=(char*)"LFSToolKit";
+	XSetClassHint(this->app->display,this->window,&classHint);
+
+	this->gc=XCreateGC(this->app->display,this->window,0,NULL);
+	this->LFSTK_setFontString((char*)DEFAULTFONT);
+	this->LFSTK_setDecorated(wi->decorated);
+	this->initWindow(wi->loadVars);
+
+	if(this->globalLib->LFSTK_getUseTheme()==true)
+		this->LFSTK_setTile(this->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
+	else
+		this->useTile=false;
+
+	this->userHome=getenv("HOME");
+	asprintf(&this->configDir,"%s/.config/LFS",this->userHome);
+	//this->closeDisplayOnExit=wi->shutDisplayOnExit;
+
+	this->globalLib->LFSTK_setCairoSurface(this->app->display,this->window,this->app->visual,&this->sfc,&this->cr,wi->w,wi->h);
+
+	switch(wi->level)
+		{
+			case BELOWALL:
+				XLowerWindow(this->app->display,this->window);
+				break;
+			case ABOVEALL:
+				XRaiseWindow(this->app->display,this->window);
 				break;
 		}
 	this->gadgetMap.clear();
@@ -791,7 +931,6 @@ LFSTK_windowClass::LFSTK_windowClass(windowInitStruct *wi)
 {
 	this->windowClassInitCommon(wi);
 	this->gadgetMap.clear();
-	
 }
 
 /**
@@ -832,21 +971,21 @@ void LFSTK_windowClass::LFSTK_showWindow(bool all)
 	XWindowAttributes wattr;
 
 	if(all==true)
-		XMapSubwindows(this->display,this->window);
-	XMapWindow(this->display,this->window);
+		XMapSubwindows(this->app->display,this->window);
+	XMapWindow(this->app->display,this->window);
 
 	memset(&xev,0,sizeof(xev));
 	xev.type=ClientMessage;
-	xev.xclient.display=this->display;
+	xev.xclient.display=this->app->display;
 	xev.xclient.window=this->window;
-	xev.xclient.message_type=XInternAtom(this->display,"_NET_ACTIVE_WINDOW",false);
+	xev.xclient.message_type=XInternAtom(this->app->display,"_NET_ACTIVE_WINDOW",false);
 	xev.xclient.format=32;
 	xev.xclient.data.l[0]=2L;
 	xev.xclient.data.l[1]=CurrentTime;
 
-	XGetWindowAttributes(this->display,this->window,&wattr);
-	XSendEvent(this->display,wattr.screen->root,false,SubstructureNotifyMask|SubstructureRedirectMask,&xev);
-//	XSetInputFocus(this->display,this->window,None,CurrentTime);
+	XGetWindowAttributes(this->app->display,this->window,&wattr);
+	XSendEvent(this->app->display,wattr.screen->root,false,SubstructureNotifyMask|SubstructureRedirectMask|ExposureMask|VisibilityChangeMask,&xev);
+//	XSetInputFocus(this->app->display,this->window,None,CurrentTime);
 	this->isVisible=true;
 }
 
@@ -855,14 +994,14 @@ void LFSTK_windowClass::LFSTK_showWindow(bool all)
 */
 void LFSTK_windowClass::LFSTK_hideWindow(void)
 {
-	//XSetInputFocus(this->display,None,RevertToParent,CurrentTime);
+	//XSetInputFocus(this->app->display,None,RevertToParent,CurrentTime);
 
-	XUnmapWindow(this->display,this->window);
+	XUnmapWindow(this->app->display,this->window);
 	this->mainLoop=false;
-	XFlush(this->display);
-	//XSync(this->display,true);
-	XSync(this->display,false);
-	//XSetInputFocus(this->display,PointerRoot,RevertToParent,CurrentTime);
+	XFlush(this->app->display);
+	//XSync(this->app->display,true);
+	XSync(this->app->display,false);
+	//XSetInputFocus(this->app->display,PointerRoot,RevertToParent,CurrentTime);
 	this->isVisible=false;
 }
 
@@ -876,7 +1015,7 @@ void LFSTK_windowClass::LFSTK_hideWindow(void)
 */
 void LFSTK_windowClass::LFSTK_setXProperty(Atom property,Atom type,int format,void *dataptr,int propcnt)
 {
-	XChangeProperty(this->display,this->window,property,type,format,PropModeReplace,(const unsigned char*)dataptr,propcnt);
+	XChangeProperty(this->app->display,this->window,property,type,format,PropModeReplace,(const unsigned char*)dataptr,propcnt);
 }
 
 /**
@@ -953,7 +1092,7 @@ void LFSTK_windowClass::LFSTK_sendMessage(const char *msg,unsigned long data0,un
 	event.xclient.type=ClientMessage;
 	event.xclient.serial=0;
 	event.xclient.send_event=True;
-	event.xclient.message_type=XInternAtom(this->display,msg,False);
+	event.xclient.message_type=XInternAtom(this->app->display,msg,False);
 	event.xclient.window=this->window;
 	event.xclient.format=32;
 	event.xclient.data.l[0]=data0;
@@ -961,44 +1100,45 @@ void LFSTK_windowClass::LFSTK_sendMessage(const char *msg,unsigned long data0,un
 	event.xclient.data.l[2]=data2;
 	event.xclient.data.l[3]=data3;
 	event.xclient.data.l[4]=data4;
-	XSendEvent(this->display,this->rootWindow,False,mask,&event);
+	XSendEvent(this->app->display,this->app->rootWindow,False,mask,&event);
 }
 
 /**
  * Init drag and drop system.
+ * \param bool accept drops onto parent window ( default=false ).
  * \note Set when lined edit class is created.
  */
-void LFSTK_windowClass::LFSTK_initDnD(void)
+void LFSTK_windowClass::LFSTK_initDnD(bool acceptwindowdrops)
 {
 //Announce XDND support
-	Atom XdndAware=XInternAtom(this->display,"XdndAware",false);
+	Atom XdndAware=XInternAtom(this->app->display,"XdndAware",false);
 	Atom version=5;
 	if(XdndAware!=None)
-		XChangeProperty(this->display,this->window,XdndAware,XA_ATOM,32,PropModeReplace,(unsigned char*)&version,1);
+		XChangeProperty(this->app->display,this->window,XdndAware,XA_ATOM,32,PropModeReplace,(unsigned char*)&version,1);
 
-	dNdAtoms[XDNDENTER]=XInternAtom(this->display,"XdndEnter",false);
-	dNdAtoms[XDNDPOSITION]=XInternAtom(this->display,"XdndPosition",false);
-	dNdAtoms[XDNDSTATUS]=XInternAtom(this->display,"XdndStatus",false);
-	dNdAtoms[XDNDTYPELIST]=XInternAtom(this->display,"XdndTypeList",false);
-	dNdAtoms[XDNDACTIONCOPY]=XInternAtom(this->display,"XdndActionCopy",false);
-	dNdAtoms[XDNDDROP]=XInternAtom(this->display,"XdndDrop",false);
-	dNdAtoms[XDNDLEAVE]=XInternAtom(this->display,"XdndLeave",false);
-	dNdAtoms[XDNDFINISHED]=XInternAtom(this->display,"XdndFinished",false);
-	dNdAtoms[XDNDSELECTION]=XInternAtom(this->display,"XdndSelection",false);
-	dNdAtoms[XDNDPROXY]=XInternAtom(this->display,"XdndProxy",false);
-	dNdAtoms[XA_CLIPBOARD]=XInternAtom(this->display,"CLIPBOARD",false);
-	dNdAtoms[XA_COMPOUND_TEXT]=XInternAtom(this->display,"COMPOUND_TEXT",false);
-	dNdAtoms[XA_UTF8_STRING]=XInternAtom(this->display,"UTF8_STRING",false);
-	dNdAtoms[XA_TARGETS]=XInternAtom(this->display,"TARGETS",false);
-	dNdAtoms[PRIMARY]=XInternAtom(this->display,"PRIMARY",false);
-	dNdAtoms[SECONDARY]=XInternAtom(this->display,"SECONDARY",false);
+	dNdAtoms[XDNDENTER]=XInternAtom(this->app->display,"XdndEnter",false);
+	dNdAtoms[XDNDPOSITION]=XInternAtom(this->app->display,"XdndPosition",false);
+	dNdAtoms[XDNDSTATUS]=XInternAtom(this->app->display,"XdndStatus",false);
+	dNdAtoms[XDNDTYPELIST]=XInternAtom(this->app->display,"XdndTypeList",false);
+	dNdAtoms[XDNDACTIONCOPY]=XInternAtom(this->app->display,"XdndActionCopy",false);
+	dNdAtoms[XDNDDROP]=XInternAtom(this->app->display,"XdndDrop",false);
+	dNdAtoms[XDNDLEAVE]=XInternAtom(this->app->display,"XdndLeave",false);
+	dNdAtoms[XDNDFINISHED]=XInternAtom(this->app->display,"XdndFinished",false);
+	dNdAtoms[XDNDSELECTION]=XInternAtom(this->app->display,"XdndSelection",false);
+	dNdAtoms[XDNDPROXY]=XInternAtom(this->app->display,"XdndProxy",false);
+	dNdAtoms[XA_CLIPBOARD]=XInternAtom(this->app->display,"CLIPBOARD",false);
+	dNdAtoms[XA_COMPOUND_TEXT]=XInternAtom(this->app->display,"COMPOUND_TEXT",false);
+	dNdAtoms[XA_UTF8_STRING]=XInternAtom(this->app->display,"UTF8_STRING",false);
+	dNdAtoms[XA_TARGETS]=XInternAtom(this->app->display,"TARGETS",false);
+	dNdAtoms[PRIMARY]=XInternAtom(this->app->display,"PRIMARY",false);
+	dNdAtoms[SECONDARY]=XInternAtom(this->app->display,"SECONDARY",false);
 
 	this->acceptDnd=true;
 	this->toBeRequested=None;
 	this->sourceWindow=None;
 	this->xDnDVersion=0;
 	this->dropGadget=NULL;
-
+	this->acceptOnThis=acceptwindowdrops;
 	this->dNdTypes["text/plain"]=1;
 	this->dNdTypes["text/uri-list"]=2;
 }
@@ -1029,7 +1169,7 @@ propertyStruct* LFSTK_windowClass::readProperty(Window src,Atom property)
 		{
 			if(ret!=0)
 				XFree(ret);
-			XGetWindowProperty(this->display,src,property,0,read_bytes,False,AnyPropertyType,&actual_type,&actual_format, &nitems,&bytes_after,&ret);
+			XGetWindowProperty(this->app->display,src,property,0,read_bytes,False,AnyPropertyType,&actual_type,&actual_format, &nitems,&bytes_after,&ret);
 
 			read_bytes *= 2;
 		}
@@ -1053,7 +1193,7 @@ std::string LFSTK_windowClass::getAtomName(Atom a)
 		retval="None";
 	else
 		{
-			aname=XGetAtomName(this->display,a);
+			aname=XGetAtomName(this->app->display,a);
 			retval=aname;
 			XFree(aname);
 		}
@@ -1219,7 +1359,7 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 					m.data.l[2]=0; //Specify an empty rectangle
 					m.data.l[3]=0;
 					m.data.l[4]=dNdAtoms[XDNDACTIONCOPY]; //We only accept copying anyway.
-					XSendEvent(this->display,event->xclient.data.l[0], False, NoEventMask, (XEvent*)&m);
+					XSendEvent(this->app->display,event->xclient.data.l[0], False, NoEventMask, (XEvent*)&m);
 				}
 
 			if(event->xclient.message_type == dNdAtoms[XDNDDROP])
@@ -1238,15 +1378,15 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 							m.data.l[0]=this->window;
 							m.data.l[1]=0;
 							m.data.l[2]=None; //Failed.
-							XSendEvent(this->display,event->xclient.data.l[0], False, NoEventMask, (XEvent*)&m);
+							XSendEvent(this->app->display,event->xclient.data.l[0], False, NoEventMask, (XEvent*)&m);
 						}
 					else
 						{
 							this->sourceWindow=event->xclient.data.l[0];
 							if(this->xDnDVersion >= 1)
-								XConvertSelection(this->display, dNdAtoms[XDNDSELECTION],this->toBeRequested,dNdAtoms[PRIMARY],this->window, event->xclient.data.l[2]);
+								XConvertSelection(this->app->display, dNdAtoms[XDNDSELECTION],this->toBeRequested,dNdAtoms[PRIMARY],this->window, event->xclient.data.l[2]);
 							else
-								XConvertSelection(this->display, dNdAtoms[XDNDSELECTION],this->toBeRequested,dNdAtoms[PRIMARY],this->window, CurrentTime);
+								XConvertSelection(this->app->display, dNdAtoms[XDNDSELECTION],this->toBeRequested,dNdAtoms[PRIMARY],this->window, CurrentTime);
 						}
 				}
 		}
@@ -1263,7 +1403,7 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 				{
 					propertyStruct *myprops=this->readProperty(this->window,dNdAtoms[PRIMARY]);
 
-					myprops->mimeType=XGetAtomName(this->display,target);
+					myprops->mimeType=XGetAtomName(this->app->display,target);
 					//If we're being given a list of targets (possible conversions)
 					if(target == dNdAtoms[XA_TARGETS])
 						{
@@ -1277,10 +1417,12 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 									return;
 								}
 							else //Request the data type we are able to select
-								XConvertSelection(this->display,dNdAtoms[XDNDSELECTION],this->toBeRequested,dNdAtoms[XDNDSELECTION],this->window, CurrentTime);
+								XConvertSelection(this->app->display,dNdAtoms[XDNDSELECTION],this->toBeRequested,dNdAtoms[XDNDSELECTION],this->window, CurrentTime);
 						}
 					else if(target==this->toBeRequested)
 						{
+							myprops->dropX=this->droppedData.x;
+							myprops->dropY=this->droppedData.y;
 							if(this->dropGadget!=NULL)
 								this->dropGadget->LFSTK_dropData(myprops);
 							else
@@ -1290,14 +1432,14 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 							XClientMessageEvent m;
 							memset(&m, sizeof(m), 0);
 							m.type=ClientMessage;
-							m.display=this->display;
+							m.display=this->app->display;
 							m.window=this->sourceWindow;
 							m.message_type=dNdAtoms[XDNDFINISHED];
 							m.format=32;
 							m.data.l[0]=this->window;//w;
 							m.data.l[1]=1;
 							m.data.l[2]=dNdAtoms[XDNDACTIONCOPY]; //We only ever copy.
-							XSendEvent(this->display,this->sourceWindow, False, NoEventMask, (XEvent*)&m);
+							XSendEvent(this->app->display,this->sourceWindow, False, NoEventMask, (XEvent*)&m);
 						}
 					else
 						return;
@@ -1307,7 +1449,7 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 					delete myprops;
 				}
 		}
-	XSync(this->display,false);
+	XSync(this->app->display,false);
 }
 
 /**
@@ -1374,12 +1516,12 @@ void LFSTK_windowClass::sendUTF8(XSelectionRequestEvent *sev)
 		{
 			Atom types[2]={this->LFSTK_getDnDAtom(XA_TARGETS),this->LFSTK_getDnDAtom(XA_UTF8_STRING)};
 /* send data all at once (not using INCR) */
-			XChangeProperty(this->display,win,pty,XA_ATOM,32,PropModeReplace,(unsigned char *)types,(int)(sizeof(types) / sizeof(Atom)));
+			XChangeProperty(this->app->display,win,pty,XA_ATOM,32,PropModeReplace,(unsigned char *)types,(int)(sizeof(types) / sizeof(Atom)));
 		}
 	else
 		{
 /* send data all at once (not using INCR) */
-			XChangeProperty(this->display,win,pty,this->LFSTK_getDnDAtom(XA_UTF8_STRING),8,PropModeReplace,(unsigned char *)this->clipBuffer.c_str(),(int)this->clipBuffer.length());
+			XChangeProperty(this->app->display,win,pty,this->LFSTK_getDnDAtom(XA_UTF8_STRING),8,PropModeReplace,(unsigned char *)this->clipBuffer.c_str(),(int)this->clipBuffer.length());
 		}
 
 /* set values for the response event */
@@ -1392,8 +1534,8 @@ void LFSTK_windowClass::sendUTF8(XSelectionRequestEvent *sev)
 	res.xselection.time=sev->time;
 
 /* send the response event */
-		XSendEvent(this->display,sev->requestor,0,0,&res);
-		XFlush(this->display);
+		XSendEvent(this->app->display,sev->requestor,0,0,&res);
+		XFlush(this->app->display);
 }
 
 /**
@@ -1401,21 +1543,43 @@ void LFSTK_windowClass::sendUTF8(XSelectionRequestEvent *sev)
 * \param XEvent	*event.
 * \return 0=handled, 1=not handled, -1 close window
 */
+static	bool flag=false;
+static	geometryStruct	oldwindowGeom{0,0,0,0};
 int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 {
 	int	retval=0;
-
 	switch(event->type)
 		{			
+			case ButtonPress:
+				if(this->passEventToRoot==true)
+					{
+						event->xbutton.window=this->app->rootWindow;
+						XSendEvent(this->app->display,this->app->rootWindow,false,ButtonPressMask,event);
+					}
+				break;
+			case ButtonRelease:
+				if(this->passEventToRoot==true)
+					{
+						event->xbutton.window=this->app->rootWindow;
+						XSendEvent(this->app->display,this->app->rootWindow,false,ButtonReleaseMask,event);
+					}
+				break;
+
 			case FocusOut:
+			//printf("FocusOut\n");
 				break;
 
 			case EnterNotify:
-//				printf("enter\n");
 				break;
+
 			case LeaveNotify:
-//				printf("leav\n");
+				if((event->xany.window==this->window) && (this->popupFromGadget!=NULL))
+					{
+						//printf("leave\n");
+						return(-1);
+					}
 				break;
+
 			case Expose:
 				if (event->xexpose.count==0)
 					this->LFSTK_clearWindow();
@@ -1444,11 +1608,23 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 
 			case ConfigureNotify:
 				{
-					geometryStruct	oldwindowGeom=this->windowGeom;
+					Window			w;
+					Window			root_return,child_return;
+					int				root_x_return,root_y_return;
+					int				win_x_return,win_y_return;
+					unsigned int	mask_return;
+					XQueryPointer(this->app->display,this->window,&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return,&mask_return);
 
+					if(flag==false)
+						{
+							oldwindowGeom=this->windowGeom;
+							flag=true;
+						}
 					this->LFSTK_resizeWindow(event->xconfigurerequest.width,event->xconfigurerequest.height,false);
-					this->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,event->xconfigurerequest.width,event->xconfigurerequest.height);
+					this->globalLib->LFSTK_setCairoSurface(this->app->display,this->window,this->app->visual,&this->sfc,&this->cr,event->xconfigurerequest.width,event->xconfigurerequest.height);
 					this->LFSTK_clearWindow(true);
+//if((mask_return!=0) || ())
+//break;
 					if((this->windowGeom.w!=oldwindowGeom.w) ||(this->windowGeom.h!=oldwindowGeom.h))
 						{
 							if(!this->gadgetMap.empty())
@@ -1461,7 +1637,13 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 													if(ml->type==MULTIGADGET)
 														{
 															LFSTK_ExpanderGadgetClass *gadget=static_cast<LFSTK_ExpanderGadgetClass*>(ml->gadget);
-															gadget->LFSTK_updateGadget(oldwindowGeom);
+															if((mask_return==0) || (gadget->liveUpdate==true))
+																{
+																	gadget->LFSTK_updateGadget(oldwindowGeom);
+																	flag=false;
+																	XEvent discard;
+																	while(XCheckMaskEvent(this->app->display,EnterNotify|LeaveNotify|MotionNotify|FocusIn|FocusOut|ConfigureNotify,&discard)==true);
+																}
 														}
 													//if(ml->type==SCROLLBARGADGET)
 													//	{
@@ -1477,32 +1659,93 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 				break;
 
 			case SelectionRequest:
-				if(XGetSelectionOwner(this->display,this->LFSTK_getDnDAtom(XA_CLIPBOARD))==this->window)
+				if(XGetSelectionOwner(this->app->display,this->LFSTK_getDnDAtom(XA_CLIPBOARD))==this->window)
 					this->sendUTF8(&event->xselectionrequest);
 				break;
 
 			case ClientMessage:
 			case SelectionNotify:
 				{
-					if (event->xclient.message_type == XInternAtom(this->display, "WM_PROTOCOLS", 1) && (Atom)event->xclient.data.l[0] == XInternAtom(this->display, "WM_DELETE_WINDOW", 1))
+					if(event->xclient.message_type == XInternAtom(this->app->display, "WM_PROTOCOLS", 1) && (Atom)event->xclient.data.l[0] == XInternAtom(this->app->display, "WM_DELETE_WINDOW", 1))
 						{
 							retval=-1;
 							break;
 						}
-//dnd for edit box
-					if(this->acceptDnd==true)
+
+//handle window drop events
+					//if((this->acceptDnd==true) && (this->callBacks.runTheCallback==true))
+					if((this->acceptDnd==true) )
 						{
 							this->LFSTK_handleDnD(event);
-							if((this->droppedData.type!=-1) && (this->acceptOnThis==true))
+							if((this->droppedData.type!=DROPINVALID) && (this->acceptOnThis==true))
 								{
-									this->droppedData.type=DROPINVALID;
+									if((this->callBacks.validCallbacks & WINDOWDROPCB) && (this->callBacks.runTheCallback==true))
+										retval=this->callBacks.droppedWindowCallback(this,this->callBacks.keyUserData);
+
+									if(retval=true)
+										{
+											this->droppedData.type=DROPINVALID;
+											freeAndNull(&this->droppedData.data);
+										}
 								}
+							break;
 						}
+
+//dnd for edit box
+//					if(this->acceptDnd==true)//TODO//
+//						{
+//						DEBUG
+//							this->LFSTK_handleDnD(event);
+//							if((this->droppedData.type!=-1) && (this->acceptOnThis==true))
+//								{
+//									this->droppedData.type=DROPINVALID;
+//								}
+//						}
 				}
 				break;
 		}
 	return(retval);
 }
+
+/**
+* Window dNd callback.
+* \param dropped dropped callback.
+* \note Format for callback is "bool functioname(LFSTK_windowClass *p,void* ud)"
+* \note First param passed to callback is pointer to object.
+* \note Second param passed to callback is user data.
+*/
+void LFSTK_windowClass::LFSTK_setWindowDropCallBack(bool (*dropped)(LFSTK_windowClass*,void*),void* ud)
+{
+	this->callBacks.validCallbacks|=WINDOWDROPCB;
+	this->callBacks.droppedWindowCallback=dropped;
+	this->callBacks.keyUserData=ud;
+	this->callBacks.runTheCallback=true;
+	this->callBacks.ignoreOrphanModKeys=true;
+	this->acceptOnThis=true;
+}
+
+/**
+* Delete a gadget.
+* \param LFSTK_gadgetClass *gadget gadget to be deleted.
+*/
+bool LFSTK_windowClass::LFSTK_deleteGadget(LFSTK_gadgetClass *gadget)
+{
+	if(!this->gadgetMap.empty())
+		{
+			for (std::map<int,mappedListener*>::iterator it=this->gadgetMap.begin();it!=this->gadgetMap.end();++it)
+				{
+					mappedListener	*ml=it->second;
+					if((ml!=NULL) && (ml->gadget==gadget))
+						{
+							delete ml->gadget;
+							delete ml;
+							return(true);
+						}
+				}
+		}
+	return(false);
+}
+
 
 
 

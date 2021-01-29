@@ -13,10 +13,12 @@ rm multilineeditexample
 exit $retval
 #endif
 
+#include "../config.h"
 #include "lfstk/LFSTKGlobals.h"
 
 #define BOXLABEL			"Multi-Line Edit"
 
+LFSTK_applicationClass		*apc=NULL;
 LFSTK_windowClass			*wc=NULL;
 LFSTK_labelClass			*label=NULL;
 LFSTK_labelClass			*personal=NULL;
@@ -36,14 +38,10 @@ const char* test_string =
     "mattis eros at.\n"
     ;
 
-bool						mainLoop=true;
-Display						*display;
-
 bool doQuit(void *p,void* ud)
 {
-	mainLoop=false;
-	XFlush(wc->display);
-	XSync(wc->display,true);
+	apc->exitValue=0;
+	apc->mainLoop=false;
 	return(false);
 }
 
@@ -53,20 +51,11 @@ bool doKeyUp(void *p,void* ud)
 	return(true);
 }
 
-bool buttonCB(void *p,void* ud)
-{
-	if(ud!=NULL)
-		{
-			printf(">>>%s<<<\n",(const char*)ud);
-		}
-	return(true);
-}
-
 void sendUTF8(XSelectionRequestEvent *sev)
 {
 	XSelectionEvent	ssev;
 
-    XChangeProperty(wc->display,sev->requestor,sev->property,wc->LFSTK_getDnDAtom(XA_UTF8_STRING),8,PropModeReplace,(unsigned char *)wc->clipBuffer.c_str(),wc->clipBuffer.length());
+    XChangeProperty(apc->display,sev->requestor,sev->property,wc->LFSTK_getDnDAtom(XA_UTF8_STRING),8,PropModeReplace,(unsigned char *)wc->clipBuffer.c_str(),wc->clipBuffer.length());
 
     ssev.type=SelectionNotify;
     ssev.requestor=sev->requestor;
@@ -75,17 +64,16 @@ void sendUTF8(XSelectionRequestEvent *sev)
     ssev.property=sev->property;
     ssev.time=sev->time;
 
-    XSendEvent(wc->display,sev->requestor,True,NoEventMask,(XEvent *)&ssev);
+    XSendEvent(apc->display,sev->requestor,True,NoEventMask,(XEvent *)&ssev);
 }
 
-int main(int argc, char **argv)
+int main(int argc, char **argv)//TODO//
 {
-	XEvent	event;
-	int		sy=BORDER;
-		
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,BOXLABEL,false);
-
-	display=wc->display;
+	int	sy=BORDER;
+	
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,BOXLABEL);
+	wc=apc->mainWindow;
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	label->LFSTK_setCairoFontDataParts("sB",20);
@@ -97,13 +85,10 @@ int main(int argc, char **argv)
 	personal->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
 
-//printf("%i %i\n",GADGETHITE,GADGETHITE*10);
-//exit(7);
 //line edit
 	editbox=new LFSTK_multiLineEditClass(wc,test_string,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE*10,BUTTONGRAV);
 	editbox->LFSTK_setKeyCallBack(NULL,doKeyUp,USERDATA(12345));
 	sy+=YSPACING+(GADGETHITE*10);
-
 
 //line
 	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
@@ -113,7 +98,7 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //quit
-	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	quit=new LFSTK_buttonClass(wc,"Quit",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE);
 	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 	sy+=YSPACING;
 
@@ -122,22 +107,9 @@ int main(int argc, char **argv)
 	wc->LFSTK_showWindow();
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
-	mainLoop=true;
-	while(mainLoop==true)
-		{
-			XNextEvent(wc->display,&event);
-			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
-
-			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
-
-			if(wc->LFSTK_handleWindowEvents(&event)<0)
-				mainLoop=false;
-		}
-
+	int retval=apc->LFSTK_runApp();
 	printf("%s\n",editbox->LFSTK_getCStr());
-	delete wc;
-	XCloseDisplay(display);
+	delete apc;
 	cairo_debug_reset_static_data();
-	return 0;
+	return(retval);
 }

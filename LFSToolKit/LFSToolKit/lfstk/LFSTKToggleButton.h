@@ -32,7 +32,7 @@ class LFSTK_toggleButtonClass  : public  LFSTK_gadgetClass
 	public:
 		LFSTK_toggleButtonClass();
 		~LFSTK_toggleButtonClass();
-		LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity);
+		LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity=NorthWestGravity);
 
 		bool mouseEnter(XButtonEvent *e);
 		bool mouseExit(XButtonEvent *e);

@@ -17,6 +17,7 @@ exit $retval
 
 #endif
 
+#include "../config.h"
 #include "lfstk/LFSTKGlobals.h"
 
 #define BOXLABEL			"Colour Chooser"
@@ -183,6 +184,5 @@ int main(int argc, char **argv)
 
 	delete wc;
 	XCloseDisplay(display);
-	cairo_debug_reset_static_data();
 	return 0;
 }

@@ -1,3 +1,24 @@
+0.5.0
+Fixed tool window events.
+Updated all examples.
+Added reload globals to LFSTK_lib.
+Fixed clearing window and gadgets after updating window background.
+Added timer callback to app class.
+Added timer to app main loop.
+Fixed dNd on windows and gadgets.
+Removed unneeded callback code.
+Redone callbacks.
+Fixed seg fault when expanding lists.
+Fixed memory leaks in various gadgets.
+Updated examples.
+Added live update for expander gadgets.
+Fixed tool window.
+Fixed menus.
+Require use of app class.
+Fixed memory leaks in list gadget.
+Added main loop to app class.
+Added new application class.
+
 0.4.6
 Fixed website address in about box.
 Fixed input focus on list gadgets.
@@ -390,6 +411,7 @@ Use make docs to make docs ( sic ), make install-docs to install in ${prefix}/sh
 Added doxygen to config/makefiles to generate documentation.
 
 0.0.5
+Fixed context window hiding.
 Fixed double free of line edit data.
 Added keep above and sicky windows.
 Fixed window gravity not working.

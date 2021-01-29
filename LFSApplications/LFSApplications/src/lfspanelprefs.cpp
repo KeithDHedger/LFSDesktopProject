@@ -28,6 +28,7 @@
 #undef DIALOGWIDTH
 #define DIALOGWIDTH (GADGETWIDTH*3)+(BORDER*3)
 
+LFSTK_applicationClass		*apc=NULL;
 LFSTK_windowClass			*wc=NULL;
 LFSTK_labelClass			*label=NULL;
 LFSTK_labelClass			*personal=NULL;
@@ -74,9 +75,6 @@ LFSTK_lineEditClass			*logout=NULL;
 LFSTK_lineEditClass			*restart=NULL;
 LFSTK_lineEditClass			*shutdown=NULL;
 
-bool						mainLoop=true;
-Display						*display;
-
 int							panelHeightPref=32;
 int							panelWidthPref=-2;
 int							onMonitorPref=0;
@@ -107,9 +105,8 @@ args	panelPrefs[]=
 
 bool doQuit(void *p,void* ud)
 {
-	mainLoop=false;
-	XFlush(wc->display);
-	XSync(wc->display,true);
+	apc->exitValue=0;
+	apc->mainLoop=false;
 	return(false);
 }
 
@@ -285,8 +282,9 @@ int main(int argc, char **argv)
 				}
 		}
 
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"LFSPanel Prefs",false);
-	display=wc->display;
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,"LFSTKPrefs");
+	wc=apc->mainWindow;
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	sy+=HALFYSPACING;
@@ -448,24 +446,13 @@ int main(int argc, char **argv)
 	if(parentWindow!=-1)
 		wc->LFSTK_setTransientFor(parentWindow);
 
-	mainLoop=true;
-	while(mainLoop==true)
-		{
-			XNextEvent(wc->display,&event);
-			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
+	int retval=apc->LFSTK_runApp();
 
-			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
-
-			if(wc->LFSTK_handleWindowEvents(&event)<0)
-				mainLoop=false;
-		}
-
-	delete wc;
 	delete panelMenu;
 	delete widthMenu;
 	delete posMenu;
 	delete gravMenu;
+	delete apc;
 
 	panelWidthConvertToStr.clear();
 	panelPosConvertToStr.clear();
@@ -477,10 +464,7 @@ int main(int argc, char **argv)
 	free(restartCommandPref);
 	free(shutdownCommandPref);
 
-	XSync(display,true);
-	XCloseDisplay(display);
-	cairo_debug_reset_static_data();
-	return 0;
+	return(retval);
 }
 
 

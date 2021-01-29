@@ -81,13 +81,13 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vert
 	wa.win_gravity=gravity;
 	wa.save_under=true;
 
-	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWSaveUnder,&wa);
-	this->gc=XCreateGC(this->display,this->window,0,NULL);
+	this->window=XCreateWindow(this->wc->app->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWSaveUnder,&wa);
+	this->gc=XCreateGC(this->wc->app->display,this->window,0,NULL);
 
-	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->window,this->wc->app->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_setCairoFontData();
 
-	XSelectInput(this->display,this->window,this->gadgetEventMask);
+	XSelectInput(this->wc->app->display,this->window,this->gadgetEventMask);
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;
 	this->ml->type=SCROLLBARGADGET;
@@ -113,6 +113,7 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vert
 				this->upLeft->LFSTK_setImageFromPath(pathtobit,CENTRE,true);
 			else
 				this->upLeft->LFSTK_setImageFromPath(LFSTKPIXMAPSDIR "/left.png",CENTRE,true);
+	
 			free(pathtobit);
 //rite
 			this->downRight=new LFSTK_buttonClass(parentwc,"",0,0,h,h,gravity);
@@ -157,8 +158,8 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vert
 	this->upLeft->LFSTK_setKeyCallBack(NULL,this->lineUpDown,(void*)this);
 	this->downRight->LFSTK_setMouseCallBack(NULL,this->lineUpDown,(void*)this);
 	this->downRight->LFSTK_setKeyCallBack(NULL,this->lineUpDown,(void*)this);
-	this->downRight->userData=(void*)2;
-	this->upLeft->userData=(void*)1;
+	this->downRight->userData=USERDATA(2);
+	this->upLeft->userData=USERDATA(1);
 }
 
 /**
@@ -289,12 +290,12 @@ void LFSTK_scrollBarClass::LFSTK_clearWindow()
 	if(this->style!=BEVELNONE)
 		this->drawBevel(&this->gadgetDetails.gadgetGeom,this->gadgetDetails.bevel);
 
-	if(this->runCallback(MOUSERELEASECB)==true)
-		this->mouseCB.releaseCallback(this,this->mouseCB.userData);
+	if(this->callBacks.validCallbacks & MOUSERELEASECB)
+		this->callBacks.mouseReleaseCallback(this,this->callBacks.mouseUserData);
 
 //reduce flickering
 	if(this->startDrag==true)
-		XSync(this->display,true);
+		XSync(this->wc->app->display,true);
 	this->thumb->LFSTK_clearWindow();
 }
 
@@ -312,22 +313,22 @@ void LFSTK_scrollBarClass::LFSTK_clearWindow(bool ignorecb)
 			this->clearBox(&this->gadgetDetails);
 			if(this->style!=BEVELNONE)
 				this->drawBevel(&this->gadgetDetails.gadgetGeom,this->gadgetDetails.bevel);
-			if(this->runCallback(MOUSERELEASECB)==true)
-				this->mouseCB.releaseCallback(this,this->mouseCB.userData);
+			if(this->callBacks.validCallbacks & MOUSERELEASECB)
+				this->callBacks.mouseReleaseCallback(this,this->callBacks.mouseUserData);
 
 //reduce flickering
 			if(this->startDrag==true)
-				XSync(this->display,true);
+				XSync(this->wc->app->display,true);
 			this->thumb->LFSTK_clearWindow();
 		}
 	else
 		{
-			XSync(this->display,true);
+			XSync(this->wc->app->display,true);
 			this->clearBox(&this->gadgetDetails);
 			if(this->style!=BEVELNONE)
 				this->drawBevel(&this->gadgetDetails.gadgetGeom,this->gadgetDetails.bevel);
 			this->thumb->LFSTK_clearWindow();
-			XSync(this->display,true);
+			XSync(this->wc->app->display,true);
 		}
 }
 
@@ -446,7 +447,9 @@ bool LFSTK_scrollBarClass::mouseUp(XButtonEvent *e)
 	this->mouseDownX=e->x;
 	this->mouseDownY=e->y;
 
-	if(this->runCallback(MOUSERELEASECB)==false)
+//	if(this->runCallback(MOUSERELEASECB)==false)
+//		return(true);
+	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
 		return(true);
 
 	if(this->inWindow==true)
@@ -490,8 +493,9 @@ bool LFSTK_scrollBarClass::thumbClicked(void *object,void* userdata)
 	if(userdata!=NULL)
 		{
 			sb=static_cast<LFSTK_scrollBarClass*>(userdata);
-			if(sb->mouseCB.releaseCallback!=NULL)
-				sb->mouseCB.releaseCallback(sb,sb->mouseCB.userData);
+			if(sb->callBacks.validCallbacks & MOUSERELEASECB)
+				sb->callBacks.mouseReleaseCallback(sb,sb->callBacks.mouseUserData);
+
 			sb->startDrag=false;
 		}
 	return(true);
@@ -534,7 +538,9 @@ bool LFSTK_scrollBarClass::mouseExit(XButtonEvent *e)
 
 bool LFSTK_scrollBarClass::mouseDown(XButtonEvent *e)
 {
-	if(this->runCallback(MOUSEPRESSCB)==false)
+//	if(this->runCallback(MOUSEPRESSCB)==false)
+//		return(true);
+	if(((this->callBacks.runTheCallback==false) || (this->isActive==false)) || ((this->callBacks.validCallbacks & MOUSEPRESSCB)==0))
 		return(true);
 
 	this->inWindow=true;
@@ -580,8 +586,8 @@ void LFSTK_scrollBarClass::LFSTK_restickWindow(void)
 
 	//this->LFSTK_getGeomWindowRelative(&geom,this->lockToWindowRight);
 	//this->LFSTK_resizeWindow(SCROLLBARWIDTH,geom.h);
-	//XGetWindowAttributes(this->display,this->lockToWindowRight,&xwa);
-	//XTranslateCoordinates(this->display,this->window,this->lockToWindowRight,xwa.x,xwa.y,&x,&y,&child );
+	//XGetWindowAttributes(this->wc->app->display,this->lockToWindowRight,&xwa);
+	//XTranslateCoordinates(this->wc->app->display,this->window,this->lockToWindowRight,xwa.x,xwa.y,&x,&y,&child );
 	//DEBUGFUNC("lockToWindowRight x=%i y=%i w=%i h=%i x=%i y=%i win=%i",xwa.x,xwa.y,xwa.width,xwa.height,x,y,this->lockToWindowRight);
 
 	//this->LFSTK_moveGadget(xwa.x,xwa.y);

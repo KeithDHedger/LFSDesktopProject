@@ -18,6 +18,7 @@
  * along with LFSApplications.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "config.h"
 #include <lfstk/LFSTKGlobals.h>
 
 #include <fcntl.h>
@@ -27,6 +28,7 @@
 #define MIMETYPESLABEL	"Mime Type"
 #define APPLABEL		"Default Application"
 
+LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass		*label=NULL;
 LFSTK_labelClass		*personal=NULL;
@@ -41,8 +43,6 @@ LFSTK_listGadgetClass	*appsList=NULL;
 LFSTK_lineEditClass		*editLine=NULL;
 LFSTK_lineEditClass		*appLine=NULL;
 
-bool					mainLoop=true;
-Display					*display;
 char					*mimeTypesFile=NULL;
 char					*lastBitPath;
 char					*mimeTypesPath;
@@ -53,9 +53,8 @@ char					*workDir;
 
 bool doQuit(void *p,void* ud)
 {
-	mainLoop=false;
-	XFlush(wc->display);
-	XSync(wc->display,true);
+	apc->exitValue=0;
+	apc->mainLoop=false;
 	return(false);
 }
 
@@ -118,6 +117,9 @@ void splitFile(char *path)
 	system(firstbit);
 	asprintf(&appslist,"find /usr/share/applications ~/.local/share/applications -iname \"*.desktop\"|sed 's@.*/@@;s@\\.desktop$@@'|sort -u > \"%s\"",appsPath);
 	system(appslist);
+	free(lastbit);
+	free(firstbit);
+	free(appslist);
 }
 
 void reWriteMimeFile(void)
@@ -288,8 +290,9 @@ int main(int argc, char **argv)
 	sprintf(tempfolder,"/tmp/lfsmimedir-XXXXXX");
 	workDir=mkdtemp(tempfolder);
 
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH*2,DIALOGHITE,"Mime Type Editor",false);
-	display=wc->display;
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,"LFSTKPrefs");
+	wc=apc->mainWindow;
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,2*DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	sy+=HALFYSPACING;
@@ -334,32 +337,32 @@ int main(int argc, char **argv)
 	sy+=LISTHITE+8;
 
 //command
-	editLine=new LFSTK_lineEditClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE,NorthGravity);
+	editLine=new LFSTK_lineEditClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE);
 	editLine->LFSTK_setMouseCallBack(returnKeyPressed,NULL,NULL);
 //app to use
-	appLine=new LFSTK_lineEditClass(wc,"",BORDER+DIALOGWIDTH,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE,NorthGravity);
+	appLine=new LFSTK_lineEditClass(wc,"",BORDER+DIALOGWIDTH,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE);
 	appLine->LFSTK_setMouseCallBack(returnKeyPressed,NULL,NULL);
 	sy+=YSPACING;
 
 //line
-	seperator=new LFSTK_buttonClass(wc,"--",0,sy,2*DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
+	seperator=new LFSTK_buttonClass(wc,"--",0,sy,2*DIALOGWIDTH,GADGETHITE);
 	seperator->LFSTK_setStyle(BEVELNONE);
 	seperator->gadgetDetails.buttonTile=false;
 	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
 	sy+=YSPACING;
 
-	insert=new LFSTK_buttonClass(wc,"Duplicate",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	insert=new LFSTK_buttonClass(wc,"Duplicate",BORDER,sy,GADGETWIDTH,GADGETHITE);
 	insert->LFSTK_setMouseCallBack(NULL,doInsert,NULL);
 
-	delentry=new LFSTK_buttonClass(wc,"Remove",2*BORDER+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	delentry=new LFSTK_buttonClass(wc,"Remove",2*BORDER+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE);
 	delentry->LFSTK_setMouseCallBack(NULL,doDelete,NULL);
 
 //aply changes
-	apply=new LFSTK_buttonClass(wc,"Apply",2*DIALOGWIDTH-2*GADGETWIDTH-2*BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	apply=new LFSTK_buttonClass(wc,"Apply",2*DIALOGWIDTH-2*GADGETWIDTH-2*BORDER,sy,GADGETWIDTH,GADGETHITE);
 	apply->LFSTK_setMouseCallBack(NULL,doApply,NULL);
 
 //cancel/quit
-	cancel=new LFSTK_buttonClass(wc,"Quit",2*DIALOGWIDTH-GADGETWIDTH-BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	cancel=new LFSTK_buttonClass(wc,"Quit",2*DIALOGWIDTH-GADGETWIDTH-BORDER,sy,GADGETWIDTH,GADGETHITE);
 	cancel->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 
 	sy+=YSPACING;
@@ -368,28 +371,15 @@ int main(int argc, char **argv)
 	wc->LFSTK_resizeWindow(DIALOGWIDTH*2,sy,true);
 	wc->LFSTK_showWindow();
 
-	mainLoop=true;
-	while(mainLoop==true)
-		{
-			XNextEvent(wc->display,&event);
-			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
-
-			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
-
-			if(wc->LFSTK_handleWindowEvents(&event)<0)
-				mainLoop=false;
-		}
+	int retval=apc->LFSTK_runApp();
 
 	command=wc->globalLib->LFSTK_oneLiner("rm -r %s",workDir);
 	free(command);
-	delete wc;
-	XCloseDisplay(display);
-	cairo_debug_reset_static_data();
+	delete apc;
 	free(tmpOutFile);
 	free(lastBitPath);
 	free(appsPath);
 	free(mimeTypesPath);
 	free(mimeTypesFile);
-	return 0;
+	return(retval);
 }

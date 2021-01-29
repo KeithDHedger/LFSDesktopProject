@@ -43,11 +43,11 @@ LFSTK_menuItemClass::LFSTK_menuItemClass(LFSTK_toolWindowClass* parentwc,LFSTK_m
 
 	wa.win_gravity=BUTTONGRAV;
 	wa.save_under=true;
-	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
-	this->gc=XCreateGC(this->display,this->window,0,NULL);
-	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+	this->window=XCreateWindow(this->wc->app->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
+	this->gc=XCreateGC(this->wc->app->display,this->window,0,NULL);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->window,this->wc->app->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_setCairoFontData();
-	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
+	XSelectInput(this->wc->app->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
 	this->style=BEVELNONE;
 
@@ -82,7 +82,9 @@ LFSTK_menuItemClass::LFSTK_menuItemClass(LFSTK_toolWindowClass* parentwc,LFSTK_m
 */
 bool LFSTK_menuItemClass::mouseExit(XButtonEvent *e)
 {
-	if(this->runCallback(MOUSERELEASECB)==false)
+//	if(this->runCallback(MOUSERELEASECB)==false)
+//		return(true);
+	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
 		return(true);
 
 	if(strcmp(this->label,"--")==0)
@@ -116,7 +118,9 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 	int				sinky;
 	unsigned int	buttonmask;
 
-	if(this->runCallback(MOUSERELEASECB)==false)
+//	if(this->runCallback(MOUSERELEASECB)==false)
+//		return(true);
+	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
 		return(true);
 
 	if(strcmp(this->label,"--")==0)
@@ -156,7 +160,7 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 					else
 						maxtxtwid+=gotsubmenu;
 					
-					this->subwc=new LFSTK_toolWindowClass(this->display,this->wc,"_NET_WM_WINDOW_TYPE_MENU",this->gadgetGeom.x,this->gadgetGeom.y,maxtxtwid,GADGETHITE*this->menuData->subMenuCnt-winshrink,"menu window");
+					this->subwc=new LFSTK_toolWindowClass(this->wc->app->display,this->wc,"_NET_WM_WINDOW_TYPE_MENU",this->gadgetGeom.x,this->gadgetGeom.y,maxtxtwid,GADGETHITE*this->menuData->subMenuCnt-winshrink,"menu window",this->wc->app);
 					for(int j=0; j<this->menuData->subMenuCnt; j++)
 						{
 							hite=GADGETHITE;
@@ -164,7 +168,7 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 								hite=SEPARATORHITE;
 
 							label=new LFSTK_menuItemClass(this->subwc,this->menu,0,sy,maxtxtwid,hite,this->menuData->subMenus[j],gotthumb);
-							label->LFSTK_setMouseCallBack(this->mouseCB.pressCallback,this->mouseCB.releaseCallback,this->menuData->subMenus[j]->userData);
+							label->LFSTK_setMouseCallBack(this->callBacks.mousePressCallback,this->callBacks.mouseReleaseCallback,this->menuData->subMenus[j]->userData);
 							if(this->menuData->subMenus[j]->imageType==FILETHUMB)
 								label->LFSTK_setImageFromPath(this->menuData->subMenus[j]->data.imagePath,MENU,true);
 							if(this->menuData->subMenus[j]->imageType==CAIROTHUMB)
@@ -178,13 +182,13 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
  
 			while(this->subwc->mainLoop==true)
 				{
-					if(XPending(this->display))
+					if(XPending(this->wc->app->display))
 						{
-							XNextEvent(this->display,&event);
+							XNextEvent(this->wc->app->display,&event);
 						}
 					else
 						{
-							XQueryPointer(this->display,this->subwc->rootWindow,&sink,&childwindow,&sinkx,&sinky,&sinkx,&sinky,&buttonmask);
+							XQueryPointer(this->wc->app->display,this->subwc->app->rootWindow,&sink,&childwindow,&sinkx,&sinky,&sinkx,&sinky,&buttonmask);
 							if((childwindow!=this->subwc->window) && (buttonmask!=0))
 								{
 									for(int j=0;j<this->menu->subwindows->size();j++)
@@ -238,14 +242,14 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 										int x;
 										int y;
 										unsigned int w,h,dump;
-										XTranslateCoordinates(this->subwc->display,this->wc->window,this->subwc->rootWindow,0,0,&x,&y,&dw );
+										XTranslateCoordinates(this->subwc->app->display,this->wc->window,this->subwc->app->rootWindow,0,0,&x,&y,&dw );
 										this->subwc->LFSTK_moveWindow(x+this->gadgetGeom.w,y+this->gadgetGeom.y,true);
 									}
 								break;
 						}
 
 
-					gotlooked=XCheckTypedWindowEvent(this->display,this->subwc->window,EnterNotify,&lookevent);
+					gotlooked=XCheckTypedWindowEvent(this->wc->app->display,this->subwc->window,EnterNotify,&lookevent);
 					if(gotlooked==false)
 						{
 							switch(event.type)
@@ -261,13 +265,13 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 								}
 						}
 
-					gotlooked=XCheckTypedWindowEvent(this->display,this->subwc->window,LeaveNotify,&lookevent);
+					gotlooked=XCheckTypedWindowEvent(this->wc->app->display,this->subwc->window,LeaveNotify,&lookevent);
 					if(gotlooked==true)
 						{
-							gotlooked=XCheckTypedWindowEvent(this->display,this->wc->window,EnterNotify,&lookevent);
+							gotlooked=XCheckTypedWindowEvent(this->wc->app->display,this->wc->window,EnterNotify,&lookevent);
 							if(gotlooked==true)
 								{
-									gotlooked=XCheckTypedWindowEvent(this->display,this->window,EnterNotify,&lookevent);
+									gotlooked=XCheckTypedWindowEvent(this->wc->app->display,this->window,EnterNotify,&lookevent);
 									if(gotlooked==false)
 										{
 											this->subwc->LFSTK_hideWindow();

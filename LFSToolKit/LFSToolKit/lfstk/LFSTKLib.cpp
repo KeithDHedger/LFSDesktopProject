@@ -86,6 +86,12 @@ LFSTK_lib::~LFSTK_lib()
 
 	if(this->globalCursorColour!=NULL)
 		free(this->globalCursorColour);
+
+	if(this->globalSBTroughColour!=NULL)
+		free(this->globalSBTroughColour);
+
+	if(this->globalListTroughColour!=NULL)
+		free(this->globalListTroughColour);
 }
 
 /**
@@ -293,8 +299,12 @@ const char *LFSTK_lib::LFSTK_getGlobalString(int state,int type)
 
 LFSTK_lib::LFSTK_lib(bool loadvars)
 {
-	char *env=NULL;
+	this->LFSTK_reloadPrefs();
+}
 
+void LFSTK_lib::LFSTK_reloadPrefs(void)
+{
+	char *env=NULL;
 	args myargs[]=
 	{
 //window
@@ -342,36 +352,37 @@ LFSTK_lib::LFSTK_lib(bool loadvars)
 		{NULL,0,NULL}
 	};
 
+	if(this->lfsToolKitGlobals!=NULL)
+		free(this->lfsToolKitGlobals);
+
+	for(int j=0;j<MAXCOLOURS;j++)
+		{
+			freeAndNull(&this->globalWindowColours[j]);
+			freeAndNull(&this->globalButtonColours[j]);
+			freeAndNull(&this->globalMenuItemColours[j]);
+			freeAndNull(&this->globalMenuItemFontColourNames[j]);
+			freeAndNull(&this->globalFontColourNames[j]);
+		}
+
+	freeAndNull(&this->globalWindowTile);
+	freeAndNull(&this->globalButtonTile);
+	freeAndNull(&this->globalMenuItemTile);
+	freeAndNull(&this->globalMenuItemFontString);
+	freeAndNull(&this->globalFontString);
+	freeAndNull(&this->globalMonoFontString);
+	freeAndNull(&this->globalCursorColour);
+	freeAndNull(&this->globalSBTroughColour);
+	freeAndNull(&this->globalListTroughColour);
+
 	this->lfsToolKitGlobals=(args*)calloc(1,sizeof(myargs));
 	memcpy(this->lfsToolKitGlobals,myargs,sizeof(myargs));
 
-	for(int j=0;j<MAXCOLOURS;j++)
-		{
-			this->globalWindowColours[j]=NULL;
-			this->globalButtonColours[j]=NULL;
-			this->globalMenuItemColours[j]=NULL;
-			this->globalMenuItemFontColourNames[j]=NULL;
-		}
-
-	for(int j=0;j<MAXCOLOURS;j++)
-		this->globalFontColourNames[j]=NULL;
-
-	this->globalFontString=NULL;
-	this->globalMonoFontString=NULL;
-	this->globalMenuItemFontString=NULL;
-	this->globalWindowTile=NULL;
-	this->globalButtonTile=NULL;
-	this->globalMenuItemTile=NULL;
 	this->autoLabelColour=false;
 	this->useTheme=false;
-	this->globalCursorColour=NULL;
 
-	if(loadvars==true)
-		{
-			asprintf(&env,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
-			this->LFSTK_loadVarsFromFile(env,this->lfsToolKitGlobals);
-			free(env);
-		}
+	asprintf(&env,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
+	this->LFSTK_loadVarsFromFile(env,this->lfsToolKitGlobals);
+	free(env);
 }
 
 /**
@@ -429,7 +440,7 @@ bool LFSTK_lib::LFSTK_loadVarsFromFile(const char* filepath,const args* dataptr)
 					if(argname!=NULL)
 						free(argname);
 					if(strarg!=NULL)
-						free(strarg);
+						free(strarg);					
 				}
 			fclose(fd);
 			return(true);
@@ -548,6 +559,7 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				retval=gadget->mouseExit(&e->xbutton);
 				break;
 			case ButtonRelease:
+				gadget->wc->app->isDragging=false;
 				if(gadget->firstClick==false)
 					{
 						gadget->isDoubleClick=false;
@@ -573,21 +585,22 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				break;
 
 			case ButtonPress:
-			//DEBUG
 				gadget->currentButton=e->xbutton.button;
 				if((gadget->LFSTK_getContextWindow()!=NULL) && (gadget->currentButton==Button3))
 					{
-						gadget->wc->popupFromGadget=gadget;
-						gadget->LFSTK_getGeomWindowRelative(&geom,gadget->rootWindow);
-						gadget->LFSTK_doPopUp(geom.x+(geom.w/2),geom.y+(geom.h/4));
+						LFSTK_windowClass	*lwc=gadget->LFSTK_getContextWindow();
+
+						lwc->popupFromGadget=gadget;
+						gadget->LFSTK_getGeomWindowRelative(&geom,gadget->wc->app->rootWindow);
+						lwc->LFSTK_moveWindow(geom.x+(geom.w/2),geom.y+(geom.h/4),true);
+						gadget->wc->app->LFSTK_runWindowLoop(lwc);
+						lwc->popupFromGadget=NULL;
 						retval=true;
 						break;
 					}
-				else
-					gadget->wc->popupFromGadget=NULL;
 
 				if((type==LINEEDITGADGET) || (type==MULTILINEGADGET))
-					XSetInputFocus(gadget->wc->display,e->xbutton.window,RevertToNone,CurrentTime);
+					XSetInputFocus(gadget->wc->app->display,e->xbutton.window,RevertToNone,CurrentTime);
 				retval=gadget->mouseDown(&e->xbutton);
 				break;
 
@@ -655,7 +668,7 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 								e->xbutton.window=gadget->parent;
 								e->xbutton.subwindow=gadget->window;
 								e->xbutton.send_event=true;
-								XSendEvent(gadget->wc->display,gadget->parent,true,0xffff,(XEvent*)e);
+								XSendEvent(gadget->wc->app->display,gadget->parent,true,0xffff,(XEvent*)e);
 								retval=false;
 							}
 						else

@@ -100,9 +100,9 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
-am__objects_1 = ../src/disks.$(OBJEXT) ../src/files.$(OBJEXT) \
-	../src/globals.$(OBJEXT) ../src/main.$(OBJEXT) \
-	../src/prefs.$(OBJEXT)
+am__objects_1 = ../src/callbacks.$(OBJEXT) ../src/disks.$(OBJEXT) \
+	../src/files.$(OBJEXT) ../src/globals.$(OBJEXT) \
+	../src/main.$(OBJEXT) ../src/prefs.$(OBJEXT)
 am_lfsdesktop_OBJECTS = $(am__objects_1)
 lfsdesktop_OBJECTS = $(am_lfsdesktop_OBJECTS)
 lfsdesktop_LDADD = $(LDADD)
@@ -121,9 +121,10 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = ../src/$(DEPDIR)/disks.Po \
-	../src/$(DEPDIR)/files.Po ../src/$(DEPDIR)/globals.Po \
-	../src/$(DEPDIR)/main.Po ../src/$(DEPDIR)/prefs.Po
+am__depfiles_remade = ../src/$(DEPDIR)/callbacks.Po \
+	../src/$(DEPDIR)/disks.Po ../src/$(DEPDIR)/files.Po \
+	../src/$(DEPDIR)/globals.Po ../src/$(DEPDIR)/main.Po \
+	../src/$(DEPDIR)/prefs.Po
 am__mv = mv -f
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -231,6 +232,8 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
 LFSTK_CFLAGS = @LFSTK_CFLAGS@
 LFSTK_LIBS = @LFSTK_LIBS@
+LIBGLIB_CFLAGS = @LIBGLIB_CFLAGS@
+LIBGLIB_LIBS = @LIBGLIB_LIBS@
 LIBOBJS = @LIBOBJS@
 LIBS = -lmagic \
 			$(X11_LIBS) \
@@ -239,6 +242,8 @@ LIBS = -lmagic \
 			$(XFT_LIBS) \
 			$(LIBUDEV_LIBS) \
 			$(CAIRO_LIBS) \
+			$(LIBGLIB_LIBS) \
+			$(LIBUDEV_LIBS) \
 			$(LFSTK_LIBS)
 
 LIBUDEV_CFLAGS = @LIBUDEV_CFLAGS@
@@ -322,6 +327,8 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 			$(LIBUDEV_CFLAGS) \
 			$(CAIRO_CFLAGS) \
 			$(LFSTK_CFLAGS) \
+			$(LIBGLIB_CFLAGS) \
+			$(LIBUDEV_CFLAGS) \
 			-Wall \
 			-DPREFIX=\""${prefix}\"" \
 			-DDATADIR=\""${pkgdatadir}"\" \
@@ -330,7 +337,7 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 			-DHELPERDIR=\""${libexecdir}/${PACKAGE}"\" \
 			-DHELPERAPP=\""${libexecdir}/${PACKAGE}/lfshelper"\"
 
-COMMONSRC = ../src/disks.cpp ../src/files.cpp ../src/globals.cpp ../src/main.cpp ../src/prefs.cpp
+COMMONSRC = ../src/callbacks.cpp ../src/disks.cpp ../src/files.cpp ../src/globals.cpp ../src/main.cpp ../src/prefs.cpp
 lfsdesktop_SOURCES = $(COMMONSRC)
 man1_MANS = ../resources/man/lfsdesktop.1
 all: all-am
@@ -415,6 +422,8 @@ clean-binPROGRAMS:
 ../src/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) ../src/$(DEPDIR)
 	@: > ../src/$(DEPDIR)/$(am__dirstamp)
+../src/callbacks.$(OBJEXT): ../src/$(am__dirstamp) \
+	../src/$(DEPDIR)/$(am__dirstamp)
 ../src/disks.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
 ../src/files.$(OBJEXT): ../src/$(am__dirstamp) \
@@ -437,6 +446,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/callbacks.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/disks.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/files.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/globals.Po@am__quote@ # am--include-marker
@@ -635,7 +645,8 @@ clean: clean-am
 clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
-		-rm -f ../src/$(DEPDIR)/disks.Po
+		-rm -f ../src/$(DEPDIR)/callbacks.Po
+	-rm -f ../src/$(DEPDIR)/disks.Po
 	-rm -f ../src/$(DEPDIR)/files.Po
 	-rm -f ../src/$(DEPDIR)/globals.Po
 	-rm -f ../src/$(DEPDIR)/main.Po
@@ -685,7 +696,8 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-		-rm -f ../src/$(DEPDIR)/disks.Po
+		-rm -f ../src/$(DEPDIR)/callbacks.Po
+	-rm -f ../src/$(DEPDIR)/disks.Po
 	-rm -f ../src/$(DEPDIR)/files.Po
 	-rm -f ../src/$(DEPDIR)/globals.Po
 	-rm -f ../src/$(DEPDIR)/main.Po

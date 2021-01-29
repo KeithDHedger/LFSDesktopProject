@@ -256,8 +256,20 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	if(type==FOLDERDIALOG)
 		dwidth=DIALOGWIDTH;
 
-	this->dialog=new LFSTK_windowClass(0,0,dwidth,hite,label,false,true,false);
-	dialog->closeDisplayOnExit=true;
+	windowInitStruct	*win;
+
+	win=new windowInitStruct;
+	win->app=parentwc->app;
+	win->name=label;
+	win->loadVars=true;
+	win->w=dwidth;
+	win->h=hite;
+	win->wc=parentwc;
+	this->dialog=new LFSTK_windowClass(win,parentwc->app);
+	delete win;
+//TODO//
+//	this->dialog=new LFSTK_windowClass(0,0,dwidth,hite,label,false,true,false);
+	//dialog->closeDisplayOnExit=true;
 
 //find files
 	this->fc=new LFSTK_findClass;
@@ -274,7 +286,7 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	sh.base_width=dwidth;
 	sh.base_width=hite;
 
-	XSetWMNormalHints(this->wc->display,dialog->window,&sh);
+	XSetWMNormalHints(this->wc->app->display,dialog->window,&sh);
 	/*
 	std::vector<hitRect>	hrs;
 	LFSTK_ExpanderGadgetClass	*multi=NULL;
@@ -545,7 +557,7 @@ void LFSTK_fileDialogClass::LFSTK_getLastFolder(void)
 */
 void LFSTK_fileDialogClass::resizeWindow(int w,int h)
 {
-	XResizeWindow(this->dialog->display,this->dialog->window,w,h);
+	XResizeWindow(this->dialog->app->display,this->dialog->window,w,h);
 }
 
 /**
@@ -570,11 +582,10 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 			this->dialog->LFSTK_showWindow();
 			this->dialog->LFSTK_setKeepAbove(true);
 			this->dialog->LFSTK_setTransientFor(this->wc->window);
-
 			this->mainLoop=true;
 			while(this->mainLoop==true)
 				{
-					XNextEvent(this->dialog->display,&event);
+					XNextEvent(this->dialog->app->display,&event);
 					mappedListener *ml=this->dialog->LFSTK_getMappedListener(event.xany.window);
 					if(ml!=NULL)
 						ml->function(ml->gadget,&event,ml->type);
@@ -619,8 +630,8 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 
 								if(ml->gadget==this->buttonApply)
 									{
-										char	*buf;
-										char	*rp;
+										char	*buf=NULL;
+										char	*rp=NULL;
 										asprintf(&buf,"%s/%s",this->dirEdit->LFSTK_getCStr(),this->fileListGadget->LFSTK_getSelectedLabel());
 										if((this->isADir(buf)==true) && (this->dialogType==FILEDIALOG))
 											{
@@ -632,10 +643,11 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 										
 										if(this->dialogType==FOLDERDIALOG)
 											{
+								//		DEBUGFUNC("%s--%s",this->dirEdit->LFSTK_getCStr(),this->fileListGadget->LFSTK_getSelectedLabel());
+												free(buf);
 												this->apply=true;
 												this->mainLoop=false;
 												this->setFileData();
-												free(buf);
 												break;
 											}
 										this->apply=true;
@@ -654,6 +666,7 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 								break;
 						}
 				}
+
 			this->dialog->LFSTK_hideWindow();
 		}
 }

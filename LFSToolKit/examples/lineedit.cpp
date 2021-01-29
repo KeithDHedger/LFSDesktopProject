@@ -14,20 +14,30 @@ rm lineeditexample
 exit $retval
 #endif
 
+#include "../config.h"
 #include "lfstk/LFSTKGlobals.h"
 
-#define BOXLABEL	"Line Edit"
+#define BOXLABEL		"Line Edit"
 
-LFSTK_windowClass	*wc=NULL;
-bool				mainLoop=true;
-Display				*display;
+LFSTK_applicationClass	*apc=NULL;
+LFSTK_windowClass		*wc=NULL;
 
 bool doQuit(void *p,void* ud)
 {
-	mainLoop=false;
-	XFlush(wc->display);
-	XSync(wc->display,true);
+	apc->exitValue=0;
+	apc->mainLoop=false;
 	return(false);
+}
+
+bool doDropped(void *p,void* ud)
+{
+	LFSTK_gadgetClass	*gadg=NULL;
+	propertyStruct		*data=NULL;
+
+	gadg=static_cast<LFSTK_gadgetClass*>(p);
+	data=static_cast<propertyStruct*>(ud);
+	printf("dropped %s on gadget %p @x/y %i %i\n",data->data,gadg,data->dropX,data->dropY);
+	return(true);
 }
 
 bool doKeyUp(void *p,void* ud)
@@ -49,21 +59,26 @@ bool doMouseUp(void *p,void* ud)
 {
 	LFSTK_lineEditClass	*gadg=NULL;
 	gadg=static_cast<LFSTK_lineEditClass*>(p);
-
 	printf("button=%X state=%X\n",gadg->mouseEvent->button,gadg->mouseEvent->state & ControlMask);
 	return(true);
 }
-
-int main(int argc, char **argv)
+bool windowDrop(LFSTK_windowClass *lwc,void* ud)
 {
-	XEvent	event;
-	int		sy=BORDER;
-	std::vector<hitRect>	hrs;
+	if(lwc!=NULL)
+		printf("dropped %s on window @x/y %i %i\n",lwc->droppedData.data,lwc->droppedData.x,lwc->droppedData.y);
+	return(true);
+}
+
+
+int main(int argc, char **argv)//TODO//
+{
+	int							sy=BORDER;
+	std::vector<hitRect>		hrs;
 	LFSTK_ExpanderGadgetClass	*multi=NULL;
 
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,BOXLABEL,false);
-
-	display=wc->display;
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,BOXLABEL);
+	wc=apc->mainWindow;
 
 	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*3);
 	multi->gadgetStretch=SPACESPREADY;
@@ -87,10 +102,13 @@ int main(int argc, char **argv)
 	hrs.push_back({0,0,DIALOGWIDTH,GADGETHITE,new LFSTK_lineEditClass(wc,"Basic line editing class for LFSToolKit.",0,0,1,1)});
 	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,doMouseUp,NULL);
 	hrs.back().gadget->LFSTK_setKeyCallBack(NULL,doKeyUp,USERDATA(12345));
+	hrs.back().gadget->LFSTK_setGadgetDropCallBack(doDropped);
+	//printf(">>>>hrs.back().gadget=%p\n",hrs.back().gadget);
 	static_cast<LFSTK_lineEditClass*>(hrs.back().gadget)->LFSTK_setCallbackOnReturn(false);
 
 	multi->LFSTK_setHitRects(hrs);
 	hrs.clear();
+//	multi->LFSTK_setGadgetDropCallBack(doDropped,USERDATA(0xdeadbeef));
 
 	sy+=YSPACING;
 
@@ -121,27 +139,15 @@ int main(int argc, char **argv)
 	hrs.clear();
 
 	sy+=YSPACING+16;
+	wc->LFSTK_setWindowDropCallBack(windowDrop,(void*)0xdeadbeef);
 
-	wc->acceptOnThis=false;
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
-	mainLoop=true;
-	while(mainLoop==true)
-		{
-			XNextEvent(wc->display,&event);
-			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
+	int retval=apc->LFSTK_runApp();
 
-			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
-
-			if(wc->LFSTK_handleWindowEvents(&event)<0)
-				mainLoop=false;
-		}
-
-	delete wc;
-	XCloseDisplay(display);
+	delete apc;
 	cairo_debug_reset_static_data();
-	return 0;
+	return(retval);
 }

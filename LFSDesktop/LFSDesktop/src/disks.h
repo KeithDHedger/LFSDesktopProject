@@ -23,11 +23,9 @@
 
 #include "globals.h"
 
-enum {HOMEPB=0,DESKTOPPB,COMPUTERPB,BOOKMARKPB,USBDISKPB,HDDRIVEPB,ROMPB,DVDROMPB,CDROMPB,NETWORKDIVE,NUMPBS};
+extern struct udev	*udev;
 
-void loadDisks(void);
-void updateDisks(void);
-bool doDiskMenuSelect(void *p,void* ud);
-void setDiskType(diskDataStruct *dnode);
+void makeDiskButtons(void);
+void updateMounted(void);
 
 #endif

@@ -44,29 +44,13 @@ struct option long_options[] =
 	{0, 0, 0, 0}
 };
 
+const char			*deskItemLabelData[]={"Open","Execute","Custom Icon","Remove Icon",NULL};
 const char			*diskLabelData[]={"Mount","Unmount","Eject","Open","Custom Icon","Remove Icon",NULL};
 const char			*diskThemeIconData[]={"drive-harddisk","media-eject","media-eject","document-open","list-add","list-remove"};
-
-LFSTK_labelClass	*label;
-
-bool				needsRefresh=true;
-pollfd				polldisks;
-int					fhfordisks;
-pollfd				polldesktop;
-int					fhfordesktop;
 
 //msg coms
 int					queueID;
 msgBuffer			buffer;
-bool				reloadPixmap=false;
-bool				reloadPrefsFlag=false;
-bool				reloadDeskFlag=false;
-
-int fileExists(const char *name)
-{
-	struct stat buffer;
-	return (stat(name,&buffer));
-}
 
 void readMsg(void)
 {
@@ -79,48 +63,53 @@ void readMsg(void)
 
 	if(retcode>0)
 		{
+			//printf("buffer.mText=%s\n",buffer.mText);
 			if(strcmp(buffer.mText,"reloadbg")==0)
-				reloadPixmap=true;
-			if(strcmp(buffer.mText,"reloadprefs")==0)
-				reloadPrefsFlag=true;
-			if(strcmp(buffer.mText,"reloaddesk")==0)
 				{
-					mainLoop=false;
-					reloadDeskFlag=true;
+					wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),apc->displayWidth,apc->displayHeight,true);
+					wc->LFSTK_clearWindow(true);
 				}
-			if(strcmp(buffer.mText,"cleandesktoprcs")==0)
+
+			if(strcmp(buffer.mText,"reloadprefs")==0)
+				reloadPrefs();
+
+			if(strcmp(buffer.mText,"cleandesktopcache")==0)
 				{
-					asprintf(&command,"find %s -maxdepth 1 -mindepth 1 |sort",cacheDeskPath);
+					asprintf(&command,"find %s -maxdepth 1 -mindepth 1 |sort",cachePath);
 					fd=popen(command,"r");
 					free(command);
 					if(fd!=NULL)
 						{
 							while(feof(fd)==0)
 								{
+									bool flag=false;
 									buff[0]=0;
 									fgets(buff,2048,fd);
 									if(strlen(buff)>0)
 										{
 											buff[strlen(buff)-1]=0;
-											*strrchr(buff,'.')=0;
-											asprintf(&command,"%s/%s",desktopPath,basename(buff));
-											if(fileExists(command)!=0)
+											for(unsigned j=0;j<desktopItems.size();j++)
 												{
-													free(command);
-													asprintf(&command,"%s.rc",buff);
-													unlink(command);
-													free(command);
+													if(strcmp(desktopItems.at(j).uuid,basename(buff))==0)
+														{
+															flag=true;
+															break;
+														}
 												}
+											if(flag==false)
+												unlink(buff);
+											else
+												continue;
 										}
 								}
 							pclose(fd);
 						}
-					}
+				}
 		}
 	buffer.mText[0]=0;
 }
 
-void printhelp(void)
+void printhelp(void)//TODO//
 {
 	printf("Usage: lfsdesktop [OPTION]\n"
 			"A CLI application\n"
@@ -131,154 +120,58 @@ void printhelp(void)
 	      );
 }
 
-void doRefresh(void)
+bool doQuit(void *p,void* ud)
 {
-	long				numRead=0;
-	int					ret;
-	char				buffer[EVENT_BUF_LEN]={0,};
-
-//refresh disks
-	updateDisks();
-	ret=poll(&polldisks,POLLIN,20);		
-	if(ret>0)
-		{
-			fprintf(stderr,"disks ret=%i\n",ret);
-			numRead=read(fhfordisks,buffer,MAXBUFFER);
-			if(numRead>0)
-				{
-					loadDisks();
-					wc->LFSTK_showWindow();
-				}
-		}
-
-//refresh desktop folder
-	ret=poll(&polldesktop,POLLIN,20);		
-	if(ret>0)
-		{
-			fprintf(stderr,"desktopr et=%i\n",ret);
-			numRead=read(fhfordesktop,buffer,EVENT_BUF_LEN);
-			if(numRead>0)
-				{
-					int cnt=0;
-					while(cnt<numRead)
-						{
-							inotify_event *notifyevent=(inotify_event*)&buffer[cnt];
-							if(notifyevent->len>0)
-								{
-									if(notifyevent->mask & IN_CREATE)
-										addDeskItem(notifyevent->name);
-									if(notifyevent->mask & IN_DELETE)
-										deleteDeskItem(notifyevent->name);
-									if(notifyevent->mask & IN_MOVED_FROM)
-										deleteDeskItem(notifyevent->name);
-										
-									if(notifyevent->mask & IN_MOVED_TO)
-										addDeskItem(notifyevent->name);
-								}
-							cnt+=sizeof(inotify_event)+notifyevent->len;
-						}
-					wc->LFSTK_showWindow();
-				}
-		}
-	needsRefresh=false;
-}
-
-void  alarmCallBack(int sig)
-{
-	XExposeEvent	event;
-	if(isDragging==false)
-		{
-			needsRefresh=true;
-			event.type=Expose;
-			event.window=wc->window;
-			readMsg();
-			XSendEvent(wc->display,wc->window,true,ExposureMask,(XEvent*)&event);
-			XFlush(wc->display);
-			//XSync(wc->display,true);
-		}
-	alarm(refreshRate);
-}
-
-void createDirDesktops(void)
-{
-	const char	*homedesk="[Desktop Entry]\nName=Home\nExec=xdg-open ~\nIcon=user-home";
-	const char	*compdesk="[Desktop Entry]\nName=Computer\nExec=xdg-open /\nIcon=computer";
-	char		*filepath;
-	FILE		*f;
-
-	filepath=(char*)alloca(strlen(desktopPath) + strlen(".computer.desktop") + 1);
-
-	sprintf(filepath,"%s/.home.desktop",desktopPath);
-	f=fopen(filepath,"w");
-	if(f != NULL)
-		{
-			fprintf(f,"%s",homedesk);
-			fclose(f);
-		}
-
-	sprintf(filepath,"%s/.computer.desktop",desktopPath);
-	f=fopen(filepath,"w");
-	if(f != NULL)
-		{
-			fprintf(f,"%s",compdesk);
-			fclose(f);
-		}
+	apc->exitValue=0;
+	apc->mainLoop=false;
+	return(false);
 }
 
 int main(int argc, char **argv)
 {
-	int					c;
-	XEvent				event;
 	char				*command;
+	int					sy=0;
 	char				*iconpath=NULL;
-	int					sy;
-	LFSTK_buttonClass	*bc;
+	LFSTK_buttonClass	*button;
 	int					key=666;
 
-BACKUP:
-	windowInitStruct *wi=new windowInitStruct;
-	wi->windowType="_NET_WM_WINDOW_TYPE_DESKTOP";
-	wi->overRide=true;
-	wi->level=BELOWALL;
-	wc=new LFSTK_windowClass(wi);
+	apc=new LFSTK_applicationClass();
 
-	command=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",wc->configDir);
+	command=apc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir);
 	key=atoi(command);
 	freeAndNull(&command);
 
 	if((queueID=msgget(key,IPC_CREAT|0660))==-1)
 		fprintf(stderr,"Can't create message queue\n");
 
-	display=wc->display;
-	wc->LFSTK_moveWindow(0,0,true);
+	udev=udev_new();
+	windowInitStruct *wi=new windowInitStruct;
+	wi->windowType="_NET_WM_DESKTOP";
+	wi->overRide=true;
+	wi->level=BELOWALL;
+	wi->decorated=false;
 
-	wc->LFSTK_setWindowPixmap(wc->globalLib->LFSTK_getWindowPixmap(display,wc->rootWindow),DisplayWidth(display,wc->screen),DisplayHeight(display,wc->screen));
+	apc->LFSTK_addWindow(wi,"Desktop");
+	wc=apc->mainWindow;
+	wc->passEventToRoot=true;
 
-	wc->LFSTK_resizeWindow(DisplayWidth(display,wc->screen),DisplayHeight(display,wc->screen),true);
-	wc->LFSTK_initDnD();
-	wc->acceptOnThis=true;
+//TODO//debug to go
+//			button=new LFSTK_buttonClass(wc,"quit",0,0,GADGETWIDTH,GADGETHITE);//TODO//
+//			button->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 
-	asprintf(&diskInfoPath,"%s/.config/LFS/disks2",getenv("HOME"));
-	asprintf(&command,"mkdir -p %s 2>&1 >/dev/null",diskInfoPath);
-	system(command);
-	free(command);
+	wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),apc->displayWidth,apc->displayHeight);
 
-	asprintf(&cacheDisksPath,"%s/.config/LFS/cache/disks",getenv("HOME"));
-	asprintf(&command,"mkdir -p %s 2>&1 >/dev/null",cacheDisksPath);
-	system(command);
-	free(command);
-
-	asprintf(&cacheDeskPath,"%s/.config/LFS/cache/desktop",getenv("HOME"));
-	asprintf(&command,"mkdir -p %s 2>&1 >/dev/null",cacheDeskPath);
+	asprintf(&cachePath,"%s/.config/LFS/lfsdesktop/cache",getenv("HOME"));
+	asprintf(&command,"mkdir -p %s 2>&1 >/dev/null",cachePath);
 	system(command);
 	free(command);
 
 	asprintf(&desktopPath,"%s/Desktop",getenv("HOME"));
-//create home/computer desktop files.
-	createDirDesktops();
+	mkdir(desktopPath,0755);
+	asprintf(&documentsPath,"%s/Documents",getenv("HOME"));
+	mkdir(documentsPath,0755);
 
 	asprintf(&prefsPath,"%s/.config/LFS/lfsdesktop.rc",getenv("HOME"));
-//##
 	asprintf(&iconTheme,"gnome");
 	iconSize=32;
 	gridSize=64;
@@ -295,347 +188,102 @@ BACKUP:
 	excludeList=NULL;
 
 	loadVarsFromFile(prefsPath,desktopPrefs);
-
-//TODO//
-//	bool				dotidy=false;
-
-
-	while(1)
-		{
-			int option_index=0;
-			c = getopt_long (argc, argv, "stdcv?h:f:a:x:4:b:A:",long_options, &option_index);
-			if (c == -1)
-				break;
-
-			switch (c)
-				{
-					case 's':
-						showSuffix=true;
-						break;
-
-				case 'f':
-					if(fontFace!=NULL)
-						free(fontFace);
-					fontFace=strdup(optarg);
-					break;
-
-//TODO//
-//				case 't':
-//					dotidy=true;
-//					break;
-//
-//				case 'd':
-//					debugDeskFlag=true;
-//					break;
-//
-//				case 'c':
-//					asprintf(&command,"rm %s/*",diskInfoPath);
-//					system(command);
-//					free(command);
-//					asprintf(&command,"rm %s/*",cachePath);
-//					system(command);
-//					free(command);
-//					break;
-
-				case 'a':
-					if(iconTheme!=NULL)
-						free(iconTheme);
-					iconTheme=strdup(optarg);
-					break;
-
-				case 'x':
-					if(terminalCommand!=NULL)
-						free(terminalCommand);
-					terminalCommand=strdup(optarg);
-					break;
-
-				case '4':
-					if(foreCol!=NULL)
-						free(foreCol);
-					foreCol=strdup(optarg);
-					break;
-
-				case 'b':
-					if(backCol!=NULL)
-						free(backCol);
-					backCol=strdup(optarg);
-					break;
-
-				case 'A':
-					if(backAlpha!=NULL)
-						free(backAlpha);
-					backAlpha=strdup(optarg);
-					break;
-
-//				case 'i':
-//					if(ignores!=NULL)
-//						free(ignores);
-//					ignores=strdup(optarg);
-//					break;
-
-//				case 'l':
-//					printf("Arg=%s\n",optarg);
-//					break;
-
-				case 'v':
-					printf("lfsdesktop %s\n",VERSION);
-					return 0;
-					break;
-
-				case '?':
-				case 'h':
-					printhelp();
-					return 0;
-					break;
-
-				default:
-					fprintf(stderr,"?? Unknown argument ??\n");
-					return UNKNOWNARG;
-					break;
-				}
-		}
-
-	if (optind < argc)
-		{
-			printf("non-option ARGV-elements: ");
-			while (optind < argc)
-				printf("%s ",argv[optind++]);
-			printf("\n");
-		}
+	apc->LFSTK_setTimer(refreshRate);
+	apc->LFSTK_setTimerCallBack(timerCB,NULL);
 
 	if(gridSize<1)
 		gridSize=1;
 
-	nextXPos=gridBorderLeft;
-	nextYPos=gridBorderLeft;
+	windowInitStruct	*win;
 
-	maxXSlots=DisplayWidth(display,wc->screen)/gridSize;
-	maxYSlots=DisplayHeight(display,wc->screen)/gridSize;
+	win=new windowInitStruct;
+	win->app=apc;
+	win->name="";
+	win->loadVars=true;
+	win->wc=wc;
+	win->windowType="_NET_WM_WINDOW_TYPE_MENU";
+	win->decorated=false;
+	win->overRide=true;
+	win->level=ABOVEALL;
 
-//disks
 	sy=0;
-	diskWindow=new LFSTK_windowClass(100,100,200,200,"xxx",true,true);
+	apc->LFSTK_addWindow(win,NULL);
+	fileWindow=apc->windows->back().window;
+	for(int j=DESKITEMOPEN;j<NOMOREDESKITEMBUTONS;j++)
+		{
+			button=new LFSTK_buttonClass(fileWindow,deskItemLabelData[j],0,sy,GADGETWIDTH*2,24);//TODO//
+			button->LFSTK_setMouseCallBack(NULL,doDeskItemMenuSelect,(void*)(long)(j));
+			iconpath=apc->globalLib->LFSTK_findThemedIcon(iconTheme,diskThemeIconData[j],"");
+			button->LFSTK_setImageFromPath(iconpath,LEFT,true);
+			freeAndNull(&iconpath);
+			sy+=GADGETHITE;
+		}
+	fileWindow->LFSTK_resizeWindow(GADGETWIDTH+16,sy,true);
+
+	win=new windowInitStruct;
+	win->app=apc;
+	win->name="";
+	win->loadVars=true;
+	win->wc=wc;
+	win->windowType="_NET_WM_WINDOW_TYPE_MENU";
+	win->decorated=false;
+	win->overRide=true;
+	win->level=ABOVEALL;
+
+	sy=0;
+	apc->LFSTK_addWindow(win,NULL);
+	diskWindow=apc->windows->back().window;
 	for(int j=MOUNTDISK;j<NOMOREBUTONS;j++)
 		{
-			diskButtons[j]=new LFSTK_buttonClass(diskWindow,diskLabelData[j],0,sy,GADGETWIDTH,24,NorthWestGravity);
-			diskButtons[j]->LFSTK_setMouseCallBack(NULL,doDiskMenuSelect,(void*)(long)(j));
-			iconpath=diskWindow->globalLib->LFSTK_findThemedIcon(iconTheme,diskThemeIconData[j],"");
-			diskButtons[j]->LFSTK_setImageFromPath(iconpath,LEFT,true);
+			button=new LFSTK_buttonClass(diskWindow,diskLabelData[j],0,sy,GADGETWIDTH+24,24);//TODO//
+			button->LFSTK_setMouseCallBack(NULL,doDiskMenuSelect,(void*)(long)(j));
+			iconpath=apc->globalLib->LFSTK_findThemedIcon(iconTheme,diskThemeIconData[j],"");
+			button->LFSTK_setImageFromPath(iconpath,LEFT,true);
 			sy+=GADGETHITE;
+			freeAndNull(&iconpath);
 		}
-	diskWindow->LFSTK_resizeWindow(GADGETWIDTH,sy,true);
-	diskWindow->LFSTK_showWindow(true);
-	diskWindow->LFSTK_hideWindow();
+	diskWindow->LFSTK_resizeWindow(GADGETWIDTH+16,sy,true);
 
-//files
-	sy=0;
-	fileWindow=new LFSTK_windowClass(100,100,200,200,"xxx",true,true);
-	for(int j=OPENDISK;j<NOMOREBUTONS;j++)
+	makeDiskButtons();
+	makeFileButtons(false);
+	updateMounted();
+	diskWatch=apc->globalLib->LFSTK_oneLiner("%s","ls -1 /dev/disk/by-partuuid|md5sum|awk '{print $1}'");
+	desktopWatch=apc->globalLib->LFSTK_oneLiner("ls -1 '%s'|md5sum|awk '{print $1}'",desktopPath);
+	wc->LFSTK_initDnD(true);
+	wc->LFSTK_setWindowDropCallBack(windowDrop,(void*)0xdeadbeef);
+	wc->LFSTK_showWindow(true);
+	wc->LFSTK_resizeWindow(apc->displayWidth,apc->displayHeight,true);
+
+	int retval=apc->LFSTK_runApp();
+
+	free(documentsPath);
+	free(homePath);
+	free(diskWatch);
+	free(desktopWatch);
+	free(cachePath);
+	free(prefsPath);
+	free(desktopPath);
+	udev_unref(udev);
+	for(unsigned j=0;j<desktopItems.size();j++)
 		{
-			fileButtons[j]=new LFSTK_buttonClass(fileWindow,diskLabelData[j],0,sy,GADGETWIDTH,24,NorthWestGravity);
-			fileButtons[j]->LFSTK_setMouseCallBack(NULL,doDeskItemMenuSelect,(void*)(long)(j));
-			iconpath=diskWindow->globalLib->LFSTK_findThemedIcon(iconTheme,diskThemeIconData[j],"");
-			fileButtons[j]->LFSTK_setImageFromPath(iconpath,LEFT,true);
-			sy+=GADGETHITE;
+			if(desktopItems.at(j).uuid!=NULL)
+				free(desktopItems.at(j).uuid);
+			if(desktopItems.at(j).itemPath!=NULL)
+				free(desktopItems.at(j).itemPath);
+			if(desktopItems.at(j).label!=NULL)
+				free(desktopItems.at(j).label);
+			if(desktopItems.at(j).iconPath!=NULL)
+				free(desktopItems.at(j).iconPath);
 		}
-	fileWindow->LFSTK_resizeWindow(GADGETWIDTH,sy,true);
-	fileWindow->LFSTK_showWindow(true);
-	fileWindow->LFSTK_hideWindow();
+	desktopItems.clear();
 
-//icon chooser
-	sy=0;
-	iconChooser=new LFSTK_windowClass(0,0,DIALOGWIDTH,200,"Icon Chooser",false);
+	free(iconTheme);
+	free(terminalCommand);
+	free(fontFace);
+	free(backCol);
+	free(foreCol);
+	free(backAlpha);
 
-	label=new LFSTK_labelClass(iconChooser,"Enter Path To Icon",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE,NorthWestGravity);
-	sy+=GADGETHITE;
-	iconChooserEdit=new LFSTK_lineEditClass(iconChooser,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE,NorthWestGravity);
-	sy+=GADGETHITE;
-
-	bc=new LFSTK_buttonClass(iconChooser,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
-	bc->LFSTK_setStyle(BEVELNONE);
-	bc->gadgetDetails.buttonTile=false;
-	bc->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
-	sy+=GADGETHITE;
-
-	bc=new LFSTK_buttonClass(iconChooser,"Apply",BORDER,sy,GADGETWIDTH,GADGETHITE,NorthWestGravity);
-	bc->LFSTK_setMouseCallBack(NULL,dialogCB,(void*)DIALOGRETAPPLY);
-	bc=new LFSTK_buttonClass(iconChooser,"Cancel",DIALOGWIDTH-BORDER-GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,NorthWestGravity);
-	bc->LFSTK_setMouseCallBack(NULL,dialogCB,(void*)DIALOGRETCANCEL);
-	sy+=GADGETHITE;
-	sy+=HALFYSPACING;
-	iconChooser->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
-	iconChooser->LFSTK_hideWindow();
-
-	loadDisks();
-	loadDesktopItems();
-	signal(SIGALRM,alarmCallBack);
-
-	wc->LFSTK_showWindow();
-	wc->LFSTK_clearWindow();
-
-//disk insert/remove
-	fhfordisks=inotify_init();
-	polldisks.fd=fhfordisks;
-	polldisks.events=POLLIN;
-	polldisks.revents=0;
-	inotify_add_watch(fhfordisks,"/dev/disk/by-uuid",IN_CREATE|IN_DELETE|IN_MODIFY);
-
-//watch desktop folder
-	fhfordesktop=inotify_init();
-	polldesktop.fd=fhfordesktop;
-	polldesktop.events=POLLIN;
-	polldesktop.revents=0;
-	inotify_add_watch(fhfordesktop,desktopPath,IN_CREATE|IN_DELETE|IN_MOVED_FROM|IN_MOVED_TO);
-
-	alarm(refreshRate);
-
-	mainLoop=true;
-	while(mainLoop==true)
-		{
-			if(needsRefresh==true)
-				doRefresh();
-
-			XNextEvent(wc->display,&event);
-			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
-			if(ml!=NULL)
-				{
-					ml->function(ml->gadget,&event,ml->type);
-					if(event.type==ButtonPress)
-						{
-							if(event.xbutton.button==Button1)
-								{
-									oldPos.x=static_cast<diskDataStruct*>(ml->gadget->userData)->posx;
-									oldPos.y=static_cast<diskDataStruct*>(ml->gadget->userData)->posy;
-								}
-						}
-				}
-
-			switch(event.type)
-				{
-					case MotionNotify:
-						isDragging=true;
-						//printf("released at xy= %i %i\n",event.xmotion.x,event.xmotion.y);
-						if(ml!=NULL)
-							ml->gadget->LFSTK_clearWindow();
-						break;
-					case ButtonRelease:
-						isDragging=false;
-					case ButtonPress:
-						if(ml==NULL)
-							{
-								event.xany.window=wc->rootWindow;
-								XSendEvent(wc->display,wc->rootWindow,true,ButtonPressMask|ButtonReleaseMask,&event);
-							}
-						break;
-					case Expose:
-						if(reloadPrefsFlag==true)
-							{
-								reloadPrefs();
-								reloadPrefsFlag=false;
-							}
-
-						if(reloadPixmap==true)
-							{
-								wc->LFSTK_setWindowPixmap(wc->globalLib->LFSTK_getWindowPixmap(display,wc->rootWindow),DisplayWidth(display,wc->screen),DisplayHeight(display,wc->screen));
-								reloadPixmap=false;
-
-								diskLinkedList		*dll=diskLL;
-								while(dll!=NULL)
-									{
-										dll->data->diskImage->LFSTK_setUseWindowPixmap(true);
-										XClearWindow(wc->display,diskLL->data->diskImage->window);
-										dll->data->diskImage->LFSTK_clearWindow();
-										dll=dll->next;
-									}
-							}
-						wc->LFSTK_clearWindow();
-						break;
-
-					case ConfigureNotify:
-						if(event.xresizerequest.send_event==false)
-							{
-								wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
-								wc->LFSTK_setWindowPixmap(wc->globalLib->LFSTK_getWindowPixmap(display,wc->rootWindow),event.xconfigurerequest.width,event.xconfigurerequest.height);
-							}
-						break;
-
-					case ClientMessage:
-					case SelectionNotify:
-							if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
-								{
-									wc->LFSTK_hideWindow();
-									mainLoop=false;
-								}
-
-							if(wc->acceptDnd==true)
-								{
-									wc->LFSTK_handleDnD(&event);
-									if((wc->droppedData.type!=DROPINVALID) && (wc->acceptOnThis==true))
-										{
-											printf("dropped %s on window @x/y %i %i\n",wc->droppedData.data,wc->droppedData.x,wc->droppedData.y);
-											if(wc->droppedData.type==DROPURI)
-												{
-													asprintf(&command,"cp '%s' ~/Desktop",wc->droppedData.data);
-													system(command);
-													freeAndNull(&command);
-												}
-											if(wc->droppedData.type==DROPTEXT)
-												{
-													char	name[16]={0,};
-													char	*pathname;
-													FILE	*fd;
-													snprintf(name,16,"%s",wc->droppedData.data);
-													for(int j=0;j<14;j++)
-														if(isalnum(name[j])==false)
-															name[j]='_';
-													asprintf(&pathname,"%s/Desktop/%s.clip",getenv("HOME"),name);
-													fd=fopen(pathname,"w");
-													if(fd!=NULL)
-														{
-															fprintf(fd,"%s",wc->droppedData.data);
-															fclose(fd);
-														}
-													freeAndNull(&pathname);
-												}
-											wc->droppedData.type=DROPINVALID;
-										}
-								}
-						break;
-					}
-		}
-
-	delete wc;
-	XCloseDisplay(display);
-	freePrefs();
-	wc=NULL;
-
-	diskLinkedList	*list=NULL;
-	diskLinkedList	*holdlist=NULL;
-	while(list!=NULL)
-		{
-			if(list->data!=NULL)
-				{
-					freeAndNull(&list->data->label);
-					freeAndNull(&list->data->devName);
-					freeAndNull(&list->data->uuid);
-					freeAndNull(&list->data->pathToIcon);
-					free(list->data);
-				}
-			holdlist=list;
-			list=list->next;
-			free(holdlist);
-		}
-	diskLL=NULL;
-
-	if(reloadDeskFlag==true)
-		{
-			mainLoop=false;
-			reloadPixmap=false;
-			reloadPrefsFlag=false;
-			reloadDeskFlag=false;
-			needsRefresh=true;
-			isDragging=false;
-			goto BACKUP;
-		}
-	return 0;
+	delete apc;
+	return(retval);
 }

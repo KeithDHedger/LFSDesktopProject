@@ -234,7 +234,7 @@ bool LFSTK_fontDialogClass::LFSTK_showDialog(const char* fontstring)
 
 	while(this->mainLoop==true)
 		{
-			XNextEvent(this->dialog->display,&event);
+			XNextEvent(this->dialog->app->display,&event);
 			mappedListener *ml=this->dialog->LFSTK_getMappedListener(event.xany.window);
 			if(ml!=NULL)
 				ml->function(ml->gadget,&event,ml->type);
@@ -267,6 +267,7 @@ bool LFSTK_fontDialogClass::LFSTK_showDialog(const char* fontstring)
 				}
 		}
 	this->dialog->LFSTK_hideWindow();
+
 	return(true);
 }
 
@@ -276,8 +277,16 @@ void LFSTK_fontDialogClass::buildDialog(void)
 	char			*sizestr[4]={0,};
 	listLabelStruct	ls;
 
-	dialog=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Font Selector",false);
-	dialog->closeDisplayOnExit=true;
+	windowInitStruct	*win;
+	win=new windowInitStruct;
+	win->app=this->wc->app;
+	win->loadVars=true;
+	win->w=DIALOGWIDTH;
+	win->h=DIALOGHITE;
+	win->wc=this->wc;
+	win->name="Font Selector";
+	this->dialog=new LFSTK_windowClass(win,this->wc->app);
+	delete win;
 
 	this->dialog->autoLabelColour=false;
 	this->dialog->LFSTK_reloadGlobals();	
@@ -343,7 +352,7 @@ void LFSTK_fontDialogClass::buildDialog(void)
 	sh.base_width=DIALOGWIDTH;
 	sh.base_width=sy;
 
-	XSetWMNormalHints(this->wc->display,dialog->window,&sh);
+	XSetWMNormalHints(this->wc->app->display,dialog->window,&sh);
 }
 
 /**
@@ -365,11 +374,11 @@ LFSTK_fontDialogClass::LFSTK_fontDialogClass(LFSTK_windowClass* parentwc,const c
 
 	wa.win_gravity=gravity;
 	wa.save_under=true;
-	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
-	this->gc=XCreateGC(this->display,this->window,0,NULL);
-	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+	this->window=XCreateWindow(this->wc->app->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
+	this->gc=XCreateGC(this->wc->app->display,this->window,0,NULL);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->window,this->wc->app->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_setCairoFontData();
-	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
+	XSelectInput(this->wc->app->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;

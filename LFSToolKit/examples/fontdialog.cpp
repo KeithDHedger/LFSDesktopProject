@@ -14,32 +14,30 @@ rm fontdialogexample
 exit $retval
 #endif
 
+#include "../config.h"
 #include "lfstk/LFSTKGlobals.h"
 
+LFSTK_applicationClass		*apc=NULL;
 LFSTK_windowClass			*wc=NULL;
 LFSTK_fontDialogClass		*fontdialog=NULL;
-Display						*display;
 
 int main(int argc, char **argv)
 {
 	const fontDataStruct	*fd;
 	const char				*bools[]={"false","true"};
 	
-	wc=new LFSTK_windowClass(0,0,1,1,"Gadgets",false);
-	display=wc->display;
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,NULL);
+	wc=apc->mainWindow;
 
 	fontdialog=new LFSTK_fontDialogClass(wc,"Select Font",0,0,1,1,BUTTONGRAV);
-
-	wc->LFSTK_setWindowType("_NET_WM_WINDOW_TYPE_DOCK");
-	wc->LFSTK_showWindow();
 
 	fontdialog->LFSTK_showDialog("Helvetica:size=18:bold:italic");
 	fd=fontdialog->LFSTK_getFontData(false);
 	if(fd->isValid==true)
 		printf("Font String:%s\nFont:%s\nSize:%i\nBold:%s\nItalic:%s\n",fd->fontString,fd->fontName,fd->fontSize,bools[fd->bold],bools[fd->italic]);
 		
-	delete wc;
-	XCloseDisplay(display);
+	delete apc;
 	cairo_debug_reset_static_data();
-	return 0;
+	return(0);
 }

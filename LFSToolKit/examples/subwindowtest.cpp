@@ -14,10 +14,12 @@ rm subwindowexample
 exit $retval
 #endif
 
+#include "../config.h"
 #include "lfstk/LFSTKGlobals.h"
 
 #define BOXLABEL			"Sub Window Test"
 
+LFSTK_applicationClass		*apc=NULL;
 LFSTK_windowClass			*wc=NULL;
 LFSTK_labelClass			*label=NULL;
 LFSTK_labelClass			*personal=NULL;
@@ -26,85 +28,55 @@ LFSTK_buttonClass			*seperator=NULL;
 LFSTK_buttonClass			*quit=NULL;
 LFSTK_buttonClass			*test=NULL;
 
-bool						mainLoop=true;
-Display						*display;
-
 bool doQuit(void *p,void* ud)
 {
-	mainLoop=false;
-	XFlush(wc->display);
-	XSync(wc->display,true);
+	apc->exitValue=0;
+	apc->mainLoop=false;
+	return(false);
+}
+
+bool doSubQuit(void *p,void* ud)
+{
+	long	subwin=(long)ud;
+	apc->windows->at(subwin).loopFlag=false;
 	return(false);
 }
 
 bool buttonCB(void *p,void* ud)
 {
-	if(ud!=NULL)
-		{
-			LFSTK_windowClass		*subwc=NULL;
-			LFSTK_labelClass		*label=NULL;
-			bool					subwcloop=true;
-			XEvent					event;
-			LFSTK_buttonClass		*button=NULL;
+	LFSTK_buttonClass	*button=NULL;
+	long				subwin=(long)ud;
 
-			subwc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"SUB WINDOW",false,true,true);
-			button=new LFSTK_buttonClass(subwc,"Close",200-HALFGADGETWIDTH,200,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-			subwcloop=true;
-			subwc->LFSTK_resizeWindow(400,400,true);
-			subwc->LFSTK_showWindow();
-
-			while(subwcloop==true)
-				{
-					XNextEvent(subwc->display,&event);
-					mappedListener *ml=subwc->LFSTK_getMappedListener(event.xany.window);
-					if(ml!=NULL)
-						{
-							ml->function(ml->gadget,&event,ml->type);
-						}
-
-					switch(event.type)
-						{
-							case ButtonRelease:
-								subwc->LFSTK_hideWindow();
-								subwcloop=false;
-								break;
-							case LeaveNotify:
-								break;
-							case Expose:
-								subwc->LFSTK_clearWindow();
-								break;
-
-							case ConfigureNotify:
-							//printf("---->\n");
-								subwc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
-								subwc->globalLib->LFSTK_setCairoSurface(subwc->display,subwc->window,subwc->visual,&subwc->sfc,&subwc->cr,event.xconfigurerequest.width,event.xconfigurerequest.height);
-								subwc->LFSTK_clearWindow();
-								break;
-
-							case ClientMessage:
-							case SelectionNotify:
-								{
-									if (event.xclient.message_type == XInternAtom(subwc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(subwc->display, "WM_DELETE_WINDOW", 1))
-										{
-											subwc->LFSTK_hideWindow();
-											subwcloop=false;
-										}
-								}
-								break;
-						}
-				}
-			delete subwc;
-		}
+	apc->LFSTK_runWindowLoop(subwin);
 	return(true);
+}
+
+int cnt=1;
+bool timerCB(LFSTK_applicationClass *p,void* ud)
+{
+	printf("From window %s\n",ud);
+	printf("Timer callback number %i of 10\n",cnt);
+	cnt++;
+	if(cnt<11)
+		return(true);
+	else
+		return(false);
 }
 
 int main(int argc, char **argv)
 {
-	XEvent	event;
-	int		sy=BORDER;
-		
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Sub Window Example",false);
-	display=wc->display;
+	int					sy=BORDER;
+	LFSTK_buttonClass	*button=NULL;
+	
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,BOXLABEL);
+	wc=apc->mainWindow;
+	wc->userData=USERDATA("Main Window");
+	apc->LFSTK_addWindow(NULL,"SUB WINDOW");
+	apc->windows->back().window->LFSTK_resizeWindow(400,400,true);
+	apc->windows->back().window->userData=USERDATA("Sub Window");
+	button=new LFSTK_buttonClass(apc->windows->back().window,"Close",200-HALFGADGETWIDTH,200,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	button->LFSTK_setMouseCallBack(NULL,doSubQuit,(void*)apc->windows->size()-1);
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	label->LFSTK_setCairoFontDataParts("sB",20);
@@ -125,7 +97,7 @@ int main(int argc, char **argv)
 
 //test
 	test=new LFSTK_buttonClass(wc,"Sub-Window",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	test->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)0xdeadbeef);
+	test->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)apc->windows->size()-1);
 	sy+=YSPACING;
 
 //quit
@@ -137,22 +109,11 @@ int main(int argc, char **argv)
 	wc->LFSTK_showWindow();
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
-	mainLoop=true;
-	while(mainLoop==true)
-		{
-			XNextEvent(wc->display,&event);
-			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
+	apc->LFSTK_setTimer(1);
+	apc->LFSTK_setTimerCallBack(timerCB,NULL);
+	int retval=apc->LFSTK_runApp();
 
-			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
-
-			if(wc->LFSTK_handleWindowEvents(&event)<0)
-				mainLoop=false;
-		}
-
-	delete wc;
-	XCloseDisplay(display);
+	delete apc;
 	cairo_debug_reset_static_data();
-
-	return 0;
+	return retval;
 }

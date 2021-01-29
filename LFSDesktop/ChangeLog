@@ -1,3 +1,10 @@
+0.2.0
+Fixed messaging. 
+Fixed memory leaks.
+Fixed popup labels.
+Major code changes,
+Updated for new lfstk API.
+
 0.1.3
 Fixed double clicking on desktop item.
 Fixed hang on double clicking some desktop items.

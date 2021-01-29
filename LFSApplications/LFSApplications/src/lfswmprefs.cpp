@@ -19,13 +19,15 @@
  */
 
 #include <getopt.h>
+
+#include "config.h"
+#include <lfstk/LFSTKGlobals.h>
 #include <libgen.h>
 
-#include "lfstk/LFSTKGlobals.h"
+#define MAXMENUS		5
+#define EDITBOXWIDTH	GADGETWIDTH*4
 
-#define MAXMENUS			5
-#define EDITBOXWIDTH		GADGETWIDTH*4
-
+LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass		*label=NULL;
 LFSTK_labelClass		*personal=NULL;
@@ -54,8 +56,6 @@ LFSTK_lineEditClass		*rescanEdit=NULL;
 LFSTK_fontDialogClass	*fontSelector=NULL;
 LFSTK_lineEditClass		*fontEdit=NULL;
 
-bool					mainLoop=true;
-Display					*display;
 char					*envFile=NULL;
 int						parentWindow=-1;
 
@@ -99,9 +99,8 @@ args					lfsWMPrefs[]=
 
 bool doQuit(void *p,void* ud)
 {
-	mainLoop=false;
-	XFlush(wc->display);
-	XSync(wc->display,true);
+	apc->exitValue=0;
+	apc->mainLoop=false;
 	return(false);
 }
 
@@ -202,7 +201,11 @@ bool coleditCB(void *p,void* ud)
 	if((ed->mouseEvent->state & Button3Mask)!=0)
 		{
 			char *col=NULL;
-			col=wc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr());
+#ifdef _ENABLEDEBUG_
+			col=apc->globalLib->LFSTK_oneLiner("LD_LIBRARY_PATH=../LFSToolKit/LFSToolKit/app/.libs LFSApplications/app/lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr());
+#else
+			col=apc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr());
+#endif
 			if(strlen(col)>0)
 				ed->LFSTK_setBuffer(col);
 			free(col);
@@ -262,8 +265,9 @@ int main(int argc, char **argv)
 	prefsColours[3]=strdup("white");
 	prefsColours[4]=strdup("white");
 
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"LFS WM Prefs",false);
-	display=wc->display;
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,"LFSTKPrefs");
+	wc=apc->mainWindow;
 
 	buffer=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",wc->configDir);
 	if((queueID=msgget(atoi(buffer),IPC_CREAT|0660))==-1)
@@ -304,7 +308,7 @@ int main(int argc, char **argv)
 			previewButtons[j]->LFSTK_setTile(NULL,0);
 			previewButtons[j]->LFSTK_setColourName(NORMALCOLOUR,prefsColours[j]);
 			previewButtons[j]->LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
-			previewButtons[j]->LFSTK_setIgnores(&previewButtons[j]->mouseCB,false,true);
+			previewButtons[j]->LFSTK_setIgnores(false,true);
 			sx+=GADGETWIDTH+BORDER;
 			previeColourEdit[j]=new LFSTK_lineEditClass(wc,prefsColours[j],sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 			previeColourEdit[j]->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
@@ -395,20 +399,8 @@ int main(int argc, char **argv)
 		wc->LFSTK_setTransientFor(parentWindow);
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
-	mainLoop=true;
-	while(mainLoop==true)
-		{
-			XNextEvent(wc->display,&event);
-			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
+	int retval=apc->LFSTK_runApp();
 
-			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
-
-			if(wc->LFSTK_handleWindowEvents(&event)<0)
-				mainLoop=false;
-		}
-
-	delete wc;
 	delete themeFolder;
 	delete placeMenu;
 	free(envFile);
@@ -417,9 +409,6 @@ int main(int argc, char **argv)
 	free(prefsFont);
 	free(prefsTheme);
 	free(prefsTermCommand);
-
-	XSync(display,true);
-	XCloseDisplay(display);
-	cairo_debug_reset_static_data();
-	return 0;
+	delete apc;
+	return(retval);
 }

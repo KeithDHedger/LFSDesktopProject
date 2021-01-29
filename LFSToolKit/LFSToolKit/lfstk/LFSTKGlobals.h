@@ -40,7 +40,7 @@
 #define DEFAULTFONT			"sans:size=10"
 #define DISCLOSURESIZE		6
 
-#define USERDATA(x)			(void*)(long)x
+#define USERDATA(x)			(void*)(long)(x)
 #define GETUSERDATA(x)		(long)x
 
 #define DIALOGWIDTH			450
@@ -82,13 +82,13 @@ struct geometryStruct
 
 
 #ifdef _ENABLEDEBUG_
-static bool	showFileData=true;
-static void debugFunc(const char *file,const char *func,int line,const char *fmt, ...)
+__attribute__((unused)) static bool	showFileData=true;
+__attribute__((unused)) static void debugFunc(const char *file,const char *func,int line,const char *fmt, ...)
 {
-	va_list	ap;
-	char	*buffer,*subbuffer;
-const char				*bools[]={"false","true"};
-//bools[fd->italic]
+	va_list		ap;
+	char		*buffer,*subbuffer;
+	const char	*bools[]={"false","true"};
+
 	buffer=(char*)alloca(512);
 	subbuffer=(char*)alloca(512);
 
@@ -153,12 +153,12 @@ const char				*bools[]={"false","true"};
 		}
 }
 
-static void simpleDebug(const char *file,const char *func,int line)
+__attribute__((unused)) static void simpleDebug(const char *file,const char *func,int line)
 {
 	printf("\nFile: %s\nFunc: %s\nLine: %i\n",basename(file),func,line);
 }
 
-static void debugKey(const char *file,const char *func,int line,XKeyEvent *e)
+__attribute__((unused)) static void debugKey(const char *file,const char *func,int line,XKeyEvent *e)
 {
 	char		c[255];
 	KeySym		keysym_return;
@@ -182,7 +182,7 @@ static void debugKey(const char *file,const char *func,int line,XKeyEvent *e)
 
 static bool	xLibErrorTK=false;
 static bool	xLibWarningsTK=false;
-static int	xErrHandler(Display *dpy,XErrorEvent *e)
+__attribute__((unused)) static int	xErrHandler(Display *dpy,XErrorEvent *e)
 {
 	char buf[256];
 
@@ -196,7 +196,7 @@ static int	xErrHandler(Display *dpy,XErrorEvent *e)
 	return 0;
 }
 
-static void freeAndNull(char **data)
+__attribute__((unused)) static void freeAndNull(char **data)
 {
 	if((data!=NULL) && (*data!=NULL))
 		{
@@ -212,22 +212,36 @@ struct args
 	void*					data;
 };
 
+class LFSTK_windowClass;
+class LFSTK_gadgetClass;
+class LFSTK_applicationClass;
+#define	NOCB				0x0
+#define	MOUSEPRESSCB		0x1
+#define	MOUSERELEASECB		0x2
+#define	KEYPRESSCB			0x4
+#define	KEYRELEASECB		0x8
+#define	WINDOWDROPCB		0x10
+#define	GADGETDROPCB		0x20
+#define	DOUBLECLICKCB		0x40
+#define	TIMERCB				0x80
+#define ALLCB				0x8F
 struct callbackStruct
 {
-	bool					(*pressCallback)(void *,void*)=NULL;
-	bool					(*releaseCallback)(void *,void*)=NULL;
-	void					*userData=NULL;
+	bool					(*mousePressCallback)(void*,void*)=NULL;
+	bool					(*mouseReleaseCallback)(void*,void*)=NULL;
+	bool					(*keyPressCallback)(void*,void*)=NULL;
+	bool					(*keyReleaseCallback)(void*,void*)=NULL;
+	bool					(*droppedWindowCallback)(LFSTK_windowClass*,void*)=NULL;
+	bool					(*droppedGadgetCallback)(void*,void*)=NULL;
+	bool					(*doubleClickCallback)(void*,void*)=NULL;
+	bool					(*timerCallback)(LFSTK_applicationClass*,void*)=NULL;
+	void					*mouseUserData=NULL;
+	void					*keyUserData=NULL;
 	bool					runTheCallback=true;
 	bool					ignoreOrphanModKeys=true;
+	int						validCallbacks=NOCB;
 };
 
-//struct geometryStruct
-//{
-//	int						x,y;
-//	unsigned				w,h;
-//	unsigned				monitor;
-//};
-//
 struct pointStruct
 {
 	int						x,y;
@@ -279,42 +293,45 @@ struct gadgetStruct
 	bool			hasIndicator=false;
 	bool			useWindowPixmap=false;
 	bool			geomRelativeToMainWindow=false;
+	bool			showLink=false;
+	bool			showBroken=false;
 };
 
-class LFSTK_windowClass;
+class LFSTK_applicationClass;
 struct windowInitStruct
 {
-	int					x=0;
-	int					y=0;
-	int					w=1;
-	int					h=1;
-	const char			*name="";
-	bool				overRide=false;
-	bool				loadVars=true;
-	bool				shutDisplayOnExit=false;
-	const char			*windowType="_NET_WM_WINDOW_TYPE_NORMAL";
-	bool				decorated=true;
-	int					level=NORMAL;
-	Display				*display;
-	LFSTK_windowClass	*wc;
+	int						x=0;
+	int						y=0;
+	int						w=1;
+	int						h=1;
+	const char				*name="";
+	bool					overRide=false;
+	bool					loadVars=true;
+	bool					shutDisplayOnExit=false;
+	const char				*windowType="_NET_WM_WINDOW_TYPE_NORMAL";
+	bool					decorated=true;
+	int						level=NORMAL;
+	Display					*display=NULL;
+	LFSTK_windowClass		*wc=NULL;
+	LFSTK_applicationClass	*app=NULL;
 };
 
 //menus
 class	LFSTK_menuClass;
 struct menuStruct
 {
-	char				*label;
-	int					imageType=0;
-	union				imageData
+	char					*label=NULL;
+	int						imageType=0;
+	union					imageData
 		{
 			char			*imagePath;
 			cairo_surface_t	*surface;
-		}				data={NULL};
+		}					data={NULL};
 
-	bool				hasSubMenu=false;
-	menuStruct			**subMenus=NULL;
-	int					subMenuCnt=0;
-	void				*userData=NULL;
+	bool					hasSubMenu=false;
+	menuStruct				**subMenus=NULL;
+	int						subMenuCnt=0;
+	void					*userData=NULL;
 };
 
 //messaging
@@ -331,6 +348,7 @@ struct msgBuffer
 enum {DESKTOP_MSG=1000,WMANAGER_MSG,PANEL_MSG,WALLPAPER_MSG,TOOLKIT_MSG,APPEARANCE_PREFS_MSG,BACKDROP_PREFS_MSG,DESKTOP_PREFS_MSG,PANEL_PREFS_MSG,TK_PREFS_MSG,WMANAGER_PREFS_MSG};
 
 #include "LFSTKLib.h"
+#include "LFSTKApplication.h"
 #include "LFSTKFindClass.h"
 #include "LFSTKWindow.h"
 #include "LFSTKGadget.h"

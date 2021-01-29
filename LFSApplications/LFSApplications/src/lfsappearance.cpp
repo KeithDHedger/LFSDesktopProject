@@ -18,7 +18,8 @@
  * along with LFSApplications.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "lfstk/LFSTKGlobals.h"
+#include "config.h"
+#include <lfstk/LFSTKGlobals.h>
 
 #undef GADGETWIDTH
 #undef GADGETHITE
@@ -26,43 +27,41 @@
 #undef DIALOGWIDTH
 #undef DIALOGMIDDLE
 
-#define GADGETWIDTH				96
-#define GADGETHITE				24
-#define HALFGADGETWIDTH			GADGETWIDTH/2
-#define LABELWIDTH				(GADGETWIDTH*2)+BORDER
+#define GADGETWIDTH		96
+#define GADGETHITE		24
+#define HALFGADGETWIDTH	GADGETWIDTH/2
+#define LABELWIDTH		(GADGETWIDTH*2)+BORDER
 
-#define DIALOGWIDTH				BORDER*2+GADGETWIDTH+LABELWIDTH
-#define DIALOGMIDDLE			DIALOGWIDTH/2
+#define DIALOGWIDTH		BORDER*2+GADGETWIDTH+LABELWIDTH
+#define DIALOGMIDDLE	DIALOGWIDTH/2
 
-LFSTK_windowClass				*wc=NULL;
-LFSTK_labelClass				*personal=NULL;
-LFSTK_labelClass				*copyrite=NULL;
-LFSTK_buttonClass				*seperator=NULL;
-LFSTK_buttonClass				*quit=NULL;
-LFSTK_buttonClass				*apply=NULL;
-LFSTK_buttonClass				*update=NULL;
+LFSTK_applicationClass	*apc=NULL;
+LFSTK_windowClass		*wc=NULL;
+LFSTK_labelClass		*personal=NULL;
+LFSTK_labelClass		*copyrite=NULL;
+LFSTK_buttonClass		*seperator=NULL;
+LFSTK_buttonClass		*quit=NULL;
+LFSTK_buttonClass		*apply=NULL;
+LFSTK_buttonClass		*update=NULL;
 
-LFSTK_buttonClass				*launchButton=NULL;
-LFSTK_labelClass				*launchLabel=NULL;
+LFSTK_buttonClass		*launchButton=NULL;
+LFSTK_labelClass		*launchLabel=NULL;
 
-LFSTK_menuClass					*setMenu=NULL;
-LFSTK_buttonClass				*loadSet=NULL;
-LFSTK_lineEditClass				*currentSet=NULL;
+LFSTK_menuClass			*setMenu=NULL;
+LFSTK_buttonClass		*loadSet=NULL;
+LFSTK_lineEditClass		*currentSet=NULL;
 
-LFSTK_lineEditClass				*key=NULL;
+LFSTK_lineEditClass		*key=NULL;
 
-bool							mainLoop=true;
-Display							*display;
-int								queueID=-1;
+int						queueID=-1;
 
-menuStruct						**groupNameMenuItems=NULL;
-LFSTK_findClass					*find;
+menuStruct				**groupNameMenuItems=NULL;
+LFSTK_findClass			*find;
 
 bool doQuit(void *p,void* ud)
 {
-	mainLoop=false;
-	XFlush(wc->display);
-	XSync(wc->display,true);
+	apc->exitValue=0;
+	apc->mainLoop=false;
 	return(false);
 }
 
@@ -142,36 +141,41 @@ void setGroup(void)
 bool buttonCB(void *p,void* ud)
 {
 	char	*command;
-	
+#ifdef _ENABLEDEBUG_
+	const char	*libpath="LD_LIBRARY_PATH=../LFSToolKit/LFSToolKit/app/.libs LFSApplications/app/";
+#else
+	const char	*libpath="";
+#endif
+
 	if(ud!=NULL)
 		{
 			if(strcmp((char*)ud,"WALLPAPERPREFS")==0)
 				{
-					asprintf(&command,"lfsbackdropprefs &",wc->window);
+					asprintf(&command,"%slfsbackdropprefs &",libpath,wc->window);
 					system(command);
 					free(command);
 				}
 			if(strcmp((char*)ud,"TOOLKITPREFS")==0)
 				{
-					asprintf(&command,"lfstkprefs &",wc->window);
+					asprintf(&command,"%slfstkprefs &",libpath,wc->window);
 					system(command);
 					free(command);
 				}
 			if(strcmp((char*)ud,"DESKTOPPREFS")==0)
 				{
-					asprintf(&command,"lfsdesktopprefs &",wc->window);
+					asprintf(&command,"%slfsdesktopprefs &",libpath,wc->window);
 					system(command);
 					free(command);
 				}
 			if(strcmp((char*)ud,"WMPREFS")==0)
 				{
-					asprintf(&command,"lfswmprefs &",wc->window);
+					asprintf(&command,"%slfswmprefs &",libpath,wc->window);
 					system(command);
 					free(command);
 				}
 			if(strcmp((char*)ud,"PANELPREFS")==0)
 				{
-					asprintf(&command,"lfspanelprefs &",wc->window);
+					asprintf(&command,"%slfspanelprefs &",libpath,wc->window);
 					system(command);
 					free(command);
 				}
@@ -246,8 +250,9 @@ int main(int argc, char **argv)
 	int			sx=BORDER;
 	char		*buffer=NULL;
 
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"LFS Appearance",false);
-	display=wc->display;
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,"LFSTKPrefs");
+	wc=apc->mainWindow;
 
 	find=new LFSTK_findClass;
 	find->LFSTK_setFindType(FOLDERTYPE);
@@ -341,24 +346,9 @@ int main(int argc, char **argv)
 	if((queueID=msgget(atoi(key->LFSTK_getCStr()),IPC_CREAT|0660))==-1)
 		fprintf(stderr,"Can't create message queue :( ...\n");
 
-	mainLoop=true;
-	while(mainLoop==true)
-		{
-			XNextEvent(wc->display,&event);
-			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
+	int retval=apc->LFSTK_runApp();
 
-			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
-
-			if(wc->LFSTK_handleWindowEvents(&event)<0)
-				mainLoop=false;
-		}
-
-	delete wc;
 	delete setMenu;
-
-	XCloseDisplay(display);
-
-	cairo_debug_reset_static_data();
-	return 0;
+	delete apc;
+	return(retval);
 }

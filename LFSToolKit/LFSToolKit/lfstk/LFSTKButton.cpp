@@ -24,8 +24,8 @@
 
 LFSTK_buttonClass::~LFSTK_buttonClass()
 {
-	if(this->isMapped==true)
-		this->LFSTK_reParentWindow(this->wc->window,0,0);
+//	if(this->isMapped==true)
+//		this->LFSTK_reParentWindow(this->wc->window,0,0);
 }
 
 LFSTK_buttonClass::LFSTK_buttonClass()
@@ -61,13 +61,13 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* lab
 	wa.win_gravity=gravity;
 	wa.save_under=true;
 
-	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWSaveUnder,&wa);
-	this->gc=XCreateGC(this->display,this->window,0,NULL);
+	this->window=XCreateWindow(this->wc->app->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWSaveUnder,&wa);
+	this->gc=XCreateGC(this->wc->app->display,this->window,0,NULL);
 
-	this->wc->globalLib->LFSTK_setCairoSurface(this->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->window,this->wc->app->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_setCairoFontData();
 
-	XSelectInput(this->display,this->window,this->gadgetEventMask);
+	XSelectInput(this->wc->app->display,this->window,this->gadgetEventMask);
 
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;
@@ -94,8 +94,8 @@ bool LFSTK_buttonClass::keyRelease(XKeyEvent *e)
 {
 	bool retval=false;
 
-	if(this->runCallback(KEYRELEASECB)==true)
-		retval=this->keyCB.releaseCallback(this,this->keyCB.userData);
+	if(this->callBacks.validCallbacks & KEYRELEASECB)
+		retval=this->callBacks.keyReleaseCallback(this,this->callBacks.keyUserData);
 
 	if(this->toParent==true)
 		return(false);
@@ -112,8 +112,8 @@ bool LFSTK_buttonClass::keyPress(XKeyEvent *e)
 {
 	bool retval=false;
 
-	if(this->runCallback(KEYPRESSCB)==true)
-		retval=this->keyCB.pressCallback(this,this->keyCB.userData);
+	if(this->callBacks.validCallbacks & KEYPRESSCB)
+		retval=this->callBacks.keyPressCallback(this,this->callBacks.keyUserData);
 
 	if(this->toParent==true)
 		return(false);

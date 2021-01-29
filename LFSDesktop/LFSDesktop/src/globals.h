@@ -31,117 +31,75 @@
 #include <ctype.h>
 #include <unistd.h>
 #include <signal.h>
+#include <vector>
+#include <unistd.h>
+#include <glib.h>
+#include <libudev.h>
 
 #include "config.h"
-
 #include <lfstk/LFSTKGlobals.h>
 
-#define EVENT_BUF_LEN	(sizeof(inotify_event)+NAME_MAX)*2
-
+#include "callbacks.h"
 #include "prefs.h"
+#include "disks.h"
 #include "files.h"
 
-struct	diskDataStruct
-{
-	LFSTK_buttonClass	*diskImage;
-	char				*label;
-	char				*devName;
-	char				*uuid;
-	char				*pathToIcon;
-	int					diskType;
-	int					posx;
-	int					posy;
-	bool				hasCustomIcon;
-	bool				mounted;
-	bool				driveHasMedia;
-	int					dataType;
-	int					gadgetSize;
-	bool				dirty;
-};
-
-#include "disks.h"
-
-
-struct	diskLinkedList
-{
-	diskLinkedList	*prev;
-	diskDataStruct	*data;
-	diskLinkedList	*next;
-};
-
-struct Hints
-{
-	unsigned long   flags;
-	unsigned long   functions;
-	unsigned long   decorations;
-	long            inputMode;
-	unsigned long   status;
-};
-
-enum {TYPENONE=-1,DISKDATATYPE=0,FILEDATATYPE};
-enum {HDDDISK=0,USBHDD,THUMBDISK,CDROM,DVDROM,DESKFOLDER,DESKFILE,DESKTOPFILE};
+enum {ISHDDDISK=1000,ISUSBHDD,ISTHUMBDISK,ISCDROM,ISDVDROM,ISDESKTOPFILE,ISDOCUMENTSFOLDER,ISHOMEFOLDER,ISCOMPUTER,ISGENERIC,ISIMAGEFILE,ISINVALID};
 enum {MOUNTDISK=0,UNMOUNTDISK,EJECTDISK,OPENDISK,CUSTOMICONDISK,REMOVECUSTOMDISK,NOMOREBUTONS};
 enum {DIALOGRETERROR=0,DIALOGRETAPPLY,DIALOGRETCANCEL};
+enum {DESKITEMOPEN,DESKITEMEXECUTE,DESKITEMCUSTOMICON,DESKITEMREMOVECUSTOM,NOMOREDESKITEMBUTONS};
+
+struct	desktopItemStruct
+{
+	char								*uuid=NULL;
+	char								*itemPath=NULL;
+	char								*label=NULL;
+	char								*iconPath=NULL;
+	int									posx=-1;
+	int									posy=-1;
+	bool								hasCustomIcon=false;
+	char								*pathToCustomIcon=NULL;
+	bool								isADisk=false;
+	bool								mounted=false;
+	int									type=ISINVALID;
+	bool								isSymLink=false;
+	LFSTK_buttonClass					*item=NULL;
+	bool								dirty=false;
+};
+
+extern desktopItemStruct				cacheFileData;
+extern args								cacheFileDataPrefs[];
+extern std::vector<desktopItemStruct>	desktopItems;
+extern char								*documentsPath;
+extern char								*homePath;
+extern char								*diskWatch;
+extern char								*desktopWatch;
 
 //main window
-extern LFSTK_windowClass	*wc;
-extern bool					mainLoop;
-extern Display				*display;
-extern bool					isDragging;
-
-//list
-extern diskLinkedList		*diskLL;
-extern int					nextXPos;
-extern int					nextYPos;
-
+extern LFSTK_applicationClass			*apc;
+extern LFSTK_windowClass				*wc;
 //paths
-extern char					*diskInfoPath;
-extern char					*cacheDisksPath;
-extern char					*cacheDeskPath;
-extern char					*prefsPath;
-extern char					*desktopPath;
-
-//save data
-extern char					*diskUUID;
-extern char					*iconPath;
-extern int					xPos;
-extern int					yPos;
-extern bool					customIcon;
-extern int					dataType;
-
-
-extern args					diskData[];
+extern char								*cachePath;
+extern char								*prefsPath;
+extern char								*desktopPath;
 
 //prefs
-extern bool					showSuffix;
-extern int					maxXSlots;
-extern int					maxYSlots;
-extern int					**xySlot;
-extern geometryStruct		oldPos;
+extern bool								showSuffix;
 
 //dialogs
-extern LFSTK_windowClass	*diskWindow;
-extern LFSTK_windowClass	*fileWindow;
-extern LFSTK_windowClass	*iconChooser;
-extern LFSTK_lineEditClass *iconChooserEdit;
-extern LFSTK_buttonClass	*diskButtons[];
-extern LFSTK_buttonClass	*fileButtons[];
-extern bool					dialogLoop;
-extern int					dialogRetVal;
+extern LFSTK_windowClass				*diskWindow;
+extern LFSTK_windowClass				*fileWindow;
 
-diskLinkedList* isInList(const char *devname);
-void newNode(void);
-void printDiskData(diskDataStruct *diskstruct);
-void setImageSize(diskDataStruct *dnode);
-void removeDeleted(void);
-void getFreeSlot(int *x,int *y);
-void setSlotFromPos(int x,int y,int val);
-bool dialogCB(void *p,void* ud);
-void dialogRun(LFSTK_windowClass *dialog);
-int toNearestInt(int left,int rite);
-void setGridXY(diskDataStruct *dnode,int x,int y);
-void getRealXY(diskDataStruct *dnode,int *x,int *y);
-void getFreeGridXY(int *x,int *y);
-void setIconImage(diskDataStruct *dnode);
+//TODO//
+//extern LFSTK_windowClass				*iconChooser;
+//extern LFSTK_lineEditClass 				*iconChooserEdit;
+//extern bool								dialogLoop;
+//extern int								dialogRetVal;
+//bool dialogCB(void *p,void* ud);
+//void dialogRun(LFSTK_windowClass *dialog);
+
+void setIconImage(desktopItemStruct	*cf);
+void setItemSize(desktopItemStruct	*cf);
+void createDesktopGadget(LFSTK_windowClass *window);
 
 #endif

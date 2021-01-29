@@ -57,6 +57,38 @@ args		panelPrefs[]=
 	{NULL,0,NULL}
 };
 
+#if 1
+void readMsg(void)
+{
+	int		retcode;
+	char	*command;
+	FILE	*fd=NULL;
+	char	buff[2048];
+
+	retcode=msgrcv(queueID,&buffer,MAX_MSG_SIZE,DESKTOP_MSG,IPC_NOWAIT);
+
+	if(retcode>0)
+		{
+			//printf("buffer.mText=%s\n",buffer.mText);
+			if(strcmp(buffer.mText,"reloadbg")==0)
+				{
+				//	wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),apc->displayWidth,apc->displayHeight,true);
+				//	wc->LFSTK_clearWindow(true);
+				}
+
+			if(strcmp(buffer.mText,"reloadprefs")==0)
+				{
+				}
+				//reloadPrefs();
+
+			if(strcmp(buffer.mText,"cleandesktopcache")==0)
+				{
+				}
+		}
+	buffer.mText[0]=0;
+}
+
+#else
 void readMsg(void)
 {
 	int		retcode;
@@ -89,6 +121,7 @@ void readMsg(void)
 		}
 	buffer.mText[0]=0;
 }
+#endif
 
 void addLeftGadgets(void)
 {
@@ -189,7 +222,7 @@ void printError(const char *err)
 	fprintf(stderr,">>>%s<<<\n",err);
 }
 
-void  alarmCallBack(void)
+bool timerCB(LFSTK_applicationClass *p,void* ud)
 {
 	readMsg();
 
@@ -208,7 +241,8 @@ void  alarmCallBack(void)
 	if(scwindow!=NULL)
 		updateSlider();
 
-	XFlush(mainwind->display);
+	XFlush(mainwind->app->display);
+	return(true);
 }
 
 bool XNextEventTimed(Display *dsp,XEvent *event_return,timeval *tv)
@@ -254,25 +288,32 @@ int main(int argc,char **argv)
 
 	XSetErrorHandler(errHandler);
 
-	mainwind=new LFSTK_windowClass(0,0,1,1,"lfs",true);
-	WM_STATE=XInternAtom(mainwind->display,"WM_STATE",False);
-	NET_WM_WINDOW_TYPE_NORMAL=XInternAtom(mainwind->display,"_NET_WM_WINDOW_TYPE_NORMAL",False);
-	NET_WM_STATE_HIDDEN=XInternAtom(mainwind->display,"_NET_WM_STATE_HIDDEN",False);
-	NET_WM_WINDOW_TYPE_DIALOG=XInternAtom(mainwind->display,"_NET_WM_WINDOW_TYPE_DIALOG",False);
-	NET_WM_DESKTOP=XInternAtom(mainwind->display,"_NET_WM_DESKTOP",False);
-	NET_WM_WINDOW_TYPE=XInternAtom(mainwind->display,"_NET_WM_WINDOW_TYPE",False);
-	NET_WM_STATE=XInternAtom(mainwind->display,"_NET_WM_STATE",False);
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,NULL);
+
+	mainwind=apc->mainWindow;
+	//mainwind=new LFSTK_windowClass(0,0,1,1,"lfs",true);
+	WM_STATE=XInternAtom(mainwind->app->display,"WM_STATE",False);
+	NET_WM_WINDOW_TYPE_NORMAL=XInternAtom(mainwind->app->display,"_NET_WM_WINDOW_TYPE_NORMAL",False);
+	NET_WM_STATE_HIDDEN=XInternAtom(mainwind->app->display,"_NET_WM_STATE_HIDDEN",False);
+	NET_WM_WINDOW_TYPE_DIALOG=XInternAtom(mainwind->app->display,"_NET_WM_WINDOW_TYPE_DIALOG",False);
+	NET_WM_DESKTOP=XInternAtom(mainwind->app->display,"_NET_WM_DESKTOP",False);
+	NET_WM_WINDOW_TYPE=XInternAtom(mainwind->app->display,"_NET_WM_WINDOW_TYPE",False);
+	NET_WM_STATE=XInternAtom(mainwind->app->display,"_NET_WM_STATE",False);
 
 	env=mainwind->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",mainwind->configDir);
 	key=atoi(env);
 	freeAndNull(&env);
+
+	apc->LFSTK_setTimer(refreshRate);
+	apc->LFSTK_setTimerCallBack(timerCB,NULL);
 
 	if((queueID=msgget(key,IPC_CREAT|0660))==-1)
 		fprintf(stderr,"Can't create message queue\n");
 
 //TODO//
 	//itemfont=mainwind->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
-	//tfont=mainwind->globalLib->LFSTK_loadFont(mainwind->display,mainwind->screen,itemfont);
+	//tfont=mainwind->globalLib->LFSTK_loadFont(mainwind->app->display,mainwind->screen,itemfont);
 	//iconSize=tfont->size;
 	iconSize=32;
 	//free(tfont);
@@ -373,44 +414,7 @@ int main(int argc,char **argv)
 	mainwind->LFSTK_showWindow(true);
 	mainwind->LFSTK_setKeepAbove(true);
 
-	mainLoop=true;
-
-	while(mainLoop==true)
-		{
-			if (XNextEventTimed(mainwind->display,&event,&tv) == True)
-				{
-					tv.tv_sec=refreshRate;
-					tv.tv_usec=0;
-
-					mappedListener *ml=mainwind->LFSTK_getMappedListener(event.xany.window);
-					if(ml!=NULL)
-						ml->function(ml->gadget,&event,ml->type);
-
-					if(mainwind->LFSTK_handleWindowEvents(&event)<0)
-						mainLoop=false;
-
-					if(scwindow!=NULL)
-						{
-							ml=scwindow->LFSTK_getMappedListener(event.xany.window);
-							if(ml!=NULL)
-								ml->function(ml->gadget,&event,ml->type);
-							scwindow->LFSTK_handleWindowEvents(&event);
-						}
-				}
-			else
-				{
-					tv.tv_sec=refreshRate;
-					tv.tv_usec=0;
-					if(useAlarm==true)
-						alarmCallBack();
-					else
-						{
-							refreshmulti=(refreshmulti+1) % REFRESHMULTI;
-							if(refreshmulti==0)
-								readMsg();
-						}
-				}
-		}
+	int retval=apc->LFSTK_runApp();
 
 	free(env);
 	free(terminalCommand);
@@ -451,12 +455,13 @@ int main(int argc,char **argv)
 			entrydata.clear();
 		}
 
+	delete apc;
 	delete mainwind;
 	delete appMenu;
 	delete logoutMenu;
 	delete windowAllMenu;
 	delete windowDeskMenu;
-
+//	delete windowDeskList//TODO//
 	free(iconL);
 	free(iconM);
 	free(iconH);

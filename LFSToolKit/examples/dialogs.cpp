@@ -14,10 +14,12 @@ rm dialogsexample
 exit $retval
 #endif
 
-#include "lfstk/LFSTKGlobals.h"
+#include "../config.h"
+#include <lfstk/LFSTKGlobals.h>
 
 #define BOXLABEL			"File/Folder Dialogs"
 
+LFSTK_applicationClass		*apc=NULL;
 LFSTK_windowClass			*wc=NULL;
 LFSTK_labelClass			*label=NULL;
 LFSTK_labelClass			*personal=NULL;
@@ -30,22 +32,19 @@ LFSTK_buttonClass			*colourbutton;
 LFSTK_fileDialogClass		*filedialogfile;
 LFSTK_fileDialogClass		*filedialogdir;
 
-bool						mainLoop=true;
-Display						*display;
 char						*wd;
 
 bool doQuit(void *p,void* ud)
 {
-	mainLoop=false;
-	XFlush(wc->display);
-	XSync(wc->display,true);
+	apc->exitValue=0;
+	apc->mainLoop=false;
 	return(false);
 }
 
 bool selectcol(void *object,void* ud)
 {
-	//system("pwd");
 	system("./colorchooser.cpp;echo");
+	return(true);
 }
 
 //use wd =~
@@ -63,7 +62,7 @@ bool selectfile(void *object,void* ud)
 			printf("File Mime-Type=%s\n",mimetype);
 			free(mimetype);
 			free(wd);
-			wd=strdup(filedialogfile->LFSTK_getCurrentDir());			
+			wd=strdup(filedialogfile->LFSTK_getCurrentDir());
 		}
 	return(true);
 }
@@ -77,6 +76,7 @@ bool fbup(void *object,void* ud)
 	fprintf(stderr,"fbup=%p\n",ud);
 	return(true);
 }
+
 //get last used folder
 bool selectdir(void *object,void* ud)
 {
@@ -90,14 +90,13 @@ bool selectdir(void *object,void* ud)
 	return(true);
 }
 
-int main(int argc, char **argv)
+int main(int argc, char **argv)//TODO//
 {
-	XEvent	event;
-	int		sy=BORDER;
-		//LFSTK_findClass *fc=new LFSTK_findClass;
+	int	sy=BORDER;
 
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"File/Folder Select",false);
-	display=wc->display;
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,BOXLABEL);
+	wc=apc->mainWindow;
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	label->LFSTK_setCairoFontDataParts("sB",20);
@@ -151,24 +150,11 @@ int main(int argc, char **argv)
 	wc->LFSTK_showWindow();
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
-	mainLoop=true;
-	while(mainLoop==true)
-		{
-			XNextEvent(wc->display,&event);
-			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
-
-			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
-
-			if(wc->LFSTK_handleWindowEvents(&event)<0)
-				mainLoop=false;
-		}
-
+	int retval=apc->LFSTK_runApp();
 	delete filedialogfile;
 	delete filedialogdir;
-	delete wc;
-	XCloseDisplay(display);
-	cairo_debug_reset_static_data();
+	delete apc;
 	free(wd);
-	return 0;
+	cairo_debug_reset_static_data();
+	return(retval);
 }
