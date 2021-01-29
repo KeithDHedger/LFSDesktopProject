@@ -22,6 +22,7 @@ exit $retval
 
 #define BOXLABEL			"Colour Chooser"
 
+LFSTK_applicationClass		*apc=NULL;
 LFSTK_windowClass			*wc=NULL;
 LFSTK_labelClass			*label=NULL;
 LFSTK_labelClass			*personal=NULL;
@@ -44,9 +45,8 @@ int	lastblue=255;
 
 bool doQuit(void *p,void* ud)
 {
-	mainLoop=false;
-	XFlush(wc->display);
-	XSync(wc->display,true);
+	apc->exitValue=0;
+	apc->mainLoop=false;
 	printf("%s",colour->LFSTK_getCStr());
 	return(false);
 }
@@ -99,8 +99,9 @@ int main(int argc, char **argv)
 	XEvent	event;
 	int		sy=BORDER;
 
-	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Gadgets",false);
-	display=wc->display;
+	apc=new LFSTK_applicationClass();
+	apc->LFSTK_addWindow(NULL,BOXLABEL);
+	wc=apc->mainWindow;
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	label->LFSTK_setCairoFontDataParts("sB",20);
@@ -118,7 +119,7 @@ int main(int argc, char **argv)
 
 	asprintf(&colourname,"#ffff00");
 	box=new LFSTK_lineEditClass(wc,"",3*BORDER+2*SCROLLBARWIDTH+GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*6,BUTTONGRAV);
-	box->LFSTK_setIgnores(&box->mouseCB,false,false);
+	box->LFSTK_setIgnores(false,false);
 
 	red=new LFSTK_scrollBarClass(wc,true,BORDER+2,sy,SCROLLBARWIDTH,200+GADGETHITE,BUTTONGRAV);
 	red->LFSTK_setScale(0,255);
@@ -169,20 +170,7 @@ int main(int argc, char **argv)
 	wc->LFSTK_showWindow();
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
-	mainLoop=true;
-	while(mainLoop==true)
-		{
-			XNextEvent(wc->display,&event);
-			mappedListener *ml=wc->LFSTK_getMappedListener(event.xany.window);
-
-			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
-
-			if(wc->LFSTK_handleWindowEvents(&event)<0)
-				mainLoop=false;
-		}
-
-	delete wc;
-	XCloseDisplay(display);
-	return 0;
+	int retval=apc->LFSTK_runApp();
+	delete apc;
+	return(retval);
 }

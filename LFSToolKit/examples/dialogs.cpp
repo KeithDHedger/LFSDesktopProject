@@ -43,7 +43,7 @@ bool doQuit(void *p,void* ud)
 
 bool selectcol(void *object,void* ud)
 {
-	system("./colorchooser.cpp;echo");
+	system("./colourchooser.cpp;echo");
 	return(true);
 }
 

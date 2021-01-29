@@ -169,10 +169,8 @@ apc->globalLib->LFSTK_setUseTheme(false);
 	win->overRide=true;
 	win->level=ABOVEALL;
 
-//	diskWindow=new LFSTK_toolWindowClass(win,apc);
 	apc->LFSTK_addWindow(win,"hello");
 	diskWindow=apc->windows->back().window;
-//	delete win;
 
 	sy=0;
 	for(int j=BUTTONMOUNT;j<NOMOREBUTONS;j++)
