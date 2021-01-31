@@ -48,8 +48,6 @@ class LFSTK_toggleButtonClass  : public  LFSTK_gadgetClass
 	private:
 		drawStyle		boxStyle;
 		bool			toggleState;
-//		cairo_surface_t	*checkOn=NULL;
-//		cairo_surface_t	*checkOff=NULL;
 };
 
 #endif
