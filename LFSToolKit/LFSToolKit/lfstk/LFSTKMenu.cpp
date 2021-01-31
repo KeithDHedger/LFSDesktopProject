@@ -79,32 +79,26 @@ void LFSTK_menuClass::LFSTK_showMenu(void)
 	int				sinkx;
 	int				sinky;
 	unsigned int	buttonmask;
-//printf("000000000000000000000000000\n");
+
 	this->mainMenuWindow->LFSTK_showWindow(true);
 	this->mainLoop=true;
 
 	XTranslateCoordinates(this->parentwc->app->display,this->parentwc->window,this->parentwc->app->rootWindow,this->x,this->y,&x,&y,&dw);
 	this->mainMenuWindow->LFSTK_moveWindow(x,y,true);
 	XSetInputFocus(this->parentwc->app->display,this->mainMenuWindow->window,RevertToNone,CurrentTime);
-//printf("33333333333333333333\n");
-//printf("app=%p disp=%p\n",this->parentwc->app,this->parentwc->app->display);
 	XSync(this->parentwc->app->display,false);
 
-//printf("55555555555555555555555555\n");
 	while(XPending(this->parentwc->app->display))
 		{
-//printf("6666666666666666\n");
 			XNextEvent(this->parentwc->app->display,&event);
 			mappedListener *ml=this->mainMenuWindow->LFSTK_getMappedListener(event.xany.window);
 
 			if(ml!=NULL)
 				ml->function(ml->gadget,&event,ml->type);
-//printf("7777777777777777\n");
 		}
 
 	while(this->mainLoop==true)
 		{
-//printf("8888888888888888888888888888\n");
 			if(XPending(this->parentwc->app->display))
 				{
 					XNextEvent(this->parentwc->app->display,&event);
@@ -144,7 +138,6 @@ void LFSTK_menuClass::LFSTK_showMenu(void)
 						this->mainLoop=false;
 						break;
 				}
-//printf("9999999999999999999999999\n");
 		}
 }
 
@@ -213,11 +206,9 @@ void LFSTK_menuClass::LFSTK_addMainMenus(menuStruct **menus,int menucnt)
 
 
 
-//	this->mainMenuWindow=(LFSTK_toolWindowClass*)new LFSTK_windowClass(win,this->parentwc->app);
 	this->mainMenuWindow=new LFSTK_toolWindowClass(win,this->parentwc->app);
 	delete win;
 
-//	this->mainMenuWindow=new LFSTK_toolWindowClass(this->parentwc->app->display,this->parentwc,"_NET_WM_WINDOW_TYPE_MENU",this->x,this->y,maxtxtwid,GADGETHITE*this->mainMenuCnt-winshrink,"menu window",this->parentwc->app);
 	for(int j=0;j<this->mainMenuCnt;j++)
 		{
 			hite=GADGETHITE;
