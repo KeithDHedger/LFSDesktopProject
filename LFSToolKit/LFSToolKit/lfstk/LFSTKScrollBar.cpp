@@ -152,6 +152,13 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vert
 			free(pathtobit);
 		}
 
+	asprintf(&pathtobit,"%s/thumb.png",this->wc->globalLib->LFSTK_getThemePath());
+	if(access(pathtobit,F_OK)==0)
+		this->thumb->LFSTK_setImageFromPath(pathtobit,CENTRE,true);
+	else
+		this->thumb->LFSTK_setImageFromPath(LFSTKPIXMAPSDIR "/thumb.png",CENTRE,true);
+	free(pathtobit);
+
 	this->thumb->LFSTK_setCanDrag(true);
 	this->thumb->LFSTK_setMouseCallBack(this->startThumbDrag,this->thumbClicked,(void*)this);
 	this->upLeft->LFSTK_setMouseCallBack(NULL,this->lineUpDown,(void*)this);

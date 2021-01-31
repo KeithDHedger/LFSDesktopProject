@@ -1622,7 +1622,7 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 						}
 					this->LFSTK_resizeWindow(event->xconfigurerequest.width,event->xconfigurerequest.height,false);
 					this->globalLib->LFSTK_setCairoSurface(this->app->display,this->window,this->app->visual,&this->sfc,&this->cr,event->xconfigurerequest.width,event->xconfigurerequest.height);
-					this->LFSTK_clearWindow(true);
+					this->LFSTK_clearWindow(false);
 //if((mask_return!=0) || ())
 //break;
 					if((this->windowGeom.w!=oldwindowGeom.w) ||(this->windowGeom.h!=oldwindowGeom.h))

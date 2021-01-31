@@ -69,7 +69,7 @@ class LFSTK_applicationClass
 		LFSTK_lib					*globalLib=NULL;
 		std::vector<windowData>		*windows;
 		LFSTK_windowClass			*mainWindow=NULL;
-		char						*configDir;
+		char						*configDir=NULL;
 
 	private:
 		int							displayNum;

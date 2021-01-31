@@ -1269,20 +1269,33 @@ void LFSTK_gadgetClass::drawIndicator(gadgetStruct* details)
 	if(this->gadgetDetails.hasIndicator==false)
 		return;
 
-	switch(details->indic)
+	switch(details->indic)//TODO//
 		{
 			case CHECK:
 				cairo_save(this->cr);
 					cairo_reset_clip (this->cr);
-						cairo_set_source_rgba(this->cr,this->colourNames[details->state].RGBAColour.r,colourNames[details->state].RGBAColour.g,colourNames[details->state].RGBAColour.b,colourNames[details->state].RGBAColour.a);
-						cairo_rectangle(this->cr,details->indicatorGeom.x,details->indicatorGeom.y,details->indicatorGeom.w,details->indicatorGeom.h);
-						cairo_fill(this->cr);
-						if(this->cImage!=NULL)
-							{
-								cairo_translate(this->cr,details->indicatorGeom.x,details->indicatorGeom.y);
-								cairo_set_source_surface(this->cr,this->cImage,0,0);
-								cairo_paint_with_alpha(this->cr,this->alpha);
-							}
+					cairo_set_source_rgba(this->cr,this->colourNames[details->state].RGBAColour.r,colourNames[details->state].RGBAColour.g,colourNames[details->state].RGBAColour.b,colourNames[details->state].RGBAColour.a);
+					cairo_rectangle(this->cr,details->indicatorGeom.x,details->indicatorGeom.y,details->indicatorGeom.w,details->indicatorGeom.h);
+					cairo_fill(this->cr);
+
+					if(details->state==NORMALCOLOUR)
+						{
+							cairo_translate(this->cr,details->indicatorGeom.x,details->indicatorGeom.y);
+							if((static_cast<LFSTK_toggleButtonClass*>(this))->checkOff!=NULL)
+								{
+									cairo_set_source_surface(this->cr,(static_cast<LFSTK_toggleButtonClass*>(this))->checkOff,0,0);
+									cairo_paint_with_alpha(this->cr,this->alpha);
+								}
+						}
+					else
+						{
+							if((static_cast<LFSTK_toggleButtonClass*>(this))->checkOn!=NULL)
+								{
+									cairo_translate(this->cr,details->indicatorGeom.x,details->indicatorGeom.y);
+									cairo_set_source_surface(this->cr,(static_cast<LFSTK_toggleButtonClass*>(this))->checkOn,0,0);
+									cairo_paint_with_alpha(this->cr,this->alpha);
+								}
+						}
 				cairo_restore(this->cr);
 				this->drawBevel(&this->gadgetDetails.indicatorGeom,this->gadgetDetails.bevel);
 				break;
@@ -1825,7 +1838,7 @@ void LFSTK_gadgetClass::LFSTK_moveGadget(int x,int y)
 	XMoveWindow(this->wc->app->display,this->window,x,y);
 	//this->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
 	//this->wc->LFSTK_clearWindow(true);
-	this->LFSTK_clearWindow();
+	this->LFSTK_clearWindow();//TESTING//
 	
 }
 

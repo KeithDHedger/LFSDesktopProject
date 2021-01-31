@@ -3,7 +3,7 @@
 #©keithhedger Fri 28 Jul 20:19:00 BST 2017 kdhedger68713@gmail.com
 
 if [ "X$1" != "X" ];then
-	USEVALGRIND="valgrind --leak-check=full"
+	USEVALGRIND="valgrind --leak-check=full "
 fi
 
 g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2 -o basicexample||exit 1

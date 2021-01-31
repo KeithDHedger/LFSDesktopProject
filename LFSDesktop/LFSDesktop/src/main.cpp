@@ -156,9 +156,10 @@ int main(int argc, char **argv)
 	wc->passEventToRoot=true;
 
 //TODO//debug to go
-//			button=new LFSTK_buttonClass(wc,"quit",0,0,GADGETWIDTH,GADGETHITE);//TODO//
-//			button->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
-
+#ifdef _ENABLEDEBUG_
+	button=new LFSTK_buttonClass(wc,"quit",0,0,GADGETWIDTH,GADGETHITE);//TODO//
+	button->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
+#endif
 	wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),apc->displayWidth,apc->displayHeight);
 
 	asprintf(&cachePath,"%s/.config/LFS/lfsdesktop/cache",getenv("HOME"));
@@ -253,6 +254,8 @@ int main(int argc, char **argv)
 	wc->LFSTK_setWindowDropCallBack(windowDrop,(void*)0xdeadbeef);
 	wc->LFSTK_showWindow(true);
 	wc->LFSTK_resizeWindow(apc->displayWidth,apc->displayHeight,true);
+
+//	wc->LFSTK_redrawAllGadgets();
 
 	int retval=apc->LFSTK_runApp();
 

@@ -149,7 +149,7 @@ void LFSTK_lineEditClass::LFSTK_resizeWindow(int w,int h)
 	this->gadgetDetails.gadgetGeom.h=this->gadgetGeom.h;
 	XResizeWindow(this->wc->app->display,this->window,this->gadgetGeom.w,this->gadgetGeom.h);
 	this->wc->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->window,this->wc->app->visual,&this->sfc,&this->cr,w,h);
-	this->LFSTK_clearWindow();
+	//this->LFSTK_clearWindow();//TESTING//
 }
 
 /**

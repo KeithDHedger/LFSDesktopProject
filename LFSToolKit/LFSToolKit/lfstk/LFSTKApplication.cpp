@@ -186,12 +186,14 @@ int LFSTK_applicationClass::LFSTK_runApp(void)
 	FD_SET(this->displayNum,&readfd);
 // Main loop
 	this->mainWindow->LFSTK_showWindow();
+	this->mainWindow->LFSTK_clearWindow(true);
 	while(XPending(this->display))
 		{
 			XNextEvent(this->display, &event);
 			this->mainWindow->LFSTK_handleWindowEvents(&event);
 		}
 	this->mainWindow->LFSTK_redrawAllGadgets();
+
 	while(this->mainLoop==true)
 		{
 // Wait for X Event or a Timer

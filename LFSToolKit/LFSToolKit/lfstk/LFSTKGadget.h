@@ -212,7 +212,7 @@ class LFSTK_gadgetClass
 		
 		int						imageWidth=0;
 		int						imageHeight=0;
-		int						imageGravity;
+		int						imageGravity=CENTRE;
 		float					ratio;
 		bool					useTile;
 

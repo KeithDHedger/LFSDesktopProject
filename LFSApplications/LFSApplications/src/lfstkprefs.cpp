@@ -199,6 +199,7 @@ bool menuCB(void *p,void* ud)
 ////other
 		{"autotextcolour",TYPEBOOL,&autocol},
 		{"usetheme",TYPEBOOL,&usetheme},
+		{"themepath",TYPESTRING,&themePath},
 		{"sbtroughcolour",TYPESTRING,&sbtrough},
 		{"listtroughcolour",TYPESTRING,&listtrough},
 //monofont

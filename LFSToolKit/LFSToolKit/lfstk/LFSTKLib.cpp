@@ -92,6 +92,9 @@ LFSTK_lib::~LFSTK_lib()
 
 	if(this->globalListTroughColour!=NULL)
 		free(this->globalListTroughColour);
+
+	if(this->themePath!=NULL)
+		free(this->themePath);
 }
 
 /**
@@ -373,6 +376,7 @@ void LFSTK_lib::LFSTK_reloadPrefs(void)
 	freeAndNull(&this->globalCursorColour);
 	freeAndNull(&this->globalSBTroughColour);
 	freeAndNull(&this->globalListTroughColour);
+	freeAndNull(&this->themePath);
 
 	this->lfsToolKitGlobals=(args*)calloc(1,sizeof(myargs));
 	memcpy(this->lfsToolKitGlobals,myargs,sizeof(myargs));
@@ -636,13 +640,13 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				//printf("conf>>>>>>>>>\n");
 				break;
 			case GravityNotify:
-//				printf("grav>>>>>>>>>>>\n");
+				//printf("grav>>>>>>>>>>>\n");
 				break;
 			case ResizeRequest:
-				printf("resize\n");
+				//printf("resize\n");
 				break;
 			case ClientMessage:
-				printf("ClientMessage from lib\n");
+				//printf("ClientMessage from lib\n");
 				//return(true);
 				break;
 			case SelectionRequest:

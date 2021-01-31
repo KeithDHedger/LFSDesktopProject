@@ -53,27 +53,26 @@ bool buttonCB(void *p,void* ud)
 				{
 					printf("Value=%i\n",t->LFSTK_getValue());
 					if(t->userData!=NULL)
-					{
-					if(t->LFSTK_getValue()==1)
 						{
-							geometryStruct		geom;
+							if(t->LFSTK_getValue()==1)
+								{
+									geometryStruct		geom;
 
-						printf("shere\n");
-							t->gadgetDetails.showBroken=true;
-							t->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);
-							scwindow->LFSTK_moveWindow(geom.x+geom.w,geom.y,true);
-							scwindow->LFSTK_showWindow(true);
-							scwindow->LFSTK_redrawAllGadgets();
-							apc->windows->at(apc->LFSTK_findWindow(scwindow)).showing=true;
+									t->gadgetDetails.showBroken=true;
+									t->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);
+									scwindow->LFSTK_moveWindow(geom.x+geom.w,geom.y,true);
+									scwindow->LFSTK_showWindow(true);
+									scwindow->LFSTK_redrawAllGadgets();
+									apc->windows->at(apc->LFSTK_findWindow(scwindow)).showing=true;
+								}
+							else
+								{
+									t->gadgetDetails.showBroken=false;
+									scwindow->LFSTK_hideWindow();
+									apc->windows->at(apc->LFSTK_findWindow(scwindow)).showing=false;
+								}
+							t->LFSTK_clearWindow();
 						}
-					else
-						{
-							t->gadgetDetails.showBroken=false;
-							scwindow->LFSTK_hideWindow();
-							apc->windows->at(apc->LFSTK_findWindow(scwindow)).showing=false;
-					}
-					t->LFSTK_clearWindow();
-					}
 				}
 		}
 
@@ -159,7 +158,7 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
-	wc->LFSTK_showWindow();
+	//wc->LFSTK_showWindow();
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	int retval=apc->LFSTK_runApp();
