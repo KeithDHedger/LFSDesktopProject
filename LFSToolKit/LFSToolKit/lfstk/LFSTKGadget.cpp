@@ -1278,7 +1278,7 @@ void LFSTK_gadgetClass::drawIndicator(gadgetStruct* details)
 					cairo_rectangle(this->cr,details->indicatorGeom.x,details->indicatorGeom.y,details->indicatorGeom.w,details->indicatorGeom.h);
 					cairo_fill(this->cr);
 
-					if(details->state==NORMALCOLOUR)
+					if((static_cast<LFSTK_toggleButtonClass*>(this))->LFSTK_getValue()==false)
 						{
 							cairo_translate(this->cr,details->indicatorGeom.x,details->indicatorGeom.y);
 							if((static_cast<LFSTK_toggleButtonClass*>(this))->checkOff!=NULL)

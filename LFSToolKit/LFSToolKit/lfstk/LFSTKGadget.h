@@ -207,8 +207,6 @@ class LFSTK_gadgetClass
 		cairo_surface_t 		*sfc=NULL;
 		cairo_surface_t			*cImage=NULL;
 		cairo_pattern_t			*pattern=NULL;
-//		cairo_surface_t			*link=NULL;
-//		cairo_surface_t			*broken=NULL;
 		
 		int						imageWidth=0;
 		int						imageHeight=0;
