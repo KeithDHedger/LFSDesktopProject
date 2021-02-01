@@ -80,7 +80,8 @@ bool doDiskMenuSelect(void *p,void* ud)
 					case OPENDISK:
 						if(((long)ud==MOUNTDISK) || ((long)ud==OPENDISK))
 							{
-								asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|xargs xdg-open &>/dev/null & &>/dev/null",desktopItems.at((unsigned long)gadg->userData).uuid);
+								asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|head -n1|xargs xdg-open &>/dev/null & &>/dev/null",desktopItems.at((unsigned long)gadg->userData).uuid);
+								//printf("command=%s\n",command);
 								system(command);
 								free(command);
 							}
@@ -163,7 +164,7 @@ bool mouseUpCB(void *p,void* ud)
 			gadg->LFSTK_getGeom(&geom);
 			if(gadg->isDoubleClick==true)
 				{
-					fprintf(stderr,"double click x=%i y=%i on %s @%lu\n",geom.x,geom.y,gadg->LFSTK_getLabel(),itemnum);
+				//	fprintf(stderr,"double click x=%i y=%i on %s @%lu\n",geom.x,geom.y,gadg->LFSTK_getLabel(),itemnum);
 					switch(desktopItems.at((unsigned long)gadg->userData).type)
 						{
 							case ISDESKTOPFILE:
@@ -190,7 +191,7 @@ bool mouseUpCB(void *p,void* ud)
 								system(command);
 								free(command);
 								updateMounted();
-								asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|xargs xdg-open &>/dev/null & &>/dev/null",desktopItems.at((unsigned long)gadg->userData).uuid);
+								asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|head -n1|xargs xdg-open &>/dev/null & &>/dev/null",desktopItems.at((unsigned long)gadg->userData).uuid);
 								system(command);
 								free(command);
 								break;

@@ -61,10 +61,8 @@ void readMsg(void)
 
 	buff[0]=0;
 	retcode=msgrcv(queueID,&buffer,MAX_MSG_SIZE,DESKTOP_MSG,IPC_NOWAIT);
-printf(">>>>>>>--%s-->>>>>>>>>>>>\n",buffer.mText);
 	if(retcode>0)
 		{
-			printf("999999999999999999999999\n");
 			if(strcmp(buffer.mText,"reloadbg")==0)
 				{
 					wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),apc->displayWidth,apc->displayHeight,true);
@@ -72,10 +70,8 @@ printf(">>>>>>>--%s-->>>>>>>>>>>>\n",buffer.mText);
 				}
 
 			if(strcmp(buffer.mText,"reloadprefs")==0)
-			{
-			printf("55555555555555555555\n");
 				reloadPrefs();
-}
+
 			if(strcmp(buffer.mText,"cleandesktopcache")==0)
 				{
 					asprintf(&command,"find %s -maxdepth 1 -mindepth 1 |sort",cachePath);
