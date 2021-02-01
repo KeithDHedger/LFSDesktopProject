@@ -57,71 +57,39 @@ args		panelPrefs[]=
 	{NULL,0,NULL}
 };
 
-#if 1
 void readMsg(void)
 {
 	int		retcode;
-	char	*command;
+	char	*command=NULL;
 	FILE	*fd=NULL;
 	char	buff[2048];
-
-	retcode=msgrcv(queueID,&buffer,MAX_MSG_SIZE,DESKTOP_MSG,IPC_NOWAIT);
-
-	if(retcode>0)
-		{
-			//printf("buffer.mText=%s\n",buffer.mText);
-			if(strcmp(buffer.mText,"reloadbg")==0)
-				{
-				//	wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),apc->displayWidth,apc->displayHeight,true);
-				//	wc->LFSTK_clearWindow(true);
-				}
-
-			if(strcmp(buffer.mText,"reloadprefs")==0)
-				{
-				}
-				//reloadPrefs();
-
-			if(strcmp(buffer.mText,"cleandesktopcache")==0)
-				{
-				}
-		}
-	buffer.mText[0]=0;
-}
-
-#else
-void readMsg(void)
-{
-	int		retcode;
 	char	*comstring=NULL;
 	char	*forwhom;
-	char	*command;
+
+	buffer.mText[0]=0;
 	retcode=msgrcv(queueID,&buffer,MAX_MSG_SIZE,PANEL_MSG,IPC_NOWAIT);
 
-	if(retcode>0)
+	comstring=strdup(buffer.mText);
+	command=strtok(comstring," ");
+	forwhom=strtok(NULL," ");
+
+	if(forwhom==NULL)
+		return;
+
+	if(strcmp(forwhom,panelID)!=0)
 		{
-			comstring=strdup(buffer.mText);
-			command=strtok(comstring," ");
-			forwhom=strtok(NULL," ");
-
-			if(forwhom==NULL)
-				return;
-
-			if(strcmp(forwhom,panelID)!=0)
-				{
-					if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
-						fprintf(stderr,"Can't send message :(\n");
-					free(comstring);
-					sleep(4);
-					return;
-				}
-
-			if((command!=NULL) && (strcmp(command,"quitpanel")==0))
-				mainLoop=false;
+			if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
+				fprintf(stderr,"Can't send message :(\n");
 			free(comstring);
+			return;
 		}
+
+	if((command!=NULL) && (strcmp(command,"quitpanel")==0))
+		apc->mainLoop=false;
+	free(comstring);
+
 	buffer.mText[0]=0;
 }
-#endif
 
 void addLeftGadgets(void)
 {
@@ -292,7 +260,6 @@ int main(int argc,char **argv)
 	apc->LFSTK_addWindow(NULL,NULL);
 
 	mainwind=apc->mainWindow;
-	//mainwind=new LFSTK_windowClass(0,0,1,1,"lfs",true);
 	WM_STATE=XInternAtom(mainwind->app->display,"WM_STATE",False);
 	NET_WM_WINDOW_TYPE_NORMAL=XInternAtom(mainwind->app->display,"_NET_WM_WINDOW_TYPE_NORMAL",False);
 	NET_WM_STATE_HIDDEN=XInternAtom(mainwind->app->display,"_NET_WM_STATE_HIDDEN",False);
@@ -454,9 +421,7 @@ int main(int argc,char **argv)
 				}
 			entrydata.clear();
 		}
-
 	delete apc;
-	delete mainwind;
 	delete appMenu;
 	delete logoutMenu;
 	delete windowAllMenu;

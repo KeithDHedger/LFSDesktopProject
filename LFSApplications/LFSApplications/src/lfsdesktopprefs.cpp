@@ -135,7 +135,7 @@ bool buttonCB(void *p,void* ud)
 	wc->globalLib->LFSTK_saveVarsToFile(envFile,desktopPrefs);
 
 	buffer.mType=DESKTOP_MSG;
-	sprintf(buffer.mText,"reloaddesk");
+	sprintf(buffer.mText,"reloadprefs");
 	if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
 		fprintf(stderr,"Can't send message :(\n");
 

@@ -59,11 +59,12 @@ void readMsg(void)
 	FILE	*fd=NULL;
 	char	buff[2048];
 
+	buff[0]=0;
 	retcode=msgrcv(queueID,&buffer,MAX_MSG_SIZE,DESKTOP_MSG,IPC_NOWAIT);
-
+printf(">>>>>>>--%s-->>>>>>>>>>>>\n",buffer.mText);
 	if(retcode>0)
 		{
-			//printf("buffer.mText=%s\n",buffer.mText);
+			printf("999999999999999999999999\n");
 			if(strcmp(buffer.mText,"reloadbg")==0)
 				{
 					wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),apc->displayWidth,apc->displayHeight,true);
@@ -71,8 +72,10 @@ void readMsg(void)
 				}
 
 			if(strcmp(buffer.mText,"reloadprefs")==0)
+			{
+			printf("55555555555555555555\n");
 				reloadPrefs();
-
+}
 			if(strcmp(buffer.mText,"cleandesktopcache")==0)
 				{
 					asprintf(&command,"find %s -maxdepth 1 -mindepth 1 |sort",cachePath);
@@ -133,12 +136,14 @@ int main(int argc, char **argv)
 	int					sy=0;
 	char				*iconpath=NULL;
 	LFSTK_buttonClass	*button;
-	int					key=666;
+	int					key=999;
 
 	apc=new LFSTK_applicationClass();
 
 	command=apc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir);
-	key=atoi(command);
+	printf("command=sed -n '2p' %s/lfsappearance.rc\n",apc->configDir);
+//	key=atoi(command);
+//	printf("com=%s key-%i\n",command,key);
 	freeAndNull(&command);
 
 	if((queueID=msgget(key,IPC_CREAT|0660))==-1)

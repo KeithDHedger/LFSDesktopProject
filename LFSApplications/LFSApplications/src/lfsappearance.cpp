@@ -86,8 +86,14 @@ void updateDesktop(void)
 				flag=true;
 		}
 
+	system("lfssetwallpaper &>/dev/null");
+
 	buffer.mType=DESKTOP_MSG;
-	sprintf(buffer.mText,"reloaddesk");
+	sprintf(buffer.mText,"reloadbg");
+	if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
+		fprintf(stderr,"Can't send message :(\n");
+
+	sprintf(buffer.mText,"reloadprefs");
 	if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
 		fprintf(stderr,"Can't send message :(\n");
 
@@ -96,7 +102,6 @@ void updateDesktop(void)
 	if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
 		fprintf(stderr,"Can't send message :(\n");
 	
-	system("lfssetwallpaper &>/dev/null");
 	system("killall lfspanel &");	
 }
 

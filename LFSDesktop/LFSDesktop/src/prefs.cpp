@@ -57,6 +57,7 @@ args	desktopPrefs[]=
 
 void reloadPrefs(void)
 {
+printf("XXXXXXXXXXXXX\n");
 	apc->globalLib->LFSTK_reloadPrefs();
 	loadVarsFromFile(prefsPath,desktopPrefs);
 	for(unsigned j=0;j<desktopItems.size();j++)
