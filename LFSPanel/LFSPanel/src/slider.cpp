@@ -213,7 +213,7 @@ int addSlider(int x,int y,int grav,bool fromleft)
 	vsb->LFSTK_setMouseCallBack(NULL,valChanged,NULL);
 	vsb->LFSTK_setScale(0,64);
 	vsb->LFSTK_setValue(atoi(vol));
-
+	vsb->reverse=direction;
 	setIcon();
 	free(vol);
 	free(label);
