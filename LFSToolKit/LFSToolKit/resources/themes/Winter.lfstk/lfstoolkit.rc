@@ -2,12 +2,12 @@ window_normal #4C9BFF
 window_prelight #6B4C26
 window_active #412502
 window_inactive #808080
-windowtile /home/keithhedger/.themes/Winter.lfstk/window.png
+windowtile /usr/share/themes/Winter.lfstk/window.png
 button_normal #BBCEEC
 button_prelight #DAEAFD
 button_active #71A9CC
 button_inactive #A7BAC6
-buttontile /home/keithhedger/.themes/Winter.lfstk/button.png
+buttontile /usr/share/themes/Winter.lfstk/button.png
 menuitem_normal #976115
 menuitem_prelight #E88900
 menuitem_active #643b00
@@ -17,7 +17,7 @@ menuitem_font_normal white
 menuitem_font_prelight dark blue
 menuitem_font_active black
 menuitem_font_inactive grey40
-menuitemtile /home/keithhedger/.themes/Winter.lfstk/menuitem.png
+menuitemtile /usr/share/themes/Winter.lfstk/menuitem.png
 font DejaVu Sans:size=10:bold
 font_normal black
 font_prelight blue
@@ -25,7 +25,7 @@ font_active black
 font_inactive grey40
 autotextcolour 0
 usetheme 1
-themepath 
+themepath /usr/share/themes/Winter.lfstk
 monofont DejaVu Sans Mono:size=14
 cursorcolour blue
 sbtroughcolour light blue
