@@ -18,7 +18,7 @@ menuitem_font_prelight dark blue
 menuitem_font_active black
 menuitem_font_inactive grey40
 menuitemtile /usr/share/themes/Winter.lfstk/menuitem.png
-font DejaVu Sans:size=10:bold
+font DejaVu Sans:size=8:bold
 font_normal black
 font_prelight blue
 font_active black
