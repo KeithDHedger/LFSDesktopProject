@@ -136,14 +136,12 @@ int main(int argc, char **argv)
 	int					sy=0;
 	char				*iconpath=NULL;
 	LFSTK_buttonClass	*button;
-	int					key=999;
+	int					key=666;
 
 	apc=new LFSTK_applicationClass();
 
 	command=apc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir);
-	printf("command=sed -n '2p' %s/lfsappearance.rc\n",apc->configDir);
-//	key=atoi(command);
-//	printf("com=%s key-%i\n",command,key);
+	key=atoi(command);
 	freeAndNull(&command);
 
 	if((queueID=msgget(key,IPC_CREAT|0660))==-1)
