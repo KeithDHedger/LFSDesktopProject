@@ -1,4 +1,6 @@
 0.2.0
+Fixed eroneous symlink icon on new disks.
+Fixed usb's being inserted.
 Fixed messaging. 
 Fixed memory leaks.
 Fixed popup labels.

@@ -270,8 +270,8 @@ int main(int argc, char **argv)
 	sy+=YSPACING+14;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
-	wc->LFSTK_showWindow();
-	wc->LFSTK_setKeepAbove(true);
+	//wc->LFSTK_showWindow();
+	//wc->LFSTK_setKeepAbove(true);
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	int retval=apc->LFSTK_runApp();

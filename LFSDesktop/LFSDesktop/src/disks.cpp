@@ -111,6 +111,7 @@ bool getUUID(const char *dev)
 
 	device=udev_device_new_from_subsystem_sysname(udev,"block",ptr);
 	tuuid=udev_device_get_property_value(device,"ID_FS_UUID");
+
 	if(tuuid!=NULL)
 		{
 			sprintf(diskUUID,"%s",tuuid);

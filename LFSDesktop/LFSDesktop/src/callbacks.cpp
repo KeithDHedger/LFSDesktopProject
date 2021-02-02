@@ -237,7 +237,7 @@ bool timerCB(LFSTK_applicationClass *p,void* ud)
 
 	readMsg();
 
-	out=apc->globalLib->LFSTK_oneLiner("%s","ls -1 /dev/disk/by-partuuid|md5sum|awk '{print $1}'");
+	out=apc->globalLib->LFSTK_oneLiner("%s","ls -1 /dev/disk/by-uuid|md5sum|awk '{print $1}'");
 	if(out!=NULL)
 		{
 			if(strcmp(out,diskWatch)!=0)

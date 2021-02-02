@@ -120,22 +120,26 @@ void setIconImage(desktopItemStruct	*cf)
 			//TODO//
 			return;
 		}
-
 	switch(cf->type)
 		{
 			case ISHDDDISK:
+				cf->isSymLink=false;
 				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-harddisk","devices");
 				break;
 			case ISUSBHDD:
+				cf->isSymLink=false;
 				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-usb","devices");
 				break;
 			case ISTHUMBDISK:
+				cf->isSymLink=false;
 				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-removable","devices");
 				break;
 			case ISCDROM:
 				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-cdrom","devices");
+				cf->isSymLink=false;
 				break;
 			case ISDVDROM:
+				cf->isSymLink=false;
 				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-dvd","devices");
 				break;
 			case ISDESKTOPFILE:
