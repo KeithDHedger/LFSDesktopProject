@@ -91,8 +91,40 @@ void updateMounted(void)
 								desktopItems.at(j).item->LFSTK_setAlpha(0.5);
 							desktopItems.at(j).item->LFSTK_clearWindow();
 						}
+					getLabel(j);
 				}
 		}
+}
+
+void getLabel(int item)
+{
+	char		disk[256]={0,};
+	const char	*ptr;
+	udev_device *device;
+	const char	*tuuid=NULL;
+	const char *dev=NULL;
+
+	dev=desktopItems.at(item).itemPath;
+	sprintf(disk,"%s",dev);
+	ptr=strrchr(disk,'/');
+	ptr++;
+	device=udev_device_new_from_subsystem_sysname(udev,"block",ptr);
+	tuuid=udev_device_get_property_value(device,"ID_FS_UUID");
+	if(tuuid!=NULL)
+		{
+			if(udev_device_get_property_value(device,"ID_FS_LABEL")!=NULL)
+				{
+					if(strcmp(desktopItems.at(item).label,udev_device_get_property_value(device,"ID_FS_LABEL"))!=0)
+						{
+							desktopItems.at(item).item-> LFSTK_setLabel(udev_device_get_property_value(device,"ID_FS_LABEL"));
+							free(desktopItems.at(item).label);
+							desktopItems.at(item).label=strdup(udev_device_get_property_value(device,"ID_FS_LABEL"));
+							setItemSize(&desktopItems.at(item));
+							desktopItems.at(item).item->LFSTK_clearWindow();
+						}
+				}
+		}
+	udev_device_unref(device);
 }
 
 bool getUUID(const char *dev)

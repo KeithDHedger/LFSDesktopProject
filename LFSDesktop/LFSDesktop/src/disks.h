@@ -28,4 +28,6 @@ extern struct udev	*udev;
 void makeDiskButtons(void);
 void updateMounted(void);
 
+void getLabel(int item);
+
 #endif
