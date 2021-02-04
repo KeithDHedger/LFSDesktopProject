@@ -25,6 +25,8 @@
 
 #include <libgen.h>
 
+#define BOXLABEL		"LFS Backdrop Prefs"
+
 struct					monitorInfo
 {
 	char	*path;
@@ -275,7 +277,7 @@ int main(int argc, char **argv)
 		}
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,"LFSTKPrefs");
+	apc->LFSTK_addWindow(NULL,BOXLABEL);
 	wc=apc->mainWindow;
 
 	asprintf(&wd,"%s",wc->userHome);

@@ -25,6 +25,8 @@
 
 #include <libgen.h>
 
+#define BOXLABEL	"LFS Desktop Prefs"
+
 LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass		*label=NULL;
@@ -237,7 +239,7 @@ int main(int argc, char **argv)
 		}
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,"LFSTKPrefs");
+	apc->LFSTK_addWindow(NULL,BOXLABEL);
 	wc=apc->mainWindow;
 
 	asprintf(&envFile,"%s/lfsdesktop.rc",wc->configDir);

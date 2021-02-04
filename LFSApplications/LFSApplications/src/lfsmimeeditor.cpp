@@ -291,7 +291,7 @@ int main(int argc, char **argv)
 	workDir=mkdtemp(tempfolder);
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,"LFSTKPrefs");
+	apc->LFSTK_addWindow(NULL,"Mime Editor");
 	wc=apc->mainWindow;
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,2*DIALOGWIDTH-BORDER-BORDER,GADGETHITE);

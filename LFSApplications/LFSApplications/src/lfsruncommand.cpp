@@ -83,7 +83,7 @@ int main(int argc, char **argv)
 	char				*thist=NULL;
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,"LFSTKPrefs");
+	apc->LFSTK_addWindow(NULL,"Run Application");
 	wc=apc->mainWindow;
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);

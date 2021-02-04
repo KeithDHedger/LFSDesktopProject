@@ -26,6 +26,7 @@
 
 #define MAXMENUS		5
 #define EDITBOXWIDTH	GADGETWIDTH*4
+#define BOXLABEL		"LFS WM Prefs"
 
 LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*wc=NULL;
@@ -266,7 +267,7 @@ int main(int argc, char **argv)
 	prefsColours[4]=strdup("white");
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,"LFSTKPrefs");
+	apc->LFSTK_addWindow(NULL,BOXLABEL);
 	wc=apc->mainWindow;
 
 	buffer=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",wc->configDir);

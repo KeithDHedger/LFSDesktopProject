@@ -26,6 +26,7 @@
 #include <lfstk/LFSTKGlobals.h>
 
 #define EDITBOXWIDTH	GADGETWIDTH*2
+#define BOXLABEL		"LFS Toolkit Prefs"
 
 LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*wc=NULL;
@@ -566,7 +567,7 @@ int main(int argc, char **argv)
 		}
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,"LFSTKPrefs");
+	apc->LFSTK_addWindow(NULL,BOXLABEL);
 	wc=apc->mainWindow;
 
 	command=apc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",wc->configDir);

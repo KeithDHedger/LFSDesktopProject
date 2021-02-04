@@ -146,7 +146,7 @@ int main(int argc, char **argv)
 		}
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,"LFSTKPrefs");
+	apc->LFSTK_addWindow(NULL,BOXLABEL);
 	wc=apc->mainWindow;
 //	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Gadgets",false);
 //	display=apc->display;

@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<title>LFS Desktop Project</title>
+<meta name="description" content="A full featured, low resource desktop environment built on Linux From Scratch">
+</head><body background="pics/BWWindowTile.png">
+<div align="center"><font color="#ffffff" size="+3"><u><b>LFS Desktop Project</b></u></font><font color="#ffffff">
+  <br>
+
+A low resource/dependency desktop for Linux From Scratch, although 
+designed for Linux From Scratch has been tested on Slackware and XUbuntu
+ briefly.
+  <br>
+
+Please note this project is not an official part of the LFS project here:
+  <br>
+
+  <a href="http://www.linuxfromscratch.org/lfs/view/stable/index.html">Linux From Scratch</a><br>
+  <br>
+The project consists of a window manager, desktop, panels, and wallpaper
+ manager, it is themeable via standard gnome/xfce icons, gtk2 themes and
+ the window manager can use standard xfce4 themes, there are also an 
+number of themes included for themeing the various widgets used by the 
+main library.<br>
+  <b>LFS Appearance<br>
+    <img src="pics/appearence.png" alt="" width="360" height="372"><br>
+    <br>
+Toolkit Prefs ( All Hallows )<br>
+    <img src="pics/ahallfstkprefs.png" alt="" width="476" height="774"><br>
+  </b><br>
+  <b><b>Toolkit Prefs ( Steel )<br>
+      <img src="pics/steellfstkprefs.png" alt="" width="472" height="756"><br>
+      <br>
+    </b></b><b><b><b><b>Toolkit Prefs ( Winter Wood )<br>
+        <img src="pics/winterlfstkprefs.png" alt="" width="472" height="756"><br>
+        <br>
+</b></b></b></b><b><b><b><b><b><b>Toolkit Prefs ( Oldy XMas )</b></b></b></b></b></b><b><b><br>
+    <img src="pics/xmaslfstkprefs.png" alt="" width="472" height="800"><br>
+  </b></b><br>
+<u><b>Default Prefs ( No Theme )<br>
+    <img src="pics/defaulttkprefs.png" alt="" width="472" height="756"><br>
+  </b></u>
+All the window manager, icon and gtk2 themes can be found here:<br>
+  <a href="https://github.com/KeithDHedger/Themes-And-Icons">Themes And Icons</a><br>
+Additionally the toolkit themes shown above are packaged with the library.<br>
+  <br>
+  <b><u>Panels</u><br>
+  </b>Multiple panels can be used and their size, position and which 
+monitor to display them on ( on a multi head system ) is set via the 
+panel prefs dialog.<br>
+  <img src="pics/panelprefs.png" alt="" width="440" height="532"><br>
+Various builtin widgets can be set in the panels, eg clock, alsa voloume
+ etc etc and of course an applications menu and logout/shutdown/reboot 
+menu.<br>
+  <img src="pics/apps.png" alt="" width="455" height="456"><br>
+  <br>
+  <img src="pics/logout.png" alt="" width="135" height="140"><br>
+<br>
+You can also add .desktop files to act as launchers.<br>
+<img src="pics/vol.png" alt="" width="68" height="347"><br>
+<br>
+A range of example widgets are available in the LFSDesktopProject/LFSToolKit/examples folder eg:<br>
+<a href="pics/examples.png"><img src="pics/examples.png" alt="" width="952" height="500" border="0"></a><br>
+<br>
+Full API documentation is available for the lfstklib in the 
+LFSToolKit/docs folder and can be built like with 'make docs' after 
+doing the configure.<br>
+<br>
+<u><b>Desktop<br>
+  </b></u>A full fledged desktop is included and will display icons for 
+disks and any items placed in the~/Desktop folder, there are also three 
+convenience icons Home, Computer and Documents which will take you to 
+the corresponding folder ( file manager is chosen by the xdg-open 
+application ). Icons can be double clicked to activate or you can use a 
+right click to pop up a context menu. Double clicking a desktop file 
+will attempt to run the corresponding application.<br>
+&nbsp;Desktop prefs are set via the lfsdesktopprefs dialog.<br>
+  <img src="pics/deskprefs.png" alt="" width="458" height="564"><br>
+  <br>
+</font><br>
+<font color="#ffffff"><font color="#ffffff">Dual head system with separate wallpapers<u><b>:</b></u></font> <br>
+  <a href="pics/desktop.png"><img src="pics/desktop.png" alt="" width="928" height="259" border="0"></a><br>
+  <br>
+  <u><b>Applications</b></u><br>
+A number of convenience apps are supplied like so:<br>
+lfsfontselect results are outputted on the command line.<br>
+  <img src="pics/fontselect.png" alt="" width="458" height="436"><br>
+  <br>
+lfsmimeeditor<br>
+  <img src="pics/mimeeditor.png" alt="" width="908" height="636"><br>
+</font><br>
+<font color="#ffffff"><font color="#ffffff">lfscolourchooser results are outputted on the command line.</font><br>
+  <img src="pics/colourchooser.png" alt="" width="346" height="460"><br>
+  <br>
+lfsruncommand<br>
+  <img src="pics/runcommand.png" alt="" width="808" height="356"><br>
+  <br>
+lfsabout<br>
+  <img src="pics/about.png" alt="" width="328" height="332"><br>
+  <br>
+  <u><b>Preferences<br>
+    </b></u>Prefs are set via the relevant settings dialogs.<br>
+  <img src="pics/wallpaperprefs.png" alt="" width="458" height="372"><br>
+<br>
+<img src="pics/tkprefs.png" alt="" width="472" height="756"><br>
+<br>
+<img src="pics/deskprefs.png" alt="" width="458" height="564"><br>
+<br>
+<img src="pics/wmprefs.png" alt="" width="458" height="532"><br>
+<br>
+<img src="pics/panelprefs.png" alt="" width="440" height="532"><br>
+<br>
+You can load a complete set of prefs via the lfsappearance dialog</font><font color="#ffffff"> via the drop down menu</font><font color="#ffffff">, you can also add an new set just type a new name in the edit box and select 'Add Group' from the drop down.<br>
+The new group will be a clone of the current prefs used.<br>
+  <img src="pics/appearencenewset.png" alt="" width="360" height="372"><br>
+  <br>
+  <u><b>Starting a</b></u><u><b> complete desktop</b></u><br>
+An example xinitrc.sample&nbsp; file is included in the main folder, 
+this should be modified to your own needs and copied to ~/.xinitrc, to 
+scripts are also installed with the LFS Applications, startlfsdesktop 
+and lfslaunchpanels, startlfsdesktop will create a set of sensible 
+default prefs if none exist and then start the desktop session, </font><font color="#ffffff">lfslaunchpanels&nbsp; will launch all the panels you have configured.<br>
+  <br>
+</font></div></body></html>

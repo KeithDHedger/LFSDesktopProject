@@ -35,6 +35,8 @@
 #define DIALOGWIDTH		BORDER*2+GADGETWIDTH+LABELWIDTH
 #define DIALOGMIDDLE	DIALOGWIDTH/2
 
+#define BOXLABEL		"LFS Appearance"
+
 LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass		*personal=NULL;
@@ -256,7 +258,7 @@ int main(int argc, char **argv)
 	char		*buffer=NULL;
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,"LFSTKPrefs");
+	apc->LFSTK_addWindow(NULL,BOXLABEL);
 	wc=apc->mainWindow;
 
 	find=new LFSTK_findClass;

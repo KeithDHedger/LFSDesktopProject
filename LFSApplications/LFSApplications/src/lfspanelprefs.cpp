@@ -24,9 +24,10 @@
 #include "lfstk/LFSTKGlobals.h"
 
 #undef GADGETWIDTH
-#define GADGETWIDTH 128
+#define GADGETWIDTH	128
 #undef DIALOGWIDTH
-#define DIALOGWIDTH (GADGETWIDTH*3)+(BORDER*3)
+#define DIALOGWIDTH	(GADGETWIDTH*3)+(BORDER*3)
+#define BOXLABEL	"LFS Panel Prefs"
 
 LFSTK_applicationClass		*apc=NULL;
 LFSTK_windowClass			*wc=NULL;
@@ -283,7 +284,7 @@ int main(int argc, char **argv)
 		}
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,"LFSTKPrefs");
+	apc->LFSTK_addWindow(NULL,BOXLABEL);
 	wc=apc->mainWindow;
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);

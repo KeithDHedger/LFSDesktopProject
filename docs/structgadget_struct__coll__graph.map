@@ -1,6 +1,0 @@
-<map id="gadgetStruct" name="gadgetStruct">
-<area shape="rect" id="node1" title=" " alt="" coords="73,205,170,233"/>
-<area shape="rect" id="node2" href="$structgeometry_struct.xhtml" title=" " alt="" coords="5,97,117,125"/>
-<area shape="rect" id="node3" href="$structcolour_struct.xhtml" title=" " alt="" coords="142,97,234,125"/>
-<area shape="rect" id="node4" href="$structcairo_color.xhtml" title=" " alt="" coords="147,5,229,33"/>
-</map>

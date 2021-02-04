@@ -13,11 +13,12 @@ exit $retval
 #include "config.h"
 #include <lfstk/LFSTKGlobals.h>
 
-#define WINDOWWIDTH 320
-#define WINDOWHITE 10
-#define WINDOWMIDDLE WINDOWWIDTH/2
-#define SPACING 24
-#define HALFSPACING SPACING/2
+#define WINDOWWIDTH		320
+#define WINDOWHITE		10
+#define WINDOWMIDDLE	WINDOWWIDTH/2
+#define SPACING			24
+#define HALFSPACING		SPACING/2
+#define BOXLABEL		"LFS About"
 
 enum {LNAME,LDESCRIPTION,LCOPYRITE,LEMAIL,LWEBSITE,LGPL,LNOMORELABELS};
 
@@ -45,7 +46,7 @@ int main(int argc, char **argv)
 	int		sy=BORDER;
 		
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,"LFSTKPrefs");
+	apc->LFSTK_addWindow(NULL,BOXLABEL);
 	wc=apc->mainWindow;
 
 	tux=new LFSTK_imageClass(wc,NULL,WINDOWMIDDLE-(IMAGESIZE/2),sy,IMAGESIZE,IMAGESIZE,BUTTONGRAV,true);

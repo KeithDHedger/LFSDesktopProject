@@ -1,5 +1,0 @@
-<map id="LFSTK_buttonClass" name="LFSTK_buttonClass">
-<area shape="rect" id="node1" title="Basic button class for LFSToolKit." alt="" coords="16,81,157,109"/>
-<area shape="rect" id="node3" href="$class_l_f_s_t_k__menu_item_class.xhtml" title="Menu item class for LFSToolKit." alt="" coords="5,157,168,185"/>
-<area shape="rect" id="node2" href="$class_l_f_s_t_k__gadget_class.xhtml" title="Base class for LFSToolKit gadgets." alt="" coords="15,5,159,33"/>
-</map>
