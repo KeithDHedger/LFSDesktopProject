@@ -4,7 +4,7 @@
 <title>LFS Desktop Project</title>
 <meta name="description" content="A full featured, low resource desktop environment built on Linux From Scratch">
 </head><body background="pics/BWWindowTile.png">
-<div align="center"><font color="#ffffff" size="+3"><u><b>LFS Desktop Project</b></u></font><font color="#ffffff">
+<div align="center"><font size="+3" color="#ffffff"><u><b>LFS Desktop Project</b></u></font><font color="#ffffff">
   <br>
 
 A low resource/dependency desktop for Linux From Scratch, although 
@@ -23,22 +23,22 @@ The project consists of a window manager, desktop, panels, and wallpaper
 number of themes included for themeing the various widgets used by the 
 main library.<br>
   <b>LFS Appearance<br>
-    <img src="pics/appearence.png" alt="" width="360" height="372"><br>
+    <img src="pics/appearence.png" alt="" height="372" width="360"><br>
     <br>
 Toolkit Prefs ( All Hallows )<br>
-    <img src="pics/ahallfstkprefs.png" alt="" width="476" height="774"><br>
+    <img src="pics/ahallfstkprefs.png" alt="" height="774" width="476"><br>
   </b><br>
   <b><b>Toolkit Prefs ( Steel )<br>
-      <img src="pics/steellfstkprefs.png" alt="" width="472" height="756"><br>
+      <img src="pics/steellfstkprefs.png" alt="" height="756" width="472"><br>
       <br>
     </b></b><b><b><b><b>Toolkit Prefs ( Winter Wood )<br>
-        <img src="pics/winterlfstkprefs.png" alt="" width="472" height="756"><br>
+        <img src="pics/winterlfstkprefs.png" alt="" height="756" width="472"><br>
         <br>
 </b></b></b></b><b><b><b><b><b><b>Toolkit Prefs ( Oldy XMas )</b></b></b></b></b></b><b><b><br>
-    <img src="pics/xmaslfstkprefs.png" alt="" width="472" height="800"><br>
+    <img src="pics/xmaslfstkprefs.png" alt="" height="800" width="472"><br>
   </b></b><br>
 <u><b>Default Prefs ( No Theme )<br>
-    <img src="pics/defaulttkprefs.png" alt="" width="472" height="756"><br>
+    <img src="pics/defaulttkprefs.png" alt="" height="756" width="472"><br>
   </b></u>
 All the window manager, icon and gtk2 themes can be found here:<br>
   <a href="https://github.com/KeithDHedger/Themes-And-Icons">Themes And Icons</a><br>
@@ -48,19 +48,38 @@ Additionally the toolkit themes shown above are packaged with the library.<br>
   </b>Multiple panels can be used and their size, position and which 
 monitor to display them on ( on a multi head system ) is set via the 
 panel prefs dialog.<br>
-  <img src="pics/panelprefs.png" alt="" width="440" height="532"><br>
-Various builtin widgets can be set in the panels, eg clock, alsa voloume
+  <img src="pics/panelprefs.png" alt="" height="532" width="440"><br>
+Various builtin widgets can be set in the panels, eg clock, alsa volume
  etc etc and of course an applications menu and logout/shutdown/reboot 
 menu.<br>
-  <img src="pics/apps.png" alt="" width="455" height="456"><br>
+Panel widgets are placed grouped either to the left or right and are selected in the prefs accordingly, a single letter defines which widgets to use ie:<br>
+A=Application menu, W=All windows, w=Only windows on current desktop, 
+L=Logout menu, C=Clock, D=Disk activity, M=CPU data, S=Spacer, 
+l=Launchers, s=ALSA volume.<br>
+Launchers are just normal .desktop files placed in 
+~/.config/LFS/launchers-PANELNAME/, the user should create the 
+folder.,the PANELNAME is user set and added to the panel config eg 
+lfspanel-LEFT.rc ( as above ), lfspanel-RIGHT.rc etc. As you can see 
+from the above image, the left panel includes launchers (l) and the ALSA volume control (s).<br>
+The application menu includes items from ~/.local/share/applications as well as the global apps in /usr/share/applications.<br>
+<br>
+<u><b>Application Menu</b></u><br>
+  <img src="pics/apps.png" alt="" height="456" width="455"><br>
   <br>
-  <img src="pics/logout.png" alt="" width="135" height="140"><br>
+<u><b>Logout Menu</b></u><br>
+  <img src="pics/logout.png" alt="" height="140" width="135"><br>
+<br>
+<u><b>Glob</b></u><u><b>al Window Menu</b></u><br>
+<img src="pics/windowmenu.png" alt="" height="179" width="390"><br>
+<br>
+<u><b>Windows On Current D</b></u><u><b>e</b></u><u><b>sktop Menu</b></u><br>
+<img src="pics/deskwindowmenu.png" alt="" height="134" width="388"><br>
 <br>
 You can also add .desktop files to act as launchers.<br>
-<img src="pics/vol.png" alt="" width="68" height="347"><br>
+<img src="pics/vol.png" alt="" height="347" width="68"><br>
 <br>
 A range of example widgets are available in the LFSDesktopProject/LFSToolKit/examples folder eg:<br>
-<a href="pics/examples.png"><img src="pics/examples.png" alt="" width="952" height="500" border="0"></a><br>
+<a href="pics/examples.png"><img src="pics/examples.png" alt="" height="500" width="952" border="0"></a><br>
 <br>
 Full API documentation is available for the lfstklib in the 
 LFSToolKit/docs folder and can be built like with 'make docs' after 
@@ -75,44 +94,44 @@ application ). Icons can be double clicked to activate or you can use a
 right click to pop up a context menu. Double clicking a desktop file 
 will attempt to run the corresponding application.<br>
 &nbsp;Desktop prefs are set via the lfsdesktopprefs dialog.<br>
-  <img src="pics/deskprefs.png" alt="" width="458" height="564"><br>
+  <img src="pics/deskprefs.png" alt="" height="564" width="458"><br>
   <br>
 </font><br>
 <font color="#ffffff"><font color="#ffffff">Dual head system with separate wallpapers<u><b>:</b></u></font> <br>
-  <a href="pics/desktop.png"><img src="pics/desktop.png" alt="" width="928" height="259" border="0"></a><br>
+  <a href="pics/desktop.png"><img src="pics/desktop.png" alt="" height="259" width="928" border="0"></a><br>
   <br>
   <u><b>Applications</b></u><br>
 A number of convenience apps are supplied like so:<br>
 lfsfontselect results are outputted on the command line.<br>
-  <img src="pics/fontselect.png" alt="" width="458" height="436"><br>
+  <img src="pics/fontselect.png" alt="" height="436" width="458"><br>
   <br>
 lfsmimeeditor<br>
-  <img src="pics/mimeeditor.png" alt="" width="908" height="636"><br>
+  <img src="pics/mimeeditor.png" alt="" height="636" width="908"><br>
 </font><br>
 <font color="#ffffff"><font color="#ffffff">lfscolourchooser results are outputted on the command line.</font><br>
-  <img src="pics/colourchooser.png" alt="" width="346" height="460"><br>
+  <img src="pics/colourchooser.png" alt="" height="460" width="346"><br>
   <br>
 lfsruncommand<br>
-  <img src="pics/runcommand.png" alt="" width="808" height="356"><br>
+  <img src="pics/runcommand.png" alt="" height="356" width="808"><br>
   <br>
 lfsabout<br>
-  <img src="pics/about.png" alt="" width="328" height="332"><br>
+  <img src="pics/about.png" alt="" height="332" width="328"><br>
   <br>
   <u><b>Preferences<br>
     </b></u>Prefs are set via the relevant settings dialogs.<br>
-  <img src="pics/wallpaperprefs.png" alt="" width="458" height="372"><br>
+  <img src="pics/wallpaperprefs.png" alt="" height="372" width="458"><br>
 <br>
-<img src="pics/tkprefs.png" alt="" width="472" height="756"><br>
+<img src="pics/tkprefs.png" alt="" height="756" width="472"><br>
 <br>
-<img src="pics/deskprefs.png" alt="" width="458" height="564"><br>
+<img src="pics/deskprefs.png" alt="" height="564" width="458"><br>
 <br>
-<img src="pics/wmprefs.png" alt="" width="458" height="532"><br>
+<img src="pics/wmprefs.png" alt="" height="532" width="458"><br>
 <br>
-<img src="pics/panelprefs.png" alt="" width="440" height="532"><br>
+<img src="pics/panelprefs.png" alt="" height="532" width="440"><br>
 <br>
 You can load a complete set of prefs via the lfsappearance dialog</font><font color="#ffffff"> via the drop down menu</font><font color="#ffffff">, you can also add an new set just type a new name in the edit box and select 'Add Group' from the drop down.<br>
 The new group will be a clone of the current prefs used.<br>
-  <img src="pics/appearencenewset.png" alt="" width="360" height="372"><br>
+  <img src="pics/appearencenewset.png" alt="" height="372" width="360"><br>
   <br>
   <u><b>Starting a</b></u><u><b> complete desktop</b></u><br>
 An example xinitrc.sample&nbsp; file is included in the main folder, 
