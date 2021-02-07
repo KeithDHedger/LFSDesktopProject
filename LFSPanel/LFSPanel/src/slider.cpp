@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <alsa/asoundlib.h>
 
-#include "slider.h"
+#include "globals.h"
 
 LFSTK_scrollBarClass	*vsb=NULL;
 LFSTK_windowClass		*scwindow=NULL;
@@ -217,7 +217,6 @@ int addSlider(int x,int y,int grav,bool fromleft)
 	setIcon();
 	free(vol);
 	free(label);
-	useAlarm=true;
 
 	return(width);
 }

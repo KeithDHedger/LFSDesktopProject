@@ -18,7 +18,7 @@
  * along with LFSPanel.  If not,see <http://www.gnu.org/licenses/>.
  */
 
-#include "windowlist.h"
+#include "globals.h"
 
 //all windows
 LFSTK_buttonClass	*windowAll=NULL;
@@ -177,14 +177,14 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 	wname=NULL;
 	winid=-1;
 
-	for (int j=n_children-1; j>=0; j--)
+	for (int j=n_children-1;j>=0; j--)
 		{
-			if((thisdesktop==true) && (isVisible(mainwind->app->display, children[j])==false))
+			if((thisdesktop==true) && (isVisible(mainwind->app->display,children[j])==false))
 				{
 					children[j]=None; /* Don't bother descending into this one */
 					continue;
 				}
-			if (!hasProp(mainwind->app->display, children[j],WM_STATE))
+			if (!hasProp(mainwind->app->display,children[j],WM_STATE))
 				continue;
 
 			if (!hasWindowProp(children[j],NET_WM_WINDOW_TYPE_NORMAL,NET_WM_WINDOW_TYPE))
@@ -231,6 +231,7 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 				{
 					windowDeskList[windowDeskListCnt]=new menuStruct;
 					windowDeskList[windowDeskListCnt]->label=strdup(wname);
+					windowDeskList[windowDeskListCnt]->label=strdup(wname);
 					windowDeskList[windowDeskListCnt++]->userData=(void*)winid;
 				}
 			else
@@ -247,7 +248,6 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 	XFree(ptr);
 	XFree(children);
 	return thewin;
-
 }
 
 void getCurrentDesktop(void)
@@ -278,14 +278,13 @@ void updateWindowMenu(void)
 
 	if(windowDesk!=NULL)
 		{
-			//if(windowDeskList!=NULL)//TODO//
-			//	delete[] windowDeskList;
 			windowDeskList=new menuStruct*[MAXWINDOWSINLIST];
+			for(int j=0;j<MAXWINDOWSINLIST;j++)
+				windowDeskList[j]=NULL;
 			win=mainwind->app->rootWindow;
 			windowDeskListCnt=0;
 			while(win!=None)
 				win=doTreeWalk(win,true);
-
 			if(windowDeskListCnt>0)
 				{
 					windowDeskMenu->LFSTK_addMainMenus(windowDeskList,windowDeskListCnt);
@@ -297,22 +296,6 @@ void updateWindowMenu(void)
 
 	if(windowAll!=NULL)
 		{
-//			if(windowAllList!=NULL)
-//				{
-//					for(unsigned j=0;j<MAXWINDOWSINLIST;j++)
-//						{
-//							if(windowAllList[j]!=NULL)
-//							{
-//								//if(windowAllList[j]->label!=NULL)
-//								//	{
-//								//		printf("windowAllList[j]=%s\n",windowAllList[j]->label);
-//								//		free(windowAllList[j]->label);
-//								//	}
-//				//	delete windowAllList[j];
-//							}
-//						}
-//				}
-
 			windowAllList=new menuStruct*[MAXWINDOWSINLIST];
 			windowAllListCnt=0;
 			win=mainwind->app->rootWindow;
@@ -365,7 +348,6 @@ int addWindowDeskMenu(int x,int y,int grav,bool fromleft)
 	updateWindowCnt=WINDOWREFRESH;
 	updateWindowMenu();
 	
-	useAlarm=true;
 	return(width);
 }
 
@@ -405,8 +387,5 @@ int addWindowMenu(int x,int y,int grav,bool fromleft)
 
 	windowDeskListCnt=-1;
 	windowAllListCnt=-1;
-	updateWindowCnt=WINDOWREFRESH;
-	updateWindowMenu();
-	useAlarm=true;
 	return(width);
 }

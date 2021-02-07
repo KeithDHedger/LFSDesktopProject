@@ -22,8 +22,6 @@
 #ifndef _CPU_
 #define _CPU_
 
-#include "globals.h"
-
 extern LFSTK_labelClass	*cpuButton;
 
 int addCpuData(int x,int y,int grav);

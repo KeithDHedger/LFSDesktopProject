@@ -22,8 +22,6 @@
 #ifndef _CLOCK_
 #define _CLOCK_
 
-#include "globals.h"
-
 extern LFSTK_labelClass	*clockButton;
 
 int addClock(int x,int y,int grav);

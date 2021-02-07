@@ -14,6 +14,10 @@ rm basicexample
 exit $retval
 #endif
 
+#include <iostream>
+#include <string>
+#include <sstream>
+
 #include "../config.h"
 #include "../LFSToolKit/lfstk/LFSTKGlobals.h"
 
@@ -32,6 +36,7 @@ LFSTK_buttonClass			*ignoredButton=NULL;
 LFSTK_buttonClass			*leftButton=NULL;
 LFSTK_buttonClass			*centreButton=NULL;
 LFSTK_buttonClass			*rightButton=NULL;
+LFSTK_buttonClass			*dropButton=NULL;
 
 bool						show=true;
 
@@ -97,6 +102,34 @@ bool timerCB(LFSTK_applicationClass *p,void* ud)
 		return(false);
 }
 
+bool gadgetDrop(void *lwc,propertyStruct *data,void* ud)
+{
+//	propertyStruct	*data;
+	LFSTK_buttonClass	*bc=static_cast<LFSTK_buttonClass*>(lwc);
+	char			*cleanstr;
+	if(data!=NULL)
+		{
+			//data=static_cast<propertyStruct*>(ud);
+			if(strcasecmp(data->mimeType,"text/uri-list")==0)
+				{
+					std::istringstream stream((const char*)data->data);
+					std::string line;
+					while(std::getline(stream, line))
+						{
+							cleanstr=apc->globalLib->LFSTK_cleanString((const char*)line.c_str());
+							printf("dropped >>%s<< on gadget %s @x/y %i %i\n",cleanstr,bc->LFSTK_getLabel(),data->dropX,data->dropY);
+							free(cleanstr);
+						}
+				}
+			else
+				{
+					cleanstr=apc->globalLib->LFSTK_cleanString((const char*)data->data);
+					printf("dropped >>%s<< on gadget %s @x/y %i %i\n",cleanstr,bc->LFSTK_getLabel(),data->dropX,data->dropY);
+					free(cleanstr);
+				}
+		}
+	return(true);
+}
 
 int main(int argc, char **argv)
 {
@@ -105,6 +138,7 @@ int main(int argc, char **argv)
 	apc=new LFSTK_applicationClass();
 	apc->LFSTK_addWindow(NULL,BOXLABEL);
 	wc=apc->mainWindow;
+	wc->LFSTK_initDnD(false);
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,NorthGravity);
 	label->LFSTK_setCairoFontDataParts("sB",20);
@@ -142,8 +176,7 @@ int main(int argc, char **argv)
 	leftButton=new LFSTK_buttonClass(wc,"Label Left",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE);
 	leftButton->LFSTK_setLabelGravity(LEFT);
 	leftButton->LFSTK_setKeyCallBack(NULL,keyCB,(void*)"Key Left");
-	leftButton->LFSTK_setMouseCallBack(NULL,mouseCB,(void*)"Mouse Left");
-
+	leftButton->LFSTK_setMouseCallBack(NULL,mouseCB,(void*)"Left");
 	sy+=YSPACING;
 //centre
 	centreButton=new LFSTK_buttonClass(wc,"Label Centre",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE);
@@ -154,6 +187,13 @@ int main(int argc, char **argv)
 	rightButton=new LFSTK_buttonClass(wc,"Label Right",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE);
 	rightButton->LFSTK_setLabelGravity(RIGHT);
 	rightButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"Right");
+	sy+=YSPACING;
+//drop gadget
+	dropButton=new LFSTK_buttonClass(wc,"Drop Here",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE);
+	dropButton->LFSTK_setKeyCallBack(NULL,keyCB,(void*)"Key Drop");
+	dropButton->LFSTK_setMouseCallBack(NULL,mouseCB,(void*)"Drop");
+	dropButton->LFSTK_setGadgetDropCallBack(gadgetDrop,NULL);
+	dropButton->gadgetAcceptsDnD=true;
 	sy+=YSPACING;
 
 //line

@@ -26,12 +26,17 @@
 #include <map>
 #include <dirent.h>
 
+#include <glib.h>
 #include <cairo.h>
 #include <cairo-xlib.h>
 
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
+
+#include <iostream>
+#include <string>
+#include <sstream>
 
 #define COPYRITE			"Copyright © 2013-2020 K.D.Hedger"
 #define PERSONAL			"keithdhedger@gmail.com"
@@ -225,6 +230,18 @@ class LFSTK_applicationClass;
 #define	DOUBLECLICKCB		0x40
 #define	TIMERCB				0x80
 #define ALLCB				0x8F
+
+struct propertyStruct
+{
+	unsigned char	*data;
+	int				format;
+	int				nitems;
+	Atom			type;
+	char			*mimeType;
+	int				dropX=-1;
+	int				dropY=-1;
+};
+
 struct callbackStruct
 {
 	bool					(*mousePressCallback)(void*,void*)=NULL;
@@ -232,10 +249,11 @@ struct callbackStruct
 	bool					(*keyPressCallback)(void*,void*)=NULL;
 	bool					(*keyReleaseCallback)(void*,void*)=NULL;
 	bool					(*droppedWindowCallback)(LFSTK_windowClass*,void*)=NULL;
-	bool					(*droppedGadgetCallback)(void*,void*)=NULL;
+	bool					(*droppedGadgetCallback)(void*,propertyStruct *data,void*)=NULL;
 	bool					(*doubleClickCallback)(void*,void*)=NULL;
 	bool					(*timerCallback)(LFSTK_applicationClass*,void*)=NULL;
 	void					*mouseUserData=NULL;
+	void					*droppedUserData=NULL;
 	void					*keyUserData=NULL;
 	bool					runTheCallback=true;
 	bool					ignoreOrphanModKeys=true;

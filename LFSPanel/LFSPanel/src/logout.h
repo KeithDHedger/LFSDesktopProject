@@ -26,7 +26,9 @@
 
 enum logoutEntrys {LOGOUT=0,RESTART,SHUTDOWN,NUMLOGOUTENTRYS};
 
+extern LFSTK_buttonClass	*logoutButton;
 extern LFSTK_menuClass		*logoutMenu;
+
 int addLogout(int x,int y,int grav,bool fromleft);
 
 #endif

@@ -94,7 +94,7 @@ class LFSTK_gadgetClass
 		void					LFSTK_setIgnores(bool runcb,bool ignoreorphanmod);
 		void					LFSTK_setMouseCallBack(bool (*downcb)(void*,void*),bool (*releasecb)(void*,void*),void* ud);
 		void					LFSTK_setKeyCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud);
-		void					LFSTK_setGadgetDropCallBack(bool (*dropped)(void*,void*),void* ud=NULL);
+		void					LFSTK_setGadgetDropCallBack(bool (*dropped)(void*,propertyStruct *data,void*),void* ud=NULL);
 		void					LFSTK_setCallBacks(callbackStruct cbs);
 		callbackStruct			callBacks;
 

@@ -22,7 +22,7 @@
 #include <signal.h>
 #include <ctime>
 
-#include "clock.h"
+#include "globals.h"
 
 LFSTK_labelClass	*clockButton=NULL;
 
@@ -63,6 +63,5 @@ int addClock(int x,int y,int grav)
 
 	clockButton=new LFSTK_labelClass(mainwind,"--:--:--",xpos,0,width,panelHeight,CENTRE,grav);
 	
-	useAlarm=true;
 	return(retval);
 }

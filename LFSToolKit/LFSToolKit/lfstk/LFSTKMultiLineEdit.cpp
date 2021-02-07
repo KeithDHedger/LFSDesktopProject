@@ -518,7 +518,7 @@ bool LFSTK_multiLineEditClass::keyRelease(XKeyEvent *e)
 * Drop data.
 * \param data Data drooped on gadget as string.
 */
-void LFSTK_multiLineEditClass::LFSTK_dropData(propertyStruct* data)
+void LFSTK_multiLineEditClass::LFSTK_dropData(propertyStruct* data)//TODO//
 {
 	int	endl;
 

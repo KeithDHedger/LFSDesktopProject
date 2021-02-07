@@ -18,7 +18,7 @@
  * along with LFSPanel.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "cpu.h"
+#include "globals.h"
 
 enum CPUDATA {CPUUSER=0,CPUNICE,CPUSYSTEM,CPUIDLE,CPUIOWAIT,CPUIRQ,CPUSOFTIRQ,CPUSTEAL,CPUDATACNT};
 
@@ -95,7 +95,6 @@ int addCpuData(int x,int y,int grav)
 	setNewData();
 	cpuButton=new LFSTK_labelClass(mainwind,"CPU=0.0%",xpos,0,width,panelHeight,CENTRE,grav);
 	cpuButton->LFSTK_setLabelGravity(LEFT);
-	useAlarm=true;
 	return(retval);
 }
 

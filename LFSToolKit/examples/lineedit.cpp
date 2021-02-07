@@ -29,13 +29,13 @@ bool doQuit(void *p,void* ud)
 	return(false);
 }
 
-bool doDropped(void *p,void* ud)
+bool doDropped(void *p,propertyStruct *data,void* ud)
 {
 	LFSTK_gadgetClass	*gadg=NULL;
-	propertyStruct		*data=NULL;
+	//propertyStruct		*data=NULL;
 
 	gadg=static_cast<LFSTK_gadgetClass*>(p);
-	data=static_cast<propertyStruct*>(ud);
+	//data=static_cast<propertyStruct*>(ud);
 	printf("dropped %s on gadget %p @x/y %i %i\n",data->data,gadg,data->dropX,data->dropY);
 	return(true);
 }

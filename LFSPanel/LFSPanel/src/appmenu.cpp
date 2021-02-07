@@ -30,7 +30,6 @@ const char			*myCats[]= {"Settings","Utility","Development","Education","Graphic
 const char			*catImageNames[]={"preferences-desktop","applications-utilities","applications-development","applications-science","applications-graphics","applications-internet","applications-multimedia","applications-office","applications-engineering","applications-games","applications-system",NULL};
 
 LFSTK_findClass		*find;
-
 LFSTK_buttonClass	*appButton=NULL;
 menuStruct			**catagoryMenus;
 LFSTK_menuClass		*appMenu=NULL;

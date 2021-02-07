@@ -1,4 +1,6 @@
 0.5.0
+Updated basic example to show drop on gadget.
+All gadgets can now handle DnD.
 Fixed themepaths in installed themes.
 Fixed display correct checkbox png.
 Fixed memory leaks.

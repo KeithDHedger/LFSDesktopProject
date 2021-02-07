@@ -22,8 +22,6 @@
 #ifndef _DISKS_
 #define _DISKS_
 
-#include "globals.h"
-
 extern LFSTK_labelClass	*diskButton;
 
 int addDiskData(int x,int y,int grav);

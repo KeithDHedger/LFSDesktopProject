@@ -27,6 +27,7 @@
 #define MAXENTRYS 500
 
 extern LFSTK_menuClass		*appMenu;
+extern LFSTK_buttonClass	*appButton;
 
 int addAppmenu(int x,int y,int grav,bool fromleft);
 extern std::map<int,menuEntryStruct*>	entrydata;

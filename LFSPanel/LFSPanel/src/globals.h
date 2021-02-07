@@ -21,9 +21,17 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string>
 
 #include "config.h"
 #include <lfstk/LFSTKGlobals.h>
+
+#include "callbacks.h"
+#include "clock.h"
+#include "disks.h"
+#include "cpu.h"
+#include "windowlist.h"
+#include "slider.h"
 
 #ifndef _GLOBALS_
 #define _GLOBALS_
@@ -32,6 +40,8 @@
 #define BWIDTH 64
 #define SPACING 10
 #define WINDOWREFRESH 2
+#define RCNAME "lfspanel"
+#define REFRESHMULTI 4
 
 enum PANELXPOS {PANELLEFT=-1,PANELCENTRE=-2,PANELRIGHT=-3};
 enum PANELYPOS {PANELTOP=-1,PANELBOTTOM=-3};
@@ -40,11 +50,21 @@ enum PANELGRAVITY {PANELABS=0,PANELNORTH,PANELEAST,PANELSOUTH,PANELWEST};
 
 struct menuEntryStruct
 {
-	char					*name;
-	char					*exec;
+	char					*name=NULL;
+	char					*exec=NULL;
+	char					*icon=NULL;
 	bool					inTerm;
-	char					*icon;
 };
+
+struct launcherList
+{
+	launcherList		*next=NULL;
+	LFSTK_buttonClass	*bc=NULL;
+	char				*icon=NULL;
+	menuEntryStruct		entry;
+};
+
+enum {NOLAUNCHERS,LAUNCHERINLEFT,LAUNCHERINRITE};
 
 //prefs
 extern char					*terminalCommand;
@@ -59,19 +79,24 @@ extern char					*rightGadgets;
 extern char					*leftGadgets;
 extern int					panelPos;
 extern int					panelGravity;
+
+extern int					queueID;
+extern msgBuffer			buffer;
+extern bool					realMainLoop;
+
 extern char					*desktopTheme;
 extern const char			*panelID;
 
 extern int					refreshRate;
 
 extern int					iconSize;
-extern bool					useAlarm;
 
 //panel window
 extern LFSTK_applicationClass	*apc;
 extern LFSTK_windowClass	*mainwind;
 extern int					rightOffset;
 extern int					leftOffset;
+extern int					launcherSide;
 
 //atoms
 extern Atom					WM_STATE;
@@ -84,5 +109,6 @@ extern Atom					NET_WM_STATE;
 
 void printError(const char *err);
 void setSizes(int *x,int *y,int *w,int *h,int *size,int *grav,bool fromleft);
+void dropDesktopFile(const char *data,launcherList *launcher);
 
 #endif

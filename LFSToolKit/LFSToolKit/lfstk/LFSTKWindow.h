@@ -35,17 +35,17 @@ struct	monitorStruct
 	int				h;
 };
 
-struct propertyStruct
-{
-	unsigned char	*data;
-	int				format;
-	int				nitems;
-	Atom			type;
-	char			*mimeType;
-	int				dropX=-1;
-	int				dropY=-1;
-};
-
+//struct propertyStruct
+//{
+//	unsigned char	*data;
+//	int				format;
+//	int				nitems;
+//	Atom			type;
+//	char			*mimeType;
+//	int				dropX=-1;
+//	int				dropY=-1;
+//};
+//
 /**
 * Drop data structure.
 * \param type 0=text, 1=uri, -1 invalid.

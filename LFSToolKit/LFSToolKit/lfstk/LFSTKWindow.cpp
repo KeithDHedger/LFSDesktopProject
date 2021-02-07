@@ -1106,6 +1106,7 @@ void LFSTK_windowClass::LFSTK_sendMessage(const char *msg,unsigned long data0,un
 /**
  * Init drag and drop system.
  * \param bool accept drops onto parent window ( default=false ).
+ * \note MUST be called to enable DnD on gadgets and windows.
  * \note Set when lined edit class is created.
  */
 void LFSTK_windowClass::LFSTK_initDnD(bool acceptwindowdrops)

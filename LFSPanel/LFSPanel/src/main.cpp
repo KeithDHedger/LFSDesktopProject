@@ -37,9 +37,8 @@
 #define RCNAME "lfspanel"
 #define REFRESHMULTI 4
 
-bool		mainLoop=true;
-int			queueID;
-msgBuffer	buffer;
+//int			queueID;
+//msgBuffer	buffer;
 
 args		panelPrefs[]=
 {
@@ -57,43 +56,8 @@ args		panelPrefs[]=
 	{NULL,0,NULL}
 };
 
-void readMsg(void)
-{
-	int		retcode;
-	char	*command=NULL;
-	FILE	*fd=NULL;
-	char	buff[2048];
-	char	*comstring=NULL;
-	char	*forwhom;
-
-	buffer.mText[0]=0;
-	retcode=msgrcv(queueID,&buffer,MAX_MSG_SIZE,PANEL_MSG,IPC_NOWAIT);
-
-	comstring=strdup(buffer.mText);
-	command=strtok(comstring," ");
-	forwhom=strtok(NULL," ");
-
-	if(forwhom==NULL)
-		return;
-
-	if(strcmp(forwhom,panelID)!=0)
-		{
-			if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
-				fprintf(stderr,"Can't send message :(\n");
-			free(comstring);
-			return;
-		}
-
-	if((command!=NULL) && (strcmp(command,"quitpanel")==0))
-		apc->mainLoop=false;
-	free(comstring);
-
-	buffer.mText[0]=0;
-}
-
 void addLeftGadgets(void)
 {
-//	int	offset=mons->x+leftOffset;
 	int	offset=leftOffset;
 
 	for(int j=0; j<strlen(leftGadgets); j++)
@@ -125,7 +89,13 @@ void addLeftGadgets(void)
 					offset+=SPACING;
 					break;
 				case 'l':
-					offset+=addLaunchers(offset,mons->y,panelGravity,true);
+					if(launcherSide==NOLAUNCHERS)
+						{
+							launcherSide=LAUNCHERINLEFT;
+							offset+=addLaunchers(offset,mons->y,panelGravity,true);
+						}
+					else
+						printError("Duplicate launcher widget");
 					break;
 				case 's':
 					offset+=addSlider(offset,mons->y,panelGravity,true);
@@ -168,7 +138,16 @@ void addRightGadgets(void)
 					offset-=SPACING;
 					break;
 				case 'l':
-					offset+=addLaunchers(offset,mons->y,panelGravity,true);
+					if(launcherSide==NOLAUNCHERS)
+						{
+							launcherSide=LAUNCHERINRITE;
+							offset+=addLaunchers(offset,mons->y,panelGravity,false);
+						}
+					else
+						printError("Duplicate launcher widget");
+					break;
+				case 's':
+					offset+=addSlider(offset,mons->y,panelGravity,false);
 					break;
 				}
 		}
@@ -190,47 +169,15 @@ void printError(const char *err)
 	fprintf(stderr,">>>%s<<<\n",err);
 }
 
-bool timerCB(LFSTK_applicationClass *p,void* ud)
+bool windowDrop(LFSTK_windowClass *lwc,void* ud)
 {
-	readMsg();
+	char	*cleanstr=NULL;
 
-	if(clockButton!=NULL)
-		updateClock();
-
-	if(diskButton!=NULL)
-		updateDiskStats();
-
-	if(cpuButton!=NULL)
-		updateCpuStats();
-
-	if((windowAll!=NULL) || (windowDesk!=NULL))
-		updateWindowMenu();
-
-	if(scwindow!=NULL)
-		updateSlider();
-
-	XFlush(mainwind->app->display);
-	return(true);
-}
-
-bool XNextEventTimed(Display *dsp,XEvent *event_return,timeval *tv)
-{
-	if (tv== NULL)
+	if(lwc!=NULL)
 		{
-			XNextEvent(dsp,event_return);
-			return(true);
+			if(lwc->droppedData.type=DROPURI)
+				dropDesktopFile((const char*)lwc->droppedData.data,NULL);
 		}
-
-	if (XPending(dsp)==0)
-		{
-			int fd=ConnectionNumber(dsp);
-			fd_set readset;
-			FD_ZERO(&readset);
-			FD_SET(fd,&readset);
-			if (select(fd+1,&readset,NULL,NULL,tv) == 0)
-				return false;
-		}
-	XNextEvent(dsp,event_return);
 	return(true);
 }
 
@@ -245,191 +192,216 @@ int main(int argc,char **argv)
 	int				key=666;
 	int				refreshmulti=0;
 
-	useAlarm=false;
-	terminalCommand=strdup("xterm -e ");
-	logoutCommand=strdup("xterm");
-	restartCommand=strdup("xterm");
-	shutdownCommand=strdup("xterm");
-	leftGadgets=strdup("A");
-	rightGadgets=strdup("L");
-	panelPos=PANELCENTRE;
-
+	realMainLoop=true;
+	
 	XSetErrorHandler(errHandler);
+	
+	while(realMainLoop==true)
+		{
+			terminalCommand=strdup("xterm -e ");
+			logoutCommand=strdup("xterm");
+			restartCommand=strdup("xterm");
+			shutdownCommand=strdup("xterm");
+			leftGadgets=strdup("A");
+			rightGadgets=strdup("L");
+			panelPos=PANELCENTRE;
 
-	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,NULL);
+			apc=new LFSTK_applicationClass();
+			apc->LFSTK_addWindow(NULL,NULL);
 
-	mainwind=apc->mainWindow;
-	WM_STATE=XInternAtom(mainwind->app->display,"WM_STATE",False);
-	NET_WM_WINDOW_TYPE_NORMAL=XInternAtom(mainwind->app->display,"_NET_WM_WINDOW_TYPE_NORMAL",False);
-	NET_WM_STATE_HIDDEN=XInternAtom(mainwind->app->display,"_NET_WM_STATE_HIDDEN",False);
-	NET_WM_WINDOW_TYPE_DIALOG=XInternAtom(mainwind->app->display,"_NET_WM_WINDOW_TYPE_DIALOG",False);
-	NET_WM_DESKTOP=XInternAtom(mainwind->app->display,"_NET_WM_DESKTOP",False);
-	NET_WM_WINDOW_TYPE=XInternAtom(mainwind->app->display,"_NET_WM_WINDOW_TYPE",False);
-	NET_WM_STATE=XInternAtom(mainwind->app->display,"_NET_WM_STATE",False);
+			mainwind=apc->mainWindow;
+			mainwind->LFSTK_initDnD(true);
+			mainwind->LFSTK_setWindowDropCallBack(windowDrop,(void*)0xdeadbeef);
 
-	env=mainwind->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",mainwind->configDir);
-	key=atoi(env);
-	freeAndNull(&env);
+			WM_STATE=XInternAtom(mainwind->app->display,"WM_STATE",False);
+			NET_WM_WINDOW_TYPE_NORMAL=XInternAtom(mainwind->app->display,"_NET_WM_WINDOW_TYPE_NORMAL",False);
+			NET_WM_STATE_HIDDEN=XInternAtom(mainwind->app->display,"_NET_WM_STATE_HIDDEN",False);
+			NET_WM_WINDOW_TYPE_DIALOG=XInternAtom(mainwind->app->display,"_NET_WM_WINDOW_TYPE_DIALOG",False);
+			NET_WM_DESKTOP=XInternAtom(mainwind->app->display,"_NET_WM_DESKTOP",False);
+			NET_WM_WINDOW_TYPE=XInternAtom(mainwind->app->display,"_NET_WM_WINDOW_TYPE",False);
+			NET_WM_STATE=XInternAtom(mainwind->app->display,"_NET_WM_STATE",False);
 
-	apc->LFSTK_setTimer(refreshRate);
-	apc->LFSTK_setTimerCallBack(timerCB,NULL);
+			env=mainwind->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",mainwind->configDir);
+			key=atoi(env);
+			freeAndNull(&env);
 
-	if((queueID=msgget(key,IPC_CREAT|0660))==-1)
-		fprintf(stderr,"Can't create message queue\n");
+			apc->LFSTK_setTimer(refreshRate);
+			apc->LFSTK_setTimerCallBack(timerCB,NULL);
+
+			if((queueID=msgget(key,IPC_CREAT|0660))==-1)
+				fprintf(stderr,"Can't create message queue\n");
 
 //TODO//
 	//itemfont=mainwind->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
 	//tfont=mainwind->globalLib->LFSTK_loadFont(mainwind->app->display,mainwind->screen,itemfont);
 	//iconSize=tfont->size;
-	iconSize=32;
+			iconSize=32;
 	//free(tfont);
 
-	if(argc>1)
-		{
-			panelID=argv[1];
-			asprintf(&env,"%s/.config/LFS/%s-%s.rc",getenv("HOME"),RCNAME,panelID);
-		}
-	else
-		asprintf(&env,"%s/.config/LFS/%s.rc",getenv("HOME"),RCNAME);
-	mainwind->globalLib->LFSTK_loadVarsFromFile(env,panelPrefs);
-
-	desktopTheme=mainwind->globalLib->LFSTK_oneLiner("cat %s/.config/LFS/lfsdesktop.rc|grep icontheme|awk '{print $2}'",getenv("HOME"));
-	mons=mainwind->LFSTK_getMonitorData(onMonitor);
-
-	rightOffset=0;
-	leftOffset=0;
-
-	addLeftGadgets();
-	addRightGadgets();
-
-	if((leftOffset==0) && (rightOffset==0))
-		{
-			fprintf(stderr,"Not using empty panel ...\n");
-			exit(0);
-		}
-
-	psize=leftOffset+abs(rightOffset);
-	px=mons->x;
-	py=mons->y;
-	switch(panelGravity)
-		{
-		case PANELSOUTH:
-			py=mons->y+mons->h-panelHeight;
-		case PANELNORTH:
-			switch(panelWidth)
+			if(argc>1)
 				{
-				case PANELFULL:
-					panelWidth=mons->w;
-					panelPos=PANELLEFT;
-					break;
-				case PANELSHRINK:
-					panelWidth=psize;
-					break;
+					panelID=argv[1];
+					asprintf(&env,"%s/%s-%s.rc",apc->configDir,RCNAME,panelID);
 				}
-			switch(panelPos)
+			else
+				asprintf(&env,"%s/%s.rc",apc->configDir,RCNAME);
+			mainwind->globalLib->LFSTK_loadVarsFromFile(env,panelPrefs);
+
+			desktopTheme=mainwind->globalLib->LFSTK_oneLiner("cat %s/.config/LFS/lfsdesktop.rc|grep icontheme|awk '{print $2}'",getenv("HOME"));
+			mons=mainwind->LFSTK_getMonitorData(onMonitor);
+
+			rightOffset=0;
+			leftOffset=0;
+
+			addLeftGadgets();
+			addRightGadgets();
+
+			if((leftOffset==0) && (rightOffset==0))
 				{
-				case PANELLEFT:
-					px=mons->x;
-					break;
-				case PANELCENTRE:
-					px=((mons->w/2)-(psize/2))+mons->x;
-					break;
-				case PANELRIGHT:
-					px=mons->x+mons->w-psize;
-					break;
+					fprintf(stderr,"Not using empty panel ...\n");
+					exit(0);
 				}
-			break;
 
-		case PANELEAST:
-			px=mons->x+mons->w-panelHeight;
-		case PANELWEST:
-			switch(panelWidth)
+			psize=leftOffset+abs(rightOffset);
+			px=mons->x;
+			py=mons->y;
+			switch(panelGravity)
 				{
-				case PANELFULL:
-					panelWidth=panelHeight;
-					panelHeight=mons->h;
-					panelPos=PANELLEFT;
-					break;
-				case PANELSHRINK:
-					panelWidth=panelHeight;
-					panelHeight=psize;
-					break;
-				default:
-					thold=panelWidth;
-					panelWidth=panelHeight;
-					panelHeight=thold;
-					break;
+					case PANELSOUTH:
+						py=mons->y+mons->h-panelHeight;
+					case PANELNORTH:
+						switch(panelWidth)
+							{
+								case PANELFULL:
+									panelWidth=mons->w;
+									panelPos=PANELLEFT;
+									break;
+								case PANELSHRINK:
+									panelWidth=psize;
+									break;
+							}
+						switch(panelPos)
+							{
+								case PANELLEFT:
+									px=mons->x;
+									break;
+								case PANELCENTRE:
+									px=((mons->w/2)-(psize/2))+mons->x;
+									break;
+								case PANELRIGHT:
+									px=mons->x+mons->w-psize;
+									break;
+							}
+						break;
+
+					case PANELEAST:
+							px=mons->x+mons->w-panelHeight;
+					case PANELWEST:
+						switch(panelWidth)
+							{
+								case PANELFULL:
+									panelWidth=panelHeight;
+									panelHeight=mons->h;
+									panelPos=PANELLEFT;
+									break;
+								case PANELSHRINK:
+									panelWidth=panelHeight;
+									panelHeight=psize;
+								break;
+								default:
+									thold=panelWidth;
+									panelWidth=panelHeight;
+									panelHeight=thold;
+								break;
+							}
+						switch(panelPos)
+							{
+								case PANELLEFT:
+									py=mons->y;
+									break;
+								case PANELCENTRE:
+									py=((mons->h/2)-(panelHeight/2))+mons->y;
+								break;
+								case PANELRIGHT:
+									py=mons->y+mons->h-panelHeight;
+								break;
+							}
+						break;
 				}
-			switch(panelPos)
+
+			mainwind->LFSTK_resizeWindow(panelWidth,panelHeight,true);
+			mainwind->LFSTK_moveWindow(px,py,true);
+			mainwind->LFSTK_showWindow(true);
+			mainwind->LFSTK_setKeepAbove(true);
+
+			int retval=apc->LFSTK_runApp();
+
+			free(env);
+			free(terminalCommand);
+
+			if(desktopTheme!=NULL)
+				free(desktopTheme);
+
+
+			free(logoutCommand);
+			free(restartCommand);
+			free(shutdownCommand);
+			free(leftGadgets);
+			free(rightGadgets);
+
+
+			launcherList	*freell;
+			while(ll!=NULL)
 				{
-				case PANELLEFT:
-					py=mons->y;
-					break;
-				case PANELCENTRE:
-					py=((mons->h/2)-(panelHeight/2))+mons->y;
-					break;
-				case PANELRIGHT:
-					py=mons->y+mons->h-panelHeight;
-					break;
+					freell=ll;
+					if(ll->icon!=NULL)
+						free(ll->icon);
+					if(ll->entry.name!=NULL)
+						free(ll->entry.name);
+					if(ll->entry.exec!=NULL)
+						free(ll->entry.exec);
+					ll=ll->next;
+					delete freell;
 				}
-			break;
-		}
 
-	mainwind->LFSTK_resizeWindow(panelWidth,panelHeight,true);
-	mainwind->LFSTK_moveWindow(px,py,true);
-	mainwind->LFSTK_showWindow(true);
-	mainwind->LFSTK_setKeepAbove(true);
-
-	int retval=apc->LFSTK_runApp();
-
-	free(env);
-	free(terminalCommand);
-
-	if(desktopTheme!=NULL)
-		free(desktopTheme);
-
-	launcherList	*freell;
-	while(ll!=NULL)
-		{
-			freell=ll;
-			if(ll->icon!=NULL)
-				free(ll->icon);
-			if(ll->entry.name!=NULL)
-				free(ll->entry.name);
-			if(ll->entry.exec!=NULL)
-				free(ll->entry.exec);
-			ll=ll->next;
-			delete freell;
-		}
-
-	if(!entrydata.empty())
-		{
-			for (std::map<int,menuEntryStruct*>::iterator it=entrydata.begin();it!=entrydata.end();++it)
+			if(!entrydata.empty())
 				{
-					menuEntryStruct	*me=it->second;
-					if (me!=NULL)
+					for (std::map<int,menuEntryStruct*>::iterator it=entrydata.begin();it!=entrydata.end();++it)
 						{
-							if(me->name!=NULL)
-								delete me->name;
-							if(me->exec!=NULL)
-								delete me->exec;
-							if(me->icon!=NULL)
-								delete me->icon;
-							delete me;
+							menuEntryStruct	*me=it->second;
+							if (me!=NULL)
+								{
+									if(me->name!=NULL)
+										delete me->name;
+									if(me->exec!=NULL)
+										delete me->exec;
+									if(me->icon!=NULL)
+										delete me->icon;
+									delete me;
+								}
 						}
+					entrydata.clear();
 				}
-			entrydata.clear();
+
+			delete appMenu;
+			delete logoutMenu;
+			delete windowAllMenu;
+			delete windowDeskMenu;
+
+			free(iconL);
+			free(iconM);
+			free(iconH);
+			logoutButton=NULL;
+			diskButton=NULL;
+			clockButton=NULL;
+			cpuButton=NULL;
+			windowAll=NULL;
+			windowDesk=NULL;
+			windowDeskMenu=NULL;
+			appButton=NULL;
+			launcherSide=NOLAUNCHERS;
+			delete apc;
 		}
-	delete apc;
-	delete appMenu;
-	delete logoutMenu;
-	delete windowAllMenu;
-	delete windowDeskMenu;
-//	delete windowDeskList//TODO//
-	free(iconL);
-	free(iconM);
-	free(iconH);
 	cairo_debug_reset_static_data();
 	return 0;
 }

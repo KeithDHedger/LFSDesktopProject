@@ -30,8 +30,6 @@ const char			*logoutIconNames[]={"system-log-out","system-restart","system-shutd
 
 bool logoutMenuCB(void *p,void* ud)
 {
-//	printf("\n\np=%p ud=%i\n",p,ud);
-//	printf("Label=%s\n",static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel());
 	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
 
 	switch((long)ud)

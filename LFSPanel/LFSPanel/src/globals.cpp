@@ -34,19 +34,23 @@ char				*leftGadgets=NULL;
 int					panelPos=PANELCENTRE;
 int					panelGravity=PANELNORTH;
 
+int					queueID;
+msgBuffer			buffer;
+
 char				*desktopTheme=NULL;
 const char			*panelID="";
+bool				realMainLoop=true;
 
 int					refreshRate=1;
 
 int					iconSize=16;
-bool				useAlarm=false;
 
 //panel window
 LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*mainwind=NULL;
 int						rightOffset=0;
 int						leftOffset=0;
+int						launcherSide=NOLAUNCHERS;
 
 //atoms
 Atom				WM_STATE=None;
@@ -94,6 +98,42 @@ void setSizes(int *x,int *y,int *w,int *h,int *size,int *grav,bool fromleft)
 					}
 				*x=0;
 				break;
+		}
+}
+
+void dropDesktopFile(const char *data,launcherList *launcher)
+{
+	char			*cleanstr;
+	char			*command=NULL;
+
+	std::istringstream stream(data);
+	std::string line;
+	while(std::getline(stream,line))
+		{
+			cleanstr=apc->globalLib->LFSTK_cleanString((const char*)line.c_str());
+			if((strrchr(cleanstr,'.')!=NULL) && (strcmp(strrchr(cleanstr,'.'),".desktop")==0))
+				{
+					asprintf(&command,"mkdir -p '%s/launchers-%s';cp -nP '%s' '%s/launchers-%s'",apc->configDir,panelID,cleanstr,apc->configDir,panelID);
+					system(command);
+					free(command);
+					//printf(">>%s<<\n",cleanstr);					
+					apc->exitValue=0;
+					apc->mainLoop=false;
+					free(cleanstr);
+					return;
+				}
+
+			if(launcher!=NULL)
+				{
+					if(launcher->entry.inTerm==false)
+						asprintf(&command,"%s \"%s\" &",launcher->entry.exec,cleanstr);
+					else
+						asprintf(&command,"%s %s \"%s\" &",terminalCommand,launcher->entry.exec,cleanstr);
+						system(command);
+						//printf(">>%s<<\n",command);
+						free(cleanstr);
+						free(command);
+				}
 		}
 }
 

@@ -102,11 +102,12 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" \
 	"$(DESTDIR)$(pixfilesdir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
-am__objects_1 = ../src/appmenu.$(OBJEXT) ../src/clock.$(OBJEXT) \
-	../src/cpu.$(OBJEXT) ../src/disks.$(OBJEXT) \
-	../src/globals.$(OBJEXT) ../src/launchers.$(OBJEXT) \
-	../src/logout.$(OBJEXT) ../src/main.$(OBJEXT) \
-	../src/slider.$(OBJEXT) ../src/windowlist.$(OBJEXT)
+am__objects_1 = ../src/appmenu.$(OBJEXT) ../src/callbacks.$(OBJEXT) \
+	../src/clock.$(OBJEXT) ../src/cpu.$(OBJEXT) \
+	../src/disks.$(OBJEXT) ../src/globals.$(OBJEXT) \
+	../src/launchers.$(OBJEXT) ../src/logout.$(OBJEXT) \
+	../src/main.$(OBJEXT) ../src/slider.$(OBJEXT) \
+	../src/windowlist.$(OBJEXT)
 am_lfspanel_OBJECTS = $(am__objects_1)
 lfspanel_OBJECTS = $(am_lfspanel_OBJECTS)
 lfspanel_LDADD = $(LDADD)
@@ -126,11 +127,11 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ../src/$(DEPDIR)/appmenu.Po \
-	../src/$(DEPDIR)/clock.Po ../src/$(DEPDIR)/cpu.Po \
-	../src/$(DEPDIR)/disks.Po ../src/$(DEPDIR)/globals.Po \
-	../src/$(DEPDIR)/launchers.Po ../src/$(DEPDIR)/logout.Po \
-	../src/$(DEPDIR)/main.Po ../src/$(DEPDIR)/slider.Po \
-	../src/$(DEPDIR)/windowlist.Po
+	../src/$(DEPDIR)/callbacks.Po ../src/$(DEPDIR)/clock.Po \
+	../src/$(DEPDIR)/cpu.Po ../src/$(DEPDIR)/disks.Po \
+	../src/$(DEPDIR)/globals.Po ../src/$(DEPDIR)/launchers.Po \
+	../src/$(DEPDIR)/logout.Po ../src/$(DEPDIR)/main.Po \
+	../src/$(DEPDIR)/slider.Po ../src/$(DEPDIR)/windowlist.Po
 am__mv = mv -f
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -241,10 +242,13 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
 LFSTK_CFLAGS = @LFSTK_CFLAGS@
 LFSTK_LIBS = @LFSTK_LIBS@
+LIBGLIB_CFLAGS = @LIBGLIB_CFLAGS@
+LIBGLIB_LIBS = @LIBGLIB_LIBS@
 LIBOBJS = @LIBOBJS@
 LIBS = $(X11_LIBS) \
 				$(ALSA_LIBS) \
 				$(XFT_LIBS) \
+				$(LIBGLIB_LIBS) \
 				$(CAIRO_LIBS) \
 				$(LFSTK_LIBS) \
 				-lm
@@ -320,6 +324,7 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 				$(ALSA_CFLAGS) \
 				$(X11_CFLAGS) \
 				$(XFT_CFLAGS) \
+				$(LIBGLIB_CFLAGS) \
 				$(CAIRO_CFLAGS) \
 				$(LFSTK_CFLAGS) \
 				-DPREFIX=\""${prefix}\"" \
@@ -327,7 +332,7 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 				-DSYSCONFDIR=\""${sysconfdir}/${PACKAGE}"\" \
 				-DLIBDIR=\""${libdir}/${PACKAGE}"\"
 
-COMMONSRC = ../src/appmenu.cpp ../src/clock.cpp ../src/cpu.cpp ../src/disks.cpp ../src/globals.cpp ../src/launchers.cpp ../src/logout.cpp ../src/main.cpp ../src/slider.cpp ../src/windowlist.cpp
+COMMONSRC = ../src/appmenu.cpp ../src/callbacks.cpp ../src/clock.cpp ../src/cpu.cpp ../src/disks.cpp ../src/globals.cpp ../src/launchers.cpp ../src/logout.cpp ../src/main.cpp ../src/slider.cpp ../src/windowlist.cpp
 lfspanel_SOURCES = $(COMMONSRC)
 man1_MANS = ../resources/man/lfspanel.1
 pixfilesdir = $(pkgdatadir)/pixmaps
@@ -416,6 +421,8 @@ clean-binPROGRAMS:
 	@: > ../src/$(DEPDIR)/$(am__dirstamp)
 ../src/appmenu.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
+../src/callbacks.$(OBJEXT): ../src/$(am__dirstamp) \
+	../src/$(DEPDIR)/$(am__dirstamp)
 ../src/clock.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
 ../src/cpu.$(OBJEXT): ../src/$(am__dirstamp) \
@@ -447,6 +454,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/appmenu.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/callbacks.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/clock.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/cpu.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/disks.Po@am__quote@ # am--include-marker
@@ -671,6 +679,7 @@ clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
 		-rm -f ../src/$(DEPDIR)/appmenu.Po
+	-rm -f ../src/$(DEPDIR)/callbacks.Po
 	-rm -f ../src/$(DEPDIR)/clock.Po
 	-rm -f ../src/$(DEPDIR)/cpu.Po
 	-rm -f ../src/$(DEPDIR)/disks.Po
@@ -726,6 +735,7 @@ installcheck-am:
 
 maintainer-clean: maintainer-clean-am
 		-rm -f ../src/$(DEPDIR)/appmenu.Po
+	-rm -f ../src/$(DEPDIR)/callbacks.Po
 	-rm -f ../src/$(DEPDIR)/clock.Po
 	-rm -f ../src/$(DEPDIR)/cpu.Po
 	-rm -f ../src/$(DEPDIR)/disks.Po

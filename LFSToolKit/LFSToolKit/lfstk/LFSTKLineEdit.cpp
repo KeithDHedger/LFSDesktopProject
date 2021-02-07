@@ -495,9 +495,8 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 * \param data Data dropped on gadget as string.
 * \note I callback is enabled user data is set to propertyStruct* data.
 */
-void LFSTK_lineEditClass::LFSTK_dropData(propertyStruct* data)
+void LFSTK_lineEditClass::LFSTK_dropData(propertyStruct* data)//TODO//
 {
-
 	int	endl;
 	if(strcasecmp(data->mimeType,"text/plain")==0)
 		this->LFSTK_setFormatedText((const char*)data->data,true);
@@ -519,8 +518,8 @@ void LFSTK_lineEditClass::LFSTK_dropData(propertyStruct* data)
 			free(d);
 		}
 
-	if(this->callBacks.validCallbacks & MOUSERELEASECB)
-		this->callBacks.droppedGadgetCallback(this,USERDATA(data));
+	if(this->callBacks.validCallbacks & GADGETDROPCB)
+		this->callBacks.droppedGadgetCallback(this,data,USERDATA(this->callBacks.droppedUserData));
 }
 
 /**

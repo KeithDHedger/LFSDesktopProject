@@ -21,73 +21,64 @@
 
 #include <ftw.h>
 #include <stdio.h>
+#include <string>
+#include <glib.h>
 
 #include "launchers.h"
 
 launcherList	*ll=NULL;
 
-int launcherCB(const char *fpath,const struct stat *sb,int typeflag)
+void addALAuncher(const char *fpath,menuEntryStruct	*entry)
 {
-	FILE			*fp;
-	char			buffer[512];
-	char			*splitstr=NULL;
+	size_t		start_pos=0;
+	std::string	from;
+	std::string	str;
+	bool		goodkey;
+	GKeyFile	*kf=g_key_file_new();
+	char		*execstring;
+
+	entry->icon=NULL;
+	entry->name=NULL;
+	entry->exec=NULL;
+	entry->inTerm=false;
+
+	goodkey=g_key_file_load_from_file(kf,fpath,G_KEY_FILE_NONE,NULL);
+	if(goodkey==true)
+		{
+			entry->name=g_key_file_get_string(kf,"Desktop Entry",G_KEY_FILE_DESKTOP_KEY_NAME,NULL);
+			entry->icon=g_key_file_get_string(kf,"Desktop Entry",G_KEY_FILE_DESKTOP_KEY_ICON,NULL);
+			entry->inTerm=g_key_file_get_boolean(kf,"Desktop Entry",G_KEY_FILE_DESKTOP_KEY_TERMINAL,NULL);
+			execstring=g_key_file_get_string(kf,"Desktop Entry",G_KEY_FILE_DESKTOP_KEY_EXEC,NULL);
+			str=execstring;
+			from="%f";
+			while((start_pos=str.find(from,start_pos))!=std::string::npos)
+				str.replace(start_pos, from.length(),"");
+			from="%U";
+			start_pos=0;
+			while((start_pos=str.find(from,start_pos))!=std::string::npos)
+				str.replace(start_pos, from.length(),"");
+			entry->exec=strdup(str.c_str());
+		}
+	g_key_file_free(kf);
+	free(execstring);
+}
+
+int launcherBuildCB(const char *fpath,const struct stat *sb,int typeflag)
+{
 	menuEntryStruct	entry;
 	char			*icon=NULL;
 	launcherList	*newlist=NULL;
 	launcherList	*looplist=NULL;
-	char			*testpercent;
 
 	if(typeflag!=FTW_F)
 		return(0);
 
+	entry.icon=NULL;
 	entry.name=NULL;
 	entry.exec=NULL;
 	entry.inTerm=false;
 
-	fp=fopen(fpath,"r");
-	if(fp!=NULL)
-		{
-			while(fgets(buffer,512,fp))
-				{
-					if(buffer[strlen(buffer)-1]=='\n')
-						buffer[strlen(buffer)-1]=0;
-					splitstr=NULL;
-					splitstr=strtok(buffer,"=");
-					if(splitstr!=NULL)
-						{
-							if(strcmp(splitstr,"Name")==0)
-								{
-									splitstr=strtok(NULL,"=");
-									entry.name=strdup(splitstr);
-								}
-
-							if(strcmp(splitstr,"Icon")==0)
-								{
-									splitstr=strtok(NULL,"=");
-									icon=strdup(splitstr);
-								}
-
-							if(strcmp(splitstr,"Exec")==0)
-								{
-									splitstr=strtok(NULL,"=");
-									testpercent=strchr(splitstr,'%');
-									if(testpercent!=NULL)
-										*testpercent=0;
-									entry.exec=strdup(splitstr);
-								}
-
-							if(strcmp(splitstr,"Terminal")==0)
-								{
-									splitstr=strtok(NULL,"=");
-									if(strcasecmp(splitstr,"true")==0)
-										entry.inTerm=true;
-									else
-										entry.inTerm=false;
-								}
-						}
-				}
-			fclose(fp);
-		}
+	addALAuncher(fpath,&entry);
 
 	if((entry.name!=NULL) && (entry.exec!=NULL))
 		{
@@ -95,7 +86,7 @@ int launcherCB(const char *fpath,const struct stat *sb,int typeflag)
 			newlist->entry=entry;
 			newlist->next=NULL;
 			newlist->bc=NULL;
-			newlist->icon=icon;
+			newlist->icon=entry.icon;
 			if(ll!=NULL)
 				{
 					looplist=ll;
@@ -112,28 +103,12 @@ int launcherCB(const char *fpath,const struct stat *sb,int typeflag)
 				free(entry.name);
 			if(entry.exec!=NULL)
 				free(entry.exec);
+			if(entry.icon!=NULL)
+				free(entry.icon);
 			if(icon!=NULL)
 				free(icon);
 		}
 	return(0);
-}
-
-bool launcherCB(void *p,void* ud)
-{
-	launcherList	*launcher=(launcherList*)ud;
-	char			*command;
-
-	if(launcher==NULL)
-		return(true);
-
-	if(launcher->entry.inTerm==false)
-		asprintf(&command,"%s &",launcher->entry.exec);
-	else
-		asprintf(&command,"%s %s &",terminalCommand,launcher->entry.exec);
-
-	system(command);
-	free(command);
-	return(true);
 }
 
 int addLaunchers(int x,int y,int grav,bool fromleft)
@@ -141,7 +116,7 @@ int addLaunchers(int x,int y,int grav,bool fromleft)
 	char			*launchers;
 	launcherList	*loopll;
 	ll=NULL;
-	const char		*icon=NULL;
+	char			*icon=NULL;
 	int				xpos=x;
 	int				ypos=y;
 	int				width=0;
@@ -151,8 +126,8 @@ int addLaunchers(int x,int y,int grav,bool fromleft)
 	int				maxwidth=0;
 	int				sx,sy;
 
-	asprintf(&launchers,"%s/.config/LFS/launchers-%s",getenv("HOME"),panelID);
-	ftw(launchers,launcherCB,16);
+	asprintf(&launchers,"%s/launchers-%s",apc->configDir,panelID);
+	ftw(launchers,launcherBuildCB,16);
 
 	setSizes(&xpos,&ypos,&width,&height,&iconsize,&thisgrav,fromleft);
 	maxwidth=width;
@@ -162,15 +137,20 @@ int addLaunchers(int x,int y,int grav,bool fromleft)
 	loopll=ll;
 	while(loopll!=NULL)
 		{
+			icon=NULL;
 			loopll->bc=new LFSTK_buttonClass(mainwind,"",sx,sy,width,height,thisgrav);
 			loopll->bc->LFSTK_setMouseCallBack(NULL,launcherCB,(void*)loopll);
-			if(loopll->icon!=NULL)
-				icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,loopll->icon,"");
+			loopll->bc->LFSTK_setGadgetDropCallBack(gadgetDrop,(void*)loopll);
+			loopll->bc->gadgetAcceptsDnD=true;
+
+			if((loopll->icon!=NULL) && (desktopTheme!=NULL))
+				icon=apc->globalLib->LFSTK_findThemedIcon(desktopTheme,loopll->icon,"");
 			if(icon!=NULL)
 				loopll->bc->LFSTK_setImageFromPath(icon,LEFT,true);
 			else
-			//	loopll->bc->LFSTK_setIconFromPath(DATADIR "/pixmaps/command.png",iconsize);
 				loopll->bc->LFSTK_setImageFromPath(DATADIR "/pixmaps/command.png",LEFT,true);
+			if(icon!=NULL)
+				free(icon);
 			loopll=loopll->next;
 			if((grav==PANELNORTH) || (grav==PANELSOUTH))
 				sx+=width;
@@ -178,5 +158,6 @@ int addLaunchers(int x,int y,int grav,bool fromleft)
 				sy+=height;
 			maxwidth+=width;
 		}
+	free(launchers);
 	return(maxwidth-width);
 }

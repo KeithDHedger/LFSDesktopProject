@@ -69,6 +69,9 @@ class LFSTK_lib
 //colours and prefs
 		void			LFSTK_setColourFromName(Display *display,Colormap cm,colourStruct *colptr,const char *name);
 		void			LFSTK_reloadPrefs(void);
+
+//utils
+		char			*LFSTK_cleanString(const char *str);
 //messaging		
 //debug
 //

@@ -292,11 +292,11 @@ void LFSTK_gadgetClass::LFSTK_setKeyCallBack(bool (*downcb)(void *,void*),bool (
 * \note First param passed to callback is pointer to object.
 * \note Second param passed to callback is user data.
 */
-void LFSTK_gadgetClass::LFSTK_setGadgetDropCallBack(bool (*dropped)(void*,void*),void* ud)
+void LFSTK_gadgetClass::LFSTK_setGadgetDropCallBack(bool (*dropped)(void*,propertyStruct *data,void*),void* ud)
 {
 	this->callBacks.validCallbacks|=GADGETDROPCB;
 	this->callBacks.droppedGadgetCallback=dropped;
-	this->callBacks.mouseUserData=ud;
+	this->callBacks.droppedUserData=ud;
 	this->callBacks.runTheCallback=true;
 	this->callBacks.ignoreOrphanModKeys=true;
 }
@@ -875,28 +875,8 @@ bool LFSTK_gadgetClass::selectionRequest(XSelectionRequestEvent *e)
 */
 void LFSTK_gadgetClass::LFSTK_dropData(propertyStruct* data)
 {
-DEBUG
-	int	endl;
-//	if(strcasecmp(data->mimeType,"text/plain")==0)
-//		this->LFSTK_setFormatedText((const char*)data->data,true);
-//
-//	if(strcasecmp(data->mimeType,"text/uri-list")==0)
-//		{
-//			char	*d;
-//			char	*ret;
-//			asprintf(&d,"%s",(const char*)data->data);
-//			endl=strlen(d)-1;
-//			while ((endl >= 0) && (isspace(d[endl])) )
-//				{
-//					d[endl]=0;
-//					endl--;
-//				}
-//			ret=this->wc->globalLib->LFSTK_oneLiner("echo -n \"%s\"|sed 's|^file://||;s|%%20| |g'",d);
-//			this->LFSTK_setFormatedText((const char*)ret,true);
-//			free(ret);
-//			free(d);
-//		}
-
+	if(this->callBacks.validCallbacks & GADGETDROPCB)
+		this->callBacks.droppedGadgetCallback(this,data,USERDATA(this->callBacks.droppedUserData));
 	return;
 }
 

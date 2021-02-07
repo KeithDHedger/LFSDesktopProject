@@ -18,7 +18,7 @@
  * along with LFSPanel.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "disks.h"
+#include "globals.h"
 
 LFSTK_labelClass	*diskButton=NULL;
 char				diskStatBuffer[256];
@@ -96,6 +96,5 @@ int addDiskData(int x,int y,int grav)
 	oldWrite=getWriteStats();
 	diskButton=new LFSTK_labelClass(mainwind,"R=0Mb/s W=0Mb/s",xpos,0,width,panelHeight,CENTRE,grav);
 	diskButton->LFSTK_setLabelGravity(LEFT);
-	useAlarm=true;
 	return(retval);
 }

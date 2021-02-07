@@ -22,8 +22,6 @@
 #ifndef _WINDOWLIST_
 #define _WINDOWLIST_
 
-#include "globals.h"
-
 #define MAXWINDOWSINLIST 512
 
 typedef struct
@@ -57,6 +55,7 @@ extern LFSTK_buttonClass	*windowDesk;
 extern const char			*possibleError;
 extern LFSTK_menuClass		*windowAllMenu;
 extern LFSTK_menuClass		*windowDeskMenu;
+extern menuStruct			**windowDeskList;
 
 int addWindowDeskMenu(int x,int y,int grav,bool fromleft);
 int addWindowMenu(int x,int y,int grav,bool fromleft);

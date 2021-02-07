@@ -1,4 +1,7 @@
 0.2.0
+Added DnD to launcher gadgets, now accpts uris or text.
+Dragging .desktop file to panel now adds to launchers.
+Added DnD to panels.
 Updated for new lfstk API's.
 
 0.1.4

@@ -22,15 +22,8 @@
 #define _LAUNCHERS_
 
 #include "globals.h"
+#include "callbacks.h"
 #include "appmenu.h"
-
-struct launcherList
-{
-	launcherList		*next;
-	LFSTK_buttonClass	*bc;
-	char				*icon;
-	menuEntryStruct		entry;
-};
 
 extern launcherList		*ll;
 

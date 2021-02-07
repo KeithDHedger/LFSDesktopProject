@@ -646,11 +646,11 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				//printf("resize\n");
 				break;
 			case ClientMessage:
-				//printf("ClientMessage from lib\n");
+				printf("ClientMessage from lib\n");
 				//return(true);
 				break;
 			case SelectionRequest:
-				//fprintf(stderr,"from SelectionRequest lib\n");
+				fprintf(stderr,"from SelectionRequest lib\n");
 				break;
 		//	default:
 				//	printf("default\n");		
@@ -738,11 +738,12 @@ char* LFSTK_lib::LFSTK_findThemedIcon(const char *theme,const char *icon,const c
 	const char  *iconthemes[3];
 	const char  *iconfolders[GLOBALPIXMAPSEND];
 	bool		maskdot=false;
-	char		*holdicon=strdup(icon);
+	char		*holdicon=NULL;
 	
 	if(icon[0]=='/')
 		return(strdup(icon));
 
+	holdicon=strdup(icon);
 	if(strcasecmp(&holdicon[strlen(holdicon)-4],".png")==0)
 		{
 			maskdot=true;
@@ -1144,5 +1145,31 @@ void LFSTK_lib::LFSTK_setThemePath(char *path)
 {
 	freeAndNull(&this->themePath);
 	this->themePath=strdup(path);
+}
+
+/**
+* Clean up string.
+* \param const char *str.
+* \return char* Cleaned string.
+* \note uri translated to local files.
+* \note strings are cleaned of white space at front and back.
+* \note returned string should be freed by caller.
+*/
+char* LFSTK_lib::LFSTK_cleanString(const char *str)
+{
+	char	*localstr=strdup(str);
+	char	*uristr=g_uri_parse_scheme(localstr);
+	char	*cleanstr;
+	if(uristr!=NULL)
+		{
+			cleanstr=g_filename_from_uri((const char*)g_strstrip(localstr),NULL,NULL);
+			free(uristr);
+		}
+	else
+		{
+			cleanstr=strdup((const char*)g_strstrip(localstr));
+		}
+	free(localstr);
+	return(cleanstr);
 }
 
