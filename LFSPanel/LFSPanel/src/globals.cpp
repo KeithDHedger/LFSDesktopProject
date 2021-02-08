@@ -101,11 +101,21 @@ void setSizes(int *x,int *y,int *w,int *h,int *size,int *grav,bool fromleft)
 		}
 }
 
+void sendNotify(const char *name,const char *message)
+{
+#ifdef _GOTNOTIFYSEND_
+	char	*command;
+	asprintf(&command,"notify-send -u low -t 2000 -i stock_dialog-info \"%s\" \"%s ...\"",name,message);
+	system(command);
+	free(command);
+#endif
+}
+
 void dropDesktopFile(const char *data,launcherList *launcher)
 {
 	char			*cleanstr;
 	char			*command=NULL;
-
+	char			*ptr;
 	std::istringstream stream(data);
 	std::string line;
 	while(std::getline(stream,line))
@@ -114,9 +124,12 @@ void dropDesktopFile(const char *data,launcherList *launcher)
 			if((strrchr(cleanstr,'.')!=NULL) && (strcmp(strrchr(cleanstr,'.'),".desktop")==0))
 				{
 					asprintf(&command,"mkdir -p '%s/launchers-%s';cp -nP '%s' '%s/launchers-%s'",apc->configDir,panelID,cleanstr,apc->configDir,panelID);
+					ptr=strrchr(cleanstr,'/');
+					sendNotify("Adding launcher ",++ptr);
 					system(command);
 					free(command);
-					//printf(">>%s<<\n",cleanstr);					
+					//printf(">>%s<<\n",cleanstr);
+					//	 /home/keithhedger/smbmounts	https://keithdhedger.github.io/
 					apc->exitValue=0;
 					apc->mainLoop=false;
 					free(cleanstr);
@@ -129,6 +142,7 @@ void dropDesktopFile(const char *data,launcherList *launcher)
 						asprintf(&command,"%s \"%s\" &",launcher->entry.exec,cleanstr);
 					else
 						asprintf(&command,"%s %s \"%s\" &",terminalCommand,launcher->entry.exec,cleanstr);
+						sendNotify("Running ",launcher->entry.exec);
 						system(command);
 						//printf(">>%s<<\n",command);
 						free(cleanstr);

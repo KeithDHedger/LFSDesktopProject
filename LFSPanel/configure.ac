@@ -39,5 +39,18 @@ PKG_CHECK_MODULES(LFSTK, $LFSTK_MODULES)
 AC_SUBST(LFSTK_LIBS)
 AC_SUBST(LFSTK_CFLAGS)
 
+AC_CHECK_PROG(NOTIFYSEND, notify-send ,true,false)
+if test $NOTIFYSEND = false; then
+	AC_MSG_NOTICE([No notify-send program found, install for lancher notification ...])
+else
+	AC_ARG_ENABLE(notify,AS_HELP_STRING([--enable-notify],[Enable notifications]),[enable_notify=$enableval],[enable_notify="yes"])
+	if test "$enable_notify" = "yes"; then
+		AC_DEFINE([_GOTNOTIFYSEND_], [], [send notify])
+		AC_MSG_NOTICE([Enabling notifications ...])
+	else
+		AC_MSG_NOTICE([Disabling notifications ...])
+	fi
+fi
+
 AC_OUTPUT(Makefile LFSPanel/app/Makefile)
 

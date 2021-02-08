@@ -110,5 +110,6 @@ extern Atom					NET_WM_STATE;
 void printError(const char *err);
 void setSizes(int *x,int *y,int *w,int *h,int *size,int *grav,bool fromleft);
 void dropDesktopFile(const char *data,launcherList *launcher);
+void sendNotify(const char *message1,const char *message2);
 
 #endif

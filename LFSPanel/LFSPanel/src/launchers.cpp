@@ -58,9 +58,9 @@ void addALAuncher(const char *fpath,menuEntryStruct	*entry)
 			while((start_pos=str.find(from,start_pos))!=std::string::npos)
 				str.replace(start_pos, from.length(),"");
 			entry->exec=strdup(str.c_str());
+			free(execstring);
 		}
 	g_key_file_free(kf);
-	free(execstring);
 }
 
 int launcherBuildCB(const char *fpath,const struct stat *sb,int typeflag)

@@ -26,3 +26,6 @@
 
 /* Version number of package */
 #undef VERSION
+
+/* send notify */
+#undef _GOTNOTIFYSEND_

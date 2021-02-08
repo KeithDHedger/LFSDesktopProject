@@ -28,11 +28,13 @@ bool launcherCB(void *p,void* ud)
 	if(launcher==NULL)
 		return(true);
 
+
 	if(launcher->entry.inTerm==false)
 		asprintf(&command,"%s &",launcher->entry.exec);
 	else
 		asprintf(&command,"%s %s &",terminalCommand,launcher->entry.exec);
 
+	sendNotify("Launching ",launcher->entry.name);
 	system(command);
 	free(command);
 	return(true);
@@ -61,6 +63,7 @@ bool gadgetDrop(void *lwc,propertyStruct *data,void* ud)
 								asprintf(&command,"%s \"%s\" &",launcher->entry.exec,line.c_str());
 							else
 								asprintf(&command,"%s %s \"%s\" &",terminalCommand,launcher->entry.exec,line.c_str());
+							sendNotify(launcher->entry.name,line.c_str());
 							system(command);
 							free(command);
 						}

@@ -86,7 +86,7 @@ void addLeftGadgets(void)
 					offset+=addCpuData(offset,mons->y,NorthWestGravity);
 					break;
 				case 'S':
-					offset+=SPACING;
+					offset+=panelHeight;
 					break;
 				case 'l':
 					if(launcherSide==NOLAUNCHERS)
@@ -135,7 +135,7 @@ void addRightGadgets(void)
 					offset-=addCpuData(offset,mons->y,NorthEastGravity);
 					break;
 				case 'S':
-					offset-=SPACING;
+					offset-=panelHeight;
 					break;
 				case 'l':
 					if(launcherSide==NOLAUNCHERS)
@@ -147,7 +147,7 @@ void addRightGadgets(void)
 						printError("Duplicate launcher widget");
 					break;
 				case 's':
-					offset+=addSlider(offset,mons->y,panelGravity,false);
+					offset-=addSlider(offset,mons->y,panelGravity,false);
 					break;
 				}
 		}

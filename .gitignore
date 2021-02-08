@@ -15,6 +15,7 @@ config.status
 Makefile
 Doxyfile
 config.h
+config.h.in
 libtool
 *.BAK
 *.libs/

@@ -81,12 +81,12 @@ int addCpuData(int x,int y,int grav)
 			return(0);
 		}
 
-
 	if(cpuButton!=NULL)
 		{
 			printError("Duplicate cpu stats");
 			return(0);
 		}
+
 	if(grav==NorthWestGravity)
 		xpos=x;
 	else
