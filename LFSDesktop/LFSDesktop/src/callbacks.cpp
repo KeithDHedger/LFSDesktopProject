@@ -41,10 +41,13 @@ bool windowDrop(LFSTK_windowClass *lwc,void* ud)
 			if(lwc->droppedData.type==DROPTEXT)
 				{
 					data=strdup(lwc->droppedData.data);
-					data=g_strstrip(data);
-					data=g_strdelimit(data,"\"'\t <>=.(){}\\|",'_');
 					snprintf(name,16,"%s",data);
-					asprintf(&command,"echo '%s' > '%s/%s'",lwc->droppedData.data,desktopPath,name);
+					for(int j=0;j<15;j++)
+						{
+							if((!isalpha(name[j])) && (!isdigit(name[j])) )
+								name[j]='_';
+						}
+					asprintf(&command,"echo -n '%s' > '%s/%s'",lwc->droppedData.data,desktopPath,name);
 					system(command);
 					free(command);
 					free(data);

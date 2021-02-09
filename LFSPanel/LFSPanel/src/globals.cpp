@@ -101,7 +101,7 @@ void setSizes(int *x,int *y,int *w,int *h,int *size,int *grav,bool fromleft)
 		}
 }
 
-void sendNotify(const char *name,const char *message)
+void sendNotify(const char *name,const char *message)//TODO//could be better
 {
 #ifdef _GOTNOTIFYSEND_
 	char	*command;
