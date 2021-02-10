@@ -113,7 +113,7 @@ void LFSTK_multiLineEditClass::LFSTK_clearWindow()
 	this->gadgetDetails.bevel=BEVELIN;
 	this->drawText();
 	this->drawBevel(&this->gadgetDetails.gadgetGeom,this->gadgetDetails.bevel);
-	XSync(this->wc->app->display,false);
+	//-->>XSync(this->wc->app->display,false);
 	return;
 }
 
@@ -353,7 +353,7 @@ void LFSTK_multiLineEditClass::getClip(void)
 	if (selectionOwner!=None)
 		{
 			XConvertSelection(this->wc->app->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->wc->LFSTK_getDnDAtom(XA_UTF8_STRING),this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->window,CurrentTime);
-			XFlush(this->wc->app->display);
+			//-->>XFlush(this->wc->app->display);
 
 			while (run==true)
 				{
@@ -493,7 +493,11 @@ bool LFSTK_multiLineEditClass::keyRelease(XKeyEvent *e)
 					this->buffer.insert(this->cursorPos,1,'\n');
 					this->cursorPos++;
 					if(this->callBacks.validCallbacks & KEYRELEASECB)
-						return(this->callBacks.keyReleaseCallback(this,this->callBacks.keyUserData));
+						{
+							this->setDisplayLines();
+							this->LFSTK_clearWindow();
+							return(this->callBacks.keyReleaseCallback(this,this->callBacks.keyUserData));
+						}
 					break;
 
 				default:

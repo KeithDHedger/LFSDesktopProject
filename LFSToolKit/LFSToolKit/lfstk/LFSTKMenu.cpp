@@ -22,7 +22,7 @@
 
 LFSTK_menuClass::~LFSTK_menuClass()
 {
-	XSync(this->parentwc->app->display,true);
+	//-->>XSync(this->parentwc->app->display,true);
 	for(int j=0;j<this->subwindows->size();j++)
 		delete this->subwindows->at(j);
 
@@ -86,7 +86,7 @@ void LFSTK_menuClass::LFSTK_showMenu(void)
 	XTranslateCoordinates(this->parentwc->app->display,this->parentwc->window,this->parentwc->app->rootWindow,this->x,this->y,&x,&y,&dw);
 	this->mainMenuWindow->LFSTK_moveWindow(x,y,true);
 	XSetInputFocus(this->parentwc->app->display,this->mainMenuWindow->window,RevertToNone,CurrentTime);
-	XSync(this->parentwc->app->display,false);
+	//-->>XSync(this->parentwc->app->display,false);
 
 	while(XPending(this->parentwc->app->display))
 		{

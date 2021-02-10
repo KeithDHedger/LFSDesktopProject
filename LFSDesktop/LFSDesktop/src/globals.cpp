@@ -101,7 +101,7 @@ void createDesktopGadget(LFSTK_windowClass *window)
 	cf.item->gadgetDetails.showLink=cf.isSymLink;
 	if(access(cf.itemPath,F_OK)!=F_OK)
 		cf.item->gadgetDetails.showBroken=true;
-
+	
 	desktopItems.push_back(cf);
 	asprintf(&desktopItems.back().uuid,"%s",cacheFileData.uuid);
 	asprintf(&desktopItems.back().itemPath,"%s",cacheFileData.itemPath);

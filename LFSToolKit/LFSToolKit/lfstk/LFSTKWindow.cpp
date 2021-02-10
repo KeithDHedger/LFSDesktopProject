@@ -270,7 +270,7 @@ void LFSTK_windowClass::LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h,bool upd
 		}
 	xLibErrorTK=false;
 	XSetErrorHandler(xErrHandler);
-	XSynchronize(this->app->display,true);
+	//-->>XSynchronize(this->app->display,true);
 
 	if(this->px!=None)
 		XFreePixmap(this->app->display,this->px);
@@ -291,7 +291,7 @@ void LFSTK_windowClass::LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h,bool upd
 
 			XSetWindowBackgroundPixmap(this->app->display,this->window,this->px);
 			XClearWindow(this->app->display,this->window);
-			XSync(this->app->display,false);
+			//-->>XSync(this->app->display,false);
 			this->usePixmap=true;
 		}
 
@@ -315,7 +315,7 @@ void LFSTK_windowClass::LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h,bool upd
 	cairo_surface_destroy(surfacefrom);
 	cairo_destroy(cr);
 	XSetErrorHandler(NULL);
-	XSynchronize(this->app->display,false);
+	//-->>XSynchronize(this->app->display,false);
 
 	if(xLibErrorTK==true)
 		{
@@ -325,7 +325,7 @@ void LFSTK_windowClass::LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h,bool upd
 			XSetWindowBackgroundPixmap(this->app->display,this->window,None);
 			XClearWindow(this->app->display,this->window);
 		}
-	XSync(this->app->display,false);
+	//-->>XSync(this->app->display,false);
 }
 
 
@@ -342,7 +342,11 @@ void LFSTK_windowClass::LFSTK_redrawAllGadgets(void)
 					if (ml!=NULL)
 						{
 							if(ml->gadget!=NULL)
-								ml->gadget->LFSTK_clearWindow();
+								{
+									if(ml->gadget->isMapped==false)
+										ml->gadget->LFSTK_showGadget();
+									ml->gadget->LFSTK_clearWindow();
+								}
 						}
 				}
 		}
@@ -998,9 +1002,9 @@ void LFSTK_windowClass::LFSTK_hideWindow(void)
 
 	XUnmapWindow(this->app->display,this->window);
 	//this->mainLoop=false;
-	XFlush(this->app->display);
-	//XSync(this->app->display,true);
-	XSync(this->app->display,false);
+	//-->>XFlush(this->app->display);
+	////-->>XSync(this->app->display,true);
+	//-->>XSync(this->app->display,false);
 	//XSetInputFocus(this->app->display,PointerRoot,RevertToParent,CurrentTime);
 	this->isVisible=false;
 }
@@ -1450,7 +1454,7 @@ void LFSTK_windowClass::LFSTK_handleDnD(XEvent *event)
 					delete myprops;
 				}
 		}
-	XSync(this->app->display,false);
+	//-->>XSync(this->app->display,false);
 }
 
 /**
@@ -1536,7 +1540,7 @@ void LFSTK_windowClass::sendUTF8(XSelectionRequestEvent *sev)
 
 /* send the response event */
 		XSendEvent(this->app->display,sev->requestor,0,0,&res);
-		XFlush(this->app->display);
+		//-->>XFlush(this->app->display);
 }
 
 /**

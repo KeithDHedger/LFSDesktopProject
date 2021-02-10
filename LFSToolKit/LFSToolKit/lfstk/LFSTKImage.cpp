@@ -26,7 +26,7 @@ LFSTK_imageClass::~LFSTK_imageClass()
 	cairo_surface_destroy(this->shapesfc);
 	cairo_destroy(this->shapecr);
 	XFreePixmap(this->wc->app->display,this->shape);
-	XSync(this->wc->app->display,true);
+	//-->>XSync(this->wc->app->display,true);
 }
 
 LFSTK_imageClass::LFSTK_imageClass()
@@ -73,8 +73,8 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 			cairo_restore(this->shapecr);
 
 			XShapeCombineMask(this->wc->app->display,this->window,ShapeBounding,0,0,cairo_xlib_surface_get_drawable(shapesfc),ShapeSet);
-			XFlush(this->wc->app->display);
-			XSync(this->wc->app->display,false);
+			//-->>XFlush(this->wc->app->display);
+			//-->>XSync(this->wc->app->display,false);
 			return;
 		}
 
@@ -99,8 +99,8 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 	cairo_restore(this->shapecr);
 
 	XShapeCombineMask(this->wc->app->display,this->window,ShapeBounding,0,0,cairo_xlib_surface_get_drawable(shapesfc),ShapeSet);
-	XFlush(this->wc->app->display);
-	XSync(this->wc->app->display,false);
+	//-->>XFlush(this->wc->app->display);
+	//-->>XSync(this->wc->app->display,false);
 }
 
 /**

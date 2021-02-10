@@ -324,18 +324,18 @@ void LFSTK_scrollBarClass::LFSTK_clearWindow(bool ignorecb)
 				this->callBacks.mouseReleaseCallback(this,this->callBacks.mouseUserData);
 
 //reduce flickering
-			if(this->startDrag==true)
-				XSync(this->wc->app->display,true);
+//			if(this->startDrag==true)
+//				XSync(this->wc->app->display,true);
 			this->thumb->LFSTK_clearWindow();
 		}
 	else
 		{
-			XSync(this->wc->app->display,true);
+			//-->>XSync(this->wc->app->display,true);
 			this->clearBox(&this->gadgetDetails);
 			if(this->style!=BEVELNONE)
 				this->drawBevel(&this->gadgetDetails.gadgetGeom,this->gadgetDetails.bevel);
 			this->thumb->LFSTK_clearWindow();
-			XSync(this->wc->app->display,true);
+			//-->>XSync(this->wc->app->display,true);
 		}
 }
 

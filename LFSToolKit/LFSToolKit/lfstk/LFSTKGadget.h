@@ -164,6 +164,7 @@ class LFSTK_gadgetClass
 		XButtonEvent			*mouseEvent=NULL;
 		XKeyEvent				*keyEvent=NULL;
 		bool					toParent=false;
+		bool					isMapped=false;
 
 	private:
 		void					initGadget(void);
@@ -172,7 +173,6 @@ class LFSTK_gadgetClass
 		cairo_surface_t			*broken=NULL;
 
 	protected:
-		bool					isMapped=false;
 		mappedListener			*ml=NULL;
 		void					drawBox(geometryStruct* g,gadgetState state,bevelType bevel);
 		void					drawIndicator(gadgetStruct* details);

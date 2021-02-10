@@ -101,7 +101,7 @@ void LFSTK_lineEditClass::LFSTK_clearWindow()
 	this->gadgetDetails.bevel=BEVELIN;
 	this->drawLabel();
 	this->drawBevel(&this->gadgetDetails.gadgetGeom,this->gadgetDetails.bevel);
-	XSync(this->wc->app->display,false);
+	//-->>XSync(this->wc->app->display,false);
 	return;
 }
 
@@ -328,7 +328,7 @@ void LFSTK_lineEditClass::getClip(void)
 	if (selectionOwner!=None)
 		{
 			XConvertSelection(this->wc->app->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->wc->LFSTK_getDnDAtom(XA_UTF8_STRING),this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->window,CurrentTime);
-			XFlush(this->wc->app->display);
+			//-->>XFlush(this->wc->app->display);
 			if(XPending(this->wc->app->display)>-1)
 				XNextEvent(this->wc->app->display,&event);
 

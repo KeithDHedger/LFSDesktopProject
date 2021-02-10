@@ -240,8 +240,8 @@ int LFSTK_applicationClass::LFSTK_runApp(void)
 				}
 		}
 
-	XFlush(this->display);
-	XSync(this->display,true);
+	//-->>XFlush(this->display);
+	//-->>XSync(this->display,true);
 	return(this->exitValue);
 }
 

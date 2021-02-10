@@ -284,17 +284,19 @@ bool timerCB(LFSTK_applicationClass *p,void* ud)
 												{
 													retval=access(fullpath,F_OK);
 													if(retval!=0)
-														desktopItems.at(j).item->LFSTK_moveGadget(-1000,-1000);//TODO//
+														desktopItems.at(j).item->LFSTK_moveGadget(-20000,10000);//TODO//
 												}
 										}
 								}
 						}
 					makeFileButtons(true);
 					wc->LFSTK_showWindow(true);
+					wc->LFSTK_redrawAllGadgets();
 				}
 			freeAndNull(&out);
 		}
 
 	updateMounted();
+
 	return(true);
 }

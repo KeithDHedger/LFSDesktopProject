@@ -461,7 +461,7 @@ void LFSTK_gadgetClass::drawBevel(geometryStruct* geom,bevelType bevel)
 		cairo_line_to(this->cr,geom->x+1,geom->y+geom->h);
 		cairo_stroke(this->cr);			
 	cairo_restore(this->cr);
-	//XSync(this->wc->app->display,false);
+	////-->>XSync(this->wc->app->display,false);
 }
 
 /**
@@ -586,7 +586,7 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 				cairo_stroke(this->cr);
 			cairo_restore(this->cr);
 		}
-	//XSync(this->wc->app->display,false);
+	////-->>XSync(this->wc->app->display,false);
 }
 
 /**
@@ -602,7 +602,7 @@ void LFSTK_gadgetClass::drawGagetDetails(void)
 		this->drawImage();
 	if(this->showIndicator==true)
 		this->drawIndicator(&this->gadgetDetails);
-	XSync(this->wc->app->display,false);
+	//-->>XSync(this->wc->app->display,false);
 }
 
 /**
@@ -967,7 +967,7 @@ void LFSTK_gadgetClass::drawImage()
 			}
 
 	cairo_restore(this->cr);
-	//XSync(this->wc->app->display,false);
+	////-->>XSync(this->wc->app->display,false);
 }
 
 /**
@@ -1296,7 +1296,7 @@ void LFSTK_gadgetClass::drawIndicator(gadgetStruct* details)
 				
 				break;
 		}
-	//XSync(this->wc->app->display,false);
+	////-->>XSync(this->wc->app->display,false);
 }
 
 /**
@@ -1359,7 +1359,7 @@ void LFSTK_gadgetClass::drawBox(geometryStruct* g,gadgetState state,bevelType be
 				cairo_stroke(this->cr);			
 			}
 	cairo_restore(this->cr);
-	XSync(this->wc->app->display,false);
+	//-->>XSync(this->wc->app->display,false);
 }
 
 /**

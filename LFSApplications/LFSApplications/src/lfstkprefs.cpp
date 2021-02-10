@@ -409,7 +409,7 @@ void setPreviewData(void)
 	windowColourEdit->LFSTK_setCursorColourName("#808080");
 
 	wc->LFSTK_clearWindow(true);
-	XFlush(apc->display);
+	//-->>XFlush(apc->display);
 }
 
 bool selectfile(void *object,void* ud)

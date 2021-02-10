@@ -1,4 +1,6 @@
 0.5.0
+Fixed dragging image.
+Removed unneeded xflush/xsync.
 Updated basic example to show drop on gadget.
 All gadgets can now handle DnD.
 Fixed themepaths in installed themes.
