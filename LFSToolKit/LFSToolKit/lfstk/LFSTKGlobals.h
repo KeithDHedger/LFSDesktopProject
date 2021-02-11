@@ -38,7 +38,7 @@
 #include <string>
 #include <sstream>
 
-#define COPYRITE			"Copyright © 2013-2020 K.D.Hedger"
+#define COPYRITE			"Copyright © 2013-2021 K.D.Hedger"
 #define PERSONAL			"keithdhedger@gmail.com"
 #define	MYWEBSITE			"https://keithdhedger.github.io/"
 
@@ -300,19 +300,19 @@ struct listData
 
 struct gadgetStruct
 {
-	colourStruct	*colour=NULL;
-	bevelType		bevel=BEVELNONE;
-	indicatorType	indic=NOINDICATOR;
-	int				state=NORMALCOLOUR;
-	int				reserveSpace=0;
-	bool			buttonTile=false;
-	geometryStruct	gadgetGeom={0,0,1,1};
-	geometryStruct	indicatorGeom={0,0,1,1};
-	bool			hasIndicator=false;
-	bool			useWindowPixmap=false;
-	bool			geomRelativeToMainWindow=false;
-	bool			showLink=false;
-	bool			showBroken=false;
+	colourStruct			*colour=NULL;
+	bevelType				bevel=BEVELNONE;
+	indicatorType			indic=NOINDICATOR;
+	int						state=NORMALCOLOUR;
+	int						reserveSpace=0;
+	bool					buttonTile=false;
+	geometryStruct			gadgetGeom={0,0,1,1};
+	geometryStruct			indicatorGeom={0,0,1,1};
+	bool					hasIndicator=false;
+	bool					useWindowPixmap=false;
+	bool					geomRelativeToMainWindow=false;
+	bool					showLink=false;
+	bool					showBroken=false;
 };
 
 class LFSTK_applicationClass;

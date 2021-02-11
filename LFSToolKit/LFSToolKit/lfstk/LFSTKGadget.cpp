@@ -29,7 +29,6 @@
 */
 LFSTK_gadgetClass::~LFSTK_gadgetClass()
 {
-//DEBUGFUNC("destroy gadget","");
 	if(this->label!=NULL)
 		free(this->label);
 
@@ -208,8 +207,6 @@ void LFSTK_gadgetClass::initGadget(void)
 	this->fontString=NULL;
 	this->autoLabelColour=this->wc->autoLabelColour;
 
-//DEBUGFUNC("%p",this->wc->globalLib)
-//this->wc->globalLib=new LFSTK_lib(true);
 	for(int j=0;j<MAXCOLOURS;j++)
 		this->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON));
 
@@ -461,7 +458,6 @@ void LFSTK_gadgetClass::drawBevel(geometryStruct* geom,bevelType bevel)
 		cairo_line_to(this->cr,geom->x+1,geom->y+geom->h);
 		cairo_stroke(this->cr);			
 	cairo_restore(this->cr);
-	////-->>XSync(this->wc->app->display,false);
 }
 
 /**
@@ -586,7 +582,6 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 				cairo_stroke(this->cr);
 			cairo_restore(this->cr);
 		}
-	////-->>XSync(this->wc->app->display,false);
 }
 
 /**
@@ -602,7 +597,6 @@ void LFSTK_gadgetClass::drawGagetDetails(void)
 		this->drawImage();
 	if(this->showIndicator==true)
 		this->drawIndicator(&this->gadgetDetails);
-	//-->>XSync(this->wc->app->display,false);
 }
 
 /**
@@ -663,8 +657,6 @@ bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 	this->mouseEvent=NULL;
 
 //no callbacks
-//	if(this->runCallback(ANYMOUSECB)==false)
-//		return(true);
 	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
 		return(true);
 
@@ -702,8 +694,6 @@ bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 	this->mouseDownY=e->y;
 	this->keyEvent=NULL;
 //no callbacks
-//	if(this->runCallback(ANYMOUSECB)==false)
-//		return(true);
 	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
 		return(true);
 
@@ -817,7 +807,6 @@ bool LFSTK_gadgetClass::mouseDrag(XMotionEvent *e)
 					this->gadgetGeom.x=(this->gadgetGeom.x/this->snap)*this->snap;
 					this->gadgetGeom.y=(this->gadgetGeom.y/this->snap)*this->snap;
 				}
-			//XMoveWindow(this->wc->app->display,this->window,this->gadgetGeom.x,this->gadgetGeom.y);
 			this->LFSTK_moveGadget(this->gadgetGeom.x,this->gadgetGeom.y);
 			this->wc->app->isDragging=true;
 		}
@@ -835,18 +824,7 @@ void LFSTK_gadgetClass::LFSTK_resizeWindow(int w,int h)
 
 	this->LFSTK_clearWindow();
 }
-//
-///**
-//* Key release callback.
-//* \param e XKeyEvent passed from mainloop->listener.
-//* \return Return true if event fully handeled or false to pass it on.
-//*/
-//bool LFSTK_gadgetClass::keyRelease(XKeyEvent *e)
-//{
-//	this->keyEvent=NULL;
-//	return(true);
-//}
-//
+
 /**
 * Client Message callback.
 * \param e XEvent passed from mainloop->listener.
@@ -918,8 +896,6 @@ void LFSTK_gadgetClass::drawImage()
 		{
 			case MENU:
 				xoffset=this->pad*2;
-				//TODO//
-				//xoffset=(this->gadgetGeom.w/2)-(width * ratio)/2+4;
 				break;
 			case LEFT:
 				xoffset=this->pad;
@@ -967,7 +943,6 @@ void LFSTK_gadgetClass::drawImage()
 			}
 
 	cairo_restore(this->cr);
-	////-->>XSync(this->wc->app->display,false);
 }
 
 /**
@@ -1025,23 +1000,6 @@ void LFSTK_gadgetClass::LFSTK_setCairoFontData(void)
 		}
 	free(string);
 
-//
-////cairo_font_face_t *ff;
-//	cairo_save(this->cr);
-//		//cairo_select_font_face(this->cr,this->fontName,this->slant,this->weight);
-//		ff=cairo_toy_font_face_create (this->fontName,this->slant,this->weight);
-//		cairo_set_font_face (this->cr,ff);
-//		cairo_set_font_size(this->cr,this->fontSize);
-//		if(strlen(this->label)>0)
-//			cairo_text_extents(this->cr,this->label,&this->textExtents);
-//		else
-//			cairo_text_extents(this->cr,"X",&this->textExtents);
-//		//this->maxTextHeight=this->fontExtents.descent+this->fontExtents.height+this->fontExtents.ascent;
-//		this->maxTextHeight=this->fontExtents.descent+this->fontExtents.ascent;
-//	cairo_restore(this->cr);
-//		cairo_font_face_destroy (ff);
-//
-
 	cairo_save(this->cr);
 		cairo_select_font_face(this->cr,this->fontName,this->slant,this->weight);
 		cairo_set_font_size(this->cr,this->fontSize);
@@ -1050,7 +1008,6 @@ void LFSTK_gadgetClass::LFSTK_setCairoFontData(void)
 			cairo_text_extents(this->cr,this->label,&this->textExtents);
 		else
 			cairo_text_extents(this->cr,"X",&this->textExtents);
-		//this->maxTextHeight=this->fontExtents.descent+this->fontExtents.height+this->fontExtents.ascent;
 		this->maxTextHeight=this->fontExtents.descent+this->fontExtents.ascent;
 	cairo_restore(this->cr);
 }
@@ -1142,18 +1099,14 @@ void LFSTK_gadgetClass::LFSTK_setCairoFontDataParts(const char* fmt,...)
 			fmt++;
 		}
 	va_end(ap);
-//cairo_font_face_t *ff;
+
 	cairo_save(this->cr);
 		cairo_select_font_face(this->cr,this->fontName,this->slant,this->weight);
-	//	ff=cairo_toy_font_face_create (this->fontName,this->slant,this->weight);
-		//cairo_set_font_face (this->cr,ff);
 		cairo_set_font_size(this->cr,this->fontSize);
 		cairo_font_extents(this->cr,&this->fontExtents);
 		cairo_text_extents(this->cr,this->label,&this->textExtents);
 		this->maxTextHeight=this->fontExtents.descent+this->fontExtents.ascent;
-	//	printf("descent=%f ascent=%f maxTextHeight=%f\n",this->fontExtents.descent,this->fontExtents.ascent,this->maxTextHeight);
 	cairo_restore(this->cr);
-		//cairo_font_face_destroy (ff);
 }
 
 /**
@@ -1249,7 +1202,7 @@ void LFSTK_gadgetClass::drawIndicator(gadgetStruct* details)
 	if(this->gadgetDetails.hasIndicator==false)
 		return;
 
-	switch(details->indic)//TODO//
+	switch(details->indic)
 		{
 			case CHECK:
 				cairo_save(this->cr);
@@ -1296,7 +1249,6 @@ void LFSTK_gadgetClass::drawIndicator(gadgetStruct* details)
 				
 				break;
 		}
-	////-->>XSync(this->wc->app->display,false);
 }
 
 /**
@@ -1359,7 +1311,6 @@ void LFSTK_gadgetClass::drawBox(geometryStruct* g,gadgetState state,bevelType be
 				cairo_stroke(this->cr);			
 			}
 	cairo_restore(this->cr);
-	//-->>XSync(this->wc->app->display,false);
 }
 
 /**
@@ -1433,15 +1384,6 @@ void LFSTK_gadgetClass::LFSTK_setImageFromSurface(cairo_surface_t *sfc,int orien
 			this->imageHeight=this->gadgetGeom.h;
 			ratio=1.0;
 		}
-/*
-	if(this->cImage==NULL)
-		this->cImage=cairo_surface_create_similar_image(sfc,cairo_image_surface_get_format(sfc),this->imageWidth,this->imageHeight);
-	tcr=cairo_create(this->cImage);
-	cairo_reset_clip(tcr);
-	cairo_scale(tcr,ratio,ratio);
-	cairo_set_source_surface(tcr,sfc,0,0);
-	cairo_paint(tcr);
-*/
 
 	if(this->cImage!=NULL)
 		cairo_surface_destroy(this->cImage);
@@ -1576,7 +1518,6 @@ cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int or
 			this->link=cairo_image_surface_create_from_png (DATADIR "/Pixmaps/symbolic-link.png");
 			this->broken=cairo_image_surface_create_from_png (DATADIR "/Pixmaps/unreadable.png");
 		}
-//	printf("datadir=%s\n", DATADIR "/Pixmaps/symbolic-link.png");
 
 	return(cs);
 }

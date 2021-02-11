@@ -67,27 +67,27 @@ int main(int argc, char **argv)
 
 //image button toolbutton
 	imagebuttonT=new LFSTK_buttonClass(wc,"Tool Button",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*2,BUTTONGRAV);
-	imagebuttonT->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)0xdeadbeef0);
+	imagebuttonT->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA(0xdeadbeef0));
 	imagebuttonT->LFSTK_setImageFromPath("./AspellGUI.png",TOOLBAR,true);
 	sy+=YSPACING*2;
 
 //image button left
 	imagebuttonL=new LFSTK_buttonClass(wc,"Left Image",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*2,BUTTONGRAV);
-	imagebuttonL->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)0xdeadbeef1);
+	imagebuttonL->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA(0xdeadbeef1));
 	imagebuttonL->LFSTK_setImageFromPath("./casper2.JPG",LEFT,true);
 	imagebuttonL->LFSTK_setLabelGravity(CENTRE);
 	sy+=YSPACING*2;
 
 //image button centre
 	imagebuttonC=new LFSTK_buttonClass(wc,"",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*2,BUTTONGRAV);
-	imagebuttonC->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)0xdeadbeef2);
+	imagebuttonC->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA(0xdeadbeef2));
 	imagebuttonC->LFSTK_setImageFromPath("./casper2.JPG",CENTRE,true);
 
 	sy+=YSPACING*2;
 
 //image button right
 	imagebuttonR=new LFSTK_buttonClass(wc,"Right Image",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*2,BUTTONGRAV);
-	imagebuttonR->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)0xdeadbeef3);
+	imagebuttonR->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA(0xdeadbeef3));
 	imagebuttonR->LFSTK_setImageFromPath("./casper2.JPG",RIGHT,true);
 	imagebuttonR->LFSTK_setLabelGravity(CENTRE);
 	imagebuttonR->gadgetDetails.reserveSpace=4;
@@ -95,7 +95,7 @@ int main(int argc, char **argv)
 
 //image button menu
 	imagebuttonR=new LFSTK_buttonClass(wc,"Menu Image Button",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
-	imagebuttonR->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)0xdeadbeef4);
+	imagebuttonR->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA(0xdeadbeef4));
 	imagebuttonR->LFSTK_setImageFromPath("./casper2.JPG",MENU,true);
 	sy+=YSPACING;
 

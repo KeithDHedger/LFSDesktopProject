@@ -41,7 +41,6 @@ class LFSTK_scrollBarClass : public LFSTK_gadgetClass
 		void				LFSTK_clearWindow(void);
 		void				LFSTK_clearWindow(bool ignorecb);
 		void				LFSTK_setStyle(bevelType s);
-		void				LFSTK_restickWindow(void);
 		void				LFSTK_resetHeight(int newheight);
 
 //set indexes

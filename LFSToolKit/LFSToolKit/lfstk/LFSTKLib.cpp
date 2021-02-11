@@ -106,92 +106,92 @@ LFSTK_lib::~LFSTK_lib()
 */
 void LFSTK_lib::LFSTK_setGlobalString(int state,int type,const char *str)
 {
-	const char	*ptr=NULL;
+	char	*ptr=NULL;
 	
 	switch(type)
 		{
 			case TYPEWINDOW:
 				ptr=this->globalWindowColours[state];
 				if(ptr!=NULL)
-					free((void*)ptr);
+					free(ptr);
 				this->globalWindowColours[state]=strdup(str);
 				break;
 			case TYPEWINDOWTILE:
 				ptr=this->globalWindowTile;
 				if(ptr!=NULL)
-					free((void*)ptr);
+					free(ptr);
 				this->globalWindowTile=strdup(str);
 				break;
 			case TYPEBUTTON:
 				ptr=this->globalButtonColours[state];
 				if(ptr!=NULL)
-					free((void*)ptr);
+					free(ptr);
 				this->globalButtonColours[state]=strdup(str);
 				break;
 			case TYPEBUTTONTILE:
 				ptr=this->globalButtonTile;
 				if(ptr!=NULL)
-					free((void*)ptr);
+					free(ptr);
 				this->globalButtonTile=strdup(str);
 				break;
 			case TYPEMENUITEM:
 				ptr=this->globalMenuItemColours[state];
 				if(ptr!=NULL)
-					free((void*)ptr);
+					free(ptr);
 				this->globalMenuItemColours[state]=strdup(str);
 				break;
 			case TYPEMENUITEMTILE:
 				ptr=this->globalMenuItemTile;
 				if(ptr!=NULL)
-					free((void*)ptr);
+					free(ptr);
 				this->globalMenuItemTile=strdup(str);
 				break;
 			case TYPEFONTCOLOUR:
 				ptr=this->globalFontColourNames[state];
 				if(ptr!=NULL)
-					free((void*)ptr);
+					free(ptr);
 				this->globalFontColourNames[state]=strdup(str);
 				break;
 			case TYPEMENUITEMFONTCOLOUR:
 				ptr=this->globalMenuItemFontColourNames[state];
 				if(ptr!=NULL)
-					free((void*)ptr);
+					free(ptr);
 				this->globalMenuItemFontColourNames[state]=strdup(str);
 				break;
 			case TYPEMENUITEMFONT:
 				ptr=this->globalMenuItemFontString;
 				if(ptr!=NULL)
-					free((void*)ptr);
+					free(ptr);
 				this->globalMenuItemFontString=strdup(str);
 				break;
 			case TYPEFONT:
 				ptr=this->globalFontString;
 				if(ptr!=NULL)
-					free((void*)ptr);
+					free(ptr);
 				this->globalFontString=strdup(str);
 				break;
 			case TYPEMONOFONT:
 				ptr=this->globalMonoFontString;
 				if(ptr!=NULL)
-					free((void*)ptr);
+					free(ptr);
 				this->globalMonoFontString=strdup(str);
 				break;
 			case TYPECURSORCOLOUR:
 				ptr=this->globalCursorColour;
 				if(ptr!=NULL)
-					free((void*)ptr);
+					free(ptr);
 				this->globalCursorColour=strdup(str);
 				break;
 			case TYPESBTROUGHCOLOUR:
 				ptr=this->globalSBTroughColour;
 				if(ptr!=NULL)
-					free((void*)ptr);
+					free(ptr);
 				this->globalSBTroughColour=strdup(str);
 				break;
 			case TYPELISTTROUGHCOLOUR:
 				ptr=this->globalListTroughColour;
 				if(ptr!=NULL)
-					free((void*)ptr);
+					free(ptr);
 				this->globalListTroughColour=strdup(str);
 				break;
 		}
@@ -215,8 +215,7 @@ const char *LFSTK_lib::LFSTK_getGlobalString(int state,int type)
 	switch(type)
 		{
 			case TYPEWINDOW:
-			//printf("--->%s<---\n",this->globalWindowColours[state]);
-			ptr=this->globalWindowColours[state];
+				ptr=this->globalWindowColours[state];
 				if(ptr==NULL)
 					ptr=defaultColourStrings[state];
 				break;
@@ -495,7 +494,6 @@ void LFSTK_lib::LFSTK_saveVarsToFile(const char* filepath,const args* dataptr)
 			if(fd!=stdout)
 				fclose(fd);
 		}
-
 }
 
 /**
@@ -548,10 +546,7 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 	LFSTK_gadgetClass	*gadget=NULL;
 	geometryStruct		geom;
 
-//printf("---%i---\n",type);
-//printf("===type=%i====\n",e->type);
 	gadget=static_cast<LFSTK_gadgetClass*>(self);
-//DEBUGFUNC("gadget=%p",gadget);
 	gadget->xEvent=e;
 
 	switch (e->type)
@@ -652,8 +647,6 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 			case SelectionRequest:
 				fprintf(stderr,"from SelectionRequest lib\n");
 				break;
-		//	default:
-				//	printf("default\n");		
 		}
 
 	gadget->xEvent=NULL;
@@ -680,7 +673,6 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 						break;
 				}
 		}
-
 	return(retval);
 }
 
@@ -733,7 +725,6 @@ void LFSTK_lib::LFSTK_setUseTheme(bool use)
 
 char* LFSTK_lib::LFSTK_findThemedIcon(const char *theme,const char *icon,const char *catagory)
 {
-
 	char        *iconpath=NULL;
 	const char  *iconthemes[3];
 	const char  *iconfolders[GLOBALPIXMAPSEND];
@@ -789,8 +780,8 @@ char* LFSTK_lib::LFSTK_findThemedIcon(const char *theme,const char *icon,const c
 						free(iconpath);
 					iconpath=NULL;
 				}
-			printf("no icon\n");
 		}
+
 breakReturn:
 	free(holdicon);
 	return(iconpath);
@@ -842,7 +833,6 @@ char* LFSTK_lib::LFSTK_oneLiner(const char* fmt,...)
 		}
 	va_end(ap);
 
-//debugfunc("%s",buffer);
 	fp=popen(buffer,"r");
 	if(fp!=NULL)
 		{

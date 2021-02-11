@@ -114,7 +114,6 @@ bool LFSTK_toggleButtonClass::mouseEnter(XButtonEvent *e)
 		}
 
 	this->inWindow=true;
-	//-->>XSync(this->wc->app->display,false);
 	LFSTK_gadgetClass::LFSTK_clearWindow();
 	return(true);
 }
@@ -145,7 +144,6 @@ bool LFSTK_toggleButtonClass::mouseExit(XButtonEvent *e)
 		}
 
 	this->inWindow=false;
-	//-->>XSync(this->wc->app->display,false);
 	LFSTK_gadgetClass::LFSTK_clearWindow();
 	return(true);
 }
@@ -176,7 +174,6 @@ bool LFSTK_toggleButtonClass::mouseDown(XButtonEvent *e)
 	else
 		this->gadgetDetails.bevel=BEVELIN;
 
-	//-->>XSync(this->wc->app->display,false);
 	LFSTK_gadgetClass::LFSTK_clearWindow();
 
 	if(this->callBacks.validCallbacks & MOUSEPRESSCB)
@@ -220,7 +217,6 @@ bool LFSTK_toggleButtonClass::mouseUp(XButtonEvent *e)
 		}
 
 	LFSTK_gadgetClass::LFSTK_clearWindow();
-	//-->>XSync(this->wc->app->display,false);
 
 	if(this->inWindow==true)
 		{

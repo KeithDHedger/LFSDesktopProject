@@ -221,7 +221,7 @@ int main(int argc,char **argv)
 			NET_WM_WINDOW_TYPE=XInternAtom(mainwind->app->display,"_NET_WM_WINDOW_TYPE",False);
 			NET_WM_STATE=XInternAtom(mainwind->app->display,"_NET_WM_STATE",False);
 
-			env=mainwind->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",mainwind->configDir);
+			env=mainwind->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir);
 			key=atoi(env);
 			freeAndNull(&env);
 

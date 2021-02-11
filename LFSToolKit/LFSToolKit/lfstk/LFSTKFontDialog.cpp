@@ -124,8 +124,7 @@ void LFSTK_fontDialogClass::loadFontStrings(void)
 
 	line[0]=0;
 
-	asprintf(&command,"%s","fc-list : family|awk -F, '{print $1}'|sort -u|wc -l");
-	out=wc->globalLib->LFSTK_oneLiner("%s",command);
+	out=this->wc->app->globalLib->LFSTK_oneLiner("%s","fc-list : family|awk -F, '{print $1}'|sort -u|wc -l");
 	if(out==NULL)
 		fontcnt=0;
 	else
@@ -133,7 +132,6 @@ void LFSTK_fontDialogClass::loadFontStrings(void)
 			fontcnt=atoi(out);
 			free(out);
 		}
-	free(command);
 
 	fontsAZ=new char*[fontcnt];
 	maxFonts=fontcnt;

@@ -270,7 +270,7 @@ int main(int argc, char **argv)
 	apc->LFSTK_addWindow(NULL,BOXLABEL);
 	wc=apc->mainWindow;
 
-	buffer=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",wc->configDir);
+	buffer=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir);
 	if((queueID=msgget(atoi(buffer),IPC_CREAT|0660))==-1)
 		fprintf(stderr,"Can't create message queue :( ...\n");
 	free(buffer);
@@ -281,7 +281,7 @@ int main(int argc, char **argv)
 				flag=true;
 		}
 
-	asprintf(&envFile,"%s/lfswmanager.rc",wc->configDir);
+	asprintf(&envFile,"%s/lfswmanager.rc",apc->configDir);
 	wc->globalLib->LFSTK_loadVarsFromFile(envFile,lfsWMPrefs);
 	prefsPlacementTemp=prefsPlacement;
 

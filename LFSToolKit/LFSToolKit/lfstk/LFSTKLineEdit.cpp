@@ -25,9 +25,6 @@
 
 LFSTK_lineEditClass::~LFSTK_lineEditClass()
 {
-//	if(this->isMapped==true)
-//		this->LFSTK_reParentWindow(this->wc->window,0,0);
-
 	if(this->cursorColour.name!=NULL)
 		{
 			free(this->cursorColour.name);
@@ -101,7 +98,6 @@ void LFSTK_lineEditClass::LFSTK_clearWindow()
 	this->gadgetDetails.bevel=BEVELIN;
 	this->drawLabel();
 	this->drawBevel(&this->gadgetDetails.gadgetGeom,this->gadgetDetails.bevel);
-	//-->>XSync(this->wc->app->display,false);
 	return;
 }
 
@@ -122,7 +118,7 @@ void LFSTK_lineEditClass::LFSTK_setFocus(void)
 */
 bool LFSTK_lineEditClass::clientMessage(XEvent *e)
 {
-printf("confmes from line edit\n");
+	printf("confmes from line edit\n");
 	return(true);
 }
 
@@ -149,7 +145,6 @@ void LFSTK_lineEditClass::LFSTK_resizeWindow(int w,int h)
 	this->gadgetDetails.gadgetGeom.h=this->gadgetGeom.h;
 	XResizeWindow(this->wc->app->display,this->window,this->gadgetGeom.w,this->gadgetGeom.h);
 	this->wc->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->window,this->wc->app->visual,&this->sfc,&this->cr,w,h);
-	//this->LFSTK_clearWindow();//TESTING//
 }
 
 /**
@@ -177,6 +172,7 @@ bool LFSTK_lineEditClass::gotFocus(XEvent *e)
 {
 	if(this->startUpMDFlag==false)
 		return(true);
+
 	if(this->isFocused==false)
 		{
 			this->isFocused=true;
@@ -196,15 +192,9 @@ void LFSTK_lineEditClass::LFSTK_setBuffer(const char *str)
 	if(bufferstr==NULL)
 		bufferstr="";
 	this->buffer=bufferstr;
-	//printf("cp=%i\n",this->cursorPos);
-	//this->cursorPos=strlen(bufferstr);
-	//this->setOffsetcurs(strlen(bufferstr));
-	//this->setOffsetcurs(1);
-//	this->offsetCurs=0;
 	this->cursorPos=strlen(bufferstr)-1;
 	this->setOffsetcurs(1000);
 	this->setOffsetcurs(1);
-//	printf("setOffsetcurs=%i\n",strlen(bufferstr));
 	if(this->cursorPos<0)
 		this->cursorPos=0;
 	this->LFSTK_clearWindow();
@@ -328,7 +318,6 @@ void LFSTK_lineEditClass::getClip(void)
 	if (selectionOwner!=None)
 		{
 			XConvertSelection(this->wc->app->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->wc->LFSTK_getDnDAtom(XA_UTF8_STRING),this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->window,CurrentTime);
-			//-->>XFlush(this->wc->app->display);
 			if(XPending(this->wc->app->display)>-1)
 				XNextEvent(this->wc->app->display,&event);
 
@@ -413,7 +402,7 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 		{
 			if(keysym_return==XK_v)
 				this->getClip();
-//TODO//
+
 			if(keysym_return==XK_c)
 				{
 					this->wc->clipBuffer=this->buffer;
@@ -493,9 +482,8 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 /**
 * Drop data.
 * \param data Data dropped on gadget as string.
-* \note I callback is enabled user data is set to propertyStruct* data.
 */
-void LFSTK_lineEditClass::LFSTK_dropData(propertyStruct* data)//TODO//
+void LFSTK_lineEditClass::LFSTK_dropData(propertyStruct* data)
 {
 	int	endl;
 	if(strcasecmp(data->mimeType,"text/plain")==0)
@@ -503,19 +491,10 @@ void LFSTK_lineEditClass::LFSTK_dropData(propertyStruct* data)//TODO//
 
 	if(strcasecmp(data->mimeType,"text/uri-list")==0)
 		{
-			char	*d;
 			char	*ret;
-			asprintf(&d,"%s",(const char*)data->data);
-			endl=strlen(d)-1;
-			while ((endl >= 0) && (isspace(d[endl])) )
-				{
-					d[endl]=0;
-					endl--;
-				}
-			ret=this->wc->globalLib->LFSTK_oneLiner("echo -n \"%s\"|sed 's|^file://||;s|%%20| |g'",d);
+			ret=this->wc->app->globalLib->LFSTK_cleanString((const char*)data->data);
 			this->LFSTK_setFormatedText((const char*)ret,true);
 			free(ret);
-			free(d);
 		}
 
 	if(this->callBacks.validCallbacks & GADGETDROPCB)
@@ -649,10 +628,4 @@ bool LFSTK_lineEditClass::LFSTK_getCallbackOnReturn(void)
 {
 	return(this->callbackOnReturn);
 }
-
-
-
-
-
-
 

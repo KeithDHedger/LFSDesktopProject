@@ -32,10 +32,8 @@ bool doQuit(void *p,void* ud)
 bool doDropped(void *p,propertyStruct *data,void* ud)
 {
 	LFSTK_gadgetClass	*gadg=NULL;
-	//propertyStruct		*data=NULL;
 
 	gadg=static_cast<LFSTK_gadgetClass*>(p);
-	//data=static_cast<propertyStruct*>(ud);
 	printf("dropped %s on gadget %p @x/y %i %i\n",data->data,gadg,data->dropX,data->dropY);
 	return(true);
 }
@@ -70,7 +68,7 @@ bool windowDrop(LFSTK_windowClass *lwc,void* ud)
 }
 
 
-int main(int argc, char **argv)//TODO//
+int main(int argc, char **argv)
 {
 	int							sy=BORDER;
 	std::vector<hitRect>		hrs;

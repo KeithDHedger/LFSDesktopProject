@@ -186,7 +186,7 @@ bool applyCB(void *p,void* ud)
 				}
 
 			getEdits();
-			asprintf(&env,"%s/%s",wc->configDir,panelNameEdit->LFSTK_getCStr());
+			asprintf(&env,"%s/%s",apc->configDir,panelNameEdit->LFSTK_getCStr());
 			wc->globalLib->LFSTK_saveVarsToFile(env,panelPrefs);
 			free(env);
 		}
@@ -212,7 +212,7 @@ void getPrefs(void)
 {
 	char	*env=NULL;
 
-	asprintf(&env,"%s/%s",wc->configDir,panelNameEdit->LFSTK_getCStr());
+	asprintf(&env,"%s/%s",apc->configDir,panelNameEdit->LFSTK_getCStr());
 	wc->globalLib->LFSTK_loadVarsFromFile(env,panelPrefs);
 	free(env);
 }
@@ -296,7 +296,7 @@ int main(int argc, char **argv)
 //panel menus
 //temp fix
 	char	*touchpanel;
-	asprintf(&touchpanel,"touch %s/lfspanel.rc",wc->configDir);
+	asprintf(&touchpanel,"touch %s/lfspanel.rc",apc->configDir);
 	system(touchpanel);
 	free(touchpanel);
 
@@ -305,7 +305,7 @@ int main(int argc, char **argv)
 	find->LFSTK_setIgnoreBroken(true);
 	find->LFSTK_setSort(false);
 	find->LFSTK_setFileTypes("lfspanel");
-	find->LFSTK_findFiles(wc->configDir,false);
+	find->LFSTK_findFiles(apc->configDir,false);
 	find->LFSTK_sortByName();
 
 	panelCnt=find->LFSTK_getDataCount();

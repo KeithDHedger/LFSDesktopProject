@@ -56,7 +56,7 @@ bool buttonCB(void *p,void* ud)
 	return(true);
 }
 
-int main(int argc, char **argv)//TODO//
+int main(int argc, char **argv)
 {
 	int	sy=BORDER;
 	int	hsy;

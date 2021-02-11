@@ -22,11 +22,9 @@
 
 LFSTK_imageClass::~LFSTK_imageClass()
 {
-//DEBUGFUNC("destroy image","");
 	cairo_surface_destroy(this->shapesfc);
 	cairo_destroy(this->shapecr);
 	XFreePixmap(this->wc->app->display,this->shape);
-	//-->>XSync(this->wc->app->display,true);
 }
 
 LFSTK_imageClass::LFSTK_imageClass()
@@ -73,8 +71,6 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 			cairo_restore(this->shapecr);
 
 			XShapeCombineMask(this->wc->app->display,this->window,ShapeBounding,0,0,cairo_xlib_surface_get_drawable(shapesfc),ShapeSet);
-			//-->>XFlush(this->wc->app->display);
-			//-->>XSync(this->wc->app->display,false);
 			return;
 		}
 
@@ -99,8 +95,6 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 	cairo_restore(this->shapecr);
 
 	XShapeCombineMask(this->wc->app->display,this->window,ShapeBounding,0,0,cairo_xlib_surface_get_drawable(shapesfc),ShapeSet);
-	//-->>XFlush(this->wc->app->display);
-	//-->>XSync(this->wc->app->display,false);
 }
 
 /**
@@ -139,5 +133,4 @@ LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* image
 	this->shape=XCreatePixmap(this->wc->app->display,this->window,w,h,1);
 	this->shapesfc=cairo_xlib_surface_create_for_bitmap(this->wc->app->display,this->shape,DefaultScreenOfDisplay(this->wc->app->display),w,h);
 	this->shapecr=cairo_create(this->shapesfc);
-
 }

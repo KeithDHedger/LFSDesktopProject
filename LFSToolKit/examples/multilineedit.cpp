@@ -51,6 +51,15 @@ bool doKeyUp(void *p,void* ud)
 	return(true);
 }
 
+bool doDropped(void *p,propertyStruct *data,void* ud)
+{
+	LFSTK_gadgetClass	*gadg=NULL;
+
+	gadg=static_cast<LFSTK_gadgetClass*>(p);
+	printf("dropped %s on gadget %p @x/y %i %i\n",data->data,gadg,data->dropX,data->dropY);
+	return(true);
+}
+
 void sendUTF8(XSelectionRequestEvent *sev)
 {
 	XSelectionEvent	ssev;
@@ -67,7 +76,7 @@ void sendUTF8(XSelectionRequestEvent *sev)
     XSendEvent(apc->display,sev->requestor,True,NoEventMask,(XEvent *)&ssev);
 }
 
-int main(int argc, char **argv)//TODO//
+int main(int argc, char **argv)
 {
 	int	sy=BORDER;
 	
@@ -88,6 +97,8 @@ int main(int argc, char **argv)//TODO//
 //line edit
 	editbox=new LFSTK_multiLineEditClass(wc,test_string,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE*10,BUTTONGRAV);
 	editbox->LFSTK_setKeyCallBack(NULL,doKeyUp,USERDATA(12345));
+	editbox->LFSTK_setGadgetDropCallBack(doDropped);
+
 	sy+=YSPACING+(GADGETHITE*10);
 
 //line

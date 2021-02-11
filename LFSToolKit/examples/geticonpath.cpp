@@ -40,15 +40,17 @@ bool doQuit(void *p,void* ud)
 bool getPath(void *p,void* ud)
 {
 	char	*iconpath=NULL;
-	char	*theme=NULL;
 
-	theme=apc->globalLib->LFSTK_oneLiner("head ~/.config/LFS/lfsdesktop.rc|grep -i icontheme|awk '{print $2}'");
-	iconpath=(char*)apc->globalLib->LFSTK_findThemedIcon(theme,mimeEdit->LFSTK_getCStr(),catEdit->LFSTK_getCStr());
+	iconpath=(char*)apc->globalLib->LFSTK_findThemedIcon(apc->iconThemeName,mimeEdit->LFSTK_getCStr(),catEdit->LFSTK_getCStr());
 
 	if(iconpath!=NULL)
-		printf("iconpath=%s\n",iconpath);
-	free(iconpath);
-	free(theme);
+		{
+			printf("iconpath=%s\n",iconpath);
+			free(iconpath);
+		}
+	else
+		printf("No icon found for '%s' in '%s'\n",mimeEdit->LFSTK_getCStr(),catEdit->LFSTK_getCStr());
+
 	return(true);
 }
 

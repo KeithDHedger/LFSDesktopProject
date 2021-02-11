@@ -22,7 +22,6 @@
 
 LFSTK_menuClass::~LFSTK_menuClass()
 {
-	//-->>XSync(this->parentwc->app->display,true);
 	for(int j=0;j<this->subwindows->size();j++)
 		delete this->subwindows->at(j);
 
@@ -36,7 +35,6 @@ LFSTK_menuClass::LFSTK_menuClass(LFSTK_windowClass *wc,int x,int y,unsigned w,un
 	subwindows=new std::vector<LFSTK_toolWindowClass*>;
 	subwindows->clear();
 	this->parentwc=wc;
-	//this->display=wc->display;
 	this->x=x;
 	this->y=y;
 	this->w=w;
@@ -86,7 +84,6 @@ void LFSTK_menuClass::LFSTK_showMenu(void)
 	XTranslateCoordinates(this->parentwc->app->display,this->parentwc->window,this->parentwc->app->rootWindow,this->x,this->y,&x,&y,&dw);
 	this->mainMenuWindow->LFSTK_moveWindow(x,y,true);
 	XSetInputFocus(this->parentwc->app->display,this->mainMenuWindow->window,RevertToNone,CurrentTime);
-	//-->>XSync(this->parentwc->app->display,false);
 
 	while(XPending(this->parentwc->app->display))
 		{
@@ -204,8 +201,6 @@ void LFSTK_menuClass::LFSTK_addMainMenus(menuStruct **menus,int menucnt)
 	win->overRide=true;
 	win->level=ABOVEALL;
 
-
-
 	this->mainMenuWindow=new LFSTK_toolWindowClass(win,this->parentwc->app);
 	delete win;
 
@@ -309,5 +304,4 @@ int	LFSTK_menuClass::LFSTK_getTextWidthForFont(const char *text)
 	cairo_destroy(cr);
 	cairo_surface_destroy(sfc);
 	return((int)(returnextents.x_advance+0.5));
-
 }

@@ -82,8 +82,6 @@ LFSTK_menuItemClass::LFSTK_menuItemClass(LFSTK_toolWindowClass* parentwc,LFSTK_m
 */
 bool LFSTK_menuItemClass::mouseExit(XButtonEvent *e)
 {
-//	if(this->runCallback(MOUSERELEASECB)==false)
-//		return(true);
 	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
 		return(true);
 
@@ -118,8 +116,6 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 	int				sinky;
 	unsigned int	buttonmask;
 
-//	if(this->runCallback(MOUSERELEASECB)==false)
-//		return(true);
 	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
 		return(true);
 

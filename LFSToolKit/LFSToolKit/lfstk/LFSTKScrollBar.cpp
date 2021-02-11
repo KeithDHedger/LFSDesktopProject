@@ -323,19 +323,14 @@ void LFSTK_scrollBarClass::LFSTK_clearWindow(bool ignorecb)
 			if(this->callBacks.validCallbacks & MOUSERELEASECB)
 				this->callBacks.mouseReleaseCallback(this,this->callBacks.mouseUserData);
 
-//reduce flickering
-//			if(this->startDrag==true)
-//				XSync(this->wc->app->display,true);
 			this->thumb->LFSTK_clearWindow();
 		}
 	else
 		{
-			//-->>XSync(this->wc->app->display,true);
 			this->clearBox(&this->gadgetDetails);
 			if(this->style!=BEVELNONE)
 				this->drawBevel(&this->gadgetDetails.gadgetGeom,this->gadgetDetails.bevel);
 			this->thumb->LFSTK_clearWindow();
-			//-->>XSync(this->wc->app->display,true);
 		}
 }
 
@@ -454,8 +449,6 @@ bool LFSTK_scrollBarClass::mouseUp(XButtonEvent *e)
 	this->mouseDownX=e->x;
 	this->mouseDownY=e->y;
 
-//	if(this->runCallback(MOUSERELEASECB)==false)
-//		return(true);
 	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
 		return(true);
 
@@ -545,8 +538,6 @@ bool LFSTK_scrollBarClass::mouseExit(XButtonEvent *e)
 
 bool LFSTK_scrollBarClass::mouseDown(XButtonEvent *e)
 {
-//	if(this->runCallback(MOUSEPRESSCB)==false)
-//		return(true);
 	if(((this->callBacks.runTheCallback==false) || (this->isActive==false)) || ((this->callBacks.validCallbacks & MOUSEPRESSCB)==0))
 		return(true);
 
@@ -580,33 +571,6 @@ void LFSTK_scrollBarClass::LFSTK_scrollByPage(bool up)
 		this->pageUpDown(this->downRight,this);
 	return;
 }
-
-/**
-* Repositon scrollbar.
-*/
-void LFSTK_scrollBarClass::LFSTK_restickWindow(void)
-{
-	Window				child;
-	XWindowAttributes	xwa;
-	geometryStruct	geom;
-	int					x,y;
-
-	//this->LFSTK_getGeomWindowRelative(&geom,this->lockToWindowRight);
-	//this->LFSTK_resizeWindow(SCROLLBARWIDTH,geom.h);
-	//XGetWindowAttributes(this->wc->app->display,this->lockToWindowRight,&xwa);
-	//XTranslateCoordinates(this->wc->app->display,this->window,this->lockToWindowRight,xwa.x,xwa.y,&x,&y,&child );
-	//DEBUGFUNC("lockToWindowRight x=%i y=%i w=%i h=%i x=%i y=%i win=%i",xwa.x,xwa.y,xwa.width,xwa.height,x,y,this->lockToWindowRight);
-
-	//this->LFSTK_moveGadget(xwa.x,xwa.y);
-
-
-this->LFSTK_getGeomWindowRelative(&geom,this->parent);
-this->LFSTK_moveGadget(geom.x,geom.y);
-this->LFSTK_resizeWindow(SCROLLBARWIDTH,geom.h);
-	DEBUGFUNC("scroll rect %r win=%i",geom,this->parent);
-}
-
-
 
 
 

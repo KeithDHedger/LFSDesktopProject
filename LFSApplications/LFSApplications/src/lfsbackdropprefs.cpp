@@ -206,7 +206,7 @@ void loadMonitorInfo(void)
 	int		numchars;
 	size_t	n;
 
-	asprintf(&monitorrc,"%s/lfsmonitors.rc",wc->configDir);
+	asprintf(&monitorrc,"%s/lfsmonitors.rc",apc->configDir);
 	fd=fopen(monitorrc,"r");
 	if(fd!=NULL)
 		{
@@ -280,9 +280,9 @@ int main(int argc, char **argv)
 	apc->LFSTK_addWindow(NULL,BOXLABEL);
 	wc=apc->mainWindow;
 
-	asprintf(&wd,"%s",wc->userHome);
-	asprintf(&mainPrefs,"%s/lfssetwallpaper.rc",wc->configDir);
-	asprintf(&monitorPrefs,"%s/lfsmonitors.rc",wc->configDir);
+	asprintf(&wd,"%s",apc->userHome);
+	asprintf(&mainPrefs,"%s/lfssetwallpaper.rc",apc->configDir);
+	asprintf(&monitorPrefs,"%s/lfsmonitors.rc",apc->configDir);
 
 	fileDialog=new LFSTK_fileDialogClass(wc,"Select File",NULL,FILEDIALOG,"lfsbackdropprefs");
 
@@ -399,7 +399,7 @@ int main(int argc, char **argv)
 	if(parentWindow!=-1)
 		wc->LFSTK_setTransientFor(parentWindow);
 
-	buffer=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",wc->configDir);
+	buffer=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir);
 	if((queueID=msgget(atoi(buffer),IPC_CREAT|0660))==-1)
 		fprintf(stderr,"Can't create message queue :( ...\n");
 	free(buffer);

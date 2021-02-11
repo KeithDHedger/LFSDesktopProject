@@ -132,7 +132,7 @@ int main(int argc, char **argv)
 	filelist=new LFSTK_listGadgetClass(wc,"list",0-(DIALOGWIDTH/2)+BORDER,0-(sy+GADGETHITE*10),DIALOGWIDTH-(BORDER*2),GADGETHITE*16,SouthGravity);
 	//filelist=new LFSTK_listGadgetClass(wc,"list",BORDER,-sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*16,SouthGravity);
 	filelist->LFSTK_setListFromFile("/tmp/biglist",false);
-	filelist->LFSTK_setMouseCallBack(NULL,select,(void*)0xdeadbeaf);
+	filelist->LFSTK_setMouseCallBack(NULL,select,USERDATA(0xdeadbeaf));
 //goto end
 	if(filelist->LFSTK_findByLabel("zcat",false)==-1)
 		printf("Not found\n");

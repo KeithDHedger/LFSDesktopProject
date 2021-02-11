@@ -33,10 +33,10 @@ struct lineStruct
 {
 	char		*line;
 	int			cursorPos;
-	double		xpos;//RESERVED
-	double		ypos;//RESERVED
-	double		width;//RESERVED
-	double		height;//RESERVED
+	double		xpos;
+	double		ypos;
+	double		width;
+	double		height;
 };
 
 /**

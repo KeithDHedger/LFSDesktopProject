@@ -37,7 +37,6 @@ class LFSTK_toolWindowClass : public LFSTK_windowClass
 	protected:
 	private:
 		void	windowClassInitCommon(windowInitStruct *wi);
-
 };
 
 #endif

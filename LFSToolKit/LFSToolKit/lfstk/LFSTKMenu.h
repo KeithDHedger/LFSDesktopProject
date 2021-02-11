@@ -20,7 +20,7 @@
 
 #ifndef _LFSTKMENU_
 #define _LFSTKMENU_
-#if 1
+
 /**
  * \brief Menu class for LFSToolKit.
 */
@@ -40,20 +40,17 @@ class LFSTK_menuClass
 		LFSTK_windowClass					*parentwc;
 		
 		void								LFSTK_setMouseCallBack(bool (*downcb)(void*,void*),bool (*releasecb)(void*,void*),void* ud);
-		//void								LFSTK_setKeyCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud);//TODO//
 		void								LFSTK_freeMenus(menuStruct **menus,int menucnt);
 		int									LFSTK_getTextWidthForFont(const char *text);
 
 		bool								mainLoop=false;
 		LFSTK_toolWindowClass				*mainMenuWindow=NULL;
 		std::vector<LFSTK_toolWindowClass*>	*subwindows;
+
 	private:		
-		//Display								*display;
 		menuStruct							**mainMenu=NULL;
 		int									mainMenuCnt=0;
-		//callbackStruct						mouseCB;
 		callbackStruct						callBacks;
-		//callbackStruct					keyCB;//TODO//
 
 		cairo_font_weight_t					weight=CAIRO_FONT_WEIGHT_NORMAL;
 		cairo_font_slant_t					slant=CAIRO_FONT_SLANT_NORMAL;
@@ -62,6 +59,4 @@ class LFSTK_menuClass
 		const char							*fontDesc=NULL;
 };
 
-
-#endif
 #endif

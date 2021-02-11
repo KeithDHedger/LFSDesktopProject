@@ -50,7 +50,8 @@ LFSTK_fileDialogClass::~LFSTK_fileDialogClass(void)
 void LFSTK_fileDialogClass::cleanDirPath(void)
 {
 	char	*rp;
-	rp=this->wc->globalLib->LFSTK_oneLiner("realpath -s '%s'",this->currentDir);
+
+	rp=realpath(this->currentDir,NULL);
 	if(this->currentDir!=NULL)
 		free(this->currentDir);
 	this->currentDir=rp;
@@ -127,7 +128,6 @@ void LFSTK_fileDialogClass::getFileList(void)
 						ls.data.surface=this->fileImage;
 						break;
 				}
-			//ls.userData=(void*)j;
 			fileListGadget->LFSTK_appendToList(ls);
 		}
 	this->fileListGadget->LFSTK_updateList();
@@ -165,7 +165,7 @@ void LFSTK_fileDialogClass::LFSTK_setWorkingDir(const char *dir)
 	char	*holddir;
 //in case dir doesnt exist
 	if(access(dir,F_OK)!=0)
-		holddir=strdup(this->wc->userHome);
+		holddir=strdup(this->wc->app->userHome);
 //in case dir=this->currentDir
 	else
 		holddir=strdup(dir);
@@ -267,14 +267,10 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	win->wc=parentwc;
 	this->dialog=new LFSTK_windowClass(win,parentwc->app);
 	delete win;
-//TODO//
-//	this->dialog=new LFSTK_windowClass(0,0,dwidth,hite,label,false,true,false);
-	//dialog->closeDisplayOnExit=true;
 
 //find files
 	this->fc=new LFSTK_findClass;
 
-//TODO//?
 	XSizeHints sh;
 	sh.flags=PMinSize|PMaxSize|PSize|PResizeInc;
 	sh.min_width=dwidth;
@@ -287,26 +283,7 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	sh.base_width=hite;
 
 	XSetWMNormalHints(this->wc->app->display,dialog->window,&sh);
-	/*
-	std::vector<hitRect>	hrs;
-	LFSTK_ExpanderGadgetClass	*multi=NULL;
-	int						internalsy=BORDER;
 
-	multi=new LFSTK_ExpanderGadgetClass(this->dialog,"",0,0,dwidth,hite);
-	multi->stretchX=true;
-	multi->stretchY=true;
-	multi->gadgetStretch=STRETCH;
-
-//file list
-this->fileListGadget=new LFSTK_listGadgetClass(this->dialog,"",BORDER,BORDER,DIALOGWIDTH-FNAVBUTTONWID,(GADGETHITE*FFILEHITE),NorthWestGravity,NULL,0);
-//	hrs.push_back({BORDER,internalsy,DIALOGWIDTH-FNAVBUTTONWID,(GADGETHITE*FFILEHITE),new LFSTK_listGadgetClass(this->dialog,"",0,0,1,1,NorthWestGravity,NULL,0)});//TODO//
-	hrs.push_back({BORDER,internalsy,DIALOGWIDTH-FNAVBUTTONWID,(GADGETHITE*FFILEHITE),this->fileListGadget});//TODO//
-	//hrs.back().gadget->LFSTK_setMouseCallBack(NULL,this->select,this);
-
-	multi->LFSTK_setHitRects(hrs);
-	hrs.clear();
-
-	*/
 //file list
 	this->fileListGadget=new LFSTK_listGadgetClass(this->dialog,"",BORDER,BORDER,DIALOGWIDTH-FNAVBUTTONWID,(GADGETHITE*FFILEHITE));
 	this->fileListGadget->LFSTK_setMouseCallBack(NULL,this->select,this);
@@ -400,7 +377,7 @@ char* LFSTK_fileDialogClass::findThemedIconFromMime(const char *mimetype)
 	const char	*iconthemes[3];
 	const char	*iconfolders[2];
 
-	theme=this->wc->globalLib->LFSTK_oneLiner("head ~/.config/LFS/lfsdesktop.rc|grep -i icontheme|awk '{print $2}'");
+	theme=this->wc->app->globalLib->LFSTK_oneLiner("head '%s'/lfsdesktop.rc|grep -i icontheme|awk '{print $2}'",this->wc->app->configDir);
 	if(theme==NULL)
 		asprintf(&theme,"gnome");
 
@@ -411,11 +388,12 @@ char* LFSTK_fileDialogClass::findThemedIconFromMime(const char *mimetype)
 	iconfolders[0]="~/.icons";
 	iconfolders[1]="/usr/share/icons";
 	iconpath=NULL;
+
 	for(int j=0;j<2;j++)
 		{
 			for(int k=0;k<3;k++)
 				{
-					iconpath=this->wc->globalLib->LFSTK_oneLiner("find %s/\"%s\"/*/mime* -iname \"*%s.*\" 2>/dev/null|sort -Vr|head -n1 2>/dev/null",iconfolders[j],iconthemes[k],mimetype);
+					iconpath=this->wc->app->globalLib->LFSTK_oneLiner("find %s/\"%s\"/*/mime* %s/\"%s\"/*/places -iname \"*%s.*\" 2>/dev/null|sort -Vr|head -n1 2>/dev/null",iconfolders[j],iconthemes[k],iconfolders[j],iconthemes[k],mimetype);
 					if((iconpath!=NULL) && (strlen(iconpath)>1))
 						goto breakReturn;
 					if(iconpath!=NULL)
@@ -493,10 +471,31 @@ void LFSTK_fileDialogClass::setPreviewData(bool fromlist)
 
 	if((strcmp(convmt,"image-jpeg")==0) || (strcmp(convmt,"image-png")==0))
 		iconpath=strdup(mt);
+	else if(strcasecmp(&mt[strlen(mt)-8],".desktop")==0)
+		{
+			GKeyFile *kf=g_key_file_new();
+			if(g_key_file_load_from_file(kf,mt,G_KEY_FILE_NONE,NULL))
+				{
+					char *iiconpath=g_key_file_get_value(kf,"Desktop Entry",G_KEY_FILE_DESKTOP_KEY_ICON,NULL);
+					if(iiconpath!=NULL)
+						{
+							iconpath=wc->app->globalLib->LFSTK_findThemedIcon(this->wc->app->iconThemeName,iiconpath,"");
+							if(iconpath==NULL)
+								iconpath=strdup("/usr/share/icons/gnome/256x256/mimetypes/text-x-generic.png");
+							free(iiconpath);
+						}
+					else
+						iconpath=strdup("/usr/share/icons/gnome/256x256/mimetypes/text-x-generic.png");
+					g_key_file_free(kf);
+				}
+			else
+				{
+					iconpath=strdup("/usr/share/icons/gnome/256x256/mimetypes/text-x-generic.png");
+				}
+		}
 	else
 		{
 			iconpath=this->findThemedIconFromMime(convmt);
-
 			if((iconpath!=NULL) && (strlen(iconpath)<2) || (iconpath==NULL))
 				{
 					asprintf(&testmime,"gnome-mime-%s",convmt);
@@ -540,11 +539,11 @@ void LFSTK_fileDialogClass::LFSTK_getLastFolder(void)
 {
 	if(this->currentDir!=NULL)
 		free(this->currentDir);
-	this->currentDir=this->wc->globalLib->LFSTK_oneLiner("grep -i '%s' '%s/dialoglast.rc'|awk -F= '{print $NF}'",this->recentsName,this->wc->configDir);
+	this->currentDir=this->wc->app->globalLib->LFSTK_oneLiner("grep -i '%s' '%s/dialoglast.rc'|awk -F= '{print $NF}'",this->recentsName,this->wc->app->configDir);
 	if(strlen(this->currentDir)<2)
 		{
 			free(this->currentDir);
-			this->currentDir=strdup(this->wc->userHome);
+			this->currentDir=strdup(this->wc->app->userHome);
 		}
 }
 
@@ -643,7 +642,6 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 										
 										if(this->dialogType==FOLDERDIALOG)
 											{
-								//		DEBUGFUNC("%s--%s",this->dirEdit->LFSTK_getCStr(),this->fileListGadget->LFSTK_getSelectedLabel());
 												free(buf);
 												this->apply=true;
 												this->mainLoop=false;
@@ -711,7 +709,7 @@ void LFSTK_fileDialogClass::setFileData(void)
 				freeAndNull(&this->currentPath);
 			this->currentPath=strdup(this->dirEdit->LFSTK_getCStr());
 
-			asprintf(&lastdir,"sed -i '/%s=/d' '%s/dialoglast.rc';echo '%s=%s'|cat - '%s/dialoglast.rc'|sort -uo '%s/dialoglast.rc'",this->recentsName,this->wc->configDir,this->recentsName,this->currentDir,this->wc->configDir,this->wc->configDir);
+			asprintf(&lastdir,"sed -i '/%s=/d' '%s/dialoglast.rc';echo '%s=%s'|cat - '%s/dialoglast.rc'|sort -uo '%s/dialoglast.rc'",this->recentsName,this->wc->app->configDir,this->recentsName,this->currentDir,this->wc->app->configDir,this->wc->app->configDir);
 			system(lastdir);
 			free(lastdir);
 		}
@@ -736,14 +734,15 @@ bool LFSTK_fileDialogClass::isADir(const char *path)
 
 bool LFSTK_fileDialogClass::select(void *object,void* userdata)
 {
-	char	*buf;
+	char	buf[PATH_MAX];
 	char	*rp;
+	char	rpath[PATH_MAX];
 
 	LFSTK_fileDialogClass *fd=static_cast<LFSTK_fileDialogClass*>(userdata);
 	LFSTK_listGadgetClass *list=static_cast<LFSTK_listGadgetClass*>(object);
 	
-	asprintf(&buf,"%s/%s",fd->LFSTK_getCurrentDir(),list->LFSTK_getSelectedLabel());
-	rp=fd->wc->globalLib->LFSTK_oneLiner("realpath -s '%s'",buf);
+	snprintf(buf,PATH_MAX,"%s/%s",fd->LFSTK_getCurrentDir(),list->LFSTK_getSelectedLabel());
+	rp=realpath(buf,rpath);
 	if(fd->isADir(buf)==false)
 	fd->dirEdit->LFSTK_setBuffer(rp);
 	fd->setPreviewData(true);
@@ -762,10 +761,6 @@ bool LFSTK_fileDialogClass::select(void *object,void* userdata)
 					fd->mainLoop=false;
 				}
 		}
-	freeAndNull(&buf);
-	freeAndNull(&rp);
 	return(true);
 }
-
-
 

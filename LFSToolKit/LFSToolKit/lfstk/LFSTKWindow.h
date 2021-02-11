@@ -35,17 +35,6 @@ struct	monitorStruct
 	int				h;
 };
 
-//struct propertyStruct
-//{
-//	unsigned char	*data;
-//	int				format;
-//	int				nitems;
-//	Atom			type;
-//	char			*mimeType;
-//	int				dropX=-1;
-//	int				dropY=-1;
-//};
-//
 /**
 * Drop data structure.
 * \param type 0=text, 1=uri, -1 invalid.
@@ -128,8 +117,7 @@ class LFSTK_windowClass
 		bool					acceptOnThis=false;
 		LFSTK_gadgetClass		*dropGadget;
 		void					LFSTK_setWindowDropCallBack(bool (*dropped)(LFSTK_windowClass*,void*),void* ud);
-		//callbackStruct			dropCB;//TODO//multipl dropped files
-		callbackStruct			callBacks;//TODO//multipl dropped files
+		callbackStruct			callBacks;
 
 //window graphics
 		void					LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h,bool updategadgets=false);
@@ -148,9 +136,6 @@ class LFSTK_windowClass
 		LFSTK_lib				*globalLib;
 
 //user data and dirs
-		const char				*userHome;
-		char					*configDir;
-
 		Window					parentWindow;
 		bool					useTile;
 		bool					acceptDnd;

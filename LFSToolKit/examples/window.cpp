@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 	wc->passEventToRoot=true;
 
 	wc->LFSTK_initDnD(true);
-	wc->LFSTK_setWindowDropCallBack(windowDrop,(void*)0xdeadbeef);
+	wc->LFSTK_setWindowDropCallBack(windowDrop,USERDATA(0xdeadbeef));
 	//wc->dropCB.runTheCallback=false;
 
 	label=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);

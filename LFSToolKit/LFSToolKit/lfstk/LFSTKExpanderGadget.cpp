@@ -295,7 +295,6 @@ void LFSTK_ExpanderGadgetClass::updateInternalGadgets(geometryStruct oldgadggeom
 							default:
 								break;
 						}
-					//this->hitRects.at(j).gadget->LFSTK_clearWindow();
 				}
 		}
 }
@@ -315,10 +314,8 @@ void LFSTK_ExpanderGadgetClass::LFSTK_dropData(propertyStruct* data)
 		
 					this->hitRects.at(j).gadget->LFSTK_getGeomWindowRelative(&geom,this->wc->app->rootWindow);
 					if(this->wc->globalLib->LFSTK_pointInRect(&point,&geom)==true)
-						{
-							this->hitRects.at(j).gadget->LFSTK_dropData(data);
-						}
-			}
+						this->hitRects.at(j).gadget->LFSTK_dropData(data);
+				}
 		}
 }
 

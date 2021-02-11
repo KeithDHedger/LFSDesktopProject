@@ -121,7 +121,7 @@ void LFSTK_listGadgetClass::LFSTK_setListFromFile(const char *filepath,bool incl
 
 	if(filepath!=NULL)
 		{
-			lines=this->wc->globalLib->LFSTK_oneLiner("wc -l %s",filepath);
+			lines=this->wc->app->globalLib->LFSTK_oneLiner("wc -l %s",filepath);
 			linecnt=atoi(lines);
 			free(lines);
 			file=fopen(filepath,"r");
@@ -209,10 +209,6 @@ void LFSTK_listGadgetClass::LFSTK_updateList(void)
 						}
 				}
 		}
-//	this->scrollBar->LFSTK_setValue(0);
-//	this->wc->LFSTK_clearWindow(true);
-//	this->currentItem=0;
-//	this->setNavSensitive();
 }
 
 /*
@@ -236,8 +232,6 @@ bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
 void LFSTK_listGadgetClass::setNavSensitive(void)
 {
 //TODO//
-//	XFlush(this->wc->app->display);
-//	XSync(this->wc->app->display,false);
 }
 
 /**
@@ -522,11 +516,4 @@ int LFSTK_listGadgetClass::LFSTK_findByLabel(const char *needle,bool select)
 		}
 	return(-1);
 }
-
-
-
-
-
-
-
 

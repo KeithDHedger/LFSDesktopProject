@@ -166,73 +166,73 @@ int main(int argc, char **argv)
 
 //lineedit
 	hrs.push_back({0,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Line Edit",0,0,1,1)});
-	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./lineedit.cpp");
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA("./lineedit.cpp"));
 //multi line
 	hrs.push_back({GADGETWIDTH+multi->spacePad,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Multi Line Edit",0,0,1,1)});
-	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./multilineedit.cpp");
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA("./multilineedit.cpp"));
 //get icon path
 	hrs.push_back({(GADGETWIDTH+multi->spacePad)*2,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Get Icon Path",0,0,1,1)});
-	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./geticonpath.cpp");
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA("./geticonpath.cpp"));
 
 	internalsy+=YSPACING;
 //basic buttons
 	hrs.push_back({0,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Buttons",0,0,1,1)});
-	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./basic.cpp");
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA("./basic.cpp"));
 //toggles
 	hrs.push_back({GADGETWIDTH+multi->spacePad,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Toggles",0,0,1,1)});
-	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./toggle.cpp");
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA("./toggle.cpp"));
 //expander
 	hrs.push_back({(GADGETWIDTH+multi->spacePad)*2,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Expander",0,0,1,1)});
-	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./expander.cpp");
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA("./expander.cpp"));
 	internalsy+=YSPACING;
 
 //menus
 	hrs.push_back({GADGETWIDTH+multi->spacePad,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Menus",0,0,1,1)});
-	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./menus.cpp");
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA("./menus.cpp"));
 	internalsy+=YSPACING;
 
 //dialogs
 	hrs.push_back({0,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Dialogs",0,0,1,1)});
-	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./dialogs.cpp");
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA("./dialogs.cpp"));
 //fontdialog
 	hrs.push_back({(GADGETWIDTH+multi->spacePad)*2,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Font Dialog",0,0,1,1)});
-	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./fontdialog.cpp");
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA("./fontdialog.cpp"));
 	internalsy+=YSPACING;
 
 //list
 	hrs.push_back({GADGETWIDTH+multi->spacePad,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"List",0,0,1,1)});
-	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./list.cpp");
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA("./list.cpp"));
 	internalsy+=YSPACING;
 
 //window
 	hrs.push_back({0,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Window",0,0,1,1)});
-	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./window.cpp");
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA("./window.cpp"));
 //subwindow
 	hrs.push_back({(GADGETWIDTH+multi->spacePad)*2,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Sub Window",0,0,1,1)});
-	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./subwindowtest.cpp");
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA("./subwindowtest.cpp"));
 	internalsy+=YSPACING;
 
 //image
 	hrs.push_back({0,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Image",0,0,1,1)});
-	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./image.cpp");
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA("./image.cpp"));
 //image buttons
 	hrs.push_back({(GADGETWIDTH+multi->spacePad)*2,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Image Buttons",0,0,1,1)});
-	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./imagebutton.cpp");
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA("./imagebutton.cpp"));
 	internalsy+=YSPACING;
 
 //scrollbar
 	hrs.push_back({GADGETWIDTH+multi->spacePad,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Scrollbar",0,0,1,1)});
-	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./scrollbar.cpp");
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA("./scrollbar.cpp"));
 	internalsy+=YSPACING;
 
 //lfsabout
 	hrs.push_back({GADGETWIDTH+multi->spacePad,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"LFS About",0,0,1,1)});
-	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./lfsabout.cpp");
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA("./lfsabout.cpp"));
 	internalsy+=YSPACING;
 
 //run command
 	hrs.push_back({GADGETWIDTH+multi->spacePad,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Run Command",0,0,1,1)});
-	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"./lfsruncommand.cpp");
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA("./lfsruncommand.cpp"));
 	internalsy+=YSPACING;
 
 	multi->LFSTK_setHitRects(hrs);

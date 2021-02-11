@@ -128,8 +128,6 @@ void dropDesktopFile(const char *data,launcherList *launcher)
 					sendNotify("Adding launcher ",++ptr);
 					system(command);
 					free(command);
-					//printf(">>%s<<\n",cleanstr);
-					//	 /home/keithhedger/smbmounts	https://keithdhedger.github.io/
 					apc->exitValue=0;
 					apc->mainLoop=false;
 					free(cleanstr);

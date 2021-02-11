@@ -109,11 +109,9 @@ LFSTK_multiLineEditClass::LFSTK_multiLineEditClass(LFSTK_windowClass* parentwc,c
 */
 void LFSTK_multiLineEditClass::LFSTK_clearWindow()
 {
-	//this->setDisplayLines();
 	this->gadgetDetails.bevel=BEVELIN;
 	this->drawText();
 	this->drawBevel(&this->gadgetDetails.gadgetGeom,this->gadgetDetails.bevel);
-	//-->>XSync(this->wc->app->display,false);
 	return;
 }
 
@@ -231,7 +229,6 @@ void LFSTK_multiLineEditClass::drawText(void)
 	int						cursorwidth;
 	int						startchar=0;
 	int						len=this->cursorPos;
-	char					*buffer;
 	const char				*curs="";
 	double					yoffset=0;
 	cairo_text_extents_t	partextents;
@@ -324,8 +321,6 @@ void LFSTK_multiLineEditClass::drawText(void)
 					}
 			}
 	cairo_restore(this->cr);
-
-	free(buffer);
 }
 
 /**
@@ -353,7 +348,6 @@ void LFSTK_multiLineEditClass::getClip(void)
 	if (selectionOwner!=None)
 		{
 			XConvertSelection(this->wc->app->display,this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->wc->LFSTK_getDnDAtom(XA_UTF8_STRING),this->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),this->window,CurrentTime);
-			//-->>XFlush(this->wc->app->display);
 
 			while (run==true)
 				{
@@ -415,7 +409,7 @@ bool LFSTK_multiLineEditClass::keyRelease(XKeyEvent *e)
 		{
 			if(keysym_return==XK_v)
 				this->getClip();
-//TODO//
+
 			if(keysym_return==XK_c)
 				{
 					this->wc->clipBuffer=this->buffer;
@@ -522,7 +516,7 @@ bool LFSTK_multiLineEditClass::keyRelease(XKeyEvent *e)
 * Drop data.
 * \param data Data drooped on gadget as string.
 */
-void LFSTK_multiLineEditClass::LFSTK_dropData(propertyStruct* data)//TODO//
+void LFSTK_multiLineEditClass::LFSTK_dropData(propertyStruct* data)
 {
 	int	endl;
 
@@ -531,20 +525,14 @@ void LFSTK_multiLineEditClass::LFSTK_dropData(propertyStruct* data)//TODO//
 
 	if(strcasecmp(data->mimeType,"text/uri-list")==0)
 		{
-			char	*d;
 			char	*ret;
-			asprintf(&d,"%s",(const char*)data->data);
-			endl=strlen(d)-1;
-			while ((endl >= 0) && (isspace(d[endl])) )
-				{
-					d[endl]=0;
-					endl--;
-				}
-			ret=this->wc->globalLib->LFSTK_oneLiner("echo -n \"%s\"|sed 's|^file://||;s|%%20| |g'",d);
+			ret=this->wc->app->globalLib->LFSTK_cleanString((const char*)data->data);
 			this->LFSTK_setFormatedText((const char*)ret,true);
 			free(ret);
-			free(d);
 		}
+
+	if(this->callBacks.validCallbacks & GADGETDROPCB)
+		this->callBacks.droppedGadgetCallback(this,data,USERDATA(this->callBacks.droppedUserData));
 }
 
 /**
@@ -678,6 +666,3 @@ void  LFSTK_multiLineEditClass::LFSTK_setFormatedText(const char *txt,bool repla
 
 	this->setDisplayLines();
 }
-
-
-

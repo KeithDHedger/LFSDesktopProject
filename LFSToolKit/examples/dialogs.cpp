@@ -90,7 +90,7 @@ bool selectdir(void *object,void* ud)
 	return(true);
 }
 
-int main(int argc, char **argv)//TODO//
+int main(int argc, char **argv)
 {
 	int	sy=BORDER;
 
@@ -109,7 +109,7 @@ int main(int argc, char **argv)//TODO//
 	sy+=YSPACING;
 
 //files and folders
-	asprintf(&wd,"%s",wc->userHome);
+	asprintf(&wd,"%s",apc->userHome);
 	filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",wd,FILEDIALOG);
 	//filedialogfile->useThumbs=true;
 	//filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",NULL,FILEDIALOG);

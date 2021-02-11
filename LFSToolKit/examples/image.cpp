@@ -98,7 +98,7 @@ int main(int argc, char **argv)
 	apc=new LFSTK_applicationClass();
 	apc->LFSTK_addWindow(NULL,BOXLABEL);
 	wc=apc->mainWindow;
-//	wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),DIALOGWIDTH,sy);//TODO//
+//	wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),DIALOGWIDTH,sy);
 	apc->globalLib->LFSTK_setUseTheme(false);
 	tux=new LFSTK_imageClass(wc,NULL,DIALOGMIDDLE-(IMAGESIZE/2),sy,IMAGESIZE,IMAGESIZE,BUTTONGRAV,true);
 	tux->LFSTK_setImageFromPath("./AspellGUI.png",PRESERVEASPECT,true);
@@ -107,7 +107,7 @@ int main(int argc, char **argv)
 	//tux->LFSTK_snapSize(24);
 	tux->LFSTK_setTile(NULL,0);
 	//tux->LFSTK_setAlpha(0.5);
-	tux->userData=(void*)"tux image";
+	tux->userData=USERDATA("tux image");
 //	tux->LFSTK_allowXMovement(false);
 //	tux->LFSTK_allowYMovement(false);
 //	tux->LFSTK_setLimits(10,-1,440,-1);
@@ -123,7 +123,7 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 	label=new LFSTK_labelClass(wc,BOXLABEL2,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
-	//label->LFSTK_setUseWindowPixmap(true);//TODO//
+	//label->LFSTK_setUseWindowPixmap(true);
 	sy+=YSPACING/2;
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
@@ -183,7 +183,7 @@ int main(int argc, char **argv)
 		}
 	diskWindow->LFSTK_resizeWindow(GADGETWIDTH+GADGETHITE,sy,true);
 	tux->LFSTK_setContextWindow(diskWindow);
-	tux->windowNumber=apc->windows->size()-1;//TODO//
+	tux->windowNumber=apc->windows->size()-1;
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	int retval=apc->LFSTK_runApp();
