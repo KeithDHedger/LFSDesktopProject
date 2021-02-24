@@ -5496,7 +5496,7 @@ fi
 
 
 
-LFSTK_MODULES="lfstk >= 0.5.0"
+LFSTK_MODULES="lfstk >= 0.5.1"
 
 pkg_failed=no
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $LFSTK_MODULES" >&5

@@ -67,7 +67,7 @@ bool contextCB(void *p,void* ud)
 	if(p!=NULL)
 		{
 			winnum=lwc->app->LFSTK_findWindow(lwc);
-			wc->app->windows->at(winnum).loopFlag=false;
+			lwc->app->windows->at(winnum).loopFlag=false;
 			//wc->popupLoop=false;
 			//printf("data=%p\n win=%i",ud,static_cast<LFSTK_gadgetClass*>(p)->windowNumber);
 			//apc->windows->at(static_cast<LFSTK_gadgetClass*>(p)->windowNumber).loopFlag=false;
@@ -96,10 +96,11 @@ int main(int argc, char **argv)
 	int	sy=BORDER;
 
 	apc=new LFSTK_applicationClass();
+	apc->globalLib->LFSTK_setUseTheme(false);
 	apc->LFSTK_addWindow(NULL,BOXLABEL);
 	wc=apc->mainWindow;
-//	wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),DIALOGWIDTH,sy);
-	apc->globalLib->LFSTK_setUseTheme(false);
+	//wc->LFSTK_setTile(NULL,0);
+	wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),DIALOGWIDTH,sy);
 	tux=new LFSTK_imageClass(wc,NULL,DIALOGMIDDLE-(IMAGESIZE/2),sy,IMAGESIZE,IMAGESIZE,BUTTONGRAV,true);
 	tux->LFSTK_setImageFromPath("./AspellGUI.png",PRESERVEASPECT,true);
 	//tux->LFSTK_setMouseCallBack(NULL,buttonCB,NULL);
@@ -148,7 +149,7 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
-	//wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),apc->displayWidth,apc->displayHeight);
+	wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),apc->displayWidth,apc->displayHeight);
 
 
 //disks
@@ -184,6 +185,8 @@ int main(int argc, char **argv)
 	diskWindow->LFSTK_resizeWindow(GADGETWIDTH+GADGETHITE,sy,true);
 	tux->LFSTK_setContextWindow(diskWindow);
 	tux->windowNumber=apc->windows->size()-1;
+
+	wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),apc->displayWidth,apc->displayHeight);
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	int retval=apc->LFSTK_runApp();

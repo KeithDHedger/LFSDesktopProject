@@ -136,7 +136,7 @@ class LFSTK_windowClass
 		LFSTK_lib				*globalLib;
 
 //user data and dirs
-		Window					parentWindow;
+		Window					parentWindow=None;
 		bool					useTile;
 		bool					acceptDnd;
 		void					*userData=NULL;

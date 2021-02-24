@@ -76,7 +76,6 @@ class LFSTK_gadgetClass
 		XEvent					*xEvent=NULL;
 
 //context window
-		void					LFSTK_doPopUpx(int x,int y);
 		LFSTK_windowClass 		*LFSTK_getContextWindow(void);
 		void					LFSTK_setContextWindow(LFSTK_windowClass *wc);
 		int						windowNumber=-1;
@@ -149,6 +148,7 @@ class LFSTK_gadgetClass
 		bool					autoLabelBGColour=false;
 		colourStruct			labelBGColour={NULL,0,{1.0,1.0,1.0,1.0}};
 		void					LFSTK_setLabelBGColour(double r,double g,double b,double a);
+		void					LFSTK_setLabelBGColour(const char* colour,double alpha);
 
 		void					LFSTK_setShowIndicator(bool show);
 		bool					useImage;
@@ -165,6 +165,8 @@ class LFSTK_gadgetClass
 		XKeyEvent				*keyEvent=NULL;
 		bool					toParent=false;
 		bool					isMapped=false;
+//context
+		contextPostition		contextWindowPos=CONTEXTRIGHT;
 
 	private:
 		void					initGadget(void);

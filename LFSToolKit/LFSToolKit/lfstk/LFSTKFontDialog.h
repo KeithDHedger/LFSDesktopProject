@@ -49,6 +49,8 @@ class LFSTK_fontDialogClass : public LFSTK_gadgetClass
 		bool						LFSTK_showDialog(const char* fontstring);
 		const fontDataStruct		*LFSTK_getFontData(bool rebuild);
 
+		LFSTK_multiLineEditClass	*preview=NULL;
+		LFSTK_lineEditClass			*fontsize=NULL;
 	private:
 		void						buildFontString(void);
 		void						loadFontStrings(void);
@@ -59,8 +61,6 @@ class LFSTK_fontDialogClass : public LFSTK_gadgetClass
 		LFSTK_listGadgetClass		*fontlist=NULL;
 		LFSTK_toggleButtonClass		*boldcheck=NULL;
 		LFSTK_toggleButtonClass		*italiccheck=NULL;
-		LFSTK_lineEditClass			*fontsize=NULL;
-		LFSTK_multiLineEditClass	*preview=NULL;
 		LFSTK_buttonClass			*seperator=NULL;
 		LFSTK_buttonClass			*apply=NULL;
 		LFSTK_buttonClass			*cancel=NULL;

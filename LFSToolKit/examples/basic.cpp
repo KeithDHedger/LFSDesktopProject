@@ -136,10 +136,28 @@ int main(int argc, char **argv)
 	int	sy=BORDER;
 
 	apc=new LFSTK_applicationClass();
+//	
+//apc->globalLib->LFSTK_setGlobalString(NORMALCOLOUR,TYPEBUTTON,"pink");
+//apc->globalLib->LFSTK_setGlobalString(-1,TYPEBUTTONTILE,"/home/keithhedger/Patterns/button-prelight.png");
+//apc->globalLib->LFSTK_setGlobalString(ACTIVECOLOUR,TYPEBUTTON,"green");
+//apc->globalLib->LFSTK_setGlobalString(ACTIVECOLOUR,TYPEFONTCOLOUR,"blue");
+//apc->globalLib->LFSTK_setGlobalString(NORMALCOLOUR,TYPEWINDOW,"red");
+//apc->globalLib->LFSTK_setGlobalString(-1,TYPEWINDOWTILE,"/home/keithhedger/Patterns/halloweenwood.jpg");//TODO//jpeg not working
+
+//apc->globalLib->LFSTK_setUseTheme(true);
+//apc->globalLib->LFSTK_setGlobalString(ACTIVECOLOUR,TYPEWINDOW,"cyan");
+//apc->globalLib->LFSTK_setGlobalString(PRELIGHTCOLOUR,TYPEWINDOW,"blue");
+//apc->globalLib->LFSTK_setGlobalString(INACTIVECOLOUR,TYPEWINDOW,"yellow");
+
 	apc->LFSTK_addWindow(NULL,BOXLABEL);
+
 	wc=apc->mainWindow;
+
+//wc->LFSTK_setTile("/home/keithhedger/Patterns/halloweenwood.jpg",-1);//TODO//this works ?//poss set usetheme
+
 	wc->LFSTK_initDnD(false);
 
+//wc->LFSTK_setWindowColourName(NORMALCOLOUR,"pink");
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,NorthGravity);
 	label->LFSTK_setCairoFontDataParts("sB",20);
 	sy+=YSPACING;
@@ -234,11 +252,14 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
+	//wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),apc->displayWidth,apc->displayHeight);
+
 	//wc->LFSTK_showWindow();
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 //	apc->LFSTK_setTimer(2);
 //	apc->LFSTK_setTimerCallBack(timerCB,NULL);
 	int retval=apc->LFSTK_runApp();
+
 	delete apc;
 	cairo_debug_reset_static_data();
 	return(retval);

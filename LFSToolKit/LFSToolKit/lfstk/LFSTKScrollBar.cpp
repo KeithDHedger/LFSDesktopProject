@@ -368,7 +368,6 @@ void LFSTK_scrollBarClass::LFSTK_setPageScroll(int line)
 	this->pageScroll=line;
 }
 
-
 bool LFSTK_scrollBarClass::pageUpDown(void *object,void* userdata)
 {
 	LFSTK_buttonClass		*button=static_cast<LFSTK_buttonClass*>(object);

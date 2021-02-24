@@ -63,13 +63,14 @@ bool doDiskMenuSelect(void *p,void* ud)
 	LFSTK_windowClass	*lwc=static_cast<LFSTK_gadgetClass*>(p)->wc;
 	LFSTK_gadgetClass	*gadg=static_cast<LFSTK_gadgetClass*>(p)->wc->popupFromGadget;
 	int					winnum;
+	std::string			retstr;
 
 	if(p!=NULL)
 		{
 			winnum=lwc->app->LFSTK_findWindow(lwc);
 			wc->app->windows->at(winnum).loopFlag=false;
 
-			switch((long)ud)
+			switch((long)ud)//TODO//
 				{
 					case MOUNTDISK:
 					case UNMOUNTDISK:
@@ -83,11 +84,11 @@ bool doDiskMenuSelect(void *p,void* ud)
 					case OPENDISK:
 						if(((long)ud==MOUNTDISK) || ((long)ud==OPENDISK))
 							{
-								asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|head -n1|xargs xdg-open &>/dev/null & &>/dev/null",desktopItems.at((unsigned long)gadg->userData).uuid);
-								//printf("command=%s\n",command);
+								asprintf(&command,"xdg-open '%s' & ",apc->globalLib->LFSTK_getNthNeedle(apc->globalLib->LFSTK_grepInFile("/proc/mounts",desktopItems.at((unsigned long)gadg->userData).itemPath),2," ").c_str());
 								system(command);
 								free(command);
 							}
+							
 						break;
 					case CUSTOMICONDISK:
 //TODO//
@@ -96,6 +97,10 @@ bool doDiskMenuSelect(void *p,void* ud)
 //TODO//
 						break;
 				}
+
+			gadg->gadgetDetails.state=NORMALCOLOUR;
+			gadg->LFSTK_clearWindow();
+			XSync(apc->display,false);
 		}
 
 	return(true);
@@ -121,7 +126,7 @@ bool doDeskItemMenuSelect(void *p,void* ud)
 						free(command);
 						break;
 
-					case DESKITEMEXECUTE:
+					case DESKITEMEXECUTE://TODO// int term
 						if(desktopItems.at((unsigned long)gadg->userData).type==ISDESKTOPFILE)
 							{
 								GKeyFile	*gkf=g_key_file_new();
@@ -139,7 +144,6 @@ bool doDeskItemMenuSelect(void *p,void* ud)
 
 						if(command!=NULL)
 							{
-								printf("command=%s\n",command);
 								system(command);
 								free(command);
 							}
@@ -149,6 +153,9 @@ bool doDeskItemMenuSelect(void *p,void* ud)
 					case REMOVECUSTOMDISK://TODO//
 						break;
 				}
+			gadg->gadgetDetails.state=NORMALCOLOUR;
+			gadg->LFSTK_clearWindow();
+			XSync(apc->display,false);
 		}
 	return(true);
 }
@@ -160,6 +167,7 @@ bool mouseUpCB(void *p,void* ud)
 	char				*cachefilepath;
 	LFSTK_buttonClass	*gadg;
 	char				*command;
+	std::string			retstr;
 
 	if(p!=NULL)
 		{
@@ -167,10 +175,9 @@ bool mouseUpCB(void *p,void* ud)
 			gadg->LFSTK_getGeom(&geom);
 			if(gadg->isDoubleClick==true)
 				{
-				//	fprintf(stderr,"double click x=%i y=%i on %s @%lu\n",geom.x,geom.y,gadg->LFSTK_getLabel(),itemnum);
 					switch(desktopItems.at((unsigned long)gadg->userData).type)
 						{
-							case ISDESKTOPFILE:
+							case ISDESKTOPFILE://TODO// in term
 								{
 									GKeyFile	*gkf=g_key_file_new();
 									char		*value=NULL;
@@ -190,11 +197,14 @@ bool mouseUpCB(void *p,void* ud)
 							case ISTHUMBDISK:
 							case ISCDROM:
 							case ISDVDROM:
+							case ISIPOD:
+							case ISSSD:
 								asprintf(&command,"%s \"%s\" \"/media/%s\" %i &>/dev/null",HELPERAPP,desktopItems.at((unsigned long)gadg->userData).uuid,desktopItems.at((unsigned long)gadg->userData).label,1);
+								printf("com1=%s\n",command);
 								system(command);
 								free(command);
 								updateMounted();
-								asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|head -n1|xargs xdg-open &>/dev/null & &>/dev/null",desktopItems.at((unsigned long)gadg->userData).uuid);
+								asprintf(&command,"xdg-open '%s' &",apc->globalLib->LFSTK_getNthNeedle(apc->globalLib->LFSTK_grepInFile("/proc/mounts",desktopItems.at((unsigned long)gadg->userData).itemPath),2," ").c_str());
 								system(command);
 								free(command);
 								break;
@@ -219,7 +229,7 @@ bool mouseUpCB(void *p,void* ud)
 					desktopItems.at(itemnum).posy=realy;
 					cacheFileData=desktopItems.at(itemnum);
 					asprintf(&cachefilepath,"%s/%s",cachePath,desktopItems.at(itemnum).uuid);
-					saveVarsToFile(cachefilepath,cacheFileDataPrefs);	
+					saveCacheFile(cachefilepath,&desktopItems.at(itemnum));
 					freeAndNull(&cachefilepath);
 				}
 		}
@@ -237,7 +247,6 @@ bool timerCB(LFSTK_applicationClass *p,void* ud)
 
 	if(apc->isDragging==true)
 		return(true);
-
 	readMsg();
 
 	out=apc->globalLib->LFSTK_oneLiner("%s","ls -1 /dev/disk/by-uuid|md5sum|awk '{print $1}'");

@@ -1,4 +1,6 @@
 0.2.0
+Use new prefs class.
+Fixed random spacing appearing in right gadgets.
 Added notifications to launchers ( can be disabled ).
 Fixed crash if non .desktop files in lanchers folder.
 Changed width of spacer widget to be same as launcher widgets.

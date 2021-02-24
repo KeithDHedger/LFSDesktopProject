@@ -84,7 +84,7 @@ DEFINE_BITMAP(minodd);
 DEFINE_BITMAP(shadeeven);
 DEFINE_BITMAP(shadeodd);
 
-//#define MAX_MSG_SIZE 256
+//#define MAX_MSG_SIZE 256//TODO//
 enum {REFRESHTHEME};
 
 //struct msgBuffer
@@ -500,6 +500,7 @@ int main(int argc,char *argv[])
 
 	runlevel=RL_STARTUP;
 
+//TODO//
 //	if((queueID=msgget(667,IPC_CREAT|0660))==-1)
 //		fprintf(stderr,"Can't create message queue\n");
 
@@ -522,12 +523,8 @@ int main(int argc,char *argv[])
 			theme.pixmaps[cnt]=0;
 			theme.masks[cnt]=0;
 			theme.gotPart[cnt]=false;
-					//XFreePixmap(dpy,theme.pixmaps[partcnt]);
-					//XFreePixmap(dpy,theme.masks[partcnt]);
 			theme.partsWidth[cnt]=0;
 			theme.partsHeight[cnt]=0;	
-			//XFreePixmap(dpy,theme.pixmaps[partcnt]);
-			//XFreePixmap(dpy,theme.masks[partcnt]);
 			cnt++;
 		}
 

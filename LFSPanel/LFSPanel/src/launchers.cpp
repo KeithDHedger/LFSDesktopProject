@@ -153,11 +153,17 @@ int addLaunchers(int x,int y,int grav,bool fromleft)
 				free(icon);
 			loopll=loopll->next;
 			if((grav==PANELNORTH) || (grav==PANELSOUTH))
-				sx+=width;
+				{
+					if(fromleft==false)
+						sx-=width;
+					else
+						sx+=width;
+				}
 			else
 				sy+=height;
 			maxwidth+=width;
 		}
 	free(launchers);
+
 	return(maxwidth-width);
 }

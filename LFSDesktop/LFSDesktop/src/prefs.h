@@ -22,26 +22,26 @@
 #define _PREFS_
 
 #include "globals.h"
+struct desktopItemStruct;
 
-extern args	desktopPrefs[];
+extern const char	*iconTheme;
+extern int			iconSize;
+extern int			gridSize;
+extern int			gridBorderLeft;
+extern int			gridBorderRight;
+extern int			refreshRate;
+extern const char	*terminalCommand;
+extern bool			showSuffix;
+extern const char	*fontFace;
+extern const char	*foreCol;
+extern const char	*backCol;
+extern const char	*backAlpha;
+extern const char	*includeList;
+extern const char	*excludeList;
 
-extern char	*iconTheme;
-extern int	iconSize;
-extern int	gridSize;
-extern int	gridBorderLeft;
-extern int	gridBorderRight;
-extern int	refreshRate;
-extern char	*terminalCommand;
-extern bool	showSuffix;
-extern char	*fontFace;
-extern char	*foreCol;
-extern char	*backCol;
-extern char	*backAlpha;
-extern char	*includeList;
-extern char	*excludeList;
-
-void saveVarsToFile(const char* filepath,args* dataptr);
-bool loadVarsFromFile(char* filepath,args* dataptr);
 void reloadPrefs(void);
+void loadPrefs(void);
+void saveCacheFile(const char *cachefilepath,desktopItemStruct *cfd);
+bool loadCacheFile(const char *cachefilepath,desktopItemStruct *cfd);
 
 #endif

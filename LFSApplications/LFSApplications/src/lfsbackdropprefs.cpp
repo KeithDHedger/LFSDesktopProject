@@ -34,6 +34,7 @@ struct					monitorInfo
 };
 
 LFSTK_applicationClass	*apc=NULL;
+LFSTK_prefsClass		prefs;
 LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass		*label=NULL;
 LFSTK_labelClass		*personal=NULL;
@@ -69,16 +70,12 @@ LFSTK_menuClass			*monitorModeMenu=NULL;
 monitorInfo				monitors[20]={{NULL,0},};
 int						selectedMonitor=0;
 
-bool					mainLoop=true;
-Display					*display;
 char					*wd=NULL;
 Window					parentWindow=-1;
 
 //prefs
 char					*mainPrefs;
 char					*monitorPrefs;
-char					*wallpaperPath=NULL;
-char					*mainColour=NULL;
 int						backdropMode=0;
 bool					multiMode=false;
 
@@ -87,15 +84,6 @@ const char				*modeLabel[5]={"Stretch","Tile","Centre","Scale","Zoom"};
 
 //msg
 int						queueID=-1;
-
-args					prefs[]=
-{
-	{"backdrop",TYPESTRING,&wallpaperPath},
-	{"colour",TYPESTRING,&mainColour},
-	{"mainmode",TYPEINT,&backdropMode},
-	{"multimode",TYPEBOOL,&multiMode},
-	{NULL,0,NULL}
-};
 
 bool doQuit(void *p,void* ud)
 {
@@ -126,11 +114,14 @@ bool buttonCB(void *p,void* ud)
 
 			if(strcmp((char*)ud,"APPLY")==0)
 				{
-					free(wallpaperPath);
-					wallpaperPath=strdup(mainBackdropEdit->LFSTK_getCStr());
-					free(mainColour);
-					mainColour=strdup(rootColourEdit->LFSTK_getCStr());
-					wc->globalLib->LFSTK_saveVarsToFile(mainPrefs,prefs);
+					prefs.prefsMap=
+						{
+							{prefs.LFSTK_hashFromKey("backdrop"),{TYPESTRING,"backdrop",mainBackdropEdit->LFSTK_getCStr(),false,0}},
+							{prefs.LFSTK_hashFromKey("colour"),{TYPESTRING,"colour",rootColourEdit->LFSTK_getCStr(),false,0}},
+							{prefs.LFSTK_hashFromKey("mainmode"),{TYPEINT,"mainmode","",false,backdropMode}},
+							{prefs.LFSTK_hashFromKey("multimode"),{TYPEBOOL,"multimode","",multipleMonitors->LFSTK_getValue(),0}},
+						};
+					prefs.LFSTK_saveVarsToFile(mainPrefs);
 					fd=fopen(monitorPrefs,"w");
 					if(fd!=NULL)
 						{
@@ -144,9 +135,6 @@ bool buttonCB(void *p,void* ud)
 					if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
 						fprintf(stderr,"Can't send message :(\n");
 				}
-
-			if(strcmp((char*)ud,"MULTIMODE")==0)
-				multiMode=multipleMonitors->LFSTK_getValue();
 		}
 	return(true);
 }
@@ -286,7 +274,16 @@ int main(int argc, char **argv)
 
 	fileDialog=new LFSTK_fileDialogClass(wc,"Select File",NULL,FILEDIALOG,"lfsbackdropprefs");
 
-	wc->globalLib->LFSTK_loadVarsFromFile(mainPrefs,prefs);
+	prefs.prefsMap=
+		{
+			{prefs.LFSTK_hashFromKey("backdrop"),{TYPESTRING,"backdrop","",false,0}},
+			{prefs.LFSTK_hashFromKey("colour"),{TYPESTRING,"colour","#404040",false,0}},
+			{prefs.LFSTK_hashFromKey("mainmode"),{TYPEINT,"mainmode","",false,0}},
+			{prefs.LFSTK_hashFromKey("multimode"),{TYPEBOOL,"multimode","",false,0}},
+		};
+
+	prefs.LFSTK_loadVarsFromFile(mainPrefs);
+	prefs.LFSTK_saveVarsToFile("-");
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,0,sy,DIALOGWIDTH,GADGETHITE);
 	sy+=HALFYSPACING;
@@ -297,14 +294,13 @@ int main(int argc, char **argv)
 //root window
 //backdrop
 	dialogButton=new LFSTK_buttonClass(wc,"Select File",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	mainBackdropEdit=new LFSTK_lineEditClass(wc,wallpaperPath,(BORDER*2)+GADGETWIDTH,sy,DIALOGWIDTH-(BORDER*3)-GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	mainBackdropEdit=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString("backdrop"),(BORDER*2)+GADGETWIDTH,sy,DIALOGWIDTH-(BORDER*3)-GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	dialogButton->LFSTK_setMouseCallBack(NULL,selectFile,(void*)mainBackdropEdit);
-	//dialogButton->LFSTK_setIndicator(DISCLOSURE);
 
 	sy+=YSPACING;
 //colour
 	label=new LFSTK_labelClass(wc,"Root Colour",BORDER,sy,GADGETWIDTH,GADGETHITE);
-	rootColourEdit=new LFSTK_lineEditClass(wc,mainColour,(BORDER*2)+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	rootColourEdit=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString("colour"),(BORDER*2)+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 //mode
 	rootModeMenu=new menuStruct*[5];
@@ -322,13 +318,12 @@ int main(int argc, char **argv)
 	rootMenu->LFSTK_setMouseCallBack(NULL,mainModeCB,NULL);
 	rootMenu->LFSTK_addMainMenus(rootModeMenu,5);
 
-	mainModeEdit=new LFSTK_lineEditClass(wc,modeLabel[backdropMode],(BORDER*2)+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	mainModeEdit=new LFSTK_lineEditClass(wc,modeLabel[prefs.LFSTK_getInt("mainmode")],(BORDER*2)+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	mainModeEdit->gadgetAcceptsDnD=false;
 	sy+=YSPACING;
 //multi mode
 	multipleMonitors=new LFSTK_toggleButtonClass(wc,"Multiple Monitors",BORDER,sy,GADGETWIDTH*2,CHECKBOXSIZE,BUTTONGRAV);
-	multipleMonitors->LFSTK_setValue(multiMode);
-	multipleMonitors->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"MULTIMODE");
+	multipleMonitors->LFSTK_setValue(prefs.LFSTK_getBool("multimode"));
 	sy+=YSPACING;
 
 //monitors
@@ -354,7 +349,6 @@ int main(int argc, char **argv)
 //monitor info
 //backdrop
 	dialogButton=new LFSTK_buttonClass(wc,"Select File",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	//dialogButton->LFSTK_setIndicator(DISCLOSURE);
 	monitorBackdropEdit=new LFSTK_lineEditClass(wc,monitors[0].path,(BORDER*2)+GADGETWIDTH,sy,DIALOGWIDTH-(BORDER*3)-GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	dialogButton->LFSTK_setMouseCallBack(NULL,selectFile,(void*)monitorBackdropEdit);
 	sy+=YSPACING;
@@ -416,7 +410,6 @@ int main(int argc, char **argv)
 				flag=true;
 		}
 
-	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	int retval=apc->LFSTK_runApp();
 	delete apc;
 	free(wd);

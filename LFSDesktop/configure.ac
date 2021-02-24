@@ -44,7 +44,7 @@ PKG_CHECK_MODULES(LIBUDEV, $LIBUDEV_MODULES)
 AC_SUBST(LIBUDEV_LIBS)
 AC_SUBST(LIBUDEV_CFLAGS)
 
-LFSTK_MODULES="lfstk >= 0.5.0"
+LFSTK_MODULES="lfstk >= 0.5.1"
 PKG_CHECK_MODULES(LFSTK, $LFSTK_MODULES)
 AC_SUBST(LFSTK_LIBS)
 AC_SUBST(LFSTK_CFLAGS)
@@ -56,6 +56,13 @@ if test $enable_suidhelper = "yes" ;then
 	AC_DEFINE([_USESUIDHELPER_], [], [Use suid helper])
 fi
 AC_MSG_RESULT($enable_suidhelper)
+
+AC_CHECK_PROG(MIMTYPE, mimetype ,true,false)
+if test $MIMTYPE = false; then
+	AC_MSG_NOTICE([No File-MimeInfo!])
+	AC_MSG_NOTICE([You can download it from here:])
+	AC_MSG_ERROR([https://cpan.metacpan.org/authors/id/M/MI/MICHIELB/])
+fi
 
 AC_MSG_CHECKING(whether to build dbug functions)
 AC_ARG_ENABLE(debug,AS_HELP_STRING([--enable-debug],[Enable debug code]),

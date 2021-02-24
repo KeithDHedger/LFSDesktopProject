@@ -28,6 +28,7 @@
 #define BOXLABEL	"LFS Desktop Prefs"
 
 LFSTK_applicationClass	*apc=NULL;
+LFSTK_prefsClass		prefs;
 LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass		*label=NULL;
 LFSTK_labelClass		*personal=NULL;
@@ -60,42 +61,8 @@ char					*wd=NULL;
 char					*envFile=NULL;
 int						parentWindow=-1;
 
-//prefs
-char					*prefsTheme=NULL;
-int						prefsIconSize=32;
-int						prefsGridSize=64;
-int						prefsLeftBorder=2;
-int						prefsRightBorder=16;
-int						prefsRefresh=2;
-char					*prefsTermCommand=NULL;
-bool					prefsShowSuffix=false;
-char					*prefsFont=NULL;
-char					*prefsLabelFColour=NULL;
-char					*prefsLabelBColour=NULL;
-char					*prefsLabelAlpha=NULL;
-char					*prefsIncludeSed=NULL;
-char					*prefsExcludeSed=NULL;
 //msg
 int						queueID=-1;
-
-args					desktopPrefs[]=
-{
-	{"icontheme",TYPESTRING,&prefsTheme},
-	{"iconsize",TYPEINT,&prefsIconSize},
-	{"gridsize",TYPEINT,&prefsGridSize},
-	{"gridborderleft",TYPEINT,&prefsLeftBorder},
-	{"gridborderrite",TYPEINT,&prefsRightBorder},
-	{"refreshrate",TYPEINT,&prefsRefresh},
-	{"termcommand",TYPESTRING,&prefsTermCommand},
-	{"showextension",TYPEBOOL,&prefsShowSuffix},
-	{"fontface",TYPESTRING,&prefsFont},
-	{"labelforeground",TYPESTRING,&prefsLabelFColour},
-	{"labelbackground",TYPESTRING,&prefsLabelBColour},
-	{"labelalpha",TYPESTRING,&prefsLabelAlpha},
-	{"includelist",TYPESTRING,&prefsIncludeSed},
-	{"excludelist",TYPESTRING,&prefsExcludeSed},
-	{NULL,0,NULL}
-};
 
 bool doQuit(void *p,void* ud)
 {
@@ -108,34 +75,25 @@ bool buttonCB(void *p,void* ud)
 {
 	msgBuffer	buffer;
 
-	free(prefsTheme);
-	free(prefsTermCommand);
-	free(prefsLabelFColour);
-	free(prefsLabelBColour);
-	free(prefsLabelAlpha);
-	free(prefsIncludeSed);
-	free(prefsExcludeSed);
-	free(prefsFont);
+	prefs.prefsMap=
+		{
+			{prefs.LFSTK_hashFromKey("icontheme"),{TYPESTRING,"icontheme",themeEditBox->LFSTK_getCStr(),false,0}},
+			{prefs.LFSTK_hashFromKey("iconsize"),{TYPEINT,"iconsize","",false,atoi(iconSizeEditBox->LFSTK_getCStr())}},
+			{prefs.LFSTK_hashFromKey("gridsize"),{TYPEINT,"gridsize","",false,atoi(gridSizeEditBox->LFSTK_getCStr())}},
+			{prefs.LFSTK_hashFromKey("gridborderleft"),{TYPEINT,"gridborderleft","",false,atoi(borderLeftEditBox->LFSTK_getCStr())}},
+			{prefs.LFSTK_hashFromKey("gridborderrite"),{TYPEINT,"gridborderrite","",false,atoi(borderRightEditBox->LFSTK_getCStr())}},
+			{prefs.LFSTK_hashFromKey("refreshrate"),{TYPEINT,"refreshrate","",false,atoi(refreshEditBox->LFSTK_getCStr())}},
+			{prefs.LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand",termCommandEditBox->LFSTK_getCStr(),false,0}},
+			{prefs.LFSTK_hashFromKey("showextension"),{TYPEBOOL,"showextension","",showSuffixCheck->LFSTK_getValue(),0}},
+			{prefs.LFSTK_hashFromKey("fontface"),{TYPESTRING,"fontface",fontEditBox->LFSTK_getCStr(),false,0}},
+			{prefs.LFSTK_hashFromKey("labelforeground"),{TYPESTRING,"labelforeground",labelColurFEditBox->LFSTK_getCStr(),false,0}},
+			{prefs.LFSTK_hashFromKey("labelbackground"),{TYPESTRING,"labelbackground",labelColurBEditBox->LFSTK_getCStr(),false,0}},
+			{prefs.LFSTK_hashFromKey("labelalpha"),{TYPESTRING,"labelalpha",labelAlphaColurEditBox->LFSTK_getCStr(),false,0}},
+			{prefs.LFSTK_hashFromKey("includelist"),{TYPESTRING,"includelist",includeEditBox->LFSTK_getCStr(),false,0}},
+			{prefs.LFSTK_hashFromKey("excludelist"),{TYPESTRING,"excludelist",excludeEditBox->LFSTK_getCStr(),false,0}}
+		};
 
-	prefsTheme=strdup(themeEditBox->LFSTK_getCStr());
-	prefsTermCommand=strdup(termCommandEditBox->LFSTK_getCStr());
-	prefsLabelFColour=strdup(labelColurFEditBox->LFSTK_getCStr());
-	prefsLabelBColour=strdup(labelColurBEditBox->LFSTK_getCStr());
-	prefsLabelAlpha=strdup(labelAlphaColurEditBox->LFSTK_getCStr());
-	prefsIncludeSed=strdup(includeEditBox->LFSTK_getCStr());
-	prefsExcludeSed=strdup(excludeEditBox->LFSTK_getCStr());
-	prefsFont=strdup(fontEditBox->LFSTK_getCStr());
-
-	prefsIconSize=atoi(iconSizeEditBox->LFSTK_getCStr());
-	prefsGridSize=atoi(gridSizeEditBox->LFSTK_getCStr());
-	prefsLeftBorder=atoi(borderLeftEditBox->LFSTK_getCStr());
-	prefsRightBorder=atoi(borderRightEditBox->LFSTK_getCStr());
-	prefsRefresh=atoi(refreshEditBox->LFSTK_getCStr());
-
-	prefsShowSuffix=showSuffixCheck->LFSTK_getValue();
-
-	wc->globalLib->LFSTK_saveVarsToFile(envFile,desktopPrefs);
-
+	prefs.LFSTK_saveVarsToFile(envFile);
 	buffer.mType=DESKTOP_MSG;
 	sprintf(buffer.mText,"reloadprefs");
 	if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
@@ -242,8 +200,27 @@ int main(int argc, char **argv)
 	apc->LFSTK_addWindow(NULL,BOXLABEL);
 	wc=apc->mainWindow;
 
+	prefs.prefsMap=
+		{
+			{prefs.LFSTK_hashFromKey("icontheme"),{TYPESTRING,"icontheme","gnome",false,0}},
+			{prefs.LFSTK_hashFromKey("iconsize"),{TYPEINT,"iconsize","",false,32}},
+			{prefs.LFSTK_hashFromKey("gridsize"),{TYPEINT,"gridsize","",false,64}},
+			{prefs.LFSTK_hashFromKey("gridborderleft"),{TYPEINT,"gridborderleft","",false,2}},
+			{prefs.LFSTK_hashFromKey("gridborderrite"),{TYPEINT,"gridborderrite","",false,16}},
+			{prefs.LFSTK_hashFromKey("refreshrate"),{TYPEINT,"refreshrate","",false,2}},
+			{prefs.LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","xterm -e ",false,0}},
+			{prefs.LFSTK_hashFromKey("showextension"),{TYPEBOOL,"showextension","",false,0}},
+			{prefs.LFSTK_hashFromKey("fontface"),{TYPESTRING,"fontface","",false,0}},
+			{prefs.LFSTK_hashFromKey("labelforeground"),{TYPESTRING,"labelforeground","",false,0}},
+			{prefs.LFSTK_hashFromKey("labelbackground"),{TYPESTRING,"labelbackground","",false,0}},
+			{prefs.LFSTK_hashFromKey("labelalpha"),{TYPESTRING,"labelalpha","1.0",false,0}},
+			{prefs.LFSTK_hashFromKey("includelist"),{TYPESTRING,"includelist","",false,0}},
+			{prefs.LFSTK_hashFromKey("excludelist"),{TYPESTRING,"excludelist","",false,0}}
+		};
+
+
 	asprintf(&envFile,"%s/lfsdesktop.rc",apc->configDir);
-	wc->globalLib->LFSTK_loadVarsFromFile(envFile,desktopPrefs);
+	prefs.LFSTK_loadVarsFromFile(envFile);
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	sy+=HALFYSPACING;
@@ -254,66 +231,68 @@ int main(int argc, char **argv)
 	asprintf(&wd,"%s/.icons",apc->userHome);
 	themeDialog=new LFSTK_fileDialogClass(wc,"Select Theme",wd,FOLDERDIALOG);
 	button=new LFSTK_buttonClass(wc,"Select Theme",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	themeEditBox=new LFSTK_lineEditClass(wc,prefsTheme,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
+	themeEditBox=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString("icontheme"),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setMouseCallBack(NULL,selectThemeFolder,(void*)themeEditBox);
 	sy+=YSPACING;
 
 //font
 	fontButton=new LFSTK_fontDialogClass(wc,"Select Font",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	fontEditBox=new LFSTK_lineEditClass(wc,prefsFont,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
+	fontEditBox=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString("fontface"),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
 	fontButton->LFSTK_setMouseCallBack(NULL,selectFontCB,(void*)fontEditBox);
 	sy+=YSPACING;
 
 //icon sizes
 	label=new LFSTK_labelClass(wc,"Icon Size",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
-	iconSizeEditBox=new LFSTK_lineEditClass(wc,(char*)std::to_string(prefsIconSize).c_str(),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	iconSizeEditBox=new LFSTK_lineEditClass(wc,(char*)std::to_string(prefs.LFSTK_getInt("iconsize")).c_str(),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
 	label=new LFSTK_labelClass(wc,"Grid Size",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
-	gridSizeEditBox=new LFSTK_lineEditClass(wc,(char*)std::to_string(prefsGridSize).c_str(),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	gridSizeEditBox=new LFSTK_lineEditClass(wc,(char*)std::to_string(prefs.LFSTK_getInt("gridsize")).c_str(),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
 	label=new LFSTK_labelClass(wc,"Borders",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
-	borderLeftEditBox=new LFSTK_lineEditClass(wc,(char*)std::to_string(prefsLeftBorder).c_str(),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	borderRightEditBox=new LFSTK_lineEditClass(wc,(char*)std::to_string(prefsRightBorder).c_str(),BORDER*2+GADGETWIDTH+GADGETWIDTH+BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	borderLeftEditBox=new LFSTK_lineEditClass(wc,(char*)std::to_string(prefs.LFSTK_getInt("gridborderleft")).c_str(),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	borderRightEditBox=new LFSTK_lineEditClass(wc,(char*)std::to_string(prefs.LFSTK_getInt("gridborderrite")).c_str(),BORDER*2+GADGETWIDTH+GADGETWIDTH+BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
 	label=new LFSTK_labelClass(wc,"Refresh",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
-	refreshEditBox=new LFSTK_lineEditClass(wc,(char*)std::to_string(prefsRefresh).c_str(),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	refreshEditBox=new LFSTK_lineEditClass(wc,(char*)std::to_string(prefs.LFSTK_getInt("refreshrate")).c_str(),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
 	label=new LFSTK_labelClass(wc,"Fore Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
-	labelColurFEditBox=new LFSTK_lineEditClass(wc,prefsLabelFColour,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	labelColurFEditBox=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString("labelforeground"),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	labelColurFEditBox->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
+	labelColurFEditBox->LFSTK_setContextWindow(NULL);
 	sy+=YSPACING;
 	
 	label=new LFSTK_labelClass(wc,"Back Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
-	labelColurBEditBox=new LFSTK_lineEditClass(wc,prefsLabelBColour,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	labelColurBEditBox=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString("labelbackground"),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	labelColurBEditBox->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
+	labelColurBEditBox->LFSTK_setContextWindow(NULL);
 	sy+=YSPACING;
 
 	label=new LFSTK_labelClass(wc,"Label Alpha",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
-	labelAlphaColurEditBox=new LFSTK_lineEditClass(wc,prefsLabelAlpha,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	labelAlphaColurEditBox=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString("labelalpha"),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
 //show suffix
 	label=new LFSTK_labelClass(wc,"Show Suffix",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	showSuffixCheck=new LFSTK_toggleButtonClass(wc,"",BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,CHECKBOXSIZE,BUTTONGRAV);
-	showSuffixCheck->LFSTK_setValue(prefsShowSuffix);
+	showSuffixCheck->LFSTK_setValue(prefs.LFSTK_getBool("showextension"));
 	sy+=YSPACING;
 
 //terminal command
 	label=new LFSTK_labelClass(wc,"Terminal CMD",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
-	termCommandEditBox=new LFSTK_lineEditClass(wc,prefsTermCommand,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
+	termCommandEditBox=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString("termcommand"),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
 //include list
 	label=new LFSTK_labelClass(wc,"Include Disks",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
-	includeEditBox=new LFSTK_lineEditClass(wc,prefsIncludeSed,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
+	includeEditBox=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString("includelist"),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 //exclude list
 	label=new LFSTK_labelClass(wc,"Exclude Disks",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
-	excludeEditBox=new LFSTK_lineEditClass(wc,prefsExcludeSed,BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
+	excludeEditBox=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString("excludelist"),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
 //line
@@ -360,14 +339,6 @@ int main(int argc, char **argv)
 	delete apc;
 	free(wd);
 	free(envFile);
-	free(prefsTheme);
-	free(prefsTermCommand);
-	free(prefsLabelFColour);
-	free(prefsLabelBColour);
-	free(prefsLabelAlpha);
-	free(prefsIncludeSed);
-	free(prefsExcludeSed);
-	free(prefsFont);
 
 	return(retval);
 }

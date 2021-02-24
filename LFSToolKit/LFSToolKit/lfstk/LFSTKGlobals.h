@@ -22,8 +22,13 @@
 #define _LFSTKGLOBALS_
 
 #include <X11/Xft/Xft.h>
-#include <iostream>
+
 #include <map>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
+
 #include <dirent.h>
 
 #include <glib.h>
@@ -34,9 +39,6 @@
 #include <sys/ipc.h>
 #include <sys/msg.h>
 
-#include <iostream>
-#include <string>
-#include <sstream>
 
 #define COPYRITE			"Copyright © 2013-2021 K.D.Hedger"
 #define PERSONAL			"keithdhedger@gmail.com"
@@ -69,12 +71,13 @@ enum {NONE=0,LEFT,CENTRE,RIGHT,AUTO,MENU,PRESERVEASPECT,TOOLBAR};
 enum gadgetState {NORMALCOLOUR=0,PRELIGHTCOLOUR,ACTIVECOLOUR,INACTIVECOLOUR,MAXCOLOURS};
 
 enum {BUTTONGADGET=1,MENUBUTTONGADGET,LINEEDITGADGET,LABELGADGET,TOGGLEGADGET,IMAGEGADGET,LISTGADGET,DIALOGGADGET,MULTILINEGADGET,SCROLLBARGADGET,MENUGADGET,MENUITEMGADGET,MULTIGADGET};
-enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
+//enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
 enum {NORMAL=0,ABOVEALL,BELOWALL};
 
 enum bevelType {BEVELIN=0,BEVELOUT,BEVELNONE};
 enum indicatorType {CHECK=0,RADIO,PICTURE,DISCLOSURE,NOINDICATOR};
 
+enum contextPostition {CONTEXTLEFT,CONTEXTRIGHT,CONTEXTATMOUSE};
 //dropdata
 enum dropDataType {DROPINVALID=0,DROPTEXT,DROPURI};
 
@@ -365,6 +368,7 @@ struct msgBuffer
 
 enum {DESKTOP_MSG=1000,WMANAGER_MSG,PANEL_MSG,WALLPAPER_MSG,TOOLKIT_MSG,APPEARANCE_PREFS_MSG,BACKDROP_PREFS_MSG,DESKTOP_PREFS_MSG,PANEL_PREFS_MSG,TK_PREFS_MSG,WMANAGER_PREFS_MSG};
 
+#include "LFSTKPrefsClass.h"
 #include "LFSTKLib.h"
 #include "LFSTKApplication.h"
 #include "LFSTKFindClass.h"

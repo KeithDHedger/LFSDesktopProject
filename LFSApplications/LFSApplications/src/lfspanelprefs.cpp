@@ -30,6 +30,7 @@
 #define BOXLABEL	"LFS Panel Prefs"
 
 LFSTK_applicationClass		*apc=NULL;
+LFSTK_prefsClass			prefs;
 LFSTK_windowClass			*wc=NULL;
 LFSTK_labelClass			*label=NULL;
 LFSTK_labelClass			*personal=NULL;
@@ -76,33 +77,9 @@ LFSTK_lineEditClass			*logout=NULL;
 LFSTK_lineEditClass			*restart=NULL;
 LFSTK_lineEditClass			*shutdown=NULL;
 
-int							panelHeightPref=32;
 int							panelWidthPref=-2;
-int							onMonitorPref=0;
 int							panelPosPref=-2;
 int							panelGravityPref=1;
-char						*leftGadgetsPref=strdup("AWw");
-char						*rightGadgetsPref=strdup("MDCL");
-char						*terminalCommandPref=strdup("xterm -e ");
-char						*logoutCommandPref=strdup("");
-char						*restartCommandPref=strdup("sudo reboot");
-char						*shutdownCommandPref=strdup("sudo shutdown -h now");
-
-args	panelPrefs[]=
-{
-	{"panelheight",TYPEINT,&panelHeightPref},
-	{"panelwidth",TYPEINT,&panelWidthPref},
-	{"onmonitor",TYPEINT,&onMonitorPref},
-	{"panelpos",TYPEINT,&panelPosPref},
-	{"panelgrav",TYPEINT,&panelGravityPref},
-	{"termcommand",TYPESTRING,&terminalCommandPref},
-	{"logoutcommand",TYPESTRING,&logoutCommandPref},
-	{"restartcommand",TYPESTRING,&restartCommandPref},
-	{"shutdowncommand",TYPESTRING,&shutdownCommandPref},
-	{"gadgetsright",TYPESTRING,&rightGadgetsPref},
-	{"gadgetsleft",TYPESTRING,&leftGadgetsPref},
-	{NULL,0,NULL}
-};
 
 bool doQuit(void *p,void* ud)
 {
@@ -129,14 +106,20 @@ bool buttonCB(void *p,void* ud)
 
 void getEdits(void)
 {
-	panelHeightPref=atoi(panelHeightEdit->LFSTK_getCStr());
-	onMonitorPref=atoi(panelOnMonitor->LFSTK_getCStr());
-	terminalCommandPref=strdup(termCommand->LFSTK_getCStr());
-	logoutCommandPref=strdup(logout->LFSTK_getCStr());
-	restartCommandPref=strdup(restart->LFSTK_getCStr());
-	shutdownCommandPref=strdup(shutdown->LFSTK_getCStr());
-	leftGadgetsPref=strdup(panelLeftGadgets->LFSTK_getCStr());
-	rightGadgetsPref=strdup(panelrightGadgets->LFSTK_getCStr());
+	prefs.prefsMap=
+		{
+			{prefs.LFSTK_hashFromKey("panelheight"),{TYPEINT,"panelheight","",false,atoi(panelHeightEdit->LFSTK_getCStr())}},
+			{prefs.LFSTK_hashFromKey("panelwidth"),{TYPEINT,"panelwidth","",false,panelWidthPref}},
+			{prefs.LFSTK_hashFromKey("onmonitor"),{TYPEINT,"onmonitor","",false,atoi(panelOnMonitor->LFSTK_getCStr())}},
+			{prefs.LFSTK_hashFromKey("panelpos"),{TYPEINT,"panelpos","",false,panelPosPref}},
+			{prefs.LFSTK_hashFromKey("panelgrav"),{TYPEINT,"panelgrav","",false,panelGravityPref}},
+			{prefs.LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand",termCommand->LFSTK_getCStr(),false,0}},
+			{prefs.LFSTK_hashFromKey("logoutcommand"),{TYPESTRING,"logoutcommand",logout->LFSTK_getCStr(),false,0}},
+			{prefs.LFSTK_hashFromKey("restartcommand"),{TYPESTRING,"restartcommand",restart->LFSTK_getCStr(),false,0}},
+			{prefs.LFSTK_hashFromKey("shutdowncommand"),{TYPESTRING,"shutdowncommand",shutdown->LFSTK_getCStr(),false,0}},
+			{prefs.LFSTK_hashFromKey("gadgetsright"),{TYPESTRING,"gadgetsright",panelrightGadgets->LFSTK_getCStr(),false,0}},
+			{prefs.LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft",panelLeftGadgets->LFSTK_getCStr(),false,0}},
+		};
 }
 
 bool applyCB(void *p,void* ud)
@@ -187,7 +170,9 @@ bool applyCB(void *p,void* ud)
 
 			getEdits();
 			asprintf(&env,"%s/%s",apc->configDir,panelNameEdit->LFSTK_getCStr());
-			wc->globalLib->LFSTK_saveVarsToFile(env,panelPrefs);
+			//wc->globalLib->LFSTK_saveVarsToFile(env,panelPrefs);
+			prefs.LFSTK_saveVarsToFile(env);
+			//prefs.LFSTK_saveVarsToFile("-");
 			free(env);
 		}
 	return(true);
@@ -195,25 +180,40 @@ bool applyCB(void *p,void* ud)
 
 void setEdits(void)
 {
-	panelWidthEdit->LFSTK_setBuffer(panelWidthConvertToStr[panelWidthPref]);
-	panelHeightEdit->LFSTK_setBuffer(std::to_string(panelHeightPref).c_str());
-	panelPosEdit->LFSTK_setBuffer(panelPosConvertToStr[panelPosPref]);
-	panelGravEdit->LFSTK_setBuffer(panelGravConvertToStr[panelGravityPref]);
-	panelOnMonitor->LFSTK_setBuffer(std::to_string(onMonitorPref).c_str());
-	termCommand->LFSTK_setBuffer(terminalCommandPref);
-	logout->LFSTK_setBuffer(logoutCommandPref);
-	restart->LFSTK_setBuffer(restartCommandPref);
-	shutdown->LFSTK_setBuffer(shutdownCommandPref);
-	panelLeftGadgets->LFSTK_setBuffer(leftGadgetsPref);
-	panelrightGadgets->LFSTK_setBuffer(rightGadgetsPref);
+	panelWidthEdit->LFSTK_setBuffer(panelWidthConvertToStr[prefs.LFSTK_getInt("panelwidth")]);
+	panelHeightEdit->LFSTK_setBuffer(std::to_string(prefs.LFSTK_getInt("panelheight")).c_str());
+	panelPosEdit->LFSTK_setBuffer(panelPosConvertToStr[prefs.LFSTK_getInt("panelpos")]);
+	panelGravEdit->LFSTK_setBuffer(panelGravConvertToStr[prefs.LFSTK_getInt("panelgrav")]);
+	panelOnMonitor->LFSTK_setBuffer(std::to_string(prefs.LFSTK_getInt("onmonitor")).c_str());
+	termCommand->LFSTK_setBuffer(prefs.LFSTK_getCString("termcommand"));
+	logout->LFSTK_setBuffer(prefs.LFSTK_getCString("logoutcommand"));
+	restart->LFSTK_setBuffer(prefs.LFSTK_getCString("restartcommand"));
+	shutdown->LFSTK_setBuffer(prefs.LFSTK_getCString("shutdowncommand"));
+	panelLeftGadgets->LFSTK_setBuffer(prefs.LFSTK_getCString("gadgetsleft"));
+	panelrightGadgets->LFSTK_setBuffer(prefs.LFSTK_getCString("gadgetsright"));
 }
 
 void getPrefs(void)
 {
 	char	*env=NULL;
 
+	prefs.prefsMap=
+		{
+			{prefs.LFSTK_hashFromKey("panelheight"),{TYPEINT,"panelheight","",false,0}},
+			{prefs.LFSTK_hashFromKey("panelwidth"),{TYPEINT,"panelwidth","",false,0}},
+			{prefs.LFSTK_hashFromKey("onmonitor"),{TYPEINT,"onmonitor","",false,0}},
+			{prefs.LFSTK_hashFromKey("panelpos"),{TYPEINT,"panelpos","",false,0}},
+			{prefs.LFSTK_hashFromKey("panelgrav"),{TYPEINT,"panelgrav","",false,0}},
+			{prefs.LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","",false,0}},
+			{prefs.LFSTK_hashFromKey("logoutcommand"),{TYPESTRING,"logoutcommand","",false,0}},
+			{prefs.LFSTK_hashFromKey("restartcommand"),{TYPESTRING,"restartcommand","",false,0}},
+			{prefs.LFSTK_hashFromKey("shutdowncommand"),{TYPESTRING,"shutdowncommand","",false,0}},
+			{prefs.LFSTK_hashFromKey("gadgetsright"),{TYPESTRING,"gadgetsright","",false,0}},
+			{prefs.LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","",false,0}},
+		};
+
 	asprintf(&env,"%s/%s",apc->configDir,panelNameEdit->LFSTK_getCStr());
-	wc->globalLib->LFSTK_loadVarsFromFile(env,panelPrefs);
+	prefs.LFSTK_loadVarsFromFile(env);
 	free(env);
 }
 
@@ -382,7 +382,6 @@ int main(int argc, char **argv)
 	panelGravMenu=new menuStruct*[4];
 	for(long j=0;j<4;j++)
 		{
-
 			panelGravMenu[j]=new menuStruct;
 			panelGravMenu[j]->label=strdup(panelGravConvertToStr[j+1]);
 			panelGravMenu[j]->userData=(void*)(j+1);
@@ -395,32 +394,32 @@ int main(int argc, char **argv)
 
 //on monitor
 	label=new LFSTK_labelClass(wc,"On Monitor",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
-	panelOnMonitor=new LFSTK_lineEditClass(wc,std::to_string(onMonitorPref).c_str(),BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
+	panelOnMonitor=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
 //term comm
 	label=new LFSTK_labelClass(wc,"Terminal CMD",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
-	termCommand=new LFSTK_lineEditClass(wc,terminalCommandPref,BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
+	termCommand=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 //logout
 	label=new LFSTK_labelClass(wc,"Logout",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
-	logout=new LFSTK_lineEditClass(wc,logoutCommandPref,BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
+	logout=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 //restart
 	label=new LFSTK_labelClass(wc,"Restart",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
-	restart=new LFSTK_lineEditClass(wc,restartCommandPref,BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
+	restart=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 //shutdown
 	label=new LFSTK_labelClass(wc,"Shutdown",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
-	shutdown=new LFSTK_lineEditClass(wc,shutdownCommandPref,BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
+	shutdown=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 //left gadgets
 	label=new LFSTK_labelClass(wc,"Left Gadgets",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
-	panelLeftGadgets=new LFSTK_lineEditClass(wc,leftGadgetsPref,BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
+	panelLeftGadgets=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 //rite gadgets
 	label=new LFSTK_labelClass(wc,"Right Gadgets",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
-	panelrightGadgets=new LFSTK_lineEditClass(wc,rightGadgetsPref,BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
+	panelrightGadgets=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
 	setEdits();
@@ -454,16 +453,6 @@ int main(int argc, char **argv)
 	delete posMenu;
 	delete gravMenu;
 	delete apc;
-
-	panelWidthConvertToStr.clear();
-	panelPosConvertToStr.clear();
-	panelGravConvertToStr.clear();
-	free(leftGadgetsPref);
-	free(rightGadgetsPref);
-	free(terminalCommandPref);
-	free(logoutCommandPref);
-	free(restartCommandPref);
-	free(shutdownCommandPref);
 
 	return(retval);
 }

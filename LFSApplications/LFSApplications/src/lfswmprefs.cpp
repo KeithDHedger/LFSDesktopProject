@@ -29,6 +29,7 @@
 #define BOXLABEL		"LFS WM Prefs"
 
 LFSTK_applicationClass	*apc=NULL;
+LFSTK_prefsClass		prefs;
 LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass		*label=NULL;
 LFSTK_labelClass		*personal=NULL;
@@ -42,6 +43,7 @@ LFSTK_buttonClass		*apply=NULL;
 LFSTK_buttonClass		*previewButtons[5]={NULL,};
 LFSTK_lineEditClass		*previeColourEdit[5]={NULL,};
 const char				*previewButtonLabels[5]={"Active Frame","Active Fill","Inactive Frame","Inactive Fill","Widget Colour"};
+const char				*prefsnames[]={"wmactive_frame","wmactive_fill","wminactive_frame","wminactive_fill","widgetcolour"};
 
 //theme
 LFSTK_fileDialogClass	*themeFolder=NULL;
@@ -68,35 +70,10 @@ const char				*placementMenuNames[]={"Smart Place On Screen","Under Mouse","Cent
 LFSTK_menuClass			*placeMenu=NULL;
 
 //prefs
-char					*prefsColours[5]={NULL,};
-char					*prefsFont=NULL;
-char					*prefsTheme=NULL;
-char					*prefsTermCommand=NULL;
-int						prefsPlacement=2;
 int						prefsPlacementTemp=2;
-int						prefsDeskCnt=6;
-int						prefsRefresh=15;
-int						prefsRescan=4;
 
 //msg
 int						queueID=-1;
-
-args					lfsWMPrefs[]=
-{
-	{"wmactive_frame",TYPESTRING,&prefsColours[0]},
-	{"wmactive_fill",TYPESTRING,&prefsColours[1]},
-	{"wminactive_frame",TYPESTRING,&prefsColours[2]},
-	{"wminactive_fill",TYPESTRING,&prefsColours[3]},
-	{"widgetcolour",TYPESTRING,&prefsColours[4]},
-	{"titlefont",TYPESTRING,&prefsFont},
-	{"theme",TYPESTRING,&prefsTheme},
-	{"termcommand",TYPESTRING,&prefsTermCommand},
-	{"placement",TYPEINT,&prefsPlacement},
-	{"desktops",TYPEINT,&prefsDeskCnt},
-	{"liveupdate",TYPEINT,&prefsRefresh},
-	{"rescanprefs",TYPEINT,&prefsRescan},
-	{NULL,0,NULL}
-};
 
 bool doQuit(void *p,void* ud)
 {
@@ -151,30 +128,27 @@ bool buttonCB(void *p,void* ud)
 				}
 			if(strcmp((char*)ud,"APPLY")==0)
 				{
-					for(int j=0;j<5;j++)
+					prefs.prefsMap=
 						{
-							free(prefsColours[j]);
-							prefsColours[j]=strdup(previeColourEdit[j]->LFSTK_getCStr());
-							previewButtons[j]->LFSTK_setColourName(NORMALCOLOUR,previeColourEdit[j]->LFSTK_getCStr());
-							previewButtons[j]->LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
-							previewButtons[j]->LFSTK_clearWindow();
-						}
-					free(prefsFont);
-					prefsFont=strdup(fontEdit->LFSTK_getCStr());
-					free(prefsTheme);
-					prefsTheme=strdup(themeEdit->LFSTK_getCStr());
-					free(prefsTermCommand);
-					prefsTermCommand=strdup(terminalEdit->LFSTK_getCStr());
-					prefsPlacement=prefsPlacementTemp;
-					prefsDeskCnt=atoi(deskCountEdit->LFSTK_getCStr());
-					prefsRefresh=atoi(refreshEdit->LFSTK_getCStr());
-					prefsRescan=atoi(rescanEdit->LFSTK_getCStr());
-					wc->globalLib->LFSTK_saveVarsToFile(envFile,lfsWMPrefs);
+							{prefs.LFSTK_hashFromKey("wmactive_frame"),{TYPESTRING,"wmactive_frame",previeColourEdit[0]->LFSTK_getCStr(),false,0}},
+							{prefs.LFSTK_hashFromKey("wmactive_fill"),{TYPESTRING,"wmactive_fill",previeColourEdit[1]->LFSTK_getCStr(),false,0}},
+							{prefs.LFSTK_hashFromKey("wminactive_frame"),{TYPESTRING,"wminactive_frame",previeColourEdit[2]->LFSTK_getCStr(),false,0}},
+							{prefs.LFSTK_hashFromKey("wminactive_fill"),{TYPESTRING,"wminactive_fill",previeColourEdit[3]->LFSTK_getCStr(),false,0}},
+							{prefs.LFSTK_hashFromKey("widgetcolour"),{TYPESTRING,"widgetcolour",previeColourEdit[4]->LFSTK_getCStr(),false,0}},
+							{prefs.LFSTK_hashFromKey("titlefont"),{TYPESTRING,"titlefont",fontEdit->LFSTK_getCStr(),false,0}},
+							{prefs.LFSTK_hashFromKey("theme"),{TYPESTRING,"theme",themeEdit->LFSTK_getCStr(),false,0}},
+							{prefs.LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand",terminalEdit->LFSTK_getCStr(),false,0}},
+							{prefs.LFSTK_hashFromKey("placement"),{TYPEINT,"placement","",false,prefsPlacementTemp}},
+							{prefs.LFSTK_hashFromKey("desktops"),{TYPEINT,"desktops","",false,atoi(deskCountEdit->LFSTK_getCStr())}},
+							{prefs.LFSTK_hashFromKey("liveupdate"),{TYPEINT,"liveupdate","",false,atoi(refreshEdit->LFSTK_getCStr())}},
+							{prefs.LFSTK_hashFromKey("rescanprefs"),{TYPEINT,"rescanprefs","",false,atoi(rescanEdit->LFSTK_getCStr())}}
+						};
+
+					prefs.LFSTK_saveVarsToFile(envFile);
 					mbuffer.mType=WMANAGER_MSG;
 					sprintf(mbuffer.mText,"reloadtheme");
 					if((msgsnd(queueID,&mbuffer,strlen(mbuffer.mText)+1,0))==-1)
 						fprintf(stderr,"Can't send message :(\n");
-
 					return(true);
 				}
 		}
@@ -260,12 +234,6 @@ int main(int argc, char **argv)
 				}
 		}
 
-	prefsColours[0]=strdup("black");
-	prefsColours[1]=strdup("#00ffff");
-	prefsColours[2]=strdup("black");
-	prefsColours[3]=strdup("white");
-	prefsColours[4]=strdup("white");
-
 	apc=new LFSTK_applicationClass();
 	apc->LFSTK_addWindow(NULL,BOXLABEL);
 	wc=apc->mainWindow;
@@ -281,9 +249,25 @@ int main(int argc, char **argv)
 				flag=true;
 		}
 
+	prefs.prefsMap=
+		{
+			{prefs.LFSTK_hashFromKey("wmactive_frame"),{TYPESTRING,"wmactive_frame","black",false,0}},
+			{prefs.LFSTK_hashFromKey("wmactive_fill"),{TYPESTRING,"wmactive_fill","#00ffff",false,0}},
+			{prefs.LFSTK_hashFromKey("wminactive_frame"),{TYPESTRING,"wminactive_frame","black",false,0}},
+			{prefs.LFSTK_hashFromKey("wminactive_fill"),{TYPESTRING,"wminactive_fill","white",false,0}},
+			{prefs.LFSTK_hashFromKey("widgetcolour"),{TYPESTRING,"widgetcolour","white",false,0}},
+			{prefs.LFSTK_hashFromKey("titlefont"),{TYPESTRING,"titlefont","",false,0}},
+			{prefs.LFSTK_hashFromKey("theme"),{TYPESTRING,"theme","",false,0}},
+			{prefs.LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","",false,0}},
+			{prefs.LFSTK_hashFromKey("placement"),{TYPEINT,"placement","",false,2}},
+			{prefs.LFSTK_hashFromKey("desktops"),{TYPEINT,"desktops","",false,6}},
+			{prefs.LFSTK_hashFromKey("liveupdate"),{TYPEINT,"liveupdate","",false,15}},
+			{prefs.LFSTK_hashFromKey("rescanprefs"),{TYPEINT,"rescanprefs","",false,4}},
+		};
+
 	asprintf(&envFile,"%s/lfswmanager.rc",apc->configDir);
-	wc->globalLib->LFSTK_loadVarsFromFile(envFile,lfsWMPrefs);
-	prefsPlacementTemp=prefsPlacement;
+	prefs.LFSTK_loadVarsFromFile(envFile);
+	prefsPlacementTemp=prefs.LFSTK_getInt("placement");
 
 	themeFolder=new LFSTK_fileDialogClass(wc,"Select File",NULL,FOLDERDIALOG,"lfswmprefstheme");
 
@@ -307,11 +291,11 @@ int main(int argc, char **argv)
 			previewButtons[j]=new LFSTK_buttonClass(wc,previewButtonLabels[j],sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 			previewButtons[j]->LFSTK_setLabelAutoColour(true);
 			previewButtons[j]->LFSTK_setTile(NULL,0);
-			previewButtons[j]->LFSTK_setColourName(NORMALCOLOUR,prefsColours[j]);
+			previewButtons[j]->LFSTK_setColourName(NORMALCOLOUR,prefs.LFSTK_getCString(prefsnames[j]));
 			previewButtons[j]->LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
 			previewButtons[j]->LFSTK_setIgnores(false,true);
 			sx+=GADGETWIDTH+BORDER;
-			previeColourEdit[j]=new LFSTK_lineEditClass(wc,prefsColours[j],sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+			previeColourEdit[j]=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString(prefsnames[j]),sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 			previeColourEdit[j]->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
 			sy+=YSPACING;
 			sx=BORDER;
@@ -321,7 +305,7 @@ int main(int argc, char **argv)
 	fontSelector=new LFSTK_fontDialogClass(wc,"Select Font",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	fontSelector->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SELECTFONT");
 	sx+=GADGETWIDTH+BORDER;
-	fontEdit=new LFSTK_lineEditClass(wc,prefsFont,sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+	fontEdit=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString("titlefont"),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 	sx=BORDER;
 
@@ -329,7 +313,7 @@ int main(int argc, char **argv)
 	themeButton=new LFSTK_buttonClass(wc,"Select Theme",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	themeButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SELECTTHEME");
 	sx+=GADGETWIDTH+BORDER;
-	themeEdit=new LFSTK_lineEditClass(wc,prefsTheme,sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+	themeEdit=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString("theme"),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 	sx=BORDER;
 
@@ -341,35 +325,34 @@ int main(int argc, char **argv)
 	placeMenu->LFSTK_addMainMenus(placementMenus,MAXMENUS);
 
 	sx+=GADGETWIDTH+BORDER;
-	placeWindowEdit=new LFSTK_lineEditClass(wc,placementMenuNames[prefsPlacement],sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+	placeWindowEdit=new LFSTK_lineEditClass(wc,placementMenuNames[prefs.LFSTK_getInt("placement")],sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 	sx=BORDER;
 
 //desks
 	label=new LFSTK_labelClass(wc,"Desktops",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	sx+=GADGETWIDTH+BORDER;
-	deskCountEdit=new LFSTK_lineEditClass(wc,std::to_string(prefsDeskCnt).c_str(),sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	deskCountEdit=new LFSTK_lineEditClass(wc,std::to_string(prefs.LFSTK_getInt("desktops")).c_str(),sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 	sx=BORDER;
 //update
 	label=new LFSTK_labelClass(wc,"Update",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	sx+=GADGETWIDTH+BORDER;
-	refreshEdit=new LFSTK_lineEditClass(wc,std::to_string(prefsRefresh).c_str(),sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	refreshEdit=new LFSTK_lineEditClass(wc,std::to_string(prefs.LFSTK_getInt("liveupdate")).c_str(),sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 	sx=BORDER;
 
 //rescan prefs
 	label=new LFSTK_labelClass(wc,"Rescan Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	sx+=GADGETWIDTH+BORDER;
-	rescanEdit=new LFSTK_lineEditClass(wc,std::to_string(prefsRescan).c_str(),sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	rescanEdit=new LFSTK_lineEditClass(wc,std::to_string(prefs.LFSTK_getInt("rescanprefs")).c_str(),sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 	sx=BORDER;
-
 
 //term command
 	label=new LFSTK_labelClass(wc,"Terminal CMD",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	sx+=GADGETWIDTH+BORDER;
-	terminalEdit=new LFSTK_lineEditClass(wc,prefsTermCommand,sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+	terminalEdit=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString("termcommand"),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 	sx=BORDER;
 
@@ -405,11 +388,6 @@ int main(int argc, char **argv)
 	delete themeFolder;
 	delete placeMenu;
 	free(envFile);
-	for(int j=0;j<5;j++)
-		free(prefsColours[j]);
-	free(prefsFont);
-	free(prefsTheme);
-	free(prefsTermCommand);
 	delete apc;
 	return(retval);
 }

@@ -23,6 +23,11 @@
 #include <stdio.h>
 #include <ftw.h>
 #include <fnmatch.h>
+#include <string.h>
+
+#include <fstream> 
+#include <regex>
+
 
 #include "appmenu.h"
 
@@ -55,15 +60,12 @@ bool menuCB(void *p,void* ud)
 			return(true);
 		}
 
-//	printf("\n\np=%p ud=%i\n",p,ud);
-//	printf("Label=%s\n",static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel());
-//	printf("Name=%s Exec=%s inTerm=%i\n",entrydata.at(entry)->name,entrydata.at(entry)->exec,entrydata.at(entry)->inTerm);
 	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
 
 	if(entrydata.at(entry)->inTerm==false)
 		asprintf(&command,"%s &",entrydata.at(entry)->exec);
 	else
-		asprintf(&command,"%s %s &",terminalCommand,entrydata.at(entry)->exec);
+		asprintf(&command,"%s %s &",prefs.LFSTK_getCString("termcommand"),entrydata.at(entry)->exec);
 
 	system(command);
 	free(command);
@@ -125,17 +127,9 @@ int ftwCatCallback(const char *fpath,const struct stat *sb,int typeflag)
 	return(0);
 }
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <ftw.h>
-
-#include <fstream> 
-#include <regex>
-
 std::map<int,menuEntryStruct*>	entrydata;
 
-void addDesktopFiles(int catnum,const char *catname)
+void addDesktopFiles(int catnum,const char *catname)//TODO//
 {
 	std::ifstream		file;
 	std::stringstream	ss;
@@ -143,7 +137,6 @@ void addDesktopFiles(int catnum,const char *catname)
 	std::regex			exp;
 	const std::regex	expname("Name=(.*)");
 	const std::regex	expicon("Icon=([^[:space:]]*).*");
-//	const std::regex	expexec("Exec=([^[:space:]]*).*");
 	const std::regex	expexec("Exec=(.*)");
 	const std::regex	expnodisplay("NoDisplay=([^[:space:]]*).*");
 	const std::regex	expterm("Terminal=true");
@@ -211,7 +204,7 @@ void addDesktopFiles(int catnum,const char *catname)
 						{
 							catagoryMenus[j]->subMenus[k]=new menuStruct;
 							catagoryMenus[j]->subMenus[k]->label=strdup(entrydata.at(fname[k])->name);
-							catagoryMenus[j]->subMenus[k]->userData=(void*)(fname[k]);
+							catagoryMenus[j]->subMenus[k]->userData=USERDATA(fname[k]);
 							iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,entrydata.at(fname[k])->icon,"");
 							if(iconpath!=NULL)
 								{
@@ -239,7 +232,7 @@ void addCatagories(void)
 				{
 					catagoryMenus[catagoryCnt]=new menuStruct;
 					catagoryMenus[catagoryCnt]->label=strdup(myCats[catcnt]);
-					catagoryMenus[catagoryCnt]->userData=(void*)(catcnt);
+					catagoryMenus[catagoryCnt]->userData=USERDATA(catcnt);
 					iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,catImageNames[catcnt],"");
 					if(iconpath!=NULL)
 						{

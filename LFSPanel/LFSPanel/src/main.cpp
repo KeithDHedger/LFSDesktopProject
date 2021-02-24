@@ -37,32 +37,23 @@
 #define RCNAME "lfspanel"
 #define REFRESHMULTI 4
 
-//int			queueID;
-//msgBuffer	buffer;
-
-args		panelPrefs[]=
+void loadPrefs(const char *env)
 {
-	{"panelheight",TYPEINT,&panelHeight},
-	{"panelwidth",TYPEINT,&panelWidth},
-	{"onmonitor",TYPEINT,&onMonitor},
-	{"termcommand",TYPESTRING,&terminalCommand},
-	{"logoutcommand",TYPESTRING,&logoutCommand},
-	{"restartcommand",TYPESTRING,&restartCommand},
-	{"shutdowncommand",TYPESTRING,&shutdownCommand},
-	{"gadgetsright",TYPESTRING,&rightGadgets},
-	{"gadgetsleft",TYPESTRING,&leftGadgets},
-	{"panelpos",TYPEINT,&panelPos},
-	{"panelgrav",TYPEINT,&panelGravity},
-	{NULL,0,NULL}
-};
+	prefs.LFSTK_loadVarsFromFile(env);
+	panelHeight=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelheight"));
+	panelWidth=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelwidth"));
+	onMonitor=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("onmonitor"));
+	panelPos=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelpos"));
+	panelGravity=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelgrav"));
+}
 
 void addLeftGadgets(void)
 {
 	int	offset=leftOffset;
 
-	for(int j=0; j<strlen(leftGadgets); j++)
+	for(int j=0; j<prefs.LFSTK_getStringObject("gadgetsleft")->length();j++)
 		{
-			switch(leftGadgets[j])
+			switch(prefs.LFSTK_getStringObject("gadgetsleft")->at(j))
 				{
 				case 'A':
 					offset+=addAppmenu(offset,mons->y,panelGravity,true);
@@ -109,9 +100,9 @@ void addLeftGadgets(void)
 void addRightGadgets(void)
 {
 	int	offset=rightOffset;
-	for(int j=strlen(rightGadgets)-1; j>=0; j--)
+	for(int j=prefs.LFSTK_getStringObject("gadgetsright")->length()-1;j>=0;j--)
 		{
-			switch(rightGadgets[j])
+			switch(prefs.LFSTK_getStringObject("gadgetsright")->at(j))
 				{
 				case 'A':
 					offset-=addAppmenu(offset,mons->y,panelGravity,false);
@@ -141,7 +132,7 @@ void addRightGadgets(void)
 					if(launcherSide==NOLAUNCHERS)
 						{
 							launcherSide=LAUNCHERINRITE;
-							offset+=addLaunchers(offset,mons->y,panelGravity,false);
+							offset-=addLaunchers(offset,mons->y,panelGravity,false);
 						}
 					else
 						printError("Duplicate launcher widget");
@@ -183,27 +174,36 @@ bool windowDrop(LFSTK_windowClass *lwc,void* ud)
 
 int main(int argc,char **argv)
 {
-	char			*env;
-	XEvent			event;
-	int				psize;
-	int				thold;
-	int				px,py;
-	timeval			tv={0,0};
-	int				key=666;
-	int				refreshmulti=0;
+	char				*env;
+	XEvent				event;
+	int					psize;
+	int					thold;
+	int					px,py;
+	timeval				tv={0,0};
+	int					key=666;
+	int					refreshmulti=0;
+	
+	prefs.prefsMap={
+						{prefs.LFSTK_hashFromKey("panelheight"),{TYPEINT,"panelheight","",false,0}},
+						{prefs.LFSTK_hashFromKey("panelwidth"),{TYPEINT,"panelwidth","",false,0}},
+						{prefs.LFSTK_hashFromKey("onmonitor"),{TYPEINT,"onmonitor","",false,0}},
 
+						{prefs.LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","xterm -e ",false,0}},
+						{prefs.LFSTK_hashFromKey("logoutcommand"),{TYPESTRING,"logoutcommand","xterm",false,0}},
+						{prefs.LFSTK_hashFromKey("restartcommand"),{TYPESTRING,"restartcommand","xterm",false,0}},
+						{prefs.LFSTK_hashFromKey("shutdowncommand"),{TYPESTRING,"shutdowncommand","xterm",false,0}},
+						{prefs.LFSTK_hashFromKey("gadgetsright"),{TYPESTRING,"gadgetsright","L",false,0}},
+						{prefs.LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","l",false,0}},
+
+						{prefs.LFSTK_hashFromKey("panelpos"),{TYPEINT,"panelpos","",false,0}},
+						{prefs.LFSTK_hashFromKey("panelgrav"),{TYPEINT,"panelgrav","",false,0}}
+					};
 	realMainLoop=true;
 	
 	XSetErrorHandler(errHandler);
-	
+
 	while(realMainLoop==true)
 		{
-			terminalCommand=strdup("xterm -e ");
-			logoutCommand=strdup("xterm");
-			restartCommand=strdup("xterm");
-			shutdownCommand=strdup("xterm");
-			leftGadgets=strdup("A");
-			rightGadgets=strdup("L");
 			panelPos=PANELCENTRE;
 
 			apc=new LFSTK_applicationClass();
@@ -245,9 +245,10 @@ int main(int argc,char **argv)
 				}
 			else
 				asprintf(&env,"%s/%s.rc",apc->configDir,RCNAME);
-			mainwind->globalLib->LFSTK_loadVarsFromFile(env,panelPrefs);
 
-			desktopTheme=mainwind->globalLib->LFSTK_oneLiner("cat %s/.config/LFS/lfsdesktop.rc|grep icontheme|awk '{print $2}'",getenv("HOME"));
+			loadPrefs(env);
+
+			desktopTheme=mainwind->globalLib->LFSTK_oneLiner("cat %s/lfsdesktop.rc|grep icontheme|awk '{print $2}'",apc->configDir);
 			mons=mainwind->LFSTK_getMonitorData(onMonitor);
 
 			rightOffset=0;
@@ -337,18 +338,9 @@ int main(int argc,char **argv)
 			int retval=apc->LFSTK_runApp();
 
 			free(env);
-			free(terminalCommand);
 
 			if(desktopTheme!=NULL)
 				free(desktopTheme);
-
-
-			free(logoutCommand);
-			free(restartCommand);
-			free(shutdownCommand);
-			free(leftGadgets);
-			free(rightGadgets);
-
 
 			launcherList	*freell;
 			while(ll!=NULL)
@@ -387,7 +379,7 @@ int main(int argc,char **argv)
 			delete logoutMenu;
 			delete windowAllMenu;
 			delete windowDeskMenu;
-
+			
 			free(iconL);
 			free(iconM);
 			free(iconH);

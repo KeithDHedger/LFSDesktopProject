@@ -79,6 +79,10 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		int					offsetCurs=0;
 		KeySym				keysym_return;
 		unsigned int		state;
+
+//contxt window
+		LFSTK_windowClass	*editWindow=NULL;
+		static bool			contextCB(void *p,void* ud);
 };
 
 #endif

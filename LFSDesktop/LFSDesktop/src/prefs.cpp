@@ -20,138 +20,125 @@
 
 #include "globals.h"
 
-char	*iconTheme;
+const char			*iconTheme;
+LFSTK_prefsClass	prefs;
 
 //desktop prefs
-int		iconSize=40;
-int		gridBorderLeft=2;
-int		gridBorderRight=2;
-int		gridSize=iconSize+gridBorderLeft;
-int		refreshRate=2;
-char	*terminalCommand=NULL;
-char	*fontFace=NULL;
-char	*backCol=NULL;
-char	*foreCol=NULL;
-char	*backAlpha;
-char	*includeList=NULL;
-char	*excludeList=NULL;
+int					iconSize=40;
+int					gridBorderLeft=2;
+int					gridBorderRight=2;
+int					gridSize=iconSize+gridBorderLeft;
+int					refreshRate=2;
+const char			*terminalCommand=NULL;
+const char			*fontFace=NULL;
+const char			*backCol=NULL;
+const char			*foreCol=NULL;
+const char			*backAlpha;
+const char			*includeList=NULL;
+const char			*excludeList=NULL;
 
-args	desktopPrefs[]=
+bool loadCacheFile(const char *cachefilepath,desktopItemStruct *cfd)
 {
-	{"icontheme",TYPESTRING,&iconTheme},
-	{"iconsize",TYPEINT,&iconSize},
-	{"gridsize",TYPEINT,&gridSize},
-	{"gridborderleft",TYPEINT,&gridBorderLeft},
-	{"gridborderrite",TYPEINT,&gridBorderRight},
-	{"refreshrate",TYPEINT,&refreshRate},
-	{"termcommand",TYPESTRING,&terminalCommand},
-	{"showextension",TYPEBOOL,&showSuffix},
-	{"fontface",TYPESTRING,&fontFace},
-	{"labelbackground",TYPESTRING,&backCol},
-	{"labelforeground",TYPESTRING,&foreCol},
-	{"labelalpha",TYPESTRING,&backAlpha},
-	{"includelist",TYPESTRING,&includeList},
-	{"excludelist",TYPESTRING,&excludeList},
-	{NULL,0,NULL}
-};
+	LFSTK_prefsClass cacheprefs;
+
+	if(access(cachefilepath,F_OK)!=0)
+		return(false);
+
+	cacheprefs.prefsMap=
+		{
+			{cacheprefs.LFSTK_hashFromKey("uuid"),{TYPESTRING,"uuid","",false,0}},
+			{cacheprefs.LFSTK_hashFromKey("posx"),{TYPEINT,"posx","",false,0}},
+			{cacheprefs.LFSTK_hashFromKey("posy"),{TYPEINT,"posy","",false,0}},
+			{cacheprefs.LFSTK_hashFromKey("hascustomicon"),{TYPEBOOL,"hascustomicon","",false,0}},
+			{cacheprefs.LFSTK_hashFromKey("pathtocustomicon"),{TYPESTRING,"pathtocustomicon","",false,0}}
+		};
+
+	cacheprefs.LFSTK_loadVarsFromFile(cachefilepath);
+
+	cfd->uuid=strdup(cacheprefs.LFSTK_getCString("uuid"));
+	cfd->posx=cacheprefs.LFSTK_getInt("posx");
+	cfd->posy=cacheprefs.LFSTK_getInt("posy");
+	cfd->hasCustomIcon=cacheprefs.LFSTK_getBool("hascustomicon");
+	cfd->pathToCustomIcon=NULL;//TODO//
+	return(true);
+}
+
+void saveCacheFile(const char *cachefilepath,desktopItemStruct *cfd)
+{
+	LFSTK_prefsClass cacheprefs;
+	const char *iconpath;
+
+	if(cfd->pathToCustomIcon==NULL)
+		iconpath="\"\"";
+	else
+		iconpath=cfd->pathToCustomIcon;
+
+	cacheprefs.prefsMap=
+		{
+			{cacheprefs.LFSTK_hashFromKey("uuid"),{TYPESTRING,"uuid",cfd->uuid,false,0}},
+			{cacheprefs.LFSTK_hashFromKey("posx"),{TYPEINT,"posx","",false,cfd->posx}},
+			{cacheprefs.LFSTK_hashFromKey("posy"),{TYPEINT,"posy","",false,cfd->posy}},
+			{cacheprefs.LFSTK_hashFromKey("hascustomicon"),{TYPEBOOL,"hascustomicon","",cfd->hasCustomIcon,0}},
+			{cacheprefs.LFSTK_hashFromKey("pathtocustomicon"),{TYPESTRING,"pathtocustomicon",iconpath,false,0}}
+		};
+
+	cacheprefs.LFSTK_saveVarsToFile(cachefilepath);
+}
+
+void loadPrefs(void)
+{
+//{(".*"),(.*),&.*}
+//{prefs.LFSTK_hashFromKey(\1),{\2,\1,"",false,0}}
+	prefs.prefsMap=
+		{
+			{prefs.LFSTK_hashFromKey("icontheme"),{TYPESTRING,"icontheme","gnome",false,0}},
+			{prefs.LFSTK_hashFromKey("iconsize"),{TYPEINT,"iconsize","",false,32}},
+			{prefs.LFSTK_hashFromKey("gridsize"),{TYPEINT,"gridsize","",false,64}},
+			{prefs.LFSTK_hashFromKey("gridborderleft"),{TYPEINT,"gridborderleft","",false,2}},
+			{prefs.LFSTK_hashFromKey("gridborderrite"),{TYPEINT,"gridborderrite","",false,2}},
+			{prefs.LFSTK_hashFromKey("refreshrate"),{TYPEINT,"refreshrate","",false,2}},
+			{prefs.LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","xterm -e ",false,0}},
+			{prefs.LFSTK_hashFromKey("showextension"),{TYPEBOOL,"showextension","",false,0}},
+			{prefs.LFSTK_hashFromKey("fontface"),{TYPESTRING,"fontface","sans:size=10:bold",false,0}},
+			{prefs.LFSTK_hashFromKey("labelbackground"),{TYPESTRING,"labelbackground","#000000",false,0}},
+			{prefs.LFSTK_hashFromKey("labelforeground"),{TYPESTRING,"labelforeground","#ffffff",false,0}},
+			{prefs.LFSTK_hashFromKey("labelalpha"),{TYPESTRING,"labelalpha","1.0",false,0}},
+			{prefs.LFSTK_hashFromKey("includelist"),{TYPESTRING,"includelist","",false,0}},
+			{prefs.LFSTK_hashFromKey("excludelist"),{TYPESTRING,"excludelist","",false,0}},
+		};
+
+	prefs.LFSTK_loadVarsFromFile(prefsPath);
+
+	iconTheme=prefs.LFSTK_getCString("icontheme");
+	iconSize=prefs.LFSTK_getInt("iconsize");
+	gridSize=prefs.LFSTK_getInt("gridsize");;
+	gridBorderLeft=prefs.LFSTK_getInt("gridborderleft");;
+	gridBorderRight=prefs.LFSTK_getInt("gridborderrite");;
+	terminalCommand=prefs.LFSTK_getCString("termcommand");
+	showSuffix=prefs.LFSTK_getBool("showextension");;
+	fontFace=prefs.LFSTK_getCString("fontface");
+	backCol=prefs.LFSTK_getCString("labelbackground");
+	foreCol=prefs.LFSTK_getCString("labelforeground");
+	backAlpha=prefs.LFSTK_getCString("labelalpha");
+	refreshRate=prefs.LFSTK_getInt("refreshrate");
+	includeList=prefs.LFSTK_getCString("includelist");
+	excludeList=prefs.LFSTK_getCString("excludelist");
+}
 
 void reloadPrefs(void)
 {
-printf("XXXXXXXXXXXXX\n");
 	apc->globalLib->LFSTK_reloadPrefs();
-	loadVarsFromFile(prefsPath,desktopPrefs);
+	loadPrefs();
 	for(unsigned j=0;j<desktopItems.size();j++)
 		{
 			freeAndNull(&desktopItems.at(j).iconPath);
 			setIconImage(&desktopItems.at(j));
 			desktopItems.at(j).item->LFSTK_setImageFromPath(desktopItems.at(j).iconPath,TOOLBAR,true);
-			desktopItems.at(j).item->LFSTK_setLabelBGColour(0.75,0.75,0.75,strtod(backAlpha,NULL));
-			apc->globalLib->LFSTK_setColourFromName(apc->display,apc->cm,&desktopItems.at(j).item->labelBGColour,backCol);
+			desktopItems.at(j).item->LFSTK_setLabelBGColour(backCol,strtod(backAlpha,NULL));
 			desktopItems.at(j).item->LFSTK_setFontColourName(NORMALCOLOUR,foreCol,false)	;	
+			desktopItems.at(j).item->LFSTK_setFontString(fontFace,true);
+			setItemSize(&desktopItems.at(j));//TODO//
 			desktopItems.at(j).item->LFSTK_clearWindow();
 		}
-}
-
-void saveVarsToFile(const char* filepath,args* dataptr)
-{
-	FILE*	fd=NULL;
-	int		cnt=0;
-
-	if(filepath[0]=='-')
-		fd=stdout;
-	else
-		fd=fopen(filepath,"w");
-
-	if(fd!=NULL)
-		{
-			while(dataptr[cnt].name!=NULL)
-				{
-					switch(dataptr[cnt].type)
-						{
-						case TYPEINT:
-							fprintf(fd,"%s	%i\n",dataptr[cnt].name,*(int*)dataptr[cnt].data);
-							break;
-						case TYPESTRING:
-							if(*(char**)(dataptr[cnt].data)!=NULL)
-								fprintf(fd,"%s	%s\n",dataptr[cnt].name,*(char**)(dataptr[cnt].data));
-							break;
-						case TYPEBOOL:
-							fprintf(fd,"%s	%i\n",dataptr[cnt].name,(int)*(bool*)dataptr[cnt].data);
-							break;
-						}
-					cnt++;
-				}
-			fclose(fd);
-		}
-}
-
-bool loadVarsFromFile(char* filepath,args* dataptr)
-{
-	FILE*	fd=NULL;
-	char	buffer[2048];
-	int		cnt;
-	char*	argname=NULL;
-	char*	strarg=NULL;
-
-	fd=fopen(filepath,"r");
-	if(fd!=NULL)
-		{
-			while(feof(fd)==0)
-				{
-					buffer[0]=0;
-					fgets(buffer,2048,fd);
-					sscanf(buffer,"%ms %ms",&argname,&strarg);
-					cnt=0;
-					while(dataptr[cnt].name!=NULL)
-						{
-							if((strarg!=NULL) && (argname!=NULL) && (strcmp(argname,dataptr[cnt].name)==0))
-								{
-									switch(dataptr[cnt].type)
-										{
-										case TYPEINT:
-											*(int*)dataptr[cnt].data=atoi(strarg);
-											break;
-										case TYPESTRING:
-											if(*(char**)(dataptr[cnt].data)!=NULL)
-												free(*(char**)(dataptr[cnt].data));
-											sscanf(buffer,"%*s %m[^\n]s",(char**)dataptr[cnt].data);
-											break;
-										case TYPEBOOL:
-											*(bool*)dataptr[cnt].data=(bool)atoi(strarg);
-											break;
-										}
-								}
-							cnt++;
-						}
-					if(argname!=NULL)
-						free(argname);
-					if(strarg!=NULL)
-						free(strarg);
-					argname=NULL;
-					strarg=NULL;
-				}
-			fclose(fd);
-			return(true);
-		}
-	return(false);
+	XSync(apc->display,false);
 }

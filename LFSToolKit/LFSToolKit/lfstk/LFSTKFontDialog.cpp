@@ -84,17 +84,18 @@ void LFSTK_fontDialogClass::buildFontString(void)
 bool select(void *object,void* userdata)
 {
 	LFSTK_fontDialogClass	*fd=static_cast<LFSTK_fontDialogClass*>(userdata);
-	LFSTK_listGadgetClass	*list=static_cast<LFSTK_listGadgetClass*>(object);
-
 	fd->LFSTK_getFontData(true);
+	fd->wc->LFSTK_clearWindow(true);
+	XSync(fd->wc->app->display,false);
 	return(true);
 }
 
 bool checkCB(void *p,void* ud)
 {
 	LFSTK_fontDialogClass	*fdata=static_cast<LFSTK_fontDialogClass*>(ud);
-
 	fdata->LFSTK_getFontData(true);
+	fdata->wc->LFSTK_clearWindow();
+	XSync(fdata->wc->app->display,false);
 	return(true);
 }
 
@@ -234,18 +235,19 @@ bool LFSTK_fontDialogClass::LFSTK_showDialog(const char* fontstring)
 		{
 			XNextEvent(this->dialog->app->display,&event);
 			mappedListener *ml=this->dialog->LFSTK_getMappedListener(event.xany.window);
-			if(ml!=NULL)
-				ml->function(ml->gadget,&event,ml->type);
-
-
-			if(this->dialog->LFSTK_handleWindowEvents(&event)<0)
-				mainLoop=false;
 
 			if(ml==NULL)
 				continue;
 
+			if(ml!=NULL)
+				ml->function(ml->gadget,&event,ml->type);
+
 			switch(event.type)
 				{
+					case KeyRelease:
+						this->preview->LFSTK_upDateText();
+						break;
+
 					case ButtonRelease:
 						if(ml!=NULL)
 							{
@@ -263,6 +265,9 @@ bool LFSTK_fontDialogClass::LFSTK_showDialog(const char* fontstring)
 							}
 						break;
 				}
+
+			if(this->dialog->LFSTK_handleWindowEvents(&event)<0)
+				mainLoop=false;
 		}
 	this->dialog->LFSTK_hideWindow();
 
@@ -317,6 +322,7 @@ void LFSTK_fontDialogClass::buildDialog(void)
 	snprintf((char*)&sizestr,3,"%i",size);
 	this->fontsize=new LFSTK_lineEditClass(this->dialog,(const char*)sizestr,BORDER*2+GADGETWIDTH+BORDER*2+GADGETWIDTH,sy-CHECKBOXSIZE/2,GADGETHITE,GADGETHITE,NorthGravity);
 	this->fontsize->LFSTK_setKeyCallBack(NULL,select,(void*)this);
+	this->fontsize->LFSTK_setCallbackOnReturn(false);
 	sy+=YSPACING;
 
 //preview

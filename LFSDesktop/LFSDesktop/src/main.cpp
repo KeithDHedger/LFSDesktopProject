@@ -24,7 +24,7 @@
 #include "globals.h"
 
 #define UNKNOWNARG -100
-
+//TODO//
 struct option long_options[] =
 {
 	{"key",1,0,'k'},
@@ -159,9 +159,9 @@ int main(int argc, char **argv)
 	button=new LFSTK_buttonClass(wc,"quit",0,0,GADGETWIDTH,GADGETHITE);//TODO//
 	button->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 #endif
+apc->globalLib->LFSTK_setUseTheme(false);
 	wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),apc->displayWidth,apc->displayHeight);
-
-	asprintf(&cachePath,"%s/.config/LFS/lfsdesktop/cache",getenv("HOME"));
+	asprintf(&cachePath,"%s/lfsdesktop/cache",apc->configDir);
 	asprintf(&command,"mkdir -p %s 2>&1 >/dev/null",cachePath);
 	system(command);
 	free(command);
@@ -171,23 +171,10 @@ int main(int argc, char **argv)
 	asprintf(&documentsPath,"%s/Documents",getenv("HOME"));
 	mkdir(documentsPath,0755);
 
-	asprintf(&prefsPath,"%s/.config/LFS/lfsdesktop.rc",getenv("HOME"));
-	asprintf(&iconTheme,"gnome");
-	iconSize=32;
-	gridSize=64;
-	gridBorderLeft=2;
-	gridBorderRight=2;
-	asprintf(&terminalCommand,"xterm -e ");
-	showSuffix=false;
-	asprintf(&fontFace,"DejaVu Sans:size=10:bold");
-	asprintf(&backCol,"#000000");
-	asprintf(&foreCol,"#ffffff");
-	asprintf(&backAlpha,"0x00");
-	refreshRate=2;
-	includeList=NULL;
-	excludeList=NULL;
+	asprintf(&prefsPath,"%s/lfsdesktop.rc",apc->configDir);
 
-	loadVarsFromFile(prefsPath,desktopPrefs);
+	loadPrefs();
+
 	apc->LFSTK_setTimer(refreshRate);
 	apc->LFSTK_setTimerCallBack(timerCB,NULL);
 
@@ -254,8 +241,6 @@ int main(int argc, char **argv)
 	wc->LFSTK_showWindow(true);
 	wc->LFSTK_resizeWindow(apc->displayWidth,apc->displayHeight,true);
 
-//	wc->LFSTK_redrawAllGadgets();
-
 	int retval=apc->LFSTK_runApp();
 
 	free(documentsPath);
@@ -278,13 +263,6 @@ int main(int argc, char **argv)
 				free(desktopItems.at(j).iconPath);
 		}
 	desktopItems.clear();
-
-	free(iconTheme);
-	free(terminalCommand);
-	free(fontFace);
-	free(backCol);
-	free(foreCol);
-	free(backAlpha);
 
 	delete apc;
 	return(retval);

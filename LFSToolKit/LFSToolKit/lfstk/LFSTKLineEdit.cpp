@@ -36,6 +36,39 @@ LFSTK_lineEditClass::LFSTK_lineEditClass()
 {
 }
 
+bool LFSTK_lineEditClass::contextCB(void *p,void* ud)
+{
+	LFSTK_windowClass	*lwc=static_cast<LFSTK_gadgetClass*>(p)->wc;
+	LFSTK_lineEditClass	*le=static_cast<LFSTK_lineEditClass*>(ud);
+	int					winnum;
+
+	if(p!=NULL)
+		{
+			winnum=lwc->app->LFSTK_findWindow(lwc);
+			lwc->app->windows->at(winnum).loopFlag=false;
+			switch(GETUSERDATA(static_cast<LFSTK_gadgetClass*>(p)->userData))
+				{
+					case 1:
+						le->wc->clipBuffer=le->LFSTK_getCStr();
+						XSetSelectionOwner(le->wc->app->display,le->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),le->wc->window,CurrentTime);
+						break;
+					case 2:
+						le->wc->clipBuffer=le->LFSTK_getCStr();
+						XSetSelectionOwner(le->wc->app->display,le->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),le->wc->window,CurrentTime);
+						le->LFSTK_setBuffer("");
+						break;
+					case 3:
+						le->getClip();
+						le->LFSTK_clearWindow();
+						break;
+					case 4:
+						le->LFSTK_setBuffer("");
+						break;
+				}
+		}
+	return(true);
+}
+
 /**
 * Main line edit constructor.
 *
@@ -88,6 +121,44 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	this->isFocused=false;
 	this->inWindow=false;
 
+	windowInitStruct	*win;
+	int					sy=0;
+	LFSTK_buttonClass	*btn;
+
+	win=new windowInitStruct;
+	win->app=this->wc->app;
+	win->name="";
+	win->loadVars=true;
+	win->x=100;
+	win->y=100;
+	win->w=200;
+	win->h=200;
+	win->wc=this->wc;
+	win->windowType="_NET_WM_WINDOW_TYPE_MENU";
+	win->decorated=false;
+	win->overRide=true;
+	win->level=ABOVEALL;
+
+	this->wc->app->LFSTK_addWindow(win,"edit");
+	this->editWindow=this->wc->app->windows->back().window;
+	btn=new LFSTK_buttonClass(this->editWindow,"Copy",0,sy,GADGETWIDTH,24);
+	btn->userData=USERDATA(1);
+	btn->LFSTK_setMouseCallBack(NULL,contextCB,USERDATA(this));
+	sy+=GADGETHITE;
+	btn=new LFSTK_buttonClass(this->editWindow,"Cut",0,sy,GADGETWIDTH,24);
+	btn->userData=USERDATA(2);
+	btn->LFSTK_setMouseCallBack(NULL,contextCB,USERDATA(this));
+	sy+=GADGETHITE;
+	btn=new LFSTK_buttonClass(this->editWindow,"Paste",0,sy,GADGETWIDTH,24);
+	btn->userData=USERDATA(3);
+	btn->LFSTK_setMouseCallBack(NULL,contextCB,USERDATA(this));
+	sy+=GADGETHITE;
+	btn=new LFSTK_buttonClass(this->editWindow,"Delete",0,sy,GADGETWIDTH,24);
+	btn->userData=USERDATA(4);
+	btn->LFSTK_setMouseCallBack(NULL,contextCB,USERDATA(this));
+	sy+=GADGETHITE;
+	this->editWindow->LFSTK_resizeWindow(GADGETWIDTH,sy,true);
+	this->LFSTK_setContextWindow(this->editWindow);
 }
 
 /**

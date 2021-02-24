@@ -1,4 +1,16 @@
 0.5.1
+Code clean.
+Fixed paths in installed themes.
+Fixed live update on font dialog.
+Fixed lineedit size in expander gadget.
+Fixed set label colour.
+New prefs class.
+Updates to config file format.
+Fixed window pixmap.
+Extra API's.
+Removed unneeded xsync's.
+Fixed paste in line edit.
+Added default cut/copy/paste context menu to line edit.
 Added drop callback on multiline edit.
 Cleaned dropping file on (multi)line edit.
 Fixed .desktop file preview in file dialog.

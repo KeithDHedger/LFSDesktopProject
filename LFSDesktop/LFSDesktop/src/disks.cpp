@@ -27,54 +27,84 @@ char		diskUUID[256]={0,};
 char		diskLabel[256]={0,};
 struct udev	*udev;
 
+int diskTypeData(const char *devname)
+{
+	udev_device *device;
+	const char	*tprop=NULL;
+	const char	*ptr;
+
+	ptr=strrchr(devname,'/');
+	ptr++;
+	device=udev_device_new_from_subsystem_sysname(udev,"block",ptr);
+
+	tprop=udev_device_get_property_value(device,"ID_MODEL");
+	if(tprop!=NULL)
+		{
+			if(strcasestr(tprop,"ipod")!=NULL)
+				{
+					udev_device_unref(device);
+					return(ISIPOD);
+				}
+			if(strcasestr(tprop,"SD_MMC")!=NULL)
+				{
+					udev_device_unref(device);
+					return(ISSSD);
+				}			
+		}
+
+	if(udev_device_get_property_value(device,"ID_CDROM_MEDIA_DVD")!=NULL)
+		{
+			udev_device_unref(device);
+			return(ISDVDROM);
+		}
+
+	if(udev_device_get_property_value(device,"ID_CDROM")!=NULL)
+		{
+			udev_device_unref(device);
+			return(ISCDROM);
+		}
+
+	if(udev_device_get_property_value(device,"ID_DRIVE_THUMB")!=NULL)
+		{
+			udev_device_unref(device);
+			return(ISTHUMBDISK);
+		}
+
+	tprop=udev_device_get_property_value(device,"DEVPATH");
+	if(tprop!=NULL)
+		{
+			if(strstr(tprop,"usb")!=NULL)
+				{
+					udev_device_unref(device);
+					return(ISUSBHDD);
+				}
+		}
+
+
+	udev_device_unref(device);
+	return(ISHDDDISK);
+}
+
 int setDiskType(const char *devname)
 {
-	char	*out=NULL;
-	int		disktype=ISHDDDISK;
-
-//cdrom
-	out=apc->globalLib->LFSTK_oneLiner("/sbin/udevadm info --query=property --name=%s|grep 'ID_CDROM=1'",devname);
-	if(strlen(out)>0)
-		{
-			disktype=ISCDROM;
-			free(out);
-			return(disktype);
-		}
-//usb
-	free(out);
-	out=apc->globalLib->LFSTK_oneLiner("/sbin/udevadm info --query=property --name=%s|grep 'usb'",devname);
-	if(strlen(out)>0)
-		{
-			free(out);
-			out=apc->globalLib->LFSTK_oneLiner("/sbin/udevadm info --query=property --name=%s|grep 'ID_DRIVE_THUMB'",devname);
-			if(strlen(out)>0)
-				{
-					disktype=ISTHUMBDISK;
-				}
-			else
-				{
-					disktype=ISUSBHDD;
-				}
-		}
-	free(out);
-//disk type
-	return(disktype);
+	return(diskTypeData(devname));
 }
 
 void updateMounted(void)
 {
-//TODO//
 	char	*command;
 	int		retval=-1;
 	bool	mounted=false;
+	bool	dosync=false;
 
 	for(unsigned j=0;j<desktopItems.size();j++)
 		{
 			if(desktopItems.at(j).type<ISDESKTOPFILE)
 				{
-					asprintf(&command,"findmnt --source UUID=%s &>/dev/null",desktopItems.at(j).uuid);
+					asprintf(&command,"grep -i \"%s\" /proc/mounts &>/dev/null",desktopItems.at(j).itemPath);
 					retval=system(command);
 					free(command);
+
 					mounted=(bool)!retval;
 					if(desktopItems.at(j).mounted!=mounted)
 						{
@@ -84,6 +114,7 @@ void updateMounted(void)
 
 					if(desktopItems.at(j).dirty==true)
 						{
+							dosync=true;
 							desktopItems.at(j).dirty=false;
 							if(desktopItems.at(j).mounted==true)
 								desktopItems.at(j).item->LFSTK_setAlpha(1.0);
@@ -93,6 +124,10 @@ void updateMounted(void)
 						}
 					getLabel(j);
 				}
+		}
+	if(dosync==true)
+		{
+			XSync(apc->display,false);
 		}
 }
 
@@ -109,6 +144,8 @@ void getLabel(int item)
 	ptr=strrchr(disk,'/');
 	ptr++;
 	device=udev_device_new_from_subsystem_sysname(udev,"block",ptr);
+	if(device!=NULL)
+	{
 	tuuid=udev_device_get_property_value(device,"ID_FS_UUID");
 	if(tuuid!=NULL)
 		{
@@ -125,6 +162,7 @@ void getLabel(int item)
 				}
 		}
 	udev_device_unref(device);
+	}
 }
 
 bool getUUID(const char *dev)
@@ -213,7 +251,7 @@ continueWithLoop:
 
 							asprintf(&cachefilepath,"%s/%s",cachePath,diskUUID);
 							if(access(cachefilepath,F_OK)==0)
-								loadVarsFromFile(cachefilepath,cacheFileDataPrefs);
+								loadCacheFile(cachefilepath,&cacheFileData);
 							else
 								{
 									cacheFileData.uuid=strdup(diskUUID);
@@ -221,7 +259,7 @@ continueWithLoop:
 									cacheFileData.posy=100;
 									cacheFileData.hasCustomIcon=false;
 									cacheFileData.pathToCustomIcon=NULL;
-									saveVarsToFile(cachefilepath,cacheFileDataPrefs);
+									saveCacheFile(cachefilepath,&cacheFileData);
 								}
 
 							cacheFileData.label=strdup(diskLabel);													

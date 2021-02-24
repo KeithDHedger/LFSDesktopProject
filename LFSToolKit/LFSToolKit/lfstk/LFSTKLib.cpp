@@ -16,6 +16,10 @@
 
  * You should have received a copy of the GNU General Public License
  * along with LFSToolKit.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Portions of this file is from here:
+ * https://github.com/rahra/cairo_jpg
+ * Many thanks!
  */
 
 #include <unistd.h>
@@ -36,7 +40,7 @@ const char	*defaultFontColourStrings[]={"white","black","white","grey80"};
 const char	*defaultFontString="sans-serif:size=10";
 const char	*defaultMonoFontString="mono:size=12";
 const char	*defaultCursorColour="black";
-const char	*defaultThemePath="/usr/share/themes/Crux/xfwm4";
+const char	*defaultThemePath="/usr/share/themes/Steel.lfstk";//TODO//
 const char	*defaultFrameStrings[]={"black","#00ffff","black","white","white"};
 const char	*defaultWindowTile="";
 const char	*defaultButtonTile="";
@@ -47,54 +51,6 @@ char		retBuffer[512];
 
 LFSTK_lib::~LFSTK_lib()
 {
-	free(lfsToolKitGlobals);
-	for(int j=0; j<MAXCOLOURS; j++)
-		{
-			if(this->globalWindowColours[j]!=NULL)
-				free(this->globalWindowColours[j]);
-
-			if(this->globalButtonColours[j]!=NULL)
-				free(this->globalButtonColours[j]);
-
-			if(this->globalMenuItemColours[j]!=NULL)
-				free(this->globalMenuItemColours[j]);
-
-			if(this->globalMenuItemFontColourNames[j]!=NULL)
-				free(this->globalMenuItemFontColourNames[j]);
-
-			if(this->globalFontColourNames[j]!=NULL)
-				free(this->globalFontColourNames[j]);
-		}
-
-	if(this->globalWindowTile!=NULL)
-		free(this->globalWindowTile);
-
-	if(this->globalButtonTile!=NULL)
-		free(this->globalButtonTile);
-
-	if(this->globalMenuItemTile!=NULL)
-		free(this->globalMenuItemTile);
-
-	if(this->globalMenuItemFontString!=NULL)
-		free(this->globalMenuItemFontString);
-
-	if(this->globalFontString!=NULL)
-		free(this->globalFontString);
-
-	if(this->globalMonoFontString!=NULL)
-		free(this->globalMonoFontString);
-
-	if(this->globalCursorColour!=NULL)
-		free(this->globalCursorColour);
-
-	if(this->globalSBTroughColour!=NULL)
-		free(this->globalSBTroughColour);
-
-	if(this->globalListTroughColour!=NULL)
-		free(this->globalListTroughColour);
-
-	if(this->themePath!=NULL)
-		free(this->themePath);
 }
 
 /**
@@ -104,95 +60,60 @@ LFSTK_lib::~LFSTK_lib()
 * \param type Type of string to set.
 * \param str New string.
 */
-void LFSTK_lib::LFSTK_setGlobalString(int state,int type,const char *str)
+void LFSTK_lib::LFSTK_setGlobalString(int state,int type,const char *str)//TODO//set prrefs?
 {
-	char	*ptr=NULL;
-	
+	char		*ptr=NULL;
+	const char	*strstate[]={"normal","prelight","active","inactive"};
+	char		prefsname[256];
+
 	switch(type)
 		{
 			case TYPEWINDOW:
-				ptr=this->globalWindowColours[state];
-				if(ptr!=NULL)
-					free(ptr);
-				this->globalWindowColours[state]=strdup(str);
+				snprintf(prefsname,255,"window_%s",strstate[state]);
+				this->prefs.LFSTK_setString(prefsname,str);
 				break;
 			case TYPEWINDOWTILE:
-				ptr=this->globalWindowTile;
-				if(ptr!=NULL)
-					free(ptr);
-				this->globalWindowTile=strdup(str);
+				this->prefs.LFSTK_setString("windowtile",str);
 				break;
 			case TYPEBUTTON:
-				ptr=this->globalButtonColours[state];
-				if(ptr!=NULL)
-					free(ptr);
-				this->globalButtonColours[state]=strdup(str);
+				snprintf(prefsname,255,"button_%s",strstate[state]);
+				this->prefs.LFSTK_setString(prefsname,str);
 				break;
 			case TYPEBUTTONTILE:
-				ptr=this->globalButtonTile;
-				if(ptr!=NULL)
-					free(ptr);
-				this->globalButtonTile=strdup(str);
+				this->prefs.LFSTK_setString("buttontile",str);
 				break;
 			case TYPEMENUITEM:
-				ptr=this->globalMenuItemColours[state];
-				if(ptr!=NULL)
-					free(ptr);
-				this->globalMenuItemColours[state]=strdup(str);
+				snprintf(prefsname,255,"menuitem_%s",strstate[state]);
+				this->prefs.LFSTK_setString(prefsname,str);
 				break;
 			case TYPEMENUITEMTILE:
-				ptr=this->globalMenuItemTile;
-				if(ptr!=NULL)
-					free(ptr);
-				this->globalMenuItemTile=strdup(str);
+				this->prefs.LFSTK_setString("menuitemtile",str);
 				break;
 			case TYPEFONTCOLOUR:
-				ptr=this->globalFontColourNames[state];
-				if(ptr!=NULL)
-					free(ptr);
-				this->globalFontColourNames[state]=strdup(str);
+				snprintf(prefsname,255,"font_%s",strstate[state]);
+				this->prefs.LFSTK_setString(prefsname,str);
 				break;
 			case TYPEMENUITEMFONTCOLOUR:
-				ptr=this->globalMenuItemFontColourNames[state];
-				if(ptr!=NULL)
-					free(ptr);
-				this->globalMenuItemFontColourNames[state]=strdup(str);
+				snprintf(prefsname,255,"menuitem_font_%s",strstate[state]);
+				this->prefs.LFSTK_setString(prefsname,str);
 				break;
 			case TYPEMENUITEMFONT:
-				ptr=this->globalMenuItemFontString;
-				if(ptr!=NULL)
-					free(ptr);
-				this->globalMenuItemFontString=strdup(str);
+				this->prefs.LFSTK_setString("menuitem_font",str);
 				break;
 			case TYPEFONT:
-				ptr=this->globalFontString;
-				if(ptr!=NULL)
-					free(ptr);
-				this->globalFontString=strdup(str);
+				this->prefs.LFSTK_setString("font",str);
 				break;
 			case TYPEMONOFONT:
-				ptr=this->globalMonoFontString;
-				if(ptr!=NULL)
-					free(ptr);
-				this->globalMonoFontString=strdup(str);
+				this->prefs.LFSTK_setString("monofont",str);
 				break;
 			case TYPECURSORCOLOUR:
-				ptr=this->globalCursorColour;
-				if(ptr!=NULL)
-					free(ptr);
-				this->globalCursorColour=strdup(str);
+				this->prefs.LFSTK_setString("cursorcolour",str);
 				break;
 			case TYPESBTROUGHCOLOUR:
-				ptr=this->globalSBTroughColour;
-				if(ptr!=NULL)
-					free(ptr);
-				this->globalSBTroughColour=strdup(str);
+				this->prefs.LFSTK_setString("sbtroughcolour",str);
 				break;
 			case TYPELISTTROUGHCOLOUR:
-				ptr=this->globalListTroughColour;
-				if(ptr!=NULL)
-					free(ptr);
-				this->globalListTroughColour=strdup(str);
+				this->prefs.LFSTK_setString("listtroughcolour",str);
 				break;
 		}
 }
@@ -211,80 +132,84 @@ const char *LFSTK_lib::LFSTK_getGlobalString(int state,int type)
 {
 	const char	*ptr=NULL;
 	bool		isfontcolour=false;
+	const char	*strstate[]={"normal","prelight","active","inactive"};
+	char		prefsname[256];
 
 	switch(type)
 		{
 			case TYPEWINDOW:
-				ptr=this->globalWindowColours[state];
+				snprintf(prefsname,255,"window_%s",strstate[state]);
+				ptr=this->prefs.LFSTK_getCString(prefsname);
 				if(ptr==NULL)
 					ptr=defaultColourStrings[state];
 				break;
 			case TYPEWINDOWTILE:
-				ptr=this->globalWindowTile;
-				if(ptr==NULL)
-					ptr=defaultWindowTile;
+				ptr=this->prefs.LFSTK_getCString("windowtile");
 				break;
 			case TYPEBUTTON:
-				ptr=this->globalButtonColours[state];
+				snprintf(prefsname,255,"button_%s",strstate[state]);
+				ptr=this->prefs.LFSTK_getCString(prefsname);
 				if(ptr==NULL)
 					ptr=defaultColourStrings[state];
 				break;
 			case TYPEBUTTONTILE:
-				ptr=this->globalButtonTile;
+				ptr=this->prefs.LFSTK_getCString("buttontile");
 				if(ptr==NULL)
 					ptr=defaultButtonTile;
 				break;
 			case TYPEMENUITEM:
-				ptr=this->globalMenuItemColours[state];
+				snprintf(prefsname,255,"menuitem_%s",strstate[state]);
+				ptr=this->prefs.LFSTK_getCString(prefsname);
 				if(ptr==NULL)
 					ptr=defaultColourStrings[state];
 				break;
 			case TYPEMENUITEMTILE:
-				ptr=this->globalMenuItemTile;
+				ptr=this->prefs.LFSTK_getCString("menuitemtile");
 				if(ptr==NULL)
 					ptr=defaultMenuItemTile;
 				break;
 			case TYPEFONTCOLOUR:
 				isfontcolour=true;
-				ptr=this->globalFontColourNames[state];
+				snprintf(prefsname,255,"font_%s",strstate[state]);
 				if(ptr==NULL)
 					ptr=defaultFontColourStrings[state];
 				break;
 			case TYPEMENUITEMFONTCOLOUR:
 				isfontcolour=true;
-				ptr=this->globalMenuItemFontColourNames[state];
+				snprintf(prefsname,255,"menuitem_font_%s",strstate[state]);
+				ptr=this->prefs.LFSTK_getCString(prefsname);
 				if(ptr==NULL)
 					ptr=defaultFontColourStrings[state];
 				break;
 			case TYPEMENUITEMFONT:
-				ptr=this->globalMenuItemFontString;
+				ptr=this->prefs.LFSTK_getCString("menuitem_font");
 				if(ptr==NULL)
 					ptr=defaultFontString;			
 				break;
 			case TYPEFONT:
-				ptr=this->globalFontString;
+				ptr=this->prefs.LFSTK_getCString("font");
 				if(ptr==NULL)
 					ptr=defaultFontString;
 				break;
 			case TYPEMONOFONT:
-				ptr=this->globalMonoFontString;
+				ptr=this->prefs.LFSTK_getCString("monofont");
 				if(ptr==NULL)
 					ptr=defaultMonoFontString;
 				break;
 			case TYPECURSORCOLOUR:
-				ptr=this->globalCursorColour;
+				ptr=this->prefs.LFSTK_getCString("cursorcolour");
 				if(ptr==NULL)
 					ptr=defaultCursorColour;
 				break;
 			case TYPESBTROUGHCOLOUR:
-				ptr=this->globalSBTroughColour;
+				ptr=this->prefs.LFSTK_getCString("sbtroughcolour");
 				if(ptr==NULL)
-					ptr=globalButtonColours[state];
+					ptr=defaultColourStrings[state];
 				break;
 			case TYPELISTTROUGHCOLOUR:
-				ptr=this->globalListTroughColour;
+				ptr=this->prefs.LFSTK_getCString("listtroughcolour");
 				if(ptr==NULL)
-					ptr=globalButtonColours[state];
+					ptr=defaultColourStrings[state];
 				break;
 		}
 
@@ -307,208 +232,51 @@ LFSTK_lib::LFSTK_lib(bool loadvars)
 void LFSTK_lib::LFSTK_reloadPrefs(void)
 {
 	char *env=NULL;
-	args myargs[]=
-	{
-//window
-		{"window_normal",TYPESTRING,&(this->globalWindowColours[NORMALCOLOUR])},
-		{"window_prelight",TYPESTRING,&(this->globalWindowColours[PRELIGHTCOLOUR])},
-		{"window_active",TYPESTRING,&(this->globalWindowColours[ACTIVECOLOUR])},
-		{"window_inactive",TYPESTRING,&(this->globalWindowColours[INACTIVECOLOUR])},
-		{"windowtile",TYPESTRING,&(this->globalWindowTile)},
-//button
-		{"button_normal",TYPESTRING,&(this->globalButtonColours[NORMALCOLOUR])},
-		{"button_prelight",TYPESTRING,&(this->globalButtonColours[PRELIGHTCOLOUR])},
-		{"button_active",TYPESTRING,&(this->globalButtonColours[ACTIVECOLOUR])},
-		{"button_inactive",TYPESTRING,&(this->globalButtonColours[INACTIVECOLOUR])},
-		{"buttontile",TYPESTRING,&(this->globalButtonTile)},
-//menu button
-		{"menuitem_normal",TYPESTRING,&(this->globalMenuItemColours[NORMALCOLOUR])},
-		{"menuitem_prelight",TYPESTRING,&(this->globalMenuItemColours[PRELIGHTCOLOUR])},
-		{"menuitem_active",TYPESTRING,&(this->globalMenuItemColours[ACTIVECOLOUR])},
-		{"menuitem_inactive",TYPESTRING,&(this->globalMenuItemColours[INACTIVECOLOUR])},
 
-		{"menuitem_font",TYPESTRING,&(this->globalMenuItemFontString)},
-		{"menuitem_font_normal",TYPESTRING,&(this->globalMenuItemFontColourNames[NORMALCOLOUR])},
-		{"menuitem_font_prelight",TYPESTRING,&(this->globalMenuItemFontColourNames[PRELIGHTCOLOUR])},
-		{"menuitem_font_active",TYPESTRING,&(this->globalMenuItemFontColourNames[ACTIVECOLOUR])},
-		{"menuitem_font_inactive",TYPESTRING,&(this->globalMenuItemFontColourNames[INACTIVECOLOUR])},
-		{"menuitemtile",TYPESTRING,&(this->globalMenuItemTile)},
-
-//font
-		{"font",TYPESTRING,&(this->globalFontString)},
-		{"font_normal",TYPESTRING,&(this->globalFontColourNames[NORMALCOLOUR])},
-		{"font_prelight",TYPESTRING,&(this->globalFontColourNames[PRELIGHTCOLOUR])},
-		{"font_active",TYPESTRING,&(this->globalFontColourNames[ACTIVECOLOUR])},
-		{"font_inactive",TYPESTRING,&(this->globalFontColourNames[INACTIVECOLOUR])},
-//other
-		{"autotextcolour",TYPEBOOL,&(this->autoLabelColour)},
-		{"usetheme",TYPEBOOL,&(this->useTheme)},
-		{"themepath",TYPESTRING,&(this->themePath)},
-//monofont
-		{"monofont",TYPESTRING,&(this->globalMonoFontString)},
-//cursor colour
-		{"cursorcolour",TYPESTRING,&(this->globalCursorColour)},
-//individual gadget colours
-		{"sbtroughcolour",TYPESTRING,&(this->globalSBTroughColour)},
-		{"listtroughcolour",TYPESTRING,&(this->globalListTroughColour)},
-		{NULL,0,NULL}
-	};
-
-	if(this->lfsToolKitGlobals!=NULL)
-		free(this->lfsToolKitGlobals);
-
-	for(int j=0;j<MAXCOLOURS;j++)
+	this->prefs.prefsMap=
 		{
-			freeAndNull(&this->globalWindowColours[j]);
-			freeAndNull(&this->globalButtonColours[j]);
-			freeAndNull(&this->globalMenuItemColours[j]);
-			freeAndNull(&this->globalMenuItemFontColourNames[j]);
-			freeAndNull(&this->globalFontColourNames[j]);
-		}
+			{this->prefs.LFSTK_hashFromKey("window_normal"),{TYPESTRING,"window_prelight","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("window_prelight"),{TYPESTRING,"window_prelight","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("window_active"),{TYPESTRING,"window_active","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("window_inactive"),{TYPESTRING,"window_inactive","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("windowtile"),{TYPESTRING,"windowtile","",false,0}},
 
-	freeAndNull(&this->globalWindowTile);
-	freeAndNull(&this->globalButtonTile);
-	freeAndNull(&this->globalMenuItemTile);
-	freeAndNull(&this->globalMenuItemFontString);
-	freeAndNull(&this->globalFontString);
-	freeAndNull(&this->globalMonoFontString);
-	freeAndNull(&this->globalCursorColour);
-	freeAndNull(&this->globalSBTroughColour);
-	freeAndNull(&this->globalListTroughColour);
-	freeAndNull(&this->themePath);
+			{this->prefs.LFSTK_hashFromKey("button_normal"),{TYPESTRING,"button_normal","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("button_prelight"),{TYPESTRING,"button_prelight","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("button_active"),{TYPESTRING,"button_active","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("button_inactive"),{TYPESTRING,"button_inactive","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("buttontile"),{TYPESTRING,"buttontile","",false,0}},
 
-	this->lfsToolKitGlobals=(args*)calloc(1,sizeof(myargs));
-	memcpy(this->lfsToolKitGlobals,myargs,sizeof(myargs));
+			{this->prefs.LFSTK_hashFromKey("menuitem_normal"),{TYPESTRING,"menuitem_normal","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("menuitem_prelight"),{TYPESTRING,"menuitem_prelight","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("menuitem_active"),{TYPESTRING,"menuitem_active","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("menuitem_inactive"),{TYPESTRING,"menuitem_inactive","",false,0}},
 
-	this->autoLabelColour=false;
-	this->useTheme=false;
+			{this->prefs.LFSTK_hashFromKey("menuitem_font"),{TYPESTRING,"menuitem_font","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("menuitem_font_normal"),{TYPESTRING,"menuitem_font_normal","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("menuitem_font_prelight"),{TYPESTRING,"menuitem_font_prelight","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("menuitem_font_active"),{TYPESTRING,"menuitem_font_active","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("menuitem_font_inactive"),{TYPESTRING,"menuitem_font_inactive","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("menuitemtile"),{TYPESTRING,"menuitemtile","",false,0}},
+
+			{this->prefs.LFSTK_hashFromKey("font"),{TYPESTRING,"font","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("font_normal"),{TYPESTRING,"font_normal","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("font_prelight"),{TYPESTRING,"font_prelight","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("font_active"),{TYPESTRING,"font_active","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("font_inactive"),{TYPESTRING,"font_inactive","",false,0}},
+
+			{this->prefs.LFSTK_hashFromKey("autotextcolour"),{TYPEBOOL,"autotextcolour","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("themepath"),{TYPESTRING,"themepath","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("monofont"),{TYPESTRING,"monofont","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("cursorcolour"),{TYPESTRING,"cursorcolour","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("sbtroughcolour"),{TYPESTRING,"sbtroughcolour","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("listtroughcolour"),{TYPESTRING,"listtroughcolour","",false,0}}
+		};
 
 	asprintf(&env,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
-	this->LFSTK_loadVarsFromFile(env,this->lfsToolKitGlobals);
+	this->prefs.LFSTK_loadVarsFromFile(env);
 	free(env);
-}
-
-/**
-* Load variables from prefs file.
-*
-* \param filepath Path to prefs file.
-* \param args Argument list..
-* \return bool Success.
-* \note args is an array of the form:
-* \note PREFNAME,PREFTYPE,VARIABLEADDRESS.
-* \note PREFTYPE=TYPEINT|TYPESTRING|TYPEBOOL.
-* \note eg:
-* \note {...,"font_inactive",TYPESTRING,&(this->globalFontColourNames[INACTIVECOLOUR],...,NULL,0,NULL};
-*/
-bool LFSTK_lib::LFSTK_loadVarsFromFile(const char* filepath,const args* dataptr)
-{
-	FILE*	fd=NULL;
-	char	buffer[2048];
-	int		cnt;
-	char*	argname=NULL;
-	char*	strarg=NULL;
-
-	fd=fopen(filepath,"r");
-	if(fd!=NULL)
-		{
-			while(feof(fd)==0)
-				{
-					buffer[0]=0;
-					fgets(buffer,2048,fd);
-					argname=NULL;
-					strarg=NULL;
-					sscanf(buffer,"%ms %ms",&argname,&strarg);
-					cnt=0;
-					while(dataptr[cnt].name!=NULL)
-						{
-							if((strarg!=NULL) && (argname!=NULL) && (strcmp(argname,dataptr[cnt].name)==0))
-								{
-									switch(dataptr[cnt].type)
-										{
-										case TYPEINT:
-											*(int*)dataptr[cnt].data=atoi(strarg);
-											break;
-										case TYPESTRING:
-											if(*(char**)(dataptr[cnt].data)!=NULL)
-												free(*(char**)(dataptr[cnt].data));
-											sscanf(buffer,"%*s %m[^\n]s",(char**)dataptr[cnt].data);
-											break;
-										case TYPEBOOL:
-											*(bool*)dataptr[cnt].data=(bool)atoi(strarg);
-											break;
-										}
-								}
-							cnt++;
-						}
-					if(argname!=NULL)
-						free(argname);
-					if(strarg!=NULL)
-						free(strarg);					
-				}
-			fclose(fd);
-			return(true);
-		}
-	return(false);
-}
-
-/**
-* Save variables to prefs file.
-*
-* \param filepath Path to prefs file.
-* \param args Argument list..
-* \note args is an array of the form:
-* \note PREFNAME,PREFTYPE,VARIABLEADDRESS.
-* \note PREFTYPE=TYPEINT|TYPESTRING|TYPEBOOL.
-* \note eg:
-* \note {...,"font_inactive",TYPESTRING,&(this->globalFontColourNames[INACTIVECOLOUR],...,NULL,0,NULL};
-*/
-void LFSTK_lib::LFSTK_saveVarsToFile(const char* filepath,const args* dataptr)
-{
-	FILE*	fd=NULL;
-	int		cnt=0;
-
-	if(filepath[0]=='-')
-		fd=stdout;
-	else
-		fd=fopen(filepath,"w");
-
-	if(fd!=NULL)
-		{
-			while(dataptr[cnt].name!=NULL)
-				{
-					switch(dataptr[cnt].type)
-						{
-						case TYPEINT:
-							fprintf(fd,"%s %i\n",dataptr[cnt].name,*(int*)dataptr[cnt].data);
-							break;
-						case TYPESTRING:
-							if(*(char**)(dataptr[cnt].data)!=NULL)
-								fprintf(fd,"%s %s\n",dataptr[cnt].name,*(char**)(dataptr[cnt].data));
-							break;
-						case TYPEBOOL:
-							fprintf(fd,"%s %i\n",dataptr[cnt].name,(int)*(bool*)dataptr[cnt].data);
-							break;
-						}
-					cnt++;
-				}
-			if(fd!=stdout)
-				fclose(fd);
-		}
-}
-
-/**
-* Get tool kit args array.
-* \return args.
-* \note args is an array of the form:
-* \note PREFNAME,PREFTYPE,VARIABLEADDRESS.
-* \note PREFTYPE=TYPEINT|TYPESTRING|TYPEBOOL.
-* \note eg:
-* \note {...,"font_inactive",TYPESTRING,&(this->globalFontColourNames[INACTIVECOLOUR],...,NULL,0,NULL};
-* \note Don't free returned array.
-*/
-const args *LFSTK_lib::LFSTK_getTKArgs(void)
-{
-	return(this->lfsToolKitGlobals);
 }
 
 /**
@@ -588,10 +356,22 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				if((gadget->LFSTK_getContextWindow()!=NULL) && (gadget->currentButton==Button3))
 					{
 						LFSTK_windowClass	*lwc=gadget->LFSTK_getContextWindow();
+						const geometryStruct *wingeom=lwc->LFSTK_getWindowGeom();
 
 						lwc->popupFromGadget=gadget;
 						gadget->LFSTK_getGeomWindowRelative(&geom,gadget->wc->app->rootWindow);
-						lwc->LFSTK_moveWindow(geom.x+(geom.w/2),geom.y+(geom.h/4),true);
+						switch(gadget->contextWindowPos)
+							{
+								case CONTEXTLEFT:
+									lwc->LFSTK_moveWindow(geom.x,geom.y+(geom.h/4),true);
+									break;
+								case CONTEXTRIGHT:
+									lwc->LFSTK_moveWindow(geom.x+geom.w-wingeom->w,geom.y+(geom.h),true);
+									break;
+								case CONTEXTATMOUSE:
+									break;
+							}
+						
 						gadget->wc->app->LFSTK_runWindowLoop(lwc);
 						lwc->popupFromGadget=NULL;
 						retval=true;
@@ -641,11 +421,10 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 				//printf("resize\n");
 				break;
 			case ClientMessage:
-				printf("ClientMessage from lib\n");
-				//return(true);
+				//printf("ClientMessage from lib\n");
 				break;
 			case SelectionRequest:
-				fprintf(stderr,"from SelectionRequest lib\n");
+				//fprintf(stderr,"from SelectionRequest lib\n");
 				break;
 		}
 
@@ -682,7 +461,7 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 */
 bool LFSTK_lib::LFSTK_getAutoLabelColour(void)
 {
-	return(this->autoLabelColour);
+	return(this->prefs.LFSTK_getBool("autotextcolour"));
 }
 
 /**
@@ -691,7 +470,7 @@ bool LFSTK_lib::LFSTK_getAutoLabelColour(void)
 */
 void LFSTK_lib::LFSTK_setAutoLabelColour(bool toset)
 {
-	this->autoLabelColour=toset;
+	this->prefs.LFSTK_setBool("autotextcolour",toset);
 }
 
 /**
@@ -700,7 +479,7 @@ void LFSTK_lib::LFSTK_setAutoLabelColour(bool toset)
 */
 bool LFSTK_lib::LFSTK_getUseTheme(void)
 {
-	return(this->useTheme);
+	return(this->prefs.LFSTK_getBool("usetheme"));
 }
 
 /**
@@ -708,7 +487,7 @@ bool LFSTK_lib::LFSTK_getUseTheme(void)
 */
 void LFSTK_lib::LFSTK_setUseTheme(bool use)
 {
-	this->useTheme=use;
+	this->prefs.LFSTK_setBool("usetheme",use);
 }
 
 /**
@@ -787,10 +566,71 @@ breakReturn:
 	return(iconpath);
 }
 
-//synchronous only
+/**
+* Execute and return stdout.
+* \param const std::string fmt,... standard printf fmt but only recognises "%s","%%" and "%i".
+* \return std::string.
+* \note Synchronous ONLY.
+*/
+std::string LFSTK_lib::LFSTK_oneLiner(const std::string fmt,...)
+{
+	FILE		*fp;
+	va_list		ap;
+	char		*buffer=(char*)alloca(MAXBUFFER);
+	std::string	str="";
+
+	va_start(ap, fmt);
+	int cnt=0;
+	while(cnt<fmt.length())
+		{
+			if(fmt.at(cnt)=='%')
+				{
+					cnt++;
+					switch(fmt.at(cnt))
+						{
+							case 's':
+								str+=va_arg(ap,char*);
+								break;
+							case 'i':
+								str+=std::to_string(va_arg(ap,int));
+								break;
+							case '%':
+								str+="%";
+								break;
+							default:
+								str+=fmt.at(cnt);
+								break;
+						}
+				}
+			else
+				{
+					str+=fmt.at(cnt);
+				}
+			cnt++;
+		}
+	va_end(ap);
+
+	fp=popen(str.c_str(),"r");
+	if(fp!=NULL)
+		{
+			buffer[0]=0;
+			fgets(buffer,MAXBUFFER-1,fp);
+			if(strlen(buffer)>0)
+				{
+					if(buffer[strlen(buffer)-1] =='\n')
+						buffer[strlen(buffer)-1]=0;
+				}
+			pclose(fp);
+			str=buffer;
+		}
+	return(str);
+}
+
 /**
 * Execute and return stout from string.
 * \return char* Allocated string caller should free.
+* \note Synchronous ONLY.
+* \note To be removed.
 */
 char* LFSTK_lib::LFSTK_oneLiner(const char* fmt,...)
 {
@@ -1124,7 +964,7 @@ cairo_surface_t	*LFSTK_lib::LFSTK_createSurfaceFromPath(const char *path)
 */
 const char* LFSTK_lib::LFSTK_getThemePath(void)
 {
-	return(this->themePath);
+	return(this->prefs.LFSTK_getCString("themepath"));
 }
 
 /**
@@ -1133,8 +973,7 @@ const char* LFSTK_lib::LFSTK_getThemePath(void)
 */
 void LFSTK_lib::LFSTK_setThemePath(char *path)
 {
-	freeAndNull(&this->themePath);
-	this->themePath=strdup(path);
+	this->prefs.LFSTK_setString("themepath",path);
 }
 
 /**
@@ -1161,5 +1000,51 @@ char* LFSTK_lib::LFSTK_cleanString(const char *str)
 		}
 	free(localstr);
 	return(cleanstr);
+}
+
+/**
+* Find line in a text file.
+* \param const std::string filepath.
+* \paramconst std::string needle
+* \return std::string returns line containg 'needle' or "".
+*/
+std::string	LFSTK_lib::LFSTK_grepInFile(const std::string filepath,const std::string needle)
+{
+    std::string		line;
+	std::ifstream	fin(filepath);
+    
+	while(getline(fin,line))
+		{
+			if(line.find(needle) != std::string::npos)
+				return(line);
+		}
+	return("");
+}
+
+/**
+* Find Nth token in a string.
+* \param const std::string haystack.
+* \param int needlecnt token number to get base 1.
+* \param const std::string delimiter default is " ".
+* \return std::string returns Nth token ( from left ).
+* \note returns "" if not found.
+*/
+std::string	LFSTK_lib::LFSTK_getNthNeedle(const std::string haystack,int needlecnt,const std::string delimiter)
+{
+	size_t		pos=0;
+	std::string	token;
+	std::string	tstr=haystack;
+	int			itemnum=1;
+
+	while((pos=tstr.find(delimiter)) != std::string::npos)
+		{
+			token=tstr.substr(0,pos);
+			if(itemnum==needlecnt)
+   				return(token);
+			else
+				itemnum++;
+			tstr.erase(0,pos+delimiter.length());
+		}
+	return("");
 }
 

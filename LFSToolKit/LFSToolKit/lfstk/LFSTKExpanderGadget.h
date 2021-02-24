@@ -59,7 +59,6 @@ class LFSTK_ExpanderGadgetClass : public LFSTK_gadgetClass
 		bool					mouseExit(XButtonEvent *e) {this->inWindow=false;return(false);};
 		bool					mouseEnter(XButtonEvent *e) {this->inWindow=true;return(false);};
 		bool					mouseDown(XButtonEvent *e) {this->inWindow=true;return(false);};
-		//void					LFSTK_clearWindow(void) {return;};
 
 		bool					stretchX=false;
 		bool					stretchY=false;

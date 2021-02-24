@@ -69,7 +69,7 @@ void makeFileButtons(bool skipvirtuals)
 				{
 					asprintf(&cachefilepath,"%s/%s",cachePath,constants[constcnt]);
 					if(access(cachefilepath,F_OK)==0)
-						loadVarsFromFile(cachefilepath,cacheFileDataPrefs);
+						loadCacheFile(cachefilepath,&cacheFileData);
 					else
 						{
 							cacheFileData.uuid=strdup(constants[constcnt]);
@@ -77,7 +77,7 @@ void makeFileButtons(bool skipvirtuals)
 							cacheFileData.posy=100;
 							cacheFileData.hasCustomIcon=false;
 							cacheFileData.pathToCustomIcon=NULL;
-							saveVarsToFile(cachefilepath,cacheFileDataPrefs);
+							saveCacheFile(cachefilepath,&cacheFileData);
 						}
 					switch(constcnt)
 						{
@@ -135,7 +135,7 @@ continueWithLoop:
 
 							asprintf(&cachefilepath,"%s/%s",cachePath,base);
 							if(access(cachefilepath,F_OK)==0)
-								loadVarsFromFile(cachefilepath,cacheFileDataPrefs);
+								loadCacheFile(cachefilepath,&cacheFileData);
 							else
 								{
 									cacheFileData.uuid=strdup(base);
@@ -143,7 +143,7 @@ continueWithLoop:
 									cacheFileData.posy=100;
 									cacheFileData.hasCustomIcon=false;
 									cacheFileData.pathToCustomIcon=NULL;
-									saveVarsToFile(cachefilepath,cacheFileDataPrefs);
+									saveCacheFile(cachefilepath,&cacheFileData);
 								}
 
 							cacheFileData.itemPath=strdup(buffer);

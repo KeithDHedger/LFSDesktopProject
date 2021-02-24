@@ -41,5 +41,6 @@ TEMPHOLD
 LFSToolKit/examples/RunExamples
 *.pc
 */confline
+lfstoolkit.rc
 
 TODO

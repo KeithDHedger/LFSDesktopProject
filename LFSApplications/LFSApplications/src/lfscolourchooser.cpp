@@ -38,8 +38,6 @@ LFSTK_scrollBarClass		*green=NULL;
 LFSTK_lineEditClass			*box=NULL;
 LFSTK_lineEditClass			*colour=NULL;
 LFSTK_toggleButtonClass		*check=NULL;
-//bool						mainLoop=true;
-//Display						*display;
 char						*colourname=NULL;
 bool						lockStep=false;
 int							lastred=255;
@@ -148,8 +146,6 @@ int main(int argc, char **argv)
 	apc=new LFSTK_applicationClass();
 	apc->LFSTK_addWindow(NULL,BOXLABEL);
 	wc=apc->mainWindow;
-//	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Gadgets",false);
-//	display=apc->display;
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	label->LFSTK_setCairoFontDataParts("sB",20);

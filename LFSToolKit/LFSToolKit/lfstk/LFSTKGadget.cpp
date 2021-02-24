@@ -163,6 +163,23 @@ void LFSTK_gadgetClass::LFSTK_setFontString(const char *s,bool setfontdata)
 }
 
 /**
+* Set the label BGcolour+alpha name .
+* \param colour Colour name.
+* \param double alpha.
+*/
+void LFSTK_gadgetClass::LFSTK_setLabelBGColour(const char* colour,double alpha)
+{
+	XColor tc,sc;
+	XAllocNamedColor(this->wc->app->display,this->wc->app->cm,colour,&sc,&tc);
+
+	this->labelBGColour.pixel=sc.pixel;
+	this->labelBGColour.RGBAColour.r=((sc.pixel>>16) & 0xff)/256.0;
+	this->labelBGColour.RGBAColour.g=((sc.pixel>>8) & 0xff)/256.0;
+	this->labelBGColour.RGBAColour.b=((sc.pixel>>0) & 0xff)/256.0;
+	this->labelBGColour.RGBAColour.a=alpha;
+}
+
+/**
 * Set the colour name for gadget.
 * \param p Gadget state.
 * \param colour Colour name.
@@ -1593,7 +1610,6 @@ void LFSTK_gadgetClass::LFSTK_setTile(const char *path,int size)
 
 	if(cs==CAIRO_STATUS_SUCCESS)
 		{
-			//cairo_translate(this->cr,-this->gadgetGeom.x,-this->gadgetGeom.y);
 			this->pattern=cairo_pattern_create_for_surface(tempimage);
 			cairo_surface_destroy(tempimage);
 			cairo_pattern_set_extend(pattern,CAIRO_EXTEND_REPEAT);
@@ -1678,50 +1694,6 @@ void LFSTK_gadgetClass::LFSTK_hideGadget(void)
 	this->isMapped=false;
 }
 
-#if 0
-/**
-* Run context window event loop.
-* \param int x.
-* \param int y.
-*/
-void LFSTK_gadgetClass::LFSTK_doPopUpx(int x,int y)
-{
-	XEvent	event;
-
-	this->wc->popupLoop=true;
-	this->contextWC->LFSTK_moveWindow(x,y,true);
-	this->contextWC->LFSTK_showWindow(true);
-	this->contextWC->LFSTK_clearWindow();
-
-	while(this->wc->popupLoop==true)
-		{
-			while (XPending(this->wc->app->display) && (this->wc->popupLoop==true))
-				{
-					XNextEvent(this->contextWC->app->display,&event);
-					mappedListener *ml=this->contextWC->LFSTK_getMappedListener(event.xany.window);
-					if(ml!=NULL)
-							ml->function(ml->gadget,&event,ml->type);
-
-					switch(event.type)
-						{
-							case LeaveNotify:
-								if(event.xany.window==this->contextWC->window)
-									this->wc->popupLoop=false;
-								break;
-							case Expose:
-								this->contextWC->LFSTK_clearWindow();
-								break;
-							case ConfigureNotify:
-								this->contextWC->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
-								this->contextWC->LFSTK_clearWindow();
-								break;
-						}
-					}
-		}
-	this->contextWC->LFSTK_hideWindow();
-}
-#endif
-
 /**
 * Set context window for gadget.
 * \param LFSTK_windowClass *wc.
@@ -1748,19 +1720,10 @@ LFSTK_windowClass* LFSTK_gadgetClass::LFSTK_getContextWindow(void)
 */
 void LFSTK_gadgetClass::LFSTK_moveGadget(int x,int y)
 {
-//	if(strcmp("Label Gadget",this->LFSTK_getLabel())==0)
-//	{
-//	geometryStruct geom;
-//	this->LFSTK_getGeomInMain(&geom);
-//		printf("---x=%i global=%i\n",x,geom.x);
-//}
 	this->gadgetGeom.x=x;
 	this->gadgetGeom.y=y;
 	XMoveWindow(this->wc->app->display,this->window,x,y);
-	//this->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
-	//this->wc->LFSTK_clearWindow(true);
 	this->LFSTK_clearWindow();//TESTING//
-	
 }
 
 /**
@@ -1839,9 +1802,6 @@ void LFSTK_gadgetClass::LFSTK_setIndicator(indicatorType indictype)
 			this->gadgetDetails.hasIndicator=false;
 			this->gadgetDetails.indicatorGeom={0,0,0,0};
 		}
-
-//{(int)(w-TRIANGLESIZE-(this->pad*2)),(int)((h/2)-(TRIANGLESIZE/2)+(this->pad/2)),TRIANGLESIZE,TRIANGLESIZE},//indicator geom
-//	true,//has indicator
 }
 
 /**

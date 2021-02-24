@@ -35,13 +35,27 @@ bool logoutMenuCB(void *p,void* ud)
 	switch((long)ud)
 		{
 			case LOGOUT:
-				system(logoutCommand);
+#ifdef _ENABLEDEBUG_
+				DEBUGFUNC("logoutCommand=>>%s<<\n",prefs.LFSTK_getCString("logoutcommand"));
+				realMainLoop=false;
+				apc->mainLoop=false;
+#else
+				system(prefs.LFSTK_getCString("logoutcommand"));
+#endif
 				break;
 			case RESTART:
-				system(restartCommand);
+#ifdef _ENABLEDEBUG_
+				DEBUGFUNC("restartCommand=>>%s<<\n",prefs.LFSTK_getCString("restartcommand"));
+#else
+				system(prefs.LFSTK_getCString("restartcommand"));
+#endif
 				break;
 			case SHUTDOWN:
-				system(shutdownCommand);
+#ifdef _ENABLEDEBUG_
+				DEBUGFUNC("shutdownCommand=>>%s<<\n",prefs.LFSTK_getCString("shutdowncommand"));
+#else
+				system(prefs.LFSTK_getCString("shutdowncommand"));
+#endif
 				break;
 		}
 

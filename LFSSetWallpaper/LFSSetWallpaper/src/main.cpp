@@ -33,17 +33,11 @@
 
 #include "config.h"
 
+#include <lfstk/LFSTKPrefsClass.h>
+
 #define UNKNOWNARG -100
 
 enum imageMode {STRETCH=0,TILE,CENTRE,SCALED,ZOOMED};
-enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
-
-struct args
-{
-	const char	*name;
-	int			type;
-	void*		data;
-};
 
 struct	monitors
 {
@@ -55,7 +49,7 @@ struct	monitors
 	char	*monitorPath;
 };
 
-char		*wallpaperPath=NULL;
+const char	*wallpaperPath=NULL;
 
 Imlib_Image	buffer;
 
@@ -79,17 +73,7 @@ int			numberOfMonitors=0;
 int			currentMonitor;
 bool		multiMode=false;
 
-args		*lfsmonitors_rc;
 monitors	*monitorData;
-
-args		lfsdesktop_rc[]=
-{
-	{"backdrop",TYPESTRING,&wallpaperPath},
-	{"mainmode",TYPEINT,&backdropMode},
-	{"colour",TYPEINT,&mainColour},
-	{"multimode",TYPEBOOL,&multiMode},
-	{NULL,0,NULL}
-};
 
 struct option long_options[] =
 {
@@ -120,87 +104,6 @@ void printhelp(void)
 	      );
 }
 
-void saveVarsToFile(const char* filepath,args* dataptr)
-{
-	FILE*	fd=NULL;
-	int		cnt=0;
-
-	if(filepath[0]=='-')
-		fd=stdout;
-	else
-		fd=fopen(filepath,"w");
-
-	if(fd!=NULL)
-		{
-			while(dataptr[cnt].name!=NULL)
-				{
-					switch(dataptr[cnt].type)
-						{
-						case TYPEINT:
-							fprintf(fd,"%s	%i\n",dataptr[cnt].name,*(int*)dataptr[cnt].data);
-							break;
-						case TYPESTRING:
-							fprintf(fd,"%s	%s\n",dataptr[cnt].name,*(char**)(dataptr[cnt].data));
-							break;
-						case TYPEBOOL:
-							fprintf(fd,"%s	%i\n",dataptr[cnt].name,(int)*(bool*)dataptr[cnt].data);
-							break;
-						}
-					cnt++;
-				}
-			fclose(fd);
-		}
-}
-
-void loadVarsFromFile(char* filepath,args* dataptr)
-{
-	FILE*	fd=NULL;
-	char	buffer[2048];
-	int		cnt;
-	char*	argname=NULL;
-	char*	strarg=NULL;
-
-	fd=fopen(filepath,"r");
-	if(fd!=NULL)
-		{
-			while(feof(fd)==0)
-				{
-					buffer[0]=0;
-					fgets(buffer,2048,fd);
-					sscanf(buffer,"%ms %ms",&argname,&strarg);
-					cnt=0;
-					while(dataptr[cnt].name!=NULL)
-						{
-							if((strarg!=NULL) && (argname!=NULL) && (strcmp(argname,dataptr[cnt].name)==0))
-								{
-									switch(dataptr[cnt].type)
-										{
-										case TYPEINT:
-											*(int*)dataptr[cnt].data=atoi(strarg);
-											break;
-										case TYPESTRING:
-											if(*(char**)(dataptr[cnt].data)!=NULL)
-												free(*(char**)(dataptr[cnt].data));
-											sscanf(buffer,"%*s %m[^\n]s",(char**)dataptr[cnt].data);
-											break;
-										case TYPEBOOL:
-											*(bool*)dataptr[cnt].data=(bool)atoi(strarg);
-											break;
-										}
-								}
-							cnt++;
-						}
-					if(argname!=NULL)
-						free(argname);
-					if(strarg!=NULL)
-						free(strarg);
-					argname=NULL;
-					strarg=NULL;
-				}
-			fclose(fd);
-		}
-}
-
 void loadMonitorData(void)
 {
 	FILE*	fd=NULL;
@@ -229,7 +132,7 @@ void loadMonitorData(void)
 		}
 }
 
-void blitToMonitorPos(int mode,char* path,int x,int y,int w,int h)
+void blitToMonitorPos(int mode,const char* path,int x,int y,int w,int h)
 {
 	Imlib_Image	image;
 	int			imagew,imageh;
@@ -359,6 +262,25 @@ void initBackdrop(void)
 	imlib_free_image();
 }
 
+void loadPrefs(void)
+{
+	LFSTK_prefsClass	prefs;
+
+	prefs.prefsMap=
+		{
+			{prefs.LFSTK_hashFromKey("backdrop"),{TYPESTRING,"backdrop","",false,0}},
+			{prefs.LFSTK_hashFromKey("mainmode"),{TYPEINT,"mainmode","",false,0}},
+			{prefs.LFSTK_hashFromKey("colour"),{TYPEINT,"colour","",false,0}},
+			{prefs.LFSTK_hashFromKey("multimode"),{TYPEBOOL,"multimode","",false,0}}
+		};
+
+	prefs.LFSTK_loadVarsFromFile(prefsPath);
+	wallpaperPath=prefs.LFSTK_getCString("backdrop");
+	backdropMode=prefs.LFSTK_getInt("mainmode");
+	mainColour=prefs.LFSTK_getInt("colour");
+	multiMode=prefs.LFSTK_getBool("multimode");
+}
+
 int main(int argc,char **argv)
 {
 	Window				parentWindow;
@@ -399,7 +321,6 @@ int main(int argc,char **argv)
 			if(cnt>0)
 				{
 					monitorData=(monitors*)malloc(sizeof(monitors)*cnt);
-					lfsmonitors_rc=(args*)malloc(sizeof(args)*cnt*2);
 					numberOfMonitors=cnt;
 
 					for (int x=0; x<cnt; x++)
@@ -413,8 +334,7 @@ int main(int argc,char **argv)
 				}
 			free(p);
 		}
-	
-	loadVarsFromFile(prefsPath,lfsdesktop_rc);
+	loadPrefs();
 	currentMonitor=-1;
 	loadMonitorData();
 
@@ -481,21 +401,6 @@ int main(int argc,char **argv)
 	XSetWindowBackgroundPixmap(display,rootWin,backDropPixmap);
 	XClearWindow(display,rootWin);
 	XFlush(display);
-	saveVarsToFile(prefsPath,lfsdesktop_rc);
-
-	char	*buf;
-	int		mn=0;
-	asprintf(&buf,":>%s",monitorRCPath);
-	system(buf);
-	free(buf);
-	fflush(NULL);
-	for(int j=0;j<numberOfMonitors;j++)
-		{
-			asprintf(&buf,"echo -en \"%i\n\"%s\"\n\" >>%s",monitorData[j].monMode,monitorData[j].monitorPath,monitorRCPath);
-			system(buf);
-			free(buf);
-			fflush(NULL);
-		}
 	free(monitorRCPath);
 	free(prefsPath);
 	fflush(NULL);

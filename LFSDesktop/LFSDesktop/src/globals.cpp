@@ -29,15 +29,6 @@ char							*cachePath;
 char							*prefsPath;
 char							*desktopPath;
 
-args	cacheFileDataPrefs[]=
-{
-	{"uuid",TYPESTRING,&cacheFileData.uuid},
-	{"posx",TYPEINT,&cacheFileData.posx},
-	{"posy",TYPEINT,&cacheFileData.posy},
-	{"hascustomicon",TYPEBOOL,&cacheFileData.hasCustomIcon},
-	{"pathtocustomicon",TYPESTRING,&cacheFileData.pathToCustomIcon},
-	{NULL,0,NULL}
-};
 std::vector<desktopItemStruct>	desktopItems;
 desktopItemStruct				cacheFileData;
 char							*documentsPath=NULL;
@@ -45,18 +36,12 @@ char							*homePath=NULL;
 char							*diskWatch=NULL;
 char							*desktopWatch=NULL;
 
-//newstuff <<<<<<<<<<<<<<<<<<<<<<<<<
-
 //prefs
 bool							showSuffix=false;//TODO//
 
 //dialogs
 LFSTK_windowClass				*diskWindow=NULL;
 LFSTK_windowClass				*fileWindow=NULL;
-//LFSTK_windowClass	*iconChooser=NULL;//TODO//
-//LFSTK_lineEditClass *iconChooserEdit=NULL;
-//bool				dialogLoop=false;
-//int					dialogRetVal=DIALOGRETERROR;
 
 void setItemSize(desktopItemStruct	*cf)
 {
@@ -92,9 +77,10 @@ void createDesktopGadget(LFSTK_windowClass *window)
 	cf.item->userData=USERDATA(desktopItems.size());
 	cf.item->LFSTK_setContextWindow(window);
 
-	cf.item->LFSTK_setLabelBGColour(0.75,0.75,0.75,strtod(backAlpha,NULL));//TODO//???
-	apc->globalLib->LFSTK_setColourFromName(apc->display,apc->cm,&cf.item->labelBGColour,backCol);
-	cf.item->LFSTK_setFontColourName(NORMALCOLOUR,foreCol,false)	;	
+	cf.item->LFSTK_setLabelAutoColour(false);
+	cf.item->LFSTK_setFontColourName(NORMALCOLOUR,foreCol,false);
+	cf.item->LFSTK_setLabelBGColour(backCol,strtod(backAlpha,NULL));
+	cf.item->LFSTK_setFontString(fontFace,true);
 	cf.item->drawLabelBG=true;
 	cf.item->autoLabelBGColour=false;
 	setItemSize(&cf);
@@ -106,7 +92,6 @@ void createDesktopGadget(LFSTK_windowClass *window)
 	asprintf(&desktopItems.back().uuid,"%s",cacheFileData.uuid);
 	asprintf(&desktopItems.back().itemPath,"%s",cacheFileData.itemPath);
 	asprintf(&desktopItems.back().label,"%s",cacheFileData.label);
-//	asprintf(&desktopItems.back().pathToCustomIcon,"%s",cacheFileData.pathToCustomIcon);
 }
 
 //set icon
@@ -141,6 +126,14 @@ void setIconImage(desktopItemStruct	*cf)
 			case ISDVDROM:
 				cf->isSymLink=false;
 				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-dvd","devices");
+				break;
+			case ISIPOD:
+				cf->isSymLink=false;
+				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-ipod","devices");
+				break;
+			case ISSSD:
+				cf->isSymLink=false;
+				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-flash","devices");
 				break;
 			case ISDESKTOPFILE:
 				{
@@ -207,6 +200,7 @@ bool dialogCB(void *p,void* ud)//TODO//
 {
 //	dialogRetVal=(int)(long)ud;
 //	dialogLoop=false;
+
 	return(true);
 }
 

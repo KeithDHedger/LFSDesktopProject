@@ -21,16 +21,12 @@
 #include "globals.h"
 
 //prefs
-char				*terminalCommand=NULL;
+LFSTK_prefsClass	prefs;
+
 int					panelHeight=16;
 int					panelWidth=-1;
 const monitorStruct	*mons=NULL;
 int					onMonitor=0;
-char				*logoutCommand=NULL;
-char				*restartCommand=NULL;
-char				*shutdownCommand=NULL;
-char				*rightGadgets=NULL;
-char				*leftGadgets=NULL;
 int					panelPos=PANELCENTRE;
 int					panelGravity=PANELNORTH;
 
@@ -139,10 +135,9 @@ void dropDesktopFile(const char *data,launcherList *launcher)
 					if(launcher->entry.inTerm==false)
 						asprintf(&command,"%s \"%s\" &",launcher->entry.exec,cleanstr);
 					else
-						asprintf(&command,"%s %s \"%s\" &",terminalCommand,launcher->entry.exec,cleanstr);
+						asprintf(&command,"%s %s \"%s\" &",prefs.LFSTK_getCString("termcommand"),launcher->entry.exec,cleanstr);
 						sendNotify("Running ",launcher->entry.exec);
 						system(command);
-						//printf(">>%s<<\n",command);
 						free(cleanstr);
 						free(command);
 				}

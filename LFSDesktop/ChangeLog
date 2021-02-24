@@ -1,4 +1,13 @@
 0.2.0
+Fixed desktop hang when opening file again!
+Changed lfstk required lib version.
+Fixed desktop hang when opening file.
+Added check for external mimetype perl module.
+Removed findmt external command.
+Various visual tweaks;
+Fixed label fg/bg/alpha colours.
+Fixed label font.
+Fixed changing prefs.
 Fixed dNd after manual delete of item from desktop.
 Fixed bad filename when dropping text onto desktop.
 Fixed changing disk label size.

@@ -16,6 +16,10 @@
 
  * You should have received a copy of the GNU General Public License
  * along with LFSToolKit.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Portions of this file is from here:
+ * https://github.com/rahra/cairo_jpg
+ * Many thanks!
  */
 
 #ifndef _LFSTK_LIB_
@@ -37,9 +41,6 @@ class LFSTK_lib
 		LFSTK_lib(bool loadvars);
 		~LFSTK_lib();
 
-		bool			LFSTK_loadVarsFromFile(const char* filepath,const args* dataptr);
-		void			LFSTK_saveVarsToFile(const char* filepath,const args* dataptr);
-		const args		*LFSTK_getTKArgs(void);
 		const char		*LFSTK_getGlobalString(int state,int type);
 		void			LFSTK_setGlobalString(int state,int type,const char *str);
 		bool			LFSTK_getAutoLabelColour(void);
@@ -53,7 +54,6 @@ class LFSTK_lib
 		static bool		LFSTK_gadgetEvent(void *self,XEvent *e,int type);
 
 		char			*LFSTK_findThemedIcon(const char *theme,const char *icon,const char *catagory);
-		char			*LFSTK_oneLiner(const char* fmt,...);
 		bool			LFSTK_pointInRect(pointStruct *point,geometryStruct *geom);
 		unsigned long	LFSTK_getColourFromName(Display *display,Colormap cm,const char *name);
 
@@ -64,7 +64,11 @@ class LFSTK_lib
 		Pixmap			LFSTK_getWindowPixmap(Display *display,Window win);
 
 //files
+		char			*LFSTK_oneLiner(const char* fmt,...);
+		std::string		LFSTK_oneLiner(const std::string fmt,...);
 		char			*LFSTK_getMimeType(const char* path);
+		std::string		LFSTK_grepInFile(const std::string filepath,const std::string needle);
+		std::string		LFSTK_getNthNeedle(const std::string haystack,int needlecnt,const std::string delimiter=" ");
 
 //colours and prefs
 		void			LFSTK_setColourFromName(Display *display,Colormap cm,colourStruct *colptr,const char *name);
@@ -75,34 +79,10 @@ class LFSTK_lib
 //messaging		
 //debug
 //
+//new prefs
+		LFSTK_prefsClass	prefs;
 	private:
 		cairo_surface_t	*cairo_image_surface_create_from_jpeg_mem(const unsigned char* data, size_t len);
-
-		args			*lfsToolKitGlobals=NULL;
-//window strings
-		char			*globalWindowColours[MAXCOLOURS]={NULL,};
-		char			*globalButtonColours[MAXCOLOURS]={NULL,};
-		char			*globalMenuItemColours[MAXCOLOURS]={NULL,};
-		char			*globalFontString=NULL;
-		char			*globalMonoFontString=NULL;
-		char			*globalWindowTile=NULL;
-		char			*globalButtonTile=NULL;
-		char			*globalMenuItemTile=NULL;
-
-//gadget strings
-		char			*globalFontColourNames[MAXCOLOURS]={NULL,};
-		char			*globalMenuItemFontString=NULL;
-		char			*globalMenuItemFontColourNames[MAXCOLOURS]={NULL,};
-
-//theme parts
-		char			*globalCursorColour=NULL;
-		char			*globalSBTroughColour=NULL;
-		char			*globalListTroughColour=NULL;
-
-//other
-		bool			autoLabelColour=false;
-		bool			useTheme=false;
-		char			*themePath=NULL;
 };
 #endif
 

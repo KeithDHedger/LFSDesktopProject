@@ -149,13 +149,14 @@ void LFSTK_windowClass::initWindow(bool loadvars)
 void LFSTK_windowClass::LFSTK_reloadGlobals(void)
 {
 	char	*env;
+
 	asprintf(&env,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
-	this->globalLib->LFSTK_loadVarsFromFile(env,this->globalLib->LFSTK_getTKArgs());
-	free(env);
+	this->globalLib->prefs.LFSTK_loadVarsFromFile(env);
 
 	this->loadGlobalColours();
 	this->isActive=true;
 	this->LFSTK_clearWindow();
+	free(env);
 }
 
 /**
@@ -263,17 +264,15 @@ void LFSTK_windowClass::LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h,bool upd
 		}
 	xLibErrorTK=false;
 	XSetErrorHandler(xErrHandler);
-	//-->>XSynchronize(this->app->display,true);
-
+	XSynchronize(this->app->display,true);
 	if(this->px!=None)
 		XFreePixmap(this->app->display,this->px);
 	this->px=XCreatePixmap(this->app->display,this->window,w,h,this->app->depth);
 
-//HMMmmmmmm??
 	surfaceto=cairo_xlib_surface_create(this->app->display,this->px,this->app->visual,w,h);
+//HMMmmmmmm??
 	surfacefrom=cairo_xlib_surface_create(this->app->display,pixmap,DefaultVisual(this->app->display,this->app->screen),w,h);
 	cr=cairo_create(surfaceto);
-
 	if(status==CAIRO_STATUS_SUCCESS)
 		{
 			cairo_save(cr);
@@ -317,7 +316,6 @@ void LFSTK_windowClass::LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h,bool upd
 			XClearWindow(this->app->display,this->window);
 		}
 }
-
 
 /**
 * Forc redraw of all gadgets..
@@ -1552,12 +1550,6 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 																	while(XCheckMaskEvent(this->app->display,EnterNotify|LeaveNotify|MotionNotify|FocusIn|FocusOut|ConfigureNotify,&discard)==true);
 																}
 														}
-													//if(ml->type==SCROLLBARGADGET)
-													//	{
-													//	printf("<<<<<<<<<<<<<\n");
-													//		if(static_cast<LFSTK_scrollBarClass*>(ml->gadget)->lockToWindow==true)
-													//			static_cast<LFSTK_scrollBarClass*>(ml->gadget)->LFSTK_restickWindow();
-													//	}
 												}
 										}
 								}

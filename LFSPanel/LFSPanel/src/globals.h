@@ -67,16 +67,12 @@ struct launcherList
 enum {NOLAUNCHERS,LAUNCHERINLEFT,LAUNCHERINRITE};
 
 //prefs
-extern char					*terminalCommand;
+extern LFSTK_prefsClass		prefs;
+
 extern int					panelHeight;
 extern int					panelWidth;
 extern const monitorStruct	*mons;
 extern int					onMonitor;
-extern char					*logoutCommand;
-extern char					*restartCommand;
-extern char					*shutdownCommand;
-extern char					*rightGadgets;
-extern char					*leftGadgets;
 extern int					panelPos;
 extern int					panelGravity;
 

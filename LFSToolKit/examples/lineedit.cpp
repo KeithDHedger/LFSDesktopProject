@@ -92,12 +92,12 @@ int main(int argc, char **argv)
 	sy+=YSPACING*2;
 
 //line edit
-	multi=new LFSTK_ExpanderGadgetClass(wc,"",BORDER,sy,DIALOGWIDTH-BORDER*2,GADGETHITE);
+	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,sy,DIALOGWIDTH,GADGETHITE);
 	multi->stretchX=true;
 	multi->gadgetStretch=STRETCH;
 	multi->gadgetAcceptsDnD=true;
 
-	hrs.push_back({0,0,DIALOGWIDTH,GADGETHITE,new LFSTK_lineEditClass(wc,"Basic line editing class for LFSToolKit.",0,0,1,1)});
+	hrs.push_back({BORDER,0,DIALOGWIDTH-BORDER*2,GADGETHITE,new LFSTK_lineEditClass(wc,"Basic line editing class for LFSToolKit.",0,0,1,1)});
 	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,doMouseUp,NULL);
 	hrs.back().gadget->LFSTK_setKeyCallBack(NULL,doKeyUp,USERDATA(12345));
 	hrs.back().gadget->LFSTK_setGadgetDropCallBack(doDropped);
