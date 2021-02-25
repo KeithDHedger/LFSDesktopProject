@@ -68,7 +68,7 @@ if [ ! -e ~/.config/LFS/lfssetwallpaper.rc ];then
 backdrop
 mainmode	0
 colour	440000
-multimode	0
+multimode	false
 EOF
 fi
 
@@ -81,7 +81,7 @@ gridborderleft 1
 gridborderrite 1
 refreshrate 2
 termcommand xterm -e
-showextension 0
+showextension false
 fontface sans:12
 labelforeground black
 labelbackground white
@@ -110,3 +110,10 @@ chmod +x $file
 $file
 
 rm $file
+
+killall lfssetwallpaper
+killall lfswmanager
+killall lfspanel
+killall lfsdesktop
+
+
