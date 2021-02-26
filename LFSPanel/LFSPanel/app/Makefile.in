@@ -251,6 +251,7 @@ LIBS = $(X11_LIBS) \
 				$(LIBGLIB_LIBS) \
 				$(CAIRO_LIBS) \
 				$(LFSTK_LIBS) \
+				$(LIBGLIB_LIBS) \
 				-lm
 
 LTLIBOBJS = @LTLIBOBJS@
@@ -328,6 +329,7 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 				$(LIBGLIB_CFLAGS) \
 				$(CAIRO_CFLAGS) \
 				$(LFSTK_CFLAGS) \
+				$(LIBGLIB_CFLAGS) \
 				-DPREFIX=\""${prefix}\"" \
 				-DDATADIR=\""${pkgdatadir}"\" \
 				-DSYSCONFDIR=\""${sysconfdir}/${PACKAGE}"\" \
