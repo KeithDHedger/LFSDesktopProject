@@ -184,7 +184,7 @@ int LFSTK_applicationClass::LFSTK_runApp(void)
 	fd_set readfd;
 	struct timeval tv={0,0};
  
-	tv.tv_sec=this->timer;;
+	tv.tv_sec=this->timer;
 	FD_ZERO(&readfd);
 	FD_SET(this->displayNum,&readfd);
 // Main loop

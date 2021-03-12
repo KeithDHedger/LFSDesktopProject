@@ -1,4 +1,5 @@
 0.5.1
+Set default time out in app class.
 Code clean.
 Fixed paths in installed themes.
 Fixed live update on font dialog.

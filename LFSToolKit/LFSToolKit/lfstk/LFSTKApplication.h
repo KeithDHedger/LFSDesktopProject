@@ -76,7 +76,7 @@ class LFSTK_applicationClass
 	private:
 		int							displayNum;
 		bool						useTimer=false;
-		int							timer=1;
+		int							timer=-1;
 		callbackStruct				callBacks;
 };
 

@@ -256,8 +256,8 @@ int main(int argc, char **argv)
 
 	//wc->LFSTK_showWindow();
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
-//	apc->LFSTK_setTimer(2);
-//	apc->LFSTK_setTimerCallBack(timerCB,NULL);
+	apc->LFSTK_setTimer(2);
+	apc->LFSTK_setTimerCallBack(timerCB,NULL);
 	int retval=apc->LFSTK_runApp();
 
 	delete apc;
