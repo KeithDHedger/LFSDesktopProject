@@ -38,6 +38,7 @@ extern const char	*backCol;
 extern const char	*backAlpha;
 extern const char	*includeList;
 extern const char	*excludeList;
+extern bool			doubleClickExecute;
 
 void reloadPrefs(void);
 void loadPrefs(void);

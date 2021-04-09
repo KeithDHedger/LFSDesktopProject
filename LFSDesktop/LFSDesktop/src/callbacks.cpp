@@ -209,7 +209,11 @@ bool mouseUpCB(void *p,void* ud)
 								free(command);
 								break;
 							default:
-								asprintf(&command,"xdg-open '%s' &",desktopItems.at((unsigned long)gadg->userData).itemPath);
+								if((doubleClickExecute==true) && (access(desktopItems.at((unsigned long)gadg->userData).itemPath,X_OK)==0))
+									asprintf(&command,"'%s' &",desktopItems.at((unsigned long)gadg->userData).itemPath);
+								else
+									asprintf(&command,"xdg-open '%s' &",desktopItems.at((unsigned long)gadg->userData).itemPath);
+								printf("%s %i\n",command,doubleClickExecute);
 								system(command);
 								free(command); 
 						}

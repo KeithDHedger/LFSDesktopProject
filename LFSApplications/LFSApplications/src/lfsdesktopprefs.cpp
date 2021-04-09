@@ -50,6 +50,7 @@ LFSTK_lineEditClass		*labelColurFEditBox=NULL;
 LFSTK_lineEditClass		*labelColurBEditBox=NULL;
 LFSTK_lineEditClass		*labelAlphaColurEditBox=NULL;
 LFSTK_toggleButtonClass	*showSuffixCheck=NULL;
+LFSTK_toggleButtonClass	*clickExeCheck=NULL;
 LFSTK_lineEditClass		*termCommandEditBox=NULL;
 LFSTK_lineEditClass		*fontEditBox=NULL;
 LFSTK_lineEditClass		*includeEditBox=NULL;
@@ -90,7 +91,8 @@ bool buttonCB(void *p,void* ud)
 			{prefs.LFSTK_hashFromKey("labelbackground"),{TYPESTRING,"labelbackground",labelColurBEditBox->LFSTK_getCStr(),false,0}},
 			{prefs.LFSTK_hashFromKey("labelalpha"),{TYPESTRING,"labelalpha",labelAlphaColurEditBox->LFSTK_getCStr(),false,0}},
 			{prefs.LFSTK_hashFromKey("includelist"),{TYPESTRING,"includelist",includeEditBox->LFSTK_getCStr(),false,0}},
-			{prefs.LFSTK_hashFromKey("excludelist"),{TYPESTRING,"excludelist",excludeEditBox->LFSTK_getCStr(),false,0}}
+			{prefs.LFSTK_hashFromKey("excludelist"),{TYPESTRING,"excludelist",excludeEditBox->LFSTK_getCStr(),false,0}},
+			{prefs.LFSTK_hashFromKey("doubleclickexe"),{TYPEBOOL,"doubleclickexe","",clickExeCheck->LFSTK_getValue(),0}}
 		};
 
 	prefs.LFSTK_saveVarsToFile(envFile);
@@ -215,7 +217,8 @@ int main(int argc, char **argv)
 			{prefs.LFSTK_hashFromKey("labelbackground"),{TYPESTRING,"labelbackground","",false,0}},
 			{prefs.LFSTK_hashFromKey("labelalpha"),{TYPESTRING,"labelalpha","1.0",false,0}},
 			{prefs.LFSTK_hashFromKey("includelist"),{TYPESTRING,"includelist","",false,0}},
-			{prefs.LFSTK_hashFromKey("excludelist"),{TYPESTRING,"excludelist","",false,0}}
+			{prefs.LFSTK_hashFromKey("excludelist"),{TYPESTRING,"excludelist","",false,0}},
+			{prefs.LFSTK_hashFromKey("doubleclickexe"),{TYPEBOOL,"doubleclickexe","",false,0}}
 		};
 
 
@@ -279,6 +282,12 @@ int main(int argc, char **argv)
 	label=new LFSTK_labelClass(wc,"Show Suffix",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	showSuffixCheck=new LFSTK_toggleButtonClass(wc,"",BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,CHECKBOXSIZE,BUTTONGRAV);
 	showSuffixCheck->LFSTK_setValue(prefs.LFSTK_getBool("showextension"));
+	sy+=YSPACING;
+
+//Double click executes
+	label=new LFSTK_labelClass(wc,"Dble Click Executes",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
+	clickExeCheck=new LFSTK_toggleButtonClass(wc,"",BORDER*2+GADGETWIDTH,sy,GADGETWIDTH,CHECKBOXSIZE,BUTTONGRAV);
+	clickExeCheck->LFSTK_setValue(prefs.LFSTK_getBool("doubleclickexe"));
 	sy+=YSPACING;
 
 //terminal command

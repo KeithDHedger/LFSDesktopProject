@@ -36,6 +36,7 @@ const char			*foreCol=NULL;
 const char			*backAlpha;
 const char			*includeList=NULL;
 const char			*excludeList=NULL;
+bool				doubleClickExecute=false;
 
 bool loadCacheFile(const char *cachefilepath,desktopItemStruct *cfd)
 {
@@ -105,6 +106,7 @@ void loadPrefs(void)
 			{prefs.LFSTK_hashFromKey("labelalpha"),{TYPESTRING,"labelalpha","1.0",false,0}},
 			{prefs.LFSTK_hashFromKey("includelist"),{TYPESTRING,"includelist","",false,0}},
 			{prefs.LFSTK_hashFromKey("excludelist"),{TYPESTRING,"excludelist","",false,0}},
+			{prefs.LFSTK_hashFromKey("doubleclickexe"),{TYPEBOOL,"doubleclickexe","",false,0}}
 		};
 
 	prefs.LFSTK_loadVarsFromFile(prefsPath);
@@ -123,6 +125,7 @@ void loadPrefs(void)
 	refreshRate=prefs.LFSTK_getInt("refreshrate");
 	includeList=prefs.LFSTK_getCString("includelist");
 	excludeList=prefs.LFSTK_getCString("excludelist");
+	doubleClickExecute=prefs.LFSTK_getBool("doubleclickexe");
 }
 
 void reloadPrefs(void)
