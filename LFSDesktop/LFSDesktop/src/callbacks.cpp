@@ -177,6 +177,15 @@ bool mouseUpCB(void *p,void* ud)
 				{
 					switch(desktopItems.at((unsigned long)gadg->userData).type)
 						{
+							case ISHOMEFOLDER:
+								system("xdg-open ~");
+								break;
+							case ISCOMPUTER:
+								system("xdg-open /");
+								break;
+							case ISDOCUMENTSFOLDER:
+								system("xdg-open ~/Documents");
+								break;
 							case ISDESKTOPFILE://TODO// in term
 								{
 									GKeyFile	*gkf=g_key_file_new();
@@ -200,7 +209,6 @@ bool mouseUpCB(void *p,void* ud)
 							case ISIPOD:
 							case ISSSD:
 								asprintf(&command,"%s \"%s\" \"/media/%s\" %i &>/dev/null",HELPERAPP,desktopItems.at((unsigned long)gadg->userData).uuid,desktopItems.at((unsigned long)gadg->userData).label,1);
-								printf("com1=%s\n",command);
 								system(command);
 								free(command);
 								updateMounted();
@@ -210,10 +218,14 @@ bool mouseUpCB(void *p,void* ud)
 								break;
 							default:
 								if((doubleClickExecute==true) && (access(desktopItems.at((unsigned long)gadg->userData).itemPath,X_OK)==0))
-									asprintf(&command,"'%s' &",desktopItems.at((unsigned long)gadg->userData).itemPath);
+									{
+										if(desktopItems.at((unsigned long)gadg->userData).isAFolder==true)
+											asprintf(&command,"xdg-open '%s' &",desktopItems.at((unsigned long)gadg->userData).itemPath);
+										else
+											asprintf(&command,"'%s' &",desktopItems.at((unsigned long)gadg->userData).itemPath);
+									}
 								else
 									asprintf(&command,"xdg-open '%s' &",desktopItems.at((unsigned long)gadg->userData).itemPath);
-								printf("%s %i\n",command,doubleClickExecute);
 								system(command);
 								free(command); 
 						}

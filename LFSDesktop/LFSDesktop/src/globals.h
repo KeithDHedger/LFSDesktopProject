@@ -57,6 +57,7 @@ struct	desktopItemStruct
 	bool								hasCustomIcon=false;
 	char								*pathToCustomIcon=NULL;
 	bool								isADisk=false;
+	bool								isAFolder=false;
 	bool								mounted=false;
 	int									type=ISINVALID;
 	bool								isSymLink=false;

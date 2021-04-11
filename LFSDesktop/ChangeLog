@@ -1,4 +1,5 @@
 0.2.0
+Fixed double click on items.
 Fixed desktop hang when opening file again!
 Changed lfstk required lib version.
 Fixed desktop hang when opening file.

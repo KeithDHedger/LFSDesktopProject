@@ -61,6 +61,7 @@ void makeFileButtons(bool skipvirtuals)
 	int			constanttypes[]={ISHOMEFOLDER,ISCOMPUTER,ISDOCUMENTSFOLDER};
 	int			constcnt=0;
 	const char	*base=NULL;
+	struct stat	statbuf;
 
 //make standard buttons
 	if(skipvirtuals==false)
@@ -146,6 +147,12 @@ continueWithLoop:
 									saveCacheFile(cachefilepath,&cacheFileData);
 								}
 
+	
+							stat(buffer,&statbuf);
+							if(S_ISDIR(statbuf.st_mode)!=0)
+								cacheFileData.isAFolder=true;
+							else
+								cacheFileData.isAFolder=false;
 							cacheFileData.itemPath=strdup(buffer);
 							cacheFileData.label=strdup(base);
 							setLabelFromDesktopFile(&cacheFileData);
