@@ -60,7 +60,9 @@ bool loadCacheFile(const char *cachefilepath,desktopItemStruct *cfd)
 	cfd->posx=cacheprefs.LFSTK_getInt("posx");
 	cfd->posy=cacheprefs.LFSTK_getInt("posy");
 	cfd->hasCustomIcon=cacheprefs.LFSTK_getBool("hascustomicon");
-	cfd->pathToCustomIcon=NULL;//TODO//
+	cfd->pathToCustomIcon=strdup(cacheprefs.LFSTK_getCString("pathtocustomicon"));
+	//cfd->pathToCustomIcon=NULL;//TODO//
+	//fprintf(stderr,"--->>>%s<<<---\n",cfd->pathToCustomIcon);
 	return(true);
 }
 

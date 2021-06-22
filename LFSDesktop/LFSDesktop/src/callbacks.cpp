@@ -148,9 +148,38 @@ bool doDeskItemMenuSelect(void *p,void* ud)
 								free(command);
 							}
 						break;
-					case CUSTOMICONDISK://TODO//
+
+					case DESKITEMCUSTOMICON:
+						{
+							LFSTK_fileDialogClass	*filedialogfile;
+							char					*pth;
+
+							fileWindow->LFSTK_hideWindow();
+							filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",NULL,FILEDIALOG);
+							filedialogfile->LFSTK_showFileDialog(NULL,"Select A File");
+							if(filedialogfile->LFSTK_isValid()==true)
+								{
+									desktopItems.at((unsigned long)gadg->userData).hasCustomIcon=true;
+									freeAndNull(&desktopItems.at((unsigned long)gadg->userData).pathToCustomIcon);
+									desktopItems.at((unsigned long)gadg->userData).pathToCustomIcon=strdup(filedialogfile->LFSTK_getCurrentPath());
+									asprintf(&pth,"%s/%s",cachePath,desktopItems.at((unsigned long)gadg->userData).uuid);
+									saveCacheFile(pth,&(desktopItems.at((unsigned long)gadg->userData)));
+									desktopItems.at((unsigned long)gadg->userData).item->LFSTK_setImageFromPath(desktopItems.at((unsigned long)gadg->userData).pathToCustomIcon,TOOLBAR,true);
+									free(pth);
+								}
+						}
 						break;
-					case REMOVECUSTOMDISK://TODO//
+					case DESKITEMREMOVECUSTOM:
+						{
+							char	*pth;
+
+							desktopItems.at((unsigned long)gadg->userData).hasCustomIcon=false;
+							freeAndNull(&desktopItems.at((unsigned long)gadg->userData).pathToCustomIcon);
+							asprintf(&pth,"%s/%s",cachePath,desktopItems.at((unsigned long)gadg->userData).uuid);
+							setIconImage(&(desktopItems.at((unsigned long)gadg->userData)));
+							desktopItems.at((unsigned long)gadg->userData).item->LFSTK_setImageFromPath((desktopItems.at((unsigned long)gadg->userData)).iconPath,TOOLBAR,true);
+							free(pth);
+						}
 						break;
 				}
 			gadg->gadgetDetails.state=NORMALCOLOUR;

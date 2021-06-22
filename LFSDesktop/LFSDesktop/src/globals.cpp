@@ -70,7 +70,7 @@ void createDesktopGadget(LFSTK_windowClass *window)
 		cf.item->LFSTK_setImageFromPath(cf.iconPath,TOOLBAR,true);
 	else
 		{
-			//TODO//
+			cf.item->LFSTK_setImageFromPath(cf.pathToCustomIcon,TOOLBAR,true);
 		}
 	cf.item->LFSTK_setUseWindowPixmap(true);
 	cf.item->LFSTK_setMouseCallBack(NULL,mouseUpCB,USERDATA(desktopItems.size()));
