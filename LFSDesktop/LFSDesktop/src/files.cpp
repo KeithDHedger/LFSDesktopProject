@@ -153,6 +153,12 @@ continueWithLoop:
 								cacheFileData.isAFolder=true;
 							else
 								cacheFileData.isAFolder=false;
+
+							if(S_ISLNK(statbuf.st_mode)!=0)
+								cacheFileData.isSymLink=true;
+							else
+								cacheFileData.isSymLink=false;
+								
 							cacheFileData.itemPath=strdup(buffer);
 							cacheFileData.label=strdup(base);
 							setLabelFromDesktopFile(&cacheFileData);
