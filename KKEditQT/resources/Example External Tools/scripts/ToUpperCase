@@ -1,0 +1,5 @@
+#!/bin/bash -e
+
+#©keithhedger Sun 19 May 11:47:41 BST 2013 kdhedger68713@gmail.com
+
+echo -n "$KKEDIT_SELECTION"|tr "a-z" "A-Z"

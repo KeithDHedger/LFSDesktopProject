@@ -1,0 +1,10 @@
+name	To Lower Case
+command	../scripts/ToLowerCase
+comment	
+flags	1
+interm	0
+inpopup	1
+alwayspopup	0
+clearview	0
+runasroot	0
+shortcutkey	76

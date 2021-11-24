@@ -1,0 +1,5 @@
+name	Find API
+command	devhelp --search %t
+flags	8
+interm	0
+inpopup	1

@@ -1,0 +1,6 @@
+name	Encoding Info
+command	../scripts/EncodingInfo
+flags	8
+interm	0
+inpopup	0
+alwayspopup	1

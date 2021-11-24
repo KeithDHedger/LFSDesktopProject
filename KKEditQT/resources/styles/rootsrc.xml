@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<style-scheme id="Root Source" _name="RootSrc" version="1.0">
+	<author>K.d.Hedger</author>
+	<_description>A red theme to use in root editor as a reminder</_description>
+
+<!-- Scribe Theme Generator 1.3 -->
+
+<!-- COLORS -->
+	<color name="comment_color" value="#e1d5e3"/>
+	<color name="number_color" value="#0012ca"/>
+	<color name="string_color" value="#ffffff"/>
+	<color name="boolean_color" value="#ffaa00"/>
+	<color name="keyword_color" value="#000000"/>
+	<color name="error_color" value="#ff0000"/>
+	<color name="text_fg" value="#000000"/>
+	<color name="text_bg" value="#900000"/>
+	<color name="line_highlight" value="#c70a0a"/>
+
+<!-- Global Settings -->
+	<style name="text" foreground="text_fg" background="text_bg"/>
+	<style name="cursor" foreground="error_color"/>
+	<style name="current-line" background="line_highlight"/>
+	<style name="line-numbers" foreground="text_bg" background="keyword_color"/>
+	<style name="selection" foreground="#ffffff" background="keyword_color"/>
+
+<!-- Bracket Matching -->
+	<style name="bracket-match" foreground="text_bg" background="keyword_color"/>
+	<style name="bracket-mismatch" background="error_color"/>
+	<style name="search-match" foreground="comment_color" background="text_fg"/>
+
+<!-- Base syntax colors
+
+Languages: plain, python, ruby, xml, html, ada, asp, awk, boo, c,
+changelog, chdr, cmake, cpp, csharp, css, d, def, desktop, diff,
+docbook, dosbatch, dot, dpatch, dtd, eiffel, erlang, forth, fortran,
+gap, gtkrc, haddock, haskell, haskell-literate, idl, ini, java,
+javascript, latex, libtool, lua, m4, makefile, msil, nermele, nsis,
+objc, ocaml, ocl, octave, pascal, perl, php, pkgconfig, po, prolog,
+R, rpmspec, scheme, sh, sql, t2t, tcl, texinfo, vala, vbnet, verilog,
+vhdl, xslt, yacc
+
+-->
+
+	<style name="def:string" foreground="string_color" bold="true"/>
+	<style name="def:character" foreground="string_color" bold="true"/>
+	<style name="def:special-char" foreground="string_color" bold="true"/>
+	<style name="def:number" foreground="number_color" bold="true"/>
+	<style name="def:decimal" foreground="number_color" bold="true"/>
+	<style name="def:floating-point" foreground="number_color" bold="true"/>
+	<style name="def:complex" foreground="number_color" bold="true"/>
+	<style name="def:base-n-integer" foreground="number_color" bold="true"/>
+	<style name="def:boolean" foreground="boolean_color" bold="true"/>
+
+	<style name="def:builtin" foreground="keyword_color"/>
+	<style name="def:keyword" foreground="keyword_color"/>
+	<style name="def:function" foreground="keyword_color"/>
+	<style name="def:type" foreground="keyword_color"/>
+	<style name="def:preprocessor" foreground="keyword_color"/>
+	<style name="def:identifier" foreground="keyword_color"/>
+	<style name="def:operator" foreground="keyword_color"/>
+	<style name="def:statement" foreground="keyword_color"/>
+
+	<style name="def:constant" foreground="keyword_color"/>
+	<style name="def:special-constant" foreground="keyword_color"/>
+	<style name="def:error" foreground="text_bg" background="error_color"/>
+
+<!-- Comments -->
+
+	<style name="def:comment" foreground="comment_color"/>
+	<style name="def:shebang" foreground="comment_color"/>
+	<style name="def:doc-comment-element" foreground="comment_color"/>
+	<style name="def:note" foreground="comment_color"/>
+
+</style-scheme>

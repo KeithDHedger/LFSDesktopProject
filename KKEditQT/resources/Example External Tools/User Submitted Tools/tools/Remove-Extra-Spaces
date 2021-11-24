@@ -1,0 +1,6 @@
+name	Remove Extra Spaces
+command	../scripts/RemoveExtraSpaces
+flags	1
+interm	0
+inpopup	1
+alwayspopup	0

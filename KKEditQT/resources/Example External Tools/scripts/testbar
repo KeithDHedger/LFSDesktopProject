@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+#©keithhedger Tue 1 Jul 13:23:13 BST 2014 kdhedger68713@gmail.com
+
+echo "Counting to 100 ..."
+for i in {1..100}
+	do
+		echo $i >$KKEDIT_BAR_CONTROL
+		sleep 0.1
+	done
+
+echo "Pulse bar ..."	
+echo pulse >$KKEDIT_BAR_CONTROL
+
+sleep 4
+
+echo "Counting down from 100 ..."
+for i in {100..0}
+	do
+		echo $i >$KKEDIT_BAR_CONTROL
+		sleep 0.1
+	done
+	
+echo "Pulse bar ..."	
+echo pulse >$KKEDIT_BAR_CONTROL
+
+sleep 4
+
+echo "Done."

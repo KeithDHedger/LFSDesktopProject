@@ -1,13 +1,26 @@
 
 AM_CPPFLAGS =	-I$(top_srcdir) \
+			$(X11_CFLAGS) \
+			$(GLIB_CFLAGS) \
 			$(QT_CFLAGS) \
 			$(QTWIDGETS_CFLAGS) \
+			$(QTX11EXTRA_CFLAGS) \
+			$(WEBENGINEWIDGETS_CFLAGS) \
+			$(GMODULE_CFLAGS) \
 			-DPREFIX=\""${prefix}\"" \
+			-DLOCALEDIR=\""${localedir}"\" \
 			-DDATADIR=\""${pkgdatadir}"\" \
 			-DSYSCONFDIR=\""${sysconfdir}/${PACKAGE}"\" \
 			-DLIBDIR=\""${libdir}/${PACKAGE}"\" \
+			-DQT5DOCSDIR=\""${with_qt5_docdir}"\" \
+			-DGTKSUPATH=\""${with_gsu_path}"\" \
+			-D_USEQT5_ \
 			-fPIC
 
-
-LIBS =	$(QT_LIBS) \
-		$(QTWIDGETS_LIBS)
+LIBS =		$(X11_LIBS) \
+			$(QTWIDGETS_LIBS) \
+			$(QTX11EXTRA_LIBS) \
+			$(GLIB_LIBS) \
+			$(WEBENGINEWIDGETS_LIBS) \
+			$(GMODULE_LIBS) \
+			$(ASPELL_LIBS)

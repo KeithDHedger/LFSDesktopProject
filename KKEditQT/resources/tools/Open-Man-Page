@@ -1,0 +1,8 @@
+name	Open Man Page
+command	./OpenManPage
+comment	Opens the manpage for the selected text if available.
+flags	4
+interm	0
+inpopup	1
+alwayspopup	0
+comment Attempt to open the manpage for the selected text.

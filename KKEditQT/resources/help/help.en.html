@@ -1,0 +1,1652 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta content="text/html; charset=windows-1252"
+      http-equiv="Content-Type">
+    <title>KKEdit Linux Coders Text Editor Help Page</title>
+    <meta content="K.D.Hedger" name="author">
+    <meta content="A GTK2 Linux text editor developed for coding
+      including spell check, function declarations, search for function
+      name, with syntax colouring, API look up, split view and external
+      tools" name="description">
+  </head>
+  <body alink="#EE0000" bgcolor="#cccccc" link="#0000EE" text="#000000"
+    vlink="#551A8B">
+    <div align="center"><big><big><u><b><font size="+3"><big><big>KKEdit</big></big></font></b></u></big></big><br>
+      <br>
+      <font size="+3">Source code text editor</font><br>
+      <br>
+      <hr size="2" width="100%"><img alt="main" src="main.gif"
+        width="800" height="490"><br>
+      <hr size="2" width="100%">
+      <div align="center"><b><font size="+1">Why another text editor?</font></b><br>
+        <br>
+        <font size="-1">Simple, I didn't like any of the others they
+          were all too flat ( sorry wrong sketch! ), anyway having used
+          gedit for years it was getting increasingly difficult to keep
+          it compiling without loads of gnome dependencies, looking
+          around Linux text editors seem to be VERY simple (leafpad)
+          stupidly complex (GVim,Bluefish), trying to be all things to
+          all people. <br>
+          One of the best text editors I have used is BBEdit but that is
+          only available on the mac, so I bit the bullet and decided to
+          write my own with the best bits from BBEdit ( the name KKEdit
+          is a tip of the hat to BBEdit ), gedit and leafpad. A simple
+          uncluttered interface, no major dependencies, with just the
+          features I use all the time, and TA DAH! KKEdit.</font><br>
+        <br>
+        <b><font size="+1">What it's not! </font></b><br>
+        <br>
+        <font size="-1">KKEdit is NOT a word processor or a web page
+          editor, it is NOT and IDE! It won't right code for you, it
+          wont insist on inserting brackets ( REALLY annoying! ), it
+          wont force you to use any particular style, it doesn't need
+          you to break all your fingers trying to hit weird and
+          wonderful key combo's and it is not tied to one particular
+          distro, oh yes and it won't cost you a penny! </font><br>
+        <br>
+        <b><font size="+1">What it is and does <br>
+          </font></b> <br>
+        <font size="-1">KKEdit is a deceptively simple text editor with
+          syntax colouring. <br>
+          It also has a function menu which allows you to jump instantly
+          to a function definition, a navigation menu which will look in
+          all open files for a function definition and then switch to
+          that tab and go to the relevant line if it can't find a
+          definition in any open files it will do a recursive search
+          from the folder of the currently selected document, you can
+          also highlight a #include directive and it will search for and
+          try to open the file, include files surrounded by &lt;&gt;
+          will be looked for in /usr/include, files surrounded by ""
+          will be looked for in the current folder.<br>
+          External tools can be added either globally or locally and
+          when run can either replace the currently select text with
+          their output, replace all the files text, be run in a terminal
+          or you can choose to ignore the output form the script, BASH,
+          python and perl can be used for the script language or any
+          interpretor that uses '#' as a comment marker.<br>
+          A number of simple demo scripts are included in the folder
+          "demotoools" ( good name eh ).<br>
+          You can drag and drop a file onto the main toolbar/menu to
+          open a file.<br>
+          Session can be saved and reloaded.<br>
+          Any amount of bookmarks can be added anywhere, selecting a
+          bookmark from the menu will switch to that tab and move to the
+          appropriate line.<br>
+          Just type a line number into the edit box on the toolbar to
+          jump straight to that line.</font><br>
+        <br>
+        <hr size="2" width="100%"><b><font size="+3">Manual</font></b><br>
+      </div>
+      <hr size="2" width="100%"><b><a href="#navanc">Navigation Menu</a></b><b><br>
+      </b> <b><a href="#funcanc">Functions Menu</a></b><b><br>
+      </b> <b><a href="#toolsanc">Tools Menu</a></b><b><br>
+      </b> <b><a href="#prefsanc">Preferences</a></b><b><br>
+        <a href="#customtoolbar">Customize The Tool Bar</a><br>
+      </b> <b><a href="#featanc">Other Features</a></b><b><br>
+      </b> <b><a href="#getanc">Get It And Build It</a></b><br>
+      <b><a href="#bugs">Bug Reporting</a></b><br>
+      <hr size="2" width="100%"><br>
+      <a name="navanc"></a><b>Navigation Menu</b><br>
+      <br>
+      <font size="-1">The Navigation menu has five sub-menus - Go To
+        Definition, Open Include File, Go To Line, Search For Define and
+        Search In Gtk-Docs.<br>
+        <br>
+        To go where a function etc is defined, select it and choose 'Go
+        To Definition' KKEdit will then look in open files for the
+        definition and switch to that page and highlight the appropriate
+        line like so:</font> <br>
+      <img alt="gotodefine" src="gotodefine.gif" width="479"
+        height="266"><br>
+      <br>
+      <img alt="define" src="founddefine.gif" width="408" height="430"><br>
+      <font size="-1">As you can see as the definition was not in an
+        open file KKEdit looks for the definition recursively starting
+        from the folder where the file was opened from and if found
+        opening the file and selecting the line with the definition.<br>
+        The search depth for finding a definition is set in the prefs
+        and defaults to 1 i.e. only looks for definitions in files in
+        the same folder as any open documents, be careful about setting
+        this too high as it can cause an unwanted delay when right
+        clicking if it has to look in a lot of sub-folders.<br>
+        <br>
+        You can also open an include file just highlight the line and
+        select&nbsp; Open Include File like so:</font> <br>
+      <img alt="openinclude" src="openinclude.gif" width="458"
+        height="329"><br>
+      <font size="-1">Include files are looked for in either
+        /usr/include or the directory the current document is in,
+        depending whether the file name is surrounded by '&lt;&gt;' or '
+        "" '.<br>
+        <br>
+        Search for Define will open an entry box and allow you to type
+        in a definition or part of a definition and will try to find it
+        in the usual places opening a file if necessary, the search is
+        case insensitive.</font> <br>
+      <br>
+      <hr size="2" width="100%"><br>
+      <a name="funcanc"></a><b>Functions Menu</b><br>
+      <br>
+      <font size="-1">The Functions menu contains a list of all defined
+        functions, variables and defines that are visible in this file,
+        to jump to the appropriate function definition just select it
+        from the menu like so:</font><br>
+      <img alt="funcmenu" src="functions.gif" width="869" height="465"><br>
+      <font size="-1"> The Functions menu will be updated after saving a
+        file or switching tabs.<br>
+        You can select how the functions menu is displayed/sorted from
+        the preferences.</font><br>
+      <hr size="2" width="100%"><br>
+      <a name="toolsanc"></a><b>Tools Menu</b><br>
+      <br>
+      <font size="-1">The Tools menu allow you to run an external script
+        i.e. to open a terminal with the working directory set to the
+        folder where the current file is open:</font><br>
+      <img alt="openterm" src="toolsmenu.gif" width="872" height="638"><br>
+      <br>
+      <font size="-1">External tools can either be added globally to
+        /usr/share/KKEdit/tools (if you have installed with
+        --prefix=/usr) or locally in ~/.KKEdit/tools.<br>
+        External tools are passed four environment variables:<br>
+        KKEDIT_CURRENTFILE - Path to current document.<br>
+        KKEDIT_CURRENTDIR - Directory of current document.<br>
+        KKEDIT_SELECTION - Currently selected text.</font> <font
+        size="-1"><br>
+        KKEDIT_DATADIR - Directory of global folder ( e.g.
+        /usr/share/KKEdit ). <br>
+      </font><font size="-1">KKEDIT_HTMLFILE</font><font size="-1">-
+        Temporary file for displaying html in doc viewer</font><br>
+      <font size="-1">More variables may be defined later.<br>
+        <br>
+      </font><font size="-1">External tools are sorted by name in the
+        menu and edit tools dialog.<br>
+        External tools can be created by hand or via the 'Tools-&gt;New'
+        menu like so:</font><br>
+      <img alt="exttool" src="newtool.gif" width="640" height="700"><br>
+      <br>
+      <font size="-1">The place holders are:<br>
+        %t - Currently selected text, the same as the $KKEDIT_SELECTION
+        environment variable passed to the command .<br>
+        %f - Filepath of the current document, the same as the
+        $KKEDIT_CURRENTFILE environment variable passed to the command.
+        <br>
+        %d - Directory of the current document or ${HOME}, the same as
+        the $KKEDIT_CURRENTDIR environment variable passed to the
+        command. <br>
+        %i -The location of the globally installed tools, the same as
+        the $KKEDIT_DATADIR environment variable passed to the command .<br>
+        %h - Temporary file for displaying html in doc viewer, the same
+        as the $KKEDIT_HTMLFILE environment variable passed to the
+        command .<br>
+        <br>
+        Selecting 'View Output' will send the output of the tool to a
+        pane in at the bottom of the editor, you can alter the size by
+        dragging the handle and hide/show the pane from the 'View' menu,
+        only stdout is captured from the output of the tool if you want
+        to capture stderr you must redirect it to stdout, you can not
+        capture stdin, if you need to interact with the tool use the '
+        Run Tool In Terminal' option.<br>
+        You can also optionally set a keyboard shortcut, just click in
+        the shortcut box, hold CONTROL and press another key with or
+        without SHIFT, to delete the shortcut just press the 'Delete'
+        key.<br>
+        <br>
+        The output pane will be shown automatically for any tool that
+        has this option selected, like so:<br>
+        <img alt="" src="outview.gif" width="452" height="441"><br>
+        This example uses the 'Run As Root Script' tool available in the
+        'Example External Tools' folder included with this archive.<br>
+        <font color="#cc0000"><b>IMPORTANT</b></font></font><font
+        color="#cc0000"><font size="-1"><b> </b></font></font><br>
+      <font size="-1">When using a tool that runs a command as root and
+        a GUI root privileges program has NOT been set the tool is
+        automatically run in a terminal</font>.<br>
+      <br>
+      <font size="-1"><font color="#cc0000"><b></b></font> <font
+          size="-1">Selecting <font size="-1">'Show HTML Doc' will
+            display the file </font></font></font><font size="-1"><font
+          size="-1"><font size="-1"><font size="-1">$KKEDIT_HTMLFILE in
+              either the Gtk Doc viewer or your <font size="-1">default
+                browser<font size="-1">, this is used in the installed
+                  example tool 'Open Man Page' to display the manpage of
+                  the selec<font size="-1">tion ( if it exists and if
+                    you have man2html installed<font size="-1">, most
+                      people do ).<br>
+                      <br>
+                      <font size="-1">Only tools that have </font>"<font
+                        size="-1">Show Tool In Pop-Up Menu"</font>
+                      selected will show up in the pop-up menu if you
+                      have also<font size="-1"> selected some text.<br>
+                        Tools that have the "Always <font size="-1">show
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                          In Popup" selected will show in the popup menu
+                          regardless of w<font size="-1">hether any text
+                            is or is not selected.<br>
+                            <br>
+                          </font></font> Commands can be 'comp<font
+                          size="-1">ound</font>' commands i.e. 'cat
+                        /tmp/textfile|head' but using pipes to a
+                        terminal may not always give what you want i.e.
+                        'xterm -hold -e 'cat "</font></font></font></font></font></font></font></font></font><font
+        size="-1"><font size="-1"><font size="-1"><font size="-1"><font
+                size="-1"><font size="-1"><font size="-1"><font
+                      size="-1"><font size="-1"><font size="-1"><font
+                            size="-1"><font size="-1"><font size="-1"><font
+                                  size="-1"><font size="-1"><font
+                                      size="-1"><font size="-1"><font
+                                          size="-1">/tmp/textfile</font></font></font></font></font></font></font></font></font>"|tail
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        -f'' WILL <font size="-1">work and show the
+                          tail of the file but <font size="-1">WILL NOT
+                            follow properly this is a <font size="-1">feature/problem
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                              of xterm and beyond</font></font> my
+                          control :(<br>
+                          <br>
+                        </font>For very </font></font></font></font></font></font></font></font>complex
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        commands create a script and set 'command' to the file path of
+        your script<font size="-1">, file paths can be absolute OR
+          relative ( see the example scripts ).</font> </font> <font
+        size="-1"><br>
+        Tools can be edited by selecting from the drop down list, if you
+        attempt to edit a globally installed tool ( <font size="-1">i.e.</font>i.e.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        one in /usr/share/KKEdit/tools ) you must have root privileges.<br>
+        <br>
+        You can also display a progress bar from your tool by selecting
+        the 'Use Prgress Bar' checkbox, a bar will be created for you
+        and you can control it by writing simple commands to a file, the
+        file path is contained in the environment variable
+        '$KKEDIT_BAR_CONTROL", you can write either a simple number
+        between 0 and 100 to set the gauge , 'pulse' to pulse the bar
+        and 'quit' to kill the bar, you do not need to specifically
+        write the 'quit' command as it will be sent automatically when
+        your tool ends, N.B. if you set your tool to run asynchronously
+        then you must send the 'quit' command your self.<br>
+        There is an example of how to control the bar in the example
+        tools in /usr/share/KKEdit/Example External Tools.</font><br>
+      <img alt="" src="countbar.gif" width="589" height="548"><br>
+      <br>
+      <img alt="" src="pulsebar.gif" width="669" height="550"><br>
+      <font size="-1"><br>
+        The title of the progress bar window is automatically set to the
+        name of your tool.<br>
+        <br>
+      </font>
+      <hr size="2" width="100%"><br>
+      <b><a name="prefsanc"></a></b><b>Preferences</b><br>
+      <br>
+      <img alt="prefs" src="prefs.gif" width="637" height="573"><br>
+      <br>
+      <img alt="" src="prefs2.gif" width="637" height="573"><br>
+      <br>
+      <img alt="" src="prefs3.gif" width="637" height="573"><br>
+      <br>
+      <font size="-1">The Prefs file is created ~/.KKEdit/kkedit.rc and
+        will be created/recreated when quitting KKEdit.<br>
+        Preferences should be set from 'Edit-&gt;Preferences'<br>
+        You can set the command to run an external tool in a terminal
+        from here.</font><br>
+      <font size="-1">Selecting 'Don't Open Duplicate File' will switch
+        to the tab of that file rather than opening another copy</font><font
+        size="-1"><font size="-1">.<br>
+          Selecting 'Don't Warn On File Change' will suppress the waning
+          dialog when an open file is changed on disk ( by another app
+          ), the tab will still be updated.<br>
+          The 'Run as Root Command' allows you to set your favorite
+          graphical root privileges program, if this is blank a terminal
+          will be used to ask for admin passwords ( <a href="#gtksui">See
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            here</a> ), the 'Terminal command' will be used to open a
+          terminal, if this is blank then the default 'xterm -e' will be
+          used. <br>
+          You can also set the highlight colour of bookmarked lines, and
+          also whether to show the bookmarkbar.<br>
+          <br>
+          You can also customize the keyboard shortcuts from here, just
+          click the button and you will get a dialog popup like so:<br>
+          <img alt="" src="keycuts.gif" width="518" height="612"><br>
+          To change the default shortcut click in the relevant box and
+          press a CONTROL key and your choice of keys with or without
+          SHIFT, shortcuts MUST use CONTROL.<br>
+          Repeat the above untill you have set all the shortcuts you
+          want and click 'Apply' to keep the changes or 'Cancel' to
+          guess what?<br>
+          <br>
+          You can also choose to open a file normally or by first
+          reading the link ( if it's a symlink ), this means that
+          filepath will either be the path to the link OR the path to
+          the real file, this is handy when using the 'Open' option from
+          the tab menu as you will either select files to open from the
+          folder the link is in or the folder were the real file is, try
+          it and see it's a lot less complicated than it sounds!<br>
+          &nbsp; <br>
+        </font> The 'Theme' can be set for the prefs via the drop down,
+        update of the current page is 'live', click 'Apply' to set the
+        theme globally or 'Cancel' to ignore changes.<br>
+        Themes are stored in "/usr/share/gtksourceview-2.0/styles" (
+        default installed themes ) or locally in ~/.gnome2/gedit/styles,
+        for compatability with gedit as most gktsourceview themes seem
+        to be gedit-centric ;)<br>
+        <img alt="" src="style.gif" width="637" height="573"><br>
+        <br>
+        <br>
+        <a name="customtoolbar"></a></font><b>Customize The Tool Bar</b><font
+        size="-1"><br>
+        <br>
+        You can customize what appears on the tool bar by simply
+        clicking on a button to add it to the menu like so:<br>
+        <img alt="" src="addtoolbutton.gif" width="688" height="151"><br>
+        <br>
+        And then drag it to where you want it to appear on the toolbar
+        like so:<br>
+        <img alt="" src="dragtoolbutton.gif" width="688" height="151"></font><br>
+      <font size="-1"><br>
+        To remove an item from the toolbar just hold 'CONTROL' and click
+        on item to be removed.<br>
+        <img alt="" src="removetoolitem.gif" width="688" height="150"><br>
+        Some items can only be added once 'Save', 'Open' etc when they
+        have been added they will be greyed out and can't be added
+        again, removing them makes them available again, the separator
+        and the expander can be used multiple times.<br>
+        You can also choose to hide/show the toolbar from the 'View'
+        menu.<br>
+      </font>
+      <hr size="2" width="100%"><br>
+      <a name="featanc"></a><b>Other Features </b><br>
+      <br>
+      <b><a href="#copyfilenameanc">Copy filename from tab menu.</a></b><b><br>
+      </b> <b><a href="#copyfilenameanc">Copy filepath from tab menu.</a></b><br>
+      <a href="#spellchk"><u><b>Spell check document from tab menu.</b></u></a><br>
+      <b> </b> <b><a href="#copyfunctiondefine">Copy function define.</a></b><b>
+      </b><b><br>
+      </b> <b><a href="#copyfunctiondefine">Go to function definition.</a></b><b>
+      </b><b><br>
+        &nbsp; </b> <b><a href="#bookmarkanc">Toggle bookmark.</a></b><b>
+      </b><b><br>
+      </b> <b><a href="#instanceanc">Single or multiple instance app.</a></b><b>
+      </b><b><br>
+      </b> <b><a href="#hexdumpanc">Open as hexdump.</a></b><b> </b><b><br>
+      </b> <b><a href="#findapi">Find API definition in Gtk Doc's.</a></b><b>
+      </b><b><br>
+      </b> <b><a href="#otherfeatsanc">Other</a></b><br>
+      <br>
+      <a name="copyfilenameanc"></a><font size="-1">Right clicking on a
+        tab allows copying of the document file name<font size="-1">,</font>
+        file path, spell check the document ,split/insplit the view, set
+        the source highlighting and quickly open other files in the same
+        directory as the current document ( handy for quickly opening
+        header files ).</font><br>
+      <img alt="tabmenu" src="tabmenu.gif" width="384" height="355"><br>
+      <br>
+      <a name="copyfunctiondefine"></a><font size="-1">The document
+        context menu also contains the&nbsp; 'Go To Definition' function
+        for convenience.<br>
+        Selecting the definition will copy it to the clipboard.<br>
+        If there is no valid definition selected the menu item will not
+        be shown.</font><br>
+      <img src="contextgoto.gif" alt="context" width="546" height="468"><br>
+      <br>
+      <font size="-1">The right click context menu<font size="-1">:<br>
+          <img alt="popup" src="popup.gif" width="606" height="640"><br>
+          <br>
+        </font></font><font size="-1"><a name="spellchk"></a></font><b>Spell
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        checker dialog</b><br>
+      <br>
+      <img alt="spellcheck" src="spellcheck.gif" width="336"
+        height="143"><br>
+      <br>
+      <b><a name="bookmarkanc"></a></b><b>Bookmarks</b><br>
+      <br>
+      <font size="-1">Any amount of bookmarks can be added, selecting
+        one will switch to that document and line.<br>
+        Bookmarks are stored with the 'Save Session' and can be restored
+        with the 'Restore Session With Bookmarks' menu.<br>
+        Bookmarks are now toggled so if you place the cursor on a line
+        with a bookmark it will add it if it's not already bookmarked or
+        remove the bookmark if it is, you can use the 'Toggle Bookmark'
+        menu from the main menu or the main context menu, you can also
+        just click in the bookmarks bar to toggle a mark on or off ( you
+        will see a little bookmark icon ).<br>
+        You can also remove all bookmarks from all open documents by
+        selecting 'Remove All Bookmarks' from the menu.<br>
+      </font> <img alt="boomark" src="bookmark.gif" width="612"
+        height="306"><br>
+      <br>
+      <a name="hexdumpanc"></a><font size="-1">You can open a file as a
+        hex dump ( this is NOT a hex editor though that may change later
+        ) like so:</font><br>
+      <img alt="hexdump" src="hexdump.gif" width="720" height="268"><br>
+      <br>
+      <a name="findapi"></a><b>Look up Gtk API</b><br>
+      <br>
+      <font size="-1">You can look up an API declaration from any
+        installed gtk-doc's installed by selecting all or part of an API
+        name like so:</font><br>
+      <img alt="selectapi" src="selectapi.gif" width="689" height="114"><br>
+      <br>
+      <font size="-1">And then selecting 'Search In Gtk-Docs' form the
+        Navigation menu or from the right click pop-up menu like so:</font><br>
+      <img alt="apimenu" src="gotoapi.gif" width="480" height="296"><br>
+      <br>
+      <font size="-1">And if you have built with the --enable-docviewer
+        option to configure ( the default ) you will get a window pop-up
+        with a list of possible links to the API you want, if there is
+        only one possible link you will go straight to that.</font><br>
+      <img alt="list" src="list.gif" width="754" height="379"><br>
+      <br>
+      <font size="-1"> Click the Link:</font><br>
+      <img alt="selected" src="selectedlist.gif" width="812"
+        height="387"><br>
+      <br>
+      <font size="-1">Links can be clicked and followed in the Gtk doc
+        viewer, and functions etc can be copied and pasted into your
+        document.<br>
+      </font><font size="-1">
+        <meta http-equiv="content-type" content="text/html;
+          charset=windows-1252">
+        <span style="color: rgb(0, 0, 0); font-family: Arial, Verdana,
+          sans-serif; font-size: small; font-style: normal;
+          font-variant: normal; font-weight: normal; letter-spacing:
+          normal; line-height: normal; orphans: auto; text-align:
+          -webkit-center; text-indent: 0px; text-transform: none;
+          white-space: normal; widows: auto; word-spacing: 0px;
+          -webkit-text-stroke-width: 0px; background-color: rgb(204,
+          204, 204); display: inline !important; float: none;">If you
+          had selected all of the 'gtk_button_get_use_stock '</span> API
+        name you would have gone straight to the screen shown.<br>
+        You can also manually enter a search term in the box and press
+        'enter' or click 'find'.</font><font size="-1">
+        <meta http-equiv="content-type" content="text/html;
+          charset=windows-1252">
+        <span style="color: rgb(0, 0, 0); font-family: Arial, Verdana,
+          sans-serif; font-size: small; font-style: normal;
+          font-variant: normal; font-weight: normal; letter-spacing:
+          normal; line-height: normal; orphans: auto; text-align:
+          -webkit-center; text-indent: 0px; text-transform: none;
+          white-space: normal; widows: auto; word-spacing: 0px;
+          -webkit-text-stroke-width: 0px; background-color: rgb(204,
+          204, 204); display: inline !important; float: none;"><br>
+          You can search within the displayed page by entering a search
+          term in the box and clicking 'Down' to search forward and 'Up'
+          to search back.</span>.<br>
+      </font> <br>
+      <a name="otherfeatsanc"></a><b>Other Features include:</b><br>
+      <font size="-1">Can be set to automatically save and restore a
+        session ( with or without bookmarks ) when starting and exiting.<br>
+        You can manually save and restore sessions via the 'File' menu,
+        you can also restore a session with or without the saved
+        bookmarks ( bookmarks are saved automatically with the session
+        ), if you change a file on disk without re-saving the session
+        you may find that some bookmarks are skewed.<br>
+        <a name="instanceanc"></a></font> <font size="-1"> You can run
+        KKEdit either as a single instance app or as a multiple instance
+        app , set via the prefs menu. Single instances are unique to
+        each workspace.<br>
+        <font size="-1">You can also open a new instance of KKEdit from
+          the file menu regardless of the prefs settings.<br>
+          <font size="-1"><br>
+            <a name="gtksui"></a></font></font></font><b>Using Root</b><font
+        size="-1"><font size="-1"><font size="-1"><br>
+            You can also open a<font size="-1"> new instance of KKEdit
+              with admin <font size="-1">privileges</font> from<font
+                size="-1"> the file menu<font size="-1">, You can set a
+                  GUI to gain root privileges in the prefs window, I
+                  would recommend,<font size="-1"> </font></font></font></font></font></font></font><b>GtkSu</b><font
+        size="-1"><font size="-1"><font size="-1"><font size="-1"><font
+                size="-1"><font size="-1"><font size="-1"> <font
+                      size="-1">( <a
+                        href="http://gtk-apps.org/content/show.php/GtkSu?content=158974">Available
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        here</a><font size="-1"> )<font size="-1">, use
+                          'gtksu --', ubuntu users may have to use
+                          'gtksu -- sudo' to stop gtk3 complaining,
+                          other options ( depending on your system and
+                          what you have installed are: 'gksu --', 'sudo
+                          -A' and so on,if no GUI to get root privileges
+                          is installed a terminal will be used depending
+                          on your preferences settings. </font></font></font></font></font></font></font></font></font></font><b><font
+          color="#cc0000"><br>
+          <br>
+          !!WARNING!!</font></b><font size="-1"><font size="-1"><font
+            size="-1"><font size="-1"><font size="-1"><font size="-1"><font
+                    size="-1"><font size="-1"><font size="-1"><font
+                          size="-1"><br>
+                          <br>
+                          Editing files with admin privileges can
+                          seriously damage your system if <font
+                            size="-1">used incorrectly.</font><br>
+                        </font></font></font></font></font></font></font></font></font></font><img
+        alt="" src="gtksu.gif" width="331" height="159"><br>
+      <br>
+      <b>Find/Replace</b><br>
+      <img alt="" src="find.gif" width="546" height="231"><br>
+      <br>
+      <font size="-1"><font size="-1"><font size="-1"><font size="-1"><font
+                size="-1"><font size="-1"><font size="-1"><font
+                      size="-1"><font size="-1"><font size="-1"><font
+                            size="-1"><font size="-1"><font size="-1"><font
+                                  size="-1"><font size="-1"><font
+                                      size="-1"><font size="-1"><font
+                                          size="-1"><font size="-1"><font
+                                              size="-1"><font size="-1">
+                                              </font> Search and replace
+                                              uses regex expressions<font
+                                                size="-1">, the quick
+                                                search <font size="-1">on
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                  the <font size="-1">toolbar
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                    does not,<font
+                                                      size="-1">
+                                                      searching
+                                                      backwards </font>can
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                    not be used with
+                                                    regex, <font
+                                                      size="-1">the text
+                                                      in the
+                                                      find/replace boxes
+                                                      are taken as
+                                                      literal strings</font>.<br>
+                                                    <font size="-1">You
+                                                      can find and
+                                                      replace in a
+                                                      single file or in
+                                                      all open files<font
+                                                        size="-1">, if
+                                                        you choose to do
+                                                        a <font
+                                                          size="-1">'R</font>eplace
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                        <font size="-1">A</font>ll'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                        in all open
+                                                        files you will
+                                                        be asked to
+                                                        confirm the
+                                                        action.<br>
+                                                        <font size="-1">The
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                          'Wrap<font
+                                                          size="-1">'
+                                                          option to
+                                                          find/replace
+                                                          is ignored
+                                                          when searching
+                                                          in all open
+                                                          files.</font></font></font>
+                                                    </font><br>
+                                                  </font></font></font></font></font></font></font></font></font></font></font></font></font><br>
+                        </font></font></font></font></font></font></font></font></font>You
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        can jump to a line using the toolbar entry:</font><br>
+      <img alt="jumptoline" src="gotolinefromtoolbar.gif" width="736"
+        height="351"><br>
+      <br>
+      <font size="-1">You can do a 'live' search by just typing into the
+        toobar&nbsp; search box::</font><br>
+      <img alt="apisearch" src="livesearch.gif" width="882" height="445"><br>
+      <br>
+      <font size="-1">Split view mode:</font><br>
+      <img alt="splitscreen" src="spliscreen.gif" width="560"
+        height="402"><br>
+      <font size="-1"><br>
+        <font size="-1">The current <font size="-1">source <font
+              size="-1">syntax colouring is now selectable via the 'tab'
+              context menu</font></font> like so</font>:<br>
+        <font size="-1">Be aware that the default highlighting for a
+          file is set by the <font size="-1">mime-type system and so
+            may change after saving/loading<font size="-1">. mime<font
+                size="-1">-types for a file can not <font size="-1">usu<font
+                    size="-1">ally be set <font size="-1">manually but
+                      depends on system auto magic stuff<font size="-1">,
+                        file suffix etc.</font></font></font></font></font></font></font></font><br>
+        <img alt="hilite" src="sourcehilite.gif" width="659"
+          height="338"><br>
+        <br>
+        You can also turn on/off various bits and peices from the 'View'
+        menu:<br>
+        <img alt="" src="viewmenu.gif" width="703" height="329"><br>
+      </font><b>Code Completion</b><font size="-1"><br>
+        If you have turned on 'Auto Show Completion' in the prefs then
+        as you type you will be shown various code completion options
+        like so:<br>
+        <img alt="" src="autocomp1.gif" width="578" height="489"><br>
+        The amount of letters in word before the pop up appears is set
+        in the prefs.<br>
+        <br>
+        You can also force the completion dialog to pop up by using a
+        keyboard shortcut ( set via the prefs ) like so:<br>
+        <img alt="" src="autocomp2.gif" width="603" height="486"><br>
+        As you can see in the above you can add a list of custom words
+        to add to the completion dialog by simpley creating the file
+        ~/.KKEdit/customcompletions and adding words to it, the file
+        MUST end in a newline, if the file does not exist no 'Custom
+        Words' option will be shown.<br>
+        Function and variable completions will show the definition when
+        the 'Details' button is toggled on, custom and document words
+        have no extra details. <br>
+        <br>
+      </font><b>Create </b><b>D</b><b>ocumentation with Doxygen</b><br>
+      <img alt="" src="docs.gif" width="808" height="636"><br>
+      <font size="-1">You can create documentation for your code if you
+        have doxygen installed by selecting "Create Documentation" from
+        the 'File' menu, the documentation will be created in the
+        current folder and displayed with either the built in docviewer
+        or the system browser, the first time you run this there may be
+        a small delay while the initial files are created by doxygen,
+        after that selecting "Create Documentation" again just updates
+        the files, if there is not a file a called 'Doxyfile' in the
+        current folder a default config file is created for you, this
+        file can manually edited to suit your needs, I would recommend
+        that you also install Graphviz for the nice fancy flow charts,
+        most distros will have packages for these two apps.<br>
+        If doxygen is NOT installed you won't have a "Create
+        Documentation" menu, just install it and ( optionally ) Graphviz
+        and restart KKEdit and the menu will appear.</font><br>
+      <br>
+      <b>Document Integration</b><br>
+      <font size="-1">There is some integration with the documents
+        crated by doxygen when, and only when using the built in
+        docview, select 'Documentation' form the 'File' menu and the doc
+        viewer will appear as above, there may be a bit of a delay the
+        first time you use this function while doxygen creates all the
+        necessary files, subsequent uses will be much faster as doxygen
+        will just update the needed files.<br>
+        Click on the 'Files' tab to get a list of files, then SHIFT
+        click on a file name like so:<br>
+        <img alt="" src="clickfile.gif" width="359" height="447">&nbsp;
+      </font><br>
+      <font size="-1">The doc viewer will open the page and the editor
+        will also either open the file or switch to the appropriate tab
+        like so:<br>
+      </font>&nbsp; <img alt="" src="edswitch.gif" width="374"
+        height="240"><br>
+      <img alt="" src="docswitch.gif" width="626" height="477"><br>
+      <br>
+      <font size="-1">Select a function for instance:</font><br>
+      <img alt="" src="funclick.gif" width="464" height="496"><br>
+      <br>
+      <font size="-1">Shows this:</font><br>
+      <img alt="" src="gotofuncclick.gif" width="825" height="677"><br>
+      <br>
+      <font size="-1">From here you can SHIFT click on the line number (
+        RED ) to open the file/switch tab and goto the line in the
+        editor and the docs like so:</font><br>
+      <img alt="" src="sourceclicked.gif" width="573" height="180"><br>
+      <br>
+      <img alt="" src="editsrcclicked.gif" width="572" height="487"><br>
+      <font size="-1">Shift clicking the file name ( BLUE ) will open
+        the file or switch tabs as above.<br>
+        Clicking a reference ( GREEN ) will go to the documentaion for
+        that refence where you can again select a line number/file etc.<br>
+        You can also click on the various graph box's to go to a
+        function definition.<br>
+        You can open a file by SHIFT clicking on a box in the include
+        dependency graph for a file like so:<br>
+        <img alt="" src="clickopen.gif" width="406" height="552"><br>
+        This will open the file or switch to the relevant tab as above.<br>
+        You can tweak the default doxyfile to add more/less info to the
+        browser.<br>
+        <br>
+        The main change you will want to make to the file 'Doxyfile' is
+        to change the project name so open then file 'doxyfile' which
+        will be in the same folder as your source&nbsp; code and change
+        the line "PROJECT_NAME="My Project"" to somthing more
+        appropriate.<br>
+        At the moment the documentation MUST&nbsp; be left in the html
+        folder created in the folder with your source code, this will
+        probably cjange later to allow you to set the folder for the
+        documentation.<br>
+        If you want more information on the various options available in
+        the doxyfile run 'doxygen -g' from the command line and a
+        default Doxyfile will be created which is heavily commented.</font><br>
+      <br>
+      <b>Plugins</b><br>
+      <font size="-1">
+        <meta http-equiv="content-type" content="text/html;
+          charset=windows-1252">
+        KKedit now supports simple 'c' plugins, an example plugin is
+        available on the plugins page, this will add a menu item to the
+        'Help' menu which will display all the currently supported
+        features of the plugin system this is still a work in progress
+        so bugs and suggestions are welcome, I will be adding extra
+        plugins that will be available from this site but if you write a
+        plugin or just have an idea for one please let me know.<br>
+        <br>
+        Plugins can be enabled/disabled from the 'Plugin Prefs' menu
+        from the 'Edit' menu.<br>
+        <img alt="" src="plugprefs.gif" width="366" height="279"> <br>
+        <br>
+        There are two plugin folders that will be searched for plugins:
+        /usr/share/KKEdit/plugins and ~/.KKEdit/plugins, plugins can be
+        in subfolders and should be named like 'libPLUGNAME.so'<br>
+        See the installed example plugin for basic features and a basic
+        Makefile.<br>
+      </font><br>
+      <meta http-equiv="content-type" content="text/html;
+        charset=windows-1252">
+      <div style="color: rgb(51, 51, 51); font-family: Arial, Verdana,
+        sans-serif; font-size: 13px; font-style: normal; font-variant:
+        normal; font-weight: normal; letter-spacing: normal;
+        line-height: normal; orphans: auto; text-indent: 0px;
+        text-transform: none; white-space: normal; widows: auto;
+        word-spacing: 0px; -webkit-text-stroke-width: 0px;
+        background-color: rgb(204, 204, 204);" align="center"><font
+          color="#000000"><font size="-1">Full details and extra plugins
+            can be found here:</font></font></div>
+      <div style="color: rgb(51, 51, 51); font-family: Arial, Verdana,
+        sans-serif; font-size: 13px; font-style: normal; font-variant:
+        normal; font-weight: normal; letter-spacing: normal;
+        line-height: normal; orphans: auto; text-indent: 0px;
+        text-transform: none; white-space: normal; widows: auto;
+        word-spacing: 0px; -webkit-text-stroke-width: 0px;
+        background-color: rgb(204, 204, 204);" align="center"><font
+          color="#000000"><font size="-1"><a
+href="https://sites.google.com/site/kkeditlinuxtexteditor/kkedit-plugins"
+              style="color: rgb(85, 26, 139);"><b>KKEdit Plugins</b></a></font></font></div>
+      <hr size="2" width="100%"><a name="getanc"></a><b>Get it here!</b><b><br>
+      </b> <b><a
+          href="http://gtk-apps.org/content/show.php?content=158161">KKEdit</a></b><br>
+      <br>
+      <font size="-1">Dependencies<br>
+        <br>
+        A reasonably new Xorg and desktop.</font> <font size="-1"><br>
+        gtk-2.24.13.<br>
+        gtksourceview-2.11.1.<br>
+        ctags.<br>
+        Autotools.<br>
+        libunique-1.1.6<br>
+        wget or curl.<br>
+        <br>
+        webkitgtk-1.10.x. (optional but recommended)<br>
+        <font size="-1">a<font size="-1">spell-0.60.6.1.</font></font></font><font
+        size="-1"><font size="-1"><font size="-1"><font size="-1">
+              (optional</font></font></font></font><font size="-1"><font
+          size="-1"><font size="-1"><font size="-1"><font size="-1"> but
+                recommended</font>)<br>
+              Gtk<font size="-1">Su (</font></font></font></font></font><font
+        size="-1"><font size="-1"><font size="-1"><font size="-1"><font
+                size="-1"><font size="-1">optional but recommended)<br>
+                  <font size="-1">Manpage Editor </font></font></font></font></font></font></font><font
+        size="-1"><font size="-1"><font size="-1"><font size="-1"><font
+                size="-1"><font size="-1"><font size="-1"><font
+                      size="-1"><font size="-1"><font size="-1"><font
+                            size="-1"><font size="-1">(</font></font></font></font></font><font
+                      size="-1"><font size="-1"><font size="-1"><font
+                            size="-1"><font size="-1"><font size="-1">optional
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                but recommended)<br>
+                                Glib-Networking </font></font></font></font></font></font></font></font></font></font></font></font></font><font
+        size="-1"><font size="-1"><font size="-1"><font size="-1"><font
+                size="-1"><font size="-1"><font size="-1"><font
+                      size="-1"><font size="-1"><font size="-1"><font
+                            size="-1"><font size="-1"><font size="-1"><font
+                                  size="-1"><font size="-1"><font
+                                      size="-1"><font size="-1"><font
+                                          size="-1"><font size="-1"><font
+                                              size="-1"><font size="-1"><font
+                                                  size="-1"><font
+                                                    size="-1"><font
+                                                      size="-1"><font
+                                                        size="-1">(</font></font></font></font></font><font
+                                                size="-1"><font
+                                                  size="-1"><font
+                                                    size="-1"><font
+                                                      size="-1"><font
+                                                        size="-1"><font
+                                                          size="-1">optional
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                          but
+                                                          recommended)<br>
+                                                          <br>
+                                                        </font></font></font></font></font></font></font></font></font></font></font></font></font>&nbsp;</font></font></font></font></font></font></font></font></font></font></font></font>webkit
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        is is an optional dependency if you want to build the Gtk-Doc
+        viewer disable by adding --disable-docviewer to ./configure or
+        ./autogen.sh.<br>
+        Spell checking via aspell is <font size="-1">optional and can
+          be enabled with the '--enable-aspell' switch to ./configure or
+          ./autogen.sh.<br>
+          <br>
+          The presence of "GtkSu" <font size="-1">a</font>nd "Manpage
+          Editor" are detected at configure and if installed will be
+          used, in the case of GtkSu this is used to get admin <font
+            size="-1">privileges when opening a root editor from the
+            file menu<font size="-1">, if Manpage Editor is detected a
+              menu item is added to the file menu, both can be
+              downloaded from this website.<br>
+            </font></font></font></font><font size="-1"><font size="-1"><font
+            size="-1"><font size="-1"><font size="-1"><font size="-1"><font
+                    size="-1"><font size="-1"><font size="-1"><font
+                          size="-1"><font size="-1"><font size="-1"><font
+                                size="-1"><font size="-1"><font
+                                    size="-1"><br>
+                                    Glib-Networking is a runtime de<font
+                                      size="-1">pendency <font
+                                        size="-1">and is used to do a
+                                        google search if "Open Man page"
+                                        or "Search in GTK-Docs" can't
+                                        find anything.<br>
+                                      </font></font></font></font></font></font></font></font></font></font></font></font></font></font></font>&nbsp;<br>
+        </font> If you use a source based distro like LFS or Slackware
+        you should have all(most) of these installed, if you use a
+        pre-packaged distro like debian and you have not compiled from
+        source before you may have to install some development packages
+        <font size="-1">i.e.</font>i.e. for debian ( this is from memory
+        ) the build-essential package and the -dev packages for gtk2 and
+      </font> <font size="-1"><br>
+        gtksourceview, check your distros documentation and you distros
+        forums for general help on compiling software.</font> <br>
+      <br>
+      <b>Building</b><br>
+      <font size="-1">Unpack the tar ball,cd into the KKEdit folder and
+        run:<br>
+        ./autogen.sh --prefix=/usr&nbsp; </font><font size="-1"><font
+          size="-1"><font size="-1">--enable-aspell</font></font>&nbsp;
+        --enable-docviewer<br>
+        make<br>
+        sudo make install<br>
+        <font size="-1">( ./configure can now be used instead of
+          ./autogen.sh - no need for autotools ).<br>
+          <font size="-1">P<font size="-1">LEASE read the README file!</font></font><br>
+        </font> See the 'INSTALL' file for full detail<font size="-1">s.<br>
+        </font></font>
+      <hr size="2" width="100%"><font size="-1"><font size="-1"><a
+            name="bugs"></a></font></font><b>Reporting Bugs</b><font
+        size="-1"><font size="-1"><br>
+          <br>
+          Please send bug reports, feature suggestions, large bags of
+          jewels etc to:</font></font><br>
+      <br>
+      &nbsp;<b> kdhedger68713@gmail.com</b><font size="-1"><font
+          size="-1"><br>
+          <br>
+          I will get back to you as soon as I can.<br>
+        </font></font><font size="-1"><font size="-1"><br>
+        </font> </font>
+      <hr size="2" width="100%"><b><font size="+3"><a
+            href="http://keithhedger.hostingsiteforfree.com">Home</a></font></b><br>
+      <hr size="2" width="100%"><br>
+      <small> </small></div>
+  </body>
+</html>

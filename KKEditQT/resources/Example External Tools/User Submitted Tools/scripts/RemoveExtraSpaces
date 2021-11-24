@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+#Submitted by:
+#©Sadi Yumuşak <sadiyumusak@gmail.com>
+#All comments and suggestions to the above.
+#Script and tools options may have been tweaked by me.
+#
+#Removes extraneous spaces from selection.
+
+echo -n "$KKEDIT_SELECTION"|sed -e 's/\&nbsp;/ /g' -e 's/\s\s\s*/ /g' -e 's/\s\s*$//g' -e 's/^\s\s*//g'

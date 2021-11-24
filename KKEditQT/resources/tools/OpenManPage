@@ -1,0 +1,9 @@
+#!/bin/bash -e
+
+#©keithhedger Sun 15 Dec 18:54:28 GMT 2013 kdhedger68713@gmail.com
+
+if man -w $KKEDIT_SELECTION &>/dev/null;then
+	man2html $(man -w $KKEDIT_SELECTION) > "$KKEDIT_HTMLFILE"
+else
+	rm "$KKEDIT_HTMLFILE" &>/dev/null
+fi

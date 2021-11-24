@@ -1,0 +1,9 @@
+name	Run As Root Script
+command	"%f"
+comment	
+flags	16
+interm	0
+inpopup	0
+alwayspopup	0
+clearview	1
+runasroot	1

@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+#Submitted by:
+#©Sadi Yumuşak <sadiyumusak@gmail.com>
+#All comments and suggestions to the above.
+#Script and tools options may have been tweaked by me.
+#
+#Sorts selection and removes duplicate lines.
+
+echo -n "$KKEDIT_SELECTION"|sort -u

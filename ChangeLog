@@ -1,0 +1,590 @@
+0.5.0
+Moving prefs.
+Done view menu.
+Done edit menu.
+Done filemenu.
+Re-writing menu/toolbar system.
+Done single instance.
+Done bookmarks.
+Done No syntax hilighting.
+Fixed update func menu on set prefs.
+Done line highlight colour.
+Removed unwanted borders from windows.
+Done tabwidth.
+Done hilite current line.
+Done func search prefsDepth.
+Done show linenumbers.
+Done autoindent.
+Done wrap lines.
+Done scrollable menus.
+Redone prefs.
+Done load.
+Restarted QT5 version.
+
+0.3.0
+Done nav and edit context menu.
+Done search gtkqt5 documentation.
+Done built in docviewer, (mostly).
+Search for define now tries case sensitive then insensitive.
+Done search for define.
+Done open include.
+Done go to definition.
+Done find/replace.
+Fixed highlight current line bug.
+Fixed non inited pointers in document class.
+Set Function menu enabled.
+Done set enavbled on selected toolitems in prefs.
+Done remove items from DnD prefs, and save.
+Done save exit data if using quit or closing main window.
+Done DnD toolbar customize in prefs.
+Moved prefs to ~/.KKEditQT and ~/.KKEdit.
+Font prefs changes take effect immediately, (mostly).
+Done 'Apply' prefs.
+Basic hightlight current line.
+Basic line numbers.
+Synched gtk code v0.2.6 to 0.3.0
+Basic function menu.
+Basic load prefs.
+Basic open file.
+Basic syntax highlighting.
+Stared port to QT5
+
+//TODO//
+0.2.6
+Updated help file and translations.
+Fixed odd characters in tab name when truncated with elipses.
+Fixed crash when ctags gets confused and produces an enormous function name.
+Added 'Sort Tabs' to file menu.
+Fixed some minor encoding to UTF8 bugs.
+Fixed bug when loading certain html files.
+Fixed minor callback bug in prefs/plugin prefs.
+Speeded up load session.
+Code clean.
+Fixed bug where closing too many tabs too fast caused a segfault.
+Fixed regex find lockup .
+Can now do backward regex search.
+Redoing regex find/replace.
+Can now only spell check whole document if document is 'clean'.
+Removed unneeded reference to libunique from build files.
+Removed debug flags from makefile.am.
+Spell check document now sets the dirty flag correctly.
+Changed dropbox to dropboxentry in spellcheck word dialog.
+Fixed bug in spell check word.
+Fixed some free() bugs.
+Improved 'ReadLink Before Opening File' option, now handles relative links better, and uses the 'real' filename for the tab name if set, if not uses the link filename ( which may be different ).
+
+0.2.5
+Set prefs option for setting max characters displayed in bookmarks menu.
+Set prefs option for setting max characters displayed in menus/context menu.
+Set prefs option for setting max characters displayed in tabs.
+Cleaned prefs code.
+Fixed single instance bug in ubuntu.
+If there is a text selection 'Replace All' now only affects the selected text instead of the whole document.
+If there is a text selection 'Find' now starts from the start of the selection instead of the end.
+Removed some deprecated function calls.
+Fixed bug with opening large html files with odd characters in the name.
+Can now group all plugins under one menu.
+Fixed occasional endless loop in replace all.
+Improved speed of 'Replace All'.
+Cleaned prefs code.
+Fixed segfault on docviewer when a very large number of possible matches are found.
+Added colour button to prefs for setting bookmark highlight colour.
+Added max find/replace history terms saved to prefs.
+Fixed ubuntu/gnome bugs AGAIN! I wish they would stop breaking stuff for no good reason!
+Added help option to command line.
+Added long command line options.
+Fixed opening files with non-ascii characters in name.
+Added linking to Xlib.
+Switched to gapplication from deprecated libunique.
+Now saves last 10 find/replace terms and reloads at startup.
+Fixed segfault when trying to open file with non ascii characters in the name with a kkedit instance already running.
+Changed Find/Replace Entry/Dropdowns to Combo box with entry.
+//TODO//
+
+0.2.4
+Added 'Add to Custom Word List" to popup when text is selected.
+Added 'Check For Updates' option to prefs.
+Added support for custom word completions.
+Redone prefs dialog.
+Added function/variable definition to 'Detail' on completion popup.
+Added variable names to auto complete.
+Added function names to auto complete.
+Added auto-complete popup key to keybindings dialog.
+Started to add auto completion.
+Changed key bindings file and format.
+Fixed bug where size of doc viewer being stored wrong if it hasn't been shown.
+Now remembers size and position of built in docviewer on quit.
+Removed redundant function 'deleteSlice' from globals.
+Truncated popup function menu entries when function/variable def is over 100 characters ( copy and paste of the entry uses full definition ).
+Truncated function menu entries when function/variable def is over 100 characters.
+Set QWidget names on menus to help find them from plugins.
+Added french translation.
+Tweaked prefs layout.
+Added 'No Syntax Highlighting' to prefs to turn off syntax highlighting.
+
+0.2.3
+Cancel quit properly if 'Cancel' selected in unsaved documents dialog.
+Status bar now shows number of replacements when using find/replace.
+Fixed 'handles' showing on side/top/bottom on startup when not showing the user panes.
+Added message dialog when disabling a plugin that can't be unloaded without a restart.
+Added KKEdit version string to data passed to plugins.
+Added main notebook QWidget to data passed to plugins.
+Exposed main menu callbacks to plugins so they can be overridden.
+Improved open include now tries exact match -> best match.
+Open include file now only needs the cursor on the line with a #include no need to select the whole line, # **MUST** be the first character on the line.
+Improved search for definition now try's: exact match in open files->exact match in all files in current folder->best match in all files in current folder.
+Fixed bug in restore session when trying to restore file with a space in the name.
+Fixed crash when trying to restore session with bookmarks with missing file.
+Improved string scanning for valid chars.
+Standardized save/load routines for configs.
+If two or more plugins use a top/bottom pane pane wont be closed until all plugins close it.
+Added top/bottom draggable panes for plugins.
+Added loadVarsFromFile and saveVarsToFile to kkedits export so plugins can use the routines to save/load data.
+Fixed key propagation to tools!
+Added reserved data to page structure.
+Fixed bug when plugin must not be unloaded.
+Fixed segfault when shutting window with close button rather than using quit.
+Fixed key presses not being propagated to plugins.
+Added user datalist to page structure for use by plugins.
+Fixed plugins in subfolders not being properly sorted on load.
+
+0.2.2
+Made 'Get Plugins' open browser as async.
+Removed use of xdg-open ( broken in LFS ) can now set the default browser in prefs if internal docviewer is disabled ( defaults to Firefox ).
+Added context pop up menu to data passed to plugins to add to the context pop up.
+Added call to "addToContext" functions in plugins.
+Added tab pop up menu to data passed to plugins to add to the tab pop up.
+Added call to "addToTab" functions in plugins.
+Removed example-plugin from package as it's available from the website now.
+Added search in page of builtin doc viewer (Up/Down).
+Fixed bug when trying to jump to non-existent function declaration.
+Fixed minor sensitive bug when closing tab.
+If documentation doesn't exist when selecting 'Show Documentation' from the 'View' menu it is now built.
+Fixed bookmarks not being removed from closed tab.
+Nag screen now only every month.
+Added check for update every month.
+Added '-s' switch ( safe ) to disable loading of ALL plugins for this session implies '-m'.
+Fixed regex for 'Open' from tab pop up not showing some files.
+~/.KKEdit/plugins now searched first for plugins, ( ie local plugs take precedence over global plugs ).
+Plugins now checked for duplicate names on load, only first instance loaded.
+Plugins now loaded alphabetically.
+If two or more plugins use a left/right pane pane wont be closed until all plugins close it.
+Added expander handles to left and right user boxes.
+Code Clean
+About and/or Preferences in plugin prefs dialog now dimmed if not available in the plugin.
+
+0.2.1
+Updated plugin help.
+Pointed various links to new website.
+Fixed a few small compile bugs when not using the built in docviewer.
+Hidden all symbols from plugins except what they need to access.
+Updated plugin help and commented example plugin source file.
+Plugin prefs dialog now stays open until manually closed.
+Added top and bottom label to the demo plugin.
+Plugins can now send output to the tool output window.
+Added textbuffer of tool output pane for plugin use.
+Added Hide/Show tooloutput for plugin use.
+Tool output pane height now saved at exit.
+Added menu 'Get Plugins' to 'Help' menu to get more plugins from my website.
+Changed some plugin interface names so its less confusing.
+Added top,left,right and bottom user vboxs to main window for use in plugins.
+Changed the build for the barber pole  as a fix for Ubuntu 12.04.
+Down graded the required version of gmodule as a fix for Ubuntu 12.04.
+Path to KKEdit's temp folder now passed to plugins.
+Added about box to example plugin.
+Added plugin icon.
+Plugins can now be enabled/disabled without restart.
+
+0.2.0
+Installed example plugin to DATADIR/plugins.
+Plugins can now be enabled and disabled from the plug prefs.
+Moved plug code to PluginClass;
+Fixed not finding more than one plugin.
+Fixed Makefile dependency.
+Fixed built in doc viewer not showing correct title.
+Started plugin prefs.
+Prelim testing on xubuntu OK.
+Fixed bug when using single instance re-running init when opening new file.
+Started help for plugins.
+Plugins can now call showDocView.
+Added KKEdit-plugins.h.
+Added test plugin.
+Started plugins code.
+Add caret browsing to docviewer.
+
+0.1.9
+Fixed 'Back' segfault.
+Made progressbar always stay on top.
+Minor fix for default Doxyfile.
+Example tools are now installed at "$(DESTDIR)$(pkgdatadir)/Example External Tools", as the packaged versions were not installing them.
+Added option to display a progress bar when running external tool, can be controlled from the tool.
+Removed the use of tempfile, now uses a tempory folder and internally generated random names.
+Added progress bar for long documentation ops.
+Fixed opening file from docs not respecting no duplicates when opening link.
+Better file integration with doxygen.
+Added missing keyboard accelerators for opening menus from keyboard (ALT-F for file menu etc ).
+Fixed regex crash when using badly formed replace string.
+Improved string slicing code.
+Add 'Show Documents' to 'View' menu to show the doxygen docs ( faster ) without rebuilding/updating ( unless they don't exist ).
+Better file integration with doxygen.
+
+0.1.8
+Numerous small bug fixes and code cleanup. 
+Yet another work around for Ubuntu based distros ( what is it with dash anyway? ).
+Prelim support for linking doxygen links to source code in the editor ( must use the internal doc viewer, won't work with external browser ).
+Fixed goto define opening a file but not scrolling to the proper line.
+Goto define now searches for an exact match first and then the nearest match.
+Back now goes back after jumping to bookmark.
+Default doxygen config file copied to current folder when making documents if there is no file called 'Doxyfile'.
+Added Show/Hide docviewer to 'View' menu.
+Added runtime check for doxygen.
+Added default doxygen config file to "/usr/share/KKEdit/docs"
+Added doxygen document builder to 'File' menu.
+Stopped loads of pointless JavaScript warnings on stdout when using the docviewer for certain pages.
+Root desktop file now uses the graphical su path defined by configure ( defaults to /usr/bin/GtkSu ).
+Can now set default path to graphical su at compile time with "--with-gsu-path" option ( can be overridden via prefs ).
+Added 'Highlight All' to regex find.
+Made 'Highlight All' persistent.
+Added 'Highlight All' to search.
+'Back' now goes back from selecting in the 'Functions' menu.
+'Back' now switches tabs as well.
+
+0.1.7
+Redone code for external tools.
+Fixed rare segfault in external tools dialog.
+Added option to delete keyboard shortcut from external tools and main keyboard shortcuts.
+Added option to add keyboard shortcut to external tools.
+Fixed status bar lag when opening many large files.
+Added 'Read Link...' to prefs to either open a link normally or to read the link first.
+Added 'Open' to tab menu to quickly open files in current directory.
+When moving multiple lines up/down selection is extended to whole lines.
+Status bar now doesn't show '(null)' if no syntax highlighting or filepath.
+Added more shortcuts.
+Update status bar on tab switch.
+Added 'Show/Hide Status Bar' to 'View' menu. 
+Added status bar.
+Added customising  dialog for keyboard shortcuts.
+Added keyboard shortcuts.
+
+0.1.6
+Updated example tools that need root to use new features.
+Now if no GUI for getting root privileges specified ALL root actions are run in terminal.
+Added 'Run Tool As Root' to tool options.
+Fixed bug when user terminal command empty.
+External Manpage editor program installed now checked at runtime instead of compile time.
+Added user command for getting root privileges via a GUI in prefs.
+Removed forced use of external app GtkSu for getting root privilege.
+Added history drop down for 'Replace'.
+Added history drop down for 'Find'.
+Added 'Don't Warn On File Change' to prefs.
+Added 'Don't Open Duplicate File' to Prefs.
+Fixed minor prefs bug.
+Set 'Root' window icon (red).
+Redone .desktop file.
+Set window icon properly.
+
+0.1.5
+Added 'Back' button to toolbar and 'Navigation' menu.
+Added 'Copy Folder Path' to tab pop up menu.
+Globally installed tools are not usually editable and so don't show in the 'Edit External Tools' dialog.
+Globally installed tools are now shown at the top of the 'Tools' menu.
+Minor 'Paste' bug fix.
+Added 'Clear tool output first' option to external tools prefs. 
+Changed example tool 'Comment Selection' to take advantage of the $KKEDIT_SOURCE_LANG env var.
+Pass highlighting language to external tools, "%l" placeholder and $KKEDIT_SOURCE_LANG env var.
+Spell check menus no longer shown if no language packs installed or other aspell problems.
+Set Edit->Cut/copy/Paste sensitive.
+Added redo all.
+Added undo all.
+
+0.1.4
+Fixed 'New Admin Editor' not running as new process.
+Fixed segfault when trying to open file without read permissions.
+Added switch to ./configure to set directory of installed Qt5 docs ( default "/usr/share/doc/qt5" ).
+Set the title of the docviewer correctly.
+Cleaned the docviewer code.
+Added a "Find API In Qt5 Docs" entry box to toolbar.
+Fixed minor bug when selecting "Search In GTK Docs" from 'Navigation' menu when no selection.
+Added "Search In Qt5 Docs" to 'Navigation' menu.
+Added "Search In Qt5 Docs" to context menu.
+Removed QT Search from external tools.
+Fixed compile error when using --disable-docviewer
+Minor fix to root style.
+
+0.1.3
+Automatically chooses the 'Root Source' style when using a root window if the style has not been set.
+Added a 'Root' gtksourcestyle for using a root editor.
+Added 'Remove All Bookmarks' to bookmark menu.
+Tweaked a few external tools to take advantage of the new 'View Output' option.
+Entry's now sorted in 'Tools' menu and 'Manage External Tools' drop down.
+Fixed a couple of tools.
+Added 'Show/Hide Tool Output' to 'View' menu.
+Added a 'View Output' option to tool flags.
+Changed 'Toggle' in 'View' menu to 'Show/Hide'.
+Fixed 'Functions' menu sorting changes to reflect prefs immediately.
+Fixed 'Functions' menu not being updated on save.
+Added 'Categorised' submenus to 'Functions' menu sorting.
+Added Function list sorting to prefs.
+
+0.1.2
+Redone help files.
+Removed unnecessary options from prefs.
+Removed 'Show BM Bar' from prefs ( now automatic ).
+Carried over visibility of Bookmark Bar and Tool Bar from previous session.
+Moved 'Toggle Bookmark Bar' to 'View' Menu.
+Added 'Toggle Tool Bar' to 'View' menu.
+Added new 'View' menu.
+Fixed greying out of unusable toolbar buttons ( e.g. can't 'cut' when no page visible etc ).
+Added expander to toolbar items.
+Added configurable toolbar.
+Fixed bug when loading session where file has weird characters in the name.
+
+0.1.1
+Fixed tool not appearing in pop up if both pop up options selected.
+Fixed not creating new tool if ~/.KKEdit/tools folder doesn't exist.
+Comments now appear as tooltips in the 'Tools' menu and the context menu.
+Added optional comments to external tools.
+Fixed crash when repeatedly deleting tools from the 'Manage External Tools' menu.
+Added a couple of source view styles (one grey and one brown).
+Added external tool to look up QT5 definition (docs must be in "/usr/share/doc/qt5" if not change the search directory in the tool),
+works the same as 'Open Manpage' just select a define 'QWidget' for instance and then select 'QT5 Search' from the tools or context menu.
+Compacted the prefs dialog, and grouped the functions.
+Fixed bug in tools where only the first use of a place holder was being set. 
+Fixed bug in external tools where %h was not being set. 
+
+0.1.0
+Fixed restoring file name with spaces ( again! )
+Redone save/restore session.
+Bookmarks now toggled rather than added.
+Added 'Toggle Bookmark' to context menu.
+Can now change bookmark highlight colour.
+Added bookmark icon.
+Fixed double free bug in prefs.
+Toggle bookmark bar now affects all open files and is remembered in the prefs.
+Bookmarks can now be added/deleted by clicking on the icon in the bookmark bar.
+Added a bookmark bar.
+Added plea for money.
+Fixed not jumping to line when selecting goto define and file is not already open.
+
+0.0.32
+Added new menu icons for 'New Editor' and 'New Admin Editor'.
+Hidden languages no longer shown.
+Source highlighting dropdown list now display language names properly.
+Source highlighting dropdown list now definitely sorted.
+Added 'Bug Reporting' link to help file as suggested.
+Moved source highlighting selector to page tab from toolbar.
+Fixed 'New Editor' not running as new process.
+Fixed 'Manpage Editor' not running as new process.
+Fixed Automake warning about new subdir-objects not set.
+
+0.0.31
+Updated 'Help' files.
+Fixed multiple warnings that file has changed on disk.
+Added 'live' preview of style scheme to prefs, 'Cancel' resets style and 'Apply' sets style.
+Added local search path to styles so now also looks in ~/.gnome2/gedit/styles.
+Added "Theme" to prefs.
+
+0.0.30
+fixed bug in determining mime type of file.
+Fixed Debian install instructions in INSTALL file.
+
+0.0.29
+Fixed infinite loop bug when no find text in find/replace dialog.
+Fixed find/replace buttons not being labelled/dimmed correctly.
+Fixed not showing replace in all files confirmation when not using regex.
+
+0.0.28
+Fixed minor bug in configure.ac script.
+Replaced simple font name and size entry box in prefs with font select button.
+Fixed Minor bug when using 'Go To Definition' from menu opens a new file jumping to wrong line number.
+Minor updates to user submitted scripts.
+If glib networking is installed if selecting "Open Man page" or "Search in GTK-Docs" can't find anything appropriate a Google search is performed.
+
+0.0.27
+Fixed over enthusiastic utf8 conversion!
+Example tools now use relative paths.
+External tools can now use relative paths to command script.
+Fixed bug with external tools.
+
+0.0.26
+Fixed .desktop file.
+Fixed minor bug in example tools for case conversion ( thanks sadi! ).
+Greyed out 'Back' button in find/replace when using regex as can't ( yet! ) do a backward regex search.
+Made Regex search optional and remembered.
+Replace unprintable characters in file with "". ( allows opening some files with binary data like .csv ).
+Scan and convert encoding to UTF8 now MUCH better.
+Fixed infinite loop bug in regex search when no match found.
+
+0.0.25
+fixed multibyte character find/replace bug.
+Search 'wrap' and 'replace all' settings saved on exit.
+Search in all files setting saved on exit.
+Added Search in all files.
+
+0.0.24
+Search/Replace now uses regex.
+Insensitive search now remembered on exit.
+
+0.0.23
+Fixed bug when GtkSu not installed.
+Set document 'dirty' after spellcheck.
+
+0.0.22
+Added check for installed manpageeditor, if succeeds menu item added in file menu.
+Code clean.
+Undo bug fix.
+Added Manpage Editor Icon for menuitem.
+Added 'Always Show In Popup Men' to external tools ( no selection needed ).
+Redone some installed tools and example tools.
+
+0.0.21
+Added 'Split View' to tab menu, click once to split, again to un-split.
+'Live Search' is now always case insensitive.
+Removed 'dirty' flag from buffer when first opening as hexdump.
+Added configure and associated files to archive so no longer needs auto-tools.
+Updated 'INSTALL' file for Debian/fedora users.
+Added drop down for syntax highlighting.
+Added 'New Editor' to file menu.
+Added 'New Admin Editor' to file menu.
+Updated help file.
+Fixed 'close tab' bug'
+Code clean.
+Now allows pipes in external tool command.
+
+0.0.20
+Added (optional) support for Aspell.
+Added 'Check Spelling' to popup menu when word selected.
+Added 'Spell Check Document' to document tab menu.
+'Cancel' while spell checking document now cancels entire action.
+Updated 'Help'.
+
+0.0.19
+Added 'Live Search' to toolbar, 'Enter' -> find next,'Shift' -> find prev.
+Added show/hide entry boxes on toolbar to prefs.
+
+0.0.18
+Added command line switch (-m) to override the single instance pref ( used for running an extra version via the tools menu etc ).
+Added drag 'n' drop to insert text file into text when dropped on text part of window;
+Added drag 'm' drop text between windows/applications.
+
+0.0.17
+Handles files with spaces in their names properly.
+Added get mime type via external command if glib fails.
+Code clean.
+Fixed segfault on filename with spaces in certain circumstances.
+
+0.0.16
+Added Recent File menu.
+Added multiple select to file open.
+Added 'Show in Pop Up' option to external tools GUI.
+Files opened on commandline/dnd etc now get added to recent items.
+
+0.0.15
+Save/restore bookmarks with session, if the files change on disk after saving session, restoring will skew bookmarks.
+Added "Close All Tabs" to file menu.
+Close all tabs BEFORE restoring session.
+Dimmed Nav, func and bookmark menus when no docs open.
+Dimmed saveall, close etc when no docs open.
+Session can now be restored with/without the saved bookmarks.
+Auto restore bookmarks can be set in prefs
+Added error dialog if can't save.
+External tools now editable from the GUI.
+For convenience info label in tools gui is selectable.
+Added 'delete' to tools GUI.
+Added 'Home' button to gtk doc viewer.
+Added '$KKEDIT_HTMLFILE' to vars passed to external script, this file should be used for displaying output from tool in html format.
+Adde '%h% to tools place holders, details as above.
+Added 'show HTML doc' option to tool, to either display the gtk doc viewer or the default browser with the page ' $KKEDIT_HTMLFILE'
+Added 'Search For Definition' entry to toolbar - same as 'Navigation->Search For Define'.
+
+0.0.14
+Removed redundant close button from toolbar.
+Added printing.
+Improved Gtk Doc search.
+Code clean.
+Only recursively search for define from main menu not pop-up ( for speed ).
+Added manual search box to gtk-doc viewer.
+Added auto save/restore session to prefs (default off).
+Tweaked help page.
+Added manual gtk doc search to toolbar
+
+0.0.13
+Added crude function lookup in gtk-doc folder - to be improved.
+Added optional webkit dependency if building doc viewer.
+Added gkt-doc viewer in own window via webkit.
+Added switch to configure for optional gkt-doc viewer.
+Added 'Save All'
+Added 'Help' now shown local if doc viewer has been built.
+Redone demo installed external tools.
+Fixed autogen.sh only passing first option on command line.
+
+0.0.12
+Do simple conversion to/from UTF-8.
+Added "Open As Hexdump" to file menu.
+Added number to untitled docs.
+Made application single instance.
+Major Code clean.
+Added select single/multi instance to prefs.
+Prefs applied immediately  ( again! ).
+
+0.0.11
+Added selected function def to popupmenu.
+Added show functions def in popupmenu.
+Fixed defines that contain : or / not displaying.
+Added version number to tarball.
+Stripped white space from bookmark label;
+Go To Definition not shown in popup if not available.
+Selecting function def in popup copies def to clipboard.
+Added new icon.
+Code clean.
+Set recursive search for tags (default = 1).
+Added Search For Define to Navigation menu.
+
+0.0.10
+Bug fix - seg fault on run external tool with no tabs.
+Added Replace all
+Added 'Go To Definition' to popup menu in document.
+Added popup menu to tabs to copy filepath/name.
+
+0.0.9
+Added external tool creator GUI.
+Bug fix crash on closing empty new tab.
+Set sensitive on save/saveas buttons menu items on startup.
+Completely redone external tools.
+Checked build with lower version of gtksourceview (2.9.9) but 2.11.1 recommended.
+Added GUI to build external tools.
+
+0.0.8
+Can now use escapes in search/replace \n, \t etc.
+Added monitor for file changed on disk.
+Code clean.
+Added go to line number in navigation menu.
+Added run async external tool.
+Help now runs async.
+Set new env variable to selected text.
+Added Find API to installed tools.
+
+0.0.7
+Removed 'Save-As' from toolbar.
+Added save/restore session
+Added simple bookmarks
+
+0.0.6
+Added wrap for search replace.
+Dim function menu when no functions available.
+Apply prefs immediately.
+Added save search wrap mode
+
+0.0.5
+Added case insensitive search.
+Function menu updated on save file.
+Added revert.
+Added GUI for Prefs.
+Added save state of search sensitive to rc file.
+Added terminal command to prefs.
+Code clean.
+Bug Fix.
+Updated Help file.
+
+0.0.4
+1st release

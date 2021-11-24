@@ -1,9 +1,6 @@
 #!/bin/bash
 
-if [ -e ./remakesourcelist ];then
-	./remakesourcelist
-fi
-
+./remakesourcelist
 aclocal
 autoheader
 touch NEWS README AUTHORS ChangeLog

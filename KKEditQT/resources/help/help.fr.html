@@ -1,0 +1,1332 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta content="text/html; charset=windows-1252"
+      http-equiv="Content-Type">
+    <title>KKEdit Linux Coders Text Editor Help Page</title>
+    <meta content="K.D.Hedger" name="author">
+    <meta content="A GTK2 Linux text editor developed for coding
+      including spell check, function declarations, search for function
+      name, with syntax colouring, API look up, split view and external
+      tools" name="description">
+  </head>
+  <body alink="#EE0000" bgcolor="#cccccc" link="#0000EE" text="#000000"
+    vlink="#551A8B">
+    <div align="center"><big><big><u><b><font size="+3"><big><big>KKEdit</big></big></font></b></u></big></big><br>
+      <br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="+3">Source éditeur de texte
+          de code</font></span> <br>
+      <br>
+      <hr size="2" width="100%"><img alt="main" src="main.gif"
+        width="800" height="490"><br>
+      <hr size="2" width="100%">
+      <div align="center"><span style="" class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"><font
+            size="+1"><b>Pourquoi un autre éditeur de texte?</b></font></span><br>
+        <br>
+        <span style="" class="notranslate" onmouseover="_tipon(this)"
+          onmouseout="_tipoff()"><font size="-1">Simple, je n'ai pas
+            aimé tous les autres, ils étaient tous trop plat (désolé
+            mauvais croquis!), Ayant de toute façon gedit utilisé
+            pendant des années, il recevait de plus en plus difficile de
+            garder la compilation sans charges de dépendances de gnome,
+            en regardant autour de Linux éditeurs de texte semble pour
+            être très simple (leafpad) bêtement complexe (GVim,
+            Bluefish), en essayant d'être tout pour tout le monde.</font></span>
+        <font size="-1"><br>
+        </font> <span class="notranslate" onmouseover="_tipon(this)"
+          onmouseout="_tipoff()"> <font size="-1">Un des meilleurs
+            éditeurs de texte que j'ai utilisé est BBEdit mais qui n'est
+            disponible que sur le mac, donc je peu la balle et a décidé
+            d'écrire mon propre avec les meilleurs morceaux de BBEdit
+            (le nom KKEdit est un coup de chapeau à BBEdit) , gedit et
+            leafpad.</font></span> <span style="" class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+            size="-1">Une interface épurée simple, pas de dépendances
+            majeures, avec seulement les fonctions que j'utilise tout le
+            temps, et TA DAH!</font></span> <span class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+            size="-1">KKEdit.</font></span> <br>
+        <br>
+        <b><font size="+1"><span style="" class="notranslate"
+              onmouseover="_tipon(this)" onmouseout="_tipoff()"><font
+                size="+1"><b>Qu'est-ce qu'il n'est pas!</b></font></span>
+          </font></b><br>
+        <br>
+        <span style="" class="notranslate" onmouseover="_tipon(this)"
+          onmouseout="_tipoff()"><font size="-1">KKEdit n'est pas un
+            traitement de texte ou un éditeur de page web, il n'est pas
+            et IDE!</font></span> <span style="" class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+            size="-1">Il sera le code ne vous convient pas, il insister
+            sur l'insertion de coutume supports (vraiment ennuyeux!), Il
+            vous oblige l'habitude d'utiliser un style particulier, il
+            n'a pas besoin de vous cassez tous vos doigts en essayant de
+            frapper touche étrange et merveilleux combo et il n'est pas
+            lié à un distro particulier, oh oui et il ne vous coûtera
+            pas un centime!</font></span> <br>
+        <br>
+        <span style="" class="notranslate" onmouseover="_tipon(this)"
+          onmouseout="_tipoff()"><font size="+1"><b>Qu'est-ce qu'il est
+              et fait</b></font></span><br>
+        <br>
+        <span class="notranslate" onmouseover="_tipon(this)"
+          onmouseout="_tipoff()"><font size="-1">KKEdit est
+            trompeusement simple éditeur de texte avec coloration
+            syntaxique.</font></span> <font size="-1"><br>
+        </font> <span style="" class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+            size="-1">Il dispose également d'un menu de fonctions qui
+            vous permet de passer instantanément à une définition de
+            fonction, un menu de navigation qui va chercher dans tous
+            les fichiers ouverts pour une définition de fonction, puis
+            passez à cet onglet et allez à la ligne pertinente si elle
+            ne peut pas trouver un définition dans tous les fichiers
+            ouverts, il fera une recherche récursive dans le dossier du
+            document sélectionné, vous pouvez également mettre en
+            évidence une directive # include et il recherchera et
+            essayez d'ouvrir le fichier, inclure des fichiers entourés
+            par &lt;&gt; sera recherché dans / usr / include, fichiers
+            entourés de "" sera recherchée dans le dossier actuel.</font></span>
+        <font size="-1"><br>
+        </font> <span class="notranslate" onmouseover="_tipon(this)"
+          onmouseout="_tipoff()"> <font size="-1">Outils externes
+            peuvent être ajoutés soit globalement ou localement et quand
+            exécuter peut soit remplacer le texte actuellement select
+            avec leur production, remplacer tout le texte des fichiers,
+            exécuter dans un terminal ou vous pouvez choisir d'ignorer
+            la sortie former le script Bash, Python et perl peut être
+            utilisé pour le langage de script ou d'un interprète qui
+            utilise '#' comme un marqueur de commentaire.</font></span>
+        <font size="-1"><br>
+        </font> <span class="notranslate" onmouseover="_tipon(this)"
+          onmouseout="_tipoff()"> <font size="-1">Un certain nombre de
+            scripts de démonstration simples sont inclus dans le dossier
+            "demotoools" (bon nom hein).</font></span> <font size="-1"><br>
+        </font> <span class="notranslate" onmouseover="_tipon(this)"
+          onmouseout="_tipoff()"> <font size="-1">Vous pouvez glisser
+            et déposer un fichier sur la barre d'outils / menu principal
+            pour ouvrir un fichier.</font></span> <font size="-1"><br>
+        </font> <span class="notranslate" onmouseover="_tipon(this)"
+          onmouseout="_tipoff()"> <font size="-1">Session peut être
+            sauvegardé et rechargé.</font></span> <font size="-1"><br>
+        </font> <span class="notranslate" onmouseover="_tipon(this)"
+          onmouseout="_tipoff()"> <font size="-1">Tout montant de
+            signets peut être ajouté n'importe où, la sélection d'un
+            signet dans le menu basculera sur cet onglet et passer à la
+            ligne appropriée.</font></span> <font size="-1"><br>
+        </font> <span class="notranslate" onmouseover="_tipon(this)"
+          onmouseout="_tipoff()"> <font size="-1">Il suffit de taper un
+            numéro de ligne dans la zone de texte sur la barre d'outils
+            pour passer directement à cette ligne.</font></span> <br>
+        <br>
+        <hr size="2" width="100%"><b><font size="+3">Manuel</font></b><br>
+      </div>
+      <hr size="2" width="100%"><span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"><a
+href="http://translate.googleusercontent.com/translate_c?depth=1&amp;hl=en&amp;ie=UTF8&amp;rurl=translate.google.com&amp;sandbox=0&amp;sl=auto&amp;tl=fr&amp;u=http://keithhedger.hostingsiteforfree.com/pages/testpages/help.html&amp;usg=ALkJrhiRwz-g9qdru_DXUPO3inuT_qyKDQ#navanc"><b>Menu
+
+            de navigation</b></a></span> <b><br>
+      </b> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"><a
+href="http://translate.googleusercontent.com/translate_c?depth=1&amp;hl=en&amp;ie=UTF8&amp;rurl=translate.google.com&amp;sandbox=0&amp;sl=auto&amp;tl=fr&amp;u=http://keithhedger.hostingsiteforfree.com/pages/testpages/help.html&amp;usg=ALkJrhiRwz-g9qdru_DXUPO3inuT_qyKDQ#funcanc"><b>Menu
+
+            Fonctions</b></a></span> <b><br>
+      </b> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"><a
+href="http://translate.googleusercontent.com/translate_c?depth=1&amp;hl=en&amp;ie=UTF8&amp;rurl=translate.google.com&amp;sandbox=0&amp;sl=auto&amp;tl=fr&amp;u=http://keithhedger.hostingsiteforfree.com/pages/testpages/help.html&amp;usg=ALkJrhiRwz-g9qdru_DXUPO3inuT_qyKDQ#toolsanc"><b>Menu
+
+            Outils</b></a></span> <b><br>
+      </b> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"><a
+href="http://translate.googleusercontent.com/translate_c?depth=1&amp;hl=en&amp;ie=UTF8&amp;rurl=translate.google.com&amp;sandbox=0&amp;sl=auto&amp;tl=fr&amp;u=http://keithhedger.hostingsiteforfree.com/pages/testpages/help.html&amp;usg=ALkJrhiRwz-g9qdru_DXUPO3inuT_qyKDQ#prefsanc"><b>Préférences</b></a></span>
+      <br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><a
+href="http://translate.googleusercontent.com/translate_c?depth=1&amp;hl=en&amp;ie=UTF8&amp;rurl=translate.google.com&amp;sandbox=0&amp;sl=auto&amp;tl=fr&amp;u=http://keithhedger.hostingsiteforfree.com/pages/testpages/help.html&amp;usg=ALkJrhiRwz-g9qdru_DXUPO3inuT_qyKDQ#customtoolbar"><b>Personnaliser
+
+            la barre d'outils</b></a></span> <b><br>
+      </b> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"><a
+href="http://translate.googleusercontent.com/translate_c?depth=1&amp;hl=en&amp;ie=UTF8&amp;rurl=translate.google.com&amp;sandbox=0&amp;sl=auto&amp;tl=fr&amp;u=http://keithhedger.hostingsiteforfree.com/pages/testpages/help.html&amp;usg=ALkJrhiRwz-g9qdru_DXUPO3inuT_qyKDQ#featanc"><b>Autres
+
+            caractéristiques</b></a></span> <b><br>
+      </b> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"><a
+href="http://translate.googleusercontent.com/translate_c?depth=1&amp;hl=en&amp;ie=UTF8&amp;rurl=translate.google.com&amp;sandbox=0&amp;sl=auto&amp;tl=fr&amp;u=http://keithhedger.hostingsiteforfree.com/pages/testpages/help.html&amp;usg=ALkJrhiRwz-g9qdru_DXUPO3inuT_qyKDQ#getanc"><b>Get
+
+            It and Build it</b></a></span> <br>
+      <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><a
+href="http://translate.googleusercontent.com/translate_c?depth=1&amp;hl=en&amp;ie=UTF8&amp;rurl=translate.google.com&amp;sandbox=0&amp;sl=auto&amp;tl=fr&amp;u=http://keithhedger.hostingsiteforfree.com/pages/testpages/help.html&amp;usg=ALkJrhiRwz-g9qdru_DXUPO3inuT_qyKDQ#bugs"><b>Bug
+
+            Reporting</b></a></span>
+      <hr size="2" width="100%"><br>
+      <a name="navanc"></a><span class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"><b>Menu de
+          navigation</b></span><br>
+      <br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><font size="-1">Le menu de navigation
+          comporte cinq sous-menus - aller à la définition, Open Inclure
+          fichier, passez à la ligne, la recherche pour définir et
+          recherche dans Gtk-Docs.</font></span> <font size="-1"><br>
+        <br>
+      </font> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+          size="-1">Pour aller là où une fonction etc sont définis,
+          sélectionnez-le et choisissez «Atteindre la définition« KKEdit
+          ensuite regarder dans les fichiers ouverts pour la définition
+          et de passer à la page et sélectionnez la ligne appropriée
+          comme ceci:</font></span><br>
+      <img alt="gotodefine" src="gotodefine.gif" width="479"
+        height="266"><br>
+      <br>
+      <img alt="define" src="founddefine.gif" width="408" height="430"><br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><font size="-1">Comme vous pouvez le voir
+          que la définition n'était pas dans un fichier ouvert KKEdit
+          cherche la définition récursive à partir du dossier où le
+          fichier a été ouvert à partir et s'il est trouvé en ouvrant le
+          fichier et en sélectionnant la ligne avec la définition.</font></span>
+      <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">La profondeur de la
+          recherche pour trouver une définition se trouve dans les prefs
+          et 1 par défaut c'est à dire ne regarde que les définitions
+          dans des fichiers dans le même dossier que tous les documents
+          ouverts, faire attention à la définition de cette trop élevé
+          car il peut causer un retard indésirable quand un clic droit
+          si il doit regarder dans un grand nombre de sous-dossiers.</font></span>
+      <font size="-1"><br>
+        <br>
+      </font> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+          size="-1">Vous pouvez également ouvrir un fichier d'inclusion
+          sélectionnez simplement la ligne et sélectionnez Ouvrir
+          Inclure fichier comme ceci:</font></span><br>
+      <img alt="openinclude" src="openinclude.gif" width="458"
+        height="329"><br>
+      <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><font size="-1">Inclure les fichiers sont
+          recherchés dans / usr / include ou le répertoire du document
+          actuel est en fonction si le nom du fichier est entouré par
+          '&lt;&gt;' ou '""'.</font></span> <font size="-1"><br>
+        <br>
+      </font> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+          size="-1">Recherche pour définir ouvrira une zone de saisie et
+          vous permettre de taper dans une définition ou une partie
+          d'une définition et allez essayer de le trouver dans les
+          endroits habituels d'ouverture d'un fichier, si nécessaire, la
+          recherche est sensible à la casse.</font></span> <br>
+      <br>
+      <hr size="2" width="100%"><br>
+      <a name="funcanc"></a><span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"><b>Menu
+          Fonctions</b></span><br>
+      <br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><font size="-1">Le menu Fonctions
+          contient une liste de toutes les fonctions définies, variables
+          et définit qui sont visibles dans ce fichier, pour passer à la
+          définition de la fonction appropriée suffit de le sélectionner
+          dans le menu comme ceci:</font></span><br>
+      <img alt="funcmenu" src="functions.gif" width="869" height="465"><br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><font size="-1">Le menu des fonctions
+          sera mis à jour après l'enregistrement d'un fichier ou changer
+          d'onglet.</font></span> <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Vous pouvez
+          sélectionner la manière dont le menu des fonctions est affiché
+          / réglé dans les préférences</font></span>
+      <hr size="2" width="100%"><br>
+      <a name="toolsanc"></a><span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"><b>Menu Outils</b></span><br>
+      <br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Le menu Outils vous
+          permet d'exécuter un script externe exemple, pour ouvrir un
+          terminal avec le répertoire de travail mis dans le dossier où
+          le fichier actuel est ouvert:</font></span><br>
+      <img alt="openterm" src="toolsmenu.gif" width="872" height="638"><br>
+      <br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><font size="-1">Outils externes peuvent
+          être soit ajoutés à l'échelle mondiale dans / usr / share /
+          KKEdit / outils (si vous avez installé avec --prefix = / usr)
+          ou localement dans ~ / .KKEdit / outils.</font></span> <font
+        size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Outils externes sont
+          passés quatre variables d'environnement:</font></span> <font
+        size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">KKEDIT_CURRENTFILE -
+          Chemin dans le document actif.</font></span> <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">KKEDIT_CURRENTDIR -
+          Annuaire du document actuel.</font></span> <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">KKEDIT_SELECTION -
+          Actuellement le texte sélectionné.</font></span> <font
+        size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">KKEDIT_DATADIR -
+          Annuaire de dossier global (par exemple / usr / share /
+          KKEdit).</font></span> <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">KKEDIT_HTMLFILE -
+          fichier temporaire pour l'affichage html dans le document
+          spectateur</font></span> <br>
+      <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Plus de variables
+          peuvent être définies ultérieurement.</font></span> <font
+        size="-1"><br>
+        <br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Outils externes sont
+          triés par nom dans la boîte de dialogue de menu et d'outils
+          d'édition.</font></span> <font size="-1"><br>
+      </font> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+          size="-1">Outils externes peuvent être créés à la main ou par
+          l'intermédiaire du 'Outils-&gt; Nouveau menu' comme ceci:</font></span><br>
+      <img alt="exttool" src="newtool.gif" width="640" height="700"><br>
+      <br>
+      <font size="-1"><span style="" class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"><font
+            size="-1">Les détenteurs de lieu sont:</font></span> <font
+          size="-1"><br>
+        </font> <span class="notranslate" onmouseover="_tipon(this)"
+          onmouseout="_tipoff()"> <font size="-1">% T - Actuellement le
+            texte sélectionné, la même que la variable d'environnement $
+            KKEDIT_SELECTION passé à la commande.</font></span> <font
+          size="-1"><br>
+        </font> <span class="notranslate" onmouseover="_tipon(this)"
+          onmouseout="_tipoff()"> <font size="-1">% F - Chemin d'accès
+            du document en cours, de même que la variable
+            d'environnement $ KKEDIT_CURRENTFILE passé à la commande.</font></span>
+        <font size="-1"><br>
+        </font> <span class="notranslate" onmouseover="_tipon(this)"
+          onmouseout="_tipoff()"> <font size="-1">% D - Annuaire du
+            document actuel ou $ {HOME}, de même que la variable
+            d'environnement $ KKEDIT_CURRENTDIR passé à la commande.</font></span>
+        <font size="-1"><br>
+        </font> <span class="notranslate" onmouseover="_tipon(this)"
+          onmouseout="_tipoff()"> <font size="-1">% I -Le emplacement
+            des outils mis en place à l'échelle mondiale, de même que la
+            variable d'environnement $ KKEDIT_DATADIR passé à la
+            commande.</font></span> <font size="-1"><br>
+        </font> <span class="notranslate" onmouseover="_tipon(this)"
+          onmouseout="_tipoff()"> <font size="-1">% H - fichier
+            temporaire pour l'affichage html dans le document
+            spectateur, de même que la variable d'environnement $
+            KKEDIT_HTMLFILE passé à la commande.</font></span> <font
+          size="-1"><br>
+          <br>
+        </font> <span class="notranslate" onmouseover="_tipon(this)"
+          onmouseout="_tipoff()"> <font size="-1">Sélectionnant
+            «Afficher la sortie 'enverra la sortie de l'outil à un volet
+            dans le bas de l'éditeur, vous pouvez modifier la taille en
+            faisant glisser la poignée et masquer / afficher le volet de
+            l'menu" Affichage ", que stdout est capturé à partir de la
+            sortie de l'outil si vous voulez capturer stderr vous devez
+            rediriger vers stdout, vous ne pouvez pas capturer stdin, si
+            vous avez besoin d'interagir avec l'outil utiliser le 'Run
+            outil Dans Terminal' option.</font></span> <font size="-1"><br>
+        </font> <span style="" class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+            size="-1">Vous pouvez aussi éventuellement définir un
+            raccourci clavier, il suffit de cliquer dans la boîte de
+            raccourci, maintenez Ctrl enfoncée et appuyez sur une autre
+            touche avec ou sans MAJ, à supprimer le raccourci suffit
+            d'appuyer sur la touche «Supprimer».</font></span> <font
+          size="-1"><br>
+          <br>
+        </font> <span class="notranslate" onmouseover="_tipon(this)"
+          onmouseout="_tipoff()"> <font size="-1">Le panneau de sortie
+            sera automatiquement affiché pour n'importe quel outil qui a
+            cette option est sélectionnée, comme ceci:</font></span><br>
+        <img alt="" src="outview.gif" width="452" height="441"><br>
+      </font><br>
+      <font size="-1"><font size="-1"><br>
+          <img alt="" src="outview.gif" width="452" height="441"><br>
+        </font> <span style="" class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+            size="-1">Cet exemple utilise le «Exécuter en tant que
+            racine Script 'outil disponible dans le dossier« Outils
+            Exemple extérieures »inclus avec cette archive.</font></span>
+        <font size="-1"><br>
+        </font> <font color="#cc0000"><b>IMPORTANT</b></font></font><font
+        color="#cc0000"><font size="-1"><b> </b></font></font><br>
+      <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><font size="-1">Lorsque vous utilisez un
+          outil qui exécute une commande en tant que root et un
+          programme de privilèges root graphique n'a pas été défini
+          l'outil est automatiquement exécuté dans un terminal.</font></span>
+      <br>
+      <br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Sélection 'Show HTML
+          Doc' pour afficher le fichier $ KKEDIT_HTMLFILE soit le
+          spectateur Gtk Doc ou votre navigateur par défaut, il est
+          utilisé dans l'exemple outil installé «Ouvrir page de manuel
+          'pour afficher la page de manuel de la mise en sélec (si elle
+          existe et si vous avez man2html installé, la plupart des
+          gens).</font></span> <font size="-1"><br>
+        <br>
+      </font> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+          size="-1">Seuls les outils qui ont "Afficher outil Pop-Up
+          Menu" est sélectionné apparaîtra dans le menu pop-up si vous
+          avez également sélectionné du texte.</font></span> <font
+        size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Les outils qui ont le
+          "Toujours afficher dans une fenêtre contextuelle" sélectionné
+          montrer dans le menu contextuel indépendamment de w ue le
+          texte est ou n'est pas sélectionnée.</font></span> <font
+        size="-1"><br>
+        <br>
+      </font> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+          size="-1">Les commandes peuvent être comp plaies »c'est à dire
+          les commandes« cat / tmp / fichier texte | tête », mais en
+          utilisant des tuyaux à un terminal ne permet pas toujours ce
+          que vous voulez dire 'xterm -hold e' chat" / tmp / texte "|
+          tail-f '' va travailler et montrer la queue du fichier mais ne
+          suivra pas correctement c'est une fonctionnalité / problème de
+          xterm et hors de mon contrôle :(</font></span> <font
+        size="-1"><br>
+        <br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Pour les commandes très
+          complexes créent un script et mis en «commande» sur le chemin
+          de fichier de votre script, les chemins de fichiers peuvent
+          être absolues ou relatives (voir les exemples de scripts).</font></span>
+      <font size="-1"><br>
+      </font> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+          size="-1">Les outils peuvent être modifiés en sélectionnant
+          dans la liste déroulante, si vous tentez de modifier un outil
+          installé à l'échelle mondiale (c.-à-dire un dans / usr / share
+          / KKEdit / outils), vous devez avoir les privilèges root.</font></span>
+      <font size="-1"><br>
+        <br>
+      </font> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+          size="-1">Vous pouvez également afficher une barre de
+          progression de votre outil en sélectionnant la case à cocher
+          "Utiliser Prgress Bar", un bar sera créé pour vous et vous
+          pouvez commander en écrivant des commandes simples à un
+          fichier, le chemin d'accès de fichier est contenu dans la
+          variable d'environnement ' $ KKEDIT_BAR_CONTROL ", vous pouvez
+          écrire un nombre simple entre 0 et 100 pour définir la jauge,«
+          pouls »de la barre d'impulsion et« quitter »pour tuer la
+          barre, vous n'avez pas besoin d'écrire spécifiquement le«
+          quitter »la commande car il sera envoyé automatiquement
+          lorsque votre outil se termine, NB si vous réglez votre outil
+          pour tourner de manière asynchrone, vous devez envoyer le
+          'quitter' commander votre auto.</font></span> <font size="-1"><br>
+      </font> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+          size="-1">Il est un exemple de la façon de contrôler la barre
+          dans les exemples d'outils dans / usr / share / KKEdit /
+          Outils Exemple externes.</font></span><br>
+      <img alt="" src="countbar.gif" width="589" height="548"><br>
+      <br>
+      <img alt="" src="pulsebar.gif" width="669" height="550"><br>
+      <font size="-1"><font size="-1"><br>
+        </font> <span style="" class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+            size="-1">Le titre de la fenêtre de la barre de progression
+            est automatiquement réglé sur le nom de votre outil.</font></span><font
+          size="-1"><br>
+        </font> </font>
+      <hr size="2" width="100%"><br>
+      <b><a name="prefsanc"></a></b> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"> <b>Préférences</b></span>
+      <br>
+      <br>
+      <img alt="prefs" src="prefs.gif" width="637" height="573"><br>
+      <br>
+      <img alt="" src="prefs2.gif" width="637" height="573"><br>
+      <br>
+      <img alt="" src="prefs3.gif" width="637" height="573"><br>
+      <br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><font size="-1">Le fichier est créé
+          Préférences ~ / .KKEdit / kkedit.rc et sera créé / recréé en
+          quittant KKEdit.</font></span> <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Les préférences doivent
+          être définies à partir de «Édition-&gt; Préférences»</font></span>
+      <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Vous pouvez définir la
+          commande à exécuter un outil externe dans un terminal à partir
+          d'ici.</font></span> <br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Sélectionnant l'option
+          "Ne pas ouvrir le fichier en double» sera passer à l'onglet de
+          ce fichier plutôt que d'ouvrir une autre copie.</font></span>
+      <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Sélection "Ne pas
+          avertir sur le changement File" pour supprimer la boîte de
+          dialogue décroissante quand un fichier ouvert est modifié sur
+          le disque (par une autre application), l'onglet sera toujours
+          mis à jour.</font></span> <font size="-1"><br>
+      </font> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+          size="-1">La «commande Exécuter en tant racine» vous permet de
+          définir votre graphique programme de privilèges root préféré,
+          si cette zone est vide un terminal sera utilisé pour demander
+          les mots de passe admin ( <a
+href="http://translate.googleusercontent.com/translate_c?depth=1&amp;hl=en&amp;ie=UTF8&amp;rurl=translate.google.com&amp;sandbox=0&amp;sl=auto&amp;tl=fr&amp;u=http://keithhedger.hostingsiteforfree.com/pages/testpages/help.html&amp;usg=ALkJrhiRwz-g9qdru_DXUPO3inuT_qyKDQ#gtksui">Voir
+
+            ici</a> ), la «commande Terminal» sera utilisé pour ouvrir
+          un terminal, si cette zone est vide alors le «xterm-e" par
+          défaut sera utilisé.</font></span> <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Vous pouvez également
+          définir la couleur de surbrillance des lignes favoris, et
+          aussi d'afficher la bookmarkbar.</font></span> <font
+        size="-1"><br>
+        <br>
+      </font> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+          size="-1">Vous pouvez également personnaliser les raccourcis
+          clavier à partir d'ici, il suffit de cliquer sur le bouton et
+          vous obtiendrez une fenêtre de dialogue comme ceci:</font></span><font
+        size="-1"><font size="-1"><br>
+          <img alt="" src="keycuts.gif" width="518" height="612"><br>
+        </font></font><font size="-1"><font size="-1"><span style=""
+            class="notranslate" onmouseover="_tipon(this)"
+            onmouseout="_tipoff()"><font size="-1">Pour modifier le
+              raccourci par défaut, cliquez dans la case correspondante
+              et appuyez sur une touche de commande et votre choix de
+              clés avec ou sans MAJ, raccourcis doivent utiliser une
+              méthode.</font></span> <font size="-1"><br>
+          </font> <span class="notranslate" onmouseover="_tipon(this)"
+            onmouseout="_tipoff()"> <font size="-1">Répétez le
+              jusqu'au-dessus vous avez défini tous les raccourcis que
+              vous souhaitez et cliquez sur «Appliquer» pour conserver
+              les modifications ou «Annuler» pour deviner quoi?</font></span>
+          <font size="-1"><br>
+            <br>
+          </font> <span class="notranslate" onmouseover="_tipon(this)"
+            onmouseout="_tipoff()"> <font size="-1">Vous pouvez
+              également choisir d'ouvrir un fichier normalement ou en
+              lisant le lien (s'il s'agit d'un lien symbolique) d'abord,
+              cela signifie que filepath sera soit le chemin vers le
+              lien ou le chemin vers le fichier réel, c'est à portée de
+              main lorsque vous utilisez la 'Open 'option dans le menu
+              de l'onglet que vous allez choisir de sélectionner les
+              fichiers à ouvrir à partir du dossier le lien est dans le
+              dossier ou le fichier était réel est, essayer et voir que
+              c'est beaucoup moins compliqué qu'il n'y paraît!</font></span>
+          <font size="-1"><br>
+            <br>
+          </font> <span class="notranslate" onmouseover="_tipon(this)"
+            onmouseout="_tipoff()"> <font size="-1">Le «thème» peut
+              être défini pour les prefs via le menu déroulant, mise à
+              jour de la page en cours est «en direct», cliquez sur
+              «Appliquer» pour définir le thème à l'échelle mondiale ou
+              sur «Annuler» pour ignorer les changements.</font></span>
+          <font size="-1"><br>
+          </font> <span style="" class="notranslate"
+            onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+              size="-1">Les thèmes sont stockés dans
+              "/usr/share/gtksourceview-2.0/styles" (par défaut installé
+              thèmes) ou localement dans ~ / .gnome2 / gedit / styles,
+              pour la compatibilité avec gedit comme la plupart des
+              thèmes de gktsourceview semblent être gedit-centrique;)</font></span></font><br>
+        <img alt="" src="style.gif" width="637" height="573"><br>
+        <br>
+        <br>
+        <a name="customtoolbar"></a></font><span style=""
+        class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><b>Personnaliser la barre d'outils</b></span>
+      <font size="-1"><br>
+      </font><font size="-1"><font size="-1"><br>
+        </font> <span style="" class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+            size="-1">Vous pouvez personnaliser ce qui apparaît sur &#8203;&#8203;la
+            barre d'outils en cliquant simplement sur &#8203;&#8203;un bouton pour
+            l'ajouter au menu comme ceci:</font></span> <font size="-1"><br>
+        </font> <img alt="" src="addtoolbutton.gif" width="688"
+          height="151"><br>
+        <br>
+      </font><font size="-1"><span style="" class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"><font
+            size="-1">Et puis faites-le glisser à l'endroit où vous
+            souhaitez qu'il apparaisse sur la barre d'outils comme ceci</font></span>:<br>
+        <img alt="" src="dragtoolbutton.gif" width="688" height="151"></font><br>
+      <font size="-1"><font size="-1"><br>
+        </font> <span style="" class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+            size="-1">Pour supprimer un élément de la barre d'outils il
+            suffit de tenir le «contrôle» et cliquez sur le point d'être
+            supprimé.</font></span> <img alt=""
+          src="removetoolitem.gif" width="688" height="150"><br>
+      </font><font size="-1"><span style="" class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"><font
+            size="-1">Certains éléments ne peuvent être ajoutés une fois
+            'Enregistrer', 'Ouvrir' etc quand ils ont été ajoutés, ils
+            seront grisés et ne peuvent être ajoutés à nouveau, en
+            supprimant les rend à nouveau disponible, le séparateur et
+            le détendeur peuvent être utilisées plusieurs fois .</font></span>
+        <font size="-1"><br>
+        </font> <span class="notranslate" onmouseover="_tipon(this)"
+          onmouseout="_tipoff()"> <font size="-1">Vous pouvez également
+            choisir de masquer / afficher la barre d'outils dans le menu
+            «Affichage».</font></span><font size="-1"><br>
+        </font> </font>
+      <hr size="2" width="100%"><br>
+      <a name="featanc"></a><span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"><b>Autres
+          caractéristiques</b></span> <br>
+      <br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><a
+href="http://translate.googleusercontent.com/translate_c?depth=1&amp;hl=en&amp;ie=UTF8&amp;rurl=translate.google.com&amp;sandbox=0&amp;sl=auto&amp;tl=fr&amp;u=http://keithhedger.hostingsiteforfree.com/pages/testpages/help.html&amp;usg=ALkJrhiRwz-g9qdru_DXUPO3inuT_qyKDQ#copyfilenameanc"><b>Copiez
+
+            le nom de fichier dans le menu de l'onglet.</b></a></span> <b><br>
+      </b> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"><a
+href="http://translate.googleusercontent.com/translate_c?depth=1&amp;hl=en&amp;ie=UTF8&amp;rurl=translate.google.com&amp;sandbox=0&amp;sl=auto&amp;tl=fr&amp;u=http://keithhedger.hostingsiteforfree.com/pages/testpages/help.html&amp;usg=ALkJrhiRwz-g9qdru_DXUPO3inuT_qyKDQ#copyfilenameanc"><b>Copiez
+
+            filepath de menu de l'onglet.</b></a></span> <br>
+      <a href="#spellchk"><span style="" class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"></span></a><a
+href="http://translate.googleusercontent.com/translate_c?depth=1&amp;hl=en&amp;ie=UTF8&amp;rurl=translate.google.com&amp;sandbox=0&amp;sl=auto&amp;tl=fr&amp;u=http://keithhedger.hostingsiteforfree.com/pages/testpages/help.html&amp;usg=ALkJrhiRwz-g9qdru_DXUPO3inuT_qyKDQ#spellchk"><b><u>Vérifier
+
+            l'orthographe de document à partir de menu de l'onglet.</u></b></a>
+      <br>
+      <b> </b> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"><a
+href="http://translate.googleusercontent.com/translate_c?depth=1&amp;hl=en&amp;ie=UTF8&amp;rurl=translate.google.com&amp;sandbox=0&amp;sl=auto&amp;tl=fr&amp;u=http://keithhedger.hostingsiteforfree.com/pages/testpages/help.html&amp;usg=ALkJrhiRwz-g9qdru_DXUPO3inuT_qyKDQ#copyfunctiondefine"><b>fonction
+
+            de copie définir.</b></a></span> <b> </b> <b><br>
+      </b> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"><a
+href="http://translate.googleusercontent.com/translate_c?depth=1&amp;hl=en&amp;ie=UTF8&amp;rurl=translate.google.com&amp;sandbox=0&amp;sl=auto&amp;tl=fr&amp;u=http://keithhedger.hostingsiteforfree.com/pages/testpages/help.html&amp;usg=ALkJrhiRwz-g9qdru_DXUPO3inuT_qyKDQ#copyfunctiondefine"><b>Aller
+
+            à fonctionner définition.</b></a></span> <b> </b> <b><br>
+        &nbsp; </b><span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"><a
+href="http://translate.googleusercontent.com/translate_c?depth=1&amp;hl=en&amp;ie=UTF8&amp;rurl=translate.google.com&amp;sandbox=0&amp;sl=auto&amp;tl=fr&amp;u=http://keithhedger.hostingsiteforfree.com/pages/testpages/help.html&amp;usg=ALkJrhiRwz-g9qdru_DXUPO3inuT_qyKDQ#bookmarkanc"><b>Signet
+
+            bascule.</b></a></span> <b> </b> <b><br>
+      </b> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"><a
+href="http://translate.googleusercontent.com/translate_c?depth=1&amp;hl=en&amp;ie=UTF8&amp;rurl=translate.google.com&amp;sandbox=0&amp;sl=auto&amp;tl=fr&amp;u=http://keithhedger.hostingsiteforfree.com/pages/testpages/help.html&amp;usg=ALkJrhiRwz-g9qdru_DXUPO3inuT_qyKDQ#instanceanc"><b>Exemple
+
+            l'application unique ou multiple.</b></a></span> <b> </b>
+      <b><br>
+      </b> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"><a
+href="http://translate.googleusercontent.com/translate_c?depth=1&amp;hl=en&amp;ie=UTF8&amp;rurl=translate.google.com&amp;sandbox=0&amp;sl=auto&amp;tl=fr&amp;u=http://keithhedger.hostingsiteforfree.com/pages/testpages/help.html&amp;usg=ALkJrhiRwz-g9qdru_DXUPO3inuT_qyKDQ#hexdumpanc"><b>Ouvrir
+
+            comme hexdump.</b></a></span> <b> </b> <b><br>
+      </b> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"><a
+href="http://translate.googleusercontent.com/translate_c?depth=1&amp;hl=en&amp;ie=UTF8&amp;rurl=translate.google.com&amp;sandbox=0&amp;sl=auto&amp;tl=fr&amp;u=http://keithhedger.hostingsiteforfree.com/pages/testpages/help.html&amp;usg=ALkJrhiRwz-g9qdru_DXUPO3inuT_qyKDQ#findapi"><b>Trouver
+
+            la définition de l'API dans Gtk de Doc.</b></a></span> <b>
+      </b> <b><br>
+      </b> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"><a
+href="http://translate.googleusercontent.com/translate_c?depth=1&amp;hl=en&amp;ie=UTF8&amp;rurl=translate.google.com&amp;sandbox=0&amp;sl=auto&amp;tl=fr&amp;u=http://keithhedger.hostingsiteforfree.com/pages/testpages/help.html&amp;usg=ALkJrhiRwz-g9qdru_DXUPO3inuT_qyKDQ#otherfeatsanc"><b>Autre</b></a></span>
+      <br>
+      <br>
+      <a name="copyfilenameanc"></a><span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"><font
+          size="-1">Cliquant sur &#8203;&#8203;un onglet de droite permet de copier
+          le nom de fichier du document, le chemin du fichier, vérifier
+          l'orthographe du document, split / insplit la vue, réglez la
+          mise en évidence de la source et rapidement d'autres fichiers
+          ouverts dans le même répertoire que le document courant
+          (pratique pour ouvrir rapidement la tête fichiers).</font></span><br>
+      <img alt="tabmenu" src="tabmenu.gif" width="384" height="355"><br>
+      <br>
+      <a name="copyfunctiondefine"></a><span class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"><font
+          size="-1">Le menu contextuel du document contient également la
+          fonction «Atteindre la définition" pour plus de commodité.</font></span>
+      <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Sélection de la
+          définition sera le copier dans le presse-papiers.</font></span>
+      <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">S'il n'y a pas de
+          définition valable choisi l'option de menu ne sera pas montré.</font></span><br>
+      <img src="contextgoto.gif" alt="context" width="546" height="468"><br>
+      <br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Le menu de droite clic
+          contextuel:</font></span><font size="-1"><font size="-1"><br>
+          <img alt="popup" src="popup.gif" width="606" height="640"><br>
+          <br>
+        </font></font><font size="-1"><a name="spellchk"></a></font><span
+        style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><b>Dialogue correcteur orthographique</b></span>
+      <br>
+      <br>
+      <img alt="spellcheck" src="spellcheck.gif" width="336"
+        height="143"><br>
+      <br>
+      <b><a name="bookmarkanc"></a></b><span style=""
+        class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><b>Favoris</b></span><br>
+      <br>
+      <font size="-1"><span class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"><font
+            size="-1">Tout montant de signets peut être ajouté, en
+            sélectionnant l'un va passer à ce document et en ligne.</font></span>
+        <font size="-1"><br>
+        </font> <span class="notranslate" onmouseover="_tipon(this)"
+          onmouseout="_tipoff()"> <font size="-1">Les signets sont
+            enregistrés avec le "Save Session" et peuvent être
+            restaurées avec le «Restaurer session avec des signets
+            'menu.</font></span> <font size="-1"><br>
+        </font> <span style="" class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+            size="-1">Les signets sont maintenant activées si vous
+            placez le curseur sur une ligne avec un signet il ajouter si
+            ce n'est pas déjà en signet ou supprimer le signet si c'est
+            le cas, vous pouvez utiliser le menu "Basculer Bookmark»
+            dans le menu principal ou le cadre principal menu, vous
+            pouvez aussi cliquer dans la barre des signets pour passer
+            une marque ou désactiver (vous verrez une petite icône de
+            signet).</font></span> <font size="-1"><br>
+        </font> <span style="" class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+            size="-1">Vous pouvez également supprimer tous les signets
+            de tous les documents ouverts en sélectionnant «Supprimer
+            tous les signets" dans le menu.</font></span><br>
+      </font> <img alt="boomark" src="bookmark.gif" width="612"
+        height="306"><br>
+      <br>
+      <a name="hexdumpanc"></a> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+          size="-1">Vous pouvez ouvrir un fichier comme un vidage
+          hexadécimal (ce n'est pas un éditeur hexadécimal si cela peut
+          changer plus tard) comme ceci:</font></span><br>
+      <img alt="hexdump" src="hexdump.gif" width="720" height="268"><br>
+      <br>
+      <a name="findapi"></a><span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"><b>Consulter
+          Gtk API</b></span> <br>
+      <br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Vous pouvez consulter
+          une déclaration d'API de toute gtk-doc installé est installé
+          en sélectionnant tout ou partie d'un nom de l'API comme ceci:</font></span><br>
+      <img alt="selectapi" src="selectapi.gif" width="689" height="114"><br>
+      <br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Et puis en
+          sélectionnant "Rechercher Dans Gtk-Docs 'forment le menu de
+          navigation ou dans le menu pop-up clic droit comme ceci:</font></span><br>
+      <img alt="apimenu" src="gotoapi.gif" width="480" height="296"><br>
+      <br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><font size="-1">Et si vous avez construit
+          avec l'option enable-DocViewer à configurer (par défaut), vous
+          obtiendrez une fenêtre pop-up avec une liste de liens
+          possibles avec l'API que vous voulez, s'il n'y a qu'un seul
+          lien possible vous irez tout droit à qui.</font></span><br>
+      <img alt="list" src="list.gif" width="754" height="379"><br>
+      <br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Cliquez sur le lien:</font></span><br>
+      <img alt="selected" src="selectedlist.gif" width="812"
+        height="387"><br>
+      <br>
+      <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><font size="-1">Les liens peuvent être
+          cliqués et suivies dans le doc spectateur Gtk, et les
+          fonctions etc peuvent être copiées et collées dans votre
+          document.</font></span> <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1"><span style="color:
+            rgb(0, 0, 0); font-family: Arial, Verdana, sans-serif;
+            font-size: small; font-style: normal; font-variant: normal;
+            font-weight: normal; letter-spacing: normal; line-height:
+            normal; orphans: auto; text-align: -webkit-center;
+            text-indent: 0px; text-transform: none; white-space: normal;
+            widows: auto; word-spacing: 0px; -webkit-text-stroke-width:
+            0px; background-color: rgb(204, 204, 204); display: inline
+            !important; float: none;">Si vous avez sélectionné tous les
+            'gtk_button_get_use_stock'</span> nom de l'API que vous
+          seriez allé directement à l'écran montré.</font></span> <font
+        size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Vous pouvez également
+          saisir manuellement un terme de recherche dans la zone et
+          appuyez sur "Entrée" ou cliquez sur "Rechercher".</font></span>
+      <span style="color: rgb(0, 0, 0); font-family: Arial, Verdana,
+        sans-serif; font-size: small; font-style: normal; font-variant:
+        normal; font-weight: normal; letter-spacing: normal;
+        line-height: normal; orphans: auto; text-align: -webkit-center;
+        text-indent: 0px; text-transform: none; white-space: normal;
+        widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;
+        background-color: rgb(204, 204, 204); display: inline
+        !important; float: none;"><font size="-1"><br>
+        </font></span> <span class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"> <span
+          style="color: rgb(0, 0, 0); font-family: Arial, Verdana,
+          sans-serif; font-size: small; font-style: normal;
+          font-variant: normal; font-weight: normal; letter-spacing:
+          normal; line-height: normal; orphans: auto; text-align:
+          -webkit-center; text-indent: 0px; text-transform: none;
+          white-space: normal; widows: auto; word-spacing: 0px;
+          -webkit-text-stroke-width: 0px; background-color: rgb(204,
+          204, 204); display: inline !important; float: none;"><font
+            size="-1">Vous pouvez effectuer une recherche dans la page
+            affichée en entrant un terme de recherche dans la case et en
+            cliquant sur &#8203;&#8203;«DOWN» pour rechercher vers l'avant et 'Up' à
+            la recherche retour.<br>
+            <br>
+          </font></span></span> <a name="otherfeatsanc"></a><span
+        style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><b>Les autres caractéristiques
+          comprennent:</b></span><br>
+      <font size="-1"><span style="" class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"><font
+            size="-1">Peut être configuré pour sauvegarder
+            automatiquement et restaurer une session (avec ou sans
+            signets) lors du démarrage et de sortie.</font></span> <font
+          size="-1"><br>
+        </font> <span style="" class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+            size="-1">Vous pouvez enregistrer manuellement et restaurer
+            les sessions via le menu "Fichier", vous pouvez également
+            restaurer une session avec ou sans les signets enregistrés
+            (signets sont enregistrés automatiquement avec la session),
+            si vous modifiez un fichier sur le disque, sans
+            ré-enregistrement de la session, vous peuvent trouver que
+            des signets sont biaisés</font></span>.<br>
+        <a name="instanceanc"></a></font> <span style=""
+        class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><font size="-1">Vous pouvez exécuter
+          KKEdit soit comme une application à instance unique ou comme
+          une application multi-instance, réglé via le menu Préf.</font></span>
+      <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Des instances uniques
+          sont propres à chaque espace de travail.</font></span> <font
+        size="-1"><br>
+      </font> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+          size="-1">Vous pouvez également ouvrir une nouvelle instance
+          de KKEdit dans le menu fichier, indépendamment des réglages de
+          prefs.</font></span><font size="-1"><font size="-1"><br>
+          <font size="-1"><br>
+          </font></font></font><font size="-1"><font size="-1"><font
+            size="-1"><a name="gtksui"></a></font></font></font><span
+        style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><b>Utilisation de Racine</b></span><font
+        size="-1"><font size="-1"><font size="-1"><br>
+          </font></font></font><span class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"><font
+          size="-1">Vous pouvez également ouvrir une nouvelle instance
+          de KKEdit avec des privilèges d'administrateur dans le menu
+          fichier, vous pouvez définir une interface graphique pour
+          obtenir les privilèges root dans la fenêtre des prefs, je vous
+          recommande,</font></span> <font size="-1"><font size="-1"> </font></font>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <b>GtkSu</b></span><b></b><font
+        size="-1"><font size="-1"><font size="-1"><font size="-1"><font
+                size="-1"><font size="-1"><font size="-1"> <font
+                      size="-1">( </font></font></font></font></font></font></font></font><span
+        style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><font size="-1"><a
+href="http://translate.googleusercontent.com/translate_c?depth=1&amp;hl=en&amp;ie=UTF8&amp;rurl=translate.google.com&amp;sandbox=0&amp;sl=auto&amp;tl=fr&amp;u=http://gtk-apps.org/content/show.php/GtkSu%3Fcontent%3D158974&amp;usg=ALkJrhh7c7kYgGKrRCsA_8_tEIt_FsGf1w">disponible
+
+            ici</a></font></span><font size="-1"><font size="-1"><font
+            size="-1"><font size="-1"><font size="-1"><font size="-1"><font
+                    size="-1"><font size="-1"><font size="-1"> )<font
+                          size="-1">, </font></font></font></font></font></font></font></font></font></font><span
+        style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><font size="-1">utiliser 'gtksu -', les
+          utilisateurs de Ubuntu peut avoir à utiliser "gtksu - sudo
+          'pour arrêter gtk3 plaindre, d'autres options (en fonction de
+          votre système et que vous avez installé sont:« gksu -',
+          «sudo-A 'et ainsi de suite, si pas d'interface graphique pour
+          obtenir les privilèges root est installé un terminal sera
+          utilisé en fonction de vos paramètres de préférences.</font></span><b><font
+          color="#cc0000"><br>
+          <br>
+          !!</font></b><b><font color="#cc0000"><span style=""
+            class="notranslate" onmouseover="_tipon(this)"
+            onmouseout="_tipoff()"><font color="#cc0000"><b>ATTENTION</b></font></span>!!</font></b><font
+        size="-1"><font size="-1"><font size="-1"><font size="-1"><font
+                size="-1"><font size="-1"><font size="-1"><font
+                      size="-1"><font size="-1"><font size="-1"><br>
+                        </font></font></font></font></font></font></font></font></font></font><font
+        size="-1"><br>
+      </font> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+          size="-1">Éditer des fichiers avec des privilèges
+          d'administrateur peut sérieusement endommager votre système
+          s'il est mal utilisé.</font></span> <font size="-1"><br>
+      </font><img alt="" src="gtksu.gif" width="331" height="159"><br>
+      <br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><b>Rechercher / Remplacer</b></span><br>
+      <img alt="" src="find.gif" width="546" height="231"><br>
+      <br>
+      <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><font size="-1">Rechercher et remplacer
+          utilise des expressions de regex, la recherche rapide sur la
+          barre d'outils n'a pas, à la recherche arrière ne peut pas
+          être utilisé avec regex, le texte de la recherche / remplacer
+          les boîtes sont considérées comme des chaînes littérales.</font></span>
+      <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Vous pouvez rechercher
+          et remplacer dans un seul fichier ou dans tous les fichiers
+          ouverts, si vous choisissez de faire un «R EPlacez A ll 'dans
+          tous les fichiers ouverts, vous serez invité à confirmer
+          l'action.</font></span> <font size="-1"><br>
+      </font> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+          size="-1">L'option 'wrap' pour trouver / remplacer est ignoré
+          lors de la recherche dans tous les fichiers ouverts.</font></span>
+      <font size="-1"><br>
+        <br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Vous pouvez passer à
+          une ligne utilisant l'entrée de la barre d'outils:</font></span><br>
+      <img alt="jumptoline" src="gotolinefromtoolbar.gif" width="736"
+        height="351"><br>
+      <br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Vous pouvez faire une
+          recherche «en direct», juste en tapant dans le moteur de
+          recherche de toobar:</font></span><br>
+      <img alt="apisearch" src="livesearch.gif" width="882" height="445"><br>
+      <br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Scission mode
+          d'affichage:</font></span><br>
+      <img alt="splitscreen" src="spliscreen.gif" width="560"
+        height="402"><br>
+      <font size="-1"><br>
+      </font><font size="-1"><font size="-1"><span class="notranslate"
+            onmouseover="_tipon(this)" onmouseout="_tipoff()"><font
+              size="-1">Le courant coloration de la syntaxe de la source
+              est maintenant sélectionnable via l'onglet '«menu
+              contextuel comme ceci:</font></span> <font size="-1"><br>
+          </font> <span style="" class="notranslate"
+            onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+              size="-1">Soyez conscient que la valeur par défaut pour
+              mettre en évidence un fichier est défini par le système de
+              type mime et peut donc changer après la sauvegarde /
+              chargement.</font></span> <span class="notranslate"
+            onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+              size="-1">-types mime d'un fichier ne peut pas Usu allié
+              être réglés manuellement, mais dépend de système de magie
+              auto trucs, déposer suffixe etc</font></span></font><font
+          size="-1"><font size="-1"><font size="-1"><font size="-1"><font
+                  size="-1"><font size="-1"><font size="-1"><font
+                        size="-1"></font></font></font></font></font></font></font></font><br>
+        <img alt="hilite" src="sourcehilite.gif" width="659"
+          height="338"><br>
+        <br>
+      </font><font size="-1"><span style="" class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"><font
+            size="-1">Vous pouvez également activer / désactiver
+            différents bits et peices dans le menu «Affichage»:</font></span>
+        <img alt="" src="viewmenu.gif" width="703" height="329"><br>
+      </font><span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><b>La complétion de code</b></span><br>
+      <font size="-1"><span style="" class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"><font
+            size="-1">Si vous avez activé "Auto Show achèvement» dans
+            les prefs alors que vous tapez, vous verrez les différentes
+            options de complétion de code comme ceci:</font></span> <img
+          alt="" src="autocomp1.gif" width="578" height="489"><br>
+      </font><font size="-1"><span class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"><font
+            size="-1">Le nombre de lettres dans le mot avant le pop up
+            apparaît est situé dans les prefs.</font></span> <font
+          size="-1"><br>
+          <br>
+        </font> <span class="notranslate" onmouseover="_tipon(this)"
+          onmouseout="_tipoff()"> <font size="-1">Vous pouvez également
+            forcer la boîte de dialogue d'achèvement de pop-up à l'aide
+            d'un raccourci clavier (réglé par les prefs) comme ceci:</font></span><br>
+        <img alt="" src="autocomp2.gif" width="603" height="486"><br>
+      </font><font size="-1"><span style="" class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"><font
+            size="-1">Comme vous pouvez le voir dans ce qui précède,
+            vous pouvez ajouter une liste de mots personnalisés à
+            ajouter à la boîte de dialogue d'achèvement en créant
+            simpley le fichier ~ / .KKEdit / customcompletions et
+            ajouter des mots à elle, le fichier doit se terminer par un
+            saut de ligne, si le fichier ne n'existait pas d'autre choix
+            "mots personnalisés» sera affiché.</font></span> <font
+          size="-1"><br>
+        </font> <span style="" class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+            size="-1">Fonction et finitions variables indiqueront la
+            définition lorsque le bouton "Détails" est basculé sur, les
+            mots personnalisés et documents n'ont pas de détails
+            supplémentaires.</font></span><font size="-1"><br>
+        </font><br>
+      </font><span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"><b>Créer
+          ocumentation D avec Doxygen</b></span><b></b><br>
+      <img alt="" src="docs.gif" width="808" height="636"><br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><font size="-1">Vous pouvez créer une
+          documentation pour votre code si vous avez doxygen installé en
+          sélectionnant "Créer la documentation» dans le menu «Fichier»,
+          la documentation sera créé dans le dossier actuel et affiché
+          avec soit intégré dans DocViewer ou le navigateur du système,
+          la première fois vous exécutez ce qu'il peut y avoir un petit
+          retard, tandis que les premiers fichiers sont créés par
+          doxygen, après que la sélection "Créer Documentation" à
+          nouveau mises à jour juste les fichiers, s'il n'y a pas un
+          fichier d'un appelé «Doxyfile 'dans le dossier courant un
+          fichier de configuration par défaut est créé pour vous, ce
+          fichier peut vérifiés manuellement en fonction de vos besoins,
+          je vous recommande également d'installer Graphviz pour les
+          belles organigrammes de fantaisie, la plupart des
+          distributions auront des forfaits pour ces deux applications.</font></span>
+      <font size="-1"><br>
+      </font> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+          size="-1">Si doxygen est pas installé, vous n'aurez pas un
+          menu "Créer la documentation", il suffit d'installer et
+          (éventuellement) Graphviz et redémarrez KKEdit et le menu
+          apparaîtra.</font></span><br>
+      <br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><b>Intégration du document</b></span> <br>
+      <font size="-1"><span style="" class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"><font
+            size="-1">Il ya une certaine intégration avec les documents
+            en caisse par doxygen si, et seulement lors de l'utilisation
+            intégré dans docview, sélectionnez «Documentation» forment
+            le menu "Fichier" et la visionneuse de document apparaîtra
+            comme ci-dessus, il peut y avoir un peu de retard le premier
+            fois que vous utilisez cette fonction alors que doxygen crée
+            tous les fichiers nécessaires, les utilisations ultérieures
+            sera beaucoup plus rapide que doxygen sera simplement mettre
+            à jour les fichiers nécessaires.</font></span> <font
+          size="-1"><br>
+        </font> <span class="notranslate" onmouseover="_tipon(this)"
+          onmouseout="_tipoff()"> <font size="-1">Cliquez sur l'onglet
+            "Fichiers pour obtenir une liste des fichiers, puis cliquez
+            sur SHIFT un nom de fichier comme ceci:</font></span><br>
+        <img alt="" src="clickfile.gif" width="359" height="447">&nbsp;
+      </font><br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Le spectateur doc
+          ouvrira la page et l'éditeur va également ouvrir le fichier ou
+          de passer à l'onglet approprié comme ceci:</font></span><font
+        size="-1"><br>
+      </font>&nbsp; <img alt="" src="edswitch.gif" width="374"
+        height="240"><br>
+      <img alt="" src="docswitch.gif" width="626" height="477"><br>
+      <br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Sélectionnez une
+          fonction, par exemple:</font></span><br>
+      <img alt="" src="funclick.gif" width="464" height="496"><br>
+      <br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Montre:</font></span><br>
+      <img alt="" src="gotofuncclick.gif" width="825" height="677"><br>
+      <br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><font size="-1">De là, vous pouvez
+          déplacer, cliquez sur le numéro de la ligne (RED) pour ouvrir
+          l'onglet de fichier / interrupteur et allez dans la ligne dans
+          l'éditeur et les docs comme ceci:</font></span><br>
+      <img alt="" src="sourceclicked.gif" width="573" height="180"><br>
+      <br>
+      <img alt="" src="editsrcclicked.gif" width="572" height="487"><br>
+      <font size="-1"><span class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"><font
+            size="-1">Maj cliquant sur &#8203;&#8203;le nom de fichier (BLEU) va
+            ouvrir le fichier ou changer d'onglet ci-dessus.</font></span>
+        <font size="-1"><br>
+        </font> <span style="" class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+            size="-1">En cliquant sur &#8203;&#8203;une référence (GREEN) ira à la
+            documentaion pour que refence où vous pouvez encore choisir
+            un numéro de ligne / fichier etc</font></span> <font
+          size="-1"><br>
+        </font> <span class="notranslate" onmouseover="_tipon(this)"
+          onmouseout="_tipoff()"> <font size="-1">Vous pouvez également
+            cliquer sur les différents boîte de graphique de se rendre à
+            une définition de fonction.</font></span> <font size="-1"><br>
+        </font> <span style="" class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+            size="-1">Vous pouvez ouvrir un fichier en cliquant sur
+            &#8203;&#8203;SHIFT une boîte dans le graphe de dépendance inclure un
+            fichier comme ceci:</font></span><br>
+        <img alt="" src="clickopen.gif" width="406" height="552"><br>
+      </font><span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><font size="-1">Cela permettra d'ouvrir
+          le fichier ou de passer à l'onglet correspondant comme
+          ci-dessus.</font></span> <font size="-1"><br>
+      </font> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+          size="-1">Vous pouvez modifier la Doxyfile par défaut pour
+          ajouter plus / moins d'infos sur le navigateur.</font></span>
+      <font size="-1"><br>
+        <br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Le principal changement
+          que vous voulez faire dans le fichier 'Doxyfile' est de
+          changer le nom du projet ainsi ouvert puis le fichier
+          'Doxyfile »qui sera dans le même dossier que votre code source
+          et changer la ligne" PROJECT_NAME = "Mon projet" " à Somthing
+          plus approprié.</font></span> <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Pour le moment, la
+          documentation doit être laissé dans le dossier html créé dans
+          le dossier avec votre code source, ce sera probablement cjange
+          plus tard pour vous permettre de régler le dossier de la
+          documentation.</font></span> <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Si vous souhaitez plus
+          d'informations sur les différentes options disponibles dans la
+          Doxyfile run 'doxygen -g' de la ligne de commande et un défaut
+          Doxyfile sera créé qui est fortement commenté.</font></span><br>
+      <br>
+      <b>Plugins</b><br>
+      <font size="-1">
+        <meta http-equiv="content-type" content="text/html;
+          charset=windows-1252">
+      </font><font size="-1"><span style="" class="notranslate"
+          onmouseover="_tipon(this)" onmouseout="_tipoff()"><font
+            size="-1">KKedit prend désormais en charge les plugins
+            simples 'c', un exemple plugin est disponible sur la page
+            des plugins, cela va ajouter un élément de menu dans le menu
+            «Aide» qui permet d'afficher toutes les fonctions
+            actuellement prises en charge le système de plugin c'est
+            encore un travail en cours si les bugs et suggestions sont
+            les bienvenues, je vais être en ajoutant des plugins
+            supplémentaires qui seront disponibles à partir de ce site,
+            mais si vous écrivez un plugin ou tout simplement avoir une
+            idée pour un s'il vous plaît faites le moi savoir.</font></span>
+        <font size="-1"><br>
+          <br>
+        </font> <span class="notranslate" onmouseover="_tipon(this)"
+          onmouseout="_tipoff()"> <font size="-1">Les plugins peuvent
+            être activés / désactivés dans le menu 'Préférences' Plugin
+            de le menu "Edition".</font></span><br>
+        <img alt="" src="plugprefs.gif" width="366" height="279"> <br>
+        <br>
+      </font><span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><font size="-1">Il ya deux dossiers
+          plugins qui seront à la recherche de plugins: / usr / share /
+          KKEdit / plugins et ~ / .KKEdit / plugins, plugins peuvent
+          être dans des sous-dossiers et devraient être nommé comme
+          «libPLUGNAME.so '</font></span> <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Voir l'exemple installé
+          le plugin pour les fonctions de base et un Makefile de base.</font></span>
+      <font size="-1"><br>
+      </font> <br>
+      <div style="color: rgb(51, 51, 51); font-family: Arial, Verdana,
+        sans-serif; font-size: 13px; font-style: normal; font-variant:
+        normal; font-weight: normal; letter-spacing: normal;
+        line-height: normal; orphans: auto; text-indent: 0px;
+        text-transform: none; white-space: normal; widows: auto;
+        word-spacing: 0px; -webkit-text-stroke-width: 0px;
+        background-color: rgb(204, 204, 204);" align="center"> <span
+          style="" class="notranslate" onmouseover="_tipon(this)"
+          onmouseout="_tipoff()"> <font color="#000000"><font size="-1">Tous
+
+              les détails et les plugins supplémentaires peuvent être
+              trouvés ici:</font></font></span> </div>
+      <div style="color: rgb(51, 51, 51); font-family: Arial, Verdana,
+        sans-serif; font-size: 13px; font-style: normal; font-variant:
+        normal; font-weight: normal; letter-spacing: normal;
+        line-height: normal; orphans: auto; text-indent: 0px;
+        text-transform: none; white-space: normal; widows: auto;
+        word-spacing: 0px; -webkit-text-stroke-width: 0px;
+        background-color: rgb(204, 204, 204);" align="center"><font
+          color="#000000"><font size="-1"><a
+href="https://sites.google.com/site/kkeditlinuxtexteditor/kkedit-plugins"
+              style="color: rgb(85, 26, 139);"><b>KKEdit Plugins</b></a></font></font></div>
+      <hr size="2" width="100%"><a name="getanc"></a><span style=""
+        class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><b>Obtenez-le ici!</b></span><b><br>
+      </b> <b><a
+          href="http://gtk-apps.org/content/show.php?content=158161">KKEdit</a></b><br>
+      <br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><font size="-1">Dépendances</font></span>
+      <font size="-1"><br>
+        <br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Un raisonnablement
+          nouveau Xorg et bureau.</font></span> <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">gtk-24.02.13.</font></span>
+      <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">gtksourceview-2.11.1.</font></span>
+      <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">ctags.</font></span> <font
+        size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Autotools.</font></span>
+      <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">libunique-1.1.6</font></span>
+      <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">wget ou curl.</font></span>
+      <font size="-1"><br>
+        <br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">webkitgtk-1.10.x.</font></span>
+      <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">(Optionnel mais
+          recommandé)</font></span> <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">une orthographe
+          0.60.6.1. (optionnel mais recommandé)</font></span> <font
+        size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Gtk Su (facultatif mais
+          conseillé)</font></span> <font size="-1"><br>
+      </font> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+          size="-1">Editeur page de manuel (optionnel mais recommandé)</font></span>
+      <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Glib-réseau (facultatif
+          mais conseillé)</font></span><font size="-1"><font size="-1"><font
+            size="-1"><font size="-1"><font size="-1"><font size="-1"><font
+                    size="-1"><font size="-1"><font size="-1"><font
+                          size="-1"><font size="-1"><font size="-1"><font
+                                size="-1"><font size="-1"><font
+                                    size="-1"><font size="-1"><font
+                                        size="-1"><font size="-1"><font
+                                            size="-1"><font size="-1"><font
+                                                size="-1"><font
+                                                  size="-1"><font
+                                                    size="-1"><font
+                                                      size="-1"><font
+                                                        size="-1"><font
+                                                          size="-1"><br>
+                                                          <br>
+                                                          &nbsp; </font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font><span
+        style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><font size="-1">webkit est est une
+          dépendance optionnelle si vous voulez construire le spectateur
+          désactiver Gtk-doc en ajoutant --disable-DocViewer à
+          ./configure ou ./autogen.sh.</font></span> <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">La vérification
+          orthographique via aspell est facultative et peut être activé
+          par le commutateur 'enable-aspell' à ./configure ou
+          ./autogen.sh.</font></span> <font size="-1"><br>
+        <br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">La présence de "GtkSu"
+          une deuxième "Manpage Editor" sont détectés à configurer et le
+          cas échéant sera utilisée, dans le cas de GtkSu il est utilisé
+          pour obtenir des privilèges d'administrateur lors de
+          l'ouverture d'un éditeur de racine dans le menu fichier, si
+          Manpage Editor est détecté un élément de menu est ajouté au
+          menu de fichiers, les deux peuvent être téléchargés à partir
+          de ce site.</font></span> <font size="-1"><br>
+        <br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Glib-réseau est un
+          environnement d'exécution de litispendance et est utilisé pour
+          faire une recherche google si "Ouvrir la page de l'homme» ou
+          «Recherche par GTK-Doc" ne peut pas trouver quoi que ce soit.</font></span>
+      <font size="-1"><br>
+        <br>
+      </font> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+          size="-1">Si vous utilisez une distribution basée sur les
+          sources comme l'EPA ou Slackware, vous devriez avoir tous les
+          (plus) de ces installés, si vous utilisez une distribution
+          pré-emballés comme debian et vous n'avez pas compilé à partir
+          des sources avant que vous pourriez avoir à installer des
+          paquets de développement à savoir à savoir pour debian (ce qui
+          est de la mémoire) le paquet build-essential et les paquets
+          -dev pour gtk2 et</font></span> <font size="-1"><br>
+      </font> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+          size="-1">gtksourceview, consultez la documentation de votre
+          distributions et vous distributions forums de l'aide générale
+          sur la compilation de logiciel.</font></span><br>
+      <br>
+      <span style="" class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><b>Bâtiment</b></span><br>
+      <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><font size="-1">Déballez la boule de
+          goudron, allez dans le dossier KKEdit et course:</font></span>
+      <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">./autogen.sh --prefix =
+          / usr --enable-aspell --enable-DocViewer</font></span> <font
+        size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">faire</font></span> <font
+        size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">sudo make install</font></span>
+      <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">(./configure Peut
+          maintenant être utilisé à la place de ./autogen.sh - pas
+          besoin de autotools).</font></span> <font size="-1"><br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">VEUILLEZ lire le
+          fichier README!</font></span> <font size="-1"><br>
+      </font> <span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"> <font
+          size="-1">Voir le fichier INSTALL pour les détails complet.</font></span><font
+        size="-1"><font size="-1"> </font></font>
+      <hr size="2" width="100%"><font size="-1"><font size="-1"><a
+            name="bugs"></a></font></font><span style=""
+        class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"><b>Rapports de bogues</b></span> <font
+        size="-1"><br>
+      </font><font size="-1"><font size="-1"><br>
+          <br>
+        </font></font><span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"><font
+          size="-1">S'il vous plaît envoyer des rapports de bugs, des
+          suggestions de fonctions, de grands sacs de bijoux, etc à:</font></span>
+      <br>
+      <br>
+      <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <b>kdhedger68713@gmail.com</b></span> <font
+        size="-1"><br>
+        <br>
+      </font> <span class="notranslate" onmouseover="_tipon(this)"
+        onmouseout="_tipoff()"> <font size="-1">Je vais revenir vers
+          vous dès que possible.</font></span><font size="-1"><font
+          size="-1"><br>
+        </font></font><font size="-1"><font size="-1"><br>
+        </font> </font>
+      <hr size="2" width="100%"><span style="" class="notranslate"
+        onmouseover="_tipon(this)" onmouseout="_tipoff()"><a
+href="http://translate.googleusercontent.com/translate_c?depth=1&amp;hl=en&amp;ie=UTF8&amp;rurl=translate.google.com&amp;sandbox=0&amp;sl=auto&amp;tl=fr&amp;u=http://keithhedger.hostingsiteforfree.com/&amp;usg=ALkJrhjf7gjvEFQQPA5AZ0c44Gsj_-1HsQ"><font
+            size="+3"><b>Maison</b></font></a></span>
+      <hr size="2" width="100%"><br>
+      <small> </small></div>
+  </body>
+</html>

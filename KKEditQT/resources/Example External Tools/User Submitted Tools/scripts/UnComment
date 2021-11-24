@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+#Submitted by:
+#©Sadi Yumuşak <sadiyumusak@gmail.com>
+#All comments and suggestions to the above.
+#Script and tools options may have been tweaked by me.
+#
+#Removes comment marks '#' from start of selected lines.
+
+echo -n "$KKEDIT_SELECTION"|sed -e 's/^\s*#\s*//g'

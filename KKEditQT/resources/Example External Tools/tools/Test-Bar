@@ -1,0 +1,11 @@
+name	Test Bar
+command	../scripts/testbar
+comment	Demo of how to use progressbar
+flags	16
+interm	0
+inpopup	0
+alwayspopup	0
+clearview	0
+runasroot	0
+usebar	1
+shortcutkey	0

@@ -1,0 +1,10 @@
+This is a TEXT editor and although it can open some files that include binary data, it may not show the correct text, if you want a binary editor I would suggest you use somthing from here:
+http://en.wikipedia.org/wiki/Comparison_of_hex_editors
+Or you can use vim, see the man page on your system.
+
+See the INSTALL file for details about installing and dependencies.
+
+Bugs and suggestions welcome please email to kdhedger68713@gmail.com
+For general info on compiling/installing software on your disro see the relevant forums.
+
+This is the QT5 version of KKEdit and is still under heavy development and is not yet practical to use and probably wiont even compile/run yet, be warned!
