@@ -379,12 +379,13 @@ VISIBLE void searchQT5Docs(Widget* widget,uPtr data)
 		}
 }
 
-#ifndef _USEQT5_
-void defSearchFromBar(Widget* widget,uPtr data)
-#else
+
+
+
 void defSearchFromBar(void)
-#endif
 {
+fprintf(stderr,"void defSearchFromBar(void)\n");
+#if 0
 	functionData* fdata;
 
 	functionSearchText=strdup(kkedit->findDefWidget->property("text").toByteArray().constData());
@@ -400,6 +401,7 @@ void defSearchFromBar(void)
 				}
 			debugFree(&functionSearchText,"defSearchFromBar functionSearchText");
 		}
+#endif
 }
 
 #ifndef _USEQT5_
@@ -1087,7 +1089,7 @@ void showOnStatus(const char* from,const char* to)
 #endif
 }
 
-void doFindReplace(int response_id)
+void doFindReplace(int response_id)//TODO//move
 {
 	int									flags=0;
 	DocumentClass						*document=getDocumentData(-1);
@@ -1164,13 +1166,13 @@ void doFindReplace(int response_id)
 			if((kkedit->wrapSearch==true) && (gotresult==false))
 				{
 					int ln=document->textCursor().blockNumber()+1;
-					gotoLine(NULL,0);
+					kkedit->gotoLine(0);
 					if(kkedit->useRegex==false)
 						gotresult=document->find(thetext,(QTextDocument::FindFlags)flags);
 					else
 						gotresult=document->find(rx,(QTextDocument::FindFlags)flags);
 					if(gotresult==false)
-						gotoLine(NULL,ln);			
+						kkedit->gotoLine(ln);			
 				}
 		}
 	else
@@ -1200,7 +1202,7 @@ void doFindReplace(int response_id)
 			else
 				{
 					cnt=0;
-					gotoLine(NULL,0);
+					kkedit->gotoLine(0);
 					if(kkedit->useRegex==false)
 						document->find(currentfindtext,(QTextDocument::FindFlags)flags);
 					else

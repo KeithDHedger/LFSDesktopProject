@@ -38,6 +38,9 @@ void KKEditClass::doNavMenuItems()
 			case OPENINCLUDEMENUITEM:
 				this->findFile();
 				break;
+			case GOTOLINEMENUITEM:
+				this->showLineEntry();
+				break;
 		}
 }
 

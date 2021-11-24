@@ -607,18 +607,24 @@ void switchPage(int thispage)//TODO//move ?
 
 									onefunc=true;
 									menuitem=new MenuItemClass(tmpstr);
-									menuitem->setCallBackVoid(gotoLine);
-									menuitem->setMenuID(linenum);	
+									//menuitem->setCallBackVoid(gotoLine);
+									menuitem->setMenuID(linenum);
+									menuitem->mainKKEditClass=kkedit;
 									qobject_cast<QMenu*>(whattypemenu)->addAction(menuitem);
-								}
+							//		QObject::connect(menuitem,SIGNAL(triggered()),menuitem,SLOT(menuClickedGotoLine()));
+									QObject::connect(menuitem,SIGNAL(triggered()),menuitem,SLOT(menuClickedGotoLine()));
+							}
 						}
 					else
 						{
 							onefunc=true;
 							menuitem=new MenuItemClass(tmpstr);
-							menuitem->setCallBackVoid(gotoLine);
-							menuitem->setMenuID(linenum);	
+							//menuitem->setCallBackVoid(gotoLine);
+							menuitem->setMenuID(linenum);
+							menuitem->mainKKEditClass=kkedit;
 							qobject_cast<QMenu*>(kkedit->funcMenu)->addAction(menuitem);
+						//	QObject::connect(menuitem,SIGNAL(triggered()),menuitem,SLOT(menuClickedGotoLine()));
+							QObject::connect(menuitem,SIGNAL(triggered()),menuitem,SLOT(menuClickedGotoLine()));
 						}
 				}
 

@@ -553,7 +553,7 @@ void KKEditClass::handleBMMenu(QWidget *widget,int what)
 				bms=this->bookMarks.value(what);
 				doc=this->pages.value(bms.docIndex);
 				qobject_cast<QTabWidget*>(this->mainNotebook)->setCurrentWidget(doc);
-				gotoLine(NULL,(long)bms.line);
+				this->gotoLine(bms.line);
 				break;
 		}
 }
@@ -721,7 +721,7 @@ VISIBLE bool KKEditClass::openFile(std::string filepath,int linenumber,bool warn
 			doc->setTabName(truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
 			qobject_cast<QTabWidget*>(kkedit->mainNotebook)->setTabToolTip(doc->tabNumber,doc->getFilePath());
 			qobject_cast<QTabWidget*>(kkedit->mainNotebook)->setCurrentIndex(doc->tabNumber);
-			gotoLine(NULL,(long)linenumber);
+			this->gotoLine(linenumber);
 			doc->document()->clearUndoRedoStacks(QTextDocument::UndoAndRedoStacks);
 			doc->setHiliteLanguage();
 #ifndef _USEMINE_

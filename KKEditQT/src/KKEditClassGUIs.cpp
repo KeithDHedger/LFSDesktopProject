@@ -625,7 +625,7 @@ void KKEditClass::buildMainGui(void)
 	qobject_cast<QTabWidget*>(this->mainNotebook)->setTabsClosable(true);
 	qobject_cast<QTabWidget*>(this->mainNotebook)->setMovable(true);
 	
-	QObject::connect(qobject_cast<QTabWidget*>(this->mainNotebook),&QTabWidget::currentChanged,switchPage);
+	QObject::connect(qobject_cast<QTabWidget*>(this->mainNotebook),&QTabWidget::currentChanged,switchPage);//TODO//
 	//connect(this,SIGNAL(&QTabWidget::currentChanged(int)),this,SLOT(switchTab(int)));
 	QObject::connect(qobject_cast<QTabWidget*>(this->mainNotebook),&QTabWidget::tabCloseRequested,closeTabQT);
 ////	QObject::connect(qobject_cast<QWidget*>(mainNotebook),&QWidget::keyPressEvent,keyp);
@@ -828,7 +828,8 @@ void KKEditClass::buildMainGui(void)
 //open include
 	menuItemSink=this->makeMenuItemClass(NAVMENU,"Open Include File",QKeySequence::fromString("Ctrl+I"),"document-open",GOTODEFMENUNAME,OPENINCLUDEMENUITEM);
 //goto line number
-	makeMenuItem(this->navMenu,"Go To Line",0,"go-down",GOTOLINEMENUNAME,&jumpToLine,NULL,0);
+	menuItemSink=this->makeMenuItemClass(NAVMENU,"Go To Line",0,"go-down",GOTOLINEMENUNAME,GOTOLINEMENUITEM);
+	//makeMenuItem(this->navMenu,"Go To Line",0,"go-down",GOTOLINEMENUNAME,&jumpToLine,NULL,0);
 //find define
 	makeMenuItem(this->navMenu,"Search For Define",0,"edit-find",SEARCHFORDEFMENUNAME,&functionSearch,NULL,0);
 //find gtkdoc
@@ -900,3 +901,16 @@ void KKEditClass::buildMainGui(void)
  	//fprintf(stderr,">>%s<<\n",this->statusText->text().toStdString().c_str());
  	this->statusBar->addWidget(this->statusText);
 }
+
+void KKEditClass::showLineEntry(void)
+{
+	bool	ok;
+
+	QString	text=QInputDialog::getText(this->mainWindow,"Go To Line","Enter Line Number",QLineEdit::Normal,"0",&ok);
+
+	if ((ok==true) && (!text.isEmpty()))
+		{
+			this->gotoLine(text.toUInt());
+		}
+}
+

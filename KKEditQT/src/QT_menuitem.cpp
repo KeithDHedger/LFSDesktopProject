@@ -90,3 +90,8 @@ bool MenuItemClass::menuClickedBool()
 		}
 	return(false);
 }
+
+void MenuItemClass::menuClickedGotoLine()
+{
+	this->mainKKEditClass->gotoLine(this->getMenuID());
+}

@@ -54,11 +54,15 @@ class MenuItemClass : public QAction
 	public:
 		explicit MenuItemClass(const QString &text, QWidget *parent = 0);
 		~MenuItemClass();
+		KKEditClass			*mainKKEditClass=NULL;
 
 		void				setMenuID(int id);
 		int					getMenuID(void);
 		void				setCallBackVoid(menuCallbackVoid func);
 		void				setCallBackBool(menuCallbackBool func);
+
+	public slots:
+		void				menuClickedGotoLine();
 
 	private:
 		int					menuID;
@@ -66,8 +70,8 @@ class MenuItemClass : public QAction
 		menuCallbackBool	callbackBool;
 
 	private slots:
-		void				menuClickedVoid();
-		bool				menuClickedBool();
+		void				menuClickedVoid(void);
+		bool				menuClickedBool(void);
 };
 
 #endif

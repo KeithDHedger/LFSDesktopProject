@@ -15,202 +15,51 @@ bool	mustBeAClass=false;
 int		classLineNumber=1;
 char	*classFileName=NULL;
 
-void goToDefine(functionData* fdata)
-{
-	if(fdata->intab!=-1)
-		{
-			qobject_cast<QTabWidget*>(kkedit->mainNotebook)->setCurrentIndex(fdata->intab);
-			gotoLine(NULL,fdata->line);
-		}
-	else
-		{
-			kkedit->openFile(fdata->file,fdata->line-1,true);
-		}
-}
 
-//VISIBLE void goToDefinition(Widget* widget,uPtr data)
-//{
-//#ifdef _USEQT5_
-//	DocumentClass	*document=getDocumentData(-1);
-//	functionData	*fdata=NULL;
-//	char			*selection;
-//	const char		*selectionptr;
-//
-//	if(document==NULL)
-//		return;
-//
-//	selection=strdup(document->textCursor().selectedText().toUtf8().constData());
-//	selectionptr=selection;
-//
-//	fdata=getFunctionByName(selectionptr,true,true);
-//	if(fdata!=NULL)
-//		{
-//			//TODO//
-////			history->savePosition();
-//			goToDefine(fdata);
-//			destroyData(fdata);
-//		}
-//
-//	free(selection);
-//#else
-//	pageStruct*		page=getDocumentData(-1);
-//	GtkTextIter		start;
-//	GtkTextIter		end;
-//	char*			selection=NULL;
-//	functionData*	fdata=NULL;
-//
-//	if(gtk_text_buffer_get_selection_bounds((GtkTextBuffer*)page->buffer,&start,&end))
-//		{
-//			selection=gtk_text_buffer_get_text((GtkTextBuffer*)page->buffer,&start,&end,false);
-//			if(selection==NULL)
-//				return;
-//		}
-//	else
-//		return;
-////TODO//
-//	fdata=getFunctionByName(selection,true,true);
-//	if(fdata!=NULL)
-//		{
-//			history->savePosition();
-//			goToDefine(fdata);
-//			destroyData(fdata);
-//		}
-//	return;
-//#endif
-//}
-
-//VISIBLE void findFile(Widget* widget,uPtr data)
-//{
-//	DocumentClass	*document=getDocumentData(-1);
-//	char			*selection;
-//	StringSlice		slice;
-//	char			*filename=NULL;
-//	char			*filepath=NULL;
-//	char			*command;
-//	char			buffer[2048];
-//	char			*searchdir=NULL;
-//	FILE			*fp;
-//
-//	if(document==NULL)
-//		return;
-//
-//	selection=strdup(document->textCursor().block().text().toUtf8().constData());
-//	if(selection[0]!='#')
-//		return;
-//
-//	filename=slice.sliceBetween(selection,(char*)"include ",NULL);
-//
-//	if(slice.getResult()==0)
-//		{
-//			if(filename[0]=='<')
-//				searchdir=strdup("/usr/include");
-//			else
-//				searchdir=strdup(document->getDirPath().toStdString().c_str());//TODO//
-//
-//			asprintf(&filepath,"%s/%s",searchdir,slice.sliceLen(filename,1,strlen(filename)-2));
-//			if(kkedit->openFile(filepath,0,false)==false)
-//				{
-//					asprintf(&command,"find \"%s\" -name \"%s\"",searchdir,basename(filepath));
-//					fp=popen(command, "r");
-//					if(fp!=NULL)
-//						{
-//							while(fgets(buffer,1024,fp))
-//								{
-//									buffer[strlen(buffer)-1]=0;
-//									kkedit->openFile(buffer,0,false);
-//								}
-//							pclose(fp);
-//						}
-//					debugFree(&command,"findFile command");
-//				}
-//			debugFree(&filepath,"findFile filepath");
-//			debugFree(&searchdir,"searchdir filepath");
-//		}
-//
-//	free(selection);
-//}
-
-void gotoLine(Widget* widget,uPtr data)
-{
-	int	line=(int)(long)data;
-#ifndef _USEQT5_
-	pageStruct*	page=getDocumentData(-1);
-	TextBuffer*	buf;
-
-	if(page!=NULL)
-		{
-			history->savePosition();
-			buf=new TextBuffer((GtkTextBuffer*)page->buffer);
-			if(page->inTop==true)
-				buf->scroll2Line((GtkTextView*)page->view,line-1);
-			else
-				buf->scroll2Line((GtkTextView*)page->view2,line-1);
-			delete buf;
-		}
-#else
-	DocumentClass	*doc=NULL;
-	QTextBlock		block;
-	QTextCursor		cursor;
-
-	doc=getDocumentData(-1);
-	if(doc==NULL)
-		return;
-	block=doc->document()->findBlockByNumber(line-1);
-	cursor=doc->textCursor();
-	cursor.setPosition(block.position());
-	//doc->setFocus();
-	doc->setTextCursor(cursor);
-#endif
-}
-
-#ifndef _USEQT5_
-void jumpToLineFromBar(GtkWidget* widget,gpointer data)
-#else
 void jumpToLineFromBar(const QString text)
-#endif
 {
-#ifdef _USEQT5_
+fprintf(stderr,"void jumpToLineFromBar(const QString text)\n");
+#if 0
 //TODO//
 	printf("jumpToLineFromBar %s\n",text.toLocal8Bit().constData());
 	theLineNum=atoi(text.toLocal8Bit().constData());
 	gotoLine(NULL,(long)theLineNum);
-#else
-	theLineNum=atoi(gtk_entry_get_text((GtkEntry*)widget));
-	gotoLine(NULL,(gpointer)(long)theLineNum);
 #endif
 }
 
-int showLineEntry(void)
-{
-	gint	result=0;
-
-	bool	ok;
-	QString	text=QInputDialog::getText(kkedit->mainWindow,"Go To Line","Enter Line Number",QLineEdit::Normal,"0",&ok);
-
-	if ((ok==true) && (!text.isEmpty()))
-		{
-			theLineNum=text.toUInt();
-			result=0;
-		}
-	else
-		result=-1;
-
-	return(result);
-}
-
-VISIBLE void jumpToLine(Widget* widget,uPtr data)
-{
-#ifdef _USEQT5_
-	if(showLineEntry()==0)
-		gotoLine(NULL,(long)theLineNum);
-#else
-	if(showLineEntry()==GTK_RESPONSE_YES)
-		gotoLine(NULL,(gpointer)(long)theLineNum);
-#endif
-}
+//int showLineEntry(void)
+//{
+//	gint	result=0;
+//
+//	bool	ok;
+//	QString	text=QInputDialog::getText(kkedit->mainWindow,"Go To Line","Enter Line Number",QLineEdit::Normal,"0",&ok);
+//
+//	if ((ok==true) && (!text.isEmpty()))
+//		{
+//			theLineNum=text.toUInt();
+//			result=0;
+//		}
+//	else
+//		result=-1;
+//
+//	return(result);
+//}
+//
+//VISIBLE void jumpToLine(Widget* widget,uPtr data)
+//{
+//#ifdef _USEQT5_
+//	if(showLineEntry()==0)
+//		gotoLine(NULL,(long)theLineNum);
+//#else
+//	if(showLineEntry()==GTK_RESPONSE_YES)
+//		gotoLine(NULL,(gpointer)(long)theLineNum);
+//#endif
+//}
 
 VISIBLE void functionSearch(Widget* widget,uPtr data)
 {
+fprintf(stderr,"VISIBLE void functionSearch(Widget* widget,uPtr data)\n");
+#if 0
 	functionData*	fdata;
 	bool			ok;
 
@@ -235,6 +84,7 @@ VISIBLE void functionSearch(Widget* widget,uPtr data)
 					ok=false;
 				}
 		}
+#endif
 }
 
 #ifndef _USEQT5_

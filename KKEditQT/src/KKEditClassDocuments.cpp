@@ -53,7 +53,7 @@ void KKEditClass::resetAllFilePrefs(void)
 		}
 }
 
-void KKEditClass::goToDefinition(void)
+void KKEditClass::goToDefinition(void)//TODO//clean
 {
 	DocumentClass	*document=getDocumentData(-1);
 	functionData	*fdata=NULL;
@@ -71,9 +71,32 @@ void KKEditClass::goToDefinition(void)
 		{
 			//TODO//
 //			history->savePosition();
-			goToDefine(fdata);
+			if(fdata->intab!=-1)
+				{
+					qobject_cast<QTabWidget*>(this->mainNotebook)->setCurrentIndex(fdata->intab);
+					this->gotoLine(fdata->line);
+				}
+			else
+				{
+					this->openFile(fdata->file,fdata->line-1,true);
+				}
 			destroyData(fdata);
 		}
 
 	free(selection);
+}
+
+void KKEditClass::gotoLine(int linenumber)
+{
+	DocumentClass	*doc=NULL;
+	QTextBlock		block;
+	QTextCursor		cursor;
+
+	doc=getDocumentData(-1);
+	if(doc==NULL)
+		return;
+	block=doc->document()->findBlockByNumber(linenumber-1);
+	cursor=doc->textCursor();
+	cursor.setPosition(block.position());
+	doc->setTextCursor(cursor);
 }
