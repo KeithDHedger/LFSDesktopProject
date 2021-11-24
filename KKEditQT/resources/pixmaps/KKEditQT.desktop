@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=KKEditQT
+Comment=A GTK2 text editor inspired ( but not based on ) BBEdit.
+Terminal=false
+Type=Application
+Categories=Utility;
+MimeType=text/plain
+Icon=KKEditQT.png
+Exec=kkedit %f
