@@ -650,8 +650,8 @@ void KKEditClass::buildMainGui(void)
 	this->fileMenu->addSeparator();
 
 //extras
-	menuItemSink=this->makeMenuItemClass(FILEMENU,"New Admin Editor",0,DATADIR"/pixmaps/ROOTKKEdit.png",NEWADMINMENUNAME,NEWADMINEDMENUITEM);
-	menuItemSink=this->makeMenuItemClass(FILEMENU,"New Editor",0,DATADIR"/pixmaps/MenuKKEdit.png",NEWEDITORMENUNAME,NEWEDMENUITEM);
+	menuItemSink=this->makeMenuItemClass(FILEMENU,"New Admin Editor",0,DATADIR"/pixmaps/ROOTKKEditQT.png",NEWADMINMENUNAME,NEWADMINEDMENUITEM);
+	menuItemSink=this->makeMenuItemClass(FILEMENU,"New Editor",0,DATADIR"/pixmaps/MenuKKEditQT.png",NEWEDITORMENUNAME,NEWEDMENUITEM);
 	
 	if(gotManEditor==0)
 		menuItemSink=this->makeMenuItemClass(FILEMENU,"Manpage Editor",0,DATADIR"/pixmaps/ManPageEditor.png",MANEDITORMENUNAME,MANPAGEEDMENUITEM);
@@ -877,7 +877,7 @@ void KKEditClass::buildMainGui(void)
 
 //	menuitem=makeMenuItem(GTK_STOCK_HELP,menu,(void*)openHelp,0,HELPMENUNAME,STOCKMENU,NULL,NULL);
 //get plugins
-	makeMenuItem(this->helpMenu,"&Get Plugins",0,DATADIR"/pixmaps/KKEditPlugMenu.png",GETPLUGSMENUNAME,&getPlugins,NULL,0);
+	makeMenuItem(this->helpMenu,"&Get Plugins",0,DATADIR"/pixmaps/KKEditQTPlugMenu.png",GETPLUGSMENUNAME,&getPlugins,NULL,0);
 //	menuitem=makeMenuItem(DATADIR"/pixmaps/KKEditPlugMenu.png",menu,(void*)getPlugins,0,GETPLUGSMENUNAME,PIXMAPMENU,"Get Plugins",NULL);
 
 
