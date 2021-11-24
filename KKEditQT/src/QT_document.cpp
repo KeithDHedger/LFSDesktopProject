@@ -331,12 +331,6 @@ void DocumentClass::setFilePrefs(void)
 	this->updateLineNumberAreaWidth();
 	
 	this->setFont(this->mainKKEditClass->prefsDocumentFont);
-	//this->setTabStopDistance(this->mainKKEditClass->prefsTabWidth);
-//	this->setTabStopDistance(textWidthInPixels);
-	//this->setTabStopDistance(1);
-	//this->setTabStopWidth(50);
-
-	//this->setTabStopDistance(4);
 	this->setLineWrapMode(static_cast<QPlainTextEdit::LineWrapMode>(this->mainKKEditClass->wrapLine));
 	this->prefsHiLiteLineColor=this->mainKKEditClass->prefsHiLiteLineColor;
 	this->bookmarkLineColor=this->mainKKEditClass->prefsBookmarkHiLiteColor;
@@ -349,10 +343,8 @@ void DocumentClass::setFilePrefs(void)
 		opts.setFlags(opts.flags()|QTextOption::ShowLineAndParagraphSeparators | QTextOption::ShowTabsAndSpaces|QTextOption::ShowDocumentTerminator);
 
 	this->document()->setDefaultTextOption(opts);
-	//this->setTabStopDistance(50.0);
-	//this->setTabStopDistance();
-	QFontMetrics fm(this->mainKKEditClass->prefsDocumentFont);
 
+	QFontMetrics fm(this->mainKKEditClass->prefsDocumentFont);
 	this->setTabStopDistance(fm.horizontalAdvance(" ")*this->mainKKEditClass->prefsTabWidth);
 }
 
