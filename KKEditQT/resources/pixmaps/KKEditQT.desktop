@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=NewQt5Project
+Comment=
+Terminal=false
+Type=Application
+Categories=Utility;
+Name[en_US]=NewQt5Project
+Icon=NewQt5Project.png
+Exec=newqt5project
