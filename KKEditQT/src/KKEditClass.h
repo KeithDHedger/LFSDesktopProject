@@ -64,6 +64,8 @@ class KKEditClass : public QObject
 		int							queueID=-1;
 		int							currentWorkSpace=-1;
 		bool						forcedMultInst=false;
+		bool						forceDefaultGeom=false;
+
 //app functions
 		void						initApp(int argc,char** argv);
 		void						buildMainGui(void);

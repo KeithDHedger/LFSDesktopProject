@@ -572,7 +572,6 @@ void KKEditClass::initApp(int argc,char** argv)
 	this->gotManEditor=WEXITSTATUS(exitstatus);
 	exitstatus=system("which doxygen 2>&1 >/dev/null");
 	this->gotDoxygen=WEXITSTATUS(exitstatus);
-
 //	if(getuid()!=0)
 //		styleName="classic";
 //	else
@@ -592,7 +591,6 @@ void KKEditClass::initApp(int argc,char** argv)
 //					 vv from object      vv signal 	  	   vv to object   vv func slot must inherit QObject
 	QObject::connect(this->checkMessages,SIGNAL(timeout()),this,SLOT(doTimer()));
 	this->checkMessages->start(this->prefsMsgTimer);
-
 
 //#ifdef _ASPELL_
 //	AspellCanHaveError*	possible_err;
@@ -616,9 +614,9 @@ void KKEditClass::initApp(int argc,char** argv)
 //	tmpHighlightColour=highlightColour;
 //
 
-	this->buildPrefsWindow();
 	this->buildMainGui();
 
+	this->buildPrefsWindow();
 //TODO//
 //	if(onExitSaveSession==true)
 //		restoreSession(NULL,(void*)restoreBookmarks);
@@ -631,8 +629,16 @@ void KKEditClass::initApp(int argc,char** argv)
 	asprintf(&htmlFile,"%s/Docview-%s.html",this->tmpFolderName.c_str(),globalSlice->randomName(6));
 	asprintf(&htmlURI,"file://%s/Docview-%s.html",this->tmpFolderName.c_str(),globalSlice->randomName(6));
 
-	QRect r=this->prefs.value("editor/geom",QVariant(QRect(50,50,800,600))).value<QRect>();
-	this->mainWindow->setGeometry(r);
+	if(this->forceDefaultGeom==false)
+		{
+			QRect r=this->prefs.value("editor/geom",QVariant(QRect(50,50,1024,768))).value<QRect>();
+			this->mainWindow->setGeometry(r);
+		}
+	else
+		{
+			QRect r(0,0,1024,768);
+			this->mainWindow->setGeometry(r);
+		}
 
 	fprintf(stderr,"this->currentWorkSpace=%i\n",this->currentWorkSpace);
 return;
@@ -777,7 +783,8 @@ VISIBLE void KKEditClass::newFile()
 void KKEditClass::writeExitData(void)
 {
 //editor
-	this->prefs.setValue("editor/geom",this->mainWindow->geometry());
+	if(this->forceDefaultGeom==false)
+		this->prefs.setValue("editor/geom",this->mainWindow->geometry());
 	this->prefs.setValue("editor/funcsort",this->prefsFunctionMenuLayout);
 	this->prefs.setValue("editor/prefsdepth",this->prefsDepth);
 	this->prefs.setValue("editor/toolbarlayout",this->prefsToolBarLayout);

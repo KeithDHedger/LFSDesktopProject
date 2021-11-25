@@ -57,7 +57,7 @@ class SingleInstanceClass
 
 		QApplication	*app;
 		int				workspace=-1;
-
+		bool			isOnX11=true;
 	private:
 		bool			deleteComfiles=false;
 		QFile			fileMsg;

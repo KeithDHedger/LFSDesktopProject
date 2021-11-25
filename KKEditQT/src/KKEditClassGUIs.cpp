@@ -69,7 +69,7 @@ void KKEditClass::buildPrefsWindow(void)
 	hbox->setContentsMargins(0,0,0,0);
 
 	this->populateDnD();
-	populateStore();
+	this->populateStore();
 
 	QObject::connect(this->listWidget,SIGNAL(itemDoubleClicked(QListWidgetItem*)),this,SLOT(doDoubleClickPrefs(QListWidgetItem*)));
 

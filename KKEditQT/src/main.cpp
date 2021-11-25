@@ -65,6 +65,7 @@ int main (int argc, char **argv)
 
 	kkedit->currentWorkSpace=siapp.workspace;;
 	kkedit->sessionID=kkedit->currentWorkSpace+MSGKEY;
+	kkedit->forceDefaultGeom=!siapp.isOnX11;
 	globalSlice=new StringSlice;
 	globalSlice->setReturnDupString(true);
 	history=new HistoryClass;

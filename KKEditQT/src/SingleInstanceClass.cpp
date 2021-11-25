@@ -33,7 +33,10 @@ SingleInstanceClass::SingleInstanceClass(QApplication *app,bool forcem)
 	QSettings	prefs;
 	bool		single=prefs.value("app/usesingle",QVariant(bool(true))).value<bool>();
 
-	if((single==false) || (forcem==true))
+	if(QX11Info::isPlatformX11()==false)
+		this->isOnX11=false;
+
+	if((QX11Info::isPlatformX11()==false) || (single==false) || (forcem==true))
 		{
 			this->workspace=(int)random();
 			this->usingMulti=true;
@@ -183,6 +186,7 @@ long SingleInstanceClass::getSIWorkSpace(void)
 	Atom			NET_WM_DESKTOP;
 	long			*deskp;
 
+fprintf(stderr,"disp=%pdisp rootwin=%p\n",disp,rootwin);
 	NET_WM_DESKTOP=XInternAtom(disp, "_NET_CURRENT_DESKTOP",False);
 	deskp=(long*)getX11Prop(rootwin,NET_WM_DESKTOP,XA_CARDINAL,32,&n);
 	if (n !=0)
