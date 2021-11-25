@@ -615,7 +615,6 @@ void KKEditClass::initApp(int argc,char** argv)
 //
 
 	this->buildMainGui();
-
 	this->buildPrefsWindow();
 //TODO//
 //	if(onExitSaveSession==true)
