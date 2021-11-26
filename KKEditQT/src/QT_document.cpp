@@ -197,8 +197,8 @@ void DocumentClass::updateLineNumberArea(const QRect &rect,int dy)
 
 void DocumentClass::keyPressEvent(QKeyEvent *event)
 {
-//fix for vnc tab key
-	if((this->mainKKEditClass->application->platformName().compare("vnc")==0) && (event->key()==Qt::Key_Tab))
+//fix for vnc/linuxfb tab key
+	if(((this->mainKKEditClass->application->platformName().compare("vnc")==0) || (this->mainKKEditClass->application->platformName().compare("linuxfb")==0)) && (event->key()==Qt::Key_Tab))
 		{
 			event->accept();
 			this->insertPlainText("\t");

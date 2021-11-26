@@ -39,7 +39,6 @@ int main (int argc, char **argv)
 	app.setOrganizationName("KDHedger");
 	app.setApplicationName("KKEditQT");
 
-fprintf(stderr,"plat=%s\n",app.platformName().toStdString().c_str());
 	singleOverRide=false;
 	loadPluginsFlag=true;
 
