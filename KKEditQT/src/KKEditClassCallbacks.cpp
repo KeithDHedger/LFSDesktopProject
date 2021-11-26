@@ -19,6 +19,66 @@
  */
 
 #include "KKEditClass.h"
+
+void KKEditClass::doBookmarkMenuItems()
+{
+	QAction			*caller=qobject_cast<QAction*>(sender());
+	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(caller);
+	DocumentClass	*document=this->getDocumentForTab(-1);
+
+	fprintf(stderr,"bookmarks -> menu id=%i, menu name=%s\n",mc->getMenuID(),mc->text().toStdString().c_str());
+	switch(mc->getMenuID())
+		{
+			case REMOVEALLBOOKMARKSMENUITEM:
+				this->rebuildBookMarkMenu();
+				break;
+			case TOGGLEBOOKMARKMENUITE:
+				this->handleBMMenu(qobject_cast<QTabWidget*>(this->mainNotebook)->currentWidget(),TOGGLEBMCLICKED);
+				break;
+			default:
+				this->handleBMMenu(qobject_cast<QTabWidget*>(this->mainNotebook)->currentWidget(),mc->getMenuID());
+				break;
+		}
+}
+
+void KKEditClass::doToolsMenuItems()
+{
+	QAction			*caller=qobject_cast<QAction*>(sender());
+	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(caller);
+	DocumentClass	*document=this->getDocumentForTab(-1);
+
+	fprintf(stderr,"tools -> menu id=%i, menu name=%s\n",mc->getMenuID(),mc->text().toStdString().c_str());
+	switch(mc->getMenuID())
+		{
+			 case MANAGETOOLSMENUITEM:
+			 	break;
+		}
+}
+
+void KKEditClass::doHelpMenuItems()
+{
+	QAction			*caller=qobject_cast<QAction*>(sender());
+	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(caller);
+	DocumentClass	*document=this->getDocumentForTab(-1);
+
+	fprintf(stderr,"help -> menu id=%i, menu name=%s\n",mc->getMenuID(),mc->text().toStdString().c_str());
+	switch(mc->getMenuID())
+		{
+			 case ABOUTMENUITEM:
+			 	doAbout(NULL,0);
+			 	break;
+			 case HELPMENUITEM:
+			 	openHelp(NULL,0);
+			 	break;
+			 case ONLINEHELPMENUITEM:
+			 	openHelp(NULL,0);
+			 	break;
+			 case GETPLUGSMENUITEM:
+				 getPlugins(NULL,0);
+			 	break;
+		}
+}
+
 void KKEditClass::doNavMenuItems()
 {
 	QAction			*caller=qobject_cast<QAction*>(sender());
@@ -40,6 +100,15 @@ void KKEditClass::doNavMenuItems()
 				break;
 			case GOTOLINEMENUITEM:
 				this->showLineEntry();
+				break;
+			case SEARCHFORDEFINEMENUITEM:
+				functionSearch(NULL,0);
+				break;
+			case SEARCHGTKDOCS:
+				searchGtkDocs(NULL,0);
+				break;
+			case SEARCHQT5DOCS:
+				searchQT5Docs(NULL,0);
 				break;
 		}
 }

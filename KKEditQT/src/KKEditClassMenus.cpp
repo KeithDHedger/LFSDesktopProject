@@ -27,7 +27,8 @@ MenuItemClass* KKEditClass::makeMenuItemClass(int mainmenu,const QString name,co
 
 	menuitem->setMenuID(userdata);
 	menuitem->setIcon(itemicon);
-	menuitem->setShortcut(key);
+	if(key!=0)
+		menuitem->setShortcut(key);
 	menuitem->setObjectName(objectname);
 
 	switch(mainmenu)
@@ -47,6 +48,18 @@ MenuItemClass* KKEditClass::makeMenuItemClass(int mainmenu,const QString name,co
 			case NAVMENU:
 				this->navMenu->addAction(menuitem);
 				QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doNavMenuItems()));
+				break;
+			case BOOKNARKSMENU:
+				this->bookMarkMenu->addAction(menuitem);
+				QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doBookmarkMenuItems()));
+				break;
+			case HELPMENU:
+				this->helpMenu->addAction(menuitem);
+				QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doHelpMenuItems()));
+				break;
+			case TOOLSMENU:
+				this->toolsMenu->addAction(menuitem);
+				QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doToolsMenuItems()));
 				break;
 		}
 

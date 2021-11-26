@@ -1720,21 +1720,3 @@ printf("getPlugins %i\n",(int)(long)data);
 #endif
 }
 
-void bookMarksWrap(Widget* widget,uPtr data)
-{
-	DocumentClass	*doc=NULL;
-
-	switch(data)
-		{
-			case TOGGLEBMCLICKED:
-				kkedit->handleBMMenu(qobject_cast<QTabWidget*>(kkedit->mainNotebook)->currentWidget(),TOGGLEBMCLICKED);
-				break;
-			case REMOVEBMSCLICKED:
-				kkedit->rebuildBookMarkMenu();
-				break;
-			default:
-				kkedit->handleBMMenu(qobject_cast<QTabWidget*>(kkedit->mainNotebook)->currentWidget(),data);
-				break;
-		}
-}
-

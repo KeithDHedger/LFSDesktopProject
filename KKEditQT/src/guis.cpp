@@ -290,96 +290,96 @@ void doMakeTool(void)
 	gtk_widget_show_all(toolwin);
 #endif
 }
-
-void buildTools(void)
-{
-//TODO//
-printf("buildTools\n");
-#ifndef _USEQT5_
-	GtkWidget*		menuitem;
-	GtkWidget*		menu;
-	GtkWidget*		image;
-	GList*			ptr;
-	bool			gotglobal=false;
-	int				keyflags=0;
-
-	buildToolsList();
-
-	GtkWidget* submenu=gtk_menu_item_get_submenu((GtkMenuItem*)toolsMenu);
-	if(submenu!=NULL)
-		gtk_menu_item_set_submenu((GtkMenuItem*)toolsMenu,NULL);
-
-	menu=gtk_menu_new();
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(toolsMenu),menu);
-
-//addtool
-	menuitem=gtk_image_menu_item_new_with_label("Manage External Tools");
-	image=gtk_image_new_from_stock(GTK_STOCK_EDIT,GTK_ICON_SIZE_MENU);
-	gtk_image_menu_item_set_image((GtkImageMenuItem *)menuitem,image);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
-	g_signal_connect(G_OBJECT(menuitem),"activate",G_CALLBACK(doMakeTool),NULL);
-
-	menuitem=gtk_separator_menu_item_new();
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
-
-	ptr=toolsList;
-	while(ptr!=NULL)
-		{
-			if( ((toolStruct*)ptr->data)->global==true)
-				{
-					gotglobal=true;
-					menuitem=gtk_image_menu_item_new_with_label(((toolStruct*)ptr->data)->menuName);
-					gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
-					g_signal_connect(G_OBJECT(menuitem),"activate",G_CALLBACK(externalTool),(void*)ptr->data);
-
-					if(((toolStruct*)ptr->data)->keyCode>0)
-						{
-							keyflags=0;
-							if(gdk_keyval_is_upper(((toolStruct*)ptr->data)->keyCode))
-								keyflags=GDK_SHIFT_MASK;
-							gtk_widget_add_accelerator((GtkWidget *)menuitem,"activate",accgroup,((toolStruct*)ptr->data)->keyCode,(GdkModifierType)(GDK_CONTROL_MASK|keyflags),GTK_ACCEL_VISIBLE);
-						}
-
-					if(((toolStruct*)ptr->data)->comment!=NULL)
-						gtk_widget_set_tooltip_text((GtkWidget*)menuitem,((toolStruct*)ptr->data)->comment);
-				}
-			ptr=g_list_next(ptr);
-		}
-
-	if(gotglobal==true)
-		{
-			menuitem=gtk_separator_menu_item_new();
-			gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
-		}
-
-	ptr=toolsList;
-	while(ptr!=NULL)
-		{
-			if( ((toolStruct*)ptr->data)->global==false)
-				{
-					menuitem=gtk_image_menu_item_new_with_label(((toolStruct*)ptr->data)->menuName);
-					gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
-					g_signal_connect(G_OBJECT(menuitem),"activate",G_CALLBACK(externalTool),(void*)ptr->data);
-
-					if(((toolStruct*)ptr->data)->keyCode>0)
-						{
-							keyflags=0;
-							if(gdk_keyval_is_upper(((toolStruct*)ptr->data)->keyCode))
-								{
-									keyflags=GDK_SHIFT_MASK;
-									if(gdk_keyval_is_lower(((toolStruct*)ptr->data)->keyCode))
-									keyflags=0;
-								}
-							gtk_widget_add_accelerator((GtkWidget *)menuitem,"activate",accgroup,((toolStruct*)ptr->data)->keyCode,(GdkModifierType)(GDK_CONTROL_MASK|keyflags),GTK_ACCEL_VISIBLE);
-						}
-
-					if(((toolStruct*)ptr->data)->comment!=NULL)
-						gtk_widget_set_tooltip_text((GtkWidget*)menuitem,((toolStruct*)ptr->data)->comment);
-				}
-			ptr=g_list_next(ptr);
-		}
-#endif
-}
+//
+//void buildTools(void)
+//{
+////TODO//
+//printf("buildTools\n");
+//#ifndef _USEQT5_
+//	GtkWidget*		menuitem;
+//	GtkWidget*		menu;
+//	GtkWidget*		image;
+//	GList*			ptr;
+//	bool			gotglobal=false;
+//	int				keyflags=0;
+//
+//	buildToolsList();
+//
+//	GtkWidget* submenu=gtk_menu_item_get_submenu((GtkMenuItem*)toolsMenu);
+//	if(submenu!=NULL)
+//		gtk_menu_item_set_submenu((GtkMenuItem*)toolsMenu,NULL);
+//
+//	menu=gtk_menu_new();
+//	gtk_menu_item_set_submenu(GTK_MENU_ITEM(toolsMenu),menu);
+//
+////addtool
+//	menuitem=gtk_image_menu_item_new_with_label("Manage External Tools");
+//	image=gtk_image_new_from_stock(GTK_STOCK_EDIT,GTK_ICON_SIZE_MENU);
+//	gtk_image_menu_item_set_image((GtkImageMenuItem *)menuitem,image);
+//	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
+//	g_signal_connect(G_OBJECT(menuitem),"activate",G_CALLBACK(doMakeTool),NULL);
+//
+//	menuitem=gtk_separator_menu_item_new();
+//	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
+//
+//	ptr=toolsList;
+//	while(ptr!=NULL)
+//		{
+//			if( ((toolStruct*)ptr->data)->global==true)
+//				{
+//					gotglobal=true;
+//					menuitem=gtk_image_menu_item_new_with_label(((toolStruct*)ptr->data)->menuName);
+//					gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
+//					g_signal_connect(G_OBJECT(menuitem),"activate",G_CALLBACK(externalTool),(void*)ptr->data);
+//
+//					if(((toolStruct*)ptr->data)->keyCode>0)
+//						{
+//							keyflags=0;
+//							if(gdk_keyval_is_upper(((toolStruct*)ptr->data)->keyCode))
+//								keyflags=GDK_SHIFT_MASK;
+//							gtk_widget_add_accelerator((GtkWidget *)menuitem,"activate",accgroup,((toolStruct*)ptr->data)->keyCode,(GdkModifierType)(GDK_CONTROL_MASK|keyflags),GTK_ACCEL_VISIBLE);
+//						}
+//
+//					if(((toolStruct*)ptr->data)->comment!=NULL)
+//						gtk_widget_set_tooltip_text((GtkWidget*)menuitem,((toolStruct*)ptr->data)->comment);
+//				}
+//			ptr=g_list_next(ptr);
+//		}
+//
+//	if(gotglobal==true)
+//		{
+//			menuitem=gtk_separator_menu_item_new();
+//			gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
+//		}
+//
+//	ptr=toolsList;
+//	while(ptr!=NULL)
+//		{
+//			if( ((toolStruct*)ptr->data)->global==false)
+//				{
+//					menuitem=gtk_image_menu_item_new_with_label(((toolStruct*)ptr->data)->menuName);
+//					gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
+//					g_signal_connect(G_OBJECT(menuitem),"activate",G_CALLBACK(externalTool),(void*)ptr->data);
+//
+//					if(((toolStruct*)ptr->data)->keyCode>0)
+//						{
+//							keyflags=0;
+//							if(gdk_keyval_is_upper(((toolStruct*)ptr->data)->keyCode))
+//								{
+//									keyflags=GDK_SHIFT_MASK;
+//									if(gdk_keyval_is_lower(((toolStruct*)ptr->data)->keyCode))
+//									keyflags=0;
+//								}
+//							gtk_widget_add_accelerator((GtkWidget *)menuitem,"activate",accgroup,((toolStruct*)ptr->data)->keyCode,(GdkModifierType)(GDK_CONTROL_MASK|keyflags),GTK_ACCEL_VISIBLE);
+//						}
+//
+//					if(((toolStruct*)ptr->data)->comment!=NULL)
+//						gtk_widget_set_tooltip_text((GtkWidget*)menuitem,((toolStruct*)ptr->data)->comment);
+//				}
+//			ptr=g_list_next(ptr);
+//		}
+//#endif
+//}
 
 void doIconView(void)
 {
@@ -526,26 +526,27 @@ void buildKeys()
 	gtk_widget_show_all(keysWindow);
 #endif
 }
-
-QAction* makeMenuItem(Widget* menu,const char* name,const QKeySequence key,const char* iconname,const char* widgetname,menuCallbackVoid ptrvoid,menuCallbackBool ptrbool,int data)
-{
-	MenuItemClass* menuitem=new MenuItemClass(name);
-
-	QIcon icon=QIcon::fromTheme(iconname,QIcon(iconname));
-	 
-	menuitem->setShortcut(key);
-	menuitem->setIcon(icon);
-	menuitem->setObjectName(widgetname);
-	if(ptrvoid!=NULL)
-		menuitem->setCallBackVoid(ptrvoid);
-	//else
-	if(ptrbool!=NULL)
-		menuitem->setCallBackBool(ptrbool);
-	menuitem->setMenuID(data);
-	qobject_cast<QMenu*>(menu)->addAction(menuitem);
-	
-	return(menuitem);
-}
+//
+//QAction* makeMenuItem(Widget* menu,const char* name,const QKeySequence key,const char* iconname,const char* widgetname,menuCallbackVoid ptrvoid,menuCallbackBool ptrbool,int data)
+//{
+//fprintf(stderr,">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.\n");
+//	MenuItemClass* menuitem=new MenuItemClass(name);
+//
+//	QIcon icon=QIcon::fromTheme(iconname,QIcon(iconname));
+//	 
+//	menuitem->setShortcut(key);
+//	menuitem->setIcon(icon);
+//	menuitem->setObjectName(widgetname);
+//	if(ptrvoid!=NULL)
+//		menuitem->setCallBackVoid(ptrvoid);
+//	//else
+//	if(ptrbool!=NULL)
+//		menuitem->setCallBackBool(ptrbool);
+//	menuitem->setMenuID(data);
+//	qobject_cast<QMenu*>(menu)->addAction(menuitem);
+//	
+//	return(menuitem);
+//}
 
 void cancelPrefs(void)
 {

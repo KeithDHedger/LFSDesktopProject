@@ -48,17 +48,17 @@ int				docWindowX=-1;
 int				docWindowY=-1;
 
 //prefs
-//QWidget*		prefsWindow;
+
 
 
 
 
 bool			noSyntax;
 bool			singleUse;
-//unsigned int	prefsTabWidth;
-//char*			fontAndSize;
-//char*			prefsTerminalCommand;
-//char*			prefsRootCommand;
+
+
+
+
 
 bool			onExitSaveSession;
 bool			restoreBookmarks;
@@ -66,29 +66,16 @@ char*			styleName=NULL;
 bool			noDuplicates;
 bool			noWarnings;
 bool			readLinkFirst;
-//bool			autoShowComps;
+
 bool			autoCheck;
 unsigned int	autoShowMinChars;
-//bool			useGlobalPlugMenu;
-//unsigned int	prefsMaxTabChars=20;
+
+
 unsigned int	maxBMChars;
-//unsigned int	maxFuncDefs=64;
+
 
 char*			browserCommand=strdup("firefox");
 
-//key short cuts
-
-//bool			tmpIndent;
-bool			tmpLineNumbers;
-bool			tmpLineWrap;
-bool			tmpHighLight;
-bool			tmpNoSyntax;
-bool			tmpSingleUse;
-int				tmpTabWidth;
-int				tmpDepth;
-bool			tmpSaveSessionOnExit;
-bool			tmpRestoreBookmarks;
-char*			tmpStyleName=NULL;
 
 toolStruct*		selectedToolFromDrop=NULL;
 
@@ -514,20 +501,16 @@ void buildToolsList(void)
 {
 }
 
-void rebuildBookMarkMenu(void)
-{
-printf("rebuildBookMarkMenu\n");
-}
-
-VISIBLE void goBack(QWidget* widget,uPtr data)
-{
-printf("goBack %i\n",(int)(long)data);
-}
-
-VISIBLE void goFoward(QWidget* widget,uPtr data)
-{
-printf("goFoward %i\n",(int)(long)data);
-}
+//
+//VISIBLE void goBack(QWidget* widget,uPtr data)
+//{
+//printf("goBack %i\n",(int)(long)data);
+//}
+//
+//VISIBLE void goFoward(QWidget* widget,uPtr data)
+//{
+//printf("goFoward %i\n",(int)(long)data);
+//}
 
 
 gboolean idleScroll(gpointer data)

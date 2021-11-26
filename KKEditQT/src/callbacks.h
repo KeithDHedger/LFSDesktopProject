@@ -141,7 +141,7 @@ void showToolOutput(bool immediate);
 void hideToolOutput(bool immediate);
 void sortTabs(Widget* widget,uPtr data);
 
-//bookmarks
-void bookMarksWrap(Widget* widget,uPtr data);
+
+
 
 #endif

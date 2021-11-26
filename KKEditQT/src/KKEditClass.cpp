@@ -505,10 +505,13 @@ void KKEditClass::buildDocViewer(void)
 
 void KKEditClass::rebuildBookMarkMenu()
 {
-	qobject_cast<QMenu*>(this->bookMarkMenu)->clear();
-	makeMenuItem(this->bookMarkMenu,"Remove All Bookmarks",0,NULL,REMOVEALLBOOKMARKS,&bookMarksWrap,NULL,REMOVEBMSCLICKED);
-	makeMenuItem(this->bookMarkMenu,"Toggle Bookmark",QKeySequence::fromString("Ctrl+T"),NULL,TOGGLEBOOKMARK,&bookMarksWrap,NULL,TOGGLEBMCLICKED);
-	qobject_cast<QMenu*>(this->bookMarkMenu)->addSeparator();
+	MenuItemClass	*menuItemSink;
+
+	this->bookMarkMenu->clear();
+	menuItemSink=this->makeMenuItemClass(BOOKNARKSMENU,"Remove All Bookmarks",0,"window-close",REMOVEALLBOOKMARKS,REMOVEALLBOOKMARKSMENUITEM);
+	menuItemSink=this->makeMenuItemClass(BOOKNARKSMENU,"Toggle Bookmark",QKeySequence::fromString("Ctrl+T"),DATADIR"/pixmaps/BookMark.png",TOGGLEBOOKMARK,TOGGLEBOOKMARKMENUITE);
+
+	this->bookMarkMenu->addSeparator();
 	this->bookMarks.clear();
 }
 
@@ -526,7 +529,6 @@ void KKEditClass::handleBMMenu(QWidget *widget,int what)
 							if((value.bmLabel.compare(cursor.block().text().simplified())==0) && (value.docIndex==doc->pageIndex))
 								{
 									sessionBusy=true;
-									//QTextBlock			block=doc->document()->findBlockByNumber(cursor.blockNumber());
 									QTextBlock			block=doc->document()->findBlockByLineNumber(value.line);
 									QTextBlockFormat	bf=block.blockFormat();
 
@@ -544,7 +546,7 @@ void KKEditClass::handleBMMenu(QWidget *widget,int what)
 					bms.docIndex=doc->pageIndex;
 					bms.line=cursor.blockNumber()+1;
 					bms.bmKey=this->bookMarksIndex;
-					bms.menu=makeMenuItem(this->bookMarkMenu,bms.bmLabel.toStdString().c_str(),0,NULL,"",&bookMarksWrap,NULL,this->bookMarksIndex);
+					bms.menu=this->makeMenuItemClass(BOOKNARKSMENU,bms.bmLabel,0,NULL,"NOTNEEDED",this->bookMarksIndex);
 					this->bookMarks[this->bookMarksIndex++]=bms;
 				}
 				break;

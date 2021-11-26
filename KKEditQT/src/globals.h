@@ -42,14 +42,6 @@ struct toolStruct
 	bool				useBar;
 };
 
-//struct bookMarkStruct
-//{
-//	pageStruct*			page;
-//	char*				label;
-//	char*				markName;
-//	int					line;
-//};
-//
 extern HistoryClass*	history;
 
 extern GList*			newBookMarksList;
@@ -85,22 +77,17 @@ extern int				docWindowWidth;
 extern int				docWindowHeight;
 extern int				docWindowX;
 extern int				docWindowY;
-//
-////prefs
-////TODO//
 
-//prefs
-//extern QWidget*			prefsWindow;
 
 
 
 
 extern bool				noSyntax;
 extern bool				singleUse;
-//extern unsigned int		prefsTabWidth;
-//extern char*			fontAndSize;
-//extern char*			prefsTerminalCommand;
-//extern char*			prefsRootCommand;
+
+
+
+
 
 extern bool				onExitSaveSession;
 extern bool				restoreBookmarks;
@@ -108,30 +95,19 @@ extern char*			styleName;
 extern bool				noDuplicates;
 extern bool				noWarnings;
 extern bool				readLinkFirst;
-//extern bool				autoShowComps;
+
 extern bool				autoCheck;
 extern unsigned int		autoShowMinChars;
-//extern bool				useGlobalPlugMenu;
-//extern unsigned int		prefsMaxTabChars;
+
+
 extern unsigned int		maxBMChars;
-//extern unsigned int		maxFuncDefs;
+
 
 extern char*			browserCommand;
 
 //key short cuts
 //TODO//
 
-//extern bool				tmpIndent;
-extern bool				tmpLineNumbers;
-extern bool				tmpLineWrap;
-extern bool				tmpHighLight;
-extern bool				tmpNoSyntax;
-extern bool				tmpSingleUse;
-extern int				tmpTabWidth;
-extern int				tmpDepth;
-extern bool				tmpSaveSessionOnExit;
-extern bool				tmpRestoreBookmarks;
-extern char*			tmpStyleName;
 
 extern toolStruct*		selectedToolFromDrop;
 

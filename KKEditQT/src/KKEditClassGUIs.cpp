@@ -753,7 +753,6 @@ void KKEditClass::buildMainGui(void)
 //plugs
 	menuItemSink=this->makeMenuItemClass(EDITMENU,"Plugin Prefs",0,"preferences-system",PLUGPREFSMENUNAME,PLUGPREFSMENUITEM);
 
-//////////////////////////////////////////
 //view menu
 	this->viewMenu=new QMenu("&View");
 	this->menuBar->addMenu(this->viewMenu);
@@ -817,8 +816,6 @@ void KKEditClass::buildMainGui(void)
 	this->toggleCompletionsMenuItem->setCheckable(true);
 	this->toggleCompletionsMenuItem->setChecked(this->showCompletions);
 
-//////////////////////////////////////////
-
 //navigation menu
 	this->navMenu=new QMenu("&Navigation");
 	this->menuBar->addMenu(this->navMenu);
@@ -829,67 +826,52 @@ void KKEditClass::buildMainGui(void)
 	menuItemSink=this->makeMenuItemClass(NAVMENU,"Open Include File",QKeySequence::fromString("Ctrl+I"),"document-open",GOTODEFMENUNAME,OPENINCLUDEMENUITEM);
 //goto line number
 	menuItemSink=this->makeMenuItemClass(NAVMENU,"Go To Line",0,"go-down",GOTOLINEMENUNAME,GOTOLINEMENUITEM);
-	//makeMenuItem(this->navMenu,"Go To Line",0,"go-down",GOTOLINEMENUNAME,&jumpToLine,NULL,0);
 //find define
-	makeMenuItem(this->navMenu,"Search For Define",0,"edit-find",SEARCHFORDEFMENUNAME,&functionSearch,NULL,0);
+	menuItemSink=this->makeMenuItemClass(NAVMENU,"Search For Define",0,"edit-find",SEARCHFORDEFMENUNAME,SEARCHFORDEFINEMENUITEM);
 //find gtkdoc
-	makeMenuItem(this->navMenu,"Search In Gtk Docs",0,"edit-find",SEARCHGTKMENUNAME,&searchGtkDocs,NULL,0);
+	menuItemSink=this->makeMenuItemClass(NAVMENU,"Search In Gtk Docs",0,"edit-find",SEARCHGTKMENUNAME,SEARCHGTKDOCS);
 //find qt5
-	makeMenuItem(this->navMenu,"Search In Qt5 Docs",0,"edit-find",SEARCHQT5MENUNAME,&searchQT5Docs,NULL,0);
+	menuItemSink=this->makeMenuItemClass(NAVMENU,"Search In Qt5 Docs",0,"edit-find",SEARCHQT5MENUNAME,SEARCHQT5DOCS);
 //goto doxy docs
 	if(gotDoxygen==0)
-		makeMenuItem(this->navMenu,"Find In Documentation",0,"edit-find",SEARCHDOXYMENUNAME,&doxyDocs,NULL,0);
-////go back
+		menuItemSink=this->makeMenuItemClass(NAVMENU,"Find In Documentation",0,"edit-find",SEARCHDOXYMENUNAME,SEARCHDOXYDOCS);
+//go back
 	this->goBackMenu=this->makeMenuItemClass(NAVMENU,"Back",0,"go-previous","NOTNEEDED",GOBACKMENUITEM);
-////go forward
+//go forward
 	this->goFowardMenu=this->makeMenuItemClass(NAVMENU,"Forward",0,"go-next","NOTNEEDED",GOFORWARDMENUITEM);
 
-	qobject_cast<QMenu*>(this->navMenu)->addSeparator();
-//////////////////////////////////////////
+	this->navMenu->addSeparator();
 
 //function menu
 	this->funcMenu=new QMenu("Fun&ctions");
 	this->menuBar->addMenu(this->funcMenu);
-
-///////////////////////////////////////////
 
 //newbookmarks
 	this->bookMarkMenu=new QMenu("&Bookmarks");
 	this->menuBar->addMenu(this->bookMarkMenu);
 	this->rebuildBookMarkMenu();
 
-///////////////////////////////////////////
-
 //external tools	
 	this->toolsMenu=new QMenu("&Tools");
 	this->menuBar->addMenu(this->toolsMenu);
-	buildTools();
+	this->buildTools();
 
-///////////////////////////////////////////
+//TODO//
+//plugin menu
 
 //help
 	this->helpMenu=new QMenu("&Help");
 	this->menuBar->addMenu(this->helpMenu);
-
+//
 //about
-	makeMenuItem(this->helpMenu,"&About",0,"help-about",ABOUTMENUNAME,&doAbout,NULL,0);
+	menuItemSink=this->makeMenuItemClass(HELPMENU,"About",0,"help-about",ABOUTMENUNAME,ABOUTMENUITEM);
 //help
-	makeMenuItem(this->helpMenu,"&Help",0,"help-contents",HELPMENUNAME,&openHelp,NULL,0);
-
-//	menuitem=makeMenuItem(GTK_STOCK_HELP,menu,(void*)openHelp,0,HELPMENUNAME,STOCKMENU,NULL,NULL);
+	menuItemSink=this->makeMenuItemClass(HELPMENU,"Help",0,"help-contents",HELPMENUNAME,HELPMENUITEM);
+	menuItemSink=this->makeMenuItemClass(HELPMENU,"Online Help",0,"help-contents",ONLINEHELPMENUNAME,ONLINEHELPMENUITEM);
 //get plugins
-	makeMenuItem(this->helpMenu,"&Get Plugins",0,DATADIR"/pixmaps/KKEditQTPlugMenu.png",GETPLUGSMENUNAME,&getPlugins,NULL,0);
-//	menuitem=makeMenuItem(DATADIR"/pixmaps/KKEditPlugMenu.png",menu,(void*)getPlugins,0,GETPLUGSMENUNAME,PIXMAPMENU,"Get Plugins",NULL);
+	menuItemSink=this->makeMenuItemClass(HELPMENU,"Get Plugins",0,DATADIR"/pixmaps/KKEditQTPlugMenu.png",GETPLUGSMENUNAME,GETPLUGSMENUITEM);
 
-
-	//this->mainWindow
-	//this->mainWindowVBox->addWidget(menuBar);
-	//this->mainWindowVBox->addWidget(toolBar);
-	//this->mainWindowVBox->addWidget(mainNotebook);
 	this->setUpToolBar();
-	//qobject_cast<QMainWindow*>(this->mainWindow)->setStatusBar(statusbar);
-
-
 	this->mainWindow->setMenuBar(qobject_cast<QMenuBar*>(this->menuBar));
 	this->mainWindow->addToolBar(this->toolBar);
 	this->mainWindow->setCentralWidget(this->mainNotebook);
@@ -898,7 +880,6 @@ void KKEditClass::buildMainGui(void)
 	this->statusText->setText("Line 0\tCol 0");
  	this->statusBar=this->mainWindow->statusBar();
  	this->mainWindow->show();
- 	//fprintf(stderr,">>%s<<\n",this->statusText->text().toStdString().c_str());
  	this->statusBar->addWidget(this->statusText);
 }
 
@@ -914,3 +895,20 @@ void KKEditClass::showLineEntry(void)
 		}
 }
 
+void KKEditClass::buildTools(void)
+{
+	MenuItemClass	*menuItemSink;
+//TODO//
+printf("buildTools\n");
+//	this->toolsMenu=new QMenu("&Tools");
+//	this->menuBar->addMenu(this->toolsMenu);
+//	this->toolsMenu->addSeparator();
+	menuItemSink=this->makeMenuItemClass(TOOLSMENU,"Manage External Tools",0,"accessories-text-editor","NOTNEEDED",MANAGETOOLSMENUITEM);
+	this->toolsMenu->addSeparator();
+//	menuitem=gtk_image_menu_item_new_with_label("Manage External Tools");
+//	image=gtk_image_new_from_stock(GTK_STOCK_EDIT,GTK_ICON_SIZE_MENU);
+//	gtk_image_menu_item_set_image((GtkImageMenuItem *)menuitem,image);
+//	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
+//	g_signal_connect(G_OBJECT(menuitem),"activate",G_CALLBACK(doMakeTool),NULL);
+
+}

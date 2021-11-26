@@ -293,23 +293,27 @@ const QString DocumentClass::getTabName(void)
 void DocumentClass::contextMenuEvent(QContextMenuEvent *event)
 {
 	QMenu				menu(this);
-	QList<QAction *>	menuactions;
+	QList<QAction*>		menuactions;
+
+	menuactions=this->mainKKEditClass->bookMarkMenu->actions();
+	menu.addAction(menuactions.at(TOGGLEBOOKMARKMENUITE-REMOVEALLBOOKMARKSMENUITEM));
+	menu.addSeparator();
 
 	menuactions=qobject_cast<QMenu*>(this->mainKKEditClass->editMenu)->actions();
-	menu.addAction(menuactions.at(UNDOITEM));
-	menu.addAction(menuactions.at(REDOITEM));
+	menu.addAction(menuactions.at(UNDOMENUITEM-UNDOMENUITEM));
+	menu.addAction(menuactions.at(REDOMENUITEM-UNDOMENUITEM));
 	menu.addSeparator();
-	menu.addAction(menuactions.at(CUTITEM));
-	menu.addAction(menuactions.at(COPYITEM));
-	menu.addAction(menuactions.at(PASTEITEM));
+	menu.addAction(menuactions.at(CUTMENUITEM-UNDOMENUITEM));
+	menu.addAction(menuactions.at(COPYMENUITEM-UNDOMENUITEM));
+	menu.addAction(menuactions.at(PASTEMENUITEM-UNDOMENUITEM));
 	menu.addSeparator();
 
 	menuactions=qobject_cast<QMenu*>(this->mainKKEditClass->navMenu)->actions();
 
-	menu.addAction(menuactions.at(SEARCHGTKDOCS));
-	menu.addAction(menuactions.at(SEARCHQT5DOCS));
-	menu.addAction(menuactions.at(SEARCHDOXYDOCS));
-	menu.addAction(menuactions.at(GOTODEFINE));
+	menu.addAction(menuactions.at(SEARCHGTKDOCS-GOTODEFINEMENUITEM));
+	menu.addAction(menuactions.at(SEARCHQT5DOCS-GOTODEFINEMENUITEM));
+	menu.addAction(menuactions.at(SEARCHDOXYDOCS-GOTODEFINEMENUITEM));
+	menu.addAction(menuactions.at(GOTODEFINEMENUITEM-GOTODEFINEMENUITEM));
 	menu.addSeparator();
 
 	menu.exec(event->globalPos());
