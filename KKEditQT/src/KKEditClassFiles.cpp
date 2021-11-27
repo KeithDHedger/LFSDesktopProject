@@ -60,9 +60,9 @@ void KKEditClass::openAsHexDump(void)
 
 VISIBLE void KKEditClass::newFile(const QString data,const QString filename)
 {
-sessionBusy=true;
 	DocumentClass*	doc;
 
+	sessionBusy=true;
 	doc=new DocumentClass(kkedit);
 	doc->setPlainText(data);
 	doc->tabNumber=qobject_cast<QTabWidget*>(kkedit->mainNotebook)->addTab(doc,"");
