@@ -23,9 +23,9 @@
 DocumentClass* KKEditClass::getDocumentForTab(int tabnum)
 {
 	if(tabnum==-1)
-		return(qobject_cast<DocumentClass*>(qobject_cast<QTabWidget*>(kkedit->mainNotebook)->currentWidget()));
+		return(qobject_cast<DocumentClass*>(kkedit->mainNotebook->currentWidget()));
 	else
-		return(qobject_cast<DocumentClass*>(qobject_cast<QTabWidget*>(kkedit->mainNotebook)->widget(tabnum)));
+		return(qobject_cast<DocumentClass*>(kkedit->mainNotebook->widget(tabnum)));
 }
 
 /*
@@ -48,14 +48,14 @@ void KKEditClass::resetAllFilePrefs(void)
 
 	for(int loop=0;loop<qobject_cast<QTabWidget*>(this->mainNotebook)->count();loop++)
 		{
-			doc=getDocumentData(loop);
+			doc=this->getDocumentForTab(loop);
 			doc->setFilePrefs();
 		}
 }
 
 void KKEditClass::goToDefinition(void)//TODO//clean
 {
-	DocumentClass	*document=getDocumentData(-1);
+	DocumentClass	*document=this->getDocumentForTab(-1);
 	functionData	*fdata=NULL;
 	char			*selection;
 	const char		*selectionptr;
@@ -92,7 +92,7 @@ void KKEditClass::gotoLine(int linenumber)
 	QTextBlock		block;
 	QTextCursor		cursor;
 
-	doc=getDocumentData(-1);
+	doc=this->getDocumentForTab(-1);
 	if(doc==NULL)
 		return;
 	block=doc->document()->findBlockByNumber(linenumber-1);

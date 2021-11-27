@@ -93,7 +93,7 @@ PROTECTED void showDocView(int howtodisplay,char* text,const char* title)
 	return;
 }
 
-VISIBLE void searchGtkDocs(Widget* widget,uPtr data)
+void searchGtkDocs(Widget* widget,uPtr data)
 {
 	char*		selection=NULL;
 	char*		searchdata[2048][2];
@@ -203,7 +203,7 @@ VISIBLE void searchGtkDocs(Widget* widget,uPtr data)
 		debugFree(&selection,"seachGtkDocs selection");
 }
 
-VISIBLE void doDoxy(Widget* widget,uPtr data)
+void doDoxy(Widget* widget,uPtr data)
 //TODO//
 {
 printf("dodoxy %i\n",(int)(long)data);
@@ -253,7 +253,7 @@ printf("dodoxy %i\n",(int)(long)data);
 }
 
 //find in doxy docs
-VISIBLE void doxyDocs(Widget* widget,uPtr data)
+void doxyDocs(Widget* widget,uPtr data)
 //TODO//
 {
 printf("doxyDocs %i\n",(int)(long)data);
@@ -314,7 +314,7 @@ printf("doxyDocs %i\n",(int)(long)data);
 }
 
 //search QT5 Documentaiion
-VISIBLE void searchQT5Docs(Widget* widget,uPtr data)
+void searchQT5Docs(Widget* widget,uPtr data)
 {
 	char*		selection=NULL;
 	char		line[1024];

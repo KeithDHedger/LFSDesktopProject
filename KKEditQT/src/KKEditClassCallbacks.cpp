@@ -293,10 +293,10 @@ void KKEditClass::doFileMenuItems()
 				doDoxy(NULL,BUILDDOCSMENUITEM);
 				break;
 			case SAVEMENUITEM:
-				saveFile(NULL,SAVEMENUITEM);
+				this->saveFile();
 				break;
 			case SAVEASMENUITEM:
-				saveFile(NULL,SAVEASMENUITEM);
+				this->saveFile();
 				break;
 			case SAVEALLMENUITEM:
 				doSaveAll(NULL,SAVEALLMENUITEM);

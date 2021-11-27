@@ -56,7 +56,7 @@ fprintf(stderr,"void jumpToLineFromBar(const QString text)\n");
 //#endif
 //}
 
-VISIBLE void functionSearch(Widget* widget,uPtr data)
+void functionSearch(Widget* widget,uPtr data)
 {
 fprintf(stderr,"VISIBLE void functionSearch(Widget* widget,uPtr data)\n");
 #if 0

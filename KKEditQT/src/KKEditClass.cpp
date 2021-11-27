@@ -700,7 +700,7 @@ void KKEditClass::readConfigs(void)
 	this->prefsUseSingle=this->prefs.value("app/usesingle",QVariant(bool(true))).value<bool>();
 }
 
-VISIBLE bool KKEditClass::openFile(std::string filepath,int linenumber,bool warn)
+bool KKEditClass::openFile(std::string filepath,int linenumber,bool warn)
 {
 	DocumentClass	*doc=new DocumentClass(this);
 	bool			retval=false;
@@ -754,7 +754,7 @@ VISIBLE bool KKEditClass::openFile(std::string filepath,int linenumber,bool warn
 	return(retval);
 }
 
-VISIBLE bool KKEditClass::openFileDialog(void)
+bool KKEditClass::openFileDialog(void)
 {
 	QStringList fileNames;
 
@@ -765,27 +765,6 @@ VISIBLE bool KKEditClass::openFileDialog(void)
 				this->openFile(fileNames.at(j).toUtf8().constData(),0,true);
 		}
 	return(true);
-}
-
-VISIBLE void KKEditClass::newFile(const QString data,const QString filename)
-{
-	DocumentClass*	doc;
-
-	doc=new DocumentClass(kkedit);
-	doc->setPlainText(data);
-	doc->tabNumber=qobject_cast<QTabWidget*>(kkedit->mainNotebook)->addTab(doc,"");
-	if(filename.compare("")==0)
-		doc->setFileName(QString("Untitled-%1").arg(untitledNumber));
-	else
-		doc->setFileName(filename);
-	doc->setTabName(truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
-	this->mainNotebook->setTabToolTip(doc->tabNumber,doc->getFileName());
-	doc->setFilePrefs();
-	doc->mimeType="text/plain";
-	doc->pageIndex=this->newPageIndex;
-	this->pages[this->newPageIndex++]=doc;
-	doc->setHiliteLanguage();
-	untitledNumber++;
 }
 
 void KKEditClass::writeExitData(void)
@@ -823,7 +802,7 @@ void KKEditClass::writeExitData(void)
 
 void KKEditClass::findFile(void)
 {
-	DocumentClass	*document=getDocumentData(-1);
+	DocumentClass	*document=this->getDocumentForTab(-1);
 	char			*selection;
 	StringSlice		slice;
 	char			*filename=NULL;

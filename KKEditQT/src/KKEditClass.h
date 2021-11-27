@@ -210,6 +210,8 @@ class KKEditClass : public QObject
 		bool						openFile(std::string filepath,int linenumber=1,bool warn=false);
 		bool						openFileDialog(void);
 		void						openAsHexDump(void);
+		QString						runPipeAndCapture(QString command);
+		bool						saveFile(void);
 
 //document vars
 //document functions

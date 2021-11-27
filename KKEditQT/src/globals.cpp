@@ -22,14 +22,14 @@
 
 QAction*		menuItemOpen=NULL;
 
-VISIBLE GList*	newBookMarksList=NULL;
+GList*	newBookMarksList=NULL;
 char*			highlightColour;
 bool			showBMBar;
 int				bmMarkNumber=0;
 
 //app stuff
 bool			busyFlag=false;
-VISIBLE bool	sessionBusy=false;
+bool	sessionBusy=false;
 bool			autoSelected=false;
 
 //find replaceAll
@@ -234,8 +234,9 @@ void plugRunFunction(gpointer data,gpointer funcname)
 #endif
 }
 
-VISIBLE DocumentClass* getDocumentData(int pagenum)
+DocumentClass* getDocumentData(int pagenum)
 {
+fprintf(stderr,">>>>>>>>>>>>>>>>>>\n");
 	if(pagenum==-1)
 		return((DocumentClass*)qobject_cast<QTabWidget*>(kkedit->mainNotebook)->currentWidget());
 	else
@@ -250,7 +251,7 @@ void setLanguage(pageStruct* page)
 {
 }
 
-VISIBLE void runCommand(char* commandtorun,void* ptr,bool interm,int flags,int useroot,char* title)
+void runCommand(char* commandtorun,void* ptr,bool interm,int flags,int useroot,char* title)
 {
 }
 
@@ -526,7 +527,7 @@ void killBarberPole(void)
 {
 }
 
-VISIBLE void debugFree(char** ptr,const char* message)
+void debugFree(char** ptr,const char* message)
 {
 #ifdef _DEBUG_FREE_
 	fprintf(stderr,"free :%s\n",message);

@@ -20,6 +20,22 @@
 
 #include "KKEditClass.h"
 
+QString KKEditClass::runPipeAndCapture(QString command)
+{
+	QString		dump("");
+	FILE		*fp=NULL;
+	char		line[1024];
+
+	fp=popen(command.toStdString().c_str(), "r");
+	if(fp!=NULL)
+		{
+			while(fgets(line,1024,fp))
+				dump+=line;
+			pclose(fp);
+		}
+	return(dump);
+}
+
 void KKEditClass::openAsHexDump(void)
 {
 	QStringList fileNames;
@@ -34,17 +50,96 @@ void KKEditClass::openAsHexDump(void)
 			for (int j=0;j<fileNames.size();j++)
 				{
 					command=QString("hexdump -C %1").arg(fileNames.at(j));
-					dump="";
-					fp=popen(command.toStdString().c_str(), "r");
-					if(fp!=NULL)
-						{
-							QFile		file(fileNames.at(j));
-							QFileInfo	fileinfo(file);
-							while(fgets(line,1024,fp))
-								dump+=line;
-							pclose(fp);
-							this->newFile(dump,QString("%1.hexdump").arg(fileinfo.fileName()));
-						}
-			}
+					dump=this->runPipeAndCapture(QString("hexdump -C %1").arg(fileNames.at(j)));
+					QFile		file(fileNames.at(j));
+					QFileInfo	fileinfo(file);
+					this->newFile(dump,QString("%1.hexdump").arg(fileinfo.fileName()));
+				}
 		}
+}
+
+VISIBLE void KKEditClass::newFile(const QString data,const QString filename)
+{
+sessionBusy=true;
+	DocumentClass*	doc;
+
+	doc=new DocumentClass(kkedit);
+	doc->setPlainText(data);
+	doc->tabNumber=qobject_cast<QTabWidget*>(kkedit->mainNotebook)->addTab(doc,"");
+	if(filename.compare("")==0)
+		doc->setFileName(QString("Untitled-%1").arg(untitledNumber));
+	else
+		doc->setFileName(filename);
+	doc->setTabName(truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
+	this->mainNotebook->setTabToolTip(doc->tabNumber,doc->getFileName());
+	doc->setFilePrefs();
+	doc->mimeType="text/plain";
+	doc->pageIndex=this->newPageIndex;
+	this->pages[this->newPageIndex++]=doc;
+	doc->setHiliteLanguage();
+	untitledNumber++;
+	sessionBusy=false;
+}
+
+bool KKEditClass::saveFile(void)
+//TODO//
+{
+	DocumentClass	*doc=this->getDocumentForTab(-1);
+
+printf("save\n");
+fprintf(stderr,"name=%s path=%s folder=%s dirty=%i\n",doc->getFileName().toStdString().c_str(),doc->getFilePath().toStdString().c_str(),doc->getDirPath().toStdString().c_str(),doc->dirty);
+return true;
+#if 0
+	DocumentClass	*page=this->getDocumentForTab(-1);
+	FILE			*fd=NULL;
+
+	if(page==NULL)
+		return(false);
+
+//	line=page->textCursor().blockNumber();
+	if(page->getPathname()!=NULL && data==0)
+		{
+			fd=fopen(page->getPathname(),"w");
+			if (fd!=NULL)
+				{
+					fputs(page->toPlainText().toLocal8Bit().constData(),fd);
+					fclose(fd);
+					page->document()->setModified(false);
+				}
+			else
+				{
+					QMessageBox *msg=new QMessageBox(QMessageBox::Warning,QString("Save File"),QString("Cant save file \"%1\"").arg(page->getPathname()),QMessageBox::Ok,kkedit->mainWindow,Qt::Dialog);
+					msg->exec();
+					delete msg;
+				}
+		}
+	else
+		{
+			if(data!=0)
+				{
+					saveFilePath=page->getPathname();
+					saveFileName=page->getFilename();
+					page->setDirname(g_path_get_dirname(page->getPathname()));
+				}
+
+			saveFileName=page->getFilename();
+			if(getSaveFile()==false)
+				return(false);
+
+			fd=fopen(saveFilePath,"w");
+			if (fd!=NULL)
+				{
+					page->setPathname((char*)saveFilePath);
+					page->setFilename((char*)saveFileName);
+					page->setDirname(g_path_get_dirname(page->getPathname()));
+					fputs(page->toPlainText().toLocal8Bit().constData(),fd);
+					fclose(fd);
+					page->document()->setModified(false);
+				}
+		}
+
+	saveFileName=NULL;
+	saveFilePath=NULL;
+#endif
+	return(true);
 }

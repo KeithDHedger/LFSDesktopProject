@@ -196,10 +196,10 @@ void destroyBMData(gpointer data)
 #endif
 }
 #ifndef _USEQT5_
-VISIBLE void removeAllBookmarks(GtkWidget* widget,GtkTextIter* titer)
+void removeAllBookmarks(GtkWidget* widget,GtkTextIter* titer)
 #else
 //TODO//
-VISIBLE void removeAllBookmarks(void)
+void removeAllBookmarks(void)
 #endif
 {
 #ifndef _USEQT5_
@@ -223,7 +223,7 @@ VISIBLE void removeAllBookmarks(void)
 #endif
 }
 
-VISIBLE void toggleBookmarkz(void)
+void toggleBookmarkz(void)
 {
 }
 
@@ -274,7 +274,7 @@ int yesNo(char* question,char* file)
 	return(result);
 }
 
-VISIBLE void doOpenFile(Widget* widget,uPtr data)
+void doOpenFile(Widget* widget,uPtr data)
 {
 	QStringList fileNames;
 
@@ -439,7 +439,7 @@ void setSensitive(void)
 bool closeTab(Widget* widget,uPtr data)
 //TODO//
 {
-fprintf(stderr,"VISIBLE void closeTab(Widget* widget,uPtr data)\n");
+fprintf(stderr,"VISIBLE void closeTab(Widget* widget,uPtr data) TODO\n");
 	DocumentClass	*doc=NULL;
 	long			thispage=(long)data;
 
@@ -482,7 +482,7 @@ fprintf(stderr,"VISIBLE void closeTab(Widget* widget,uPtr data)\n");
 	return(true);
 }
 
-VISIBLE void closeAllTabs(Widget* widget,uPtr data)//TOGO//
+void closeAllTabs(Widget* widget,uPtr data)//TOGO//
 {
 	bool retval;
 printf("closeAllTabs %i\n",(int)(long)data);
@@ -636,10 +636,10 @@ void switchPage(int thispage)//TODO//move ?
 }
 
 #ifndef _USEQT5_
-VISIBLE void dropUri(GtkWidget *widget,GdkDragContext *context,gint x,gint y,GtkSelectionData *selection_data,guint info,guint32 time,gpointer user_data)
+void dropUri(GtkWidget *widget,GdkDragContext *context,gint x,gint y,GtkSelectionData *selection_data,guint info,guint32 time,gpointer user_data)
 #else
 //TODO
-VISIBLE void dropUri(void)
+void dropUri(void)
 #endif
 {
 #ifndef _USEQT5_
@@ -792,7 +792,7 @@ void externalTool(void)
 #endif
 }
 
-VISIBLE void openHelp(Widget* widget,uPtr data)
+void openHelp(Widget* widget,uPtr data)
 //TODO//
 {
 printf("openHelp %i\n",(int)(long)data);
@@ -831,10 +831,10 @@ void copyToClipboard(void)
 }
 
 #ifndef _USEQT5_
-VISIBLE void addtoCustomWordList(GtkWidget* widget,gpointer data)
+void addtoCustomWordList(GtkWidget* widget,gpointer data)
 #else
 //TODO//
-VISIBLE void addtoCustomWordList(void)
+void addtoCustomWordList(void)
 #endif
 {
 #ifndef _USEQT5_
@@ -1285,7 +1285,7 @@ bool tabPopUp(void)
 }
 
 
-VISIBLE bool doSaveAll(Widget* widget,uPtr data)
+bool doSaveAll(Widget* widget,uPtr data)
 //TODO//
 {
 printf("doSaveAll %i\n",(int)(long)data);
@@ -1330,7 +1330,7 @@ printf("doSaveAll %i\n",(int)(long)data);
 	return(true);
 }
 
-VISIBLE void doShutdown(Widget* widget,uPtr data)
+void doShutdown(Widget* widget,uPtr data)
 //TODO//save modified files
 {
 #if 1
@@ -1449,7 +1449,7 @@ void setToolOptions(void)
 #endif
 }
 
-VISIBLE void doAbout(Widget* widget,uPtr data)
+void doAbout(Widget* widget,uPtr data)
 //TODO//
 {
 printf("doAbout %i\n",(int)(long)data);
@@ -1480,7 +1480,7 @@ void beginPrint(void)
 {
 }
 
-VISIBLE void printFile(Widget* widget,uPtr data)
+void printFile(Widget* widget,uPtr data)
 {
 printf("printFile %i\n",(int)(long)data);
 }
@@ -1489,7 +1489,7 @@ void recentFileMenu(void)
 {
 }
 
-VISIBLE void newEditor(Widget* widget,uPtr data)
+void newEditor(Widget* widget,uPtr data)
 {
 	std::string command;//TODO//
 
@@ -1671,10 +1671,10 @@ void loadKeybindings(void)
 }
 
 #ifndef _USEQT5_
-VISIBLE gboolean keyShortCut(GtkWidget* window,GdkEventKey* event,gpointer data)
+gboolean keyShortCut(GtkWidget* window,GdkEventKey* event,gpointer data)
 #else
 //TODO//
-VISIBLE gboolean keyShortCut(void)
+gboolean keyShortCut(void)
 #endif
 {
 #ifndef _USEQT5_
@@ -1706,7 +1706,7 @@ VISIBLE gboolean keyShortCut(void)
 	return(false);
 }
 
-VISIBLE void getPlugins(Widget* widget,uPtr data)
+void getPlugins(Widget* widget,uPtr data)
 //TODO//
 {
 printf("getPlugins %i\n",(int)(long)data);

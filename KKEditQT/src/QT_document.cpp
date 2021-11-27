@@ -290,11 +290,12 @@ const QString DocumentClass::getDirPath(void)
 void DocumentClass::setTabName(QString tabname)
 {
 	this->tabName=tabname;
-	qobject_cast<QTabWidget*>(this->mainKKEditClass->mainNotebook)->setTabText(this->tabNumber,tabname);
+	this->mainKKEditClass->mainNotebook->setTabText(this->tabNumber,tabname);
 }
 
 const QString DocumentClass::getTabName(void)
 {
+fprintf(stderr,"tabname=>>%s<<\n",this->tabName.toStdString().c_str());
 	return(this->tabName);
 }
 
