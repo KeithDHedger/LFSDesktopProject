@@ -83,13 +83,65 @@ VISIBLE void KKEditClass::newFile(const QString data,const QString filename)
 }
 
 bool KKEditClass::saveFile(void)
-//TODO//
 {
 	DocumentClass	*doc=this->getDocumentForTab(-1);
+	QFile			file;
+	QFileInfo		fileinfo;
+	bool			retval=false;
 
-printf("save\n");
-fprintf(stderr,"name=%s path=%s folder=%s dirty=%i\n",doc->getFileName().toStdString().c_str(),doc->getFilePath().toStdString().c_str(),doc->getDirPath().toStdString().c_str(),doc->dirty);
-return true;
+	if(doc==NULL)
+		return(false);
+
+	if(doc->getFilePath().isEmpty()==true)
+		{
+			fprintf(stderr,"filepath not set\n");
+			 QString fileName = QFileDialog::getSaveFileName(this->mainWindow,"Save File",doc->getFileName());
+			 if(fileName.isEmpty()==true)
+			 	return(false);
+			 else
+			 	{
+					file.setFileName(fileName);
+			 		fileinfo.setFile(file);
+					retval=file.open(QIODevice::Text | QIODevice::WriteOnly);
+					if(retval==true)
+						{
+					 		doc->setDirPath(fileinfo.canonicalPath());
+							doc->setFilePath(fileinfo.canonicalFilePath());
+							doc->setFileName(fileinfo.fileName());
+							this->mainNotebook->setTabToolTip(doc->tabNumber,doc->getFilePath());
+							QTextStream(&file) << doc->toPlainText() << Qt::endl;
+							doc->dirty=false;
+							doc->setTabName(truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
+							file.close();
+						}
+					else
+						{
+							QMessageBox *msg=new QMessageBox(QMessageBox::Warning,QString("Save File"),QString("Cant save file \"%1\"").arg(doc->getFileName()),QMessageBox::Ok,this->mainWindow,Qt::Dialog);
+							msg->exec();
+							delete msg;
+						}
+			 	}
+		}
+	else
+		{
+			file.setFileName(doc->getFilePath());
+			fileinfo.setFile(file);
+			retval=file.open(QIODevice::Text | QIODevice::WriteOnly);
+			if(retval==true)
+				{
+					QTextStream(&file) << doc->toPlainText() << Qt::endl;
+					doc->dirty=false;
+					doc->setTabName(truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
+					file.close();
+				}
+			else
+				{
+					QMessageBox *msg=new QMessageBox(QMessageBox::Warning,QString("Save File"),QString("Cant save file \"%1\"").arg(doc->getFileName()),QMessageBox::Ok,this->mainWindow,Qt::Dialog);
+					msg->exec();
+					delete msg;
+				}
+		}
+	return true;
 #if 0
 	DocumentClass	*page=this->getDocumentForTab(-1);
 	FILE			*fd=NULL;

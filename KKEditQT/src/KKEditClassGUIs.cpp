@@ -621,13 +621,13 @@ void KKEditClass::buildMainGui(void)
 
 	this->mainNotebook=new QTabWidget;
 	
-	qobject_cast<QTabWidget*>(this->mainNotebook)->setDocumentMode(true);
-	qobject_cast<QTabWidget*>(this->mainNotebook)->setTabsClosable(true);
-	qobject_cast<QTabWidget*>(this->mainNotebook)->setMovable(true);
+	this->mainNotebook->setDocumentMode(true);
+	this->mainNotebook->setTabsClosable(true);
+	this->mainNotebook->setMovable(true);
 	
-	QObject::connect(qobject_cast<QTabWidget*>(this->mainNotebook),&QTabWidget::currentChanged,switchPage);//TODO//
+	QObject::connect(this->mainNotebook,&QTabWidget::currentChanged,switchPage);//TODO//
 	//connect(this,SIGNAL(&QTabWidget::currentChanged(int)),this,SLOT(switchTab(int)));
-	QObject::connect(qobject_cast<QTabWidget*>(this->mainNotebook),&QTabWidget::tabCloseRequested,closeTabQT);
+	QObject::connect(this->mainNotebook,&QTabWidget::tabCloseRequested,closeTabQT);
 ////	QObject::connect(qobject_cast<QWidget*>(mainNotebook),&QWidget::keyPressEvent,keyp);
 
 	this->menuBar=new QMenuBar;

@@ -33,10 +33,10 @@ void KKEditClass::doBookmarkMenuItems()
 				this->rebuildBookMarkMenu();
 				break;
 			case TOGGLEBOOKMARKMENUITE:
-				this->handleBMMenu(qobject_cast<QTabWidget*>(this->mainNotebook)->currentWidget(),TOGGLEBMCLICKED);
+				this->handleBMMenu(this->mainNotebook->currentWidget(),TOGGLEBMCLICKED);
 				break;
 			default:
-				this->handleBMMenu(qobject_cast<QTabWidget*>(this->mainNotebook)->currentWidget(),mc->getMenuID());
+				this->handleBMMenu(this->mainNotebook->currentWidget(),mc->getMenuID());
 				break;
 		}
 }
@@ -413,7 +413,7 @@ void KKEditClass::setPreferences(void)
 
 	this->resetAllFilePrefs();
 	this->writeExitData();
-	switchPage(qobject_cast<QTabWidget*>(this->mainNotebook)->currentIndex());
+	switchPage(this->mainNotebook->currentIndex());
 }
 
 void KKEditClass::setBMColour(void)

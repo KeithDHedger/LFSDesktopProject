@@ -46,7 +46,7 @@ void KKEditClass::resetAllFilePrefs(void)
 {
 	DocumentClass	*doc;
 
-	for(int loop=0;loop<qobject_cast<QTabWidget*>(this->mainNotebook)->count();loop++)
+	for(int loop=0;loop<this->mainNotebook->count();loop++)
 		{
 			doc=this->getDocumentForTab(loop);
 			doc->setFilePrefs();
@@ -73,7 +73,7 @@ void KKEditClass::goToDefinition(void)//TODO//clean
 //			history->savePosition();
 			if(fdata->intab!=-1)
 				{
-					qobject_cast<QTabWidget*>(this->mainNotebook)->setCurrentIndex(fdata->intab);
+					this->mainNotebook->setCurrentIndex(fdata->intab);
 					this->gotoLine(fdata->line);
 				}
 			else

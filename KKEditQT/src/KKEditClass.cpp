@@ -219,13 +219,13 @@ void KKEditClass::buildDocViewer(void)
 //
 //	this->mainNotebook=new QTabWidget;
 //	
-//	qobject_cast<QTabWidget*>(this->mainNotebook)->setDocumentMode(true);
-//	qobject_cast<QTabWidget*>(this->mainNotebook)->setTabsClosable(true);
-//	qobject_cast<QTabWidget*>(this->mainNotebook)->setMovable(true);
+//	this->mainNotebook->setDocumentMode(true);
+//	this->mainNotebook->setTabsClosable(true);
+//	this->mainNotebook->setMovable(true);
 //	
-//	QObject::connect(qobject_cast<QTabWidget*>(this->mainNotebook),&QTabWidget::currentChanged,switchPage);
+//	QObject::connect(this->mainNotebook,&QTabWidget::currentChanged,switchPage);
 //	//connect(this,SIGNAL(&QTabWidget::currentChanged(int)),this,SLOT(switchTab(int)));
-//	QObject::connect(qobject_cast<QTabWidget*>(this->mainNotebook),&QTabWidget::tabCloseRequested,closeTabQT);
+//	QObject::connect(this->mainNotebook,&QTabWidget::tabCloseRequested,closeTabQT);
 //////	QObject::connect(qobject_cast<QWidget*>(mainNotebook),&QWidget::keyPressEvent,keyp);
 //
 //	this->menuBar=new QMenuBar;
@@ -554,7 +554,7 @@ void KKEditClass::handleBMMenu(QWidget *widget,int what)
 			default:
 				bms=this->bookMarks.value(what);
 				doc=this->pages.value(bms.docIndex);
-				qobject_cast<QTabWidget*>(this->mainNotebook)->setCurrentWidget(doc);
+				this->mainNotebook->setCurrentWidget(doc);
 				this->gotoLine(bms.line);
 				break;
 		}
@@ -722,13 +722,13 @@ bool KKEditClass::openFile(std::string filepath,int linenumber,bool warn)
 			doc->setFilePrefs();
 			doc->pageIndex=this->newPageIndex;
 			this->pages[this->newPageIndex++]=doc;
-			doc->tabNumber=qobject_cast<QTabWidget*>(kkedit->mainNotebook)->addTab(doc,doc->getTabName());
+			doc->tabNumber=qobject_cast<QTabWidget*>(this->mainNotebook)->addTab(doc,doc->getTabName());
 			doc->setDirPath(fileinfo.canonicalPath());
 			doc->setFilePath(fileinfo.canonicalFilePath());
 			doc->setFileName(fileinfo.fileName());
 			doc->setTabName(truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
-			qobject_cast<QTabWidget*>(kkedit->mainNotebook)->setTabToolTip(doc->tabNumber,doc->getFilePath());
-			qobject_cast<QTabWidget*>(kkedit->mainNotebook)->setCurrentIndex(doc->tabNumber);
+			qobject_cast<QTabWidget*>(this->mainNotebook)->setTabToolTip(doc->tabNumber,doc->getFilePath());
+			qobject_cast<QTabWidget*>(this->mainNotebook)->setCurrentIndex(doc->tabNumber);
 			this->gotoLine(linenumber);
 			doc->document()->clearUndoRedoStacks(QTextDocument::UndoAndRedoStacks);
 			doc->setHiliteLanguage();
