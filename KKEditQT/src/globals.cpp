@@ -233,15 +233,6 @@ void plugRunFunction(gpointer data,gpointer funcname)
 	globalPlugins->runPlugFunction((moduleData*)data,(const char*)funcname);
 #endif
 }
-//
-//DocumentClass* kkedit->getDocumentForTab(int pagenum)
-//{
-//fprintf(stderr,">>>>>>>>>>>>>>>>>>\n");
-//	if(pagenum==-1)
-//		return((DocumentClass*)qobject_cast<QTabWidget*>(kkedit->mainNotebook)->currentWidget());
-//	else
-//		return((DocumentClass*)qobject_cast<QTabWidget*>(kkedit->mainNotebook)->widget(pagenum));
-//}
 
 void getMimeType(char* filepath,void* ptr)
 {
