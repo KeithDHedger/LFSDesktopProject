@@ -109,7 +109,7 @@ void jumpToMark(void)
 
 	for(int loop=0; loop<gtk_notebook_get_n_pages((GtkNotebook*)mainNotebook); loop++)
 		{
-			checkpage=getDocumentData(loop);
+			checkpage=kkedit->getDocumentForTab(loop);
 			if(checkpage==page)
 				{
 					gtk_notebook_set_current_page((GtkNotebook*)mainNotebook,loop);
@@ -378,7 +378,7 @@ gboolean docLinkTrap(WebKitWebView* web_view,WebKitWebFrame* frame,WebKitNetwork
 			buf=new TextBuffer;
 			for(int j=0; j<gtk_notebook_get_n_pages((GtkNotebook*)mainNotebook); j++)
 				{
-					page=getDocumentData(j);
+					page=kkedit->getDocumentForTab(j);
 					if((strcmp(page->realFilePath,doxydata->sourceFile)==0) || (strcmp(page->filePath,doxydata->sourceFile)==0))
 						{
 							gtk_notebook_set_current_page((GtkNotebook*)mainNotebook,j);

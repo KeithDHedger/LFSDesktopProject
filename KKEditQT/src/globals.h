@@ -173,7 +173,7 @@ extern char*			statusMessage;
 extern const char*		localeLang;
 
 void plugRunFunction(gpointer data,gpointer funcname);
-DocumentClass* getDocumentData(int pagenum);
+//DocumentClass* getDocumentData(int pagenum);
 
 void getMimeType(char* filepath,void* ptr);
 void setLanguage(pageStruct* page);

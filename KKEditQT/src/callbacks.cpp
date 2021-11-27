@@ -33,7 +33,7 @@ void releasePlugs(gpointer data,gpointer user_data)
 void setToobarSensitive(void)
 {
 #ifndef _USEQT5_
-	pageStruct*	page=getDocumentData(currentTabNumber);
+	pageStruct*	page=kkedit->getDocumentForTab(currentTabNumber);
 
 	for(int j=0; j<(int)strlen(prefsToolBarLayout); j++)
 		{
@@ -211,7 +211,7 @@ void removeAllBookmarks(void)
 	numpages=gtk_notebook_get_n_pages((GtkNotebook*)mainNotebook);
 	for(int j=0; j<numpages; j++)
 		{
-			page=getDocumentData(j);
+			page=kkedit->getDocumentForTab(j);
 			gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&startiter);
 			gtk_text_buffer_get_end_iter((GtkTextBuffer*)page->buffer,&enditer);
 			gtk_source_buffer_remove_source_marks(page->buffer,&startiter,&enditer,NULL);
@@ -320,7 +320,7 @@ void updateStatusBar(void)
 
 	if(busyFlag==true)
 		return;
-	pageStruct* pagecheck=getDocumentData(currentTabNumber);
+	pageStruct* pagecheck=kkedit->getDocumentForTab(currentTabNumber);
 
 	if((page==NULL) || (showStatus==false))
 		{
@@ -357,7 +357,7 @@ void updateStatusBar(void)
 void setSensitive(void)
 {
 #ifndef _USEQT5_
-	pageStruct*		page=getDocumentData(-1);
+	pageStruct*		page=kkedit->getDocumentForTab(-1);
 	const gchar*	text;
 	char*			newlabel;
 	int				offset=0;
@@ -518,8 +518,8 @@ void sortTabs(Widget* widget,uPtr data)
 			flag=false;
 			for (int j=0;j<gtk_notebook_get_n_pages((GtkNotebook*)mainNotebook)-1;j++)
 				{
-					page1=getDocumentData(j);
-					page2=getDocumentData(j+1);
+					page1=kkedit->getDocumentForTab(j);
+					page2=kkedit->getDocumentForTab(j+1);
 					if(strcmp(page2->fileName,page1->fileName)<0)
 						{
 							flag=true;
@@ -666,7 +666,7 @@ void externalTool(void)
 {
 #ifndef _USEQT5_
 	toolStruct*		tool=(toolStruct*)data;
-	pageStruct*		page=getDocumentData(-1);
+	pageStruct*		page=kkedit->getDocumentForTab(-1);
 	char*			docdirname=NULL;
 	char*			tooldirname=NULL;
 	char*			text=NULL;
@@ -869,7 +869,7 @@ void populatePopupMenu(void)
 #endif
 {
 #ifndef _USEQT5_
-	pageStruct*		page=getDocumentData(-1);
+	pageStruct*		page=kkedit->getDocumentForTab(-1);
 	GtkTextIter		start;
 	GtkTextIter		end;
 	char*			selection=NULL;
@@ -1020,7 +1020,7 @@ gboolean whatPane(void)
 #endif
 {
 #ifndef _USEQT5_
-	pageStruct* page=(pageStruct*)getDocumentData(-1);
+	pageStruct* page=(pageStruct*)kkedit->getDocumentForTab(-1);
 
 	if((long)data==1)
 		page->inTop=true;
@@ -1075,7 +1075,7 @@ void changeSourceStyle(void)
 #endif
 {
 #ifndef _USEQT5_
-	pageStruct*					page=getDocumentData(-1);
+	pageStruct*					page=kkedit->getDocumentForTab(-1);
 	GtkSourceLanguageManager*	lm=gtk_source_language_manager_get_default();
 	const gchar* const*			ids=gtk_source_language_manager_get_language_ids(lm);
 	GtkSourceLanguage*			lang=gtk_source_language_manager_get_language(lm,ids[(long)data]);
@@ -1296,7 +1296,7 @@ printf("doSaveAll %i\n",(int)(long)data);
 
 	for(int loop=0; loop<numpages; loop++)
 		{
-			page=getDocumentData(loop);
+			page=kkedit->getDocumentForTab(loop);
 			if(gtk_text_buffer_get_modified(GTK_TEXT_BUFFER(page->buffer)))
 				{
 					if((bool)data==true)
@@ -1514,7 +1514,7 @@ void doKeyShortCut(int what)
 #ifndef _USEQT5_
 	TextBuffer*		buf;
 	char*			text;
-	pageStruct*		page=getDocumentData(-1);
+	pageStruct*		page=kkedit->getDocumentForTab(-1);
 	GtkTextMark*	mark;
 
 	if(page==NULL)

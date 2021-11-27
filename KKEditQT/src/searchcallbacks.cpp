@@ -108,7 +108,7 @@ void searchGtkDocs(Widget* widget,uPtr data)
 	char*		link;
 	int			cnt=0;
 
-	DocumentClass	*document=getDocumentData(-1);
+	DocumentClass	*document=kkedit->getDocumentForTab(-1);
 
 	if(document==NULL)
 		return;
@@ -208,7 +208,7 @@ void doDoxy(Widget* widget,uPtr data)
 {
 printf("dodoxy %i\n",(int)(long)data);
 #ifndef _USEQT5_
-	pageStruct*	page=getDocumentData(-1);
+	pageStruct*	page=kkedit->getDocumentForTab(-1);
 	struct stat	sb;
 	bool		dorebuild;
 	FILE*		fp;
@@ -259,7 +259,7 @@ void doxyDocs(Widget* widget,uPtr data)
 printf("doxyDocs %i\n",(int)(long)data);
 
 #ifndef _USEQT5_
-	pageStruct*	page=getDocumentData(-1);
+	pageStruct*	page=kkedit->getDocumentForTab(-1);
 	GtkTextIter	start;
 	GtkTextIter	end;
 	char*		selection=NULL;
@@ -325,7 +325,7 @@ void searchQT5Docs(Widget* widget,uPtr data)
 	GString*	str;
 	char*		func=NULL;
 
-	DocumentClass	*document=getDocumentData(-1);
+	DocumentClass	*document=kkedit->getDocumentForTab(-1);
 
 	if(document==NULL)
 		return;
@@ -491,7 +491,7 @@ void doAllFiles(int dowhat,bool found)
 		}
 
 	gtk_notebook_set_current_page((GtkNotebook*)mainNotebook,currentFindPage);
-	page=getDocumentData(currentFindPage);
+	page=kkedit->getDocumentForTab(currentFindPage);
 
 	if(dowhat==FINDNEXT)
 		{
@@ -587,7 +587,7 @@ void regexFind(int dowhat)
 	int						testformatch;
 	GtkTextIter				hastart,haend;
 
-	page=getDocumentData(currentFindPage);
+	page=kkedit->getDocumentForTab(currentFindPage);
 	if(gtk_entry_get_text_length((GtkEntry*)findBox)==0)
 		return;
 
@@ -702,7 +702,7 @@ void regexFind(int dowhat)
 								if(currentFindPage>=gtk_notebook_get_n_pages((GtkNotebook*)mainNotebook))
 									currentFindPage=0;
 								gtk_notebook_set_current_page((GtkNotebook*)mainNotebook,currentFindPage);
-								page=getDocumentData(currentFindPage);
+								page=kkedit->getDocumentForTab(currentFindPage);
 								page->regexMatchNumber=-1;
 								dofindnext=true;
 								gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&startiter);
@@ -753,7 +753,7 @@ void regexFind(int dowhat)
 								if(currentFindPage<0)
 									currentFindPage=gtk_notebook_get_n_pages((GtkNotebook*)mainNotebook)-1;
 								gtk_notebook_set_current_page((GtkNotebook*)mainNotebook,currentFindPage);
-								page=getDocumentData(currentFindPage);
+								page=kkedit->getDocumentForTab(currentFindPage);
 								page->regexMatchNumber=-1;
 								dofindprev=true;
 								gtk_text_buffer_get_end_iter((GtkTextBuffer*)page->buffer,&enditer);
@@ -794,7 +794,7 @@ fromregexsinglereplace=false;
 
 						for(int j=startloop;j<endloop;j++)
 							{
-								page=getDocumentData(j);
+								page=kkedit->getDocumentForTab(j);
 								if(findInAllFiles==true)
 									{
 										gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&startiter);
@@ -888,7 +888,7 @@ void basicFind(int dowhat)
 				pagesChecked=0;
 		}
 
-	page=getDocumentData(currentFindPage);
+	page=kkedit->getDocumentForTab(currentFindPage);
 
 	doBusy(true,page);
 
@@ -1092,7 +1092,7 @@ void showOnStatus(const char* from,const char* to)
 void doFindReplace(int response_id)//TODO//move
 {
 	int									flags=0;
-	DocumentClass						*document=getDocumentData(-1);
+	DocumentClass						*document=kkedit->getDocumentForTab(-1);
 	char								*currentfindtext;
 	char								*currentreplacetext;
 	const char							*thetext;
@@ -1309,7 +1309,7 @@ void doLiveSearch(void)
 {
 printf("doLiveSearch\n");
 #ifndef _USEQT5_
-	pageStruct* 			page=getDocumentData(-1);
+	pageStruct* 			page=kkedit->getDocumentForTab(-1);
 	GtkSourceSearchFlags	flags;
 	char*					searchtext;
 	int						modkey=((GdkEventKey*)event)->state;

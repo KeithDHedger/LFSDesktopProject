@@ -321,7 +321,7 @@ struct bookMarkStruct
 #ifndef _USEQT5_
 
 void		showDocView(int howtodisplay,char* text,const char* title);
-pageStruct*	getDocumentData(int pagenum);
+pageStruct*	kkedit->getDocumentForTab(int pagenum);
 void		showToolOutput(bool immediate);
 void		hideToolOutput(bool immediate);
 void		showSide(bool left);

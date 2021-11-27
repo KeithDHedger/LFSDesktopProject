@@ -233,15 +233,15 @@ void plugRunFunction(gpointer data,gpointer funcname)
 	globalPlugins->runPlugFunction((moduleData*)data,(const char*)funcname);
 #endif
 }
-
-DocumentClass* getDocumentData(int pagenum)
-{
-fprintf(stderr,">>>>>>>>>>>>>>>>>>\n");
-	if(pagenum==-1)
-		return((DocumentClass*)qobject_cast<QTabWidget*>(kkedit->mainNotebook)->currentWidget());
-	else
-		return((DocumentClass*)qobject_cast<QTabWidget*>(kkedit->mainNotebook)->widget(pagenum));
-}
+//
+//DocumentClass* kkedit->getDocumentForTab(int pagenum)
+//{
+//fprintf(stderr,">>>>>>>>>>>>>>>>>>\n");
+//	if(pagenum==-1)
+//		return((DocumentClass*)qobject_cast<QTabWidget*>(kkedit->mainNotebook)->currentWidget());
+//	else
+//		return((DocumentClass*)qobject_cast<QTabWidget*>(kkedit->mainNotebook)->widget(pagenum));
+//}
 
 void getMimeType(char* filepath,void* ptr)
 {
@@ -257,7 +257,7 @@ void runCommand(char* commandtorun,void* ptr,bool interm,int flags,int useroot,c
 
 functionData* getFunctionByName(const char* name,bool recurse,bool casesensitive)
 {
-	DocumentClass		*document=getDocumentData(-1);
+	DocumentClass		*document=kkedit->getDocumentForTab(-1);
 	pageStruct			*page;
 	char				*functions=NULL;
 	QString				str;
@@ -293,7 +293,7 @@ functionData* getFunctionByName(const char* name,bool recurse,bool casesensitive
 
 	while(whileflag==true)
 		{
-			document=getDocumentData(loop);
+			document=kkedit->getDocumentForTab(loop);
 			if(document->filePath!=NULL)
 				{
 					kkedit->prefsFunctionMenuLayout=0;

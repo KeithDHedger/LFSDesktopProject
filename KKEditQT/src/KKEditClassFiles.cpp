@@ -78,6 +78,7 @@ VISIBLE void KKEditClass::newFile(const QString data,const QString filename)
 	this->pages[this->newPageIndex++]=doc;
 	doc->setHiliteLanguage();
 	untitledNumber++;
+	this->mainNotebook->setCurrentWidget(doc);
 	sessionBusy=false;
 }
 

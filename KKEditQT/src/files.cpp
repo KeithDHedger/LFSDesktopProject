@@ -201,7 +201,7 @@ bool getSaveFile(void)
 //printf("save/all %i\n",(int)(long)data);
 //return true;
 //#if 0
-//	DocumentClass	*page=getDocumentData(-1);
+//	DocumentClass	*page=kkedit->getDocumentForTab(-1);
 //	FILE			*fd=NULL;
 //
 //	if(page==NULL)
@@ -280,7 +280,7 @@ bool getSaveFile(void)
 //			filename=g_path_get_basename(filepath);
 //			newFile(NULL,NULL);
 //			pagenum=currentPage-1;
-//			page=getDocumentData(pagenum);
+//			page=kkedit->getDocumentForTab(pagenum);
 //			asprintf(&command,"hexdump -C %s",filepath);
 //			fp=popen(command, "r");
 //			while(fgets(line,1024,fp))
@@ -320,7 +320,7 @@ void reloadFile(Widget* widget,uPtr data)
 printf("reloadFile %i\n",(int)(long)data);
 
 #ifndef _USEQT5_
-	pageStruct*	page=getDocumentData(-1);
+	pageStruct*	page=kkedit->getDocumentForTab(-1);
 	gchar*		buffer;
 	long		filelen;
 	GtkTextIter	start;
@@ -362,7 +362,7 @@ printf("saveSession %i\n",(int)(long)data);
 		{
 			for(int loop=0; loop<gtk_notebook_get_n_pages((GtkNotebook*)mainNotebook); loop++)
 				{
-					page=getDocumentData(loop);
+					page=kkedit->getDocumentForTab(loop);
 					mark=gtk_text_buffer_get_insert((GtkTextBuffer*)page->buffer);
 					gtk_text_buffer_get_iter_at_mark((GtkTextBuffer*)page->buffer,&iter,mark);
 					linenumber=gtk_text_iter_get_line(&iter);
@@ -436,7 +436,7 @@ do bookmarks
 //TODO//
 							fgets(buffer,2048,fd);
 							sscanf(buffer,"%i %s",(int*)&intarg,(char*)&strarg);
-							page=getDocumentData(currentPage-1);
+							page=kkedit->getDocumentForTab(currentPage-1);
 							gtk_notebook_set_current_page((GtkNotebook*)mainNotebook,currentPage-1);
 							while(intarg!=-1)
 								{
@@ -499,7 +499,7 @@ do bookmarks
 						{
 							fgets(buffer,2048,fd);
 							sscanf(buffer,"%i %s",(int*)&intarg,(char*)&strarg);
-							page=getDocumentData(currentPage-1);
+							page=kkedit->getDocumentForTab(currentPage-1);
 							gtk_notebook_set_current_page((GtkNotebook*)mainNotebook,currentPage-1);
 							while(intarg!=-1)
 								{
