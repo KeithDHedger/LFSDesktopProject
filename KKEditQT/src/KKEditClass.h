@@ -206,9 +206,10 @@ class KKEditClass : public QObject
 
 //file vars
 //file functions
-		void						newFile(void);
+		void						newFile(const QString data="",const QString filename="");
 		bool						openFile(std::string filepath,int linenumber=1,bool warn=false);
 		bool						openFileDialog(void);
+		void						openAsHexDump(void);
 
 //document vars
 //document functions

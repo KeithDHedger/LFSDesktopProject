@@ -716,6 +716,7 @@ VISIBLE bool KKEditClass::openFile(std::string filepath,int linenumber,bool warn
 			QString			content=QString::fromUtf8(file.readAll());
 			QMimeDatabase	db;
 			QMimeType		type=db.mimeTypeForFile(fileinfo.canonicalFilePath());
+			fprintf(stderr,">>%s<<\n",type.name().toStdString().c_str());
 			doc->mimeType=type.name();
 			doc->setPlainText(content);
 			doc->setFilePrefs();
@@ -766,18 +767,24 @@ VISIBLE bool KKEditClass::openFileDialog(void)
 	return(true);
 }
 
-VISIBLE void KKEditClass::newFile()
+VISIBLE void KKEditClass::newFile(const QString data,const QString filename)
 {
 	DocumentClass*	doc;
 
 	doc=new DocumentClass(kkedit);
+	doc->setPlainText(data);
 	doc->tabNumber=qobject_cast<QTabWidget*>(kkedit->mainNotebook)->addTab(doc,"");
-	doc->setFileName(QString("Untitled-%1").arg(untitledNumber));
+	if(filename.compare("")==0)
+		doc->setFileName(QString("Untitled-%1").arg(untitledNumber));
+	else
+		doc->setFileName(filename);
 	doc->setTabName(truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
+	this->mainNotebook->setTabToolTip(doc->tabNumber,doc->getFileName());
 	doc->setFilePrefs();
+	doc->mimeType="text/plain";
 	doc->pageIndex=this->newPageIndex;
 	this->pages[this->newPageIndex++]=doc;
-
+	doc->setHiliteLanguage();
 	untitledNumber++;
 }
 

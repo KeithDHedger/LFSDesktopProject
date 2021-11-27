@@ -406,6 +406,8 @@ void DocumentClass::setHiliteLanguage(void)
 			this->highlighter->setCurrentLanguage(QSourceHighlite::QSourceHighliter::CodeJs);
 	else if(this->mimeType.compare("text/x-makefile",Qt::CaseInsensitive)==0)
 			this->highlighter->setCurrentLanguage(QSourceHighlite::QSourceHighliter::CodeMake);
+	else
+		theme=(QSourceHighliter::Themes)-1;
 
 	this->highlighter->setTheme(theme);
 }

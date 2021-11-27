@@ -899,7 +899,7 @@ void KKEditClass::buildTools(void)
 {
 	MenuItemClass	*menuItemSink;
 //TODO//
-printf("buildTools\n");
+printf("TODO buildTools\n");
 //	this->toolsMenu=new QMenu("&Tools");
 //	this->menuBar->addMenu(this->toolsMenu);
 //	this->toolsMenu->addSeparator();

@@ -30,7 +30,7 @@ bool openFile(const gchar *filepath,int linenumber,bool warn);
 bool saveFile(Widget* widget,uPtr data);
 void newFileWrap(Widget* widget,uPtr data);
 
-void openAsHexDump(Widget *widget,uPtr user_data);
+
 void reloadFile(Widget* widget,uPtr data);
 
 void saveSession(Widget* widget,uPtr data);

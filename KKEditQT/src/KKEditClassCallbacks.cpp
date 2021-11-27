@@ -277,7 +277,7 @@ void KKEditClass::doFileMenuItems()
 				this->openFileDialog();
 				break;
 			case HEXDUMPMENUITEM:
-				openAsHexDump(NULL,HEXDUMPMENUITEM);
+				this->openAsHexDump();
 				break;
 			case NEWADMINEDMENUITEM:
 				newEditor(NULL,1);
