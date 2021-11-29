@@ -716,8 +716,8 @@ bool KKEditClass::openFile(std::string filepath,int linenumber,bool warn)
 			QString			content=QString::fromUtf8(file.readAll());
 			QMimeDatabase	db;
 			QMimeType		type=db.mimeTypeForFile(fileinfo.canonicalFilePath());
-			fprintf(stderr,">>%s<<\n",type.name().toStdString().c_str());
 			doc->mimeType=type.name();
+			fprintf(stderr,">>%s<<\n",type.name().toStdString().c_str());
 			doc->setPlainText(content);
 			doc->setFilePrefs();
 			doc->pageIndex=this->newPageIndex;
@@ -850,3 +850,50 @@ void KKEditClass::findFile(void)
 
 	free(selection);
 }
+
+void KKEditClass::showBarberPole(QString windowtitle,QString bodylabel,QString cancellabel,QString controlfiile)
+{
+}
+
+void KKEditClass::buildDocs(void)
+{
+	DocumentClass	*doc=kkedit->getDocumentForTab(-1);
+	struct stat		sb;
+	FILE			*fp;
+	char			line[4096];
+	char			opdata[4096];
+	char			*commsfile;
+
+	if(doc==NULL)
+		return;
+
+	asprintf(&commsfile,"KKEditQTProgressBar \"Building Docs\" \"Please Wait ...\" \"\" \"%s/progress\" &",this->tmpFolderName.c_str());
+	system(commsfile);
+	free(commsfile);
+	asprintf(&commsfile,"%s/progress",this->tmpFolderName.c_str());
+	chdir(doc->getDirPath().toStdString().c_str());
+
+	stat("Doxyfile",&sb);
+	if(!S_ISREG(sb.st_mode))
+		system("cp " DATADIR "/docs/Doxyfile .");
+
+	if(thePage!=NULL)
+		debugFree(&thePage,"doDoxy thePage");
+
+	asprintf(&thePage,"file://%s/html/index.html",doc->getDirPath().toStdString().c_str());
+	fp=popen("doxygen Doxyfile","r");
+	while(fgets(line,4095,fp))
+		{
+			line[strlen(line)-1]=0;
+			snprintf(opdata,4095,"echo -n \"%s\" >\"%s\"",line,commsfile);
+			system(opdata);
+		}
+	pclose(fp);
+
+	showDocView(USEURI,thePage,"Doxygen Documentation");
+
+	free(commsfile);
+	asprintf(&commsfile,"echo quit>\"%s/progress\"",this->tmpFolderName.c_str());
+	system(commsfile);
+}
+

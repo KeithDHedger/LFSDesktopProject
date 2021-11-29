@@ -1,126 +1,77 @@
 /*
  *
- * K.D.Hedger 2012 <kdhedger68713@gmail.com>
- *
+ * ©K. D. Hedger. Mon 29 Nov 13:21:04 GMT 2021 keithdhedger@gmail.com
+
+ * This file (main.cpp) is part of KKEditQT.
+
+ * KKEditQT is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * at your option) any later version.
+
+ * KKEditQT is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with KKEditQT.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdlib.h>
-#include <gtk/gtk.h>
-#include <string.h>
-#include <sys/stat.h>
+#include <QtGui>
+#include <QApplication>
+#include <QProgressDialog>
+#include <unistd.h>
 
-GtkWidget*	progressWindow;
-GtkWidget*	progressBar;
-bool		doPulse=true;
-int			percent;
+enum labelEnums {WINDOWTITLE=1,BODYLABEL,CANCELLABEL,CONTROLFILE};
 
-enum {QUIT,PULSE,PERCENT};
-
-void shutdown(GtkWidget* widget,gpointer data)
+int main(int argc, char **argv)
 {
-	gtk_main_quit();
-}
+	FILE*			fp;
+	char			line[256];
+	char			command[256];
+	bool			flag=true; 
+	QApplication	app(argc, argv);
+	QString			dialoglabel="Building docs ...";
+	QString			windowtitle="Please wait ...";
+	QString			cancellabel="Abort opertation";
 
-void killBarberPole(void)
-{
-	gtk_widget_destroy(progressWindow);
-	progressBar=NULL;
-	shutdown(NULL,NULL);
-}
-
-gboolean idleScroll(gpointer data)
-{
-	FILE*	fp;
-	char	line[256];
-	int		dowhat=0;
-	char*	command;
-	int		perc;
-
-	asprintf(&command,"cat %s",(char*)data);
-
-	fp=popen(command, "r");
-	while(fgets(line,256,fp))
-		{
-			dowhat=PERCENT;
-			if(strncasecmp(line,"quit",4)==0)
-				dowhat=QUIT;
-			if(strncasecmp(line,"pulse",5)==0)
-				dowhat=PULSE;
-		}
-	pclose(fp);
-
-	gtk_main_iteration_do(false);
-	if(progressBar!=NULL)
-		{
-			switch(dowhat)
-				{
-					case QUIT:
-						killBarberPole();
-						return(false);
-						break;
-					case PULSE:
-						doPulse=true;
-						break;
-					default:
-						doPulse=false;
-						percent=atoi(line);
-						break;
-				}
-			if(doPulse==true)
-				gtk_progress_bar_pulse((GtkProgressBar*)progressBar);
-			else
-				{
-					perc=(int)atof(line);
-					if(perc>100)
-						gtk_progress_bar_set_fraction((GtkProgressBar*)progressBar,1.0);
-					else if(perc<0)
-						gtk_progress_bar_set_fraction((GtkProgressBar*)progressBar,0);
-					else
-						gtk_progress_bar_set_fraction((GtkProgressBar*)progressBar,(float)perc/100);
-				}
-			return(true);
-		}
-	else
-		return(false);
-}
-
-
-void showBarberPole(const char* title,char* filepath)
-{
-	GtkWidget*		vbox;
-
-	progressWindow=gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_widget_set_size_request(progressWindow,400,40);
-	gtk_window_set_type_hint((GtkWindow*)progressWindow,GDK_WINDOW_TYPE_HINT_NORMAL);
-	gtk_window_set_title((GtkWindow*)progressWindow,title);
-	vbox=gtk_vbox_new(FALSE,0);
-	progressBar=gtk_progress_bar_new();
-	gtk_progress_bar_set_fraction((GtkProgressBar*)progressBar,0);
-
-	gtk_progress_bar_set_orientation((GtkProgressBar*)progressBar,GTK_PROGRESS_LEFT_TO_RIGHT);
-
-	gtk_box_pack_start(GTK_BOX(vbox),progressBar,false,false,8);
-	gtk_container_add(GTK_CONTAINER(progressWindow),vbox);
-
-	gtk_window_set_keep_above((GtkWindow*)progressWindow,true);
-	gtk_window_set_deletable((GtkWindow*)progressWindow,false);
-	gtk_window_set_resizable((GtkWindow*)progressWindow,false);
-	gtk_window_set_skip_taskbar_hint((GtkWindow*)progressWindow,true);
-	gtk_window_set_skip_pager_hint((GtkWindow*)progressWindow,true);
-
-	gtk_widget_show_all(progressWindow);
-	g_timeout_add(100,idleScroll,(void*)filepath);
-}
-
-int main(int argc,char **argv)
-{
-	char*	command;
-
-	asprintf(&command,"echo 0 > \"%s\"",argv[2]);
+	sprintf(command,"echo 0 > '%s'",argv[CONTROLFILE]);
 	system(command);
-	free(command);
-	doPulse=false;
-	gtk_init(&argc,&argv);
-	showBarberPole(argv[1],argv[2]);
-	gtk_main();
+
+	windowtitle=argv[WINDOWTITLE];
+	dialoglabel=argv[BODYLABEL];
+	cancellabel=argv[CANCELLABEL];
+
+	if(cancellabel.isEmpty()==true)
+		cancellabel=QString();
+	QProgressDialog progress(dialoglabel,cancellabel,0,0,nullptr,Qt::Dialog);
+	progress.setWindowModality(Qt::WindowModal);
+	progress.setWindowTitle(windowtitle);
+	progress.setWindowFlags(progress.windowFlags() | Qt::WindowStaysOnTopHint);
+	progress.show();
+
+	sprintf(command,"cat '%s' 2>/dev/null",argv[CONTROLFILE]);
+
+	while(flag)
+		{
+			app.processEvents(); 
+			if (progress.wasCanceled())
+				flag=false;
+			usleep(500);
+			fp=popen(command, "r");
+			while(fgets(line,256,fp))
+				{
+					if(strncasecmp(line,"quit",4)==0)
+						flag=false;
+					else
+						progress.setLabelText(line);
+				}
+			pclose(fp);
+		}
+
+	sprintf(command,"rm '%s' &>/dev/null",argv[CONTROLFILE]);
+	system(command);
+
+	return 0;
 }

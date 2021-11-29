@@ -280,17 +280,18 @@ void KKEditClass::doFileMenuItems()
 				this->openAsHexDump();
 				break;
 			case NEWADMINEDMENUITEM:
-				newEditor(NULL,1);
+				this->newEditor(NEWADMINEDMENUITEM);
 				break;
 			case NEWEDMENUITEM:
-				newEditor(NULL,2);
+				this->newEditor(NEWEDMENUITEM);
 				break;
 			case
 				MANPAGEEDMENUITEM:
-				newEditor(NULL,3);
+				this->newEditor(MANPAGEEDMENUITEM);
 				break;
 			case BUILDDOCSMENUITEM:
-				doDoxy(NULL,BUILDDOCSMENUITEM);
+				this->buildDocs();
+				//doDoxy(NULL,BUILDDOCSMENUITEM);
 				break;
 			case SAVEMENUITEM:
 				this->saveFile();

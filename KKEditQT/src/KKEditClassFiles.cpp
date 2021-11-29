@@ -20,6 +20,20 @@
 
 #include "KKEditClass.h"
 
+void KKEditClass::runPipe(QString command)
+{
+	FILE		*fp=NULL;
+	char		line[1024];
+
+	fp=popen(command.toStdString().c_str(), "r");
+	if(fp!=NULL)
+		{
+//			while(fgets(line,1024,fp))
+//				dump+=line;
+			pclose(fp);
+		}
+}
+
 QString KKEditClass::runPipeAndCapture(QString command)
 {
 	QString		dump("");
@@ -142,57 +156,31 @@ bool KKEditClass::saveFile(void)
 				}
 		}
 	return true;
-#if 0
-	DocumentClass	*page=this->getDocumentForTab(-1);
-	FILE			*fd=NULL;
-
-	if(page==NULL)
-		return(false);
-
-//	line=page->textCursor().blockNumber();
-	if(page->getPathname()!=NULL && data==0)
-		{
-			fd=fopen(page->getPathname(),"w");
-			if (fd!=NULL)
-				{
-					fputs(page->toPlainText().toLocal8Bit().constData(),fd);
-					fclose(fd);
-					page->document()->setModified(false);
-				}
-			else
-				{
-					QMessageBox *msg=new QMessageBox(QMessageBox::Warning,QString("Save File"),QString("Cant save file \"%1\"").arg(page->getPathname()),QMessageBox::Ok,kkedit->mainWindow,Qt::Dialog);
-					msg->exec();
-					delete msg;
-				}
-		}
-	else
-		{
-			if(data!=0)
-				{
-					saveFilePath=page->getPathname();
-					saveFileName=page->getFilename();
-					page->setDirname(g_path_get_dirname(page->getPathname()));
-				}
-
-			saveFileName=page->getFilename();
-			if(getSaveFile()==false)
-				return(false);
-
-			fd=fopen(saveFilePath,"w");
-			if (fd!=NULL)
-				{
-					page->setPathname((char*)saveFilePath);
-					page->setFilename((char*)saveFileName);
-					page->setDirname(g_path_get_dirname(page->getPathname()));
-					fputs(page->toPlainText().toLocal8Bit().constData(),fd);
-					fclose(fd);
-					page->document()->setModified(false);
-				}
-		}
-
-	saveFileName=NULL;
-	saveFilePath=NULL;
-#endif
-	return(true);
 }
+
+void KKEditClass::newEditor(int what)
+{
+	QString	command;
+
+	switch(what)
+		{
+			case NEWADMINEDMENUITEM:
+				command=GTKSUPATH " kkedit -m 2>&1 >/dev/null &";
+				runPipe(command);
+				//system(command.c_str());
+				break;
+		case NEWEDMENUITEM:
+			runPipe("kkedit -m 2>&1 >/dev/null &");
+			//system("kkedit -m 2>&1 >/dev/null &");
+			break;
+		case MANPAGEEDMENUITEM:
+			if(kkedit->gotManEditor==0)
+				runPipe("manpageeditor 2>&1 >/dev/null &");
+			//	system("manpageeditor 2>&1 >/dev/null &");
+			break;
+		}
+
+}
+
+
+

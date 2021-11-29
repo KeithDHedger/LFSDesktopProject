@@ -1489,25 +1489,6 @@ void recentFileMenu(void)
 {
 }
 
-void newEditor(Widget* widget,uPtr data)
-{
-	std::string command;//TODO//
-
-	switch((long)data)
-		{
-		case 1:
-			command=GTKSUPATH " kkedit -m 2>&1 >/dev/null &";
-			system(command.c_str());
-			break;
-		case 2:
-			system("kkedit -m 2>&1 >/dev/null &");
-			break;
-		case 3:
-			if(kkedit->gotManEditor==0)
-				system("manpageeditor 2>&1 >/dev/null &");
-			break;
-		}
-}
 
 void doKeyShortCut(int what)
 {

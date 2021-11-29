@@ -6,6 +6,7 @@ include ../sources
 
 kkeditqt_SOURCES = $(COMMONSRC)
 
+KKEditQTProgressBar_SOURCES = ../pole/main.cpp
 
 kkeditqt_CFLAGS = -ggdb -O0 -fvisibility=default
 kkeditqt_CXXFLAGS = -ggdb -O0 -fvisibility=default
@@ -27,7 +28,7 @@ stylefiles_DATA = ../resources/styles/*
 
 include_HEADERS = ../src/kkedit-plugins.h
 
-bin_PROGRAMS = kkeditqt
+bin_PROGRAMS = kkeditqt KKEditQTProgressBar
 
 install-exec-hook:
 	install -D ../resources/pixmaps/KKEditQTPlug.png $(DESTDIR)${prefix}/share/pixmaps/KKEditQTPlug.png

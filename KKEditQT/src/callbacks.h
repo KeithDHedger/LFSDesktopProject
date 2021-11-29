@@ -89,7 +89,7 @@ gboolean whatPane(GtkWidget *widget,GdkEvent *event,gpointer data);
 gboolean whatPane(void);
 #endif
 
-void newEditor(Widget* widget,uPtr data);
+
 
 #ifndef _USEQT5_
 void changeSourceStyle(GtkWidget* widget,gpointer data);

@@ -385,7 +385,11 @@ void DocumentClass::setHiliteLanguage(void)
 		theme=(QSourceHighliter::Themes)-1;
 	if(this->mimeType.compare("text/x-c++src",Qt::CaseInsensitive)==0)
 		this->highlighter->setCurrentLanguage(QSourceHighlite::QSourceHighliter::CodeCpp);
+	else if(this->mimeType.compare("text/x-c++hdr",Qt::CaseInsensitive)==0)
+			this->highlighter->setCurrentLanguage(QSourceHighlite::QSourceHighliter::CodeCpp);
 	else if(this->mimeType.compare("text/x-csrc",Qt::CaseInsensitive)==0)
+			this->highlighter->setCurrentLanguage(QSourceHighlite::QSourceHighliter::CodeC);
+	else if(this->mimeType.compare("text/x-chdr",Qt::CaseInsensitive)==0)
 			this->highlighter->setCurrentLanguage(QSourceHighlite::QSourceHighliter::CodeC);
 	else if(this->mimeType.compare("application/x-shellscript",Qt::CaseInsensitive)==0)
 			this->highlighter->setCurrentLanguage(QSourceHighlite::QSourceHighliter::CodeBash);

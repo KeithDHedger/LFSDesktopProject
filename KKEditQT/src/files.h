@@ -25,10 +25,6 @@
 
 void saveVarsToFile(char* filepath,args* dataptr);
 void loadVarsFromFile(char* filepath,args* dataptr);
-bool openFile(const gchar *filepath,int linenumber,bool warn);
-
-bool saveFile(Widget* widget,uPtr data);
-void newFileWrap(Widget* widget,uPtr data);
 
 
 void reloadFile(Widget* widget,uPtr data);
@@ -42,6 +38,6 @@ void fileChangedOnDisk(GFileMonitor *monitor,GFile *file,GFile *other_file,GFile
 //TODO//
 void fileChangedOnDisk(void);
 #endif
-void setFilePrefs(uPtr pagedata);
+
 
 #endif

@@ -45,7 +45,6 @@ enum	{AUTOINDENT=0,SHOWNUMS,WRAP,HIGHLIGHT,SYNTAXHILITE,USESINGLE,AUTOSAVE,NODUP
 enum {MAXTABCHARS=0,MAXHISTORY,MAXFUNCDEPTH,COMPLETIONSIZE,TABWIDTH,MENUWIDTH,MAXBMWIDTH,MAXPREFSINTWIDGETS};
 enum {FUNCTIONCOMBO=0,THEMECOMBO,FONTNAMECOMBO,FONTSIZECOMBO,PREFSTERMCOMMAND,PREFSROOTCOMMAND,PREFSBROWSERCOMMAND,PREFSCURRENTFONT,BMHIGHLIGHTCOLOUR,CURRENTLINECOLOUR,MAXPREFSOTHERWIDGETS};
 
-
 #include "kkedit-includes.h"
 class MenuItemClass;
 
@@ -80,6 +79,8 @@ class KKEditClass : public QObject
 		void						readConfigs(void);
 		void						findFile(void);
 		void						buildTools(void);
+		void						showBarberPole(QString windowtitle,QString bodylabel,QString cancellabel,QString controlfiile);
+		void						buildDocs(void);
 
 //app prefs
 //document
@@ -212,6 +213,8 @@ class KKEditClass : public QObject
 		void						openAsHexDump(void);
 		QString						runPipeAndCapture(QString command);
 		bool						saveFile(void);
+		void						newEditor(int what);
+		void						runPipe(QString command);
 
 //document vars
 //document functions
