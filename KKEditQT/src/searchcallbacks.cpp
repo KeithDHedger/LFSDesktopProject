@@ -203,60 +203,6 @@ void searchGtkDocs(Widget* widget,uPtr data)
 		debugFree(&selection,"seachGtkDocs selection");
 }
 
-void doDoxy(Widget* widget,uPtr data)
-//TODO//
-{
-printf("dodoxy %i\n",(int)(long)data);
-
-//
-//	DocumentClass* doc=kkedit->getDocumentForTab(-1);
-//	struct stat	sb;
-//	bool		dorebuild;
-//	FILE*		fp;
-//	char		line[4096];
-//	char		opdata[4096];
-//
-//		dorebuild=true;
-////	else
-////		dorebuild=false;
-//
-//	if(doc==NULL)
-//		return;
-//
-//	system("KKEditQTProgressBar \"Building Docs\" \"Please Wait ...\" \"\" \"/tmp/scrolldata\" &");
-//	chdir(doc->getDirPath().toStdString().c_str());
-//
-//	stat("./html/index.html",&sb);
-//	if(!S_ISREG(sb.st_mode))
-//		dorebuild=true;
-//
-//	stat("Doxyfile",&sb);
-//	if(!S_ISREG(sb.st_mode))
-//		{
-//			system("cp " DATADIR "/docs/Doxyfile .");
-//			dorebuild=true;
-//		}
-//
-//	if(thePage!=NULL)
-//		debugFree(&thePage,"doDoxy thePage");
-//
-//	asprintf(&thePage,"file://%s/html/index.html",doc->getDirPath().toStdString().c_str());
-//	if(dorebuild==true)
-//		{
-//			fp=popen("doxygen Doxyfile","r");
-//			while(fgets(line,4095,fp))
-//				{
-//					line[strlen(line)-1]=0;
-//					snprintf(opdata,4095,"echo -n \"%s\" >\"/tmp/scrolldata\"",line);
-//					system(opdata);
-//				}
-//			pclose(fp);
-//		}
-//	showDocView(USEURI,thePage,"Doxygen Documentation");
-//
-//	system("echo quit>/tmp/scrolldata");
-
-}
 
 //find in doxy docs
 void doxyDocs(Widget* widget,uPtr data)

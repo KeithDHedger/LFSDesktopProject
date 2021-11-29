@@ -123,7 +123,7 @@ void KKEditClass::doViewMenuItems()
 	switch(mc->getMenuID())
 		{
 			case DOCSMENUITEM:
-				doDoxy(NULL,0);
+				//doDoxy(NULL,0);
 				break;
 			case TOGGLETOOLBARMENUITEM:
 				this->toolbarVisible=!this->toolbarVisible;

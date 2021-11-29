@@ -27,11 +27,7 @@ void KKEditClass::runPipe(QString command)
 
 	fp=popen(command.toStdString().c_str(), "r");
 	if(fp!=NULL)
-		{
-//			while(fgets(line,1024,fp))
-//				dump+=line;
-			pclose(fp);
-		}
+		pclose(fp);
 }
 
 QString KKEditClass::runPipeAndCapture(QString command)

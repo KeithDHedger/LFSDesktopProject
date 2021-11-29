@@ -862,17 +862,15 @@ void KKEditClass::buildDocs(void)
 	FILE			*fp;
 	char			line[4096];
 	char			opdata[4096];
-	char			*commsfile;
+	QString			pipecom;
 
 	if(doc==NULL)
 		return;
 
-	asprintf(&commsfile,"KKEditQTProgressBar \"Building Docs\" \"Please Wait ...\" \"\" \"%s/progress\" &",this->tmpFolderName.c_str());
-	system(commsfile);
-	free(commsfile);
-	asprintf(&commsfile,"%s/progress",this->tmpFolderName.c_str());
-	chdir(doc->getDirPath().toStdString().c_str());
-
+	pipecom=QString("KKEditQTProgressBar \"Building Docs\" \"Please Wait ...\" \"\" \"%1/progress\" &").arg(this->tmpFolderName.c_str());
+	this->runPipe(QString("KKEditQTProgressBar \"Building Docs\" \"Please Wait ...\" \"\" \"%1/progress\" &").arg(this->tmpFolderName.c_str()));
+	//chdir(doc->getDirPath().toStdString().c_str());
+QDir::setCurrent(doc->getDirPath());
 	stat("Doxyfile",&sb);
 	if(!S_ISREG(sb.st_mode))
 		system("cp " DATADIR "/docs/Doxyfile .");
@@ -885,15 +883,13 @@ void KKEditClass::buildDocs(void)
 	while(fgets(line,4095,fp))
 		{
 			line[strlen(line)-1]=0;
-			snprintf(opdata,4095,"echo -n \"%s\" >\"%s\"",line,commsfile);
+			snprintf(opdata,4095,"echo -n \"%s\" >\"%s/progress\"",line,this->tmpFolderName.c_str());
 			system(opdata);
 		}
 	pclose(fp);
 
 	showDocView(USEURI,thePage,"Doxygen Documentation");
 
-	free(commsfile);
-	asprintf(&commsfile,"echo quit>\"%s/progress\"",this->tmpFolderName.c_str());
-	system(commsfile);
+	this->runPipe(QString("echo quit>\"%1/progress\"").arg(this->tmpFolderName.c_str()));
 }
 
