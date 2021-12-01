@@ -81,6 +81,7 @@ class KKEditClass : public QObject
 		void						buildTools(void);
 		void						showBarberPole(QString windowtitle,QString bodylabel,QString cancellabel,QString controlfiile);
 		void						buildDocs(void);
+		void						showDocs(void);
 
 //app prefs
 //document
@@ -212,9 +213,10 @@ class KKEditClass : public QObject
 		bool						openFileDialog(void);
 		void						openAsHexDump(void);
 		QString						runPipeAndCapture(QString command);
-		bool						saveFile(void);
+		bool						saveFile(int tabnum);
 		void						newEditor(int what);
 		void						runPipe(QString command);
+		void						saveAllFiles(void);
 
 //document vars
 //document functions
@@ -320,6 +322,8 @@ class KKEditClass : public QObject
 		void						setLineColour(void);
 		void						setFont(void);
 		void						addToToolBar(void);
+
+		void						switchPage(int index);
 
 	protected:
 	private:

@@ -202,6 +202,107 @@ void KKEditClass::buildDocViewer(void)
 #endif
 }
 
+void KKEditClass::switchPage(int index)
+{
+	char*			functions=NULL;
+	char*			lineptr;
+	DocumentClass	*doc=NULL;
+	int				linenum;
+	char			tmpstr[1024];
+	char*			correctedstr;
+	char*			typenames[50]= {NULL,};
+	char*			newstr=NULL;
+	bool			flag;
+	int				numtypes=0;
+	QMenu			*whattypemenu;
+	QMenu			*typesubmenus[50]= {NULL,};
+	bool			onefunc=false;
+	MenuItemClass	*menuitem;
+
+//	if(sessionBusy==true)
+//		return;
+fprintf(stderr,"index=%i\n",index);
+	doc=qobject_cast<DocumentClass*>(this->mainNotebook->widget(index));
+	if(doc==0)
+		return;
+	if(doc==NULL)
+		return;
+
+	doc->setStatusBarText();
+	qobject_cast<QMenu*>(this->funcMenu)->clear();
+	getRecursiveTagList((char*)doc->getFilePath().toStdString().c_str(),&functions);
+
+	lineptr=functions;
+	while (lineptr!=NULL)
+		{
+			tmpstr[0]=0;
+			sscanf (lineptr,"%*s %*s %i %[^\n]s",&linenum,tmpstr);
+			correctedstr=truncateWithElipses(tmpstr,this->prefsMaxFuncChars);
+			sprintf(tmpstr,"%s",correctedstr);
+			debugFree(&correctedstr,"switchPage correctedstr");
+
+			if(strlen(tmpstr)>0)
+				{
+					if(this->prefsFunctionMenuLayout==4)
+						{
+							newstr=NULL;
+							newstr=globalSlice->sliceBetween(lineptr,(char*)" ",(char*)" ");
+							if(newstr!=NULL)
+								{
+									flag=false;
+									for(int j=0; j<numtypes; j++)
+										{
+											if (strcmp(newstr,typenames[j])==0)
+												{
+													whattypemenu=typesubmenus[j];
+													flag=true;
+													break;
+												}
+										}
+
+									if(flag==false)
+										{
+											typenames[numtypes]=strdup(newstr);
+											debugFree(&newstr,"switchPage newstr");
+											if(typenames[numtypes][strlen(typenames[numtypes])-1]=='s')
+												asprintf(&newstr,"%s's",typenames[numtypes]);
+											else
+												asprintf(&newstr,"%ss",typenames[numtypes]);
+											newstr[0]=toupper(newstr[0]);
+											typesubmenus[numtypes]=new QMenu(newstr);
+											qobject_cast<QMenu*>(this->funcMenu)->addMenu(qobject_cast<QMenu*>(typesubmenus[numtypes]));
+											whattypemenu=typesubmenus[numtypes];
+											numtypes++;
+										}
+
+									debugFree(&newstr,"switchPage newstr");
+
+									onefunc=true;
+									menuitem=new MenuItemClass(tmpstr);
+									menuitem->setMenuID(linenum);
+									menuitem->mainKKEditClass=this;
+									qobject_cast<QMenu*>(whattypemenu)->addAction(menuitem);
+									QObject::connect(menuitem,SIGNAL(triggered()),menuitem,SLOT(menuClickedGotoLine()));
+							}
+						}
+					else
+						{
+							onefunc=true;
+							menuitem=new MenuItemClass(tmpstr);
+							menuitem->setMenuID(linenum);
+							menuitem->mainKKEditClass=this;
+							qobject_cast<QMenu*>(this->funcMenu)->addAction(menuitem);
+							QObject::connect(menuitem,SIGNAL(triggered()),menuitem,SLOT(menuClickedGotoLine()));
+						}
+				}
+
+			lineptr=strchr(lineptr,'\n');
+			if (lineptr!=NULL)
+				lineptr++;
+		}
+	this->funcMenu->setEnabled(onefunc);
+}
+
 
 //void switchTab(int thispage)//TODO//move ?
 //{
@@ -641,7 +742,6 @@ void KKEditClass::initApp(int argc,char** argv)
 			this->mainWindow->setGeometry(r);
 		}
 
-	fprintf(stderr,"this->currentWorkSpace=%i\n",this->currentWorkSpace);
 return;
 	refreshMainWindow();
 
@@ -717,7 +817,6 @@ bool KKEditClass::openFile(std::string filepath,int linenumber,bool warn)
 			QMimeDatabase	db;
 			QMimeType		type=db.mimeTypeForFile(fileinfo.canonicalFilePath());
 			doc->mimeType=type.name();
-			fprintf(stderr,">>%s<<\n",type.name().toStdString().c_str());
 			doc->setPlainText(content);
 			doc->setFilePrefs();
 			doc->pageIndex=this->newPageIndex;
@@ -869,8 +968,8 @@ void KKEditClass::buildDocs(void)
 
 	pipecom=QString("KKEditQTProgressBar \"Building Docs\" \"Please Wait ...\" \"\" \"%1/progress\" &").arg(this->tmpFolderName.c_str());
 	this->runPipe(QString("KKEditQTProgressBar \"Building Docs\" \"Please Wait ...\" \"\" \"%1/progress\" &").arg(this->tmpFolderName.c_str()));
-	//chdir(doc->getDirPath().toStdString().c_str());
-QDir::setCurrent(doc->getDirPath());
+
+	QDir::setCurrent(doc->getDirPath());
 	stat("Doxyfile",&sb);
 	if(!S_ISREG(sb.st_mode))
 		system("cp " DATADIR "/docs/Doxyfile .");
@@ -893,3 +992,17 @@ QDir::setCurrent(doc->getDirPath());
 	this->runPipe(QString("echo quit>\"%1/progress\"").arg(this->tmpFolderName.c_str()));
 }
 
+void KKEditClass::showDocs(void)
+{
+	DocumentClass	*doc=kkedit->getDocumentForTab(-1);
+	QFileInfo		fileinfo=QString("%1/html/index.html").arg(doc->getDirPath());
+
+	if(fileinfo.exists()==false)
+		this->buildDocs();
+	else
+		{
+			debugFree(&thePage,"doDoxy thePage");
+			asprintf(&thePage,"file://%s/html/index.html",doc->getDirPath().toStdString().c_str());
+			showDocView(USEURI,thePage,"Doxygen Documentation");
+		}
+}

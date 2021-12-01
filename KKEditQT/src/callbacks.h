@@ -72,7 +72,7 @@ void doAbout(Widget* widget,uPtr data);
 
 
 
-bool doSaveAll(Widget* widget,uPtr data);
+
 void closeAllTabs(Widget* widget,uPtr data);
 
 #ifndef _USEQT5_

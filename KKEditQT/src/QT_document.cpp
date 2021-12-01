@@ -295,7 +295,6 @@ void DocumentClass::setTabName(QString tabname)
 
 const QString DocumentClass::getTabName(void)
 {
-fprintf(stderr,"tabname=>>%s<<\n",this->tabName.toStdString().c_str());
 	return(this->tabName);
 }
 

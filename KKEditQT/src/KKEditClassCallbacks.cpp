@@ -123,7 +123,7 @@ void KKEditClass::doViewMenuItems()
 	switch(mc->getMenuID())
 		{
 			case DOCSMENUITEM:
-				//doDoxy(NULL,0);
+				this->showDocs();
 				break;
 			case TOGGLETOOLBARMENUITEM:
 				this->toolbarVisible=!this->toolbarVisible;
@@ -291,16 +291,15 @@ void KKEditClass::doFileMenuItems()
 				break;
 			case BUILDDOCSMENUITEM:
 				this->buildDocs();
-				//doDoxy(NULL,BUILDDOCSMENUITEM);
 				break;
 			case SAVEMENUITEM:
-				this->saveFile();
+				this->saveFile(-1);
 				break;
 			case SAVEASMENUITEM:
-				this->saveFile();
+				this->saveFile(-1);
 				break;
 			case SAVEALLMENUITEM:
-				doSaveAll(NULL,SAVEALLMENUITEM);
+				this->saveAllFiles();
 				break;
 			case SAVESESSIONMENUITEM:
 				saveSession(NULL,SAVESESSIONMENUITEM);

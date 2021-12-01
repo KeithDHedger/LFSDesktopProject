@@ -189,44 +189,6 @@ void setToobarSensitive(void)
 #endif
 }
 
-void destroyBMData(gpointer data)
-{
-#ifndef _USEQT5_
-	debugFree(&((bookMarksNew*)data)->markName,"destroyBMData markName");
-#endif
-}
-#ifndef _USEQT5_
-void removeAllBookmarks(GtkWidget* widget,GtkTextIter* titer)
-#else
-//TODO//
-void removeAllBookmarks(void)
-#endif
-{
-#ifndef _USEQT5_
-	pageStruct*	page=NULL;
-	int			numpages;
-	GtkTextIter	startiter;
-	GtkTextIter	enditer;
-
-	numpages=gtk_notebook_get_n_pages((GtkNotebook*)mainNotebook);
-	for(int j=0; j<numpages; j++)
-		{
-			page=kkedit->getDocumentForTab(j);
-			gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&startiter);
-			gtk_text_buffer_get_end_iter((GtkTextBuffer*)page->buffer,&enditer);
-			gtk_source_buffer_remove_source_marks(page->buffer,&startiter,&enditer,NULL);
-		}
-	g_list_free_full(newBookMarksList,destroyBMData);
-	newBookMarksList=NULL;
-	rebuildBookMarkMenu();
-	gtk_widget_show_all(bookMarkMenu);
-#endif
-}
-
-void toggleBookmarkz(void)
-{
-}
-
 void refreshMainWindow(void)
 {
 #ifndef _USEQT5_
@@ -274,18 +236,6 @@ int yesNo(char* question,char* file)
 	return(result);
 }
 
-void doOpenFile(Widget* widget,uPtr data)
-{
-	QStringList fileNames;
-
-	fileNames=QFileDialog::getOpenFileNames(kkedit->mainWindow,"Open File","","",0);
-	if (fileNames.count())
-		{
-			for (int j=0;j<fileNames.size();j++)
-				kkedit->openFile(fileNames.at(j).toUtf8().constData(),0,true);
-		}
-}
-
 int askSaveDialog(const QString filename)
 {
 	QMessageBox msgBox;
@@ -296,62 +246,6 @@ int askSaveDialog(const QString filename)
 	msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
 	msgBox.setDefaultButton(QMessageBox::Cancel);
 	return(msgBox.exec());
-}
-
-#ifndef _USEQT5_
-void updateStatusBar(GtkTextBuffer* textbuffer,GtkTextIter* location,GtkTextMark* mark,gpointer data)
-#else
-//TODO//
-void updateStatusBar(void)
-#endif
-{
-#ifndef _USEQT5_
-	pageStruct* page=(pageStruct*)data;
-	TextBuffer*	buf;
-	char*		message=NULL;
-	const char*	path;
-	const char*	lang;
-
-	if(sessionBusy==true)
-		return;
-
-	if((statusMessage!=NULL) || (busyFlag==true))
-		return;
-
-	if(busyFlag==true)
-		return;
-	pageStruct* pagecheck=kkedit->getDocumentForTab(currentTabNumber);
-
-	if((page==NULL) || (showStatus==false))
-		{
-			gtk_statusbar_pop((GtkStatusbar*)statusWidget,0);
-			gtk_statusbar_push((GtkStatusbar*)statusWidget,0,"");
-			return;
-		}
-
-	page->regexList=NULL;
-	page->regexMatchNumber=-1;
-
-	if(pagecheck!=page)
-		return;
-
-	path=page->filePath;
-	lang=page->lang;
-
-	if(path==NULL)
-		path="";
-
-	if(lang==NULL)
-		lang="";
-
-	buf=new TextBuffer(textbuffer);
-
-	gtk_statusbar_pop((GtkStatusbar*)statusWidget,0);
-	asprintf(&message,"Line %i Column %i \t\tSyntax Highlighting %s\t\tFilePath %s",buf->lineNum,buf->column,lang,path);
-	gtk_statusbar_push((GtkStatusbar*)statusWidget,0,message);
-	debugFree(&message,"updateStatusBar message");
-	delete buf;
-#endif
 }
 
 void setSensitive(void)
@@ -530,110 +424,110 @@ void sortTabs(Widget* widget,uPtr data)
 #endif
 }
 
-void switchPage(int thispage)//TODO//move ?
-{
-	char*			functions=NULL;
-	char*			lineptr;
-	DocumentClass	*doc=NULL;
-	int				linenum;
-	char			tmpstr[1024];
-	char*			correctedstr;
-	char*			typenames[50]= {NULL,};
-	char*			newstr=NULL;
-	bool			flag;
-	int				numtypes=0;
-	QMenu			*whattypemenu;
-	QMenu			*typesubmenus[50]= {NULL,};
-	bool			onefunc=false;
-	MenuItemClass	*menuitem;
-
-	//if(sessionBusy==true)
-	//	return;
-
-	doc=(DocumentClass*)((QTabWidget*)kkedit->mainNotebook)->widget(thispage);
-	if(doc==0)
-		return;
-	if(doc==NULL)
-		return;
-
-	doc->setStatusBarText();
-	qobject_cast<QMenu*>(kkedit->funcMenu)->clear();
-	getRecursiveTagList((char*)doc->getFilePath().toStdString().c_str(),&functions);//TODO//
-
-	lineptr=functions;
-	while (lineptr!=NULL)
-		{
-			tmpstr[0]=0;
-			sscanf (lineptr,"%*s %*s %i %[^\n]s",&linenum,tmpstr);
-			correctedstr=truncateWithElipses(tmpstr,kkedit->prefsMaxFuncChars);
-			sprintf(tmpstr,"%s",correctedstr);
-			debugFree(&correctedstr,"switchPage correctedstr");
-
-			if(strlen(tmpstr)>0)
-				{
-					if(kkedit->prefsFunctionMenuLayout==4)
-						{
-							newstr=NULL;
-							newstr=globalSlice->sliceBetween(lineptr,(char*)" ",(char*)" ");
-							if(newstr!=NULL)
-								{
-									flag=false;
-									for(int j=0; j<numtypes; j++)
-										{
-											if (strcmp(newstr,typenames[j])==0)
-												{
-													whattypemenu=typesubmenus[j];
-													flag=true;
-													break;
-												}
-										}
-
-									if(flag==false)
-										{
-											typenames[numtypes]=strdup(newstr);
-											debugFree(&newstr,"switchPage newstr");
-											if(typenames[numtypes][strlen(typenames[numtypes])-1]=='s')
-												asprintf(&newstr,"%s's",typenames[numtypes]);
-											else
-												asprintf(&newstr,"%ss",typenames[numtypes]);
-											newstr[0]=toupper(newstr[0]);
-											typesubmenus[numtypes]=new QMenu(newstr);
-											qobject_cast<QMenu*>(kkedit->funcMenu)->addMenu(qobject_cast<QMenu*>(typesubmenus[numtypes]));
-											whattypemenu=typesubmenus[numtypes];
-											numtypes++;
-										}
-
-									debugFree(&newstr,"switchPage newstr");
-
-									onefunc=true;
-									menuitem=new MenuItemClass(tmpstr);
-									//menuitem->setCallBackVoid(gotoLine);
-									menuitem->setMenuID(linenum);
-									menuitem->mainKKEditClass=kkedit;
-									qobject_cast<QMenu*>(whattypemenu)->addAction(menuitem);
-							//		QObject::connect(menuitem,SIGNAL(triggered()),menuitem,SLOT(menuClickedGotoLine()));
-									QObject::connect(menuitem,SIGNAL(triggered()),menuitem,SLOT(menuClickedGotoLine()));
-							}
-						}
-					else
-						{
-							onefunc=true;
-							menuitem=new MenuItemClass(tmpstr);
-							//menuitem->setCallBackVoid(gotoLine);
-							menuitem->setMenuID(linenum);
-							menuitem->mainKKEditClass=kkedit;
-							qobject_cast<QMenu*>(kkedit->funcMenu)->addAction(menuitem);
-						//	QObject::connect(menuitem,SIGNAL(triggered()),menuitem,SLOT(menuClickedGotoLine()));
-							QObject::connect(menuitem,SIGNAL(triggered()),menuitem,SLOT(menuClickedGotoLine()));
-						}
-				}
-
-			lineptr=strchr(lineptr,'\n');
-			if (lineptr!=NULL)
-				lineptr++;
-		}
-	kkedit->funcMenu->setEnabled(onefunc);
-}
+//void switchPage(int thispage)//TODO//move ?
+//{
+//	char*			functions=NULL;
+//	char*			lineptr;
+//	DocumentClass	*doc=NULL;
+//	int				linenum;
+//	char			tmpstr[1024];
+//	char*			correctedstr;
+//	char*			typenames[50]= {NULL,};
+//	char*			newstr=NULL;
+//	bool			flag;
+//	int				numtypes=0;
+//	QMenu			*whattypemenu;
+//	QMenu			*typesubmenus[50]= {NULL,};
+//	bool			onefunc=false;
+//	MenuItemClass	*menuitem;
+//
+//	//if(sessionBusy==true)
+//	//	return;
+//
+//	doc=(DocumentClass*)((QTabWidget*)kkedit->mainNotebook)->widget(thispage);
+//	if(doc==0)
+//		return;
+//	if(doc==NULL)
+//		return;
+//
+//	doc->setStatusBarText();
+//	qobject_cast<QMenu*>(kkedit->funcMenu)->clear();
+//	getRecursiveTagList((char*)doc->getFilePath().toStdString().c_str(),&functions);//TODO//
+//
+//	lineptr=functions;
+//	while (lineptr!=NULL)
+//		{
+//			tmpstr[0]=0;
+//			sscanf (lineptr,"%*s %*s %i %[^\n]s",&linenum,tmpstr);
+//			correctedstr=truncateWithElipses(tmpstr,kkedit->prefsMaxFuncChars);
+//			sprintf(tmpstr,"%s",correctedstr);
+//			debugFree(&correctedstr,"switchPage correctedstr");
+//
+//			if(strlen(tmpstr)>0)
+//				{
+//					if(kkedit->prefsFunctionMenuLayout==4)
+//						{
+//							newstr=NULL;
+//							newstr=globalSlice->sliceBetween(lineptr,(char*)" ",(char*)" ");
+//							if(newstr!=NULL)
+//								{
+//									flag=false;
+//									for(int j=0; j<numtypes; j++)
+//										{
+//											if (strcmp(newstr,typenames[j])==0)
+//												{
+//													whattypemenu=typesubmenus[j];
+//													flag=true;
+//													break;
+//												}
+//										}
+//
+//									if(flag==false)
+//										{
+//											typenames[numtypes]=strdup(newstr);
+//											debugFree(&newstr,"switchPage newstr");
+//											if(typenames[numtypes][strlen(typenames[numtypes])-1]=='s')
+//												asprintf(&newstr,"%s's",typenames[numtypes]);
+//											else
+//												asprintf(&newstr,"%ss",typenames[numtypes]);
+//											newstr[0]=toupper(newstr[0]);
+//											typesubmenus[numtypes]=new QMenu(newstr);
+//											qobject_cast<QMenu*>(kkedit->funcMenu)->addMenu(qobject_cast<QMenu*>(typesubmenus[numtypes]));
+//											whattypemenu=typesubmenus[numtypes];
+//											numtypes++;
+//										}
+//
+//									debugFree(&newstr,"switchPage newstr");
+//
+//									onefunc=true;
+//									menuitem=new MenuItemClass(tmpstr);
+//									//menuitem->setCallBackVoid(gotoLine);
+//									menuitem->setMenuID(linenum);
+//									menuitem->mainKKEditClass=kkedit;
+//									qobject_cast<QMenu*>(whattypemenu)->addAction(menuitem);
+//							//		QObject::connect(menuitem,SIGNAL(triggered()),menuitem,SLOT(menuClickedGotoLine()));
+//									QObject::connect(menuitem,SIGNAL(triggered()),menuitem,SLOT(menuClickedGotoLine()));
+//							}
+//						}
+//					else
+//						{
+//							onefunc=true;
+//							menuitem=new MenuItemClass(tmpstr);
+//							//menuitem->setCallBackVoid(gotoLine);
+//							menuitem->setMenuID(linenum);
+//							menuitem->mainKKEditClass=kkedit;
+//							qobject_cast<QMenu*>(kkedit->funcMenu)->addAction(menuitem);
+//						//	QObject::connect(menuitem,SIGNAL(triggered()),menuitem,SLOT(menuClickedGotoLine()));
+//							QObject::connect(menuitem,SIGNAL(triggered()),menuitem,SLOT(menuClickedGotoLine()));
+//						}
+//				}
+//
+//			lineptr=strchr(lineptr,'\n');
+//			if (lineptr!=NULL)
+//				lineptr++;
+//		}
+//	kkedit->funcMenu->setEnabled(onefunc);
+//}
 
 #ifndef _USEQT5_
 void dropUri(GtkWidget *widget,GdkDragContext *context,gint x,gint y,GtkSelectionData *selection_data,guint info,guint32 time,gpointer user_data)
@@ -1284,51 +1178,6 @@ bool tabPopUp(void)
 	return(false);
 }
 
-
-bool doSaveAll(Widget* widget,uPtr data)
-//TODO//
-{
-printf("doSaveAll %i\n",(int)(long)data);
-#if 0
-	int			numpages=gtk_notebook_get_n_pages((GtkNotebook*)mainNotebook);
-	int			result;
-	pageStruct*	page;
-
-	for(int loop=0; loop<numpages; loop++)
-		{
-			page=kkedit->getDocumentForTab(loop);
-			if(gtk_text_buffer_get_modified(GTK_TEXT_BUFFER(page->buffer)))
-				{
-					if((bool)data==true)
-						{
-							result=show_question(g_path_get_basename(page->fileName));
-							switch(result)
-								{
-								case GTK_RESPONSE_YES:
-									gtk_notebook_set_current_page((GtkNotebook*)mainNotebook,loop);
-									saveFile(NULL,NULL);
-									break;
-								case GTK_RESPONSE_NO:
-									break;
-								case GTK_RESPONSE_CANCEL:
-									return(true);
-									break;
-
-								default:
-									break;
-								}
-						}
-					else
-						{
-							gtk_notebook_set_current_page((GtkNotebook*)mainNotebook,loop);
-							saveFile(NULL,NULL);
-						}
-				}
-		}
-	return(true);
-#endif
-	return(true);
-}
 
 void doShutdown(Widget* widget,uPtr data)
 //TODO//save modified files

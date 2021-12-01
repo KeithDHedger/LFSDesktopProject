@@ -92,9 +92,9 @@ VISIBLE void KKEditClass::newFile(const QString data,const QString filename)
 	sessionBusy=false;
 }
 
-bool KKEditClass::saveFile(void)
+bool KKEditClass::saveFile(int tabnum)
 {
-	DocumentClass	*doc=this->getDocumentForTab(-1);
+	DocumentClass	*doc=this->getDocumentForTab(tabnum);
 	QFile			file;
 	QFileInfo		fileinfo;
 	bool			retval=false;
@@ -152,6 +152,21 @@ bool KKEditClass::saveFile(void)
 				}
 		}
 	return true;
+}
+
+void KKEditClass::saveAllFiles(void)
+{
+printf("void KKEditClass::saveAllFiles(void)\n");
+	sessionBusy=true;
+
+	int	numtabs=kkedit->mainNotebook->count();
+	for(int loop=0;loop<numtabs;loop++)
+		{
+			if(this->saveFile(loop)==false)
+				return;
+		}
+
+	sessionBusy=false;
 }
 
 void KKEditClass::newEditor(int what)

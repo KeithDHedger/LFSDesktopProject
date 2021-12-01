@@ -590,13 +590,3 @@ void fileErrorMessages(char *message,const gchar *filepath)
 #endif
 }
 
-bool openFile(const gchar *filepath,int linenumber,bool warn)
-{
-	return(kkedit->openFile(filepath,linenumber,warn));
-}
-
-
-void newFileWrap(Widget* widget,uPtr data)
-{
-	//kkedit->newFile();
-}

@@ -554,7 +554,7 @@ void cancelPrefs(void)
 	//delete prefsWindow;
 	kkedit->readConfigs();
 	kkedit->resetAllFilePrefs();
-	switchPage(qobject_cast<QTabWidget*>(kkedit->mainNotebook)->currentIndex());
+	kkedit->switchPage(qobject_cast<QTabWidget*>(kkedit->mainNotebook)->currentIndex());
 }
 
 
