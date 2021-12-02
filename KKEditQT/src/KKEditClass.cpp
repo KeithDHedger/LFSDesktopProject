@@ -1014,15 +1014,20 @@ void KKEditClass::showDocs(void)
 
 bool KKEditClass::closeTab(int index)
 {
-fprintf(stderr,"bool KKEditClass::closeTab(int index)\n");
 	DocumentClass	*doc=NULL;
 	int				thispage=index;
 
 	this->sessionBusy=true;
+
 	if(this->closingAllTabs==true)
 		thispage=0;
 	else
-		thispage=(this->mainNotebook)->currentIndex();
+		{
+			if(index==-1)
+				thispage=this->mainNotebook->currentIndex();
+			else
+				thispage=index;
+		}
 
 	doc=qobject_cast<DocumentClass*>(this->mainNotebook->widget(thispage));
 	if(doc!=0)
