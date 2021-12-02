@@ -72,6 +72,7 @@ class KKEditClass : public QObject
 		int							currentWorkSpace=-1;
 		bool						forcedMultInst=false;
 		bool						forceDefaultGeom=false;
+		bool						sessionBusy=false;
 
 //app functions
 		void						initApp(int argc,char** argv);
@@ -119,6 +120,7 @@ class KKEditClass : public QObject
 		bool						findInAllFiles=false;
 		bool						hightlightAll=true;
 		int							currentPage=0;
+		bool						closingAllTabs=false;
 //editor functions
 
 //menubar
@@ -217,7 +219,8 @@ class KKEditClass : public QObject
 		void						newEditor(int what);
 		void						runPipe(QString command);
 		void						saveAllFiles(void);
-
+		bool						saveFileAs(int tabnum);
+		int							askSaveDialog(const QString filename);
 //document vars
 //document functions
 		DocumentClass				*getDocumentForTab(int tabnum);
@@ -324,6 +327,7 @@ class KKEditClass : public QObject
 		void						addToToolBar(void);
 
 		void						switchPage(int index);
+		bool						closeTab(int index);
 
 	protected:
 	private:

@@ -627,7 +627,8 @@ void KKEditClass::buildMainGui(void)
 	
 	//QObject::connect(this->mainNotebook,&QTabWidget::currentChanged(int),switchPage(int));//TODO//
 	QObject::connect(this->mainNotebook,SIGNAL(currentChanged(int)),this,SLOT(switchPage(int)));
-	QObject::connect(this->mainNotebook,&QTabWidget::tabCloseRequested,closeTabQT);
+	QObject::connect(this->mainNotebook,SIGNAL(tabCloseRequested(int)),this,SLOT(closeTab(int)));
+	//QObject::connect(this->mainNotebook,&QTabWidget::tabCloseRequested,closeTabQT);
 ////	QObject::connect(qobject_cast<QWidget*>(mainNotebook),&QWidget::keyPressEvent,keyp);
 
 	this->menuBar=new QMenuBar;
@@ -691,6 +692,7 @@ void KKEditClass::buildMainGui(void)
 
 //close
 	this->closeMenuItem=this->makeMenuItemClass(FILEMENU,"Close",QKeySequence::Close,"window-close",CLOSEMENUNAME,CLOSEMENUITEM);
+	//this->closeMenuItem=this->makeMenuItemClass(FILEMENU,"Close",QKeySequence::Close,"window-close",CLOSEMENUNAME,CLOSEMENUITEM);
 
 //close-all
 	this->closeAllMenuItem=this->makeMenuItemClass(FILEMENU,"Close All",0,"window-close",CLOSEALLMENUNAME,CLOSEALLMENUITEM);

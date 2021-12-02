@@ -70,18 +70,21 @@ void KKEditClass::openAsHexDump(void)
 
 VISIBLE void KKEditClass::newFile(const QString data,const QString filename)
 {
-	DocumentClass*	doc;
+	DocumentClass	*doc;
+	int				tabnum;
 
-	sessionBusy=true;
+	this->sessionBusy=true;
 	doc=new DocumentClass(kkedit);
 	doc->setPlainText(data);
-	doc->tabNumber=qobject_cast<QTabWidget*>(kkedit->mainNotebook)->addTab(doc,"");
+	//doc->tabNumber=qobject_cast<QTabWidget*>(kkedit->mainNotebook)->addTab(doc,"");
+	tabnum=this->mainNotebook->addTab(doc,"");
 	if(filename.compare("")==0)
 		doc->setFileName(QString("Untitled-%1").arg(untitledNumber));
 	else
 		doc->setFileName(filename);
 	doc->setTabName(truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
-	this->mainNotebook->setTabToolTip(doc->tabNumber,doc->getFileName());
+	//this->mainNotebook->setTabToolTip(doc->tabNumber,doc->getFileName());
+	this->mainNotebook->setTabToolTip(tabnum,doc->getFileName());
 	doc->setFilePrefs();
 	doc->mimeType="text/plain";
 	doc->pageIndex=this->newPageIndex;
@@ -89,7 +92,64 @@ VISIBLE void KKEditClass::newFile(const QString data,const QString filename)
 	doc->setHiliteLanguage();
 	untitledNumber++;
 	this->mainNotebook->setCurrentWidget(doc);
-	sessionBusy=false;
+	this->sessionBusy=false;
+}
+
+int KKEditClass::askSaveDialog(const QString filename)
+{
+	QMessageBox msgBox;
+
+	msgBox.setIcon(QMessageBox::Warning);
+	msgBox.setText(filename+" has been modified.");
+	msgBox.setInformativeText("Do you want to save your changes?");
+	msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+	msgBox.setDefaultButton(QMessageBox::Cancel);
+	return(msgBox.exec());
+}
+
+bool KKEditClass::saveFileAs(int tabnum)
+{
+	DocumentClass	*doc=this->getDocumentForTab(tabnum);
+	QFile			file;
+	QFileInfo		fileinfo;
+	bool			retval=false;
+	QString			dialogpath;
+	int				calctabnum=this->mainNotebook->indexOf(doc);
+
+	if(doc->getFilePath().isEmpty()==true)
+		dialogpath=getenv("HOME") + QString("/") + doc->getFileName();
+	else
+		dialogpath=doc->getFilePath();
+
+	QString fileName = QFileDialog::getSaveFileName(this->mainWindow,"Save File",dialogpath);
+
+	if(fileName.isEmpty()==true)
+		return(false);
+	else
+		{
+			file.setFileName(fileName);
+			fileinfo.setFile(file);
+			retval=file.open(QIODevice::Text | QIODevice::WriteOnly);
+			if(retval==true)
+				{
+					doc->setDirPath(fileinfo.canonicalPath());
+					doc->setFilePath(fileinfo.canonicalFilePath());
+					doc->setFileName(fileinfo.fileName());
+					//this->mainNotebook->setTabToolTip(doc->tabNumber,doc->getFilePath());
+					this->mainNotebook->setTabToolTip(calctabnum,doc->getFilePath());
+					QTextStream(&file) << doc->toPlainText() << Qt::endl;
+					doc->dirty=false;
+					doc->setTabName(truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
+					file.close();
+				}
+			else
+				{
+					QMessageBox *msg=new QMessageBox(QMessageBox::Warning,QString("Save File"),QString("Cant save file \"%1\"").arg(doc->getFileName()),QMessageBox::Ok,this->mainWindow,Qt::Dialog);
+					msg->exec();
+					delete msg;
+				}
+		}	
+	return(retval);
 }
 
 bool KKEditClass::saveFile(int tabnum)
@@ -104,33 +164,7 @@ bool KKEditClass::saveFile(int tabnum)
 
 	if(doc->getFilePath().isEmpty()==true)
 		{
-			fprintf(stderr,"filepath not set\n");
-			 QString fileName = QFileDialog::getSaveFileName(this->mainWindow,"Save File",doc->getFileName());
-			 if(fileName.isEmpty()==true)
-			 	return(false);
-			 else
-			 	{
-					file.setFileName(fileName);
-			 		fileinfo.setFile(file);
-					retval=file.open(QIODevice::Text | QIODevice::WriteOnly);
-					if(retval==true)
-						{
-					 		doc->setDirPath(fileinfo.canonicalPath());
-							doc->setFilePath(fileinfo.canonicalFilePath());
-							doc->setFileName(fileinfo.fileName());
-							this->mainNotebook->setTabToolTip(doc->tabNumber,doc->getFilePath());
-							QTextStream(&file) << doc->toPlainText() << Qt::endl;
-							doc->dirty=false;
-							doc->setTabName(truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
-							file.close();
-						}
-					else
-						{
-							QMessageBox *msg=new QMessageBox(QMessageBox::Warning,QString("Save File"),QString("Cant save file \"%1\"").arg(doc->getFileName()),QMessageBox::Ok,this->mainWindow,Qt::Dialog);
-							msg->exec();
-							delete msg;
-						}
-			 	}
+			return(this->saveFileAs(tabnum)==false);
 		}
 	else
 		{
@@ -157,7 +191,7 @@ bool KKEditClass::saveFile(int tabnum)
 void KKEditClass::saveAllFiles(void)
 {
 printf("void KKEditClass::saveAllFiles(void)\n");
-	sessionBusy=true;
+	this->sessionBusy=true;
 
 	int	numtabs=kkedit->mainNotebook->count();
 	for(int loop=0;loop<numtabs;loop++)
@@ -166,7 +200,7 @@ printf("void KKEditClass::saveAllFiles(void)\n");
 				return;
 		}
 
-	sessionBusy=false;
+	this->sessionBusy=false;
 }
 
 void KKEditClass::newEditor(int what)

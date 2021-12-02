@@ -219,8 +219,8 @@ void KKEditClass::switchPage(int index)
 	bool			onefunc=false;
 	MenuItemClass	*menuitem;
 
-//	if(sessionBusy==true)
-//		return;
+	if(this->sessionBusy==true)
+		return;
 fprintf(stderr,"index=%i\n",index);
 	doc=qobject_cast<DocumentClass*>(this->mainNotebook->widget(index));
 	if(doc==0)
@@ -629,13 +629,13 @@ void KKEditClass::handleBMMenu(QWidget *widget,int what)
 						{
 							if((value.bmLabel.compare(cursor.block().text().simplified())==0) && (value.docIndex==doc->pageIndex))
 								{
-									sessionBusy=true;
+									this->sessionBusy=true;
 									QTextBlock			block=doc->document()->findBlockByLineNumber(value.line);
 									QTextBlockFormat	bf=block.blockFormat();
 
 									bf.clearBackground();
 									cursor.setBlockFormat(bf);
-									sessionBusy=false;
+									this->sessionBusy=false;
 								
 									this->bookMarkMenu->removeAction(value.menu);
 									this->bookMarks.remove(value.bmKey);
@@ -806,9 +806,10 @@ bool KKEditClass::openFile(std::string filepath,int linenumber,bool warn)
 	bool			retval=false;
 	QFile			file(QString::fromStdString(filepath));
 	QFileInfo		fileinfo(file);
+	int				tabnum;
 
 	busyFlag=true;
-	sessionBusy=true;
+	this->sessionBusy=true;
 
 	retval=file.open(QIODevice::Text | QIODevice::ReadOnly);
 	if(retval==true)
@@ -821,13 +822,16 @@ bool KKEditClass::openFile(std::string filepath,int linenumber,bool warn)
 			doc->setFilePrefs();
 			doc->pageIndex=this->newPageIndex;
 			this->pages[this->newPageIndex++]=doc;
-			doc->tabNumber=qobject_cast<QTabWidget*>(this->mainNotebook)->addTab(doc,doc->getTabName());
+			//doc->tabNumber=qobject_cast<QTabWidget*>(this->mainNotebook)->addTab(doc,doc->getTabName());
+			tabnum=this->mainNotebook->addTab(doc,doc->getTabName());
 			doc->setDirPath(fileinfo.canonicalPath());
 			doc->setFilePath(fileinfo.canonicalFilePath());
 			doc->setFileName(fileinfo.fileName());
 			doc->setTabName(truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
-			qobject_cast<QTabWidget*>(this->mainNotebook)->setTabToolTip(doc->tabNumber,doc->getFilePath());
-			qobject_cast<QTabWidget*>(this->mainNotebook)->setCurrentIndex(doc->tabNumber);
+		//	qobject_cast<QTabWidget*>(this->mainNotebook)->setTabToolTip(doc->tabNumber,doc->getFilePath());
+			this->mainNotebook->setTabToolTip(tabnum,doc->getFilePath());
+			//qobject_cast<QTabWidget*>(this->mainNotebook)->setCurrentIndex(doc->tabNumber);
+			this->mainNotebook->setCurrentIndex(tabnum);
 			this->gotoLine(linenumber);
 			doc->document()->clearUndoRedoStacks(QTextDocument::UndoAndRedoStacks);
 			doc->setHiliteLanguage();
@@ -846,9 +850,10 @@ bool KKEditClass::openFile(std::string filepath,int linenumber,bool warn)
 			file.close();
 		}
 	busyFlag=false;
-	sessionBusy=false;
+	this->sessionBusy=false;
 	doc->dirty=false;
-	if(doc->tabNumber==0)
+	//if(doc->tabNumber==0)
+	if(tabnum==0)
 		switchPage(0);
 	return(retval);
 }
@@ -1006,3 +1011,50 @@ void KKEditClass::showDocs(void)
 			showDocView(USEURI,thePage,"Doxygen Documentation");
 		}
 }
+
+bool KKEditClass::closeTab(int index)
+{
+fprintf(stderr,"bool KKEditClass::closeTab(int index)\n");
+	DocumentClass	*doc=NULL;
+	int				thispage=index;
+
+	this->sessionBusy=true;
+	if(this->closingAllTabs==true)
+		thispage=0;
+	else
+		thispage=(this->mainNotebook)->currentIndex();
+
+	doc=qobject_cast<DocumentClass*>(this->mainNotebook->widget(thispage));
+	if(doc!=0)
+		{
+			if(doc->dirty==true)
+				{
+					int result=this->askSaveDialog(doc->fileName);
+					switch(result)
+						{
+							case QMessageBox::Save:
+								this->saveFile(thispage);
+								fprintf(stderr,"save\n");
+       // Save was clicked
+								break;
+							case QMessageBox::Discard:
+       // Don't Save was clicked
+								fprintf(stderr,"Discard\n");
+								break;
+							case QMessageBox::Cancel:
+       // Cancel was clicked
+								this->sessionBusy=false;
+								fprintf(stderr,"Cancel\n");
+								return(false);
+								break;
+						}
+				}
+
+			this->mainNotebook->removeTab(thispage);
+			delete doc;
+		}
+
+	this->sessionBusy=false;
+	return(true);
+}
+

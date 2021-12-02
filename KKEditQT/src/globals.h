@@ -64,7 +64,7 @@ extern unsigned int		maxFRHistory;
 
 //app stuff
 extern bool				busyFlag;
-extern bool				sessionBusy;
+//extern bool				sessionBusy;
 extern bool				autoSelected;
 
 extern int				currentPage;

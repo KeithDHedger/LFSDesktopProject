@@ -29,7 +29,7 @@ int				bmMarkNumber=0;
 
 //app stuff
 bool			busyFlag=false;
-bool	sessionBusy=false;
+//bool	sessionBusy=false;
 bool			autoSelected=false;
 
 //find replaceAll

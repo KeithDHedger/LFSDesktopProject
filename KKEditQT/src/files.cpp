@@ -266,7 +266,7 @@ printf("restoreSession %i\n",(int)(long)data);
 	char		strarg[2048];
 	int			currentline;
 
-	sessionBusy=true;
+	kkedit->sessionBusy=true;
 
 	asprintf(&filename,"%s/" KKEDITFOLDER "/session",getenv("HOME"));
 	fd=fopen(filename,"r");
@@ -278,7 +278,7 @@ printf("restoreSession %i\n",(int)(long)data);
 					sscanf(buffer,"%i %[^\n]s",(int*)&currentline,(char*)&strarg);
 					if(kkedit->openFile(strarg,currentline,true)==false)
 						{
-							sessionBusy=true;
+							kkedit->sessionBusy=true;
 							intarg=999;
 							while(intarg!=-1)
 								{
@@ -288,7 +288,7 @@ printf("restoreSession %i\n",(int)(long)data);
 						}
 					else
 						{
-							sessionBusy=true;
+							kkedit->sessionBusy=true;
 							intarg=999;
 							fgets(buffer,2048,fd);
 							sscanf(buffer,"%i %s",(int*)&intarg,(char*)&strarg);
@@ -324,7 +324,7 @@ do bookmarks
 			debugFree(&filename,"restoreSession filename");
 		}
 
-	sessionBusy=false;
+	kkedit->sessionBusy=false;
 #else
 	FILE*		fd=NULL;
 	char*		filename;
@@ -340,7 +340,7 @@ do bookmarks
 	while(gtk_events_pending())
 		gtk_main_iteration_do(false);
 
-	sessionBusy=true;
+	kkedit->sessionBusy=true;
 	gtk_widget_freeze_child_notify((GtkWidget*)mainNotebook);
 
 	asprintf(&filename,"%s/" KKEDITFOLDER "/session",getenv("HOME"));
@@ -353,7 +353,7 @@ do bookmarks
 					sscanf(buffer,"%i %[^\n]s",(int*)&currentline,(char*)&strarg);
 					if(kkedit->openFile(strarg,currentline,true)==false)
 						{
-							sessionBusy=true;
+						kkedit->sessionBusy=true;
 							intarg=999;
 							while(intarg!=-1)
 								{
@@ -387,7 +387,7 @@ do bookmarks
 		}
 
 	gtk_widget_thaw_child_notify((GtkWidget*)mainNotebook);
-	sessionBusy=false;
+	kkedit->sessionBusy=false;
 	while(gtk_events_pending())
 		gtk_main_iteration_do(false);
 	delete buf;
@@ -499,89 +499,6 @@ gboolean clickInView(void)
 	return(false);
 }
 
-pageStruct* makeNewPage(void)
-{
-	pageStruct*			page;
-#ifdef _USEQT5_
-printf("makenewpage\n");
-	page=(pageStruct*)malloc(sizeof(pageStruct));
-	return(page);
-#else
-	GtkTextIter			iter;
-	GtkTextAttributes*	attr;
-
-	page=(pageStruct*)malloc(sizeof(pageStruct));
-	page->buffer=NULL;
-	page->userDataList=NULL;
-	page->filePath=NULL;
-	page->realFilePath=NULL;
-
-	page->pane=gtk_vpaned_new();
-	page->pageWindow=(GtkScrolledWindow*)gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(page->pageWindow),GTK_POLICY_AUTOMATIC,GTK_POLICY_AUTOMATIC);
-	page->pageWindow2=(GtkScrolledWindow*)gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(page->pageWindow2),GTK_POLICY_AUTOMATIC,GTK_POLICY_AUTOMATIC);
-
-	page->buffer=gtk_source_buffer_new(NULL);
-	page->view=(GtkSourceView*)gtk_source_view_new_with_buffer(page->buffer);
-
-//completion
-	page->completion=gtk_source_view_get_completion(GTK_SOURCE_VIEW(page->view));
-	g_object_set(page->completion,"remember-info-visibility",true,NULL);
-	g_object_set(page->completion,"select-on-show",true,NULL);
-	g_object_set(page->completion,"show-headers",true,NULL);
-	g_object_set(page->completion,"show-icons",false,NULL);
-	g_object_set(page->completion,"accelerators",0,NULL);
-	createCompletion(page);
-
-	g_signal_connect(G_OBJECT(page->view),"populate-popup",G_CALLBACK(populatePopupMenu),NULL);
-	page->view2=(GtkSourceView*)gtk_source_view_new_with_buffer(page->buffer);
-
-	attr=gtk_text_view_get_default_attributes((GtkTextView*)page->view);
-	page->highlightTag=gtk_text_buffer_create_tag((GtkTextBuffer*)page->buffer,"highlighttag","background",gdk_color_to_string((const GdkColor*)&attr->appearance.fg_color),"foreground",gdk_color_to_string((const GdkColor*)&attr->appearance.bg_color),NULL);
-	gtk_text_attributes_unref(attr);
-
-	gtk_paned_add1(GTK_PANED(page->pane),(GtkWidget*)page->pageWindow);
-	gtk_container_add (GTK_CONTAINER(page->pageWindow),(GtkWidget*)page->view);
-	g_signal_connect(G_OBJECT(page->view),"button-release-event",G_CALLBACK(whatPane),(void*)1);
-
-	page->rebuildMenu=true;
-	page->isFirst=true;
-	page->itsMe=false;
-	page->markList=NULL;
-	page->inTop=true;
-	page->gFile=NULL;
-	page->monitor=NULL;
-	page->isSplit=false;
-	page->lang=NULL;
-	page->tabVbox=NULL;
-	page->showingChanged=false;
-	page->backMark=gtk_text_mark_new("back-mark",true);
-	page->regexList=NULL;
-	page->regexMatchNumber=-1;
-
-	gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&iter);
-	gtk_text_buffer_add_mark(GTK_TEXT_BUFFER(page->buffer),page->backMark,&iter);
-
-//dnd
-	gtk_drag_dest_set((GtkWidget*)page->view,GTK_DEST_DEFAULT_ALL,NULL,0,GDK_ACTION_COPY);
-	gtk_drag_dest_add_uri_targets((GtkWidget*)page->view);
-	gtk_drag_dest_add_text_targets((GtkWidget*)page->view);
-	g_signal_connect_after(G_OBJECT(page->view),"drag-data-received",G_CALLBACK(dropText),(void*)page);
-	g_signal_connect(G_OBJECT(page->view),"button-press-event",G_CALLBACK(clickInView),NULL);
-
-	gtk_text_buffer_set_modified(GTK_TEXT_BUFFER(page->buffer),FALSE);
-	g_signal_connect(G_OBJECT(page->buffer),"modified-changed",G_CALLBACK(setSensitive),NULL);
-	gtk_widget_grab_focus((GtkWidget*)page->view);
-
-	g_signal_connect(page->view, "line-mark-activated",G_CALLBACK(line_mark_activated),page);
-	add_source_mark_pixbufs(GTK_SOURCE_VIEW(page->view));
-//status bar
-	g_signal_connect(G_OBJECT(page->buffer),"mark-set",G_CALLBACK(updateStatusBar),(void*)page);
-
-	return(page);
-#endif
-}
 
 void fileErrorMessages(char *message,const gchar *filepath)
 {

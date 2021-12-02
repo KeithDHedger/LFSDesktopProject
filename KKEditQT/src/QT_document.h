@@ -75,7 +75,6 @@ class DocumentClass : public QPlainTextEdit
 #else
 		QSourceHighlite::QSourceHighliter	*highlighter;
 #endif
-		int									tabNumber;
 		KKEditClass							*mainKKEditClass=NULL;
 		QColor								prefsHiLiteLineColor;
 		QColor								bookmarkLineColor;

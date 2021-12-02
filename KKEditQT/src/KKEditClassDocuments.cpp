@@ -23,9 +23,9 @@
 DocumentClass* KKEditClass::getDocumentForTab(int tabnum)
 {
 	if(tabnum==-1)
-		return(qobject_cast<DocumentClass*>(kkedit->mainNotebook->currentWidget()));
+		return(qobject_cast<DocumentClass*>(this->mainNotebook->currentWidget()));
 	else
-		return(qobject_cast<DocumentClass*>(kkedit->mainNotebook->widget(tabnum)));
+		return(qobject_cast<DocumentClass*>(this->mainNotebook->widget(tabnum)));
 }
 
 /*

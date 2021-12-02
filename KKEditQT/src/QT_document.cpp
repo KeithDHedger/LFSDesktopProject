@@ -111,7 +111,7 @@ void DocumentClass::updateLineNumberAreaWidth(void)
 
 void DocumentClass::modified()
 {
-	if((sessionBusy==true) || (this->dirty==true))
+	if((this->mainKKEditClass->sessionBusy==true) || (this->dirty==true))
 		return;
 
 	this->dirty=true;
@@ -131,13 +131,13 @@ void DocumentClass::highlightCurrentLine()
 		{
 			if(value.docIndex==this->pageIndex)
 				{
-					sessionBusy=true;
+					this->mainKKEditClass->sessionBusy=true;
 					QTextBlock block=this->document()->findBlockByNumber(value.line-1);
 					QTextBlockFormat bf=block.blockFormat();
 					QTextCursor cursor(block);
 					bf.setBackground(this->bookmarkLineColor);
 					cursor.setBlockFormat(bf);
-					sessionBusy=false;
+					this->mainKKEditClass->sessionBusy=false;
 				}
 		}
 
@@ -289,8 +289,10 @@ const QString DocumentClass::getDirPath(void)
 
 void DocumentClass::setTabName(QString tabname)
 {
+	int tabnum=this->mainKKEditClass->mainNotebook->indexOf(this);
 	this->tabName=tabname;
-	this->mainKKEditClass->mainNotebook->setTabText(this->tabNumber,tabname);
+	//this->mainKKEditClass->mainNotebook->setTabText(this->tabNumber,tabname);
+	this->mainKKEditClass->mainNotebook->setTabText(tabnum,tabname);
 }
 
 const QString DocumentClass::getTabName(void)

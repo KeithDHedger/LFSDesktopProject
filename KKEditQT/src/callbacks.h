@@ -15,12 +15,6 @@ void doOpenFile(Widget* widget,uPtr data);
 bool closeTab(Widget* widget,uPtr data);
 void closeTabQT(int tabnum);
 
-#ifndef _USEQT5_
-void switchPage(GtkNotebook *notebook,gpointer arg1,guint arg2,gpointer user_data);
-#else
-//TODO//
-void switchPage(int thispage);
-#endif
 void setSensitive(void);
 
 void copyToClip(Widget* widget,uPtr data);

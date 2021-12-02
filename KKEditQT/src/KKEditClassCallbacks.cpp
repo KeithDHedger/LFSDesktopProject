@@ -265,6 +265,7 @@ void KKEditClass::doFileMenuItems()
 {
 	QAction			*caller=qobject_cast<QAction*>(sender());
 	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(caller);
+	bool			retval;
 	fprintf(stderr,"file -> menu id=%i, menu name=%s\n",mc->getMenuID(),mc->text().toStdString().c_str());
 
 	switch(mc->getMenuID())
@@ -296,7 +297,7 @@ void KKEditClass::doFileMenuItems()
 				this->saveFile(-1);
 				break;
 			case SAVEASMENUITEM:
-				this->saveFile(-1);
+				this->saveFileAs(-1);
 				break;
 			case SAVEALLMENUITEM:
 				this->saveAllFiles();
@@ -311,7 +312,8 @@ void KKEditClass::doFileMenuItems()
 				printFile(NULL,PRINTMENUITEM);
 				break;
 			case CLOSEMENUITEM:
-				closeTab(NULL,0);
+				this->closingAllTabs=false;
+				retval=this->closeTab(-1);
 				break;
 			case CLOSEALLMENUITEM:
 				closeAllTabs(NULL,CLOSEALLMENUITEM);
