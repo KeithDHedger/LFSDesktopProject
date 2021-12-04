@@ -526,27 +526,6 @@ void buildKeys()
 	gtk_widget_show_all(keysWindow);
 #endif
 }
-//
-//QAction* makeMenuItem(Widget* menu,const char* name,const QKeySequence key,const char* iconname,const char* widgetname,menuCallbackVoid ptrvoid,menuCallbackBool ptrbool,int data)
-//{
-//fprintf(stderr,">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.\n");
-//	MenuItemClass* menuitem=new MenuItemClass(name);
-//
-//	QIcon icon=QIcon::fromTheme(iconname,QIcon(iconname));
-//	 
-//	menuitem->setShortcut(key);
-//	menuitem->setIcon(icon);
-//	menuitem->setObjectName(widgetname);
-//	if(ptrvoid!=NULL)
-//		menuitem->setCallBackVoid(ptrvoid);
-//	//else
-//	if(ptrbool!=NULL)
-//		menuitem->setCallBackBool(ptrbool);
-//	menuitem->setMenuID(data);
-//	qobject_cast<QMenu*>(menu)->addAction(menuitem);
-//	
-//	return(menuitem);
-//}
 
 void cancelPrefs(void)
 {

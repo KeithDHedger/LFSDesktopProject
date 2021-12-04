@@ -26,9 +26,6 @@
 void saveVarsToFile(char* filepath,args* dataptr);
 void loadVarsFromFile(char* filepath,args* dataptr);
 
-
-void reloadFile(Widget* widget,uPtr data);
-
 void saveSession(Widget* widget,uPtr data);
 void restoreSession(Widget* widget,uPtr data);
 

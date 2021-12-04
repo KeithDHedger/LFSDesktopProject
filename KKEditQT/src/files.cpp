@@ -180,31 +180,6 @@ void dropText(void)
 #endif
 }
 
-void reloadFile(Widget* widget,uPtr data)
-//TODO//
-{
-printf("reloadFile %i\n",(int)(long)data);
-
-#ifndef _USEQT5_
-	pageStruct*	page=kkedit->getDocumentForTab(-1);
-	gchar*		buffer;
-	long		filelen;
-	GtkTextIter	start;
-	GtkTextIter	end;
-
-	if(page->filePath!=NULL)
-		{
-			g_file_get_contents(page->filePath,&buffer,(gsize*)&filelen,NULL);
-			gtk_text_buffer_get_bounds((GtkTextBuffer*)page->buffer,&start,&end);
-			gtk_text_buffer_select_range((GtkTextBuffer*)page->buffer,&start,&end);
-			gtk_text_buffer_delete_selection((GtkTextBuffer*)page->buffer,true,true);
-			gtk_text_buffer_get_start_iter((GtkTextBuffer*)page->buffer,&start);
-			gtk_text_buffer_insert((GtkTextBuffer*)page->buffer,&start,buffer,filelen);
-			debugFree(&buffer,"reloadFile buffer");
-		}
-#endif
-}
-
 void saveSession(Widget* widget,uPtr data)
 //TODO//
 {
@@ -258,6 +233,7 @@ void restoreSession(Widget* widget,uPtr data)
 //TODO//
 {
 printf("restoreSession %i\n",(int)(long)data);
+#if 0
 #ifdef _USEQT5_
 	FILE*		fd=NULL;
 	char*		filename;
@@ -391,6 +367,7 @@ do bookmarks
 	while(gtk_events_pending())
 		gtk_main_iteration_do(false);
 	delete buf;
+#endif
 #endif
 }
 

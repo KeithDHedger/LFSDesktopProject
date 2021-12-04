@@ -38,8 +38,6 @@ class StringSlice
 		char* 	slice(char* src,int start,int end);
 		char* 	sliceStrLen(char* src,char* startstr,int len);
 		char* 	deleteSlice(char* src,char* delstr);
-		char* 	replaceSlice(char* src,char* findstr,char* replacestr);
-		char*	replaceAllSlice(char* src,char* findstr,char* replacestr);
 		void	setCaseless(bool caseval);
 		void	copyToBuffer(const char* str);
 		int		getResult(void);

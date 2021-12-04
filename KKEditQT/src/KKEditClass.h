@@ -209,6 +209,7 @@ class KKEditClass : public QObject
 		void						setUpToolBar(void);
 
 //file vars
+		bool						openFromDialog=false;
 //file functions
 		void						newFile(const QString data="",const QString filename="");
 		bool						openFile(std::string filepath,int linenumber=1,bool warn=false);
@@ -228,6 +229,7 @@ class KKEditClass : public QObject
 		void						goToDefinition(void);
 		void						showLineEntry(void);
 		void						gotoLine(int linenumber);
+		void						reloadDocument(void);
 
 //bookmark vars
 		QHash<int,bookMarkStruct>	bookMarks;
@@ -328,6 +330,7 @@ class KKEditClass : public QObject
 
 		void						switchPage(int index);
 		bool						closeTab(int index);
+		void						closeAllTabs(void);
 
 	protected:
 	private:

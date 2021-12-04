@@ -11,9 +11,6 @@
 
 #include "kkedit-includes.h"
 
-void doOpenFile(Widget* widget,uPtr data);
-bool closeTab(Widget* widget,uPtr data);
-void closeTabQT(int tabnum);
 
 void setSensitive(void);
 

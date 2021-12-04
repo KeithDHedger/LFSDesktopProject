@@ -316,10 +316,10 @@ void KKEditClass::doFileMenuItems()
 				retval=this->closeTab(-1);
 				break;
 			case CLOSEALLMENUITEM:
-				closeAllTabs(NULL,CLOSEALLMENUITEM);
+				this->closeAllTabs();
 				break;
 			case REVERTMENUITEM:
-				reloadFile(NULL,REVERTMENUITEM);
+				this->reloadDocument();
 				break;
 			case QUITMENUITEM:
 				doShutdown(NULL,QUITMENUITEM);

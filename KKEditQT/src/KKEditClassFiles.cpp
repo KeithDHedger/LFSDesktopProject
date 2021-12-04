@@ -76,14 +76,12 @@ VISIBLE void KKEditClass::newFile(const QString data,const QString filename)
 	this->sessionBusy=true;
 	doc=new DocumentClass(kkedit);
 	doc->setPlainText(data);
-	//doc->tabNumber=qobject_cast<QTabWidget*>(kkedit->mainNotebook)->addTab(doc,"");
 	tabnum=this->mainNotebook->addTab(doc,"");
 	if(filename.compare("")==0)
 		doc->setFileName(QString("Untitled-%1").arg(untitledNumber));
 	else
 		doc->setFileName(filename);
 	doc->setTabName(truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
-	//this->mainNotebook->setTabToolTip(doc->tabNumber,doc->getFileName());
 	this->mainNotebook->setTabToolTip(tabnum,doc->getFileName());
 	doc->setFilePrefs();
 	doc->mimeType="text/plain";
@@ -135,7 +133,6 @@ bool KKEditClass::saveFileAs(int tabnum)
 					doc->setDirPath(fileinfo.canonicalPath());
 					doc->setFilePath(fileinfo.canonicalFilePath());
 					doc->setFileName(fileinfo.fileName());
-					//this->mainNotebook->setTabToolTip(doc->tabNumber,doc->getFilePath());
 					this->mainNotebook->setTabToolTip(calctabnum,doc->getFilePath());
 					QTextStream(&file) << doc->toPlainText() << Qt::endl;
 					doc->dirty=false;
@@ -164,7 +161,7 @@ bool KKEditClass::saveFile(int tabnum)
 
 	if(doc->getFilePath().isEmpty()==true)
 		{
-			return(this->saveFileAs(tabnum)==false);
+			return(this->saveFileAs(tabnum));
 		}
 	else
 		{
@@ -190,16 +187,17 @@ bool KKEditClass::saveFile(int tabnum)
 
 void KKEditClass::saveAllFiles(void)
 {
-printf("void KKEditClass::saveAllFiles(void)\n");
 	this->sessionBusy=true;
 
-	int	numtabs=kkedit->mainNotebook->count();
+	int	numtabs=this->mainNotebook->count();
 	for(int loop=0;loop<numtabs;loop++)
 		{
 			if(this->saveFile(loop)==false)
-				return;
+				{
+					this->sessionBusy=false;
+					return;
+				}
 		}
-
 	this->sessionBusy=false;
 }
 
@@ -212,20 +210,15 @@ void KKEditClass::newEditor(int what)
 			case NEWADMINEDMENUITEM:
 				command=GTKSUPATH " kkedit -m 2>&1 >/dev/null &";
 				runPipe(command);
-				//system(command.c_str());
 				break;
 		case NEWEDMENUITEM:
 			runPipe("kkedit -m 2>&1 >/dev/null &");
-			//system("kkedit -m 2>&1 >/dev/null &");
 			break;
 		case MANPAGEEDMENUITEM:
 			if(kkedit->gotManEditor==0)
 				runPipe("manpageeditor 2>&1 >/dev/null &");
-			//	system("manpageeditor 2>&1 >/dev/null &");
 			break;
 		}
 
 }
-
-
 

@@ -100,3 +100,41 @@ void KKEditClass::gotoLine(int linenumber)
 	cursor.setPosition(block.position());
 	doc->setTextCursor(cursor);
 }
+
+
+void KKEditClass::reloadDocument(void)
+{
+printf("void KKEditClass::reloadFile(void)\n");
+
+	DocumentClass	*doc=this->getDocumentForTab(-1);
+	bool			retval;
+	int				calctabnum;
+
+	if(doc==NULL)
+		return;
+
+	if(doc->getFilePath().isEmpty()==true)
+		return;
+
+	calctabnum=this->mainNotebook->indexOf(doc);
+
+	QFile			file(doc->getFilePath());
+	QFileInfo		fileinfo(file);
+
+	this->sessionBusy=true;
+
+	retval=file.open(QIODevice::Text | QIODevice::ReadOnly);
+	if(retval==true)
+		{
+			QString	content=QString::fromUtf8(file.readAll());
+			doc->setPlainText(content);
+			doc->highlighter->rehighlight();
+			doc->dirty=false;
+			file.close();
+			doc->setTabName(truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
+		}
+
+	this->sessionBusy=false;
+	switchPage(calctabnum);
+}
+

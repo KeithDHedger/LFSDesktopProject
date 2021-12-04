@@ -29,7 +29,7 @@ int				bmMarkNumber=0;
 
 //app stuff
 bool			busyFlag=false;
-//bool	sessionBusy=false;
+
 bool			autoSelected=false;
 
 //find replaceAll
@@ -293,7 +293,7 @@ functionData* getFunctionByName(const char* name,bool recurse,bool casesensitive
 					if(functions!=NULL)
 						{
 							str=functions;
-							strlist=str.split("\n",QString::SkipEmptyParts);
+							strlist=str.split("\n",Qt::SkipEmptyParts);
 							gotmatch=-1;
 							for(int i=0;i<strlist.size();i++)
 								{
@@ -350,7 +350,7 @@ functionData* getFunctionByName(const char* name,bool recurse,bool casesensitive
 					if(functions!=NULL)
 						{
 							str=functions;
-							strlist=str.split("\n",QString::SkipEmptyParts);
+							strlist=str.split("\n",Qt::SkipEmptyParts);
 							gotmatch=-1;
 							for(int i=0;i<strlist.size();i++)
 								{
@@ -492,17 +492,6 @@ gint sortTools(gconstpointer a,gconstpointer b)
 void buildToolsList(void)
 {
 }
-
-//
-//VISIBLE void goBack(QWidget* widget,uPtr data)
-//{
-//printf("goBack %i\n",(int)(long)data);
-//}
-//
-//VISIBLE void goFoward(QWidget* widget,uPtr data)
-//{
-//printf("goFoward %i\n",(int)(long)data);
-//}
 
 
 gboolean idleScroll(gpointer data)

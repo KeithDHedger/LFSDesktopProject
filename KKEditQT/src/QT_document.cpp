@@ -291,7 +291,6 @@ void DocumentClass::setTabName(QString tabname)
 {
 	int tabnum=this->mainKKEditClass->mainNotebook->indexOf(this);
 	this->tabName=tabname;
-	//this->mainKKEditClass->mainNotebook->setTabText(this->tabNumber,tabname);
 	this->mainKKEditClass->mainNotebook->setTabText(tabnum,tabname);
 }
 

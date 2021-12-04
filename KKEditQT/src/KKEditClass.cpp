@@ -221,7 +221,7 @@ void KKEditClass::switchPage(int index)
 
 	if(this->sessionBusy==true)
 		return;
-fprintf(stderr,"index=%i\n",index);
+
 	doc=qobject_cast<DocumentClass*>(this->mainNotebook->widget(index));
 	if(doc==0)
 		return;
@@ -302,307 +302,6 @@ fprintf(stderr,"index=%i\n",index);
 		}
 	this->funcMenu->setEnabled(onefunc);
 }
-
-
-//void switchTab(int thispage)//TODO//move ?
-//{
-//fprintf(stderr,"here\n");
-//}
-
-//void KKEditClass::buildMainGui(void)
-//{
-//	MenuItemClass	*menuItemSink;
-//
-//	this->mainWindow=new QMainWindow;
-////	this->mainWindowVBox=new QVBoxLayout();//TODO//HMMmmmmmm
-////	this->mainWindowVBox->setContentsMargins(2,2,2,2);
-////	this->mainWindow->setLayout(this->mainWindowVBox);
-//
-//	this->mainNotebook=new QTabWidget;
-//	
-//	this->mainNotebook->setDocumentMode(true);
-//	this->mainNotebook->setTabsClosable(true);
-//	this->mainNotebook->setMovable(true);
-//	
-//	QObject::connect(this->mainNotebook,&QTabWidget::currentChanged,switchPage);
-//	//connect(this,SIGNAL(&QTabWidget::currentChanged(int)),this,SLOT(switchTab(int)));
-//	QObject::connect(this->mainNotebook,&QTabWidget::tabCloseRequested,closeTabQT);
-//////	QObject::connect(qobject_cast<QWidget*>(mainNotebook),&QWidget::keyPressEvent,keyp);
-//
-//	this->menuBar=new QMenuBar;
-//	this->toolBar=new QToolBar;
-//
-//
-////file menu
-//	this->fileMenu=new QMenu("&File");
-//	this->menuBar->addMenu(this->fileMenu);
-//
-////new
-//	this->newMenuItem=this->makeMenuItemClass(FILEMENU,"New",QKeySequence::New,"document-new",NEWMENUNAME,NEWMENUITEM);
-//
-////open
-//	this->openMenuItem=this->makeMenuItemClass(FILEMENU,"Open",QKeySequence::Open,"document-open",OPENMENUNAME,OPENMENUITEM);
-//
-////open as hexdump
-//	menuItemSink=this->makeMenuItemClass(FILEMENU,"Open As Hexdump",0,"document-open",HEXDUMPMENUNAME,HEXDUMPMENUITEM);
-//
-//	this->fileMenu->addSeparator();
-//
-////extras
-//	menuItemSink=this->makeMenuItemClass(FILEMENU,"New Admin Editor",0,DATADIR"/pixmaps/ROOTKKEdit.png",NEWADMINMENUNAME,NEWADMINEDMENUITEM);
-//	menuItemSink=this->makeMenuItemClass(FILEMENU,"New Editor",0,DATADIR"/pixmaps/MenuKKEdit.png",NEWEDITORMENUNAME,NEWEDMENUITEM);
-//	
-//	if(gotManEditor==0)
-//		menuItemSink=this->makeMenuItemClass(FILEMENU,"Manpage Editor",0,DATADIR"/pixmaps/ManPageEditor.png",MANEDITORMENUNAME,MANPAGEEDMENUITEM);
-//
-////doxy
-//	if(gotDoxygen==0)
-//		menuItemSink=this->makeMenuItemClass(FILEMENU,"Build Documentation",0,"edit-copy",DOXYBUILDMENUNAME,BUILDDOCSMENUITEM);
-//
-//	this->fileMenu->addSeparator();
-//
-////recent menu
-////TODO//
-////	makeMenuItem(this->fileMenu,"Recent Files",0,NULL,RECENTMENUNAME,&newFileWrap,NULL,1000);
-//	this->fileMenu->addSeparator();
-//
-////save
-//	this->saveMenuItem=this->makeMenuItemClass(FILEMENU,"Save",QKeySequence::Save,"document-save",SAVEMENUNAME,SAVEMENUITEM);
-//
-////savas
-//	this->saveAsMenuItem=this->makeMenuItemClass(FILEMENU,"Save As",QKeySequence("Ctrl+Shift+S"),"document-save-as",SAVEASMENUNAME,SAVEASMENUITEM);
-//
-////save all
-//	this->saveAllMenuItem=this->makeMenuItemClass(FILEMENU,"Save All",0,"document-save",SAVEALLMENUNAME,SAVEALLMENUITEM);
-//
-//	this->fileMenu->addSeparator();
-//
-////save session
-//	this->saveSessionMenuItem=this->makeMenuItemClass(FILEMENU,"Save Session",0,"document-save",SAVESESSIONMENUNAME,SAVESESSIONMENUITEM);
-//
-////restore session
-//	this->restoreSessionMenuItem=this->makeMenuItemClass(FILEMENU,"Save Session",0,"document-save",RESTORESESSIONMENUNAME,RESTORESESSIONMENUITEM);
-//
-////printfile
-//	this->printMenuItem=this->makeMenuItemClass(FILEMENU,"Print",QKeySequence::Print,"document-print",PRINTMENUNAME,PRINTMENUITEM);
-//
-//	this->fileMenu->addSeparator();
-//
-////close
-//	this->closeMenuItem=this->makeMenuItemClass(FILEMENU,"Close",QKeySequence::Close,"window-close",CLOSEMENUNAME,CLOSEMENUITEM);
-//
-////close-all
-//	this->closeAllMenuItem=this->makeMenuItemClass(FILEMENU,"Close All",0,"window-close",CLOSEALLMENUNAME,CLOSEALLMENUITEM);
-//
-//	this->fileMenu->addSeparator();
-//
-////reload file
-//	this->revertMenuItem=this->makeMenuItemClass(FILEMENU,"Revert",0,"document-revert",REVERTMENUNAME,REVERTMENUITEM);
-//
-//	this->fileMenu->addSeparator();
-//
-////quit
-//	menuItemSink=this->makeMenuItemClass(FILEMENU,"Quit",QKeySequence::Quit,"application-exit",QUITMENUNAME,QUITMENUITEM);
-//
-////edit menu
-//	this->editMenu=new QMenu("&Edit");
-//	this->menuBar->addMenu(this->editMenu);
-//
-////undo
-//	this->undoMenuItem=this->makeMenuItemClass(EDITMENU,"Undo",QKeySequence::Undo,"edit-undo",UNDOMENUNAME,UNDOMENUITEM);
-//
-////redo
-//	this->redoMenuItem=this->makeMenuItemClass(EDITMENU,"Redo",QKeySequence::Redo,"edit-redo",REDOMENUNAME,REDOMENUITEM);
-//
-////undoall
-//	this->undoAllMenuItem=this->makeMenuItemClass(EDITMENU,"Undo All",0,"edit-undo",UNDOALLMENUNAME,UNDOALLMENUITEM);
-//
-////redoall
-//	this->redoAllMenuItem=this->makeMenuItemClass(EDITMENU,"Redo All",0,"edit-redo",REDOALLMENUNAME,REDOALLMENUITEM);
-//
-//	this->editMenu->addSeparator();
-//
-////cut
-//	this->cutMenuItem=this->makeMenuItemClass(EDITMENU,"Cut",QKeySequence::Cut,"edit-cut",CUTMENUNAME,CUTMENUITEM);
-////copy
-//	this->copyMenuItem=this->makeMenuItemClass(EDITMENU,"Copy",QKeySequence::Copy,"edit-copy",COPYMENUNAME,COPYMENUITEM);
-////paste
-//	this->pasteMenuItem=this->makeMenuItemClass(EDITMENU,"Paste",QKeySequence::Paste,"edit-paste",PASTEMENUNAME,PASTEMENUITEM);
-//
-//	this->editMenu->addSeparator();
-//
-////find
-//	this->findMenuItem=this->makeMenuItemClass(EDITMENU,"Find",QKeySequence::Find,"edit-find",FINDMENUNAME,FINDMENUITEM);
-////find next
-//	this->findNextMenuItem=this->makeMenuItemClass(EDITMENU,"Find Next",QKeySequence("Ctrl+G"),"go-next",FINDNEXTMENUNAME,FINDNEXTMENUITEM);
-//
-//	this->editMenu->addSeparator();
-//
-////sort tabs
-//	this->sortTabsMenuItem=this->makeMenuItemClass(EDITMENU,"Sort Tabs",0,"view-sort-ascending",SORTTABSMENUNAME,SORTTABSMENUITEM);
-////show all tabs
-//	this->showAllTabsMenuItem=this->makeMenuItemClass(EDITMENU,"Show All Tabs",0,"list-add",SHOWALLTABSMENUNAME,SHOWALLTABSMENUITEM);
-////select tab
-//	this->selectTabMenuItem=this->makeMenuItemClass(EDITMENU,"Select Tab",0,"accessories-text-editor",SELECTTABMENUNAME,SELECTTABMENUITEM);
-//
-//	this->editMenu->addSeparator();
-//
-////prefs
-//	menuItemSink=this->makeMenuItemClass(EDITMENU,"Preferences",0,"preferences-desktop",PREFSMENUNAME,PREFSMENUITEM);
-////plugs
-//	menuItemSink=this->makeMenuItemClass(EDITMENU,"Plugin Prefs",0,"preferences-system",PLUGPREFSMENUNAME,PLUGPREFSMENUITEM);
-//
-////////////////////////////////////////////
-////view menu
-//	this->viewMenu=new QMenu("&View");
-//	this->menuBar->addMenu(this->viewMenu);
-//
-////show docs
-//	menuItemSink=this->makeMenuItemClass(VIEWMENU,"Show Documentaion",0,NULL,SHOWDOCSMENUNAME,DOCSMENUITEM);
-//
-////toggle toolbar bar
-//	if(this->toolbarVisible)//TODO//
-//		toggleToolBarMenuItem=this->makeMenuItemClass(VIEWMENU,"Hide Tool Bar",0,NULL,SHOWTOOLBARMENUNAME,TOGGLETOOLBARMENUITEM);
-//	else
-//		toggleToolBarMenuItem=this->makeMenuItemClass(VIEWMENU,"Show Tool Bar",0,NULL,SHOWTOOLBARMENUNAME,TOGGLETOOLBARMENUITEM);
-//
-////tooloutput
-//	if(this->toolWindowVisible)
-//		this->toggleToolWindowMenuItem=this->makeMenuItemClass(VIEWMENU,"Hide Tool Output",0,NULL,SHOWTOOLOUTMENUNAME,TOGGLETOOLWINDOWMENUITEM);
-//	else
-//		this->toggleToolWindowMenuItem=this->makeMenuItemClass(VIEWMENU,"Show Tool Output",0,NULL,SHOWTOOLOUTMENUNAME,TOGGLETOOLWINDOWMENUITEM);
-//
-////toggle statusbar
-//	if(this->statusBarVisible)
-//		this->toggleStatusBarMenuItem=this->makeMenuItemClass(VIEWMENU,"Hide Status Bar",0,NULL,SHOWSTATUSMENUNAME,TOGGLESTATUSBARMENUITEM);
-//	else
-//		this->toggleStatusBarMenuItem=this->makeMenuItemClass(VIEWMENU,"Show Status Bar",0,NULL,SHOWTOOLOUTMENUNAME,TOGGLESTATUSBARMENUITEM);
-//
-//#ifdef _BUILDDOCVIEWER_
-////toggle docviewer
-//	this->toggleDocViewMenuItem=this->makeMenuItemClass(VIEWMENU,"Show Docviewer",0,NULL,SHOWDOCVIEWERMENUNAME,TOGGLEDOCVIEWMENUITEM);
-//#endif
-//
-//	this->viewMenu->addSeparator();
-//
-////toggle line numbers
-//	this->lineNumbersVisible=this->prefsShowLineNumbers;
-//	this->toggleLineNumbersMenuItem=this->makeMenuItemClass(VIEWMENU,"Show Line Numbers",0,NULL,"NOTNEEDED",TOGGLELINENUMBERSMENUITEM);
-//	this->toggleLineNumbersMenuItem->setCheckable(true);
-//	this->toggleLineNumbersMenuItem->setChecked(this->prefsShowLineNumbers);
-////toggle wrap line
-//	this->wrapLine=this->prefsLineWrap;
-//	this->toggleWrapLineMenuItem=this->makeMenuItemClass(VIEWMENU,"Wrap Lines",0,NULL,"NOTNEEDED",TOGGLELINEWRAPMENUITEM);
-//	this->toggleWrapLineMenuItem->setCheckable(true);
-//	this->toggleWrapLineMenuItem->setChecked(this->prefsLineWrap);
-////toggle hilit current line
-//	this->hiliteCurrentLine=this->prefsHighLightline;
-//	this->toggleHiliteCurrentLineMenuItem=this->makeMenuItemClass(VIEWMENU,"Highlight Current Line",0,NULL,"NOTNEEDED",TOGGLEHILITELINEMENUITEM);
-//	this->toggleHiliteCurrentLineMenuItem->setCheckable(true);
-//	this->toggleHiliteCurrentLineMenuItem->setChecked(this->hiliteCurrentLine);
-////show hiliting
-//	this->showHighLighting=this->prefsSyntaxHilighting;
-//	this->toggleSyntaxHilightingMenuItem=this->makeMenuItemClass(VIEWMENU,"Syntax Highlighting",0,NULL,"NOTNEEDED",TOGGLESYNTAXHILITINGMENUITEM);
-//	this->toggleSyntaxHilightingMenuItem->setCheckable(true);
-//	this->toggleSyntaxHilightingMenuItem->setChecked(this->showHighLighting);
-////toggle whitespace
-//	this->toggleWhiteSpaceMenuItem=this->makeMenuItemClass(VIEWMENU,"Show Whitespace",0,NULL,"NOTNEEDED",TOGGLEWHITESPACEMENUITEM);
-//	this->toggleWhiteSpaceMenuItem->setCheckable(true);
-//	this->toggleWhiteSpaceMenuItem->setChecked(false);
-////QCompleter
-////toggle completions
-//	this->showCompletions=this->prefsAutoShowCompletions;
-//	this->toggleCompletionsMenuItem=this->makeMenuItemClass(VIEWMENU,"Auto Show Completions",0,NULL,"NOTNEEDED",TOGGLECOMPLETIONSMENUITEM);
-//	this->toggleCompletionsMenuItem->setCheckable(true);
-//	this->toggleCompletionsMenuItem->setChecked(this->showCompletions);
-//
-////////////////////////////////////////////
-//
-////navigation menu
-//	this->navMenu=new QMenu("&Navigation");
-//	this->menuBar->addMenu(this->navMenu);
-//
-////goto define
-//	this->goToDefineMenu=reinterpret_cast<QWidget*>(makeMenuItem(this->navMenu,"Go To Definition",QKeySequence::fromString("Ctrl+D"),"dialog-question",GOTODEFMENUNAME,&goToDefinition,NULL,0));
-//
-////open include
-//	makeMenuItem(this->navMenu,"Open Include File",QKeySequence::fromString("Ctrl+I"),"document-open",OPENINCLUDEMENUNAME,&findFile,NULL,0);
-////goto line number
-//	makeMenuItem(this->navMenu,"Go To Line",0,"go-down",GOTOLINEMENUNAME,&jumpToLine,NULL,0);
-////find define
-//	makeMenuItem(this->navMenu,"Search For Define",0,"edit-find",SEARCHFORDEFMENUNAME,&functionSearch,NULL,0);
-////find gtkdoc
-//	makeMenuItem(this->navMenu,"Search In Gtk Docs",0,"edit-find",SEARCHGTKMENUNAME,&searchGtkDocs,NULL,0);
-////find qt5
-//	makeMenuItem(this->navMenu,"Search In Qt5 Docs",0,"edit-find",SEARCHQT5MENUNAME,&searchQT5Docs,NULL,0);
-////goto doxy docs
-//	if(gotDoxygen==0)
-//		makeMenuItem(this->navMenu,"Find In Documentation",0,"edit-find",SEARCHDOXYMENUNAME,&doxyDocs,NULL,0);
-//////go back
-//	this->goBackMenu=this->makeMenuItemClass(NAVMENU,"Back",0,"go-previous","NOTNEEDED",GOBACKMENUITEM);
-//////go forward
-//	this->goFowardMenu=this->makeMenuItemClass(NAVMENU,"Forward",0,"go-next","NOTNEEDED",GOFORWARDMENUITEM);
-//
-//	qobject_cast<QMenu*>(this->navMenu)->addSeparator();
-////////////////////////////////////////////
-//
-////function menu
-//	this->funcMenu=new QMenu("Fun&ctions");
-//	this->menuBar->addMenu(this->funcMenu);
-//
-/////////////////////////////////////////////
-//
-////newbookmarks
-//	this->bookMarkMenu=new QMenu("&Bookmarks");
-//	this->menuBar->addMenu(this->bookMarkMenu);
-//	this->rebuildBookMarkMenu();
-//
-/////////////////////////////////////////////
-//
-////external tools	
-//	this->toolsMenu=new QMenu("&Tools");
-//	this->menuBar->addMenu(this->toolsMenu);
-//	buildTools();
-//
-/////////////////////////////////////////////
-//
-////help
-//	this->helpMenu=new QMenu("&Help");
-//	this->menuBar->addMenu(this->helpMenu);
-//
-////about
-//	makeMenuItem(this->helpMenu,"&About",0,"help-about",ABOUTMENUNAME,&doAbout,NULL,0);
-////help
-//	makeMenuItem(this->helpMenu,"&Help",0,"help-contents",HELPMENUNAME,&openHelp,NULL,0);
-//
-////	menuitem=makeMenuItem(GTK_STOCK_HELP,menu,(void*)openHelp,0,HELPMENUNAME,STOCKMENU,NULL,NULL);
-////get plugins
-//	makeMenuItem(this->helpMenu,"&Get Plugins",0,DATADIR"/pixmaps/KKEditPlugMenu.png",GETPLUGSMENUNAME,&getPlugins,NULL,0);
-////	menuitem=makeMenuItem(DATADIR"/pixmaps/KKEditPlugMenu.png",menu,(void*)getPlugins,0,GETPLUGSMENUNAME,PIXMAPMENU,"Get Plugins",NULL);
-//
-//
-//	//this->mainWindow
-//	//this->mainWindowVBox->addWidget(menuBar);
-//	//this->mainWindowVBox->addWidget(toolBar);
-//	//this->mainWindowVBox->addWidget(mainNotebook);
-//	this->setUpToolBar();
-//	//qobject_cast<QMainWindow*>(this->mainWindow)->setStatusBar(statusbar);
-//
-//
-//	this->mainWindow->setMenuBar(qobject_cast<QMenuBar*>(this->menuBar));
-//	this->mainWindow->addToolBar(this->toolBar);
-//	this->mainWindow->setCentralWidget(this->mainNotebook);
-//
-//	this->statusText=new QLabel;	
-//	this->statusText->setText("Line 0\tCol 0");
-// 	this->statusBar=this->mainWindow->statusBar();
-// 	this->mainWindow->show();
-// 	//fprintf(stderr,">>%s<<\n",this->statusText->text().toStdString().c_str());
-// 	this->statusBar->addWidget(this->statusText);
-//	//statbar=reinterpret_cast<QMainWindow*>(this->mainWindow)->statusBar();
-//	//statbar=qobject_cast<QMainWindow*>(this->mainWindow)->statusBar();
-// 	//reinterpret_cast<QMainWindow*>(this->mainWindow)->statusBar()->showMessage("Ready", 2000);
-//}
 
 void KKEditClass::rebuildBookMarkMenu()
 {
@@ -822,15 +521,12 @@ bool KKEditClass::openFile(std::string filepath,int linenumber,bool warn)
 			doc->setFilePrefs();
 			doc->pageIndex=this->newPageIndex;
 			this->pages[this->newPageIndex++]=doc;
-			//doc->tabNumber=qobject_cast<QTabWidget*>(this->mainNotebook)->addTab(doc,doc->getTabName());
 			tabnum=this->mainNotebook->addTab(doc,doc->getTabName());
 			doc->setDirPath(fileinfo.canonicalPath());
 			doc->setFilePath(fileinfo.canonicalFilePath());
 			doc->setFileName(fileinfo.fileName());
 			doc->setTabName(truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
-		//	qobject_cast<QTabWidget*>(this->mainNotebook)->setTabToolTip(doc->tabNumber,doc->getFilePath());
 			this->mainNotebook->setTabToolTip(tabnum,doc->getFilePath());
-			//qobject_cast<QTabWidget*>(this->mainNotebook)->setCurrentIndex(doc->tabNumber);
 			this->mainNotebook->setCurrentIndex(tabnum);
 			this->gotoLine(linenumber);
 			doc->document()->clearUndoRedoStacks(QTextDocument::UndoAndRedoStacks);
@@ -852,9 +548,9 @@ bool KKEditClass::openFile(std::string filepath,int linenumber,bool warn)
 	busyFlag=false;
 	this->sessionBusy=false;
 	doc->dirty=false;
-	//if(doc->tabNumber==0)
-	if(tabnum==0)
-		switchPage(0);
+
+	if(this->openFromDialog==false)
+		switchPage(tabnum);
 	return(retval);
 }
 
@@ -865,9 +561,12 @@ bool KKEditClass::openFileDialog(void)
 	fileNames=QFileDialog::getOpenFileNames(this->mainWindow,"Open File","","",0);
 	if (fileNames.count())
 		{
+			this->openFromDialog=true;
 			for (int j=0;j<fileNames.size();j++)
 				this->openFile(fileNames.at(j).toUtf8().constData(),0,true);
 		}
+	this->openFromDialog=false;
+	switchPage(this->mainNotebook->currentIndex());
 	return(true);
 }
 
@@ -1012,6 +711,27 @@ void KKEditClass::showDocs(void)
 		}
 }
 
+void KKEditClass::closeAllTabs(void)
+{
+printf("void KKEditClass::closeAllTabs(void)\n");
+	bool retval;
+	this->sessionBusy=true;
+	int	numtabs=(this->mainNotebook)->count();
+	for(int loop=0; loop<numtabs; loop++)
+		{
+			closingAllTabs=true;
+			retval=this->closeTab(0);
+			if(retval==false)
+				{
+					this->sessionBusy=false;
+					return;
+				}
+		}
+
+	this->rebuildBookMarkMenu();
+	this->sessionBusy=false;
+}
+
 bool KKEditClass::closeTab(int index)
 {
 	DocumentClass	*doc=NULL;
@@ -1039,17 +759,14 @@ bool KKEditClass::closeTab(int index)
 						{
 							case QMessageBox::Save:
 								this->saveFile(thispage);
-								fprintf(stderr,"save\n");
        // Save was clicked
 								break;
 							case QMessageBox::Discard:
        // Don't Save was clicked
-								fprintf(stderr,"Discard\n");
 								break;
 							case QMessageBox::Cancel:
        // Cancel was clicked
 								this->sessionBusy=false;
-								fprintf(stderr,"Cancel\n");
 								return(false);
 								break;
 						}
