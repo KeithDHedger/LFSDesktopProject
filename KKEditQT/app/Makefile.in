@@ -123,6 +123,7 @@ am__objects_1 = ../src/kkeditqt-backclass.$(OBJEXT) \
 	../src/kkeditqt-KKEditClassFiles.$(OBJEXT) \
 	../src/kkeditqt-KKEditClassGUIs.$(OBJEXT) \
 	../src/kkeditqt-KKEditClassMenus.$(OBJEXT) \
+	../src/kkeditqt-KKEditClassSearch.$(OBJEXT) \
 	../src/kkeditqt-languagedata.$(OBJEXT) \
 	../src/kkeditqt-main.$(OBJEXT) \
 	../src/kkeditqt-moc_KKEditClass.$(OBJEXT) \
@@ -197,6 +198,7 @@ am__depfiles_remade = ../pole/$(DEPDIR)/main.Po \
 	../src/$(DEPDIR)/kkeditqt-KKEditClassFiles.Po \
 	../src/$(DEPDIR)/kkeditqt-KKEditClassGUIs.Po \
 	../src/$(DEPDIR)/kkeditqt-KKEditClassMenus.Po \
+	../src/$(DEPDIR)/kkeditqt-KKEditClassSearch.Po \
 	../src/$(DEPDIR)/kkeditqt-QT_document.Po \
 	../src/$(DEPDIR)/kkeditqt-QT_highlighter.Po \
 	../src/$(DEPDIR)/kkeditqt-QT_menuitem.Po \
@@ -408,7 +410,7 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 			-D_USEQT5_ \
 			-fPIC
 
-COMMONSRC = ../src/backclass.cpp ../src/callbacks.cpp ../src/completion.cpp ../src/files.cpp ../src/globals.cpp ../src/guis.cpp ../src/internet.cpp ../src/KKEditClassCallbacks.cpp ../src/KKEditClass.cpp ../src/KKEditClassDocuments.cpp ../src/KKEditClassFiles.cpp ../src/KKEditClassGUIs.cpp ../src/KKEditClassMenus.cpp ../src/languagedata.cpp ../src/main.cpp ../src/moc_KKEditClass.cpp ../src/moc_QT_document.cpp ../src/moc_QT_highlighter.cpp ../src/moc_QT_menuitem.cpp ../src/navcallbacks.cpp ../src/pluginclass.cpp ../src/plugins.cpp ../src/qsourcehighliter.cpp ../src/qsourcehighliterthemes.cpp ../src/QT_document.cpp ../src/QT_highlighter.cpp ../src/QT_menuitem.cpp ../src/searchcallbacks.cpp ../src/SingleInstanceClass.cpp ../src/sliceclass.cpp ../src/spellcheck.cpp ../src/textbuffer.cpp
+COMMONSRC = ../src/backclass.cpp ../src/callbacks.cpp ../src/completion.cpp ../src/files.cpp ../src/globals.cpp ../src/guis.cpp ../src/internet.cpp ../src/KKEditClassCallbacks.cpp ../src/KKEditClass.cpp ../src/KKEditClassDocuments.cpp ../src/KKEditClassFiles.cpp ../src/KKEditClassGUIs.cpp ../src/KKEditClassMenus.cpp ../src/KKEditClassSearch.cpp ../src/languagedata.cpp ../src/main.cpp ../src/moc_KKEditClass.cpp ../src/moc_QT_document.cpp ../src/moc_QT_highlighter.cpp ../src/moc_QT_menuitem.cpp ../src/navcallbacks.cpp ../src/pluginclass.cpp ../src/plugins.cpp ../src/qsourcehighliter.cpp ../src/qsourcehighliterthemes.cpp ../src/QT_document.cpp ../src/QT_highlighter.cpp ../src/QT_menuitem.cpp ../src/searchcallbacks.cpp ../src/SingleInstanceClass.cpp ../src/sliceclass.cpp ../src/spellcheck.cpp ../src/textbuffer.cpp
 kkeditqt_SOURCES = $(COMMONSRC)
 KKEditQTProgressBar_SOURCES = ../pole/main.cpp
 kkeditqt_CFLAGS = -ggdb -O0 -fvisibility=default
@@ -544,6 +546,8 @@ KKEditQTProgressBar$(EXEEXT): $(KKEditQTProgressBar_OBJECTS) $(KKEditQTProgressB
 	../src/$(DEPDIR)/$(am__dirstamp)
 ../src/kkeditqt-KKEditClassMenus.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
+../src/kkeditqt-KKEditClassSearch.$(OBJEXT): ../src/$(am__dirstamp) \
+	../src/$(DEPDIR)/$(am__dirstamp)
 ../src/kkeditqt-languagedata.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
 ../src/kkeditqt-main.$(OBJEXT): ../src/$(am__dirstamp) \
@@ -637,6 +641,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/kkeditqt-KKEditClassFiles.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/kkeditqt-KKEditClassGUIs.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/kkeditqt-KKEditClassMenus.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/kkeditqt-KKEditClassSearch.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/kkeditqt-QT_document.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/kkeditqt-QT_highlighter.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/kkeditqt-QT_menuitem.Po@am__quote@ # am--include-marker
@@ -867,6 +872,20 @@ am--depfiles: $(am__depfiles_remade)
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/KKEditClassMenus.cpp' object='../src/kkeditqt-KKEditClassMenus.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(kkeditqt_CXXFLAGS) $(CXXFLAGS) -c -o ../src/kkeditqt-KKEditClassMenus.obj `if test -f '../src/KKEditClassMenus.cpp'; then $(CYGPATH_W) '../src/KKEditClassMenus.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/KKEditClassMenus.cpp'; fi`
+
+../src/kkeditqt-KKEditClassSearch.o: ../src/KKEditClassSearch.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(kkeditqt_CXXFLAGS) $(CXXFLAGS) -MT ../src/kkeditqt-KKEditClassSearch.o -MD -MP -MF ../src/$(DEPDIR)/kkeditqt-KKEditClassSearch.Tpo -c -o ../src/kkeditqt-KKEditClassSearch.o `test -f '../src/KKEditClassSearch.cpp' || echo '$(srcdir)/'`../src/KKEditClassSearch.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/kkeditqt-KKEditClassSearch.Tpo ../src/$(DEPDIR)/kkeditqt-KKEditClassSearch.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/KKEditClassSearch.cpp' object='../src/kkeditqt-KKEditClassSearch.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(kkeditqt_CXXFLAGS) $(CXXFLAGS) -c -o ../src/kkeditqt-KKEditClassSearch.o `test -f '../src/KKEditClassSearch.cpp' || echo '$(srcdir)/'`../src/KKEditClassSearch.cpp
+
+../src/kkeditqt-KKEditClassSearch.obj: ../src/KKEditClassSearch.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(kkeditqt_CXXFLAGS) $(CXXFLAGS) -MT ../src/kkeditqt-KKEditClassSearch.obj -MD -MP -MF ../src/$(DEPDIR)/kkeditqt-KKEditClassSearch.Tpo -c -o ../src/kkeditqt-KKEditClassSearch.obj `if test -f '../src/KKEditClassSearch.cpp'; then $(CYGPATH_W) '../src/KKEditClassSearch.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/KKEditClassSearch.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/kkeditqt-KKEditClassSearch.Tpo ../src/$(DEPDIR)/kkeditqt-KKEditClassSearch.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/KKEditClassSearch.cpp' object='../src/kkeditqt-KKEditClassSearch.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(kkeditqt_CXXFLAGS) $(CXXFLAGS) -c -o ../src/kkeditqt-KKEditClassSearch.obj `if test -f '../src/KKEditClassSearch.cpp'; then $(CYGPATH_W) '../src/KKEditClassSearch.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/KKEditClassSearch.cpp'; fi`
 
 ../src/kkeditqt-languagedata.o: ../src/languagedata.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(kkeditqt_CXXFLAGS) $(CXXFLAGS) -MT ../src/kkeditqt-languagedata.o -MD -MP -MF ../src/$(DEPDIR)/kkeditqt-languagedata.Tpo -c -o ../src/kkeditqt-languagedata.o `test -f '../src/languagedata.cpp' || echo '$(srcdir)/'`../src/languagedata.cpp
@@ -1377,6 +1396,7 @@ distclean: distclean-am
 	-rm -f ../src/$(DEPDIR)/kkeditqt-KKEditClassFiles.Po
 	-rm -f ../src/$(DEPDIR)/kkeditqt-KKEditClassGUIs.Po
 	-rm -f ../src/$(DEPDIR)/kkeditqt-KKEditClassMenus.Po
+	-rm -f ../src/$(DEPDIR)/kkeditqt-KKEditClassSearch.Po
 	-rm -f ../src/$(DEPDIR)/kkeditqt-QT_document.Po
 	-rm -f ../src/$(DEPDIR)/kkeditqt-QT_highlighter.Po
 	-rm -f ../src/$(DEPDIR)/kkeditqt-QT_menuitem.Po
@@ -1458,6 +1478,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ../src/$(DEPDIR)/kkeditqt-KKEditClassFiles.Po
 	-rm -f ../src/$(DEPDIR)/kkeditqt-KKEditClassGUIs.Po
 	-rm -f ../src/$(DEPDIR)/kkeditqt-KKEditClassMenus.Po
+	-rm -f ../src/$(DEPDIR)/kkeditqt-KKEditClassSearch.Po
 	-rm -f ../src/$(DEPDIR)/kkeditqt-QT_document.Po
 	-rm -f ../src/$(DEPDIR)/kkeditqt-QT_highlighter.Po
 	-rm -f ../src/$(DEPDIR)/kkeditqt-QT_menuitem.Po

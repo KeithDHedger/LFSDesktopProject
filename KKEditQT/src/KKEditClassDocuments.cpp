@@ -135,6 +135,6 @@ printf("void KKEditClass::reloadFile(void)\n");
 		}
 
 	this->sessionBusy=false;
-	switchPage(calctabnum);
+	this->switchPage(calctabnum);
 }
 

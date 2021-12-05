@@ -1004,28 +1004,28 @@ bool tabPopUp(void)
 	return(false);
 }
 
-
-void doShutdown(Widget* widget,uPtr data)
-//TODO//save modified files
-{
-#if 1
-	//if(kkedit->forcedMultInst==false)
-	if(kkedit->forcedMultInst==false)
-		kkedit->writeExitData();
-#ifdef _ASPELL_
-	delete_aspell_config(aspellConfig);
-	delete_aspell_speller(spellChecker);
-#endif
-	//if(onExitSaveSession)
-	//	saveSession(NULL,0);
-	//if(doSaveAll(widget,(uPtr)true)==false)
-	//	return;
-	//g_list_foreach(globalPlugins->plugins,releasePlugs,NULL);
-#endif
-
-	QApplication::quit();
-}
-
+//
+//void doShutdown(Widget* widget,uPtr data)
+////TODO//save modified files
+//{
+//#if 1
+//	//if(kkedit->forcedMultInst==false)
+//	if(kkedit->forcedMultInst==false)
+//		kkedit->writeExitData();
+//#ifdef _ASPELL_
+//	delete_aspell_config(aspellConfig);
+//	delete_aspell_speller(spellChecker);
+//#endif
+//	//if(onExitSaveSession)
+//	//	saveSession(NULL,0);
+//	//if(doSaveAll(widget,(uPtr)true)==false)
+//	//	return;
+//	//g_list_foreach(globalPlugins->plugins,releasePlugs,NULL);
+//#endif
+//
+//	QApplication::quit();
+//}
+//
 
 #ifndef _USEQT5_
 void setToolOptions(GtkWidget* widget,gpointer data)

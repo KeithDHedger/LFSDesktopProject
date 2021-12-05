@@ -585,13 +585,15 @@ void KKEditClass::buildFindReplace(void)
 	hbox->setLayout(hlayout);
 
 	button=new QPushButton("Forward");
-	QObject::connect((QPushButton*)button,&QPushButton::clicked,doFindForwardWrap);
+	button->setObjectName(FINDNEXTOBJECTNAME);
+	QObject::connect(button,SIGNAL(clicked()),this,SLOT(doFindButton()));
 	icon=QIcon::fromTheme("go-next",QIcon("go-next"));
 	button->setIcon(icon);
 	hlayout->addWidget(button);
 
 	button=new QPushButton("Back");
-	QObject::connect((QPushButton*)button,&QPushButton::clicked,doFindBackWrap);
+	button->setObjectName(FINDPREVOBJECTNAME);
+	QObject::connect(button,SIGNAL(clicked()),this,SLOT(doFindButton()));
 	icon=QIcon::fromTheme("go-previous",QIcon("go-previous"));
 	button->setIcon(icon);
 	hlayout->addWidget(button);
@@ -600,9 +602,10 @@ void KKEditClass::buildFindReplace(void)
 		this->frReplace=new QPushButton("Replace");
 	else
 		this->frReplace=new QPushButton("Replace All");
-	QObject::connect((QPushButton*)frReplace,&QPushButton::clicked,doReplaceWrap);
+	frReplace->setObjectName(FINDREPLACEOBJECTNAME);
+	QObject::connect(frReplace,SIGNAL(clicked()),this,SLOT(doFindButton()));
 	icon=QIcon::fromTheme("edit-find-replace",QIcon("edit-find-replace"));
-	reinterpret_cast<QPushButton*>(this->frReplace)->setIcon(icon);
+	this->frReplace->setIcon(icon);
 	hlayout->addWidget(this->frReplace);
 
 	vlayout->addWidget(hbox);
@@ -881,7 +884,6 @@ void KKEditClass::buildMainGui(void)
 	this->statusText=new QLabel;	
 	this->statusText->setText("Line 0\tCol 0");
  	this->statusBar=this->mainWindow->statusBar();
- 	this->mainWindow->show();
  	this->statusBar->addWidget(this->statusText);
 }
 

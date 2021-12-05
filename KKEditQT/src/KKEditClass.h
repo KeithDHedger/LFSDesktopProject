@@ -21,6 +21,8 @@
 #ifndef _KKEDITCLASS_
 #define _KKEDITCLASS_
 
+#define STATUSBARTIMEOUT 5000
+
 enum {FILEMENU=0x4000,EDITMENU,VIEWMENU,NAVMENU,FUNCTIONSMENU,BOOKNARKSMENU,TOOLSMENU,PLUGINSMENU,HELPMENU};
 
 //file
@@ -44,6 +46,8 @@ enum {ABOUTMENUITEM=0xe000,HELPMENUITEM,ONLINEHELPMENUITEM,GETPLUGSMENUITEM};
 enum	{AUTOINDENT=0,SHOWNUMS,WRAP,HIGHLIGHT,SYNTAXHILITE,USESINGLE,AUTOSAVE,NODUPLICATE,NOWARN,AUTOSHOW,BEKIND,GLOBALPLUGMENU,SETFONT,MAXPREFSWIDGETS};
 enum {MAXTABCHARS=0,MAXHISTORY,MAXFUNCDEPTH,COMPLETIONSIZE,TABWIDTH,MENUWIDTH,MAXBMWIDTH,MAXPREFSINTWIDGETS};
 enum {FUNCTIONCOMBO=0,THEMECOMBO,FONTNAMECOMBO,FONTSIZECOMBO,PREFSTERMCOMMAND,PREFSROOTCOMMAND,PREFSBROWSERCOMMAND,PREFSCURRENTFONT,BMHIGHLIGHTCOLOUR,CURRENTLINECOLOUR,MAXPREFSOTHERWIDGETS};
+
+enum {FINDNEXT=1,FINDPREV,FINDREPLACE};
 
 #include "kkedit-includes.h"
 class MenuItemClass;
@@ -83,6 +87,7 @@ class KKEditClass : public QObject
 		void						showBarberPole(QString windowtitle,QString bodylabel,QString cancellabel,QString controlfiile);
 		void						buildDocs(void);
 		void						showDocs(void);
+		void						shutDownApp(void);
 
 //app prefs
 //document
@@ -219,7 +224,7 @@ class KKEditClass : public QObject
 		bool						saveFile(int tabnum);
 		void						newEditor(int what);
 		void						runPipe(QString command);
-		void						saveAllFiles(void);
+		bool						saveAllFiles(void);
 		bool						saveFileAs(int tabnum);
 		int							askSaveDialog(const QString filename);
 //document vars
@@ -272,12 +277,13 @@ class KKEditClass : public QObject
 
 //find replace vars
 		QWidget						*findReplaceDialog;
-		QWidget						*findDropBox;
-		QWidget						*replaceDropBox;
+		QComboBox					*findDropBox;
+		QComboBox					*replaceDropBox;
 		QWidget						*frSwitches[FRMAXSWITCHES];
-		QWidget						*frReplace;
+		QPushButton					*frReplace;
 //find replace functions
 		void						buildFindReplace(void);
+		void						doFindReplace(int response_id);
 
 //plugin vars
 		QWidget						*globalPlugMenu=NULL;
@@ -331,6 +337,8 @@ class KKEditClass : public QObject
 		void						switchPage(int index);
 		bool						closeTab(int index);
 		void						closeAllTabs(void);
+
+		void						doFindButton(void);
 
 	protected:
 	private:

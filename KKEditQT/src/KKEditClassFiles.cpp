@@ -159,12 +159,29 @@ bool KKEditClass::saveFile(int tabnum)
 	if(doc==NULL)
 		return(false);
 
-	if(doc->getFilePath().isEmpty()==true)
+	if(doc->dirty==true)
 		{
-			return(this->saveFileAs(tabnum));
+			int result=this->askSaveDialog(doc->fileName);
+			switch(result)
+				{
+					case QMessageBox::Save:
+						break;
+					case QMessageBox::Discard:
+       					return(true);
+						break;
+					case QMessageBox::Cancel:
+						this->sessionBusy=false;
+						return(false);
+						break;
+				}
 		}
+
+	if((doc->getFilePath().isEmpty()==true) && (doc->dirty==true))
+		return(this->saveFileAs(tabnum));
 	else
 		{
+			if(doc->dirty==false)
+				return(true);
 			file.setFileName(doc->getFilePath());
 			fileinfo.setFile(file);
 			retval=file.open(QIODevice::Text | QIODevice::WriteOnly);
@@ -185,7 +202,7 @@ bool KKEditClass::saveFile(int tabnum)
 	return true;
 }
 
-void KKEditClass::saveAllFiles(void)
+bool KKEditClass::saveAllFiles(void)
 {
 	this->sessionBusy=true;
 
@@ -195,10 +212,11 @@ void KKEditClass::saveAllFiles(void)
 			if(this->saveFile(loop)==false)
 				{
 					this->sessionBusy=false;
-					return;
+					return(false);;
 				}
 		}
 	this->sessionBusy=false;
+	return(true);
 }
 
 void KKEditClass::newEditor(int what)

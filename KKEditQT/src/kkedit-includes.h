@@ -86,10 +86,6 @@ struct msgStruct
 
 enum msgActions {OPENFILE=100,SAVEFILE,QUITAPP,ACTIVATEAPP};
 
-#define REPLACE			100
-#define FINDNEXT		200
-#define FINDPREV		300
-
 #define TOOL_ASYNC 8
 #define TOOL_IGNORE_OP 0
 #define TOOL_PASTE_OP 1

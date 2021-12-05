@@ -243,7 +243,7 @@ void KKEditClass::doEditMenuItems()
 			case FINDMENUITEM:
 				this->findReplaceDialog->show();
 			case FINDNEXTMENUITEM:
-				//this->findReplaceDialog->show();
+				doFindReplace(FINDNEXT);
 				break;
 			case SORTTABSMENUITEM:
 				break;
@@ -252,7 +252,6 @@ void KKEditClass::doEditMenuItems()
 			case SELECTTABMENUITEM:
 				break;
 			case PREFSMENUITEM:
-				//doPrefs(NULL,0);
 				this->doPrefs(NULL,0);
 				break;
 			case PLUGPREFSMENUITEM:
@@ -322,7 +321,7 @@ void KKEditClass::doFileMenuItems()
 				this->reloadDocument();
 				break;
 			case QUITMENUITEM:
-				doShutdown(NULL,QUITMENUITEM);
+				this->shutDownApp();
 				break;
 		}
 }
@@ -347,7 +346,8 @@ void KKEditClass::doTimer(void)
 							case SAVEFILE:
 								break;
 							case QUITAPP:
-								doShutdown(NULL,0);
+								//doShutdown(NULL,0);
+								//this->
 								break;
 							case ACTIVATEAPP://TODO//minimized
 								this->application->setActiveWindow(this->mainWindow);

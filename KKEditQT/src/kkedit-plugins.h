@@ -85,6 +85,9 @@
 #define REMOVEALLBOOKMARKS "removeallbookmarks"
 #define TOGGLEBOOKMARK "togglebookmark"
 
+#define FINDNEXTOBJECTNAME "1"
+#define FINDPREVOBJECTNAME "2"
+#define FINDREPLACEOBJECTNAME "3"
 
 #ifndef _PAGESTRUCT_
 #define _PAGESTRUCT_

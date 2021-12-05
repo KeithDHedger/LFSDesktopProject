@@ -724,7 +724,7 @@ void regexFind(int dowhat)
 					}
 				break;
 
-			case REPLACE:
+			case FINDREPLACE:
 								fromregexreplace=false;
 fromregexsinglereplace=false;
 				if(replaceAll==true)
@@ -941,7 +941,7 @@ void basicFind(int dowhat)
 					}
 			}
 
-		if((dowhat==REPLACE) && (replaceAll==false))
+		if((dowhat==FINDREPLACE) && (replaceAll==false))
 			{
 				if(gtk_text_buffer_get_selection_bounds((GtkTextBuffer*)page->buffer,&page->match_start,&page->match_end))
 					{
@@ -954,7 +954,7 @@ void basicFind(int dowhat)
 				basicFind(FINDNEXT);
 			}
 
-		if((dowhat==REPLACE) && (findInAllFiles==true) && (replaceAll==true))
+		if((dowhat==FINDREPLACE) && (findInAllFiles==true) && (replaceAll==true))
 			{
 				if(yesNo((char*)"Do you want to replace in ALL open files?"),(char*)""==GTK_RESPONSE_CANCEL)
 					return;
@@ -962,12 +962,12 @@ void basicFind(int dowhat)
 						for(int j=0;j<gtk_notebook_get_n_pages((GtkNotebook*)mainNotebook);j++)
 							{
 								gtk_notebook_set_current_page((GtkNotebook*)mainNotebook,j);
-								basicFind(REPLACE);
+								basicFind(FINDREPLACE);
 							}
 						findInAllFiles=true;
 			}
 
-		if((dowhat==REPLACE) && (replaceAll==true))
+		if((dowhat==FINDREPLACE) && (replaceAll==true))
 			{
 
 			if((gtk_text_buffer_get_has_selection((GtkTextBuffer*)page->buffer)==true) && (autoSelected==false))
@@ -1040,185 +1040,6 @@ void showOnStatus(const char* from,const char* to)
 	statusMessage=message;
 #endif
 }
-
-void doFindReplace(int response_id)//TODO//move
-{
-	int									flags=0;
-	DocumentClass						*document=kkedit->getDocumentForTab(-1);
-	char								*currentfindtext;
-	char								*currentreplacetext;
-	const char							*thetext;
-	GSList								*tlist;
-	GSList								*list;
-	QComboBox							*combo;
-	bool								flag=false;
-	int									cnt;
-	QString								str;
-	bool								gotresult;
-	QColor								lineColor=QColor(Qt::green);
-	QTextDocument						*doc;
-
-	if(document==NULL)
-		return;
-
-	doc=document->document();
-	QTextCursor							newCursor(doc);
-
-
-	currentfindtext=strdup(reinterpret_cast<QComboBox*>(kkedit->findDropBox)->currentText().toUtf8().constData());
-	currentreplacetext=strdup(reinterpret_cast<QComboBox*>(kkedit->replaceDropBox)->currentText().toUtf8().constData());
-
-	QRegExp			rx(currentfindtext);
-
-	if(kkedit->insensitiveSearch==true)
-		rx.setCaseSensitivity(Qt::CaseInsensitive);
-	else
-		{
-			flags+=QTextDocument::FindCaseSensitively;
-			rx.setCaseSensitivity(Qt::CaseSensitive);
-		}
-
-	flags+=(((response_id==FINDPREV)<<((QTextDocument::FindBackward)-1)));
-
-	if((response_id==FINDNEXT) && (kkedit->hightlightAll==true))
-		{
-			document->clearHilites();
-			document->selection.format.setBackground(lineColor);
-			while(!newCursor.isNull() && !newCursor.atEnd())
-				{
-					if(kkedit->useRegex==false)
-						newCursor=doc->find(currentfindtext,newCursor,(QTextDocument::FindFlags)flags);
-					else
-						newCursor=doc->find(rx,newCursor,(QTextDocument::FindFlags)flags);
-					
-					if(!newCursor.isNull())
-						{
-							document->selection.cursor=newCursor;
-							document->hilightSelections.append(document->selection);
-						}
-				}
-				document->setXtraSelections();
-		}
-
-	if(kkedit->hightlightAll==false)
-		{
-			document->clearHilites();
-		}
-
-	if(response_id!=REPLACE)
-		{
-			combo=reinterpret_cast<QComboBox*>(kkedit->findDropBox);
-			list=findList;
-			thetext=currentfindtext;
-			if(kkedit->useRegex==false)
-				gotresult=document->find(thetext,(QTextDocument::FindFlags)flags);
-			else
-				gotresult=document->find(rx,(QTextDocument::FindFlags)flags);
-
-			if((kkedit->wrapSearch==true) && (gotresult==false))
-				{
-					int ln=document->textCursor().blockNumber()+1;
-					kkedit->gotoLine(0);
-					if(kkedit->useRegex==false)
-						gotresult=document->find(thetext,(QTextDocument::FindFlags)flags);
-					else
-						gotresult=document->find(rx,(QTextDocument::FindFlags)flags);
-					if(gotresult==false)
-						kkedit->gotoLine(ln);			
-				}
-		}
-	else
-		{
-			combo=reinterpret_cast<QComboBox*>(kkedit->replaceDropBox);
-			list=replaceList;
-			thetext=currentreplacetext;
-			if(kkedit->replaceAll==false)
-				{
-					if(kkedit->useRegex==false)
-						{
-							if(document->textCursor().hasSelection())
-								document->textCursor().insertText(thetext);
-							document->find(currentfindtext,(QTextDocument::FindFlags)flags);
-						}
-					else
-						{
-							if(document->textCursor().hasSelection())
-								{
-									str=document->textCursor().selectedText();
-									str.replace(rx,thetext);
-									document->textCursor().insertText(str);
-								}
-							document->find(rx,(QTextDocument::FindFlags)flags);
-						}
-				}
-			else
-				{
-					cnt=0;
-					kkedit->gotoLine(0);
-					if(kkedit->useRegex==false)
-						document->find(currentfindtext,(QTextDocument::FindFlags)flags);
-					else
-						document->find(rx,(QTextDocument::FindFlags)flags);
-
-					while(!newCursor.isNull() && !newCursor.atEnd())
-						{
-							if(kkedit->useRegex==false)
-								newCursor=doc->find(currentfindtext,newCursor,(QTextDocument::FindFlags)flags);
-							else
-								newCursor=doc->find(rx,newCursor,(QTextDocument::FindFlags)flags);
-					
-							if(!newCursor.isNull())
-								{
-									if(kkedit->useRegex==false)
-										{
-											newCursor.insertText(thetext);
-											cnt++;
-										}
-									else
-										{
-											str=newCursor.selectedText();
-											str.replace(rx,thetext);
-											newCursor.insertText(str);
-											cnt++;
-										}
-								}
-						}
-					printf("Replaced %i occurrances of %s with %s\n",cnt,currentfindtext,thetext);
-				}
-		}
-
-	if(list==NULL)
-		{
-			list=g_slist_append(list,strdup(thetext));
-			combo->addItem(thetext);
-		}
-	else
-		{
-			tlist=list;
-			flag=false;
-			do
-				{
-					if(strcmp((const gchar*)tlist->data,thetext)==0)
-						flag=true;
-					tlist=tlist->next;
-				}
-			while(tlist!=NULL);
-
-			if(flag==false)
-				{
-					list=g_slist_append(list,strdup(thetext));
-					combo->addItem(thetext);
-				}
-		}
-
-	debugFree(&currentfindtext,"doFindReplace currentfindtext");
-	debugFree(&currentreplacetext,"doFindReplace currentreplacetext");
-}
-
-//VISIBLE void find(Widget* widget,uPtr data)
-//{
-//	kkedit->findReplaceDialog->show();
-//}
 
 void doSearchPrefs(int state)
 {

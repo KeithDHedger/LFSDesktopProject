@@ -50,7 +50,7 @@ bool tabPopUp(GtkWidget *my_widget, GdkEventButton *event,gpointer user_data);
 bool tabPopUp(void);
 #endif
 
-void doShutdown(Widget* widget,uPtr data);
+//void doShutdown(Widget* widget,uPtr data);
 
 #ifndef _USEQT5_
 void setToolOptions(GtkWidget* widget,gpointer data);

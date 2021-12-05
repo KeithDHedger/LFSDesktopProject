@@ -441,6 +441,7 @@ void KKEditClass::initApp(int argc,char** argv)
 			this->mainWindow->setGeometry(r);
 		}
 
+	this->mainWindow->show();
 return;
 	refreshMainWindow();
 
@@ -779,4 +780,24 @@ bool KKEditClass::closeTab(int index)
 	this->sessionBusy=false;
 	return(true);
 }
+
+void KKEditClass::shutDownApp()
+{
+	if(this->forcedMultInst==false)
+		this->writeExitData();
+//TODO
+//#ifdef _ASPELL_
+//	delete_aspell_config(aspellConfig);
+//	delete_aspell_speller(spellChecker);
+//#endif
+	//if(onExitSaveSession)
+	//	saveSession(NULL,0);
+	//if(doSaveAll(widget,(uPtr)true)==false)
+	//	return;
+	//g_list_foreach(globalPlugins->plugins,releasePlugs,NULL);
+
+	if(this->saveAllFiles()==true)
+		QApplication::quit();
+}
+
 

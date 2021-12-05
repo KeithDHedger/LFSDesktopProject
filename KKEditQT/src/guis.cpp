@@ -591,20 +591,6 @@ printf(">>%i<<\n",state);
 //	spellCheckWord=NULL;
 }
 
-#ifdef _USEQT5_
-void doFindForwardWrap(void)
-{
-	doFindReplace(FINDNEXT);
-}
-void doFindBackWrap(void)
-{
-	doFindReplace(FINDPREV);
-}
-void doReplaceWrap(void)
-{
-	doFindReplace(REPLACE);
-}
-#endif
 
 #ifdef _ASPELL_
 void buildWordCheck(int documentCheck)
