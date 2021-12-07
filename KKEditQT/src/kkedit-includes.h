@@ -135,6 +135,9 @@ struct functionData
 class DocumentClass;
 class HistoryClass;
 class KKEditClass;
+#ifdef _ASPELL_
+#include <aspell.h>
+#endif
 
 #include "sliceclass.h"
 #include "kkedit-plugins.h"

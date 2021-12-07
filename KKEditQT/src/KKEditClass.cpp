@@ -394,18 +394,6 @@ void KKEditClass::initApp(int argc,char** argv)
 	QObject::connect(this->checkMessages,SIGNAL(timeout()),this,SLOT(doTimer()));
 	this->checkMessages->start(this->prefsMsgTimer);
 
-//#ifdef _ASPELL_
-//	AspellCanHaveError*	possible_err;
-//	spellChecker=NULL;
-//	aspellConfig=NULL;
-//	aspellConfig=new_aspell_config();
-//	possible_err=new_aspell_speller(aspellConfig);
-//
-//	if(aspell_error_number(possible_err)!= 0)
-//		puts(aspell_error_message(possible_err));
-//	else
-//		spellChecker=to_aspell_speller(possible_err);
-//#endif
 	//globalSlice=new StringSlice;
 //
 //
@@ -426,6 +414,19 @@ void KKEditClass::initApp(int argc,char** argv)
 #endif
 
 	buildFindReplace();
+#ifdef _ASPELL_
+	AspellCanHaveError	*possible_err;
+	//this->spellChecker=NULL;
+	//this->aspellConfig=NULL;
+	this->aspellConfig=new_aspell_config();
+	possible_err=new_aspell_speller(this->aspellConfig);
+
+	if(aspell_error_number(possible_err)!= 0)
+		puts(aspell_error_message(possible_err));
+	else
+		spellChecker=to_aspell_speller(possible_err);
+	this->buildSpellCheckerGUI();
+#endif
 
 	asprintf(&htmlFile,"%s/Docview-%s.html",this->tmpFolderName.c_str(),globalSlice->randomName(6));
 	asprintf(&htmlURI,"file://%s/Docview-%s.html",this->tmpFolderName.c_str(),globalSlice->randomName(6));
@@ -837,10 +838,10 @@ void KKEditClass::shutDownApp()
 	if(this->forcedMultInst==false)
 		this->writeExitData();
 //TODO
-//#ifdef _ASPELL_
-//	delete_aspell_config(aspellConfig);
-//	delete_aspell_speller(spellChecker);
-//#endif
+#ifdef _ASPELL_
+	delete_aspell_config(aspellConfig);
+	delete_aspell_speller(spellChecker);
+#endif
 	//if(onExitSaveSession)
 	//	saveSession(NULL,0);
 	//if(doSaveAll(widget,(uPtr)true)==false)

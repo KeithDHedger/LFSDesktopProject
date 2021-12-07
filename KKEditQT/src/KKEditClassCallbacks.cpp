@@ -497,5 +497,14 @@ void KKEditClass::doTabBarContextMenu(void)
 			case COPYFILENAME:
 				clipboard->setText(doc->getFileName());
 				break;
+			case SPELLCHECKDOC:
+				if(doc->textCursor().selectedText().isEmpty()==false)
+					{
+						this->setUpSpellGUI(doc->textCursor().selectedText(),doc);
+			//selection=strdup(document->textCursor().selectedText().toUtf8().constData());
+//						this->infoLabel->setText(QString("Change %1 to:").arg(doc->textCursor().selectedText()));
+//						this->spellCheckGUI->show();
+					}
+				break;
 		}
 }

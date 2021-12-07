@@ -965,5 +965,121 @@ void KKEditClass::rebuildTabsMenu(void)
 				}
 }
 
+#ifdef _ASPELL_
+void KKEditClass::buildSpellCheckerGUI(void)
+{
+	QVBoxLayout*	vlayout=new QVBoxLayout;
+	QWidget*		hbox;
+	QHBoxLayout*	hlayout;
+	QLabel			*label;
+	QPushButton		*button;
+	QIcon			icon;
 
+	this->spellCheckGUI=new QDialog(this->mainWindow);
+	this->spellCheckGUI->setWindowTitle("Spell Check Word");
+	vlayout->setContentsMargins(4,0,4,0);
+
+//find
+	this->infoLabel=new QLabel("Change word to:");
+	this->infoLabel->setAlignment(Qt::AlignCenter);
+	vlayout->addWidget(this->infoLabel);
+
+	this->wordDropBox=new QComboBox;
+	this->wordDropBox->setEditable(true);
+	//reinterpret_cast<QComboBox*>(this->findDropBox)->setCompleter(0);
+	vlayout->addWidget(this->wordDropBox);
+
+//switches 3rd row
+	hlayout=new QHBoxLayout;
+	hlayout->setContentsMargins(0,4,0,4);
+	hbox=new QWidget;
+	hbox->setLayout(hlayout);
+
+	button=new QPushButton("Apply");
+	//button->setObjectName(FINDNEXTOBJECTNAME);
+	//QObject::connect(button,SIGNAL(clicked()),this,SLOT(doFindButton()));
+	//icon=QIcon::fromTheme("go-next",QIcon("go-next"));
+	//button->setIcon(icon);
+	hlayout->addWidget(button);
+
+	button=new QPushButton("Ignore");
+	//button->setObjectName(FINDNEXTOBJECTNAME);
+	//QObject::connect(button,SIGNAL(clicked()),this,SLOT(doFindButton()));
+	//icon=QIcon::fromTheme("go-next",QIcon("go-next"));
+	//button->setIcon(icon);
+	hlayout->addWidget(button);
+
+	button=new QPushButton("Add");
+	//button->setObjectName(FINDNEXTOBJECTNAME);
+	//QObject::connect(button,SIGNAL(clicked()),this,SLOT(doFindButton()));
+	//icon=QIcon::fromTheme("go-next",QIcon("go-next"));
+	//button->setIcon(icon);
+	hlayout->addWidget(button);
+
+	button=new QPushButton("Cancel");
+	//button->setObjectName(FINDNEXTOBJECTNAME);
+	//QObject::connect(button,SIGNAL(clicked()),this,SLOT(doFindButton()));
+	//icon=QIcon::fromTheme("go-next",QIcon("go-next"));
+	//button->setIcon(icon);
+	hlayout->addWidget(button);
+
+	vlayout->addWidget(hbox);
+
+	this->spellCheckGUI->setLayout(vlayout);
+//	QVBoxLayout*	vlayout=new QVBoxLayout;
+//	QWidget*		mainwidget=new QWidget;
+//	QWidget*		hbox;
+//	QHBoxLayout*	hlayout;
+//	//Button*			button;
+//	QWidget*			button;
+//	Qt::WindowFlags flags;
+//
+//	window=new QMainWindow;
+//	window->setWindowTitle("Aspell GUI");
+//	((QMainWindow*)window)->resize(420,150);
+//	flags=window->windowFlags();
+//	window->setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
+//
+//	bufferBox=new QPlainTextEdit;
+//	vlayout->setContentsMargins(0,0,0,0);
+//	vlayout->addWidget(bufferBox);
+//	hlayout=new QHBoxLayout;
+//	hbox=new QWidget;
+//	hbox->setLayout(hlayout);
+//
+////about
+//	button=new Button("&About");
+//	hlayout->addWidget(button);
+//	button->setCallBack((func_ptr)&doAbout);
+//	button->setIcon(QIcon::fromTheme("help-about"));
+////spellcheck //doSpellCheckDoc
+//	button=new Button("&Spell Check");
+//	hlayout->addWidget(button);
+//	button->setCallBack((func_ptr)&doSpellCheckDoc);
+//	button->setIcon(QIcon::fromTheme("tools-check-spelling"));
+////check word
+//	button=new Button("&Check Word");
+//	hlayout->addWidget(button);
+//	button->setCallBack((func_ptr)&checkWord);
+//	button->setIcon(QIcon::fromTheme("tools-check-spelling"));
+////unstick
+//	button=new Button("&Normal");
+//	hlayout->addWidget(button);
+//	button->setCallBack((func_ptr)&doSticky);
+//	button->setCheckable(true);
+//	button->setChecked(true);
+//	
+////quit
+//	button=new Button("&Quit");
+//	hlayout->addWidget(button);
+//	button->setCallBack((func_ptr)&doShutdown);
+//	button->setIcon(QIcon::fromTheme("application-exit"));
+//
+////button box to main vbox
+//	vlayout->addWidget(hbox);
+//
+//	mainwidget->setLayout(vlayout);
+//	((QMainWindow*)window)->setCentralWidget(mainwidget);
+}
+#endif
 

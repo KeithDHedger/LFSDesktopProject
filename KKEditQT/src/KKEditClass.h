@@ -89,6 +89,13 @@ class KKEditClass : public QObject
 		bool						forceDefaultGeom=false;
 		bool						sessionBusy=false;
 		tabMenuStruct				tabContextMenuItems[TABCONTEXTMENUCNT]={{COPYFOLDERPATH,"Copy Folder Path"},{COPYFILEPATH,"Copy File Path"},{COPYFILENAME,"Copy File Name"},{SPELLCHECKDOC,"Spellcheck Document"},{SRCHILTIE,"Source Hilighting"},{HIDETAB,"Hide Tab"},{LOCKCONTENTS,"Lock Contents"},{OPENFROMHERE,"Open From Here"},{OPENINBROWSER,"Open In Browser"}};
+#ifdef _ASPELL_
+		AspellConfig				*aspellConfig=NULL;
+		AspellSpeller				*spellChecker=0;
+		QWidget						*spellCheckGUI=NULL;
+		QComboBox					*wordDropBox;
+		QLabel						*infoLabel;
+#endif
 
 //app functions
 		void						initApp(int argc,char** argv);
@@ -100,7 +107,10 @@ class KKEditClass : public QObject
 		void						buildDocs(void);
 		void						showDocs(void);
 		void						shutDownApp(void);
-
+#ifdef _ASPELL_
+		void						buildSpellCheckerGUI(void);
+		void						setUpSpellGUI(QString word,DocumentClass *doc);
+#endif
 //app prefs
 //document
 		bool						prefsIndent=true;

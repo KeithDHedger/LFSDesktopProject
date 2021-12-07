@@ -138,3 +138,12 @@ printf("void KKEditClass::reloadFile(void)\n");
 	this->switchPage(calctabnum);
 }
 
+void KKEditClass::setUpSpellGUI(QString word,DocumentClass *doc)
+{
+	if(doc==NULL)
+		doc=this->getDocumentForTab(-1);
+
+	this->infoLabel->setText(QString("Change %1 to:").arg(word));
+	this->spellCheckGUI->show();
+}
+
