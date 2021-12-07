@@ -49,6 +49,16 @@ enum {FUNCTIONCOMBO=0,THEMECOMBO,FONTNAMECOMBO,FONTSIZECOMBO,PREFSTERMCOMMAND,PR
 
 enum {FINDNEXT=1,FINDPREV,FINDREPLACE};
 
+struct tabMenuStruct
+{
+	unsigned int	what;
+	const char		*label;
+};
+
+enum {COPYFOLDERPATH=0xf000,COPYFILEPATH=0xf100,COPYFILENAME=0xf200,SPELLCHECKDOC=0xf300,SRCHILTIE=0xf400,HIDETAB=0xf500,LOCKCONTENTS=0xf600,OPENFROMHERE=0xf700,OPENINBROWSER=0xf800};
+
+enum {TABCONTEXTMENUCNT=(OPENINBROWSER-COPYFOLDERPATH) / 0x100 +1};
+
 #include "kkedit-includes.h"
 class MenuItemClass;
 
@@ -62,7 +72,8 @@ class KKEditClass : public QObject
 
 //app vars
 		QMainWindow					*mainWindow;
-		QTabWidget						*mainNotebook=NULL;
+		QTabWidget					*mainNotebook=NULL;
+		QTabBar						*tabBar=NULL;
 		QApplication				*application;
 		QTimer 						*checkMessages;
 		std::string					tmpFolderName;
@@ -77,6 +88,7 @@ class KKEditClass : public QObject
 		bool						forcedMultInst=false;
 		bool						forceDefaultGeom=false;
 		bool						sessionBusy=false;
+		tabMenuStruct				tabContextMenuItems[TABCONTEXTMENUCNT]={{COPYFOLDERPATH,"Copy Folder Path"},{COPYFILEPATH,"Copy File Path"},{COPYFILENAME,"Copy File Name"},{SPELLCHECKDOC,"Spellcheck Document"},{SRCHILTIE,"Source Hilighting"},{HIDETAB,"Hide Tab"},{LOCKCONTENTS,"Lock Contents"},{OPENFROMHERE,"Open From Here"},{OPENINBROWSER,"Open In Browser"}};
 
 //app functions
 		void						initApp(int argc,char** argv);
@@ -127,6 +139,9 @@ class KKEditClass : public QObject
 		int							currentPage=0;
 		bool						closingAllTabs=false;
 //editor functions
+		QString						truncateWithElipses(const QString str,unsigned int maxlen);
+		void						sortTabs(void);
+		void						rebuildTabsMenu(void);
 
 //menubar
 		QMenuBar					*menuBar;
@@ -159,8 +174,8 @@ class KKEditClass : public QObject
 		MenuItemClass				*findNextMenuItem;
 		MenuItemClass				*sortTabsMenuItem;
 		MenuItemClass				*showAllTabsMenuItem;
-		MenuItemClass				*selectTabMenuItem;
-
+		//MenuItemClass				*selectTabMenuItem;
+QMenu *selectTabMenu;
 //view menu
 		QMenu						*viewMenu;
 		bool						toolbarVisible=true;
@@ -221,7 +236,7 @@ class KKEditClass : public QObject
 		bool						openFileDialog(void);
 		void						openAsHexDump(void);
 		QString						runPipeAndCapture(QString command);
-		bool						saveFile(int tabnum);
+		bool						saveFile(int tabnum,bool ask=true);
 		void						newEditor(int what);
 		void						runPipe(QString command);
 		bool						saveAllFiles(void);
@@ -326,6 +341,8 @@ class KKEditClass : public QObject
 		void						doBookmarkMenuItems();
 		void						doHelpMenuItems();
 		void						doToolsMenuItems();
+		void						doSelectTab(void);
+		void						doTabBarContextMenu(void);
 
 		void						doDoubleClickPrefs(QListWidgetItem *item);
 		void						setPreferences(void);
@@ -339,7 +356,7 @@ class KKEditClass : public QObject
 		void						closeAllTabs(void);
 
 		void						doFindButton(void);
-
+		void						tabContextMenu(const QPoint &pt);
 	protected:
 	private:
 //app

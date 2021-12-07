@@ -131,7 +131,7 @@ printf("void KKEditClass::reloadFile(void)\n");
 			doc->highlighter->rehighlight();
 			doc->dirty=false;
 			file.close();
-			doc->setTabName(truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
+			doc->setTabName(this->truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
 		}
 
 	this->sessionBusy=false;

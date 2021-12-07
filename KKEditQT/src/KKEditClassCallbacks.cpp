@@ -19,6 +19,15 @@
  */
 
 #include "KKEditClass.h"
+#include <QClipboard>
+
+void KKEditClass::doSelectTab()
+{
+	QTabBar			*bar=this->mainNotebook->tabBar();
+	QAction			*caller=qobject_cast<QAction*>(sender());
+	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(caller);
+	bar->setCurrentIndex(mc->getMenuID());
+}
 
 void KKEditClass::doBookmarkMenuItems()
 {
@@ -246,6 +255,7 @@ void KKEditClass::doEditMenuItems()
 				doFindReplace(FINDNEXT);
 				break;
 			case SORTTABSMENUITEM:
+				this->sortTabs();
 				break;
 			case SHOWALLTABSMENUITEM:
 				break;
@@ -293,7 +303,7 @@ void KKEditClass::doFileMenuItems()
 				this->buildDocs();
 				break;
 			case SAVEMENUITEM:
-				this->saveFile(-1);
+				this->saveFile(-1,false);
 				break;
 			case SAVEASMENUITEM:
 				this->saveFileAs(-1);
@@ -464,4 +474,28 @@ void KKEditClass::addToToolBar(void)
 
 	this->prefsToolBarLayout=(char*)qobject_cast<MenuItemClass*>(mc)->objectName().constData();
 	this->populateStore();
+}
+
+void KKEditClass::doTabBarContextMenu(void)
+{
+	QAction			*caller=qobject_cast<QAction*>(sender());
+	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(caller);
+	bool			retval;
+	QClipboard		*clipboard=this->application->clipboard();
+	DocumentClass	*doc;
+
+	doc=this->getDocumentForTab((mc->getMenuID() & 0xff));
+	fprintf(stderr,"doTabBarContextMenu -> menu id=%x, menu name=%s\n",mc->getMenuID(),mc->text().toStdString().c_str());
+	switch(mc->getMenuID() & 0xff00)
+		{
+			case COPYFOLDERPATH:
+				clipboard->setText(doc->getDirPath());
+				break;
+			case COPYFILEPATH:
+				clipboard->setText(doc->getFilePath());
+				break;
+			case COPYFILENAME:
+				clipboard->setText(doc->getFileName());
+				break;
+		}
 }

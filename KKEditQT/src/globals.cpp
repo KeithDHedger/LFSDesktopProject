@@ -189,43 +189,6 @@ int				usebar=0;
 //status bar message
 char*			statusMessage=NULL;
 
-//truncate tabname with elipses
-QString truncateWithElipses(const QString str,unsigned int maxlen)
-{
-	QString newlabel;
-	if(str.length()>maxlen)
-		newlabel=str.left((maxlen-3)/2)+"..."+str.right((maxlen-3)/2);
-	else
-		newlabel=str;
-
-	return(newlabel);
-}
-
-char* truncateWithElipses(char* str,unsigned int maxlen)
-{
-	char*	retstr;
-	char	*front,*back;
-	int		sides;
-
-	if(g_utf8_validate(str,-1,NULL)==true)
-		{
-			if(g_utf8_strlen(str,-1)>maxlen)
-				{
-					sides=(maxlen-5)/2;
-					front=g_utf8_substring(str,0,sides);
-					back=g_utf8_substring(str,g_utf8_strlen(str,-1)-sides,g_utf8_strlen(str,-1));
-					asprintf(&retstr,"%s ... %s",front,back);
-					debugFree(&front,"truncateWithElipses front");
-					debugFree(&back,"truncateWithElipses back");
-				}
-			else
-				retstr=strdup(str);
-		}
-	else
-		retstr=strdup(str);
-
-	return(retstr);
-}
 
 void plugRunFunction(gpointer data,gpointer funcname)
 {

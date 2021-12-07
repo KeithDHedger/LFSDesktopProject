@@ -61,6 +61,8 @@ MenuItemClass* KKEditClass::makeMenuItemClass(int mainmenu,const QString name,co
 				this->toolsMenu->addAction(menuitem);
 				QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doToolsMenuItems()));
 				break;
+			//case TABCONTEXTMENU:
+			//	break;
 		}
 
 	return(menuitem);

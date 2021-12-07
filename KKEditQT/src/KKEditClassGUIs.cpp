@@ -623,7 +623,12 @@ void KKEditClass::buildMainGui(void)
 //	this->mainWindow->setLayout(this->mainWindowVBox);
 
 	this->mainNotebook=new QTabWidget;
-	
+
+//contextMenuEvent
+	this->tabBar=this->mainNotebook->tabBar();
+	this->tabBar->setContextMenuPolicy(Qt::CustomContextMenu);
+	QObject::connect(this->tabBar,SIGNAL(customContextMenuRequested(const QPoint &)),SLOT(tabContextMenu(const QPoint &)));
+
 	this->mainNotebook->setDocumentMode(true);
 	this->mainNotebook->setTabsClosable(true);
 	this->mainNotebook->setMovable(true);
@@ -749,7 +754,9 @@ void KKEditClass::buildMainGui(void)
 //show all tabs
 	this->showAllTabsMenuItem=this->makeMenuItemClass(EDITMENU,"Show All Tabs",0,"list-add",SHOWALLTABSMENUNAME,SHOWALLTABSMENUITEM);
 //select tab
-	this->selectTabMenuItem=this->makeMenuItemClass(EDITMENU,"Select Tab",0,"accessories-text-editor",SELECTTABMENUNAME,SELECTTABMENUITEM);
+//	this->selectTabMenuItem=this->makeMenuItemClass(EDITMENU,"Select Tab",0,"accessories-text-editor",SELECTTABMENUNAME,SELECTTABMENUITEM);
+	this->selectTabMenu=new QMenu("Select Tab");
+	this->editMenu->addMenu(this->selectTabMenu);
 
 	this->editMenu->addSeparator();
 
@@ -916,3 +923,47 @@ printf("TODO buildTools\n");
 //	g_signal_connect(G_OBJECT(menuitem),"activate",G_CALLBACK(doMakeTool),NULL);
 
 }
+
+void KKEditClass::sortTabs(void)
+{
+	QTabBar	*bar=this->mainNotebook->tabBar();
+	bool	flag=true;
+	DocumentClass	*doc1;
+	DocumentClass	*doc2;//=this->getDocumentForTab(-1);
+
+	while(flag==true)
+		{
+			flag=false;
+			for(int j=0;j<bar->count()-1;j++)
+				{
+					doc1=this->getDocumentForTab(j);
+					doc2=this->getDocumentForTab(j+1);
+					if(doc1->getFileName().compare(doc2->getFileName())>0)
+						{
+							flag=true;
+							bar->moveTab(j+1,j);
+						}
+				}
+		}
+	rebuildTabsMenu();
+}
+
+void KKEditClass::rebuildTabsMenu(void)
+{
+	DocumentClass	*doc;
+	MenuItemClass	*menuitem;
+	QTabBar			*bar=this->mainNotebook->tabBar();
+
+	this->selectTabMenu->clear();
+	for(int j=0;j<bar->count();j++)
+				{
+					doc=this->getDocumentForTab(j);
+					menuitem=new MenuItemClass(doc->getFileName());
+					menuitem->setMenuID(j);
+					this->selectTabMenu->addAction(menuitem);
+					QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doSelectTab()));
+				}
+}
+
+
+

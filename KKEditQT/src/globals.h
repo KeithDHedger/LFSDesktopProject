@@ -189,12 +189,12 @@ void goFoward(QWidget* widget,uPtr data);
 void showBarberPole(const char* title);
 void killBarberPole(void);
 void debugFree(char** ptr,const char* message);
-char* truncateWithElipses(char* str,unsigned int maxlen);
+
 void doBusy(bool busy,pageStruct* page);
 
 char* toCharStar(QString *str);
 
-QString truncateWithElipses(const QString str,unsigned int maxlen);
+
 extern KKEditClass *kkedit;
 #endif
 

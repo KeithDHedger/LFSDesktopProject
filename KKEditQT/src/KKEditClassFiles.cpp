@@ -81,7 +81,7 @@ VISIBLE void KKEditClass::newFile(const QString data,const QString filename)
 		doc->setFileName(QString("Untitled-%1").arg(untitledNumber));
 	else
 		doc->setFileName(filename);
-	doc->setTabName(truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
+	doc->setTabName(this->truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
 	this->mainNotebook->setTabToolTip(tabnum,doc->getFileName());
 	doc->setFilePrefs();
 	doc->mimeType="text/plain";
@@ -90,6 +90,7 @@ VISIBLE void KKEditClass::newFile(const QString data,const QString filename)
 	doc->setHiliteLanguage();
 	untitledNumber++;
 	this->mainNotebook->setCurrentWidget(doc);
+	this->rebuildTabsMenu();
 	this->sessionBusy=false;
 }
 
@@ -136,7 +137,7 @@ bool KKEditClass::saveFileAs(int tabnum)
 					this->mainNotebook->setTabToolTip(calctabnum,doc->getFilePath());
 					QTextStream(&file) << doc->toPlainText() << Qt::endl;
 					doc->dirty=false;
-					doc->setTabName(truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
+					doc->setTabName(this->truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
 					file.close();
 				}
 			else
@@ -149,7 +150,7 @@ bool KKEditClass::saveFileAs(int tabnum)
 	return(retval);
 }
 
-bool KKEditClass::saveFile(int tabnum)
+bool KKEditClass::saveFile(int tabnum,bool ask)
 {
 	DocumentClass	*doc=this->getDocumentForTab(tabnum);
 	QFile			file;
@@ -159,7 +160,7 @@ bool KKEditClass::saveFile(int tabnum)
 	if(doc==NULL)
 		return(false);
 
-	if(doc->dirty==true)
+	if((doc->dirty==true) && (ask==true))
 		{
 			int result=this->askSaveDialog(doc->fileName);
 			switch(result)
@@ -189,7 +190,7 @@ bool KKEditClass::saveFile(int tabnum)
 				{
 					QTextStream(&file) << doc->toPlainText() << Qt::endl;
 					doc->dirty=false;
-					doc->setTabName(truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
+					doc->setTabName(this->truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
 					file.close();
 				}
 			else

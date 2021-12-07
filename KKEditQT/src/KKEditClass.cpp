@@ -209,7 +209,7 @@ void KKEditClass::switchPage(int index)
 	DocumentClass	*doc=NULL;
 	int				linenum;
 	char			tmpstr[1024];
-	char*			correctedstr;
+	QString			correctedstr;
 	char*			typenames[50]= {NULL,};
 	char*			newstr=NULL;
 	bool			flag;
@@ -237,9 +237,8 @@ void KKEditClass::switchPage(int index)
 		{
 			tmpstr[0]=0;
 			sscanf (lineptr,"%*s %*s %i %[^\n]s",&linenum,tmpstr);
-			correctedstr=truncateWithElipses(tmpstr,this->prefsMaxFuncChars);
-			sprintf(tmpstr,"%s",correctedstr);
-			debugFree(&correctedstr,"switchPage correctedstr");
+			correctedstr=this->truncateWithElipses(tmpstr,this->prefsMaxFuncChars);
+			sprintf(tmpstr,"%s",correctedstr.toStdString().c_str());
 
 			if(strlen(tmpstr)>0)
 				{
@@ -300,6 +299,7 @@ void KKEditClass::switchPage(int index)
 			if (lineptr!=NULL)
 				lineptr++;
 		}
+	this->rebuildTabsMenu();
 	this->funcMenu->setEnabled(onefunc);
 }
 
@@ -500,6 +500,49 @@ void KKEditClass::readConfigs(void)
 	this->prefsUseSingle=this->prefs.value("app/usesingle",QVariant(bool(true))).value<bool>();
 }
 
+
+/*
+	MenuItemClass	*menuitem=new MenuItemClass(name);
+	QIcon			itemicon=QIcon::fromTheme(iconname,QIcon(iconname));
+
+	menuitem->setMenuID(userdata);
+	menuitem->setIcon(itemicon);
+	if(key!=0)
+		menuitem->setShortcut(key);
+	menuitem->setObjectName(objectname);
+
+	switch(mainmenu)
+		{
+			case FILEMENU:
+				this->fileMenu->addAction(menuitem);
+				QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doFileMenuItems()));
+				break;
+
+*/
+void KKEditClass::tabContextMenu(const QPoint &pt)
+{
+	MenuItemClass	*menuitem;
+	int				tabIndex;
+
+	if (pt.isNull())
+		return;
+
+	tabIndex=this->tabBar->tabAt(pt);
+
+	if (tabIndex!=-1)
+		{
+			QMenu	menu(this->tabBar);
+			for(int cnt=0;cnt<TABCONTEXTMENUCNT;cnt++)
+				{
+					menuitem=new MenuItemClass(this->tabContextMenuItems[cnt].label);
+					menuitem->setMenuID(this->tabContextMenuItems[cnt].what+tabIndex);
+					menu.addAction(menuitem);
+					QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doTabBarContextMenu()));
+				}
+			menu.exec(this->tabBar->mapToGlobal(pt));
+		}
+}
+
 bool KKEditClass::openFile(std::string filepath,int linenumber,bool warn)
 {
 	DocumentClass	*doc=new DocumentClass(this);
@@ -526,7 +569,7 @@ bool KKEditClass::openFile(std::string filepath,int linenumber,bool warn)
 			doc->setDirPath(fileinfo.canonicalPath());
 			doc->setFilePath(fileinfo.canonicalFilePath());
 			doc->setFileName(fileinfo.fileName());
-			doc->setTabName(truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
+			doc->setTabName(this->truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
 			this->mainNotebook->setTabToolTip(tabnum,doc->getFilePath());
 			this->mainNotebook->setCurrentIndex(tabnum);
 			this->gotoLine(linenumber);
@@ -552,6 +595,9 @@ bool KKEditClass::openFile(std::string filepath,int linenumber,bool warn)
 
 	if(this->openFromDialog==false)
 		switchPage(tabnum);
+
+	this->rebuildTabsMenu();
+
 	return(retval);
 }
 
@@ -730,6 +776,7 @@ printf("void KKEditClass::closeAllTabs(void)\n");
 		}
 
 	this->rebuildBookMarkMenu();
+	this->rebuildTabsMenu();
 	this->sessionBusy=false;
 }
 
@@ -759,7 +806,7 @@ bool KKEditClass::closeTab(int index)
 					switch(result)
 						{
 							case QMessageBox::Save:
-								this->saveFile(thispage);
+								this->saveFile(thispage,false);
        // Save was clicked
 								break;
 							case QMessageBox::Discard:
@@ -768,6 +815,7 @@ bool KKEditClass::closeTab(int index)
 							case QMessageBox::Cancel:
        // Cancel was clicked
 								this->sessionBusy=false;
+								this->rebuildTabsMenu();
 								return(false);
 								break;
 						}
@@ -776,6 +824,9 @@ bool KKEditClass::closeTab(int index)
 			this->mainNotebook->removeTab(thispage);
 			delete doc;
 		}
+
+	if(this->closingAllTabs==false)
+		this->rebuildTabsMenu();
 
 	this->sessionBusy=false;
 	return(true);
@@ -799,5 +850,17 @@ void KKEditClass::shutDownApp()
 	if(this->saveAllFiles()==true)
 		QApplication::quit();
 }
+
+QString KKEditClass::truncateWithElipses(const QString str,unsigned int maxlen)
+{
+	QString newlabel;
+	if(str.length()>maxlen)
+		newlabel=str.left((maxlen-3)/2)+"..."+str.right((maxlen-3)/2);
+	else
+		newlabel=str;
+
+	return(newlabel);
+}
+
 
 
