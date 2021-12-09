@@ -325,7 +325,9 @@ void DocumentClass::contextMenuEvent(QContextMenuEvent *event)
 	menu.addAction(menuactions.at(GOTODEFINEMENUITEM-GOTODEFINEMENUITEM));
 	menu.addSeparator();
 
+#ifdef _ASPELL_
 	menu.addAction(this->mainKKEditClass->spellCheckMenuItem);
+#endif
 	menu.addSeparator();
 
 	menu.exec(event->globalPos());

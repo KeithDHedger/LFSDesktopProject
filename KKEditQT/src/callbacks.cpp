@@ -218,36 +218,6 @@ void refreshMainWindow(void)
 #endif
 }
 
-int yesNo(char* question,char* file)
-{
-	int			result=0;
-#ifndef _USEQT5_
-	GtkWidget*	dialog;
-
-	dialog=gtk_message_dialog_new(GTK_WINDOW(mainWindow),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_WARNING,GTK_BUTTONS_NONE,"%s %s",question,file);
-
-	gtk_dialog_add_buttons((GtkDialog*)dialog,GTK_STOCK_YES,GTK_RESPONSE_YES,GTK_STOCK_NO,GTK_RESPONSE_CANCEL,NULL);
-	gtk_window_set_title(GTK_WINDOW(dialog),"What Do You Want To Do?");
-
-	result=gtk_dialog_run(GTK_DIALOG(dialog));
-	gtk_widget_destroy(dialog);
-
-#endif
-	return(result);
-}
-
-int askSaveDialog(const QString filename)
-{
-	QMessageBox msgBox;
-
-	msgBox.setIcon(QMessageBox::Warning);
-	msgBox.setText(filename+" has been modified.");
-	msgBox.setInformativeText("Do you want to save your changes?");
-	msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-	msgBox.setDefaultButton(QMessageBox::Cancel);
-	return(msgBox.exec());
-}
-
 void setSensitive(void)
 {
 #ifndef _USEQT5_
@@ -520,10 +490,8 @@ printf("openHelp %i\n",(int)(long)data);
 #ifndef _USEQT5_
 	const char* lang;
 
-	if(strncmp(localeLang,"en",2)==0)
+
 		lang="en";
-	else
-		lang="fr";
 
 	asprintf(&thePage,"file://%s/help/help.%s.html",DATADIR,lang);
 #ifdef _BUILDDOCVIEWER_

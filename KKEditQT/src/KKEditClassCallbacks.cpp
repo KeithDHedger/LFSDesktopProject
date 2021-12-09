@@ -514,11 +514,13 @@ void KKEditClass::doOddMenuItems(void)
 		switch(mc->getMenuID())
 			{
 				case SPELLCHECKMENUITEM:
+#ifdef _ASPELL_
 					if(doc->textCursor().selectedText().isEmpty()==false)
 						{
 							this->returnWord=false;
 							this->setUpSpellGUI(doc->textCursor().selectedText(),doc);
 						}
+#endif
 					break;
 			}
 }
@@ -528,6 +530,7 @@ void KKEditClass::doOddButtons(void)
 	DocumentClass	*doc=this->getDocumentForTab(-1);
 	switch(sender()->objectName().toInt())
 		{
+#ifdef _ASPELL_
 			case APPLYWORDBUTTON:
 				fprintf(stderr,"APPLYWORD\n");
 				this->spellCheckGUI->hide();
@@ -559,6 +562,9 @@ void KKEditClass::doOddButtons(void)
 				fprintf(stderr,"CANCELSPELLCHECK\n");
 				this->cancelCheck=true;
 				this->spellCheckGUI->hide();
+				break;
+#endif
+			default:
 				break;
 		}
 }

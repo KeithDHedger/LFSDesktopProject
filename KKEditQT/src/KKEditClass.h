@@ -115,12 +115,12 @@ class KKEditClass : public QObject
 		void						buildDocs(void);
 		void						showDocs(void);
 		void						shutDownApp(void);
-#ifdef _ASPELL_
+
 		void						buildSpellCheckerGUI(void);
 		void						setUpSpellGUI(QString word,DocumentClass *doc);
 		bool						checkSelection(QString selection);
 		void						checkDoc(DocumentClass *doc);
-#endif
+
 //app prefs
 //document
 		bool						prefsIndent=true;
@@ -146,7 +146,7 @@ class KKEditClass : public QObject
 		bool						prefsUseGlobalPlugMenu=true;
 		int							prefsMsgTimer;
 		bool						prefsUseSingle=true;
-
+		bool						prefsNagScreen=false;
 //editor vars
 		QStatusBar					*statusBar;
 		QLabel						*statusText;
@@ -329,7 +329,7 @@ QMenu *selectTabMenu;
 //		bool					noDuplicates=false;
 //		bool					noWarnings=false;
 //		bool					hightlightAll=true;
-//		bool					nagScreen=false;
+		
 //		bool					showBMBar=false;
 
 //		unsigned int				autoShowMinChars=4;

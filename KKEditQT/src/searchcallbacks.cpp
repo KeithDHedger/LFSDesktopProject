@@ -810,6 +810,7 @@ fromregexsinglereplace=false;
 #endif
 }
 
+#if 0
 void basicFind(int dowhat)
 {
 #ifndef _USEQT5_
@@ -1016,28 +1017,12 @@ void basicFind(int dowhat)
 	debugFree(&replacetext,"basicFind replacetext");
 #endif
 }
-
+#endif
 void pasteFRClip(Widget* widget,uPtr data)
 //TODO//
 {
 #ifndef _USEQT5_
 	gtk_entry_set_text((GtkEntry*)data,gtk_combo_box_text_get_active_text((GtkComboBoxText*)widget));
-#endif
-}
-
-void showOnStatus(const char* from,const char* to)
-{
-#ifndef _USEQT5_
-	char*	message=NULL;
-
-	if( (showStatus==false))
-			return;
-
-	gtk_statusbar_pop((GtkStatusbar*)statusWidget,0);
-	asprintf(&message,"Replaced %i instances of '%s' with '%s'",itemsReplaced+1,from,to);
-	gtk_statusbar_pop((GtkStatusbar*)statusWidget,0);
-	gtk_statusbar_push((GtkStatusbar*)statusWidget,0,message);
-	statusMessage=message;
 #endif
 }
 

@@ -165,37 +165,32 @@ void KKEditClass::buildDocViewer(void)
     qobject_cast<QWebView*>(this->webView)->load(QUrl("file://" DATADIR "/help/help.en.html"));
     docvlayout->addWidget(this->webView);
 
-	//widget=new QPushButton(QIcon::fromTheme("go-previous",QIcon("go-previous")),"Back");
 	widget=new QPushButton(QIcon::fromTheme("go-previous"),"Back");
 	dochlayout->addWidget(widget);
 	QObject::connect((QPushButton*)widget,&QPushButton::clicked,webKitGoBack);
 
 	dochlayout->addStretch(1);
 
-	//widget=new QPushButton(QIcon::fromTheme("go-home",QIcon("go-home")),"Home");
 	widget=new QPushButton(QIcon::fromTheme("go-home"),"Home");
 	dochlayout->addWidget(widget);
 	QObject::connect((QPushButton*)widget,&QPushButton::clicked,webKitGoHome);
 
 	dochlayout->addStretch(1);
 
-	//widget=new QPushButton(QIcon::fromTheme("edit-find",QIcon("edit-find")),"Find");
 	widget=new QPushButton(QIcon::fromTheme("edit-find"),"Find");
 	dochlayout->addWidget(widget);
 
 	widget=new QLineEdit;
 	dochlayout->addWidget(widget);
 
-	//widget=new QPushButton(QIcon::fromTheme("go-down",QIcon("go-down")),"Down");
 	widget=new QPushButton(QIcon::fromTheme("go-down"),"Down");
 	dochlayout->addWidget(widget);
-	//widget=new QPushButton(QIcon::fromTheme("go-up",QIcon("go-up")),"Up");
+	
 	widget=new QPushButton(QIcon::fromTheme("go-up"),"Up");
 	dochlayout->addWidget(widget);
 
 	dochlayout->addStretch(1);
 
-	//widget=new QPushButton(QIcon::fromTheme("go-next",QIcon("go-next")),"Forward");
 	widget=new QPushButton(QIcon::fromTheme("go-next"),"Forward");
 	dochlayout->addWidget(widget);
 	QObject::connect((QPushButton*)widget,&QPushButton::clicked,webKitGoForward);

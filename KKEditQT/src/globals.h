@@ -45,7 +45,7 @@ struct toolStruct
 extern HistoryClass*	history;
 
 extern GList*			newBookMarksList;
-extern char*			highlightColour;
+
 extern bool				showBMBar;
 #ifndef _USEQT5_
 extern GtkWidget*		bmHighlightBox;
@@ -55,7 +55,7 @@ extern GtkWidget*		bmHighlightBox;
 extern int				bmMarkNumber;
 
 extern char*			prefsToolBarLayout;
-extern QAction*			menuItemOpen;
+
 
 //find replaceAll
 extern GSList*			findList;
@@ -67,9 +67,9 @@ extern bool				busyFlag;
 
 extern bool				autoSelected;
 
-extern int				currentPage;
-//nag
-extern bool				nagScreen;
+
+
+
 
 
 //docview size and position
@@ -83,7 +83,7 @@ extern int				docWindowY;
 
 
 extern bool				noSyntax;
-extern bool				singleUse;
+//extern bool				singleUse;
 
 
 
@@ -94,7 +94,7 @@ extern bool				restoreBookmarks;
 extern char*			styleName;
 extern bool				noDuplicates;
 extern bool				noWarnings;
-extern bool				readLinkFirst;
+
 
 extern bool				autoCheck;
 extern unsigned int		autoShowMinChars;
@@ -153,14 +153,14 @@ extern int				rootarg;
 extern int				keycode;
 extern int				usebar;
 
-extern char*			windowAllocData;
-extern char*			docWindowAllocData;
+
+
 extern args				keybindings_rc[];
 
-//status bar message
-extern char*			statusMessage;
 
-extern const char*		localeLang;
+
+
+
 
 void plugRunFunction(gpointer data,gpointer funcname);
 
@@ -174,15 +174,15 @@ void getRecursiveTagList(char* filepath,void* ptr);
 void buildToolsList(void);
 void getRecursiveTagListFileName(char* filepath,void* ptr);
 
-void goBack(QWidget* widget,uPtr data);
-void goFoward(QWidget* widget,uPtr data);
-void showBarberPole(const char* title);
-void killBarberPole(void);
+
+
+
+
 void debugFree(char** ptr,const char* message);
 
-void doBusy(bool busy,pageStruct* page);
 
-char* toCharStar(QString *str);
+
+
 
 
 extern KKEditClass *kkedit;

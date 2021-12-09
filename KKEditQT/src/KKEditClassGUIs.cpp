@@ -296,7 +296,8 @@ void KKEditClass::buildPrefsWindow(void)
 	hbox->addStretch(1);
 	mainvbox->addLayout(hbox,0);
 
-	makePrefsCheck(BEKIND,"I have donated",nagScreen,-1,-1);
+//TODO//
+	makePrefsCheck(BEKIND,"I have donated",this->prefsNagScreen,-1,-1);
 	hbox=new QHBoxLayout;
     hbox->addStretch(1);
 	hbox->addWidget(prefsWidgets[BEKIND]);
@@ -337,19 +338,8 @@ void KKEditClass::buildPrefsWindow(void)
 
 void KKEditClass::addIcon(const char* icon,const char* data,int toolnumber,const char* tooltip)
 {
-/*
-	MenuItemClass	*menuitem=new MenuItemClass(name);
-	QIcon			itemicon=QIcon::fromTheme(iconname,QIcon(iconname));
-
-	menuitem->setMenuID(userdata);
-	menuitem->setIcon(itemicon);
-	menuitem->setShortcut(key);
-	menuitem->setObjectName(objectname);
-
-*/
 	QIcon qicon;
 	MenuItemClass* menuitem=new MenuItemClass(icon);
-	//qicon=QIcon::fromTheme(icon,QIcon(icon));
 	qicon=QIcon::fromTheme(icon);
 	menuitem->setObjectName(data);
 	menuitem->setIcon(qicon);
@@ -389,7 +379,6 @@ void KKEditClass::addIconToList(const char* name,int type)
 	QIcon icon;
 	QListWidgetItem *iconw;
 
-	//icon=QIcon::fromTheme(name,QIcon(name));
 	icon=QIcon::fromTheme(name);
 	iconw=new QListWidgetItem(icon,"",0,type);
 	this->listWidget->addItem(iconw);
@@ -589,7 +578,6 @@ void KKEditClass::buildFindReplace(void)
 	button=new QPushButton("Forward");
 	button->setObjectName(FINDNEXTOBJECTNAME);
 	QObject::connect(button,SIGNAL(clicked()),this,SLOT(doFindButton()));
-//	icon=QIcon::fromTheme("go-next",QIcon("go-next"));
 	icon=QIcon::fromTheme("go-next");
 	button->setIcon(icon);
 	hlayout->addWidget(button);
@@ -597,7 +585,6 @@ void KKEditClass::buildFindReplace(void)
 	button=new QPushButton("Back");
 	button->setObjectName(FINDPREVOBJECTNAME);
 	QObject::connect(button,SIGNAL(clicked()),this,SLOT(doFindButton()));
-	//icon=QIcon::fromTheme("go-previous",QIcon("go-previous"));
 	icon=QIcon::fromTheme("go-previous");
 	button->setIcon(icon);
 	hlayout->addWidget(button);
@@ -608,7 +595,6 @@ void KKEditClass::buildFindReplace(void)
 		this->frReplace=new QPushButton("Replace All");
 	frReplace->setObjectName(FINDREPLACEOBJECTNAME);
 	QObject::connect(frReplace,SIGNAL(clicked()),this,SLOT(doFindButton()));
-	//icon=QIcon::fromTheme("edit-find-replace",QIcon("edit-find-replace"));
 	icon=QIcon::fromTheme("edit-find-replace");
 	this->frReplace->setIcon(icon);
 	hlayout->addWidget(this->frReplace);
@@ -970,9 +956,9 @@ void KKEditClass::rebuildTabsMenu(void)
 				}
 }
 
-#ifdef _ASPELL_
 void KKEditClass::buildSpellCheckerGUI(void)
 {
+#ifdef _ASPELL_
 	QVBoxLayout*	vlayout=new QVBoxLayout;
 	QWidget*		hbox;
 	QHBoxLayout*	hlayout;
@@ -1023,60 +1009,6 @@ void KKEditClass::buildSpellCheckerGUI(void)
 	vlayout->addWidget(hbox);
 
 	this->spellCheckGUI->setLayout(vlayout);
-//	QVBoxLayout*	vlayout=new QVBoxLayout;
-//	QWidget*		mainwidget=new QWidget;
-//	QWidget*		hbox;
-//	QHBoxLayout*	hlayout;
-//	//Button*			button;
-//	QWidget*			button;
-//	Qt::WindowFlags flags;
-//
-//	window=new QMainWindow;
-//	window->setWindowTitle("Aspell GUI");
-//	((QMainWindow*)window)->resize(420,150);
-//	flags=window->windowFlags();
-//	window->setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
-//
-//	bufferBox=new QPlainTextEdit;
-//	vlayout->setContentsMargins(0,0,0,0);
-//	vlayout->addWidget(bufferBox);
-//	hlayout=new QHBoxLayout;
-//	hbox=new QWidget;
-//	hbox->setLayout(hlayout);
-//
-////about
-//	button=new Button("&About");
-//	hlayout->addWidget(button);
-//	button->setCallBack((func_ptr)&doAbout);
-//	button->setIcon(QIcon::fromTheme("help-about"));
-////spellcheck //doSpellCheckDoc
-//	button=new Button("&Spell Check");
-//	hlayout->addWidget(button);
-//	button->setCallBack((func_ptr)&doSpellCheckDoc);
-//	button->setIcon(QIcon::fromTheme("tools-check-spelling"));
-////check word
-//	button=new Button("&Check Word");
-//	hlayout->addWidget(button);
-//	button->setCallBack((func_ptr)&checkWord);
-//	button->setIcon(QIcon::fromTheme("tools-check-spelling"));
-////unstick
-//	button=new Button("&Normal");
-//	hlayout->addWidget(button);
-//	button->setCallBack((func_ptr)&doSticky);
-//	button->setCheckable(true);
-//	button->setChecked(true);
-//	
-////quit
-//	button=new Button("&Quit");
-//	hlayout->addWidget(button);
-//	button->setCallBack((func_ptr)&doShutdown);
-//	button->setIcon(QIcon::fromTheme("application-exit"));
-//
-////button box to main vbox
-//	vlayout->addWidget(hbox);
-//
-//	mainwidget->setLayout(vlayout);
-//	((QMainWindow*)window)->setCentralWidget(mainwidget);
-}
 #endif
+}
 

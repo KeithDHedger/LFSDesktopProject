@@ -20,10 +20,10 @@
 
 #include "globals.h"
 
-QAction*		menuItemOpen=NULL;
+
 
 GList*	newBookMarksList=NULL;
-char*			highlightColour;
+
 bool			showBMBar;
 int				bmMarkNumber=0;
 
@@ -37,9 +37,9 @@ GSList*			findList=NULL;
 GSList*			replaceList=NULL;
 unsigned int	maxFRHistory=5;
 
-int				currentPage=0;
-//nag
-bool			nagScreen;
+
+
+
 
 //docview size and position
 int				docWindowWidth;
@@ -54,7 +54,7 @@ int				docWindowY=-1;
 
 
 bool			noSyntax;
-bool			singleUse;
+//bool			singleUse;
 
 
 
@@ -65,7 +65,7 @@ bool			restoreBookmarks;
 char*			styleName=NULL;
 bool			noDuplicates;
 bool			noWarnings;
-bool			readLinkFirst;
+
 
 bool			autoCheck;
 unsigned int	autoShowMinChars;
@@ -99,7 +99,7 @@ char*			htmlFile=NULL;
 char*			htmlURI=NULL;
 char*			tmpFolderName=NULL;
 
-const char*		localeLang;
+
 
 HistoryClass*	history;
 StringSlice*	globalSlice=NULL;
@@ -161,8 +161,8 @@ args			keybindings_rc[]=
 PluginClass*	globalPlugins=NULL;
 
 //save and load var lists
-char*			windowAllocData=NULL;
-char*			docWindowAllocData=NULL;
+
+
 
 int				intermarg=0;
 int				flagsarg=0;
@@ -177,7 +177,7 @@ int				keycode=0;
 int				usebar=0;
 
 //status bar message
-char*			statusMessage=NULL;
+
 
 
 void plugRunFunction(gpointer data,gpointer funcname)
@@ -447,19 +447,6 @@ void buildToolsList(void)
 }
 
 
-gboolean idleScroll(gpointer data)
-{
-	return(false);
-}
-
-void showBarberPole(const char* title)
-{
-}
-
-void killBarberPole(void)
-{
-}
-
 void debugFree(char** ptr,const char* message)
 {
 #ifdef _DEBUG_FREE_
@@ -477,12 +464,6 @@ void doBusy(bool busy,pageStruct* page)
 {
 }
 
-char* toCharStar(QString *str)
-{
-	QByteArray ba;
-	ba=str->toLocal8Bit();
-	return(strdup(ba.data()));
-}
 KKEditClass  *kkedit;
 
 

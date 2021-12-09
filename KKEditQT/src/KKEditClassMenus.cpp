@@ -23,7 +23,6 @@
 MenuItemClass* KKEditClass::makeMenuItemClass(int mainmenu,const QString name,const QKeySequence key,const QString iconname,const QString objectname,int userdata)
 {
 	MenuItemClass	*menuitem=new MenuItemClass(name);
-//	QIcon			itemicon=QIcon::fromTheme(iconname,QIcon(iconname));
 	QIcon			itemicon=QIcon::fromTheme(iconname);
 
 	menuitem->setMenuID(userdata);

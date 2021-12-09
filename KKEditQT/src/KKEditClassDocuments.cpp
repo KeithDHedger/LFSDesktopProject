@@ -140,6 +140,7 @@ printf("void KKEditClass::reloadFile(void)\n");
 
 bool KKEditClass::checkSelection(QString selection)
 {
+#ifdef _ASPELL_
 	int							correct;
 	AspellWordList*				suggestions;
 	AspellStringEnumeration*	elements;
@@ -164,11 +165,13 @@ bool KKEditClass::checkSelection(QString selection)
 			delete_aspell_string_enumeration(elements);
 			return(true);
 		}
+#endif
 	return(false);
 }
 
 void KKEditClass::setUpSpellGUI(QString word,DocumentClass *doc)
 {
+#ifdef _ASPELL_
 	if(doc==NULL)
 		doc=this->getDocumentForTab(-1);
 
@@ -177,10 +180,12 @@ void KKEditClass::setUpSpellGUI(QString word,DocumentClass *doc)
 			this->infoLabel->setText(QString("Change %1 to:").arg(word));
 			this->spellCheckGUI->exec();
 		}
+#endif
 }
 
 void KKEditClass::checkDoc(DocumentClass *doc)
 {
+#ifdef _ASPELL_
 	AspellCanHaveError*		ret;
 	AspellDocumentChecker*	checker;
 	AspellToken				token;
@@ -244,7 +249,11 @@ void KKEditClass::checkDoc(DocumentClass *doc)
 					memmove(word_begin+goodwordlen,word_begin+token.len,strlen(word_begin+token.len)+1);
 					memcpy(word_begin,this->goodWord.toStdString().c_str(),goodwordlen);
 					docstart+=goodwordlen;
-					doc->setPlainText(line);
+//					doc->setPlainText(line);//TODO//HMMMmmmmmm
+//				cursor.setPosition(token.offset);
+//			cursor.movePosition(QTextCursor::EndOfWord,QTextCursor::KeepAnchor);
+//			doc->setTextCursor(cursor);
+				
 				}
 			}
 
@@ -252,5 +261,6 @@ void KKEditClass::checkDoc(DocumentClass *doc)
 //replace all text in check document
 
 	doc->setPlainText(line);
+#endif
 }
 
