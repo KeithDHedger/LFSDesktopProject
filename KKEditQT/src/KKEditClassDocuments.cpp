@@ -248,11 +248,11 @@ void KKEditClass::checkDoc(DocumentClass *doc)
 					diff+=goodwordlen-token.len;
 					memmove(word_begin+goodwordlen,word_begin+token.len,strlen(word_begin+token.len)+1);
 					memcpy(word_begin,this->goodWord.toStdString().c_str(),goodwordlen);
+					doc->setPlainText(line);//TODO//HMMMmmmmmm
+				cursor.setPosition(docstart);
 					docstart+=goodwordlen;
-//					doc->setPlainText(line);//TODO//HMMMmmmmmm
-//				cursor.setPosition(token.offset);
-//			cursor.movePosition(QTextCursor::EndOfWord,QTextCursor::KeepAnchor);
-//			doc->setTextCursor(cursor);
+			cursor.movePosition(QTextCursor::EndOfWord,QTextCursor::KeepAnchor);
+			doc->setTextCursor(cursor);
 				
 				}
 			}
