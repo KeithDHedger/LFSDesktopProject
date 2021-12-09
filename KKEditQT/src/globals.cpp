@@ -99,16 +99,6 @@ char*			htmlFile=NULL;
 char*			htmlURI=NULL;
 char*			tmpFolderName=NULL;
 
-
-//spellcheck
-
-char*			badWord=NULL;
-char*			goodWord=NULL;
-#ifdef _ASPELL_
-AspellConfig*	aspellConfig;
-AspellSpeller*	spellChecker=0;
-#endif
-
 const char*		localeLang;
 
 HistoryClass*	history;

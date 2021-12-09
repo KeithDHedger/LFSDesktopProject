@@ -146,10 +146,6 @@ class KKEditClass;
 #include "textbuffer.h"
 #include "backclass.h"
 
-#ifdef _ASPELL_
-#include <aspell.h>
-#endif
-
 #ifdef _BUILDDOCVIEWER_
 #include <QtWebKitWidgets>
 #endif
@@ -170,7 +166,7 @@ class KKEditClass;
 #include "callbacks.h"
 #include "guis.h"
 #include "searchcallbacks.h"
-#include "spellcheck.h"
+
 #include "files.h"
 #include "completion.h"
 

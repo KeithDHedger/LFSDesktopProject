@@ -1,4 +1,7 @@
 0.5.0
+Removed old spell check src's.
+Done spell check.
+Added icons to tab context menu.
 Done copy filepath/dirpath/filename.
 Started tab context menu.
 Done select tab.

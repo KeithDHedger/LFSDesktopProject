@@ -498,13 +498,70 @@ void KKEditClass::doTabBarContextMenu(void)
 				clipboard->setText(doc->getFileName());
 				break;
 			case SPELLCHECKDOC:
-				if(doc->textCursor().selectedText().isEmpty()==false)
-					{
-						this->setUpSpellGUI(doc->textCursor().selectedText(),doc);
-			//selection=strdup(document->textCursor().selectedText().toUtf8().constData());
-//						this->infoLabel->setText(QString("Change %1 to:").arg(doc->textCursor().selectedText()));
-//						this->spellCheckGUI->show();
-					}
+				fprintf(stderr,"SPELLCHECKDOC\n");
+				this->checkDoc(doc);
 				break;
 		}
 }
+
+void KKEditClass::doOddMenuItems(void)
+{
+	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(sender());
+	bool			retval;
+	QClipboard		*clipboard=this->application->clipboard();
+	DocumentClass	*doc=this->getDocumentForTab(-1);
+
+		switch(mc->getMenuID())
+			{
+				case SPELLCHECKMENUITEM:
+					if(doc->textCursor().selectedText().isEmpty()==false)
+						{
+							this->returnWord=false;
+							this->setUpSpellGUI(doc->textCursor().selectedText(),doc);
+						}
+					break;
+			}
+}
+
+void KKEditClass::doOddButtons(void)
+{
+	DocumentClass	*doc=this->getDocumentForTab(-1);
+	switch(sender()->objectName().toInt())
+		{
+			case APPLYWORDBUTTON:
+				fprintf(stderr,"APPLYWORD\n");
+				this->spellCheckGUI->hide();
+				if(this->returnWord==false)
+					{
+						doc->textCursor().removeSelectedText();
+						doc->textCursor().insertText(this->wordDropBox->currentText());
+					}
+				else
+					this->goodWord=this->wordDropBox->currentText();
+				this->returnWord=false;
+				break;
+			case IGNOREWORDBUTTON:
+				fprintf(stderr,"IGNOREWORDBUTTON\n");
+				if(this->returnWord==false)
+					aspell_speller_add_to_session(this->spellChecker,doc->textCursor().selectedText().toStdString().c_str(),-1);
+				else
+					aspell_speller_add_to_session(this->spellChecker,this->badWord.toStdString().c_str(),-1);
+				this->spellCheckGUI->hide();
+				this->returnWord=false;
+				break;
+			case ADDWORDBUTTON:
+				fprintf(stderr,"ADDWORDBUTTON\n");
+				aspell_speller_add_to_personal(this->spellChecker,this->badWord.toStdString().c_str(),-1);
+				aspell_speller_save_all_word_lists(this->spellChecker);
+				this->spellCheckGUI->hide();
+				break;
+			case CANCELSPELLCHECK:
+				fprintf(stderr,"CANCELSPELLCHECK\n");
+				this->cancelCheck=true;
+				this->spellCheckGUI->hide();
+				break;
+		}
+}
+
+
+

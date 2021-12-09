@@ -23,7 +23,7 @@
 
 #define STATUSBARTIMEOUT 5000
 
-enum {FILEMENU=0x4000,EDITMENU,VIEWMENU,NAVMENU,FUNCTIONSMENU,BOOKNARKSMENU,TOOLSMENU,PLUGINSMENU,HELPMENU};
+enum {FILEMENU=0x4000,EDITMENU,VIEWMENU,NAVMENU,FUNCTIONSMENU,BOOKNARKSMENU,TOOLSMENU,PLUGINSMENU,HELPMENU,NOMENU};
 
 //file
 enum {NEWMENUITEM=0x8000,OPENMENUITEM,HEXDUMPMENUITEM,NEWADMINEDMENUITEM,NEWEDMENUITEM,MANPAGEEDMENUITEM,BUILDDOCSMENUITEM,SAVEMENUITEM,SAVEASMENUITEM,SAVEALLMENUITEM,SAVESESSIONMENUITEM,RESTORESESSIONMENUITEM,PRINTMENUITEM,CLOSEMENUITEM,CLOSEALLMENUITEM,REVERTMENUITEM,QUITMENUITEM};
@@ -49,15 +49,18 @@ enum {FUNCTIONCOMBO=0,THEMECOMBO,FONTNAMECOMBO,FONTSIZECOMBO,PREFSTERMCOMMAND,PR
 
 enum {FINDNEXT=1,FINDPREV,FINDREPLACE};
 
+enum {SPELLCHECKMENUITEM=0x2000,APPLYWORDBUTTON,IGNOREWORDBUTTON,ADDWORDBUTTON,CANCELSPELLCHECK};
+
 struct tabMenuStruct
 {
 	unsigned int	what;
 	const char		*label;
+	const char		*icon;
 };
 
-enum {COPYFOLDERPATH=0xf000,COPYFILEPATH=0xf100,COPYFILENAME=0xf200,SPELLCHECKDOC=0xf300,SRCHILTIE=0xf400,HIDETAB=0xf500,LOCKCONTENTS=0xf600,OPENFROMHERE=0xf700,OPENINBROWSER=0xf800};
+enum {COPYFOLDERPATH=0xf000,COPYFILEPATH=0xf100,COPYFILENAME=0xf200,SPELLCHECKDOC=0xf300,SRCHILTIE=0xf400,HIDETAB=0xf500,LOCKCONTENTS=0xf600,OPENFROMHERE=0xf700};
 
-enum {TABCONTEXTMENUCNT=(OPENINBROWSER-COPYFOLDERPATH) / 0x100 +1};
+enum {TABCONTEXTMENUCNT=(OPENFROMHERE-COPYFOLDERPATH) / 0x100 +1};
 
 #include "kkedit-includes.h"
 class MenuItemClass;
@@ -88,13 +91,18 @@ class KKEditClass : public QObject
 		bool						forcedMultInst=false;
 		bool						forceDefaultGeom=false;
 		bool						sessionBusy=false;
-		tabMenuStruct				tabContextMenuItems[TABCONTEXTMENUCNT]={{COPYFOLDERPATH,"Copy Folder Path"},{COPYFILEPATH,"Copy File Path"},{COPYFILENAME,"Copy File Name"},{SPELLCHECKDOC,"Spellcheck Document"},{SRCHILTIE,"Source Hilighting"},{HIDETAB,"Hide Tab"},{LOCKCONTENTS,"Lock Contents"},{OPENFROMHERE,"Open From Here"},{OPENINBROWSER,"Open In Browser"}};
+		tabMenuStruct				tabContextMenuItems[TABCONTEXTMENUCNT]={{COPYFOLDERPATH,"Copy Folder Path","edit-copy"},{COPYFILEPATH,"Copy File Path","edit-copy"},{COPYFILENAME,"Copy File Name","edit-copy"},{SPELLCHECKDOC,"Spellcheck Document","tools-check-spelling"},{SRCHILTIE,"Source Hilighting","preferences-system"},{HIDETAB,"Hide Tab","list-remove"},{LOCKCONTENTS,"Lock Contents","list-remove"},{OPENFROMHERE,"Open From Here","document-open"}};
 #ifdef _ASPELL_
 		AspellConfig				*aspellConfig=NULL;
 		AspellSpeller				*spellChecker=0;
-		QWidget						*spellCheckGUI=NULL;
+		QDialog						*spellCheckGUI=NULL;
 		QComboBox					*wordDropBox;
 		QLabel						*infoLabel;
+		MenuItemClass				*spellCheckMenuItem;
+		bool						returnWord=false;
+		QString						goodWord;
+		QString						badWord;
+		bool						cancelCheck=false;
 #endif
 
 //app functions
@@ -110,6 +118,8 @@ class KKEditClass : public QObject
 #ifdef _ASPELL_
 		void						buildSpellCheckerGUI(void);
 		void						setUpSpellGUI(QString word,DocumentClass *doc);
+		bool						checkSelection(QString selection);
+		void						checkDoc(DocumentClass *doc);
 #endif
 //app prefs
 //document
@@ -353,6 +363,8 @@ QMenu *selectTabMenu;
 		void						doToolsMenuItems();
 		void						doSelectTab(void);
 		void						doTabBarContextMenu(void);
+		void						doOddMenuItems(void);
+		void						doOddButtons(void);
 
 		void						doDoubleClickPrefs(QListWidgetItem *item);
 		void						setPreferences(void);
@@ -383,9 +395,6 @@ QMenu *selectTabMenu;
 };
 
 //
-//#ifdef _ASPELL_
-//	AspellCanHaveError*	possible_err;
-//#endif
 	//globalSlice=new StringSlice;
 //
 //
@@ -398,17 +407,6 @@ QMenu *selectTabMenu;
 //	asprintf(&htmlFile,"%s/Docview-%s.html",tmpFolderName,globalSlice->randomName(6));
 //	asprintf(&htmlURI,"file://%s/Docview-%s.html",tmpFolderName,globalSlice->randomName(6));
 //
-//#ifdef _ASPELL_
-//	spellChecker=NULL;
-//	aspellConfig=NULL;
-//	aspellConfig=new_aspell_config();
-//	possible_err=new_aspell_speller(aspellConfig);
-//
-//	if(aspell_error_number(possible_err)!= 0)
-//		puts(aspell_error_message(possible_err));
-//	else
-//		spellChecker=to_aspell_speller(possible_err);
-//#endif
 //
 ////do plugins
 //	globalPlugins=new PluginClass(loadPluginsFlag);

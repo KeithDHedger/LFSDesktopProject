@@ -588,6 +588,7 @@ void populatePopupMenu(GtkTextView *entry,GtkMenu *menu,gpointer user_data)
 void populatePopupMenu(void)
 #endif
 {
+#if 0
 #ifndef _USEQT5_
 	pageStruct*		page=kkedit->getDocumentForTab(-1);
 	GtkTextIter		start;
@@ -715,22 +716,24 @@ void populatePopupMenu(void)
 
 	gtk_widget_show_all((GtkWidget*)menu);
 #endif
-}
-
-#ifndef _USEQT5_
-void doTabMenu(GtkWidget *widget,gpointer user_data)
-#else
-//TODO//
-void doTabMenu(void)
 #endif
-{
-#ifndef _USEQT5_
-	GtkClipboard*	clipboard=gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
 
-	gtk_clipboard_set_text(clipboard,(char*)user_data,-1);
-	gtk_widget_destroy(tabMenu);
-#endif
 }
+//
+//#ifndef _USEQT5_
+//void doTabMenu(GtkWidget *widget,gpointer user_data)
+//#else
+////TODO//
+//void doTabMenu(void)
+//#endif
+//{
+//#ifndef _USEQT5_
+//	GtkClipboard*	clipboard=gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+//
+//	gtk_clipboard_set_text(clipboard,(char*)user_data,-1);
+//	gtk_widget_destroy(tabMenu);
+//#endif
+//}
 
 #ifndef _USEQT5_
 gboolean whatPane(GtkWidget *widget,GdkEvent *event,gpointer data)
@@ -829,6 +832,7 @@ bool tabPopUp(GtkWidget *widget, GdkEventButton *event,gpointer user_data)
 bool tabPopUp(void)
 #endif
 {
+#if 0
 #ifndef _USEQT5_
 	pageStruct*					page;
 	GtkWidget*					menuitem;
@@ -1000,6 +1004,7 @@ bool tabPopUp(void)
 		}
 	else
 		return(false);
+#endif
 #endif
 	return(false);
 }

@@ -165,32 +165,38 @@ void KKEditClass::buildDocViewer(void)
     qobject_cast<QWebView*>(this->webView)->load(QUrl("file://" DATADIR "/help/help.en.html"));
     docvlayout->addWidget(this->webView);
 
-	widget=new QPushButton(QIcon::fromTheme("go-previous",QIcon("go-previous")),"Back");
+	//widget=new QPushButton(QIcon::fromTheme("go-previous",QIcon("go-previous")),"Back");
+	widget=new QPushButton(QIcon::fromTheme("go-previous"),"Back");
 	dochlayout->addWidget(widget);
 	QObject::connect((QPushButton*)widget,&QPushButton::clicked,webKitGoBack);
 
 	dochlayout->addStretch(1);
 
-	widget=new QPushButton(QIcon::fromTheme("go-home",QIcon("go-home")),"Home");
+	//widget=new QPushButton(QIcon::fromTheme("go-home",QIcon("go-home")),"Home");
+	widget=new QPushButton(QIcon::fromTheme("go-home"),"Home");
 	dochlayout->addWidget(widget);
 	QObject::connect((QPushButton*)widget,&QPushButton::clicked,webKitGoHome);
 
 	dochlayout->addStretch(1);
 
-	widget=new QPushButton(QIcon::fromTheme("edit-find",QIcon("edit-find")),"Find");
+	//widget=new QPushButton(QIcon::fromTheme("edit-find",QIcon("edit-find")),"Find");
+	widget=new QPushButton(QIcon::fromTheme("edit-find"),"Find");
 	dochlayout->addWidget(widget);
 
 	widget=new QLineEdit;
 	dochlayout->addWidget(widget);
 
-	widget=new QPushButton(QIcon::fromTheme("go-down",QIcon("go-down")),"Down");
+	//widget=new QPushButton(QIcon::fromTheme("go-down",QIcon("go-down")),"Down");
+	widget=new QPushButton(QIcon::fromTheme("go-down"),"Down");
 	dochlayout->addWidget(widget);
-	widget=new QPushButton(QIcon::fromTheme("go-up",QIcon("go-up")),"Up");
+	//widget=new QPushButton(QIcon::fromTheme("go-up",QIcon("go-up")),"Up");
+	widget=new QPushButton(QIcon::fromTheme("go-up"),"Up");
 	dochlayout->addWidget(widget);
 
 	dochlayout->addStretch(1);
 
-	widget=new QPushButton(QIcon::fromTheme("go-next",QIcon("go-next")),"Forward");
+	//widget=new QPushButton(QIcon::fromTheme("go-next",QIcon("go-next")),"Forward");
+	widget=new QPushButton(QIcon::fromTheme("go-next"),"Forward");
 	dochlayout->addWidget(widget);
 	QObject::connect((QPushButton*)widget,&QPushButton::clicked,webKitGoForward);
 
@@ -416,8 +422,6 @@ void KKEditClass::initApp(int argc,char** argv)
 	buildFindReplace();
 #ifdef _ASPELL_
 	AspellCanHaveError	*possible_err;
-	//this->spellChecker=NULL;
-	//this->aspellConfig=NULL;
 	this->aspellConfig=new_aspell_config();
 	possible_err=new_aspell_speller(this->aspellConfig);
 
@@ -425,6 +429,12 @@ void KKEditClass::initApp(int argc,char** argv)
 		puts(aspell_error_message(possible_err));
 	else
 		spellChecker=to_aspell_speller(possible_err);
+
+	this->spellCheckMenuItem=new MenuItemClass("Spell Check");
+	QIcon	itemicon=QIcon::fromTheme("tools-check-spelling");
+	this->spellCheckMenuItem->setMenuID(SPELLCHECKMENUITEM);
+	this->spellCheckMenuItem->setIcon(itemicon);
+	QObject::connect(this->spellCheckMenuItem,SIGNAL(triggered()),this,SLOT(doOddMenuItems()));
 	this->buildSpellCheckerGUI();
 #endif
 
@@ -501,31 +511,12 @@ void KKEditClass::readConfigs(void)
 	this->prefsUseSingle=this->prefs.value("app/usesingle",QVariant(bool(true))).value<bool>();
 }
 
-
-/*
-	MenuItemClass	*menuitem=new MenuItemClass(name);
-	QIcon			itemicon=QIcon::fromTheme(iconname,QIcon(iconname));
-
-	menuitem->setMenuID(userdata);
-	menuitem->setIcon(itemicon);
-	if(key!=0)
-		menuitem->setShortcut(key);
-	menuitem->setObjectName(objectname);
-
-	switch(mainmenu)
-		{
-			case FILEMENU:
-				this->fileMenu->addAction(menuitem);
-				QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doFileMenuItems()));
-				break;
-
-*/
 void KKEditClass::tabContextMenu(const QPoint &pt)
 {
 	MenuItemClass	*menuitem;
 	int				tabIndex;
 
-	if (pt.isNull())
+	if(pt.isNull())
 		return;
 
 	tabIndex=this->tabBar->tabAt(pt);
@@ -538,6 +529,8 @@ void KKEditClass::tabContextMenu(const QPoint &pt)
 					menuitem=new MenuItemClass(this->tabContextMenuItems[cnt].label);
 					menuitem->setMenuID(this->tabContextMenuItems[cnt].what+tabIndex);
 					menu.addAction(menuitem);
+					QIcon itemicon=QIcon::fromTheme(this->tabContextMenuItems[cnt].icon);
+					menuitem->setIcon(itemicon);
 					QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doTabBarContextMenu()));
 				}
 			menu.exec(this->tabBar->mapToGlobal(pt));
@@ -839,8 +832,8 @@ void KKEditClass::shutDownApp()
 		this->writeExitData();
 //TODO
 #ifdef _ASPELL_
-	delete_aspell_config(aspellConfig);
-	delete_aspell_speller(spellChecker);
+	delete_aspell_config(this->aspellConfig);
+	delete_aspell_speller(this->spellChecker);
 #endif
 	//if(onExitSaveSession)
 	//	saveSession(NULL,0);

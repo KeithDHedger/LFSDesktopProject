@@ -128,16 +128,6 @@ extern char*			htmlFile;
 extern char*			htmlURI;
 extern char*			tmpFolderName;
 
-#ifdef _ASPELL_
-//TODO//
-#endif
-
-extern char*			badWord;
-extern char*			goodWord;
-#ifdef _ASPELL_
-extern AspellConfig*	aspellConfig;
-extern AspellSpeller*	spellChecker;
-#endif
 extern StringSlice*		globalSlice;
 
 extern unsigned int		shortCuts[NUMSHORTCUTS][2];

@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_KKEditClass_t {
-    QByteArrayData data[27];
-    char stringdata0[342];
+    QByteArrayData data[29];
+    char stringdata0[370];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -44,21 +44,23 @@ QT_MOC_LITERAL(8, 104, 15), // "doHelpMenuItems"
 QT_MOC_LITERAL(9, 120, 16), // "doToolsMenuItems"
 QT_MOC_LITERAL(10, 137, 11), // "doSelectTab"
 QT_MOC_LITERAL(11, 149, 19), // "doTabBarContextMenu"
-QT_MOC_LITERAL(12, 169, 18), // "doDoubleClickPrefs"
-QT_MOC_LITERAL(13, 188, 16), // "QListWidgetItem*"
-QT_MOC_LITERAL(14, 205, 4), // "item"
-QT_MOC_LITERAL(15, 210, 14), // "setPreferences"
-QT_MOC_LITERAL(16, 225, 11), // "setBMColour"
-QT_MOC_LITERAL(17, 237, 13), // "setLineColour"
-QT_MOC_LITERAL(18, 251, 7), // "setFont"
-QT_MOC_LITERAL(19, 259, 12), // "addToToolBar"
-QT_MOC_LITERAL(20, 272, 10), // "switchPage"
-QT_MOC_LITERAL(21, 283, 5), // "index"
-QT_MOC_LITERAL(22, 289, 8), // "closeTab"
-QT_MOC_LITERAL(23, 298, 12), // "closeAllTabs"
-QT_MOC_LITERAL(24, 311, 12), // "doFindButton"
-QT_MOC_LITERAL(25, 324, 14), // "tabContextMenu"
-QT_MOC_LITERAL(26, 339, 2) // "pt"
+QT_MOC_LITERAL(12, 169, 14), // "doOddMenuItems"
+QT_MOC_LITERAL(13, 184, 12), // "doOddButtons"
+QT_MOC_LITERAL(14, 197, 18), // "doDoubleClickPrefs"
+QT_MOC_LITERAL(15, 216, 16), // "QListWidgetItem*"
+QT_MOC_LITERAL(16, 233, 4), // "item"
+QT_MOC_LITERAL(17, 238, 14), // "setPreferences"
+QT_MOC_LITERAL(18, 253, 11), // "setBMColour"
+QT_MOC_LITERAL(19, 265, 13), // "setLineColour"
+QT_MOC_LITERAL(20, 279, 7), // "setFont"
+QT_MOC_LITERAL(21, 287, 12), // "addToToolBar"
+QT_MOC_LITERAL(22, 300, 10), // "switchPage"
+QT_MOC_LITERAL(23, 311, 5), // "index"
+QT_MOC_LITERAL(24, 317, 8), // "closeTab"
+QT_MOC_LITERAL(25, 326, 12), // "closeAllTabs"
+QT_MOC_LITERAL(26, 339, 12), // "doFindButton"
+QT_MOC_LITERAL(27, 352, 14), // "tabContextMenu"
+QT_MOC_LITERAL(28, 367, 2) // "pt"
 
     },
     "KKEditClass\0doTimer\0\0doFileMenuItems\0"
@@ -66,6 +68,7 @@ QT_MOC_LITERAL(26, 339, 2) // "pt"
     "doNavMenuItems\0doBookmarkMenuItems\0"
     "doHelpMenuItems\0doToolsMenuItems\0"
     "doSelectTab\0doTabBarContextMenu\0"
+    "doOddMenuItems\0doOddButtons\0"
     "doDoubleClickPrefs\0QListWidgetItem*\0"
     "item\0setPreferences\0setBMColour\0"
     "setLineColour\0setFont\0addToToolBar\0"
@@ -80,7 +83,7 @@ static const uint qt_meta_data_KKEditClass[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      21,   14, // methods
+      23,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -88,27 +91,29 @@ static const uint qt_meta_data_KKEditClass[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,  119,    2, 0x0a /* Public */,
-       3,    0,  120,    2, 0x0a /* Public */,
-       4,    0,  121,    2, 0x0a /* Public */,
-       5,    0,  122,    2, 0x0a /* Public */,
-       6,    0,  123,    2, 0x0a /* Public */,
-       7,    0,  124,    2, 0x0a /* Public */,
-       8,    0,  125,    2, 0x0a /* Public */,
-       9,    0,  126,    2, 0x0a /* Public */,
-      10,    0,  127,    2, 0x0a /* Public */,
-      11,    0,  128,    2, 0x0a /* Public */,
-      12,    1,  129,    2, 0x0a /* Public */,
-      15,    0,  132,    2, 0x0a /* Public */,
-      16,    0,  133,    2, 0x0a /* Public */,
-      17,    0,  134,    2, 0x0a /* Public */,
-      18,    0,  135,    2, 0x0a /* Public */,
-      19,    0,  136,    2, 0x0a /* Public */,
-      20,    1,  137,    2, 0x0a /* Public */,
-      22,    1,  140,    2, 0x0a /* Public */,
-      23,    0,  143,    2, 0x0a /* Public */,
-      24,    0,  144,    2, 0x0a /* Public */,
-      25,    1,  145,    2, 0x0a /* Public */,
+       1,    0,  129,    2, 0x0a /* Public */,
+       3,    0,  130,    2, 0x0a /* Public */,
+       4,    0,  131,    2, 0x0a /* Public */,
+       5,    0,  132,    2, 0x0a /* Public */,
+       6,    0,  133,    2, 0x0a /* Public */,
+       7,    0,  134,    2, 0x0a /* Public */,
+       8,    0,  135,    2, 0x0a /* Public */,
+       9,    0,  136,    2, 0x0a /* Public */,
+      10,    0,  137,    2, 0x0a /* Public */,
+      11,    0,  138,    2, 0x0a /* Public */,
+      12,    0,  139,    2, 0x0a /* Public */,
+      13,    0,  140,    2, 0x0a /* Public */,
+      14,    1,  141,    2, 0x0a /* Public */,
+      17,    0,  144,    2, 0x0a /* Public */,
+      18,    0,  145,    2, 0x0a /* Public */,
+      19,    0,  146,    2, 0x0a /* Public */,
+      20,    0,  147,    2, 0x0a /* Public */,
+      21,    0,  148,    2, 0x0a /* Public */,
+      22,    1,  149,    2, 0x0a /* Public */,
+      24,    1,  152,    2, 0x0a /* Public */,
+      25,    0,  155,    2, 0x0a /* Public */,
+      26,    0,  156,    2, 0x0a /* Public */,
+      27,    1,  157,    2, 0x0a /* Public */,
 
  // slots: parameters
     QMetaType::Void,
@@ -121,17 +126,19 @@ static const uint qt_meta_data_KKEditClass[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, 0x80000000 | 13,   14,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void, 0x80000000 | 15,   16,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Int,   21,
-    QMetaType::Bool, QMetaType::Int,   21,
+    QMetaType::Void, QMetaType::Int,   23,
+    QMetaType::Bool, QMetaType::Int,   23,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::QPoint,   26,
+    QMetaType::Void, QMetaType::QPoint,   28,
 
        0        // eod
 };
@@ -152,18 +159,20 @@ void KKEditClass::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id,
         case 7: _t->doToolsMenuItems(); break;
         case 8: _t->doSelectTab(); break;
         case 9: _t->doTabBarContextMenu(); break;
-        case 10: _t->doDoubleClickPrefs((*reinterpret_cast< QListWidgetItem*(*)>(_a[1]))); break;
-        case 11: _t->setPreferences(); break;
-        case 12: _t->setBMColour(); break;
-        case 13: _t->setLineColour(); break;
-        case 14: _t->setFont(); break;
-        case 15: _t->addToToolBar(); break;
-        case 16: _t->switchPage((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 17: { bool _r = _t->closeTab((*reinterpret_cast< int(*)>(_a[1])));
+        case 10: _t->doOddMenuItems(); break;
+        case 11: _t->doOddButtons(); break;
+        case 12: _t->doDoubleClickPrefs((*reinterpret_cast< QListWidgetItem*(*)>(_a[1]))); break;
+        case 13: _t->setPreferences(); break;
+        case 14: _t->setBMColour(); break;
+        case 15: _t->setLineColour(); break;
+        case 16: _t->setFont(); break;
+        case 17: _t->addToToolBar(); break;
+        case 18: _t->switchPage((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 19: { bool _r = _t->closeTab((*reinterpret_cast< int(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = std::move(_r); }  break;
-        case 18: _t->closeAllTabs(); break;
-        case 19: _t->doFindButton(); break;
-        case 20: _t->tabContextMenu((*reinterpret_cast< const QPoint(*)>(_a[1]))); break;
+        case 20: _t->closeAllTabs(); break;
+        case 21: _t->doFindButton(); break;
+        case 22: _t->tabContextMenu((*reinterpret_cast< const QPoint(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -198,13 +207,13 @@ int KKEditClass::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 21)
+        if (_id < 23)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 21;
+        _id -= 23;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 21)
+        if (_id < 23)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 21;
+        _id -= 23;
     }
     return _id;
 }

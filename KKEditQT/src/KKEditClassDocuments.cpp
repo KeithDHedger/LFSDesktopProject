@@ -138,12 +138,119 @@ printf("void KKEditClass::reloadFile(void)\n");
 	this->switchPage(calctabnum);
 }
 
+bool KKEditClass::checkSelection(QString selection)
+{
+	int							correct;
+	AspellWordList*				suggestions;
+	AspellStringEnumeration*	elements;
+	const char*					suggestedword;
+	int							wordcnt=0;
+	char*						wordlist[100];
+	const char					*word=selection.toStdString().c_str();
+
+	correct=aspell_speller_check(spellChecker,word,-1);
+	this->wordDropBox->clear();
+
+	if(!correct)
+		{
+			suggestions=(AspellWordList*)aspell_speller_suggest(spellChecker,word,-1);
+			elements=aspell_word_list_elements(suggestions);
+			while((suggestedword=aspell_string_enumeration_next(elements))!=NULL)
+				{
+					wordlist[wordcnt]=strdup(suggestedword);
+					this->wordDropBox->addItem(wordlist[wordcnt],QVariant(wordcnt));
+					wordcnt++;
+				}
+			delete_aspell_string_enumeration(elements);
+			return(true);
+		}
+	return(false);
+}
+
 void KKEditClass::setUpSpellGUI(QString word,DocumentClass *doc)
 {
 	if(doc==NULL)
 		doc=this->getDocumentForTab(-1);
 
-	this->infoLabel->setText(QString("Change %1 to:").arg(word));
-	this->spellCheckGUI->show();
+	if(this->checkSelection(word)==true)
+		{
+			this->infoLabel->setText(QString("Change %1 to:").arg(word));
+			this->spellCheckGUI->exec();
+		}
+}
+
+void KKEditClass::checkDoc(DocumentClass *doc)
+{
+	AspellCanHaveError*		ret;
+	AspellDocumentChecker*	checker;
+	AspellToken				token;
+	int						diff=0;
+	unsigned int			goodwordlen;
+	char*					word_begin;
+	char*					badword;
+	char*					line;
+	QString					qstr;
+	QTextCursor				cursor;
+	int						docstart=0;
+	QByteArray				bytearray;
+
+	if(doc==NULL)
+		return;
+
+	cursor=doc->textCursor();
+	qstr=doc->toPlainText();
+	bytearray=qstr.toUtf8();
+	line=(char*)bytearray.constData();
+
+	/* Set up the document checker */
+	ret=new_aspell_document_checker(this->spellChecker);
+	if (aspell_error(ret)!=0)
+		{
+			printf("Error: %s\n",aspell_error_message(ret));
+			return;
+		}
+
+	checker=to_aspell_document_checker(ret);
+	  /* First process the line */
+	aspell_document_checker_process(checker,line,-1);
+	  /* Now find the misspellings in the line */
+	while(token=aspell_document_checker_next_misspelling(checker),token.len!=0)
+		{
+	    /* Pay particular attention to how token.offset and diff is used */
+			asprintf(&badword,"%.*s",token.len,(char*)&line[token.offset+diff]);
+			this->goodWord="";
+			this->cancelCheck=false;
+			this->returnWord=true;
+			this->badWord=badword;
+			cursor.setPosition(token.offset);
+			cursor.movePosition(QTextCursor::EndOfWord,QTextCursor::KeepAnchor);
+			doc->setTextCursor(cursor);
+			this->setUpSpellGUI(badword,NULL);
+
+			if(this->cancelCheck==true)
+				{
+					delete_aspell_document_checker(checker);
+					this->cancelCheck=false;
+					doc->setPlainText(line);
+					return;
+				}
+			word_begin=line+token.offset+diff;
+
+			if(this->goodWord.isEmpty()==false)
+				{
+					goodwordlen=this->goodWord.length();
+	    /* Replace the misspelled word with the replacement */
+					diff+=goodwordlen-token.len;
+					memmove(word_begin+goodwordlen,word_begin+token.len,strlen(word_begin+token.len)+1);
+					memcpy(word_begin,this->goodWord.toStdString().c_str(),goodwordlen);
+					docstart+=goodwordlen;
+					doc->setPlainText(line);
+				}
+			}
+
+	delete_aspell_document_checker(checker);
+//replace all text in check document
+
+	doc->setPlainText(line);
 }
 

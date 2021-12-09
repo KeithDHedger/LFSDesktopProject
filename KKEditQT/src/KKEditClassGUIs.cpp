@@ -349,7 +349,8 @@ void KKEditClass::addIcon(const char* icon,const char* data,int toolnumber,const
 */
 	QIcon qicon;
 	MenuItemClass* menuitem=new MenuItemClass(icon);
-	qicon=QIcon::fromTheme(icon,QIcon(icon));
+	//qicon=QIcon::fromTheme(icon,QIcon(icon));
+	qicon=QIcon::fromTheme(icon);
 	menuitem->setObjectName(data);
 	menuitem->setIcon(qicon);
 	QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(addToToolBar()));
@@ -388,7 +389,8 @@ void KKEditClass::addIconToList(const char* name,int type)
 	QIcon icon;
 	QListWidgetItem *iconw;
 
-	icon=QIcon::fromTheme(name,QIcon(name));
+	//icon=QIcon::fromTheme(name,QIcon(name));
+	icon=QIcon::fromTheme(name);
 	iconw=new QListWidgetItem(icon,"",0,type);
 	this->listWidget->addItem(iconw);
 }
@@ -587,14 +589,16 @@ void KKEditClass::buildFindReplace(void)
 	button=new QPushButton("Forward");
 	button->setObjectName(FINDNEXTOBJECTNAME);
 	QObject::connect(button,SIGNAL(clicked()),this,SLOT(doFindButton()));
-	icon=QIcon::fromTheme("go-next",QIcon("go-next"));
+//	icon=QIcon::fromTheme("go-next",QIcon("go-next"));
+	icon=QIcon::fromTheme("go-next");
 	button->setIcon(icon);
 	hlayout->addWidget(button);
 
 	button=new QPushButton("Back");
 	button->setObjectName(FINDPREVOBJECTNAME);
 	QObject::connect(button,SIGNAL(clicked()),this,SLOT(doFindButton()));
-	icon=QIcon::fromTheme("go-previous",QIcon("go-previous"));
+	//icon=QIcon::fromTheme("go-previous",QIcon("go-previous"));
+	icon=QIcon::fromTheme("go-previous");
 	button->setIcon(icon);
 	hlayout->addWidget(button);
 
@@ -604,7 +608,8 @@ void KKEditClass::buildFindReplace(void)
 		this->frReplace=new QPushButton("Replace All");
 	frReplace->setObjectName(FINDREPLACEOBJECTNAME);
 	QObject::connect(frReplace,SIGNAL(clicked()),this,SLOT(doFindButton()));
-	icon=QIcon::fromTheme("edit-find-replace",QIcon("edit-find-replace"));
+	//icon=QIcon::fromTheme("edit-find-replace",QIcon("edit-find-replace"));
+	icon=QIcon::fromTheme("edit-find-replace");
 	this->frReplace->setIcon(icon);
 	hlayout->addWidget(this->frReplace);
 
@@ -996,31 +1001,23 @@ void KKEditClass::buildSpellCheckerGUI(void)
 	hbox->setLayout(hlayout);
 
 	button=new QPushButton("Apply");
-	//button->setObjectName(FINDNEXTOBJECTNAME);
-	//QObject::connect(button,SIGNAL(clicked()),this,SLOT(doFindButton()));
-	//icon=QIcon::fromTheme("go-next",QIcon("go-next"));
-	//button->setIcon(icon);
+	button->setObjectName(QString("%1").arg(APPLYWORDBUTTON));
+	QObject::connect(button,SIGNAL(clicked()),this,SLOT(doOddButtons()));
 	hlayout->addWidget(button);
 
 	button=new QPushButton("Ignore");
-	//button->setObjectName(FINDNEXTOBJECTNAME);
-	//QObject::connect(button,SIGNAL(clicked()),this,SLOT(doFindButton()));
-	//icon=QIcon::fromTheme("go-next",QIcon("go-next"));
-	//button->setIcon(icon);
+	button->setObjectName(QString("%1").arg(IGNOREWORDBUTTON));
+	QObject::connect(button,SIGNAL(clicked()),this,SLOT(doOddButtons()));
 	hlayout->addWidget(button);
 
 	button=new QPushButton("Add");
-	//button->setObjectName(FINDNEXTOBJECTNAME);
-	//QObject::connect(button,SIGNAL(clicked()),this,SLOT(doFindButton()));
-	//icon=QIcon::fromTheme("go-next",QIcon("go-next"));
-	//button->setIcon(icon);
+	button->setObjectName(QString("%1").arg(ADDWORDBUTTON));
+	QObject::connect(button,SIGNAL(clicked()),this,SLOT(doOddButtons()));
 	hlayout->addWidget(button);
 
 	button=new QPushButton("Cancel");
-	//button->setObjectName(FINDNEXTOBJECTNAME);
-	//QObject::connect(button,SIGNAL(clicked()),this,SLOT(doFindButton()));
-	//icon=QIcon::fromTheme("go-next",QIcon("go-next"));
-	//button->setIcon(icon);
+	button->setObjectName(QString("%1").arg(CANCELSPELLCHECK));
+	QObject::connect(button,SIGNAL(clicked()),this,SLOT(doOddButtons()));
 	hlayout->addWidget(button);
 
 	vlayout->addWidget(hbox);

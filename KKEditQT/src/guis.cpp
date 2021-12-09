@@ -591,7 +591,7 @@ printf(">>%i<<\n",state);
 //	spellCheckWord=NULL;
 }
 
-
+#if 0
 #ifdef _ASPELL_
 void buildWordCheck(int documentCheck)
 {
@@ -648,6 +648,7 @@ void buildWordCheck(int documentCheck)
 	g_signal_connect(G_OBJECT(spellCheckWord),"delete_event",GTK_SIGNAL_FUNC(gtk_true),NULL);
 #endif
 }
+#endif
 #endif
 
 int showFunctionEntry(void)

@@ -23,7 +23,8 @@
 MenuItemClass* KKEditClass::makeMenuItemClass(int mainmenu,const QString name,const QKeySequence key,const QString iconname,const QString objectname,int userdata)
 {
 	MenuItemClass	*menuitem=new MenuItemClass(name);
-	QIcon			itemicon=QIcon::fromTheme(iconname,QIcon(iconname));
+//	QIcon			itemicon=QIcon::fromTheme(iconname,QIcon(iconname));
+	QIcon			itemicon=QIcon::fromTheme(iconname);
 
 	menuitem->setMenuID(userdata);
 	menuitem->setIcon(itemicon);
@@ -60,6 +61,10 @@ MenuItemClass* KKEditClass::makeMenuItemClass(int mainmenu,const QString name,co
 			case TOOLSMENU:
 				this->toolsMenu->addAction(menuitem);
 				QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doToolsMenuItems()));
+				break;
+			case NOMENU:
+				//this->toolsMenu->addAction(menuitem);
+				//QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doToolsMenuItems()));
 				break;
 			//case TABCONTEXTMENU:
 			//	break;
