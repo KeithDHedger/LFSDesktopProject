@@ -366,6 +366,7 @@ void KKEditClass::initApp(int argc,char** argv)
 	char	tmpfoldertemplate[]="/tmp/KKEditQT-XXXXXX";
 	int		exitstatus;
 	char*	filename;
+	QRect	r(0,0,1024,768);
 
 	this->tmpFolderName=mkdtemp(tmpfoldertemplate);
 //	this->prefsTerminalCommand="xterm -e ";
@@ -437,15 +438,8 @@ void KKEditClass::initApp(int argc,char** argv)
 	asprintf(&htmlURI,"file://%s/Docview-%s.html",this->tmpFolderName.c_str(),globalSlice->randomName(6));
 
 	if(this->forceDefaultGeom==false)
-		{
-			QRect r=this->prefs.value("editor/geom",QVariant(QRect(50,50,1024,768))).value<QRect>();
-			this->mainWindow->setGeometry(r);
-		}
-	else
-		{
-			QRect r(0,0,1024,768);
-			this->mainWindow->setGeometry(r);
-		}
+		r=this->prefs.value("app/geometry",QVariant(QRect(50,50,1024,768))).value<QRect>();
+	this->mainWindow->setGeometry(r);
 
 	this->mainWindow->show();
 return;
@@ -610,7 +604,8 @@ void KKEditClass::writeExitData(void)
 {
 //editor
 	if(this->forceDefaultGeom==false)
-		this->prefs.setValue("editor/geom",this->mainWindow->geometry());
+		this->prefs.setValue("app/geometry",this->mainWindow->geometry());
+
 	this->prefs.setValue("editor/funcsort",this->prefsFunctionMenuLayout);
 	this->prefs.setValue("editor/prefsdepth",this->prefsDepth);
 	this->prefs.setValue("editor/toolbarlayout",this->prefsToolBarLayout);

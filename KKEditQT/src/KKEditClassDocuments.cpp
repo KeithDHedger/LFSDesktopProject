@@ -227,7 +227,7 @@ void KKEditClass::checkDoc(DocumentClass *doc)
 			this->cancelCheck=false;
 			this->returnWord=true;
 			this->badWord=badword;
-			cursor.setPosition(token.offset);
+			cursor.setPosition(docstart+token.offset);
 			cursor.movePosition(QTextCursor::EndOfWord,QTextCursor::KeepAnchor);
 			doc->setTextCursor(cursor);
 			this->setUpSpellGUI(badword,NULL);
@@ -236,7 +236,6 @@ void KKEditClass::checkDoc(DocumentClass *doc)
 				{
 					delete_aspell_document_checker(checker);
 					this->cancelCheck=false;
-					doc->setPlainText(line);
 					return;
 				}
 			word_begin=line+token.offset+diff;
@@ -248,12 +247,8 @@ void KKEditClass::checkDoc(DocumentClass *doc)
 					diff+=goodwordlen-token.len;
 					memmove(word_begin+goodwordlen,word_begin+token.len,strlen(word_begin+token.len)+1);
 					memcpy(word_begin,this->goodWord.toStdString().c_str(),goodwordlen);
-					doc->setPlainText(line);//TODO//HMMMmmmmmm
-				cursor.setPosition(docstart);
-					docstart+=goodwordlen;
-			cursor.movePosition(QTextCursor::EndOfWord,QTextCursor::KeepAnchor);
-			doc->setTextCursor(cursor);
-				
+					doc->setPlainText(line);
+					docstart=diff;
 				}
 			}
 
