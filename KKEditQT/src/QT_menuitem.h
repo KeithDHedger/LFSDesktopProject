@@ -56,8 +56,10 @@ class MenuItemClass : public QAction
 		~MenuItemClass();
 		KKEditClass			*mainKKEditClass=NULL;
 
-		void				setMenuID(int id);
-		int					getMenuID(void);
+		void				setMenuID(unsigned int id);
+		unsigned int 		getMenuID(void);
+		void				setMenuString(QString str);
+		const QString		*getMenuString(void);
 		void				setCallBackVoid(menuCallbackVoid func);
 		void				setCallBackBool(menuCallbackBool func);
 
@@ -66,6 +68,7 @@ class MenuItemClass : public QAction
 
 	private:
 		int					menuID;
+		QString				*menuString;
 		menuCallbackVoid	callbackVoid;
 		menuCallbackBool	callbackBool;
 

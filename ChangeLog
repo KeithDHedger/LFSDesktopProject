@@ -1,4 +1,6 @@
 0.5.0
+Done tab context open file from here.
+Done tab context set src hilite.
 Fixed saving size and position of app on exit.
 Removed old spell check src's.
 Done spell check.

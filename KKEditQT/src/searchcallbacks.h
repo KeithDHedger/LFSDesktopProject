@@ -69,7 +69,7 @@ void doLiveSearch(GtkWidget* widget,GdkEvent *event,gpointer data);
 //TODO//
 void doLiveSearch(void);
 #endif
-void basicFind(int dowhat);
+
 void regexFind(int dowhat);
 
 void searchQT5Docs(Widget* widget,uPtr data);

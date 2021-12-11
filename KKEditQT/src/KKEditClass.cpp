@@ -503,7 +503,9 @@ void KKEditClass::readConfigs(void)
 void KKEditClass::tabContextMenu(const QPoint &pt)
 {
 	MenuItemClass	*menuitem;
+	MenuItemClass	*menuitem1;
 	int				tabIndex;
+	int				srccnt=0;
 
 	if(pt.isNull())
 		return;
@@ -513,8 +515,40 @@ void KKEditClass::tabContextMenu(const QPoint &pt)
 	if (tabIndex!=-1)
 		{
 			QMenu	menu(this->tabBar);
+			QMenu	srcmenu(this->tabContextMenuItems[(SRCHILTIE-COPYFOLDERPATH)/0x100].label);
+			QMenu	filemenu(this->tabContextMenuItems[(OPENFROMHERE-COPYFOLDERPATH)/0x100].label);
 			for(int cnt=0;cnt<TABCONTEXTMENUCNT;cnt++)
 				{
+					if(cnt==(SRCHILTIE-COPYFOLDERPATH)/0x100)
+						{
+							menu.addMenu(&srcmenu);
+							while(this->srcMenuNames[srccnt]!=NULL)
+								{
+									menuitem1=new MenuItemClass(this->srcMenuNames[srccnt]);
+									menuitem1->setMenuID(((srccnt)*0x100)+tabIndex);
+									srcmenu.addAction(menuitem1);
+									QObject::connect(menuitem1,SIGNAL(triggered()),this,SLOT(doTabBarContextMenuSetHilite()));
+									srccnt++;
+								}
+							continue;
+						}
+
+					if(cnt==(OPENFROMHERE-COPYFOLDERPATH)/0x100)
+						{
+							menu.addMenu(&filemenu);
+							DocumentClass	*doc=this->getDocumentForTab(tabIndex);
+							QDir			dir(doc->getDirPath());
+							QStringList		flist=dir.entryList(QDir::Files);
+							for(int k=0;k<flist.count();k++)
+								{
+										menuitem1=new MenuItemClass(flist.at(k));
+										menuitem1->setMenuID(OPENFROMHERE+tabIndex);
+										filemenu.addAction(menuitem1);
+										QObject::connect(menuitem1,SIGNAL(triggered()),this,SLOT(doTabBarContextMenuSetHilite()));
+								}
+							continue;
+						}
+			
 					menuitem=new MenuItemClass(this->tabContextMenuItems[cnt].label);
 					menuitem->setMenuID(this->tabContextMenuItems[cnt].what+tabIndex);
 					menu.addAction(menuitem);

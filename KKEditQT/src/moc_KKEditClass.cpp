@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_KKEditClass_t {
-    QByteArrayData data[29];
-    char stringdata0[370];
+    QByteArrayData data[30];
+    char stringdata0[399];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -60,7 +60,8 @@ QT_MOC_LITERAL(24, 317, 8), // "closeTab"
 QT_MOC_LITERAL(25, 326, 12), // "closeAllTabs"
 QT_MOC_LITERAL(26, 339, 12), // "doFindButton"
 QT_MOC_LITERAL(27, 352, 14), // "tabContextMenu"
-QT_MOC_LITERAL(28, 367, 2) // "pt"
+QT_MOC_LITERAL(28, 367, 2), // "pt"
+QT_MOC_LITERAL(29, 370, 28) // "doTabBarContextMenuSetHilite"
 
     },
     "KKEditClass\0doTimer\0\0doFileMenuItems\0"
@@ -73,7 +74,8 @@ QT_MOC_LITERAL(28, 367, 2) // "pt"
     "item\0setPreferences\0setBMColour\0"
     "setLineColour\0setFont\0addToToolBar\0"
     "switchPage\0index\0closeTab\0closeAllTabs\0"
-    "doFindButton\0tabContextMenu\0pt"
+    "doFindButton\0tabContextMenu\0pt\0"
+    "doTabBarContextMenuSetHilite"
 };
 #undef QT_MOC_LITERAL
 
@@ -83,7 +85,7 @@ static const uint qt_meta_data_KKEditClass[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      23,   14, // methods
+      24,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -91,29 +93,30 @@ static const uint qt_meta_data_KKEditClass[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,  129,    2, 0x0a /* Public */,
-       3,    0,  130,    2, 0x0a /* Public */,
-       4,    0,  131,    2, 0x0a /* Public */,
-       5,    0,  132,    2, 0x0a /* Public */,
-       6,    0,  133,    2, 0x0a /* Public */,
-       7,    0,  134,    2, 0x0a /* Public */,
-       8,    0,  135,    2, 0x0a /* Public */,
-       9,    0,  136,    2, 0x0a /* Public */,
-      10,    0,  137,    2, 0x0a /* Public */,
-      11,    0,  138,    2, 0x0a /* Public */,
-      12,    0,  139,    2, 0x0a /* Public */,
-      13,    0,  140,    2, 0x0a /* Public */,
-      14,    1,  141,    2, 0x0a /* Public */,
-      17,    0,  144,    2, 0x0a /* Public */,
-      18,    0,  145,    2, 0x0a /* Public */,
-      19,    0,  146,    2, 0x0a /* Public */,
-      20,    0,  147,    2, 0x0a /* Public */,
-      21,    0,  148,    2, 0x0a /* Public */,
-      22,    1,  149,    2, 0x0a /* Public */,
-      24,    1,  152,    2, 0x0a /* Public */,
-      25,    0,  155,    2, 0x0a /* Public */,
-      26,    0,  156,    2, 0x0a /* Public */,
-      27,    1,  157,    2, 0x0a /* Public */,
+       1,    0,  134,    2, 0x0a /* Public */,
+       3,    0,  135,    2, 0x0a /* Public */,
+       4,    0,  136,    2, 0x0a /* Public */,
+       5,    0,  137,    2, 0x0a /* Public */,
+       6,    0,  138,    2, 0x0a /* Public */,
+       7,    0,  139,    2, 0x0a /* Public */,
+       8,    0,  140,    2, 0x0a /* Public */,
+       9,    0,  141,    2, 0x0a /* Public */,
+      10,    0,  142,    2, 0x0a /* Public */,
+      11,    0,  143,    2, 0x0a /* Public */,
+      12,    0,  144,    2, 0x0a /* Public */,
+      13,    0,  145,    2, 0x0a /* Public */,
+      14,    1,  146,    2, 0x0a /* Public */,
+      17,    0,  149,    2, 0x0a /* Public */,
+      18,    0,  150,    2, 0x0a /* Public */,
+      19,    0,  151,    2, 0x0a /* Public */,
+      20,    0,  152,    2, 0x0a /* Public */,
+      21,    0,  153,    2, 0x0a /* Public */,
+      22,    1,  154,    2, 0x0a /* Public */,
+      24,    1,  157,    2, 0x0a /* Public */,
+      25,    0,  160,    2, 0x0a /* Public */,
+      26,    0,  161,    2, 0x0a /* Public */,
+      27,    1,  162,    2, 0x0a /* Public */,
+      29,    0,  165,    2, 0x0a /* Public */,
 
  // slots: parameters
     QMetaType::Void,
@@ -139,6 +142,7 @@ static const uint qt_meta_data_KKEditClass[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void, QMetaType::QPoint,   28,
+    QMetaType::Void,
 
        0        // eod
 };
@@ -173,6 +177,7 @@ void KKEditClass::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id,
         case 20: _t->closeAllTabs(); break;
         case 21: _t->doFindButton(); break;
         case 22: _t->tabContextMenu((*reinterpret_cast< const QPoint(*)>(_a[1]))); break;
+        case 23: _t->doTabBarContextMenuSetHilite(); break;
         default: ;
         }
     }
@@ -207,13 +212,13 @@ int KKEditClass::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 23)
+        if (_id < 24)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 23;
+        _id -= 24;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 23)
+        if (_id < 24)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 23;
+        _id -= 24;
     }
     return _id;
 }
