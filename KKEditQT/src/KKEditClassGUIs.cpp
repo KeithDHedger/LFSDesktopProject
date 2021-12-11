@@ -1012,3 +1012,20 @@ void KKEditClass::buildSpellCheckerGUI(void)
 #endif
 }
 
+bool KKEditClass::openFileDialog(void)
+{
+	QStringList fileNames;
+
+	fileNames=QFileDialog::getOpenFileNames(this->mainWindow,"Open File","","",0);
+	if (fileNames.count())
+		{
+			this->openFromDialog=true;
+			for (int j=0;j<fileNames.size();j++)
+				this->openFile(fileNames.at(j).toUtf8().constData(),0,true);
+		}
+	this->openFromDialog=false;
+	switchPage(this->mainNotebook->currentIndex());
+	return(true);
+}
+
+

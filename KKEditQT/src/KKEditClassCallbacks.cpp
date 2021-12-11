@@ -521,7 +521,7 @@ void KKEditClass::doTabBarContextMenuSetHilite(void)
 	switch(mc->getMenuID() & 0xfff00)
 		{
 			case OPENFROMHERE:
-				this->openFile(QString("%1/%2").arg(doc->getDirPath()).arg(mc->text()).toStdString());
+				this->openFile(QString("%1/%2").arg(doc->getDirPath()).arg(mc->text()));
 				this->sessionBusy=false;
 				return;
 				break;

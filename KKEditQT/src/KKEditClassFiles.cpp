@@ -241,3 +241,60 @@ void KKEditClass::newEditor(int what)
 
 }
 
+bool KKEditClass::openFile(QString filepath,int linenumber,bool warn)
+{
+	DocumentClass	*doc=new DocumentClass(this);
+	bool			retval=false;
+	QFile			file(filepath);
+	QFileInfo		fileinfo(file);
+	int				tabnum;
+
+	busyFlag=true;
+	this->sessionBusy=true;
+
+	retval=file.open(QIODevice::Text | QIODevice::ReadOnly);
+	if(retval==true)
+		{
+			QString			content=QString::fromUtf8(file.readAll());
+			QMimeDatabase	db;
+			QMimeType		type=db.mimeTypeForFile(fileinfo.canonicalFilePath());
+			doc->mimeType=type.name();
+			doc->setPlainText(content);
+			doc->setFilePrefs();
+			doc->pageIndex=this->newPageIndex;
+			this->pages[this->newPageIndex++]=doc;
+			tabnum=this->mainNotebook->addTab(doc,doc->getTabName());
+			doc->setDirPath(fileinfo.canonicalPath());
+			doc->setFilePath(fileinfo.canonicalFilePath());
+			doc->setFileName(fileinfo.fileName());
+			doc->setTabName(this->truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
+			this->mainNotebook->setTabToolTip(tabnum,doc->getFilePath());
+			this->mainNotebook->setCurrentIndex(tabnum);
+			this->gotoLine(linenumber);
+			doc->document()->clearUndoRedoStacks(QTextDocument::UndoAndRedoStacks);
+			doc->setHiliteLanguage();
+#ifndef _USEMINE_
+			//doc->highlighter->setCurrentLanguage(QSourceHighlite::QSourceHighliter::CodeCpp);
+//			QSourceHighliter::Themes theme=(QSourceHighliter::Themes)-1;
+//			if(this->prefsSyntaxHilighting==true)
+//				theme=(QSourceHighliter::Themes)2;//TODO//get theme from file
+//
+//			doc->highlighter->setTheme(theme);
+#endif
+			doc->highlighter->rehighlight();
+			doc->dirty=false;
+
+			retval=true;
+			file.close();
+		}
+	busyFlag=false;
+	this->sessionBusy=false;
+	doc->dirty=false;
+
+	if(this->openFromDialog==false)
+		switchPage(tabnum);
+
+	this->rebuildTabsMenu();
+
+	return(retval);
+}

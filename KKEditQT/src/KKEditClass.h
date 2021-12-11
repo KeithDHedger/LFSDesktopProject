@@ -255,7 +255,7 @@ QMenu *selectTabMenu;
 		bool						openFromDialog=false;
 //file functions
 		void						newFile(const QString data="",const QString filename="");
-		bool						openFile(std::string filepath,int linenumber=1,bool warn=false);
+		bool						openFile(QString filepath,int linenumber=1,bool warn=false);
 		bool						openFileDialog(void);
 		void						openAsHexDump(void);
 		QString						runPipeAndCapture(QString command);
