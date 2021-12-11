@@ -64,7 +64,7 @@ enum {TABCONTEXTMENUCNT=(OPENFROMHERE-COPYFOLDERPATH) / 0x100 +1};
 
 enum {NONESRCCODE=0,CPPSRCCODE=0x100,CSRCCODE=0x200,BASHSRCCODE=0x300,PYTHONSRCCODE=0x400,GOSRCCODE=0x500,LUASRCCODE=0x600,YAMLSRCCODE=0x700,PHPSRCCODE=0x800,XMLSRCCODE=0x900,CSSSRCCODE=0xa00,JSSRCCODE=0xb00,MAKESRCCODE=0xc00};
 
-enum {HIDETABSHORTCUT=0,SHORTCUTSCOUNT};
+enum {HIDETABSHORTCUT=0,DELETELINE,DELETETOEOL,DELETETOSOL,SELECTWORD,DELETEWORD,DUPLICATELINE,SELECTLINE,SHORTCUTSCOUNT};
 
 #include "kkedit-includes.h"
 class MenuItemClass;
@@ -109,7 +109,8 @@ class KKEditClass : public QObject
 		QString						badWord;
 		bool						cancelCheck=false;
 #endif
-		QShortcut					*appShortcuts[SHORTCUTSCOUNT]={NULL};
+		QShortcut					*appShortcuts[SHORTCUTSCOUNT];
+		QString						defaultShortCuts[SHORTCUTSCOUNT]={"Ctrl+H","Ctrl+Y","Ctrl+?","Ctrl+K","Ctrl+Shift+H","Ctrl+D","Ctrl+Shift+D","Ctrl+L"};
 
 //app functions
 		void						initApp(int argc,char** argv);

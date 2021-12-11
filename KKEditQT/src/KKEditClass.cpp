@@ -388,6 +388,16 @@ void KKEditClass::initApp(int argc,char** argv)
 	g_mkdir_with_parents(filename,493);
 	debugFree(&filename,"init filename");
 
+	this->mainWindow=new QMainWindow;
+
+	for(int j=0;j<SHORTCUTSCOUNT;j++)
+		{
+			this->appShortcuts[j]=new QShortcut(this->mainWindow);
+			this->appShortcuts[j]->setKey(QKeySequence(this->defaultShortCuts[j]));
+			this->appShortcuts[j]->setObjectName(QString("%1").arg(j));
+			QObject::connect(this->appShortcuts[j],SIGNAL(activated()),this,SLOT(doAppShortCuts()));
+		}
+
 	this->readConfigs();
 
 	if((this->queueID=msgget(this->sessionID,IPC_CREAT|0660))==-1)
@@ -444,15 +454,6 @@ void KKEditClass::initApp(int argc,char** argv)
 		r=this->prefs.value("app/geometry",QVariant(QRect(50,50,1024,768))).value<QRect>();
 	this->mainWindow->setGeometry(r);
 
-
-this->appShortcuts[HIDETABSHORTCUT]=new QShortcut(this->mainWindow);
-//this->appShortcuts[HIDETABSHORTCUT].setKey(Qt::CTRL + Qt::Key_H);
-this->appShortcuts[HIDETABSHORTCUT]->setKey(QKeySequence("Ctrl+H"));
-//this->appShortcuts->id=0xaaee;
-//this->appShortcuts->setKey(Qt::CTRL + Qt::Key_K);
-this->appShortcuts[HIDETABSHORTCUT]->setObjectName(QString("%1").arg(HIDETABSHORTCUT));
-			QObject::connect(this->appShortcuts[HIDETABSHORTCUT],SIGNAL(activated()),this,SLOT(doAppShortCuts()));
-//QShortcut *sh=new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_K), this, SLOT(doAppShortCuts()));
 	this->mainWindow->show();
 return;
 	refreshMainWindow();
@@ -484,12 +485,52 @@ return;
 
 void KKEditClass::doAppShortCuts(void)
 {
-	QShortcut	*sc=qobject_cast<QShortcut*>(sender());
+	QShortcut		*sc=qobject_cast<QShortcut*>(sender());
+	DocumentClass	*doc=this->getDocumentForTab(-1);
+fprintf(stderr,"here what=%i\n",sc->objectName().toInt());
+	QString			txt;
 
+	if(doc==NULL)
+		return;
+
+	QTextCursor	cursor=doc->textCursor();
 	switch(sc->objectName().toInt())
 		{
 			case HIDETABSHORTCUT:
 				this->mainNotebook->setTabVisible(this->mainNotebook->currentIndex(),false);
+				break;
+			case DELETELINE:
+				cursor.select(QTextCursor::LineUnderCursor);
+				cursor.removeSelectedText();
+				cursor.deleteChar();
+				break;
+			case DELETETOEOL:
+				cursor.movePosition(QTextCursor::EndOfLine,QTextCursor::KeepAnchor);
+				cursor.removeSelectedText();
+				break;
+			case DELETETOSOL:
+				cursor.movePosition(QTextCursor::StartOfLine,QTextCursor::KeepAnchor);
+				cursor.removeSelectedText();
+				break;
+			case SELECTWORD:
+				cursor.select(QTextCursor::WordUnderCursor);
+				doc->setTextCursor(cursor);
+				break;
+			case DELETEWORD:
+				cursor.select(QTextCursor::WordUnderCursor);
+				cursor.removeSelectedText();
+				break;
+			case DUPLICATELINE:
+				cursor.select(QTextCursor::LineUnderCursor);
+				txt=cursor.selectedText();
+				cursor.movePosition(QTextCursor::Down,QTextCursor::MoveAnchor);
+				cursor.insertText(txt);
+				//cursor.insertText("\n");
+				//doc->setTextCursor(cursor);
+				break;
+			case SELECTLINE:
+				cursor.select(QTextCursor::LineUnderCursor);
+				doc->setTextCursor(cursor);
 				break;
 		}
 }

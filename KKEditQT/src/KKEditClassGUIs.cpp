@@ -608,7 +608,7 @@ void KKEditClass::buildMainGui(void)
 {
 	MenuItemClass	*menuItemSink;
 
-	this->mainWindow=new QMainWindow;
+	//this->mainWindow=new QMainWindow;
 //	this->mainWindowVBox=new QVBoxLayout();//TODO//HMMmmmmmm
 //	this->mainWindowVBox->setContentsMargins(2,2,2,2);
 //	this->mainWindow->setLayout(this->mainWindowVBox);
@@ -824,7 +824,7 @@ void KKEditClass::buildMainGui(void)
 	this->menuBar->addMenu(this->navMenu);
 
 //goto define
-	goToDefineMenuItem=this->makeMenuItemClass(NAVMENU,"Go To Definition",QKeySequence::fromString("Ctrl+D"),"dialog-question",GOTODEFMENUNAME,GOTODEFINEMENUITEM);
+	goToDefineMenuItem=this->makeMenuItemClass(NAVMENU,"Go To Definition",0,"dialog-question",GOTODEFMENUNAME,GOTODEFINEMENUITEM);
 //open include
 	menuItemSink=this->makeMenuItemClass(NAVMENU,"Open Include File",QKeySequence::fromString("Ctrl+I"),"document-open",GOTODEFMENUNAME,OPENINCLUDEMENUITEM);
 //goto line number
