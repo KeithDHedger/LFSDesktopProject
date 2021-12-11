@@ -64,6 +64,8 @@ enum {TABCONTEXTMENUCNT=(OPENFROMHERE-COPYFOLDERPATH) / 0x100 +1};
 
 enum {NONESRCCODE=0,CPPSRCCODE=0x100,CSRCCODE=0x200,BASHSRCCODE=0x300,PYTHONSRCCODE=0x400,GOSRCCODE=0x500,LUASRCCODE=0x600,YAMLSRCCODE=0x700,PHPSRCCODE=0x800,XMLSRCCODE=0x900,CSSSRCCODE=0xa00,JSSRCCODE=0xb00,MAKESRCCODE=0xc00};
 
+enum {HIDETABSHORTCUT=0,SHORTCUTSCOUNT};
+
 #include "kkedit-includes.h"
 class MenuItemClass;
 
@@ -93,7 +95,7 @@ class KKEditClass : public QObject
 		bool						forcedMultInst=false;
 		bool						forceDefaultGeom=false;
 		bool						sessionBusy=false;
-		tabMenuStruct				tabContextMenuItems[TABCONTEXTMENUCNT]={{COPYFOLDERPATH,"Copy Folder Path","edit-copy"},{COPYFILEPATH,"Copy File Path","edit-copy"},{COPYFILENAME,"Copy File Name","edit-copy"},{SPELLCHECKDOC,"Spellcheck Document","tools-check-spelling"},{SRCHILTIE,"Source Hilighting","preferences-system"},{HIDETAB,"Hide Tab","list-remove"},{LOCKCONTENTS,"Lock Contents","list-remove"},{OPENFROMHERE,"Open From Here","document-open"}};
+		tabMenuStruct				tabContextMenuItems[TABCONTEXTMENUCNT]={{COPYFOLDERPATH,"Copy Folder Path","edit-copy"},{COPYFILEPATH,"Copy File Path","edit-copy"},{COPYFILENAME,"Copy File Name","edit-copy"},{SPELLCHECKDOC,"Spellcheck Document","tools-check-spelling"},{SRCHILTIE,"Source Hilighting","preferences-system"},{HIDETAB,"Hide Tab","list-remove"},{LOCKCONTENTS,"Toggle Lock Contents","list-remove"},{OPENFROMHERE,"Open From Here","document-open"}};
 		const char					*srcMenuNames[20]={"None","C++","C","SH","Python","Go","Lua","YAML","PHP","XML","CSS","Javascript","Make",NULL};
 #ifdef _ASPELL_
 		AspellConfig				*aspellConfig=NULL;
@@ -107,6 +109,7 @@ class KKEditClass : public QObject
 		QString						badWord;
 		bool						cancelCheck=false;
 #endif
+		QShortcut					*appShortcuts[SHORTCUTSCOUNT]={NULL};
 
 //app functions
 		void						initApp(int argc,char** argv);
@@ -383,6 +386,8 @@ QMenu *selectTabMenu;
 		void						doFindButton(void);
 		void						tabContextMenu(const QPoint &pt);
 		void						doTabBarContextMenuSetHilite(void);
+
+		void						doAppShortCuts(void);
 
 	protected:
 	private:

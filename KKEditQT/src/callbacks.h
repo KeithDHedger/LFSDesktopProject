@@ -130,7 +130,7 @@ void getPlugins(Widget* widget,uPtr data);
 
 void showToolOutput(bool immediate);
 void hideToolOutput(bool immediate);
-void sortTabs(Widget* widget,uPtr data);
+
 
 
 

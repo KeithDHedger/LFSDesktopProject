@@ -30,6 +30,9 @@ KKEditClass::~KKEditClass()
 {
 	char*	command=NULL;
 
+	for(int j=0;j<SHORTCUTSCOUNT;j++)
+		delete this->appShortcuts[j];
+
 	asprintf(&command,"rm -rf %s",this->tmpFolderName.c_str());
 	system(command);
 	debugFree(&command,"doShutdown command");
@@ -441,6 +444,15 @@ void KKEditClass::initApp(int argc,char** argv)
 		r=this->prefs.value("app/geometry",QVariant(QRect(50,50,1024,768))).value<QRect>();
 	this->mainWindow->setGeometry(r);
 
+
+this->appShortcuts[HIDETABSHORTCUT]=new QShortcut(this->mainWindow);
+//this->appShortcuts[HIDETABSHORTCUT].setKey(Qt::CTRL + Qt::Key_H);
+this->appShortcuts[HIDETABSHORTCUT]->setKey(QKeySequence("Ctrl+H"));
+//this->appShortcuts->id=0xaaee;
+//this->appShortcuts->setKey(Qt::CTRL + Qt::Key_K);
+this->appShortcuts[HIDETABSHORTCUT]->setObjectName(QString("%1").arg(HIDETABSHORTCUT));
+			QObject::connect(this->appShortcuts[HIDETABSHORTCUT],SIGNAL(activated()),this,SLOT(doAppShortCuts()));
+//QShortcut *sh=new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_K), this, SLOT(doAppShortCuts()));
 	this->mainWindow->show();
 return;
 	refreshMainWindow();
@@ -468,6 +480,18 @@ return;
 
 //TODO//
 	setSensitive();
+}
+
+void KKEditClass::doAppShortCuts(void)
+{
+	QShortcut	*sc=qobject_cast<QShortcut*>(sender());
+
+	switch(sc->objectName().toInt())
+		{
+			case HIDETABSHORTCUT:
+				this->mainNotebook->setTabVisible(this->mainNotebook->currentIndex(),false);
+				break;
+		}
 }
 
 void KKEditClass::readConfigs(void)
@@ -544,7 +568,7 @@ void KKEditClass::tabContextMenu(const QPoint &pt)
 										menuitem1=new MenuItemClass(flist.at(k));
 										menuitem1->setMenuID(OPENFROMHERE+tabIndex);
 										filemenu.addAction(menuitem1);
-										QObject::connect(menuitem1,SIGNAL(triggered()),this,SLOT(doTabBarContextMenuSetHilite()));
+										QObject::connect(menuitem1,SIGNAL(triggered()),this,SLOT(doTabBarContextMenu()));
 								}
 							continue;
 						}
@@ -554,6 +578,12 @@ void KKEditClass::tabContextMenu(const QPoint &pt)
 					menu.addAction(menuitem);
 					QIcon itemicon=QIcon::fromTheme(this->tabContextMenuItems[cnt].icon);
 					menuitem->setIcon(itemicon);
+//					if(cnt==(HIDETAB-COPYFOLDERPATH)/0x100)//TODO//
+//						{
+//						fprintf(stderr,"here\n");
+//							menuitem->setShortcut(QKeySequence("Ctrl+H"));
+//						}
+//					
 					QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doTabBarContextMenu()));
 				}
 			menu.exec(this->tabBar->mapToGlobal(pt));

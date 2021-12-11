@@ -920,7 +920,7 @@ void KKEditClass::sortTabs(void)
 	QTabBar	*bar=this->mainNotebook->tabBar();
 	bool	flag=true;
 	DocumentClass	*doc1;
-	DocumentClass	*doc2;//=this->getDocumentForTab(-1);
+	DocumentClass	*doc2;
 
 	while(flag==true)
 		{
@@ -947,13 +947,13 @@ void KKEditClass::rebuildTabsMenu(void)
 
 	this->selectTabMenu->clear();
 	for(int j=0;j<bar->count();j++)
-				{
-					doc=this->getDocumentForTab(j);
-					menuitem=new MenuItemClass(doc->getFileName());
-					menuitem->setMenuID(j);
-					this->selectTabMenu->addAction(menuitem);
-					QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doSelectTab()));
-				}
+		{
+			doc=this->getDocumentForTab(j);
+			menuitem=new MenuItemClass(doc->getFileName());
+			menuitem->setMenuID(j);
+			this->selectTabMenu->addAction(menuitem);
+			QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doSelectTab()));
+		}
 }
 
 void KKEditClass::buildSpellCheckerGUI(void)

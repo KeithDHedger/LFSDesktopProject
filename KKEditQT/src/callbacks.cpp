@@ -300,29 +300,6 @@ void setSensitive(void)
 #endif
 }
 
-void sortTabs(Widget* widget,uPtr data)
-{
-#ifndef _USEQT5_
-	bool		flag=true;
-	pageStruct	*page1=NULL;
-	pageStruct	*page2=NULL;
-
-	while(flag==true)
-		{
-			flag=false;
-			for (int j=0;j<gtk_notebook_get_n_pages((GtkNotebook*)mainNotebook)-1;j++)
-				{
-					page1=kkedit->getDocumentForTab(j);
-					page2=kkedit->getDocumentForTab(j+1);
-					if(strcmp(page2->fileName,page1->fileName)<0)
-						{
-							flag=true;
-							gtk_notebook_reorder_child((GtkNotebook*)mainNotebook,page2->tabVbox,j);
-						}
-				}
-		}
-#endif
-}
 
 
 #ifndef _USEQT5_

@@ -23,16 +23,16 @@
 
 void KKEditClass::doSelectTab()
 {
+	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(sender());
 	QTabBar			*bar=this->mainNotebook->tabBar();
-	QAction			*caller=qobject_cast<QAction*>(sender());
-	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(caller);
+
+	bar->setTabVisible(mc->getMenuID(),true);
 	bar->setCurrentIndex(mc->getMenuID());
 }
 
 void KKEditClass::doBookmarkMenuItems()
 {
-	QAction			*caller=qobject_cast<QAction*>(sender());
-	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(caller);
+	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(sender());
 	DocumentClass	*document=this->getDocumentForTab(-1);
 
 	fprintf(stderr,"bookmarks -> menu id=%i, menu name=%s\n",mc->getMenuID(),mc->text().toStdString().c_str());
@@ -52,8 +52,7 @@ void KKEditClass::doBookmarkMenuItems()
 
 void KKEditClass::doToolsMenuItems()
 {
-	QAction			*caller=qobject_cast<QAction*>(sender());
-	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(caller);
+	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(sender());
 	DocumentClass	*document=this->getDocumentForTab(-1);
 
 	fprintf(stderr,"tools -> menu id=%i, menu name=%s\n",mc->getMenuID(),mc->text().toStdString().c_str());
@@ -66,8 +65,7 @@ void KKEditClass::doToolsMenuItems()
 
 void KKEditClass::doHelpMenuItems()
 {
-	QAction			*caller=qobject_cast<QAction*>(sender());
-	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(caller);
+	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(sender());
 	DocumentClass	*document=this->getDocumentForTab(-1);
 
 	fprintf(stderr,"help -> menu id=%i, menu name=%s\n",mc->getMenuID(),mc->text().toStdString().c_str());
@@ -90,8 +88,7 @@ void KKEditClass::doHelpMenuItems()
 
 void KKEditClass::doNavMenuItems()
 {
-	QAction			*caller=qobject_cast<QAction*>(sender());
-	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(caller);
+	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(sender());
 	DocumentClass	*document=this->getDocumentForTab(-1);
 
 	fprintf(stderr,"nav -> menu id=%i, menu name=%s\n",mc->getMenuID(),mc->text().toStdString().c_str());
@@ -124,8 +121,7 @@ void KKEditClass::doNavMenuItems()
 
 void KKEditClass::doViewMenuItems()
 {
-	QAction			*caller=qobject_cast<QAction*>(sender());
-	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(caller);
+	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(sender());
 	DocumentClass	*document=this->getDocumentForTab(-1);
 
 	fprintf(stderr,"view -> menu id=%i, menu name=%s\n",mc->getMenuID(),mc->text().toStdString().c_str());
@@ -208,8 +204,7 @@ void KKEditClass::doViewMenuItems()
 
 void KKEditClass::doEditMenuItems()
 {
-	QAction			*caller=qobject_cast<QAction*>(sender());
-	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(caller);
+	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(sender());
 	DocumentClass	*document=this->getDocumentForTab(-1);
 
 	fprintf(stderr,"edit -> menu id=%i, menu name=%s\n",mc->getMenuID(),mc->text().toStdString().c_str());
@@ -258,8 +253,8 @@ void KKEditClass::doEditMenuItems()
 				this->sortTabs();
 				break;
 			case SHOWALLTABSMENUITEM:
-				break;
-			case SELECTTABMENUITEM:
+				for(int j=0;j<this->mainNotebook->count();j++)
+					this->mainNotebook->setTabVisible(j,true);
 				break;
 			case PREFSMENUITEM:
 				this->doPrefs(NULL,0);
@@ -272,8 +267,7 @@ void KKEditClass::doEditMenuItems()
 
 void KKEditClass::doFileMenuItems()
 {
-	QAction			*caller=qobject_cast<QAction*>(sender());
-	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(caller);
+	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(sender());
 	bool			retval;
 	fprintf(stderr,"file -> menu id=%i, menu name=%s\n",mc->getMenuID(),mc->text().toStdString().c_str());
 
@@ -469,8 +463,7 @@ void KKEditClass::setFont(void)
 
 void KKEditClass::addToToolBar(void)
 {
-	QAction			*caller=qobject_cast<QAction*>(sender());
-	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(caller);
+	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(sender());
 
 	this->prefsToolBarLayout=(char*)qobject_cast<MenuItemClass*>(mc)->objectName().constData();
 	this->populateStore();
@@ -478,15 +471,14 @@ void KKEditClass::addToToolBar(void)
 
 void KKEditClass::doTabBarContextMenu(void)
 {
-	QAction			*caller=qobject_cast<QAction*>(sender());
-	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(caller);
+	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(sender());
 	bool			retval;
 	QClipboard		*clipboard=this->application->clipboard();
 	DocumentClass	*doc;
 
 	doc=this->getDocumentForTab((mc->getMenuID() & 0xff));
 	fprintf(stderr,"doTabBarContextMenu -> menu id=%x, menu name=%s\n",mc->getMenuID(),mc->text().toStdString().c_str());
-	switch(mc->getMenuID() & 0xff00)
+	switch(mc->getMenuID() & 0xfff00)
 		{
 			case COPYFOLDERPATH:
 				clipboard->setText(doc->getDirPath());
@@ -501,8 +493,21 @@ void KKEditClass::doTabBarContextMenu(void)
 				fprintf(stderr,"SPELLCHECKDOC\n");
 				this->checkDoc(doc);
 				break;
-			case SRCHILTIE:
-				//doc->setHiliteLanguage
+			case OPENFROMHERE:
+				this->openFile(QString("%1/%2").arg(doc->getDirPath()).arg(mc->text()));
+				break;
+			case HIDETAB:
+				this->mainNotebook->setTabVisible(mc->getMenuID() & 0xff,false);
+				break;
+			case LOCKCONTENTS:
+				doc->setReadOnly(!doc->isReadOnly());
+				if(doc->isReadOnly()==true)
+						doc->setTabName(QString("+%1").arg(doc->getTabName()));
+				else
+					if(doc->dirty==true)
+						doc->setTabName(this->truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars)+"*");
+					else
+						doc->setTabName(this->truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
 				break;
 		}
 }
@@ -520,11 +525,6 @@ void KKEditClass::doTabBarContextMenuSetHilite(void)
 	this->sessionBusy=true;
 	switch(mc->getMenuID() & 0xfff00)
 		{
-			case OPENFROMHERE:
-				this->openFile(QString("%1/%2").arg(doc->getDirPath()).arg(mc->text()));
-				this->sessionBusy=false;
-				return;
-				break;
 			case NONESRCCODE:
 				themenum=-1;
 				break;
