@@ -102,14 +102,6 @@ void removeAllBookmarks(GtkWidget* widget,GtkTextIter* titer);
 void removeAllBookmarks(void);
 #endif
 
-#ifndef _USEQT5_
-gboolean keyShortCut(GtkWidget* window,GdkEventKey* event,gpointer data);
-#else
-//TODO//
-gboolean keyShortCut(void);
-#endif
-void loadKeybindings(void);
-
 
 #ifndef _USEQT5_
 void updateStatusBar(GtkTextBuffer* textbuffer,GtkTextIter* location,GtkTextMark* mark,gpointer data);
