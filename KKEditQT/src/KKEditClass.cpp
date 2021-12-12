@@ -390,15 +390,16 @@ void KKEditClass::initApp(int argc,char** argv)
 
 	this->mainWindow=new QMainWindow;
 
+	this->readConfigs();
+
 	for(int j=0;j<SHORTCUTSCOUNT;j++)
 		{
 			this->appShortcuts[j]=new QShortcut(this->mainWindow);
-			this->appShortcuts[j]->setKey(QKeySequence(this->defaultShortCuts[j]));
+			this->appShortcuts[j]->setKey(QKeySequence(this->defaultShortCutsList.at(j)));
 			this->appShortcuts[j]->setObjectName(QString("%1").arg(j));
 			QObject::connect(this->appShortcuts[j],SIGNAL(activated()),this,SLOT(doAppShortCuts()));
 		}
 
-	this->readConfigs();
 
 	if((this->queueID=msgget(this->sessionID,IPC_CREAT|0660))==-1)
 		fprintf(stderr,"Can't create message queue, scripting wont work :( ...\n");
@@ -487,50 +488,105 @@ void KKEditClass::doAppShortCuts(void)
 {
 	QShortcut		*sc=qobject_cast<QShortcut*>(sender());
 	DocumentClass	*doc=this->getDocumentForTab(-1);
-fprintf(stderr,"here what=%i\n",sc->objectName().toInt());
 	QString			txt;
+	QTextCursor		cursor;
+	int				anc;
 
 	if(doc==NULL)
 		return;
 
-	QTextCursor	cursor=doc->textCursor();
+	cursor=doc->textCursor();
 	switch(sc->objectName().toInt())
 		{
 			case HIDETABSHORTCUT:
 				this->mainNotebook->setTabVisible(this->mainNotebook->currentIndex(),false);
 				break;
-			case DELETELINE:
+			case DELETELINESHORTCUT:
 				cursor.select(QTextCursor::LineUnderCursor);
 				cursor.removeSelectedText();
 				cursor.deleteChar();
 				break;
-			case DELETETOEOL:
+			case DELETETOEOLSHORTCUT:
 				cursor.movePosition(QTextCursor::EndOfLine,QTextCursor::KeepAnchor);
 				cursor.removeSelectedText();
 				break;
-			case DELETETOSOL:
+			case DELETETOSOLSHORTCUT:
 				cursor.movePosition(QTextCursor::StartOfLine,QTextCursor::KeepAnchor);
 				cursor.removeSelectedText();
 				break;
-			case SELECTWORD:
+			case SELECTWORDSHORTCUT:
 				cursor.select(QTextCursor::WordUnderCursor);
 				doc->setTextCursor(cursor);
 				break;
-			case DELETEWORD:
+			case DELETEWORDSHORTCUT:
 				cursor.select(QTextCursor::WordUnderCursor);
 				cursor.removeSelectedText();
 				break;
-			case DUPLICATELINE:
-				cursor.select(QTextCursor::LineUnderCursor);
+			case DUPLICATELINESHORTCUT:
+				anc=cursor.anchor();
+				cursor.select(QTextCursor::BlockUnderCursor);
 				txt=cursor.selectedText();
-				cursor.movePosition(QTextCursor::Down,QTextCursor::MoveAnchor);
+				if(txt.isEmpty()==true)
+					txt='\n';
+				cursor.movePosition(QTextCursor::EndOfLine,QTextCursor::MoveAnchor);
 				cursor.insertText(txt);
-				//cursor.insertText("\n");
-				//doc->setTextCursor(cursor);
+				cursor.setPosition(anc);
+				doc->setTextCursor(cursor);
+				emit doc->cursorPositionChanged();
 				break;
-			case SELECTLINE:
+			case SELECTLINESHORTCUT:
 				cursor.select(QTextCursor::LineUnderCursor);
 				doc->setTextCursor(cursor);
+				break;
+			case MOVELINEUPSHORTCUT:
+				anc=cursor.positionInBlock();
+				cursor.select(QTextCursor::LineUnderCursor);
+				txt=cursor.selectedText();
+				cursor.removeSelectedText();
+				cursor.deleteChar();
+				cursor.movePosition(QTextCursor::Up,QTextCursor::MoveAnchor);
+				cursor.insertText(QString("%1%2").arg(txt).arg('\n'));
+				cursor.movePosition(QTextCursor::Up,QTextCursor::MoveAnchor);
+				cursor.setPosition(cursor.anchor()+anc);
+				doc->setTextCursor(cursor);
+				emit doc->cursorPositionChanged();
+				break;
+			case MOVELINEDOWNSHORTCUT:
+				anc=cursor.positionInBlock();
+				cursor.select(QTextCursor::LineUnderCursor);
+				txt=cursor.selectedText();
+				cursor.removeSelectedText();
+				cursor.deleteChar();
+				cursor.movePosition(QTextCursor::Down,QTextCursor::MoveAnchor);
+				cursor.insertText(QString("%1%2").arg(txt).arg('\n'));
+				cursor.movePosition(QTextCursor::Up,QTextCursor::MoveAnchor);
+				cursor.setPosition(cursor.anchor()+anc);
+				doc->setTextCursor(cursor);
+				emit doc->cursorPositionChanged();
+				break;
+			case MOVESELECTIONUPSHORTCUT:
+				txt=cursor.selectedText();
+				cursor.removeSelectedText();
+				cursor.deleteChar();
+				cursor.movePosition(QTextCursor::Up,QTextCursor::MoveAnchor);
+				anc=cursor.anchor();
+				cursor.insertText(QString("%1%2").arg(txt).arg('\n'));
+				cursor.setPosition(anc);
+				cursor.movePosition(QTextCursor::NextCharacter,QTextCursor::KeepAnchor,txt.length());
+				doc->setTextCursor(cursor);
+				emit doc->cursorPositionChanged();
+				break;
+			case MOVESELECTIONDOWNSHORTCUT:
+				txt=cursor.selectedText();
+				cursor.removeSelectedText();
+				cursor.deleteChar();
+				cursor.movePosition(QTextCursor::Down,QTextCursor::MoveAnchor);
+				anc=cursor.anchor();
+				cursor.insertText(QString("%1%2").arg(txt).arg('\n'));
+				cursor.setPosition(anc);
+				cursor.movePosition(QTextCursor::NextCharacter,QTextCursor::KeepAnchor,txt.length());
+				doc->setTextCursor(cursor);
+				emit doc->cursorPositionChanged();
 				break;
 		}
 }
@@ -563,6 +619,11 @@ void KKEditClass::readConfigs(void)
 //application
 	this->prefsMsgTimer=this->prefs.value("app/msgtimer",1000).toInt();
 	this->prefsUseSingle=this->prefs.value("app/usesingle",QVariant(bool(true))).value<bool>();
+
+
+this->defaultShortCutsList=this->prefs.value("app/shortcuts").toStringList();
+	//this->prefs.setValue("app/shortcuts",this->defaultShortCutsList);
+
 }
 
 void KKEditClass::tabContextMenu(const QPoint &pt)
@@ -663,6 +724,7 @@ void KKEditClass::writeExitData(void)
 //application
 	this->prefs.setValue("app/msgtimer",this->prefsMsgTimer);
 	this->prefs.setValue("app/usesingle",this->prefsUseSingle);
+	this->prefs.setValue("app/shortcuts",this->defaultShortCutsList);
 }
 
 void KKEditClass::findFile(void)
@@ -852,10 +914,6 @@ void KKEditClass::shutDownApp()
 	if(this->forcedMultInst==false)
 		this->writeExitData();
 //TODO
-#ifdef _ASPELL_
-	delete_aspell_config(this->aspellConfig);
-	delete_aspell_speller(this->spellChecker);
-#endif
 	//if(onExitSaveSession)
 	//	saveSession(NULL,0);
 	//if(doSaveAll(widget,(uPtr)true)==false)
@@ -863,7 +921,13 @@ void KKEditClass::shutDownApp()
 	//g_list_foreach(globalPlugins->plugins,releasePlugs,NULL);
 
 	if(this->saveAllFiles()==true)
-		QApplication::quit();
+		{
+#ifdef _ASPELL_
+			delete_aspell_config(this->aspellConfig);
+			delete_aspell_speller(this->spellChecker);
+#endif
+			QApplication::quit();
+		}
 }
 
 QString KKEditClass::truncateWithElipses(const QString str,unsigned int maxlen)

@@ -93,6 +93,11 @@ class DocumentClass : public QPlainTextEdit
 		uPtr								reserved4;
 
 		int									pageIndex;
+
+	//signals:
+	//	void								cursorPositionChanged(void);
+
+//	public slots:
 	protected:
 	    void								resizeEvent(QResizeEvent *event);
 		void								keyPressEvent(QKeyEvent *event);
@@ -100,8 +105,8 @@ class DocumentClass : public QPlainTextEdit
 		void								contextMenuEvent(QContextMenuEvent *event) Q_DECL_OVERRIDE;
 
 	private slots:
-		void								updateLineNumberAreaWidth(void);
 		void								highlightCurrentLine();
+		void								updateLineNumberAreaWidth(void);
 		void								updateLineNumberArea(const QRect &, int);
 		void								modified();
 

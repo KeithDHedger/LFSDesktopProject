@@ -33,16 +33,16 @@ struct qt_meta_stringdata_DocumentClass_t {
 static const qt_meta_stringdata_DocumentClass_t qt_meta_stringdata_DocumentClass = {
     {
 QT_MOC_LITERAL(0, 0, 13), // "DocumentClass"
-QT_MOC_LITERAL(1, 14, 25), // "updateLineNumberAreaWidth"
-QT_MOC_LITERAL(2, 40, 0), // ""
-QT_MOC_LITERAL(3, 41, 20), // "highlightCurrentLine"
+QT_MOC_LITERAL(1, 14, 20), // "highlightCurrentLine"
+QT_MOC_LITERAL(2, 35, 0), // ""
+QT_MOC_LITERAL(3, 36, 25), // "updateLineNumberAreaWidth"
 QT_MOC_LITERAL(4, 62, 20), // "updateLineNumberArea"
 QT_MOC_LITERAL(5, 83, 8) // "modified"
 
     },
-    "DocumentClass\0updateLineNumberAreaWidth\0"
-    "\0highlightCurrentLine\0updateLineNumberArea\0"
-    "modified"
+    "DocumentClass\0highlightCurrentLine\0\0"
+    "updateLineNumberAreaWidth\0"
+    "updateLineNumberArea\0modified"
 };
 #undef QT_MOC_LITERAL
 
@@ -80,8 +80,8 @@ void DocumentClass::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
         auto *_t = static_cast<DocumentClass *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
-        case 0: _t->updateLineNumberAreaWidth(); break;
-        case 1: _t->highlightCurrentLine(); break;
+        case 0: _t->highlightCurrentLine(); break;
+        case 1: _t->updateLineNumberAreaWidth(); break;
         case 2: _t->updateLineNumberArea((*reinterpret_cast< const QRect(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
         case 3: _t->modified(); break;
         default: ;
