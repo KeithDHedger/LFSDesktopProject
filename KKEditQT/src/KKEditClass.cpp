@@ -389,17 +389,12 @@ void KKEditClass::initApp(int argc,char** argv)
 	debugFree(&filename,"init filename");
 
 	this->mainWindow=new QMainWindow;
+	for(int j=0;j<SHORTCUTSCOUNT;j++)
+		this->appShortcuts[j]=new QShortcut(this->mainWindow);
+
+	this->setAppShortcuts();
 
 	this->readConfigs();
-
-	for(int j=0;j<SHORTCUTSCOUNT;j++)
-		{
-			this->appShortcuts[j]=new QShortcut(this->mainWindow);
-			this->appShortcuts[j]->setKey(QKeySequence(this->defaultShortCutsList.at(j)));
-			this->appShortcuts[j]->setObjectName(QString("%1").arg(j));
-			QObject::connect(this->appShortcuts[j],SIGNAL(activated()),this,SLOT(doAppShortCuts()));
-		}
-
 
 	if((this->queueID=msgget(this->sessionID,IPC_CREAT|0660))==-1)
 		fprintf(stderr,"Can't create message queue, scripting wont work :( ...\n");
@@ -619,11 +614,9 @@ void KKEditClass::readConfigs(void)
 //application
 	this->prefsMsgTimer=this->prefs.value("app/msgtimer",1000).toInt();
 	this->prefsUseSingle=this->prefs.value("app/usesingle",QVariant(bool(true))).value<bool>();
+	this->defaultShortCutsList=this->prefs.value("app/shortcuts").toStringList();
 
-
-this->defaultShortCutsList=this->prefs.value("app/shortcuts").toStringList();
-	//this->prefs.setValue("app/shortcuts",this->defaultShortCutsList);
-
+	this->setAppShortcuts();	
 }
 
 void KKEditClass::tabContextMenu(const QPoint &pt)
@@ -939,6 +932,21 @@ QString KKEditClass::truncateWithElipses(const QString str,unsigned int maxlen)
 		newlabel=str;
 
 	return(newlabel);
+}
+
+void KKEditClass::setAppShortcuts(void)//TODO//HHMMmmmmmm
+{
+	for(int j=0;j<SHORTCUTSCOUNT;j++)
+		{
+			if(this->appShortcuts[j]!=NULL)
+				{
+					delete this->appShortcuts[j];
+					this->appShortcuts[j]=new QShortcut(this->mainWindow);
+				}
+			this->appShortcuts[j]->setKey(QKeySequence(this->defaultShortCutsList.at(j)));
+			this->appShortcuts[j]->setObjectName(QString("%1").arg(j));
+			QObject::connect(this->appShortcuts[j],SIGNAL(activated()),this,SLOT(doAppShortCuts()));
+		}
 }
 
 

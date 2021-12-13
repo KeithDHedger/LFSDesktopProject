@@ -463,71 +463,7 @@ gboolean setKeyInEntry(void)
 	return(true);
 }
 
-void buildKeys()
-{
-#ifndef _USEQT5_
-	GtkWidget*	vbox;
-	GtkWidget*	item;
-	GtkWidget*	hbox;
-	char		keystring[32];
-	int			loop;
-	char*		keycutsinfo;
-
-	if(keysWindow==NULL)
-		{
-			keysWindow=gtk_window_new(GTK_WINDOW_TOPLEVEL);
-			gtk_window_set_title((GtkWindow*)keysWindow,"Define Keyboard Shortcuts");
-			vbox=gtk_vbox_new(false,8);
-
-			asprintf(&keycutsinfo,"%s","To set a custom shortcut:\nClick in the appropriate box and press CONTROL ( and optionally SHIFT ) plus your custom key.\nJust press 'Delete' to remove the shortcut\nClick 'Apply' to keep changes or 'Cancel' to discard any changes.");
-			item=gtk_label_new(keycutsinfo);
-			gtk_label_set_justify((GtkLabel*)item,GTK_JUSTIFY_CENTER);
-			gtk_label_set_line_wrap((GtkLabel*)item,true);
-			gtk_box_pack_start(GTK_BOX(vbox),item,false,false,0);
-			free(keycutsinfo);
-//functions
-			for(loop=0;loop<NUMSHORTCUTS;loop++)
-				{
-					hbox=gtk_hbox_new(true,0);
-					shortcuttext[loop]=gettext(shortcuttext[loop]);
-					gtk_box_pack_start(GTK_BOX(hbox),gtk_label_new(shortcuttext[loop]),true,true,0);
-					entries[loop]=gtk_entry_new();
-					g_signal_connect(G_OBJECT(entries[loop]),"key-press-event",G_CALLBACK(setKeyInEntry),NULL);
-					gtk_box_pack_start(GTK_BOX(hbox),entries[loop],true,true,0);
-					gtk_box_pack_start(GTK_BOX(vbox),hbox,true,true,0);
-				}
-//buttons
-			gtk_box_pack_start(GTK_BOX(vbox),gtk_hseparator_new(),true,true,0);
-
-			hbox=gtk_hbox_new(true,4);
-			item=gtk_button_new_from_stock(GTK_STOCK_APPLY);
-			gtk_box_pack_start(GTK_BOX(hbox),item,true,false,2);
-			gtk_widget_set_name(item,"apply");
-			g_signal_connect(G_OBJECT(item),"clicked",G_CALLBACK(setKeyCuts),(void*)item);	
-
-			item=gtk_button_new_from_stock(GTK_STOCK_CANCEL);
-			gtk_box_pack_start(GTK_BOX(hbox),item,true,false,2);
-			gtk_widget_set_name(item,"cancel");
-			g_signal_connect(G_OBJECT(item),"clicked",G_CALLBACK(setKeyCuts),(void*)item);
-			gtk_box_pack_start(GTK_BOX(vbox),hbox,true,true,2);
-
-//show it
-			gtk_container_add(GTK_CONTAINER(keysWindow),(GtkWidget*)vbox);
-		}
-
-	for(int j=0;j<NUMSHORTCUTS;j++)
-		{
-			if(gdk_keyval_name(shortCuts[j][0])!=NULL)
-				{
-					sprintf(&keystring[0],"%s",gdk_keyval_name(shortCuts[j][0]));
-					gtk_entry_set_text((GtkEntry*)entries[j],(char*)&keystring);
-				}
-		}
-	gtk_widget_show_all(keysWindow);
-#endif
-}
-
-void cancelPrefs(void)
+void cancelPrefsxx(void)
 {
 	kkedit->prefsWindow->hide();
 	//delete prefsWindow;

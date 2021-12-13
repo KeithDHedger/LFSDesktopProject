@@ -45,11 +45,11 @@ enum {ABOUTMENUITEM=0xe000,HELPMENUITEM,ONLINEHELPMENUITEM,GETPLUGSMENUITEM};
 
 enum	{AUTOINDENT=0,SHOWNUMS,WRAP,HIGHLIGHT,SYNTAXHILITE,USESINGLE,AUTOSAVE,NODUPLICATE,NOWARN,AUTOSHOW,BEKIND,GLOBALPLUGMENU,SETFONT,MAXPREFSWIDGETS};
 enum {MAXTABCHARS=0,MAXHISTORY,MAXFUNCDEPTH,COMPLETIONSIZE,TABWIDTH,MENUWIDTH,MAXBMWIDTH,MAXPREFSINTWIDGETS};
-enum {FUNCTIONCOMBO=0,THEMECOMBO,FONTNAMECOMBO,FONTSIZECOMBO,PREFSTERMCOMMAND,PREFSROOTCOMMAND,PREFSBROWSERCOMMAND,PREFSCURRENTFONT,BMHIGHLIGHTCOLOUR,CURRENTLINECOLOUR,MAXPREFSOTHERWIDGETS};
+enum {FUNCTIONCOMBO=0,THEMECOMBO,FONTNAMECOMBO,FONTSIZECOMBO,PREFSTERMCOMMAND,PREFSROOTCOMMAND,PREFSBROWSERCOMMAND,PREFSCURRENTFONT,BMHIGHLIGHTCOLOUR,CURRENTLINECOLOUR,SHORTCUTSCOMBO,MAXPREFSOTHERWIDGETS};
 
 enum {FINDNEXT=1,FINDPREV,FINDREPLACE};
 
-enum {SPELLCHECKMENUITEM=0x2000,APPLYWORDBUTTON,IGNOREWORDBUTTON,ADDWORDBUTTON,CANCELSPELLCHECK};
+enum {SPELLCHECKMENUITEM=0x2000,APPLYWORDBUTTON,IGNOREWORDBUTTON,ADDWORDBUTTON,CANCELSPELLCHECK,CANCELPREFS};
 
 struct tabMenuStruct
 {
@@ -127,6 +127,7 @@ class KKEditClass : public QObject
 		void						setUpSpellGUI(QString word,DocumentClass *doc);
 		bool						checkSelection(QString selection);
 		void						checkDoc(DocumentClass *doc);
+		void						setAppShortcuts(void);
 
 //app prefs
 //document
@@ -201,8 +202,8 @@ class KKEditClass : public QObject
 		MenuItemClass				*findNextMenuItem;
 		MenuItemClass				*sortTabsMenuItem;
 		MenuItemClass				*showAllTabsMenuItem;
-		//MenuItemClass				*selectTabMenuItem;
-QMenu *selectTabMenu;
+		QMenu						*selectTabMenu;
+
 //view menu
 		QMenu						*viewMenu;
 		bool						toolbarVisible=true;
@@ -307,6 +308,8 @@ QMenu *selectTabMenu;
 		QListWidget					*listWidget;
 		QToolBar					*fromHBox;
 		QAction						*tool[19];
+		QDialog						*keyShortcutsWindow;
+
 //prefswindow functions
 		void						makePrefsCheck(int widgnum,const QString label,bool onoff,int posx,int posy);
 		void						makePrefsDial(int widgnum,const QString label,int value,int minvalue,int maxvalue,int posy);
@@ -316,6 +319,7 @@ QMenu *selectTabMenu;
 		void						doPrefs(Widget* widget,uPtr data);
 		void						addIconToList(const char* name,int type);
 		void						populateStore(void);
+		void						resetKeyCombo(void);
 
 //find replace vars
 		QWidget						*findReplaceDialog;
@@ -379,6 +383,7 @@ QMenu *selectTabMenu;
 		void						setLineColour(void);
 		void						setFont(void);
 		void						addToToolBar(void);
+		void						buildGetKeyShortCut(int index);
 
 		void						switchPage(int index);
 		bool						closeTab(int index);

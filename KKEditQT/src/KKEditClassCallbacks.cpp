@@ -419,6 +419,7 @@ void KKEditClass::setPreferences(void)
 
 	this->resetAllFilePrefs();
 	this->writeExitData();
+	this->setAppShortcuts();
 	switchPage(this->mainNotebook->currentIndex());
 }
 
@@ -629,6 +630,12 @@ void KKEditClass::doOddButtons(void)
 				this->spellCheckGUI->hide();
 				break;
 #endif
+			case CANCELPREFS:
+				this->prefsWindow->hide();
+				this->readConfigs();
+				this->resetAllFilePrefs();
+				this->switchPage(this->mainNotebook->currentIndex());
+				break;
 			default:
 				break;
 		}

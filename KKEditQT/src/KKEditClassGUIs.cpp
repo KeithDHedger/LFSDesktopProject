@@ -42,7 +42,7 @@ void KKEditClass::makePrefsCheck(int widgnum,const QString label,bool onoff,int 
 
 void KKEditClass::doPrefs(Widget* widget,uPtr data)
 {
-//TODO//HMMMmmmmmm
+	this->resetKeyCombo();
 	this->prefsWindow->setWindowModality(Qt::ApplicationModal);
 	this->prefsWindow->raise();
 	this->prefsWindow->setWindowState(Qt::WindowActive);
@@ -145,6 +145,16 @@ void KKEditClass::buildPrefsWindow(void)
 	table->addWidget(widgetlabel,posy,0,Qt::AlignVCenter);
 	table->addWidget(prefsOtherWidgets[THEMECOMBO],posy,1,posy,-1,Qt::AlignVCenter);
 
+//shortcuts
+	posy++;
+	prefsOtherWidgets[SHORTCUTSCOMBO]=new QComboBox;
+	this->resetKeyCombo();
+    QObject::connect(prefsOtherWidgets[SHORTCUTSCOMBO],SIGNAL(activated(int)),this,SLOT(buildGetKeyShortCut(int)));
+
+	widgetlabel=new QLabel("Set Keyboard Shortcuts:");
+	table->addWidget(widgetlabel,posy,0,Qt::AlignVCenter);
+	table->addWidget(prefsOtherWidgets[SHORTCUTSCOMBO],posy,1,posy-1,-1,Qt::AlignBaseline);
+
 //font button
 	posy++;
 	widgetlabel = new QLabel("Font:");
@@ -209,17 +219,6 @@ void KKEditClass::buildPrefsWindow(void)
 	hbox->addStretch(1);
 	table->addLayout(hbox,posy,0,1,-1);
 
-//show keybindings dialog
-//TODO//
-	posy++;
-	hbox=new QHBoxLayout;
-    button = new QPushButton("Customize Keyboard Shortcuts");
-	hbox->addStretch(1);
-	hbox->addWidget(button);
-	hbox->setStretch(1,2);
-	hbox->addStretch(1);
-	table->addLayout(hbox,posy,0,1,-1,Qt::AlignVCenter);
-	
 	QSpacerItem *space=new QSpacerItem(0,0,QSizePolicy::Maximum,QSizePolicy::Maximum);
 	posy++;
 	table->addItem(space,posy,0,100,-1);
@@ -326,7 +325,9 @@ void KKEditClass::buildPrefsWindow(void)
 	hbox->addWidget(button);
 	hbox->addStretch(1);
 	button=new QPushButton("Restore Prefs");
-	QObject::connect(((QPushButton*)button),&QPushButton::clicked,cancelPrefs);
+	button->setObjectName(QString("%1").arg(CANCELPREFS));
+	QObject::connect(button,SIGNAL(clicked()),this,SLOT(doOddButtons()));
+	//QObject::connect(((QPushButton*)button),&QPushButton::clicked,cancelPrefs);
 	hbox->addWidget(button);
 	hbox->addStretch(1);
 	mainvbox->addLayout(hbox);
@@ -1028,4 +1029,33 @@ bool KKEditClass::openFileDialog(void)
 	return(true);
 }
 
+void KKEditClass::resetKeyCombo(void)
+{
+	qobject_cast<QComboBox*>(prefsOtherWidgets[SHORTCUTSCOMBO])->clear();
+	qobject_cast<QComboBox*>(prefsOtherWidgets[SHORTCUTSCOMBO])->addItem(QString("Hide tab - %1").arg(this->defaultShortCutsList.at(HIDETABSHORTCUT)));
+	qobject_cast<QComboBox*>(prefsOtherWidgets[SHORTCUTSCOMBO])->addItem(QString("Delete current line - %1").arg(this->defaultShortCutsList.at(DELETELINESHORTCUT)));
+	qobject_cast<QComboBox*>(prefsOtherWidgets[SHORTCUTSCOMBO])->addItem(QString("Delete to EOL - %1").arg(this->defaultShortCutsList.at(DELETETOEOLSHORTCUT)));
+	qobject_cast<QComboBox*>(prefsOtherWidgets[SHORTCUTSCOMBO])->addItem(QString("Delete to SOL - %1").arg(this->defaultShortCutsList.at(DELETETOSOLSHORTCUT)));
+	qobject_cast<QComboBox*>(prefsOtherWidgets[SHORTCUTSCOMBO])->addItem(QString("Select word under cursor - %1").arg(this->defaultShortCutsList.at(SELECTWORDSHORTCUT)));
+	qobject_cast<QComboBox*>(prefsOtherWidgets[SHORTCUTSCOMBO])->addItem(QString("Delete word under cursor - %1").arg(this->defaultShortCutsList.at(DELETEWORDSHORTCUT)));
+	qobject_cast<QComboBox*>(prefsOtherWidgets[SHORTCUTSCOMBO])->addItem(QString("Duplicate line - %1").arg(this->defaultShortCutsList.at(DUPLICATELINESHORTCUT)));
+	qobject_cast<QComboBox*>(prefsOtherWidgets[SHORTCUTSCOMBO])->addItem(QString("Select current line - %1").arg(this->defaultShortCutsList.at(SELECTLINESHORTCUT)));
+	qobject_cast<QComboBox*>(prefsOtherWidgets[SHORTCUTSCOMBO])->addItem(QString("Move line up - %1").arg(this->defaultShortCutsList.at(MOVELINEUPSHORTCUT)));
+	qobject_cast<QComboBox*>(prefsOtherWidgets[SHORTCUTSCOMBO])->addItem(QString("Move line down - %1").arg(this->defaultShortCutsList.at(MOVELINEDOWNSHORTCUT)));
+	qobject_cast<QComboBox*>(prefsOtherWidgets[SHORTCUTSCOMBO])->addItem(QString("Move Selection up - %1").arg(this->defaultShortCutsList.at(MOVESELECTIONUPSHORTCUT)));
+	qobject_cast<QComboBox*>(prefsOtherWidgets[SHORTCUTSCOMBO])->addItem(QString("Move Selection down - %1").arg(this->defaultShortCutsList.at(MOVESELECTIONDOWNSHORTCUT)));
+}
 
+void KKEditClass::buildGetKeyShortCut(int index)
+{
+	bool	ok;
+
+	QString	text=QInputDialog::getText(this->mainWindow,"Keyboard Shortcut","Enter Key Combo",QLineEdit::Normal,this->defaultShortCutsList.at(index),&ok);
+	if ((ok==true) && (!text.isEmpty()))
+		{
+			this->defaultShortCutsList[index]=text;
+			this->resetKeyCombo();
+			qobject_cast<QComboBox*>(prefsOtherWidgets[SHORTCUTSCOMBO])->setCurrentIndex(index);
+			this->setAppShortcuts();
+		}
+}
