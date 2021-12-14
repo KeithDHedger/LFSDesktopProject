@@ -38,6 +38,18 @@ KKEditClass::~KKEditClass()
 	debugFree(&command,"doShutdown command");
 }
 
+void KKEditClass::doSearchFromBar(const QString txt)
+{
+	fprintf(stderr,"void KKEditClass::doSearchFromBar(const QString txt)=%s\n",txt.toStdString().c_str());
+	switch(sender()->objectName().toInt())
+		{
+			case DOLINEBOX:
+				//fprintf(stderr,"DOLIVESEARCH\n");
+				this->gotoLine(txt.toInt());
+				break;
+		}
+}
+
 void KKEditClass::setUpToolBar(void)
 {
 	this->toolBar->clear();
@@ -99,38 +111,49 @@ void KKEditClass::setUpToolBar(void)
 						break;
 
 					case '9':
-						this->lineNumberWidget=new QLineEdit;
-						reinterpret_cast<QLineEdit*>(this->lineNumberWidget)->setValidator(new QIntValidator);
-						this->lineNumberWidget->setToolTip("Go To Line");
-						this->lineNumberWidget->setMaximumWidth(48);
-						QObject::connect(((QLineEdit*)this->lineNumberWidget),&QLineEdit::textChanged,jumpToLineFromBar);
+						if(this->lineNumberWidget==NULL)
+							{
+								this->lineNumberWidget=new QLineEdit;
+								qobject_cast<QLineEdit*>(this->lineNumberWidget)->setValidator(new QIntValidator);
+								this->lineNumberWidget->setObjectName(QString("%1").arg(DOLINEBOX));
+								this->lineNumberWidget->setToolTip("Go To Line");
+								this->lineNumberWidget->setMaximumWidth(48);
+								QObject::connect(this->lineNumberWidget,SIGNAL(textEdited(const QString)),this,SLOT(doSearchFromBar(const QString)));
+							}
 						this->toolBar->addWidget(this->lineNumberWidget);
 						break;
 //find in gtkdoc
 					case 'A':
-						this->findApiWidget=new QLineEdit;
-						this->findApiWidget->setToolTip("Find API In Gtk Docs");
-						QObject::connect(((QLineEdit*)this->findApiWidget),&QLineEdit::returnPressed,docSearchFromBar);
-						this->toolBar->addWidget(this->findApiWidget);
+						if(this->findGtkApiWidget==NULL)
+							{
+								this->findGtkApiWidget=new QLineEdit;
+								this->findGtkApiWidget->setObjectName(QString("%1").arg(DOGTKSEARCH));
+								this->findGtkApiWidget->setToolTip("Find API In Gtk Docs");
+								QObject::connect(this->findGtkApiWidget,SIGNAL(returnPressed()),this,SLOT(doOddButtons()));
+							}
+						this->toolBar->addWidget(this->findGtkApiWidget);
 						break;
 
 //find in qt5doc
 					case 'Q':
-						this->findQtApiWidget=new QLineEdit;
+						if(this->findQtApiWidget==NULL)
+							this->findQtApiWidget=new QLineEdit;
 						this->findQtApiWidget->setToolTip("Find API In Qt5 Docs");
 						QObject::connect(((QLineEdit*)this->findQtApiWidget),&QLineEdit::returnPressed,qt5DocSearchFromBar);
 						this->toolBar->addWidget(this->findQtApiWidget);
 						break;
 //find in function def
 					case 'D':
-						this->findDefWidget=new QLineEdit;
+						if(this->findDefWidget==NULL)
+							this->findDefWidget=new QLineEdit;
 						this->findDefWidget->setToolTip("Search For Define");
 						QObject::connect(((QLineEdit*)this->findDefWidget),&QLineEdit::returnPressed,defSearchFromBar);
 						this->toolBar->addWidget(this->findDefWidget);
 						break;
 //livesearch
 					case 'L':
-						this->liveSearchWidget=new QLineEdit;
+						if(this->liveSearchWidget==NULL)
+							this->liveSearchWidget=new QLineEdit;
 						this->liveSearchWidget->setToolTip("Live Search");
 						QObject::connect(((QLineEdit*)this->liveSearchWidget),&QLineEdit::textChanged,doLiveSearch);
 						this->toolBar->addWidget(this->liveSearchWidget);
@@ -1033,7 +1056,7 @@ void KKEditClass::setToobarSensitive(void)
 						break;
 //find in gtkdoc
 					case 'A':
-						this->findApiWidget->setEnabled(true);
+						this->findGtkApiWidget->setEnabled(true);
 						break;
 
 //find in qt5doc

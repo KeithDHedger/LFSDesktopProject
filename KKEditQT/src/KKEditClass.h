@@ -49,7 +49,8 @@ enum {FUNCTIONCOMBO=0,THEMECOMBO,FONTNAMECOMBO,FONTSIZECOMBO,PREFSTERMCOMMAND,PR
 
 enum {FINDNEXT=1,FINDPREV,FINDREPLACE};
 
-enum {SPELLCHECKMENUITEM=0x2000,APPLYWORDBUTTON,IGNOREWORDBUTTON,ADDWORDBUTTON,CANCELSPELLCHECK,CANCELPREFS};
+//od enums
+enum {SPELLCHECKMENUITEM=0x2000,APPLYWORDBUTTON,IGNOREWORDBUTTON,ADDWORDBUTTON,CANCELSPELLCHECK,CANCELPREFS,DOLINEBOX,DOLIVESEARCH,DOAPISEARCH,DOQT5SEARCH,DOGTKSEARCH};
 
 struct tabMenuStruct
 {
@@ -251,11 +252,11 @@ class KKEditClass : public QObject
 
 //toolbar vars
 		QToolBar					*toolBar=NULL;
-		QWidget						*lineNumberWidget;
-		QWidget						*findApiWidget;
-		QWidget						*findQtApiWidget;
-		QWidget						*findDefWidget;
-		QWidget						*liveSearchWidget;
+		QWidget						*lineNumberWidget=NULL;
+		QLineEdit					*findGtkApiWidget=NULL;
+		QWidget						*findQtApiWidget=NULL;
+		QWidget						*findDefWidget=NULL;
+		QWidget						*liveSearchWidget=NULL;
 //toolbar functions
 		void						setUpToolBar(void);
 
@@ -334,6 +335,10 @@ class KKEditClass : public QObject
 		void						buildFindReplace(void);
 		void						doFindReplace(int response_id);
 
+//search vars
+//search functions
+		void						searchGtkDocs(const QString txt);
+
 //plugin vars
 		QWidget						*globalPlugMenu=NULL;
 
@@ -397,6 +402,8 @@ class KKEditClass : public QObject
 		void						doTabBarContextMenuSetHilite(void);
 
 		void						doAppShortCuts(void);
+
+		void						doSearchFromBar(const QString txt);
 
 	protected:
 	private:

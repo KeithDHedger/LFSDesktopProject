@@ -197,3 +197,159 @@ void KKEditClass::doFindReplace(int response_id)
 	debugFree(&currentfindtext,"doFindReplace currentfindtext");
 	debugFree(&currentreplacetext,"doFindReplace currentreplacetext");
 }
+
+void KKEditClass::searchGtkDocs(const QString txt)
+{
+//	char*		selection=NULL;
+//	char*		searchdata[2048][2];
+//	char		line[1024];
+//	FILE*		fp;
+//	FILE*		fd;
+//	char*		command=NULL;
+//	char*		ptr=NULL;
+//	char*		funcname;
+//	char*		foldername;
+//	char*		tempstr;
+//	char*		link;
+//	int			cnt=0;
+
+	QString		searchfor;
+	QString		funcname;
+	QString		link;
+
+	DocumentClass	*doc=this->getDocumentForTab(-1);
+
+	if((txt.isEmpty()==true) && (doc==NULL))
+		return;
+
+	if((txt.isEmpty()==true) && (doc->textCursor().hasSelection()==false))
+		return;
+	else
+		{
+			if(txt.isEmpty()==true)
+				searchfor=doc->textCursor().selectedText();
+			else
+				searchfor=txt;
+		}
+	fprintf(stderr,"txt=%s\n",searchfor.toStdString().c_str());
+	QString	results=this->runPipeAndCapture(QString("find /usr/share/gtk-doc/html -iname \"*.devhelp2\" -exec grep -iHe %1 '{}' \\;").arg(searchfor));
+//runPipeAndCapture
+//			asprintf(&command,"find /usr/share/gtk-doc/html -iname \"*.devhelp2\" -exec grep -iHe %s '{}' \\;",selection);
+	fprintf(stderr,"results=%s\n",results.toStdString().c_str());
+	QStringList	reslist=results.split("\n",Qt::SkipEmptyParts);
+	for(int j=0;j<reslist.count();j++)
+	{
+		//fprintf(stderr,"results=%s\n",reslist.at(j).toStdString().c_str());
+	//funcname=globalSlice->sliceBetween(line,(char*)"name=\"",(char*)"\" link=");
+	funcname=reslist.at(j).section("\" link=",0,0).section("name=\"",1,1);
+	link=reslist.at(j).section("link=\"",1,1).section("\"",0,0);
+QTextStream(stderr) << funcname << " " << link << Qt::endl;
+
+							fprintf(stderr,"<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n");
+							fprintf(stderr,"<html>\n");
+							fprintf(stderr,"<body>\n");
+
+							//for(int loop=0;loop<cnt;loop++)
+							//	{
+									fprintf(stderr,"<a href=\"%s\">%s</a><br>\n",link.toStdString().c_str(),funcname.toStdString().c_str());
+							//	}
+							fprintf(stderr,"</body>\n");
+							fprintf(stderr,"</html>\n");
+
+
+}
+return;
+#if 0
+	if(document==NULL)
+		return;
+
+	for(int loop=0;loop<2048;loop++)
+		{
+			searchdata[loop][0]=NULL;
+			searchdata[loop][1]=NULL;
+		}
+
+	if((gpointer)data!=NULL)
+		selection=strdup((char*)data);
+	else
+		{
+			selection=strdup(document->textCursor().selectedText().toUtf8().constData());
+		}
+
+	if(selection!=NULL)
+		{
+			asprintf(&command,"find /usr/share/gtk-doc/html -iname \"*.devhelp2\" -exec grep -iHe %s '{}' \\;",selection);
+			fp=popen(command,"r");
+			while(fgets(line,1024,fp))
+				{
+					ptr=strstr(line,"name=\"");
+					if(ptr!=NULL)
+						{
+							funcname=globalSlice->sliceBetween(line,(char*)"name=\"",(char*)"\" link=");
+							if(globalSlice->getResult()==0)
+								{
+									if(strstr(funcname,selection)!=NULL)
+										{
+											if(cnt<2048)
+												{
+													tempstr=globalSlice->sliceBetween(line,(char*)"",(char*)":");
+													if(tempstr!=NULL)
+														{
+															foldername=g_path_get_dirname(tempstr);
+															link=globalSlice->sliceBetween(line,(char*)"link=\"",(char*)"\"");
+															if((foldername!=NULL) && (link!=NULL))
+																{
+																	searchdata[cnt][0]=strdup(funcname);
+																	asprintf(&searchdata[cnt][1],"%s/%s",foldername,link);
+																	debugFree(&foldername,"seachGtkDocs foldername");
+																	debugFree(&link,"seachGtkDocs link");
+																	cnt++;
+																}
+															debugFree(&tempstr,"seachGtkDocs tempstr");
+														}
+												}
+										}
+									debugFree(&funcname,"seachGtkDocs funcname");
+									funcname=NULL;
+								}
+						}
+				}
+
+			if(cnt>1)
+				{
+					fd=fopen(htmlFile,"w");
+					if(fd!=NULL)
+						{								
+							fprintf(fd,"<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n");
+							fprintf(fd,"<html>\n");
+							fprintf(fd,"<body>\n");
+
+							for(int loop=0;loop<cnt;loop++)
+								{
+									fprintf(fd,"<a href=\"%s\">%s</a><br>\n",searchdata[loop][1],searchdata[loop][0]);
+								}
+							fprintf(fd,"</body>\n");
+							fprintf(fd,"</html>\n");
+							fclose(fd);
+							thePage=strdup(htmlURI);
+						}
+				}
+			else
+				{
+					asprintf(&thePage,"file://%s",searchdata[0][1]);
+				}
+
+			showDocView(USEURI,selection,"Gtk Docs");
+		}
+
+	for(int loop=0;loop<cnt;loop++)
+		{
+			if(searchdata[loop][0]!=NULL)
+				debugFree(&searchdata[loop][0],"seachGtkDocs searchdata[loop][0]");
+			if(searchdata[loop][1]!=NULL)
+				debugFree(&searchdata[loop][1],"seachGtkDocs searchdata[loop][1]");
+		}
+	if((selection!=NULL) && ((gpointer)data==NULL))
+		debugFree(&selection,"seachGtkDocs selection");
+#endif
+}

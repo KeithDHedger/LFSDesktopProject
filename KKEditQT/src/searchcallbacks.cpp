@@ -93,7 +93,7 @@ PROTECTED void showDocView(int howtodisplay,char* text,const char* title)
 	return;
 }
 
-void searchGtkDocs(Widget* widget,uPtr data)
+void searchGtkDocsx(Widget* widget,uPtr data)
 {
 	char*		selection=NULL;
 	char*		searchdata[2048][2];
@@ -363,13 +363,13 @@ void docSearchFromBar(void)
 #endif
 {
 #ifdef _USEQT5_
-	const char* text=kkedit->findApiWidget->property("text").toByteArray().constData();
+	const char* text=kkedit->findGtkApiWidget->property("text").toByteArray().constData();
 #else
 	const char* text=gtk_entry_get_text((GtkEntry*)data);
 #endif
 
 	if(text!=NULL && strlen(text)>0)
-		searchGtkDocs(NULL,(uPtr)text);
+		searchGtkDocsx(NULL,(uPtr)text);
 }
 
 #ifdef _BUILDDOCVIEWER_

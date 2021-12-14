@@ -111,7 +111,7 @@ void KKEditClass::doNavMenuItems()
 				functionSearch(NULL,0);
 				break;
 			case SEARCHGTKDOCS:
-				searchGtkDocs(NULL,0);
+				this->searchGtkDocs("");
 				break;
 			case SEARCHQT5DOCS:
 				searchQT5Docs(NULL,0);
@@ -637,6 +637,19 @@ void KKEditClass::doOddButtons(void)
 				this->readConfigs();
 				this->resetAllFilePrefs();
 				this->switchPage(this->mainNotebook->currentIndex());
+				break;
+			case DOLIVESEARCH:
+				fprintf(stderr,"DOLIVESEARCH\n");
+				break;
+			case DOAPISEARCH:
+				fprintf(stderr,"DOAPISEARCH\n");
+				break;
+			case DOQT5SEARCH:
+				fprintf(stderr,"DOQT5SEARCH\n");
+				break; 
+			case DOGTKSEARCH:
+				fprintf(stderr,"DOGTKSEARCH gtkwidget QLineEdit\n");
+				this->searchGtkDocs(this->findGtkApiWidget->text());
 				break;
 			default:
 				break;

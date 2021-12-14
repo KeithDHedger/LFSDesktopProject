@@ -79,7 +79,7 @@ void qt5DocSearchFromBar(Widget* widget,uPtr data);
 void qt5DocSearchFromBar(void);
 #endif
 
-void searchGtkDocs(Widget* widget,uPtr data);
+void searchGtkDocsx(Widget* widget,uPtr data);
 
 void showDocView(int howtodisplay,char* text,const char* title);
 void pasteFRClip(Widget* widget,uPtr data);

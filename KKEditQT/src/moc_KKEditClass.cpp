@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_KKEditClass_t {
-    QByteArrayData data[32];
-    char stringdata0[434];
+    QByteArrayData data[34];
+    char stringdata0[454];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -63,7 +63,9 @@ QT_MOC_LITERAL(27, 359, 12), // "doFindButton"
 QT_MOC_LITERAL(28, 372, 14), // "tabContextMenu"
 QT_MOC_LITERAL(29, 387, 2), // "pt"
 QT_MOC_LITERAL(30, 390, 28), // "doTabBarContextMenuSetHilite"
-QT_MOC_LITERAL(31, 419, 14) // "doAppShortCuts"
+QT_MOC_LITERAL(31, 419, 14), // "doAppShortCuts"
+QT_MOC_LITERAL(32, 434, 15), // "doSearchFromBar"
+QT_MOC_LITERAL(33, 450, 3) // "txt"
 
     },
     "KKEditClass\0doTimer\0\0doFileMenuItems\0"
@@ -78,7 +80,7 @@ QT_MOC_LITERAL(31, 419, 14) // "doAppShortCuts"
     "buildGetKeyShortCut\0index\0switchPage\0"
     "closeTab\0closeAllTabs\0doFindButton\0"
     "tabContextMenu\0pt\0doTabBarContextMenuSetHilite\0"
-    "doAppShortCuts"
+    "doAppShortCuts\0doSearchFromBar\0txt"
 };
 #undef QT_MOC_LITERAL
 
@@ -88,7 +90,7 @@ static const uint qt_meta_data_KKEditClass[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      26,   14, // methods
+      27,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -96,32 +98,33 @@ static const uint qt_meta_data_KKEditClass[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,  144,    2, 0x0a /* Public */,
-       3,    0,  145,    2, 0x0a /* Public */,
-       4,    0,  146,    2, 0x0a /* Public */,
-       5,    0,  147,    2, 0x0a /* Public */,
-       6,    0,  148,    2, 0x0a /* Public */,
-       7,    0,  149,    2, 0x0a /* Public */,
-       8,    0,  150,    2, 0x0a /* Public */,
-       9,    0,  151,    2, 0x0a /* Public */,
-      10,    0,  152,    2, 0x0a /* Public */,
-      11,    0,  153,    2, 0x0a /* Public */,
-      12,    0,  154,    2, 0x0a /* Public */,
-      13,    0,  155,    2, 0x0a /* Public */,
-      14,    1,  156,    2, 0x0a /* Public */,
-      17,    0,  159,    2, 0x0a /* Public */,
-      18,    0,  160,    2, 0x0a /* Public */,
-      19,    0,  161,    2, 0x0a /* Public */,
-      20,    0,  162,    2, 0x0a /* Public */,
-      21,    0,  163,    2, 0x0a /* Public */,
-      22,    1,  164,    2, 0x0a /* Public */,
-      24,    1,  167,    2, 0x0a /* Public */,
-      25,    1,  170,    2, 0x0a /* Public */,
-      26,    0,  173,    2, 0x0a /* Public */,
-      27,    0,  174,    2, 0x0a /* Public */,
-      28,    1,  175,    2, 0x0a /* Public */,
-      30,    0,  178,    2, 0x0a /* Public */,
-      31,    0,  179,    2, 0x0a /* Public */,
+       1,    0,  149,    2, 0x0a /* Public */,
+       3,    0,  150,    2, 0x0a /* Public */,
+       4,    0,  151,    2, 0x0a /* Public */,
+       5,    0,  152,    2, 0x0a /* Public */,
+       6,    0,  153,    2, 0x0a /* Public */,
+       7,    0,  154,    2, 0x0a /* Public */,
+       8,    0,  155,    2, 0x0a /* Public */,
+       9,    0,  156,    2, 0x0a /* Public */,
+      10,    0,  157,    2, 0x0a /* Public */,
+      11,    0,  158,    2, 0x0a /* Public */,
+      12,    0,  159,    2, 0x0a /* Public */,
+      13,    0,  160,    2, 0x0a /* Public */,
+      14,    1,  161,    2, 0x0a /* Public */,
+      17,    0,  164,    2, 0x0a /* Public */,
+      18,    0,  165,    2, 0x0a /* Public */,
+      19,    0,  166,    2, 0x0a /* Public */,
+      20,    0,  167,    2, 0x0a /* Public */,
+      21,    0,  168,    2, 0x0a /* Public */,
+      22,    1,  169,    2, 0x0a /* Public */,
+      24,    1,  172,    2, 0x0a /* Public */,
+      25,    1,  175,    2, 0x0a /* Public */,
+      26,    0,  178,    2, 0x0a /* Public */,
+      27,    0,  179,    2, 0x0a /* Public */,
+      28,    1,  180,    2, 0x0a /* Public */,
+      30,    0,  183,    2, 0x0a /* Public */,
+      31,    0,  184,    2, 0x0a /* Public */,
+      32,    1,  185,    2, 0x0a /* Public */,
 
  // slots: parameters
     QMetaType::Void,
@@ -150,6 +153,7 @@ static const uint qt_meta_data_KKEditClass[] = {
     QMetaType::Void, QMetaType::QPoint,   29,
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void, QMetaType::QString,   33,
 
        0        // eod
 };
@@ -187,6 +191,7 @@ void KKEditClass::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id,
         case 23: _t->tabContextMenu((*reinterpret_cast< const QPoint(*)>(_a[1]))); break;
         case 24: _t->doTabBarContextMenuSetHilite(); break;
         case 25: _t->doAppShortCuts(); break;
+        case 26: _t->doSearchFromBar((*reinterpret_cast< const QString(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -221,13 +226,13 @@ int KKEditClass::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 26)
+        if (_id < 27)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 26;
+        _id -= 27;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 26)
+        if (_id < 27)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 26;
+        _id -= 27;
     }
     return _id;
 }

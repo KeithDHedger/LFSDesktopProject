@@ -45,6 +45,7 @@ class StringSlice
 		char*	decodeHtml(char* src);
 		char*	randomName(int len);
 		bool	getDuplicate(void);
+
 	private:
 		void	checkBufferLen(char* str);
 		void	checkBufferLen(int size);
