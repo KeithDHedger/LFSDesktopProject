@@ -829,7 +829,7 @@ void KKEditClass::buildMainGui(void)
 //open include
 	menuItemSink=this->makeMenuItemClass(NAVMENU,"Open Include File",QKeySequence::fromString("Ctrl+I"),"document-open",GOTODEFMENUNAME,OPENINCLUDEMENUITEM);
 //goto line number
-	menuItemSink=this->makeMenuItemClass(NAVMENU,"Go To Line",0,"go-down",GOTOLINEMENUNAME,GOTOLINEMENUITEM);
+	goToLineDialogMenuItem=this->makeMenuItemClass(NAVMENU,"Go To Line",0,"go-down",GOTOLINEMENUNAME,GOTOLINEMENUITEM);
 //find define
 	menuItemSink=this->makeMenuItemClass(NAVMENU,"Search For Define",0,"edit-find",SEARCHFORDEFMENUNAME,SEARCHFORDEFINEMENUITEM);
 //find gtkdoc

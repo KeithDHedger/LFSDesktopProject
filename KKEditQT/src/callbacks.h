@@ -90,7 +90,7 @@ void changeSourceStyle(void);
 #endif
 int yesNo(char* question,char* file);
 
-void setToobarSensitive(void);
+void setToobarSensitivex(void);
 
 
 

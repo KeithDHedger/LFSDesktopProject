@@ -92,6 +92,7 @@ VISIBLE void KKEditClass::newFile(const QString data,const QString filename)
 	this->mainNotebook->setCurrentWidget(doc);
 	this->rebuildTabsMenu();
 	this->sessionBusy=false;
+	this->setToobarSensitive();
 }
 
 int KKEditClass::askSaveDialog(const QString filename)
@@ -146,7 +147,8 @@ bool KKEditClass::saveFileAs(int tabnum)
 					msg->exec();
 					delete msg;
 				}
-		}	
+		}
+	this->setToobarSensitive();
 	return(retval);
 }
 
@@ -295,6 +297,6 @@ bool KKEditClass::openFile(QString filepath,int linenumber,bool warn)
 		switchPage(tabnum);
 
 	this->rebuildTabsMenu();
-
+	this->setToobarSensitive();
 	return(retval);
 }

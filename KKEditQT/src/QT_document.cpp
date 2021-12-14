@@ -111,6 +111,7 @@ void DocumentClass::updateLineNumberAreaWidth(void)
 
 void DocumentClass::modified()
 {
+	//this->mainKKEditClass->setToobarSensitive();
 	if((this->mainKKEditClass->sessionBusy==true) || (this->dirty==true))
 		return;
 
@@ -122,6 +123,7 @@ void DocumentClass::setStatusBarText(void)
 {
 	QString text=QString("Line %1\tCol %2\tSessionId 0x%3\t\tFilePath %4").arg(this->textCursor().blockNumber()+1).arg(this->textCursor().positionInBlock()+1).arg(this->mainKKEditClass->sessionID,0,16).arg(this->filePath);
 	this->mainKKEditClass->statusText->setText(text);
+	this->mainKKEditClass->setToobarSensitive();
 }
 
 void DocumentClass::highlightCurrentLine()
@@ -155,6 +157,7 @@ void DocumentClass::highlightCurrentLine()
 		}
 	else
 		this->setXtraSelections();
+	this->mainKKEditClass->setToobarSensitive();
 }
 
 void DocumentClass::setXtraSelections()
@@ -197,6 +200,8 @@ void DocumentClass::updateLineNumberArea(const QRect &rect,int dy)
 
 void DocumentClass::keyPressEvent(QKeyEvent *event)
 {
+	//this->dirty=true;
+
 //fix for vnc/linuxfb tab key
 	if(((this->mainKKEditClass->application->platformName().compare("vnc")==0) || (this->mainKKEditClass->application->platformName().compare("linuxfb")==0)) && (event->key()==Qt::Key_Tab))
 		{
@@ -227,6 +232,8 @@ void DocumentClass::keyReleaseEvent(QKeyEvent *event)
 			QTextCursor cursor=this->textCursor();
 			this->insertPlainText(this->indentPad);
 		}
+	this->dirty=true;
+	this->mainKKEditClass->setToobarSensitive();
 	QPlainTextEdit::keyReleaseEvent(event);
 }
 
@@ -250,6 +257,10 @@ DocumentClass::DocumentClass(KKEditClass *kk,QWidget *parent): QPlainTextEdit(pa
 	connect(this,SIGNAL(updateRequest(QRect,int)),this,SLOT(updateLineNumberArea(QRect,int)));
 	connect(this,SIGNAL(cursorPositionChanged()),this,SLOT(highlightCurrentLine()));
 	connect(this,SIGNAL(textChanged()),this,SLOT(modified()));
+
+	connect(this,SIGNAL(undoAvailable(bool)),this,SLOT(setUndo(bool)));
+	connect(this,SIGNAL(redoAvailable(bool)),this,SLOT(setRedo(bool)));
+
 	//connect(this,SIGNAL(keyPressEvent()),this,SLOT(keyp(QKeyEvent * event)));
 	//QObject::connect(qobject_cast<QWidget*>(this->mainNotebook),&QWidget::keyPressEvent,keyp);
 
@@ -420,5 +431,15 @@ void DocumentClass::setHiliteLanguage(void)
 		theme=(QSourceHighliter::Themes)-1;
 
 	this->highlighter->setTheme(theme);
+}
+
+void DocumentClass::setUndo(bool avail)
+{
+	this->gotUndo=avail;
+}
+
+void DocumentClass::setRedo(bool avail)
+{
+	this->gotRedo=avail;
 }
 

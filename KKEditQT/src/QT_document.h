@@ -91,6 +91,8 @@ class DocumentClass : public QPlainTextEdit
 		GSList*								regexList;
 		int									regexMatchNumber;
 		uPtr								reserved4;
+		bool								gotUndo=false;
+		bool								gotRedo=false;
 
 		int									pageIndex;
 
@@ -109,6 +111,8 @@ class DocumentClass : public QPlainTextEdit
 		void								updateLineNumberAreaWidth(void);
 		void								updateLineNumberArea(const QRect &, int);
 		void								modified();
+		void								setUndo(bool avail);
+		void								setRedo(bool avail);
 
 	private:
 		void								clearXtraSelections(void);

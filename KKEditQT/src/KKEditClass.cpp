@@ -847,6 +847,7 @@ printf("void KKEditClass::closeAllTabs(void)\n");
 
 	this->rebuildBookMarkMenu();
 	this->rebuildTabsMenu();
+	this->setToobarSensitive();
 	this->sessionBusy=false;
 }
 
@@ -896,7 +897,10 @@ bool KKEditClass::closeTab(int index)
 		}
 
 	if(this->closingAllTabs==false)
-		this->rebuildTabsMenu();
+		{
+			this->rebuildTabsMenu();
+			this->setToobarSensitive();
+		}
 
 	this->sessionBusy=false;
 	return(true);
@@ -934,7 +938,7 @@ QString KKEditClass::truncateWithElipses(const QString str,unsigned int maxlen)
 	return(newlabel);
 }
 
-void KKEditClass::setAppShortcuts(void)//TODO//HHMMmmmmmm
+void KKEditClass::setAppShortcuts(void)
 {
 	for(int j=0;j<SHORTCUTSCOUNT;j++)
 		{
@@ -949,5 +953,103 @@ void KKEditClass::setAppShortcuts(void)//TODO//HHMMmmmmmm
 		}
 }
 
+void KKEditClass::setToobarSensitive(void)
+{
+	DocumentClass	*doc=this->getDocumentForTab(-1);
+	bool			override;
+	bool			gotdoc=true;
+	bool			hasselection=false;
+
+	if(doc==NULL)
+		{
+			override=false;
+			gotdoc=false;
+		}
+	else
+		{
+			override=doc->dirty;
+			hasselection=doc->textCursor().hasSelection();
+		}
+
+	for(int j=0;j<this->prefsToolBarLayout.length();j++)
+		{
+			switch(this->prefsToolBarLayout.at(j).toLatin1())
+				{
+//new
+					case 'N':
+						this->newMenuItem->setEnabled(true);
+						break;
+//open+recent
+					case 'O':
+						this->newMenuItem->setEnabled(true);
+						break;
+//save
+					case 'S':
+						this->saveMenuItem->setEnabled(override);
+						break;
+
+//cut
+					case 'X':
+						this->cutMenuItem->setEnabled((gotdoc==true) && ((hasselection) & (!doc->isReadOnly())));
+						break;
+//copy
+					case 'C':
+						this->copyMenuItem->setEnabled(hasselection);
+						break;
+//paste
+					case 'P':
+						this->pasteMenuItem->setEnabled((gotdoc==true) && (doc->canPaste()));
+						break;
+//undo
+					case 'U':
+						this->undoMenuItem->setEnabled((gotdoc==true) && (doc->gotUndo));
+						this->undoAllMenuItem->setEnabled((gotdoc==true) && (doc->gotUndo));
+						break;
+//redo
+					case 'R':
+						this->redoMenuItem->setEnabled((gotdoc==true) && (doc->gotRedo));
+						this->redoAllMenuItem->setEnabled((gotdoc==true) && (doc->gotRedo));
+						break;
+//find
+					case 'F':
+						this->findMenuItem->setEnabled(true);
+						break;
+//navigation
+					case 'G':
+						this->goToDefineMenuItem->setEnabled(hasselection);
+						break;
+//go back
+					case 'B':
+						this->goBackMenu->setEnabled(true);
+						break;
+//go foward
+					case 'W':
+						this->goFowardMenu->setEnabled(true);
+						break;
+
+					case '9':
+						this->lineNumberWidget->setEnabled(gotdoc);
+						this->goToLineDialogMenuItem->setEnabled(gotdoc);
+						break;
+//find in gtkdoc
+					case 'A':
+						this->findApiWidget->setEnabled(true);
+						break;
+
+//find in qt5doc
+					case 'Q':
+						this->findQtApiWidget->setEnabled(true);
+						break;
+//find in function def
+					case 'D':
+						this->findDefWidget->setEnabled(true);
+						break;
+//livesearch
+					case 'L':
+						this->liveSearchWidget->setEnabled(gotdoc);
+						break;
+				}
+		}
+}
 
 

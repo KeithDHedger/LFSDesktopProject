@@ -129,6 +129,8 @@ class KKEditClass : public QObject
 		void						checkDoc(DocumentClass *doc);
 		void						setAppShortcuts(void);
 
+		void						setToobarSensitive(void);
+
 //app prefs
 //document
 		bool						prefsIndent=true;
@@ -230,6 +232,7 @@ class KKEditClass : public QObject
 		MenuItemClass				*goToDefineMenuItem;
 		MenuItemClass				*goBackMenu;
 		MenuItemClass				*goFowardMenu;
+		MenuItemClass				*goToLineDialogMenuItem;
 
 //function menu
 		QMenu						*funcMenu;

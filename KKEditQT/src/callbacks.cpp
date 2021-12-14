@@ -30,7 +30,7 @@ void releasePlugs(gpointer data,gpointer user_data)
 #endif
 }
 
-void setToobarSensitive(void)
+void setToobarSensitivex(void)
 {
 #ifndef _USEQT5_
 	pageStruct*	page=kkedit->getDocumentForTab(currentTabNumber);
