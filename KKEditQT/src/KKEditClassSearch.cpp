@@ -198,27 +198,20 @@ void KKEditClass::doFindReplace(int response_id)
 	debugFree(&currentreplacetext,"doFindReplace currentreplacetext");
 }
 
-void KKEditClass::searchGtkDocs(const QString txt)
+void KKEditClass::searchGtkDocs(const QString txt,int what)
 {
-//	char*		selection=NULL;
-//	char*		searchdata[2048][2];
-//	char		line[1024];
-//	FILE*		fp;
-//	FILE*		fd;
-//	char*		command=NULL;
-//	char*		ptr=NULL;
-//	char*		funcname;
-//	char*		foldername;
-//	char*		tempstr;
-//	char*		link;
-//	int			cnt=0;
-
-	QString		searchfor;
-	QString		funcname;
-	QString		link;
+	QString			searchfor;
+	QString			funcname;
+	QString			link;
+	QString			basefile;
+	QString			results;
+	QStringList		reslist;
+	QString			searchcommand;
+	QFile			html(htmlFile);
 
 	DocumentClass	*doc=this->getDocumentForTab(-1);
-
+//<a href="/usr/share/doc/qt5/doc/qtcore/qtextstream
+//			asprintf(&command,"find %s -iname \"%s*.html\"|sed 's/.html$//'|sort",QT5DOCSDIR,str->str);
 	if((txt.isEmpty()==true) && (doc==NULL))
 		return;
 
@@ -231,125 +224,53 @@ void KKEditClass::searchGtkDocs(const QString txt)
 			else
 				searchfor=txt;
 		}
-	fprintf(stderr,"txt=%s\n",searchfor.toStdString().c_str());
-	QString	results=this->runPipeAndCapture(QString("find /usr/share/gtk-doc/html -iname \"*.devhelp2\" -exec grep -iHe %1 '{}' \\;").arg(searchfor));
-//runPipeAndCapture
-//			asprintf(&command,"find /usr/share/gtk-doc/html -iname \"*.devhelp2\" -exec grep -iHe %s '{}' \\;",selection);
-	fprintf(stderr,"results=%s\n",results.toStdString().c_str());
-	QStringList	reslist=results.split("\n",Qt::SkipEmptyParts);
-	for(int j=0;j<reslist.count();j++)
-	{
-		//fprintf(stderr,"results=%s\n",reslist.at(j).toStdString().c_str());
-	//funcname=globalSlice->sliceBetween(line,(char*)"name=\"",(char*)"\" link=");
-	funcname=reslist.at(j).section("\" link=",0,0).section("name=\"",1,1);
-	link=reslist.at(j).section("link=\"",1,1).section("\"",0,0);
-QTextStream(stderr) << funcname << " " << link << Qt::endl;
 
-							fprintf(stderr,"<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n");
-							fprintf(stderr,"<html>\n");
-							fprintf(stderr,"<body>\n");
-
-							//for(int loop=0;loop<cnt;loop++)
-							//	{
-									fprintf(stderr,"<a href=\"%s\">%s</a><br>\n",link.toStdString().c_str(),funcname.toStdString().c_str());
-							//	}
-							fprintf(stderr,"</body>\n");
-							fprintf(stderr,"</html>\n");
-
-
-}
-return;
-#if 0
-	if(document==NULL)
-		return;
-
-	for(int loop=0;loop<2048;loop++)
+	switch(what)
 		{
-			searchdata[loop][0]=NULL;
-			searchdata[loop][1]=NULL;
+			case 0:
+				searchcommand=QString("find /usr/share/gtk-doc/html -iname \"*.devhelp2\" -exec grep -iHe %1 '{}' \\;").arg(searchfor);
+				break;
+			case 1:
+				searchcommand=QString("find %1 -iname \"%2*.html\"|sed 's/.html$//'|sort").arg(QT5DOCSDIR).arg(searchfor);
+				break;
 		}
 
-	if((gpointer)data!=NULL)
-		selection=strdup((char*)data);
-	else
-		{
-			selection=strdup(document->textCursor().selectedText().toUtf8().constData());
-		}
+	results=this->runPipeAndCapture(searchcommand);
+	reslist=results.split("\n",Qt::SkipEmptyParts);
 
-	if(selection!=NULL)
+	if(html.open(QFile::WriteOnly|QFile::Truncate))
 		{
-			asprintf(&command,"find /usr/share/gtk-doc/html -iname \"*.devhelp2\" -exec grep -iHe %s '{}' \\;",selection);
-			fp=popen(command,"r");
-			while(fgets(line,1024,fp))
+     		QTextStream out(&html);
+			out << "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">" << Qt::endl;
+			out << "<html>" << Qt::endl;
+			out << "<head>" << Qt::endl;
+			out << "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">" << Qt::endl;
+			out << "</head>" << Qt::endl;
+			out << "<body>" << Qt::endl;
+
+			for(int loop=0;loop<reslist.count();loop++)
 				{
-					ptr=strstr(line,"name=\"");
-					if(ptr!=NULL)
+					switch(what)
 						{
-							funcname=globalSlice->sliceBetween(line,(char*)"name=\"",(char*)"\" link=");
-							if(globalSlice->getResult()==0)
-								{
-									if(strstr(funcname,selection)!=NULL)
-										{
-											if(cnt<2048)
-												{
-													tempstr=globalSlice->sliceBetween(line,(char*)"",(char*)":");
-													if(tempstr!=NULL)
-														{
-															foldername=g_path_get_dirname(tempstr);
-															link=globalSlice->sliceBetween(line,(char*)"link=\"",(char*)"\"");
-															if((foldername!=NULL) && (link!=NULL))
-																{
-																	searchdata[cnt][0]=strdup(funcname);
-																	asprintf(&searchdata[cnt][1],"%s/%s",foldername,link);
-																	debugFree(&foldername,"seachGtkDocs foldername");
-																	debugFree(&link,"seachGtkDocs link");
-																	cnt++;
-																}
-															debugFree(&tempstr,"seachGtkDocs tempstr");
-														}
-												}
-										}
-									debugFree(&funcname,"seachGtkDocs funcname");
-									funcname=NULL;
-								}
+							case 0:
+								funcname=reslist.at(loop).section("\" link=",0,0).section("name=\"",1,1);
+								link=reslist.at(loop).section("link=\"",1,1).section("\"",0,0);
+								basefile=reslist.at(loop).section(":",0,0).section("/",0,-2);
+								out << "<a href=\"file://" << basefile << "/" << link << "\">" << funcname << "</a><br>" << Qt::endl;
+								break;
+							case 1:
+								link="file://" + reslist.at(loop) + ".html";
+								funcname=reslist.at(loop).section("/",-1,-1);
+								out << "<a href=\"" << link << "\">" << funcname << "</a><br>" << Qt::endl;
+								break;
 						}
 				}
-
-			if(cnt>1)
-				{
-					fd=fopen(htmlFile,"w");
-					if(fd!=NULL)
-						{								
-							fprintf(fd,"<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n");
-							fprintf(fd,"<html>\n");
-							fprintf(fd,"<body>\n");
-
-							for(int loop=0;loop<cnt;loop++)
-								{
-									fprintf(fd,"<a href=\"%s\">%s</a><br>\n",searchdata[loop][1],searchdata[loop][0]);
-								}
-							fprintf(fd,"</body>\n");
-							fprintf(fd,"</html>\n");
-							fclose(fd);
-							thePage=strdup(htmlURI);
-						}
-				}
-			else
-				{
-					asprintf(&thePage,"file://%s",searchdata[0][1]);
-				}
-
-			showDocView(USEURI,selection,"Gtk Docs");
+			out << "</body>" << Qt::endl;
+			out << "</html>" << Qt::endl;
+			html.close();
 		}
 
-	for(int loop=0;loop<cnt;loop++)
-		{
-			if(searchdata[loop][0]!=NULL)
-				debugFree(&searchdata[loop][0],"seachGtkDocs searchdata[loop][0]");
-			if(searchdata[loop][1]!=NULL)
-				debugFree(&searchdata[loop][1],"seachGtkDocs searchdata[loop][1]");
-		}
-	if((selection!=NULL) && ((gpointer)data==NULL))
-		debugFree(&selection,"seachGtkDocs selection");
-#endif
+	debugFree(&thePage,"thePage");
+	thePage=strdup(htmlURI);
+	showDocView(USEURI,(char*)searchfor.toStdString().c_str(),"Gtk Docs");
 }

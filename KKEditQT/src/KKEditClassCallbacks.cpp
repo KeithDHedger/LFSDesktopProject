@@ -99,7 +99,7 @@ void KKEditClass::doNavMenuItems()
 			case GOFORWARDMENUITEM:
 				break;
 			case GOTODEFINEMENUITEM:
-				this->goToDefinition();
+				this->goToDefinition("");
 				break;
 			case OPENINCLUDEMENUITEM:
 				this->findFile();
@@ -111,10 +111,12 @@ void KKEditClass::doNavMenuItems()
 				functionSearch(NULL,0);
 				break;
 			case SEARCHGTKDOCS:
-				this->searchGtkDocs("");
+				this->searchGtkDocs("",0);
+				fprintf(stderr,"SEARCHGTKDOCS\n");
 				break;
 			case SEARCHQT5DOCS:
-				searchQT5Docs(NULL,0);
+				fprintf(stderr,"SEARCHQT5DOCS >>%s<<\n",QT5DOCSDIR);
+				this->searchGtkDocs("",1);
 				break;
 		}
 }
@@ -643,13 +645,15 @@ void KKEditClass::doOddButtons(void)
 				break;
 			case DOAPISEARCH:
 				fprintf(stderr,"DOAPISEARCH\n");
+				this->goToDefinition(this->findDefWidget->text());
 				break;
 			case DOQT5SEARCH:
 				fprintf(stderr,"DOQT5SEARCH\n");
+				this->searchGtkDocs(this->findQtApiWidget->text(),1);
 				break; 
 			case DOGTKSEARCH:
 				fprintf(stderr,"DOGTKSEARCH gtkwidget QLineEdit\n");
-				this->searchGtkDocs(this->findGtkApiWidget->text());
+				this->searchGtkDocs(this->findGtkApiWidget->text(),0);
 				break;
 			default:
 				break;

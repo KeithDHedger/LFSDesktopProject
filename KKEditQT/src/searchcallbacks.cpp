@@ -92,117 +92,117 @@ PROTECTED void showDocView(int howtodisplay,char* text,const char* title)
 		
 	return;
 }
-
-void searchGtkDocsx(Widget* widget,uPtr data)
-{
-	char*		selection=NULL;
-	char*		searchdata[2048][2];
-	char		line[1024];
-	FILE*		fp;
-	FILE*		fd;
-	char*		command=NULL;
-	char*		ptr=NULL;
-	char*		funcname;
-	char*		foldername;
-	char*		tempstr;
-	char*		link;
-	int			cnt=0;
-
-	DocumentClass	*document=kkedit->getDocumentForTab(-1);
-
-	if(document==NULL)
-		return;
-
-	for(int loop=0;loop<2048;loop++)
-		{
-			searchdata[loop][0]=NULL;
-			searchdata[loop][1]=NULL;
-		}
-
-	if((gpointer)data!=NULL)
-		selection=strdup((char*)data);
-	else
-		{
-			selection=strdup(document->textCursor().selectedText().toUtf8().constData());
-		}
-
-	if(selection!=NULL)
-		{
-			asprintf(&command,"find /usr/share/gtk-doc/html -iname \"*.devhelp2\" -exec grep -iHe %s '{}' \\;",selection);
-			fp=popen(command,"r");
-			while(fgets(line,1024,fp))
-				{
-					ptr=strstr(line,"name=\"");
-					if(ptr!=NULL)
-						{
-							funcname=globalSlice->sliceBetween(line,(char*)"name=\"",(char*)"\" link=");
-							if(globalSlice->getResult()==0)
-								{
-									if(strstr(funcname,selection)!=NULL)
-										{
-											if(cnt<2048)
-												{
-													tempstr=globalSlice->sliceBetween(line,(char*)"",(char*)":");
-													if(tempstr!=NULL)
-														{
-															foldername=g_path_get_dirname(tempstr);
-															link=globalSlice->sliceBetween(line,(char*)"link=\"",(char*)"\"");
-															if((foldername!=NULL) && (link!=NULL))
-																{
-																	searchdata[cnt][0]=strdup(funcname);
-																	asprintf(&searchdata[cnt][1],"%s/%s",foldername,link);
-																	debugFree(&foldername,"seachGtkDocs foldername");
-																	debugFree(&link,"seachGtkDocs link");
-																	cnt++;
-																}
-															debugFree(&tempstr,"seachGtkDocs tempstr");
-														}
-												}
-										}
-									debugFree(&funcname,"seachGtkDocs funcname");
-									funcname=NULL;
-								}
-						}
-				}
-
-			if(cnt>1)
-				{
-					fd=fopen(htmlFile,"w");
-					if(fd!=NULL)
-						{								
-							fprintf(fd,"<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n");
-							fprintf(fd,"<html>\n");
-							fprintf(fd,"<body>\n");
-
-							for(int loop=0;loop<cnt;loop++)
-								{
-									fprintf(fd,"<a href=\"%s\">%s</a><br>\n",searchdata[loop][1],searchdata[loop][0]);
-								}
-							fprintf(fd,"</body>\n");
-							fprintf(fd,"</html>\n");
-							fclose(fd);
-							thePage=strdup(htmlURI);
-						}
-				}
-			else
-				{
-					asprintf(&thePage,"file://%s",searchdata[0][1]);
-				}
-
-			showDocView(USEURI,selection,"Gtk Docs");
-		}
-
-	for(int loop=0;loop<cnt;loop++)
-		{
-			if(searchdata[loop][0]!=NULL)
-				debugFree(&searchdata[loop][0],"seachGtkDocs searchdata[loop][0]");
-			if(searchdata[loop][1]!=NULL)
-				debugFree(&searchdata[loop][1],"seachGtkDocs searchdata[loop][1]");
-		}
-	if((selection!=NULL) && ((gpointer)data==NULL))
-		debugFree(&selection,"seachGtkDocs selection");
-}
-
+//
+//void searchGtkDocsx(Widget* widget,uPtr data)
+//{
+//	char*		selection=NULL;
+//	char*		searchdata[2048][2];
+//	char		line[1024];
+//	FILE*		fp;
+//	FILE*		fd;
+//	char*		command=NULL;
+//	char*		ptr=NULL;
+//	char*		funcname;
+//	char*		foldername;
+//	char*		tempstr;
+//	char*		link;
+//	int			cnt=0;
+//
+//	DocumentClass	*document=kkedit->getDocumentForTab(-1);
+//
+//	if(document==NULL)
+//		return;
+//
+//	for(int loop=0;loop<2048;loop++)
+//		{
+//			searchdata[loop][0]=NULL;
+//			searchdata[loop][1]=NULL;
+//		}
+//
+//	if((gpointer)data!=NULL)
+//		selection=strdup((char*)data);
+//	else
+//		{
+//			selection=strdup(document->textCursor().selectedText().toUtf8().constData());
+//		}
+//
+//	if(selection!=NULL)
+//		{
+//			asprintf(&command,"find /usr/share/gtk-doc/html -iname \"*.devhelp2\" -exec grep -iHe %s '{}' \\;",selection);
+//			fp=popen(command,"r");
+//			while(fgets(line,1024,fp))
+//				{
+//					ptr=strstr(line,"name=\"");
+//					if(ptr!=NULL)
+//						{
+//							funcname=globalSlice->sliceBetween(line,(char*)"name=\"",(char*)"\" link=");
+//							if(globalSlice->getResult()==0)
+//								{
+//									if(strstr(funcname,selection)!=NULL)
+//										{
+//											if(cnt<2048)
+//												{
+//													tempstr=globalSlice->sliceBetween(line,(char*)"",(char*)":");
+//													if(tempstr!=NULL)
+//														{
+//															foldername=g_path_get_dirname(tempstr);
+//															link=globalSlice->sliceBetween(line,(char*)"link=\"",(char*)"\"");
+//															if((foldername!=NULL) && (link!=NULL))
+//																{
+//																	searchdata[cnt][0]=strdup(funcname);
+//																	asprintf(&searchdata[cnt][1],"%s/%s",foldername,link);
+//																	debugFree(&foldername,"seachGtkDocs foldername");
+//																	debugFree(&link,"seachGtkDocs link");
+//																	cnt++;
+//																}
+//															debugFree(&tempstr,"seachGtkDocs tempstr");
+//														}
+//												}
+//										}
+//									debugFree(&funcname,"seachGtkDocs funcname");
+//									funcname=NULL;
+//								}
+//						}
+//				}
+//
+//			if(cnt>1)
+//				{
+//					fd=fopen(htmlFile,"w");
+//					if(fd!=NULL)
+//						{								
+//							fprintf(fd,"<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n");
+//							fprintf(fd,"<html>\n");
+//							fprintf(fd,"<body>\n");
+//
+//							for(int loop=0;loop<cnt;loop++)
+//								{
+//									fprintf(fd,"<a href=\"%s\">%s</a><br>\n",searchdata[loop][1],searchdata[loop][0]);
+//								}
+//							fprintf(fd,"</body>\n");
+//							fprintf(fd,"</html>\n");
+//							fclose(fd);
+//							thePage=strdup(htmlURI);
+//						}
+//				}
+//			else
+//				{
+//					asprintf(&thePage,"file://%s",searchdata[0][1]);
+//				}
+//
+//			showDocView(USEURI,selection,"Gtk Docs");
+//		}
+//
+//	for(int loop=0;loop<cnt;loop++)
+//		{
+//			if(searchdata[loop][0]!=NULL)
+//				debugFree(&searchdata[loop][0],"seachGtkDocs searchdata[loop][0]");
+//			if(searchdata[loop][1]!=NULL)
+//				debugFree(&searchdata[loop][1],"seachGtkDocs searchdata[loop][1]");
+//		}
+//	if((selection!=NULL) && ((gpointer)data==NULL))
+//		debugFree(&selection,"seachGtkDocs selection");
+//}
+//
 
 //find in doxy docs
 void doxyDocs(Widget* widget,uPtr data)
@@ -266,111 +266,111 @@ printf("doxyDocs %i\n",(int)(long)data);
 }
 
 //search QT5 Documentaiion
-void searchQT5Docs(Widget* widget,uPtr data)
-{
-	char*		selection=NULL;
-	char		line[1024];
-	FILE*		fp;
-	FILE*		fd;
-	char*		command=NULL;
-	int			cnt=0;
-	GString*	str;
-	char*		func=NULL;
+//void searchQT5Docs(Widget* widget,uPtr data)
+//{
+//	char*		selection=NULL;
+//	char		line[1024];
+//	FILE*		fp;
+//	FILE*		fd;
+//	char*		command=NULL;
+//	int			cnt=0;
+//	GString*	str;
+//	char*		func=NULL;
+//
+//	DocumentClass	*document=kkedit->getDocumentForTab(-1);
+//
+//	if(document==NULL)
+//		return;
+//
+//	if((gpointer)data!=NULL)
+//		selection=strdup((char*)data);
+//	else
+//		{
+//			selection=strdup(document->textCursor().selectedText().toUtf8().constData());
+//		}
+//
+//	if(selection!=NULL)
+//		{
+//			str=g_string_new(selection);
+//			str=g_string_ascii_down(str);
+//
+//			asprintf(&command,"find %s -iname \"%s*.html\"|sed 's/.html$//'|sort",QT5DOCSDIR,str->str);
+//
+//			fd=fopen(htmlFile,"w");
+//			if(fd!=NULL)
+//				{								
+//					fprintf(fd,"<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n");
+//					fprintf(fd,"<html>\n");
+//					fprintf(fd,"<body>\n");
+//
+//					fp=popen(command,"r");
+//					while(fgets(line,1024,fp))
+//						{
+//							func=g_path_get_basename(line);
+//							if((func !=NULL) && (strcasecmp(func,"")!=0))
+//								{
+//									cnt++;
+//									fprintf(fd,"<a href=\"%s.html\">%s</a><br>\n",line,func);
+//								}
+//						}
+//					fprintf(fd,"</body>\n");
+//					fprintf(fd,"</html>\n");
+//					fclose(fd);
+//					fclose(fp);
+//					debugFree(&command,"searchQT5Docs command");
+//				}
+//			if(cnt==0)
+//				asprintf(&thePage,"file://(null)");
+//			else
+//				thePage=strdup(htmlURI);
+//
+//			showDocView(USEURI,(char*)str->str,"Qt5 Docs");
+//
+//			g_string_free(str,true);
+//			debugFree(&selection,"searchQT5Docs selection");
+//		}
+//}
+//
+//
+//
+//
+//void defSearchFromBar(void)
+//{
+//fprintf(stderr,"void defSearchFromBar(void)\n");
+//#if 0
+//	functionData* fdata;
+//
+//	functionSearchText=strdup(kkedit->findDefWidget->property("text").toByteArray().constData());
+//
+//	if(functionSearchText!=NULL)
+//		{
+//			printf("defSearchFromBar %s\n",functionSearchText);
+//			fdata=getFunctionByName(functionSearchText,true,true);
+//			if(fdata!=NULL)
+//				{
+//					goToDefine(fdata);
+//					destroyData(fdata);
+//				}
+//			debugFree(&functionSearchText,"defSearchFromBar functionSearchText");
+//		}
+//#endif
+//}
 
-	DocumentClass	*document=kkedit->getDocumentForTab(-1);
-
-	if(document==NULL)
-		return;
-
-	if((gpointer)data!=NULL)
-		selection=strdup((char*)data);
-	else
-		{
-			selection=strdup(document->textCursor().selectedText().toUtf8().constData());
-		}
-
-	if(selection!=NULL)
-		{
-			str=g_string_new(selection);
-			str=g_string_ascii_down(str);
-
-			asprintf(&command,"find %s -iname \"%s*.html\"|sed 's/.html$//'|sort",QT5DOCSDIR,str->str);
-
-			fd=fopen(htmlFile,"w");
-			if(fd!=NULL)
-				{								
-					fprintf(fd,"<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n");
-					fprintf(fd,"<html>\n");
-					fprintf(fd,"<body>\n");
-
-					fp=popen(command,"r");
-					while(fgets(line,1024,fp))
-						{
-							func=g_path_get_basename(line);
-							if((func !=NULL) && (strcasecmp(func,"")!=0))
-								{
-									cnt++;
-									fprintf(fd,"<a href=\"%s.html\">%s</a><br>\n",line,func);
-								}
-						}
-					fprintf(fd,"</body>\n");
-					fprintf(fd,"</html>\n");
-					fclose(fd);
-					fclose(fp);
-					debugFree(&command,"searchQT5Docs command");
-				}
-			if(cnt==0)
-				asprintf(&thePage,"file://(null)");
-			else
-				thePage=strdup(htmlURI);
-
-			showDocView(USEURI,(char*)str->str,"Qt5 Docs");
-
-			g_string_free(str,true);
-			debugFree(&selection,"searchQT5Docs selection");
-		}
-}
-
-
-
-
-void defSearchFromBar(void)
-{
-fprintf(stderr,"void defSearchFromBar(void)\n");
-#if 0
-	functionData* fdata;
-
-	functionSearchText=strdup(kkedit->findDefWidget->property("text").toByteArray().constData());
-
-	if(functionSearchText!=NULL)
-		{
-			printf("defSearchFromBar %s\n",functionSearchText);
-			fdata=getFunctionByName(functionSearchText,true,true);
-			if(fdata!=NULL)
-				{
-					goToDefine(fdata);
-					destroyData(fdata);
-				}
-			debugFree(&functionSearchText,"defSearchFromBar functionSearchText");
-		}
-#endif
-}
-
-#ifndef _USEQT5_
-void docSearchFromBar(Widget* widget,uPtr data)
-#else
-void docSearchFromBar(void)
-#endif
-{
-#ifdef _USEQT5_
-	const char* text=kkedit->findGtkApiWidget->property("text").toByteArray().constData();
-#else
-	const char* text=gtk_entry_get_text((GtkEntry*)data);
-#endif
-
-	if(text!=NULL && strlen(text)>0)
-		searchGtkDocsx(NULL,(uPtr)text);
-}
+//#ifndef _USEQT5_
+//void docSearchFromBar(Widget* widget,uPtr data)
+//#else
+//void docSearchFromBar(void)
+//#endif
+//{
+//#ifdef _USEQT5_
+//	const char* text=kkedit->findGtkApiWidget->property("text").toByteArray().constData();
+//#else
+//	const char* text=gtk_entry_get_text((GtkEntry*)data);
+//#endif
+//
+//	if(text!=NULL && strlen(text)>0)
+//		searchGtkDocsx(NULL,(uPtr)text);
+//}
 
 #ifdef _BUILDDOCVIEWER_
 void docSearchInPageFoward(Widget* widget,uPtr data)
@@ -395,22 +395,22 @@ void docSearchInPageBack(Widget* widget,uPtr data)
 #endif
 }
 #endif
-
-#ifndef _USEQT5_
-void qt5DocSearchFromBar(Widget* widget,uPtr data)
-#else
-void qt5DocSearchFromBar(void)
-#endif
-{
-#ifndef _USEQT5_
-	const char* text=gtk_entry_get_text((GtkEntry*)data);
-#else
-	const char* text=kkedit->findQtApiWidget->property("text").toByteArray().constData();
-#endif
-
-	if(text!=NULL && strlen(text)>0)
-		searchQT5Docs(NULL,(uPtr)text);
-}
+//
+//#ifndef _USEQT5_
+//void qt5DocSearchFromBar(Widget* widget,uPtr data)
+//#else
+//void qt5DocSearchFromBar(void)
+//#endif
+//{
+//#ifndef _USEQT5_
+//	const char* text=gtk_entry_get_text((GtkEntry*)data);
+//#else
+//	const char* text=kkedit->findQtApiWidget->property("text").toByteArray().constData();
+//#endif
+//
+//	if(text!=NULL && strlen(text)>0)
+//		searchQT5Docs(NULL,(uPtr)text);
+//}
 
 void doAllFiles(int dowhat,bool found)
 {

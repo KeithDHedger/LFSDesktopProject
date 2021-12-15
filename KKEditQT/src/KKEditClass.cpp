@@ -138,16 +138,18 @@ void KKEditClass::setUpToolBar(void)
 					case 'Q':
 						if(this->findQtApiWidget==NULL)
 							this->findQtApiWidget=new QLineEdit;
+						this->findQtApiWidget->setObjectName(QString("%1").arg(DOQT5SEARCH));
 						this->findQtApiWidget->setToolTip("Find API In Qt5 Docs");
-						QObject::connect(((QLineEdit*)this->findQtApiWidget),&QLineEdit::returnPressed,qt5DocSearchFromBar);
+						QObject::connect(this->findQtApiWidget,SIGNAL(returnPressed()),this,SLOT(doOddButtons()));
 						this->toolBar->addWidget(this->findQtApiWidget);
 						break;
 //find in function def
 					case 'D':
 						if(this->findDefWidget==NULL)
 							this->findDefWidget=new QLineEdit;
+						this->findDefWidget->setObjectName(QString("%1").arg(DOAPISEARCH));
 						this->findDefWidget->setToolTip("Search For Define");
-						QObject::connect(((QLineEdit*)this->findDefWidget),&QLineEdit::returnPressed,defSearchFromBar);
+						QObject::connect(this->findDefWidget,SIGNAL(returnPressed()),this,SLOT(doOddButtons()));
 						this->toolBar->addWidget(this->findDefWidget);
 						break;
 //livesearch

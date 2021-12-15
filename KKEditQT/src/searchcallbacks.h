@@ -43,24 +43,24 @@ void doFindReplace(int response_id);
 #endif
 
 void find(Widget* widget,uPtr data);
-
-#ifndef _USEQT5_
-void doSearchPrefs(Widget* widget,uPtr data);
-#else
+//
+//#ifndef _USEQT5_
+//void doSearchPrefs(Widget* widget,uPtr data);
+//#else
 void doSearchPrefs(int state);
-#endif
-
-#ifndef _USEQT5_
-void docSearchFromBar(Widget* widget,uPtr data);
-#else
-void docSearchFromBar(void);
-#endif
-
-#ifndef _USEQT5_
-void defSearchFromBar(Widget* widget,uPtr data);
-#else
-void defSearchFromBar(void);
-#endif
+//#endif
+//
+//#ifndef _USEQT5_
+//void docSearchFromBar(Widget* widget,uPtr data);
+//#else
+//void docSearchFromBar(void);
+//#endif
+//
+//#ifndef _USEQT5_
+//void defSearchFromBar(Widget* widget,uPtr data);
+//#else
+//void defSearchFromBar(void);
+//#endif
 
 
 #ifndef _USEQT5_
@@ -71,15 +71,15 @@ void doLiveSearch(void);
 #endif
 
 void regexFind(int dowhat);
-
-void searchQT5Docs(Widget* widget,uPtr data);
-#ifndef _USEQT5_
-void qt5DocSearchFromBar(Widget* widget,uPtr data);
-#else
-void qt5DocSearchFromBar(void);
-#endif
-
-void searchGtkDocsx(Widget* widget,uPtr data);
+//
+//void searchQT5Docs(Widget* widget,uPtr data);
+//#ifndef _USEQT5_
+//void qt5DocSearchFromBar(Widget* widget,uPtr data);
+//#else
+//void qt5DocSearchFromBar(void);
+//#endif
+//
+//void searchGtkDocsx(Widget* widget,uPtr data);
 
 void showDocView(int howtodisplay,char* text,const char* title);
 void pasteFRClip(Widget* widget,uPtr data);

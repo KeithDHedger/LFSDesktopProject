@@ -254,8 +254,8 @@ class KKEditClass : public QObject
 		QToolBar					*toolBar=NULL;
 		QWidget						*lineNumberWidget=NULL;
 		QLineEdit					*findGtkApiWidget=NULL;
-		QWidget						*findQtApiWidget=NULL;
-		QWidget						*findDefWidget=NULL;
+		QLineEdit					*findQtApiWidget=NULL;
+		QLineEdit					*findDefWidget=NULL;
 		QWidget						*liveSearchWidget=NULL;
 //toolbar functions
 		void						setUpToolBar(void);
@@ -278,7 +278,7 @@ class KKEditClass : public QObject
 //document functions
 		DocumentClass				*getDocumentForTab(int tabnum);
 		void						resetAllFilePrefs(void);
-		void						goToDefinition(void);
+		void						goToDefinition(const QString txt);
 		void						showLineEntry(void);
 		void						gotoLine(int linenumber);
 		void						reloadDocument(void);
@@ -337,7 +337,7 @@ class KKEditClass : public QObject
 
 //search vars
 //search functions
-		void						searchGtkDocs(const QString txt);
+		void						searchGtkDocs(const QString txt,int what);
 
 //plugin vars
 		QWidget						*globalPlugMenu=NULL;

@@ -53,17 +53,32 @@ void KKEditClass::resetAllFilePrefs(void)
 		}
 }
 
-void KKEditClass::goToDefinition(void)//TODO//clean
+void KKEditClass::goToDefinition(const QString txt)
 {
-	DocumentClass	*document=this->getDocumentForTab(-1);
+	DocumentClass	*doc=this->getDocumentForTab(-1);
 	functionData	*fdata=NULL;
 	char			*selection;
 	const char		*selectionptr;
+	QString			searchfor;
 
-	if(document==NULL)
+	if((txt.isEmpty()==true) && (doc==NULL))
 		return;
 
-	selection=strdup(document->textCursor().selectedText().toUtf8().constData());
+	if((txt.isEmpty()==true) && (doc->textCursor().hasSelection()==false))
+		return;
+	else
+		{
+			if(txt.isEmpty()==true)
+				searchfor=doc->textCursor().selectedText();
+			else
+				searchfor=txt;
+		}
+
+//	if(document==NULL)
+//		return;
+
+	//selection=strdup(document->textCursor().selectedText().toUtf8().constData());
+	selection=strdup(searchfor.toUtf8().constData());
 	selectionptr=selection;
 
 	fdata=getFunctionByName(selectionptr,true,true);
