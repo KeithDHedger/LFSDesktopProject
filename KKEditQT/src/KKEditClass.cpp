@@ -639,7 +639,8 @@ void KKEditClass::readConfigs(void)
 //application
 	this->prefsMsgTimer=this->prefs.value("app/msgtimer",1000).toInt();
 	this->prefsUseSingle=this->prefs.value("app/usesingle",QVariant(bool(true))).value<bool>();
-	this->defaultShortCutsList=this->prefs.value("app/shortcuts").toStringList();
+//	this->defaultShortCutsList=this->prefs.value("app/shortcuts").toStringList();
+	this->defaultShortCutsList=this->prefs.value("app/shortcuts",QVariant(QStringList({"Ctrl+H","Ctrl+Y","Ctrl+?","Ctrl+K","Ctrl+Shift+H","Ctrl+D","Ctrl+Shift+D","Ctrl+L","Ctrl+M","Ctrl+Shift+M","Ctrl+@","Ctrl+'"}))).toStringList();
 
 	this->setAppShortcuts();	
 }
