@@ -43,7 +43,7 @@ void doFindReplace(int response_id);
 #endif
 
 void find(Widget* widget,uPtr data);
-void doSearchPrefs(int state);
+//void doSearchPrefs(int state);
 
 
 #ifndef _USEQT5_

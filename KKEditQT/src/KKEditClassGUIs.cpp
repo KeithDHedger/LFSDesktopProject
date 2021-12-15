@@ -530,13 +530,15 @@ void KKEditClass::buildFindReplace(void)
 
 //case
 	this->frSwitches[FRCASE]=new QCheckBox("Case insensitive");
-	reinterpret_cast<QCheckBox*>(this->frSwitches[FRCASE])->setChecked(this->insensitiveSearch);
-	QObject::connect((QCheckBox*)this->frSwitches[FRCASE],&QCheckBox::stateChanged,doSearchPrefs);
+	this->frSwitches[FRCASE]->setChecked(this->insensitiveSearch);
+	//QObject::connect((QCheckBox*)this->frSwitches[FRCASE],&QCheckBox::stateChanged,doSearchPrefs);
+	QObject::connect(this->frSwitches[FRCASE],SIGNAL(stateChanged(int)),this,SLOT(setSearchPrefs(int)));
 	hlayout->addWidget(this->frSwitches[FRCASE]);
 //use regex
 	this->frSwitches[FRUSEREGEX]=new QCheckBox("Use Regex");
 	reinterpret_cast<QCheckBox*>(this->frSwitches[FRUSEREGEX])->setChecked(this->useRegex);
-	QObject::connect((QCheckBox*)this->frSwitches[FRUSEREGEX],&QCheckBox::stateChanged,doSearchPrefs);
+//	QObject::connect((QCheckBox*)this->frSwitches[FRUSEREGEX],&QCheckBox::stateChanged,doSearchPrefs);
+	QObject::connect(this->frSwitches[FRCASE],SIGNAL(stateChanged(int)),this,SLOT(setSearchPrefs(int)));
 	hlayout->addWidget(this->frSwitches[FRUSEREGEX]);
 
 	vlayout->addWidget(hbox);
@@ -548,24 +550,28 @@ void KKEditClass::buildFindReplace(void)
 	hbox->setLayout(hlayout);
 //wrap
 	this->frSwitches[FRWRAP]=new QCheckBox("Wrap");
-	reinterpret_cast<QCheckBox*>(this->frSwitches[FRWRAP])->setChecked(this->wrapSearch);
-	QObject::connect((QCheckBox*)this->frSwitches[FRWRAP],&QCheckBox::stateChanged,doSearchPrefs);
+	this->frSwitches[FRWRAP]->setChecked(this->wrapSearch);
+//	QObject::connect((QCheckBox*)this->frSwitches[FRWRAP],&QCheckBox::stateChanged,doSearchPrefs);
+	QObject::connect(this->frSwitches[FRWRAP],SIGNAL(stateChanged(int)),this,SLOT(setSearchPrefs(int)));
 	hlayout->addWidget(this->frSwitches[FRWRAP]);
 
 //all files
 	this->frSwitches[FRALLFILES]=new QCheckBox("All Files");
-	reinterpret_cast<QCheckBox*>(this->frSwitches[FRALLFILES])->setChecked(this->findInAllFiles);
-	QObject::connect((QCheckBox*)this->frSwitches[FRALLFILES],&QCheckBox::stateChanged,doSearchPrefs);
+	this->frSwitches[FRALLFILES]->setChecked(this->findInAllFiles);
+	//QObject::connect((QCheckBox*)this->frSwitches[FRALLFILES],&QCheckBox::stateChanged,doSearchPrefs);
+	QObject::connect(this->frSwitches[FRALLFILES],SIGNAL(stateChanged(int)),this,SLOT(setSearchPrefs(int)));
 	hlayout->addWidget(this->frSwitches[FRALLFILES]);
 //hilite all
 	this->frSwitches[FRHIGHLIGHTALL]=new QCheckBox("Highlight All");
-	reinterpret_cast<QCheckBox*>(this->frSwitches[FRHIGHLIGHTALL])->setChecked(this->hightlightAll);
-	QObject::connect((QCheckBox*)this->frSwitches[FRHIGHLIGHTALL],&QCheckBox::stateChanged,doSearchPrefs);
+	this->frSwitches[FRHIGHLIGHTALL]->setChecked(this->hightlightAll);
+//	QObject::connect((QCheckBox*)this->frSwitches[FRHIGHLIGHTALL],&QCheckBox::stateChanged,doSearchPrefs);
+	QObject::connect(this->frSwitches[FRHIGHLIGHTALL],SIGNAL(stateChanged(int)),this,SLOT(setSearchPrefs(int)));
 	hlayout->addWidget(this->frSwitches[FRHIGHLIGHTALL]);
 //rep all
 	this->frSwitches[FRREPLACEALL]=new QCheckBox("Replace All");
-	reinterpret_cast<QCheckBox*>(this->frSwitches[FRREPLACEALL])->setChecked(this->replaceAll);
-	QObject::connect((QCheckBox*)this->frSwitches[FRREPLACEALL],&QCheckBox::stateChanged,doSearchPrefs);
+	this->frSwitches[FRREPLACEALL]->setChecked(this->replaceAll);
+//	QObject::connect((QCheckBox*)this->frSwitches[FRREPLACEALL],&QCheckBox::stateChanged,doSearchPrefs);
+	QObject::connect(this->frSwitches[FRREPLACEALL],SIGNAL(stateChanged(int)),this,SLOT(setSearchPrefs(int)));
 	hlayout->addWidget(this->frSwitches[FRREPLACEALL]);
 
 	vlayout->addWidget(hbox);

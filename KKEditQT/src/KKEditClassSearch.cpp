@@ -61,6 +61,12 @@ void KKEditClass::doFindReplace(int response_id)
 			rx.setCaseSensitivity(Qt::CaseSensitive);
 		}
 
+QTextStream(stderr) << "insensitiveSearch=" << this->insensitiveSearch <<Qt::endl;
+QTextStream(stderr) << "hightlightAll=" << this->hightlightAll <<Qt::endl;
+QTextStream(stderr) << "useRegex=" << this->useRegex <<Qt::endl;
+QTextStream(stderr) << "wrapSearch=" << this->wrapSearch <<Qt::endl;
+QTextStream(stderr) << "replaceAll=" << this->replaceAll <<Qt::endl;
+
 	flags+=(((response_id==FINDPREV)<<((QTextDocument::FindBackward)-1)));
 
 	if((response_id==FINDNEXT) && (this->hightlightAll==true))
@@ -274,3 +280,36 @@ void KKEditClass::searchGtkDocs(const QString txt,int what)
 	thePage=strdup(htmlURI);
 	showDocView(USEURI,(char*)searchfor.toStdString().c_str(),"Gtk Docs");
 }
+
+void KKEditClass::setSearchPrefs(int state)
+{
+	for(int j=FRCASE;j<FRMAXSWITCHES;j++)
+		{
+			switch(j)
+				{
+					case FRCASE:
+						this->insensitiveSearch=this->frSwitches[FRCASE]->isChecked();
+						break;
+					case FRUSEREGEX:
+						this->useRegex=this->frSwitches[FRUSEREGEX]->isChecked();
+						break;
+					case FRWRAP:
+						this->wrapSearch=this->frSwitches[FRWRAP]->isChecked();
+						break;
+					case FRALLFILES:
+						this->findInAllFiles=this->frSwitches[FRALLFILES]->isChecked();
+						break;
+					case FRHIGHLIGHTALL:
+						this->hightlightAll=this->frSwitches[FRHIGHLIGHTALL]->isChecked();
+						break;
+					case FRREPLACEALL:
+						this->replaceAll=this->frSwitches[FRREPLACEALL]->isChecked();
+						if(this->replaceAll==false)
+							this->frReplace->setText("Replace");
+						else
+							this->frReplace->setText("Replace All");
+						break;
+				}
+		}
+}
+

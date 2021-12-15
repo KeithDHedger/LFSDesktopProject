@@ -284,37 +284,37 @@ int findThisRegex(pageStruct* page,int charpos)
 	return(retval);
 }
 
-void doSearchPrefs(int state)
-{
-	for(int j=FRCASE;j<FRMAXSWITCHES;j++)
-		{
-			switch(j)
-				{
-					case FRCASE:
-						kkedit->insensitiveSearch=reinterpret_cast<QCheckBox*>(kkedit->frSwitches[FRCASE])->isChecked();
-						break;
-					case FRUSEREGEX:
-						kkedit->useRegex=reinterpret_cast<QCheckBox*>(kkedit->frSwitches[FRUSEREGEX])->isChecked();
-						break;
-					case FRWRAP:
-						kkedit->wrapSearch=reinterpret_cast<QCheckBox*>(kkedit->frSwitches[FRWRAP])->isChecked();
-						break;
-					case FRALLFILES:
-						kkedit->findInAllFiles=reinterpret_cast<QCheckBox*>(kkedit->frSwitches[FRALLFILES])->isChecked();
-						break;
-					case FRHIGHLIGHTALL:
-						kkedit->hightlightAll=reinterpret_cast<QCheckBox*>(kkedit->frSwitches[FRHIGHLIGHTALL])->isChecked();
-						break;
-					case FRREPLACEALL:
-						kkedit->replaceAll=reinterpret_cast<QCheckBox*>(kkedit->frSwitches[FRREPLACEALL])->isChecked();
-						if(kkedit->replaceAll==false)
-							reinterpret_cast<QPushButton*>(kkedit->frReplace)->setText("Replace");
-						else
-							reinterpret_cast<QPushButton*>(kkedit->frReplace)->setText("Replace All");
-						break;
-				}
-		}
-}
+//void doSearchPrefs(int state)
+//{
+//	for(int j=FRCASE;j<FRMAXSWITCHES;j++)
+//		{
+//			switch(j)
+//				{
+//					case FRCASE:
+//						kkedit->insensitiveSearch=reinterpret_cast<QCheckBox*>(kkedit->frSwitches[FRCASE])->isChecked();
+//						break;
+//					case FRUSEREGEX:
+//						kkedit->useRegex=reinterpret_cast<QCheckBox*>(kkedit->frSwitches[FRUSEREGEX])->isChecked();
+//						break;
+//					case FRWRAP:
+//						kkedit->wrapSearch=reinterpret_cast<QCheckBox*>(kkedit->frSwitches[FRWRAP])->isChecked();
+//						break;
+//					case FRALLFILES:
+//						kkedit->findInAllFiles=reinterpret_cast<QCheckBox*>(kkedit->frSwitches[FRALLFILES])->isChecked();
+//						break;
+//					case FRHIGHLIGHTALL:
+//						kkedit->hightlightAll=reinterpret_cast<QCheckBox*>(kkedit->frSwitches[FRHIGHLIGHTALL])->isChecked();
+//						break;
+//					case FRREPLACEALL:
+//						kkedit->replaceAll=reinterpret_cast<QCheckBox*>(kkedit->frSwitches[FRREPLACEALL])->isChecked();
+//						if(kkedit->replaceAll==false)
+//							reinterpret_cast<QPushButton*>(kkedit->frReplace)->setText("Replace");
+//						else
+//							reinterpret_cast<QPushButton*>(kkedit->frReplace)->setText("Replace All");
+//						break;
+//				}
+//		}
+//}
 
 #ifndef _USEQT5_
 void doLiveSearch(GtkWidget* widget,GdkEvent *event,gpointer data)

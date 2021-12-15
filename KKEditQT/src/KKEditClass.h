@@ -274,6 +274,7 @@ class KKEditClass : public QObject
 		bool						saveAllFiles(void);
 		bool						saveFileAs(int tabnum);
 		int							askSaveDialog(const QString filename);
+
 //document vars
 //document functions
 		DocumentClass				*getDocumentForTab(int tabnum);
@@ -329,7 +330,7 @@ class KKEditClass : public QObject
 		QWidget						*findReplaceDialog;
 		QComboBox					*findDropBox;
 		QComboBox					*replaceDropBox;
-		QWidget						*frSwitches[FRMAXSWITCHES];
+		QCheckBox					*frSwitches[FRMAXSWITCHES];
 		QPushButton					*frReplace;
 //find replace functions
 		void						buildFindReplace(void);
@@ -404,6 +405,7 @@ class KKEditClass : public QObject
 		void						doAppShortCuts(void);
 
 		void						doSearchFromBar(const QString txt);
+		void						setSearchPrefs(int state);
 
 	protected:
 	private:
