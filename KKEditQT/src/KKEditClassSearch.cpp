@@ -41,33 +41,37 @@ void KKEditClass::doFindReplace(int response_id)
 	bool								gotresult;
 	QColor								lineColor=QColor(Qt::green);
 	QTextDocument						*doc;
-
+	QTextCursor							newCursor;
+	QRegularExpression					rx;
+	int									currentline;
 	if(document==NULL)
 		return;
 
 	doc=document->document();
-	QTextCursor							newCursor(doc);
 
+	this->setSearchPrefs(0);
+
+	currentline=document->textCursor().blockNumber();
+	newCursor=document->textCursor();
 	currentfindtext=strdup(this->findDropBox->currentText().toUtf8().constData());
 	currentreplacetext=strdup(this->replaceDropBox->currentText().toUtf8().constData());
 
-	QRegExp								rx(currentfindtext);
+	rx.setPattern(currentfindtext);
 
 	if(this->insensitiveSearch==true)
-		rx.setCaseSensitivity(Qt::CaseInsensitive);
+		rx.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
 	else
 		{
 			flags+=QTextDocument::FindCaseSensitively;
-			rx.setCaseSensitivity(Qt::CaseSensitive);
 		}
 
-QTextStream(stderr) << "insensitiveSearch=" << this->insensitiveSearch <<Qt::endl;
-QTextStream(stderr) << "hightlightAll=" << this->hightlightAll <<Qt::endl;
-QTextStream(stderr) << "useRegex=" << this->useRegex <<Qt::endl;
-QTextStream(stderr) << "wrapSearch=" << this->wrapSearch <<Qt::endl;
-QTextStream(stderr) << "replaceAll=" << this->replaceAll <<Qt::endl;
-
-	flags+=(((response_id==FINDPREV)<<((QTextDocument::FindBackward)-1)));
+//QTextStream(stderr) << "insensitiveSearch=" << this->insensitiveSearch <<Qt::endl;
+//QTextStream(stderr) << "hightlightAll=" << this->hightlightAll <<Qt::endl;
+//QTextStream(stderr) << "useRegex=" << this->useRegex <<Qt::endl;
+//QTextStream(stderr) << "wrapSearch=" << this->wrapSearch <<Qt::endl;
+//QTextStream(stderr) << "replaceAll=" << this->replaceAll <<Qt::endl;
+//
+	flags+=(((response_id==FINDPREV)<<((QTextDocument::FindBackward)-1)));//TODO// wrap backwards do all files
 
 	if((response_id==FINDNEXT) && (this->hightlightAll==true))
 		{
@@ -113,7 +117,19 @@ QTextStream(stderr) << "replaceAll=" << this->replaceAll <<Qt::endl;
 					else
 						gotresult=document->find(rx,(QTextDocument::FindFlags)flags);
 					if(gotresult==false)
-						this->gotoLine(ln);			
+						this->gotoLine(ln);
+				}
+			
+			if((this->wrapSearch==true) && (gotresult==false) && (response_id==FINDPREV))
+				{
+					int ln=document->blockCount();
+					this->gotoLine(ln);
+					if(this->useRegex==false)
+						gotresult=document->find(thetext,(QTextDocument::FindFlags)flags);
+					else
+						gotresult=document->find(rx,(QTextDocument::FindFlags)flags);
+					if(gotresult==false)
+							this->gotoLine(0);
 				}
 		}
 	else
@@ -127,7 +143,7 @@ QTextStream(stderr) << "replaceAll=" << this->replaceAll <<Qt::endl;
 						{
 							if(document->textCursor().hasSelection())
 								document->textCursor().insertText(thetext);
-							document->find(currentfindtext,(QTextDocument::FindFlags)flags);
+							gotresult=document->find(currentfindtext,(QTextDocument::FindFlags)flags);
 						}
 					else
 						{
@@ -137,13 +153,22 @@ QTextStream(stderr) << "replaceAll=" << this->replaceAll <<Qt::endl;
 									str.replace(rx,thetext);
 									document->textCursor().insertText(str);
 								}
-							document->find(rx,(QTextDocument::FindFlags)flags);
+							gotresult=document->find(rx,(QTextDocument::FindFlags)flags);
+							
 						}
+//				if((this->wrapSearch==true) && (gotresult==false) && (response_id==FINDREPLACE))
+//				{
+//								fprintf(stderr,"FINDNEXT\n");
+//								//this->gotoLine(1);
+//				//this->doFindReplace(FINDREPLACE);
+//				}
+
 				}
 			else
 				{
 					cnt=0;
 					this->gotoLine(0);
+						newCursor=document->textCursor();
 					if(this->useRegex==false)
 						document->find(currentfindtext,(QTextDocument::FindFlags)flags);
 					else
