@@ -41,11 +41,6 @@ unsigned int	maxFRHistory=5;
 
 
 
-//docview size and position
-int				docWindowWidth;
-int				docWindowHeight;
-int				docWindowX=-1;
-int				docWindowY=-1;
 
 //prefs
 
@@ -412,6 +407,7 @@ void getRecursiveTagList(char* filepath,void* ptr)
 	while(fgets(line,2048,fp))
 		{
 			newstr=globalSlice->deleteSlice(line,filepath);
+			//fprintf(stderr,"newstr=>>%s<<",newstr);
 			if(globalSlice->getResult()==NOERROR)
 				{
 					g_string_append_printf(str,"%s",newstr);

@@ -175,78 +175,20 @@ void KKEditClass::setUpToolBar(void)
 		}
 }
 
-void KKEditClass::buildDocViewer(void)
-{
-#ifdef _BUILDDOCVIEWER_
-	QVBoxLayout	*docvlayout=new QVBoxLayout;
-	QHBoxLayout	*dochlayout=new QHBoxLayout;
-	QWidget		*widget;
-
-	this->docView=new QMainWindow(mainWindow);
-	this->docView->setGeometry(this->docWindowX,this->docWindowY,this->docWindowWidth,this->docWindowHeight);
-	
-	widget=new QWidget;
-	widget->setLayout(docvlayout);
-	qobject_cast<QMainWindow*>(this->docView)->setCentralWidget(widget);
-
-	this->webView=new QWebView(widget);
-    qobject_cast<QWebView*>(this->webView)->load(QUrl("file://" DATADIR "/help/help.en.html"));
-    docvlayout->addWidget(this->webView);
-
-	widget=new QPushButton(QIcon::fromTheme("go-previous"),"Back");
-	dochlayout->addWidget(widget);
-	QObject::connect((QPushButton*)widget,&QPushButton::clicked,webKitGoBack);
-
-	dochlayout->addStretch(1);
-
-	widget=new QPushButton(QIcon::fromTheme("go-home"),"Home");
-	dochlayout->addWidget(widget);
-	QObject::connect((QPushButton*)widget,&QPushButton::clicked,webKitGoHome);
-
-	dochlayout->addStretch(1);
-
-	widget=new QPushButton(QIcon::fromTheme("edit-find"),"Find");
-	dochlayout->addWidget(widget);
-
-	widget=new QLineEdit;
-	dochlayout->addWidget(widget);
-
-	widget=new QPushButton(QIcon::fromTheme("go-down"),"Down");
-	dochlayout->addWidget(widget);
-	
-	widget=new QPushButton(QIcon::fromTheme("go-up"),"Up");
-	dochlayout->addWidget(widget);
-
-	dochlayout->addStretch(1);
-
-	widget=new QPushButton(QIcon::fromTheme("go-next"),"Forward");
-	dochlayout->addWidget(widget);
-	QObject::connect((QPushButton*)widget,&QPushButton::clicked,webKitGoForward);
-
-	widget=new QWidget;
-	widget->setLayout(dochlayout);
-	docvlayout->addWidget(widget);
-
-	this->docView->hide();
-#endif
-}
-
 void KKEditClass::switchPage(int index)
 {
-	char*			functions=NULL;
-	char*			lineptr;
 	DocumentClass	*doc=NULL;
-	int				linenum;
-	char			tmpstr[1024];
 	QString			correctedstr;
-	char*			typenames[50]= {NULL,};
-	char*			newstr=NULL;
 	bool			flag;
-	int				numtypes=0;
 	QMenu			*whattypemenu;
 	QMenu			*typesubmenus[50]= {NULL,};
-	bool			onefunc=false;
+	int				numtypes=0;
 	MenuItemClass	*menuitem;
+	int				linenumber;
+	QString			label="";
+	QString			entrytype="";
+	QStringList		types;
+	QStringList		sl;
 
 	if(this->sessionBusy==true)
 		return;
@@ -257,15 +199,70 @@ void KKEditClass::switchPage(int index)
 	if(doc==NULL)
 		return;
 
+	types.clear();
+	sl.clear();
 	doc->setStatusBarText();
-	qobject_cast<QMenu*>(this->funcMenu)->clear();
-	getRecursiveTagList((char*)doc->getFilePath().toStdString().c_str(),&functions);
+	this->funcMenu->clear();
 
-	lineptr=functions;
+	sl=this->getNewRecursiveTagList(doc->getFilePath());
+	if(sl.isEmpty()==true)
+		{
+			this->funcMenu->setEnabled(false);
+			return;
+		}
+
+//	QTextStream(stderr) << ">>" << sl.at(0) << '\n' <<  sl.at(0).section(" ",2,2) << "--" << sl.at(0).section(" ",4) << "<<" << Qt::endl;
+
+for(int j=0;j<sl.count();j++)
+	{
+		linenumber=sl.at(j).section(" ",2,2).toInt();
+		label=sl.at(j).section(" ",4);
+		entrytype=sl.at(j).section(" ",1,1);
+		entrytype=entrytype.left(1).toUpper()+entrytype.mid(1) +"s";
+
+		if(entrytype.isEmpty()==false)
+			{
+				flag=false;
+				for(int j=0; j<types.count(); j++)
+					{
+						if (entrytype.compare(types[j])==0)
+							{
+								whattypemenu=typesubmenus[j];
+								flag=true;
+								break;
+							}
+					}
+
+				if(flag==false)
+					{
+						types<<entrytype;
+						typesubmenus[numtypes]=new QMenu(entrytype);
+						this->funcMenu->addMenu(typesubmenus[numtypes]);
+						typesubmenus[numtypes]->setStyleSheet("QMenu { menu-scrollable: true ;}");
+						whattypemenu=typesubmenus[numtypes];
+						whattypemenu->setStyleSheet("QMenu { menu-scrollable: true ;}");
+						numtypes++;
+					}
+
+				menuitem=new MenuItemClass(this->truncateWithElipses(label,this->prefsMaxFuncChars));
+				menuitem->setMenuID(linenumber);
+				menuitem->mainKKEditClass=this;
+				whattypemenu->addAction(menuitem);
+				QObject::connect(menuitem,SIGNAL(triggered()),menuitem,SLOT(menuClickedGotoLine()));
+
+	//QTextStream(stderr) << "linenum=" << linenumber << " " << "type=" << entrytype << " " << "label="  << label <<  Qt::endl;
+			}
+	}
+	this->rebuildTabsMenu();
+	this->funcMenu->setEnabled(true);
+
+return;
+#if 0
 	while (lineptr!=NULL)
 		{
 			tmpstr[0]=0;
 			sscanf (lineptr,"%*s %*s %i %[^\n]s",&linenum,tmpstr);
+			//fprintf(stderr,"lineptr=>>%s<<\n",lineptr);
 			correctedstr=this->truncateWithElipses(tmpstr,this->prefsMaxFuncChars);
 			sprintf(tmpstr,"%s",correctedstr.toStdString().c_str());
 
@@ -273,14 +270,15 @@ void KKEditClass::switchPage(int index)
 				{
 					if(this->prefsFunctionMenuLayout==4)
 						{
-							newstr=NULL;
-							newstr=globalSlice->sliceBetween(lineptr,(char*)" ",(char*)" ");
-							if(newstr!=NULL)
+							QString qlineptr=lineptr;
+							newstr=qlineptr.section(" ",1,1);
+
+							if(newstr.isEmpty()==false)
 								{
 									flag=false;
 									for(int j=0; j<numtypes; j++)
 										{
-											if (strcmp(newstr,typenames[j])==0)
+											if (newstr.compare(typenames[j])==0)
 												{
 													whattypemenu=typesubmenus[j];
 													flag=true;
@@ -290,20 +288,17 @@ void KKEditClass::switchPage(int index)
 
 									if(flag==false)
 										{
-											typenames[numtypes]=strdup(newstr);
-											debugFree(&newstr,"switchPage newstr");
+											typenames[numtypes]=strdup(newstr.toStdString().c_str());
 											if(typenames[numtypes][strlen(typenames[numtypes])-1]=='s')
-												asprintf(&newstr,"%s's",typenames[numtypes]);
+												newstr+="'s";
 											else
-												asprintf(&newstr,"%ss",typenames[numtypes]);
-											newstr[0]=toupper(newstr[0]);
+												newstr+="s";
+											newstr=newstr.left(1).toUpper()+newstr.mid(1);
 											typesubmenus[numtypes]=new QMenu(newstr);
 											qobject_cast<QMenu*>(this->funcMenu)->addMenu(qobject_cast<QMenu*>(typesubmenus[numtypes]));
 											whattypemenu=typesubmenus[numtypes];
 											numtypes++;
 										}
-
-									debugFree(&newstr,"switchPage newstr");
 
 									onefunc=true;
 									menuitem=new MenuItemClass(tmpstr);
@@ -330,6 +325,7 @@ void KKEditClass::switchPage(int index)
 		}
 	this->rebuildTabsMenu();
 	this->funcMenu->setEnabled(onefunc);
+#endif
 }
 
 void KKEditClass::rebuildBookMarkMenu()
@@ -639,7 +635,6 @@ void KKEditClass::readConfigs(void)
 //application
 	this->prefsMsgTimer=this->prefs.value("app/msgtimer",1000).toInt();
 	this->prefsUseSingle=this->prefs.value("app/usesingle",QVariant(bool(true))).value<bool>();
-//	this->defaultShortCutsList=this->prefs.value("app/shortcuts").toStringList();
 	this->defaultShortCutsList=this->prefs.value("app/shortcuts",QVariant(QStringList({"Ctrl+H","Ctrl+Y","Ctrl+?","Ctrl+K","Ctrl+Shift+H","Ctrl+D","Ctrl+Shift+D","Ctrl+L","Ctrl+M","Ctrl+Shift+M","Ctrl+@","Ctrl+'"}))).toStringList();
 
 	this->setAppShortcuts();	
@@ -716,6 +711,10 @@ void KKEditClass::writeExitData(void)
 //editor
 	if(this->forceDefaultGeom==false)
 		this->prefs.setValue("app/geometry",this->mainWindow->geometry());
+
+#ifdef _BUILDDOCVIEWER_
+	this->prefs.setValue("app/viewergeometry",this->docView->geometry());
+#endif
 
 	this->prefs.setValue("editor/funcsort",this->prefsFunctionMenuLayout);
 	this->prefs.setValue("editor/prefsdepth",this->prefsDepth);

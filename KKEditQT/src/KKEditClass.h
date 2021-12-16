@@ -276,6 +276,7 @@ class KKEditClass : public QObject
 		bool						saveAllFiles(void);
 		bool						saveFileAs(int tabnum);
 		int							askSaveDialog(const QString filename);
+		QStringList					getNewRecursiveTagList(QString filepath);
 
 //document vars
 //document functions
@@ -294,14 +295,10 @@ class KKEditClass : public QObject
 		void						handleBMMenu(QWidget *widget,int what);
 
 //docviewer vars
-		QWidget						*docView=NULL;
-		QWidget						*webView=NULL;
+		QMainWindow					*docView=NULL;
+		QWebView					*webView=NULL;
 		bool						docviewerVisible=false;
 		MenuItemClass				*toggleDocViewMenuItem;
-		int							docWindowWidth=800;//TODO//
-		int							docWindowHeight=600;
-		int							docWindowX=100;
-		int							docWindowY=100;
 //docviewer functions
 		void						buildDocViewer(void);
 

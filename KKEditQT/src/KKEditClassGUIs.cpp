@@ -1054,3 +1054,62 @@ void KKEditClass::buildGetKeyShortCut(int index)
 			this->setAppShortcuts();
 		}
 }
+
+void KKEditClass::buildDocViewer(void)
+{
+#ifdef _BUILDDOCVIEWER_
+	QVBoxLayout	*docvlayout=new QVBoxLayout;
+	QHBoxLayout	*dochlayout=new QHBoxLayout;
+	QWidget		*widget;
+	QRect		r;
+
+	this->docView=new QMainWindow(mainWindow);
+
+	r=this->prefs.value("app/viewergeometry",QVariant(QRect(100,100,800,600))).value<QRect>();
+	this->docView->setGeometry(r);
+	
+	widget=new QWidget;
+	widget->setLayout(docvlayout);
+	this->docView->setCentralWidget(widget);
+
+	this->webView=new QWebView(widget);
+    this->webView->load(QUrl("file://" DATADIR "/help/help.en.html"));
+    docvlayout->addWidget(this->webView);
+
+	widget=new QPushButton(QIcon::fromTheme("go-previous"),"Back");
+	dochlayout->addWidget(widget);
+	QObject::connect((QPushButton*)widget,&QPushButton::clicked,webKitGoBack);
+
+	dochlayout->addStretch(1);
+
+	widget=new QPushButton(QIcon::fromTheme("go-home"),"Home");
+	dochlayout->addWidget(widget);
+	QObject::connect((QPushButton*)widget,&QPushButton::clicked,webKitGoHome);
+
+	dochlayout->addStretch(1);
+
+	widget=new QPushButton(QIcon::fromTheme("edit-find"),"Find");
+	dochlayout->addWidget(widget);
+
+	widget=new QLineEdit;
+	dochlayout->addWidget(widget);
+
+	widget=new QPushButton(QIcon::fromTheme("go-down"),"Down");
+	dochlayout->addWidget(widget);
+	
+	widget=new QPushButton(QIcon::fromTheme("go-up"),"Up");
+	dochlayout->addWidget(widget);
+
+	dochlayout->addStretch(1);
+
+	widget=new QPushButton(QIcon::fromTheme("go-next"),"Forward");
+	dochlayout->addWidget(widget);
+	QObject::connect((QPushButton*)widget,&QPushButton::clicked,webKitGoForward);
+
+	widget=new QWidget;
+	widget->setLayout(dochlayout);
+	docvlayout->addWidget(widget);
+
+	this->docView->hide();
+#endif
+}

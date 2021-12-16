@@ -69,19 +69,6 @@ extern bool				autoSelected;
 
 
 
-
-
-
-//docview size and position
-extern int				docWindowWidth;
-extern int				docWindowHeight;
-extern int				docWindowX;
-extern int				docWindowY;
-
-
-
-
-
 extern bool				noSyntax;
 //extern bool				singleUse;
 
