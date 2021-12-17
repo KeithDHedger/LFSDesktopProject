@@ -53,6 +53,249 @@ void KKEditClass::resetAllFilePrefs(void)
 		}
 }
 
+/*
+functionData* getFunctionByName(const char* name,bool recurse,bool casesensitive)
+{
+	DocumentClass		*document=kkedit->getDocumentForTab(-1);
+	pageStruct			*page;
+	char				*functions=NULL;
+	QString				str;
+	char				*lineptr;
+	int					gotmatch=-1;
+	char				function[1024];
+	functionData*		fdata;
+	int					loop;
+	int					startpage;
+	int					holdlistfunction=kkedit->prefsFunctionMenuLayout;
+	StringSlice			slice;
+	bool				whileflag=true;
+	bool				checkthispage=true;
+	int					maxpage;;
+	char				funcname[256];
+	char				filepath[1024];
+	int					linenumber;
+	QStringList			strlist;
+	Qt::CaseSensitivity	cs;
+
+	if(document==NULL)
+		return(NULL);
+
+	if(casesensitive==true)
+		cs=Qt::CaseSensitive;
+	else
+		cs=Qt::CaseInsensitive;
+
+	loop=qobject_cast<QTabWidget*>(kkedit->mainNotebook)->currentIndex();
+	startpage=loop;
+	checkthispage=true;
+	maxpage=qobject_cast<QTabWidget*>(kkedit->mainNotebook)->count();
+
+	while(whileflag==true)
+		{
+			document=kkedit->getDocumentForTab(loop);
+			if(document->filePath!=NULL)
+				{
+					kkedit->prefsFunctionMenuLayout=0;
+					getRecursiveTagList((char*)document->filePath.toStdString().c_str(),&functions);//TODO//
+					kkedit->prefsFunctionMenuLayout=holdlistfunction;
+					if(functions!=NULL)
+						{
+							str=functions;
+							strlist=str.split("\n",Qt::SkipEmptyParts);
+							gotmatch=-1;
+							for(int i=0;i<strlist.size();i++)
+								{
+									if(strlist.at(i).startsWith(name,cs))
+										{
+											gotmatch=0;
+											lineptr=strdup(strlist.at(i).toLocal8Bit().constData());
+											break;
+										}
+								}
+
+							debugFree(&functions,"functions getFunctionByName");
+							if(gotmatch==0)
+								{
+									fdata=(functionData*)malloc(sizeof(functionData));
+									sscanf (lineptr,"%" VALIDFUNCTIONCHARS "s",function);
+									fdata->name=strdup(function);
+									sscanf (lineptr,"%*s %" VALIDFUNCTIONCHARS "s",function);
+									fdata->type=strdup(function);
+									sscanf (lineptr,"%*s %*s %i",&fdata->line);
+									sscanf (lineptr,"%*s %*s %*i %" VALIDFILENAMECHARS "s",function);
+									fdata->file=strdup(function);
+									sscanf (lineptr,"%*s %*s %*i %*s %[^\n]s",function);
+									fdata->define=strdup(function);
+									fdata->intab=loop;
+									debugFree(&lineptr,"lineptr getFunctionByName");
+									return(fdata);
+								}
+						}
+				}
+
+			if(checkthispage==true)
+				{
+					loop=-1;
+					checkthispage=false;
+				}
+
+			loop++;
+			if(loop==startpage)
+				loop++;
+			if(loop==maxpage)
+				whileflag=false;
+
+		}
+
+//not in any open files
+//check ./ from all files
+//dont do this from popup for speed reasons
+//	if(recurse==true)
+		{
+			if(document->getDirPath()!=NULL)
+				{
+					getRecursiveTagListFileName((char*)document->getDirPath().toStdString().c_str(),&functions);//TODO//
+					if(functions!=NULL)
+						{
+							str=functions;
+							strlist=str.split("\n",Qt::SkipEmptyParts);
+							gotmatch=-1;
+							for(int i=0;i<strlist.size();i++)
+								{
+									if(strlist.at(i).startsWith(name,cs))
+										{
+											gotmatch=0;
+											lineptr=strdup(strlist.at(i).toLocal8Bit().constData());
+											break;
+										}
+								}
+
+							if(gotmatch!=-1)
+								{
+									sscanf (lineptr, "%s\t%s\t%i",funcname,filepath,&linenumber);
+									fdata=(functionData*)malloc(sizeof(functionData));
+									fdata->name=strdup(funcname);
+									fdata->file=strdup(filepath);
+									fdata->line=linenumber+1;
+									fdata->type=NULL;
+									fdata->define=NULL;
+									fdata->intab=-1;
+									return(fdata);
+								}
+						}
+					
+				}
+		}
+	return(NULL);			
+}					getRecursiveTagList((char*)document->filePath.toStdString().c_str(),&functions);//TODO//
+*/
+void KKEditClass::goToDefinition(const QString txt)
+{
+	DocumentClass	*doc=this->getDocumentForTab(-1);
+	QString			searchfor;
+	bool			whileflag=false;
+	int				linenumber;
+	QString			label="";
+	QStringList		sl;
+
+	if((txt.isEmpty()==true) && (doc==NULL))
+		return;
+
+	if((txt.isEmpty()==true) && (doc->textCursor().hasSelection()==false))
+		return;
+	else
+		{
+			if(txt.isEmpty()==true)
+				searchfor=doc->textCursor().selectedText();
+			else
+				searchfor=txt;
+		}
+
+	Qt::CaseSensitivity casesens=Qt::CaseSensitive;
+	for(int sens=0;sens<3;sens++)
+		{
+//optimized for speed
+//exact match case sensitive this file
+			doc=this->getDocumentForTab(-1);
+			if(doc!=NULL)
+				{
+					sl=this->getNewRecursiveTagList(doc->getFilePath());
+					if(sl.isEmpty()==false)
+						{
+							for(int loop=0;loop<sl.count();loop++)
+								{
+									label=sl.at(loop).section(" ",0,0);
+									if( ((sens<2) && (label.compare(searchfor,casesens)==0)) || ((sens==2) && (label.contains(searchfor,casesens)==true)))
+										{
+											linenumber=sl.at(loop).section(" ",2,2).toInt();
+											this->mainNotebook->setCurrentIndex(loop);
+											this->gotoLine(linenumber);
+											return;
+										}
+								}
+						}
+				}
+	
+//check open files
+//exact match case sensitive
+			sl.clear();
+			for(int tabs=0;tabs<this->mainNotebook->count();tabs++)
+				{
+					doc=this->getDocumentForTab(tabs);
+					if(doc->filePath!=NULL)
+						sl=this->getNewRecursiveTagList(doc->getFilePath());
+//exact match case sensitive
+					if(sl.isEmpty()==false)
+						{
+							for(int loop=0;loop<sl.count();loop++)
+								{
+									label=sl.at(loop).section(" ",0,0);
+									if( ((sens<2) && (label.compare(searchfor,casesens)==0)) || ((sens==2) && (label.contains(searchfor,casesens)==true)))
+										{
+											linenumber=sl.at(loop).section(" ",2,2).toInt();
+											label=sl.at(loop).section(" ",3,3);
+											this->mainNotebook->setCurrentIndex(tabs);
+											this->gotoLine(linenumber);
+											return;
+										}
+								}
+						}
+				}
+
+			for(int loop=0;loop<this->mainNotebook->count();loop++)
+				{
+					doc=this->getDocumentForTab(loop);
+					if(doc->filePath!=NULL)
+						{
+							QDir			dir(doc->getDirPath());
+							QStringList		flist=dir.entryList(QDir::Files);
+							for(int k=0;k<flist.count();k++)
+								{
+									if(!flist.at(k).endsWith(".o"))
+										{
+											sl=this->getNewRecursiveTagList(doc->getDirPath() + "/" + flist.at(k));
+											if(sl.isEmpty()==true)
+												continue;
+//exact match
+											for(int j=0;j<sl.count();j++)
+												{
+													label=sl.at(j).section(" ",0,0);
+													if( ((sens<2) && (label.compare(searchfor,casesens)==0)) || ((sens==2) && (label.contains(searchfor,casesens)==true)))
+														{
+															linenumber=sl.at(j).section(" ",2,2).toInt();
+															this->openFile(doc->getDirPath() + "/" + flist.at(k),linenumber);
+															return;
+														}
+												}									
+										}
+								}
+						}
+				}
+			casesens=Qt::CaseInsensitive;
+		}
+	this->statusBar->showMessage(QString("Couldn't find definition for %1").arg(searchfor),STATUSBARTIMEOUT);
+}
+#if 0
 void KKEditClass::goToDefinition(const QString txt)
 {
 	DocumentClass	*doc=this->getDocumentForTab(-1);
@@ -80,7 +323,7 @@ void KKEditClass::goToDefinition(const QString txt)
 	//selection=strdup(document->textCursor().selectedText().toUtf8().constData());
 	selection=strdup(searchfor.toUtf8().constData());
 	selectionptr=selection;
-
+fprintf(stderr,">>>>>>>>>>>>>>>\n");
 	fdata=getFunctionByName(selectionptr,true,true);
 	if(fdata!=NULL)
 		{
@@ -100,6 +343,7 @@ void KKEditClass::goToDefinition(const QString txt)
 
 	free(selection);
 }
+#endif
 
 void KKEditClass::gotoLine(int linenumber)
 {

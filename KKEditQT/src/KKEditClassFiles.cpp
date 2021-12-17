@@ -92,7 +92,7 @@ VISIBLE void KKEditClass::newFile(const QString data,const QString filename)
 	this->mainNotebook->setCurrentWidget(doc);
 	this->rebuildTabsMenu();
 	this->sessionBusy=false;
-	this->setToobarSensitive();
+	this->setToolbarSensitive();
 }
 
 int KKEditClass::askSaveDialog(const QString filename)
@@ -148,7 +148,7 @@ bool KKEditClass::saveFileAs(int tabnum)
 					delete msg;
 				}
 		}
-	this->setToobarSensitive();
+	this->setToolbarSensitive();
 	return(retval);
 }
 
@@ -297,7 +297,7 @@ bool KKEditClass::openFile(QString filepath,int linenumber,bool warn)
 		switchPage(tabnum);
 
 	this->rebuildTabsMenu();
-	this->setToobarSensitive();
+	this->setToolbarSensitive();
 	return(retval);
 }
 
@@ -308,7 +308,6 @@ QStringList KKEditClass::getNewRecursiveTagList(QString filepath)
 	QStringList	retval;
 	QString		results;
 
-//	this->runPipe(QString("KKEditQTProgressBar \"Building Docs\" \"Please Wait ...\" \"\" \"%1/progress\" &").arg(this->tmpFolderName.c_str()));
 	switch (this->prefsFunctionMenuLayout)
 		{
 			case 0:
@@ -327,66 +326,10 @@ QStringList KKEditClass::getNewRecursiveTagList(QString filepath)
 				sort="sort";
 				break;
 		}
-//	asprintf(&command,"find \"%s\" -maxdepth %i|ctags -L - -x|%s|sed 's@ \\+@ @g'",filepath,kkedit->prefsDepth,sort);
+
 	command=QString("find \"%1\" -maxdepth %2|ctags -L - -x|%3|sed 's@ \\+@ @g'").arg(filepath).arg(this->prefsDepth).arg(sort);
-	//QTextStream(stderr) << ">>" << command << "<<" << Qt::endl;
-
-
 	results=this->runPipeAndCapture(command);
 	retval=results.split("\n",Qt::SkipEmptyParts);
 
-
-
-	//this->runPipe(QString("KKEditQTProgressBar \"Building Docs\" \"Please Wait ...\" \"\" \"%1/progress\" &").arg(this->tmpFolderName.c_str()));
 	return(retval);
-#if 0
-	FILE*		fp;
-	char		line[2048];
-	GString*	str=g_string_new(NULL);
-	char*		command;
-	char*		newstr=NULL;
-	char*		sort=NULL;
-
-	if(filepath==NULL)
-		return;
-
-	switch (kkedit->prefsFunctionMenuLayout)
-		{
-		case 0:
-			asprintf(&sort,"sort -k 2rb,2rb -k 1b,1b");
-			break;
-		case 1:
-			asprintf(&sort,"sort -k 2rb,2rb -k 3n,3n");
-			break;
-		case 2:
-			asprintf(&sort,"sort -k 3n");
-			break;
-		case 4:
-			asprintf(&sort,"sort -k 2rb,2rb -k 1b,1b");
-			break;
-		default:
-			asprintf(&sort,"sort");
-			break;
-		}
-
-//TODO// filepath
-	asprintf(&command,"find \"%s\" -maxdepth %i|ctags -L - -x|%s|sed 's@ \\+@ @g'",filepath,kkedit->prefsDepth,sort);
-	fp=popen(command, "r");
-	while(fgets(line,2048,fp))
-		{
-			newstr=globalSlice->deleteSlice(line,filepath);
-			fprintf(stderr,"newstr=>>%s<<",newstr);
-			if(globalSlice->getResult()==NOERROR)
-				{
-					g_string_append_printf(str,"%s",newstr);
-					debugFree(&newstr,"getRecursiveTagList newstr");
-				}
-		}
-	pclose(fp);
-
-	*((char**)ptr)=str->str;
-	g_string_free(str,false);
-	debugFree(&command,"getRecursiveTagList command");
-	debugFree(&sort,"getRecursiveTagList sort");
-#endif
 }

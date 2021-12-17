@@ -300,7 +300,7 @@ void KKEditClass::doFileMenuItems()
 				break;
 			case SAVEMENUITEM:
 				this->saveFile(-1,false);
-				this->setToobarSensitive();
+				this->setToolbarSensitive();
 				break;
 			case SAVEASMENUITEM:
 				this->saveFileAs(-1);
@@ -514,7 +514,7 @@ void KKEditClass::doTabBarContextMenu(void)
 						doc->setTabName(this->truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
 				break;
 		}
-	this->setToobarSensitive();
+	this->setToolbarSensitive();
 }
 
 void KKEditClass::doTabBarContextMenuSetHilite(void)

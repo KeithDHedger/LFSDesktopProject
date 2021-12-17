@@ -177,18 +177,13 @@ void KKEditClass::setUpToolBar(void)
 
 void KKEditClass::switchPage(int index)
 {
-	DocumentClass	*doc=NULL;
-	QString			correctedstr;
-	bool			flag;
-	QMenu			*whattypemenu;
-	QMenu			*typesubmenus[50]= {NULL,};
-	int				numtypes=0;
-	MenuItemClass	*menuitem;
-	int				linenumber;
-	QString			label="";
-	QString			entrytype="";
-	QStringList		types;
-	QStringList		sl;
+	DocumentClass			*doc=NULL;
+	MenuItemClass			*menuitem;
+	int						linenumber;
+	QString					label="";
+	QString					entrytype="";
+	QStringList				sl;
+	QHash<QString,QMenu*>	menus;
 
 	if(this->sessionBusy==true)
 		return;
@@ -199,7 +194,7 @@ void KKEditClass::switchPage(int index)
 	if(doc==NULL)
 		return;
 
-	types.clear();
+	menus.clear();
 	sl.clear();
 	doc->setStatusBarText();
 	this->funcMenu->clear();
@@ -211,121 +206,44 @@ void KKEditClass::switchPage(int index)
 			return;
 		}
 
-//	QTextStream(stderr) << ">>" << sl.at(0) << '\n' <<  sl.at(0).section(" ",2,2) << "--" << sl.at(0).section(" ",4) << "<<" << Qt::endl;
-
-for(int j=0;j<sl.count();j++)
-	{
-		linenumber=sl.at(j).section(" ",2,2).toInt();
-		label=sl.at(j).section(" ",4);
-		entrytype=sl.at(j).section(" ",1,1);
-		entrytype=entrytype.left(1).toUpper()+entrytype.mid(1) +"s";
-
-		if(entrytype.isEmpty()==false)
-			{
-				flag=false;
-				for(int j=0; j<types.count(); j++)
-					{
-						if (entrytype.compare(types[j])==0)
-							{
-								whattypemenu=typesubmenus[j];
-								flag=true;
-								break;
-							}
-					}
-
-				if(flag==false)
-					{
-						types<<entrytype;
-						typesubmenus[numtypes]=new QMenu(entrytype);
-						this->funcMenu->addMenu(typesubmenus[numtypes]);
-						typesubmenus[numtypes]->setStyleSheet("QMenu { menu-scrollable: true ;}");
-						whattypemenu=typesubmenus[numtypes];
-						whattypemenu->setStyleSheet("QMenu { menu-scrollable: true ;}");
-						numtypes++;
-					}
-
-				menuitem=new MenuItemClass(this->truncateWithElipses(label,this->prefsMaxFuncChars));
-				menuitem->setMenuID(linenumber);
-				menuitem->mainKKEditClass=this;
-				whattypemenu->addAction(menuitem);
-				QObject::connect(menuitem,SIGNAL(triggered()),menuitem,SLOT(menuClickedGotoLine()));
-
-	//QTextStream(stderr) << "linenum=" << linenumber << " " << "type=" << entrytype << " " << "label="  << label <<  Qt::endl;
-			}
-	}
-	this->rebuildTabsMenu();
-	this->funcMenu->setEnabled(true);
-
-return;
-#if 0
-	while (lineptr!=NULL)
+	for(int j=0;j<sl.count();j++)
 		{
-			tmpstr[0]=0;
-			sscanf (lineptr,"%*s %*s %i %[^\n]s",&linenum,tmpstr);
-			//fprintf(stderr,"lineptr=>>%s<<\n",lineptr);
-			correctedstr=this->truncateWithElipses(tmpstr,this->prefsMaxFuncChars);
-			sprintf(tmpstr,"%s",correctedstr.toStdString().c_str());
+			linenumber=sl.at(j).section(" ",2,2).toInt();
+			label=sl.at(j).section(" ",4);
+			entrytype=sl.at(j).section(" ",1,1);
 
-			if(strlen(tmpstr)>0)
+			if(entrytype.isEmpty()==false)
 				{
 					if(this->prefsFunctionMenuLayout==4)
 						{
-							QString qlineptr=lineptr;
-							newstr=qlineptr.section(" ",1,1);
-
-							if(newstr.isEmpty()==false)
+							entrytype=entrytype.left(1).toUpper()+entrytype.mid(1) +"s";
+							menuitem=new MenuItemClass(this->truncateWithElipses(label,this->prefsMaxFuncChars));
+						}
+					else
+						menuitem=new MenuItemClass(this->truncateWithElipses(entrytype.toUpper() + " " +label,this->prefsMaxFuncChars));
+				
+					menuitem->setMenuID(linenumber);
+					menuitem->mainKKEditClass=this;
+					QObject::connect(menuitem,SIGNAL(triggered()),menuitem,SLOT(menuClickedGotoLine()));			
+					if(this->prefsFunctionMenuLayout==4)
+						{
+							if(menus.contains(entrytype)==false)
 								{
-									flag=false;
-									for(int j=0; j<numtypes; j++)
-										{
-											if (newstr.compare(typenames[j])==0)
-												{
-													whattypemenu=typesubmenus[j];
-													flag=true;
-													break;
-												}
-										}
-
-									if(flag==false)
-										{
-											typenames[numtypes]=strdup(newstr.toStdString().c_str());
-											if(typenames[numtypes][strlen(typenames[numtypes])-1]=='s')
-												newstr+="'s";
-											else
-												newstr+="s";
-											newstr=newstr.left(1).toUpper()+newstr.mid(1);
-											typesubmenus[numtypes]=new QMenu(newstr);
-											qobject_cast<QMenu*>(this->funcMenu)->addMenu(qobject_cast<QMenu*>(typesubmenus[numtypes]));
-											whattypemenu=typesubmenus[numtypes];
-											numtypes++;
-										}
-
-									onefunc=true;
-									menuitem=new MenuItemClass(tmpstr);
-									menuitem->setMenuID(linenum);
-									menuitem->mainKKEditClass=this;
-									qobject_cast<QMenu*>(whattypemenu)->addAction(menuitem);
-									QObject::connect(menuitem,SIGNAL(triggered()),menuitem,SLOT(menuClickedGotoLine()));
-							}
+									menus[entrytype]=new QMenu(entrytype);
+									this->funcMenu->addMenu(menus.value(entrytype));
+									menus.value(entrytype)->setStyleSheet("QMenu { menu-scrollable: true ;}");
+								}
+							menus.value(entrytype)->addAction(menuitem);
 						}
 					else
 						{
-							onefunc=true;
-							menuitem=new MenuItemClass(tmpstr);
-							menuitem->setMenuID(linenum);
-							menuitem->mainKKEditClass=this;
-							qobject_cast<QMenu*>(this->funcMenu)->addAction(menuitem);
-							QObject::connect(menuitem,SIGNAL(triggered()),menuitem,SLOT(menuClickedGotoLine()));
+							this->funcMenu->addAction(menuitem);
 						}
 				}
-
-			lineptr=strchr(lineptr,'\n');
-			if (lineptr!=NULL)
-				lineptr++;
 		}
+
 	this->rebuildTabsMenu();
-	this->funcMenu->setEnabled(onefunc);
-#endif
+	this->funcMenu->setEnabled(true);
 }
 
 void KKEditClass::rebuildBookMarkMenu()
@@ -497,7 +415,7 @@ return;
 
 
 //TODO//
-	setSensitive();
+
 }
 
 void KKEditClass::doAppShortCuts(void)
@@ -872,7 +790,7 @@ printf("void KKEditClass::closeAllTabs(void)\n");
 
 	this->rebuildBookMarkMenu();
 	this->rebuildTabsMenu();
-	this->setToobarSensitive();
+	this->setToolbarSensitive();
 	this->sessionBusy=false;
 }
 
@@ -924,7 +842,7 @@ bool KKEditClass::closeTab(int index)
 	if(this->closingAllTabs==false)
 		{
 			this->rebuildTabsMenu();
-			this->setToobarSensitive();
+			this->setToolbarSensitive();
 		}
 
 	this->sessionBusy=false;
@@ -978,7 +896,7 @@ void KKEditClass::setAppShortcuts(void)
 		}
 }
 
-void KKEditClass::setToobarSensitive(void)
+void KKEditClass::setToolbarSensitive(void)
 {
 	DocumentClass	*doc=this->getDocumentForTab(-1);
 	bool			override;

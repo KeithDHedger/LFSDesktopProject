@@ -132,7 +132,7 @@ class KKEditClass : public QObject
 		void						checkDoc(DocumentClass *doc);
 		void						setAppShortcuts(void);
 
-		void						setToobarSensitive(void);
+		void						setToolbarSensitive(void);
 
 //app prefs
 //document

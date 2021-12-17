@@ -111,7 +111,6 @@ void DocumentClass::updateLineNumberAreaWidth(void)
 
 void DocumentClass::modified()
 {
-	//this->mainKKEditClass->setToobarSensitive();
 	if((this->mainKKEditClass->sessionBusy==true) || (this->dirty==true))
 		return;
 
@@ -123,7 +122,7 @@ void DocumentClass::setStatusBarText(void)
 {
 	QString text=QString("Line %1\tCol %2\tSessionId 0x%3\t\tFilePath %4").arg(this->textCursor().blockNumber()+1).arg(this->textCursor().positionInBlock()+1).arg(this->mainKKEditClass->sessionID,0,16).arg(this->filePath);
 	this->mainKKEditClass->statusText->setText(text);
-	this->mainKKEditClass->setToobarSensitive();
+	this->mainKKEditClass->setToolbarSensitive();
 }
 
 void DocumentClass::highlightCurrentLine()
@@ -157,7 +156,7 @@ void DocumentClass::highlightCurrentLine()
 		}
 	else
 		this->setXtraSelections();
-	this->mainKKEditClass->setToobarSensitive();
+	this->mainKKEditClass->setToolbarSensitive();
 }
 
 void DocumentClass::setXtraSelections()
@@ -233,7 +232,7 @@ void DocumentClass::keyReleaseEvent(QKeyEvent *event)
 			this->insertPlainText(this->indentPad);
 		}
 	this->dirty=true;
-	this->mainKKEditClass->setToobarSensitive();
+	this->mainKKEditClass->setToolbarSensitive();
 	QPlainTextEdit::keyReleaseEvent(event);
 }
 

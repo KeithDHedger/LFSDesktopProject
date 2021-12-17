@@ -12,7 +12,7 @@
 #include "kkedit-includes.h"
 
 
-void setSensitive(void);
+
 
 void copyToClip(Widget* widget,uPtr data);
 void cutToClip(Widget* widget,uPtr data);
@@ -90,7 +90,7 @@ void changeSourceStyle(void);
 #endif
 int yesNo(char* question,char* file);
 
-void setToobarSensitivex(void);
+
 
 
 

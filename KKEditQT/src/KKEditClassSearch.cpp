@@ -241,8 +241,7 @@ void KKEditClass::searchGtkDocs(const QString txt,int what)
 	QFile			html(htmlFile);
 
 	DocumentClass	*doc=this->getDocumentForTab(-1);
-//<a href="/usr/share/doc/qt5/doc/qtcore/qtextstream
-//			asprintf(&command,"find %s -iname \"%s*.html\"|sed 's/.html$//'|sort",QT5DOCSDIR,str->str);
+
 	if((txt.isEmpty()==true) && (doc==NULL))
 		return;
 
