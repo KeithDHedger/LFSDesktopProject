@@ -110,7 +110,7 @@ extern QAction			*findFuncDefButton;
 extern QAction			*liveSearchButton;
 
 extern char*			functionSearchText;
-extern char*			thePage;
+
 
 #ifdef _BUILDDOCVIEWER_
 #endif

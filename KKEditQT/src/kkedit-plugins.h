@@ -170,7 +170,7 @@ struct plugData
 //unused
 	char*			htmlFile;
 //location of variable that holds the uri to be disp[layed by showDoc
-	char**			thePage;
+	//char**			thePage;
 //main notebook
 	QWidget*			notebook;
 //current page MAYBE NULL!!

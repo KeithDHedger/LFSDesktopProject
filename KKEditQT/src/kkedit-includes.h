@@ -164,7 +164,7 @@ class KKEditClass;
 
 #include "plugins.h"
 #include "callbacks.h"
-#include "guis.h"
+
 #include "searchcallbacks.h"
 
 #include "files.h"

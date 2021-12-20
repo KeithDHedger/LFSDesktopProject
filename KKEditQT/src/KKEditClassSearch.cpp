@@ -229,7 +229,7 @@ void KKEditClass::doFindReplace(int response_id)
 	debugFree(&currentreplacetext,"doFindReplace currentreplacetext");
 }
 
-void KKEditClass::searchGtkDocs(const QString txt,int what)
+void KKEditClass::searchAPIDocs(const QString txt,int what)
 {
 	QString			searchfor;
 	QString			funcname;
@@ -300,9 +300,11 @@ void KKEditClass::searchGtkDocs(const QString txt,int what)
 			html.close();
 		}
 
-	debugFree(&thePage,"thePage");
-	thePage=strdup(this->htmlURI.toStdString().c_str());
-	showDocView(USEURI,(char*)searchfor.toStdString().c_str(),"Gtk Docs");
+	this->docView->setWindowTitle("Results for: " + searchfor);
+	this->webView->load(this->htmlURI);
+	this->docviewerVisible=true;
+	this->toggleDocViewMenuItem->setText("Hide Docviewer");
+	this->docView->show();
 }
 
 void KKEditClass::setSearchPrefs(int state)
@@ -337,3 +339,20 @@ void KKEditClass::setSearchPrefs(int state)
 		}
 }
 
+void KKEditClass::functionSearchDialog(void)
+{
+	bool			ok;
+	DocumentClass	*doc=this->getDocumentForTab(-1);
+	QString			defaulttxt="";
+
+	if(doc!=NULL)
+		{
+			if(doc->textCursor().hasSelection()==true)
+				defaulttxt=doc->textCursor().selectedText();
+		}
+
+	QString	text=QInputDialog::getText(this->mainWindow,"Find Definition","Enter Definition",QLineEdit::Normal,defaulttxt,&ok);
+
+	if ((ok==true) && (!text.isEmpty()))
+		this->goToDefinition(text);
+}

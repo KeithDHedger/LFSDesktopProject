@@ -8,9 +8,6 @@
 
 #define TABLECOLS 2
 
-
-const char* 	shortcuttext[NUMSHORTCUTS]={"Delete Current Line","Delete To End Of Line","Delete To Beginning Of Line","Select Word Under Cursor","Delete Word Under Cursor","Duplicate Current Line","Select Current Line","Move Current Line Up","Move Current Line Down","Select From Cursor To End Of Line","Select From Beginning Of Line To Cursor","Move Selection Up","Move Selection Down","Show Completion"};
-
 void findTool(toolStruct* data,char* toolname)
 {
 #ifndef _USEQT5_
@@ -290,189 +287,96 @@ void doMakeTool(void)
 	gtk_widget_show_all(toolwin);
 #endif
 }
-//
-//void buildTools(void)
-//{
-////TODO//
-//printf("buildTools\n");
-//#ifndef _USEQT5_
-//	GtkWidget*		menuitem;
-//	GtkWidget*		menu;
-//	GtkWidget*		image;
-//	GList*			ptr;
-//	bool			gotglobal=false;
-//	int				keyflags=0;
-//
-//	buildToolsList();
-//
-//	GtkWidget* submenu=gtk_menu_item_get_submenu((GtkMenuItem*)toolsMenu);
-//	if(submenu!=NULL)
-//		gtk_menu_item_set_submenu((GtkMenuItem*)toolsMenu,NULL);
-//
-//	menu=gtk_menu_new();
-//	gtk_menu_item_set_submenu(GTK_MENU_ITEM(toolsMenu),menu);
-//
-////addtool
-//	menuitem=gtk_image_menu_item_new_with_label("Manage External Tools");
-//	image=gtk_image_new_from_stock(GTK_STOCK_EDIT,GTK_ICON_SIZE_MENU);
-//	gtk_image_menu_item_set_image((GtkImageMenuItem *)menuitem,image);
-//	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
-//	g_signal_connect(G_OBJECT(menuitem),"activate",G_CALLBACK(doMakeTool),NULL);
-//
-//	menuitem=gtk_separator_menu_item_new();
-//	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
-//
-//	ptr=toolsList;
-//	while(ptr!=NULL)
-//		{
-//			if( ((toolStruct*)ptr->data)->global==true)
-//				{
-//					gotglobal=true;
-//					menuitem=gtk_image_menu_item_new_with_label(((toolStruct*)ptr->data)->menuName);
-//					gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
-//					g_signal_connect(G_OBJECT(menuitem),"activate",G_CALLBACK(externalTool),(void*)ptr->data);
-//
-//					if(((toolStruct*)ptr->data)->keyCode>0)
-//						{
-//							keyflags=0;
-//							if(gdk_keyval_is_upper(((toolStruct*)ptr->data)->keyCode))
-//								keyflags=GDK_SHIFT_MASK;
-//							gtk_widget_add_accelerator((GtkWidget *)menuitem,"activate",accgroup,((toolStruct*)ptr->data)->keyCode,(GdkModifierType)(GDK_CONTROL_MASK|keyflags),GTK_ACCEL_VISIBLE);
-//						}
-//
-//					if(((toolStruct*)ptr->data)->comment!=NULL)
-//						gtk_widget_set_tooltip_text((GtkWidget*)menuitem,((toolStruct*)ptr->data)->comment);
-//				}
-//			ptr=g_list_next(ptr);
-//		}
-//
-//	if(gotglobal==true)
-//		{
-//			menuitem=gtk_separator_menu_item_new();
-//			gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
-//		}
-//
-//	ptr=toolsList;
-//	while(ptr!=NULL)
-//		{
-//			if( ((toolStruct*)ptr->data)->global==false)
-//				{
-//					menuitem=gtk_image_menu_item_new_with_label(((toolStruct*)ptr->data)->menuName);
-//					gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
-//					g_signal_connect(G_OBJECT(menuitem),"activate",G_CALLBACK(externalTool),(void*)ptr->data);
-//
-//					if(((toolStruct*)ptr->data)->keyCode>0)
-//						{
-//							keyflags=0;
-//							if(gdk_keyval_is_upper(((toolStruct*)ptr->data)->keyCode))
-//								{
-//									keyflags=GDK_SHIFT_MASK;
-//									if(gdk_keyval_is_lower(((toolStruct*)ptr->data)->keyCode))
-//									keyflags=0;
-//								}
-//							gtk_widget_add_accelerator((GtkWidget *)menuitem,"activate",accgroup,((toolStruct*)ptr->data)->keyCode,(GdkModifierType)(GDK_CONTROL_MASK|keyflags),GTK_ACCEL_VISIBLE);
-//						}
-//
-//					if(((toolStruct*)ptr->data)->comment!=NULL)
-//						gtk_widget_set_tooltip_text((GtkWidget*)menuitem,((toolStruct*)ptr->data)->comment);
-//				}
-//			ptr=g_list_next(ptr);
-//		}
-//#endif
-//}
 
-void doIconView(void)
+void buildTools(void)
 {
-#ifndef _USEQT5_
-	GtkCellRenderer *renderer;
-
-	listStore=gtk_list_store_new(3,GDK_TYPE_PIXBUF,G_TYPE_STRING,G_TYPE_INT);
-	iconView=(GtkIconView*)gtk_icon_view_new();
-	gtk_icon_view_set_pixbuf_column(GTK_ICON_VIEW(iconView),PIXBUF_COLUMN);
-	gtk_icon_view_set_model(GTK_ICON_VIEW(iconView),GTK_TREE_MODEL(listStore));
-	gtk_icon_view_set_item_padding(GTK_ICON_VIEW(iconView),0);
-	
-	populateStore();
-
-	gtk_icon_view_set_selection_mode (GTK_ICON_VIEW (iconView),GTK_SELECTION_SINGLE);
-	gtk_icon_view_set_orientation (GTK_ICON_VIEW (iconView),GTK_ORIENTATION_HORIZONTAL);
-	gtk_icon_view_set_columns (GTK_ICON_VIEW (iconView),24);
-	gtk_icon_view_set_reorderable(GTK_ICON_VIEW(iconView),TRUE);
-
-	renderer=gtk_cell_renderer_pixbuf_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(iconView),renderer,false);
-
-	renderer=gtk_cell_renderer_text_new();
-	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT(iconView),renderer,false);
-
-	gtk_box_pack_start(GTK_BOX(iconViewBox),(GtkWidget*)iconView,false,false,2);
-	g_signal_connect(G_OBJECT(iconView),"button-press-event",G_CALLBACK(clickIt),NULL);
-#endif
-}
-
-#ifndef _USEQT5_
-void setKeyCuts(GtkWidget* widget,gpointer data)
-#else
 //TODO//
-void setKeyCuts(void)
-#endif
-{
+printf("buildTools\n");
 #ifndef _USEQT5_
-	char*	filename;
-	const char*		text;
+	GtkWidget*		menuitem;
+	GtkWidget*		menu;
+	GtkWidget*		image;
+	GList*			ptr;
+	bool			gotglobal=false;
+	int				keyflags=0;
 
-	if(strcasecmp(gtk_widget_get_name(widget),"cancel")==0)
-		gtk_widget_hide(keysWindow);
+	buildToolsList();
 
-	if(strcasecmp(gtk_widget_get_name(widget),"apply")==0)
+	GtkWidget* submenu=gtk_menu_item_get_submenu((GtkMenuItem*)toolsMenu);
+	if(submenu!=NULL)
+		gtk_menu_item_set_submenu((GtkMenuItem*)toolsMenu,NULL);
+
+	menu=gtk_menu_new();
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(toolsMenu),menu);
+
+//addtool
+	menuitem=gtk_image_menu_item_new_with_label("Manage External Tools");
+	image=gtk_image_new_from_stock(GTK_STOCK_EDIT,GTK_ICON_SIZE_MENU);
+	gtk_image_menu_item_set_image((GtkImageMenuItem *)menuitem,image);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
+	g_signal_connect(G_OBJECT(menuitem),"activate",G_CALLBACK(doMakeTool),NULL);
+
+	menuitem=gtk_separator_menu_item_new();
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
+
+	ptr=toolsList;
+	while(ptr!=NULL)
 		{
-			for(int j=0;j<NUMSHORTCUTS;j++)
+			if( ((toolStruct*)ptr->data)->global==true)
 				{
-					text=gtk_entry_get_text((GtkEntry*)entries[j]);
-					shortCuts[j][0]=gdk_keyval_from_name(text);
-					shortCuts[j][1]=j;
-					if(shortCutStrings[j]!=NULL)
-						debugFree(&shortCutStrings[j],"setKeyCuts shortCutStrings");
-					asprintf(&shortCutStrings[j],"%i %i - ^%c %s",shortCuts[j][0],shortCuts[j][1],shortCuts[j][0],shortcuttext[j]);
+					gotglobal=true;
+					menuitem=gtk_image_menu_item_new_with_label(((toolStruct*)ptr->data)->menuName);
+					gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
+					g_signal_connect(G_OBJECT(menuitem),"activate",G_CALLBACK(externalTool),(void*)ptr->data);
+
+					if(((toolStruct*)ptr->data)->keyCode>0)
+						{
+							keyflags=0;
+							if(gdk_keyval_is_upper(((toolStruct*)ptr->data)->keyCode))
+								keyflags=GDK_SHIFT_MASK;
+							gtk_widget_add_accelerator((GtkWidget *)menuitem,"activate",accgroup,((toolStruct*)ptr->data)->keyCode,(GdkModifierType)(GDK_CONTROL_MASK|keyflags),GTK_ACCEL_VISIBLE);
+						}
+
+					if(((toolStruct*)ptr->data)->comment!=NULL)
+						gtk_widget_set_tooltip_text((GtkWidget*)menuitem,((toolStruct*)ptr->data)->comment);
 				}
-			asprintf(&filename,"%s/" KKEDITFOLDER "/keybindings.rc",getenv("HOME"));
-			saveVarsToFile(filename,keybindings_rc);
-			gtk_widget_hide(keysWindow);
+			ptr=g_list_next(ptr);
 		}
-#endif
-}
 
-#ifndef _USEQT5_
-gboolean setKeyInEntry(GtkEntry* widget,GdkEventKey* event,gpointer data)
-#else
-//TODO//
-gboolean setKeyInEntry(void)
-#endif
-{
-#ifndef _USEQT5_
-	if((event->type==GDK_KEY_PRESS) && (event->keyval==GDK_KEY_Delete))
+	if(gotglobal==true)
 		{
-			gtk_entry_set_text(widget,"");
-			return(true);
+			menuitem=gtk_separator_menu_item_new();
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
 		}
 
-	if ((event->type==GDK_KEY_PRESS)&& (event->state & GDK_CONTROL_MASK))
-		gtk_entry_set_text(widget,gdk_keyval_name(event->keyval));
+	ptr=toolsList;
+	while(ptr!=NULL)
+		{
+			if( ((toolStruct*)ptr->data)->global==false)
+				{
+					menuitem=gtk_image_menu_item_new_with_label(((toolStruct*)ptr->data)->menuName);
+					gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
+					g_signal_connect(G_OBJECT(menuitem),"activate",G_CALLBACK(externalTool),(void*)ptr->data);
 
+					if(((toolStruct*)ptr->data)->keyCode>0)
+						{
+							keyflags=0;
+							if(gdk_keyval_is_upper(((toolStruct*)ptr->data)->keyCode))
+								{
+									keyflags=GDK_SHIFT_MASK;
+									if(gdk_keyval_is_lower(((toolStruct*)ptr->data)->keyCode))
+									keyflags=0;
+								}
+							gtk_widget_add_accelerator((GtkWidget *)menuitem,"activate",accgroup,((toolStruct*)ptr->data)->keyCode,(GdkModifierType)(GDK_CONTROL_MASK|keyflags),GTK_ACCEL_VISIBLE);
+						}
+
+					if(((toolStruct*)ptr->data)->comment!=NULL)
+						gtk_widget_set_tooltip_text((GtkWidget*)menuitem,((toolStruct*)ptr->data)->comment);
+				}
+			ptr=g_list_next(ptr);
+		}
 #endif
-	return(true);
 }
-
-void cancelPrefsxx(void)
-{
-	kkedit->prefsWindow->hide();
-	//delete prefsWindow;
-	kkedit->readConfigs();
-	kkedit->resetAllFilePrefs();
-	kkedit->switchPage(qobject_cast<QTabWidget*>(kkedit->mainNotebook)->currentIndex());
-}
-
-
 
 #ifndef _USEQT5_
 void addRecentToMenu(GtkRecentChooser* chooser,GtkWidget* menu)
@@ -511,36 +415,6 @@ void addRecentToMenu(void)
 				}
 		}
 #endif
-}
-
-
-int showFunctionEntry(void)
-{
-	gint		result=false;
-#ifndef _USEQT5_
-	GtkWidget*	dialog;
-	GtkWidget*	content_area;
-	GtkWidget*	entrybox;
-
-	dialog=gtk_message_dialog_new(GTK_WINDOW(mainWindow),GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_OTHER,GTK_BUTTONS_NONE,"Enter Function Name");
-
-	gtk_dialog_add_buttons((GtkDialog*)dialog,GTK_STOCK_CANCEL,GTK_RESPONSE_CANCEL,GTK_STOCK_OK,GTK_RESPONSE_YES,NULL);
-	gtk_window_set_title(GTK_WINDOW(dialog),"Find Function");
-
-	content_area=gtk_dialog_get_content_area(GTK_DIALOG(dialog));	
-	entrybox=gtk_entry_new();
-	gtk_entry_set_activates_default((GtkEntry*)entrybox,true);
-	gtk_dialog_set_default_response((GtkDialog*)dialog,GTK_RESPONSE_YES);
-	gtk_container_add(GTK_CONTAINER(content_area),entrybox);
-	gtk_widget_show_all(content_area);
-	result=gtk_dialog_run(GTK_DIALOG(dialog));
-	if(functionSearchText!=NULL)
-		debugFree(&functionSearchText,"showFunctionEntry functionSearchText");
-	functionSearchText=strdup(gtk_entry_get_text((GtkEntry*)entrybox));
-	gtk_widget_destroy(dialog);
-
-#endif
-	return(result);
 }
 
 

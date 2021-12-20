@@ -108,15 +108,13 @@ void KKEditClass::doNavMenuItems()
 				this->showLineEntry();
 				break;
 			case SEARCHFORDEFINEMENUITEM:
-				functionSearch(NULL,0);
+				this->functionSearchDialog();
 				break;
 			case SEARCHGTKDOCS:
-				this->searchGtkDocs("",0);
-				fprintf(stderr,"SEARCHGTKDOCS\n");
+				this->searchAPIDocs("",0);
 				break;
 			case SEARCHQT5DOCS:
-				fprintf(stderr,"SEARCHQT5DOCS >>%s<<\n",QT5DOCSDIR);
-				this->searchGtkDocs("",1);
+				this->searchAPIDocs("",1);
 				break;
 		}
 }
@@ -649,11 +647,20 @@ void KKEditClass::doOddButtons(void)
 				break;
 			case DOQT5SEARCH:
 				fprintf(stderr,"DOQT5SEARCH\n");
-				this->searchGtkDocs(this->findQtApiWidget->text(),1);
+				this->searchAPIDocs(this->findQtApiWidget->text(),1);
 				break; 
 			case DOGTKSEARCH:
 				fprintf(stderr,"DOGTKSEARCH gtkwidget QLineEdit\n");
-				this->searchGtkDocs(this->findGtkApiWidget->text(),0);
+				this->searchAPIDocs(this->findGtkApiWidget->text(),0);
+				break;
+			case DOCVIEWERGOBACK:
+				this->webView->page()->triggerAction(QWebPage::Back);
+				break;
+			case DOCVIEWERGOHOME:
+				this->webView->load(QUrl(this->htmlURI));
+				break;
+			case DOCVIEWERGOFORWARD:
+				this->webView->page()->triggerAction(QWebPage::Forward);
 				break;
 			default:
 				break;

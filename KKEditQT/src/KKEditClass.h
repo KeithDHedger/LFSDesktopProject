@@ -50,7 +50,7 @@ enum {FUNCTIONCOMBO=0,THEMECOMBO,FONTNAMECOMBO,FONTSIZECOMBO,PREFSTERMCOMMAND,PR
 enum {FINDNEXT=1,FINDPREV,FINDREPLACE};
 
 //od enums
-enum {SPELLCHECKMENUITEM=0x2000,APPLYWORDBUTTON,IGNOREWORDBUTTON,ADDWORDBUTTON,CANCELSPELLCHECK,CANCELPREFS,DOLINEBOX,DOLIVESEARCH,DOAPISEARCH,DOQT5SEARCH,DOGTKSEARCH};
+enum {SPELLCHECKMENUITEM=0x2000,APPLYWORDBUTTON,IGNOREWORDBUTTON,ADDWORDBUTTON,CANCELSPELLCHECK,CANCELPREFS,DOLINEBOX,DOLIVESEARCH,DOAPISEARCH,DOQT5SEARCH,DOGTKSEARCH,DOCVIEWERGOBACK,DOCVIEWERGOFORWARD,DOCVIEWERGOHOME};
 
 struct tabMenuStruct
 {
@@ -178,7 +178,7 @@ class KKEditClass : public QObject
 		QString						truncateWithElipses(const QString str,unsigned int maxlen);
 		void						sortTabs(void);
 		void						rebuildTabsMenu(void);
-
+		void						functionSearchDialog(void);
 //menubar
 		QMenuBar					*menuBar;
 
@@ -340,7 +340,7 @@ class KKEditClass : public QObject
 
 //search vars
 //search functions
-		void						searchGtkDocs(const QString txt,int what);
+		void						searchAPIDocs(const QString txt,int what);
 
 //plugin vars
 		QWidget						*globalPlugMenu=NULL;
@@ -409,6 +409,11 @@ class KKEditClass : public QObject
 		void						doSearchFromBar(const QString txt);
 		void						setSearchPrefs(int state);
 
+#ifdef _BUILDDOCVIEWER_
+//		void						docViewerGoBack() { QTextStream(stderr) << "<<<<<<" << Qt::endl; this->webView->page()->triggerAction(QWebPage::Back);}
+//		void						docViewerGoForward() { this->webView->page()->triggerAction(QWebPage::Forward);}
+//		void						docViewerGoHome() { this->webView->load(QUrl(this->htmlURI));}
+#endif
 	protected:
 	private:
 //app

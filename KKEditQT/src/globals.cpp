@@ -79,17 +79,15 @@ GList*			toolsList=NULL;
 int				currentTabNumber;
 int 			untitledNumber=1;
 
-QAction			*gotoLineButton=NULL;
-QAction			*findApiButton=NULL;
-QAction			*findQtApiButton=NULL;
-QAction			*findFuncDefButton=NULL;
-QAction			*liveSearchButton=NULL;
-
-
+//QAction			*gotoLineButton=NULL;
+//QAction			*findApiButton=NULL;
+//QAction			*findQtApiButton=NULL;
+//QAction			*findFuncDefButton=NULL;
+//QAction			*liveSearchButton=NULL;
 
 
 char*			functionSearchText=NULL;
-char*			thePage=NULL;
+
 
 HistoryClass*	history;
 

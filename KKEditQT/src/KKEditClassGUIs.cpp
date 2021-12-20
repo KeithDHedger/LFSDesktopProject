@@ -757,7 +757,7 @@ void KKEditClass::buildMainGui(void)
 	this->menuBar->addMenu(this->viewMenu);
 
 //show docs
-	menuItemSink=this->makeMenuItemClass(VIEWMENU,"Show Documentaion",0,NULL,SHOWDOCSMENUNAME,DOCSMENUITEM);
+	menuItemSink=this->makeMenuItemClass(VIEWMENU,"Show Documentation",0,NULL,SHOWDOCSMENUNAME,DOCSMENUITEM);
 
 //toggle toolbar bar
 	if(this->toolbarVisible)//TODO//
@@ -1073,18 +1073,45 @@ void KKEditClass::buildDocViewer(void)
 	this->docView->setCentralWidget(widget);
 
 	this->webView=new QWebView(widget);
-    this->webView->load(QUrl("file://" DATADIR "/help/help.en.html"));
-    docvlayout->addWidget(this->webView);
+
+//
+// QWebPage *page = this->webView->page();
+//  QWebSettings *settings = page->settings();
+// // settings->setAttribute(QWebSettings::JavascriptEnabled, true);
+////  settings->setAttribute(QWebSettings::PluginsEnabled, true);
+//settings->setAttribute(QWebSettings::PluginsEnabled,false);
+//settings->setAttribute(QWebSettings::JavascriptEnabled,true);
+//settings->setAttribute(QWebSettings::JavaEnabled,false);
+//settings->setAttribute(QWebSettings::LinksIncludedInFocusChain,false);
+//settings->setAttribute(QWebSettings::PrintElementBackgrounds,false);
+//settings->setAttribute(QWebSettings::OfflineWebApplicationCacheEnabled,true);
+//settings->setAttribute(QWebSettings::LocalStorageEnabled,true);
+//settings->setAttribute(QWebSettings::TiledBackingStoreEnabled,true);
+//settings->setAttribute(QWebSettings::SiteSpecificQuirksEnabled,false);
+//settings->setAttribute(QWebSettings::CSSRegionsEnabled,false);
+//settings->setAttribute(QWebSettings::NotificationsEnabled,false);
+//settings->setAttribute(QWebSettings::WebSecurityEnabled,false);
+//settings->setAttribute(QWebSettings::WebGLEnabled,false);
+//
+
+
+	this->webView->load(QUrl("file://" DATADIR "/help/help.en.html"));
+
+ 
+
+	docvlayout->addWidget(this->webView);
 
 	widget=new QPushButton(QIcon::fromTheme("go-previous"),"Back");
+	widget->setObjectName(QString("%1").arg(DOCVIEWERGOBACK));
+	QObject::connect(widget,SIGNAL(clicked()),this,SLOT(doOddButtons()));
 	dochlayout->addWidget(widget);
-	QObject::connect((QPushButton*)widget,&QPushButton::clicked,webKitGoBack);
 
 	dochlayout->addStretch(1);
 
 	widget=new QPushButton(QIcon::fromTheme("go-home"),"Home");
 	dochlayout->addWidget(widget);
-	QObject::connect((QPushButton*)widget,&QPushButton::clicked,webKitGoHome);
+	widget->setObjectName(QString("%1").arg(DOCVIEWERGOHOME));
+	QObject::connect(widget,SIGNAL(clicked()),this,SLOT(doOddButtons()));
 
 	dochlayout->addStretch(1);
 
@@ -1104,7 +1131,8 @@ void KKEditClass::buildDocViewer(void)
 
 	widget=new QPushButton(QIcon::fromTheme("go-next"),"Forward");
 	dochlayout->addWidget(widget);
-	QObject::connect((QPushButton*)widget,&QPushButton::clicked,webKitGoForward);
+	widget->setObjectName(QString("%1").arg(DOCVIEWERGOFORWARD));
+	QObject::connect(widget,SIGNAL(clicked()),this,SLOT(doOddButtons()));
 
 	widget=new QWidget;
 	widget->setLayout(dochlayout);

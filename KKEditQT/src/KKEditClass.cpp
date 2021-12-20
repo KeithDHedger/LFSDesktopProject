@@ -373,7 +373,8 @@ void KKEditClass::initApp(int argc,char** argv)
 #endif
 
 	this->htmlFile=QString("%1/Docview-%2.html").arg(this->tmpFolderName).arg(this->randomName(6));
-	this->htmlURI=QString("file://%1/Docview-%2.html").arg(this->tmpFolderName).arg(this->randomName(6));
+	//this->htmlURI=QString("file://%1/Docview-%2.html").arg(this->tmpFolderName).arg(this->randomName(6));
+	this->htmlURI="file://"+this->htmlFile;
 
 	if(this->forceDefaultGeom==false)
 		r=this->prefs.value("app/geometry",QVariant(QRect(50,50,1024,768))).value<QRect>();
@@ -719,7 +720,7 @@ void KKEditClass::buildDocs(void)
 	char			line[4096];
 	char			opdata[4096];
 	QString			pipecom;
-
+	QFileInfo		fileinfo;
 	if(doc==NULL)
 		return;
 
@@ -731,10 +732,7 @@ void KKEditClass::buildDocs(void)
 	if(!S_ISREG(sb.st_mode))
 		system("cp " DATADIR "/docs/Doxyfile .");
 
-	if(thePage!=NULL)
-		debugFree(&thePage,"doDoxy thePage");
-
-	asprintf(&thePage,"file://%s/html/index.html",doc->getDirPath().toStdString().c_str());
+	fileinfo=QString("%1/html/index.html").arg(doc->getDirPath());
 	fp=popen("doxygen Doxyfile","r");
 	while(fgets(line,4095,fp))
 		{
@@ -744,7 +742,13 @@ void KKEditClass::buildDocs(void)
 		}
 	pclose(fp);
 
-	showDocView(USEURI,thePage,"Doxygen Documentation");
+	QString com=QString("/bin/echo '<meta http-equiv=\"refresh\" content=\"0; URL='file://%1'\" />' > %2").arg(fileinfo.absoluteFilePath()).arg(this->htmlFile);
+	system(com.toStdString().c_str());
+	this->docView->setWindowTitle("Doxygen Documentation");
+	this->webView->load(QUrl("file://" + this->htmlFile));
+	this->docviewerVisible=true;
+	this->toggleDocViewMenuItem->setText("Hide Docviewer");
+	this->docView->show();
 
 	this->runPipe(QString("echo quit>\"%1/progress\"").arg(this->tmpFolderName));
 }
@@ -758,9 +762,13 @@ void KKEditClass::showDocs(void)
 		this->buildDocs();
 	else
 		{
-			debugFree(&thePage,"doDoxy thePage");
-			asprintf(&thePage,"file://%s/html/index.html",doc->getDirPath().toStdString().c_str());
-			showDocView(USEURI,thePage,"Doxygen Documentation");
+			QString com=QString("/bin/echo '<meta http-equiv=\"refresh\" content=\"0; URL='file://%1'\" />' > %2").arg(fileinfo.absoluteFilePath()).arg(this->htmlFile);
+			system(com.toStdString().c_str());
+			this->docView->setWindowTitle("Doxygen Documentation");
+			this->webView->load(QUrl("file://" + this->htmlFile));
+			this->docviewerVisible=true;
+			this->toggleDocViewMenuItem->setText("Hide Docviewer");
+			this->docView->show();
 		}
 }
 
