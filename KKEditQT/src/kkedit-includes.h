@@ -121,16 +121,16 @@ enum  utilVarType {BOOLVAR=0,INTVAR,CHARVAR,MULTVAR,BADTYPE,DECIMALOUT,HEXOUT,OC
 #define PLATFORM	"qt"
 typedef long		uPtr;
 typedef QWidget 	Widget;
-
-struct functionData
-{
-	char*				name;
-	char*				type;
-	int					line;
-	char*				file;
-	char*				define;
-	int					intab;
-};
+//
+//struct functionData
+//{
+//	char*				name;
+//	char*				type;
+//	int					line;
+//	char*				file;
+//	char*				define;
+//	int					intab;
+//};
 
 class DocumentClass;
 class HistoryClass;
@@ -139,7 +139,7 @@ class KKEditClass;
 #include <aspell.h>
 #endif
 
-#include "sliceclass.h"
+
 #include "kkedit-plugins.h"
 #include "globals.h"
 

@@ -9,7 +9,7 @@
 #ifndef _NAVCALLBACKS_
 #define _NAVCALLBACKS_
 
-void goToDefine(functionData* fdata);
+//void goToDefine(functionData* fdata);
 
 void goToDefinition(Widget* widget,uPtr data);
 //void findFile(Widget* widget,uPtr data);

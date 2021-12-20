@@ -86,7 +86,9 @@ class KKEditClass : public QObject
 		QTabBar						*tabBar=NULL;
 		QApplication				*application;
 		QTimer 						*checkMessages;
-		std::string					tmpFolderName;
+		QString						tmpFolderName;
+		QString						htmlFile;
+		QString						htmlURI;
 		QSettings					prefs;
 		int							gotManEditor;
 		int							gotDoxygen;
@@ -133,6 +135,7 @@ class KKEditClass : public QObject
 		void						setAppShortcuts(void);
 
 		void						setToolbarSensitive(void);
+		QString						randomName(int len);
 
 //app prefs
 //document
@@ -421,20 +424,6 @@ class KKEditClass : public QObject
 
 };
 
-//
-	//globalSlice=new StringSlice;
-//
-//
-//	readConfig();
-//	loadKeybindings();
-//
-//	tmpStyleName=strdup(styleName);
-//	tmpHighlightColour=highlightColour;
-//
-//	asprintf(&htmlFile,"%s/Docview-%s.html",tmpFolderName,globalSlice->randomName(6));
-//	asprintf(&htmlURI,"file://%s/Docview-%s.html",tmpFolderName,globalSlice->randomName(6));
-//
-//
 ////do plugins
 //	globalPlugins=new PluginClass(loadPluginsFlag);
 ////set up plugin data
@@ -469,6 +458,5 @@ class KKEditClass : public QObject
 //	localeLang=getenv("LANG");
 //
 //	history=new HistoryClass;
-//	globalSlice->setReturnDupString(true);
 
 #endif

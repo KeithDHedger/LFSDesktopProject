@@ -5689,7 +5689,7 @@ if test ${enable_aspell+y}
 then :
   enableval=$enable_aspell; enable_aspell=$enableval
 else $as_nop
-  enable_aspell="no"
+  enable_aspell="yes"
 fi
 
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $enable_aspell" >&5

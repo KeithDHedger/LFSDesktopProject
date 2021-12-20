@@ -65,7 +65,7 @@ AC_MSG_RESULT([Setting Qt5 Docs directory to $with_qt5_docdir])
 AC_MSG_CHECKING(whether to include spell checker (aspell))
 AC_ARG_ENABLE(aspell,AS_HELP_STRING([--enable-aspell],[Include spellchecker]),
     [enable_aspell=$enableval],
-    [enable_aspell="no"])
+    [enable_aspell="yes"])
 AC_MSG_RESULT($enable_aspell)
 if test "$enable_aspell" = "yes"; then
 	ASPELL_LIBS=-laspell

@@ -37,8 +37,8 @@ void webKitGoForward(void)
 
 void webKitGoHome(void)
 {
-	if(g_file_test(htmlFile,G_FILE_TEST_EXISTS)==true)
-		qobject_cast<QWebView*>(kkedit->webView)->load(QUrl(htmlURI));
+	if(g_file_test(kkedit->htmlFile.toStdString().c_str(),G_FILE_TEST_EXISTS)==true)
+		kkedit->webView->load(QUrl(kkedit->htmlURI));
 }
 #endif
 
@@ -60,7 +60,7 @@ PROTECTED void showDocView(int howtodisplay,char* text,const char* title)
 		}
 
 	if(howtodisplay==USEFILE)
-			qobject_cast<QWebView*>(kkedit->webView)->load(QUrl(htmlURI));
+			kkedit->webView->load(QUrl(kkedit->htmlURI));
 
 	qobject_cast<QAction*>(kkedit->toggleDocViewMenuItem)->setText("Hide Docviewer");
 	kkedit->docView->show();
@@ -77,7 +77,7 @@ PROTECTED void showDocView(int howtodisplay,char* text,const char* title)
 		}
 
 	if(howtodisplay==USEFILE)
-		asprintf(&command,"%s %s",browserCommand,htmlURI);
+		asprintf(&command,"%s %s",browserCommand,htmlURI.toStdString().c_str());
 
 	if(command!=NULL)
 		{

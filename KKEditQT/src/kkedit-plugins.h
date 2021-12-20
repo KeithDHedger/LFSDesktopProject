@@ -9,12 +9,9 @@
 #ifndef _PLUGINS_
 #define _PLUGINS_
 
-#ifndef _USEQT5_
-#include <gtksourceview/gtksourceview.h>
-#endif
 
 #include <gmodule.h>
-//#include <gio/gio.h>
+
 
 #define GLOBALPLUGS			1
 #define LOCALPLUGS			0
@@ -119,34 +116,6 @@ struct pageStruct
 	char				*lastFind;
 	bool				dirty=false;
 	QString				mimeType="text/plain";
-//	Widget*				pane;
-//	Widget*				pageWindow;
-//	Widget*				pageWindow2;
-//	Widget*				buffer;
-//	Widget*				view;
-//	Widget*				view2;
-//	Widget*				navSubMenu;
-//	bool				rebuildMenu;
-//	Widget*				tabName;
-//	Widget				iter;
-//	Widget				match_start;
-//	Widget				match_end;
-//	bool				isFirst;
-//	char*				fileName;
-////TODO//
-//	uPtr				gFile; 
-//	uPtr				monitor;
-//	bool				itsMe;
-//	GList*				markList;
-//	bool				inTop;
-//	bool				isSplit;
-//	const char*			lang;
-//	QVBoxLayout*		tabVbox;
-//	bool				showingChanged;
-//	Widget*				backMark;
-//	Widget*				highlightTag;
-//	GList*				userDataList;
-//	Widget* 			completion;
 	GSList*				regexList;
 	int					regexMatchNumber;
 	uPtr				reserved4;
@@ -247,66 +216,6 @@ struct plugData
 //locale dir for gettext
 	const char*		locale;
 
-#if 0
-//#ifndef _USEQT5_
-//menus
-	plugMenuList	mlist;
-	moduleData*		modData;
-//	GList*			plugins;
-//install location of KKEdit data
-	const char*		dataDir;
-//global plugin folder defaults to DATADIR/plugins
-	char*			gPlugFolder;
-//local plugin folder defaults to ~/.KKEdit/plugins
-	char*			lPlugFolder;
-//kkedit version string
-	const char*		kkeditVersion;
-//unused
-	char*			htmlFile;
-//location of variable that holds the uri to be disp[layed by showDoc
-	char**			thePage;
-//main notebook
-	GtkNotebook*	notebook;
-//current page MAYBE NULL!!
-	pageStruct*		page;
-//cuurent tab
-	int				currentTab;
-//KKEdits temp folder
-	char*			tmpFolder;
-//kkedits main window user box's
-//top
-	GtkWidget*		topUserBox;
-	GtkWidget*		mainWindowVPane;
-//left
-	GtkWidget*		leftUserBox;
-	GtkWidget*		mainWindowHPane;
-//right
-	GtkWidget*		rightUserBox;
-	GtkWidget*		secondWindowHPane;
-//bottom
-	GtkWidget*		bottomUserBox;
-	GtkWidget*		secondWindowVPane;
-//kkedit main window
-	GtkWidget*		mainWindow;
-//tool output window buffer;
-	GtkTextBuffer*	toolOutBuffer;
-//tool output window
-	GtkWidget*		toolOutWindow;
-//tab popup menu
-	GtkWidget*		tabPopUpMenu;
-//right click popup menu
-	GtkWidget*		contextPopUpMenu;
-
-//leftright user box visiblity ref
-	int				leftShow;
-	int				rightShow;
-//topbottom user box visiblity ref
-	int				topShow;
-	int				bottomShow;
-//locale dir for gettext
-	const char*		locale;
-//#else
-#endif
 };
 
 struct bookMarkStruct

@@ -7,7 +7,7 @@
 * 
 ******************************************************/
 
-#include "sliceclass.h"
+//#include "sliceclass.h"
 #include "pluginclass.h"
 
 PluginClass::PluginClass(bool loadPlugs)
@@ -39,26 +39,26 @@ void PluginClass::setPlugFolder(void)
 char* PluginClass::getNameFromPath(char* path)
 {
 	char*			name;
-	StringSlice*	slice=new StringSlice;
-	char*			base;
-
-	slice->setReturnDupString(true);	
-	base=strdup(path);
-	name=basename(base);
-	name=slice->sliceBetween(name,(char*)"lib",(char*)".so");
-	delete slice;
-	debugFree(&base,"PluginClass::getNameFromPath base");
+//	StringSlice*	slice=new StringSlice;
+//	char*			base;
+//
+//	slice->setReturnDupString(true);	
+//	base=strdup(path);
+//	name=basename(base);
+//	name=slice->sliceBetween(name,(char*)"lib",(char*)".so");
+//	delete slice;
+//	debugFree(&base,"PluginClass::getNameFromPath base");
 	return(name);
 }
 
 char* PluginClass::getNameFromModule(GModule* module)
 {
 	char*		name;
-	StringSlice*	slice=new StringSlice;
-
-	slice->setReturnDupString(true);	
-	name=slice->sliceBetween((char*)g_module_name(module),(char*)"lib",(char*)".so");
-	delete slice;
+//	StringSlice*	slice=new StringSlice;
+//
+//	slice->setReturnDupString(true);	
+//	name=slice->sliceBetween((char*)g_module_name(module),(char*)"lib",(char*)".so");
+//	delete slice;
 	return(name);
 }
 

@@ -33,7 +33,7 @@ KKEditClass::~KKEditClass()
 	for(int j=0;j<SHORTCUTSCOUNT;j++)
 		delete this->appShortcuts[j];
 
-	asprintf(&command,"rm -rf %s",this->tmpFolderName.c_str());
+	asprintf(&command,"rm -rf %s",this->tmpFolderName.toStdString().c_str());
 	system(command);
 	debugFree(&command,"doShutdown command");
 }
@@ -344,16 +344,6 @@ void KKEditClass::initApp(int argc,char** argv)
 	QObject::connect(this->checkMessages,SIGNAL(timeout()),this,SLOT(doTimer()));
 	this->checkMessages->start(this->prefsMsgTimer);
 
-	//globalSlice=new StringSlice;
-//
-//
-//	
-//	loadKeybindings();
-//
-//	tmpStyleName=strdup(styleName);
-//	tmpHighlightColour=highlightColour;
-//
-
 	this->buildMainGui();
 	this->buildPrefsWindow();
 //TODO//
@@ -382,8 +372,8 @@ void KKEditClass::initApp(int argc,char** argv)
 	this->buildSpellCheckerGUI();
 #endif
 
-	asprintf(&htmlFile,"%s/Docview-%s.html",this->tmpFolderName.c_str(),globalSlice->randomName(6));
-	asprintf(&htmlURI,"file://%s/Docview-%s.html",this->tmpFolderName.c_str(),globalSlice->randomName(6));
+	this->htmlFile=QString("%1/Docview-%2.html").arg(this->tmpFolderName).arg(this->randomName(6));
+	this->htmlURI=QString("file://%1/Docview-%2.html").arg(this->tmpFolderName).arg(this->randomName(6));
 
 	if(this->forceDefaultGeom==false)
 		r=this->prefs.value("app/geometry",QVariant(QRect(50,50,1024,768))).value<QRect>();
@@ -391,31 +381,47 @@ void KKEditClass::initApp(int argc,char** argv)
 
 	this->mainWindow->show();
 return;
-	refreshMainWindow();
+//	refreshMainWindow();
+//
+//	buildFindReplace();
+//
+//	for(unsigned int j=0; j<g_slist_length(findList); j++)
+//		{
+//			reinterpret_cast<QComboBox*>(findDropBox)->addItem((const char*)g_slist_nth_data(findList,j));
+//		}
+//	reinterpret_cast<QComboBox*>(findDropBox)->setCurrentIndex(g_slist_length(findList)-1);
+//
+//	for(unsigned int j=0; j<g_slist_length(findList); j++)
+//		{
+//			reinterpret_cast<QComboBox*>(replaceDropBox)->addItem((const char*)g_slist_nth_data(replaceList,j));
+//		}
+//	reinterpret_cast<QComboBox*>(replaceDropBox)->setCurrentIndex(g_slist_length(findList)-1);
+//
+////TODO//
+//
+//#ifdef _BUILDDOCVIEWER_
+//	buildDocViewer();
+//#endif
+//
+//
+////TODO//
 
-	buildFindReplace();
+}
 
-	for(unsigned int j=0; j<g_slist_length(findList); j++)
-		{
-			reinterpret_cast<QComboBox*>(findDropBox)->addItem((const char*)g_slist_nth_data(findList,j));
-		}
-	reinterpret_cast<QComboBox*>(findDropBox)->setCurrentIndex(g_slist_length(findList)-1);
+QString KKEditClass::randomName(int len)
+{
+//	this->checkBufferLen(len);
+//	srand(time(0));
+	QString	retval="";
 
-	for(unsigned int j=0; j<g_slist_length(findList); j++)
-		{
-			reinterpret_cast<QComboBox*>(replaceDropBox)->addItem((const char*)g_slist_nth_data(replaceList,j));
-		}
-	reinterpret_cast<QComboBox*>(replaceDropBox)->setCurrentIndex(g_slist_length(findList)-1);
+	const char alphanum[]="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	for(int i=0;i<len;++i)
+		retval+=alphanum[rand()%(sizeof(alphanum)-1)];
+   //    	this->buffer[i]=alphanum[rand()%(sizeof(alphanum)-1)];
 
-//TODO//
-
-#ifdef _BUILDDOCVIEWER_
-	buildDocViewer();
-#endif
-
-
-//TODO//
-
+    //this->buffer[len]=0;
+   // return(this->returnData(this->buffer));
+   return(retval);
 }
 
 void KKEditClass::doAppShortCuts(void)
@@ -666,52 +672,39 @@ void KKEditClass::writeExitData(void)
 void KKEditClass::findFile(void)
 {
 	DocumentClass	*document=this->getDocumentForTab(-1);
-	char			*selection;
-	StringSlice		slice;
-	char			*filename=NULL;
-	char			*filepath=NULL;
-	char			*command;
-	char			buffer[2048];
-	char			*searchdir=NULL;
-	FILE			*fp;
+	QString			selection;
+	QString			filename;
+	QString			results;
+	QStringList		retval;
 
 	if(document==NULL)
 		return;
 
-	selection=strdup(document->textCursor().block().text().toUtf8().constData());
-	if(selection[0]!='#')
+	selection=document->textCursor().block().text().trimmed();
+
+	if((selection.isEmpty()==true) || (selection.startsWith('#')==false))
 		return;
 
-	filename=slice.sliceBetween(selection,(char*)"include ",NULL);
+	filename=selection.replace(QRegExp("#.*include\\s*[\"<](.*)[\">]"),"\\1").trimmed();
 
-	if(slice.getResult()==0)
+	if(this->openFile(QString("%1/%2").arg(document->getDirPath()).arg(filename))==true)
+		return;
+
+	results=this->runPipeAndCapture(QString("find \"%1\" -iname \"%2\"").arg(document->getDirPath()).arg(filename));
+	if(results.isEmpty()==false)
 		{
-			if(filename[0]=='<')
-				searchdir=strdup("/usr/include");
-			else
-				searchdir=strdup(document->getDirPath().toStdString().c_str());//TODO//
-
-			asprintf(&filepath,"%s/%s",searchdir,slice.sliceLen(filename,1,strlen(filename)-2));
-			if(kkedit->openFile(filepath,0,false)==false)
-				{
-					asprintf(&command,"find \"%s\" -name \"%s\"",searchdir,basename(filepath));
-					fp=popen(command, "r");
-					if(fp!=NULL)
-						{
-							while(fgets(buffer,1024,fp))
-								{
-									buffer[strlen(buffer)-1]=0;
-									kkedit->openFile(buffer,0,false);
-								}
-							pclose(fp);
-						}
-					debugFree(&command,"findFile command");
-				}
-			debugFree(&filepath,"findFile filepath");
-			debugFree(&searchdir,"searchdir filepath");
+			retval=results.split("\n",Qt::SkipEmptyParts);
+			for(int j=0;j<retval.count();j++)
+				this->openFile(retval.at(j));
 		}
 
-	free(selection);
+	results=this->runPipeAndCapture(QString("find \"/usr/include\" -iname \"%1\"").arg(filename));
+	if(results.isEmpty()==true)
+		return;
+
+	retval=results.split("\n",Qt::SkipEmptyParts);
+	for(int j=0;j<retval.count();j++)
+		this->openFile(retval.at(j));
 }
 
 void KKEditClass::showBarberPole(QString windowtitle,QString bodylabel,QString cancellabel,QString controlfiile)
@@ -730,8 +723,8 @@ void KKEditClass::buildDocs(void)
 	if(doc==NULL)
 		return;
 
-	pipecom=QString("KKEditQTProgressBar \"Building Docs\" \"Please Wait ...\" \"\" \"%1/progress\" &").arg(this->tmpFolderName.c_str());
-	this->runPipe(QString("KKEditQTProgressBar \"Building Docs\" \"Please Wait ...\" \"\" \"%1/progress\" &").arg(this->tmpFolderName.c_str()));
+	pipecom=QString("KKEditQTProgressBar \"Building Docs\" \"Please Wait ...\" \"\" \"%1/progress\" &").arg(this->tmpFolderName);
+	this->runPipe(QString("KKEditQTProgressBar \"Building Docs\" \"Please Wait ...\" \"\" \"%1/progress\" &").arg(this->tmpFolderName));
 
 	QDir::setCurrent(doc->getDirPath());
 	stat("Doxyfile",&sb);
@@ -746,14 +739,14 @@ void KKEditClass::buildDocs(void)
 	while(fgets(line,4095,fp))
 		{
 			line[strlen(line)-1]=0;
-			snprintf(opdata,4095,"echo -n \"%s\" >\"%s/progress\"",line,this->tmpFolderName.c_str());
+			snprintf(opdata,4095,"echo -n \"%s\" >\"%s/progress\"",line,this->tmpFolderName.toStdString().c_str());
 			system(opdata);
 		}
 	pclose(fp);
 
 	showDocView(USEURI,thePage,"Doxygen Documentation");
 
-	this->runPipe(QString("echo quit>\"%1/progress\"").arg(this->tmpFolderName.c_str()));
+	this->runPipe(QString("echo quit>\"%1/progress\"").arg(this->tmpFolderName));
 }
 
 void KKEditClass::showDocs(void)

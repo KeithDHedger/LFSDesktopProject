@@ -111,14 +111,6 @@ extern QAction			*liveSearchButton;
 
 extern char*			functionSearchText;
 extern char*			thePage;
-extern char*			htmlFile;
-extern char*			htmlURI;
-extern char*			tmpFolderName;
-
-extern StringSlice*		globalSlice;
-
-extern unsigned int		shortCuts[NUMSHORTCUTS][2];
-extern char*			shortCutStrings[NUMSHORTCUTS];
 
 #ifdef _BUILDDOCVIEWER_
 #endif
@@ -142,11 +134,7 @@ extern int				usebar;
 
 
 
-extern args				keybindings_rc[];
-
-
-
-
+//extern args				keybindings_rc[];
 
 
 void plugRunFunction(gpointer data,gpointer funcname);
@@ -154,12 +142,12 @@ void plugRunFunction(gpointer data,gpointer funcname);
 
 void getMimeType(char* filepath,void* ptr);
 void setLanguage(pageStruct* page);
-void runCommand(char* commandtorun,void* ptr,bool interm,int flags,int useroot,char* title);
-functionData* getFunctionByName(const char* name,bool recurse,bool casesensitive);
-void destroyData(functionData* fdata);
-void getRecursiveTagList(char* filepath,void* ptr);
+
+
+
+
 void buildToolsList(void);
-void getRecursiveTagListFileName(char* filepath,void* ptr);
+
 
 
 

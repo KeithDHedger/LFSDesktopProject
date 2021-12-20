@@ -238,7 +238,7 @@ void KKEditClass::searchGtkDocs(const QString txt,int what)
 	QString			results;
 	QStringList		reslist;
 	QString			searchcommand;
-	QFile			html(htmlFile);
+	QFile			html(this->htmlFile);
 
 	DocumentClass	*doc=this->getDocumentForTab(-1);
 
@@ -301,7 +301,7 @@ void KKEditClass::searchGtkDocs(const QString txt,int what)
 		}
 
 	debugFree(&thePage,"thePage");
-	thePage=strdup(htmlURI);
+	thePage=strdup(this->htmlURI.toStdString().c_str());
 	showDocView(USEURI,(char*)searchfor.toStdString().c_str(),"Gtk Docs");
 }
 

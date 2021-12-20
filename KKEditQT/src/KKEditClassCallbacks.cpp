@@ -72,16 +72,16 @@ void KKEditClass::doHelpMenuItems()
 	switch(mc->getMenuID())
 		{
 			 case ABOUTMENUITEM:
-			 	doAbout(NULL,0);
+			 //	doAbout(NULL,0);
 			 	break;
 			 case HELPMENUITEM:
-			 	openHelp(NULL,0);
+			 //	openHelp(NULL,0);
 			 	break;
 			 case ONLINEHELPMENUITEM:
-			 	openHelp(NULL,0);
+			 //	openHelp(NULL,0);
 			 	break;
 			 case GETPLUGSMENUITEM:
-				 getPlugins(NULL,0);
+				// getPlugins(NULL,0);
 			 	break;
 		}
 }
@@ -315,7 +315,7 @@ void KKEditClass::doFileMenuItems()
 				restoreSession(NULL,RESTORESESSIONMENUITEM);
 				break;
 			case PRINTMENUITEM:
-				printFile(NULL,PRINTMENUITEM);
+				//printFile(NULL,PRINTMENUITEM);
 				break;
 			case CLOSEMENUITEM:
 				this->closingAllTabs=false;
