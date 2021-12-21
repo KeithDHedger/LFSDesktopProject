@@ -49,8 +49,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-//#include <boost/algorithm/string.hpp>
-//#include <boost/format.hpp>
 #include <sys/ipc.h>
 #include <sys/msg.h>
 
@@ -60,8 +58,6 @@
 
 #include <libgen.h>
 #include <time.h>
-//#include <libintl.h>
-//#include <locale.h>
 
 #undef _DEBUG_FREE_
 //#define _DEBUG_FREE_ 1
@@ -115,22 +111,12 @@ enum msgActions {OPENFILE=100,SAVEFILE,QUITAPP,ACTIVATEAPP};
 #define NUMSHORTCUTS	14
 
 enum {PIXBUF_COLUMN,TEXT_COLUMN,BUTTON_NUM};
-//enum {FRCASE=0,FRUSEREGEX,FRWRAP,FRALLFILES,FRHIGHLIGHTALL,FRREPLACEALL,FRMAXSWITCHES};
+
 enum  utilVarType {BOOLVAR=0,INTVAR,CHARVAR,MULTVAR,BADTYPE,DECIMALOUT,HEXOUT,OCTALOUT};
 
 #define PLATFORM	"qt"
 typedef long		uPtr;
 typedef QWidget 	Widget;
-//
-//struct functionData
-//{
-//	char*				name;
-//	char*				type;
-//	int					line;
-//	char*				file;
-//	char*				define;
-//	int					intab;
-//};
 
 class DocumentClass;
 class HistoryClass;

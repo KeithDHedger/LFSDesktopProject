@@ -169,8 +169,8 @@ struct plugData
 	const char*		kkeditVersion;
 //unused
 	char*			htmlFile;
-//location of variable that holds the uri to be disp[layed by showDoc
-	//char**			thePage;
+
+
 //main notebook
 	QWidget*			notebook;
 //current page MAYBE NULL!!

@@ -28,44 +28,12 @@ GSList*			replaceList=NULL;
 unsigned int	maxFRHistory=5;
 
 
-
-//bool			noSyntax;
-//bool			singleUse;
-
-
-
-
-
-//bool			onExitSaveSession;
-//bool			restoreBookmarks;
-//char*			styleName=NULL;
-//bool			noDuplicates;
-//bool			noWarnings;
-//
-//
-//bool			autoCheck;
-//unsigned int	autoShowMinChars;
-//
-//
-//unsigned int	maxBMChars;
-
-
 char*			browserCommand=strdup("firefox");
 
 
 toolStruct*		selectedToolFromDrop=NULL;
 
 GList*			toolsList=NULL;
-
-//int				currentTabNumber;
-//int 			untitledNumber=1;
-
-//QAction			*gotoLineButton=NULL;
-//QAction			*findApiButton=NULL;
-//QAction			*findQtApiButton=NULL;
-//QAction			*findFuncDefButton=NULL;
-//QAction			*liveSearchButton=NULL;
-
 
 char*			functionSearchText=NULL;
 
@@ -135,9 +103,9 @@ void debugFree(char** ptr,const char* message)
 
 }
 
-void doBusy(bool busy,pageStruct* page)
-{
-}
+//void doBusy(bool busy,pageStruct* page)
+//{
+//}
 
 KKEditClass  *kkedit;
 

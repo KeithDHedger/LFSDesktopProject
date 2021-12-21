@@ -11,16 +11,6 @@
 
 #include "kkedit-includes.h"
 
-
-
-
-
-
-
-
-
-
-
 #ifndef _USEQT5_
 void dropUri(GtkWidget *widget,GdkDragContext *context,gint x,gint y,GtkSelectionData *selection_data,guint info,guint32 time,gpointer user_data);
 #else
@@ -34,10 +24,6 @@ void externalTool(GtkWidget* widget,gpointer data);
 void externalTool(void);
 #endif
 
-
-
-
-
 #ifndef _USEQT5_
 void setToolOptions(GtkWidget* widget,gpointer data);
 #else
@@ -46,9 +32,6 @@ void setToolOptions(void);
 #endif
 
 void doAbout(Widget* widget,uPtr data);
-
-
-
 
 void getPlugins(Widget* widget,uPtr data);
 
