@@ -63,31 +63,31 @@ extern GSList*			replaceList;
 extern unsigned int		maxFRHistory;
 
 //app stuff
-extern bool				busyFlag;
-
-extern bool				autoSelected;
-
-
-
-extern bool				noSyntax;
-//extern bool				singleUse;
-
-
-
+//extern bool				busyFlag;
+//
+//extern bool				autoSelected;
+//
+//
+//
+//extern bool				noSyntax;
+////extern bool				singleUse;
+//
 
 
-extern bool				onExitSaveSession;
-extern bool				restoreBookmarks;
-extern char*			styleName;
-extern bool				noDuplicates;
-extern bool				noWarnings;
 
-
-extern bool				autoCheck;
-extern unsigned int		autoShowMinChars;
-
-
-extern unsigned int		maxBMChars;
+//
+//extern bool				onExitSaveSession;
+//extern bool				restoreBookmarks;
+//extern char*			styleName;
+//extern bool				noDuplicates;
+//extern bool				noWarnings;
+//
+//
+//extern bool				autoCheck;
+//extern unsigned int		autoShowMinChars;
+//
+//
+//extern unsigned int		maxBMChars;
 
 
 extern char*			browserCommand;
@@ -100,20 +100,17 @@ extern toolStruct*		selectedToolFromDrop;
 
 
 extern GList*			toolsList;
+//
+//extern int				currentTabNumber;
+//extern int 				untitledNumber;
+//extern QAction			*gotoLineButton;
+//extern QAction			*findApiButton;
+//extern QAction			*findQtApiButton;
+//extern QAction			*findFuncDefButton;
+//extern QAction			*liveSearchButton;
+//
+//extern char*			functionSearchText;
 
-extern int				currentTabNumber;
-extern int 				untitledNumber;
-extern QAction			*gotoLineButton;
-extern QAction			*findApiButton;
-extern QAction			*findQtApiButton;
-extern QAction			*findFuncDefButton;
-extern QAction			*liveSearchButton;
-
-extern char*			functionSearchText;
-
-
-#ifdef _BUILDDOCVIEWER_
-#endif
 
 #include "pluginclass.h"
 

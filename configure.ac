@@ -8,7 +8,8 @@ AC_PROG_CXX
 AM_INIT_AUTOMAKE
 
 AC_PROG_CC
-#AC_HEADER_STDC
+AC_PROG_CXX
+#AX_CXX_COMPILE_STDCXX_11(noext,mandatory)
 
 PKG_PROG_PKG_CONFIG
 
@@ -102,3 +103,4 @@ AC_MSG_RESULT([Setting path to graphical su app to "$with_gsu_path"])
 
 AC_CONFIG_FILES(Makefile KKEditQT/app/Makefile)
 AC_OUTPUT
+

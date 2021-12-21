@@ -653,14 +653,8 @@ void KKEditClass::doOddButtons(void)
 				fprintf(stderr,"DOGTKSEARCH gtkwidget QLineEdit\n");
 				this->searchAPIDocs(this->findGtkApiWidget->text(),0);
 				break;
-			case DOCVIEWERGOBACK:
-				this->webView->page()->triggerAction(QWebPage::Back);
-				break;
 			case DOCVIEWERGOHOME:
 				this->webView->load(QUrl(this->htmlURI));
-				break;
-			case DOCVIEWERGOFORWARD:
-				this->webView->page()->triggerAction(QWebPage::Forward);
 				break;
 			default:
 				break;

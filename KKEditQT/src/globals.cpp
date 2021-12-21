@@ -22,16 +22,6 @@
 
 
 
-GList*	newBookMarksList=NULL;
-
-bool			showBMBar;
-int				bmMarkNumber=0;
-
-//app stuff
-bool			busyFlag=false;
-
-bool			autoSelected=false;
-
 //find replaceAll
 GSList*			findList=NULL;
 GSList*			replaceList=NULL;
@@ -39,34 +29,25 @@ unsigned int	maxFRHistory=5;
 
 
 
-
-
-
-//prefs
-
-
-
-
-
-bool			noSyntax;
+//bool			noSyntax;
 //bool			singleUse;
 
 
 
 
 
-bool			onExitSaveSession;
-bool			restoreBookmarks;
-char*			styleName=NULL;
-bool			noDuplicates;
-bool			noWarnings;
-
-
-bool			autoCheck;
-unsigned int	autoShowMinChars;
-
-
-unsigned int	maxBMChars;
+//bool			onExitSaveSession;
+//bool			restoreBookmarks;
+//char*			styleName=NULL;
+//bool			noDuplicates;
+//bool			noWarnings;
+//
+//
+//bool			autoCheck;
+//unsigned int	autoShowMinChars;
+//
+//
+//unsigned int	maxBMChars;
 
 
 char*			browserCommand=strdup("firefox");
@@ -76,8 +57,8 @@ toolStruct*		selectedToolFromDrop=NULL;
 
 GList*			toolsList=NULL;
 
-int				currentTabNumber;
-int 			untitledNumber=1;
+//int				currentTabNumber;
+//int 			untitledNumber=1;
 
 //QAction			*gotoLineButton=NULL;
 //QAction			*findApiButton=NULL;

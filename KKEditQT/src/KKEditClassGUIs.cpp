@@ -112,15 +112,13 @@ void KKEditClass::buildPrefsWindow(void)
 
 //auto save session
 	posy++;
-	makePrefsCheck(AUTOSAVE,"Auto Save/Restore Session",onExitSaveSession,0,posy);
-//	g_signal_connect(G_OBJECT(prefsWidgets[AUTOSAVE]),"toggled",G_CALLBACK(setPrefs),(void*)prefsWidgets[AUTOSAVE]);
-
+	makePrefsCheck(AUTOSAVE,"Auto Save/Restore Session",this->onExitSaveSession,0,posy);
 //no duplicates
 	posy++;
-	makePrefsCheck(NODUPLICATE,"Don't Open Duplicate File",noDuplicates,0,posy);
+	makePrefsCheck(NODUPLICATE,"Don't Open Duplicate File",this->noDuplicates,0,posy);
 //turn off warnings
 	posy++;
-	makePrefsCheck(NOWARN,"Don't Warn On File Change",noWarnings,0,posy);
+	makePrefsCheck(NOWARN,"Don't Warn On File Change",this->noWarnings,0,posy);
 
 //autoshow completion
 	posy++;
@@ -200,7 +198,7 @@ void KKEditClass::buildPrefsWindow(void)
 
 //autoshow completion
 	posy++;
-	makePrefsDial(COMPLETIONSIZE,"Completion Minimum Word Size:",autoShowMinChars,2,20,posy);
+	makePrefsDial(COMPLETIONSIZE,"Completion Minimum Word Size:",this->autoShowMinChars,2,20,posy);
 
 //sort functions
 	posy++;
@@ -269,7 +267,7 @@ void KKEditClass::buildPrefsWindow(void)
 	makePrefsDial(MENUWIDTH,"Max Characters In Function Defs:",this->prefsMaxFuncChars,5,MAXTEXTWIDTH,posy);
 //max bookmark strings
 	posy++;
-	makePrefsDial(MAXBMWIDTH,"Max Characters In Bookmarks:",maxBMChars,5,MAXTEXTWIDTH,posy);
+	makePrefsDial(MAXBMWIDTH,"Max Characters In Bookmarks:",this->maxBMChars,5,MAXTEXTWIDTH,posy);
 
 //use global plug menu
 	posy++;
@@ -1061,6 +1059,7 @@ void KKEditClass::buildDocViewer(void)
 	QVBoxLayout	*docvlayout=new QVBoxLayout;
 	QHBoxLayout	*dochlayout=new QHBoxLayout;
 	QWidget		*widget;
+	QPushButton	*button;
 	QRect		r;
 
 	this->docView=new QMainWindow(mainWindow);
@@ -1073,66 +1072,43 @@ void KKEditClass::buildDocViewer(void)
 	this->docView->setCentralWidget(widget);
 
 	this->webView=new QWebView(widget);
-
-//
-// QWebPage *page = this->webView->page();
-//  QWebSettings *settings = page->settings();
-// // settings->setAttribute(QWebSettings::JavascriptEnabled, true);
-////  settings->setAttribute(QWebSettings::PluginsEnabled, true);
-//settings->setAttribute(QWebSettings::PluginsEnabled,false);
-//settings->setAttribute(QWebSettings::JavascriptEnabled,true);
-//settings->setAttribute(QWebSettings::JavaEnabled,false);
-//settings->setAttribute(QWebSettings::LinksIncludedInFocusChain,false);
-//settings->setAttribute(QWebSettings::PrintElementBackgrounds,false);
-//settings->setAttribute(QWebSettings::OfflineWebApplicationCacheEnabled,true);
-//settings->setAttribute(QWebSettings::LocalStorageEnabled,true);
-//settings->setAttribute(QWebSettings::TiledBackingStoreEnabled,true);
-//settings->setAttribute(QWebSettings::SiteSpecificQuirksEnabled,false);
-//settings->setAttribute(QWebSettings::CSSRegionsEnabled,false);
-//settings->setAttribute(QWebSettings::NotificationsEnabled,false);
-//settings->setAttribute(QWebSettings::WebSecurityEnabled,false);
-//settings->setAttribute(QWebSettings::WebGLEnabled,false);
-//
-
-
-	this->webView->load(QUrl("file://" DATADIR "/help/help.en.html"));
-
- 
+	this->webView->load(QUrl("file://" DATADIR "/help/index.html"));
 
 	docvlayout->addWidget(this->webView);
 
-	widget=new QPushButton(QIcon::fromTheme("go-previous"),"Back");
-	widget->setObjectName(QString("%1").arg(DOCVIEWERGOBACK));
-	QObject::connect(widget,SIGNAL(clicked()),this,SLOT(doOddButtons()));
-	dochlayout->addWidget(widget);
+	button=new QPushButton(QIcon::fromTheme("go-previous"),"Back");
+	QObject::connect(button,&QPushButton::clicked,[=]() {this->webView->page()->triggerAction(QWebPage::Back);});
+	dochlayout->addWidget(button);
 
 	dochlayout->addStretch(1);
 
-	widget=new QPushButton(QIcon::fromTheme("go-home"),"Home");
-	dochlayout->addWidget(widget);
-	widget->setObjectName(QString("%1").arg(DOCVIEWERGOHOME));
-	QObject::connect(widget,SIGNAL(clicked()),this,SLOT(doOddButtons()));
+	button=new QPushButton(QIcon::fromTheme("go-home"),"Home");
+	dochlayout->addWidget(button);
+	button->setObjectName(QString("%1").arg(DOCVIEWERGOHOME));
+	QObject::connect(button,SIGNAL(clicked()),this,SLOT(doOddButtons()));
 
 	dochlayout->addStretch(1);
 
-	widget=new QPushButton(QIcon::fromTheme("edit-find"),"Find");
-	dochlayout->addWidget(widget);
+	button=new QPushButton(QIcon::fromTheme("edit-find"),"Find");
+	QObject::connect(button,&QPushButton::clicked,[=]() {QTextStream(stderr) << "find" << Qt::endl;});
+	dochlayout->addWidget(button);
 
 	widget=new QLineEdit;
 	dochlayout->addWidget(widget);
 
-	widget=new QPushButton(QIcon::fromTheme("go-down"),"Down");
-	dochlayout->addWidget(widget);
+	button=new QPushButton(QIcon::fromTheme("go-down"),"Down");
+	QObject::connect(button,&QPushButton::clicked,[=]() {QTextStream(stderr) << "Down" << Qt::endl;});
+	dochlayout->addWidget(button);
 	
-	widget=new QPushButton(QIcon::fromTheme("go-up"),"Up");
-	dochlayout->addWidget(widget);
+	button=new QPushButton(QIcon::fromTheme("go-up"),"Up");
+	QObject::connect(button,&QPushButton::clicked,[=]() {QTextStream(stderr) << "Up" << Qt::endl;});
+	dochlayout->addWidget(button);
 
 	dochlayout->addStretch(1);
 
-	widget=new QPushButton(QIcon::fromTheme("go-next"),"Forward");
-	dochlayout->addWidget(widget);
-	widget->setObjectName(QString("%1").arg(DOCVIEWERGOFORWARD));
-	QObject::connect(widget,SIGNAL(clicked()),this,SLOT(doOddButtons()));
+	button=new QPushButton(QIcon::fromTheme("go-next"),"Forward");
+	dochlayout->addWidget(button);
+	QObject::connect(button,&QPushButton::clicked,[=]() {this->webView->page()->triggerAction(QWebPage::Forward);});
 
 	widget=new QWidget;
 	widget->setLayout(dochlayout);

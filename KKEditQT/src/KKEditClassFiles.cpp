@@ -78,7 +78,7 @@ VISIBLE void KKEditClass::newFile(const QString data,const QString filename)
 	doc->setPlainText(data);
 	tabnum=this->mainNotebook->addTab(doc,"");
 	if(filename.compare("")==0)
-		doc->setFileName(QString("Untitled-%1").arg(untitledNumber));
+		doc->setFileName(QString("Untitled-%1").arg(this->untitledNumber));
 	else
 		doc->setFileName(filename);
 	doc->setTabName(this->truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
@@ -88,7 +88,7 @@ VISIBLE void KKEditClass::newFile(const QString data,const QString filename)
 	doc->pageIndex=this->newPageIndex;
 	this->pages[this->newPageIndex++]=doc;
 	doc->setHiliteLanguage();
-	untitledNumber++;
+	this->untitledNumber++;
 	this->mainNotebook->setCurrentWidget(doc);
 	this->rebuildTabsMenu();
 	this->sessionBusy=false;
@@ -251,7 +251,6 @@ bool KKEditClass::openFile(QString filepath,int linenumber,bool warn)
 	QFileInfo		fileinfo(file);
 	int				tabnum;
 
-	busyFlag=true;
 	this->sessionBusy=true;
 
 	retval=file.open(QIODevice::Text | QIODevice::ReadOnly);
@@ -289,7 +288,6 @@ bool KKEditClass::openFile(QString filepath,int linenumber,bool warn)
 			retval=true;
 			file.close();
 		}
-	busyFlag=false;
 	this->sessionBusy=false;
 	doc->dirty=false;
 

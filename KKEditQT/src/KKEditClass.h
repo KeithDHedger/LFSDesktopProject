@@ -50,7 +50,7 @@ enum {FUNCTIONCOMBO=0,THEMECOMBO,FONTNAMECOMBO,FONTSIZECOMBO,PREFSTERMCOMMAND,PR
 enum {FINDNEXT=1,FINDPREV,FINDREPLACE};
 
 //od enums
-enum {SPELLCHECKMENUITEM=0x2000,APPLYWORDBUTTON,IGNOREWORDBUTTON,ADDWORDBUTTON,CANCELSPELLCHECK,CANCELPREFS,DOLINEBOX,DOLIVESEARCH,DOAPISEARCH,DOQT5SEARCH,DOGTKSEARCH,DOCVIEWERGOBACK,DOCVIEWERGOFORWARD,DOCVIEWERGOHOME};
+enum {SPELLCHECKMENUITEM=0x2000,APPLYWORDBUTTON,IGNOREWORDBUTTON,ADDWORDBUTTON,CANCELSPELLCHECK,CANCELPREFS,DOLINEBOX,DOLIVESEARCH,DOAPISEARCH,DOQT5SEARCH,DOGTKSEARCH,DOCVIEWERGOHOME};
 
 struct tabMenuStruct
 {
@@ -163,6 +163,8 @@ class KKEditClass : public QObject
 		int							prefsMsgTimer;
 		bool						prefsUseSingle=true;
 		bool						prefsNagScreen=false;
+		bool						onExitSaveSession=false;
+
 //editor vars
 		QStatusBar					*statusBar;
 		QLabel						*statusText;
@@ -174,6 +176,11 @@ class KKEditClass : public QObject
 		bool						hightlightAll=true;
 		int							currentPage=0;
 		bool						closingAllTabs=false;
+		bool						noDuplicates=false;
+		bool						noWarnings=false;
+		unsigned int				autoShowMinChars=4;
+		unsigned int				maxBMChars;
+		unsigned int 				untitledNumber=1;
 //editor functions
 		QString						truncateWithElipses(const QString str,unsigned int maxlen);
 		void						sortTabs(void);
@@ -347,14 +354,14 @@ class KKEditClass : public QObject
 
 ///////////////////////////////////////////TODO/////////////////////////////////////////////////////////////////////////
 
-//		bool					onExitSaveSession=false;
-//		bool					noDuplicates=false;
-//		bool					noWarnings=false;
+//		
+//		
+//		
 //		bool					hightlightAll=true;
 		
 //		bool					showBMBar=false;
 
-//		unsigned int				autoShowMinChars=4;
+//		
 
 
 
