@@ -219,8 +219,8 @@ void KKEditClass::doFindReplace(int response_id)
 				}
 		}
 
-	debugFree(&currentfindtext,"doFindReplace currentfindtext");
-	debugFree(&currentreplacetext,"doFindReplace currentreplacetext");
+	if (currentfindtext!=NULL) free(currentfindtext);currentfindtext=NULL;
+	if (currentreplacetext!=NULL) free(currentreplacetext);currentreplacetext=NULL;
 }
 
 void KKEditClass::searchAPIDocs(const QString txt,int what)

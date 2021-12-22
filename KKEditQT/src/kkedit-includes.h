@@ -118,9 +118,11 @@ enum  utilVarType {BOOLVAR=0,INTVAR,CHARVAR,MULTVAR,BADTYPE,DECIMALOUT,HEXOUT,OC
 typedef long		uPtr;
 typedef QWidget 	Widget;
 
+
+class KKEditClass;
 class DocumentClass;
 class HistoryClass;
-class KKEditClass;
+
 #ifdef _ASPELL_
 #include <aspell.h>
 #endif

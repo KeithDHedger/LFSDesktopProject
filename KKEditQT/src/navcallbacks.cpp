@@ -26,8 +26,8 @@ bool readFile(char *name)
 	FILE*			file;
 	unsigned long	fileLen;
 
-	if(filebuffer!=NULL)
-		debugFree(&filebuffer,"readFile filebuffer");
+	//if(filebuffer!=NULL)
+	if (filebuffer!=NULL) free(filebuffer);filebuffer=NULL;
 	//Open file
 	file=fopen(name,"rb");
 	if (!file)
@@ -237,9 +237,9 @@ docFileData* getDoxyFileData(char* uri)
 			debugFree((char**)&doxydata,"getDoxyFileData doxydata");
 			doxydata=NULL;
 		}
-	debugFree(&unhashedline,"getDoxyFileData unhashedline");
-	debugFree(&linetag,"getDoxyFileData linetag");
-	debugFree(&filepath,"getDoxyFileData filepath");
+	if (unhashedline!=NULL) free(unhashedline);unhashedline=NULL;
+	if (linetag!=NULL) free(linetag);linetag=NULL;
+	if (filepath!=NULL) free(filepath);filepath=NULL;
 	return(doxydata);
 #endif
 	return(NULL);

@@ -74,7 +74,7 @@ VISIBLE void KKEditClass::newFile(const QString data,const QString filename)
 	int				tabnum;
 
 	this->sessionBusy=true;
-	doc=new DocumentClass(kkedit);
+	doc=new DocumentClass(this);
 	doc->setPlainText(data);
 	tabnum=this->mainNotebook->addTab(doc,"");
 	if(filename.compare("")==0)
@@ -236,7 +236,7 @@ void KKEditClass::newEditor(int what)
 			runPipe("kkedit -m 2>&1 >/dev/null &");
 			break;
 		case MANPAGEEDMENUITEM:
-			if(kkedit->gotManEditor==0)
+			if(this->gotManEditor==0)
 				runPipe("manpageeditor 2>&1 >/dev/null &");
 			break;
 		}

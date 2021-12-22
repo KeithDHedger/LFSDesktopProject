@@ -20,82 +20,82 @@
 
 #ifndef _GLOBALS_
 #define _GLOBALS_
-
-#include "kkedit-includes.h"
-#include "config.h"
-#include "internet.h"
-
-struct toolStruct
-{
-	char*				menuName;
-	char*				filePath;
-	char*				command;
-	int					flags;
-	bool				inTerminal;					
-	bool				inPopUp;
-	bool				alwaysPopup;
-	bool				clearView;
-	char*				comment;
-	bool				global;
-	bool				runAsRoot;
-	int					keyCode;
-	bool				useBar;
-};
-
-extern HistoryClass*	history;
-
-extern GList*			newBookMarksList;
-
-extern bool				showBMBar;
-#ifndef _USEQT5_
-extern GtkWidget*		bmHighlightBox;
-#else
-//TODO//
-#endif
-extern int				bmMarkNumber;
-
-extern char*			prefsToolBarLayout;
-
+//
+//#include "kkedit-includes.h"
+//#include "config.h"
+//#include "internet.h"
+//
+//struct toolStruct
+//{
+//	char*				menuName;
+//	char*				filePath;
+//	char*				command;
+//	int					flags;
+//	bool				inTerminal;					
+//	bool				inPopUp;
+//	bool				alwaysPopup;
+//	bool				clearView;
+//	char*				comment;
+//	bool				global;
+//	bool				runAsRoot;
+//	int					keyCode;
+//	bool				useBar;
+//};
+//
+//extern HistoryClass*	history;
+//
+//extern GList*			newBookMarksList;
+//
+//extern bool				showBMBar;
+//#ifndef _USEQT5_
+//extern GtkWidget*		bmHighlightBox;
+//#else
+////TODO//
+//#endif
+//extern int				bmMarkNumber;
+//
+//extern char*			prefsToolBarLayout;
+//
 
 //find replaceAll
 //extern GSList*			findList;
 //extern GSList*			replaceList;
-extern unsigned int		maxFRHistory;
+//extern unsigned int		maxFRHistory;
+
+//
+//extern char*			browserCommand;
+//
+//
+//extern toolStruct*		selectedToolFromDrop;
+//
+//
+//extern GList*			toolsList;
+//
+//#include "pluginclass.h"
+//
+//extern PluginClass*		globalPlugins;
+//
+//void plugRunFunction(gpointer data,gpointer funcname);
+//
+//
+//void getMimeType(char* filepath,void* ptr);
+//void setLanguage(pageStruct* page);
+//
+//
+//
+//
+//void buildToolsList(void);
+//
 
 
-extern char*			browserCommand;
-
-
-extern toolStruct*		selectedToolFromDrop;
-
-
-extern GList*			toolsList;
-
-#include "pluginclass.h"
-
-extern PluginClass*		globalPlugins;
-
-void plugRunFunction(gpointer data,gpointer funcname);
-
-
-void getMimeType(char* filepath,void* ptr);
-void setLanguage(pageStruct* page);
-
-
-
-
-void buildToolsList(void);
-
-
-
-void debugFree(char** ptr,const char* message);
-
-
-
+//void debugFree(char** ptr,const char* message);
 
 
 
-extern KKEditClass *kkedit;
+
+
+
+//extern KKEditClass *kkedit;
 #endif
 
 

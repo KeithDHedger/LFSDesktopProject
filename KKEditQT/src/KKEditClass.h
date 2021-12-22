@@ -69,7 +69,10 @@ enum {HIDETABSHORTCUT=0,DELETELINESHORTCUT,DELETETOEOLSHORTCUT,DELETETOSOLSHORTC
 
 enum {FRCASE=0,FRUSEREGEX,FRWRAP,FRALLFILES,FRHIGHLIGHTALL,FRREPLACEALL,FRMAXSWITCHES};
 
+#include "backclass.h"
+//class HistoryClass;
 #include "kkedit-includes.h"
+
 class MenuItemClass;
 
 class KKEditClass : public QObject
@@ -116,6 +119,8 @@ class KKEditClass : public QObject
 #endif
 		QShortcut					*appShortcuts[SHORTCUTSCOUNT];
 		QStringList					defaultShortCutsList={"Ctrl+H","Ctrl+Y","Ctrl+?","Ctrl+K","Ctrl+Shift+H","Ctrl+D","Ctrl+Shift+D","Ctrl+L","Ctrl+M","Ctrl+Shift+M","Ctrl+@","Ctrl+'"};
+
+		HistoryClass				*history;
 
 //app functions
 		void						initApp(int argc,char** argv);
@@ -164,7 +169,7 @@ class KKEditClass : public QObject
 		bool						prefsUseSingle=true;
 		bool						prefsNagScreen=false;
 		bool						onExitSaveSession=false;
-
+		QString						browserCommand;
 //editor vars
 		QStatusBar					*statusBar;
 		QLabel						*statusText;
@@ -343,6 +348,7 @@ class KKEditClass : public QObject
 		QPushButton					*frReplace;
 		QStringList					findList;
 		QStringList					replaceList;
+		unsigned int				maxFRHistory=5;
 //find replace functions
 		void						buildFindReplace(void);
 		void						doFindReplace(int response_id);

@@ -18,17 +18,17 @@ class HistoryClass
 		HistoryClass();
 		~HistoryClass();
 
-		void		getThisPoint(void);
-		pageStruct*	getPage(void);
-		TextBuffer*	getTextBuffer(void);
-		bool		savePosition(void);
-		void		setPage(pageStruct* page);
-		int			getTabNumForPage(void);
-		bool		canGoBack(void);
-	private:
-		pageStruct*		savedPage;
-		TextBuffer*		buf;
-		bool			goBack;
+//		void		getThisPoint(void);
+//		pageStruct*	getPage(void);
+//		//TextBuffer*	getTextBuffer(void);
+//		bool		savePosition(void);
+//		void		setPage(pageStruct* page);
+//		int			getTabNumForPage(void);
+//		bool		canGoBack(void);
+//	private:
+//		pageStruct*		savedPage;
+//		TextBuffer*		buf;
+//		bool			goBack;
 };
 
 #endif

@@ -24,6 +24,7 @@
 KKEditClass::KKEditClass(QApplication *app)
 {
 	this->application=app;
+	this->history=new HistoryClass;
 }
 
 KKEditClass::~KKEditClass()
@@ -33,9 +34,11 @@ KKEditClass::~KKEditClass()
 	for(int j=0;j<SHORTCUTSCOUNT;j++)
 		delete this->appShortcuts[j];
 
+	delete this->history;
+
 	asprintf(&command,"rm -rf %s",this->tmpFolderName.toStdString().c_str());
 	system(command);
-	debugFree(&command,"doShutdown command");
+	if (command!=NULL) free(command);command=NULL;
 }
 
 void KKEditClass::doSearchFromBar(const QString txt)
@@ -325,7 +328,7 @@ void KKEditClass::initApp(int argc,char** argv)
 	//this->highlightColour="#808080";
 	asprintf(&filename,"%s/" KKEDITFOLDER "/tools",getenv("HOME"));
 	g_mkdir_with_parents(filename,493);
-	debugFree(&filename,"init filename");
+	if (filename!=NULL) free(filename);filename=NULL;
 
 	this->mainWindow=new QMainWindow;
 	for(int j=0;j<SHORTCUTSCOUNT;j++)
@@ -718,7 +721,7 @@ void KKEditClass::showBarberPole(QString windowtitle,QString bodylabel,QString c
 
 void KKEditClass::buildDocs(void)
 {
-	DocumentClass	*doc=kkedit->getDocumentForTab(-1);
+	DocumentClass	*doc=this->getDocumentForTab(-1);
 	struct stat		sb;
 	FILE			*fp;
 	char			line[4096];
@@ -759,7 +762,7 @@ void KKEditClass::buildDocs(void)
 
 void KKEditClass::showDocs(void)
 {
-	DocumentClass	*doc=kkedit->getDocumentForTab(-1);
+	DocumentClass	*doc=this->getDocumentForTab(-1);
 	QFileInfo		fileinfo=QString("%1/html/index.html").arg(doc->getDirPath());
 
 	if(fileinfo.exists()==false)

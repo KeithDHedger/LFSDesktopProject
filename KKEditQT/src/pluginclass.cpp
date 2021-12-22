@@ -28,7 +28,7 @@ PluginClass::PluginClass(bool loadPlugs)
 
 PluginClass::~PluginClass()
 {
-	debugFree(&plugFolderPaths[LOCALPLUGS],"~PluginClass plugFolderPaths");
+	if (plugFolderPaths[LOCALPLUGS]!=NULL) free(plugFolderPaths[LOCALPLUGS]);plugFolderPaths[LOCALPLUGS]=NULL;
 }
 
 void PluginClass::setPlugFolder(void)
@@ -86,13 +86,13 @@ bool PluginClass::checkForEnabled(char* plugname)
 					if((strlen(name)>0) && (strcasecmp(name,plugname)==0))
 						{
 							fclose(fd);
-							debugFree(&filename,"PluginClass::checkForEnabled filename");
+							if (filename!=NULL) free(filename);filename=NULL;
 							return(false);
 						}
 				}
 			fclose(fd);
 		}
-	debugFree(&filename,"PluginClass::checkForEnabled filename");
+	if (filename!=NULL) free(filename);filename=NULL;
 	return(true);
 
 }
@@ -125,7 +125,7 @@ void PluginClass::deleteBlackList()
 
 	asprintf(&command,"rm %s/.KKEdit/pluglist 2>/dev/null",getenv("HOME"));
 	system(command);
-	debugFree(&command," PluginClass::deleteBlackList command");
+	if (command!=NULL) free(command);command=NULL;
 }
 
 void PluginClass::appendToBlackList(char* name)
@@ -134,7 +134,7 @@ void PluginClass::appendToBlackList(char* name)
 
 	asprintf(&command,"echo %s >> %s/.KKEdit/pluglist",name,getenv("HOME"));
 	system(command);
-	debugFree(&command," PluginClass::appendToBlackList command");
+	if (command!=NULL) free(command);command=NULL;
 
 }
 
@@ -200,7 +200,7 @@ void PluginClass::loadPlugins(void)
 								}
 							pclose(pf);
 						}
-					debugFree(&command,"PluginClass::loadPlugins command");
+					if (command!=NULL) free(command);command=NULL;
 				}
 		}
 }
@@ -255,11 +255,11 @@ char* PluginClass::getPluginPathByName(char* name)
 							if(strcasecmp(name,testname)==0)
 								{
 									pclose(pf);
-									debugFree(&testname,"PluginClass::getPluginPathByName testname");
+									if (testname!=NULL) free(testname);testname=NULL;
 									return(strdup(buffer));
 								}
 							else
-								debugFree(&testname,"PluginClass::getPluginPathByName testname");
+								if (testname!=NULL) free(testname);testname=NULL;
 						}
 					pclose(pf);
 				}

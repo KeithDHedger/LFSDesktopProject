@@ -307,10 +307,10 @@ void KKEditClass::doFileMenuItems()
 				this->saveAllFiles();
 				break;
 			case SAVESESSIONMENUITEM:
-				saveSession(NULL,SAVESESSIONMENUITEM);
+				//saveSession(NULL,SAVESESSIONMENUITEM);
 				break;
 			case RESTORESESSIONMENUITEM:
-				restoreSession(NULL,RESTORESESSIONMENUITEM);
+				//restoreSession(NULL,RESTORESESSIONMENUITEM);
 				break;
 			case PRINTMENUITEM:
 				//printFile(NULL,PRINTMENUITEM);

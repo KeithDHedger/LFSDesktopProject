@@ -61,13 +61,13 @@ printf("doxyDocs %i\n",(int)(long)data);
 							if(strstr(titleline,selection)!=NULL)
 								{
 									if(thePage!=NULL)
-										debugFree(&thePage,"doxyDocs thePage");
+										if (thePage!=NULL) free(thePage);thePage=NULL;
 									asprintf(&thePage,"file://%s",line);
 									while(fgets(titleline,1024,headfile));
 									while(fgets(titleline,1024,findfile));
 									pclose(headfile);
 									pclose(findfile);
-									debugFree(&headcommand,"doxyDocs headcommand 1");
+									if (headcommand!=NULL) free(headcommand);headcommand=NULL;
 									showDocView(USEURI,thePage,"Doxygen Documentation");
 									killBarberPole();
 									return;
@@ -76,9 +76,9 @@ printf("doxyDocs %i\n",(int)(long)data);
 					pclose(headfile);
 				}
 			pclose(findfile);
-			if(headcommand!=NULL)
-				debugFree(&headcommand,"doxyDocs headcommand 2");
-			debugFree(&findcommand,"doxyDocs findcommand 2");
+
+			if (headcommand!=NULL) free(headcommand);headcommand=NULL;
+			if (findcommand!=NULL) free(findcommand);findcommand=NULL;
 			killBarberPole();
 		}
 #endif

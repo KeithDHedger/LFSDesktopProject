@@ -25,69 +25,69 @@
 //find replaceAll
 //GSList*			findList=NULL;
 //GSList*			replaceList=NULL;
-unsigned int	maxFRHistory=5;
+//unsigned int	maxFRHistory=5;
 
+//
+//char*			browserCommand=strdup("firefox");
+//
+//
+//toolStruct*		selectedToolFromDrop=NULL;
+//
+//GList*			toolsList=NULL;
+//
+//char*			functionSearchText=NULL;
+//
+//
+//HistoryClass*	history;
+//
+//PluginClass*	globalPlugins=NULL;
+//
+//void plugRunFunction(gpointer data,gpointer funcname)
+//{
+//#ifndef _USEQT5_
+//	globalPlugins->runPlugFunction((moduleData*)data,(const char*)funcname);
+//#endif
+//}
+//
+//void getMimeType(char* filepath,void* ptr)
+//{
+//}
+//
+//void destroyTool(gpointer data)
+//{
+//	if(((toolStruct*)data)->menuName!=NULL)
+//		debugFree(&((toolStruct*)data)->menuName,"destroyTool menuName");
+//	if(((toolStruct*)data)->filePath!=NULL)
+//		debugFree(&((toolStruct*)data)->filePath,"destroyTool filePath");
+//	if(((toolStruct*)data)->command!=NULL)
+//		debugFree(&((toolStruct*)data)->command,"destroyTool command");
+//	debugFree((char**)&data,"destroyTool data");
+//}
+//
+//gint sortTools(gconstpointer a,gconstpointer b)
+//{
+//	return(strcasecmp(((toolStruct*)a)->menuName,((toolStruct*)b)->menuName));
+//}
+//
+//void buildToolsList(void)
+//{
+//}
+//
 
-char*			browserCommand=strdup("firefox");
+//void debugFree(char** ptr,const char* message)
+//{
+//#ifdef _DEBUG_FREE_
+//	fprintf(stderr,"free :%s\n",message);
+//#endif
+//
+//	if (*ptr!=NULL)
+//		free(*ptr);
+//
+//	*ptr=NULL;
+//
+//}
 
-
-toolStruct*		selectedToolFromDrop=NULL;
-
-GList*			toolsList=NULL;
-
-char*			functionSearchText=NULL;
-
-
-HistoryClass*	history;
-
-PluginClass*	globalPlugins=NULL;
-
-void plugRunFunction(gpointer data,gpointer funcname)
-{
-#ifndef _USEQT5_
-	globalPlugins->runPlugFunction((moduleData*)data,(const char*)funcname);
-#endif
-}
-
-void getMimeType(char* filepath,void* ptr)
-{
-}
-
-void destroyTool(gpointer data)
-{
-	if(((toolStruct*)data)->menuName!=NULL)
-		debugFree(&((toolStruct*)data)->menuName,"destroyTool menuName");
-	if(((toolStruct*)data)->filePath!=NULL)
-		debugFree(&((toolStruct*)data)->filePath,"destroyTool filePath");
-	if(((toolStruct*)data)->command!=NULL)
-		debugFree(&((toolStruct*)data)->command,"destroyTool command");
-	debugFree((char**)&data,"destroyTool data");
-}
-
-gint sortTools(gconstpointer a,gconstpointer b)
-{
-	return(strcasecmp(((toolStruct*)a)->menuName,((toolStruct*)b)->menuName));
-}
-
-void buildToolsList(void)
-{
-}
-
-
-void debugFree(char** ptr,const char* message)
-{
-#ifdef _DEBUG_FREE_
-	fprintf(stderr,"free :%s\n",message);
-#endif
-
-	if (*ptr!=NULL)
-		free(*ptr);
-
-	*ptr=NULL;
-
-}
-
-KKEditClass  *kkedit;
+//KKEditClass  *kkedit;
 
 
  

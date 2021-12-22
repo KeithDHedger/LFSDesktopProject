@@ -236,8 +236,8 @@ void addtoCustomWordList(void)
 
 	asprintf(&command,"echo '%s'|cat - %s/%s|sort -u -o %s/%s.tmp;mv %s/%s.tmp %s/%s",selection,getenv("HOME"),CUSTOMWORDFILE,getenv("HOME"),CUSTOMWORDFILE,getenv("HOME"),CUSTOMWORDFILE,getenv("HOME"),CUSTOMWORDFILE);
 	system(command);
-	debugFree(&command,"addtoCustomWordList command");
-	debugFree(&selection,"addtoCustomWordList selection");
+	if (command!=NULL) free(command);command=NULL;
+	if (selection!=NULL) free(selection);selection=NULL;
 	createCompletion(page);
 #endif
 }
@@ -333,9 +333,9 @@ void setToolOptions(void)
 				}
 		}
 
-	debugFree(&toolpath,"setToolOptions toolpath");
-	debugFree(&text,"setToolOptions text");
-	debugFree(&dirname,"setToolOptions dirname");
+	if (toolpath!=NULL) free(toolpath);toolpath=NULL;
+	if (text!=NULL) free(text);text=NULL;
+	if (dirname!=NULL) free(dirname);dirname=NULL;
 #endif
 }
 
@@ -356,8 +356,8 @@ printf("doAbout %i\n",(int)(long)data);
 
 	gtk_show_about_dialog(NULL,"authors",authors,"translator-credits",translators,"comments",aboutboxstring,"copyright",copyright,"version",VERSION,"website",MYWEBSITE,"program-name","KKEdit","logo-icon-name","KKEdit","license",licence,NULL);
 
-	debugFree(&licence,"doAbout licence");
-	debugFree(&translators,"doAbout licence");
+	if (licence!=NULL) free(licence);licence=NULL;
+	if (translators!=NULL) free(translators);translators=NULL;
 #endif
 }
 

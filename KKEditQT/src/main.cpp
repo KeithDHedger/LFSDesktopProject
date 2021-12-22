@@ -34,6 +34,7 @@ int main (int argc, char **argv)
 	QApplication		app(argc,argv);
 	QCommandLineParser	parser;
 	bool				forcemulti;
+	KKEditClass  		*kkedit;
 
 	app.setStyleSheet("QMenu { menu-scrollable: true ;}");
 	app.setOrganizationName("KDHedger");
@@ -67,8 +68,6 @@ int main (int argc, char **argv)
 	kkedit->sessionID=kkedit->currentWorkSpace+MSGKEY;
 	kkedit->forceDefaultGeom=!siapp.isOnX11;
 
-	history=new HistoryClass;
-
 	kkedit->initApp(argc,argv);
 
 	for(int j=1;j<argc;j++)
@@ -80,7 +79,6 @@ int main (int argc, char **argv)
 		app.setWindowIcon(QIcon::fromTheme(PACKAGE "Root",QIcon(DATADIR"/pixmaps/KKEditRoot.png")));
 	status=app.exec();
 
-	delete history;
 	delete kkedit;
 	return status;
 }

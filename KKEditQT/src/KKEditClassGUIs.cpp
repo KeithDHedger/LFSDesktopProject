@@ -251,14 +251,14 @@ void KKEditClass::buildPrefsWindow(void)
 //set default browser
 	posy++;
     widgetlabel=new QLabel("Default Browser:");
-	prefsOtherWidgets[PREFSBROWSERCOMMAND]=new QLineEdit(browserCommand);
+	prefsOtherWidgets[PREFSBROWSERCOMMAND]=new QLineEdit(this->browserCommand);
 	table->addWidget(widgetlabel,posy,0,Qt::AlignVCenter);
 	table->addWidget(prefsOtherWidgets[PREFSBROWSERCOMMAND],posy,1,1,-1,Qt::AlignVCenter);
 	space=new QSpacerItem(0,0,QSizePolicy::Maximum,QSizePolicy::Maximum);
 
 //find replace history max
 	posy++;
-	makePrefsDial(MAXHISTORY,"Max Find/Replace History:",maxFRHistory,0,MAXTEXTWIDTH,posy);
+	makePrefsDial(MAXHISTORY,"Max Find/Replace History:",this->maxFRHistory,0,MAXTEXTWIDTH,posy);
 //max tab label width
 	posy++;
 	makePrefsDial(MAXTABCHARS,"Max Characters In Tab:",this->prefsMaxTabChars,5,MAXTEXTWIDTH,posy);
