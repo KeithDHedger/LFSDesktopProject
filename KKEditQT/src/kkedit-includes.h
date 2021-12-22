@@ -129,9 +129,9 @@ class HistoryClass;
 
 
 #include "kkedit-plugins.h"
-#include "globals.h"
 
-#include "textbuffer.h"
+
+
 #include "backclass.h"
 
 #ifdef _BUILDDOCVIEWER_
@@ -155,7 +155,7 @@ class HistoryClass;
 
 #include "searchcallbacks.h"
 
-#include "files.h"
+
 #include "completion.h"
 
 #define VISIBLE __attribute__((visibility("default")))
