@@ -336,6 +336,17 @@ void KKEditClass::doTimer(void)
 	int			retcode=0;
 	msgStruct	buffer;
 
+	if(this->docView->isVisible()==true)
+		{
+			this->toggleDocViewMenuItem->setText("Hide Docviewer");
+			this->docviewerVisible=true;
+		}
+	else
+		{
+			this->toggleDocViewMenuItem->setText("Show Docviewer");
+			this->docviewerVisible=false;
+		}
+
 	while(retcode!=-1)
 		{
 			buffer.mText[0]=0;

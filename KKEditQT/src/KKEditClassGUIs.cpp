@@ -1066,6 +1066,9 @@ void KKEditClass::buildDocViewer(void)
 
 	this->docView=new QMainWindow(mainWindow);
 
+//TODO//close event
+//QObject::connect((QWidget*)this->docView,&QWidget::closeEvent,[=]() {fprintf(stderr,">>>>>\n");});
+
 	r=this->prefs.value("app/viewergeometry",QVariant(QRect(100,100,800,600))).value<QRect>();
 	this->docView->setGeometry(r);
 	
