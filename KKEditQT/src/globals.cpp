@@ -23,8 +23,8 @@
 
 
 //find replaceAll
-GSList*			findList=NULL;
-GSList*			replaceList=NULL;
+//GSList*			findList=NULL;
+//GSList*			replaceList=NULL;
 unsigned int	maxFRHistory=5;
 
 
@@ -41,22 +41,6 @@ char*			functionSearchText=NULL;
 HistoryClass*	history;
 
 PluginClass*	globalPlugins=NULL;
-
-//save and load var lists
-
-
-
-int				intermarg=0;
-int				flagsarg=0;
-int				inpopup=0;
-int				alwayspopup=0;
-int				clearview=0;
-char*			commandarg=NULL;
-char*			commentarg=NULL;
-char*			menuname=NULL;
-int				rootarg=0;
-int				keycode=0;
-int				usebar=0;
 
 void plugRunFunction(gpointer data,gpointer funcname)
 {
@@ -102,10 +86,6 @@ void debugFree(char** ptr,const char* message)
 	*ptr=NULL;
 
 }
-
-//void doBusy(bool busy,pageStruct* page)
-//{
-//}
 
 KKEditClass  *kkedit;
 

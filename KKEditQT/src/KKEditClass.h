@@ -341,6 +341,8 @@ class KKEditClass : public QObject
 		QComboBox					*replaceDropBox;
 		QCheckBox					*frSwitches[FRMAXSWITCHES];
 		QPushButton					*frReplace;
+		QStringList					findList;
+		QStringList					replaceList;
 //find replace functions
 		void						buildFindReplace(void);
 		void						doFindReplace(int response_id);

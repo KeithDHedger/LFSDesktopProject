@@ -32,8 +32,8 @@ void KKEditClass::doFindReplace(int response_id)
 	char								*currentfindtext;
 	char								*currentreplacetext;
 	const char							*thetext;
-	GSList								*tlist;
-	GSList								*list;
+	QStringList							*tlist;
+	QStringList							*list;
 	QComboBox							*combo;
 	bool								flag=false;
 	int									cnt;
@@ -44,6 +44,8 @@ void KKEditClass::doFindReplace(int response_id)
 	QTextCursor							newCursor;
 	QRegularExpression					rx;
 	int									currentline;
+	int									comboindex;
+
 	if(document==NULL)
 		return;
 
@@ -101,7 +103,8 @@ void KKEditClass::doFindReplace(int response_id)
 	if(response_id!=FINDREPLACE)
 		{
 			combo=this->findDropBox;
-			list=findList;
+			list=&this->findList;
+			comboindex=combo->currentIndex();
 			thetext=currentfindtext;
 			if(this->useRegex==false)
 				gotresult=document->find(thetext,(QTextDocument::FindFlags)flags);
@@ -135,7 +138,7 @@ void KKEditClass::doFindReplace(int response_id)
 	else
 		{
 			combo=this->replaceDropBox;
-			list=replaceList;
+			list=&this->replaceList;
 			thetext=currentreplacetext;
 			if(this->replaceAll==false)
 				{
@@ -201,26 +204,17 @@ void KKEditClass::doFindReplace(int response_id)
 				}
 		}
 
-	if(list==NULL)
+	if(QString(thetext).isEmpty()==false)
 		{
-			list=g_slist_append(list,strdup(thetext));
-			combo->addItem(thetext);
-		}
-	else
-		{
-			tlist=list;
 			flag=false;
-			do
+			for(int j=0;j<list->count();j++)
 				{
-					if(strcmp((const gchar*)tlist->data,thetext)==0)
+					if(list->at(j).compare(thetext)==0)
 						flag=true;
-					tlist=tlist->next;
 				}
-			while(tlist!=NULL);
-
 			if(flag==false)
 				{
-					list=g_slist_append(list,strdup(thetext));
+					list->append(thetext);
 					combo->addItem(thetext);
 				}
 		}

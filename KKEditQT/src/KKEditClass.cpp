@@ -560,6 +560,8 @@ void KKEditClass::readConfigs(void)
 //application
 	this->prefsMsgTimer=this->prefs.value("app/msgtimer",1000).toInt();
 	this->prefsUseSingle=this->prefs.value("app/usesingle",QVariant(bool(true))).value<bool>();
+	this->findList=this->prefs.value("app/findlist").toStringList();
+	this->replaceList=this->prefs.value("app/replacelist").toStringList();
 	this->defaultShortCutsList=this->prefs.value("app/shortcuts",QVariant(QStringList({"Ctrl+H","Ctrl+Y","Ctrl+?","Ctrl+K","Ctrl+Shift+H","Ctrl+D","Ctrl+Shift+D","Ctrl+L","Ctrl+M","Ctrl+Shift+M","Ctrl+@","Ctrl+'"}))).toStringList();
 
 	this->setAppShortcuts();	
@@ -668,6 +670,8 @@ void KKEditClass::writeExitData(void)
 	this->prefs.setValue("app/msgtimer",this->prefsMsgTimer);
 	this->prefs.setValue("app/usesingle",this->prefsUseSingle);
 	this->prefs.setValue("app/shortcuts",this->defaultShortCutsList);
+	this->prefs.setValue("app/findlist",this->findList);
+	this->prefs.setValue("app/replacelist",this->replaceList);
 }
 
 void KKEditClass::findFile(void)

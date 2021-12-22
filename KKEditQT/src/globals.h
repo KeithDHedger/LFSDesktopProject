@@ -58,8 +58,8 @@ extern char*			prefsToolBarLayout;
 
 
 //find replaceAll
-extern GSList*			findList;
-extern GSList*			replaceList;
+//extern GSList*			findList;
+//extern GSList*			replaceList;
 extern unsigned int		maxFRHistory;
 
 
@@ -74,21 +74,6 @@ extern GList*			toolsList;
 #include "pluginclass.h"
 
 extern PluginClass*		globalPlugins;
-
-//save and load var lists
-extern int				intermarg;
-extern int				flagsarg;
-extern int				inpopup;
-extern int				alwayspopup;
-extern int				clearview;
-extern char*			commandarg;
-extern char*			commentarg;
-extern char*			menuname;
-extern int				rootarg;
-extern int				keycode;
-extern int				usebar;
-
-
 
 void plugRunFunction(gpointer data,gpointer funcname);
 

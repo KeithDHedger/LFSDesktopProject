@@ -508,6 +508,7 @@ void KKEditClass::buildFindReplace(void)
 	this->findDropBox=new QComboBox;
 	reinterpret_cast<QComboBox*>(this->findDropBox)->setEditable(true);
 	reinterpret_cast<QComboBox*>(this->findDropBox)->setCompleter(0);
+	this->findDropBox->addItems(this->findList);
 	vlayout->addWidget(this->findDropBox);
 
 //replace
@@ -518,6 +519,7 @@ void KKEditClass::buildFindReplace(void)
 	this->replaceDropBox=new QComboBox;
 	reinterpret_cast<QComboBox*>(this->replaceDropBox)->setEditable(true);
 	reinterpret_cast<QComboBox*>(this->replaceDropBox)->setCompleter(0);
+	this->replaceDropBox->addItems(this->replaceList);
 	vlayout->addWidget(replaceDropBox);
 
 //switches 1st row
