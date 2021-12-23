@@ -48,8 +48,8 @@ MenuItemClass::~MenuItemClass()
 
 MenuItemClass::MenuItemClass(const QString &text, QWidget *parent): QAction(parent)
 {
-	this->callbackVoid=NULL;
-	this->callbackBool=NULL;
+	//this->callbackVoid=NULL;
+	//this->callbackBool=NULL;
 	this->menuID=0;
 	this->menuString=NULL;
 	this->setText(text);
@@ -75,32 +75,32 @@ const QString* MenuItemClass::getMenuString(void)
 	return(this->menuString);
 }
 
-void MenuItemClass::setCallBackVoid(menuCallbackVoid func)
-{
-	this->callbackVoid=func;
-	connect(this,SIGNAL(triggered()),this,SLOT(menuClickedVoid()));
-}
-
-void MenuItemClass::setCallBackBool(menuCallbackBool func)
-{
-	this->callbackBool=func;
-	connect(this,SIGNAL(triggered()),this,SLOT(menuClickedBool()));
-}
-
+//void MenuItemClass::setCallBackVoid(menuCallbackVoid func)
+//{
+//	this->callbackVoid=func;
+//	connect(this,SIGNAL(triggered()),this,SLOT(menuClickedVoid()));
+//}
+//
+//void MenuItemClass::setCallBackBool(menuCallbackBool func)
+//{
+//	this->callbackBool=func;
+//	connect(this,SIGNAL(triggered()),this,SLOT(menuClickedBool()));
+//}
+//
 void MenuItemClass::menuClickedVoid()
 {
-	if(this->callbackVoid!=NULL)
-		{
-			this->callbackVoid((Widget*)this,this->getMenuID());
-		}
+//	if(this->callbackVoid!=NULL)
+//		{
+//			this->callbackVoid((Widget*)this,this->getMenuID());
+//		}
 }
 
 bool MenuItemClass::menuClickedBool()
 {
-	if(this->callbackBool!=NULL)
-		{
-			return(this->callbackBool((Widget*)this,this->getMenuID()));
-		}
+//	if(this->callbackBool!=NULL)
+//		{
+//			return(this->callbackBool((Widget*)this,this->getMenuID()));
+//		}
 	return(false);
 }
 

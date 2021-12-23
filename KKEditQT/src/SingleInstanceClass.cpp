@@ -20,14 +20,6 @@
 
 #include "SingleInstanceClass.h"
 
-enum msgActions {OPENFILE=100,SAVEFILE,QUITAPP,ACTIVATEAPP};
-
-struct msgStruct
-{
-	long mType;
-	char mText[MAXMSGSIZE];
-};
-
 SingleInstanceClass::SingleInstanceClass(QApplication *app,bool forcem)
 {
 	QSettings	prefs;
@@ -193,4 +185,3 @@ long SingleInstanceClass::getSIWorkSpace(void)
 
 	return(-1);
 }
-

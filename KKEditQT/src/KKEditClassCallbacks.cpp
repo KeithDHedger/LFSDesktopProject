@@ -257,10 +257,10 @@ void KKEditClass::doEditMenuItems()
 					this->mainNotebook->setTabVisible(j,true);
 				break;
 			case PREFSMENUITEM:
-				this->doPrefs(NULL,0);
+				this->doPrefs();
 				break;
 			case PLUGPREFSMENUITEM:
-				doPlugPrefs(NULL,0);
+				//doPlugPrefs(NULL,0);
 				break;
 		}
 }

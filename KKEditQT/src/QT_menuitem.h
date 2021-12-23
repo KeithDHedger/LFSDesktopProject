@@ -43,8 +43,8 @@
 
 #include "kkedit-includes.h"
 
-typedef void (*menuCallbackVoid)(Widget* widget,long data);
-typedef bool (*menuCallbackBool)(Widget* widget,long data);
+//typedef void (*menuCallbackVoid)(Widget* widget,long data);
+//typedef bool (*menuCallbackBool)(Widget* widget,long data);
 
 
 class MenuItemClass : public QAction
@@ -60,8 +60,8 @@ class MenuItemClass : public QAction
 		unsigned int 		getMenuID(void);
 		void				setMenuString(QString str);
 		const QString		*getMenuString(void);
-		void				setCallBackVoid(menuCallbackVoid func);
-		void				setCallBackBool(menuCallbackBool func);
+		//void				setCallBackVoid(menuCallbackVoid func);
+		//void				setCallBackBool(menuCallbackBool func);
 
 	public slots:
 		void				menuClickedGotoLine();
@@ -69,8 +69,8 @@ class MenuItemClass : public QAction
 	private:
 		int					menuID;
 		QString				*menuString;
-		menuCallbackVoid	callbackVoid;
-		menuCallbackBool	callbackBool;
+		//menuCallbackVoid	callbackVoid;
+		//menuCallbackBool	callbackBool;
 
 	private slots:
 		void				menuClickedVoid(void);

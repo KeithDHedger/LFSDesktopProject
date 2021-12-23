@@ -69,8 +69,6 @@ enum {HIDETABSHORTCUT=0,DELETELINESHORTCUT,DELETETOEOLSHORTCUT,DELETETOSOLSHORTC
 
 enum {FRCASE=0,FRUSEREGEX,FRWRAP,FRALLFILES,FRHIGHLIGHTALL,FRREPLACEALL,FRMAXSWITCHES};
 
-#include "backclass.h"
-//class HistoryClass;
 #include "kkedit-includes.h"
 
 class MenuItemClass;
@@ -120,7 +118,7 @@ class KKEditClass : public QObject
 		QShortcut					*appShortcuts[SHORTCUTSCOUNT];
 		QStringList					defaultShortCutsList={"Ctrl+H","Ctrl+Y","Ctrl+?","Ctrl+K","Ctrl+Shift+H","Ctrl+D","Ctrl+Shift+D","Ctrl+L","Ctrl+M","Ctrl+Shift+M","Ctrl+@","Ctrl+'"};
 
-		HistoryClass				*history;
+		//HistoryClass				*history;
 
 //app functions
 		void						initApp(int argc,char** argv);
@@ -335,7 +333,7 @@ class KKEditClass : public QObject
 		void						addIcon(const char* icon,const char* data,int toolnumber,const char* tooltip);
 		void						populateDnD(void);
 		void						buildPrefsWindow(void);
-		void						doPrefs(Widget* widget,uPtr data);
+		void						doPrefs(void);
 		void						addIconToList(const char* name,int type);
 		void						populateStore(void);
 		void						resetKeyCombo(void);

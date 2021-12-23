@@ -88,18 +88,13 @@ class DocumentClass : public QPlainTextEdit
 		char								*lastFind;
 		bool								dirty=false;
 		QString								mimeType="text/plain";
-		GSList*								regexList;
 		int									regexMatchNumber;
-		uPtr								reserved4;
+		//uPtr								reserved4;
 		bool								gotUndo=false;
 		bool								gotRedo=false;
 
 		int									pageIndex;
 
-	//signals:
-	//	void								cursorPositionChanged(void);
-
-//	public slots:
 	protected:
 	    void								resizeEvent(QResizeEvent *event);
 		void								keyPressEvent(QKeyEvent *event);

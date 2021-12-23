@@ -68,7 +68,7 @@ void KKEditClass::openAsHexDump(void)
 		}
 }
 
-VISIBLE void KKEditClass::newFile(const QString data,const QString filename)
+void KKEditClass::newFile(const QString data,const QString filename)
 {
 	DocumentClass	*doc;
 	int				tabnum;

@@ -21,29 +21,11 @@
 #ifndef _SINGLEINSTANCECLASS_
 #define _SINGLEINSTANCECLASS_
 
-#include <QtWidgets>
-#include <QApplication>
+#include "kkedit-includes.h"
+
 #include <QX11Info>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
-#include <sys/types.h>
-#include <signal.h>
-
-#include <sys/ipc.h>
-#include <sys/msg.h>
-#include <unistd.h>
-
-#define MAXMSGSIZE 1024
-#define MSGKEY 0x8000
-#define ALLOK 0
-#define UNKNOWNARG 1
-#define NOMAKEQUEUE 2
-#define NOSENDMSG 3
-#define WAITMSG 0
-
-#define MSGANY 0
-#define MSGSEND 2
-#define MSGRECEIVE 1
 
 class SingleInstanceClass
 {

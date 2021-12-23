@@ -238,10 +238,9 @@ void DocumentClass::keyReleaseEvent(QKeyEvent *event)
 
 DocumentClass::DocumentClass(KKEditClass *kk,QWidget *parent): QPlainTextEdit(parent)
 {
-	this->regexList=NULL;
 	this->doneHighlightAll=false;
 	this->lastFind=NULL;
-	this->reserved4=0;
+	//this->reserved4=0;
 	this->mainKKEditClass=kk;
 
 #ifdef _USEMINE_

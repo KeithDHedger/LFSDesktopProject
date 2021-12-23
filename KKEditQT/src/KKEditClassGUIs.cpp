@@ -40,7 +40,7 @@ void KKEditClass::makePrefsCheck(int widgnum,const QString label,bool onoff,int 
 		this->table->addWidget(prefsWidgets[widgnum],posy,posx,Qt::AlignTop);
 }
 
-void KKEditClass::doPrefs(Widget* widget,uPtr data)
+void KKEditClass::doPrefs(void)
 {
 	this->resetKeyCombo();
 	this->prefsWindow->setWindowModality(Qt::ApplicationModal);

@@ -24,7 +24,7 @@
 KKEditClass::KKEditClass(QApplication *app)
 {
 	this->application=app;
-	this->history=new HistoryClass;
+//	this->history=new HistoryClass;
 }
 
 KKEditClass::~KKEditClass()
@@ -34,7 +34,7 @@ KKEditClass::~KKEditClass()
 	for(int j=0;j<SHORTCUTSCOUNT;j++)
 		delete this->appShortcuts[j];
 
-	delete this->history;
+//	delete this->history;
 
 	asprintf(&command,"rm -rf %s",this->tmpFolderName.toStdString().c_str());
 	system(command);
@@ -160,7 +160,7 @@ void KKEditClass::setUpToolBar(void)
 						if(this->liveSearchWidget==NULL)
 							this->liveSearchWidget=new QLineEdit;
 						this->liveSearchWidget->setToolTip("Live Search");
-						QObject::connect(((QLineEdit*)this->liveSearchWidget),&QLineEdit::textChanged,doLiveSearch);
+						//QObject::connect(((QLineEdit*)this->liveSearchWidget),&QLineEdit::textChanged,doLiveSearch);
 						this->toolBar->addWidget(this->liveSearchWidget);
 						break;
 
@@ -326,9 +326,9 @@ void KKEditClass::initApp(int argc,char** argv)
 //	else
 //		styleName="Root Source";
 	//this->highlightColour="#808080";
-	asprintf(&filename,"%s/" KKEDITFOLDER "/tools",getenv("HOME"));
-	g_mkdir_with_parents(filename,493);
-	if (filename!=NULL) free(filename);filename=NULL;
+//	asprintf(&filename,"%s/" KKEDITFOLDER "/tools",getenv("HOME"));
+//	g_mkdir_with_parents(filename,493);
+//	if (filename!=NULL) free(filename);filename=NULL;
 
 	this->mainWindow=new QMainWindow;
 	for(int j=0;j<SHORTCUTSCOUNT;j++)

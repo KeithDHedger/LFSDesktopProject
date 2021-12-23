@@ -1,12 +1,10 @@
 
 AM_CPPFLAGS =	-I$(top_srcdir) \
 			$(X11_CFLAGS) \
-			$(GLIB_CFLAGS) \
 			$(QT_CFLAGS) \
 			$(QTWIDGETS_CFLAGS) \
 			$(QTX11EXTRA_CFLAGS) \
 			$(WEBENGINEWIDGETS_CFLAGS) \
-			$(GMODULE_CFLAGS) \
 			-DPREFIX=\""${prefix}\"" \
 			-DLOCALEDIR=\""${localedir}"\" \
 			-DDATADIR=\""${pkgdatadir}"\" \
@@ -20,7 +18,5 @@ AM_CPPFLAGS =	-I$(top_srcdir) \
 LIBS =		$(X11_LIBS) \
 			$(QTWIDGETS_LIBS) \
 			$(QTX11EXTRA_LIBS) \
-			$(GLIB_LIBS) \
 			$(WEBENGINEWIDGETS_LIBS) \
-			$(GMODULE_LIBS) \
 			$(ASPELL_LIBS)
