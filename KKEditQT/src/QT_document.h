@@ -1,38 +1,29 @@
 /*
  *
- * ©K. D. Hedger. Fri  5 Nov 14:04:29 GMT 2021 keithdhedger@gmail.com
+ * ©K. D. Hedger. Thu 23 Dec 20:37:27 GMT 2021 keithdhedger@gmail.com
 
- * This file (QT_document.h) is part of KKEdit.
+ * This file (QT_document.h) is part of KKEditQT.
 
- * KKEdit is free software: you can redistribute it and/or modify
+ * KKEditQT is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * at your option) any later version.
 
- * KKEdit is distributed in the hope that it will be useful,
+ * KKEditQT is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with KKEdit.  If not, see <http://www.gnu.org/licenses/>.
+ * along with KKEditQT.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef _QT_DOCUMENT_
 #define _QT_DOCUMENT_
 
-#include "kkedit-includes.h"
-
-#include <QPlainTextEdit>
-#include <QObject>
-#include "qsourcehighliter.h"
+#include "KKEditClass.h"
 
 using namespace QSourceHighlite;
-
-class QPaintEvent;
-class QResizeEvent;
-class QSize;
-class QWidget;
 
 class LineNumberArea;
 
@@ -88,11 +79,8 @@ class DocumentClass : public QPlainTextEdit
 		char								*lastFind;
 		bool								dirty=false;
 		QString								mimeType="text/plain";
-		int									regexMatchNumber;
-		//uPtr								reserved4;
 		bool								gotUndo=false;
 		bool								gotRedo=false;
-
 		int									pageIndex;
 
 	protected:
@@ -112,8 +100,6 @@ class DocumentClass : public QPlainTextEdit
 	private:
 		void								clearXtraSelections(void);
 		QWidget 							*lineNumberArea;
-		QTextCursor							oldCursor;
-		QTextBlockFormat					oldBlockFormat;
 		QString								indentPad;
 		bool								realShowLineNumbers(void);
 		bool								realHiliteLine(void);

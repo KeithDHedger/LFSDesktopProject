@@ -1,23 +1,22 @@
 /*
  *
- * ©K. D. Hedger. Sun 31 Oct 12:19:03 GMT 2021 keithdhedger@gmail.com
+ * ©K. D. Hedger. Thu 23 Dec 20:39:55 GMT 2021 keithdhedger@gmail.com
 
- * This file (KKEditClass.cpp) is part of KKEdit.
+ * This file (KKEditClass.cpp) is part of KKEditQT.
 
- * KKEdit is free software: you can redistribute it and/or modify
+ * KKEditQT is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * at your option) any later version.
 
- * KKEdit is distributed in the hope that it will be useful,
+ * KKEditQT is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with KKEdit.  If not, see <http://www.gnu.org/licenses/>.
+ * along with KKEditQT.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 
 #include "KKEditClass.h"
 
@@ -255,7 +254,7 @@ void KKEditClass::rebuildBookMarkMenu()
 
 	this->bookMarkMenu->clear();
 	menuItemSink=this->makeMenuItemClass(BOOKNARKSMENU,"Remove All Bookmarks",0,"window-close",REMOVEALLBOOKMARKS,REMOVEALLBOOKMARKSMENUITEM);
-	menuItemSink=this->makeMenuItemClass(BOOKNARKSMENU,"Toggle Bookmark",QKeySequence::fromString("Ctrl+T"),DATADIR"/pixmaps/BookMark.png",TOGGLEBOOKMARK,TOGGLEBOOKMARKMENUITE);
+	menuItemSink=this->makeMenuItemClass(BOOKNARKSMENU,"Toggle Bookmark",QKeySequence::fromString("Ctrl+T"),DATADIR"/pixmaps/BookMark.png",TOGGLEBOOKMARK,TOGGLEBOOKMARKMENUITEM);
 
 	this->bookMarkMenu->addSeparator();
 	this->bookMarks.clear();
@@ -268,7 +267,7 @@ void KKEditClass::handleBMMenu(QWidget *widget,int what)
 	bookMarkStruct	bms;
 	switch(what)
 		{
-			case TOGGLEBMCLICKED:
+			case TOGGLEBOOKMARKMENUITEM:
 				{
 					foreach(bookMarkStruct value,this->bookMarks)
 						{
@@ -289,8 +288,10 @@ void KKEditClass::handleBMMenu(QWidget *widget,int what)
 						}
 
 					bms.bmLabel=cursor.block().text().simplified();
-					bms.docIndex=doc->pageIndex;
 					bms.line=cursor.blockNumber()+1;
+					if(bms.bmLabel.isEmpty()==true)
+						bms.bmLabel=doc->getFileName() + QString(" Line %1").arg(bms.line); 
+					bms.docIndex=doc->pageIndex;
 					bms.bmKey=this->bookMarksIndex;
 					bms.menu=this->makeMenuItemClass(BOOKNARKSMENU,bms.bmLabel,0,NULL,"NOTNEEDED",this->bookMarksIndex);
 					this->bookMarks[this->bookMarksIndex++]=bms;
@@ -414,17 +415,11 @@ return;
 
 QString KKEditClass::randomName(int len)
 {
-//	this->checkBufferLen(len);
-//	srand(time(0));
 	QString	retval="";
 
 	const char alphanum[]="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 	for(int i=0;i<len;++i)
 		retval+=alphanum[rand()%(sizeof(alphanum)-1)];
-   //    	this->buffer[i]=alphanum[rand()%(sizeof(alphanum)-1)];
-
-    //this->buffer[len]=0;
-   // return(this->returnData(this->buffer));
    return(retval);
 }
 
@@ -624,12 +619,6 @@ void KKEditClass::tabContextMenu(const QPoint &pt)
 					menu.addAction(menuitem);
 					QIcon itemicon=QIcon::fromTheme(this->tabContextMenuItems[cnt].icon);
 					menuitem->setIcon(itemicon);
-//					if(cnt==(HIDETAB-COPYFOLDERPATH)/0x100)//TODO//
-//						{
-//						fprintf(stderr,"here\n");
-//							menuitem->setShortcut(QKeySequence("Ctrl+H"));
-//						}
-//					
 					QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doTabBarContextMenu()));
 				}
 			menu.exec(this->tabBar->mapToGlobal(pt));

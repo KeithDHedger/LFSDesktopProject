@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Sun  5 Dec 16:00:07 GMT 2021 keithdhedger@gmail.com
+ * ©K. D. Hedger. Thu 23 Dec 20:39:32 GMT 2021 keithdhedger@gmail.com
 
  * This file (KKEditClassSearch.cpp) is part of KKEditQT.
 
@@ -67,12 +67,6 @@ void KKEditClass::doFindReplace(int response_id)
 			flags+=QTextDocument::FindCaseSensitively;
 		}
 
-//QTextStream(stderr) << "insensitiveSearch=" << this->insensitiveSearch <<Qt::endl;
-//QTextStream(stderr) << "hightlightAll=" << this->hightlightAll <<Qt::endl;
-//QTextStream(stderr) << "useRegex=" << this->useRegex <<Qt::endl;
-//QTextStream(stderr) << "wrapSearch=" << this->wrapSearch <<Qt::endl;
-//QTextStream(stderr) << "replaceAll=" << this->replaceAll <<Qt::endl;
-//
 	flags+=(((response_id==FINDPREV)<<((QTextDocument::FindBackward)-1)));//TODO// wrap backwards do all files
 
 	if((response_id==FINDNEXT) && (this->hightlightAll==true))

@@ -1,21 +1,21 @@
 /*
  *
- * ©K. D. Hedger. Sun 31 Oct 12:18:55 GMT 2021 keithdhedger@gmail.com
+ * ©K. D. Hedger. Thu 23 Dec 20:40:06 GMT 2021 keithdhedger@gmail.com
 
- * This file (KKEditClass.h) is part of KKEdit.
+ * This file (KKEditClass.h) is part of KKEditQT.
 
- * KKEdit is free software: you can redistribute it and/or modify
+ * KKEditQT is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * at your option) any later version.
 
- * KKEdit is distributed in the hope that it will be useful,
+ * KKEditQT is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with KKEdit.  If not, see <http://www.gnu.org/licenses/>.
+ * along with KKEditQT.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef _KKEDITCLASS_
@@ -35,7 +35,7 @@ enum {DOCSMENUITEM=0xa000,TOGGLETOOLBARMENUITEM,TOGGLETOOLWINDOWMENUITEM,TOGGLES
 enum {GOTODEFINEMENUITEM=0xb000,OPENINCLUDEMENUITEM,GOTOLINEMENUITEM,SEARCHFORDEFINEMENUITEM,SEARCHGTKDOCS,SEARCHQT5DOCS,SEARCHDOXYDOCS,GOBACKMENUITEM,GOFORWARDMENUITEM};
 //func
 //bms
-enum {REMOVEALLBOOKMARKSMENUITEM=0xc000,TOGGLEBOOKMARKMENUITE};
+enum {REMOVEALLBOOKMARKSMENUITEM=0xc000,TOGGLEBOOKMARKMENUITEM};
 
 //tools
 enum {MANAGETOOLSMENUITEM=0xd000};
@@ -69,7 +69,13 @@ enum {HIDETABSHORTCUT=0,DELETELINESHORTCUT,DELETETOEOLSHORTCUT,DELETETOSOLSHORTC
 
 enum {FRCASE=0,FRUSEREGEX,FRWRAP,FRALLFILES,FRHIGHLIGHTALL,FRREPLACEALL,FRMAXSWITCHES};
 
-#include "kkedit-includes.h"
+#include "qsourcehighliter.h"
+#include "qsourcehighliterthemes.h"
+#include "languagedata.h"
+
+#include "QT_menuitem.h"
+#include "QT_highlighter.h"
+#include "QT_document.h"
 
 class MenuItemClass;
 
@@ -140,6 +146,7 @@ class KKEditClass : public QObject
 		void						setToolbarSensitive(void);
 		QString						randomName(int len);
 
+		void						writeExitData(void);
 //app prefs
 //document
 		bool						prefsIndent=true;
@@ -358,35 +365,6 @@ class KKEditClass : public QObject
 //plugin vars
 		QWidget						*globalPlugMenu=NULL;
 
-///////////////////////////////////////////TODO/////////////////////////////////////////////////////////////////////////
-
-//		
-//		
-//		
-//		bool					hightlightAll=true;
-		
-//		bool					showBMBar=false;
-
-//		
-
-
-
-//		std::string				styleName;
-
-
-//theme
-
-//	private slots:
-//		void					switchTab(int thispage);
-
-
-
-
-//temp prefs
-
-//app
-		void						writeExitData(void);
-
 	public slots:
 		void						doTimer(void);
 		void						doFileMenuItems();
@@ -422,59 +400,8 @@ class KKEditClass : public QObject
 		void						doSearchFromBar(const QString txt);
 		void						setSearchPrefs(int state);
 
-#ifdef _BUILDDOCVIEWER_
-//		void						docViewerGoBack() { QTextStream(stderr) << "<<<<<<" << Qt::endl; this->webView->page()->triggerAction(QWebPage::Back);}
-//		void						docViewerGoForward() { this->webView->page()->triggerAction(QWebPage::Forward);}
-//		void						docViewerGoHome() { this->webView->load(QUrl(this->htmlURI));}
-#endif
 	protected:
 	private:
-//app
-
-
-	
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////	
-
-
-
-
 };
-
-////do plugins
-//	globalPlugins=new PluginClass(loadPluginsFlag);
-////set up plugin data
-//	globalPlugins->globalPlugData=(plugData*)malloc(sizeof(plugData));
-//	globalPlugins->globalPlugData->dataDir=DATADIR;
-//	globalPlugins->globalPlugData->gPlugFolder=globalPlugins->plugFolderPaths[GLOBALPLUGS];
-//	globalPlugins->globalPlugData->lPlugFolder=globalPlugins->plugFolderPaths[LOCALPLUGS];
-//	globalPlugins->globalPlugData->htmlFile=htmlFile;
-//	globalPlugins->globalPlugData->thePage=&thePage;
-//	globalPlugins->globalPlugData->currentTab=-1;
-//	globalPlugins->globalPlugData->tmpFolder=tmpFolderName;
-//	globalPlugins->globalPlugData->kkeditVersion=VERSION;
-//
-//	/*
-//		for(int j=0;j<globalPlugins->plugCount;j++)
-//			{
-//				struct pluginData
-//	{
-//		char*		name;
-//		bool		enabled;
-//		GModule*	module;
-//		bool		loaded;
-//		char*       path;
-//	};
-//				pluginData* pd=(pluginData*)g_list_nth_data(globalPlugins->plugins,j);
-//				printf("num %i name=%s\n",j,pd->name);
-//				printf("num %i enabled=%i\n",j,(int)pd->enabled);
-//				printf("num %i path=%s\n",j,pd->path);
-//			}
-//	*/
-//
-//	localeLang=getenv("LANG");
-//
-//	history=new HistoryClass;
 
 #endif

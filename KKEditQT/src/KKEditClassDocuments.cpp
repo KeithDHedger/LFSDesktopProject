@@ -1,21 +1,21 @@
 /*
  *
- * ©K. D. Hedger. Fri 19 Nov 11:35:40 GMT 2021 keithdhedger@gmail.com
+ * ©K. D. Hedger. Thu 23 Dec 20:38:56 GMT 2021 keithdhedger@gmail.com
 
- * This file (KKEditClassDocuments.cpp) is part of KKEdit.
+ * This file (KKEditClassDocuments.cpp) is part of KKEditQT.
 
- * KKEdit is free software: you can redistribute it and/or modify
+ * KKEditQT is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * at your option) any later version.
 
- * KKEdit is distributed in the hope that it will be useful,
+ * KKEditQT is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with KKEdit.  If not, see <http://www.gnu.org/licenses/>.
+ * along with KKEditQT.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "KKEditClass.h"
@@ -28,20 +28,6 @@ DocumentClass* KKEditClass::getDocumentForTab(int tabnum)
 		return(qobject_cast<DocumentClass*>(this->mainNotebook->widget(tabnum)));
 }
 
-/*
- QHashIterator<QString, int> i(hash);
- while (i.hasNext()) {
-     i.next();
-     cout << i.key() << ": " << i.value() << Qt::endl;
- }
-Here's the same code, but using an STL-style iterator:
-
- QHash<QString, int>::const_iterator i = hash.constBegin();
- while (i != hash.constEnd()) {
-     cout << i.key() << ": " << i.value() << Qt::endl;
-     ++i;
- }
-*/
 void KKEditClass::resetAllFilePrefs(void)
 {
 	DocumentClass	*doc;
@@ -53,142 +39,6 @@ void KKEditClass::resetAllFilePrefs(void)
 		}
 }
 
-/*
-functionData* getFunctionByName(const char* name,bool recurse,bool casesensitive)
-{
-	DocumentClass		*document=kkedit->getDocumentForTab(-1);
-	pageStruct			*page;
-	char				*functions=NULL;
-	QString				str;
-	char				*lineptr;
-	int					gotmatch=-1;
-	char				function[1024];
-	functionData*		fdata;
-	int					loop;
-	int					startpage;
-	int					holdlistfunction=kkedit->prefsFunctionMenuLayout;
-	StringSlice			slice;
-	bool				whileflag=true;
-	bool				checkthispage=true;
-	int					maxpage;;
-	char				funcname[256];
-	char				filepath[1024];
-	int					linenumber;
-	QStringList			strlist;
-	Qt::CaseSensitivity	cs;
-
-	if(document==NULL)
-		return(NULL);
-
-	if(casesensitive==true)
-		cs=Qt::CaseSensitive;
-	else
-		cs=Qt::CaseInsensitive;
-
-	loop=qobject_cast<QTabWidget*>(kkedit->mainNotebook)->currentIndex();
-	startpage=loop;
-	checkthispage=true;
-	maxpage=qobject_cast<QTabWidget*>(kkedit->mainNotebook)->count();
-
-	while(whileflag==true)
-		{
-			document=kkedit->getDocumentForTab(loop);
-			if(document->filePath!=NULL)
-				{
-					kkedit->prefsFunctionMenuLayout=0;
-					getRecursiveTagList((char*)document->filePath.toStdString().c_str(),&functions);//TODO//
-					kkedit->prefsFunctionMenuLayout=holdlistfunction;
-					if(functions!=NULL)
-						{
-							str=functions;
-							strlist=str.split("\n",Qt::SkipEmptyParts);
-							gotmatch=-1;
-							for(int i=0;i<strlist.size();i++)
-								{
-									if(strlist.at(i).startsWith(name,cs))
-										{
-											gotmatch=0;
-											lineptr=strdup(strlist.at(i).toLocal8Bit().constData());
-											break;
-										}
-								}
-
-							debugFree(&functions,"functions getFunctionByName");
-							if(gotmatch==0)
-								{
-									fdata=(functionData*)malloc(sizeof(functionData));
-									sscanf (lineptr,"%" VALIDFUNCTIONCHARS "s",function);
-									fdata->name=strdup(function);
-									sscanf (lineptr,"%*s %" VALIDFUNCTIONCHARS "s",function);
-									fdata->type=strdup(function);
-									sscanf (lineptr,"%*s %*s %i",&fdata->line);
-									sscanf (lineptr,"%*s %*s %*i %" VALIDFILENAMECHARS "s",function);
-									fdata->file=strdup(function);
-									sscanf (lineptr,"%*s %*s %*i %*s %[^\n]s",function);
-									fdata->define=strdup(function);
-									fdata->intab=loop;
-									debugFree(&lineptr,"lineptr getFunctionByName");
-									return(fdata);
-								}
-						}
-				}
-
-			if(checkthispage==true)
-				{
-					loop=-1;
-					checkthispage=false;
-				}
-
-			loop++;
-			if(loop==startpage)
-				loop++;
-			if(loop==maxpage)
-				whileflag=false;
-
-		}
-
-//not in any open files
-//check ./ from all files
-//dont do this from popup for speed reasons
-//	if(recurse==true)
-		{
-			if(document->getDirPath()!=NULL)
-				{
-					getRecursiveTagListFileName((char*)document->getDirPath().toStdString().c_str(),&functions);//TODO//
-					if(functions!=NULL)
-						{
-							str=functions;
-							strlist=str.split("\n",Qt::SkipEmptyParts);
-							gotmatch=-1;
-							for(int i=0;i<strlist.size();i++)
-								{
-									if(strlist.at(i).startsWith(name,cs))
-										{
-											gotmatch=0;
-											lineptr=strdup(strlist.at(i).toLocal8Bit().constData());
-											break;
-										}
-								}
-
-							if(gotmatch!=-1)
-								{
-									sscanf (lineptr, "%s\t%s\t%i",funcname,filepath,&linenumber);
-									fdata=(functionData*)malloc(sizeof(functionData));
-									fdata->name=strdup(funcname);
-									fdata->file=strdup(filepath);
-									fdata->line=linenumber+1;
-									fdata->type=NULL;
-									fdata->define=NULL;
-									fdata->intab=-1;
-									return(fdata);
-								}
-						}
-					
-				}
-		}
-	return(NULL);			
-}					getRecursiveTagList((char*)document->filePath.toStdString().c_str(),&functions);//TODO//
-*/
 void KKEditClass::goToDefinition(const QString txt)
 {
 	DocumentClass	*doc=this->getDocumentForTab(-1);
@@ -295,55 +145,6 @@ void KKEditClass::goToDefinition(const QString txt)
 		}
 	this->statusBar->showMessage(QString("Couldn't find definition for %1").arg(searchfor),STATUSBARTIMEOUT);
 }
-#if 0
-void KKEditClass::goToDefinition(const QString txt)
-{
-	DocumentClass	*doc=this->getDocumentForTab(-1);
-	functionData	*fdata=NULL;
-	char			*selection;
-	const char		*selectionptr;
-	QString			searchfor;
-
-	if((txt.isEmpty()==true) && (doc==NULL))
-		return;
-
-	if((txt.isEmpty()==true) && (doc->textCursor().hasSelection()==false))
-		return;
-	else
-		{
-			if(txt.isEmpty()==true)
-				searchfor=doc->textCursor().selectedText();
-			else
-				searchfor=txt;
-		}
-
-//	if(document==NULL)
-//		return;
-
-	//selection=strdup(document->textCursor().selectedText().toUtf8().constData());
-	selection=strdup(searchfor.toUtf8().constData());
-	selectionptr=selection;
-fprintf(stderr,">>>>>>>>>>>>>>>\n");
-	fdata=getFunctionByName(selectionptr,true,true);
-	if(fdata!=NULL)
-		{
-			//TODO//
-//			history->savePosition();
-			if(fdata->intab!=-1)
-				{
-					this->mainNotebook->setCurrentIndex(fdata->intab);
-					this->gotoLine(fdata->line);
-				}
-			else
-				{
-					this->openFile(fdata->file,fdata->line-1,true);
-				}
-			destroyData(fdata);
-		}
-
-	free(selection);
-}
-#endif
 
 void KKEditClass::gotoLine(int linenumber)
 {

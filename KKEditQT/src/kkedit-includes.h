@@ -84,18 +84,7 @@ enum msgActions {OPENFILE=100,SAVEFILE,QUITAPP,ACTIVATEAPP};
 #define	TOOL_INSERT_MASK 0b10111
 #define	TOOL_VIEW_OP 16
 
-#define VALIDFILENAMECHARS "[A-Za-z0-9_-./ <>]"
-#define VALIDFUNCTIONCHARS "[A-Za-z0-9_*:/@()-,.#;][\"]"
-
-#define BOOKMAXMARKMENULEN 40
-#define MAXRECENT 10
 #define MAXTEXTWIDTH 500
-
-#define MARK_TYPE_1		"one"
-#define MARK_TYPE_2		"two"
-
-#define USEURI			-1
-#define USEFILE			-2
 
 #define KKEDITFOLDER	".KKEditQT"
 
@@ -108,20 +97,89 @@ enum {PIXBUF_COLUMN,TEXT_COLUMN,BUTTON_NUM};
 
 enum  utilVarType {BOOLVAR=0,INTVAR,CHARVAR,MULTVAR,BADTYPE,DECIMALOUT,HEXOUT,OCTALOUT};
 
+#define GLOBALPLUGS			1
+#define LOCALPLUGS			0
+
+#define NEWMENUNAME "newmenu"
+#define OPENMENUNAME "openmenu"
+#define HEXDUMPMENUNAME "hexdumpmenu"
+#define NEWADMINMENUNAME "newadminmenu"
+
+#define NEWEDITORMENUNAME "neweditormenu"
+#define MANEDITORMENUNAME "maneditormenu"
+#define DOXYBUILDMENUNAME "doxybuildmenu"
+#define RECENTMENUNAME "recentmenu"
+#define SAVEMENUNAME "savemenu"
+#define SAVEASMENUNAME "saveasmenu"
+#define SAVEALLMENUNAME "saveallmenu"
+#define SAVESESSIONMENUNAME "savesessionmenu"
+#define RESTORESESSIONMENUNAME "restoresessionmenu"
+#define PRINTMENUNAME "printmenu"
+#define CLOSEMENUNAME "closemenu"
+#define CLOSEALLMENUNAME "closeallmenu"
+#define SORTTABSMENUNAME "sorttabsmenu"
+#define SHOWALLTABSMENUNAME "showalltabsmenu"
+#define SELECTTABMENUNAME "selecttabmenu"
+#define REVERTMENUNAME "revertmenu"
+#define QUITMENUNAME "quitmenu"
+#define UNDOMENUNAME "undomenu"
+#define REDOMENUNAME "redomenu"
+#define UNDOALLMENUNAME "undoallmenu"
+#define REDOALLMENUNAME "redoallmenu"
+#define CUTMENUNAME "cutmenu"
+#define COPYMENUNAME "copymenu"
+#define PASTEMENUNAME "pastemenu"
+#define FINDMENUNAME "findmenu"
+#define FINDNEXTMENUNAME "findnextmenu"
+#define PREFSMENUNAME "prefsmenu"
+#define PLUGPREFSMENUNAME "plugprefsmenu"
+#define SHOWDOCSMENUNAME "showdocsmenu"
+#define SHOWBMBARMENUNAME "showbmbarmenu"
+#define SHOWTOOLBARMENUNAME "showtoolbarmenu"
+#define SHOWTOOLOUTMENUNAME "showtoolout"
+#define SHOWSTATUSMENUNAME "showstatusmenu"
+#define SHOWDOCVIEWERMENUNAME "showdocviewer"
+#define GOTODEFMENUNAME "gotodefinemenu"
+#define OPENINCLUDEMENUNAME "openincludemenu"
+#define GOTOLINEMENUNAME "gotolinemenu"
+#define SEARCHFORDEFMENUNAME "searchfordefmenu"
+#define SEARCHGTKMENUNAME "searchgtkmenu"
+#define SEARCHQT5MENUNAME "searchqt5menu"
+#define SEARCHDOXYMENUNAME "searchdoxymenu"
+#define GOBACKMENUNAME "gobackmenu"
+#define GOFORWARDMENUNAME "goforwardmenu"
+#define ABOUTMENUNAME "aboutmenu"
+#define HELPMENUNAME "helpmenu"
+#define ONLINEHELPMENUNAME "onlinehelpmenu"
+#define GETPLUGSMENUNAME "getplugsmenu"
+#define REMOVEALLBOOKMARKS "removeallbookmarks"
+#define TOGGLEBOOKMARK "togglebookmark"
+
+#define FINDNEXTOBJECTNAME "1"
+#define FINDPREVOBJECTNAME "2"
+#define FINDREPLACEOBJECTNAME "3"
+
+struct args
+{
+	const char*	name;
+	int			type;
+	void*		data;
+};
+
+enum {TYPEINT=1,TYPESTRING,TYPEBOOL,TYPELIST};
+
 class KKEditClass;
 class DocumentClass;
 
-
-#include "kkedit-plugins.h"
-
-#include "qsourcehighliter.h"
-#include "qsourcehighliterthemes.h"
-#include "languagedata.h"
-
-
-#include "QT_menuitem.h"
-#include "QT_highlighter.h"
-#include "QT_document.h"
+struct bookMarkStruct
+{
+	DocumentClass*		doc;
+	int					line;
+	int					docIndex;
+	QString				bmLabel;
+	QAction				*menu;
+	int					bmKey;
+};
 
 #include "KKEditClass.h"
 

@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Fri 26 Nov 17:34:26 GMT 2021 keithdhedger@gmail.com
+ * ©K. D. Hedger. Thu 23 Dec 20:39:15 GMT 2021 keithdhedger@gmail.com
 
  * This file (KKEditClassFiles.cpp) is part of KKEditQT.
 
