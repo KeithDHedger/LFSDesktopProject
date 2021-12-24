@@ -1,5 +1,6 @@
 0.5.1
 Fixed blank label in bm menu if bookmarking empty line.
+Sorce tree clean up.
 
 0.5.0
 Done saving find/replace history.
