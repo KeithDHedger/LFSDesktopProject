@@ -212,13 +212,17 @@ class KKEditClass : public QObject
 		QMenu						*fileMenu;
 		QMenu						*saveSessionsMenu;
 		QMenu						*restoreSessionsMenu;
+		MenuItemClass				*saveCurrentSessionMenuItem;
+		MenuItemClass				*restoreDefaultSessionMenuItem;
+
+
 		MenuItemClass				*newMenuItem;
 		MenuItemClass				*openMenuItem;
 		MenuItemClass				*saveMenuItem;
 		MenuItemClass				*saveAsMenuItem;
 		MenuItemClass				*saveAllMenuItem;
-		MenuItemClass				*saveSessionMenuItem;
-		MenuItemClass				*restoreSessionMenuItem;
+		//MenuItemClass				*saveSessionMenuItem;
+		//MenuItemClass				*restoreSessionMenuItem;
 		MenuItemClass				*printMenuItem;
 		MenuItemClass				*closeMenuItem;
 		MenuItemClass				*closeAllMenuItem;

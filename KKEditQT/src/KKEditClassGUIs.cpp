@@ -678,7 +678,7 @@ void KKEditClass::buildMainGui(void)
 //save session
 	this->saveSessionsMenu=new QMenu("&Save Session");
 	this->fileMenu->addMenu(this->saveSessionsMenu);
-	menuItemSink=this->makeMenuItemClass(SAVESESSIONSMENU,"Save Current Session",0,NULL,SAVESESSIONMENUNAME,CURRENTSESSION);
+	this->saveCurrentSessionMenuItem=this->makeMenuItemClass(SAVESESSIONSMENU,"Save Current Session",0,NULL,SAVESESSIONMENUNAME,CURRENTSESSION);
 	this->saveSessionsMenu->addSeparator();
 	for(int j=1;j<MAXSESSIONS;j++)
 		menuItemSink=this->makeMenuItemClass(SAVESESSIONSMENU,this->sessionNames.value(j),0,NULL,SAVESESSIONMENUNAME,j);
@@ -686,7 +686,7 @@ void KKEditClass::buildMainGui(void)
 //restore session
 	this->restoreSessionsMenu=new QMenu("&Restore Session");
 	this->fileMenu->addMenu(this->restoreSessionsMenu);
-	menuItemSink=this->makeMenuItemClass(RESTORESESSIONSMENU,"Restore Default Session",0,NULL,RESTORESESSIONMENUNAME,CURRENTSESSION);
+	this->restoreDefaultSessionMenuItem=this->makeMenuItemClass(RESTORESESSIONSMENU,"Restore Default Session",0,NULL,RESTORESESSIONMENUNAME,CURRENTSESSION);
 	this->restoreSessionsMenu->addSeparator();
 	for(int j=1;j<MAXSESSIONS;j++)
 		menuItemSink=this->makeMenuItemClass(RESTORESESSIONSMENU,this->sessionNames.value(j),0,NULL,RESTORESESSIONMENUNAME,j);

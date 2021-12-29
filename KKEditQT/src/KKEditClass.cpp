@@ -831,6 +831,7 @@ printf("void KKEditClass::closeAllTabs(void)\n");
 	this->rebuildBookMarkMenu();
 	this->rebuildTabsMenu();
 	this->setToolbarSensitive();
+	this->currentSessionNumber=0xdeadbeef;
 	this->sessionBusy=false;
 }
 

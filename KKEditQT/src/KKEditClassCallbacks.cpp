@@ -44,7 +44,6 @@ void KKEditClass::doSessionsMenuItems(void)
 				}
 
 			sessionname=QString("Session-%1").arg(sessionnumber);
-		
 			file.setFileName(QString("%1/Session-%2").arg(this->sessionFolder).arg(sessionnumber));
 			fileinfo.setFile(file);
 //get sesion name
@@ -83,7 +82,8 @@ void KKEditClass::doSessionsMenuItems(void)
 						}
 
 					this->restoreSessionsMenu->clear();
-					menuItemSink=this->makeMenuItemClass(RESTORESESSIONSMENU,"Restore Default Session",0,NULL,RESTORESESSIONMENUNAME,CURRENTSESSION);
+					this->restoreSessionsMenu->addAction(restoreDefaultSessionMenuItem);
+					//menuItemSink=this->makeMenuItemClass(RESTORESESSIONSMENU,"Restore Default Session",0,NULL,RESTORESESSIONMENUNAME,CURRENTSESSION);
 					this->restoreSessionsMenu->addSeparator();
 					for(int j=1;j<MAXSESSIONS;j++)
 						menuItemSink=this->makeMenuItemClass(RESTORESESSIONSMENU,this->sessionNames.value(j),0,NULL,RESTORESESSIONMENUNAME,j);

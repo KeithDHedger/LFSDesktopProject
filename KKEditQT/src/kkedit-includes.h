@@ -114,7 +114,9 @@ enum  utilVarType {BOOLVAR=0,INTVAR,CHARVAR,MULTVAR,BADTYPE,DECIMALOUT,HEXOUT,OC
 #define SAVEALLMENUNAME "saveallmenu"
 #define SAVESESSIONMENUNAME "savesessionmenu"
 #define RESTORESESSIONMENUNAME "restoresessionmenu"
-#define SESSIONS "sessions"
+#define SAVECURRENTSESSIONMENUNAME "savecurrentsessionmenu"
+#define RESTOREDEFAULTSESSIONMENUNAME "restoredefaultsessionmenu"
+
 #define PRINTMENUNAME "printmenu"
 #define CLOSEMENUNAME "closemenu"
 #define CLOSEALLMENUNAME "closeallmenu"
