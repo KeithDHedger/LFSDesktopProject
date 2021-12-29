@@ -23,7 +23,7 @@
 
 #define STATUSBARTIMEOUT 5000
 
-enum {FILEMENU=0x4000,EDITMENU,VIEWMENU,NAVMENU,FUNCTIONSMENU,BOOKNARKSMENU,TOOLSMENU,PLUGINSMENU,HELPMENU,NOMENU};
+enum {FILEMENU=0x4000,EDITMENU,VIEWMENU,NAVMENU,FUNCTIONSMENU,BOOKMARKSMENU,TOOLSMENU,PLUGINSMENU,HELPMENU,SAVESESSIONSMENU,RESTORESESSIONSMENU,CURRENTSESSION,NOMENU};
 
 //file
 enum {NEWMENUITEM=0x8000,OPENMENUITEM,HEXDUMPMENUITEM,NEWADMINEDMENUITEM,NEWEDMENUITEM,MANPAGEEDMENUITEM,BUILDDOCSMENUITEM,SAVEMENUITEM,SAVEASMENUITEM,SAVEALLMENUITEM,SAVESESSIONMENUITEM,RESTORESESSIONMENUITEM,PRINTMENUITEM,CLOSEMENUITEM,CLOSEALLMENUITEM,REVERTMENUITEM,QUITMENUITEM};
@@ -124,6 +124,13 @@ class KKEditClass : public QObject
 		QShortcut					*appShortcuts[SHORTCUTSCOUNT];
 		QStringList					defaultShortCutsList={"Ctrl+H","Ctrl+Y","Ctrl+?","Ctrl+K","Ctrl+Shift+H","Ctrl+D","Ctrl+Shift+D","Ctrl+L","Ctrl+M","Ctrl+Shift+M","Ctrl+@","Ctrl+'"};
 
+		//sesions
+		QHash<int,QString>			sessionNames;
+		QString						homeFolder;
+		QString						homeDataFolder;
+		QString						sessionFolder;
+		unsigned int				currentSessionNumber=0xdeadbeef;
+
 		//HistoryClass				*history;
 
 //app functions
@@ -147,6 +154,7 @@ class KKEditClass : public QObject
 		QString						randomName(int len);
 
 		void						writeExitData(void);
+
 //app prefs
 //document
 		bool						prefsIndent=true;
@@ -202,6 +210,8 @@ class KKEditClass : public QObject
 //menu vars
 //file menu
 		QMenu						*fileMenu;
+		QMenu						*saveSessionsMenu;
+		QMenu						*restoreSessionsMenu;
 		MenuItemClass				*newMenuItem;
 		MenuItemClass				*openMenuItem;
 		MenuItemClass				*saveMenuItem;
@@ -399,6 +409,8 @@ class KKEditClass : public QObject
 
 		void						doSearchFromBar(const QString txt);
 		void						setSearchPrefs(int state);
+
+		void						doSessionsMenuItems(void);
 
 	protected:
 	private:

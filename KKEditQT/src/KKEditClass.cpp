@@ -253,8 +253,8 @@ void KKEditClass::rebuildBookMarkMenu()
 	MenuItemClass	*menuItemSink;
 
 	this->bookMarkMenu->clear();
-	menuItemSink=this->makeMenuItemClass(BOOKNARKSMENU,"Remove All Bookmarks",0,"window-close",REMOVEALLBOOKMARKS,REMOVEALLBOOKMARKSMENUITEM);
-	menuItemSink=this->makeMenuItemClass(BOOKNARKSMENU,"Toggle Bookmark",QKeySequence::fromString("Ctrl+T"),DATADIR"/pixmaps/BookMark.png",TOGGLEBOOKMARK,TOGGLEBOOKMARKMENUITEM);
+	menuItemSink=this->makeMenuItemClass(BOOKMARKSMENU,"Remove All Bookmarks",0,"window-close",REMOVEALLBOOKMARKS,REMOVEALLBOOKMARKSMENUITEM);
+	menuItemSink=this->makeMenuItemClass(BOOKMARKSMENU,"Toggle Bookmark",QKeySequence::fromString("Ctrl+T"),DATADIR"/pixmaps/BookMark.png",TOGGLEBOOKMARK,TOGGLEBOOKMARKMENUITEM);
 
 	this->bookMarkMenu->addSeparator();
 	this->bookMarks.clear();
@@ -293,7 +293,7 @@ void KKEditClass::handleBMMenu(QWidget *widget,int what)
 						bms.bmLabel=doc->getFileName() + QString(" Line %1").arg(bms.line); 
 					bms.docIndex=doc->pageIndex;
 					bms.bmKey=this->bookMarksIndex;
-					bms.menu=this->makeMenuItemClass(BOOKNARKSMENU,bms.bmLabel,0,NULL,"NOTNEEDED",this->bookMarksIndex);
+					bms.menu=this->makeMenuItemClass(BOOKMARKSMENU,bms.bmLabel,0,NULL,"NOTNEEDED",this->bookMarksIndex);
 					this->bookMarks[this->bookMarksIndex++]=bms;
 				}
 				break;
@@ -313,7 +313,50 @@ void KKEditClass::initApp(int argc,char** argv)
 	int		exitstatus;
 	char*	filename;
 	QRect	r(0,0,1024,768);
+	QDir	tdir;
+	QString	tstr;
+	QFile	file;
 
+	this->homeFolder=QString("%1").arg(tdir.homePath());
+	this->homeDataFolder=QString("%1/%2").arg(this->homeFolder).arg(KKEDITFOLDER);
+	this->sessionFolder=QString("%1/%2/%3").arg(this->homeFolder).arg(KKEDITFOLDER).arg("sesssions");
+
+	tdir.mkpath(this->sessionFolder);
+	for(int j=0;j<MAXSESSIONS;j++)
+		{
+			tstr=QString("touch '%1/Session-%2'").arg(this->sessionFolder).arg(j);
+			system(tstr.toStdString().c_str());
+			file.setFileName(QString("%1/Session-%2").arg(this->sessionFolder).arg(j));
+			if(file.open(QIODevice::Text | QIODevice::ReadOnly))
+				{
+					tstr=QTextStream(&file).readLine();
+					file.close();
+					if(tstr.isEmpty()==true)
+						{
+							if(file.open(QIODevice::Text | QIODevice::WriteOnly))
+								{
+									if(j>0)
+										{
+											QTextStream(&file) << "New Session-" << j <<Qt::endl;
+											this->sessionNames[j]=QString("New Session-%1").arg(j);
+										}
+									else
+										{
+											QTextStream(&file) << "Default Session" <<Qt::endl;
+											this->sessionNames[0]=QString("Default Session");
+										}
+									file.close();
+								}
+						}
+					else
+						this->sessionNames[j]=tstr;
+				}
+		}
+QTextStream(stderr) << ">>" << this->homeFolder << "<<" << Qt::endl;
+QTextStream(stderr) << ">>" << this->homeDataFolder << "<<" << Qt::endl;
+QTextStream(stderr) << ">>" << this->sessionFolder << "<<" << Qt::endl;
+
+	//
 	this->tmpFolderName=mkdtemp(tmpfoldertemplate);
 //	this->prefsTerminalCommand="xterm -e ";
 //	this->prefsRootCommand=GTKSUPATH;

@@ -20,6 +20,136 @@
 
 #include "KKEditClass.h"
 
+void KKEditClass::doSessionsMenuItems(void)
+{
+	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(sender());
+	QFile			file;
+	QFileInfo		fileinfo;
+	bool			retval;
+	DocumentClass	*doc;
+	bookMarkStruct	bm;
+	QString			sessionname;
+	QString			tempstr;
+	MenuItemClass	*menuItemSink;
+	unsigned int	sessionnumber=mc->getMenuID();
+
+	if(sender()->objectName().compare(SAVESESSIONMENUNAME)==0)
+		{
+			if(sessionnumber==CURRENTSESSION)
+				{
+//QTextStream(stderr) << "sessionnumber=" << sessionnumber << " menuid=" << mc->getMenuID() << " CURRENTSESSION=" << CURRENTSESSION << "cuerrent ses num=" << this->currentSessionNumber << Qt::endl;
+					if(this->currentSessionNumber==0xdeadbeef)
+						return;
+					sessionnumber=this->currentSessionNumber;
+				}
+
+			sessionname=QString("Session-%1").arg(sessionnumber);
+		
+			file.setFileName(QString("%1/Session-%2").arg(this->sessionFolder).arg(sessionnumber));
+			fileinfo.setFile(file);
+//get sesion name
+			retval=file.open(QIODevice::Text | QIODevice::ReadOnly);
+			if(retval==true)
+				{
+					QTextStream	in(&file);
+					tempstr=in.readLine();//sessionname
+					file.close();
+					if(tempstr.isEmpty()==false)
+						{
+							sessionname=tempstr;
+						}
+				}
+	
+			retval=file.open(QIODevice::Text | QIODevice::WriteOnly);
+			if(retval==true)
+				{
+					int		linenumber=10;
+					bool	visible=true;
+					bool	ok;
+
+					if(mc->getMenuID()!=CURRENTSESSION)
+						{
+							QString	text=QInputDialog::getText(this->mainWindow,"Session Name","Enter Session Name",QLineEdit::Normal,sessionname,&ok);
+							if ((ok==true) && (!text.isEmpty()))
+								{
+									sessionname=(text);
+									mc->setText(sessionname);
+									this->sessionNames[mc->getMenuID()]=sessionname;
+								}
+						}
+					else
+						{
+							sessionname=this->sessionNames.value(sessionnumber);
+						}
+
+					this->restoreSessionsMenu->clear();
+					menuItemSink=this->makeMenuItemClass(RESTORESESSIONSMENU,"Restore Default Session",0,NULL,RESTORESESSIONMENUNAME,CURRENTSESSION);
+					this->restoreSessionsMenu->addSeparator();
+					for(int j=1;j<MAXSESSIONS;j++)
+						menuItemSink=this->makeMenuItemClass(RESTORESESSIONSMENU,this->sessionNames.value(j),0,NULL,RESTORESESSIONMENUNAME,j);
+
+					QTextStream(&file) << sessionname << Qt::endl;
+					for(int j=0;j<this->mainNotebook->count();j++)
+						{
+							doc=this->getDocumentForTab(j);
+							QTextStream(&file) << linenumber << " " << visible << " " << doc->getFilePath() << Qt::endl;
+
+							foreach(bookMarkStruct bm, this->bookMarks)
+								{
+									if(doc->pageIndex==bm.docIndex)
+										QTextStream(&file) << bm.line << " " << bm.bmLabel << Qt::endl;
+								}
+							QTextStream(&file) << "-1 endmarks" << Qt::endl;
+						}
+					file.close();
+				}
+			return;
+		}
+
+	if(sender()->objectName().compare(RESTORESESSIONMENUNAME)==0)
+		{
+			sessionnumber=mc->getMenuID();
+			if(sessionnumber==CURRENTSESSION)
+				return;
+
+			this->closeAllTabs();
+			file.setFileName(QString("%1/Session-%2").arg(this->sessionFolder).arg(sessionnumber));
+			fileinfo.setFile(file);
+			retval=file.open(QIODevice::Text | QIODevice::ReadOnly);
+			if(retval==true)
+				{
+					int		linenumber=999;
+					int		visible=666;
+					int		mainline;
+					QTextStream	in(&file);
+					QString line;
+					line=in.readLine();//sessionname
+					while(in.atEnd()==false)
+						{
+							in >> mainline;
+							in >> visible;
+							line=in.readLine().trimmed();
+							linenumber=-1;
+							this->openFile(line);
+							do
+								{
+									in >> linenumber;
+									line=in.readLine().trimmed();
+									if(linenumber>0)
+										{
+											this->gotoLine(linenumber);
+											this->handleBMMenu(this->mainNotebook->currentWidget(),TOGGLEBOOKMARKMENUITEM);
+										}
+								}
+							while(linenumber!=-1);
+							this->gotoLine(mainline);
+						}
+					this->currentSessionNumber=sessionnumber;
+					file.close();
+				}
+		}
+}
+
 void KKEditClass::doSelectTab()
 {
 	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(sender());

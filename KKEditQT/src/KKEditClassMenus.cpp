@@ -49,7 +49,7 @@ MenuItemClass* KKEditClass::makeMenuItemClass(int mainmenu,const QString name,co
 				this->navMenu->addAction(menuitem);
 				QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doNavMenuItems()));
 				break;
-			case BOOKNARKSMENU:
+			case BOOKMARKSMENU:
 				this->bookMarkMenu->addAction(menuitem);
 				QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doBookmarkMenuItems()));
 				break;
@@ -61,6 +61,21 @@ MenuItemClass* KKEditClass::makeMenuItemClass(int mainmenu,const QString name,co
 				this->toolsMenu->addAction(menuitem);
 				QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doToolsMenuItems()));
 				break;
+			case SAVESESSIONSMENU:
+				this->saveSessionsMenu->addAction(menuitem);
+				QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doSessionsMenuItems()));
+				break;
+			case RESTORESESSIONSMENU:
+				this->restoreSessionsMenu->addAction(menuitem);
+				QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doSessionsMenuItems()));
+				break;
+//			case SESSIONMENUS:
+//				this->saveSessionsMenu->addAction(menuitem);
+//				QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doSaveSessionsMenuItems()));
+//				this->restoreSessionsMenu->addAction(menuitem);
+//				QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doRestoreSessionsMenuItems()));
+//				break;
+
 			case NOMENU:
 				break;
 		}

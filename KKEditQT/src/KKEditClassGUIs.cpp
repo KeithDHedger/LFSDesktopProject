@@ -674,11 +674,37 @@ void KKEditClass::buildMainGui(void)
 
 	this->fileMenu->addSeparator();
 
+
 //save session
-	this->saveSessionMenuItem=this->makeMenuItemClass(FILEMENU,"Save Session",0,"document-save",SAVESESSIONMENUNAME,SAVESESSIONMENUITEM);
+	this->saveSessionsMenu=new QMenu("&Save Session");
+	this->fileMenu->addMenu(this->saveSessionsMenu);
+	menuItemSink=this->makeMenuItemClass(SAVESESSIONSMENU,"Save Current Session",0,NULL,SAVESESSIONMENUNAME,CURRENTSESSION);
+	this->saveSessionsMenu->addSeparator();
+	for(int j=1;j<MAXSESSIONS;j++)
+		menuItemSink=this->makeMenuItemClass(SAVESESSIONSMENU,this->sessionNames.value(j),0,NULL,SAVESESSIONMENUNAME,j);
 
 //restore session
-	this->restoreSessionMenuItem=this->makeMenuItemClass(FILEMENU,"Save Session",0,"document-save",RESTORESESSIONMENUNAME,RESTORESESSIONMENUITEM);
+	this->restoreSessionsMenu=new QMenu("&Restore Session");
+	this->fileMenu->addMenu(this->restoreSessionsMenu);
+	menuItemSink=this->makeMenuItemClass(RESTORESESSIONSMENU,"Restore Default Session",0,NULL,RESTORESESSIONMENUNAME,CURRENTSESSION);
+	this->restoreSessionsMenu->addSeparator();
+	for(int j=1;j<MAXSESSIONS;j++)
+		menuItemSink=this->makeMenuItemClass(RESTORESESSIONSMENU,this->sessionNames.value(j),0,NULL,RESTORESESSIONMENUNAME,j);
+
+
+/*
+//save session
+	this->saveSessionsMenu=new QMenu("&Save Session");
+	this->restoreSessionsMenu=new QMenu("&Restore Session");
+	this->fileMenu->addMenu(this->saveSessionsMenu);
+	this->fileMenu->addMenu(this->restoreSessionsMenu);
+
+	for(int j=0;j<MAXSESSIONS;j++)
+		menuItemSink=this->makeMenuItemClass(SESSIONMENUS,this->sessionNames.value(j),0,NULL,SESSIONS,j);
+*/
+//restore session
+//	for(int j=0;j<MAXSESSIONS;j++)
+//		menuItemSink=this->makeMenuItemClass(RESTORESESSIONSMENU,this->sessionNames.value(j),0,NULL,SESSIONS,j|0x1000);
 
 //printfile
 	this->printMenuItem=this->makeMenuItemClass(FILEMENU,"Print",QKeySequence::Print,"document-print",PRINTMENUNAME,PRINTMENUITEM);
@@ -687,7 +713,6 @@ void KKEditClass::buildMainGui(void)
 
 //close
 	this->closeMenuItem=this->makeMenuItemClass(FILEMENU,"Close",QKeySequence::Close,"window-close",CLOSEMENUNAME,CLOSEMENUITEM);
-	//this->closeMenuItem=this->makeMenuItemClass(FILEMENU,"Close",QKeySequence::Close,"window-close",CLOSEMENUNAME,CLOSEMENUITEM);
 
 //close-all
 	this->closeAllMenuItem=this->makeMenuItemClass(FILEMENU,"Close All",0,"window-close",CLOSEALLMENUNAME,CLOSEALLMENUITEM);

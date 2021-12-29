@@ -114,6 +114,7 @@ enum  utilVarType {BOOLVAR=0,INTVAR,CHARVAR,MULTVAR,BADTYPE,DECIMALOUT,HEXOUT,OC
 #define SAVEALLMENUNAME "saveallmenu"
 #define SAVESESSIONMENUNAME "savesessionmenu"
 #define RESTORESESSIONMENUNAME "restoresessionmenu"
+#define SESSIONS "sessions"
 #define PRINTMENUNAME "printmenu"
 #define CLOSEMENUNAME "closemenu"
 #define CLOSEALLMENUNAME "closeallmenu"
@@ -158,6 +159,8 @@ enum  utilVarType {BOOLVAR=0,INTVAR,CHARVAR,MULTVAR,BADTYPE,DECIMALOUT,HEXOUT,OC
 #define FINDNEXTOBJECTNAME "1"
 #define FINDPREVOBJECTNAME "2"
 #define FINDREPLACEOBJECTNAME "3"
+
+#define MAXSESSIONS 24
 
 struct args
 {
