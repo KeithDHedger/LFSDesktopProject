@@ -53,7 +53,7 @@ void KKEditClass::doFindReplace(int response_id)
 
 	this->setSearchPrefs(0);
 
-	currentline=document->textCursor().blockNumber();
+	currentline=document->getCurrentLineNumber();
 	newCursor=document->textCursor();
 	currentfindtext=strdup(this->findDropBox->currentText().toUtf8().constData());
 	currentreplacetext=strdup(this->replaceDropBox->currentText().toUtf8().constData());
@@ -107,7 +107,7 @@ void KKEditClass::doFindReplace(int response_id)
 
 			if((this->wrapSearch==true) && (gotresult==false))
 				{
-					int ln=document->textCursor().blockNumber()+1;
+					int ln=document->getCurrentLineNumber();
 					this->gotoLine(0);
 					if(this->useRegex==false)
 						gotresult=document->find(thetext,(QTextDocument::FindFlags)flags);

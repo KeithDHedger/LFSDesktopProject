@@ -82,8 +82,7 @@ void KKEditClass::doSessionsMenuItems(void)
 						}
 
 					this->restoreSessionsMenu->clear();
-					this->restoreSessionsMenu->addAction(restoreDefaultSessionMenuItem);
-					//menuItemSink=this->makeMenuItemClass(RESTORESESSIONSMENU,"Restore Default Session",0,NULL,RESTORESESSIONMENUNAME,CURRENTSESSION);
+					this->restoreSessionsMenu->addAction(this->restoreDefaultSessionMenuItem);
 					this->restoreSessionsMenu->addSeparator();
 					for(int j=1;j<MAXSESSIONS;j++)
 						menuItemSink=this->makeMenuItemClass(RESTORESESSIONSMENU,this->sessionNames.value(j),0,NULL,RESTORESESSIONMENUNAME,j);
@@ -92,8 +91,9 @@ void KKEditClass::doSessionsMenuItems(void)
 					for(int j=0;j<this->mainNotebook->count();j++)
 						{
 							doc=this->getDocumentForTab(j);
-							QTextStream(&file) << linenumber << " " << visible << " " << doc->getFilePath() << Qt::endl;
+							linenumber=doc->getCurrentLineNumber();
 
+							QTextStream(&file) << linenumber << " " << visible << " " << doc->getFilePath() << Qt::endl;
 							foreach(bookMarkStruct bm, this->bookMarks)
 								{
 									if(doc->pageIndex==bm.docIndex)

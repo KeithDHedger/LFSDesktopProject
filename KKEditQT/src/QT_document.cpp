@@ -20,6 +20,11 @@
 
 #include "QT_document.h"
 
+int DocumentClass::getCurrentLineNumber(void)
+{
+	return(this->textCursor().blockNumber()+1);
+}
+
 bool DocumentClass::realShowLineNumbers(void)
 {
 	return(this->mainKKEditClass->lineNumbersVisible);
@@ -120,7 +125,7 @@ void DocumentClass::modified()
 
 void DocumentClass::setStatusBarText(void)
 {
-	QString text=QString("Line %1\tCol %2\tSessionId 0x%3\t\tFilePath %4").arg(this->textCursor().blockNumber()+1).arg(this->textCursor().positionInBlock()+1).arg(this->mainKKEditClass->sessionID,0,16).arg(this->filePath);
+	QString text=QString("Line %1\tCol %2\tSessionId 0x%3\t\tFilePath %4").arg(this->getCurrentLineNumber()).arg(this->textCursor().positionInBlock()+1).arg(this->mainKKEditClass->sessionID,0,16).arg(this->filePath);
 	this->mainKKEditClass->statusText->setText(text);
 	this->mainKKEditClass->setToolbarSensitive();
 }

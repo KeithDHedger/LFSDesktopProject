@@ -1,4 +1,6 @@
 0.5.1
+Added get current line number to QT_document.
+Fixed saving current line in save session.
 Done sessions.
 Fixed blank label in bm menu if bookmarking empty line.
 Sorce tree clean up.

@@ -43,6 +43,7 @@ class DocumentClass : public QPlainTextEdit
 		const QString						getDirPath(void);
 		void								setTabName(QString tabname);
 		const QString						getTabName(void);
+		int									getCurrentLineNumber(void);
 
 		void								setFilePrefs(void);
 		void								setHiliteLanguage(void);
