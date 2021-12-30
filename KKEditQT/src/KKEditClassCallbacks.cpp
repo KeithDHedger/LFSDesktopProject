@@ -189,6 +189,8 @@ void KKEditClass::doToolsMenuItems()
 	switch(mc->getMenuID())
 		{
 			 case MANAGETOOLSMENUITEM:
+			 	this->rebuildToolsMenu();
+			 	this->toolsWindow->show();
 			 	break;
 		}
 }

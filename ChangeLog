@@ -41,7 +41,7 @@ Done close tab.
 Done saveas.
 done switch tab.
 Done Save all.
-Done build/show documentaion.
+Done build/show documentation.
 Code clean.
 Fixed doxyfile.
 Fixed header sysntax hiliting.
@@ -70,6 +70,7 @@ Done show linenumbers.
 Done autoindent.
 Done wrap lines.
 Done scrollable menus.
+Made prefs dialog modal.
 Redone prefs.
 Done load.
 Restarted QT5 version.

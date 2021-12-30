@@ -320,6 +320,7 @@ void KKEditClass::initApp(int argc,char** argv)
 	this->homeFolder=QString("%1").arg(tdir.homePath());
 	this->homeDataFolder=QString("%1/%2").arg(this->homeFolder).arg(KKEDITFOLDER);
 	this->sessionFolder=QString("%1/%2/%3").arg(this->homeFolder).arg(KKEDITFOLDER).arg("sesssions");
+	this->toolsFolder=QString("%1/%2/%3").arg(this->homeFolder).arg(KKEDITFOLDER).arg("tools");
 
 	tdir.mkpath(this->sessionFolder);
 	for(int j=0;j<MAXSESSIONS;j++)

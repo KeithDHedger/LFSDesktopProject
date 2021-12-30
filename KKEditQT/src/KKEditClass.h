@@ -130,6 +130,7 @@ class KKEditClass : public QObject
 		QString						homeDataFolder;
 		QString						sessionFolder;
 		unsigned int				currentSessionNumber=0xdeadbeef;
+		QString						toolsFolder;
 
 		//HistoryClass				*history;
 
@@ -275,8 +276,6 @@ class KKEditClass : public QObject
 //bookmarks menu
 		QMenu						*bookMarkMenu;
 
-//tools menu
-		QMenu						*toolsMenu;
 
 //help menu
 		QMenu						*helpMenu;
@@ -325,6 +324,15 @@ class KKEditClass : public QObject
 //bookmark functions
 		void						rebuildBookMarkMenu(void);
 		void						handleBMMenu(QWidget *widget,int what);
+
+//tools menu
+		QMenu						*toolsMenu;
+//tools vars
+		QDialog						*toolsWindow;
+		QComboBox					*toolSelect;
+
+//tools functions
+		void						rebuildToolsMenu(void);
 
 //docviewer vars
 		QMainWindow					*docView=NULL;

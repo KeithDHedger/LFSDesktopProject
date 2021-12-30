@@ -920,6 +920,10 @@ void KKEditClass::showLineEntry(void)
 void KKEditClass::buildTools(void)
 {
 	MenuItemClass	*menuItemSink;
+	QVBoxLayout		*mainvbox=new QVBoxLayout();
+	QHBoxLayout		*hbox=new QHBoxLayout;
+	QLabel			*widgetlabel;
+
 //TODO//
 printf("TODO buildTools\n");
 //	this->toolsMenu=new QMenu("&Tools");
@@ -927,12 +931,30 @@ printf("TODO buildTools\n");
 //	this->toolsMenu->addSeparator();
 	menuItemSink=this->makeMenuItemClass(TOOLSMENU,"Manage External Tools",0,"accessories-text-editor","NOTNEEDED",MANAGETOOLSMENUITEM);
 	this->toolsMenu->addSeparator();
+
+	this->toolsWindow=new QDialog(this->mainWindow);
+	this->toolsWindow->setWindowTitle("External Tools");
+
+	mainvbox->setContentsMargins(0,0,0,0);
+	hbox->setContentsMargins(0,0,0,0);
+
+	this->toolSelect=new QComboBox;
+	//this->rebuildToolsMenu();
+
+	mainvbox->addWidget(this->toolSelect);
+//	widgetlabel=new QLabel("Theme:");
+//	table->addWidget(widgetlabel,posy,0,Qt::AlignVCenter);
+//	table->addWidget(prefsOtherWidgets[THEMECOMBO],posy,1,posy,-1,Qt::AlignVCenter);
+
 //	menuitem=gtk_image_menu_item_new_with_label("Manage External Tools");
 //	image=gtk_image_new_from_stock(GTK_STOCK_EDIT,GTK_ICON_SIZE_MENU);
 //	gtk_image_menu_item_set_image((GtkImageMenuItem *)menuitem,image);
 //	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
 //	g_signal_connect(G_OBJECT(menuitem),"activate",G_CALLBACK(doMakeTool),NULL);
 
+this->toolsWindow->setLayout(mainvbox);
+
+	this->toolsWindow->setWindowModality(Qt::WindowModal);
 }
 
 void KKEditClass::sortTabs(void)
