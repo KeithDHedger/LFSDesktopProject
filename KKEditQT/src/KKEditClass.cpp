@@ -427,6 +427,7 @@ QTextStream(stderr) << ">>" << this->sessionFolder << "<<" << Qt::endl;
 		r=this->prefs.value("app/geometry",QVariant(QRect(50,50,1024,768))).value<QRect>();
 	this->mainWindow->setGeometry(r);
 
+	this->setToolbarSensitive();
 	this->mainWindow->show();
 return;
 //	refreshMainWindow();
@@ -830,8 +831,8 @@ printf("void KKEditClass::closeAllTabs(void)\n");
 
 	this->rebuildBookMarkMenu();
 	this->rebuildTabsMenu();
-	this->setToolbarSensitive();
 	this->currentSessionNumber=0xdeadbeef;
+	this->setToolbarSensitive();
 	this->sessionBusy=false;
 }
 
@@ -954,6 +955,13 @@ void KKEditClass::setToolbarSensitive(void)
 			override=doc->dirty;
 			hasselection=doc->textCursor().hasSelection();
 		}
+
+	if(	this->currentSessionNumber==0xdeadbeef)
+		this->saveCurrentSessionMenuItem->setEnabled(false);
+	else
+		this->saveCurrentSessionMenuItem->setEnabled(true);
+
+	this->restoreDefaultSessionMenuItem->setEnabled(false);//TODO//
 
 	for(int j=0;j<this->prefsToolBarLayout.length();j++)
 		{

@@ -148,6 +148,7 @@ void KKEditClass::doSessionsMenuItems(void)
 					file.close();
 				}
 		}
+	this->setToolbarSensitive();
 }
 
 void KKEditClass::doSelectTab()
