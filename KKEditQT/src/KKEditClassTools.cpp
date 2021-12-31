@@ -22,14 +22,20 @@
 
 void KKEditClass::rebuildToolsMenu(void)
 {
-	QFile		file;
-	QStringList	sl;
-	QString		toolsdir=toolsFolder;
-	QDir		dir(toolsdir);
-	QStringList	flist=dir.entryList(QDir::Files);
+	QFile			file;
+	QStringList		sl;
+	QString			toolsdir=this->toolsFolder;
+	QDir			dir(toolsdir);
+	QStringList		flist=dir.entryList(QDir::Files);
+	MenuItemClass	*menuItemSink;
+	int				dropnum=0;
 
 	this->toolSelect->clear();
 	this->toolSelect->addItem("New Tool");
+	this->toolsMenu->clear();
+
+	menuItemSink=this->makeMenuItemClass(TOOLSMENU,"Manage External Tools",0,"accessories-text-editor","NOTNEEDED",MANAGETOOLSMENUITEM);
+	this->toolsMenu->addSeparator();
 
 	for(int k=0; k<flist.count(); k++)
 		{
@@ -42,13 +48,11 @@ void KKEditClass::rebuildToolsMenu(void)
 
 					if((sl.count()>2) && (sl.at(0).startsWith("name")) && (sl.at(1).startsWith("command")) && (sl.at(2).startsWith("comment")))
 						{
-							this->toolSelect->addItem(flist.at(k));
-							//QTextStream(stdout) << flist.at(k) << Qt::endl;
-							//for( QStringList::Iterator it = sl.begin(); it != sl.end(); ++it)
-							//	QTextStream(stdout) << ">>" << *it << "<<<" << "\n";
+							menuItemSink=this->makeMenuItemClass(TOOLSMENU,flist.at(k),0,NULL,"NOTNEEDED",TOOLNUMBER+dropnum++);
+							menuItemSink->setMenuString(toolsdir + "/" + flist.at(k));
+							this->toolSelect->addItem(flist.at(k),toolsdir + "/" + flist.at(k));
 						}
 					file.close();
-
 				}
 		}
 }

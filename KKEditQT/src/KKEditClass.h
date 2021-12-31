@@ -38,7 +38,7 @@ enum {GOTODEFINEMENUITEM=0xb000,OPENINCLUDEMENUITEM,GOTOLINEMENUITEM,SEARCHFORDE
 enum {REMOVEALLBOOKMARKSMENUITEM=0xc000,TOGGLEBOOKMARKMENUITEM};
 
 //tools
-enum {MANAGETOOLSMENUITEM=0xd000};
+enum {MANAGETOOLSMENUITEM=0xd000,TOOLNUMBER};
 //plugins
 //help
 enum {ABOUTMENUITEM=0xe000,HELPMENUITEM,ONLINEHELPMENUITEM,GETPLUGSMENUITEM};
@@ -386,6 +386,7 @@ class KKEditClass : public QObject
 		QWidget						*globalPlugMenu=NULL;
 
 	public slots:
+		void						debugSignalSlot(int);
 		void						doTimer(void);
 		void						doFileMenuItems();
 		void						doEditMenuItems();

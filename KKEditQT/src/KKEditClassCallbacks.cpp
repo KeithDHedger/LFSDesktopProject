@@ -192,6 +192,10 @@ void KKEditClass::doToolsMenuItems()
 			 	this->rebuildToolsMenu();
 			 	this->toolsWindow->show();
 			 	break;
+
+			 default:
+			 	QTextStream(stderr) << "menuid=" << (mc->getMenuID() & 0xfff) << " menustring=" << mc->getMenuString() << "<<" << Qt::endl;
+			 	break;
 		}
 }
 

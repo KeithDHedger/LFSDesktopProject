@@ -162,6 +162,25 @@ enum  utilVarType {BOOLVAR=0,INTVAR,CHARVAR,MULTVAR,BADTYPE,DECIMALOUT,HEXOUT,OC
 #define FINDPREVOBJECTNAME "2"
 #define FINDREPLACEOBJECTNAME "3"
 
+#define TOOLNAME "name"
+#define TOOLCOMMAND "command"
+#define TOOLKEY "key"
+#define TOOLCOMMENT "comment"
+#define TOOLRUNINTERM "toolruninterm"
+#define TOOLSHOWINPOPUP "toolshowinpopup"
+#define TOOLALWAYSINPOPUP "toolalwaysinpopup"
+#define TOOLRUNSYNC "toolrunsync"
+#define TOOLSHOWDOC "toolshowdoc"
+#define TOOLCLEAROP "toolclearop"
+#define TOOLRUNASROOT "toolrunasroot"
+#define TOOLUSEPOLE "toolusepole"
+#define TOOLIGNOREOUT "toolignoreout"
+#define TOOLPASTEOUT "toolpasteout"
+#define TOOLREPLACEALL "toolreplaceall"
+#define TOOLVIEWOUT "toolviewout"
+
+enum toolEnums {TNAME=0,TCOMMAND,TCOMMENT};
+
 #define MAXSESSIONS 24
 
 struct args

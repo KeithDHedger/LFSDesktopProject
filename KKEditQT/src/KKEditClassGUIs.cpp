@@ -923,14 +923,20 @@ void KKEditClass::buildTools(void)
 	QVBoxLayout		*mainvbox=new QVBoxLayout();
 	QHBoxLayout		*hbox=new QHBoxLayout;
 	QLabel			*widgetlabel;
+	QGridLayout		*grid;
+	QWidget			*tab;
+	QCheckBox		check;
+	QLineEdit		*edit;
+	int				posx=0;
+	int				posy=0;
 
 //TODO//
 printf("TODO buildTools\n");
-//	this->toolsMenu=new QMenu("&Tools");
-//	this->menuBar->addMenu(this->toolsMenu);
+	//this->toolsMenu=new QMenu("&Tools");
+	//this->menuBar->addMenu(this->toolsMenu);
 //	this->toolsMenu->addSeparator();
-	menuItemSink=this->makeMenuItemClass(TOOLSMENU,"Manage External Tools",0,"accessories-text-editor","NOTNEEDED",MANAGETOOLSMENUITEM);
-	this->toolsMenu->addSeparator();
+//	menuItemSink=this->makeMenuItemClass(TOOLSMENU,"Manage External Tools",0,"accessories-text-editor","NOTNEEDED",MANAGETOOLSMENUITEM);
+//	this->toolsMenu->addSeparator();
 
 	this->toolsWindow=new QDialog(this->mainWindow);
 	this->toolsWindow->setWindowTitle("External Tools");
@@ -938,10 +944,74 @@ printf("TODO buildTools\n");
 	mainvbox->setContentsMargins(0,0,0,0);
 	hbox->setContentsMargins(0,0,0,0);
 
-	this->toolSelect=new QComboBox;
-	//this->rebuildToolsMenu();
+	tab=new QWidget();
+	grid=new QGridLayout;
+	grid->setColumnStretch(1,1);
 
+	this->toolSelect=new QComboBox;
+	QObject::connect(this->toolSelect,SIGNAL(activated(int)),this,SLOT(debugSignalSlot(int)));
 	mainvbox->addWidget(this->toolSelect);
+	this->rebuildToolsMenu();
+
+//name
+	widgetlabel=new QLabel("Tool Name:");
+	grid->addWidget(widgetlabel,posy,posx,Qt::AlignVCenter);
+	edit=new QLineEdit("New Tool");
+	edit->setObjectName(TOOLNAME);
+	grid->addWidget(edit,posy++,posx+1,Qt::AlignVCenter);
+
+//command
+	widgetlabel=new QLabel("Command:");
+	grid->addWidget(widgetlabel,posy,posx,Qt::AlignVCenter);
+	edit=new QLineEdit("");
+	edit->setObjectName(TOOLCOMMAND);
+	grid->addWidget(edit,posy++,1,Qt::AlignVCenter);
+//shortcut
+	widgetlabel=new QLabel("Shortcut:");
+	grid->addWidget(widgetlabel,posy,posx,Qt::AlignVCenter);
+	edit=new QLineEdit("");
+	edit->setObjectName(TOOLKEY);
+	grid->addWidget(edit,posy++,posx+1,Qt::AlignVCenter);
+//comment
+	widgetlabel=new QLabel("Comment:");
+	grid->addWidget(widgetlabel,posy,posx,Qt::AlignVCenter);
+	edit=new QLineEdit("");
+	edit->setObjectName(TOOLCOMMENT);
+	grid->addWidget(edit,posy++,posx+1,Qt::AlignVCenter);
+
+//info
+	QString info="PLACEHOLDERS:\n\
+%t - Currently selected text. Passed to command as $KKEDIT_SELECTION\n\
+%f - Filepath of the current document. Passed to command as $KKEDIT_CURRENTFILE\n\
+%d - Directory of the current document or $HOME. Passed to command as $KKEDIT_CURRENTDIR\n\
+%i - The location of the globally installed tools. Passed to command as $KKEDIT_DATADIR\n\
+%h - Tempory file for displaying html in doc viewer. Passed to command as $KKEDIT_HTMLFILE\n\
+%l - Highlihting language. Passed to command as $KKEDIT_SOURCE_LANG";
+
+	widgetlabel=new QLabel(info);
+	grid->addWidget(widgetlabel,posy,posx,posy++,-1,Qt::AlignVCenter);
+
+//checkboxes
+//run in term
+//show in popup
+//always show in popup
+//run sync
+//show html doc
+//clear tool out
+//run as root
+//use pole
+
+//radios
+//ignore out
+//paste out
+//replace all
+//view out
+
+	tab->setLayout(grid);
+	mainvbox->addWidget(tab);
+	//prefsnotebook->addTab(tab,"Text Style");
+
+
 //	widgetlabel=new QLabel("Theme:");
 //	table->addWidget(widgetlabel,posy,0,Qt::AlignVCenter);
 //	table->addWidget(prefsOtherWidgets[THEMECOMBO],posy,1,posy,-1,Qt::AlignVCenter);
@@ -952,7 +1022,7 @@ printf("TODO buildTools\n");
 //	gtk_menu_shell_append(GTK_MENU_SHELL(menu),menuitem);
 //	g_signal_connect(G_OBJECT(menuitem),"activate",G_CALLBACK(doMakeTool),NULL);
 
-this->toolsWindow->setLayout(mainvbox);
+	this->toolsWindow->setLayout(mainvbox);
 
 	this->toolsWindow->setWindowModality(Qt::WindowModal);
 }

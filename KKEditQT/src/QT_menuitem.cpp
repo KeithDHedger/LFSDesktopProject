@@ -22,8 +22,6 @@
 
 MenuItemClass::~MenuItemClass()
 {
-	if(this->menuString!=NULL)
-		delete this->menuString;
 }
 
 MenuItemClass::MenuItemClass(const QString &text, QWidget *parent): QAction(parent)
@@ -31,7 +29,7 @@ MenuItemClass::MenuItemClass(const QString &text, QWidget *parent): QAction(pare
 	//this->callbackVoid=NULL;
 	//this->callbackBool=NULL;
 	this->menuID=0;
-	this->menuString=NULL;
+	this->menuString=nullptr;
 	this->setText(text);
 }
 
@@ -47,10 +45,10 @@ unsigned int MenuItemClass::getMenuID(void)
 
 void MenuItemClass::setMenuString(QString str)
 {
-	this->menuString=new QString(str);
+	this->menuString=str;
 }
 
-const QString* MenuItemClass::getMenuString(void)
+QString MenuItemClass::getMenuString(void)
 {
 	return(this->menuString);
 }

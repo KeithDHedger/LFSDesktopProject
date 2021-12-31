@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_KKEditClass_t {
-    QByteArrayData data[37];
-    char stringdata0[495];
+    QByteArrayData data[38];
+    char stringdata0[511];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -33,56 +33,58 @@ struct qt_meta_stringdata_KKEditClass_t {
 static const qt_meta_stringdata_KKEditClass_t qt_meta_stringdata_KKEditClass = {
     {
 QT_MOC_LITERAL(0, 0, 11), // "KKEditClass"
-QT_MOC_LITERAL(1, 12, 7), // "doTimer"
-QT_MOC_LITERAL(2, 20, 0), // ""
-QT_MOC_LITERAL(3, 21, 15), // "doFileMenuItems"
-QT_MOC_LITERAL(4, 37, 15), // "doEditMenuItems"
-QT_MOC_LITERAL(5, 53, 15), // "doViewMenuItems"
-QT_MOC_LITERAL(6, 69, 14), // "doNavMenuItems"
-QT_MOC_LITERAL(7, 84, 19), // "doBookmarkMenuItems"
-QT_MOC_LITERAL(8, 104, 15), // "doHelpMenuItems"
-QT_MOC_LITERAL(9, 120, 16), // "doToolsMenuItems"
-QT_MOC_LITERAL(10, 137, 11), // "doSelectTab"
-QT_MOC_LITERAL(11, 149, 19), // "doTabBarContextMenu"
-QT_MOC_LITERAL(12, 169, 14), // "doOddMenuItems"
-QT_MOC_LITERAL(13, 184, 12), // "doOddButtons"
-QT_MOC_LITERAL(14, 197, 18), // "doDoubleClickPrefs"
-QT_MOC_LITERAL(15, 216, 16), // "QListWidgetItem*"
-QT_MOC_LITERAL(16, 233, 4), // "item"
-QT_MOC_LITERAL(17, 238, 14), // "setPreferences"
-QT_MOC_LITERAL(18, 253, 11), // "setBMColour"
-QT_MOC_LITERAL(19, 265, 13), // "setLineColour"
-QT_MOC_LITERAL(20, 279, 7), // "setFont"
-QT_MOC_LITERAL(21, 287, 12), // "addToToolBar"
-QT_MOC_LITERAL(22, 300, 19), // "buildGetKeyShortCut"
-QT_MOC_LITERAL(23, 320, 5), // "index"
-QT_MOC_LITERAL(24, 326, 10), // "switchPage"
-QT_MOC_LITERAL(25, 337, 8), // "closeTab"
-QT_MOC_LITERAL(26, 346, 12), // "closeAllTabs"
-QT_MOC_LITERAL(27, 359, 12), // "doFindButton"
-QT_MOC_LITERAL(28, 372, 14), // "tabContextMenu"
-QT_MOC_LITERAL(29, 387, 2), // "pt"
-QT_MOC_LITERAL(30, 390, 28), // "doTabBarContextMenuSetHilite"
-QT_MOC_LITERAL(31, 419, 14), // "doAppShortCuts"
-QT_MOC_LITERAL(32, 434, 15), // "doSearchFromBar"
-QT_MOC_LITERAL(33, 450, 3), // "txt"
-QT_MOC_LITERAL(34, 454, 14), // "setSearchPrefs"
-QT_MOC_LITERAL(35, 469, 5), // "state"
-QT_MOC_LITERAL(36, 475, 19) // "doSessionsMenuItems"
+QT_MOC_LITERAL(1, 12, 15), // "debugSignalSlot"
+QT_MOC_LITERAL(2, 28, 0), // ""
+QT_MOC_LITERAL(3, 29, 7), // "doTimer"
+QT_MOC_LITERAL(4, 37, 15), // "doFileMenuItems"
+QT_MOC_LITERAL(5, 53, 15), // "doEditMenuItems"
+QT_MOC_LITERAL(6, 69, 15), // "doViewMenuItems"
+QT_MOC_LITERAL(7, 85, 14), // "doNavMenuItems"
+QT_MOC_LITERAL(8, 100, 19), // "doBookmarkMenuItems"
+QT_MOC_LITERAL(9, 120, 15), // "doHelpMenuItems"
+QT_MOC_LITERAL(10, 136, 16), // "doToolsMenuItems"
+QT_MOC_LITERAL(11, 153, 11), // "doSelectTab"
+QT_MOC_LITERAL(12, 165, 19), // "doTabBarContextMenu"
+QT_MOC_LITERAL(13, 185, 14), // "doOddMenuItems"
+QT_MOC_LITERAL(14, 200, 12), // "doOddButtons"
+QT_MOC_LITERAL(15, 213, 18), // "doDoubleClickPrefs"
+QT_MOC_LITERAL(16, 232, 16), // "QListWidgetItem*"
+QT_MOC_LITERAL(17, 249, 4), // "item"
+QT_MOC_LITERAL(18, 254, 14), // "setPreferences"
+QT_MOC_LITERAL(19, 269, 11), // "setBMColour"
+QT_MOC_LITERAL(20, 281, 13), // "setLineColour"
+QT_MOC_LITERAL(21, 295, 7), // "setFont"
+QT_MOC_LITERAL(22, 303, 12), // "addToToolBar"
+QT_MOC_LITERAL(23, 316, 19), // "buildGetKeyShortCut"
+QT_MOC_LITERAL(24, 336, 5), // "index"
+QT_MOC_LITERAL(25, 342, 10), // "switchPage"
+QT_MOC_LITERAL(26, 353, 8), // "closeTab"
+QT_MOC_LITERAL(27, 362, 12), // "closeAllTabs"
+QT_MOC_LITERAL(28, 375, 12), // "doFindButton"
+QT_MOC_LITERAL(29, 388, 14), // "tabContextMenu"
+QT_MOC_LITERAL(30, 403, 2), // "pt"
+QT_MOC_LITERAL(31, 406, 28), // "doTabBarContextMenuSetHilite"
+QT_MOC_LITERAL(32, 435, 14), // "doAppShortCuts"
+QT_MOC_LITERAL(33, 450, 15), // "doSearchFromBar"
+QT_MOC_LITERAL(34, 466, 3), // "txt"
+QT_MOC_LITERAL(35, 470, 14), // "setSearchPrefs"
+QT_MOC_LITERAL(36, 485, 5), // "state"
+QT_MOC_LITERAL(37, 491, 19) // "doSessionsMenuItems"
 
     },
-    "KKEditClass\0doTimer\0\0doFileMenuItems\0"
-    "doEditMenuItems\0doViewMenuItems\0"
-    "doNavMenuItems\0doBookmarkMenuItems\0"
-    "doHelpMenuItems\0doToolsMenuItems\0"
-    "doSelectTab\0doTabBarContextMenu\0"
-    "doOddMenuItems\0doOddButtons\0"
-    "doDoubleClickPrefs\0QListWidgetItem*\0"
-    "item\0setPreferences\0setBMColour\0"
-    "setLineColour\0setFont\0addToToolBar\0"
-    "buildGetKeyShortCut\0index\0switchPage\0"
-    "closeTab\0closeAllTabs\0doFindButton\0"
-    "tabContextMenu\0pt\0doTabBarContextMenuSetHilite\0"
+    "KKEditClass\0debugSignalSlot\0\0doTimer\0"
+    "doFileMenuItems\0doEditMenuItems\0"
+    "doViewMenuItems\0doNavMenuItems\0"
+    "doBookmarkMenuItems\0doHelpMenuItems\0"
+    "doToolsMenuItems\0doSelectTab\0"
+    "doTabBarContextMenu\0doOddMenuItems\0"
+    "doOddButtons\0doDoubleClickPrefs\0"
+    "QListWidgetItem*\0item\0setPreferences\0"
+    "setBMColour\0setLineColour\0setFont\0"
+    "addToToolBar\0buildGetKeyShortCut\0index\0"
+    "switchPage\0closeTab\0closeAllTabs\0"
+    "doFindButton\0tabContextMenu\0pt\0"
+    "doTabBarContextMenuSetHilite\0"
     "doAppShortCuts\0doSearchFromBar\0txt\0"
     "setSearchPrefs\0state\0doSessionsMenuItems"
 };
@@ -94,7 +96,7 @@ static const uint qt_meta_data_KKEditClass[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      29,   14, // methods
+      30,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -102,37 +104,39 @@ static const uint qt_meta_data_KKEditClass[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,  159,    2, 0x0a /* Public */,
-       3,    0,  160,    2, 0x0a /* Public */,
-       4,    0,  161,    2, 0x0a /* Public */,
-       5,    0,  162,    2, 0x0a /* Public */,
-       6,    0,  163,    2, 0x0a /* Public */,
-       7,    0,  164,    2, 0x0a /* Public */,
-       8,    0,  165,    2, 0x0a /* Public */,
-       9,    0,  166,    2, 0x0a /* Public */,
-      10,    0,  167,    2, 0x0a /* Public */,
-      11,    0,  168,    2, 0x0a /* Public */,
-      12,    0,  169,    2, 0x0a /* Public */,
-      13,    0,  170,    2, 0x0a /* Public */,
-      14,    1,  171,    2, 0x0a /* Public */,
-      17,    0,  174,    2, 0x0a /* Public */,
-      18,    0,  175,    2, 0x0a /* Public */,
-      19,    0,  176,    2, 0x0a /* Public */,
-      20,    0,  177,    2, 0x0a /* Public */,
-      21,    0,  178,    2, 0x0a /* Public */,
-      22,    1,  179,    2, 0x0a /* Public */,
-      24,    1,  182,    2, 0x0a /* Public */,
-      25,    1,  185,    2, 0x0a /* Public */,
-      26,    0,  188,    2, 0x0a /* Public */,
-      27,    0,  189,    2, 0x0a /* Public */,
-      28,    1,  190,    2, 0x0a /* Public */,
-      30,    0,  193,    2, 0x0a /* Public */,
-      31,    0,  194,    2, 0x0a /* Public */,
-      32,    1,  195,    2, 0x0a /* Public */,
-      34,    1,  198,    2, 0x0a /* Public */,
-      36,    0,  201,    2, 0x0a /* Public */,
+       1,    1,  164,    2, 0x0a /* Public */,
+       3,    0,  167,    2, 0x0a /* Public */,
+       4,    0,  168,    2, 0x0a /* Public */,
+       5,    0,  169,    2, 0x0a /* Public */,
+       6,    0,  170,    2, 0x0a /* Public */,
+       7,    0,  171,    2, 0x0a /* Public */,
+       8,    0,  172,    2, 0x0a /* Public */,
+       9,    0,  173,    2, 0x0a /* Public */,
+      10,    0,  174,    2, 0x0a /* Public */,
+      11,    0,  175,    2, 0x0a /* Public */,
+      12,    0,  176,    2, 0x0a /* Public */,
+      13,    0,  177,    2, 0x0a /* Public */,
+      14,    0,  178,    2, 0x0a /* Public */,
+      15,    1,  179,    2, 0x0a /* Public */,
+      18,    0,  182,    2, 0x0a /* Public */,
+      19,    0,  183,    2, 0x0a /* Public */,
+      20,    0,  184,    2, 0x0a /* Public */,
+      21,    0,  185,    2, 0x0a /* Public */,
+      22,    0,  186,    2, 0x0a /* Public */,
+      23,    1,  187,    2, 0x0a /* Public */,
+      25,    1,  190,    2, 0x0a /* Public */,
+      26,    1,  193,    2, 0x0a /* Public */,
+      27,    0,  196,    2, 0x0a /* Public */,
+      28,    0,  197,    2, 0x0a /* Public */,
+      29,    1,  198,    2, 0x0a /* Public */,
+      31,    0,  201,    2, 0x0a /* Public */,
+      32,    0,  202,    2, 0x0a /* Public */,
+      33,    1,  203,    2, 0x0a /* Public */,
+      35,    1,  206,    2, 0x0a /* Public */,
+      37,    0,  209,    2, 0x0a /* Public */,
 
  // slots: parameters
+    QMetaType::Void, QMetaType::Int,    2,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -145,22 +149,22 @@ static const uint qt_meta_data_KKEditClass[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, 0x80000000 | 15,   16,
+    QMetaType::Void, 0x80000000 | 16,   17,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Int,   23,
-    QMetaType::Void, QMetaType::Int,   23,
-    QMetaType::Bool, QMetaType::Int,   23,
+    QMetaType::Void, QMetaType::Int,   24,
+    QMetaType::Void, QMetaType::Int,   24,
+    QMetaType::Bool, QMetaType::Int,   24,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::QPoint,   29,
+    QMetaType::Void, QMetaType::QPoint,   30,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::QString,   33,
-    QMetaType::Void, QMetaType::Int,   35,
+    QMetaType::Void, QMetaType::QString,   34,
+    QMetaType::Void, QMetaType::Int,   36,
     QMetaType::Void,
 
        0        // eod
@@ -172,36 +176,37 @@ void KKEditClass::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id,
         auto *_t = static_cast<KKEditClass *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
-        case 0: _t->doTimer(); break;
-        case 1: _t->doFileMenuItems(); break;
-        case 2: _t->doEditMenuItems(); break;
-        case 3: _t->doViewMenuItems(); break;
-        case 4: _t->doNavMenuItems(); break;
-        case 5: _t->doBookmarkMenuItems(); break;
-        case 6: _t->doHelpMenuItems(); break;
-        case 7: _t->doToolsMenuItems(); break;
-        case 8: _t->doSelectTab(); break;
-        case 9: _t->doTabBarContextMenu(); break;
-        case 10: _t->doOddMenuItems(); break;
-        case 11: _t->doOddButtons(); break;
-        case 12: _t->doDoubleClickPrefs((*reinterpret_cast< QListWidgetItem*(*)>(_a[1]))); break;
-        case 13: _t->setPreferences(); break;
-        case 14: _t->setBMColour(); break;
-        case 15: _t->setLineColour(); break;
-        case 16: _t->setFont(); break;
-        case 17: _t->addToToolBar(); break;
-        case 18: _t->buildGetKeyShortCut((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 19: _t->switchPage((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 20: { bool _r = _t->closeTab((*reinterpret_cast< int(*)>(_a[1])));
+        case 0: _t->debugSignalSlot((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 1: _t->doTimer(); break;
+        case 2: _t->doFileMenuItems(); break;
+        case 3: _t->doEditMenuItems(); break;
+        case 4: _t->doViewMenuItems(); break;
+        case 5: _t->doNavMenuItems(); break;
+        case 6: _t->doBookmarkMenuItems(); break;
+        case 7: _t->doHelpMenuItems(); break;
+        case 8: _t->doToolsMenuItems(); break;
+        case 9: _t->doSelectTab(); break;
+        case 10: _t->doTabBarContextMenu(); break;
+        case 11: _t->doOddMenuItems(); break;
+        case 12: _t->doOddButtons(); break;
+        case 13: _t->doDoubleClickPrefs((*reinterpret_cast< QListWidgetItem*(*)>(_a[1]))); break;
+        case 14: _t->setPreferences(); break;
+        case 15: _t->setBMColour(); break;
+        case 16: _t->setLineColour(); break;
+        case 17: _t->setFont(); break;
+        case 18: _t->addToToolBar(); break;
+        case 19: _t->buildGetKeyShortCut((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 20: _t->switchPage((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 21: { bool _r = _t->closeTab((*reinterpret_cast< int(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = std::move(_r); }  break;
-        case 21: _t->closeAllTabs(); break;
-        case 22: _t->doFindButton(); break;
-        case 23: _t->tabContextMenu((*reinterpret_cast< const QPoint(*)>(_a[1]))); break;
-        case 24: _t->doTabBarContextMenuSetHilite(); break;
-        case 25: _t->doAppShortCuts(); break;
-        case 26: _t->doSearchFromBar((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 27: _t->setSearchPrefs((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 28: _t->doSessionsMenuItems(); break;
+        case 22: _t->closeAllTabs(); break;
+        case 23: _t->doFindButton(); break;
+        case 24: _t->tabContextMenu((*reinterpret_cast< const QPoint(*)>(_a[1]))); break;
+        case 25: _t->doTabBarContextMenuSetHilite(); break;
+        case 26: _t->doAppShortCuts(); break;
+        case 27: _t->doSearchFromBar((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 28: _t->setSearchPrefs((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 29: _t->doSessionsMenuItems(); break;
         default: ;
         }
     }
@@ -236,13 +241,13 @@ int KKEditClass::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 29)
+        if (_id < 30)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 29;
+        _id -= 30;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 29)
+        if (_id < 30)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 29;
+        _id -= 30;
     }
     return _id;
 }

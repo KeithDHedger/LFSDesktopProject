@@ -39,7 +39,7 @@ class MenuItemClass : public QAction
 		void				setMenuID(unsigned int id);
 		unsigned int 		getMenuID(void);
 		void				setMenuString(QString str);
-		const QString		*getMenuString(void);
+		QString				getMenuString(void);
 		//void				setCallBackVoid(menuCallbackVoid func);
 		//void				setCallBackBool(menuCallbackBool func);
 
@@ -48,7 +48,7 @@ class MenuItemClass : public QAction
 
 	private:
 		int					menuID;
-		QString				*menuString;
+		QString				menuString;
 		//menuCallbackVoid	callbackVoid;
 		//menuCallbackBool	callbackBool;
 
