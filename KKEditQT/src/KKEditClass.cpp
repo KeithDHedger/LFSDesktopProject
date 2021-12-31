@@ -1047,29 +1047,6 @@ void KKEditClass::setToolbarSensitive(void)
 
 void KKEditClass::debugSignalSlot(int what)
 {
-	QFile		file;
-	QStringList	sl;
-
-	file.setFileName(this->toolSelect->currentData().toString());
-	if(file.open(QIODevice::Text | QIODevice::ReadOnly))
-		{
-			QString line;
-			QTextStream	in(&file);
-			sl=QTextStream(&file).readAll().split("\n",Qt::SkipEmptyParts);
-			file.close();
-		}
-
-	QLineEdit *edit=this->toolsWindow->findChild<QLineEdit*>(TOOLNAME);
-	edit->setText(sl.at(TNAME).section(TOOLNAME,1,1).trimmed());
-
-	edit=this->toolsWindow->findChild<QLineEdit*>(TOOLCOMMAND);
-	edit->setText(sl.at(TCOMMAND).section(TOOLCOMMAND,1,1).trimmed());
-
-
-	edit=this->toolsWindow->findChild<QLineEdit*>(TOOLCOMMENT);
-	edit->setText(sl.at(TCOMMENT).section(TOOLCOMMENT,1,1).trimmed());
-
-//	QTextStream(stderr) << "here " << edit->text() << " " << this->toolSelect->currentData().toString() << Qt::endl;
 }
 
 

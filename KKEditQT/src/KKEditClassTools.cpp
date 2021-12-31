@@ -57,6 +57,55 @@ void KKEditClass::rebuildToolsMenu(void)
 		}
 }
 
-//void KKEditClass::buildTools(void)
-//{
-//}
+void KKEditClass::setToolsData(int what)
+{
+	QFile		file;
+	QStringList	sl;
+	QLineEdit	*edit;
+	QCheckBox	*check;
+
+	file.setFileName(this->toolSelect->currentData().toString());
+	if(file.open(QIODevice::Text | QIODevice::ReadOnly))
+		{
+			QString line;
+			QTextStream	in(&file);
+			sl=QTextStream(&file).readAll().split("\n",Qt::SkipEmptyParts);
+			file.close();
+		}
+
+	edit=this->toolsWindow->findChild<QLineEdit*>(TOOLNAME);
+	edit->setText(sl.at(TNAME).section(TOOLNAME,1,1).trimmed());
+
+	edit=this->toolsWindow->findChild<QLineEdit*>(TOOLCOMMAND);
+	edit->setText(sl.at(TCOMMAND).section(TOOLCOMMAND,1,1).trimmed());
+
+	edit=this->toolsWindow->findChild<QLineEdit*>(TOOLCOMMENT);
+	edit->setText(sl.at(TCOMMENT).section(TOOLCOMMENT,1,1).trimmed());
+
+//run in term
+	check=this->toolsWindow->findChild<QCheckBox*>(TOOLRUNINTERM);
+	check->setCheckState((Qt::CheckState)(2*sl.at(TINTERM).section(TOOLRUNINTERM,1,1).toInt()));
+//show in popup
+	check=this->toolsWindow->findChild<QCheckBox*>(TOOLSHOWINPOPUP);
+	check->setCheckState((Qt::CheckState)(2*sl.at(TINPOPUP).section(TOOLSHOWINPOPUP,1,1).toInt()));
+
+//always show in popup
+	check=this->toolsWindow->findChild<QCheckBox*>(TOOLALWAYSINPOPUP);
+	check->setCheckState((Qt::CheckState)(2*sl.at(TALWAYSPOPUP).section(TOOLALWAYSINPOPUP,1,1).toInt()));
+//run sync
+//show html doc
+//clear tool out
+//run as root
+//use pole
+
+//radios
+//ignore out
+//paste out
+//replace all
+//view out
+
+
+	QTextStream(stderr) << "here " << sl.at(TINTERM).section(TOOLRUNINTERM,1,1) << " " << this->toolSelect->currentData().toString() << Qt::endl;
+}
+
+

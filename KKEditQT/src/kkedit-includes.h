@@ -76,14 +76,6 @@ struct msgStruct
 
 enum msgActions {OPENFILE=100,SAVEFILE,QUITAPP,ACTIVATEAPP};
 
-#define TOOL_ASYNC 8
-#define TOOL_IGNORE_OP 0
-#define TOOL_PASTE_OP 1
-#define TOOL_REPLACE_OP 2
-#define TOOL_SHOW_DOC 4
-#define	TOOL_INSERT_MASK 0b10111
-#define	TOOL_VIEW_OP 16
-
 #define MAXTEXTWIDTH 500
 
 #define KKEDITFOLDER	".KKEditQT"
@@ -164,22 +156,31 @@ enum  utilVarType {BOOLVAR=0,INTVAR,CHARVAR,MULTVAR,BADTYPE,DECIMALOUT,HEXOUT,OC
 
 #define TOOLNAME "name"
 #define TOOLCOMMAND "command"
-#define TOOLKEY "key"
+#define TOOLKEY "shortcutkey"
 #define TOOLCOMMENT "comment"
-#define TOOLRUNINTERM "toolruninterm"
-#define TOOLSHOWINPOPUP "toolshowinpopup"
-#define TOOLALWAYSINPOPUP "toolalwaysinpopup"
-#define TOOLRUNSYNC "toolrunsync"
-#define TOOLSHOWDOC "toolshowdoc"
-#define TOOLCLEAROP "toolclearop"
-#define TOOLRUNASROOT "toolrunasroot"
-#define TOOLUSEPOLE "toolusepole"
-#define TOOLIGNOREOUT "toolignoreout"
-#define TOOLPASTEOUT "toolpasteout"
-#define TOOLREPLACEALL "toolreplaceall"
-#define TOOLVIEWOUT "toolviewout"
+#define TOOLFLAGS "flags"
+#define TOOLRUNINTERM "interm"
+#define TOOLSHOWINPOPUP "inpopup"
+#define TOOLALWAYSINPOPUP "alwayspopup"
+#define TOOLRUNSYNC "flags"
+#define TOOLSHOWDOC "flags"
+#define TOOLCLEAROP "clearview"
+#define TOOLRUNASROOT "runasroot"
+#define TOOLUSEPOLE "usebar"
+#define TOOLIGNOREOUT "flags"
+#define TOOLPASTEOUT "flags"
+#define TOOLREPLACEALL "flags"
+#define TOOLVIEWOUT "flags"
 
-enum toolEnums {TNAME=0,TCOMMAND,TCOMMENT};
+#define TOOL_ASYNC 8
+#define TOOL_IGNORE_OP 0
+#define TOOL_PASTE_OP 1
+#define TOOL_REPLACE_OP 2
+#define TOOL_SHOW_DOC 4
+#define	TOOL_INSERT_MASK 0b10111
+#define	TOOL_VIEW_OP 16
+
+enum toolEnums {TNAME=0,TCOMMAND,TCOMMENT,TINTERM,TFLAGS,TINPOPUP,TALWAYSPOPUP,TCLEARVIEW,TRUNASROOT,TUSEBAR,TSHORTCUTKEY};
 
 #define MAXSESSIONS 24
 

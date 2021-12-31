@@ -423,6 +423,8 @@ class KKEditClass : public QObject
 
 		void						doSessionsMenuItems(void);
 
+		void						setToolsData(int);
+
 	protected:
 	private:
 };

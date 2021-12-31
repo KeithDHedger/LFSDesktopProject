@@ -925,7 +925,7 @@ void KKEditClass::buildTools(void)
 	QLabel			*widgetlabel;
 	QGridLayout		*grid;
 	QWidget			*tab;
-	QCheckBox		check;
+	QCheckBox		*check;
 	QLineEdit		*edit;
 	int				posx=0;
 	int				posy=0;
@@ -949,7 +949,7 @@ printf("TODO buildTools\n");
 	grid->setColumnStretch(1,1);
 
 	this->toolSelect=new QComboBox;
-	QObject::connect(this->toolSelect,SIGNAL(activated(int)),this,SLOT(debugSignalSlot(int)));
+	QObject::connect(this->toolSelect,SIGNAL(activated(int)),this,SLOT(setToolsData(int)));
 	mainvbox->addWidget(this->toolSelect);
 	this->rebuildToolsMenu();
 
@@ -991,10 +991,20 @@ printf("TODO buildTools\n");
 	widgetlabel=new QLabel(info);
 	grid->addWidget(widgetlabel,posy,posx,posy++,-1,Qt::AlignVCenter);
 
+	posy+=7;
 //checkboxes
 //run in term
+	check=new QCheckBox("Run Tool In Terminal");
+	check->setObjectName(TOOLRUNINTERM);
+	grid->addWidget(check,posy++,posx,Qt::AlignVCenter);
 //show in popup
+	check=new QCheckBox("Show Tool In Pop-Up Menu");
+	check->setObjectName(TOOLSHOWINPOPUP);
+	grid->addWidget(check,posy++,posx,Qt::AlignVCenter);
 //always show in popup
+	check=new QCheckBox("Always Show Tool In Pop-Up Menu");
+	check->setObjectName(TOOLALWAYSINPOPUP);
+	grid->addWidget(check,posy++,posx,Qt::AlignVCenter);
 //run sync
 //show html doc
 //clear tool out
