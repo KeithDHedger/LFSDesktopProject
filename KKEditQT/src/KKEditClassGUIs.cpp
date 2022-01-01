@@ -926,6 +926,7 @@ void KKEditClass::buildTools(void)
 	QGridLayout		*grid;
 	QWidget			*tab;
 	QCheckBox		*check;
+	QRadioButton	*radio;
 	QLineEdit		*edit;
 	int				posx=0;
 	int				posy=0;
@@ -1006,16 +1007,45 @@ printf("TODO buildTools\n");
 	check->setObjectName(TOOLALWAYSINPOPUP);
 	grid->addWidget(check,posy++,posx,Qt::AlignVCenter);
 //run sync
+	check=new QCheckBox("Run Tool Synchronously");
+	QObject::connect(check,SIGNAL(stateChanged(int)),this,SLOT(setToolsData(int)));	
+	check->setObjectName(TOOLRUNSYNC);
+	grid->addWidget(check,posy++,posx,Qt::AlignVCenter);
 //show html doc
+	check=new QCheckBox("Show HTML Doc");
+	check->setObjectName(TOOLSHOWDOC);
+	grid->addWidget(check,posy++,posx,Qt::AlignVCenter);
 //clear tool out
+	check=new QCheckBox("Clear Tool Output First");
+	check->setObjectName(TOOLCLEAROP);
+	grid->addWidget(check,posy++,posx,Qt::AlignVCenter);
 //run as root
+	check=new QCheckBox("Run Tool As Root");
+	check->setObjectName(TOOLRUNASROOT);
+	grid->addWidget(check,posy++,posx,Qt::AlignVCenter);
 //use pole
+	check=new QCheckBox("Use Progress Bar");
+	check->setObjectName(TOOLUSEPOLE);
+	grid->addWidget(check,posy++,posx,Qt::AlignVCenter);
 
 //radios
 //ignore out
+	radio=new QRadioButton("Ignore Output");
+	radio->setObjectName(TOOLIGNOREOUT);
+	grid->addWidget(radio,posy++,posx,Qt::AlignVCenter);
 //paste out
+	radio=new QRadioButton("Paste Output");
+	radio->setChecked(true);
+	radio->setObjectName(TOOLPASTEOUT);
+	grid->addWidget(radio,posy++,posx,Qt::AlignVCenter);
 //replace all
+	radio=new QRadioButton("Replace All Contents");
+	radio->setObjectName(TOOLREPLACEALL);
+	grid->addWidget(radio,posy++,posx,Qt::AlignVCenter);
 //view out
+	radio=new QRadioButton("View Output");
+	radio->setObjectName(TOOLVIEWOUT);
+	grid->addWidget(radio,posy++,posx,Qt::AlignVCenter);
 
 	tab->setLayout(grid);
 	mainvbox->addWidget(tab);

@@ -162,15 +162,15 @@ enum  utilVarType {BOOLVAR=0,INTVAR,CHARVAR,MULTVAR,BADTYPE,DECIMALOUT,HEXOUT,OC
 #define TOOLRUNINTERM "interm"
 #define TOOLSHOWINPOPUP "inpopup"
 #define TOOLALWAYSINPOPUP "alwayspopup"
-#define TOOLRUNSYNC "flags"
-#define TOOLSHOWDOC "flags"
+#define TOOLRUNSYNC "toolrunsync"
+#define TOOLSHOWDOC "toolshowdoc"
 #define TOOLCLEAROP "clearview"
 #define TOOLRUNASROOT "runasroot"
 #define TOOLUSEPOLE "usebar"
-#define TOOLIGNOREOUT "flags"
-#define TOOLPASTEOUT "flags"
-#define TOOLREPLACEALL "flags"
-#define TOOLVIEWOUT "flags"
+#define TOOLIGNOREOUT "toolignoreout"
+#define TOOLPASTEOUT "toolpasteout"
+#define TOOLREPLACEALL "toolreplaceall"
+#define TOOLVIEWOUT "toolviewout"
 
 #define TOOL_ASYNC 8
 #define TOOL_IGNORE_OP 0
