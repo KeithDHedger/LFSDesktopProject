@@ -958,9 +958,9 @@ void KKEditClass::setToolbarSensitive(void)
 		}
 
 	if(	this->currentSessionNumber==0xdeadbeef)
-		this->saveCurrentSessionMenuItem->setEnabled(false);
+		this->saveSessionsMenu->setEnabled(false);
 	else
-		this->saveCurrentSessionMenuItem->setEnabled(true);
+		this->saveSessionsMenu->setEnabled(true);
 
 	this->restoreDefaultSessionMenuItem->setEnabled(false);//TODO//
 

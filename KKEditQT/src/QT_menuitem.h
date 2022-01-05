@@ -40,8 +40,12 @@ class MenuItemClass : public QAction
 		unsigned int 		getMenuID(void);
 		void				setMenuString(QString str);
 		QString				getMenuString(void);
+
+
 		//void				setCallBackVoid(menuCallbackVoid func);
 		//void				setCallBackBool(menuCallbackBool func);
+		bool				inPopup=false;
+		bool				alwaysInPopup=false;
 
 	public slots:
 		void				menuClickedGotoLine();

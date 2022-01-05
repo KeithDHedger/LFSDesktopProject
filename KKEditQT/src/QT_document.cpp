@@ -316,6 +316,7 @@ void DocumentClass::contextMenuEvent(QContextMenuEvent *event)
 {
 	QMenu				menu(this);
 	QList<QAction*>		menuactions;
+	MenuItemClass		*mc;
 
 	menuactions=this->mainKKEditClass->bookMarkMenu->actions();
 	menu.addAction(menuactions.at(TOGGLEBOOKMARKMENUITEM-REMOVEALLBOOKMARKSMENUITEM));
@@ -338,11 +339,40 @@ void DocumentClass::contextMenuEvent(QContextMenuEvent *event)
 	menu.addAction(menuactions.at(GOTODEFINEMENUITEM-GOTODEFINEMENUITEM));
 	menu.addSeparator();
 
+//tools
+	menuactions=qobject_cast<QMenu*>(this->mainKKEditClass->toolsMenu)->actions();
+	for(int j=1;j<menuactions.count();j++)
+		{
+			mc=qobject_cast<MenuItemClass*>(menuactions.at(j));
+			if(mc!=NULL)
+				{
+					if(mc->alwaysInPopup==true)
+						menu.addAction(menuactions.at(j));
+				}
+		}
+
+	menu.addSeparator();
+
+	for(int j=1;j<menuactions.count();j++)
+		{
+			mc=qobject_cast<MenuItemClass*>(menuactions.at(j));
+			if(mc!=NULL)
+				{
+					if(this->textCursor().hasSelection()==true)
+						{
+							if(mc->inPopup==true)
+								menu.addAction(menuactions.at(j));
+						}
+				}
+		}
+
+	menu.addSeparator();
+	
 #ifdef _ASPELL_
 	menu.addAction(this->mainKKEditClass->spellCheckMenuItem);
 #endif
 	menu.addSeparator();
-
+menu.setStyleSheet("QMenu { menu-scrollable: true ;}");
 	menu.exec(event->globalPos());
 }
 

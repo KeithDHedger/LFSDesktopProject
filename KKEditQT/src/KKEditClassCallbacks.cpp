@@ -184,6 +184,8 @@ void KKEditClass::doToolsMenuItems()
 {
 	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(sender());
 	DocumentClass	*document=this->getDocumentForTab(-1);
+	QFile			file;
+	QStringList		sl;
 
 	fprintf(stderr,"tools -> menu id=%i, menu name=%s\n",mc->getMenuID(),mc->text().toStdString().c_str());
 	switch(mc->getMenuID())
@@ -194,7 +196,101 @@ void KKEditClass::doToolsMenuItems()
 			 	break;
 
 			 default:
-			 	QTextStream(stderr) << "menuid=" << (mc->getMenuID() & 0xfff) << " menustring=" << mc->getMenuString() << "<<" << Qt::endl;
+				file.setFileName(mc->getMenuString());
+				if(file.open(QIODevice::Text | QIODevice::ReadOnly))
+					{
+						QString line;
+						QTextStream	in(&file);
+						sl=QTextStream(&file).readAll().split("\n",Qt::SkipEmptyParts);
+						file.close();
+						sl.sort(Qt::CaseInsensitive);
+//				QTextStream(stderr) << mc->getMenuString() << "--" << sl.at(TOOL_COMMAND) << Qt::endl;
+						if(sl.at(TOOL_COMMAND).section(TOOLCOMMAND,1,1).trimmed().isEmpty()==false)
+							{
+								QString str=sl.at(TOOL_COMMAND).section(TOOLCOMMAND,1,1).trimmed();
+								if(document!=NULL)
+									{
+										//%d doc folder
+										setenv("KKEDIT_CURRENTDIR",document->getDirPath().toStdString().c_str(),1);
+										str.replace("%d",document->getDirPath());
+										//%f doc filepath
+										setenv("KKEDIT_CURRENTFILE",document->getFilePath().toStdString().c_str(),1);
+										str.replace("%f",document->getFilePath());
+										//%t selected text
+										setenv("KKEDIT_SELECTION",document->textCursor().selectedText().replace(QRegularExpression("\u2029|\\r\\n|\\r"),"\n").toStdString().c_str(),1);
+										str.replace("%t",document->textCursor().selectedText());
+										//%m
+										setenv("KKEDIT_MIMETYPE",document->mimeType.toStdString().c_str(),1);
+										str.replace("%m",document->mimeType);
+									}
+
+								//%h html file
+								setenv("KKEDIT_HTMLFILE",this->htmlFile.toStdString().c_str(),1);
+								str.replace("%h",this->htmlFile);
+								//%i
+								setenv("KKEDIT_DATADIR","TODO",1);
+								str.replace("%i","TODO");
+
+								int trm=sl.indexOf(QRegularExpression(QString(".*%1.*").arg(TOOLRUNINTERM)));//todo//
+								
+								QTextStream(stderr) << "prefsTerminalCommand=" << this->prefsTerminalCommand << " str=" << str << "<<" << sl.at(trm).section(TOOLRUNINTERM,1,1).trimmed() << Qt::endl;
+								if(sl.at(trm).section(TOOLRUNINTERM,1,1).trimmed().toInt()==1)
+									{
+										str=this->prefsTerminalCommand + " " + str;
+										str=QString("cd %1;%2").arg(this->toolsFolder).arg(str);
+										runPipe(str);
+										return;
+									}
+								
+								if(((sl.at(TOOL_FLAGS).section(TOOLFLAGS,1,1).trimmed().toInt() & TOOL_PASTE_OP)==TOOL_PASTE_OP) && (document!=NULL))
+									{
+										str=QString("cd %1;%2").arg(this->toolsFolder).arg(str);
+										document->textCursor().removeSelectedText();
+										document->textCursor().insertText(runPipeAndCapture(str));
+										return;
+									}
+
+								if(((sl.at(TOOL_FLAGS).section(TOOLFLAGS,1,1).trimmed().toInt() & TOOL_REPLACE_OP)==TOOL_REPLACE_OP) && (document!=NULL))
+									{
+										str=QString("cd %1;%2").arg(this->toolsFolder).arg(str);
+										document->setPlainText(runPipeAndCapture(str));
+										return;
+									}
+
+								if((sl.at(TOOL_FLAGS).section(TOOLFLAGS,1,1).trimmed().toInt() & TOOL_VIEW_OP)==TOOL_VIEW_OP)//TODO//
+									{
+										str=QString("cd %1;%2").arg(this->toolsFolder).arg(str);
+										str=runPipeAndCapture(str);
+										QMessageBox mes(QMessageBox::Information,"Tool Output",str,QMessageBox::Ok);
+										mes.exec();
+										return;
+									}
+
+								if((sl.at(TOOL_FLAGS).section(TOOLFLAGS,1,1).trimmed().toInt() & TOOL_ASYNC)==TOOL_ASYNC)
+									{
+										str=QString("cd %1;%2").arg(this->toolsFolder).arg(str);
+										str=runPipeAndCapture(str);
+										return;
+									}
+	
+								if((sl.at(TOOL_FLAGS).section(TOOLFLAGS,1,1).trimmed().toInt() & TOOL_SHOW_DOC)==TOOL_SHOW_DOC)
+									{
+										str=QString("cd %1;%2").arg(this->toolsFolder).arg(str);
+										QTextStream(stderr) << str << Qt::endl;
+										runPipe(str);
+										this->docView->setWindowTitle(sl.at(TOOL_NAME).section(TOOLNAME,1,1).trimmed());
+										this->webView->load(QUrl("file://" + this->htmlFile));
+										this->docviewerVisible=true;
+										this->toggleDocViewMenuItem->setText("Hide Docviewer");
+										this->docView->show();
+										return;
+									}
+
+								QTextStream(stderr) << str << Qt::endl;
+								runPipe(str);
+					 			//QTextStream(stderr) << "menuid=" << (mc->getMenuID() & 0xfff) << " menustring=" << mc->getMenuString() << "<<" << sl.at(TOOL_COMMAND).section(TOOLCOMMAND,1,1).trimmed() << Qt::endl;
+							}
+					}
 			 	break;
 		}
 }
@@ -540,6 +636,9 @@ void KKEditClass::setPreferences(void)
 	this->prefsFunctionMenuLayout=qobject_cast<QComboBox*>(this->prefsOtherWidgets[FUNCTIONCOMBO])->currentIndex();
 	this->prefsSyntaxHilighting=qobject_cast<QCheckBox*>(this->prefsWidgets[SYNTAXHILITE])->checkState();
 	this->prefsAutoShowCompletions=qobject_cast<QCheckBox*>(this->prefsWidgets[AUTOSHOW])->checkState();
+
+//term command
+	this->prefsTerminalCommand=qobject_cast<QLineEdit*>(prefsOtherWidgets[PREFSTERMCOMMAND])->text();
 
 //TODO//
 	this->prefsWindow->hide();

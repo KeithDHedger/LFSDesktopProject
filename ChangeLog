@@ -1,4 +1,8 @@
 0.5.1
+Added sort tool.
+Added verify tool.
+Clean tool constants.
+Started tools.
 Added KKEditClassTools.cpp
 Started tools.
 Set/get menuitem string now static string.

@@ -39,23 +39,170 @@ void KKEditClass::rebuildToolsMenu(void)
 
 	for(int k=0; k<flist.count(); k++)
 		{
+			//sl=this->verifyTool(QString filepath)
 			file.setFileName(toolsdir + "/" + flist.at(k));
 			if(file.open(QIODevice::Text | QIODevice::ReadOnly))
 				{
 					QString line;
 					QTextStream	in(&file);
 					sl=QTextStream(&file).readAll().split("\n",Qt::SkipEmptyParts);
-
-					if((sl.count()>2) && (sl.at(0).startsWith("name")) && (sl.at(1).startsWith("command")) && (sl.at(2).startsWith("comment")))
+					sl.sort(Qt::CaseInsensitive);
+					//enum toolEnums {TOOL_ALWAYS_IN_POPUP=0,TOOL_CLEAR_VIEW,TOOL_COMMAND,TOOL_COMMENT,TOOL_FLAGS,TOOL_INPOPUP,TOOL_IN_TERM,TOOL_NAME,TOOL_RUN_AS_ROOT,TOOL_SHORTCUT_KEY,TOOL_USE_BAR,TOOL_END};
+					if((sl.count()>=TOOL_END) && (sl.at(TOOL_NAME).startsWith("name")) && (sl.at(TOOL_COMMAND).startsWith("command")) && (sl.at(TOOL_COMMENT).startsWith("comment")))
 						{
 							menuItemSink=this->makeMenuItemClass(TOOLSMENU,flist.at(k),0,NULL,"NOTNEEDED",TOOLNUMBER+dropnum++);
 							menuItemSink->setMenuString(toolsdir + "/" + flist.at(k));
+							menuItemSink->inPopup=(bool)sl.at(TOOL_INPOPUP).section(TOOLSHOWINPOPUP,1,1).toInt();
+							menuItemSink->alwaysInPopup=(bool)sl.at(TOOL_ALWAYS_IN_POPUP).section(TOOLALWAYSINPOPUP,1,1).toInt();
 							this->toolSelect->addItem(flist.at(k),toolsdir + "/" + flist.at(k));
 						}
 					file.close();
 				}
 		}
 }
+
+QStringList KKEditClass::verifyTool(QString filepath)
+{
+	QFile		file;
+	QStringList	sl;
+
+	file.setFileName(filepath);
+	if(file.open(QIODevice::Text | QIODevice::ReadOnly))
+		{
+			QString line;
+			QTextStream	in(&file);
+			sl=QTextStream(&file).readAll().split("\n",Qt::SkipEmptyParts);
+			sl.sort(Qt::CaseInsensitive);
+			file.close();
+		}
+
+	if(sl.count()<TOOL_END)
+		{
+			QTextStream(stderr) << "Possible error with " << filepath << Qt::endl;
+			int		cnt=0;
+			while(sl.count()<TOOL_END)
+				sl<<"XXX";
+			while(cnt<TOOL_END)
+				{
+					switch(cnt)
+						{
+							case TOOL_ALWAYS_IN_POPUP:
+								if(sl.at(cnt).section(TOOLALWAYSINPOPUP,0,0,QString::SectionIncludeTrailingSep|QString::SectionCaseInsensitiveSeps).trimmed().compare(TOOLALWAYSINPOPUP)!=0)
+									{
+										sl<< QString("%1	0").arg(TOOLALWAYSINPOPUP);
+										sl.sort(Qt::CaseInsensitive);
+										cnt=0;
+										continue;
+									}
+								break;
+							case TOOL_CLEAR_VIEW:
+								if(sl.at(cnt).section(TOOLCLEAROP,0,0,QString::SectionIncludeTrailingSep|QString::SectionCaseInsensitiveSeps).trimmed().compare(TOOLCLEAROP)!=0)
+									{
+										sl<< QString("%1	0").arg(TOOLCLEAROP);
+										sl.sort(Qt::CaseInsensitive);
+										cnt=0;
+										continue;
+									}
+								break;
+							case TOOL_COMMAND:
+								if(sl.at(cnt).section(TOOLCOMMAND,0,0,QString::SectionIncludeTrailingSep|QString::SectionCaseInsensitiveSeps).trimmed().compare(TOOLCOMMAND)!=0)
+									{
+										sl<< QString("%1	exit 1").arg(TOOLCOMMAND);
+										sl.sort(Qt::CaseInsensitive);
+										cnt=0;
+										continue;
+									}
+								break;
+							case TOOL_COMMENT:
+								if(sl.at(cnt).section(TOOLCOMMENT,0,0,QString::SectionIncludeTrailingSep|QString::SectionCaseInsensitiveSeps).trimmed().compare(TOOLCOMMENT)!=0)
+									{
+										sl<< QString("%1	").arg(TOOLCOMMENT);
+										sl.sort(Qt::CaseInsensitive);
+										cnt=0;
+										continue;
+									}
+								break;
+							case TOOL_FLAGS:
+								if(sl.at(cnt).section(TOOLFLAGS,0,0,QString::SectionIncludeTrailingSep|QString::SectionCaseInsensitiveSeps).trimmed().compare(TOOLFLAGS)!=0)
+									{
+										sl<< QString("%1	0").arg(TOOLFLAGS);
+										sl.sort(Qt::CaseInsensitive);
+										cnt=0;
+										continue;
+									}
+								break;
+							case TOOL_INPOPUP:
+								if(sl.at(cnt).section(TOOLSHOWINPOPUP,0,0,QString::SectionIncludeTrailingSep|QString::SectionCaseInsensitiveSeps).trimmed().compare(TOOLSHOWINPOPUP)!=0)
+									{
+										sl<< QString("%1	0").arg(TOOLSHOWINPOPUP);
+										sl.sort(Qt::CaseInsensitive);
+										cnt=0;
+										continue;
+									}
+								break;
+							case TOOL_IN_TERM:
+								if(sl.at(cnt).section(TOOLRUNINTERM,0,0,QString::SectionIncludeTrailingSep|QString::SectionCaseInsensitiveSeps).trimmed().compare(TOOLRUNINTERM)!=0)
+									{
+										sl<< QString("%1	0").arg(TOOLRUNINTERM);
+										sl.sort(Qt::CaseInsensitive);
+										cnt=0;
+										continue;
+									}
+								break;
+							case TOOL_NAME:
+								if(sl.at(cnt).section(TOOLNAME,0,0,QString::SectionIncludeTrailingSep|QString::SectionCaseInsensitiveSeps).trimmed().compare(TOOLNAME)!=0)
+									{
+										sl<< QString("%1	Bad Tool").arg(TOOLNAME);
+										sl.sort(Qt::CaseInsensitive);
+										cnt=0;
+										continue;
+									}
+								break;
+							case TOOL_RUN_AS_ROOT:
+								if(sl.at(cnt).section(TOOLRUNASROOT,0,0,QString::SectionIncludeTrailingSep|QString::SectionCaseInsensitiveSeps).trimmed().compare(TOOLRUNASROOT)!=0)
+									{
+										sl<< QString("%1	0").arg(TOOLRUNASROOT);
+										sl.sort(Qt::CaseInsensitive);
+										cnt=0;
+										continue;
+									}
+								break;
+							case TOOL_SHORTCUT_KEY:
+								if(sl.at(cnt).section(TOOLKEY,0,0,QString::SectionIncludeTrailingSep|QString::SectionCaseInsensitiveSeps).trimmed().compare(TOOLKEY)!=0)
+									{
+										sl<< QString("%1	").arg(TOOLKEY);
+										sl.sort(Qt::CaseInsensitive);
+										cnt=0;
+										continue;
+									}
+								break;
+							case TOOL_USE_BAR:
+								if(sl.at(cnt).section(TOOLUSEPOLE,0,0,QString::SectionIncludeTrailingSep|QString::SectionCaseInsensitiveSeps).trimmed().compare(TOOLUSEPOLE)!=0)
+									{
+										sl<< QString("%1	0").arg(TOOLUSEPOLE);
+										sl.sort(Qt::CaseInsensitive);
+										cnt=0;
+										continue;
+									}
+								break;
+						}
+					cnt++;
+				}
+		}
+	QTextStream(stderr) << '\n' << Qt::endl;
+	for(int j=0;j<TOOL_END;j++)
+		QTextStream(stderr) << sl.at(j) << Qt::endl;
+	QTextStream(stderr) << '\n' << Qt::endl;
+	return(sl);
+}
+									//QTextStream(stderr) << cnt << ">>" << sl.at(cnt).section(TOOLALWAYSINPOPUP,0,0,QString::SectionIncludeTrailingSep|QString::SectionCaseInsensitiveSeps) << "<<" " -->" << sl.at(cnt) << "<--" << Qt::endl;
+
+	//QTextStream(stderr) << '\n' << Qt::endl;
+	//for(int j=0;j<TOOL_END;j++)
+	//	QTextStream(stderr) << sl.at(j) << Qt::endl;
+	//								return(sl);
+					//if(numloops>TOOL_END)
+					//	break;
 
 void KKEditClass::setToolsData(int what)
 {
@@ -67,46 +214,68 @@ void KKEditClass::setToolsData(int what)
 	const QSignalBlocker	blocker(sender());
 	int						flags=0;
 
+//	sl=this->verifyTool(this->toolSelect->currentData().toString());
+//	file.setFileName(this->toolSelect->currentData().toString());
+//	if(file.open(QIODevice::Text | QIODevice::ReadOnly))
+//		{
+//			QString line;
+//			QTextStream	in(&file);
+//			sl=QTextStream(&file).readAll().split("\n",Qt::SkipEmptyParts);
+//for(int j=0;j<sl.count();j++)
+//	QTextStream(stderr) << sl.at(j) << Qt::endl;
+//			sl.sort(Qt::CaseInsensitive);
+//			file.close();
+//		}
+
+//for(int j=0;j<sl.count();j++)
+//	QTextStream(stderr) << sl.at(j) << Qt::endl;
+
+	sl=this->verifyTool(this->toolSelect->currentData().toString());
+
 	if(sender()->objectName().compare(TOOLRUNSYNC)!=0)
 		{
-			file.setFileName(this->toolSelect->currentData().toString());
-			if(file.open(QIODevice::Text | QIODevice::ReadOnly))
-				{
-					QString line;
-					QTextStream	in(&file);
-					sl=QTextStream(&file).readAll().split("\n",Qt::SkipEmptyParts);
-					file.close();
-				}
+	sl=this->verifyTool(this->toolSelect->currentData().toString());
+//			file.setFileName(this->toolSelect->currentData().toString());
+//			if(file.open(QIODevice::Text | QIODevice::ReadOnly))
+//				{
+//					QString line;
+//					QTextStream	in(&file);
+//					sl=QTextStream(&file).readAll().split("\n",Qt::SkipEmptyParts);
+//					file.close();
+//				}
 
 			edit=this->toolsWindow->findChild<QLineEdit*>(TOOLNAME);
-			edit->setText(sl.at(TNAME).section(TOOLNAME,1,1).trimmed());
+			edit->setText(sl.at(TOOL_NAME).section(TOOLNAME,1,1).trimmed());
 
 			edit=this->toolsWindow->findChild<QLineEdit*>(TOOLCOMMAND);
-			edit->setText(sl.at(TCOMMAND).section(TOOLCOMMAND,1,1).trimmed());
+			edit->setText(sl.at(TOOL_COMMAND).section(TOOLCOMMAND,1,1).trimmed());
 
 			edit=this->toolsWindow->findChild<QLineEdit*>(TOOLCOMMENT);
-			edit->setText(sl.at(TCOMMENT).section(TOOLCOMMENT,1,1).trimmed());
+			edit->setText(sl.at(TOOL_COMMENT).section(TOOLCOMMENT,1,1).trimmed());
+
+			edit=this->toolsWindow->findChild<QLineEdit*>(TOOLKEY);
+			edit->setText(sl.at(TOOL_SHORTCUT_KEY).section(TOOLKEY,1,1).trimmed());
 
 //run in term
 			check=this->toolsWindow->findChild<QCheckBox*>(TOOLRUNINTERM);
-			check->setCheckState((Qt::CheckState)(2*sl.at(TINTERM).section(TOOLRUNINTERM,1,1).toInt()));
+			check->setCheckState((Qt::CheckState)(2*sl.at(TOOL_IN_TERM).section(TOOLRUNINTERM,1,1).toInt()));
 //show in popup
 			check=this->toolsWindow->findChild<QCheckBox*>(TOOLSHOWINPOPUP);
-			check->setCheckState((Qt::CheckState)(2*sl.at(TINPOPUP).section(TOOLSHOWINPOPUP,1,1).toInt()));
+			check->setCheckState((Qt::CheckState)(2*sl.at(TOOL_INPOPUP).section(TOOLSHOWINPOPUP,1,1).toInt()));
 //always show in popup
 			check=this->toolsWindow->findChild<QCheckBox*>(TOOLALWAYSINPOPUP);
-			check->setCheckState((Qt::CheckState)(2*sl.at(TALWAYSPOPUP).section(TOOLALWAYSINPOPUP,1,1).toInt()));
+			check->setCheckState((Qt::CheckState)(2*sl.at(TOOL_ALWAYS_IN_POPUP).section(TOOLALWAYSINPOPUP,1,1).toInt()));
 //clear tool out
 			check=this->toolsWindow->findChild<QCheckBox*>(TOOLCLEAROP);
-			check->setCheckState((Qt::CheckState)(2*sl.at(TCLEARVIEW).section(TOOLCLEAROP,1,1).toInt()));
+			check->setCheckState((Qt::CheckState)(2*sl.at(TOOL_CLEAR_VIEW).section(TOOLCLEAROP,1,1).toInt()));
 //run as root
 			check=this->toolsWindow->findChild<QCheckBox*>(TOOLRUNASROOT);
-			check->setCheckState((Qt::CheckState)(2*sl.at(TRUNASROOT).section(TOOLRUNASROOT,1,1).toInt()));
+			check->setCheckState((Qt::CheckState)(2*sl.at(TOOL_RUN_AS_ROOT).section(TOOLRUNASROOT,1,1).toInt()));
 //use pole
 			check=this->toolsWindow->findChild<QCheckBox*>(TOOLUSEPOLE);
-			check->setCheckState((Qt::CheckState)(2*sl.at(TUSEBAR).section(TOOLUSEPOLE,1,1).toInt()));
+			check->setCheckState((Qt::CheckState)(2*sl.at(TOOL_USE_BAR).section(TOOLUSEPOLE,1,1).toInt()));
 //flags
-			flags=sl.at(TFLAGS).section(TOOLFLAGS,1,1).toInt();
+			flags=sl.at(TOOL_FLAGS).section(TOOLFLAGS,1,1).toInt();
 //show html doc
 			check=this->toolsWindow->findChild<QCheckBox*>(TOOLSHOWDOC);
 			check->setCheckState((Qt::CheckState)(2*((flags & TOOL_SHOW_DOC)==TOOL_SHOW_DOC)));

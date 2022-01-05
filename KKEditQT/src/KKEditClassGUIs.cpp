@@ -933,11 +933,6 @@ void KKEditClass::buildTools(void)
 
 //TODO//
 printf("TODO buildTools\n");
-	//this->toolsMenu=new QMenu("&Tools");
-	//this->menuBar->addMenu(this->toolsMenu);
-//	this->toolsMenu->addSeparator();
-//	menuItemSink=this->makeMenuItemClass(TOOLSMENU,"Manage External Tools",0,"accessories-text-editor","NOTNEEDED",MANAGETOOLSMENUITEM);
-//	this->toolsMenu->addSeparator();
 
 	this->toolsWindow=new QDialog(this->mainWindow);
 	this->toolsWindow->setWindowTitle("External Tools");
@@ -987,17 +982,36 @@ printf("TODO buildTools\n");
 %d - Directory of the current document or $HOME. Passed to command as $KKEDIT_CURRENTDIR\n\
 %i - The location of the globally installed tools. Passed to command as $KKEDIT_DATADIR\n\
 %h - Tempory file for displaying html in doc viewer. Passed to command as $KKEDIT_HTMLFILE\n\
-%l - Highlihting language. Passed to command as $KKEDIT_SOURCE_LANG";
+%m - Mime tyoe of file. Passed to command as $KKEDIT_MIMETYPE";
 
 	widgetlabel=new QLabel(info);
 	grid->addWidget(widgetlabel,posy,posx,posy++,-1,Qt::AlignVCenter);
 
 	posy+=7;
 //checkboxes
+//run as root
+	check=new QCheckBox("Run Tool As Root");
+	check->setObjectName(TOOLRUNASROOT);
+	grid->addWidget(check,posy++,posx,Qt::AlignVCenter);
 //run in term
 	check=new QCheckBox("Run Tool In Terminal");
 	check->setObjectName(TOOLRUNINTERM);
 	grid->addWidget(check,posy++,posx,Qt::AlignVCenter);
+//show html doc
+	check=new QCheckBox("Show HTML Doc");
+	check->setObjectName(TOOLSHOWDOC);
+	grid->addWidget(check,posy++,posx,Qt::AlignVCenter);
+//run sync
+	check=new QCheckBox("Run Tool Synchronously");
+	QObject::connect(check,SIGNAL(stateChanged(int)),this,SLOT(setToolsData(int)));	
+	check->setObjectName(TOOLRUNSYNC);
+	grid->addWidget(check,posy++,posx,Qt::AlignVCenter);
+
+//use pole
+	check=new QCheckBox("Use Progress Bar");
+	check->setObjectName(TOOLUSEPOLE);
+	grid->addWidget(check,posy++,posx,Qt::AlignVCenter);
+
 //show in popup
 	check=new QCheckBox("Show Tool In Pop-Up Menu");
 	check->setObjectName(TOOLSHOWINPOPUP);
@@ -1006,26 +1020,9 @@ printf("TODO buildTools\n");
 	check=new QCheckBox("Always Show Tool In Pop-Up Menu");
 	check->setObjectName(TOOLALWAYSINPOPUP);
 	grid->addWidget(check,posy++,posx,Qt::AlignVCenter);
-//run sync
-	check=new QCheckBox("Run Tool Synchronously");
-	QObject::connect(check,SIGNAL(stateChanged(int)),this,SLOT(setToolsData(int)));	
-	check->setObjectName(TOOLRUNSYNC);
-	grid->addWidget(check,posy++,posx,Qt::AlignVCenter);
-//show html doc
-	check=new QCheckBox("Show HTML Doc");
-	check->setObjectName(TOOLSHOWDOC);
-	grid->addWidget(check,posy++,posx,Qt::AlignVCenter);
 //clear tool out
 	check=new QCheckBox("Clear Tool Output First");
 	check->setObjectName(TOOLCLEAROP);
-	grid->addWidget(check,posy++,posx,Qt::AlignVCenter);
-//run as root
-	check=new QCheckBox("Run Tool As Root");
-	check->setObjectName(TOOLRUNASROOT);
-	grid->addWidget(check,posy++,posx,Qt::AlignVCenter);
-//use pole
-	check=new QCheckBox("Use Progress Bar");
-	check->setObjectName(TOOLUSEPOLE);
 	grid->addWidget(check,posy++,posx,Qt::AlignVCenter);
 
 //radios

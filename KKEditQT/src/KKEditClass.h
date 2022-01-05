@@ -333,6 +333,7 @@ class KKEditClass : public QObject
 
 //tools functions
 		void						rebuildToolsMenu(void);
+		QStringList					verifyTool(QString filepath);
 
 //docviewer vars
 		QMainWindow					*docView=NULL;
