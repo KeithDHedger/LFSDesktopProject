@@ -928,6 +928,7 @@ void KKEditClass::buildTools(void)
 	QCheckBox		*check;
 	QRadioButton	*radio;
 	QLineEdit		*edit;
+	QPushButton		*button;
 	int				posx=0;
 	int				posy=0;
 
@@ -1049,6 +1050,30 @@ printf("TODO buildTools\n");
 
 	tab->setLayout(grid);
 	mainvbox->addWidget(tab);
+
+
+	hbox=new QHBoxLayout;
+	hbox->addStretch(1);
+	button=new QPushButton("Save Tool");
+	button->setObjectName(QString("%1").arg(TOOLSSAVE));
+	QObject::connect(button,SIGNAL(clicked()),this,SLOT(doOddButtons()));
+	hbox->addWidget(button);
+
+	hbox->addStretch(1);
+	button=new QPushButton("Cancel");
+	button->setObjectName(QString("%1").arg(TOOLSCANCEL));
+	QObject::connect(button,SIGNAL(clicked()),this,SLOT(doOddButtons()));
+	hbox->addWidget(button);
+	hbox->addStretch(1);
+	mainvbox->addLayout(hbox);
+
+//
+//
+//
+//	button=new QPushButton("Restore Prefs");
+//	button->setObjectName(QString("%1").arg(CANCELPREFS));
+//	QObject::connect(button,SIGNAL(clicked()),this,SLOT(doOddButtons()));
+
 	//prefsnotebook->addTab(tab,"Text Style");
 
 
