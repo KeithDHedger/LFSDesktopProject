@@ -37,7 +37,7 @@ void KKEditClass::rebuildToolsMenu(void)
 	menuItemSink=this->makeMenuItemClass(TOOLSMENU,"Manage External Tools",0,"accessories-text-editor","NOTNEEDED",MANAGETOOLSMENUITEM);
 	this->toolsMenu->addSeparator();
 
-	QTextStream(stderr) << ">>>>>>>>>>>>>>>>>>>>>>>>>>" << Qt::endl;
+	//QTextStream(stderr) << ">>>>>>>>>>>>>>>>>>>>>>>>>>" << Qt::endl;
 	for(int k=0; k<flist.count(); k++)
 		{
 			sl=this->verifyTool(QString("%1/%2").arg(toolsdir).arg(flist.at(k)));
@@ -53,7 +53,7 @@ void KKEditClass::rebuildToolsMenu(void)
 						}
 				}
 		}
-	QTextStream(stderr) << "<<<<<<<<<<<<<<<<<<<<<<<<<" << Qt::endl;
+//	QTextStream(stderr) << "<<<<<<<<<<<<<<<<<<<<<<<<<" << Qt::endl;
 }
 
 QStringList KKEditClass::verifyTool(QString filepath)
@@ -76,7 +76,7 @@ QStringList KKEditClass::verifyTool(QString filepath)
 
 	if((sl.indexOf(QRegularExpression("^name.*$"))==-1) && (sl.indexOf(QRegularExpression("^command.*$"))==-1) && (sl.indexOf(QRegularExpression("^flags.*$"))==-1))
 		{
-			QTextStream(stderr) << "This doesn't look like a tools file not fixing ... " << filepath << Qt::endl;
+			//QTextStream(stderr) << "This doesn't look like a tools file not fixing ... " << filepath << Qt::endl;
 			sl.clear();
 			return(sl);
 		}
@@ -200,17 +200,54 @@ void KKEditClass::setToolsData(int what)
 	QFile					file;
 	QStringList				sl;
 	QLineEdit				*edit;
-	QCheckBox				*check;
+	QCheckBox				*check;//TOGO//
 	QRadioButton			*radio;
 	const QSignalBlocker	blocker(sender());
 	int						flags=0;
+	bool					setradioenable=true;
+	QCheckBox				*runintermcheck;
+	QCheckBox				*inpopupcheck;
+	QCheckBox				*alwaysincheck;
+	QCheckBox				*synccheck;
+	QCheckBox				*doccheck;
+	QCheckBox				*clearcheck;
+	QCheckBox				*rootcheck;
+	QCheckBox				*barcheck;
 
-	if(sender()->objectName().compare(TOOLRUNSYNC)!=0)
+	sl=this->verifyTool(this->toolSelect->currentData().toString());
+	if(sl.isEmpty()==true)
+		return;//TODO//make default tool
+
+for(int j=0;j<TOOL_END;j++)
+	QTextStream(stderr) << sl.at(j) << Qt::endl;
+QTextStream(stderr) << what << Qt::endl;
+
+	sl=this->verifyTool(this->toolSelect->currentData().toString());
+	if(sl.isEmpty()==true)
+		return;//TODO//make default tool
+
+	runintermcheck=this->toolsWindow->findChild<QCheckBox*>(TOOLRUNINTERM);
+	inpopupcheck=this->toolsWindow->findChild<QCheckBox*>(TOOLSHOWINPOPUP);
+	alwaysincheck=this->toolsWindow->findChild<QCheckBox*>(TOOLALWAYSINPOPUP);
+	synccheck=this->toolsWindow->findChild<QCheckBox*>(TOOLRUNSYNC);
+	doccheck=this->toolsWindow->findChild<QCheckBox*>(TOOLSHOWDOC);
+	clearcheck=this->toolsWindow->findChild<QCheckBox*>(TOOLCLEAROP);
+	rootcheck=this->toolsWindow->findChild<QCheckBox*>(TOOLRUNASROOT);
+	barcheck=this->toolsWindow->findChild<QCheckBox*>(TOOLUSEPOLE);
+
+	if(sender()->objectName().compare(TOOLCOMBOBOX)==0)
 		{
-			sl=this->verifyTool(this->toolSelect->currentData().toString());
-			if(sl.isEmpty()==true)
-				return;//TODO//make default tool
-
+			QTextStream(stderr) << "from box " << sender()->objectName() << Qt::endl;
+			flags=sl.at(TOOL_FLAGS).section(TOOLFLAGS,1,1).toInt();
+			runintermcheck->setEnabled(true);
+			inpopupcheck->setEnabled(true);
+			alwaysincheck->setEnabled(true);
+			synccheck->setEnabled(true);
+			doccheck->setEnabled(true);
+			clearcheck->setEnabled(true);
+			rootcheck->setEnabled(true);
+			barcheck->setEnabled(true);
+//set boxes
 			edit=this->toolsWindow->findChild<QLineEdit*>(TOOLNAME);
 			edit->setText(sl.at(TOOL_NAME).section(TOOLNAME,1,1).trimmed());
 
@@ -223,84 +260,126 @@ void KKEditClass::setToolsData(int what)
 			edit=this->toolsWindow->findChild<QLineEdit*>(TOOLKEY);
 			edit->setText(sl.at(TOOL_SHORTCUT_KEY).section(TOOLKEY,1,1).trimmed());
 
-//run in term
-			check=this->toolsWindow->findChild<QCheckBox*>(TOOLRUNINTERM);
-			check->setCheckState((Qt::CheckState)(2*sl.at(TOOL_IN_TERM).section(TOOLRUNINTERM,1,1).toInt()));
-//show in popup
-			check=this->toolsWindow->findChild<QCheckBox*>(TOOLSHOWINPOPUP);
-			check->setCheckState((Qt::CheckState)(2*sl.at(TOOL_INPOPUP).section(TOOLSHOWINPOPUP,1,1).toInt()));
-//always show in popup
-			check=this->toolsWindow->findChild<QCheckBox*>(TOOLALWAYSINPOPUP);
-			check->setCheckState((Qt::CheckState)(2*sl.at(TOOL_ALWAYS_IN_POPUP).section(TOOLALWAYSINPOPUP,1,1).toInt()));
-//clear tool out
-			check=this->toolsWindow->findChild<QCheckBox*>(TOOLCLEAROP);
-			check->setCheckState((Qt::CheckState)(2*sl.at(TOOL_CLEAR_VIEW).section(TOOLCLEAROP,1,1).toInt()));
+
+//set sync
+			setradioenable=true;
+			if((flags & TOOL_ASYNC)==TOOL_ASYNC)
+				setradioenable=false;
+
+			synccheck->setCheckState((Qt::CheckState)(2*((flags & TOOL_ASYNC)!=TOOL_ASYNC)));
+
+//set run in term
+			runintermcheck->setCheckState((Qt::CheckState)(2*sl.at(TOOL_IN_TERM).section(TOOLRUNINTERM,1,1).toInt()));
+			if(runintermcheck->checkState()==Qt::Checked)
+				{
+					setradioenable=false;
+					doccheck->setEnabled(false);
+					clearcheck->setEnabled(false);
+				}
+//set show doc
+			doccheck->setCheckState((Qt::CheckState)(2*((flags & TOOL_SHOW_DOC)==TOOL_SHOW_DOC)));
+			if(doccheck->checkState()==Qt::Checked)
+				{
+					setradioenable=false;
+					clearcheck->setEnabled(false);
+				}
 //run as root
-			check=this->toolsWindow->findChild<QCheckBox*>(TOOLRUNASROOT);
-			check->setCheckState((Qt::CheckState)(2*sl.at(TOOL_RUN_AS_ROOT).section(TOOLRUNASROOT,1,1).toInt()));
-//use pole
-			check=this->toolsWindow->findChild<QCheckBox*>(TOOLUSEPOLE);
-			check->setCheckState((Qt::CheckState)(2*sl.at(TOOL_USE_BAR).section(TOOLUSEPOLE,1,1).toInt()));
-//flags
-			flags=sl.at(TOOL_FLAGS).section(TOOLFLAGS,1,1).toInt();
-//show html doc
-			check=this->toolsWindow->findChild<QCheckBox*>(TOOLSHOWDOC);
-			check->setCheckState((Qt::CheckState)(2*((flags & TOOL_SHOW_DOC)==TOOL_SHOW_DOC)));
-		}
+			rootcheck->setCheckState((Qt::CheckState)(2*sl.at(TOOL_RUN_AS_ROOT).section(TOOLRUNASROOT,1,1).toInt()));
+//use bar
+			barcheck->setCheckState((Qt::CheckState)(2*sl.at(TOOL_USE_BAR).section(TOOLUSEPOLE,1,1).toInt()));
+//show in popup
+			inpopupcheck->setCheckState((Qt::CheckState)(2*sl.at(TOOL_INPOPUP).section(TOOLSHOWINPOPUP,1,1).toInt()));
+//always in popup
+			alwaysincheck->setCheckState((Qt::CheckState)(2*sl.at(TOOL_ALWAYS_IN_POPUP).section(TOOLALWAYSINPOPUP,1,1).toInt()));
+//clear op
+			clearcheck->setCheckState((Qt::CheckState)(2*sl.at(TOOL_CLEAR_VIEW).section(TOOLCLEAROP,1,1).toInt()));
 
-//set default
-	radio=this->toolsWindow->findChild<QRadioButton*>(TOOLIGNOREOUT);
-	radio->setChecked(true);
-
-//run sync
-	check=this->toolsWindow->findChild<QCheckBox*>(TOOLRUNSYNC);
-
-	if(((flags & TOOL_ASYNC)==TOOL_ASYNC) || (check->checkState()==Qt::Unchecked))
-		{
+//enable radios
 			radio=this->toolsWindow->findChild<QRadioButton*>(TOOLIGNOREOUT);
-			radio->setEnabled(false);
+			radio->setChecked(true);
+			radio->setEnabled(setradioenable);
 			radio=this->toolsWindow->findChild<QRadioButton*>(TOOLPASTEOUT);
-			radio->setEnabled(false);
+			radio->setEnabled(setradioenable);
 			radio=this->toolsWindow->findChild<QRadioButton*>(TOOLREPLACEALL);
-			radio->setEnabled(false);
+			radio->setEnabled(setradioenable);
 			radio=this->toolsWindow->findChild<QRadioButton*>(TOOLVIEWOUT);
-			radio->setEnabled(false);
+			radio->setEnabled(setradioenable);
+
+			switch((flags & TOOL_INSERT_MASK))
+				{
+					case TOOL_IGNORE_OP:
+						radio=this->toolsWindow->findChild<QRadioButton*>(TOOLIGNOREOUT);
+						radio->setChecked(true);
+						break;
+					case TOOL_PASTE_OP:
+						radio=this->toolsWindow->findChild<QRadioButton*>(TOOLPASTEOUT);
+						radio->setChecked(true);
+						break;
+					case TOOL_REPLACE_OP:
+						radio=this->toolsWindow->findChild<QRadioButton*>(TOOLREPLACEALL);
+						radio->setChecked(true);
+						break;
+					case TOOL_VIEW_OP:
+						radio=this->toolsWindow->findChild<QRadioButton*>(TOOLVIEWOUT);
+						radio->setChecked(true);
+						break;
+				}
+
+			
 		}
 	else
 		{
-			radio=this->toolsWindow->findChild<QRadioButton*>(TOOLIGNOREOUT);
-			radio->setEnabled(true);
-			radio=this->toolsWindow->findChild<QRadioButton*>(TOOLPASTEOUT);
-			radio->setEnabled(true);
-			radio=this->toolsWindow->findChild<QRadioButton*>(TOOLREPLACEALL);
-			radio->setEnabled(true);
-			radio=this->toolsWindow->findChild<QRadioButton*>(TOOLVIEWOUT);
-			radio->setEnabled(true);
-		}
+			bool	resetradios=false;
+			bool	syncflag=false;
+			bool	termflag=false;
+			bool	docflag=false;
 
-	if(sender()->objectName().compare(TOOLRUNSYNC)==0)
-		return;
+			QTextStream(stderr) << "other " << sender()->objectName() << Qt::endl;
+//run in term
+			if(sender()->objectName().compare(TOOLRUNINTERM)==0)
+				resetradios=true;
+//set sync
+			if(sender()->objectName().compare(TOOLRUNSYNC)==0)
+				resetradios=true;
+//set show doc
+			if(sender()->objectName().compare(TOOLSHOWDOC)==0)
+				resetradios=true;
 
-	check->setCheckState((Qt::CheckState)(2*((flags & TOOL_ASYNC)!=TOOL_ASYNC)));
+//somthing changed
+			if(resetradios==true)
+				{
+					termflag=(bool)runintermcheck->checkState();
+					syncflag=(bool)synccheck->checkState();
+					docflag=(bool)doccheck->checkState();
+					synccheck->setEnabled(!termflag);
+					setradioenable=true;
+					if((syncflag==false) || (termflag==true) || (docflag==true))
+						setradioenable=false;
+					else
+						setradioenable=true;
 
-	switch((flags & TOOL_INSERT_MASK))
-		{
-			case TOOL_IGNORE_OP:
-				radio=this->toolsWindow->findChild<QRadioButton*>(TOOLIGNOREOUT);
-				radio->setChecked(true);
-				break;
-			case TOOL_PASTE_OP:
-				radio=this->toolsWindow->findChild<QRadioButton*>(TOOLPASTEOUT);
-				radio->setChecked(true);
-				break;
-			case TOOL_REPLACE_OP:
-				radio=this->toolsWindow->findChild<QRadioButton*>(TOOLREPLACEALL);
-				radio->setChecked(true);
-				break;
-			case TOOL_VIEW_OP:
-				radio=this->toolsWindow->findChild<QRadioButton*>(TOOLVIEWOUT);
-				radio->setChecked(true);
-				break;
+					doccheck->setEnabled(true);
+					clearcheck->setEnabled(true);
+				
+					if(termflag==true)
+						{
+							doccheck->setEnabled(!termflag);
+							clearcheck->setEnabled(!termflag);
+							synccheck->setCheckState(Qt::Unchecked);
+						}
+					
+					if(docflag==true)
+						clearcheck->setEnabled(!docflag);
+				
+					radio=this->toolsWindow->findChild<QRadioButton*>(TOOLIGNOREOUT);
+					radio->setEnabled(setradioenable);
+					radio=this->toolsWindow->findChild<QRadioButton*>(TOOLPASTEOUT);
+					radio->setEnabled(setradioenable);
+					radio=this->toolsWindow->findChild<QRadioButton*>(TOOLREPLACEALL);
+					radio->setEnabled(setradioenable);
+					radio=this->toolsWindow->findChild<QRadioButton*>(TOOLVIEWOUT);
+					radio->setEnabled(setradioenable);
+				}
 		}
 }
 

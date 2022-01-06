@@ -1,4 +1,6 @@
 0.5.1
+Fixed enabling tool options.
+Done update tools window when switching tools.
 Disabled save session menu if no tabs open.
 Added sort tool.
 Added verify tool.

@@ -154,6 +154,7 @@ enum  utilVarType {BOOLVAR=0,INTVAR,CHARVAR,MULTVAR,BADTYPE,DECIMALOUT,HEXOUT,OC
 #define FINDPREVOBJECTNAME "2"
 #define FINDREPLACEOBJECTNAME "3"
 
+#define TOOLCOMBOBOX "toolcombobox"
 #define TOOLNAME "name"
 #define TOOLCOMMAND "command"
 #define TOOLKEY "shortcutkey"

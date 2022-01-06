@@ -945,6 +945,7 @@ printf("TODO buildTools\n");
 	grid->setColumnStretch(1,1);
 
 	this->toolSelect=new QComboBox;
+	this->toolSelect->setObjectName(TOOLCOMBOBOX);
 	QObject::connect(this->toolSelect,SIGNAL(activated(int)),this,SLOT(setToolsData(int)));
 	mainvbox->addWidget(this->toolSelect);
 	this->rebuildToolsMenu();
@@ -996,10 +997,12 @@ printf("TODO buildTools\n");
 //run in term
 	check=new QCheckBox("Run Tool In Terminal");
 	check->setObjectName(TOOLRUNINTERM);
+	QObject::connect(check,SIGNAL(stateChanged(int)),this,SLOT(setToolsData(int)));
 	grid->addWidget(check,posy++,posx,Qt::AlignVCenter);
 //show html doc
 	check=new QCheckBox("Show HTML Doc");
 	check->setObjectName(TOOLSHOWDOC);
+	QObject::connect(check,SIGNAL(stateChanged(int)),this,SLOT(setToolsData(int)));
 	grid->addWidget(check,posy++,posx,Qt::AlignVCenter);
 //run sync
 	check=new QCheckBox("Run Tool Synchronously");
