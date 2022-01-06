@@ -196,27 +196,22 @@ void KKEditClass::doToolsMenuItems()
 			 	break;
 
 			 default:
-				file.setFileName(mc->getMenuString());
-				if(file.open(QIODevice::Text | QIODevice::ReadOnly))
+			 	sl=this->verifyTool(mc->getMenuString());
+			 	if(sl.isEmpty()==true)
+			 		return;
+
+				if(sl.at(TOOL_COMMAND).section(TOOLCOMMAND,1,1).trimmed().isEmpty()==false)
 					{
-						QString line;
-						QTextStream	in(&file);
-						sl=QTextStream(&file).readAll().split("\n",Qt::SkipEmptyParts);
-						file.close();
-						sl.sort(Qt::CaseInsensitive);
-//				QTextStream(stderr) << mc->getMenuString() << "--" << sl.at(TOOL_COMMAND) << Qt::endl;
-						if(sl.at(TOOL_COMMAND).section(TOOLCOMMAND,1,1).trimmed().isEmpty()==false)
+						QString str=sl.at(TOOL_COMMAND).section(TOOLCOMMAND,1,1).trimmed();
+						if(document!=NULL)
 							{
-								QString str=sl.at(TOOL_COMMAND).section(TOOLCOMMAND,1,1).trimmed();
-								if(document!=NULL)
-									{
-										//%d doc folder
-										setenv("KKEDIT_CURRENTDIR",document->getDirPath().toStdString().c_str(),1);
-										str.replace("%d",document->getDirPath());
-										//%f doc filepath
-										setenv("KKEDIT_CURRENTFILE",document->getFilePath().toStdString().c_str(),1);
-										str.replace("%f",document->getFilePath());
-										//%t selected text
+								//%d doc folder
+								setenv("KKEDIT_CURRENTDIR",document->getDirPath().toStdString().c_str(),1);
+								str.replace("%d",document->getDirPath());
+								//%f doc filepath
+								setenv("KKEDIT_CURRENTFILE",document->getFilePath().toStdString().c_str(),1);
+								str.replace("%f",document->getFilePath());
+								//%t selected text
 										setenv("KKEDIT_SELECTION",document->textCursor().selectedText().replace(QRegularExpression("\u2029|\\r\\n|\\r"),"\n").toStdString().c_str(),1);
 										str.replace("%t",document->textCursor().selectedText());
 										//%m
@@ -290,7 +285,7 @@ void KKEditClass::doToolsMenuItems()
 								runPipe(str);
 					 			//QTextStream(stderr) << "menuid=" << (mc->getMenuID() & 0xfff) << " menustring=" << mc->getMenuString() << "<<" << sl.at(TOOL_COMMAND).section(TOOLCOMMAND,1,1).trimmed() << Qt::endl;
 							}
-					}
+					//}
 			 	break;
 		}
 }

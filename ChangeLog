@@ -1,4 +1,5 @@
 0.5.1
+Disabled save session menu if no tabs open.
 Added sort tool.
 Added verify tool.
 Clean tool constants.

@@ -37,17 +37,12 @@ void KKEditClass::rebuildToolsMenu(void)
 	menuItemSink=this->makeMenuItemClass(TOOLSMENU,"Manage External Tools",0,"accessories-text-editor","NOTNEEDED",MANAGETOOLSMENUITEM);
 	this->toolsMenu->addSeparator();
 
+	QTextStream(stderr) << ">>>>>>>>>>>>>>>>>>>>>>>>>>" << Qt::endl;
 	for(int k=0; k<flist.count(); k++)
 		{
-			//sl=this->verifyTool(QString filepath)
-			file.setFileName(toolsdir + "/" + flist.at(k));
-			if(file.open(QIODevice::Text | QIODevice::ReadOnly))
+			sl=this->verifyTool(QString("%1/%2").arg(toolsdir).arg(flist.at(k)));
+			if(sl.isEmpty()==false)
 				{
-					QString line;
-					QTextStream	in(&file);
-					sl=QTextStream(&file).readAll().split("\n",Qt::SkipEmptyParts);
-					sl.sort(Qt::CaseInsensitive);
-					//enum toolEnums {TOOL_ALWAYS_IN_POPUP=0,TOOL_CLEAR_VIEW,TOOL_COMMAND,TOOL_COMMENT,TOOL_FLAGS,TOOL_INPOPUP,TOOL_IN_TERM,TOOL_NAME,TOOL_RUN_AS_ROOT,TOOL_SHORTCUT_KEY,TOOL_USE_BAR,TOOL_END};
 					if((sl.count()>=TOOL_END) && (sl.at(TOOL_NAME).startsWith("name")) && (sl.at(TOOL_COMMAND).startsWith("command")) && (sl.at(TOOL_COMMENT).startsWith("comment")))
 						{
 							menuItemSink=this->makeMenuItemClass(TOOLSMENU,flist.at(k),0,NULL,"NOTNEEDED",TOOLNUMBER+dropnum++);
@@ -56,9 +51,9 @@ void KKEditClass::rebuildToolsMenu(void)
 							menuItemSink->alwaysInPopup=(bool)sl.at(TOOL_ALWAYS_IN_POPUP).section(TOOLALWAYSINPOPUP,1,1).toInt();
 							this->toolSelect->addItem(flist.at(k),toolsdir + "/" + flist.at(k));
 						}
-					file.close();
 				}
 		}
+	QTextStream(stderr) << "<<<<<<<<<<<<<<<<<<<<<<<<<" << Qt::endl;
 }
 
 QStringList KKEditClass::verifyTool(QString filepath)
@@ -76,12 +71,20 @@ QStringList KKEditClass::verifyTool(QString filepath)
 			file.close();
 		}
 
+	while(sl.count()<TOOL_END)
+		sl<<"XXX";
+
+	if((sl.indexOf(QRegularExpression("^name.*$"))==-1) && (sl.indexOf(QRegularExpression("^command.*$"))==-1) && (sl.indexOf(QRegularExpression("^flags.*$"))==-1))
+		{
+			QTextStream(stderr) << "This doesn't look like a tools file not fixing ... " << filepath << Qt::endl;
+			sl.clear();
+			return(sl);
+		}
+
 	if(sl.count()<TOOL_END)
 		{
 			QTextStream(stderr) << "Possible error with " << filepath << Qt::endl;
 			int		cnt=0;
-			while(sl.count()<TOOL_END)
-				sl<<"XXX";
 			while(cnt<TOOL_END)
 				{
 					switch(cnt)
@@ -189,20 +192,8 @@ QStringList KKEditClass::verifyTool(QString filepath)
 					cnt++;
 				}
 		}
-	QTextStream(stderr) << '\n' << Qt::endl;
-	for(int j=0;j<TOOL_END;j++)
-		QTextStream(stderr) << sl.at(j) << Qt::endl;
-	QTextStream(stderr) << '\n' << Qt::endl;
 	return(sl);
 }
-									//QTextStream(stderr) << cnt << ">>" << sl.at(cnt).section(TOOLALWAYSINPOPUP,0,0,QString::SectionIncludeTrailingSep|QString::SectionCaseInsensitiveSeps) << "<<" " -->" << sl.at(cnt) << "<--" << Qt::endl;
-
-	//QTextStream(stderr) << '\n' << Qt::endl;
-	//for(int j=0;j<TOOL_END;j++)
-	//	QTextStream(stderr) << sl.at(j) << Qt::endl;
-	//								return(sl);
-					//if(numloops>TOOL_END)
-					//	break;
 
 void KKEditClass::setToolsData(int what)
 {
@@ -214,35 +205,11 @@ void KKEditClass::setToolsData(int what)
 	const QSignalBlocker	blocker(sender());
 	int						flags=0;
 
-//	sl=this->verifyTool(this->toolSelect->currentData().toString());
-//	file.setFileName(this->toolSelect->currentData().toString());
-//	if(file.open(QIODevice::Text | QIODevice::ReadOnly))
-//		{
-//			QString line;
-//			QTextStream	in(&file);
-//			sl=QTextStream(&file).readAll().split("\n",Qt::SkipEmptyParts);
-//for(int j=0;j<sl.count();j++)
-//	QTextStream(stderr) << sl.at(j) << Qt::endl;
-//			sl.sort(Qt::CaseInsensitive);
-//			file.close();
-//		}
-
-//for(int j=0;j<sl.count();j++)
-//	QTextStream(stderr) << sl.at(j) << Qt::endl;
-
-	sl=this->verifyTool(this->toolSelect->currentData().toString());
-
 	if(sender()->objectName().compare(TOOLRUNSYNC)!=0)
 		{
-	sl=this->verifyTool(this->toolSelect->currentData().toString());
-//			file.setFileName(this->toolSelect->currentData().toString());
-//			if(file.open(QIODevice::Text | QIODevice::ReadOnly))
-//				{
-//					QString line;
-//					QTextStream	in(&file);
-//					sl=QTextStream(&file).readAll().split("\n",Qt::SkipEmptyParts);
-//					file.close();
-//				}
+			sl=this->verifyTool(this->toolSelect->currentData().toString());
+			if(sl.isEmpty()==true)
+				return;//TODO//make default tool
 
 			edit=this->toolsWindow->findChild<QLineEdit*>(TOOLNAME);
 			edit->setText(sl.at(TOOL_NAME).section(TOOLNAME,1,1).trimmed());
