@@ -118,6 +118,7 @@ void KKEditClass::doSessionsMenuItems(void)
 			retval=file.open(QIODevice::Text | QIODevice::ReadOnly);
 			if(retval==true)
 				{
+					this->showBarberPole("Restore Session","Please Wait","Cancel",QString("%1/session").arg(this->tmpFolderName));
 					int		linenumber=999;
 					int		visible=666;
 					int		mainline;
@@ -130,6 +131,8 @@ void KKEditClass::doSessionsMenuItems(void)
 							in >> visible;
 							line=in.readLine().trimmed();
 							linenumber=-1;
+							this->runPipe(QString("echo \"Opening %1 ...\">\"%2/session\"").arg(line.trimmed()).arg(this->tmpFolderName));
+							//DEBUGSTR(QString("echo \"Opening %1 ...\">\"%2/session\"").arg(line.trimmed()).arg(this->tmpFolderName))
 							this->openFile(line);
 							do
 								{
@@ -146,6 +149,7 @@ void KKEditClass::doSessionsMenuItems(void)
 						}
 					this->currentSessionNumber=sessionnumber;
 					file.close();
+					this->runPipe(QString("echo quit>\"%1/session\"").arg(this->tmpFolderName));
 				}
 		}
 	this->setToolbarSensitive();
@@ -860,6 +864,9 @@ void KKEditClass::doOddButtons(void)
 					retval=file.open(QIODevice::Text | QIODevice::WriteOnly);
 					if(retval==true)
 						{
+
+							this->showBarberPole("Rebuild Tools Menu","Rebuilding tools menu, please wait ...","Cancel",QString("%1/tools").arg(this->tmpFolderName));
+
 							DEBUGSTR("Saving : " << this->toolSelect->currentData().toString())
 
 							QTextStream(&file) << TOOLALWAYSINPOPUP << "\t" << this->toolsWindow->findChild<QCheckBox*>(TOOLALWAYSINPOPUP)->isChecked() << Qt::endl;
@@ -893,6 +900,7 @@ void KKEditClass::doOddButtons(void)
 							if(saveas==true)
 								flags=this->toolSelect->findText(this->toolsWindow->findChild<QLineEdit*>(TOOLNAME)->text());
 			 				this->toolSelect->setCurrentIndex(flags);
+							this->runPipe(QString("echo quit>\"%1/tools\"").arg(this->tmpFolderName));
 						}
 				}
 				break;
@@ -905,8 +913,10 @@ void KKEditClass::doOddButtons(void)
 					if(this->yesNoDialog("Deleting "+fileinfo.fileName(),"This is not undoable, continue?")!=QMessageBox::Yes)
 						return;
 
+					this->showBarberPole("Rebuild Tools Menu","Rebuilding tools menu, please wait ...","Cancel",QString("%1/tools").arg(this->tmpFolderName));
 					file.remove();
 					this->rebuildToolsMenu();
+					this->runPipe(QString("echo quit>\"%1/tools\"").arg(this->tmpFolderName));
 				}
 				break;
 			case TOOLSCANCEL:

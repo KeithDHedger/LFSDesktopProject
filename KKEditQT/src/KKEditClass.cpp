@@ -749,8 +749,33 @@ void KKEditClass::findFile(void)
 		this->openFile(retval.at(j));
 }
 
-void KKEditClass::showBarberPole(QString windowtitle,QString bodylabel,QString cancellabel,QString controlfiile)
+void KKEditClass::showBarberPole(QString windowtitle,QString bodylabel,QString cancellabel,QString controlfile)
 {
+	QString	pipecom;
+
+	pipecom=QString("KKEditQTProgressBar \"%1\" \"%2\" \"%3\" \"%4\" &").arg(windowtitle).arg(bodylabel).arg(cancellabel).arg(controlfile);
+DEBUGSTR(pipecom)
+	this->runPipe(pipecom);
+
+//	pipecom=QString("KKEditQTProgressBar \"Building Docs\" \"Please Wait ...\" \"\" \"%1/progress\" &").arg(this->tmpFolderName);
+/*
+	pipecom=QString("KKEditQTProgressBar \"Building Docs\" \"Please Wait ...\" \"\" \"%1/progress\" &").arg(this->tmpFolderName);
+	this->runPipe(QString("KKEditQTProgressBar \"Building Docs\" \"Please Wait ...\" \"\" \"%1/progress\" &").arg(this->tmpFolderName));
+
+	QDir::setCurrent(doc->getDirPath());
+	stat("Doxyfile",&sb);
+	if(!S_ISREG(sb.st_mode))
+		system("cp " DATADIR "/docs/Doxyfile .");
+
+	fileinfo=QString("%1/html/index.html").arg(doc->getDirPath());
+	fp=popen("doxygen Doxyfile","r");
+	while(fgets(line,4095,fp))
+		{
+			line[strlen(line)-1]=0;
+			snprintf(opdata,4095,"echo -n \"%s\" >\"%s/progress\"",line,this->tmpFolderName.toStdString().c_str());
+			system(opdata);
+		}
+*/
 }
 
 void KKEditClass::buildDocs(void)
@@ -833,6 +858,7 @@ printf("void KKEditClass::closeAllTabs(void)\n");
 	this->rebuildBookMarkMenu();
 	this->rebuildTabsMenu();
 	this->currentSessionNumber=0xdeadbeef;
+	this->closingAllTabs=false;
 	this->setToolbarSensitive();
 	this->sessionBusy=false;
 }
@@ -957,11 +983,20 @@ void KKEditClass::setToolbarSensitive(void)
 			hasselection=doc->textCursor().hasSelection();
 		}
 
-	if(	this->currentSessionNumber==0xdeadbeef)
-		this->saveSessionsMenu->setEnabled(false);
+//	if(	this->currentSessionNumber==0xdeadbeef)
+	if(this->mainNotebook->count()==0)
+		{
+			this->saveSessionsMenu->setEnabled(false);
+			this->currentSessionNumber=0xdeadbeef;
+		}
 	else
 		this->saveSessionsMenu->setEnabled(true);
 
+	if(this->currentSessionNumber==0xdeadbeef)
+		this->saveCurrentSessionMenuItem->setEnabled(false);
+	else
+		this->saveCurrentSessionMenuItem->setEnabled(true);
+		
 	this->restoreDefaultSessionMenuItem->setEnabled(false);//TODO//
 
 	for(int j=0;j<this->prefsToolBarLayout.length();j++)

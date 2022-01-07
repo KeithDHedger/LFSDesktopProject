@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 	QString			windowtitle="Please wait ...";
 	QString			cancellabel="Abort opertation";
 
-	sprintf(command,"echo Please Wait ... > '%s'",argv[CONTROLFILE]);
+	sprintf(command,"echo \"%s\" > '%s'",argv[BODYLABEL],argv[CONTROLFILE]);
 	system(command);
 
 	windowtitle=argv[WINDOWTITLE];
