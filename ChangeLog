@@ -1,4 +1,9 @@
 0.5.1
+Done tool save as.
+Done delete tool.
+Code clean.
+Fixed not saving correct flags for tool.
+Done save tool.
 Fixed enabling tool options.
 Done update tools window when switching tools.
 Disabled save session menu if no tabs open.

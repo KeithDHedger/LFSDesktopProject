@@ -353,9 +353,9 @@ void KKEditClass::initApp(int argc,char** argv)
 						this->sessionNames[j]=tstr;
 				}
 		}
-QTextStream(stderr) << ">>" << this->homeFolder << "<<" << Qt::endl;
-QTextStream(stderr) << ">>" << this->homeDataFolder << "<<" << Qt::endl;
-QTextStream(stderr) << ">>" << this->sessionFolder << "<<" << Qt::endl;
+DEBUGSTR( ">>" << this->homeFolder << "<<" )
+DEBUGSTR( ">>" << this->homeDataFolder << "<<" )
+DEBUGSTR( ">>" << this->sessionFolder << "<<" )
 
 	//
 	this->tmpFolderName=mkdtemp(tmpfoldertemplate);

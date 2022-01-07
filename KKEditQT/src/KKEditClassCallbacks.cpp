@@ -37,7 +37,7 @@ void KKEditClass::doSessionsMenuItems(void)
 		{
 			if(sessionnumber==CURRENTSESSION)
 				{
-//QTextStream(stderr) << "sessionnumber=" << sessionnumber << " menuid=" << mc->getMenuID() << " CURRENTSESSION=" << CURRENTSESSION << "cuerrent ses num=" << this->currentSessionNumber << Qt::endl;
+//DEBUGSTR( "sessionnumber=" << sessionnumber << " menuid=" << mc->getMenuID() << " CURRENTSESSION=" << CURRENTSESSION << "cuerrent ses num=" << this->currentSessionNumber )
 					if(this->currentSessionNumber==0xdeadbeef)
 						return;
 					sessionnumber=this->currentSessionNumber;
@@ -186,12 +186,15 @@ void KKEditClass::doToolsMenuItems()
 	DocumentClass	*document=this->getDocumentForTab(-1);
 	QFile			file;
 	QStringList		sl;
+	int				holdindex;
 
 	fprintf(stderr,"tools -> menu id=%i, menu name=%s\n",mc->getMenuID(),mc->text().toStdString().c_str());
 	switch(mc->getMenuID())
 		{
 			 case MANAGETOOLSMENUITEM:
-			 	this->rebuildToolsMenu();
+			 	//holdindex=this->toolSelect->currentIndex();
+			 	//this->rebuildToolsMenu();
+			 	//this->toolSelect->setCurrentIndex(holdindex);
 			 	this->toolsWindow->show();
 			 	break;
 
@@ -228,7 +231,7 @@ void KKEditClass::doToolsMenuItems()
 
 								int trm=sl.indexOf(QRegularExpression(QString(".*%1.*").arg(TOOLRUNINTERM)));//todo//
 								
-								QTextStream(stderr) << "prefsTerminalCommand=" << this->prefsTerminalCommand << " str=" << str << "<<" << sl.at(trm).section(TOOLRUNINTERM,1,1).trimmed() << Qt::endl;
+								DEBUGSTR( "prefsTerminalCommand=" << this->prefsTerminalCommand << " str=" << str << "<<" << sl.at(trm).section(TOOLRUNINTERM,1,1).trimmed() )
 								if(sl.at(trm).section(TOOLRUNINTERM,1,1).trimmed().toInt()==1)
 									{
 										str=this->prefsTerminalCommand + " " + str;
@@ -271,7 +274,7 @@ void KKEditClass::doToolsMenuItems()
 								if((sl.at(TOOL_FLAGS).section(TOOLFLAGS,1,1).trimmed().toInt() & TOOL_SHOW_DOC)==TOOL_SHOW_DOC)
 									{
 										str=QString("cd %1;%2").arg(this->toolsFolder).arg(str);
-										QTextStream(stderr) << str << Qt::endl;
+										DEBUGSTR( str )
 										runPipe(str);
 										this->docView->setWindowTitle(sl.at(TOOL_NAME).section(TOOLNAME,1,1).trimmed());
 										this->webView->load(QUrl("file://" + this->htmlFile));
@@ -281,9 +284,9 @@ void KKEditClass::doToolsMenuItems()
 										return;
 									}
 
-								QTextStream(stderr) << str << Qt::endl;
+								DEBUGSTR( str )
 								runPipe(str);
-					 			//QTextStream(stderr) << "menuid=" << (mc->getMenuID() & 0xfff) << " menustring=" << mc->getMenuString() << "<<" << sl.at(TOOL_COMMAND).section(TOOLCOMMAND,1,1).trimmed() << Qt::endl;
+					 			//DEBUGSTR( "menuid=" << (mc->getMenuID() & 0xfff) << " menustring=" << mc->getMenuString() << "<<" << sl.at(TOOL_COMMAND).section(TOOLCOMMAND,1,1).trimmed() )
 							}
 					//}
 			 	break;
@@ -837,8 +840,78 @@ void KKEditClass::doOddMenuItems(void)
 void KKEditClass::doOddButtons(void)
 {
 	DocumentClass	*doc=this->getDocumentForTab(-1);
+	bool			saveas=false;
+
+	DEBUGSTR( "void KKEditClass::doOddButtons(void) << " << sender()->objectName() )
 	switch(sender()->objectName().toInt())
 		{
+			case TOOLSSAVEAS:
+				saveas=true;
+			case TOOLSSAVE:
+				{
+					int		flags=0;
+					QFile	file;
+					bool	retval;
+
+					if(saveas==false)
+						file.setFileName(this->toolSelect->currentData().toString());
+					else
+						file.setFileName(QString("%1/%2").arg(this->toolsFolder).arg(this->toolsWindow->findChild<QLineEdit*>(TOOLNAME)->text()));
+					retval=file.open(QIODevice::Text | QIODevice::WriteOnly);
+					if(retval==true)
+						{
+							DEBUGSTR("Saving : " << this->toolSelect->currentData().toString())
+
+							QTextStream(&file) << TOOLALWAYSINPOPUP << "\t" << this->toolsWindow->findChild<QCheckBox*>(TOOLALWAYSINPOPUP)->isChecked() << Qt::endl;
+							QTextStream(&file) << TOOLCLEAROP << "\t" << this->toolsWindow->findChild<QCheckBox*>(TOOLCLEAROP)->isChecked() << Qt::endl;
+							QTextStream(&file) << TOOLCOMMAND << "\t" << this->toolsWindow->findChild<QLineEdit*>(TOOLCOMMAND)->text() << Qt::endl;
+							QTextStream(&file) << TOOLCOMMENT << "\t" << this->toolsWindow->findChild<QLineEdit*>(TOOLCOMMENT)->text() << Qt::endl;
+
+							if(this->toolsWindow->findChild<QRadioButton*>(TOOLPASTEOUT)->isChecked()==true)
+								flags=TOOL_PASTE_OP;
+							if(this->toolsWindow->findChild<QRadioButton*>(TOOLREPLACEALL)->isChecked()==true)
+								flags=TOOL_REPLACE_OP;
+							if(this->toolsWindow->findChild<QRadioButton*>(TOOLVIEWOUT)->isChecked()==true)
+								flags=TOOL_VIEW_OP;
+							if(this->toolsWindow->findChild<QCheckBox*>(TOOLRUNSYNC)->isChecked()==false)
+								flags|=TOOL_ASYNC;
+							if(this->toolsWindow->findChild<QCheckBox*>(TOOLSHOWDOC)->isChecked()==true)
+								flags|=TOOL_SHOW_DOC;
+
+							QTextStream(&file) << TOOLFLAGS << "\t" << flags << Qt::endl;
+							QTextStream(&file) << TOOLSHOWINPOPUP << "\t" << this->toolsWindow->findChild<QCheckBox*>(TOOLSHOWINPOPUP)->isChecked() << Qt::endl;
+							QTextStream(&file) << TOOLRUNINTERM << "\t" << this->toolsWindow->findChild<QCheckBox*>(TOOLRUNINTERM)->isChecked() << Qt::endl;
+							QTextStream(&file) << TOOLNAME << "\t" << this->toolsWindow->findChild<QLineEdit*>(TOOLNAME)->text() << Qt::endl;
+							QTextStream(&file) << TOOLRUNASROOT << "\t" << this->toolsWindow->findChild<QCheckBox*>(TOOLRUNASROOT)->isChecked() << Qt::endl;
+							QTextStream(&file) << TOOLKEY << "\t" << this->toolsWindow->findChild<QLineEdit*>(TOOLKEY)->text() << Qt::endl;
+							QTextStream(&file) << TOOLUSEPOLE << "\t" << this->toolsWindow->findChild<QCheckBox*>(TOOLUSEPOLE)->isChecked() << Qt::endl;
+
+							file.close();
+
+							flags=this->toolSelect->currentIndex();
+			 				this->rebuildToolsMenu();
+							if(saveas==true)
+								flags=this->toolSelect->findText(this->toolsWindow->findChild<QLineEdit*>(TOOLNAME)->text());
+			 				this->toolSelect->setCurrentIndex(flags);
+						}
+				}
+				break;
+			case TOOLSDELETE:
+				{
+					QFile		file;
+					file.setFileName(this->toolSelect->currentData().toString());
+					QFileInfo	fileinfo(file);
+					DEBUGSTR("Deleting : " << fileinfo.fileName())
+					if(this->yesNoDialog("Deleting "+fileinfo.fileName(),"This is not undoable, continue?")!=QMessageBox::Yes)
+						return;
+
+					file.remove();
+					this->rebuildToolsMenu();
+				}
+				break;
+			case TOOLSCANCEL:
+				this->toolsWindow->hide();
+				break;
 #ifdef _ASPELL_
 			case APPLYWORDBUTTON:
 				fprintf(stderr,"APPLYWORD\n");

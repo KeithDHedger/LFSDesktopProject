@@ -37,7 +37,6 @@ void KKEditClass::rebuildToolsMenu(void)
 	menuItemSink=this->makeMenuItemClass(TOOLSMENU,"Manage External Tools",0,"accessories-text-editor","NOTNEEDED",MANAGETOOLSMENUITEM);
 	this->toolsMenu->addSeparator();
 
-	//QTextStream(stderr) << ">>>>>>>>>>>>>>>>>>>>>>>>>>" << Qt::endl;
 	for(int k=0; k<flist.count(); k++)
 		{
 			sl=this->verifyTool(QString("%1/%2").arg(toolsdir).arg(flist.at(k)));
@@ -53,7 +52,6 @@ void KKEditClass::rebuildToolsMenu(void)
 						}
 				}
 		}
-//	QTextStream(stderr) << "<<<<<<<<<<<<<<<<<<<<<<<<<" << Qt::endl;
 }
 
 QStringList KKEditClass::verifyTool(QString filepath)
@@ -76,14 +74,14 @@ QStringList KKEditClass::verifyTool(QString filepath)
 
 	if((sl.indexOf(QRegularExpression("^name.*$"))==-1) && (sl.indexOf(QRegularExpression("^command.*$"))==-1) && (sl.indexOf(QRegularExpression("^flags.*$"))==-1))
 		{
-			//QTextStream(stderr) << "This doesn't look like a tools file not fixing ... " << filepath << Qt::endl;
+			//DEBUGSTR( "This doesn't look like a tools file not fixing ... " << filepath )
 			sl.clear();
 			return(sl);
 		}
 
 	if(sl.count()<TOOL_END)
 		{
-			QTextStream(stderr) << "Possible error with " << filepath << Qt::endl;
+			DEBUGSTR( "Possible error with " << filepath )
 			int		cnt=0;
 			while(cnt<TOOL_END)
 				{
@@ -200,7 +198,6 @@ void KKEditClass::setToolsData(int what)
 	QFile					file;
 	QStringList				sl;
 	QLineEdit				*edit;
-	QCheckBox				*check;//TOGO//
 	QRadioButton			*radio;
 	const QSignalBlocker	blocker(sender());
 	int						flags=0;
@@ -217,14 +214,9 @@ void KKEditClass::setToolsData(int what)
 	sl=this->verifyTool(this->toolSelect->currentData().toString());
 	if(sl.isEmpty()==true)
 		return;//TODO//make default tool
-
-for(int j=0;j<TOOL_END;j++)
-	QTextStream(stderr) << sl.at(j) << Qt::endl;
-QTextStream(stderr) << what << Qt::endl;
-
-	sl=this->verifyTool(this->toolSelect->currentData().toString());
-	if(sl.isEmpty()==true)
-		return;//TODO//make default tool
+//for(int j=0;j<TOOL_END;j++)
+//	DEBUGSTR( sl.at(j) )
+//DEBUGSTR( what )
 
 	runintermcheck=this->toolsWindow->findChild<QCheckBox*>(TOOLRUNINTERM);
 	inpopupcheck=this->toolsWindow->findChild<QCheckBox*>(TOOLSHOWINPOPUP);
@@ -237,7 +229,7 @@ QTextStream(stderr) << what << Qt::endl;
 
 	if(sender()->objectName().compare(TOOLCOMBOBOX)==0)
 		{
-			QTextStream(stderr) << "from box " << sender()->objectName() << Qt::endl;
+			DEBUGSTR( "from box " << sender()->objectName() )
 			flags=sl.at(TOOL_FLAGS).section(TOOLFLAGS,1,1).toInt();
 			runintermcheck->setEnabled(true);
 			inpopupcheck->setEnabled(true);
@@ -260,39 +252,38 @@ QTextStream(stderr) << what << Qt::endl;
 			edit=this->toolsWindow->findChild<QLineEdit*>(TOOLKEY);
 			edit->setText(sl.at(TOOL_SHORTCUT_KEY).section(TOOLKEY,1,1).trimmed());
 
-
 //set sync
 			setradioenable=true;
 			if((flags & TOOL_ASYNC)==TOOL_ASYNC)
 				setradioenable=false;
 
-			synccheck->setCheckState((Qt::CheckState)(2*((flags & TOOL_ASYNC)!=TOOL_ASYNC)));
+			synccheck->setChecked((flags & TOOL_ASYNC)!=TOOL_ASYNC);
 
 //set run in term
-			runintermcheck->setCheckState((Qt::CheckState)(2*sl.at(TOOL_IN_TERM).section(TOOLRUNINTERM,1,1).toInt()));
-			if(runintermcheck->checkState()==Qt::Checked)
+			runintermcheck->setChecked(sl.at(TOOL_IN_TERM).section(TOOLRUNINTERM,1,1).toInt());
+			if(runintermcheck->isChecked()==true)
 				{
 					setradioenable=false;
 					doccheck->setEnabled(false);
 					clearcheck->setEnabled(false);
 				}
 //set show doc
-			doccheck->setCheckState((Qt::CheckState)(2*((flags & TOOL_SHOW_DOC)==TOOL_SHOW_DOC)));
-			if(doccheck->checkState()==Qt::Checked)
+			doccheck->setChecked((flags & TOOL_SHOW_DOC)==TOOL_SHOW_DOC);
+			if(doccheck->isChecked()==true)
 				{
 					setradioenable=false;
 					clearcheck->setEnabled(false);
 				}
 //run as root
-			rootcheck->setCheckState((Qt::CheckState)(2*sl.at(TOOL_RUN_AS_ROOT).section(TOOLRUNASROOT,1,1).toInt()));
+			rootcheck->setChecked(sl.at(TOOL_RUN_AS_ROOT).section(TOOLRUNASROOT,1,1).toInt());
 //use bar
-			barcheck->setCheckState((Qt::CheckState)(2*sl.at(TOOL_USE_BAR).section(TOOLUSEPOLE,1,1).toInt()));
+			barcheck->setChecked(sl.at(TOOL_USE_BAR).section(TOOLUSEPOLE,1,1).toInt());
 //show in popup
-			inpopupcheck->setCheckState((Qt::CheckState)(2*sl.at(TOOL_INPOPUP).section(TOOLSHOWINPOPUP,1,1).toInt()));
+			inpopupcheck->setChecked(sl.at(TOOL_INPOPUP).section(TOOLSHOWINPOPUP,1,1).toInt());
 //always in popup
-			alwaysincheck->setCheckState((Qt::CheckState)(2*sl.at(TOOL_ALWAYS_IN_POPUP).section(TOOLALWAYSINPOPUP,1,1).toInt()));
+			alwaysincheck->setChecked(sl.at(TOOL_ALWAYS_IN_POPUP).section(TOOLALWAYSINPOPUP,1,1).toInt());
 //clear op
-			clearcheck->setCheckState((Qt::CheckState)(2*sl.at(TOOL_CLEAR_VIEW).section(TOOLCLEAROP,1,1).toInt()));
+			clearcheck->setChecked(sl.at(TOOL_CLEAR_VIEW).section(TOOLCLEAROP,1,1).toInt());
 
 //enable radios
 			radio=this->toolsWindow->findChild<QRadioButton*>(TOOLIGNOREOUT);
@@ -324,8 +315,6 @@ QTextStream(stderr) << what << Qt::endl;
 						radio->setChecked(true);
 						break;
 				}
-
-			
 		}
 	else
 		{
@@ -334,7 +323,7 @@ QTextStream(stderr) << what << Qt::endl;
 			bool	termflag=false;
 			bool	docflag=false;
 
-			QTextStream(stderr) << "other " << sender()->objectName() << Qt::endl;
+			DEBUGSTR( "other " << sender()->objectName() )
 //run in term
 			if(sender()->objectName().compare(TOOLRUNINTERM)==0)
 				resetradios=true;
@@ -348,9 +337,10 @@ QTextStream(stderr) << what << Qt::endl;
 //somthing changed
 			if(resetradios==true)
 				{
-					termflag=(bool)runintermcheck->checkState();
-					syncflag=(bool)synccheck->checkState();
-					docflag=(bool)doccheck->checkState();
+					termflag=runintermcheck->isChecked();
+					syncflag=synccheck->isChecked();
+					docflag=doccheck->isChecked();
+
 					synccheck->setEnabled(!termflag);
 					setradioenable=true;
 					if((syncflag==false) || (termflag==true) || (docflag==true))
@@ -365,7 +355,7 @@ QTextStream(stderr) << what << Qt::endl;
 						{
 							doccheck->setEnabled(!termflag);
 							clearcheck->setEnabled(!termflag);
-							synccheck->setCheckState(Qt::Unchecked);
+							synccheck->setChecked(false);
 						}
 					
 					if(docflag==true)

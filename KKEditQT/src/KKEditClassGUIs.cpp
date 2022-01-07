@@ -938,7 +938,7 @@ printf("TODO buildTools\n");
 	this->toolsWindow=new QDialog(this->mainWindow);
 	this->toolsWindow->setWindowTitle("External Tools");
 
-	mainvbox->setContentsMargins(0,0,0,0);
+	mainvbox->setContentsMargins(0,0,0,16);
 	hbox->setContentsMargins(0,0,0,0);
 
 	tab=new QWidget();
@@ -1060,12 +1060,25 @@ printf("TODO buildTools\n");
 	hbox->addWidget(button);
 
 	hbox->addStretch(1);
-	button=new QPushButton("Cancel");
+	button=new QPushButton("Save Tool As");
+	button->setObjectName(QString("%1").arg(TOOLSSAVEAS));
+	QObject::connect(button,SIGNAL(clicked()),this,SLOT(doOddButtons()));
+	hbox->addWidget(button);
+
+	hbox->addStretch(1);
+	button=new QPushButton("Delete Tool");
+	button->setObjectName(QString("%1").arg(TOOLSDELETE));
+	QObject::connect(button,SIGNAL(clicked()),this,SLOT(doOddButtons()));
+	hbox->addWidget(button);
+
+	hbox->addStretch(1);
+	button=new QPushButton("Dismiss");
 	button->setObjectName(QString("%1").arg(TOOLSCANCEL));
 	QObject::connect(button,SIGNAL(clicked()),this,SLOT(doOddButtons()));
 	hbox->addWidget(button);
 	hbox->addStretch(1);
 	mainvbox->addLayout(hbox);
+
 
 //
 //
@@ -1302,4 +1315,17 @@ void KKEditClass::buildDocViewer(void)
 
 	this->docView->hide();
 #endif
+}
+
+int KKEditClass::yesNoDialog(QString txt,QString info)
+{
+	int			retval=0;
+	QMessageBox	msgBox;
+
+	msgBox.setIcon(QMessageBox::Warning);
+	msgBox.setText(txt);
+	msgBox.setInformativeText(info);
+	msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	msgBox.setDefaultButton(QMessageBox::No);
+	return(msgBox.exec());
 }

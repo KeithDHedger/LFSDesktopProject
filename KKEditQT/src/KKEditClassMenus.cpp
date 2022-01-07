@@ -69,12 +69,6 @@ MenuItemClass* KKEditClass::makeMenuItemClass(int mainmenu,const QString name,co
 				this->restoreSessionsMenu->addAction(menuitem);
 				QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doSessionsMenuItems()));
 				break;
-//			case SESSIONMENUS:
-//				this->saveSessionsMenu->addAction(menuitem);
-//				QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doSaveSessionsMenuItems()));
-//				this->restoreSessionsMenu->addAction(menuitem);
-//				QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doRestoreSessionsMenuItems()));
-//				break;
 
 			case NOMENU:
 				break;
