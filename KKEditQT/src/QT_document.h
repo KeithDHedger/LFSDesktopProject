@@ -89,6 +89,11 @@ class DocumentClass : public QPlainTextEdit
 		void								keyPressEvent(QKeyEvent *event);
 		void								keyReleaseEvent(QKeyEvent *event);
 		void								contextMenuEvent(QContextMenuEvent *event) Q_DECL_OVERRIDE;
+//dand
+		void								dragEnterEvent(QDragEnterEvent* event);
+		void								dropEvent(QDropEvent* event);
+		void								dragMoveEvent(QDragMoveEvent *event);
+
 
 	private slots:
 		void								highlightCurrentLine();

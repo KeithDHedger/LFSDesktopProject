@@ -246,6 +246,7 @@ DocumentClass::DocumentClass(KKEditClass *kk,QWidget *parent): QPlainTextEdit(pa
 	this->doneHighlightAll=false;
 	this->lastFind=NULL;
 	this->mainKKEditClass=kk;
+	this->setAcceptDrops(true);
 
 #ifdef _USEMINE_
 	this->highlighter=new Highlighter(this->document());
@@ -473,5 +474,75 @@ void DocumentClass::setUndo(bool avail)
 void DocumentClass::setRedo(bool avail)
 {
 	this->gotRedo=avail;
+}
+
+void DocumentClass::dragMoveEvent(QDragMoveEvent *event)
+{
+	if((event->mimeData()->hasUrls()==true))
+		event->accept();
+	else
+		QPlainTextEdit::dragMoveEvent(event);
+}
+
+void DocumentClass::dragEnterEvent(QDragEnterEvent* event)
+{
+	if((event->mimeData()->hasUrls()==true))
+		event->accept();
+    else
+		QPlainTextEdit::dragEnterEvent(event);
+}
+
+void DocumentClass::dropEvent(QDropEvent* event)
+{ 
+	if (event->mimeData()->hasUrls())
+		{
+			const QMimeData	*mime=event->mimeData();
+			QList<QUrl>		list=mime->urls();
+			if(list.isEmpty()==false)
+				{
+					bool			retval=false;
+					QFile			file(list.at(0).toLocalFile());
+					QFileInfo		fileinfo(file);
+					int				tabnum;
+					const QSignalBlocker	blocker(sender());
+
+					retval=file.open(QIODevice::Text | QIODevice::ReadOnly);
+					if(retval==true)
+						{
+							QString			content=QString::fromUtf8(file.readAll());
+							QMimeDatabase	db;
+							QMimeType		type=db.mimeTypeForFile(fileinfo.canonicalFilePath());
+							this->mimeType=type.name();
+							this->setPlainText(content);
+							this->setFilePrefs();
+							this->setDirPath(fileinfo.canonicalPath());
+							this->setFilePath(fileinfo.canonicalFilePath());
+							this->setFileName(fileinfo.fileName());
+							this->setTabName(this->mainKKEditClass->truncateWithElipses(this->getFileName(),this->mainKKEditClass->prefsMaxTabChars));
+							this->mainKKEditClass->mainNotebook->setTabToolTip(tabnum,this->getFilePath());
+							this->document()->clearUndoRedoStacks(QTextDocument::UndoAndRedoStacks);
+							this->setHiliteLanguage();
+//#ifndef _USEMINE_
+//			//doc->highlighter->setCurrentLanguage(QSourceHighlite::QSourceHighliter::CodeCpp);
+////			QSourceHighliter::Themes theme=(QSourceHighliter::Themes)-1;
+////			if(this->prefsSyntaxHilighting==true)
+////				theme=(QSourceHighliter::Themes)2;//TODO//get theme from file
+////
+////			doc->highlighter->setTheme(theme);
+//#endif
+							this->highlighter->rehighlight();
+							this->dirty=false;
+							file.close();
+						}
+					this->dirty=false;
+					this->mainKKEditClass->switchPage(tabnum);
+					this->mainKKEditClass->rebuildTabsMenu();
+					this->mainKKEditClass->setToolbarSensitive();
+					event->accept();
+				}
+			return;
+		}
+
+	QPlainTextEdit::dropEvent(event);
 }
 

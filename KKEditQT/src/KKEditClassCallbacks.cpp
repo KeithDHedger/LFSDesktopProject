@@ -196,9 +196,6 @@ void KKEditClass::doToolsMenuItems()
 	switch(mc->getMenuID())
 		{
 			 case MANAGETOOLSMENUITEM:
-			 	//holdindex=this->toolSelect->currentIndex();
-			 	//this->rebuildToolsMenu();
-			 	//this->toolSelect->setCurrentIndex(holdindex);
 			 	this->toolsWindow->show();
 			 	break;
 

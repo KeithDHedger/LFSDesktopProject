@@ -1,4 +1,5 @@
 0.5.1
+Done DanD on docs.
 Fixed minor visual problem with pole.
 Removed setting for path to qt docs, now only set in prefs.
 Removed setting path to gsu from configure, now only set in prefs.

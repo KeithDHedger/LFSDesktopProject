@@ -698,21 +698,6 @@ void KKEditClass::buildMainGui(void)
 	for(int j=1;j<MAXSESSIONS;j++)
 		menuItemSink=this->makeMenuItemClass(RESTORESESSIONSMENU,this->sessionNames.value(j),0,NULL,RESTORESESSIONMENUNAME,j);
 
-
-/*
-//save session
-	this->saveSessionsMenu=new QMenu("&Save Session");
-	this->restoreSessionsMenu=new QMenu("&Restore Session");
-	this->fileMenu->addMenu(this->saveSessionsMenu);
-	this->fileMenu->addMenu(this->restoreSessionsMenu);
-
-	for(int j=0;j<MAXSESSIONS;j++)
-		menuItemSink=this->makeMenuItemClass(SESSIONMENUS,this->sessionNames.value(j),0,NULL,SESSIONS,j);
-*/
-//restore session
-//	for(int j=0;j<MAXSESSIONS;j++)
-//		menuItemSink=this->makeMenuItemClass(RESTORESESSIONSMENU,this->sessionNames.value(j),0,NULL,SESSIONS,j|0x1000);
-
 //printfile
 	this->printMenuItem=this->makeMenuItemClass(FILEMENU,"Print",QKeySequence::Print,"document-print",PRINTMENUNAME,PRINTMENUITEM);
 
