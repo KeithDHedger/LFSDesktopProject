@@ -9,7 +9,6 @@ AM_INIT_AUTOMAKE
 
 AC_PROG_CC
 AC_PROG_CXX
-#AX_CXX_COMPILE_STDCXX_11(noext,mandatory)
 
 PKG_PROG_PKG_CONFIG
 
@@ -37,16 +36,8 @@ if test "$enable_docviewer" = "yes"; then
 	PKG_CHECK_MODULES(WEBENGINEWIDGETS, $WEBENGINEWIDGETS_MODULES)
 	AC_SUBST(WEBENGINEWIDGETS_CFLAGS)
 	AC_SUBST(WEBENGINEWIDGETS_LIBS)
-
 	AC_DEFINE([_BUILDDOCVIEWER_], [], [Build doc viewer])
 fi
-
-AC_ARG_WITH(qt5-docdir,AS_HELP_STRING([--with-qt5-docdir],[Installtion DIR for Qt5 documentation]),
-    [with_qt5_docdir=$withval],
-    [with_qt5_docdir="/usr/share/doc/qt5"])
-
-AC_SUBST(with_qt5_docdir)
-AC_MSG_RESULT([Setting Qt5 Docs directory to $with_qt5_docdir])
 
 AC_MSG_CHECKING(whether to include spell checker (aspell))
 AC_ARG_ENABLE(aspell,AS_HELP_STRING([--enable-aspell],[Include spellchecker]),
@@ -77,14 +68,6 @@ if test $MANPAGEEDITOR = false; then
 	AC_MSG_NOTICE([You can download it from here:])
 	AC_MSG_NOTICE([https://github.com/KeithDHedger/ManPageEditor])
 fi
-
-#TODO
-AC_ARG_WITH(gsu-path,AS_HELP_STRING([--with-gsu-path],[Path to graphical su app]),
-    [with_gsu_path=$withval],
-    [with_gsu_path="gtksu -- "])
-
-AC_SUBST(with_gsu_path)
-AC_MSG_RESULT([Setting path to graphical su app to "$with_gsu_path"])
 
 AC_CONFIG_FILES(Makefile KKEditQT/app/Makefile)
 AC_OUTPUT

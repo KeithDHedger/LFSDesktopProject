@@ -249,7 +249,7 @@ void KKEditClass::searchAPIDocs(const QString txt,int what)
 				searchcommand=QString("find /usr/share/gtk-doc/html -iname \"*.devhelp2\" -exec grep -iHe %1 '{}' \\;").arg(searchfor);
 				break;
 			case 1:
-				searchcommand=QString("find %1 -iname \"%2*.html\"|sed 's/.html$//'|sort").arg(QT5DOCSDIR).arg(searchfor);
+				searchcommand=QString("find %1 -iname \"%2*.html\"|sed 's/.html$//'|sort").arg(this->prefsQtDocDir).arg(searchfor);
 				break;
 		}
 

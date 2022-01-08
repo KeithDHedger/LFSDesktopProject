@@ -248,6 +248,13 @@ void KKEditClass::buildPrefsWindow(void)
 	table->addWidget(widgetlabel,posy,0,Qt::AlignVCenter);
 	table->addWidget(prefsOtherWidgets[PREFSROOTCOMMAND],posy,1,1,-1,Qt::AlignVCenter);
 
+//qt doc dir
+	posy++;
+    widgetlabel=new QLabel("QT Document Folder:");
+	prefsOtherWidgets[PREFSQTDOCDIR]=new QLineEdit(this->prefsQtDocDir);
+	table->addWidget(widgetlabel,posy,0,Qt::AlignVCenter);
+	table->addWidget(prefsOtherWidgets[PREFSQTDOCDIR],posy,1,1,-1,Qt::AlignVCenter);
+
 //set default browser
 	posy++;
     widgetlabel=new QLabel("Default Browser:");
@@ -1007,6 +1014,7 @@ printf("TODO buildTools\n");
 	grid->addWidget(check,posy++,posx,Qt::AlignVCenter);
 //run sync
 	check=new QCheckBox("Run Tool Synchronously");
+	check->setChecked(true);
 	QObject::connect(check,SIGNAL(stateChanged(int)),this,SLOT(setToolsData(int)));	
 	check->setObjectName(TOOLRUNSYNC);
 	grid->addWidget(check,posy++,posx,Qt::AlignVCenter);
@@ -1032,11 +1040,11 @@ printf("TODO buildTools\n");
 //radios
 //ignore out
 	radio=new QRadioButton("Ignore Output");
+	radio->setChecked(true);
 	radio->setObjectName(TOOLIGNOREOUT);
 	grid->addWidget(radio,posy++,posx,Qt::AlignVCenter);
 //paste out
 	radio=new QRadioButton("Paste Output");
-	radio->setChecked(true);
 	radio->setObjectName(TOOLPASTEOUT);
 	grid->addWidget(radio,posy++,posx,Qt::AlignVCenter);
 //replace all
@@ -1057,6 +1065,7 @@ printf("TODO buildTools\n");
 	button=new QPushButton("Save Tool");
 	button->setObjectName(QString("%1").arg(TOOLSSAVE));
 	QObject::connect(button,SIGNAL(clicked()),this,SLOT(doOddButtons()));
+	button->setEnabled(false);
 	hbox->addWidget(button);
 
 	hbox->addStretch(1);

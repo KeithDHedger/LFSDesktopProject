@@ -618,12 +618,10 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
-with_gsu_path
 MANPAGEEDITOR
 GTKSU
 CTAGS
 ASPELL_LIBS
-with_qt5_docdir
 WEBENGINEWIDGETS_LIBS
 WEBENGINEWIDGETS_CFLAGS
 QTX11EXTRA_LIBS
@@ -730,9 +728,7 @@ enable_option_checking
 enable_dependency_tracking
 enable_silent_rules
 enable_docviewer
-with_qt5_docdir
 enable_aspell
-with_gsu_path
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1387,12 +1383,6 @@ Optional Features:
   --disable-silent-rules  verbose build output (undo: "make V=0")
   --enable-docviewer      Build the Doc viewer
   --enable-aspell         Include spellchecker
-
-Optional Packages:
-  --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
-  --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
-  --with-qt5-docdir       Installtion DIR for Qt5 documentation
-  --with-gsu-path         Path to graphical su app
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -5298,7 +5288,6 @@ ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
-#AX_CXX_COMPILE_STDCXX_11(noext,mandatory)
 
 
 
@@ -5823,24 +5812,9 @@ fi
 
 
 
-
 printf "%s\n" "#define _BUILDDOCVIEWER_ /**/" >>confdefs.h
 
 fi
-
-
-# Check whether --with-qt5-docdir was given.
-if test ${with_qt5_docdir+y}
-then :
-  withval=$with_qt5_docdir; with_qt5_docdir=$withval
-else $as_nop
-  with_qt5_docdir="/usr/share/doc/qt5"
-fi
-
-
-
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: Setting Qt5 Docs directory to $with_qt5_docdir" >&5
-printf "%s\n" "Setting Qt5 Docs directory to $with_qt5_docdir" >&6; }
 
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether to include spell checker (aspell)" >&5
 printf %s "checking whether to include spell checker (aspell)... " >&6; }
@@ -6012,21 +5986,6 @@ printf "%s\n" "$as_me: You can download it from here:" >&6;}
 	{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: https://github.com/KeithDHedger/ManPageEditor" >&5
 printf "%s\n" "$as_me: https://github.com/KeithDHedger/ManPageEditor" >&6;}
 fi
-
-#TODO
-
-# Check whether --with-gsu-path was given.
-if test ${with_gsu_path+y}
-then :
-  withval=$with_gsu_path; with_gsu_path=$withval
-else $as_nop
-  with_gsu_path="gtksu -- "
-fi
-
-
-
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: Setting path to graphical su app to \"$with_gsu_path\"" >&5
-printf "%s\n" "Setting path to graphical su app to \"$with_gsu_path\"" >&6; }
 
 ac_config_files="$ac_config_files Makefile KKEditQT/app/Makefile"
 

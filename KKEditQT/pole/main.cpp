@@ -45,7 +45,7 @@ int main(int argc, char **argv)
 
 	if(cancellabel.isEmpty()==true)
 		cancellabel=QString();
-	QProgressDialog progress(dialoglabel,cancellabel,0,0,nullptr,Qt::Dialog);
+	QProgressDialog progress("",cancellabel,0,0,nullptr,Qt::Dialog);
 	progress.setWindowModality(Qt::WindowModal);
 	progress.setWindowTitle(windowtitle);
 	progress.setWindowFlags(progress.windowFlags() | Qt::WindowStaysOnTopHint);

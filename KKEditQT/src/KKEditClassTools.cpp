@@ -210,13 +210,42 @@ void KKEditClass::setToolsData(int what)
 	QCheckBox				*clearcheck;
 	QCheckBox				*rootcheck;
 	QCheckBox				*barcheck;
+	QPushButton				*savebutton;
 
-	sl=this->verifyTool(this->toolSelect->currentData().toString());
-	if(sl.isEmpty()==true)
-		return;//TODO//make default tool
-//for(int j=0;j<TOOL_END;j++)
-//	DEBUGSTR( sl.at(j) )
-//DEBUGSTR( what )
+
+	savebutton=this->toolsWindow->findChild<QPushButton*>(QString("%1").arg(TOOLSSAVE));
+	savebutton->setEnabled(!this->toolSelect->currentData().toString().isEmpty());
+	if(sender()->objectName().compare(TOOLCOMBOBOX)==0)
+		{
+			if(what==0)
+				{
+					DEBUGSTR("new tool")
+					sl.clear();
+					sl<<QString("%1\t0").arg(TOOLALWAYSINPOPUP);
+					sl<<QString("%1\t0").arg(TOOLCLEAROP);
+					sl<<QString("%1\t").arg(TOOLCOMMAND);
+					sl<<QString("%1\t").arg(TOOLCOMMENT);
+					sl<<QString("%1\t0").arg(TOOLFLAGS);
+					sl<<QString("%1\t0").arg(TOOLSHOWINPOPUP);
+					sl<<QString("%1\t0").arg(TOOLRUNINTERM);
+					sl<<QString("%1\tNew Tool").arg(TOOLNAME);
+					sl<<QString("%1\t0").arg(TOOLRUNASROOT);
+					sl<<QString("%1\t").arg(TOOLKEY);
+					sl<<QString("%1\t0").arg(TOOLUSEPOLE);
+					//for(int j=0;j<TOOL_END;j++)
+					//	DEBUGSTR( sl.at(j) )
+					savebutton->setEnabled(false);
+				}
+			else
+				{
+					sl=this->verifyTool(this->toolSelect->currentData().toString());
+					if(sl.isEmpty()==true)
+						{
+							DEBUGSTR("Tool empty ...")
+							return;
+						}
+				}
+		}
 
 	runintermcheck=this->toolsWindow->findChild<QCheckBox*>(TOOLRUNINTERM);
 	inpopupcheck=this->toolsWindow->findChild<QCheckBox*>(TOOLSHOWINPOPUP);

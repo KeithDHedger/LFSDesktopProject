@@ -8,8 +8,8 @@ kkeditqt_SOURCES = $(COMMONSRC)
 
 KKEditQTProgressBar_SOURCES = ../pole/main.cpp
 
-kkeditqt_CFLAGS = -ggdb -O0 -fvisibility=default
-kkeditqt_CXXFLAGS = -ggdb -O0 -fvisibility=default
+#kkeditqt_CFLAGS = -ggdb -O0 -fvisibility=default
+#kkeditqt_CXXFLAGS = -ggdb -O0 -fvisibility=default
 
 pixfilesdir = $(pkgdatadir)/pixmaps
 pixfiles_DATA = ../resources/pixmaps/*

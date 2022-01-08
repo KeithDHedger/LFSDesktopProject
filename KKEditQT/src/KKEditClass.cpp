@@ -584,7 +584,8 @@ void KKEditClass::readConfigs(void)
 	this->prefsMaxTabChars=this->prefs.value("editor/maxtabchars",20).toInt();
 	this->prefsMaxFuncChars=this->prefs.value("editor/maxfuncchars",64).toInt();
 	this->prefsTerminalCommand=this->prefs.value("editor/terminalcommand","xterm -e").toString();
-	this->prefsRootCommand=this->prefs.value("editor/rootcommand",GTKSUPATH).toString();
+	this->prefsRootCommand=this->prefs.value("editor/rootcommand","gtksu -- ").toString();
+	this->prefsQtDocDir=this->prefs.value("editor/qtdocdir","/usr/share/doc/qt5").toString();
 
 //document
 	this->prefsHighLightline=this->prefs.value("document/highlightline",QVariant(bool(true))).value<bool>();
@@ -688,6 +689,7 @@ void KKEditClass::writeExitData(void)
 	this->prefs.setValue("editor/terminalcommand",this->prefsTerminalCommand);
 	this->prefs.setValue("editor/rootcommand",this->prefsRootCommand);
 	this->prefs.setValue("editor/toolbarlayout",this->prefsToolBarLayout);
+	this->prefs.setValue("editor/qtdocdir",this->prefsQtDocDir);
 
 //document
 	this->prefs.setValue("document/indent",this->prefsIndent);
@@ -754,28 +756,8 @@ void KKEditClass::showBarberPole(QString windowtitle,QString bodylabel,QString c
 	QString	pipecom;
 
 	pipecom=QString("KKEditQTProgressBar \"%1\" \"%2\" \"%3\" \"%4\" &").arg(windowtitle).arg(bodylabel).arg(cancellabel).arg(controlfile);
-DEBUGSTR(pipecom)
 	this->runPipe(pipecom);
-
-//	pipecom=QString("KKEditQTProgressBar \"Building Docs\" \"Please Wait ...\" \"\" \"%1/progress\" &").arg(this->tmpFolderName);
-/*
-	pipecom=QString("KKEditQTProgressBar \"Building Docs\" \"Please Wait ...\" \"\" \"%1/progress\" &").arg(this->tmpFolderName);
-	this->runPipe(QString("KKEditQTProgressBar \"Building Docs\" \"Please Wait ...\" \"\" \"%1/progress\" &").arg(this->tmpFolderName));
-
-	QDir::setCurrent(doc->getDirPath());
-	stat("Doxyfile",&sb);
-	if(!S_ISREG(sb.st_mode))
-		system("cp " DATADIR "/docs/Doxyfile .");
-
-	fileinfo=QString("%1/html/index.html").arg(doc->getDirPath());
-	fp=popen("doxygen Doxyfile","r");
-	while(fgets(line,4095,fp))
-		{
-			line[strlen(line)-1]=0;
-			snprintf(opdata,4095,"echo -n \"%s\" >\"%s/progress\"",line,this->tmpFolderName.toStdString().c_str());
-			system(opdata);
-		}
-*/
+//DEBUGSTR(pipecom)
 }
 
 void KKEditClass::buildDocs(void)
@@ -803,8 +785,7 @@ void KKEditClass::buildDocs(void)
 	while(fgets(line,4095,fp))
 		{
 			line[strlen(line)-1]=0;
-			snprintf(opdata,4095,"echo -n \"%s\" >\"%s/progress\"",line,this->tmpFolderName.toStdString().c_str());
-			system(opdata);
+			this->runPipe(QString("echo -n \"%1\" >\"%2/progress\"").arg(line).arg(this->tmpFolderName));
 		}
 	pclose(fp);
 

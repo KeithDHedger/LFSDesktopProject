@@ -1,4 +1,7 @@
 0.5.1
+Fixed minor visual problem with pole.
+Removed setting for path to qt docs, now only set in prefs.
+Removed setting path to gsu from configure, now only set in prefs.
 Done tool save as.
 Done delete tool.
 Code clean.

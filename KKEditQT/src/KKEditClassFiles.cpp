@@ -229,7 +229,7 @@ void KKEditClass::newEditor(int what)
 	switch(what)
 		{
 			case NEWADMINEDMENUITEM:
-				command=GTKSUPATH " kkedit -m 2>&1 >/dev/null &";
+				command=QString("\"%1\" kkedit -m 2>&1 >/dev/null &").arg(this->prefsRootCommand);
 				runPipe(command);
 				break;
 		case NEWEDMENUITEM:
@@ -240,7 +240,6 @@ void KKEditClass::newEditor(int what)
 				runPipe("manpageeditor 2>&1 >/dev/null &");
 			break;
 		}
-
 }
 
 bool KKEditClass::openFile(QString filepath,int linenumber,bool warn)

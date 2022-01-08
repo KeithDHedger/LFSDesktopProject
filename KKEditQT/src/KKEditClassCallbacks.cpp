@@ -641,8 +641,11 @@ void KKEditClass::setPreferences(void)
 
 //term command
 	this->prefsTerminalCommand=qobject_cast<QLineEdit*>(prefsOtherWidgets[PREFSTERMCOMMAND])->text();
+//root command
+	this->prefsRootCommand=qobject_cast<QLineEdit*>(prefsOtherWidgets[PREFSROOTCOMMAND])->text();
+//qt doc dir
+	this->prefsQtDocDir=qobject_cast<QLineEdit*>(prefsOtherWidgets[PREFSQTDOCDIR])->text();
 
-//TODO//
 	this->prefsWindow->hide();
 
 	this->prefsToolBarLayout="";
@@ -856,7 +859,8 @@ void KKEditClass::doOddButtons(void)
 					int		flags=0;
 					QFile	file;
 					bool	retval;
-
+					QPushButton	*savebutton;
+	
 					if(saveas==false)
 						file.setFileName(this->toolSelect->currentData().toString());
 					else
@@ -901,6 +905,9 @@ void KKEditClass::doOddButtons(void)
 								flags=this->toolSelect->findText(this->toolsWindow->findChild<QLineEdit*>(TOOLNAME)->text());
 			 				this->toolSelect->setCurrentIndex(flags);
 							this->runPipe(QString("echo quit>\"%1/tools\"").arg(this->tmpFolderName));
+
+							savebutton=this->toolsWindow->findChild<QPushButton*>(QString("%1").arg(TOOLSSAVE));
+							savebutton->setEnabled(true);
 						}
 				}
 				break;

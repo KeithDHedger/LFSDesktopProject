@@ -184,19 +184,7 @@ enum  utilVarType {BOOLVAR=0,INTVAR,CHARVAR,MULTVAR,BADTYPE,DECIMALOUT,HEXOUT,OC
 #define DEBUGSTR(x) QTextStream(stderr) << x << Qt::endl;
 //#define DEBUGSTR(x)
 
-//enum toolEnums {TOOL_NAME=0,TOOL_COMMAND,TOOL_COMMENT,TOOL_IN_TERM,TOOL_FLAGS,TOOL_INPOPUP,TOOL_ALWAYS_IN_POPUP,TOOL_CLEAR_VIEW,TOOL_RUN_AS_ROOT,TOOL_USE_BAR,TSHORTCUTKEY};
 enum toolEnums {TOOL_ALWAYS_IN_POPUP=0,TOOL_CLEAR_VIEW,TOOL_COMMAND,TOOL_COMMENT,TOOL_FLAGS,TOOL_INPOPUP,TOOL_IN_TERM,TOOL_NAME,TOOL_RUN_AS_ROOT,TOOL_SHORTCUT_KEY,TOOL_USE_BAR,TOOL_END};
-//alwayspopup	1
-//clearview	0
-//command	echo '%d--%f--%t--%h--%i--%m' > /dev/pts/2
-//comment	test tool
-//flags	0
-//inpopup	0
-//interm	1
-//name	AAA Test
-//runasroot	0
-//shortcutkey	0
-//usebar	0
 
 #define MAXSESSIONS 24
 
