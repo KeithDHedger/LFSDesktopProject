@@ -1,5 +1,15 @@
 KKEditQT/app/KKEditQTProgressBar
-KKEditQT/src/moc_*.cpp
+KKEditQT/pole/.deps
+KKEditQT/pole/.dirstamp
+KKEditQT/src/.deps
+KKEditQT/src/.dirstamp
+KKEditQT/src/moc_KKEditClass.cpp
+KKEditQT/src/moc_QT_document.cpp
+KKEditQT/src/moc_QT_highlighter.cpp
+KKEditQT/src/moc_QT_menuitem.cpp
+KKEditQT/src/moc_QT_notebook.cpp
+KKEditQT/src/moc_QT_toolbar.cpp
+KKEditQT/src/searchdata.xml
 KKEditQT/app/Makefile
 KKEditQT/app/kkeditqt
 KKEditQT/pole/main.o
@@ -9,6 +19,4 @@ KKEditQT/src/*.o
 KKEditQT/src/html
 KKEditQT/src/searchdata.xml
 Makefile
-KKEditQT/pole/.deps
-KKEditQT/pole/.dirstamp
 configure
