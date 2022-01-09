@@ -7,7 +7,6 @@ KKEditQT/pole/main.o
 KKEditQT/src/.deps
 KKEditQT/src/.dirstamp
 KKEditQT/src/*.o
-KKEditQT/src/moc_*
 KKEditQT/src/html
 KKEditQT/src/searchdata.xml
 Makefile
@@ -22,4 +21,8 @@ KKEditQT/pole/.dirstamp
 KKEditQT/app/KKEditQTProgressBar
 KKEditQT/resources/styles
 configure
-
+KKEditQT/src/moc_QT_document.cpp
+KKEditQT/src/moc_QT_highlighter.cpp
+KKEditQT/src/moc_QT_menuitem.cpp
+KKEditQT/src/moc_QT_notebook.cpp
+KKEditQT/src/moc_QT_toolbar.cpp
