@@ -478,6 +478,7 @@ void DocumentClass::setRedo(bool avail)
 
 void DocumentClass::dragMoveEvent(QDragMoveEvent *event)
 {
+//DEBUGSTR("here")
 	if((event->mimeData()->hasUrls()==true))
 		event->accept();
 	else
@@ -515,12 +516,6 @@ void DocumentClass::dropEvent(QDropEvent* event)
 							this->mimeType=type.name();
 							this->setPlainText(content);
 							this->setFilePrefs();
-							this->setDirPath(fileinfo.canonicalPath());
-							this->setFilePath(fileinfo.canonicalFilePath());
-							this->setFileName(fileinfo.fileName());
-							this->setTabName(this->mainKKEditClass->truncateWithElipses(this->getFileName(),this->mainKKEditClass->prefsMaxTabChars));
-							this->mainKKEditClass->mainNotebook->setTabToolTip(tabnum,this->getFilePath());
-							this->document()->clearUndoRedoStacks(QTextDocument::UndoAndRedoStacks);
 							this->setHiliteLanguage();
 //#ifndef _USEMINE_
 //			//doc->highlighter->setCurrentLanguage(QSourceHighlite::QSourceHighliter::CodeCpp);
@@ -531,10 +526,9 @@ void DocumentClass::dropEvent(QDropEvent* event)
 ////			doc->highlighter->setTheme(theme);
 //#endif
 							this->highlighter->rehighlight();
-							this->dirty=false;
+							this->dirty=true;
 							file.close();
 						}
-					this->dirty=false;
 					this->mainKKEditClass->switchPage(tabnum);
 					this->mainKKEditClass->rebuildTabsMenu();
 					this->mainKKEditClass->setToolbarSensitive();

@@ -73,11 +73,16 @@ enum {FRCASE=0,FRUSEREGEX,FRWRAP,FRALLFILES,FRHIGHLIGHTALL,FRREPLACEALL,FRMAXSWI
 #include "qsourcehighliterthemes.h"
 #include "languagedata.h"
 
+
 #include "QT_menuitem.h"
 #include "QT_highlighter.h"
 #include "QT_document.h"
+#include "QT_toolbar.h"
+#include "QT_notebook.h"
 
+class NoteBookClass;
 class MenuItemClass;
+class ToolBarClass;
 
 class KKEditClass : public QObject
 {
@@ -89,7 +94,8 @@ class KKEditClass : public QObject
 
 //app vars
 		QMainWindow					*mainWindow;
-		QTabWidget					*mainNotebook=NULL;
+		//QTabWidget					*mainNotebook=NULL;
+		NoteBookClass				*mainNotebook=NULL;
 		QTabBar						*tabBar=NULL;
 		QApplication				*application;
 		QTimer 						*checkMessages;
@@ -286,7 +292,8 @@ class KKEditClass : public QObject
 		MenuItemClass				*makeMenuItemClass(int mainmenu,const QString name,const QKeySequence key,const QString iconname,const QString objectname,int userdata);
 
 //toolbar vars
-		QToolBar					*toolBar=NULL;
+//		QToolBar					*toolBar=NULL;
+		ToolBarClass				*toolBar=NULL;
 		QWidget						*lineNumberWidget=NULL;
 		QLineEdit					*findGtkApiWidget=NULL;
 		QLineEdit					*findQtApiWidget=NULL;

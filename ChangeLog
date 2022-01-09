@@ -1,4 +1,6 @@
 0.5.1
+Done switch tab while dragging.
+Done drop files on toolbar to open.
 Done DanD on docs.
 Fixed minor visual problem with pole.
 Removed setting for path to qt docs, now only set in prefs.

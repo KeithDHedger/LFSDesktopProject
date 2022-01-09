@@ -616,7 +616,8 @@ void KKEditClass::buildMainGui(void)
 //	this->mainWindowVBox->setContentsMargins(2,2,2,2);
 //	this->mainWindow->setLayout(this->mainWindowVBox);
 
-	this->mainNotebook=new QTabWidget;
+	//this->mainNotebook=new QTabWidget;
+	this->mainNotebook=new NoteBookClass(this);
 
 //contextMenuEvent
 	this->tabBar=this->mainNotebook->tabBar();
@@ -626,6 +627,8 @@ void KKEditClass::buildMainGui(void)
 	this->mainNotebook->setDocumentMode(true);
 	this->mainNotebook->setTabsClosable(true);
 	this->mainNotebook->setMovable(true);
+	//	this->mainNotebook->setAcceptDrops(true);//TODO//
+	//	this->mainNotebook->tabBar()->setAcceptDrops(true);
 	
 	//QObject::connect(this->mainNotebook,&QTabWidget::currentChanged(int),switchPage(int));//TODO//
 	QObject::connect(this->mainNotebook,SIGNAL(currentChanged(int)),this,SLOT(switchPage(int)));
@@ -634,7 +637,8 @@ void KKEditClass::buildMainGui(void)
 ////	QObject::connect(qobject_cast<QWidget*>(mainNotebook),&QWidget::keyPressEvent,keyp);
 
 	this->menuBar=new QMenuBar;
-	this->toolBar=new QToolBar;
+	//this->toolBar=new QToolBar;
+	this->toolBar=new ToolBarClass(this);
 
 
 //file menu
