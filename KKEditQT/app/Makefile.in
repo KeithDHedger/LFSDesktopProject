@@ -101,7 +101,7 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(scriptfilesdir)" \
 	"$(DESTDIR)$(docfilesdir)" "$(DESTDIR)$(helpfilesdir)" \
-	"$(DESTDIR)$(pixfilesdir)" "$(DESTDIR)$(stylefilesdir)"
+	"$(DESTDIR)$(pixfilesdir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
 am_KKEditQTProgressBar_OBJECTS = ../pole/main.$(OBJEXT)
@@ -218,8 +218,7 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
-DATA = $(docfiles_DATA) $(helpfiles_DATA) $(pixfiles_DATA) \
-	$(stylefiles_DATA)
+DATA = $(docfiles_DATA) $(helpfiles_DATA) $(pixfiles_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 # Read a list of newline-separated strings from the standard input,
 # and print each of them once, without duplicates.  Input order is
@@ -376,8 +375,6 @@ scriptfilesdir = $(pkgdatadir)/tools
 scriptfiles_SCRIPTS = ../resources/tools/*
 docfilesdir = $(pkgdatadir)/docs
 docfiles_DATA = ../resources/docs/*
-stylefilesdir = $(pkgdatadir)/styles
-stylefiles_DATA = ../resources/styles/*
 all: all-am
 
 .SUFFIXES:
@@ -678,27 +675,6 @@ uninstall-pixfilesDATA:
 	@list='$(pixfiles_DATA)'; test -n "$(pixfilesdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	dir='$(DESTDIR)$(pixfilesdir)'; $(am__uninstall_files_from_dir)
-install-stylefilesDATA: $(stylefiles_DATA)
-	@$(NORMAL_INSTALL)
-	@list='$(stylefiles_DATA)'; test -n "$(stylefilesdir)" || list=; \
-	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(stylefilesdir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(stylefilesdir)" || exit 1; \
-	fi; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(stylefilesdir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(stylefilesdir)" || exit $$?; \
-	done
-
-uninstall-stylefilesDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(stylefiles_DATA)'; test -n "$(stylefilesdir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	dir='$(DESTDIR)$(stylefilesdir)'; $(am__uninstall_files_from_dir)
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -789,7 +765,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(PROGRAMS) $(SCRIPTS) $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(scriptfilesdir)" "$(DESTDIR)$(docfilesdir)" "$(DESTDIR)$(helpfilesdir)" "$(DESTDIR)$(pixfilesdir)" "$(DESTDIR)$(stylefilesdir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(scriptfilesdir)" "$(DESTDIR)$(docfilesdir)" "$(DESTDIR)$(helpfilesdir)" "$(DESTDIR)$(pixfilesdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -873,8 +849,7 @@ info: info-am
 info-am:
 
 install-data-am: install-docfilesDATA install-helpfilesDATA \
-	install-pixfilesDATA install-scriptfilesSCRIPTS \
-	install-stylefilesDATA
+	install-pixfilesDATA install-scriptfilesSCRIPTS
 
 install-dvi: install-dvi-am
 
@@ -946,7 +921,7 @@ ps-am:
 
 uninstall-am: uninstall-binPROGRAMS uninstall-docfilesDATA \
 	uninstall-helpfilesDATA uninstall-pixfilesDATA \
-	uninstall-scriptfilesSCRIPTS uninstall-stylefilesDATA
+	uninstall-scriptfilesSCRIPTS
 
 .MAKE: install-am install-exec-am install-strip
 
@@ -960,13 +935,12 @@ uninstall-am: uninstall-binPROGRAMS uninstall-docfilesDATA \
 	install-html install-html-am install-info install-info-am \
 	install-man install-pdf install-pdf-am install-pixfilesDATA \
 	install-ps install-ps-am install-scriptfilesSCRIPTS \
-	install-strip install-stylefilesDATA installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic pdf pdf-am ps ps-am tags tags-am uninstall \
-	uninstall-am uninstall-binPROGRAMS uninstall-docfilesDATA \
-	uninstall-helpfilesDATA uninstall-pixfilesDATA \
-	uninstall-scriptfilesSCRIPTS uninstall-stylefilesDATA
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic pdf pdf-am ps ps-am \
+	tags tags-am uninstall uninstall-am uninstall-binPROGRAMS \
+	uninstall-docfilesDATA uninstall-helpfilesDATA \
+	uninstall-pixfilesDATA uninstall-scriptfilesSCRIPTS
 
 .PRECIOUS: Makefile
 

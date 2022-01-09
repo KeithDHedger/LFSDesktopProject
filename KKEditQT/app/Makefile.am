@@ -23,8 +23,8 @@ scriptfiles_SCRIPTS = ../resources/tools/*
 docfilesdir = $(pkgdatadir)/docs
 docfiles_DATA = ../resources/docs/*
 
-stylefilesdir = $(pkgdatadir)/styles
-stylefiles_DATA = ../resources/styles/*
+#stylefilesdir = $(pkgdatadir)/styles
+#stylefiles_DATA = ../resources/styles/*
 
 #include_HEADERS = ../src/kkedit-plugins.h
 

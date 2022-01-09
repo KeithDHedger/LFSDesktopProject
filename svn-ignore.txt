@@ -21,3 +21,5 @@ KKEditQT/pole/.deps
 KKEditQT/pole/.dirstamp
 KKEditQT/app/KKEditQTProgressBar
 KKEditQT/resources/styles
+configure
+
