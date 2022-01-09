@@ -3,7 +3,7 @@
 shopt -s nullglob
 cd "KKEditQT/src"
 
-rm moc_*||true
+rm moc_* &>/dev/null||true
 
 moc KKEditClass.h -o moc_KKEditClass.cpp
 while read
