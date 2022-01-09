@@ -38,16 +38,16 @@ void NoteBookClass::dragMoveEvent(QDragMoveEvent *event)
 
 	if((event->mimeData()->hasUrls()==true) || (event->mimeData()->hasText()))
 		event->accept();
-
-	QTabWidget::dragMoveEvent(event);
+	else
+		QTabWidget::dragMoveEvent(event);
 }
 
 void NoteBookClass::dragEnterEvent(QDragEnterEvent* event)
 {
 	if((event->mimeData()->hasUrls()==true) || (event->mimeData()->hasText()))
 		event->accept();
-
-	QTabWidget::dragEnterEvent(event);
+	else
+		QTabWidget::dragEnterEvent(event);
 }
 
 void NoteBookClass::dropEvent(QDropEvent* event)
@@ -60,6 +60,7 @@ void NoteBookClass::dropEvent(QDropEvent* event)
 						this->mainKKEditClass->openFile(event->mimeData()->urls().at(j).toLocalFile());
 				}
 			event->accept();
+			return;
 		}
 
 	QTabWidget::dropEvent(event);

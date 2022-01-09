@@ -56,6 +56,7 @@ void ToolBarClass::dropEvent(QDropEvent* event)
 						this->mainKKEditClass->openFile(event->mimeData()->urls().at(j).toLocalFile());
 				}
 			event->accept();
+			return;
 		}
 	QToolBar::dropEvent(event);
 }
