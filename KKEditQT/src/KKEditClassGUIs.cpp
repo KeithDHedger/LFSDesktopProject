@@ -700,8 +700,10 @@ void KKEditClass::buildMainGui(void)
 	this->restoreDefaultSessionMenuItem=this->makeMenuItemClass(RESTORESESSIONSMENU,"Restore Default Session",0,NULL,RESTORESESSIONMENUNAME,CURRENTSESSION);
 	this->restoreSessionsMenu->addSeparator();
 	for(int j=1;j<MAXSESSIONS;j++)
-		menuItemSink=this->makeMenuItemClass(RESTORESESSIONSMENU,this->sessionNames.value(j),0,NULL,RESTORESESSIONMENUNAME,j);
-
+		{
+			menuItemSink=this->makeMenuItemClass(RESTORESESSIONSMENU,this->sessionNames.value(j),0,NULL,RESTORESESSIONMENUNAME,j);
+			this->restoreSessionMenuItemsList.append(menuItemSink);
+		}
 //printfile
 	this->printMenuItem=this->makeMenuItemClass(FILEMENU,"Print",QKeySequence::Print,"document-print",PRINTMENUNAME,PRINTMENUITEM);
 
@@ -928,9 +930,6 @@ void KKEditClass::buildTools(void)
 	int				posx=0;
 	int				posy=0;
 
-//TODO//
-printf("TODO buildTools\n");
-
 	this->toolsWindow=new QDialog(this->mainWindow);
 	this->toolsWindow->setWindowTitle("External Tools");
 
@@ -1132,6 +1131,9 @@ void KKEditClass::rebuildTabsMenu(void)
 	DocumentClass	*doc;
 	MenuItemClass	*menuitem;
 	QTabBar			*bar=this->mainNotebook->tabBar();
+
+	if(this->sessionBusy==true)
+		return;
 
 	this->selectTabMenu->clear();
 	for(int j=0;j<bar->count();j++)

@@ -31,8 +31,6 @@ int main (int argc, char **argv)
 	bool				retval=false;
 	QDir				commsDir;
 	QApplication		app(argc,argv);
-	QCommandLineParser	parser;
-	bool				forcemulti;
 	KKEditClass  		*kkedit;
 
 	app.setStyleSheet("QMenu { menu-scrollable: true ;}");
@@ -48,34 +46,39 @@ int main (int argc, char **argv)
 			loadPluginsFlag=false;
 		}
 
-	parser.addHelpOption();
-	QCommandLineOption forcemultiinst(QStringList() << "m" << "multi","Force multiple instance.");
-	parser.addOption(forcemultiinst);
-
 	kkedit=new KKEditClass(&app);
+	kkedit->parser.addHelpOption();
+	QCommandLineOption forcemultiinst(QStringList() << "m" << "multi","Force multiple instance.");
+	kkedit->parser.addOption(forcemultiinst);
+	QCommandLineOption opensession(QStringList() << "s" << "restore-session","SessionName","Open session by name.");
+	kkedit->parser.addOption(opensession);
+	QCommandLineOption quitapp(QStringList() << "q" << "quit","Quit app.");
+	kkedit->parser.addOption(quitapp);
 
-	parser.process(app);
-	forcemulti=parser.isSet(forcemultiinst);
+	kkedit->parser.process(app);
 
-	SingleInstanceClass siapp(&app,forcemulti);
+	SingleInstanceClass siapp(&app,&kkedit->parser);
 
-	kkedit->forcedMultInst=forcemulti;
 	if(siapp.getRunning()==true)
-		return(0);
+		{
+			kkedit->runCLICommands(siapp.queueID);
+			return(0);
+		}
 
+	kkedit->forcedMultInst=kkedit->parser.isSet("multi");
 	kkedit->currentWorkSpace=siapp.workspace;;
 	kkedit->sessionID=kkedit->currentWorkSpace+MSGKEY;
 	kkedit->forceDefaultGeom=!siapp.isOnX11;
 
 	kkedit->initApp(argc,argv);
 
-	for(int j=1;j<argc;j++)
-		kkedit->openFile(argv[j],0,true);
+	kkedit->runCLICommands(kkedit->queueID);
 
 	if(getuid()!=0)
 		app.setWindowIcon(QIcon::fromTheme(PACKAGE,QIcon(DATADIR"/pixmaps/KKEdit.png")));
 	else
 		app.setWindowIcon(QIcon::fromTheme(PACKAGE "Root",QIcon(DATADIR"/pixmaps/KKEditRoot.png")));
+
 	status=app.exec();
 
 	delete kkedit;

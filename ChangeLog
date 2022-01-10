@@ -1,4 +1,7 @@
 0.5.1
+Done quit app from cli.
+Done load session by name from cli.
+Done single instance commands.
 Done switch tab while dragging.
 Done drop files on toolbar to open.
 Done DanD on docs.

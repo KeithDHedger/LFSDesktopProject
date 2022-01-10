@@ -20,8 +20,9 @@
 
 #include "SingleInstanceClass.h"
 
-SingleInstanceClass::SingleInstanceClass(QApplication *app,bool forcem)
+SingleInstanceClass::SingleInstanceClass(QApplication *app,QCommandLineParser *parser)
 {
+	bool		forcem=parser->isSet("multi");
 	QSettings	prefs;
 	bool		single=prefs.value("app/usesingle",QVariant(bool(true))).value<bool>();
 
@@ -86,41 +87,12 @@ bool SingleInstanceClass::getRunning(void)
 			retval=this->fileMsg.open(QIODevice::Text | QIODevice::ReadOnly);
 			if(retval==true)
 				{
-					int			queueID=-1;
 					msgStruct	message;
 					int			msglen;
 					QString		content=this->fileMsg.readAll();
+					this->queueID=msgget(content.toInt(nullptr,10),IPC_CREAT|0660);
 					this->fileMsg.close();
-					if(this->app->arguments().size()<2)
-						{
-							if((queueID=msgget(content.toInt(nullptr,10),IPC_CREAT|0660))==-1)
-								fprintf(stderr,"Can't create message queue, scripting wont work :( ...\n");
-							else
-								{
-									msglen=snprintf(message.mText,MAXMSGSIZE-1,"%s","ACTIVATE");
-									message.mType=ACTIVATEAPP;
-									msgsnd(queueID,&message,msglen,0);
-									isrunning=true;
-								}
-						}
-					else
-						{
-							if((queueID=msgget(content.toInt(nullptr,10),IPC_CREAT|0660))==-1)
-								fprintf(stderr,"Can't create message queue, scripting wont work :( ...\n");
-							else
-								{
-									for(int j=1;j<this->app->arguments().size();j++)
-										{
-											msglen=snprintf(message.mText,MAXMSGSIZE-1,"%s",this->app->arguments().at(j).toStdString().c_str());
-											message.mType=OPENFILE;
-											msgsnd(queueID,&message,msglen,0);
-										}
-									msglen=snprintf(message.mText,MAXMSGSIZE-1,"%s","ACTIVATE");
-									message.mType=ACTIVATEAPP;
-									msgsnd(queueID,&message,msglen,0);
-									isrunning=true;
-								}
-						}
+					isrunning=true;
 				}
 		}
 	else

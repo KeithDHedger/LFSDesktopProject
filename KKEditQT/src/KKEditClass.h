@@ -94,11 +94,10 @@ class KKEditClass : public QObject
 
 //app vars
 		QMainWindow					*mainWindow;
-		//QTabWidget					*mainNotebook=NULL;
 		NoteBookClass				*mainNotebook=NULL;
 		QTabBar						*tabBar=NULL;
 		QApplication				*application;
-		QTimer 						*checkMessages;
+		QTimer 						*checkMessages=NULL;
 		QString						tmpFolderName;
 		QString						htmlFile;
 		QString						htmlURI;
@@ -162,6 +161,9 @@ class KKEditClass : public QObject
 
 		void						writeExitData(void);
 		int							yesNoDialog(QString txt,QString info);
+//scripting
+		void						runCLICommands(int quid);
+		QCommandLineParser			parser;
 
 //app prefs
 //document
@@ -223,6 +225,7 @@ class KKEditClass : public QObject
 		QMenu						*restoreSessionsMenu;
 		MenuItemClass				*saveCurrentSessionMenuItem;
 		MenuItemClass				*restoreDefaultSessionMenuItem;
+		QList<MenuItemClass*>		restoreSessionMenuItemsList;
 
 
 		MenuItemClass				*newMenuItem;

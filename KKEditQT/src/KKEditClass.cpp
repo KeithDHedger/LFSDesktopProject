@@ -953,6 +953,9 @@ void KKEditClass::setToolbarSensitive(void)
 	bool			gotdoc=true;
 	bool			hasselection=false;
 
+	if(this->sessionBusy==true)
+		return;
+
 	if(doc==NULL)
 		{
 			override=false;
@@ -1065,4 +1068,42 @@ void KKEditClass::debugSignalSlot(int what)
 {
 }
 
+void KKEditClass::runCLICommands(int quid)
+{
+	msgStruct	message;
+	int			msglen;
+	QString		opensessionname;
+	QStringList	list;
+
+	if(quid==-1)
+		fprintf(stderr,"From KKedit Can't create message queue, scripting wont work :( ...\n");
+	else
+		{
+			if(this->parser.isSet("quit"))
+				{
+ 					msglen=snprintf(message.mText,MAXMSGSIZE-1,"%s","quit");
+					message.mType=QUITAPP;
+					msgsnd(quid,&message,msglen,0);
+				}
+
+			if(this->parser.isSet("restore-session"))
+				{
+					opensessionname=this->parser.value("restore-session");
+ 					msglen=snprintf(message.mText,MAXMSGSIZE-1,"%s",opensessionname.toStdString().c_str());
+					message.mType=OPENSESSION;
+					msgsnd(quid,&message,msglen,0);
+				}
+
+			list=this->parser.positionalArguments();
+			for(int j=0;j<list.count();j++)
+				{
+					msglen=snprintf(message.mText,MAXMSGSIZE-1,"%s",list.at(j).toStdString().c_str());
+					message.mType=OPENFILE;
+					msgsnd(quid,&message,msglen,0);
+				}
+			msglen=snprintf(message.mText,MAXMSGSIZE-1,"%s","ACTIVATE");
+			message.mType=ACTIVATEAPP;
+			msgsnd(quid,&message,msglen,0);
+		}
+}
 

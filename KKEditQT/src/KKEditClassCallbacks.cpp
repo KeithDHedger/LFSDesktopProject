@@ -24,7 +24,6 @@ void KKEditClass::doSessionsMenuItems(void)
 {
 	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(sender());
 	QFile			file;
-	QFileInfo		fileinfo;
 	bool			retval;
 	DocumentClass	*doc;
 	bookMarkStruct	bm;
@@ -45,7 +44,6 @@ void KKEditClass::doSessionsMenuItems(void)
 
 			sessionname=QString("Session-%1").arg(sessionnumber);
 			file.setFileName(QString("%1/Session-%2").arg(this->sessionFolder).arg(sessionnumber));
-			fileinfo.setFile(file);
 //get sesion name
 			retval=file.open(QIODevice::Text | QIODevice::ReadOnly);
 			if(retval==true)
@@ -74,6 +72,7 @@ void KKEditClass::doSessionsMenuItems(void)
 									sessionname=(text);
 									mc->setText(sessionname);
 									this->sessionNames[mc->getMenuID()]=sessionname;
+								//	this->restoreSessionMenuItemsList.at(mc->getMenuID())
 								}
 						}
 					else
@@ -84,8 +83,12 @@ void KKEditClass::doSessionsMenuItems(void)
 					this->restoreSessionsMenu->clear();
 					this->restoreSessionsMenu->addAction(this->restoreDefaultSessionMenuItem);
 					this->restoreSessionsMenu->addSeparator();
+					this->restoreSessionMenuItemsList.clear();
 					for(int j=1;j<MAXSESSIONS;j++)
-						menuItemSink=this->makeMenuItemClass(RESTORESESSIONSMENU,this->sessionNames.value(j),0,NULL,RESTORESESSIONMENUNAME,j);
+						{
+							menuItemSink=this->makeMenuItemClass(RESTORESESSIONSMENU,this->sessionNames.value(j),0,NULL,RESTORESESSIONMENUNAME,j);
+							this->restoreSessionMenuItemsList.append(menuItemSink);
+						}
 
 					QTextStream(&file) << sessionname << Qt::endl;
 					for(int j=0;j<this->mainNotebook->count();j++)
@@ -111,10 +114,9 @@ void KKEditClass::doSessionsMenuItems(void)
 			sessionnumber=mc->getMenuID();
 			if(sessionnumber==CURRENTSESSION)
 				return;
-
 			this->closeAllTabs();
+			this->sessionBusy=true;
 			file.setFileName(QString("%1/Session-%2").arg(this->sessionFolder).arg(sessionnumber));
-			fileinfo.setFile(file);
 			retval=file.open(QIODevice::Text | QIODevice::ReadOnly);
 			if(retval==true)
 				{
@@ -131,8 +133,7 @@ void KKEditClass::doSessionsMenuItems(void)
 							in >> visible;
 							line=in.readLine().trimmed();
 							linenumber=-1;
-							this->runPipe(QString("echo \"Opening %1 ...\">\"%2/session\"").arg(line.trimmed()).arg(this->tmpFolderName));
-							//DEBUGSTR(QString("echo \"Opening %1 ...\">\"%2/session\"").arg(line.trimmed()).arg(this->tmpFolderName))
+							this->runPipe(QString("echo \"Opening %1 ...\">\"%2/session\" &").arg(line.trimmed()).arg(this->tmpFolderName));
 							this->openFile(line);
 							do
 								{
@@ -152,6 +153,9 @@ void KKEditClass::doSessionsMenuItems(void)
 					this->runPipe(QString("echo quit>\"%1/session\"").arg(this->tmpFolderName));
 				}
 		}
+
+	this->sessionBusy=false;
+	this->switchPage(this->mainNotebook->count()-1);
 	this->setToolbarSensitive();
 }
 
@@ -593,12 +597,18 @@ void KKEditClass::doTimer(void)
 							case SAVEFILE:
 								break;
 							case QUITAPP:
-								//doShutdown(NULL,0);
-								//this->
+								this->shutDownApp();
 								break;
 							case ACTIVATEAPP://TODO//minimized
 								this->application->setActiveWindow(this->mainWindow);
 								this->mainWindow->activateWindow();
+								break;
+							case OPENSESSION:
+								for(int j=0;j<this->restoreSessionMenuItemsList.count();j++)
+									{
+										if(QString(buffer.mText).compare(this->restoreSessionMenuItemsList.at(j)->text())==0)
+											emit this->restoreSessionMenuItemsList.at(j)->triggered();
+									}
 								break;
 						}
 				}

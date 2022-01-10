@@ -249,15 +249,16 @@ bool KKEditClass::openFile(QString filepath,int linenumber,bool warn)
 	QFile			file(filepath);
 	QFileInfo		fileinfo(file);
 	int				tabnum;
+	QMimeDatabase	db;
+	QMimeType		type;
+	QString			content;
 
-	this->sessionBusy=true;
-
+	//this->sessionBusy=true;
 	retval=file.open(QIODevice::Text | QIODevice::ReadOnly);
 	if(retval==true)
 		{
-			QString			content=QString::fromUtf8(file.readAll());
-			QMimeDatabase	db;
-			QMimeType		type=db.mimeTypeForFile(fileinfo.canonicalFilePath());
+			content=QString::fromUtf8(file.readAll());
+			type=db.mimeTypeForFile(fileinfo.canonicalFilePath());
 			doc->mimeType=type.name();
 			doc->setPlainText(content);
 			doc->setFilePrefs();
@@ -287,14 +288,15 @@ bool KKEditClass::openFile(QString filepath,int linenumber,bool warn)
 			retval=true;
 			file.close();
 		}
-	this->sessionBusy=false;
+
+	this->rebuildTabsMenu();
 	doc->dirty=false;
 
 	if(this->openFromDialog==false)
-		switchPage(tabnum);
+		this->switchPage(tabnum);
 
-	this->rebuildTabsMenu();
 	this->setToolbarSensitive();
+	//this->sessionBusy=false;
 	return(retval);
 }
 
