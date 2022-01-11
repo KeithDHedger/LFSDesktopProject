@@ -1,4 +1,6 @@
 0.5.1
+Done About box.
+Removed book marks when closing tab.
 Single instace class code clean.
 Done quit app from cli.
 Done load session by name from cli.

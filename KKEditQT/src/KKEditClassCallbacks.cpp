@@ -298,6 +298,7 @@ void KKEditClass::doToolsMenuItems()
 		}
 }
 
+#include "QT_AboutBox.h"
 void KKEditClass::doHelpMenuItems()
 {
 	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(sender());
@@ -307,7 +308,22 @@ void KKEditClass::doHelpMenuItems()
 	switch(mc->getMenuID())
 		{
 			 case ABOUTMENUITEM:
-			 //	doAbout(NULL,0);
+			 	{
+					QString			content;
+					QFile			licencefile(DATADIR "/docs/gpl-3.0.txt");
+					bool			retval;
+					AboutBoxClass	*about=new AboutBoxClass(this->mainWindow,DATADIR "/pixmaps/KKEditQT.png");
+
+					retval=licencefile.open(QIODevice::Text | QIODevice::ReadOnly);
+					if(retval==true)
+						{
+							content=QString::fromUtf8(licencefile.readAll());
+							licencefile.close();
+							about->setLicence(content);
+						}
+					about->setAuthors(defaultauthors);
+					about->runAbout();
+				}
 			 	break;
 			 case HELPMENUITEM:
 			 //	openHelp(NULL,0);

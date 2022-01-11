@@ -265,8 +265,21 @@ void KKEditClass::handleBMMenu(QWidget *widget,int what)
 	DocumentClass	*doc=this->pages.value(qobject_cast<DocumentClass*>(widget)->pageIndex);
 	QTextCursor		cursor=doc->textCursor();
 	bookMarkStruct	bms;
+
 	switch(what)
 		{
+			case REMOVEBOOKMARKSFROMPAGE:
+				foreach(bookMarkStruct value,this->bookMarks)
+					{
+						if(value.docIndex==doc->pageIndex)
+							{
+									this->bookMarkMenu->removeAction(value.menu);
+									delete value.menu;
+									this->bookMarks.remove(value.bmKey);
+							}
+					}
+				return;
+				break;
 			case TOGGLEBOOKMARKMENUITEM:
 				{
 					foreach(bookMarkStruct value,this->bookMarks)
@@ -388,8 +401,6 @@ DEBUGSTR( ">>" << this->sessionFolder << "<<" )
 			if((this->queueID=msgget(this->sessionID,IPC_CREAT|0660))==-1)
 				fprintf(stderr,"Can't create message queue, scripting wont work :( ...\n");
 		}
-//	if((this->queueID=msgget(this->sessionID,IPC_CREAT|0660))==-1)
-//		fprintf(stderr,"Can't create message queue, scripting wont work :( ...\n");
 
 	this->checkMessages=new QTimer();
 //linle a symlink.
@@ -890,12 +901,17 @@ bool KKEditClass::closeTab(int index)
 						}
 				}
 
+	if(this->closingAllTabs==false)
+			this->handleBMMenu(this->mainNotebook->widget(thispage),REMOVEBOOKMARKSFROMPAGE);
+
 			this->mainNotebook->removeTab(thispage);
 			delete doc;
 		}
 
 	if(this->closingAllTabs==false)
 		{
+			//this->rebuildBookMarkMenu();
+			//this->handleBMMenu(this->mainNotebook->widget(thispage),REMOVEBOOKMARKSFROMPAGE);
 			this->rebuildTabsMenu();
 			this->setToolbarSensitive();
 		}
