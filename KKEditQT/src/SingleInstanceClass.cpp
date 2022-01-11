@@ -20,9 +20,8 @@
 
 #include "SingleInstanceClass.h"
 
-SingleInstanceClass::SingleInstanceClass(QApplication *app,QCommandLineParser *parser)
+SingleInstanceClass::SingleInstanceClass(QApplication *app,bool forcem)
 {
-	bool		forcem=parser->isSet("multi");
 	QSettings	prefs;
 	bool		single=prefs.value("app/usesingle",QVariant(bool(true))).value<bool>();
 
@@ -31,6 +30,7 @@ SingleInstanceClass::SingleInstanceClass(QApplication *app,QCommandLineParser *p
 
 	if((QX11Info::isPlatformX11()==false) || (single==false) || (forcem==true))
 		{
+			srand(time(NULL));
 			this->workspace=(int)random();
 			this->usingMulti=true;
 		}
@@ -102,6 +102,7 @@ bool SingleInstanceClass::getRunning(void)
 				{
 					QTextStream	out(&this->fileMsg);
 					out << MSGKEY+this->workspace << "\n";
+					this->queueID=msgget(MSGKEY+this->workspace,IPC_CREAT|0660);
 					this->fileMsg.close();
 				}
 			retval=this->filePID.open(QIODevice::Text | QIODevice::WriteOnly);

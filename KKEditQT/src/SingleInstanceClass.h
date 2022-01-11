@@ -30,7 +30,7 @@
 class SingleInstanceClass
 {
 	public:
-		SingleInstanceClass(QApplication *app,QCommandLineParser	*parser);
+		SingleInstanceClass(QApplication *app,bool forcem);
 		~SingleInstanceClass();
 
 		long			getSIWorkSpace(void);

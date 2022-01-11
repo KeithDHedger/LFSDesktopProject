@@ -48,16 +48,17 @@ int main (int argc, char **argv)
 
 	kkedit=new KKEditClass(&app);
 	kkedit->parser.addHelpOption();
-	QCommandLineOption forcemultiinst(QStringList() << "m" << "multi","Force multiple instance.");
-	kkedit->parser.addOption(forcemultiinst);
-	QCommandLineOption opensession(QStringList() << "s" << "restore-session","SessionName","Open session by name.");
-	kkedit->parser.addOption(opensession);
-	QCommandLineOption quitapp(QStringList() << "q" << "quit","Quit app.");
-	kkedit->parser.addOption(quitapp);
+
+	kkedit->parser.addOptions(
+		{
+			{{"m","multi"},"Force multiple instance."},
+			{{"q","quit"},"Quit app."},
+			{{"s","restore-session"},"SessionName","Open session by name."}
+		});
 
 	kkedit->parser.process(app);
 
-	SingleInstanceClass siapp(&app,&kkedit->parser);
+	SingleInstanceClass siapp(&app,kkedit->parser.isSet("multi"));
 
 	if(siapp.getRunning()==true)
 		{
@@ -65,6 +66,7 @@ int main (int argc, char **argv)
 			return(0);
 		}
 
+	kkedit->queueID=siapp.queueID;
 	kkedit->forcedMultInst=kkedit->parser.isSet("multi");
 	kkedit->currentWorkSpace=siapp.workspace;;
 	kkedit->sessionID=kkedit->currentWorkSpace+MSGKEY;

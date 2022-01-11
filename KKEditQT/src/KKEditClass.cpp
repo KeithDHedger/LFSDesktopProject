@@ -383,8 +383,13 @@ DEBUGSTR( ">>" << this->sessionFolder << "<<" )
 
 	this->readConfigs();
 
-	if((this->queueID=msgget(this->sessionID,IPC_CREAT|0660))==-1)
-		fprintf(stderr,"Can't create message queue, scripting wont work :( ...\n");
+	if(this->queueID==-1)
+		{
+			if((this->queueID=msgget(this->sessionID,IPC_CREAT|0660))==-1)
+				fprintf(stderr,"Can't create message queue, scripting wont work :( ...\n");
+		}
+//	if((this->queueID=msgget(this->sessionID,IPC_CREAT|0660))==-1)
+//		fprintf(stderr,"Can't create message queue, scripting wont work :( ...\n");
 
 	this->checkMessages=new QTimer();
 //linle a symlink.
