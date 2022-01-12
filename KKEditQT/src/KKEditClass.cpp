@@ -65,7 +65,30 @@ void KKEditClass::setUpToolBar(void)
 						break;
 //open+recent
 					case 'O':
-						this->toolBar->addAction(qobject_cast<QAction*>(this->openMenuItem));
+						{
+							QPushButton *recent=new QPushButton("");
+							QMenu		*recentmenu=new QMenu("");
+							QToolButton *tb=new QToolButton;
+							MenuItemClass *mc=new MenuItemClass("/home/keithhedger/Projects/HOLDTOGO/src/backclass.cpp");
+							recentmenu->addAction(mc);
+		QObject::connect(mc,&QAction::triggered,[=]() {DEBUGSTR("menu item pressed")});
+							recentmenu->addAction("two");
+							recentmenu->addAction("three");
+							recentmenu->addAction("four");
+							recent->setMenu(recentmenu);
+							recent->setFlat(true);
+							recent->setFixedWidth(16);	
+							
+							//tb->setArrowType(Qt::DownArrow);
+							QIcon itemicon=QIcon::fromTheme("document-open");
+
+							tb->setIcon(itemicon);
+													tb->setMenu(recentmenu);
+	QObject::connect(tb,&QPushButton::clicked,[=]() {DEBUGSTR("button pressed")});
+							this->toolBar->addAction(qobject_cast<QAction*>(this->openMenuItem));
+							this->toolBar->addWidget(qobject_cast<QWidget*>(recent));
+							this->toolBar->addWidget(qobject_cast<QWidget*>(tb));
+						}
 						break;
 //save
 					case 'S':
