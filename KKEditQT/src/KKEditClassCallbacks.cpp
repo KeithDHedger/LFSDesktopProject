@@ -281,11 +281,7 @@ void KKEditClass::doToolsMenuItems()
 										str=QString("cd %1;%2").arg(this->toolsFolder).arg(str);
 										DEBUGSTR( str )
 										runPipe(str);
-										this->docView->setWindowTitle(sl.at(TOOL_NAME).section(TOOLNAME,1,1).trimmed());
-										this->webView->load(QUrl("file://" + this->htmlFile));
-										this->docviewerVisible=true;
-										this->toggleDocViewMenuItem->setText("Hide Docviewer");
-										this->docView->show();
+										this->showWebPage(sl.at(TOOL_NAME).section(TOOLNAME,1,1).trimmed(),"file://" + this->htmlFile);
 										return;
 									}
 
@@ -298,7 +294,6 @@ void KKEditClass::doToolsMenuItems()
 		}
 }
 
-#include "QT_AboutBox.h"
 void KKEditClass::doHelpMenuItems()
 {
 	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(sender());
@@ -312,7 +307,7 @@ void KKEditClass::doHelpMenuItems()
 					QString			content;
 					QFile			licencefile(DATADIR "/docs/gpl-3.0.txt");
 					bool			retval;
-					AboutBoxClass	*about=new AboutBoxClass(this->mainWindow,DATADIR "/pixmaps/KKEditQT.png");
+					AboutBoxClass	*about=new AboutBoxClass(this->mainWindow,DATADIR "/pixmaps/" PACKAGE ".png");
 
 					retval=licencefile.open(QIODevice::Text | QIODevice::ReadOnly);
 					if(retval==true)
@@ -325,14 +320,15 @@ void KKEditClass::doHelpMenuItems()
 					about->runAbout();
 				}
 			 	break;
+
 			 case HELPMENUITEM:
-			 //	openHelp(NULL,0);
+			 	this->showWebPage("Help For " PACKAGE,"file://" DATADIR "/help/index.html");
 			 	break;
 			 case ONLINEHELPMENUITEM:
-			 //	openHelp(NULL,0);
+			 	this->showWebPage("Online Help For " PACKAGE,"https://keithdhedger.github.io/KKEdit/"); //TODO//online help
 			 	break;
 			 case GETPLUGSMENUITEM:
-				// getPlugins(NULL,0);
+				DEBUGSTR("TODO get plugins ...")
 			 	break;
 		}
 }
@@ -415,6 +411,7 @@ void KKEditClass::doViewMenuItems()
 					}
 				break;
 			case TOGGLEDOCVIEWMENUITEM:
+#ifdef _BUILDDOCVIEWER_
 				this->docviewerVisible=!this->docviewerVisible;
 				if(this->docviewerVisible)
 					{
@@ -426,6 +423,7 @@ void KKEditClass::doViewMenuItems()
 						this->toggleDocViewMenuItem->setText("Show Docviewer");
 						this->docView->hide();
 					}
+#endif
 				break;
 			case TOGGLELINENUMBERSMENUITEM:
 				this->lineNumbersVisible=!this->lineNumbersVisible;
@@ -587,16 +585,9 @@ void KKEditClass::doTimer(void)
 	int			retcode=0;
 	msgStruct	buffer;
 
-	if(this->docView->isVisible()==true)//ugly hack!!//
-		{
-			this->toggleDocViewMenuItem->setText("Hide Docviewer");
-			this->docviewerVisible=true;
-		}
-	else
-		{
-			this->toggleDocViewMenuItem->setText("Show Docviewer");
-			this->docviewerVisible=false;
-		}
+#ifdef _BUILDDOCVIEWER_
+	this->setDocMenu();
+#endif
 
 	while(retcode!=-1)
 		{
@@ -1008,7 +999,7 @@ void KKEditClass::doOddButtons(void)
 				this->searchAPIDocs(this->findGtkApiWidget->text(),0);
 				break;
 			case DOCVIEWERGOHOME:
-				this->webView->load(QUrl(this->htmlURI));
+				this->showWebPage("",this->htmlURI);
 				break;
 			default:
 				break;

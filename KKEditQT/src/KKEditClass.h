@@ -73,7 +73,7 @@ enum {FRCASE=0,FRUSEREGEX,FRWRAP,FRALLFILES,FRHIGHLIGHTALL,FRREPLACEALL,FRMAXSWI
 #include "qsourcehighliterthemes.h"
 #include "languagedata.h"
 
-
+#include "QT_AboutBox.h"
 #include "QT_menuitem.h"
 #include "QT_highlighter.h"
 #include "QT_document.h"
@@ -162,6 +162,9 @@ class KKEditClass : public QObject
 
 		void						writeExitData(void);
 		int							yesNoDialog(QString txt,QString info);
+
+//webpage
+		void						showWebPage(QString windowtitle,QString url);
 //scripting
 		void						runCLICommands(int quid);
 		QCommandLineParser			parser;
@@ -194,7 +197,7 @@ class KKEditClass : public QObject
 		bool						prefsUseSingle=true;
 		bool						prefsNagScreen=false;
 		bool						onExitSaveSession=false;
-		QString						browserCommand;
+
 //editor vars
 		QStatusBar					*statusBar;
 		QLabel						*statusText;
@@ -348,12 +351,15 @@ class KKEditClass : public QObject
 		QStringList					verifyTool(QString filepath);
 
 //docviewer vars
+#ifdef _BUILDDOCVIEWER_
 		QMainWindow					*docView=NULL;
 		QWebView					*webView=NULL;
 		bool						docviewerVisible=false;
 		MenuItemClass				*toggleDocViewMenuItem;
 //docviewer functions
+#endif
 		void						buildDocViewer(void);
+		void						setDocMenu(void);
 
 //prefswindow
 //prefswindow vars

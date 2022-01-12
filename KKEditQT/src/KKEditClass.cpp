@@ -807,12 +807,8 @@ void KKEditClass::buildDocs(void)
 
 	QString com=QString("/bin/echo '<meta http-equiv=\"refresh\" content=\"0; URL='file://%1'\" />' > %2").arg(fileinfo.absoluteFilePath()).arg(this->htmlFile);
 	system(com.toStdString().c_str());
-	this->docView->setWindowTitle("Doxygen Documentation");
-	this->webView->load(QUrl("file://" + this->htmlFile));
-	this->docviewerVisible=true;
-	this->toggleDocViewMenuItem->setText("Hide Docviewer");
-	this->docView->show();
 
+	this->showWebPage("Doxygen Documentation","file://" + this->htmlFile);
 	this->runPipe(QString("echo quit>\"%1/progress\"").arg(this->tmpFolderName));
 }
 
@@ -824,14 +820,10 @@ void KKEditClass::showDocs(void)
 	if(fileinfo.exists()==false)
 		this->buildDocs();
 	else
-		{
+		{//TODO//
 			QString com=QString("/bin/echo '<meta http-equiv=\"refresh\" content=\"0; URL='file://%1'\" />' > %2").arg(fileinfo.absoluteFilePath()).arg(this->htmlFile);
 			system(com.toStdString().c_str());
-			this->docView->setWindowTitle("Doxygen Documentation");
-			this->webView->load(QUrl("file://" + this->htmlFile));
-			this->docviewerVisible=true;
-			this->toggleDocViewMenuItem->setText("Hide Docviewer");
-			this->docView->show();
+			this->showWebPage("Doxygen Documentation","file://" + this->htmlFile);
 		}
 }
 
@@ -1127,4 +1119,35 @@ void KKEditClass::runCLICommands(int quid)
 			msgsnd(quid,&message,msglen,0);
 		}
 }
+
+void KKEditClass::setDocMenu(void)
+{
+#ifdef _BUILDDOCVIEWER_
+	if(this->docView->isVisible()==true)//ugly hack!!//
+		{
+			this->toggleDocViewMenuItem->setText("Hide Docviewer");
+			this->docviewerVisible=true;
+		}
+	else
+		{
+			this->toggleDocViewMenuItem->setText("Show Docviewer");
+			this->docviewerVisible=false;
+		}
+#endif
+}
+
+void KKEditClass::showWebPage(QString windowtitle,QString url)
+{
+#ifdef _BUILDDOCVIEWER_
+
+	if(windowtitle.isEmpty()==false)
+		this->docView->setWindowTitle(windowtitle);
+	this->webView->load(QUrl(url));
+	this->docView->show();
+	this->setDocMenu();
+#else
+	QDesktopServices::openUrl(QUrl(url));
+#endif
+}
+
 

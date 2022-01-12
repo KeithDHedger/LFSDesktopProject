@@ -288,11 +288,7 @@ void KKEditClass::searchAPIDocs(const QString txt,int what)
 			html.close();
 		}
 
-	this->docView->setWindowTitle("Results for: " + searchfor);
-	this->webView->load(this->htmlURI);
-	this->docviewerVisible=true;
-	this->toggleDocViewMenuItem->setText("Hide Docviewer");
-	this->docView->show();
+	this->showWebPage("Results for: " + searchfor,this->htmlURI);
 }
 
 void KKEditClass::setSearchPrefs(int state)

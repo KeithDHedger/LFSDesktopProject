@@ -77,9 +77,9 @@ int main (int argc, char **argv)
 	kkedit->runCLICommands(kkedit->queueID);
 
 	if(getuid()!=0)
-		app.setWindowIcon(QIcon::fromTheme(PACKAGE,QIcon(DATADIR"/pixmaps/KKEdit.png")));
+		app.setWindowIcon(QIcon(DATADIR "/pixmaps/" PACKAGE ".png"));
 	else
-		app.setWindowIcon(QIcon::fromTheme(PACKAGE "Root",QIcon(DATADIR"/pixmaps/KKEditRoot.png")));
+		app.setWindowIcon(QIcon(DATADIR"/pixmaps/KKEditRoot.png"));
 
 	status=app.exec();
 
