@@ -23,6 +23,8 @@
 KKEditClass::KKEditClass(QApplication *app)
 {
 	this->application=app;
+//	this->recentFiles=new RecentMenuClass(this);
+//	this->recentFiles->updateRecents();
 //	this->history=new HistoryClass;
 }
 
@@ -32,7 +34,7 @@ KKEditClass::~KKEditClass()
 
 	for(int j=0;j<SHORTCUTSCOUNT;j++)
 		delete this->appShortcuts[j];
-
+	delete this->recentFiles;
 //	delete this->history;
 
 	asprintf(&command,"rm -rf %s",this->tmpFolderName.toStdString().c_str());
@@ -66,28 +68,37 @@ void KKEditClass::setUpToolBar(void)
 //open+recent
 					case 'O':
 						{
-							QPushButton *recent=new QPushButton("");
-							QMenu		*recentmenu=new QMenu("");
-							QToolButton *tb=new QToolButton;
-							MenuItemClass *mc=new MenuItemClass("/home/keithhedger/Projects/HOLDTOGO/src/backclass.cpp");
-							recentmenu->addAction(mc);
-		QObject::connect(mc,&QAction::triggered,[=]() {DEBUGSTR("menu item pressed")});
-							recentmenu->addAction("two");
-							recentmenu->addAction("three");
-							recentmenu->addAction("four");
-							recent->setMenu(recentmenu);
-							recent->setFlat(true);
-							recent->setFixedWidth(16);	
-							
-							//tb->setArrowType(Qt::DownArrow);
-							QIcon itemicon=QIcon::fromTheme("document-open");
+							QPushButton *recent=new QPushButton(NULL);
+	//						QMenu		*recentmenu=new QMenu("");
 
-							tb->setIcon(itemicon);
-													tb->setMenu(recentmenu);
-	QObject::connect(tb,&QPushButton::clicked,[=]() {DEBUGSTR("button pressed")});
+//RecentMenuClass *rc=new RecentMenuClass(this);
+//rc->updateRecents();
+//QObject::connect(rc->recentMenu,&QMenu::triggered,[=]() {DEBUGSTR("menu item pressed")});
+//MenuItemClass *mc1=new MenuItemClass("/home/keithhedger/Projects/HOLDTOGO/src/backclass.cpp");
+//rc->addAction(mc1);
+//rc->addAction("gfddlfgdfkl");
+//rc->addAction("gfddlfgdfkl");
+//rc->addAction("gfddlfgdfkl");
+//
+//this->toolBar->addAction(qobject_cast<QAction*>(rc));
+//
+//							MenuItemClass *mc=new MenuItemClass("/home/keithhedger/Projects/HOLDTOGO/src/backclass.cpp");
+//							recentmenu->addAction(mc);
+//							QObject::connect(mc,&QAction::triggered,[=]() {DEBUGSTR("menu item pressed")});
+//							recentmenu->addAction("two");
+//							recentmenu->addAction("three");
+//							recentmenu->addAction("four");
+							//recent->setMenu(recentmenu);
+							
+							recent->setMenu(this->recentFiles->recentMenu);
+							recent->setFlat(true);
+							recent->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);	
+							recent->setMaximumWidth(16);
+
+							//QIcon itemicon=QIcon::fromTheme("document-open");
+
 							this->toolBar->addAction(qobject_cast<QAction*>(this->openMenuItem));
 							this->toolBar->addWidget(qobject_cast<QWidget*>(recent));
-							this->toolBar->addWidget(qobject_cast<QWidget*>(tb));
 						}
 						break;
 //save
@@ -357,6 +368,7 @@ void KKEditClass::initApp(int argc,char** argv)
 	this->homeDataFolder=QString("%1/%2").arg(this->homeFolder).arg(KKEDITFOLDER);
 	this->sessionFolder=QString("%1/%2/%3").arg(this->homeFolder).arg(KKEDITFOLDER).arg("sesssions");
 	this->toolsFolder=QString("%1/%2/%3").arg(this->homeFolder).arg(KKEDITFOLDER).arg("tools");
+	this->recentFiles=new RecentMenuClass(this);
 
 	tdir.mkpath(this->sessionFolder);
 	for(int j=0;j<MAXSESSIONS;j++)
@@ -462,6 +474,9 @@ DEBUGSTR( ">>" << this->sessionFolder << "<<" )
 	this->htmlFile=QString("%1/Docview-%2.html").arg(this->tmpFolderName).arg(this->randomName(6));
 	//this->htmlURI=QString("file://%1/Docview-%2.html").arg(this->tmpFolderName).arg(this->randomName(6));
 	this->htmlURI="file://"+this->htmlFile;
+
+//	this->recentFiles=new RecentMenuClass(this);
+	this->recentFiles->updateRecents();
 
 	if(this->forceDefaultGeom==false)
 		r=this->prefs.value("app/geometry",QVariant(QRect(50,50,1024,768))).value<QRect>();

@@ -1,4 +1,7 @@
 0.5.1
+Done open recent menu.
+Done open recent toolbar icon.
+Added recentMenuClass.
 Done help.
 Removed browser command from prefs now use default browser ( as set by xdg ).
 Done About box.

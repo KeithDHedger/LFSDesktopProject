@@ -75,6 +75,7 @@ enum {FRCASE=0,FRUSEREGEX,FRWRAP,FRALLFILES,FRHIGHLIGHTALL,FRREPLACEALL,FRMAXSWI
 
 #include "QT_AboutBox.h"
 #include "QT_menuitem.h"
+#include "QT_recentMenu.h"
 #include "QT_highlighter.h"
 #include "QT_document.h"
 #include "QT_toolbar.h"
@@ -83,6 +84,7 @@ enum {FRCASE=0,FRUSEREGEX,FRWRAP,FRALLFILES,FRHIGHLIGHTALL,FRREPLACEALL,FRMAXSWI
 
 class NoteBookClass;
 class MenuItemClass;
+class RecentMenuClass;
 class ToolBarClass;
 
 class KKEditClass : public QObject
@@ -129,6 +131,8 @@ class KKEditClass : public QObject
 #endif
 		QShortcut					*appShortcuts[SHORTCUTSCOUNT];
 		QStringList					defaultShortCutsList={"Ctrl+H","Ctrl+Y","Ctrl+?","Ctrl+K","Ctrl+Shift+H","Ctrl+D","Ctrl+Shift+D","Ctrl+L","Ctrl+M","Ctrl+Shift+M","Ctrl+@","Ctrl+'"};
+//recent files
+		RecentMenuClass				*recentFiles=NULL;
 
 		//sesions
 		QHash<int,QString>			sessionNames;
@@ -234,6 +238,7 @@ class KKEditClass : public QObject
 
 		MenuItemClass				*newMenuItem;
 		MenuItemClass				*openMenuItem;
+		MenuItemClass				*openRecentMenuItem;
 		MenuItemClass				*saveMenuItem;
 		MenuItemClass				*saveAsMenuItem;
 		MenuItemClass				*saveAllMenuItem;

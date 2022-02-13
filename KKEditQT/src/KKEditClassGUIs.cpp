@@ -643,6 +643,10 @@ void KKEditClass::buildMainGui(void)
 //open
 	this->openMenuItem=this->makeMenuItemClass(FILEMENU,"Open",QKeySequence::Open,"document-open",OPENMENUNAME,OPENMENUITEM);
 
+//open recent
+	//this->openRecentMenuItem=this->makeMenuItemClass(FILEMENU,"Open Recent",QKeySequence::Open,"document-open",OPENMENUNAME,OPENMENUITEM);
+	//this->openRecentMenuItem=new QMenu("&Save Session");
+this->fileMenu->addMenu(this->recentFiles->recentMenu);
 //open as hexdump
 	menuItemSink=this->makeMenuItemClass(FILEMENU,"Open As Hexdump",0,"document-open",HEXDUMPMENUNAME,HEXDUMPMENUITEM);
 

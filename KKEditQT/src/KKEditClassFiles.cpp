@@ -140,6 +140,7 @@ bool KKEditClass::saveFileAs(int tabnum)
 					doc->dirty=false;
 					doc->setTabName(this->truncateWithElipses(doc->getFileName(),this->prefsMaxTabChars));
 					file.close();
+					this->recentFiles->addFilePath(doc->getFilePath());
 				}
 			else
 				{
@@ -287,6 +288,7 @@ bool KKEditClass::openFile(QString filepath,int linenumber,bool warn)
 
 			retval=true;
 			file.close();
+			this->recentFiles->addFilePath(filepath);
 		}
 
 	this->rebuildTabsMenu();
