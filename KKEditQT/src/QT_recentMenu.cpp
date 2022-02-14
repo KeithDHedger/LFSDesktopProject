@@ -40,8 +40,15 @@ RecentMenuClass::RecentMenuClass(KKEditClass *kk)
 
 void RecentMenuClass::addFilePath(QString path)
 {
-	QFile	file;
-	bool	retval;
+	QFile			file;
+	bool			retval;
+	QList<QAction*>	acts=this->recentMenu->actions(); 
+
+	for(int j=0;j<acts.count();j++)
+		{
+			if(acts.at(j)->text().compare(path)==0)
+				return;
+		}
 
 	file.setFileName(this->recentFileList);
 	retval=file.open(QIODevice::Text | QIODevice::Append);

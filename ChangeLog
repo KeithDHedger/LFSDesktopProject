@@ -1,4 +1,5 @@
 0.5.2
+Fixed dont add file path to recent if already present.
 Done dont open duplicate file pref.
 
 0.5.1
