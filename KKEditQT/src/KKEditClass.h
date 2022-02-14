@@ -214,7 +214,6 @@ class KKEditClass : public QObject
 		bool						hightlightAll=true;
 		int							currentPage=0;
 		bool						closingAllTabs=false;
-//		bool						noDuplicates=false;
 		bool						noWarnings=false;
 		unsigned int				autoShowMinChars=4;
 		unsigned int				maxBMChars;
