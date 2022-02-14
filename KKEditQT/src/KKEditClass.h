@@ -195,6 +195,7 @@ class KKEditClass : public QObject
 		QString						prefsTerminalCommand;
 		QString						prefsRootCommand;
 		QString						prefsQtDocDir;
+		bool						prefsNoOpenduplicate=false;
 //app
 		bool						prefsUseGlobalPlugMenu=true;
 		int							prefsMsgTimer;
@@ -213,7 +214,7 @@ class KKEditClass : public QObject
 		bool						hightlightAll=true;
 		int							currentPage=0;
 		bool						closingAllTabs=false;
-		bool						noDuplicates=false;
+//		bool						noDuplicates=false;
 		bool						noWarnings=false;
 		unsigned int				autoShowMinChars=4;
 		unsigned int				maxBMChars;
@@ -223,6 +224,7 @@ class KKEditClass : public QObject
 		void						sortTabs(void);
 		void						rebuildTabsMenu(void);
 		void						functionSearchDialog(void);
+		bool						checkForOpenFile(QString filepath);
 //menubar
 		QMenuBar					*menuBar;
 

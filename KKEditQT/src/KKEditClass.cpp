@@ -640,6 +640,7 @@ void KKEditClass::readConfigs(void)
 	this->prefsTerminalCommand=this->prefs.value("editor/terminalcommand","xterm -e").toString();
 	this->prefsRootCommand=this->prefs.value("editor/rootcommand","gtksu -- ").toString();
 	this->prefsQtDocDir=this->prefs.value("editor/qtdocdir","/usr/share/doc/qt5").toString();
+	this->prefsNoOpenduplicate=this->prefs.value("editor/noopendup",QVariant(bool(true))).value<bool>();
 
 //document
 	this->prefsHighLightline=this->prefs.value("document/highlightline",QVariant(bool(true))).value<bool>();
@@ -744,7 +745,8 @@ void KKEditClass::writeExitData(void)
 	this->prefs.setValue("editor/rootcommand",this->prefsRootCommand);
 	this->prefs.setValue("editor/toolbarlayout",this->prefsToolBarLayout);
 	this->prefs.setValue("editor/qtdocdir",this->prefsQtDocDir);
-
+	this->prefs.setValue("editor/noopendup",this->prefsNoOpenduplicate);
+	
 //document
 	this->prefs.setValue("document/indent",this->prefsIndent);
 	this->prefs.setValue("document/wrap",this->prefsLineWrap);

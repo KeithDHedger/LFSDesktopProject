@@ -115,7 +115,7 @@ void KKEditClass::buildPrefsWindow(void)
 	makePrefsCheck(AUTOSAVE,"Auto Save/Restore Session",this->onExitSaveSession,0,posy);
 //no duplicates
 	posy++;
-	makePrefsCheck(NODUPLICATE,"Don't Open Duplicate File",this->noDuplicates,0,posy);
+	makePrefsCheck(NODUPLICATE,"Don't Open Duplicate File",this->prefsNoOpenduplicate,0,posy);
 //turn off warnings
 	posy++;
 	makePrefsCheck(NOWARN,"Don't Warn On File Change",this->noWarnings,0,posy);

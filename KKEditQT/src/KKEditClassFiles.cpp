@@ -243,6 +243,20 @@ void KKEditClass::newEditor(int what)
 		}
 }
 
+bool KKEditClass::checkForOpenFile(QString filepath)
+{
+	DocumentClass	*doc;
+	for(int tabs=0;tabs<this->mainNotebook->count();tabs++)
+		{
+			doc=this->getDocumentForTab(tabs);
+			if((doc->filePath!=NULL) && (doc->filePath.compare(filepath)==0))
+				{
+					this->mainNotebook->setCurrentIndex(tabs);
+					return(true);
+				}
+		}
+	return(false);
+}
 bool KKEditClass::openFile(QString filepath,int linenumber,bool warn)
 {
 	DocumentClass	*doc=new DocumentClass(this);
@@ -255,6 +269,11 @@ bool KKEditClass::openFile(QString filepath,int linenumber,bool warn)
 	QString			content;
 
 	//this->sessionBusy=true;
+	if((this->prefsNoOpenduplicate==true) && (this->checkForOpenFile(filepath)==true))
+		{
+			return(true);
+		}
+
 	retval=file.open(QIODevice::Text | QIODevice::ReadOnly);
 	if(retval==true)
 		{
