@@ -255,6 +255,9 @@ void KKEditClass::buildPrefsWindow(void)
 	table->addWidget(widgetlabel,posy,0,Qt::AlignVCenter);
 	table->addWidget(prefsOtherWidgets[PREFSQTDOCDIR],posy,1,1,-1,Qt::AlignVCenter);
 
+//recent history max
+	posy++;
+	makePrefsDial(MAXRECENTS,"Max Recent Files:",this->recentFiles->maxFiles,0,MAXTEXTWIDTH,posy);
 //find replace history max
 	posy++;
 	makePrefsDial(MAXHISTORY,"Max Find/Replace History:",this->maxFRHistory,0,MAXTEXTWIDTH,posy);

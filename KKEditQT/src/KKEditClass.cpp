@@ -475,7 +475,6 @@ DEBUGSTR( ">>" << this->sessionFolder << "<<" )
 	//this->htmlURI=QString("file://%1/Docview-%2.html").arg(this->tmpFolderName).arg(this->randomName(6));
 	this->htmlURI="file://"+this->htmlFile;
 
-//	this->recentFiles=new RecentMenuClass(this);
 	this->recentFiles->updateRecents();
 
 	if(this->forceDefaultGeom==false)
@@ -641,6 +640,7 @@ void KKEditClass::readConfigs(void)
 	this->prefsRootCommand=this->prefs.value("editor/rootcommand","gtksu -- ").toString();
 	this->prefsQtDocDir=this->prefs.value("editor/qtdocdir","/usr/share/doc/qt5").toString();
 	this->prefsNoOpenduplicate=this->prefs.value("editor/noopendup",QVariant(bool(true))).value<bool>();
+	this->recentFiles->maxFiles=this->prefs.value("editor/maxrecents",10).toInt();
 
 //document
 	this->prefsHighLightline=this->prefs.value("document/highlightline",QVariant(bool(true))).value<bool>();
@@ -672,6 +672,7 @@ void KKEditClass::tabContextMenu(const QPoint &pt)
 	MenuItemClass	*menuitem1;
 	int				tabIndex;
 	int				srccnt=0;
+	QIcon			itemicon;
 
 	if(pt.isNull())
 		return;
@@ -688,6 +689,8 @@ void KKEditClass::tabContextMenu(const QPoint &pt)
 					if(cnt==(SRCHILTIE-COPYFOLDERPATH)/0x100)
 						{
 							menu.addMenu(&srcmenu);
+							itemicon=QIcon::fromTheme(this->tabContextMenuItems[cnt].icon);
+							srcmenu.setIcon(itemicon);
 							while(this->srcMenuNames[srccnt]!=NULL)
 								{
 									menuitem1=new MenuItemClass(this->srcMenuNames[srccnt]);
@@ -705,6 +708,8 @@ void KKEditClass::tabContextMenu(const QPoint &pt)
 							DocumentClass	*doc=this->getDocumentForTab(tabIndex);
 							QDir			dir(doc->getDirPath());
 							QStringList		flist=dir.entryList(QDir::Files);
+							itemicon=QIcon::fromTheme(this->tabContextMenuItems[cnt].icon);
+							filemenu.setIcon(itemicon);
 							for(int k=0;k<flist.count();k++)
 								{
 										menuitem1=new MenuItemClass(flist.at(k));
@@ -718,7 +723,24 @@ void KKEditClass::tabContextMenu(const QPoint &pt)
 					menuitem=new MenuItemClass(this->tabContextMenuItems[cnt].label);
 					menuitem->setMenuID(this->tabContextMenuItems[cnt].what+tabIndex);
 					menu.addAction(menuitem);
-					QIcon itemicon=QIcon::fromTheme(this->tabContextMenuItems[cnt].icon);
+
+//ugly//TODO//
+					DocumentClass	*doc=this->getDocumentForTab(tabIndex);
+					if(cnt==(LOCKCONTENTS-COPYFOLDERPATH)/0x100)
+						{
+						if(doc->isReadOnly()==true)
+							{
+								menuitem->setText("Unlock Contents");
+								itemicon=QIcon::fromTheme("emblem-default");
+							}
+						else
+							{
+								itemicon=QIcon::fromTheme(this->tabContextMenuItems[cnt].icon);
+								menuitem->setText(this->tabContextMenuItems[cnt].label);
+							}
+						}
+					else
+						itemicon=QIcon::fromTheme(this->tabContextMenuItems[cnt].icon);
 					menuitem->setIcon(itemicon);
 					QObject::connect(menuitem,SIGNAL(triggered()),this,SLOT(doTabBarContextMenu()));
 				}
@@ -746,6 +768,7 @@ void KKEditClass::writeExitData(void)
 	this->prefs.setValue("editor/toolbarlayout",this->prefsToolBarLayout);
 	this->prefs.setValue("editor/qtdocdir",this->prefsQtDocDir);
 	this->prefs.setValue("editor/noopendup",this->prefsNoOpenduplicate);
+	this->prefs.setValue("editor/maxrecents",this->recentFiles->maxFiles);
 	
 //document
 	this->prefs.setValue("document/indent",this->prefsIndent);

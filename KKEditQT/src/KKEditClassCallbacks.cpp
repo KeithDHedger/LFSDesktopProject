@@ -36,7 +36,6 @@ void KKEditClass::doSessionsMenuItems(void)
 		{
 			if(sessionnumber==CURRENTSESSION)
 				{
-//DEBUGSTR( "sessionnumber=" << sessionnumber << " menuid=" << mc->getMenuID() << " CURRENTSESSION=" << CURRENTSESSION << "cuerrent ses num=" << this->currentSessionNumber )
 					if(this->currentSessionNumber==0xdeadbeef)
 						return;
 					sessionnumber=this->currentSessionNumber;
@@ -72,7 +71,6 @@ void KKEditClass::doSessionsMenuItems(void)
 									sessionname=(text);
 									mc->setText(sessionname);
 									this->sessionNames[mc->getMenuID()]=sessionname;
-								//	this->restoreSessionMenuItemsList.at(mc->getMenuID())
 								}
 						}
 					else
@@ -173,7 +171,6 @@ void KKEditClass::doBookmarkMenuItems()
 	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(sender());
 	DocumentClass	*document=this->getDocumentForTab(-1);
 
-	fprintf(stderr,"bookmarks -> menu id=%i, menu name=%s\n",mc->getMenuID(),mc->text().toStdString().c_str());
 	switch(mc->getMenuID())
 		{
 			case REMOVEALLBOOKMARKSMENUITEM:
@@ -196,7 +193,6 @@ void KKEditClass::doToolsMenuItems()
 	QStringList		sl;
 	int				holdindex;
 
-	fprintf(stderr,"tools -> menu id=%i, menu name=%s\n",mc->getMenuID(),mc->text().toStdString().c_str());
 	switch(mc->getMenuID())
 		{
 			 case MANAGETOOLSMENUITEM:
@@ -287,9 +283,7 @@ void KKEditClass::doToolsMenuItems()
 
 								DEBUGSTR( str )
 								runPipe(str);
-					 			//DEBUGSTR( "menuid=" << (mc->getMenuID() & 0xfff) << " menustring=" << mc->getMenuString() << "<<" << sl.at(TOOL_COMMAND).section(TOOLCOMMAND,1,1).trimmed() )
 							}
-					//}
 			 	break;
 		}
 }
@@ -299,7 +293,6 @@ void KKEditClass::doHelpMenuItems()
 	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(sender());
 	DocumentClass	*document=this->getDocumentForTab(-1);
 
-	fprintf(stderr,"help -> menu id=%i, menu name=%s\n",mc->getMenuID(),mc->text().toStdString().c_str());
 	switch(mc->getMenuID())
 		{
 			 case ABOUTMENUITEM:
@@ -338,7 +331,6 @@ void KKEditClass::doNavMenuItems()
 	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(sender());
 	DocumentClass	*document=this->getDocumentForTab(-1);
 
-	fprintf(stderr,"nav -> menu id=%i, menu name=%s\n",mc->getMenuID(),mc->text().toStdString().c_str());
 	switch(mc->getMenuID())
 		{
 			case GOBACKMENUITEM:
@@ -371,7 +363,6 @@ void KKEditClass::doViewMenuItems()
 	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(sender());
 	DocumentClass	*document=this->getDocumentForTab(-1);
 
-	fprintf(stderr,"view -> menu id=%i, menu name=%s\n",mc->getMenuID(),mc->text().toStdString().c_str());
 	switch(mc->getMenuID())
 		{
 			case DOCSMENUITEM:
@@ -456,8 +447,6 @@ void KKEditClass::doEditMenuItems()
 	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(sender());
 	DocumentClass	*document=this->getDocumentForTab(-1);
 
-	fprintf(stderr,"edit -> menu id=%i, menu name=%s\n",mc->getMenuID(),mc->text().toStdString().c_str());
-
 	switch(mc->getMenuID())
 		{
 			case UNDOMENUITEM:
@@ -518,7 +507,6 @@ void KKEditClass::doFileMenuItems()
 {
 	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(sender());
 	bool			retval;
-	fprintf(stderr,"file -> menu id=%i, menu name=%s\n",mc->getMenuID(),mc->text().toStdString().c_str());
 
 	switch(mc->getMenuID())
 		{
@@ -653,6 +641,8 @@ void KKEditClass::setPreferences(void)
 	this->prefsSyntaxHilighting=qobject_cast<QCheckBox*>(this->prefsWidgets[SYNTAXHILITE])->checkState();
 	this->prefsAutoShowCompletions=qobject_cast<QCheckBox*>(this->prefsWidgets[AUTOSHOW])->checkState();
 	this->prefsNoOpenduplicate=qobject_cast<QCheckBox*>(this->prefsWidgets[NODUPLICATE])->checkState();
+	this->recentFiles->maxFiles=qobject_cast<QSpinBox*>(this->prefsIntWidgets[MAXRECENTS])->value();
+	this->recentFiles->updateRecents();
 
 //term command
 	this->prefsTerminalCommand=qobject_cast<QLineEdit*>(prefsOtherWidgets[PREFSTERMCOMMAND])->text();
@@ -745,7 +735,6 @@ void KKEditClass::doTabBarContextMenu(void)
 	DocumentClass	*doc;
 
 	doc=this->getDocumentForTab((mc->getMenuID() & 0xff));
-	fprintf(stderr,"doTabBarContextMenu -> menu id=%x, menu name=%s\n",mc->getMenuID(),mc->text().toStdString().c_str());
 	switch(mc->getMenuID() & 0xfff00)
 		{
 			case COPYFOLDERPATH:
@@ -864,7 +853,6 @@ void KKEditClass::doOddButtons(void)
 	DocumentClass	*doc=this->getDocumentForTab(-1);
 	bool			saveas=false;
 
-	DEBUGSTR( "void KKEditClass::doOddButtons(void) << " << sender()->objectName() )
 	switch(sender()->objectName().toInt())
 		{
 			case TOOLSSAVEAS:

@@ -36,7 +36,7 @@ class RecentMenuClass : public QObject
 		void		addFilePath(QString path);
 
 		QMenu		*recentMenu;
-		int			maxFiles=10;
+		int			maxFiles=12;
 
 	private:		
 		QString		recentFileList;

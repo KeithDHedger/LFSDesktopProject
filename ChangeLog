@@ -1,4 +1,7 @@
 0.5.2
+Fixed new editor menu item.
+Updated tab context menu icons.
+Added max recent files to prefs.
 Fixed dont add file path to recent if already present.
 Done dont open duplicate file pref.
 

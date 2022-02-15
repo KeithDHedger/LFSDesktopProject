@@ -230,16 +230,16 @@ void KKEditClass::newEditor(int what)
 	switch(what)
 		{
 			case NEWADMINEDMENUITEM:
-				command=QString("\"%1\" kkedit -m 2>&1 >/dev/null &").arg(this->prefsRootCommand);
+				command=QString("%1 kkeditqt -m 2>&1 >/dev/null &").arg(this->prefsRootCommand);
 				runPipe(command);
 				break;
-		case NEWEDMENUITEM:
-			runPipe("kkedit -m 2>&1 >/dev/null &");
-			break;
-		case MANPAGEEDMENUITEM:
-			if(this->gotManEditor==0)
-				runPipe("manpageeditor 2>&1 >/dev/null &");
-			break;
+			case NEWEDMENUITEM:
+				system("/usr/bin/kkeditqt -m 2>&1 >/dev/null &");
+				break;
+			case MANPAGEEDMENUITEM:
+				if(this->gotManEditor==0)
+					system("manpageeditor 2>&1 >/dev/null &");
+				break;
 		}
 }
 
