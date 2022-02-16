@@ -334,8 +334,10 @@ void KKEditClass::doNavMenuItems()
 	switch(mc->getMenuID())
 		{
 			case GOBACKMENUITEM:
+				this->history->goBack();
 				break;
 			case GOFORWARDMENUITEM:
+				this->history->goForward();
 				break;
 			case GOTODEFINEMENUITEM:
 				this->goToDefinition("");

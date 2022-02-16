@@ -26,6 +26,8 @@ KKEditClass::KKEditClass(QApplication *app)
 //	this->recentFiles=new RecentMenuClass(this);
 //	this->recentFiles->updateRecents();
 //	this->history=new HistoryClass;
+	this->history=new HistoryClass(this);
+
 }
 
 KKEditClass::~KKEditClass()
@@ -346,6 +348,7 @@ void KKEditClass::handleBMMenu(QWidget *widget,int what)
 				break;
 
 			default:
+				this->history->pushToBackList(doc->getCurrentLineNumber(),doc->getFilePath());
 				bms=this->bookMarks.value(what);
 				doc=this->pages.value(bms.docIndex);
 				this->mainNotebook->setCurrentWidget(doc);

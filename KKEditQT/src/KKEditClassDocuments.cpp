@@ -42,6 +42,7 @@ void KKEditClass::resetAllFilePrefs(void)
 void KKEditClass::goToDefinition(const QString txt)
 {
 	DocumentClass	*doc=this->getDocumentForTab(-1);
+	DocumentClass	*dochold=this->getDocumentForTab(-1);
 	QString			searchfor;
 	bool			whileflag=false;
 	int				linenumber;
@@ -60,6 +61,7 @@ void KKEditClass::goToDefinition(const QString txt)
 			else
 				searchfor=txt;
 		}
+DEBUGSTR("goToDefinition")
 
 	Qt::CaseSensitivity casesens=Qt::CaseSensitive;
 	for(int sens=0;sens<3;sens++)
@@ -79,6 +81,7 @@ void KKEditClass::goToDefinition(const QString txt)
 										{
 											linenumber=sl.at(loop).section(" ",2,2).toInt();
 											this->mainNotebook->setCurrentIndex(loop);
+											this->history->pushToBackList(dochold->getCurrentLineNumber(),dochold->getFilePath());
 											this->gotoLine(linenumber);
 											return;
 										}
@@ -104,6 +107,7 @@ void KKEditClass::goToDefinition(const QString txt)
 										{
 											linenumber=sl.at(loop).section(" ",2,2).toInt();
 											label=sl.at(loop).section(" ",3,3);
+											this->history->pushToBackList(dochold->getCurrentLineNumber(),dochold->getFilePath());
 											this->mainNotebook->setCurrentIndex(tabs);
 											this->gotoLine(linenumber);
 											return;
@@ -132,6 +136,7 @@ void KKEditClass::goToDefinition(const QString txt)
 													label=sl.at(j).section(" ",0,0);
 													if( ((sens<2) && (label.compare(searchfor,casesens)==0)) || ((sens==2) && (label.contains(searchfor,casesens)==true)))
 														{
+															this->history->pushToBackList(dochold->getCurrentLineNumber(),dochold->getFilePath());
 															linenumber=sl.at(j).section(" ",2,2).toInt();
 															this->openFile(doc->getDirPath() + "/" + flist.at(k),linenumber);
 															return;

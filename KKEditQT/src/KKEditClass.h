@@ -75,6 +75,7 @@ enum {FRCASE=0,FRUSEREGEX,FRWRAP,FRALLFILES,FRHIGHLIGHTALL,FRREPLACEALL,FRMAXSWI
 
 #include "QT_AboutBox.h"
 #include "QT_menuitem.h"
+#include "QT_historyClass.h"
 #include "QT_recentMenu.h"
 #include "QT_highlighter.h"
 #include "QT_document.h"
@@ -85,6 +86,7 @@ enum {FRCASE=0,FRUSEREGEX,FRWRAP,FRALLFILES,FRHIGHLIGHTALL,FRREPLACEALL,FRMAXSWI
 class NoteBookClass;
 class MenuItemClass;
 class RecentMenuClass;
+class HistoryClass;
 class ToolBarClass;
 
 class KKEditClass : public QObject
@@ -141,8 +143,6 @@ class KKEditClass : public QObject
 		QString						sessionFolder;
 		unsigned int				currentSessionNumber=0xdeadbeef;
 		QString						toolsFolder;
-
-		//HistoryClass				*history;
 
 //app functions
 		void						initApp(int argc,char** argv);
@@ -218,6 +218,8 @@ class KKEditClass : public QObject
 		unsigned int				autoShowMinChars=4;
 		unsigned int				maxBMChars;
 		unsigned int 				untitledNumber=1;
+		HistoryClass				*history;
+
 //editor functions
 		QString						truncateWithElipses(const QString str,unsigned int maxlen);
 		void						sortTabs(void);
