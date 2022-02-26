@@ -83,6 +83,7 @@ class DocumentClass : public QPlainTextEdit
 		bool								gotUndo=false;
 		bool								gotRedo=false;
 		int									pageIndex;
+		void								setBMFromLineBar(QMouseEvent *event);
 
 	protected:
 	    void								resizeEvent(QResizeEvent *event);
@@ -93,7 +94,6 @@ class DocumentClass : public QPlainTextEdit
 		void								dragEnterEvent(QDragEnterEvent* event);
 		void								dropEvent(QDropEvent* event);
 		void								dragMoveEvent(QDragMoveEvent *event);
-
 
 	private slots:
 		void								highlightCurrentLine();
@@ -111,6 +111,7 @@ class DocumentClass : public QPlainTextEdit
 		bool								realHiliteLine(void);
 		bool								realSyntaxHighlighting(void);
 };
+
 
 class LineNumberArea : public QWidget
 {
@@ -132,7 +133,11 @@ class LineNumberArea : public QWidget
 			{
 				codeEditor->lineNumberAreaPaintEvent(event);
 			}
- 
+
+		void mouseReleaseEvent(QMouseEvent *event)
+			{
+				this->codeEditor->setBMFromLineBar(event);
+			}
 	private:
 		DocumentClass *codeEditor;
 };

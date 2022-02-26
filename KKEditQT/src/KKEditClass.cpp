@@ -296,11 +296,16 @@ void KKEditClass::rebuildBookMarkMenu()
 	this->bookMarks.clear();
 }
 
-void KKEditClass::handleBMMenu(QWidget *widget,int what)
+void KKEditClass::handleBMMenu(QWidget *widget,int what,QTextCursor curs)
 {
 	DocumentClass	*doc=this->pages.value(qobject_cast<DocumentClass*>(widget)->pageIndex);
-	QTextCursor		cursor=doc->textCursor();
+	QTextCursor		cursor;
 	bookMarkStruct	bms;
+
+if(curs.isNull()==true)
+	cursor=doc->textCursor();
+else
+	cursor=curs;
 
 	switch(what)
 		{
@@ -922,6 +927,7 @@ bool KKEditClass::closeTab(int index)
 {
 	DocumentClass	*doc=NULL;
 	int				thispage=index;
+	QTextCursor		tc;
 
 	this->sessionBusy=true;
 
@@ -960,7 +966,8 @@ bool KKEditClass::closeTab(int index)
 				}
 
 	if(this->closingAllTabs==false)
-			this->handleBMMenu(this->mainNotebook->widget(thispage),REMOVEBOOKMARKSFROMPAGE);
+			this->handleBMMenu(this->mainNotebook->widget(thispage),REMOVEBOOKMARKSFROMPAGE,tc);
+		//	this->handleBMMenu(this->mainNotebook->widget(thispage),REMOVEBOOKMARKSFROMPAGE);
 
 			this->mainNotebook->removeTab(thispage);
 			delete doc;

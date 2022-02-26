@@ -346,7 +346,7 @@ class KKEditClass : public QObject
 		int							bookMarksIndex=100;
 //bookmark functions
 		void						rebuildBookMarkMenu(void);
-		void						handleBMMenu(QWidget *widget,int what);
+		void						handleBMMenu(QWidget *widget,int what,QTextCursor curs);
 
 //tools menu
 		QMenu						*toolsMenu;

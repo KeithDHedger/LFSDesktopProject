@@ -140,7 +140,9 @@ void KKEditClass::doSessionsMenuItems(void)
 									if(linenumber>0)
 										{
 											this->gotoLine(linenumber);
-											this->handleBMMenu(this->mainNotebook->currentWidget(),TOGGLEBOOKMARKMENUITEM);
+											QTextCursor tc;
+											//this->handleBMMenu(this->mainNotebook->currentWidget(),TOGGLEBOOKMARKMENUITEM);
+											this->handleBMMenu(this->mainNotebook->currentWidget(),TOGGLEBOOKMARKMENUITEM,tc);
 										}
 								}
 							while(linenumber!=-1);
@@ -170,6 +172,7 @@ void KKEditClass::doBookmarkMenuItems()
 {
 	MenuItemClass	*mc=qobject_cast<MenuItemClass*>(sender());
 	DocumentClass	*document=this->getDocumentForTab(-1);
+	QTextCursor		tc;
 
 	switch(mc->getMenuID())
 		{
@@ -177,10 +180,10 @@ void KKEditClass::doBookmarkMenuItems()
 				this->rebuildBookMarkMenu();
 				break;
 			case TOGGLEBOOKMARKMENUITEM:
-				this->handleBMMenu(this->mainNotebook->currentWidget(),TOGGLEBOOKMARKMENUITEM);
+				this->handleBMMenu(this->mainNotebook->currentWidget(),TOGGLEBOOKMARKMENUITEM,tc);
 				break;
 			default:
-				this->handleBMMenu(this->mainNotebook->currentWidget(),mc->getMenuID());
+				this->handleBMMenu(this->mainNotebook->currentWidget(),mc->getMenuID(),tc);
 				break;
 		}
 }

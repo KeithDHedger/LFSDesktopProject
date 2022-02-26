@@ -540,3 +540,13 @@ void DocumentClass::dropEvent(QDropEvent* event)
 	QPlainTextEdit::dropEvent(event);
 }
 
+void DocumentClass::setBMFromLineBar(QMouseEvent *event)
+{
+	QPoint		pos(event->x(),event->y());
+	QTextCursor	cursor=this->cursorForPosition(pos);
+
+	this->mainKKEditClass->handleBMMenu(this,TOGGLEBOOKMARKMENUITEM,cursor);
+	this->highlightCurrentLine();
+}
+
+
