@@ -7,4 +7,17 @@ See the INSTALL file for details about installing and dependencies.
 Bugs and suggestions welcome please email to kdhedger68713@gmail.com
 For general info on compiling/installing software on your disro see the relevant forums.
 
-This is the QT5 version of KKEdit and is still under heavy development and is not yet practical to use and probably wiont even compile/run yet, be warned!
+This is the QT5 version of KKEdit and is still under heavy development and is not yet as full featured as the gtk version that it will eventually replace.
+
+TODO:
+
+search forward/back checkbox
+
+plugins
+
+global tools
+
+hilighting
+
+
+
