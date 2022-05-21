@@ -1,0 +1,4 @@
+#define maxeven_width 8
+#define maxeven_height 8
+static unsigned char maxeven_bits[] = {
+   0x18, 0x18, 0x18, 0xff, 0xff, 0x18, 0x18, 0x18 };

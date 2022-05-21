@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=LFS Mime Type Editor
+Comment=LFS Mime Type Editor For LFSDesktop
+Terminal=false
+Type=Application
+Categories=Gnome;GTK;;Settings;DesktopSettings;
+Icon=application-x-addon
+Exec=lfsmimeeditor

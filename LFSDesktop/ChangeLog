@@ -1,0 +1,206 @@
+0.2.0
+Fixed not displaying items as links properly.
+Added custom icons to desktop files.
+Fixed double click on items.
+Fixed desktop hang when opening file again!
+Changed lfstk required lib version.
+Fixed desktop hang when opening file.
+Added check for external mimetype perl module.
+Removed findmt external command.
+Various visual tweaks;
+Fixed label fg/bg/alpha colours.
+Fixed label font.
+Fixed changing prefs.
+Fixed dNd after manual delete of item from desktop.
+Fixed bad filename when dropping text onto desktop.
+Fixed changing disk label size.
+Fixed changing disk label.
+Fixed eroneous symlink icon on new disks.
+Fixed usb's being inserted.
+Fixed messaging. 
+Fixed memory leaks.
+Fixed popup labels.
+Major code changes,
+Updated for new lfstk API.
+
+0.1.3
+Fixed double clicking on desktop item.
+Fixed hang on double clicking some desktop items.
+Added forground label colour to prefs.
+Updated to use pkg-config for lfstoolkit.
+Going over to internal sysv msging.
+Added back cli options that fell off!
+Fixed endless loop when checking disk list.
+Added cleandesktoprcs command to messaging.
+Images (jpg/png) now show thumbnail on desktop.
+Dropping text on desktop now creates text clipping file containing dropped text.
+Fixed reseting icon on removing custom image.
+Send "reloadprefs" via messaging to reload icon theme.
+Send "reloaddesk" via messaging to restart desktop.
+Send "reloadbg" via messaging to reload background.
+Added System V messaging.
+Fixed prefs font not being used.
+Fixed background launch of desktop item.
+Fixed wrong inotify events on file move/rename.
+Added back label BG colour and alpha to prefs.
+Added Home and Computer locatins to desktop.
+Fixed mainloop hogging too much cpu time.
+Code clean.
+Added right border to prefs.
+Better default placement.
+No longer needs composite manager.
+New desktop now allows copying files to ~/Desktop via DnD.Done Custom add/remove icon for desk items.
+Done Custom add/remove icon for disk items.
+Double clicking now mounts and opens disks.
+Code clean.
+Done mount/unmount eject.
+Added context menu to desktop items.
+Added context menu to disks.
+Double clicking now launches items.
+Done snap to grid for disks.
+Done snap to grid for desktop items.
+Done copy dropped item to desktop.
+Done desktop items.
+Saves position.
+Added custom icon path to disks.
+Better state change for drives.
+Better insert/remove detection for removable drives.
+Code clean.
+Switched to linked list for disk data.
+Added alpha to un-mounted disks.
+Added disks.
+Added prefs.
+Sets root window as backdrop.
+Complete rewrite.
+
+0.1.2
+Fixed multiple resizing events.
+Fixed context menus for desktop icons.
+Updated to use new toolkit.
+Updated font desc in prefs to match rest of lfs.
+
+0.1.1
+Popup list now hidden when custom icon dialog shown.
+Fixed crash when right clicking desktop icon after using custom icon dialog.
+Moved include files.
+Updated manpage.
+Corrected label foreground/bcakground colour bug.
+
+0.1.0
+Synched versions to "0.1.0".
+Commited to github.
+
+0.0.14
+Fixed unneeded window attr causing crash on some distros.
+Context menu icons now use image instead of icon.
+Code clean.
+Lowered xft, cairo and udev versions.
+Fixed segfault when can't find mime type of file/folder on desktop.
+Fixed nasty recursive bug when displaying desktop files.
+Removed appMenu as it is now in window manager and available from the panel app.
+Added intermediate file so no just do ./cnofigure instead of ./autogen.s
+
+0.0.13
+Label is centred in popups if no icon available.
+Get themed icons for popups from lib class.
+Made popup button icons themed.
+Added icons to popup buttons.
+No longer creates/deletes popup windows every time.
+Construct popups at start up.
+
+0.0.12
+Updated man page.
+Added '--back-alpha' or '-A' option to command line.
+Colour specs now the same as the wm and tool kit ie use #RGB insatead of 0xRGBA.
+Added 'labelalpha' to prefs to set alpha of label indepenent of colour.
+Removed lfstooolkit prefs code.
+Updated to use new tool kit.
+
+0.0.11
+Updated licence stuff at top of file.
+Removed externel icon dialog box.
+Removed unneeded libs.
+Dialog boxes use the new toolkit.
+Added LFSToolKit library.
+Added Xft lib.
+Made showing 'Appmenu' on right click on desktop optional, default=noshow, now moved to the window manager as it should be.
+
+0.0.10
+Fixed default terminal command not being set if not specified on command line ( defaults to "xterm -e" ).
+
+0.0.9
+Added "--enable-3dwidgets" to configure script to allow linking against Xaw3D ( default is link against Xaw7 ).
+Updated manpage.
+Added 'ignore' to command options.
+Added 'ignores' list to prefs to not show disk who's label is in the ';' delimited list.
+Added fontface/forecolour/backcolour to command line args.
+Added backcolour option to prefs.
+Added forecolour option to prefs.
+Added fontface option to prefs.
+Icon labels now use cairo text for rendering anti alias text.
+
+Changed to cairo text from XLib text for nicer fonts for labels.
+0.0.8
+Added basic manpage.
+Added 'tidy' option to clean stale files from cache, custom positions/icons unaffected.
+Selection from 'Applications' popup now obeys 'Terminal=..' option in desktop file.
+Added 'showextension' to config options
+Added "show-extension" command opt to show file extensions ( default no show ).
+Added 'termcommand' to config options
+Added "term-command" command opt to set the command to use when opening desktop file in terminal.
+Fix for some window mangers not respecting 'keep below' and bringing the desktop to the front (openbox), now stays underneath.
+
+0.0.7
+Custom icon path dialog now pops up in centre of window.
+.desktop files now show proper icon for theme.
+Added 'Open' option to right click menu.
+Added remove custom icons.
+Added set custom icons.
+Added 'appmenu' resources file to /etc/X11/app-defaults.
+Application menu now pops up at mouse and disappears if mouse is moved out of window.
+Added 'Applications' menu.
+
+0.0.6
+Now shows 'Computer' icon for root system, and no longer mountable/unmountable from right click.
+Uses kernel 'getmntent' routines for determining mounted disks and mount point instead of external command.
+More stuff in memory instead of thrashing hardrive.
+Folded Desktop files into disk arrays.
+Major code clean.
+Symlinks handled properly in ~/Desktop.
+Pop up menu disappears if you move pointer out of window.
+Fixed Segfault trying to eject some disks.
+Added right click on disk to mount/unmount/eject.
+
+0.0.5
+Use default icon for corrupt/unknown format icons.
+Set default icons for incomplete icon themes ( defaults taken from gnome theme ).
+Corrected wrong icons for bash scripts/text files.
+Now use libmagic to get mime types.
+Code clean.
+Files in~/Desktop now shown/opened ( with double click ).
+Better disk type recognition.
+Disk icon data now held in memory instead of keep read hardrive.
+Switched to libudev.
+
+0.0.4
+Let the system have some CPU cycles!
+Uses default ( gnome ) icons for missing disk icons.
+USB type ( card/ipod ) now detected.
+Added fix for ntfs disks not mounting properly with suid helper.
+Mounted disks with helper mounts as user.
+Added config option ( --enable-suidhelper ) ( default ) to use helper or udevil.
+Added suid mount helper app.
+Switched to cairo.
+
+0.0.3
+Double click also uses xdg-open to open folder when  mounting.
+Box indicator around target position.
+Simple drag icons to position.
+Snap to grid done.
+Double click mounts via udevil.
+Shows mounted/unmounted. 
+Shaped window, passes through events.
+Displays disks.
+
+0.0.1-0.0.2
+First commits.

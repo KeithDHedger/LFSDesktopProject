@@ -1,0 +1,103 @@
+0.2.0
+Use new prefs class.
+Fixed random spacing appearing in right gadgets.
+Added notifications to launchers ( can be disabled ).
+Fixed crash if non .desktop files in lanchers folder.
+Changed width of spacer widget to be same as launcher widgets.
+Added DnD to launcher gadgets, now accpts uris or text.
+Dragging .desktop file to panel now adds to launchers.
+Added DnD to panels.
+Updated for new lfstk API's.
+
+0.1.4
+Fixed panel size on multiple monitors.
+Added ~/.local/share/applications to search path for application menu.
+Fixed parsing Exec in desktop files.
+Added alsa dependency.
+Fixed updating vol slider.
+Reversed vol slider on vertical panels.
+Added Volume control.
+Redone windowlists to use new menus.
+Redone logout to use new menus.
+Fixed messaging for multiple panels.
+Fixed appmenu exec regex.
+Added messaging.
+Canged appmenu to new menu/find class.
+
+0.1.3
+Updated to use pkg-config for toolkit.
+Updated for tool kit update.
+
+0.1.2
+Removed disclosure triangles from main buttons.
+Updated to use cairo.
+Fixed segfault.
+Fixed some icons not scaling properly.
+
+0.1.1
+Code clean.
+Updated for new lib version.
+
+0.1.0
+Fixed missing last window on global window list.
+Fixed showing hidden windows in main window list.
+Fixed minor graphical bug.
+Synched versions to "0.1.0".
+Commited to github.
+
+0.0.5
+Removed need for external script to get window lists.
+Changed to using imlib2 image for button icons.
+Fixed not showing empty catagory.
+Lowered xft version.
+Added show about box to appmenu.Fixed messaging for multiple panels.
+Clock, disk and CPU usage now use window background.
+Panel now uses window tile image if available.
+Added intermediate file so no just do ./configure instead of ./autogen.s
+Stopped alarm being triggered if not needed.
+Added default icon for missing icon from .desktop files in launcher gadget.
+Updated manpage.
+Removed %U,%f etc in desktop file exec entry as not used.
+Added launchers to panel's follows
+
+0.0.4
+Panels can now be on any edge - 'panelgrav' in prefs PANELNORTH=1,PANELEAST=2,PANELSOUTH=3,PANELWEST=4.
+Entries now sorted.
+Added icons to submenus.
+Added icons to catagorys.
+Redone appmenu to build window at startup.
+Added window list on current desktop, 'w' in prefs gadget string.
+Removed unnecessary strdups.
+Icons use icons from desktop theme if possible.
+Refuse to run an empty panel.
+Updated manpage.
+Added spacer gadget 'S' ( multiple spacers ARE allowed ).
+Duplicate gadgets disallowed.
+Right gadgets now ordered left to right as expected from config string.
+Fixed segfault when not displaying clock.
+Removed forced extra spacing.
+Added Icons to panel buttons.
+
+0.0.3
+Trapped X errors.
+Added Window list gadget.
+Added panel positions left/right/centre and fixed.
+Added panel modes shrink and fixed size.
+Added multiple panels, use 'lfspanel-1.rc' for panel 1 and call with 'lfspanel 1' etc, lfspanel.rc is main panel call with 'lfspanel'.
+Made panel gadgets positionable from prefs.
+Added left/right gadget layout.
+Added setting position of gadegets on panel via prefs.
+
+0.0.2
+Added cpu stats.
+Added disk i/o stats.
+Panel now stays above all other windows.
+Added clock.
+Updated for new toolkit/.
+Added logout commands to prefs.
+Added logout menu.
+Added appmenu.
+Added place on monitor number.
+
+0.0.1
+First commit of lfs panel.

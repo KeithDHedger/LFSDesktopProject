@@ -1,0 +1,38 @@
+
+AM_CPPFLAGS =	-I$(top_srcdir) \
+				$(XEXT_CFLAGS) \
+				$(X11_CFLAGS) \
+				$(XCOMPOSITE_CFLAGS) \
+				$(XDAMAGE_CFLAGS) \
+				$(XRENDER_CFLAGS) \
+				$(XFIXES_CFLAGS) \
+				$(XFT_CFLAGS) \
+				$(XINERAMA_CFLAGS) \
+				$(CAIRO_CFLAGS) \
+				$(IMLIB_CFLAGS) \
+				$(LFSTK_CFLAGS) \
+				$(LIBGLIB_CFLAGS) \
+				-DPREFIX=\""${prefix}\"" \
+				-DDATADIR=\""${pkgdatadir}"\" \
+				-DSYSCONFDIR=\""${sysconfdir}/${PACKAGE}"\" \
+				-DLIBDIR=\""${libdir}/${PACKAGE}"\" \
+				-DGETTEXT_PACKAGE=\"lfswmanager\" \
+				-DPACKAGE_LOCALE_DIR=\"$(localedir)\" \
+				-DPACKAGE_DATADIR=\"$(pkgdatadir)\" \
+				-DHELPERDIR=\""${libdir}"\" \
+				-DMAINMENUAPP=\""${libexecdir}/${PACKAGE}/appmenu"\"
+
+LIBS =			$(XEXT_LIBS) \
+				$(X11_LIBS) \
+				$(XDAMAGE_LIBS) \
+				$(XRENDER_LIBS) \
+				$(XFIXES_LIBS) \
+				$(XFT_LIBS) \
+				$(XCOMPOSITE_LIBS) \
+				$(XINERAMA_LIBS) \
+				$(CAIRO_LIBS) \
+				$(IMLIB_LIBS) \
+				$(LIBGLIB_LIBS) \
+				$(LFSTK_LIBS) \
+				 -lm
+

@@ -1,0 +1,242 @@
+.TH "lfswmanager" "1" "0.0.16" "K. D. Hedger" "User Commands"
+.SH "NAME"
+\fBlfswmanager\fR - Manpage for lfswmanager.
+.br
+
+.SH "SYNOPSIS"
+\fBlfswmanager\fR [ OPTION ] ...  [ display ]
+.br
+.SH "DESCRIPTION"
+Part of the LFS Desktop  project here:
+.br
+
+http://www.linuxquestions.org/questions/linux-from-scratch-13/the-linux-from-scratch-desktop-project-4175542914
+.br
+
+This provides the window manager.
+.br
+
+\fBLFSWManager\fR is a window manager for the X Window System.  It supports virtual desktops, Xft font rendering, and is pretty standards compliant, the code base is from the 'wind' window manager available here:
+.br
+
+http://sourceforge.net/projects/windwm/?source=navbar
+.br
+Thanks to Johan Veenhuizen for the original code.
+.br
+.SH "OPTIONS"
+A display argument may be specified to manage a display other than the default.
+.br
+
+The following options are recognized:
+.br
+
+\fB-n\fR	number
+.br
+	Set initial number of virtual desktops.  Zero means keep current setting, and is the default. If no current setting exists, 12 desktops are allocated.
+.br
+
+\fB-t\fR	font
+.br
+	Use font for window titles.
+.br
+
+\fB-B\fR	colour
+.br
+	Active fill colour.
+.br
+
+\fB-b\fR	colour
+.br
+	Inactive fill colour.
+.br
+
+\fB-F\fR	colour
+.br
+	Active frame colour.
+.br
+
+\fB-f\fR	colour
+.br
+	Inactive frame colour.
+.br
+
+\fB-X\fR	colour
+.br
+	Button and title colour.
+.br
+
+\fB-p\fR	placement
+.br
+	Set new window placement.
+.br
+	0=Smart( Screen ), 1=Under mouse ,2=Centre on monitor with mouse( default ), 3=Screen centre, 4=Smart( Monitor with mouse ).
+.br
+
+\fB-l\fR	liveupdate
+.br
+	Live update of window when resizing ( >0=Live ( default=5 - slowest=1, faster/less updates >1 ), 0=Update window on relase of mouse button - fastest.
+.br
+
+\fB-T\fR	theme
+.br
+	Path to theme eg "/usr/share/themes/Crux", "/home/keithhedger/.themes/OldBrownWood".
+.br
+	If no theme is specified either on the command line or in the prefs file then a basic window border is drawn using the colours above ( default ).
+.br
+	
+.br
+\fB-X\fR	command
+.br
+	Set terminal command ( default xterm -e ).
+.br
+
+\fB-w\fR	outfile
+.br
+	After setting prefs from default, prefsfile and command line write out a prefsfile to outfile and quit ( MUST be last option ).
+.br
+	Use '-' to write to stdout.
+.br
+
+	All the above except '-w' can be placed in a preferences file at ~/.config/LFS/lfswmanager.rc.
+.br
+	
+.br
+Window focus
+.br
+	Press a pointer button inside the window to raise it and give it the keyboard input focus.
+.br
+
+Moving a window
+.br
+	Drag the window by its title bar to the desired location.  Alternatively, hold down the Alt key and grab the window from anywhere inside its frame.
+.br
+	Dragging a window off of the left/right edge of the screen will now flip the desktop.
+.br
+
+Resizing a window
+.br
+	Drag the top left or right corners to resize the window.
+.br
+
+Deleting a window
+.br
+	Push the × button in the upper right corner of the frame to ask the window to delete itself.
+.br
+
+Virtual desktops
+.br
+	Wind supports virtual desktops as defined by the Extended Window Manager Hints specification.  The first twelve desktops are addressable using the Alt-Fn key bindings.  An external pager is needed to address more than twelve desktops.
+.br
+
+The following key bindings are provided:
+.br
+
+\fBAlt-!\fR
+.br
+	Groups all focused application windows to the current desktop.
+.br
+
+\fBAlt-Esc\fR
+.br
+	Cycle through the open applications on the current desktop.
+.br
+
+\fBAlt-Backspace\fR
+.br
+	Ask the focused window to delete itself.
+.br
+
+\fBAlt-Return\fR
+.br
+	Toggle the fullscreen property of the focused window.
+.br
+
+\fBAlt-Space\fR
+.br
+	Toggle stickiness of the focused window.  A sticky window is visible on all desktops.  This property is indicated by an underlined window title.
+.br
+
+\fBAlt-Fn\fR
+.br
+	Switch to the n-th virtual desktop.
+.br
+
+\fBShift-Alt-Fn\fR
+.br
+	Change number of virtual desktops to n, and switch to the last one.  Windows beyond desktop n are moved to n.  
+.br
+	Shift-Alt-F1 is particularly useful when logging out.
+.br
+
+LFSWManager terminates gracefully upon receipt of any of the SIGHUP, SIGINT, and SIGTERM signals.
+.br
+
+.SH "FILES"
+Preference file is at ~/.config/LFS/lfswmanager.rc.
+.br
+
+Sample prefs file:
+.br
+
+placement 2
+.br
+titlefont sans:size=10
+.br
+desktops 6
+.br
+liveupdate 10
+.br
+theme /usr/share/themes/Crux
+.br
+termcommand xfce4-terminal -x 
+.br
+wmactive_frame #948069
+.br
+wmactive_fill #5E3300
+.br
+wminactive_frame #9B9184
+.br
+wminactive_fill #836C51
+.br
+widgetcolour white
+.br
+
+N.B.
+.br
+Prefs file MUST end in newline.
+.br
+.SH "AUTHOR"
+K. D. Hedger, \fIhttp://keithhedger.darktech.org\fR
+.br
+
+Original code:
+.br
+Johan Veenhuizen, \fIveenhuizen@users.sourceforge.net\fR
+.br
+.SH "BUGS"
+Report bugs to \fIkeithdhedger@gmail.com\fR
+.br
+.SH "SEE ALSO"
+startx(1), xdm(1), X(7)
+.br
+
+\fIhttp://windwm.sourceforge.net\fR
+.br
+
+.SH "LICENSE"
+Copyright 2010 Johan Veenhuizen
+.br
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the ``Software''), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+.br
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+.br
+
+THE SOFTWARE IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+.br
+
+Extra code released under GPLv3
+.br
+Copyright 2015 Keith Hedger.
+.br

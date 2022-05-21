@@ -1,0 +1,4 @@
+#define mineven_width 8
+#define mineven_height 8
+static unsigned char mineven_bits[] = {
+   0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00, 0x00 };

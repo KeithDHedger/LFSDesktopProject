@@ -1,0 +1,46 @@
+AC_INIT([LFSApplications],[0.2.0],[PROJ],[LFSApplications])
+
+AC_CONFIG_HEADER([config.h])
+AC_PROG_CXX
+
+AM_INIT_AUTOMAKE
+
+AC_PROG_CC
+AC_HEADER_STDC
+
+X11_MODULES="x11 >= 1.6.2"
+PKG_CHECK_MODULES(X11, $X11_MODULES)
+AC_SUBST(X11_CFLAGS)
+AC_SUBST(X11_LIBS)
+
+XFT_MODULES="xft >= 2.3.1"
+PKG_CHECK_MODULES(XFT, $XFT_MODULES)
+AC_SUBST(XFT_CFLAGS)
+AC_SUBST(XFT_LIBS)
+
+CAIRO_MODULES="cairo >= 1.12.16"
+PKG_CHECK_MODULES(CAIRO, $CAIRO_MODULES)
+AC_SUBST(CAIRO_LIBS)
+AC_SUBST(CAIRO_CFLAGS)
+
+LFSTK_MODULES="lfstk >= 0.5.1"
+PKG_CHECK_MODULES(LFSTK, $LFSTK_MODULES)
+AC_SUBST(LFSTK_LIBS)
+AC_SUBST(LFSTK_CFLAGS)
+
+LIBGLIB_MODULES="glib-2.0 >= 2.60.0"
+PKG_CHECK_MODULES(LIBGLIB, $LIBGLIB_MODULES)
+AC_SUBST(LIBGLIB_LIBS)
+AC_SUBST(LIBGLIB_CFLAGS)
+
+AC_MSG_CHECKING(whether to build dbug functions)
+AC_ARG_ENABLE(debug,AS_HELP_STRING([--enable-debug],[Enable debug code]),
+    [enable_debug=$enableval],
+    [enable_debug="no"])
+AC_MSG_RESULT($enable_debug)
+if test "$enable_debug" = "yes"; then
+	AC_DEFINE([_ENABLEDEBUG_], [], [Enable debug code])
+fi
+
+AC_OUTPUT(Makefile LFSApplications/app/Makefile)
+

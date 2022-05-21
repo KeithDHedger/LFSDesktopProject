@@ -1,0 +1,167 @@
+#!/bin/bash
+
+#
+#©K. D. Hedger. Thu 11 Mar 13:39:19 GMT 2021 keithdhedger@gmail.com
+#
+#This file (startlfsdesktop) is part of LFSApplications.
+#
+#LFSApplications is free software: you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#at your option) any later version.
+#
+#LFSApplications is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License
+#along with LFSApplications.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+if [ "X$1" = "X--reset" ];then
+	mv ~/.config/LFS ~/.config/LFS.$(date +%y%m%d-%H%M)
+fi
+
+mkdir -p ~/Desktop &>/dev/null
+
+if [ ! -e ~/.config/LFS ];then
+	mkdir -vp ~/.config/LFS
+fi
+
+if [ ! -e ~/.config/LFS/lfswmanager.rc ];then
+	cat > ~/.config/LFS/lfswmanager.rc <<EOF
+wmactive_frame black
+wmactive_fill cyan
+wminactive_frame black
+wminactive_fill white
+widgetcolour black
+titlefont sans:size=12
+theme ""
+termcommand xterm -e 
+placement 2
+desktops 6
+liveupdate 20
+rescanprefs 30
+EOF
+fi
+
+if [ ! -e ~/.config/LFS/lfspanel.rc ];then
+	cat > ~/.config/LFS/lfspanel.rc <<EOF
+panelheight 32
+panelwidth -2
+onmonitor 0
+panelpos -2
+panelgrav 1
+termcommand xterm -e 
+logoutcommand rm /tmp/${USER}-lfssession.pid
+restartcommand sudo reboot
+shutdowncommand sudo shutdown -h now
+gadgetsright MDCL
+gadgetsleft AWw
+EOF
+fi
+
+if [ ! -e ~/.config/LFS/lfssetwallpaper.rc ];then
+	cat > ~/.config/LFS/lfssetwallpaper.rc <<EOF
+backdrop ""
+mainmode 0
+colour 440000
+multimode false
+EOF
+fi
+
+if [ ! -e ~/.config/LFS/lfsdesktop.rc ];then
+	cat > ~/.config/LFS/lfsdesktop.rc <<EOF
+icontheme /usr/share/icons/gnome
+iconsize 48
+gridsize 64
+gridborderleft 1
+gridborderrite 1
+refreshrate 2
+termcommand xterm -e 
+showextension false
+fontface sans:12
+labelforeground black
+labelbackground white
+labelalpha 100
+includelist .*
+excludelist 
+EOF
+fi
+#.*\(sd.[1-9]*[0-9]$\|sr.\)
+#\(sda[12346]$\|sda13\)
+
+if [ ! -e ~/.config/LFS/lfstoolkit.rc ];then
+        cat > ~/.config/LFS/lfstoolkit.rc <<EOF
+font sans:size=8
+monofont sans:size=16
+usetheme false
+themepath ""
+buttontile ""
+windowtile ""
+font_active black
+font_normal white
+cursorcolour grey80
+menuitem_font_inactive grey
+menuitem_font_prelight white
+menuitemtile ""
+window_active grey40
+window_normal grey40
+menuitem_active #676767
+menuitem_normal #979797
+button_inactive #D1D1D1
+button_prelight #7B7B7B
+button_active #676767
+button_normal #A3A3A3
+font_inactive grey
+font_prelight grey20
+autotextcolour false
+sbtroughcolour grey80
+menuitem_inactive #d1d1d1
+menuitem_prelight #979797
+listtroughcolour grey60
+menuitem_font sans:size=8
+window_inactive grey40
+window_prelight grey40
+menuitem_font_active grey25
+menuitem_font_normal black
+EOF
+fi
+
+if [ ! -e ~/.config/LFS/lfsappearance.rc ];then
+	cat > ~/.config/LFS/lfsappearance.rc <<EOF
+
+777
+EOF
+fi
+
+lfssetwallpaper
+lfswmanager &
+lfswmpid=$?
+sleep 1
+lfsdesktop &
+lfsdeskpid=$?
+lfspanel &
+lfspanelpid=$?
+
+file=`mktemp -u`
+cat > $file << EOF
+#!/bin/bash
+touch /tmp/${USER}-lfssession.pid
+while [ -e /tmp/${USER}-lfssession.pid ]
+	do
+		sleep 5
+	done
+EOF
+
+chmod +x $file
+$file
+
+rm $file
+
+kill -9 $lfswmpid
+kill -9 $lfsdeskpid
+kill -9 $lfspanelpid
+
+

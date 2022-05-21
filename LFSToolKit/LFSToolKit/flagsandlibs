@@ -1,0 +1,25 @@
+
+AM_CXXFLAGS = -Wl,--version-script=../lfstk/exportmap -include config.h
+AM_LDFLAGS = -version-info $(LFSTOOLKIT_LIBTOOL_VERSION)
+
+AM_CPPFLAGS =	-I$(top_srcdir) \
+				-I.. \
+				$(X11_CFLAGS) \
+				$(XFT_CFLAGS) \
+				$(XINERAMA_CFLAGS) \
+				$(JPEG_CFLAGS) \
+				$(CAIRO_CFLAGS) \
+				$(LIBGLIB_CFLAGS) \
+				-DPREFIX=\""${prefix}\"" \
+				-DDATADIR=\""${pkgdatadir}"\" \
+				-DSYSCONFDIR=\""${sysconfdir}/${PACKAGE}"\" \
+				-DLIBDIR=\""${libdir}/${PACKAGE}"\" \
+				-DLFSTKPIXMAPSDIR=\""${pkgdatadir}/Pixmaps"\"
+
+LIBS =			$(X11_LIBS) \
+				$(XFT_LIBS) \
+				$(XINERAMA_LIBS) \
+				$(JPEG_LIBS) \
+				$(CAIRO_LIBS) \
+				$(LIBGLIB_LIBS) \
+				-lm

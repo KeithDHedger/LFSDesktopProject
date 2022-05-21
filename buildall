@@ -1,0 +1,42 @@
+#!/bin/bash -e
+
+#
+#©K. D. Hedger. Tue 31 Jul 13:33:01 BST 2018 keithdhedger@gmail.com
+#
+#This file (makeall) is part of LFSDesktopProject.
+#
+#LFSDesktopProject is free software: you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#at your option) any later version.
+#
+#LFSDesktopProject is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License
+#along with LFSDesktopProject.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+PREFIX="/usr"
+STAGING=
+LDCONFIG="/sbin/ldconfig"
+
+for arg in LFSToolKit LFSSetWallpaper LFSDesktop LFSWManager LFSPanel LFSApplications
+	do
+		tar -xvf ${arg}-*.tar.gz
+		pushd ${arg}
+			./configure --prefix=${PREFIX}||./autogen.sh --prefix=${PREFIX}||(echo "Configure Error...";exit 1)
+			make
+			if [ $arg = "LFSToolKit" ];then
+				make purge DESTDIR=${STAGING}||true
+			fi
+			make install DESTDIR=${STAGING}
+		
+			if [ $arg = "LFSToolKit" ];then
+				$LDCONFIG
+			fi
+
+		popd
+	done

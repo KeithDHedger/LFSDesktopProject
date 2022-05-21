@@ -1,0 +1,6 @@
+#!/bin/bash
+
+shopt -s nullglob
+cd "LFSDesktop/src"
+csrclst=$(echo "../src/*.c" "../src/*.cpp")
+echo COMMONSRC = $csrclst > ../sources

@@ -1,0 +1,24 @@
+0.2.0
+Updated for new lfstk API's.
+
+0.1.1
+Fixed new (ish) sscanf modifiers.
+
+0.1.0
+Synched versions to "0.1.0".
+Commited to github.
+
+0.0.7
+Added intermediate file so no just do ./cnofigure instead of ./autogen.s
+
+0.0.6
+Added 'Zoomed' (4) to modes.
+Added 'Scaled' (3) to modes.
+Fixed tiling overrun problem.
+Fixed buffer overrun error
+
+0.0.5
+Changed name to LFSSetWallpaper.
+
+0.0.1-0.0.4
+Forgot the change log!

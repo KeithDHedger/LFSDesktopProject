@@ -1,0 +1,1 @@
+../LFSTKFindClass.h

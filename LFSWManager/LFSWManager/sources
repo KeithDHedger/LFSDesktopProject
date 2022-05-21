@@ -1,0 +1,1 @@
+COMMONSRC = ../src/atoms.cpp ../src/button.cpp ../src/client.cpp ../src/dragger.cpp ../src/ewmh.cpp ../src/frame.cpp ../src/lib.cpp ../src/main.cpp ../src/mwm.cpp ../src/prefs.cpp ../src/root.cpp ../src/wind.cpp ../src/xftfont.cpp

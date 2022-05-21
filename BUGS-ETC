@@ -1,0 +1,28 @@
+Email:
+keithhedger@keithhedger.darktech.org
+
+Reporting Bugs:
+Please report any bugs/problems to the above email, please do NOT post them on the various message boards where you may have obtained this software.
+
+Please include the folowing info:
+What distro you are using and what version, NO code names, so XUbuntu 24.5 NOT XUbuntu wacky warthogs, for instance.
+What desktop you are using Gnome,Xfce, None etc.
+Are you using a prepackaged version of the software and if so what package manager are you using.
+Are you compiling from a source tarball or from the git repo.
+What configure options are you using.
+What make flags ( if any ) are you using.
+What version of the software are you building.
+How to recreate the error.
+Have you checked that you have all the needed dependencies and dev files installed.
+
+Bugs reported on the message boards etc rather than via email WILL be ignored, unless you have a compelling reason not to use email.
+
+UI Problems:
+UI problems include stuff like wrong/no translations, so also let me know what language you are using and the output of the 'locale' command, a screen shot would also be helpful for visual problems.
+
+Suggestions, feature requests etc:
+I am always happy to look at adding new features, though not all feature requests are suitable or feasable I WILL honestly consider any reasonable request.
+
+Donations:
+If you want to donate money to any of my projects please use paypal and the email:
+keithdhedger@gmail.com

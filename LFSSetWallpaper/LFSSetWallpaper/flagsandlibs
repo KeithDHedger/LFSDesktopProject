@@ -1,0 +1,20 @@
+
+AM_CPPFLAGS =	-I$(top_srcdir) \
+			$(X11_CFLAGS) \
+			$(XINERAMA_CFLAGS) \
+			$(IMLIB_CFLAGS) \
+			$(LFSTK_CFLAGS) \
+			$(LIBGLIB_CFLAGS) \
+			-DPREFIX=\""${prefix}\"" \
+			-DDATADIR=\""${pkgdatadir}"\" \
+			-DSYSCONFDIR=\""${sysconfdir}/${PACKAGE}"\" \
+			-DLIBDIR=\""${libdir}/${PACKAGE}"\"
+
+LIBS =		$(X11_LIBS) \
+			$(XINERAMA_LIBS) \
+			$(LFSTK_LIBS) \
+			$(LIBGLIB_LIBS) \
+			$(IMLIB_LIBS)
+
+
+

@@ -1,0 +1,117 @@
+.TH "lfsdesktop" "1" "0.1.1" "K. D. Hedger" "User Commands"
+.SH "NAME"
+\fBlfsdesktop\fR - Manual page for lfsdesktop.
+.br
+
+.SH "SYNOPSIS"
+\fBlfsdesktop \fR[\fIOPTION\fR] ...
+.br
+
+.SH "DESCRIPTION"
+Part of the LFS Desktop  project here:
+.br
+
+http://www.linuxquestions.org/questions/linux-from-scratch-13/the-linux-from-scratch-desktop-project-4175542914
+.br
+
+This provides the desktop.
+.br
+.SH "OPTIONS"
+
+\fB-c,--clean\fR
+.br
+	Clean disk info/desktop cache data
+.br
+
+\fB-t,--tidy\fR
+.br
+	Tidy disk info/desktop cache data preserving existing
+.br
+
+\fB-a,--theme\fR
+.br
+	Set theme
+.br
+
+\fB-x,--term-command\fR
+.br
+	Set terminal command ( default xterm -e )
+.br
+
+\fB-s,--show-extension\fR
+.br
+	Set terminal command ( default xterm -e )
+.br
+
+\fB-f,--font\fR
+.br
+	Font face ( Sans;0;0;10 - Fontname;Weight(0/1);Slant(0/1/2);Fontsize )
+.br
+
+\fB-4,--fore-colour\fR
+.br
+	Fore colour for label in RGB # notation, or colour name ( default #ffffff, '#' is compulsory for hex numbers )
+.br
+
+\fB-b,--back-colour\fR
+.br
+	Back colour for label in RGB # notation, or colour name ( default #000000, '#' is compulsory for hex numbers )
+.br
+
+\fB-A,--back-alpha\fR
+.br
+	Alpha for label between 0.0 and 1.0 ( default 1.0 )
+.br
+
+\fB-i,--ignore\fR
+.br
+	List of ';' seperated disk labels to NOT show on desktop
+.br
+
+\fB-d,--debug\fR
+.br
+	Debug
+.br
+
+\fB-v,--version\fR
+.br
+	output version information and exit
+.br
+
+\fB-h,-?,--help\fR
+.br
+	print this help
+.br
+
+.SH "FILES"
+A Sample prefs file is below this should be placed in ~/.config/LFS/lfsdesktop.rc, configure to suit yourself.
+.br
+
+icontheme OldBrownWoodIcons
+.br
+iconsize 32
+.br
+gridsize 64
+.br
+gridborder 32
+.br
+refreshrate 2
+.br
+termcommand xterm -e 
+.br
+showextension 0
+.br
+fontface sans-serif;1;0;10
+.br
+labelforeground white
+.br
+labelbackground grey60
+.br
+labelalpha 0.4
+.br
+noshow PQSERVICE;DATA;SYSTEM_RESERVED
+.br
+.SH "REPORTING BUGS"
+Report bugs to keithdhedger@gmail.com
+.br
+

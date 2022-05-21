@@ -1,0 +1,483 @@
+0.5.1
+Fixed about example.
+Fixed not not setting button font colour form prefs.
+Set default time out in app class.
+Code clean.
+Fixed paths in installed themes.
+Fixed live update on font dialog.
+Fixed lineedit size in expander gadget.
+Fixed set label colour.
+New prefs class.
+Updates to config file format.
+Fixed window pixmap.
+Extra API's.
+Removed unneeded xsync's.
+Fixed paste in line edit.
+Added default cut/copy/paste context menu to line edit.
+Added drop callback on multiline edit.
+Cleaned dropping file on (multi)line edit.
+Fixed .desktop file preview in file dialog.
+Code clean.
+
+0.5.0
+Fixed dragging image.
+Removed unneeded xflush/xsync.
+Updated basic example to show drop on gadget.
+All gadgets can now handle DnD.
+Fixed themepaths in installed themes.
+Fixed display correct checkbox png.
+Fixed memory leaks.
+Fixed not picking up png's for check box.
+Fixed spurious scrollbar events.
+Fixed theme path prefs.
+Fixed tool window events.
+Updated all examples.
+Added reload globals to LFSTK_lib.
+Fixed clearing window and gadgets after updating window background.
+Added timer callback to app class.
+Added timer to app main loop.
+Fixed dNd on windows and gadgets.
+Removed unneeded callback code.
+Redone callbacks.
+Fixed seg fault when expanding lists.
+Fixed memory leaks in various gadgets.
+Updated examples.
+Added live update for expander gadgets.
+Fixed tool window.
+Fixed menus.
+Require use of app class.
+Fixed memory leaks in list gadget.
+Added main loop to app class.
+Added new application class.
+
+0.4.6
+Fixed website address in about box.
+Fixed input focus on list gadgets.
+Fixed list gadget expanding/shrinking in both x/y.
+Can now add list gadget to expander.
+Internal changes.
+Fixed scrollbar visual.
+Made font dialog window not resizable.
+Removed redundant params from list creation.
+Changed default gravity of list gadget to NorthGravity.
+
+0.4.5
+Renamed multi gadget to expander.
+Updated lineedit example.
+Fixed dAndD onto multi gadget.
+Set sensible defaults for multigadget.
+Updated run examples.
+Cleaned menu example.
+Added various layouts to multi gadget class.
+Fixed menu colours.
+Added passing mouse/key events to gadget parent window.
+Added multigadget example to RunApps.cpp
+Fixed scrollbar thumb pixmap.
+Fixed pixmap offsets when moving gadget.
+Fixed pixmap offsets on labels, checkboxes,menus and seperators.
+Fixed resizing gadget.
+Added resizing gadget (LFSTK_ExpanderGadgetClass).
+Removed debug code.
+Set gadget mouse event on mouseup.
+Added setting scrollbar value without running CB.
+Added colour chooser to examples.
+Added setting font options when showing font dialog.
+Fixed keyboard focus in lists.
+Added LFSTK_selectByIndex to list class.
+Update preview text in font dialog when changing size etc.
+Fixed minor visual bg in multiline edit.
+Added scrolling in multiline edit.
+Fixed DandD on line/multiline edit.
+Added sepearate mouse/key callbacks to gadget class.
+Fixed ignore mod keys pressed alone in line edit.
+Changes in lfsapps for new API's.
+Added append to list to list gadget.
+Fixed list gadget leak.
+Fixed focus on line edit.
+Fixed list gadget scrollbar not resetting on update list.
+Fixed fontdialog list not getting keybaord focus.
+Code clean.
+Fixed doxygen documentaion.
+Added scrolling lists via keyboard ( page up/down line up/down ).
+Added scrolling list via scroll wheel ( button 5/4 ).
+Added programatically scroll scroll bar.
+Added LFSTK_getKey/LFSTK_getModifier/LFSTK_getKeySym to line edit class.
+
+0.4.4
+Fixed line edit 1st char bug.
+Line edit visual tweaks.
+Removed LFSTK_menuButtonClass.
+
+0.4.3
+Fixed hiding menu windows when clicking in root window.
+LFSTK_menuButtonClass deprecated, to be removed.
+
+0.4.2
+Fixed font dialog layout.
+Added sepearte on/off pngs for checkbox.
+Cleaned toggle class code.
+Added check box png support.
+Added listtroughcolour to prefs.
+Started adding more theme parts.
+Fixed minor faults.
+Added theme path to lfstkprefs.
+Added support for arrow pngs in themes for scrollbars.
+Fixed install themes.
+Fixed copyright.
+Fixed line edit visual anomaly.
+Fixed unfocused line edit.
+Updated Winter theme.
+Added scrollbar trough colour to lfstkprefs.
+
+0.4.1
+Fixed reversed scrollbar get value.
+Added reverse to scrollbar class.
+Made value in scrollbar class private.
+Added LFSTK_getValue to scrollbar class.
+Added LFSTK_setValue to scrollbar class, now updates thumb position.
+Added manual addition of indicator to gadget.
+Added opt to ignore "./.." to find class.
+Renamed find class.
+
+0.4.0
+Fixed height of menu separator.
+Fixed menu labels with images and sub menus.
+Fixed menu label sizing.
+Code clean.
+Added toolwindow.
+Finished Menu class.
+Added new menu class.
+Added Xmas theme.
+Fixed window colours.
+Fixed Toolbar button label.
+Fixed multi line edit not getting focus on mouse down.
+Renamed Findclass.
+Fixed visual anomaly's in list box.
+Scrollbar now responds to scroll wheel properly.
+Speed tweaks for list gadgets.
+Code clean.
+Converted Font dialog to new API's.
+Converted file dialog's to new API's.
+Changed list API's.
+
+0.3.1
+Fixed flickering when scrolling large list.
+Added cumulative search option to LFSTK_findClass:LFSTK_findFiles.
+Code clean.
+UI changes.
+Better nav in filedialogs using entry bar.
+Added broken link image to file dialog.
+Added link images to file dialog.
+Redone LFSTK_findClass.
+Added arrows to scrolbar line buttons.
+Added option to do clear window on all gadgets from window clear window.
+Added some sample themes ( installed in/usr/share/themes, move to ~/.themes to use ). 
+Exposed LFSTK_findClass.
+Added file name filter to LFSTK_findClass.
+Better file dialog path resolve.
+Added Hide/Show dot files in file/folder dialogs.
+Code clean.
+Fixed file/folder dialogs.
+Redone file/folder dialogs.
+Fixed some memory leaks in file dialogs.
+Added generic image icon for lists.
+Removed ( temporarily ) thumbnails in file dialog list.
+Code clean.
+Fixed scrollbar visuals.
+Fixed scrollbar bugs.
+Added new scrollbar to lists/dialogs.
+Added vertical scrollbar.
+Done scrollbar class.
+Added scrollbar example.
+Fixed broken symlinks.
+Moved callback routines from button class to gadgetclass.
+Added scrollbar class.
+
+0.3.0
+Moved movement constraints to main gadgetclass.
+Added movement constraints to image class.
+Fixed leak in dNd in line edit.
+Fixed various memory leaks.
+Fixed memory leak on setting label BG colour.
+Added optional valgrind check to examples.
+cd examixed memory leaks from various classes.
+Fixed cursor size in line edits.
+Added cursor colour to prefs.
+Added mono font to prefs.
+Fixed cursor movement in line edit.
+Saved mono text char width in linedit.
+Cursor pos in single line edit now shows inverse char.
+Cursor pos in multi line edit now shows inverse char.
+Delete key now deletes forward in line edit and multi line edit.
+Added multi line edit to examples.
+Done cursor keys in multi line edit.
+Added multiline text gadget.
+Paste/drop in line edit now formats tabs=8 spaces, ignores new lines.
+Fixed line edit copy.
+Code clean.
+Updated examples.
+Fixed random crash at exit.
+Added basic window events to window class, see examples.
+CTRL+c now copies line edit data to clipboard ( without xclip ).
+Updated examples.
+Changed label defaults to - button grav=northwest, label grav=centre.
+
+0.2.4
+Changed doxgen op files to *.xhtml.
+Fixed segfault with cairo_image_surface_create_from_png when handed a jpg.
+Fixed not deleting gadget from window properly.
+Removed empty file preview from folder dialog.
+Fiile/folder dialogs can now save/restore last selected folder.
+Fixed occasional menu window not being on top.
+Trapped error when trying to set bg pixmap.
+LFSTK_setFontString now has option to reset fontdata.
+Better label alignment.
+Added label BG auto colour.
+Added setColourFromName to lib.
+Added label BG colour to gadgets.
+Fixed gadgets using parent windows pixmap.
+Can now set above/below/normal on window create.
+Added window constructor using struct to set data.
+Show winow no longer raises window as well.
+Added getcstr to linedit class.
+Added debug code.
+Added context menu to gadgets.
+Drag only with button 1 now.
+Added double click detection.
+
+0.2.3
+Added geticonpath.cpp to examples.
+Tweaked find themed icon to include users .local/share/icons folder.
+Updated basic button example.
+Fixed label gravity ... Again!
+Added snap to grid size and alpha to main gadget class.
+Fixed label gravity.
+Added 'tool bar' type to image button.
+Added setting window background pixmap to window class.
+Added getting window pixmap to lib.
+Removed redundant clear window from image class.
+Added DnD to main window.
+Fixed DnD atom creation.
+Added file data to preview.
+Added file preview to file dialogs.
+Validating file/folder selections now more robust.
+Added *LFSTK_fileDialogClass::LFSTK_getCurrentPath(void) to file dialog class.
+Fixed list controls not setting proper state on first showing.
+Fixe whit text on white background on list gadget.
+Fixed menubutton visual glitch.
+Added more examples.
+Plugging memory leaks.
+CTRL Delete now clears edit field.
+Fixed check button not updating when set manually.
+Addev CTRL-v/CTRL-c to copy/paste to/from edit box ( needas xclip ).
+Fixed test len exceeding gadget width in line edit.
+Removed imlib references.
+Code clean.
+Fixed double clicking in dfile/folder dialogs.
+Image gadgets now use shaped window.
+Added Defauult dialog, button sizes etc to global defines.
+Added new font dialog button class.
+Fixed visual problems with list/dialog gadgets.
+Fixed folder/file dialog nav buttons crash.
+Corrected wrong font in menu items.
+Done file/folder dialogs.
+Done list gadget.
+Plugged lots of memory leaks.
+Done images in menus and sub menus.
+Done sub menus ... still needs work.
+Fixed disclosure indicator.
+Done basic menus.
+Fixed auto colour for labels.
+Converted gadget, button, label & image class to use cairo.
+
+0.2.2
+Fixed NULL label in setImageFromPath.
+Fixed not getting local co-ords of gadget.
+Standized getting geometryStruct.
+Images can now be set to draggable.
+Removed redundant imlib image load functions.
+Added setting list from file.
+Images now scaled after loading/before displaying.
+Fixed images in list with labels.
+Migrating to cairo from imlib.
+Code clean.
+Removed MenuListClass.
+
+0.2.0
+Leaving sub menu now returns to main menu.
+Fixed sub menu image not being scaled.
+Set text colour in list gadget to auto.
+Started to add new menulist class.
+Added typing folder path in dialog box.
+Added new show file dialog to set cwd and dialog title.
+Fixed double slash in dir path in file selector.
+Fixed missized images in menu items.
+Added set working dir to file selector.
+Added thumbnails to file selector for .png, .jpg, .gif, and .tiff.
+Fixed file selector not handling filenames with spaces.
+Overloaded LFSTK_getGeom to alow pasing a geom structure to be filled in.
+Finished file selector dialog.
+Fixe odd segfault when changing lists.
+Added file dialog icons.
+Added images to list gadget.
+Started file selector dialog.
+Added home/end buttons to list gadget.
+list gadget now usable and in examples/gadgets.cpp.
+Adding list gadget to toolkit.
+Fixed segfault if no size in font description string.
+
+0.1.2
+Font selector improvments.
+Font nav buttons sensitve now set.
+Added home/end buttons to Font selector.
+Font dialog scroll buttons now 'stick' at bottom/top of list.
+Label for font button can now display font name or label.
+Added FontButton class to toolkit.
+Line edit tweaks.
+Fixed focus/unfocus error when showing window with line edits.
+
+0.1.1
+Mouse cursor now set to '+' only when over gadget that accepts dNd.
+New more efficient listener functions for all classes.
+Line edit gadget accepts dropped text or file uri.
+Added drag and drop to line edit gadget.
+Gadgets now destroyed with window.
+Includes now grouped into include/lfstk.
+All includes now added from one global file.
+Started to add d&d.
+
+0.1.0
+Synched versions to "0.1.0".
+Commited to github.
+
+0.0.10
+Windows now getting focus on show.
+Main window does not now lose focus when selecting menu.
+Menu buttons now use image instead of icons.
+Library version bump.
+Image class now uses LFSTK_setImageFromPath instead of LFSTK_setIconFromPath.
+Fixed tile strings returning null instaead of string.
+Lowered xft version.
+Changed autogen.sh to update libtool files if needed.
+Added seperator if label="--"
+Added imageClass to toolkit.
+Fixed getting wrong font data for gadgets.
+Corrected menuitem tile not joining up.
+Added usetheme to toolkit prefs.
+Added seperate tiles for window, button and menuitem.
+Added set gadget background to tile.
+Added set window background to tile.
+Added intermediate file so now just do ./configure instead of ./autogen.s
+
+0.0.9
+Fixed menu button popups appearing on wrong monitor.
+Added LFSTK_gadgetOnMonitor to gadget class.
+Improved themed icon search.
+Added icon size to menuitemstruct - must be set if adding icon.
+Added search in /usr/share/icons/gnome when searching for themed icon.
+Fixed menu button with sub menus not showing icon.
+Massive speed up looking up themed icon in libclass.
+Added execute one line command to lib class.
+Added find themed icon to lib class.
+Stopped menu going off screen to top/bottom.
+Stopped menu going off screen to left/right.
+Speed and resource improvements to menu button class.
+Menu winow created in menuButton constructor.
+Cached menuitem lists.
+Added create pixmaps from file to lib class.
+Added icons to buttons.
+
+0.0.8
+Fixed gravity bug in LFSLabelClass.
+Code clean.
+Line edit class always draws black on white.
+XftColours now created on start.
+Made get listener in gadgets private.
+Made draw label public.
+Removed unnecessary overrides of drawlabel.
+Added move window to window class.
+Added get monitor count/monitor geom to window class.
+Added loading monitor data to window class.
+Added Xinerama dependency.
+Added 'purge' Makefile target to remove old libs.
+Added different indicators to toggle button.
+Added align right to gadget class.
+Added toggle button.
+Version bump.
+
+0.0.7
+Added reload colours to gadget class.
+Added hide window.
+Fixed race condition if mouse is in line edit gadget on start up.
+Added getgeom to gadget class.
+Fixed getgeom in window class not getting global values.
+Added get buffer to line edit class.
+Moved load font to lib class.
+Added show window to window class.
+Added get/set label to base gadget class.
+Added get stick state to window class.
+Fixed not setting window active in constructor.
+Added Label class.
+Added auto colour for button labels chhoses black/white depending on ( guessed ) brightness.
+Fixed manual window resize event loop.
+Fixed not getting font colours from loaded vars.
+Added load vars from default rc file when creating window, defaults true.
+Minor revision bump.
+Made global names in lib class private.
+Added default colour/font names.
+Added set/get active to window class.
+Fixed is Active not being set on window class constructor.
+Removed redundant init routines.
+Code clean.
+Added LFSTK_lib class.
+Cursor set to end of line in line edit when first shown.
+Added inactive states to prefs file.
+Added 'inactive' state to gadgets.
+Fixed too many refreshes in line edit.
+
+0.0.6
+Fixed bug in line edit gadget where no button pressed with shift etc.
+Mostly done documentation.
+Use make docs to make docs ( sic ), make install-docs to install in ${prefix}/share/doc/LFSToolKit
+Added doxygen to config/makefiles to generate documentation.
+
+0.0.5
+Fixed context window hiding.
+Fixed double free of line edit data.
+Added keep above and sicky windows.
+Fixed window gravity not working.
+Fixed pager not showing window.
+Now supplies relevent event to class event handlers.
+Event hanlers now return a bool - true=event handled, false=pass it along.
+Callbacks now return a bool.
+Labels now default to centre.
+Removed linking to unused libs.
+
+0.0.4
+Line edit now scolls correctly.
+Added paste ( ctl-v ) to line edit.
+Added cursor keys to line edit.
+All button clases now inherit from base gadget class.
+Added line edit class.
+Added base gadget class.
+
+0.0.3
+Fixed not setting proper colours.
+Added menuitem font and colours.
+Fixed random setting font segfault.
+Fixed font not being set.
+Added setting global colours previously loaded from prefs file to button classes.
+Added setting global colours from prefs file to window class.
+
+0.0.2
+Removed setting colours on create button class.
+Added set colours for menuitems.
+Added init buttons to set default colours.
+Added buttons inherit colours from main window.
+Added menu button.
+Added general purpose button.
+Added mainwindow.
+
+0.0.1
+First commit.
+

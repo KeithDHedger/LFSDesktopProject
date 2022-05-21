@@ -1,0 +1,30 @@
+
+AM_CPPFLAGS = -I$(top_srcdir) \
+			$(X11_CFLAGS) \
+			$(XINERAMA_CFLAGS) \
+			$(XEXT_CFLAGS) \
+			$(XFT_CFLAGS) \
+			$(LIBUDEV_CFLAGS) \
+			$(CAIRO_CFLAGS) \
+			$(LFSTK_CFLAGS) \
+			$(LIBGLIB_CFLAGS) \
+			$(LIBUDEV_CFLAGS) \
+			-Wall \
+			-DPREFIX=\""${prefix}\"" \
+			-DDATADIR=\""${pkgdatadir}"\" \
+			-DSYSCONFDIR=\""${sysconfdir}/${PACKAGE}"\" \
+			-DLIBDIR=\""${libdir}/${PACKAGE}"\" \
+			-DHELPERDIR=\""${libexecdir}/${PACKAGE}"\" \
+			-DHELPERAPP=\""${libexecdir}/${PACKAGE}/lfshelper"\"
+
+LIBS =		$(X11_LIBS) \
+			$(XINERAMA_LIBS) \
+			$(XEXT_LIBS) \
+			$(XFT_LIBS) \
+			$(LIBUDEV_LIBS) \
+			$(CAIRO_LIBS) \
+			$(LIBGLIB_LIBS) \
+			$(LIBUDEV_LIBS) \
+			$(LFSTK_LIBS)
+
+

@@ -1,0 +1,161 @@
+0.1.3
+Minor fix to frame reparenting.
+Fixed draging window to flip desktops.
+Added -N switch to force no theme.
+Removed unused helper app.
+
+0.1.2
+Updated to use pkg-config for lfstoolkit.
+Going over to internal sysv msging.
+Now use global msg key from ~/.config/LFS/lfsappearance.rc
+Added rescan prefs option to prefs.
+Fixed reseting theme to colours from pixmap based,
+New event loop.
+Added SysV messaging to reset theme.
+Appmenu now uses CNTRL + Button3.
+Appmenu now available on either root window or DESKTOP type windows.
+Code clean.
+Replaced old debug code with new.
+Updated for new toolkit.
+
+0.1.1
+Updated appmenu to use cairo.
+Fixed appmenu popup.
+Tweaked window stack for transient windows.
+Code clean
+Updated for new lib version.
+Fixed crash on unmanaged windows.
+Fixed crash on window title = NULL.
+Tweaked usage print out.
+Fixed window title x position correctly centering when using theme.
+Added title y offset from theme.rc if exists.
+Fixed window not getting focus when poped to front.
+Fixed infinite loop with two windows from same app trying to be above each other at the same time.
+
+0.1.0
+Synched versions to "0.1.0".
+Commited to github.
+
+0.0.16
+Lowered xft, cairo and xext version.
+Window now focususing properly when being brought to front.
+Added intermediate file so no just do ./cnofigure instead of ./autogen.s
+
+0.0.15
+Appmenu correctly determines if .desktop file holds 'icon= ... ' line.
+Sets _NET_WM_DESKTOP correctly when moving window.
+Updated appmenu.
+Updated manpage.
+Updated to new toolkit.
+
+0.0.14
+Theme now uses just a theme name OR a full path to theme.
+Removed 'k' option.
+Removed manual load of prefs file from appmenu.
+Code clean.
+Updated for new tool kit.
+
+0.0.13
+Command line can overide ( some ) theme settings.
+Added -k option to prevent reading of options from ~/.config/LFS/lfstoolkit.rc.
+Added -X option to command line to set text/button colour.
+Text colour and menu buttons now use the same colours.
+Can now set the menu button colour when not using theme. 
+Butons on inactive windows now use inactive colours.
+Window name now in white same as buttons.
+Redone non-themed window name.
+Removed unneeded  creation/deletion of GC's.
+Redone non-themed buttons.
+Redone non-themed window borders.
+Fixed minor refresh bug in appmenu.
+Appmenu now uses global colours from ~/.config/LFS/lfstoolkit.rc
+Added 'Appmenu'.
+Added linking to LFS Tool Kit library.
+
+0.0.12
+Added left edge resize.
+Added right edge resize.
+Added bottom edge resize.
+Added bottom left corner resize.
+Added bottom right corner resize.
+Removed useless non-fatal xlib complaints when not in debug mode.
+Fixed trying to draw border/buttons on undecorated windows.
+Fixed minor visual bug placing buttons when themerc button_offset=0.
+Added debug checkpoints to most functions ( not used unless --with-debug-level=1 ).
+Added beter debug code.
+Removed some unwanted traps.
+Added '--with-debug-level' to configure 0 - No debug, 1 - write to stderr and logfile ( default 0 ).
+Shaded windows can now only be stretched horizontally.
+Tweaked shade function, to not unnecessarily draw sides/bottom when shaded.
+Redone button updates, now uses shaped windows.
+
+0.0.11.1
+Critical bug fix.
+
+0.0.11
+Done button_offset, active_text_color, inactive_text_color.
+Adding options from themerc.
+
+0.0.10
+Added 'theme' option to prefs.
+Added '-T' option to command line to set path to theme.
+Fixed incomplete button definitions on some themes.
+Adjusted window theme parts.
+Added themed buttons.
+Added xfwm4 themes ( still needs tweaking but mostly works ).
+Added '-w' option to write out prefsfile.
+Removed old debug code ( assert's ).
+Maximize now maximizes to monitor of window.
+
+0.0.9
+Added -l option to command line to set number of updates to window when resisizing, 0=no updates until mouse button released, >0 number of updates defaults to 5.
+Updated man page.
+Fixed dragging windows to new desktop on multiple monitors of differernt widths.
+Dragging windows to next/previous desktop now works properly. 
+Code clean.
+Fixed button spacing when not all buttons are used.
+
+0.0.8
+Added 'Shade' window button, bit of a kludge needs improving.
+More compliance with extended window manager hints standard.
+Code clean and simplify.
+Plays better with pagers etc, ie cairo-dock/xfce-panel can now min/max/close/show window from popup menu and shows iconized thimbnail.
+Added 'Minimize' button.
+
+0.0.7
+Started handling MOTIF_WM_HINTS properly.
+Added 'maximize' button.
+Added number of desktops to prefs file.
+Added font and size to prefs.
+Added placement to prefs file.
+Added prefs file, for fore/back colours.
+Improved 'dock' type window handling but still needs tweeking.
+Mouse wheel now moves between desktops.
+Above/Below code tightened up.
+
+0.0.6
+Fixed widows above all otheres changing state.
+Fixed 'sticky' windows changing state.
+Fixed dragging certain application windows to new desktop pulling all other windows of the app there.
+Added 'ALT-!' key binding to group all application windows of focused application into current desktop.
+Removed some redundant code.
+Redone man page.
+Redone printing help.
+Added '-?' and '-h' to commandline options.
+Added '-p' option to command line to set window placement, 0=Smart( Screen ), 1=Under mouse ,2=Centre on monitor with mouse( default ), 3=Screen centre, 4=Smart( Monitor with mouse ).
+Added multi monitor support for window placement.
+
+0.0.5
+All windows of type desktop now stay below windows  with below state set regardless of creation time.
+Fixed putting windows below.
+Fixed default cursor not being set.
+Made windows of type NET_WM_WINDOW_TYPE_DESKTOP 'sticky'.
+
+0.0.4
+Drag window off of left/right edge cycles desktop.
+Desktop windows now stay below and don't get raised.
+Removed x11font code, now only xft fonts used.
+Code clean.
+
+0.0.0-0.0.3
+First commits.

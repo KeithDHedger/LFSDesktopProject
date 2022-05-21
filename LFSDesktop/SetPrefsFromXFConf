@@ -1,0 +1,78 @@
+#!/bin/bash
+
+#©keithhedger Mon 11 May 17:44:08 BST 2015 kdhedger68713@gmail.com
+
+prefs="$(cat ${HOME}/.config/LFS/lfsdesktop.rc|sed 's/ /=/g;s/;//g')"
+eval "$prefs"
+
+theme=$(xfconf-query -c "xsettings" -p "/Net/ThemeName")
+iconetheme=$(xfconf-query -c "xsettings" -p "/Net/IconThemeName")
+fontname=$(xfconf-query -c "xsettings" -p "/Gtk/FontName")
+fontsize="${fontname##?* }"
+fontname="${fontname% ?*}"
+
+iconsize=${iconsize:-32}
+gridborder=${gridborder:-32}
+refreshrate=${refreshrate:-2}
+labelforeground=${labelforeground:-"0xffffffff"}
+labelbackground=${labelbackground:-"0x10101060"}
+noshow=${noshow:-";;"}
+
+MON0=$(xfconf-query -c "xfce4-desktop" -p "/backdrop/screen0/monitor0/image-path")
+MON1=$(xfconf-query -c "xfce4-desktop" -p "/backdrop/screen0/monitor1/image-path")
+
+echo "icontheme $iconetheme" > ${HOME}/.config/LFS/lfsdesktop.rc
+echo "iconsize $iconsize" >> ${HOME}/.config/LFS/lfsdesktop.rc
+echo "gridborder $gridborder" >> ${HOME}/.config/LFS/lfsdesktop.rc
+echo "refreshrate $refreshrate" >> ${HOME}/.config/LFS/lfsdesktop.rc
+echo "fontface ${fontname};1;0;${fontsize}" >> ${HOME}/.config/LFS/lfsdesktop.rc
+echo "labelforeground $labelforeground" >> ${HOME}/.config/LFS/lfsdesktop.rc
+echo "labelbackground $labelbackground" >> ${HOME}/.config/LFS/lfsdesktop.rc
+echo "noshow $noshow" >> ${HOME}/.config/LFS/lfsdesktop.rc
+
+imagestyle=$(xfconf-query -c "xfce4-desktop" -p "/backdrop/screen0/monitor0/image-style")
+case $imagestyle in
+	0)
+		ims=0;;
+	1)
+		ims=2;;
+	2)
+		ims=1;;
+	*)
+		ims=0;;
+esac
+
+echo "$ims" > "${HOME}/.config/LFS/monitors.rc"
+echo $MON0 >> "${HOME}/.config/LFS/monitors.rc"
+
+imagestyle=$(xfconf-query -c "xfce4-desktop" -p "/backdrop/screen0/monitor1/image-style")
+case $imagestyle in
+	0)
+		ims=0;;
+	1)
+		ims=2;;
+	2)
+		ims=1;;
+	*)
+		ims=0;;
+esac
+
+echo "$ims" >> "${HOME}/.config/LFS/monitors.rc"
+echo $MON1 >> "${HOME}/.config/LFS/monitors.rc"
+
+echo "backdrop	${HOME}/Wallpapers/2000 AD 0304 [manwolf1]0000 (~Cclay~).jpg" > "${HOME}/.config/LFS/setwallpaper.rc"
+echo "mainmode	2" >> "${HOME}/.config/LFS/setwallpaper.rc"
+echo "colour	4210752" >> "${HOME}/.config/LFS/setwallpaper.rc"
+echo "multimode	1" >> "${HOME}/.config/LFS/setwallpaper.rc"
+
+setwallpaper
+lfsdesktop  &
+
+#gtk stuff
+echo "gtk-theme-name = \"$theme\"" > ~/.gtkrc-2.0
+echo "gtk-icon-theme-name = \"$iconetheme\"" >> ~/.gtkrc-2.0
+#gtk-font-name = "[font-name] [size]"
+echo "gtk-fallback-icon-theme = gnome" >> ~/.gtkrc-2.0
+#gtk-cursor-theme-name = XSilver
+#gtk-cursor-theme-size = 16
+

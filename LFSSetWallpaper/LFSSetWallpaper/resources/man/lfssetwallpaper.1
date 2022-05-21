@@ -1,0 +1,87 @@
+.TH "lfssetwallpaper" "1" "0.0.7" "K. D. Hedger" "User Commands"
+.SH "NAME"
+\fBlfssetwallpaper\fR - manual page for lfssetwallpaper.
+.br
+
+.SH "SYNOPSIS"
+\fBlfssetwallpaper \fR[\fIOPTION\fR]
+.br
+
+.SH "DESCRIPTION"
+Part of the LFS Desktop  project here:
+.br
+
+http://www.linuxquestions.org/questions/linux-from-scratch-13/the-linux-from-scratch-desktop-project-4175542914
+.br
+
+This provides the desktop wallpaper.
+.br
+.SH "OPTIONS"
+Set the desktop wallpaper for LFSDesktop
+.br
+
+\fB-w\fR,--wallpaper \fI/path/to/wallpaper\fR ARG
+.br
+
+\fB-c\fR,--colour
+.br
+       Background colour N (decimal or hex)
+.br
+
+\fB-a\fR,--mainmode
+.br
+       Main Mode (Stretch=0,Tile=1,Centre=2,Scaled=3,Zoomed=4) N
+.br
+
+\fB-o\fR,--monitormode
+.br
+       Mode for individual monitors (as above) N
+.br
+
+\fB-m\fR,--monitor
+.br
+       Monitor number N
+.br
+
+\fB-y\fR,--multimode
+.br
+       Multi monitor image mode 0=Single image,1=Multi image N
+.br
+
+\fB-v\fR,--version
+.br
+       output version information and exit
+.br
+
+\fB-h\fR,-?,--help
+.br
+       print this help
+.br
+
+.SH "FILES"
+A Sample prefs file is below this should be placed in ~/.config/LFS/lfssetwallpaper.rc, configure to suit yourself.
+.br
+
+backdrop /home/keithhedger/.local/share/xfce4/backdrops/wide_linux_autumn_desktop_autumn_linux_background-other.jpg
+.br
+mainmode 4
+.br
+colour 4210752
+.br
+multimode 0
+.br
+
+You also need the seperate monitors prefs file ~/.config/LFS/lfsmonitors.rc
+.br
+3
+.br
+/home/keithhedger/.local/share/xfce4/backdrops/wide_linux_autumn_desktop_autumn_linux_background-other.jpg
+.br
+4
+.br
+/home/keithhedger/.local/share/xfce4/backdrops/Free-Fall-Desktop-Wallpaper.jpg
+.br
+.SH "REPORTING BUGS"
+Report bugs to keithdhedger@gmail.com
+.br
+

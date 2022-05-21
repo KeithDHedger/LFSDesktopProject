@@ -1,0 +1,4 @@
+#define minodd_width 7
+#define minodd_height 7
+static unsigned char minodd_bits[] = {
+   0x00, 0x00, 0x00, 0x7f, 0x00, 0x00, 0x00 };

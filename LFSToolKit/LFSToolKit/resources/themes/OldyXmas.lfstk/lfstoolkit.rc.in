@@ -1,0 +1,32 @@
+window_normal dark green
+window_prelight #6B4C26
+window_active #412502
+window_inactive #808080
+windowtile ""
+button_normal dark green
+button_prelight #e00000
+button_active dark blue
+button_inactive light blue
+buttontile ""
+menuitem_normal red
+menuitem_prelight blue
+menuitem_active dark red
+menuitem_inactive light blue
+menuitem_font sans-serif:size=8
+menuitem_font_normal black
+menuitem_font_prelight white
+menuitem_font_active white
+menuitem_font_inactive grey40
+menuitemtile ""
+font SHARRPE GOTHIK:size=12
+font_normal white
+font_prelight black
+font_active white
+font_inactive grey
+autotextcolour false
+usetheme false
+themepath @prefix@/share/themes/OldyXmas.lfstk
+monofont mono:size=12
+cursorcolour red
+sbtroughcolour red
+listtroughcolour red

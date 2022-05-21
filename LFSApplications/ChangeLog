@@ -1,0 +1,127 @@
+0.2.0
+Fixed seg fault on applying lfspanelprefs settings.
+Fixed about dialog.
+Updated for new lfstk API's.
+
+0.1.3
+Fixed windows staying on top of parent windos.
+Added lfscolourchooser to apps.
+Added scroll/list trough colours to lfstkprefs.
+Fixed prefs font select.
+Fixed mime list editor apply.
+Added font selector to apps.
+Added mime type editor to apps
+Added option to set number of saved commands in lfsruncommand, see README for details.
+Changed lfstkprefs to use new menu and find classes.
+Changed lfspanelprefs to use new menu and find classes.
+Changed lfswmprefs to use new menu and find classes.
+Fixed  memory leak in lfsappearance.
+Changed lfsbackdropprefs to use new menu classes.
+Changed lfsappearance to use new menu and find classes.
+Added forground colour to lfsdesktopprefs.
+Lfstkprefs now updates desktop and panels immediately.
+Added search in /usr/share/themes as well as ~/.themes for sets.
+Fixed no sets instlled in ~/.themes.
+Fixed messaging.
+Redone test lfstkprefs.
+Added themes to lfstkprefs.
+Code clean.
+Added cursor colour pref to lfstk prefs.
+Added mono font pref to lfstk prefs.
+
+0.1.2
+Fixed copying/pasting between prefs.
+Updated to use LFSTK_handleWindowEvents.
+Updated to use pkg-config for lfstoolkit.
+Going over to internal sysv msging.
+Updated apps to updated toolkit.
+Fixed lfsrunapplication not storing history properly.
+Force no use theme if theme part missing from tk prefs.
+Added msg's to appearence.
+Set correct title to WM prefs.
+Added messageing to WM prefs.
+Bacdrop prefs remembers last folder across launches.
+Updated desktop prefs app for new desktop.
+Fixed DnD on prefs dialogs.
+Fixed panelprefs not staying in front of main appearance window.
+Fixed panel prefs not writing changes to some properties.
+Converted lfstkprefs to new toolkit.
+Added lfsruncommand to install.
+Updated prefs dialogs.
+Added file selector for setting wm theme.
+Added file selector for setting desktop icon theme.
+Added file selector for geting tiles to lfstkprefs.
+Backdrop prefs now uses file selecter.
+Removed lfsfontselect app as font button is now in lfstk.
+Redone prefs to use new fontselector button from lfstk.
+Tidied up wmprefs and fontselector.
+--window option added to apps to set transient window for.
+Lfsappearance now handles sub dialogs properly. 
+
+0.1.1
+Lfswmprefs now uses new font selector.
+Added Font selecter dialog.
+Added Font preview to lfswmprefs.
+Added bold/italic switches to lfswmprefs.
+Added font selection menu to lfswmprefs.
+Updated mainloops fro dNd.
+Code clean.
+Updated for new lib version.
+
+0.1.0
+Synched versions to "0.1.0".
+Commited to github.
+
+0.0.4
+Standarized panel's appearance.
+Fixed new menu structure not setting useIcon/useImage.
+Set "About box" to keep above.
+Fixed segfault when no prefs files exists.
+Lowered xft lib version.
+Added lfsabout dialog.
+Minor tweaks to lfstkprefs.
+Added 'lfslaunchpanels' wrapper to launch all available panels at once.
+Added theme buttons to lfstkprefs.
+Added intermediate file so now just do ./configure instead of ./autogen.s
+Fixed backdrop prefs window not centering.
+Added lfspanelprefs.
+Fixed icon entries in .desktop files.
+
+0.0.3
+Added extra modes to wallpaperprefs.
+Fixxed memory alloc segfault.
+Added wallpaper prefs.
+Desktop prefs now uses check box for show/hide suffix.
+Window placement selection in wmprefs now uses drop down.
+Current set saved at exit.
+Current set now set in edit box.
+Redone lfstk dialog.
+Added set label auto colour to lfstk dialog.
+
+0.0.2
+Dialogs now reflect changes in toolkti prefs.
+Renamed lfsprefsgroup.
+Renamed lfstkappearance.
+Added lfsdesktopprefs.desktop
+Added lfsprefsgroup.desktop
+Added lfstkappearance.desktop
+Added lfswallpaperprefs.desktop
+Added lfswmprefs.desktop
+Added lfsprefsgroup.
+Exit from lfsdesktopprefs prints settings to stdout.
+Apply in lfsdesktopprefs now restarts desktop.
+Exit from lfstkappearance prints settings to stdout.
+Apply in lfstkappearance now writes tool kit prefs.
+Exit from lfswmprefs prints settings to stdout.
+Apply in lfswmprefs now restarts window manager.
+Fixed keep above in all prefs dialogs.
+Added desktop prefs.
+Added window manager prefs.
+Added labels.
+Apply prints config to stdout.
+Save save to ~/.config/LFS/lfstooltik.rc.
+Added LFS Toolkit prefs.
+
+0.0.1
+First commit of lfs toolkit apps.Added intermediate file so no just do ./cnofigure instead of ./autogen.s
+

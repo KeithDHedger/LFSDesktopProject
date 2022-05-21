@@ -1,0 +1,4 @@
+#define shadeeven_width 8
+#define shadeeven_height 8
+static unsigned char shadeeven_bits[] = {
+   0xff, 0x00, 0xff, 0x7e, 0x3c, 0x18, 0x00, 0x00 };
