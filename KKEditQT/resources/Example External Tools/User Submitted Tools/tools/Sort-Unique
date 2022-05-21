@@ -1,6 +1,0 @@
-name	Sort Unique
-command	../scripts/SortUnique
-flags	1
-interm	0
-inpopup	1
-alwayspopup	0

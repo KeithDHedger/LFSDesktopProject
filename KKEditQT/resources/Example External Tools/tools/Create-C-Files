@@ -1,4 +1,0 @@
-name	Create C Files
-command	../scripts/CreateCFiles
-flags	0
-interm	0

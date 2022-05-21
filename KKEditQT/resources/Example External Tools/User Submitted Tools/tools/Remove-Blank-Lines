@@ -1,6 +1,0 @@
-name	Remove Blank Lines
-command	../scripts/RemoveBlankLines
-flags	1
-interm	0
-inpopup	1
-alwayspopup	0

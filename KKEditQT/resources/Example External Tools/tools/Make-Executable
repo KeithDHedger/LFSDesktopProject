@@ -1,4 +1,0 @@
-name	Make Executable
-command	chmod +x %f
-flags	0
-interm	0

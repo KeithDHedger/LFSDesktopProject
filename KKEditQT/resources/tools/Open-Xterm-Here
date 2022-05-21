@@ -1,7 +1,0 @@
-name	Open Xterm Here
-command	sh -c "cd %d;xterm -e /bin/bash"
-comment	Open an xterm in the current document's folder
-flags	8
-interm	0
-inpopup	0
-alwayspopup	1

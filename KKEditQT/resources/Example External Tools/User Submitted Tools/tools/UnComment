@@ -1,6 +1,0 @@
-name	UnComment
-command	../scripts/UnComment
-flags	1
-interm	0
-inpopup	1
-alwayspopup	0
