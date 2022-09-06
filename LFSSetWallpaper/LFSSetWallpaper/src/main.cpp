@@ -49,7 +49,7 @@ struct	monitors
 	char	*monitorPath;
 };
 
-const char	*wallpaperPath=NULL;
+char			*wallpaperPath=NULL;
 
 Imlib_Image	buffer;
 
@@ -275,7 +275,7 @@ void loadPrefs(void)
 		};
 
 	prefs.LFSTK_loadVarsFromFile(prefsPath);
-	wallpaperPath=prefs.LFSTK_getCString("backdrop");
+	wallpaperPath=strdup(prefs.LFSTK_getCString("backdrop"));
 	backdropMode=prefs.LFSTK_getInt("mainmode");
 	mainColour=prefs.LFSTK_getInt("colour");
 	multiMode=prefs.LFSTK_getBool("multimode");
@@ -334,7 +334,8 @@ int main(int argc,char **argv)
 				}
 			free(p);
 		}
-	loadPrefs();
+
+	loadPrefs();	
 	currentMonitor=-1;
 	loadMonitorData();
 
@@ -349,7 +350,7 @@ int main(int argc,char **argv)
 				{
 				case 'w':
 					if(currentMonitor==-1)
-						wallpaperPath=optarg;
+						wallpaperPath=strdup(optarg);
 					else
 						monitorData[currentMonitor].monitorPath=strdup(optarg);
 					break;
@@ -403,6 +404,7 @@ int main(int argc,char **argv)
 	XFlush(display);
 	free(monitorRCPath);
 	free(prefsPath);
+	free(wallpaperPath);
 	fflush(NULL);
 
 	return(0);

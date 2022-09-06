@@ -63,7 +63,7 @@ void readMsg(void)
 	retcode=msgrcv(queueID,&buffer,MAX_MSG_SIZE,DESKTOP_MSG,IPC_NOWAIT);
 	if(retcode>0)
 		{
-			if(strcmp(buffer.mText,"reloadbg")==0)
+			if(strcmp(buffer.mText,"reloaddesk")==0)
 				{
 					wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),apc->displayWidth,apc->displayHeight,true);
 					wc->LFSTK_clearWindow(true);

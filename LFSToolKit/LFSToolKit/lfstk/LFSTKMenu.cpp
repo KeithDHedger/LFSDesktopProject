@@ -79,6 +79,8 @@ void LFSTK_menuClass::LFSTK_showMenu(void)
 	unsigned int	buttonmask;
 
 	this->mainMenuWindow->LFSTK_showWindow(true);
+	this->mainMenuWindow->LFSTK_setKeepAbove(true);
+
 	this->mainLoop=true;
 
 	XTranslateCoordinates(this->parentwc->app->display,this->parentwc->window,this->parentwc->app->rootWindow,this->x,this->y,&x,&y,&dw);

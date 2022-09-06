@@ -438,7 +438,8 @@ void LFSTK_windowClass::LFSTK_setDecorated(bool isDecorated)
 			hints.inputMode=0;
 			hints.status=0;
 			xa_prop[9]=XInternAtom(this->app->display,"_MOTIF_WM_HINTS",True);
-			XChangeProperty(this->app->display,this->window,xa_prop[9],xa_prop[9],32,PropModeReplace,(unsigned char *)&hints,5);
+			if(xa_prop[9]!=None)
+				XChangeProperty(this->app->display,this->window,xa_prop[9],xa_prop[9],32,PropModeReplace,(unsigned char *)&hints,5);
 		}
 }
 
@@ -555,7 +556,8 @@ void LFSTK_windowClass::LFSTK_setKeepAbove(bool set)
 		xclient.data.l[0] =_NET_WM_STATE_REMOVE;
 	xclient.data.l[1] =xa1;
 	xclient.data.l[2]=0;
-	XSendEvent(this->app->display,this->app->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
+//	XSendEvent(this->app->display,this->app->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
+	XSendEvent(this->app->display,this->window,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
 }
 
 /**

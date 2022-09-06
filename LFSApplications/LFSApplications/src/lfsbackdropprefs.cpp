@@ -283,7 +283,7 @@ int main(int argc, char **argv)
 		};
 
 	prefs.LFSTK_loadVarsFromFile(mainPrefs);
-	prefs.LFSTK_saveVarsToFile("-");
+	//prefs.LFSTK_saveVarsToFile("-");
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,0,sy,DIALOGWIDTH,GADGETHITE);
 	sy+=HALFYSPACING;
@@ -398,9 +398,9 @@ int main(int argc, char **argv)
 		fprintf(stderr,"Can't create message queue :( ...\n");
 	free(buffer);
 
-	bool	flag=false;
-	int		retcode;
-	int		receiveType=IPC_NOWAIT;
+	bool			flag=false;
+	int			retcode;
+	int			receiveType=IPC_NOWAIT;
 	msgBuffer	mbuffer;
 
 	while(flag==false)

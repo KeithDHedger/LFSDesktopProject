@@ -25,7 +25,7 @@ LDCONFIG="/sbin/ldconfig"
 
 for arg in LFSToolKit LFSSetWallpaper LFSDesktop LFSWManager LFSPanel LFSApplications
 	do
-		tar -xvf ${arg}-*.tar.gz
+#		tar -xvf ${arg}-*.tar.gz
 		pushd ${arg}
 			./configure --prefix=${PREFIX}||./autogen.sh --prefix=${PREFIX}||(echo "Configure Error...";exit 1)
 			make
