@@ -1,0 +1,1 @@
+COMMONSRC = ../src/clientClass.cpp ../src/eventsClass.cpp ../src/lfswm2Class.cpp ../src/main.cpp ../src/windowsClass.cpp
