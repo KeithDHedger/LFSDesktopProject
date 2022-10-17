@@ -193,7 +193,8 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			v[4]=this->mainClass->atoms.at("_NET_WM_ACTION_MAXIMIZE_VERT");
 			v[5]=this->mainClass->atoms.at("_NET_WM_ACTION_MINIMIZE");
 			v[6]=this->mainClass->atoms.at("_NET_WM_STATE_BELOW");
-int nd=4;
+
+			int nd=this->mainClass->currentDesktop;
 			this->LFSWM2_setProp(id,this->mainClass->atoms.at("_NET_WM_ALLOWED_ACTIONS"),XA_ATOM,32,v,7);
 			//this->LFSWM2_setProp(cc->contentWindow,this->mainClass->atoms.at("_NET_WM_DESKTOP"),XA_CARDINAL,32,(void*)&cc->onDesk,1);
 			this->LFSWM2_setProp(cc->contentWindow,this->mainClass->atoms.at("_NET_WM_DESKTOP"),XA_CARDINAL,32,(void*)&nd,1);
@@ -541,15 +542,26 @@ bool LFSWM2_windowClass::LFSWM2_hasState(Window w,Atom state)
 
 void LFSWM2_windowClass::LFSWM2_changeState(Window id,int how,Atom state)
 {
-	switch (how)
+//this->mainClass->DEBUG_printAtom(state);
+	LFSWM2_clientClass	*cc;
+	cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(id);
+
+	switch(how)
 		{
 			case NET_WM_STATE_REMOVE:
 				this->LFSWM2_removeProp(id,state);
+				if((cc!=NULL) && (state==this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN")))
+					cc->isMinimized=false;
+					
 				break;
 			case NET_WM_STATE_ADD:
 				this->LFSWM2_addState(id,state);
+				if((cc!=NULL) && (state==this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN")))
+					cc->isMinimized=true;
 				break;
 			case NET_WM_STATE_TOGGLE://TODO//
+				if((cc!=NULL) && (state==this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN")))
+					cc->isMinimized=!cc->isMinimized;
 				if (LFSWM2_hasState(id,state))
 					this->LFSWM2_removeProp(id,state);
 				else
@@ -679,5 +691,4 @@ void LFSWM2_windowClass::LFSWM2_setWindowState(Window w,long state)
 {
 	long data[2]= {state,None};
 	XChangeProperty(this->mainClass->display,w,this->mainClass->atoms.at("WM_STATE"),this->mainClass->atoms.at("WM_STATE"),32,PropModeReplace,(unsigned char *)data,2);
-
 }

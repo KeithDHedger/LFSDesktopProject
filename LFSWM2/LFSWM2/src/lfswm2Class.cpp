@@ -378,6 +378,7 @@ void LFSWM2_Class::ewmh_notifyndesk(unsigned long n)
 void LFSWM2_Class::LFSWM2_setCurrentDesktop(unsigned long i)
 {
 	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_CURRENT_DESKTOP"),XA_CARDINAL,32,&i,1);
+	this->currentDesktop=i;
 }
 
 #ifdef __DEBUG__

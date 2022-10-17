@@ -240,8 +240,7 @@ void LFSWM2_clientClass::LFSWM2_maxWindow(void)
 
 void LFSWM2_clientClass::LFSWM2_showWindow(void)
 {
-fprintf(stderr,"void LFSWM2_clientClass::LFSWM2_showWindow(void)\n");
-
+	XMapWindow(this->mainClass->display,this->frameWindow);
 }
 
 void LFSWM2_clientClass::LFSWM2_hideWindow(void)
