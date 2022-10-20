@@ -55,7 +55,8 @@ class LFSWM2_clientClass
 		rectStruct		clientPreMaxRect;
 		rectStruct		framePreMaxRect;
 		bool				nameIsUTF=false;
-
+		bool				moveToTop=false;
+	
 		Window			closeButton;
 		Window			maximizeButton;
 		Window			minimizeButton;

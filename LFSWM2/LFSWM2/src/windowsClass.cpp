@@ -195,6 +195,7 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			v[6]=this->mainClass->atoms.at("_NET_WM_STATE_BELOW");
 
 			int nd=this->mainClass->currentDesktop;
+			cc->onDesk=this->mainClass->currentDesktop;
 			this->LFSWM2_setProp(id,this->mainClass->atoms.at("_NET_WM_ALLOWED_ACTIONS"),XA_ATOM,32,v,7);
 			//this->LFSWM2_setProp(cc->contentWindow,this->mainClass->atoms.at("_NET_WM_DESKTOP"),XA_CARDINAL,32,(void*)&cc->onDesk,1);
 			this->LFSWM2_setProp(cc->contentWindow,this->mainClass->atoms.at("_NET_WM_DESKTOP"),XA_CARDINAL,32,(void*)&nd,1);
@@ -544,29 +545,51 @@ void LFSWM2_windowClass::LFSWM2_changeState(Window id,int how,Atom state)
 {
 //this->mainClass->DEBUG_printAtom(state);
 	LFSWM2_clientClass	*cc;
-	cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(id);
+	bool					*clientprop=NULL;
 
+	cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(id);
 	switch(how)
 		{
 			case NET_WM_STATE_REMOVE:
 				this->LFSWM2_removeProp(id,state);
-				if((cc!=NULL) && (state==this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN")))
-					cc->isMinimized=false;
+				//if((cc!=NULL) && (state==this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN")))
+				//	cc->isMinimized=false;
 					
 				break;
 			case NET_WM_STATE_ADD:
 				this->LFSWM2_addState(id,state);
-				if((cc!=NULL) && (state==this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN")))
-					cc->isMinimized=true;
+				//if((cc!=NULL) && (state==this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN")))
+				//	cc->isMinimized=true;
 				break;
 			case NET_WM_STATE_TOGGLE://TODO//
-				if((cc!=NULL) && (state==this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN")))
-					cc->isMinimized=!cc->isMinimized;
+				//if((cc!=NULL) && (state==this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN")))
+				//	cc->isMinimized=!cc->isMinimized;
 				if (LFSWM2_hasState(id,state))
 					this->LFSWM2_removeProp(id,state);
 				else
 					this->LFSWM2_addState(id,state);
 				break;
+		}
+
+	if(cc!=NULL)
+		{
+			if(state=this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN"))
+				clientprop=&cc->isMinimized;
+			else if((state=this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_VERT")) || (state=this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ")))
+				clientprop=&cc->isMaximized;
+
+			switch(how)
+				{
+					case NET_WM_STATE_REMOVE:
+						*clientprop=false;
+						break;
+					case NET_WM_STATE_ADD:
+						*clientprop=true;
+						break;
+					case NET_WM_STATE_TOGGLE:
+						*clientprop=!*clientprop;
+						break;
+				}
 		}
 }
 

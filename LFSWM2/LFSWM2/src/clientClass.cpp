@@ -167,7 +167,11 @@ bool LFSWM2_clientClass::LFSWM2_handleControls(XEvent *e)
 
 				if(e->xbutton.window==this->maximizeButton)
 					{
-						retval=true;
+						retval=true;//TOFIX
+						#if 0
+						this->mainClass->mainWindowClass->LFSWM2_changeState(this->contentWindow,NET_WM_STATE_TOGGLE,this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ"));
+						this->mainClass->mainWindowClass->LFSWM2_changeState(this->contentWindow,NET_WM_STATE_TOGGLE,this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ"));
+						#else
 						if(this->isMaximized==true)
 							{
 								this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ"));
@@ -178,6 +182,7 @@ bool LFSWM2_clientClass::LFSWM2_handleControls(XEvent *e)
 								this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ"));
 								this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_VERT"));
 							}
+						#endif
 						this->LFSWM2_maxWindow();
 					}
 					

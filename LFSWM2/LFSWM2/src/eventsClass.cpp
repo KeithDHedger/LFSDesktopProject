@@ -578,28 +578,23 @@ void LFSWM2_eventsClass::LFSWM2_sendConfigureEvent(Window wid,rectStruct r)
 void LFSWM2_eventsClass::LFSWM2_restack(void)
 {
 	LFSWM2_clientClass	*ccs;
-	std::vector<Window> sl;
-	std::vector<Window> cl;
+	std::vector<Window>	sl;
+	std::vector<Window>	cl;
+	Atom					*v=NULL;
+	long unsigned int	nitems_return;
+
+	v=(Atom*)this->mainClass->mainWindowClass->LFSWM2_getProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,&nitems_return);
 	for(int j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
-//	for(int j=this->mainClass->mainWindowClass->windowIDList.size()-1;j>-1;j--)
 		{
 			ccs=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(j));
 			if(ccs!=NULL)
 				{
-				fprintf(stderr,"here? ondesk=%p cd=%p\n",ccs->onDesk,this->mainClass->currentDesktop);
-				
-					if(ccs->onDesk!=this->mainClass->currentDesktop)
-					{
-					fprintf(stderr,"show %p\n",ccs->frameWindow);
-						ccs->LFSWM2_hideWindow();
-					}
-					else
-						{
-							if(ccs->isMinimized==false)
-								ccs->LFSWM2_showWindow();
-						}
-
 					if(ccs->onTop==true)
+						{
+							sl.emplace(sl.begin(),ccs->frameWindow);
+							cl.emplace(cl.begin(),ccs->contentWindow);
+						}
+					else if((v!=NULL) && (ccs->contentWindow==v[0]))
 						{
 							sl.emplace(sl.begin(),ccs->frameWindow);
 							cl.emplace(cl.begin(),ccs->contentWindow);
@@ -629,9 +624,22 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)
 		}
 
 	XRestackWindows(this->mainClass->display,sl.data(),sl.size());
+
 	this->mainClass->mainWindowClass->windowIDList=cl;
 	this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CLIENT_LIST"),XA_WINDOW,32,cl.data(),cl.size());
 	this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CLIENT_LIST_STACKING"),XA_WINDOW,32,cl.data(),cl.size());
+
+	for(int j=this->mainClass->mainWindowClass->windowIDList.size()-1;j>-1;j--)
+		{
+			ccs=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(j));
+			if(ccs!=NULL)
+				{
+					if((ccs->onDesk==this->mainClass->currentDesktop) && (ccs->isMinimized==false))
+						XMapRaised(this->mainClass->display,ccs->frameWindow);
+					else
+						ccs->LFSWM2_hideWindow();
+				}
+		}
 }
 
 //void LFSWM2_eventsClass::LFSWM2_restack(void)

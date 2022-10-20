@@ -23,7 +23,7 @@ PREFIX="/usr"
 STAGING=
 LDCONFIG="/sbin/ldconfig"
 
-for arg in LFSToolKit LFSSetWallpaper LFSDesktop LFSWManager LFSPanel LFSApplications
+for arg in LFSToolKit LFSSetWallpaper LFSDesktop LFSWManager LFSPanel LFSApplications LFSWM2
 	do
 #		tar -xvf ${arg}-*.tar.gz
 		pushd ${arg}
