@@ -642,8 +642,8 @@ void LFSWM2_windowClass::LFSWM2_refreshFrame(LFSWM2_clientClass *cc,XExposeEvent
 {
 	rectStruct r=cc->frameWindowRect;
 
-	if(e==NULL)
-		return;
+	//if(e==NULL)
+	//	return;
 //fprintf(stderr,"x=%i y=%i w=%i h=%i\n",e->x,e->y,e->width,e->height);
 	if(e!=NULL)
 		{

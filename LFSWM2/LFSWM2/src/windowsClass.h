@@ -83,7 +83,7 @@ class LFSWM2_windowClass
 
 //graphics
 		struct fontColour				*LFSWM2_xftLoadColour(const char *name,const char *fallback);
-		void								LFSWM2_refreshFrame(LFSWM2_clientClass *cc,XExposeEvent *e);
+		void								LFSWM2_refreshFrame(LFSWM2_clientClass *cc,XExposeEvent *e=NULL);
 
 //vars
 		LFSWM2_Class							*mainClass;

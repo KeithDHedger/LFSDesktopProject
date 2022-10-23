@@ -379,11 +379,9 @@ void LFSWM2_Class::LFSWM2_setCurrentDesktop(unsigned long i)
 {
 	XSync(this->display,false);
 	if(this->currentDesktop!=i)
-	{
-fprintf(stderr,">>>>>>000000 desk=%i\n",i);
-	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_CURRENT_DESKTOP"),XA_CARDINAL,32,&i,1);
-	this->currentDesktop=i;
-	//this->mainEventClass->LFSWM2_restack();
+		{
+		this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_CURRENT_DESKTOP"),XA_CARDINAL,32,&i,1);
+		this->currentDesktop=i;
 	}
 }
 

@@ -96,10 +96,13 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 					case ButtonRelease:
 						start.subwindow=None;
 						cc=NULL;
+						this->skipnext=false;
 						break;
 						//fprintf(stderr,"ButtonRelease eventnumber %i\n",when++);
 						break;
 					case ButtonPress:
+						this->skipnext=false;
+
 						//fprintf(stderr,"ButtonPress eventnumber %i\n",when++);
 						start=e.xbutton;
 						cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xbutton.window);
@@ -327,17 +330,17 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						break;
 					case PropertyNotify:
 						{
-							fprintf(stderr,"PropertyNotify IN eventnumber %i atom name=%s\n",when++,XGetAtomName(this->mainClass->display,e.xproperty.atom));
+							//fprintf(stderr,"PropertyNotify IN eventnumber %i atom name=%s\n",when++,XGetAtomName(this->mainClass->display,e.xproperty.atom));
 							LFSWM2_clientClass	*cc;
 
 //	if (e.xproperty.atom==this->mainClass->atoms.at("_NET_CURRENT_DESKTOP") )
 
 {
-					fprintf(stderr,">>>>>>>>>>>>window=%p rootwin=%p\n",e.xproperty.window,this->mainClass->rootWindow);
-if(e.xproperty.window==this->mainClass->rootWindow)
-{
-fprintf(stderr,"send to root\n");
-}
+				//	fprintf(stderr,">>>>>>>>>>>>window=%p rootwin=%p\n",e.xproperty.window,this->mainClass->rootWindow);
+//if(e.xproperty.window==this->mainClass->rootWindow)
+//{
+//fprintf(stderr,"send to root\n");
+//}
 //			if(this->mainClass->currentDesktop!=e->data.l[0])
 //				{
 //			//	int h=e->data.l[0];
@@ -383,13 +386,14 @@ fprintf(stderr,"send to root\n");
 
 							if(e.xproperty.state==PropertyNewValue)
 								{
-								fprintf(stderr,">>>>>>WM_STATE window=%p sendevent=%i<<<<<\n",e.xproperty.window,e.xproperty.send_event);
+								
+								//fprintf(stderr,">>>>>>WM_STATE window=%p sendevent=%i<<<<<\n",e.xproperty.window,e.xproperty.send_event);
 								if(e.xproperty.atom=this->mainClass->atoms.at("WM_STATE"))
 								{
 								//this->skipnext=true;
 									LFSWM2_clientClass	*ccmessage;
 
-								this->mainClass->DEBUG_printAtom(e.xproperty.atom);
+								//this->mainClass->DEBUG_printAtom(e.xproperty.atom);
 								ccmessage=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(e.xproperty.window));
 								if(ccmessage!=NULL)
 									{
@@ -538,6 +542,7 @@ void LFSWM2_eventsClass::LFSWM2_doClientMsg(Window id,XClientMessageEvent *e)
 
 	if(e->message_type==this->mainClass->atoms.at("_NET_WM_DESKTOP") && e->format==32)
 		{
+			this->skipnext=false;
 			if(this->mainClass->currentDesktop==e->data.l[0])
 				this->skipnext=true;
 			ccmessage=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(e->window));
@@ -548,7 +553,10 @@ void LFSWM2_eventsClass::LFSWM2_doClientMsg(Window id,XClientMessageEvent *e)
 					if(ccmessage->onDesk!=this->mainClass->currentDesktop)
 						ccmessage->LFSWM2_hideWindow();
 					else
+					{
 						ccmessage->LFSWM2_showWindow();
+						this->mainClass->mainWindowClass->LFSWM2_refreshFrame(ccmessage);
+					}
 						
 					XSync(this->mainClass->display,true);
 				}
