@@ -65,6 +65,9 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 				}
 			XNextEvent(this->mainClass->display,&e);
 
+//if(e.xany.window=this->mainClass->rootWindow)
+//	fprintf(stderr,"in root\n");
+///fprintf(stderr,">>e.type==%p window=%p\n",e.type,e.xany.window);
 			cccontrol=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(e.xany.window));
 			if(cccontrol!=NULL)
 				{
@@ -105,13 +108,13 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 								XGetWindowAttributes(this->mainClass->display,cc->frameWindow, &attr);
 								if((e.xbutton.state&Mod4Mask)==Mod4Mask)
 									break;
-								//XRaiseWindow(this->mainClass->display,cc->frameWindow);
+								XRaiseWindow(this->mainClass->display,cc->frameWindow);
 								XSetInputFocus(this->mainClass->display,cc->contentWindow,RevertToParent,CurrentTime);
 								this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,&cc->contentWindow,1);
 								if(cc->onBottom==false)
 									this->LFSWM2_moveToTop(cc->contentWindow);
 								//cc->onBottom=false;
-								this->LFSWM2_restack();
+								//TODO//this->LFSWM2_restack();
 //this->LFSWM2_restack();
 						XAllowEvents(this->mainClass->display,ReplayPointer,e.xbutton.time);
 						XSync(this->mainClass->display,false);
@@ -203,7 +206,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						break;
 					case UnmapNotify:
 						{
-							fprintf(stderr,"UnmapNotify IN eventnumber %i\n",when++);
+							//fprintf(stderr,"UnmapNotify IN eventnumber %i\n",when++);
 							LFSWM2_clientClass	*cc;
 
 							cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xexpose.window);
@@ -211,7 +214,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 								{
 									XUnmapWindow(this->mainClass->display,cc->frameWindow);
 								}
-							fprintf(stderr,"UnmapNotify OUT eventnumber %i\n",when);
+							//fprintf(stderr,"UnmapNotify OUT eventnumber %i\n",when);
 						}
 						break;
 					case MapNotify:
@@ -274,13 +277,12 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 									cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
 									if(cc!=NULL)
 										{
-										fprintf(stderr,">>>>>>>>>>>>>>>>>\n");
 											this->mainClass->mainWindowClass->LFSWM2_changeState(cc->contentWindow,NET_WM_STATE_REMOVE,this->mainClass->atoms.at("_NET_WM_STATE_ABOVE"));
 											this->mainClass->mainWindowClass->LFSWM2_changeState(cc->contentWindow,NET_WM_STATE_TOGGLE,this->mainClass->atoms.at("_NET_WM_STATE_BELOW"));
 											cc->onBottom=!cc->onBottom;
 											if(cc->onBottom==true)
 												this->LFSWM2_moveToBottom(cc->contentWindow);
-											this->LFSWM2_restack();
+											//TODO//this->LFSWM2_restack();
 											//fprintf(stderr,"ConfigureRequest eventnumber %i detail=%i ccbelloe=%i\n",when++,e.xconfigurerequest.detail,cc->onBottom);
 											XSync(this->mainClass->display,false);
 										}
@@ -325,12 +327,93 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						break;
 					case PropertyNotify:
 						{
-						//	fprintf(stderr,"PropertyNotify IN eventnumber %i atom name=%s\n",when++,XGetAtomName(this->mainClass->display,e.xproperty.atom));
+							fprintf(stderr,"PropertyNotify IN eventnumber %i atom name=%s\n",when++,XGetAtomName(this->mainClass->display,e.xproperty.atom));
 							LFSWM2_clientClass	*cc;
+
+//	if (e.xproperty.atom==this->mainClass->atoms.at("_NET_CURRENT_DESKTOP") )
+
+{
+					fprintf(stderr,">>>>>>>>>>>>window=%p rootwin=%p\n",e.xproperty.window,this->mainClass->rootWindow);
+if(e.xproperty.window==this->mainClass->rootWindow)
+{
+fprintf(stderr,"send to root\n");
+}
+//			if(this->mainClass->currentDesktop!=e->data.l[0])
+//				{
+//			//	int h=e->data.l[0];
+//					//this->mainClass->LFSWM2_setCurrentDesktop(e->data.l[0]);
+//					//this->mainClass->currentDesktop=h;
+//					//if((e->data.l[0]==NOSRC) || (e->data.l[0]==PAGERSRC))
+//					//if(e->send_event==false)
+//					fprintf(stderr,"00000000000000000000\n");
+//			for(int j=0;j<5;j++)
+//				{
+//					fprintf(stderr,"data[%i]=%p\n",j,e->data.l[j]);
+//					this->mainClass->DEBUG_printAtom(e->data.l[j]);
+//				}
+//				fprintf(stderr,"message_type=%p\n",e->message_type);
+//				fprintf(stderr,"type=%p\n",e->type);
+//					//if(this->skipRestack==false)
+//					if((e->window==this->mainClass->rootWindow))
+//					{
+//					this->mainClass->LFSWM2_setCurrentDesktop(e->data.l[0]);
+//							this->LFSWM2_restack();
+//						}
+//					
+//					//this->skipRestack=false;
+//				}
+//			//if(this->skipRestack==false)
+//			//	this->LFSWM2_restack();
+//			//this->skipRestack=false;	
+//			//else
+//			//	this->LFSWM2_restack();
+//		//	this->mainClass->DEBUG_printAtom(e->message_type);//Atom 0x14d name=_NET_WM_STATE
+//		//	for(int j=0;j<5;j++)
+//		//		{
+//		//			fprintf(stderr,"data[%i]=%p\n",j,e->data.l[j]);
+//		//			this->mainClass->DEBUG_printAtom(e->data.l[j]);
+//		//		}
+
+		}
+
+
+
+
+
 
 							if(e.xproperty.state==PropertyNewValue)
 								{
+								fprintf(stderr,">>>>>>WM_STATE window=%p sendevent=%i<<<<<\n",e.xproperty.window,e.xproperty.send_event);
+								if(e.xproperty.atom=this->mainClass->atoms.at("WM_STATE"))
+								{
+								//this->skipnext=true;
+									LFSWM2_clientClass	*ccmessage;
 
+								this->mainClass->DEBUG_printAtom(e.xproperty.atom);
+								ccmessage=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(e.xproperty.window));
+								if(ccmessage!=NULL)
+									{
+									if(ccmessage->onDesk!=this->mainClass->currentDesktop)
+										this->mainClass->LFSWM2_setCurrentDesktop(ccmessage->onDesk);
+									XRaiseWindow(this->mainClass->display,ccmessage->frameWindow);
+									}
+									this->skipnext=false;
+								break;
+								}
+
+									if(e.xproperty.atom=this->mainClass->atoms.at("_NET_WM_DESKTOP"))
+										{
+										
+										break;
+											cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xproperty.window);
+											if(cc==NULL)
+												break;
+											fprintf(stderr,"desktop=%p\n",e.xproperty.atom);
+											this->mainClass->LFSWM2_setCurrentDesktop(cc->onDesk);
+											//this->mainClass->currentDesktop=cc->onDesk;
+											this->LFSWM2_restack();
+											break;
+										}
 									if(e.xproperty.atom=this->mainClass->atoms.at("_NET_WM_NAME"))
 										{	
 											cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xproperty.window);
@@ -357,8 +440,53 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						//fprintf(stderr,"ColormapNotify eventnumber %i\n",when++);
 						break;
 					case ClientMessage:
+					#if 0
 						//fprintf(stderr,"ClientMessage eventnumber %i\n",when++);
-						this->LFSWM2_doClientMsg(e.xclient.window,&e.xclient);
+						if(e.xclient.window==this->mainClass->rootWindow)
+							{
+							XClientMessageEvent *ee=&e.xclient;
+								if (ee->message_type==this->mainClass->atoms.at("_NET_CURRENT_DESKTOP") && ee->format==32)
+		{
+//		if(e->window==this->mainClass->rootWindow)
+//		{
+//			for(int j=0;j<5;j++)
+//				{
+//					fprintf(stderr,"data[%i]=%p\n",j,e->data.l[j]);
+//					this->mainClass->DEBUG_printAtom(e->data.l[j]);
+//				}
+//				fprintf(stderr,"message_type=%p\n",e->message_type);
+//				fprintf(stderr,"type=%p\n",e->type);
+//				fprintf(stderr,"serial=%p\n",e->serial);
+//				fprintf(stderr,"send_event=%p\n",e->send_event);
+//				fprintf(stderr,"window=%p\n",e->window);
+//				if(this->mainClass->currentDesktop==e->data.l[0])
+//					{
+//					//skipnext=true;
+//					return;
+//					}
+//			}
+//			if(skipnext==true)
+//				{
+//					skipnext=false;
+//					return;
+//				}
+
+			if(this->mainClass->currentDesktop!=ee->data.l[0])
+				{
+					if((ee->window==this->mainClass->rootWindow))
+						{
+							//fprintf(stderr,"e->data.l[0]=%p currentDesktop=%p oldd=%p\n",e->data.l[0],this->mainClass->currentDesktop,oldd);
+							if(ee->data.l[0]!=this->mainClass->currentDesktop)
+								this->mainClass->LFSWM2_setCurrentDesktop(ee->data.l[0]);
+							this->LFSWM2_restack();
+						}
+				}
+		}
+							}
+						else
+						#endif
+						
+							this->LFSWM2_doClientMsg(e.xclient.window,&e.xclient);
 						break;
 					case MappingNotify:
 						fprintf(stderr,"MappingNotify eventnumber %i\n",when++);
@@ -374,26 +502,28 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 void LFSWM2_eventsClass::LFSWM2_doClientMsg(Window id,XClientMessageEvent *e)
 {
 	LFSWM2_clientClass	*ccmessage;
-	this->mainClass->DEBUG_printAtom(e->message_type);
-//	for(int j=0;j<5;j++)
-//		{
-//			fprintf(stderr,"data[%i]=%p\n",j,e->data.l[j]);
-//			this->mainClass->DEBUG_printAtom(e->data.l[j]);
-//		}
 
 	if(e->message_type==this->mainClass->atoms.at("_NET_ACTIVE_WINDOW") && e->format==32)
 		{
+		//	fprintf(stderr,"this->mainClass->atoms.at(_NET_ACTIVE_WINDOW) && e->format==32)\n");
 			ccmessage=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(e->window));
 			if(ccmessage!=NULL)
-				{
+				{	
+					if(this->mainClass->currentDesktop!=ccmessage->onDesk)
+						{
+							this->mainClass->LFSWM2_setCurrentDesktop(ccmessage->onDesk);
+							this->LFSWM2_moveToTop(ccmessage->contentWindow);
+							XRaiseWindow(this->mainClass->display,ccmessage->frameWindow);
+							XRaiseWindow(this->mainClass->display,ccmessage->contentWindow);
+							this->LFSWM2_restack();
+						}
+
 					XMapWindow(this->mainClass->display,ccmessage->frameWindow);
 					if((e->data.l[0]==NOSRC) || (e->data.l[0]==PAGERSRC))
 						XRaiseWindow(this->mainClass->display,ccmessage->frameWindow);
 					this->mainClass->mainWindowClass->LFSWM2_setWindowState(id,NormalState);
 					this->mainClass->mainWindowClass->LFSWM2_changeState(ccmessage->contentWindow,NET_WM_STATE_REMOVE,this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN"));
 					this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,(void*)&ccmessage->contentWindow,1);
-					this->LFSWM2_restack();
-					XSync(this->mainClass->display,false);
 				}
 			return;
 		}
@@ -408,14 +538,26 @@ void LFSWM2_eventsClass::LFSWM2_doClientMsg(Window id,XClientMessageEvent *e)
 
 	if(e->message_type==this->mainClass->atoms.at("_NET_WM_DESKTOP") && e->format==32)
 		{
-			fprintf(stderr,"e->message_type==NET_WM_DESKTOP && e->format==32\n");
-//			csetappdesk(c,e->data.l[0] & 0xffffffff);
+			if(this->mainClass->currentDesktop==e->data.l[0])
+				this->skipnext=true;
+			ccmessage=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(e->window));
+			if(ccmessage!=NULL)
+				{
+					ccmessage->onDesk=e->data.l[0];
+					this->mainClass->mainWindowClass->LFSWM2_setProp(ccmessage->contentWindow,this->mainClass->atoms.at("_NET_WM_DESKTOP"),XA_CARDINAL,32,(void*)&ccmessage->onDesk,1);
+					if(ccmessage->onDesk!=this->mainClass->currentDesktop)
+						ccmessage->LFSWM2_hideWindow();
+					else
+						ccmessage->LFSWM2_showWindow();
+						
+					XSync(this->mainClass->display,true);
+				}
 			return;
 		}
 
 	if ((e->message_type==this->mainClass->atoms.at("WM_CHANGE_STATE")) && (e->format==32))
 		{
-			fprintf(stderr,"e->message_type==WM_CHANGE_STATE) && (e->format==32)\n");
+			fprintf(stderr,"e->message_type==WM_CHANGE_STATE) && (e->format==32) e->data.l[0]==%p\n",e->data.l[0]);
 			if(e->data.l[0]==IconicState)
 				{
 					ccmessage=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(e->window));
@@ -424,6 +566,32 @@ void LFSWM2_eventsClass::LFSWM2_doClientMsg(Window id,XClientMessageEvent *e)
 					return;
 				}
 		}
+
+
+//	if (e->message_type==this->mainClass->atoms.at("_WM_STATE") && e->format==32)
+//		{
+///*
+//Atom 0x14d name=_NET_WM_STATE
+//data[0]=0x1
+//Atom 0x1 name=PRIMARY
+//data[1]=0x14e
+//Atom 0x14e name=_NET_WM_STATE_ABOVE
+//data[2]=(nil)
+//Atom (nil) name=(null)
+//data[3]=0x2
+//Atom 0x2 name=SECONDARY
+//data[4]=(nil)
+//Atom (nil) name=(null)
+//
+//*/
+////	this->mainClass->DEBUG_printAtom(e->message_type);//Atom 0x14d name=_NET_WM_STATE
+////	for(int j=0;j<5;j++)
+////		{
+////			fprintf(stderr,"data[%i]=%p\n",j,e->data.l[j]);
+////			this->mainClass->DEBUG_printAtom(e->data.l[j]);
+////		}
+//}
+
 
 	if (e->message_type==this->mainClass->atoms.at("_NET_WM_STATE") && e->format==32)
 		{
@@ -471,44 +639,13 @@ Atom (nil) name=(null)
 							this->mainClass->mainWindowClass->LFSWM2_changeState(ccmessage->contentWindow,NET_WM_STATE_REMOVE,this->mainClass->atoms.at("_NET_WM_STATE_BELOW"));
 
 							this->LFSWM2_moveToTop(ccmessage->contentWindow);
-							this->LFSWM2_restack();
+							//TODO//this->LFSWM2_restack();
 						}
 					return;
 				}
-/*
-				fprintf(stderr,"lower\n");
-					this->mainClass->mainWindowClass->LFSWM2_changeState(id,e->data.l[0],e->data.l[1]);
-					ccmessage=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(id));
-					if(ccmessage!=NULL)
-						{
-							this->mainClass->mainWindowClass->LFSWM2_changeState(ccmessage->contentWindow,NET_WM_STATE_REMOVE,this->mainClass->atoms.at("_NET_WM_STATE_ABOVE"));
-							this->mainClass->mainWindowClass->LFSWM2_changeState(ccmessage->contentWindow,NET_WM_STATE_TOGGLE,this->mainClass->atoms.at("_NET_WM_STATE_BELOW"));
-							ccmessage->onBottom=!ccmessage->onBottom;
-							if(ccmessage->onBottom==true)
-								{
-									this->LFSWM2_moveToBottom(ccmessage->contentWindow);
-									XLowerWindow(this->mainClass->display,ccmessage->frameWindow);
-								}
-							this->LFSWM2_restack();
-							fprintf(stderr,"_NET_WM_STATE_BELOW  ccbelloe=%i\n",ccmessage->onBottom);
-							XSync(this->mainClass->display,false);
 
-//							if(e->data.l[0]==NET_WM_STATE_REMOVE)
-//								{
-//									ccmessage->onBottom=false;
-//									return;
-//								}
-//							//XMapWindow(this->mainClass->display,ccmessage->frameWindow);
-//							if(ccmessage->onBottom==true)
-//								XLowerWindow(this->mainClass->display,ccmessage->frameWindow);
-//							ccmessage->onBottom=true;
-//							this->LFSWM2_moveToBottom(ccmessage->contentWindow);
-//							this->LFSWM2_restack();
-						}
-*/
 			else if(e->data.l[1]==this->mainClass->atoms.at("_NET_WM_STATE_BELOW"))
 				{
-				fprintf(stderr,"lower\n");
 					this->mainClass->mainWindowClass->LFSWM2_changeState(id,e->data.l[0],e->data.l[1]);
 					ccmessage=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(id));
 					if(ccmessage!=NULL)
@@ -518,11 +655,10 @@ Atom (nil) name=(null)
 									ccmessage->onBottom=false;
 									return;
 								}
-							//XMapWindow(this->mainClass->display,ccmessage->frameWindow);
 							XLowerWindow(this->mainClass->display,ccmessage->frameWindow);
 							ccmessage->onBottom=true;
 							this->LFSWM2_moveToBottom(ccmessage->contentWindow);
-							this->LFSWM2_restack();
+							//TODO//this->LFSWM2_restack();
 						}
 					return;
 				}
@@ -539,18 +675,40 @@ Atom (nil) name=(null)
 
 	if (e->message_type==this->mainClass->atoms.at("_NET_CURRENT_DESKTOP") && e->format==32)
 		{
+//		if(e->window==this->mainClass->rootWindow)
+//		{
+//			for(int j=0;j<5;j++)
+//				{
+//					fprintf(stderr,"data[%i]=%p\n",j,e->data.l[j]);
+//					this->mainClass->DEBUG_printAtom(e->data.l[j]);
+//				}
+//				fprintf(stderr,"message_type=%p\n",e->message_type);
+//				fprintf(stderr,"type=%p\n",e->type);
+//				fprintf(stderr,"serial=%p\n",e->serial);
+//				fprintf(stderr,"send_event=%p\n",e->send_event);
+//				fprintf(stderr,"window=%p\n",e->window);
+//				if(this->mainClass->currentDesktop==e->data.l[0])
+//					{
+//					//skipnext=true;
+//					return;
+//					}
+//			}
+			if(skipnext==true)
+				{
+					skipnext=false;
+					return;
+				}
+
 			if(this->mainClass->currentDesktop!=e->data.l[0])
 				{
-					this->mainClass->LFSWM2_setCurrentDesktop(e->data.l[0]);
-					this->LFSWM2_restack();
+					if((e->window==this->mainClass->rootWindow))
+						{
+							//fprintf(stderr,"e->data.l[0]=%p currentDesktop=%p oldd=%p\n",e->data.l[0],this->mainClass->currentDesktop,oldd);
+							if(e->data.l[0]!=this->mainClass->currentDesktop)
+								this->mainClass->LFSWM2_setCurrentDesktop(e->data.l[0]);
+							this->LFSWM2_restack();
+						}
 				}
-		//	this->mainClass->DEBUG_printAtom(e->message_type);//Atom 0x14d name=_NET_WM_STATE
-		//	for(int j=0;j<5;j++)
-		//		{
-		//			fprintf(stderr,"data[%i]=%p\n",j,e->data.l[j]);
-		//			this->mainClass->DEBUG_printAtom(e->data.l[j]);
-		//		}
-
 		}
 
 	this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(id);
@@ -596,6 +754,7 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)
 						}
 					else if((v!=NULL) && (ccs->contentWindow==v[0]))
 						{
+							this->LFSWM2_moveToTop(ccs->contentWindow);
 							sl.emplace(sl.begin(),ccs->frameWindow);
 							cl.emplace(cl.begin(),ccs->contentWindow);
 						}
