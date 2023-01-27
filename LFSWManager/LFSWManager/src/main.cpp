@@ -542,13 +542,7 @@ int main(int argc,char *argv[])
 
 	prefsfile=lfstkLib->LFSTK_oneLiner("sed -n '2p' \"%s/.config/LFS/lfsappearance.rc\"",getenv("HOME"));
 	key=atoi(prefsfile);
-	
-	if((queueID=msgget(key,IPC_CREAT|0660))==-1)
-		fprintf(stderr,"Can't create message queue\n");
 
-	printf("key=%s key=%i\n",prefsfile,atoi(prefsfile));
-	free(prefsfile);
-	
 	ndesk=numberOfDesktops;
 
 	XSetErrorHandler(errhandler);
@@ -608,7 +602,7 @@ int main(int argc,char *argv[])
 			useTheme=false;
 		}
 
-	while ((opt=getopt(argc,argv,"?hNp:B:b:F:f:X:n:t:l:T:w:x:")) != -1)
+	while ((opt=getopt(argc,argv,"?hNp:B:b:F:f:X:n:t:l:T:w:x:k:")) != -1)
 		switch (opt)
 			{
 			case 'N':
@@ -673,7 +667,9 @@ int main(int argc,char *argv[])
 					free(terminalCommand);
 				terminalCommand=strdup(optarg);
 				break;
-
+			case 'k':
+				key=atoi(optarg);
+				break;
 			default:
 				usage(stderr);
 				exit(1);
@@ -688,6 +684,12 @@ int main(int argc,char *argv[])
 			usage(stderr);
 			exit(1);
 		}
+
+	if((queueID=msgget(key,IPC_CREAT|0660))==-1)
+		fprintf(stderr,"Can't create message queue\n");
+
+	printf("prefs key=%s real key=%i\n",prefsfile,key);
+	free(prefsfile);
 
 #ifdef _ENABLEDEBUG_
 	xLibWarnings=true;
@@ -757,6 +759,7 @@ int main(int argc,char *argv[])
 
 			if((needsRefresh==true) && (whatMsg==REFRESHTHEME))
 				{
+				fprintf(stderr,">>>>\n");
 					loadWMTheme();
 					needsRefresh=false;
 				}
