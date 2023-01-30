@@ -85,7 +85,7 @@ DEFINE_BITMAP(shadeeven);
 DEFINE_BITMAP(shadeodd);
 
 //#define MAX_MSG_SIZE 256//TODO//
-enum {REFRESHTHEME};
+enum {REFRESHTHEME,QUITLFSWM,RESTARTLFSWM,NOMSG};
 
 //struct msgBuffer
 //{
@@ -759,11 +759,15 @@ int main(int argc,char *argv[])
 
 			if((needsRefresh==true) && (whatMsg==REFRESHTHEME))
 				{
-				fprintf(stderr,">>>>\n");
 					loadWMTheme();
 					needsRefresh=false;
+					whatMsg=NOMSG;
 				}
-
+			if(whatMsg==QUITLFSWM)
+				{
+					whatMsg=NOMSG;
+					break;
+				}
 			if (redirect(&e,e.xany.window)==-1)
 				{
 					/*
