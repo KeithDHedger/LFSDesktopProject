@@ -83,7 +83,7 @@ bool draggerevent(void *self,XEvent *e,int type)
 
 struct dragger *dcreate(Window parent,int x,int y,int width,int height,int gravity,Cursor cursor,void (*dragnotify)(void *,int,int,unsigned long,Time),void *arg)
 {
-		XSetWindowAttributes sa;
+	XSetWindowAttributes sa;
 
 	sa.win_gravity=gravity;
 	sa.cursor=cursor;

@@ -203,6 +203,46 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 
 			this->LFSWM2_setClientList(id,true);
 
+//top left dragger
+			wa.win_gravity=NorthWestGravity;
+			wa.cursor=this->mainClass->topLeftCursor;
+
+			cc->topLeftDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,0,0,32,32,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
+			XSelectInput(this->mainClass->display,cc->topLeftDragger,ButtonPressMask|EnterWindowMask|LeaveWindowMask);
+			XMapWindow(this->mainClass->display,cc->topLeftDragger);
+//top righht dragger
+			wa.win_gravity=NorthEastGravity;
+			wa.cursor=this->mainClass->topRightCursor;
+
+			cc->topRightDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.width-32,0,32,32,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
+			XSelectInput(this->mainClass->display,cc->topRightDragger,ButtonPressMask|EnterWindowMask|LeaveWindowMask);
+			XMapWindow(this->mainClass->display,cc->topRightDragger);
+
+//bottom dragger
+			wa.win_gravity=SouthWestGravity;
+			wa.cursor=this->mainClass->bottomCursor;
+
+			cc->bottomDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,0,cc->frameWindowRect.height-32,cc->frameWindowRect.width,32,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
+			XSelectInput(this->mainClass->display,cc->bottomDragger,ButtonPressMask|EnterWindowMask|LeaveWindowMask);
+			XMapWindow(this->mainClass->display,cc->bottomDragger);
+
+
+//bottom left dragger
+			wa.win_gravity=SouthWestGravity;
+			wa.cursor=this->mainClass->bottomLeftCursor;
+
+			cc->bottomLeftDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,0,cc->frameWindowRect.height-32,32,32,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
+			XSelectInput(this->mainClass->display,cc->bottomLeftDragger,ButtonPressMask|EnterWindowMask|LeaveWindowMask);
+			XMapWindow(this->mainClass->display,cc->bottomLeftDragger);
+
+//bottom rite dragger
+			wa.win_gravity=SouthEastGravity;
+			wa.cursor=this->mainClass->bottomRightCursor;
+
+			cc->bottomRightDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.width-32,cc->frameWindowRect.height-32,32,32,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
+			XSelectInput(this->mainClass->display,cc->bottomRightDragger,ButtonPressMask|EnterWindowMask|LeaveWindowMask);
+			XMapWindow(this->mainClass->display,cc->bottomRightDragger);
+
 //controls
 			wa.win_gravity=NorthEastGravity;
 			wa.save_under=true;
@@ -265,6 +305,9 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			this->mainClass->mainEventClass->LFSWM2_restack();
 			if(cc->windowType==NORMALWINDOW)
 				XAddToSaveSet(this->mainClass->display,id);
+
+
+
 		}
 	XSync(this->mainClass->display,false);
 //	XUngrabServer(this->mainClass->display);

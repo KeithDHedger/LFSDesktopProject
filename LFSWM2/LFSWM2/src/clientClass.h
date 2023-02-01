@@ -62,6 +62,14 @@ class LFSWM2_clientClass
 		Window			minimizeButton;
 		Window			shadeButton;
 
+		Window			topLeftDragger;
+		Window			topRightDragger;;
+		Window			bottomLeftDragger;
+		Window			bottomRightDragger;
+		Window			leftSideDragger;
+		Window			rightSideDragger;
+		Window			bottomDragger;
+
 		void				LFSWM2_showWindow(void);
 		void				LFSWM2_hideWindow(void);
 		void				LFSWM2_minWindow(void);
@@ -70,6 +78,7 @@ class LFSWM2_clientClass
 		void				drawMouseLeave(Window id,Pixmap pm,struct controlData data);
 	private:
 		void				drawMouseEnter(Window id,controlData data,Pixmap pm);
+		bool				doTLDrag(XEvent *e);
 };
 
 #endif

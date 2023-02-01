@@ -68,10 +68,12 @@ typedef unsigned long Desk;
 class LFSWM2_windowClass;
 class LFSWM2_eventsClass;
 class LFSWM2_clientClass;
+class LFSWM2_messageClass;
 
 #include "eventsClass.h"
 #include "windowsClass.h"
 #include "clientClass.h"
+#include "messageClass.h"
 
 #define BORDER_WIDTH 0
 #define CONTROL_GAP 24
@@ -109,8 +111,18 @@ static unsigned char maximizeWindowBits[]=
 #define NET_WM_STATE_ADD 1
 #define NET_WM_STATE_TOGGLE 2
 
+#define MAX_MSG_SIZE 4096
+
 //source (data[0]) client messgae:0=no source  1=application 2=pager
 enum MESSAGESOURCE {NOSRC=0,APPLICATIONSRC,PAGERSRC};
+enum MESSAGETYPE {REFRESHTHEME,QUITLFSWM,RESTARTLFSWM,NOMSG};
+enum MESSAGEFORWHO {DESKTOP_MSG=1000,WMANAGER_MSG};
+
+struct msgBuffer
+{
+	long		mType;
+	char		mText[MAX_MSG_SIZE];
+};
 
 struct controlData
 {
@@ -118,6 +130,8 @@ struct controlData
 	rectStruct	pixmapBox;
 	int			startX;
 };
+
+static LFSWM2_Class	*theMainClass=NULL;
 
 class LFSWM2_Class
 {
@@ -174,8 +188,18 @@ class LFSWM2_Class
 		Pixmap				minimizeBitMap;
 		Pixmap				shadeBitMap;
 
+		Cursor				topLeftCursor;
+		Cursor				topRightCursor;
+		Cursor				rightCursor;
+		Cursor				bottomRightCursor;
+		Cursor				bottomCursor;
+		Cursor				bottomLeftCursor;
+		Cursor				leftCursor;
+		Cursor				rootCursor;
+
 		LFSWM2_eventsClass	*mainEventClass;
 		LFSWM2_windowClass	*mainWindowClass;
+		LFSWM2_messageClass	*messages;
 
 #ifdef __DEBUG__
 		void					DEBUG_printAtom(Atom a);

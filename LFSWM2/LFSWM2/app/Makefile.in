@@ -104,7 +104,8 @@ PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
 am__objects_1 = ../src/clientClass.$(OBJEXT) \
 	../src/eventsClass.$(OBJEXT) ../src/lfswm2Class.$(OBJEXT) \
-	../src/main.$(OBJEXT) ../src/windowsClass.$(OBJEXT)
+	../src/main.$(OBJEXT) ../src/messageClass.$(OBJEXT) \
+	../src/windowsClass.$(OBJEXT)
 am_lfswm2_OBJECTS = $(am__objects_1)
 lfswm2_OBJECTS = $(am_lfswm2_OBJECTS)
 lfswm2_LDADD = $(LDADD)
@@ -154,6 +155,7 @@ am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ../src/$(DEPDIR)/clientClass.Po \
 	../src/$(DEPDIR)/eventsClass.Po \
 	../src/$(DEPDIR)/lfswm2Class.Po ../src/$(DEPDIR)/main.Po \
+	../src/$(DEPDIR)/messageClass.Po \
 	../src/$(DEPDIR)/windowsClass.Po
 am__mv = mv -f
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
@@ -310,7 +312,7 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 			-DLIBDIR=\""${libdir}/${PACKAGE}"\" \
 			-DLFSTKPIXMAPSDIR=\""${pkgdatadir}/Pixmaps"\"
 
-COMMONSRC = ../src/clientClass.cpp ../src/eventsClass.cpp ../src/lfswm2Class.cpp ../src/main.cpp ../src/windowsClass.cpp
+COMMONSRC = ../src/clientClass.cpp ../src/eventsClass.cpp ../src/lfswm2Class.cpp ../src/main.cpp ../src/messageClass.cpp ../src/windowsClass.cpp
 lfswm2_SOURCES = $(COMMONSRC)
 lfswm2_CFLAGS = -O3
 scriptfilesdir = $(pkgdatadir)/scripts
@@ -406,6 +408,8 @@ clean-binPROGRAMS:
 	../src/$(DEPDIR)/$(am__dirstamp)
 ../src/main.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
+../src/messageClass.$(OBJEXT): ../src/$(am__dirstamp) \
+	../src/$(DEPDIR)/$(am__dirstamp)
 ../src/windowsClass.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
 
@@ -459,6 +463,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/eventsClass.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfswm2Class.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/main.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/messageClass.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/windowsClass.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
@@ -657,6 +662,7 @@ distclean: distclean-am
 	-rm -f ../src/$(DEPDIR)/eventsClass.Po
 	-rm -f ../src/$(DEPDIR)/lfswm2Class.Po
 	-rm -f ../src/$(DEPDIR)/main.Po
+	-rm -f ../src/$(DEPDIR)/messageClass.Po
 	-rm -f ../src/$(DEPDIR)/windowsClass.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
@@ -707,6 +713,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ../src/$(DEPDIR)/eventsClass.Po
 	-rm -f ../src/$(DEPDIR)/lfswm2Class.Po
 	-rm -f ../src/$(DEPDIR)/main.Po
+	-rm -f ../src/$(DEPDIR)/messageClass.Po
 	-rm -f ../src/$(DEPDIR)/windowsClass.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic

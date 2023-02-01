@@ -468,6 +468,11 @@ bool readMsg(void)
 					whatMsg=REFRESHTHEME;
 					return(true);
 				}
+			if(strcmp(buffer.mText,"quit")==0)
+				{
+					whatMsg=QUITLFSWM;
+					return(true);
+				}
 		}
 	return(false);
 }
@@ -765,6 +770,7 @@ int main(int argc,char *argv[])
 				}
 			if(whatMsg==QUITLFSWM)
 				{
+					fprintf(stderr,"quitting ...\n");
 					whatMsg=NOMSG;
 					break;
 				}
@@ -815,12 +821,15 @@ int main(int argc,char *argv[])
 	ftfreecolor(fhighlight);
 	ftfree(font);
 
+	XSync(dpy,false);
 	XFreeGC(dpy,activeGC);
 	XCloseDisplay(dpy);
 
 	free(terminalCommand);
 	for(int j=0;j<TEXTCOLOUR+1;j++)
 		free(fontColours[j]);
+
+	fprintf(stderr,"out of here ...\n");
 
 	return exitstatus;
 }

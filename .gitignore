@@ -17,6 +17,7 @@ Doxyfile
 config.h
 libtool
 *.BAK
+*.bak
 *.libs/
 HOLD/
 LFSToolKit/examples/*example

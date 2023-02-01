@@ -108,12 +108,32 @@ void LFSWM2_clientClass::LFSWM2_sendCloseWindow(void)
 	this->mainClass->mainWindowClass->LFSWM2_destroyClient(this->frameWindow);
 }
 
+bool LFSWM2_clientClass::doTLDrag(XEvent *e)
+{
+	if(e->xany.window==this->topLeftDragger)
+		{
+			fprintf(stderr,"in LFSWM2_clientClass::doTLDrag(XEvent *e)\n");
+		}
+	return(true);
+}
+
 bool LFSWM2_clientClass::LFSWM2_handleControls(XEvent *e)
 {
 	bool					retval=false;
 	XClientMessageEvent	em;
 	Pixmap				pm;
 	struct controlData	data;
+
+	//		if(e->xany.window==this->topLeftDragger)
+//				{
+//					fprintf(stderr,"in tldragger\n");
+//				}
+
+	if(e->xany.window==this->topLeftDragger)
+		{
+			this->doTLDrag(e);
+			return(true);
+		}
 
 	if((e->xany.window!=this->closeButton) && (e->xany.window!=this->maximizeButton) && (e->xany.window!=this->minimizeButton) && (e->xany.window!=this->shadeButton))
 		return(retval);
@@ -141,10 +161,19 @@ bool LFSWM2_clientClass::LFSWM2_handleControls(XEvent *e)
 	switch(e->type)
 		{
 			case EnterNotify:
+//			if(e->xany.window==this->topLeftDragger)
+//				{
+//					fprintf(stderr,"in tldragger\n");
+//				}
+//
 				//fprintf(stderr,"EnterNotify\n");
 				this->drawMouseEnter(e->xany.window,data,pm);
 				break;
 			case LeaveNotify:
+//			if(e->xany.window==this->topLeftDragger)
+//				{
+//					fprintf(stderr,"out tldragger\n");
+//				}
 				//fprintf(stderr,"LeaveNotify IN\n");
 				this->drawMouseLeave(e->xany.window,pm,data);
 				//fprintf(stderr,"LeaveNotify OUT\n");

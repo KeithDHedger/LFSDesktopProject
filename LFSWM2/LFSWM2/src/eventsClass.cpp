@@ -47,7 +47,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 	XSync(this->mainClass->display,false);
 	while(XPending(this->mainClass->display)!=0)
 		{
-		XSync(this->mainClass->display,false);
+			XSync(this->mainClass->display,false);
 		}
 
 */
@@ -63,7 +63,13 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 							firstrun=false;
 						}
 				}
+
+			if(this->mainClass->messages->whatMsg==QUITLFSWM)
+				break;
+
 			XNextEvent(this->mainClass->display,&e);
+
+//this->mainClass->messages->LFSWM2_readMsg(this->mainClass->messages);
 
 //if(e.xany.window=this->mainClass->rootWindow)
 //	fprintf(stderr,"in root\n");

@@ -92,7 +92,8 @@ LFSWM2_Class::LFSWM2_Class(void)
 	this->LFSWM2_initRootWindow();
 	XSetErrorHandler(&LFSWM2_Class::LFSWM2_xError);
 
-	this->frameBG=this->mainWindowClass->LFSWM2_xftLoadColour("#5E3300","#808080");
+//	this->frameBG=this->mainWindowClass->LFSWM2_xftLoadColour("#5E3300","#808080");
+	this->frameBG=this->mainWindowClass->LFSWM2_xftLoadColour("#4194FE","#808080");
 	this->frameFG=this->mainWindowClass->LFSWM2_xftLoadColour("#948069","#808080");
 	this->frameText=this->mainWindowClass->LFSWM2_xftLoadColour("rgb:ff/ff/ff","#808080");
 	this->frameFont=XftFontOpenName(this->display,this->screen,"sans-serif:size=14:bold");
@@ -102,16 +103,28 @@ LFSWM2_Class::LFSWM2_Class(void)
 	this->minimizeBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)minimizeWindowBits,minimizeWindowSize,minimizeWindowSize);
 	this->shadeBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)shadeWindowBits,shadeWindowSize,shadeWindowSize);
 
-	Cursor curs=XCreateFontCursor(this->display,XC_left_ptr);
-	XDefineCursor(this->display,this->rootWindow,curs);
+	//Cursor curs=XCreateFontCursor(this->display,XC_left_ptr);
+	//XDefineCursor(this->display,this->rootWindow,curs);
 
 	this->LFSWM2_setDeskCount(this->numberOfDesktops);
 	this->LFSWM2_setCurrentDesktop(this->currentDesktop);
 	
+
+	this->topLeftCursor=XCreateFontCursor(this->display,XC_top_left_corner);
+	this->topRightCursor=XCreateFontCursor(this->display,XC_top_right_corner);
+	this->rightCursor=XCreateFontCursor(this->display,XC_right_side);
+	this->bottomRightCursor=XCreateFontCursor(this->display,XC_bottom_right_corner);
+	this->bottomCursor=XCreateFontCursor(this->display,XC_bottom_side);
+	this->bottomLeftCursor=XCreateFontCursor(this->display,XC_bottom_left_corner);
+	this->leftCursor=XCreateFontCursor(this->display,XC_left_side);
+	this->rootCursor=XCreateFontCursor(this->display,XC_left_ptr);
+
 	this->mainWindowClass->init();
 
-//				this->mainEventClass->LFSWM2_restack();
+	XDefineCursor(this->display,this->rootWindow,this->rootCursor);
 
+//				this->mainEventClass->LFSWM2_restack();
+	this->messages=new LFSWM2_messageClass(this);
 }
 
 void LFSWM2_Class::LFSWM2_pushXErrorHandler(void)
@@ -392,3 +405,10 @@ void LFSWM2_Class::DEBUG_printAtom(Atom a)
 }
 #endif
 
+//void LFSWM2_Class::LFSWM2_alarm(void)
+//{
+////	QTimer	*timer=new QTimer(this);
+////	this->mess
+////	connect(timer,&QTimer::timeout,this,QOverload<>::of(&AnalogClock::update));
+////	timer->start(1000);
+//}

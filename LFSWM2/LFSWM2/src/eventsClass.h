@@ -25,6 +25,7 @@
 
 class LFSWM2_Class;
 #include "lfswm2Class.h"
+#include "messageClass.h"
 
 class LFSWM2_eventsClass
 {

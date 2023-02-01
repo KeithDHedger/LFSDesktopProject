@@ -51,39 +51,39 @@ struct fontColour
 class LFSWM2_windowClass
 {
 	public:
-		LFSWM2_windowClass(LFSWM2_Class *mainclass);
+		LFSWM2_windowClass(LFSWM2_Class		*mainclass);
 		~LFSWM2_windowClass(void);
-		void								init(void);
+		void									init(void);
 
 //properties
-		void								*LFSWM2_getProp(Window w,Atom prop,Atom type,long unsigned int *nitems_return);
-		void								LFSWM2_setProp(Window w,Atom prop,Atom type,int fmt,void *ptr,int nelem);
-		void								*LFSWM2_getFullProp(Window w,Atom prop,Atom type,int fmt,unsigned long *rcountp);
-		void								LFSWM2_removeProp(Window w,Atom state);
-		char								*LFSWM2_decodeTextProp(XTextProperty *p);
+		void									*LFSWM2_getProp(Window w,Atom prop,Atom type,long unsigned int *nitems_return);
+		void									LFSWM2_setProp(Window w,Atom prop,Atom type,int fmt,void *ptr,int nelem);
+		void									*LFSWM2_getFullProp(Window w,Atom prop,Atom type,int fmt,unsigned long *rcountp);
+		void									LFSWM2_removeProp(Window w,Atom state);
+		char									*LFSWM2_decodeTextProp(XTextProperty *p);
 
 //windows
-		int								LFSWM2_getWindowType(Window id);
-		void								LFSWM2_addState(Window w,Atom state);
-		void								LFSWM2_setWindowState(Window w,long state);
-		void								LFSWM2_changeState(Window id,int how,Atom state);
-		bool								LFSWM2_hasState(Window w,Atom state);
+		int									LFSWM2_getWindowType(Window id);
+		void									LFSWM2_addState(Window w,Atom state);
+		void									LFSWM2_setWindowState(Window w,long state);
+		void									LFSWM2_changeState(Window id,int how,Atom state);
+		bool									LFSWM2_hasState(Window w,Atom state);
 
-		rectStruct						LFSWM2_getWindowRect(Window id,Window parent,bool dotranslate=true);
-		Window							LFSWM2_getParentWindow(Window id);
-		void								LFSWM2_reloadWindowState(Window id);
+		rectStruct							LFSWM2_getWindowRect(Window id,Window parent,bool dotranslate=true);
+		Window								LFSWM2_getParentWindow(Window id);
+		void									LFSWM2_reloadWindowState(Window id);
 
 //clients
-		void								LFSWM2_buildClientList(void);
-		void								LFSWM2_createClient(Window id);
-		void								LFSWM2_destroyClient(Window id);
-		LFSWM2_clientClass				*LFSWM2_getClientClass(Window id);
-		void								LFSWM2_deleteClientEntry(Window id);
-		void								LFSWM2_setClientList(Window id,bool addwindow);
+		void									LFSWM2_buildClientList(void);
+		void									LFSWM2_createClient(Window id);
+		void									LFSWM2_destroyClient(Window id);
+		LFSWM2_clientClass					*LFSWM2_getClientClass(Window id);
+		void									LFSWM2_deleteClientEntry(Window id);
+		void									LFSWM2_setClientList(Window id,bool addwindow);
 
 //graphics
-		struct fontColour				*LFSWM2_xftLoadColour(const char *name,const char *fallback);
-		void								LFSWM2_refreshFrame(LFSWM2_clientClass *cc,XExposeEvent *e=NULL);
+		struct fontColour					*LFSWM2_xftLoadColour(const char *name,const char *fallback);
+		void									LFSWM2_refreshFrame(LFSWM2_clientClass *cc,XExposeEvent *e=NULL);
 
 //vars
 		LFSWM2_Class							*mainClass;
