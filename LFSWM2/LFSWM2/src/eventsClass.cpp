@@ -156,6 +156,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 										r.width=ttattr.width;
 										r.height=ttattr.height;
 										this->LFSWM2_sendConfigureEvent(cc->contentWindow,r);
+										cc->frameWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(cc->frameWindow,this->mainClass->rootWindow);
 									}
 								}
 						}
@@ -274,11 +275,17 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 					//	fprintf(stderr,"GravityNotify eventnumber %i\n",when++);
 						break;
 					case ResizeRequest:
-						//fprintf(stderr,"ResizeRequest eventnumber %i\n",when++);
+						fprintf(stderr,"ResizeRequest eventnumber %i\n",when++);
 						break;
 					case ConfigureRequest:
 						{
-						//fprintf(stderr,"ResizeRequest eventnumber %i\n",when++);
+//						if(true)
+//						{
+//							fprintf(stderr,"ConfigureRequest eventnumber %i\n",when++);
+//							fprintf(stderr,"type=%i 23=ConfigureRequest\n",e.xconfigurerequest.type);
+//							fprintf(stderr,"parent=%p \n",e.xconfigurerequest.parent);
+//							fprintf(stderr,"window=%p \n",e.xconfigurerequest.window);
+//						}
 							if(e.xconfigurerequest.detail==Below)
 								{
 									LFSWM2_clientClass	*cc;
@@ -300,7 +307,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 								}
 							LFSWM2_clientClass	*cc;
 							XWindowChanges		changes;
-
+//TODO//>>>>>>>>>>>>>>>>>>
 							// Copy fields from e to changes.
 							changes.x=e.xconfigurerequest.x;
 							changes.y=e.xconfigurerequest.y;
@@ -314,11 +321,12 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 							if(cc!=NULL)
 								{
 									XConfigureWindow(this->mainClass->display,e.xconfigurerequest.window,e.xconfigurerequest.value_mask,&changes);
-									XMoveResizeWindow(this->mainClass->display,cc->frameWindow,changes.x,changes.y,changes.width+(this->mainClass->sideBarSize*2),changes.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);
+									XMoveResizeWindow(this->mainClass->display,cc->frameWindow,changes.x,changes.y,changes.width+(this->mainClass->sideBarSize*3),changes.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+2);//TODO//constant yuck
 
-									XMoveWindow(this->mainClass->display,cc->contentWindow,this->mainClass->sideBarSize-1,this->mainClass->titleBarSize-1);
+									XMoveWindow(this->mainClass->display,cc->contentWindow,this->mainClass->sideBarSize,this->mainClass->titleBarSize);
 									cc->clientWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(cc->contentWindow,this->mainClass->rootWindow);
 									cc->frameWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(cc->frameWindow,this->mainClass->rootWindow);
+									cc->LFSWM2_resizeControls();
 									XSync(this->mainClass->display,false);
 								}
 							else
@@ -338,6 +346,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						{
 							//fprintf(stderr,"PropertyNotify IN eventnumber %i atom name=%s\n",when++,XGetAtomName(this->mainClass->display,e.xproperty.atom));
 							LFSWM2_clientClass	*cc;
+							
 
 //	if (e.xproperty.atom==this->mainClass->atoms.at("_NET_CURRENT_DESKTOP") )
 

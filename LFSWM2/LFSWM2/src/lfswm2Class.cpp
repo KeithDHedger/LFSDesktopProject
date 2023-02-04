@@ -52,6 +52,7 @@ LFSWM2_Class::LFSWM2_Class(void)
 	this->screen=DefaultScreen(this->display);
 	this->displayWidth=DisplayWidth(this->display,this->screen);
 	this->displayHeight=DisplayHeight(this->display,this->screen);
+	this->depth=DefaultDepth(this->display,this->screen);
 
 	this->rootWindow=DefaultRootWindow(this->display);
 	this->defaultVisual=DefaultVisual(this->display,this->screen);
@@ -109,7 +110,6 @@ LFSWM2_Class::LFSWM2_Class(void)
 	this->LFSWM2_setDeskCount(this->numberOfDesktops);
 	this->LFSWM2_setCurrentDesktop(this->currentDesktop);
 	
-
 	this->topLeftCursor=XCreateFontCursor(this->display,XC_top_left_corner);
 	this->topRightCursor=XCreateFontCursor(this->display,XC_top_right_corner);
 	this->rightCursor=XCreateFontCursor(this->display,XC_right_side);

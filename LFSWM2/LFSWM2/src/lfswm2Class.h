@@ -162,6 +162,7 @@ class LFSWM2_Class
 		int					whiteColour;
 		GC					mainGC;
 		unsigned int			screen;
+		int					depth;
 		int					numberOfMonitors;
 		std::vector<rectStruct>	monitors;
 
