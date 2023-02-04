@@ -1,6 +1,10 @@
+0.2.1
+Done side drag-resize.
+
 0.2.0
 Done bottom drag-resize.
 Done corner drag-resize.
+Done cursor changes in draggers.
 Added messageClass.
 Done reframing etc etc.
 

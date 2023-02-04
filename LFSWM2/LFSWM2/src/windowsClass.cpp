@@ -245,6 +245,18 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			XMapWindow(this->mainClass->display,cc->bottomRightDragger);
 
 //left side dragger
+			wa.win_gravity=NorthWestGravity;
+			wa.cursor=this->mainClass->leftCursor;
+			cc->leftSideDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,0,cc->dragsize,cc->dragsize,cc->frameWindowRect.height-(cc->dragsize*2),0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
+			XSelectInput(this->mainClass->display,cc->leftSideDragger,ButtonPressMask|PointerMotionMask|ButtonReleaseMask);
+			XMapWindow(this->mainClass->display,cc->leftSideDragger);
+
+//right side dragger
+			wa.win_gravity=NorthEastGravity;
+			wa.cursor=this->mainClass->rightCursor;
+			cc->rightSideDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.width-cc->dragsize,cc->dragsize,cc->dragsize,cc->frameWindowRect.height-(cc->dragsize*2),0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
+			XSelectInput(this->mainClass->display,cc->rightSideDragger,ButtonPressMask|PointerMotionMask|ButtonReleaseMask);
+			XMapWindow(this->mainClass->display,cc->rightSideDragger);
 
 //controls
 			wa.win_gravity=NorthEastGravity;

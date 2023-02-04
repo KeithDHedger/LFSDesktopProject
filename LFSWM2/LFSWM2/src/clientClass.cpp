@@ -116,112 +116,7 @@ void LFSWM2_clientClass::adjustContentWindow(void)
 	this->clientWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->contentWindow,this->mainClass->rootWindow);
 }
 
-bool LFSWM2_clientClass::doSizeDrag(XEvent *e)
-{
-	if(e->xany.window==this->topLeftDragger)
-		{
-			switch(e->type)
-				{
-					case ButtonPress:
-						this->buttonDown=true;
-						this->sx=e->xmotion.x;
-						this->sy=e->xmotion.y;
-						//fprintf(stderr,"ButtonPress\n");
-						steps=0;
-						break;
-
-					case ButtonRelease:
-						this->buttonDown=false;
-						this->sx=0;
-						this->sy=0;
-						//fprintf(stderr,"ButtonRelease\n");
-						break;
-					case MotionNotify:
-						if(buttonDown==true)
-							{
-								this->steps++;
-								if(this->steps>this->smoothness)
-									{
-										XConfigureRequestEvent	ce;
-										this->clientWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->contentWindow,this->mainClass->rootWindow);
-
-										ce.type=ConfigureRequest;
-										ce.serial=0;
-										ce.send_event=True;
-										ce.display=this->mainClass->display;
-										ce.parent=this->frameWindow;
-										ce.window=this->contentWindow;
-										ce.x=e->xmotion.x_root-this->sx;
-										ce.y=e->xmotion.y_root-this->sy;
-										ce.width=this->clientWindowRect.width-(e->xmotion.x-this->sx);
-										ce.height=this->clientWindowRect.height-(e->xmotion.y-this->sy);
-										ce.border_width=0;//TODO//
-										ce.value_mask=CWWidth|CWHeight|CWX|CWY;
-										XSendEvent(this->mainClass->display,this->contentWindow,true,StructureNotifyMask,(XEvent*)&ce);
-										this->setWindowRects();
-										this->steps=0;
-									}
-								return(true);
-							}
-						break;
-				}
-		}
-	return(true);
-}
-
-bool LFSWM2_clientClass::doSizeDragBRD(XEvent *e)
-{
-	if(e->xany.window==this->bottomRightDragger)
-		{
-			switch(e->type)
-				{
-					case ButtonPress:
-						this->buttonDown=true;
-						this->sx=e->xmotion.x;
-						this->sy=e->xmotion.y;
-						//fprintf(stderr,"ButtonPress\n");
-						steps=0;
-						break;
-
-					case ButtonRelease:
-						this->buttonDown=false;
-						this->sx=0;
-						this->sy=0;
-						//fprintf(stderr,"ButtonRelease\n");
-						break;
-					case MotionNotify:
-						//fprintf(stderr,"MotionNotify\n");
-						if(buttonDown==true)
-							{
-								this->steps++;
-								if(this->steps>this->smoothness)
-									{
-										XConfigureRequestEvent	ce;
-										this->setWindowRects(false);
-										ce.type=ConfigureRequest;
-										ce.serial=0;
-										ce.send_event=True;
-										ce.display=this->mainClass->display;
-										ce.parent=this->frameWindow;
-										ce.window=this->contentWindow;
-										ce.x=this->frameWindowRect.x;
-										ce.y=this->frameWindowRect.y;
-										ce.width=this->clientWindowRect.width+(e->xmotion.x-this->sx);
-										ce.height=this->clientWindowRect.height+(e->xmotion.y-this->sy);
-										ce.value_mask=CWWidth|CWHeight|CWX|CWY;
-										XSendEvent(this->mainClass->display,this->contentWindow,true,StructureNotifyMask,(XEvent*)&ce);
-										this->setWindowRects();
-										this->steps=0;
-									}
-								return(true);
-							}
-						break;
-				}
-		}
-	return(true);
-}
-
-bool LFSWM2_clientClass::doSizeDragger(XEvent *e)
+bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 {
 	switch(e->type)
 		{
@@ -282,6 +177,21 @@ bool LFSWM2_clientClass::doSizeDragger(XEvent *e)
 										ce.height=this->clientWindowRect.height+(e->xmotion.y-this->sy);
 									}
 
+								if(e->xany.window==this->leftSideDragger)
+									{
+										ce.x=e->xmotion.x_root-this->sx;
+										ce.y=this->frameWindowRect.y;
+										ce.width=this->clientWindowRect.width-(e->xmotion.x-this->sx);
+										ce.height=this->clientWindowRect.height;
+									}
+								if(e->xany.window==this->rightSideDragger)
+									{
+										ce.x=this->frameWindowRect.x;
+										ce.y=this->frameWindowRect.y;
+										ce.width=this->clientWindowRect.width+(e->xmotion.x-this->sx);
+										ce.height=this->clientWindowRect.height;
+									}
+
 								ce.display=this->mainClass->display;
 								ce.parent=this->frameWindow;
 								ce.window=this->contentWindow;
@@ -310,7 +220,7 @@ bool LFSWM2_clientClass::LFSWM2_handleControls(XEvent *e)
 
 	if((e->xany.window==this->topLeftDragger) || (e->xany.window==this->bottomRightDragger) || (e->xany.window==this->topRightDragger) || (e->xany.window==this->bottomLeftDragger)|| (e->xany.window==this->bottomDragger)|| (e->xany.window==this->leftSideDragger)|| (e->xany.window==this->rightSideDragger))
 		{
-			retval=this->doSizeDragger(e);
+			retval=this->doResizeDraggers(e);
 		}
 
 	if((e->xany.window!=this->closeButton) && (e->xany.window!=this->maximizeButton) && (e->xany.window!=this->minimizeButton) && (e->xany.window!=this->shadeButton))
@@ -475,4 +385,6 @@ void LFSWM2_clientClass::LFSWM2_resizeControls(void)
 {
 //fprintf(stderr,"newwid=%i newhite=%i\n",this->frameWindowRect.width,this->frameWindowRect.height);
 	XResizeWindow(this->mainClass->display,this->bottomDragger,this->frameWindowRect.width,this->dragsize);
+	XResizeWindow(this->mainClass->display,this->leftSideDragger,this->dragsize,this->frameWindowRect.height-(this->dragsize*2));
+	XResizeWindow(this->mainClass->display,this->rightSideDragger,this->dragsize,this->frameWindowRect.height-(this->dragsize*2));
 }

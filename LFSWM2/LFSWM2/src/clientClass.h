@@ -88,9 +88,9 @@ class LFSWM2_clientClass
 		int				dw=0;
 		int				dh=0;
 		void				drawMouseEnter(Window id,controlData data,Pixmap pm);
-		bool				doSizeDrag(XEvent *e);
-		bool				doSizeDragBRD(XEvent *e);
-		bool				doSizeDragger(XEvent *e);
+		//bool				doSizeDrag(XEvent *e);
+		//bool				doSizeDragBRD(XEvent *e);
+		bool				doResizeDraggers(XEvent *e);
 		void				setWindowRects(bool resize=true);
 		void				adjustContentWindow(void);
 		Window			wireframe=0;
