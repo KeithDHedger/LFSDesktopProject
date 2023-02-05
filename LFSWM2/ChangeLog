@@ -1,4 +1,6 @@
 0.2.1
+Fixed frame windows getting left over.
+Code clean.
 Done side drag-resize.
 
 0.2.0

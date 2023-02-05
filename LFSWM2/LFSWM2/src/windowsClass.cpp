@@ -732,13 +732,16 @@ Window LFSWM2_windowClass::LFSWM2_getParentWindow(Window id)
 	Window		parent=0;
 	Window		*children=NULL;
     unsigned int	num_children=0;
-
+this->mainClass->LFSWM2_pushXErrorHandler();
 	if(!XQueryTree(this->mainClass->display,id,&root,&parent,&children,&num_children))
+	{
+	this->mainClass->LFSWM2_popXErrorHandler();
 		return(0);
+		}
 
 	if(children!=NULL)
 		XFree((char*)children);
-
+this->mainClass->LFSWM2_popXErrorHandler();
    return(parent);
 }
 

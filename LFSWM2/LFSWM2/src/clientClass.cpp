@@ -27,14 +27,18 @@ LFSWM2_clientClass::LFSWM2_clientClass(LFSWM2_Class *mainclass,Window id)
 
 LFSWM2_clientClass::~LFSWM2_clientClass(void)
 {
-	this->mainClass->mainWindowClass->LFSWM2_setClientList(this->contentWindow,false);
+	this->mainClass->LFSWM2_pushXErrorHandler();
+		this->mainClass->mainWindowClass->LFSWM2_setClientList(this->contentWindow,false);
 
-	XRemoveFromSaveSet(this->mainClass->display,this->contentWindow);	
-	XUnmapSubwindows(this->mainClass->display,this->frameWindow);
-	XUnmapWindow(this->mainClass->display,this->frameWindow);
-	XDestroySubwindows(this->mainClass->display,this->frameWindow);
-	this->mainClass->mainWindowClass->LFSWM2_deleteClientEntry(this->frameWindow);
-	this->mainClass->mainWindowClass->LFSWM2_deleteClientEntry(this->contentWindow);
+		this->mainClass->mainWindowClass->LFSWM2_deleteClientEntry(this->frameWindow);
+		this->mainClass->mainWindowClass->LFSWM2_deleteClientEntry(this->contentWindow);
+
+		XRemoveFromSaveSet(this->mainClass->display,this->contentWindow);	
+		XUnmapSubwindows(this->mainClass->display,this->frameWindow);
+		XUnmapWindow(this->mainClass->display,this->frameWindow);
+		XDestroySubwindows(this->mainClass->display,this->frameWindow);
+		//XSync(this->mainClass->display,true);
+	this->mainClass->LFSWM2_popXErrorHandler();
 }
 
 void LFSWM2_clientClass::LFSWM2_setWindowName(void)
