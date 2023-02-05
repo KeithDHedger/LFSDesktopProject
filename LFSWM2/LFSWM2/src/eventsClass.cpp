@@ -293,6 +293,28 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 									break;
 								}
+
+							if(e.xconfigurerequest.detail==Above)
+								{
+									LFSWM2_clientClass	*cc;
+//									XClientMessageEvent	em;
+									cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
+									if(cc!=NULL)
+										{
+											this->mainClass->mainWindowClass->LFSWM2_changeState(cc->contentWindow,NET_WM_STATE_TOGGLE,this->mainClass->atoms.at("_NET_WM_STATE_ABOVE"));
+											this->mainClass->mainWindowClass->LFSWM2_changeState(cc->contentWindow,NET_WM_STATE_REMOVE,this->mainClass->atoms.at("_NET_WM_STATE_BELOW"));
+											cc->onTop=!cc->onTop;
+											if(cc->onTop==true)
+												this->LFSWM2_moveToTop(cc->contentWindow);
+											//TODO//this->LFSWM2_restack();
+											fprintf(stderr,"ConfigureRequest eventnumber %i detail=%i ccbelloe=%i\n",when++,e.xconfigurerequest.detail,cc->onTop);
+											XSync(this->mainClass->display,false);
+										}
+
+									break;
+								}
+
+
 							LFSWM2_clientClass	*cc;
 							XWindowChanges		changes;
 //TODO//>>>>>>>>>>>>>>>>>>
