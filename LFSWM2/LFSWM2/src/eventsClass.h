@@ -45,8 +45,6 @@ class LFSWM2_eventsClass
 		LFSWM2_Class	*mainClass;
 //	private:
 		bool		skipnext=false;
-		//int		oldd=0;
-	//	bool		noskipnext=false;
 };
 
 #endif

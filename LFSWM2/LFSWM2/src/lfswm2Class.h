@@ -140,7 +140,7 @@ class LFSWM2_Class
 		~LFSWM2_Class(void);
 
 		void					LFSWM2_initRootWindow(void);
-		void					LFSWM2_setDeskCount(Desk val);
+		void					LFSWM2_setDeskCount(unsigned long val);
 		unsigned long		LFSWM2_getDesktopCount(void);
 		void					LFSWM2_setCurrentDesktop(unsigned long i);
 
@@ -154,7 +154,7 @@ class LFSWM2_Class
 
 //vars
 		unsigned int			numberOfDesktops=6;
-		Desk					currentDesktop=0;
+		unsigned long		currentDesktop=0;
 		Display				*display;
 		Window				rootWindow;
 		Visual				*defaultVisual;
@@ -197,6 +197,7 @@ class LFSWM2_Class
 		Cursor				bottomLeftCursor;
 		Cursor				leftCursor;
 		Cursor				rootCursor;
+		bool					needsRestack=false;
 
 		LFSWM2_eventsClass	*mainEventClass;
 		LFSWM2_windowClass	*mainWindowClass;
@@ -207,7 +208,7 @@ class LFSWM2_Class
 #endif
 
 	private:
-		void					ewmh_notifyndesk(unsigned long n);
+		//void					ewmh_notifyndesk(unsigned long n);
 //vars
 		XErrorHandler		lastXErrorHandler;
 };

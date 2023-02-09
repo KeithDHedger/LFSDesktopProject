@@ -46,13 +46,9 @@ void LFSWM2_windowClass::LFSWM2_buildClientList(void)
 
 	std::string	windowname;
 
-	//XGrabServer(this->mainClass->display);
-
 	XQueryTree(this->mainClass->display,this->mainClass->rootWindow,&returned_root,&returned_parent,&toplevelwindows,&windowscnt);
 	for(unsigned int i=0;i<windowscnt;++i)
 		this->LFSWM2_createClient(toplevelwindows[i]);
-
-	//XUngrabServer(this->mainClass->display);
 }
 
 void LFSWM2_windowClass::LFSWM2_deleteClientEntry(Window id)
@@ -76,12 +72,12 @@ void LFSWM2_windowClass::LFSWM2_destroyClient(Window id)
 {
 	LFSWM2_clientClass	*cc;
 
-	this->mainClass->mainEventClass->LFSWM2_restack();
 	cc=this->LFSWM2_getClientClass(id);
 	if(cc!=NULL)
 		{
 			delete cc;
 		}
+	this->mainClass->needsRestack=true;
 }
 
 struct fontColour* LFSWM2_windowClass::LFSWM2_xftLoadColour(const char *name,const char *fallback)
@@ -125,8 +121,6 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			XRaiseWindow(this->mainClass->display,id);
 			return;
 		}
-
-	//XGrabServer(this->mainClass->display);
 
 	if(this->clientList.count(id)>0)
 		{
@@ -185,7 +179,7 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 
 			XSelectInput(this->mainClass->display,cc->contentWindow,PropertyChangeMask|StructureNotifyMask);
 
-			Atom	v[7];
+			Atom		v[8];
 
 			v[0]=this->mainClass->atoms.at("_NET_WM_ACTION_CHANGE_DESKTOP");
 			v[1]=this->mainClass->atoms.at("_NET_WM_ACTION_CLOSE");
@@ -193,11 +187,12 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			v[3]=this->mainClass->atoms.at("_NET_WM_ACTION_MAXIMIZE_HORZ");
 			v[4]=this->mainClass->atoms.at("_NET_WM_ACTION_MAXIMIZE_VERT");
 			v[5]=this->mainClass->atoms.at("_NET_WM_ACTION_MINIMIZE");
-			v[6]=this->mainClass->atoms.at("_NET_WM_STATE_BELOW");
+			v[6]=this->mainClass->atoms.at("_NET_WM_STATE_ABOVE");
+			v[7]=this->mainClass->atoms.at("_NET_WM_STATE_BELOW");
 
 			int nd=this->mainClass->currentDesktop;
 			cc->onDesk=this->mainClass->currentDesktop;
-			this->LFSWM2_setProp(id,this->mainClass->atoms.at("_NET_WM_ALLOWED_ACTIONS"),XA_ATOM,32,v,7);
+			this->LFSWM2_setProp(id,this->mainClass->atoms.at("_NET_WM_ALLOWED_ACTIONS"),XA_ATOM,32,v,8);
 			//this->LFSWM2_setProp(cc->contentWindow,this->mainClass->atoms.at("_NET_WM_DESKTOP"),XA_CARDINAL,32,(void*)&cc->onDesk,1);
 			this->LFSWM2_setProp(cc->contentWindow,this->mainClass->atoms.at("_NET_WM_DESKTOP"),XA_CARDINAL,32,(void*)&nd,1);
 //setprop(root,NET_CLIENT_LIST_STACKING,XA_WINDOW,32,v,n);
@@ -317,13 +312,11 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			this->LFSWM2_reloadWindowState(id);
 
 			this->mainClass->mainEventClass->LFSWM2_moveToTop(cc->contentWindow);
-			this->mainClass->mainEventClass->LFSWM2_restack();
 			if(cc->windowType==NORMALWINDOW)
 				XAddToSaveSet(this->mainClass->display,id);
-
+			this->mainClass->needsRestack=true;
 		}
 	XSync(this->mainClass->display,false);
-//	XUngrabServer(this->mainClass->display);
 }
 
 rectStruct LFSWM2_windowClass::LFSWM2_getWindowRect(Window id,Window parent,bool dotranslate)
@@ -381,7 +374,6 @@ enum {NORMALWINDOW=0,DESKTOPWINDOW,DOCKWINDOW,MENUWINDOW,DIALOGWINDOW,TOOLWINDOW
 					if(strcmp(x,"_NET_WM_WINDOW_TYPE_TOOL")==0)
 						retval=TOOLWINDOW;
 
-					//fprintf(stderr,"window type atom=%s\n",x);
 					XFree(x);
 				}
 		}
@@ -467,12 +459,6 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 	bool					handled;
 	bool					unmax=true;
 
-//	csetfull(c,false);
-//	c->followdesk=false;
-//	c->skiptaskbar=false;
-//	c->isAbove=false;
-//	c->isBelow=false;
-
 	cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(id));
 	if(cc==NULL)
 		return;
@@ -503,6 +489,7 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 
 	if((n>0) && (states[0]==this->mainClass->atoms.at("_NET_WM_STATE_ABOVE")))
 		{
+		fprintf(stderr,"_NET_WM_STATE_ABOVE\n");
 			cc->onTop=true;
 		}
 
@@ -512,13 +499,8 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 			cc->onBottom=true;
 		}
 
-//	for (unsigned int i=0; i<n; i++)
-//		{
-//			//if((states[i]
-//			fprintf(stderr,"states[%i]=%s\n",i,XGetAtomName(this->mainClass->display,states[i]));
-//			
-//		}
 
+//TODO//
 #if 0
 	for (unsigned int i=0; i<n; i++)
 		{
@@ -540,43 +522,6 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 					handled=true;
 				}
 
-			if(states[i]==NET_WM_STATE_ABOVE)
-				{
-					c->isAbove=true;
-					handled=true;
-				}
-
-			if(states[i]==NET_WM_STATE_BELOW)
-				{
-					fprintf(stderr,"there>>>>\n");
-					c->isBelow=true;
-					handled=true;
-				}
-#endif			
-//			if((states[i]==NET_WM_STATE_MAXIMIZED_HORZ) || (states[i]==NET_WM_STATE_MAXIMIZED_VERT))
-//				{
-//					unmax=false;
-//					if( (c->frame!=NULL) && (c->frame->isMaximized==false) )
-//						maximizeWindow(c,666);
-//					handled=true;
-//				}
-#if 0
-			if(states[i]==NET_WM_STATE_HIDDEN)
-				{
-					if(c->frame->isMaximized==false)
-						maximizeWindow(c,666);
-					handled=true;
-				}
-
-			if(handled==false)
-				removestate(w,states[i]);
-		}
-
-	if((c->frame!=NULL) && ((unmax==true) and (c->frame->isMaximized==true)))
-		maximizeWindow(c,666);
-
-	if (states != NULL)
-		XFree(states);
 #endif
 }
 
@@ -599,7 +544,6 @@ bool LFSWM2_windowClass::LFSWM2_hasState(Window w,Atom state)
 
 void LFSWM2_windowClass::LFSWM2_changeState(Window id,int how,Atom state)
 {
-//this->mainClass->DEBUG_printAtom(state);
 	LFSWM2_clientClass	*cc;
 	bool					*clientprop=NULL;
 
@@ -607,19 +551,12 @@ void LFSWM2_windowClass::LFSWM2_changeState(Window id,int how,Atom state)
 	switch(how)
 		{
 			case NET_WM_STATE_REMOVE:
-				this->LFSWM2_removeProp(id,state);
-				//if((cc!=NULL) && (state==this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN")))
-				//	cc->isMinimized=false;
-					
+				this->LFSWM2_removeProp(id,state);					
 				break;
 			case NET_WM_STATE_ADD:
 				this->LFSWM2_addState(id,state);
-				//if((cc!=NULL) && (state==this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN")))
-				//	cc->isMinimized=true;
 				break;
 			case NET_WM_STATE_TOGGLE://TODO//
-				//if((cc!=NULL) && (state==this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN")))
-				//	cc->isMinimized=!cc->isMinimized;
 				if (LFSWM2_hasState(id,state))
 					this->LFSWM2_removeProp(id,state);
 				else
@@ -732,17 +669,18 @@ Window LFSWM2_windowClass::LFSWM2_getParentWindow(Window id)
 	Window		parent=0;
 	Window		*children=NULL;
     unsigned int	num_children=0;
-this->mainClass->LFSWM2_pushXErrorHandler();
-	if(!XQueryTree(this->mainClass->display,id,&root,&parent,&children,&num_children))
-	{
-	this->mainClass->LFSWM2_popXErrorHandler();
-		return(0);
-		}
 
-	if(children!=NULL)
-		XFree((char*)children);
-this->mainClass->LFSWM2_popXErrorHandler();
-   return(parent);
+	this->mainClass->LFSWM2_pushXErrorHandler();
+		if(!XQueryTree(this->mainClass->display,id,&root,&parent,&children,&num_children))
+			{
+				this->mainClass->LFSWM2_popXErrorHandler();
+				return(0);
+			}
+
+		if(children!=NULL)
+			XFree((char*)children);
+	this->mainClass->LFSWM2_popXErrorHandler();
+	return(parent);
 }
 
 void LFSWM2_windowClass::LFSWM2_setClientList(Window id,bool addwindow)
@@ -762,8 +700,8 @@ void LFSWM2_windowClass::LFSWM2_setClientList(Window id,bool addwindow)
 						}
 				}
 		}
-	this->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CLIENT_LIST"),XA_WINDOW,32,this->windowIDList.data(),this->windowIDList.size());
-	this->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CLIENT_LIST_STACKING"),XA_WINDOW,32,this->windowIDList.data(),this->windowIDList.size());
+	//this->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CLIENT_LIST"),XA_WINDOW,32,this->windowIDList.data(),this->windowIDList.size());
+	//this->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CLIENT_LIST_STACKING"),XA_WINDOW,32,this->windowIDList.data(),this->windowIDList.size());
 }
 
 void LFSWM2_windowClass::LFSWM2_setWindowState(Window w,long state)

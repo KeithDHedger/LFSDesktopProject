@@ -78,6 +78,8 @@ class LFSWM2_clientClass
 		void				drawMouseLeave(Window id,Pixmap pm,struct controlData data);
 		void				LFSWM2_resizeControls(void);
 
+		void				LFSWM2_setWMState(XEvent *e);
+
 		int				dragsize=16;
 		int				smoothness=10;
 

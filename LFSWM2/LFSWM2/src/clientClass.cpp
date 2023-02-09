@@ -37,7 +37,6 @@ LFSWM2_clientClass::~LFSWM2_clientClass(void)
 		XUnmapSubwindows(this->mainClass->display,this->frameWindow);
 		XUnmapWindow(this->mainClass->display,this->frameWindow);
 		XDestroySubwindows(this->mainClass->display,this->frameWindow);
-		//XSync(this->mainClass->display,true);
 	this->mainClass->LFSWM2_popXErrorHandler();
 }
 
@@ -254,46 +253,19 @@ bool LFSWM2_clientClass::LFSWM2_handleControls(XEvent *e)
 	switch(e->type)
 		{
 			case EnterNotify:
-//			if(e->xany.window==this->topLeftDragger)
-//				{
-//					fprintf(stderr,"in tldragger\n");
-//				}
-//
-				//fprintf(stderr,"EnterNotify\n");
-				this->drawMouseEnter(e->xany.window,data,pm);
-				break;
 			case LeaveNotify:
-//			if(e->xany.window==this->topLeftDragger)
-//				{
-//					fprintf(stderr,"out tldragger\n");
-//				}
-				//fprintf(stderr,"LeaveNotify IN\n");
 				this->drawMouseLeave(e->xany.window,pm,data);
-				//fprintf(stderr,"LeaveNotify OUT\n");
 				break;
 			case ButtonPress:
 				if(e->xbutton.window==this->closeButton)
 					{
 						this->LFSWM2_sendCloseWindow();
-//						em.type=ClientMessage;
-//						em.window=this->contentWindow;
-//						em.message_type=this->mainClass->atoms.at("WM_PROTOCOLS");
-//						em.format=32;
-//						em.data.l[0]=this->mainClass->atoms.at("WM_DELETE_WINDOW");;
-//						em.data.l[1]=CurrentTime;
-//						XSendEvent(this->mainClass->display,this->contentWindow,false,NoEventMask,(XEvent *)&em);
-//						XSync(this->mainClass->display,false);
-//						this->mainClass->mainWindowClass->LFSWM2_destroyClient(this->frameWindow);
 						retval=true;
 					}
 
 				if(e->xbutton.window==this->maximizeButton)
 					{
 						retval=true;//TOFIX
-						#if 0
-						this->mainClass->mainWindowClass->LFSWM2_changeState(this->contentWindow,NET_WM_STATE_TOGGLE,this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ"));
-						this->mainClass->mainWindowClass->LFSWM2_changeState(this->contentWindow,NET_WM_STATE_TOGGLE,this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ"));
-						#else
 						if(this->isMaximized==true)
 							{
 								this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ"));
@@ -304,7 +276,6 @@ bool LFSWM2_clientClass::LFSWM2_handleControls(XEvent *e)
 								this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ"));
 								this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_VERT"));
 							}
-						#endif
 						this->LFSWM2_maxWindow();
 					}
 					
@@ -312,13 +283,7 @@ bool LFSWM2_clientClass::LFSWM2_handleControls(XEvent *e)
 					{
 						XIconifyWindow(this->mainClass->display,this->contentWindow,this->mainClass->screen);
 
-						//this->LFSWM2_minWindow();
 						retval=true;
-//						this->isMinimized=true;
-//						this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN"));
-//						XIconifyWindow(this->mainClass->display,this->contentWindow,this->mainClass->screen);
-//						this->LFSWM2_hideWindow();
-						//fprintf(stderr,"this->isMinimized==true iconifyc=%x iconifyf=%x\n",this->contentWindow,this->frameWindow);
 					}
 				if(e->xbutton.window==this->shadeButton)
 					{
@@ -387,8 +352,62 @@ void LFSWM2_clientClass::LFSWM2_hideWindow(void)
 
 void LFSWM2_clientClass::LFSWM2_resizeControls(void)
 {
-//fprintf(stderr,"newwid=%i newhite=%i\n",this->frameWindowRect.width,this->frameWindowRect.height);
 	XResizeWindow(this->mainClass->display,this->bottomDragger,this->frameWindowRect.width,this->dragsize);
 	XResizeWindow(this->mainClass->display,this->leftSideDragger,this->dragsize,this->frameWindowRect.height-(this->dragsize*2));
 	XResizeWindow(this->mainClass->display,this->rightSideDragger,this->dragsize,this->frameWindowRect.height-(this->dragsize*2));
 }
+
+void LFSWM2_clientClass::LFSWM2_setWMState(XEvent *e)
+{
+	long unsigned int	n;
+	Atom					*states;
+
+	this->onBottom=false;
+	this->onTop=false;
+
+	states=(Atom*)this->mainClass->mainWindowClass->LFSWM2_getFullProp(e->xproperty.window,this->mainClass->atoms.at("_NET_WM_STATE"),XA_ATOM,32,&n);
+
+	if(n>0)
+		{
+			for(int g=0;g<n;g++)
+				{
+					//this->mainClass->DEBUG_printAtom(states[g]);
+					this->mainClass->mainWindowClass->LFSWM2_changeState(e->xproperty.window,NET_WM_STATE_ADD,states[g]);
+				}
+		}
+
+	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atoms.at("_NET_WM_STATE_FULLSCREEN")))
+		{
+			fprintf(stderr,"got _NET_WM_STATE_FULLSCREEN\n");
+		}
+
+	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atoms.at("_NET_WM_STATE_BELOW")))
+		{
+			this->onBottom=true;
+			XLowerWindow(this->mainClass->display,this->contentWindow);
+			XSync(this->mainClass->display,false);
+			this->mainClass->needsRestack=true;
+		}
+
+	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atoms.at("_NET_WM_STATE_ABOVE")))
+		{
+			this->onTop=true;
+			XRaiseWindow(this->mainClass->display,this->contentWindow);
+			this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,&this->contentWindow,1);
+			XSync(this->mainClass->display,false);
+			this->mainClass->needsRestack=true;
+		}
+}
+/*
+		Atom		v[8];
+
+			v[0]=this->mainClass->atoms.at("_NET_WM_ACTION_CHANGE_DESKTOP");
+			v[1]=this->mainClass->atoms.at("_NET_WM_ACTION_CLOSE");
+			v[2]=this->mainClass->atoms.at("_NET_WM_ACTION_FULLSCREEN");
+			v[3]=this->mainClass->atoms.at("_NET_WM_ACTION_MAXIMIZE_HORZ");
+			v[4]=this->mainClass->atoms.at("_NET_WM_ACTION_MAXIMIZE_VERT");
+			v[5]=this->mainClass->atoms.at("_NET_WM_ACTION_MINIMIZE");
+			v[6]=this->mainClass->atoms.at("_NET_WM_STATE_ABOVE");
+			v[7]=this->mainClass->atoms.at("_NET_WM_STATE_BELOW");
+
+*/

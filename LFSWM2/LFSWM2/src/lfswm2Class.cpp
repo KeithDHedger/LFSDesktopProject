@@ -27,7 +27,7 @@
 
 #include "lfswm2Class.h"
 
-const char *atomNames[]={"_NET_WM_WINDOW_TYPE_MENU","_NET_ACTIVE_WINDOW","_NET_CLIENT_LIST","_NET_CLIENT_LIST_STACKING","_NET_CLOSE_WINDOW","_NET_CURRENT_DESKTOP","_NET_DESKTOP_GEOMETRY","_NET_DESKTOP_VIEWPORT","_NET_FRAME_EXTENTS","_NET_NUMBER_OF_DESKTOPS","_NET_REQUEST_FRAME_EXTENTS","_NET_SUPPORTED","_NET_SUPPORTING_WM_CHECK","_NET_WM_ACTION_CHANGE_DESKTOP","_NET_WM_ACTION_CLOSE","_NET_WM_ACTION_FULLSCREEN","_NET_WM_ACTION_MINIMIZE","_NET_WM_ALLOWED_ACTIONS","_NET_WM_DESKTOP","_NET_WM_ICON_NAME","_NET_WM_NAME","_NET_WM_STATE","_NET_WM_STATE_ABOVE","_NET_WM_STATE_BELOW","_NET_WM_STATE_FULLSCREEN","_NET_WM_STATE_HIDDEN","_NET_WM_STATE_SKIP_TASKBAR","_NET_WM_VISIBLE_ICON_NAME","_NET_WM_VISIBLE_NAME","_NET_WM_WINDOW_TYPE","_NET_WM_WINDOW_TYPE_DOCK","_NET_WORKAREA","_NET_WM_WINDOW_TYPE_DESKTOP","_NET_WM_WINDOW_TYPE_NORMAL","_NET_WM_STATE_STICKY","_NET_WM_ACTION_MAXIMIZE_HORZ","_NET_WM_ACTION_MAXIMIZE_VERT","_NET_WM_STATE_MAXIMIZED_VERT","_NET_WM_STATE_MAXIMIZED_HORZ","UTF8_STRING","MOTIF_WM_HINTS","WM_CHANGE_STATE","WM_DELETE_WINDOW","WM_PROTOCOLS","WM_STATE","_NET_WM_WINDOW_TYPE_DIALOG","_NET_WM_WINDOW_TYPE_TOOL","_MOTIF_WM_HINTS","_NET_WM_PID",NULL};
+const char *atomNames[]={"_NET_WM_WINDOW_TYPE_MENU","_NET_ACTIVE_WINDOW","_NET_CLIENT_LIST","_NET_CLIENT_LIST_STACKING","_NET_CLOSE_WINDOW","_NET_CURRENT_DESKTOP","_NET_DESKTOP_GEOMETRY","_NET_DESKTOP_VIEWPORT","_NET_FRAME_EXTENTS","_NET_NUMBER_OF_DESKTOPS","_NET_REQUEST_FRAME_EXTENTS","_NET_SUPPORTED","_NET_SUPPORTING_WM_CHECK","_NET_WM_ACTION_CHANGE_DESKTOP","_NET_WM_ACTION_CLOSE","_NET_WM_ACTION_FULLSCREEN","_NET_WM_ACTION_MINIMIZE","_NET_WM_ALLOWED_ACTIONS","_NET_WM_DESKTOP","_NET_WM_ICON_NAME","_NET_WM_NAME","_NET_WM_STATE","_NET_WM_STATE_ABOVE","_NET_WM_STATE_BELOW","_NET_WM_STATE_FULLSCREEN","_NET_WM_STATE_HIDDEN","_NET_WM_STATE_SKIP_TASKBAR","_NET_WM_VISIBLE_ICON_NAME","_NET_WM_VISIBLE_NAME","_NET_WM_WINDOW_TYPE","_NET_WM_WINDOW_TYPE_DOCK","_NET_WORKAREA","_NET_WM_WINDOW_TYPE_DESKTOP","_NET_WM_WINDOW_TYPE_NORMAL","_NET_WM_STATE_STICKY","_NET_WM_ACTION_MAXIMIZE_HORZ","_NET_WM_ACTION_MAXIMIZE_VERT","_NET_WM_STATE_MAXIMIZED_VERT","_NET_WM_STATE_MAXIMIZED_HORZ","UTF8_STRING","MOTIF_WM_HINTS","WM_CHANGE_STATE","WM_DELETE_WINDOW","WM_PROTOCOLS","WM_STATE","_NET_WM_WINDOW_TYPE_DIALOG","_NET_WM_WINDOW_TYPE_TOOL","_MOTIF_WM_HINTS","_NET_WM_PID","_NET_WM_USER_TIME",NULL};
 
 LFSWM2_Class::~LFSWM2_Class(void)
 {
@@ -123,7 +123,6 @@ LFSWM2_Class::LFSWM2_Class(void)
 
 	XDefineCursor(this->display,this->rootWindow,this->rootCursor);
 
-//				this->mainEventClass->LFSWM2_restack();
 	this->messages=new LFSWM2_messageClass(this);
 }
 
@@ -339,63 +338,87 @@ int LFSWM2_Class::LFSWM2_xError(Display *display,XErrorEvent *e)
 
 unsigned long LFSWM2_Class::LFSWM2_getDesktopCount(void)
 {
-	unsigned long nd=DEFAULT_NUMBER_OF_DESKTOPS;
-	unsigned long n;
-	unsigned long *p=(long unsigned int*)this->mainWindowClass->LFSWM2_getFullProp(this->rootWindow,this->atoms.at("_NET_NUMBER_OF_DESKTOPS"),XA_CARDINAL,32,&n);
-
-	if(p!=NULL)
-		{
-			if(n==1)
-				nd=*p & 0xffffffffUL;
-			XFree(p);
-		}
-	return nd;
+	return(this->currentDesktop);
+//
+//	unsigned long nd=DEFAULT_NUMBER_OF_DESKTOPS;
+//	unsigned long n;
+//	unsigned long *p=(long unsigned int*)this->mainWindowClass->LFSWM2_getFullProp(this->rootWindow,this->atoms.at("_NET_NUMBER_OF_DESKTOPS"),XA_CARDINAL,32,&n);
+//
+//	if(p!=NULL)
+//		{
+//			if(n==1)
+//				nd=*p & 0xffffffffUL;
+//			XFree(p);
+//		}
+//	return nd;
 }
 
-void LFSWM2_Class::LFSWM2_setDeskCount(Desk val)
+void LFSWM2_Class::LFSWM2_setDeskCount(unsigned long val)
 {
 	if (val==0||val>=0xffffffffUL)
 		return;
 
-	Desk		oldval=this->numberOfDesktops;
+	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_NUMBER_OF_DESKTOPS"),XA_CARDINAL,32,&val,1);
 	this->numberOfDesktops=val;
+	this->needsRestack=true;
 
-	if (val >= oldval)
-		this->ewmh_notifyndesk(val);
+//	
+//	Desk		oldval=this->numberOfDesktops;
+//	this->numberOfDesktops=val;
+//
+//	if (val >= oldval)
+//		this->ewmh_notifyndesk(val);
 }
 
-void LFSWM2_Class::ewmh_notifyndesk(unsigned long n)
-{
-	long		*viewport=(long int*)malloc(n*2*sizeof(long));
-	long		*workarea=(long int*)malloc(n*4*sizeof(long));
-
-	for(unsigned long i=0;i<n;i++)
-		{
-			viewport[2*i+0]=0;
-			viewport[2*i+1]=0;
-
-			workarea[4*i+0]=0;
-			workarea[4*i+1]=0;
-			workarea[4*i+2]=this->displayWidth;
-			workarea[4*i+3]=this->displayHeight;
-		}
-
-	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_DESKTOP_VIEWPORT"),XA_CARDINAL,32,viewport,n*2);
-	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_WORKAREA"),XA_CARDINAL,32,workarea,n*4);
-	free(workarea);
-	free(viewport);
-
-	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_NUMBER_OF_DESKTOPS"),XA_CARDINAL,32,&n,1);
-}
+//void LFSWM2_Class::ewmh_notifyndesk(unsigned long n)
+//{
+//	long		*viewport=(long int*)malloc(n*2*sizeof(long));
+//	long		*workarea=(long int*)malloc(n*4*sizeof(long));
+//
+//	for(unsigned long i=0;i<n;i++)
+//		{
+//			viewport[2*i+0]=0;
+//			viewport[2*i+1]=0;
+//
+//			workarea[4*i+0]=0;
+//			workarea[4*i+1]=0;
+//			workarea[4*i+2]=this->displayWidth;
+//			workarea[4*i+3]=this->displayHeight;
+//		}
+//
+//	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_DESKTOP_VIEWPORT"),XA_CARDINAL,32,viewport,n*2);
+//	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_WORKAREA"),XA_CARDINAL,32,workarea,n*4);
+//	free(workarea);
+//	free(viewport);
+//
+//	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_NUMBER_OF_DESKTOPS"),XA_CARDINAL,32,&n,1);
+//	this->deskCount=n;
+//}
 
 void LFSWM2_Class::LFSWM2_setCurrentDesktop(unsigned long i)
 {
-	XSync(this->display,false);
+	LFSWM2_clientClass	*cc;
+
 	if(this->currentDesktop!=i)
 		{
-		this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_CURRENT_DESKTOP"),XA_CARDINAL,32,&i,1);
-		this->currentDesktop=i;
-	}
+			this->needsRestack=true;
+			this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_CURRENT_DESKTOP"),XA_CARDINAL,32,&i,1);
+			this->currentDesktop=i;
+			this->needsRestack=true;
+
+			//for(int j=0;j<this->mainWindowClass->windowIDList.size();j++)
+			for(int j=this->mainWindowClass->windowIDList.size()-1;j>=0;j--)
+				{
+					cc=this->mainWindowClass->LFSWM2_getClientClass(this->mainWindowClass->windowIDList.at(j));
+					if(cc!=NULL)
+						{
+							if(cc->onDesk==this->currentDesktop)
+								cc->LFSWM2_showWindow();
+							else
+								cc->LFSWM2_hideWindow();
+						}
+				}
+		}
 }
 
 #ifdef __DEBUG__
@@ -404,11 +427,3 @@ void LFSWM2_Class::DEBUG_printAtom(Atom a)
 	fprintf(stderr,"Atom %p name=%s\n",a,XGetAtomName(this->display,a));
 }
 #endif
-
-//void LFSWM2_Class::LFSWM2_alarm(void)
-//{
-////	QTimer	*timer=new QTimer(this);
-////	this->mess
-////	connect(timer,&QTimer::timeout,this,QOverload<>::of(&AnalogClock::update));
-////	timer->start(1000);
-//}

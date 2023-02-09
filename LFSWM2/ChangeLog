@@ -1,4 +1,9 @@
 0.2.1
+Done switching desktops.
+Done restack.
+Fixed x11 _NET_CLIENT_LIST_STACKING.
+Fixed windows above.
+Fixed windows below.
 Fixed frame windows getting left over.
 Code clean.
 Done side drag-resize.
