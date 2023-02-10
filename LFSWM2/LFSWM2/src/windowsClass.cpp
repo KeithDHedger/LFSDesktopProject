@@ -29,8 +29,6 @@ LFSWM2_windowClass::LFSWM2_windowClass(LFSWM2_Class *mainclass)
 	this->mainClass=mainclass;
 }
 
-#define NELEM(v) (sizeof v / sizeof v[0])
-
 void LFSWM2_windowClass::init(void)
 {
 	this->LFSWM2_buildClientList();
@@ -38,13 +36,12 @@ void LFSWM2_windowClass::init(void)
 
 void LFSWM2_windowClass::LFSWM2_buildClientList(void)
 {
-	Window	returned_root;
-	Window	returned_parent;
-	Window	*toplevelwindows;
-	unsigned int windowscnt;
-	unsigned long n=0;
-
-	std::string	windowname;
+	Window			returned_root;
+	Window			returned_parent;
+	Window			*toplevelwindows;
+	unsigned int		windowscnt;
+	std::string		windowname;
+	unsigned long	n=0;
 
 	XQueryTree(this->mainClass->display,this->mainClass->rootWindow,&returned_root,&returned_parent,&toplevelwindows,&windowscnt);
 	for(unsigned int i=0;i<windowscnt;++i)
@@ -190,11 +187,9 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			v[6]=this->mainClass->atoms.at("_NET_WM_STATE_ABOVE");
 			v[7]=this->mainClass->atoms.at("_NET_WM_STATE_BELOW");
 
-			int nd=this->mainClass->currentDesktop;
 			cc->onDesk=this->mainClass->currentDesktop;
 			this->LFSWM2_setProp(id,this->mainClass->atoms.at("_NET_WM_ALLOWED_ACTIONS"),XA_ATOM,32,v,8);
-			//this->LFSWM2_setProp(cc->contentWindow,this->mainClass->atoms.at("_NET_WM_DESKTOP"),XA_CARDINAL,32,(void*)&cc->onDesk,1);
-			this->LFSWM2_setProp(cc->contentWindow,this->mainClass->atoms.at("_NET_WM_DESKTOP"),XA_CARDINAL,32,(void*)&nd,1);
+			this->LFSWM2_setProp(cc->contentWindow,this->mainClass->atoms.at("_NET_WM_DESKTOP"),XA_CARDINAL,32,(void*)&cc->onDesk,1);
 //setprop(root,NET_CLIENT_LIST_STACKING,XA_WINDOW,32,v,n);
 
 			this->LFSWM2_setClientList(id,true);
@@ -221,7 +216,6 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			cc->bottomDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,0,cc->frameWindowRect.height-cc->dragsize,cc->frameWindowRect.width,cc->dragsize,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
 			XSelectInput(this->mainClass->display,cc->bottomDragger,ButtonPressMask|PointerMotionMask|ButtonReleaseMask);
 			XMapWindow(this->mainClass->display,cc->bottomDragger);
-
 
 //bottom left dragger
 			wa.win_gravity=SouthWestGravity;
@@ -298,9 +292,8 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			XMapWindow(this->mainClass->display,cc->shadeButton);
 
 			cc->LFSWM2_setWindowName();
-				unsigned long		n=0;
-
-			Atom *states=(Atom*)this->LFSWM2_getFullProp(id,this->mainClass->atoms.at("_NET_WM_STATE"),XA_ATOM,32,&n);
+			unsigned long	n=0;
+			Atom				*states=(Atom*)this->LFSWM2_getFullProp(id,this->mainClass->atoms.at("_NET_WM_STATE"),XA_ATOM,32,&n);
 //check no longer maxed
 			if(n>1)
 				{
@@ -397,12 +390,13 @@ char* LFSWM2_windowClass::LFSWM2_decodeTextProp(XTextProperty *p)
 
 void *LFSWM2_windowClass::LFSWM2_getFullProp(Window w,Atom prop,Atom type,int fmt,unsigned long *rcountp)
 {
-	void *ptr=NULL;
-	unsigned long count=32;
-	Atom rtype;
-	int rfmt;
-	unsigned long rafter;
-	for (;;)
+	void				*ptr=NULL;
+	unsigned long	count=32;
+	Atom				rtype;
+	int				rfmt;
+	unsigned long	rafter;
+
+	while(true)
 		{
 			if(XGetWindowProperty(this->mainClass->display,w,prop,0L,count,false,type,&rtype,&rfmt,rcountp,&rafter,(unsigned char **)&ptr)!=Success)
 				{
@@ -434,11 +428,11 @@ void LFSWM2_windowClass::LFSWM2_setProp(Window w,Atom prop,Atom type,int fmt,voi
 
 void* LFSWM2_windowClass::LFSWM2_getProp(Window w,Atom prop,Atom type,long unsigned int *nitems_return)
 {
-	void					*prop_return=NULL;
-	Atom					actual_type_return=0;
-	int					actual_format_return=0;
-	unsigned long		bytes_after_return=0;
-	int					result=-1;
+	void				*prop_return=NULL;
+	Atom				actual_type_return=0;
+	int				actual_format_return=0;
+	unsigned long	bytes_after_return=0;
+	int				result=-1;
 
 	result=XGetWindowProperty(this->mainClass->display,w,prop,0L,32,false,type,&actual_type_return,&actual_format_return,nitems_return,&bytes_after_return,(unsigned char**)&prop_return);
 
@@ -474,7 +468,6 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 					if((n==2) && (states[0]==this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_VERT")) || (states[1]==this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ")))
 						unmaxit=false;
 				}
-
 			cc->LFSWM2_maxWindow();
 		}
 
@@ -498,7 +491,6 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 		fprintf(stderr,"_NET_WM_STATE_BELOW\n");
 			cc->onBottom=true;
 		}
-
 
 //TODO//
 #if 0
@@ -532,11 +524,13 @@ bool LFSWM2_windowClass::LFSWM2_hasState(Window w,Atom state)
 	Atom				*v=(Atom*)this->LFSWM2_getProp(w,this->mainClass->atoms.at("_NET_WM_STATE"),XA_ATOM,&n);
 
 	for(unsigned long i=0;i<n;i++)
-		if(v[i]==state)
-			{
-				found=true;
-				break;
-			}
+		{
+			if(v[i]==state)
+				{
+					found=true;
+					break;
+				}
+		}
 	if(v!=NULL)
 		XFree(v);
 	return found;
@@ -593,11 +587,13 @@ void LFSWM2_windowClass::LFSWM2_addState(Window w,Atom state)
 	Atom				*old=(Atom*)LFSWM2_getProp(w,this->mainClass->atoms.at("_NET_WM_STATE"),XA_ATOM,&n);
 
 	for(unsigned long i=0;i<n;i++)
-		if(old[i]==state)
-			{
-				present=True;
-				break;
-			}
+		{
+			if(old[i]==state)
+				{
+					present=True;
+					break;
+				}
+		}
 
 	if(!present)
 		{
@@ -700,12 +696,10 @@ void LFSWM2_windowClass::LFSWM2_setClientList(Window id,bool addwindow)
 						}
 				}
 		}
-	//this->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CLIENT_LIST"),XA_WINDOW,32,this->windowIDList.data(),this->windowIDList.size());
-	//this->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CLIENT_LIST_STACKING"),XA_WINDOW,32,this->windowIDList.data(),this->windowIDList.size());
 }
 
 void LFSWM2_windowClass::LFSWM2_setWindowState(Window w,long state)
 {
-	long data[2]= {state,None};
+	long data[2]={state,None};
 	XChangeProperty(this->mainClass->display,w,this->mainClass->atoms.at("WM_STATE"),this->mainClass->atoms.at("WM_STATE"),32,PropModeReplace,(unsigned char *)data,2);
 }

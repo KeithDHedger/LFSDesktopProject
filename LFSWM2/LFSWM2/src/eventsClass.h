@@ -43,8 +43,7 @@ class LFSWM2_eventsClass
 
 //vars
 		LFSWM2_Class	*mainClass;
-//	private:
-		bool		skipnext=false;
+	private:
 };
 
 #endif

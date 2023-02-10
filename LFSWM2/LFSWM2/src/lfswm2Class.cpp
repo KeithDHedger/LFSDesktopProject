@@ -104,9 +104,6 @@ LFSWM2_Class::LFSWM2_Class(void)
 	this->minimizeBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)minimizeWindowBits,minimizeWindowSize,minimizeWindowSize);
 	this->shadeBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)shadeWindowBits,shadeWindowSize,shadeWindowSize);
 
-	//Cursor curs=XCreateFontCursor(this->display,XC_left_ptr);
-	//XDefineCursor(this->display,this->rootWindow,curs);
-
 	this->LFSWM2_setDeskCount(this->numberOfDesktops);
 	this->LFSWM2_setCurrentDesktop(this->currentDesktop);
 	
@@ -118,10 +115,9 @@ LFSWM2_Class::LFSWM2_Class(void)
 	this->bottomLeftCursor=XCreateFontCursor(this->display,XC_bottom_left_corner);
 	this->leftCursor=XCreateFontCursor(this->display,XC_left_side);
 	this->rootCursor=XCreateFontCursor(this->display,XC_left_ptr);
+	XDefineCursor(this->display,this->rootWindow,this->rootCursor);
 
 	this->mainWindowClass->init();
-
-	XDefineCursor(this->display,this->rootWindow,this->rootCursor);
 
 	this->messages=new LFSWM2_messageClass(this);
 }
@@ -142,7 +138,7 @@ void LFSWM2_Class::LFSWM2_initRootWindow(void)
 	XSelectInput(this->display,this->rootWindow,StructureNotifyMask|ExposureMask|ButtonPress|ButtonReleaseMask|EnterWindowMask|LeaveWindowMask|SubstructureRedirectMask|SubstructureNotifyMask|ButtonPressMask);
 	XSync(this->display,false);
 
-	Atom globals[]=
+	std::vector<Atom>	globalAtoms=
 		{
 			this->atoms.at("_NET_ACTIVE_WINDOW"),
 			this->atoms.at("_NET_CLIENT_LIST"),
@@ -183,17 +179,16 @@ void LFSWM2_Class::LFSWM2_initRootWindow(void)
 			this->atoms.at("_NET_WM_STATE_MAXIMIZED_VERT"),
 			this->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ")
 		};
-
-	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_SUPPORTED"),XA_ATOM,32,globals,NELEM(globals));
+	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_SUPPORTED"),XA_ATOM,32,(void*)globalAtoms.data(),globalAtoms.size());
 	long geometry[2]={this->displayWidth,this->displayHeight};
 	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_DESKTOP_GEOMETRY"),XA_CARDINAL,32,geometry,2);
 }
 
 int LFSWM2_Class::LFSWM2_wmDetected(Display *display,XErrorEvent *e)
 {
-  fprintf(stderr,"already running wm ... TODO\n");
-  exit(2);
-  return 0;
+	fprintf(stderr,"already running wm ... TODO\n");
+	exit(2);
+	return 0;
 }
 
 int LFSWM2_Class::LFSWM2_xWarnings(Display *display,XErrorEvent *e)
@@ -333,24 +328,12 @@ int LFSWM2_Class::LFSWM2_xError(Display *display,XErrorEvent *e)
 
 	XGetErrorText(display,e->error_code,error_text,sizeof(error_text));
 	fprintf(stderr,"Received X error:\nRequest: %i %s\n%i %s Resource ID: %x\n",int(e->request_code),X_REQUEST_CODE_NAMES[e->request_code],int(e->error_code),error_text,e->resourceid);
-  return 0;
+	return 0;
 }
 
 unsigned long LFSWM2_Class::LFSWM2_getDesktopCount(void)
 {
 	return(this->currentDesktop);
-//
-//	unsigned long nd=DEFAULT_NUMBER_OF_DESKTOPS;
-//	unsigned long n;
-//	unsigned long *p=(long unsigned int*)this->mainWindowClass->LFSWM2_getFullProp(this->rootWindow,this->atoms.at("_NET_NUMBER_OF_DESKTOPS"),XA_CARDINAL,32,&n);
-//
-//	if(p!=NULL)
-//		{
-//			if(n==1)
-//				nd=*p & 0xffffffffUL;
-//			XFree(p);
-//		}
-//	return nd;
 }
 
 void LFSWM2_Class::LFSWM2_setDeskCount(unsigned long val)
@@ -361,39 +344,7 @@ void LFSWM2_Class::LFSWM2_setDeskCount(unsigned long val)
 	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_NUMBER_OF_DESKTOPS"),XA_CARDINAL,32,&val,1);
 	this->numberOfDesktops=val;
 	this->needsRestack=true;
-
-//	
-//	Desk		oldval=this->numberOfDesktops;
-//	this->numberOfDesktops=val;
-//
-//	if (val >= oldval)
-//		this->ewmh_notifyndesk(val);
 }
-
-//void LFSWM2_Class::ewmh_notifyndesk(unsigned long n)
-//{
-//	long		*viewport=(long int*)malloc(n*2*sizeof(long));
-//	long		*workarea=(long int*)malloc(n*4*sizeof(long));
-//
-//	for(unsigned long i=0;i<n;i++)
-//		{
-//			viewport[2*i+0]=0;
-//			viewport[2*i+1]=0;
-//
-//			workarea[4*i+0]=0;
-//			workarea[4*i+1]=0;
-//			workarea[4*i+2]=this->displayWidth;
-//			workarea[4*i+3]=this->displayHeight;
-//		}
-//
-//	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_DESKTOP_VIEWPORT"),XA_CARDINAL,32,viewport,n*2);
-//	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_WORKAREA"),XA_CARDINAL,32,workarea,n*4);
-//	free(workarea);
-//	free(viewport);
-//
-//	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_NUMBER_OF_DESKTOPS"),XA_CARDINAL,32,&n,1);
-//	this->deskCount=n;
-//}
 
 void LFSWM2_Class::LFSWM2_setCurrentDesktop(unsigned long i)
 {
@@ -406,7 +357,6 @@ void LFSWM2_Class::LFSWM2_setCurrentDesktop(unsigned long i)
 			this->currentDesktop=i;
 			this->needsRestack=true;
 
-			//for(int j=0;j<this->mainWindowClass->windowIDList.size();j++)
 			for(int j=this->mainWindowClass->windowIDList.size()-1;j>=0;j--)
 				{
 					cc=this->mainWindowClass->LFSWM2_getClientClass(this->mainWindowClass->windowIDList.at(j));

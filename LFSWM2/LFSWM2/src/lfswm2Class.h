@@ -63,8 +63,6 @@ struct rectStruct
 #endif
 };
 
-typedef unsigned long Desk;
-
 class LFSWM2_windowClass;
 class LFSWM2_eventsClass;
 class LFSWM2_clientClass;
@@ -101,11 +99,6 @@ static unsigned char maximizeWindowBits[]=
 {
    0x18, 0x18, 0x18, 0xff, 0xff, 0x18, 0x18, 0x18
 };
-
-#define NELEM(v) (sizeof v / sizeof v[0])
-#define DEFAULT_NUMBER_OF_DESKTOPS 6
-// The desktop number of sticky windows
-#define DESK_ALL 0xffffffffUL
 
 #define NET_WM_STATE_REMOVE 0
 #define NET_WM_STATE_ADD 1
@@ -150,7 +143,6 @@ class LFSWM2_Class
 
 		void					LFSWM2_pushXErrorHandler(void);
 		void					LFSWM2_popXErrorHandler(void);
-
 
 //vars
 		unsigned int			numberOfDesktops=6;
@@ -208,7 +200,6 @@ class LFSWM2_Class
 #endif
 
 	private:
-		//void					ewmh_notifyndesk(unsigned long n);
 //vars
 		XErrorHandler		lastXErrorHandler;
 };

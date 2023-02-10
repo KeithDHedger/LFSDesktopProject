@@ -44,7 +44,7 @@ class LFSWM2_clientClass
 		std::string		name="";
 		int				windowType=-1;
 		bool				visible=false;
-		Desk				onDesk=0;
+		unsigned long	onDesk=0;
 		bool				visibleOnAllDesks=false;
 		bool				onTop=false;
 		bool				onBottom=false;

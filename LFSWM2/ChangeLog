@@ -1,4 +1,6 @@
 0.2.1
+Code clean.
+Removed bits of legacy code.
 Done switching desktops.
 Done restack.
 Fixed x11 _NET_CLIENT_LIST_STACKING.
