@@ -50,7 +50,7 @@ class LFSWM2_clientClass
 		bool				onBottom=false;
 		bool				isMaximized=false;
 		bool				isMinimized=false;
-		rectStruct		clientWindowRect;
+		rectStruct		contentWindowRect;
 		rectStruct		frameWindowRect;
 		rectStruct		clientPreMaxRect;
 		rectStruct		framePreMaxRect;
@@ -81,7 +81,7 @@ class LFSWM2_clientClass
 		void				LFSWM2_setWMState(XEvent *e);
 
 		int				dragsize=16;
-		int				smoothness=10;
+		int				smoothness=20;
 
 	private:
 		bool				buttonDown=false;

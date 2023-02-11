@@ -162,10 +162,10 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 
 			cc->windowType=this->LFSWM2_getWindowType(id);
 			cc->contentWindow=id;
-			cc->clientWindowRect=this->LFSWM2_getWindowRect(id,this->mainClass->rootWindow);
+			cc->contentWindowRect=this->LFSWM2_getWindowRect(id,this->mainClass->rootWindow);
 			cc->framePreMaxRect=this->LFSWM2_getWindowRect(id,this->mainClass->rootWindow);
 			cc->clientPreMaxRect=this->LFSWM2_getWindowRect(id,this->mainClass->rootWindow);
-			cc->clientWindowRect.y-=this->mainClass->titleBarSize;
+			cc->contentWindowRect.y-=this->mainClass->titleBarSize;
 			cc->frameWindowRect=this->LFSWM2_getWindowRect(cc->frameWindow,this->mainClass->rootWindow);
 			this->clientList[id]=cc;
 			this->clientList[cc->frameWindow]=cc;
@@ -175,7 +175,7 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 
 			this->LFSWM2_setWindowState(id,NormalState);
 
-			this->mainClass->mainEventClass->LFSWM2_sendConfigureEvent(id,cc->clientWindowRect);
+			this->mainClass->mainEventClass->LFSWM2_sendConfigureEvent(id,cc->contentWindowRect);
 			XGrabButton(this->mainClass->display,Button1,0,id,False,ButtonPressMask,GrabModeSync,GrabModeAsync,None,None);
 			XGrabButton(this->mainClass->display,Button1,Mod4Mask,id,False,ButtonPressMask|ButtonReleaseMask|PointerMotionMask,GrabModeAsync,GrabModeAsync,None,None);
 

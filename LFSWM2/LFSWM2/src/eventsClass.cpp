@@ -125,12 +125,13 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 											XMoveWindow(this->mainClass->display,cc->frameWindow,attr.x+xdiff,attr.y+ydiff);
 								//notify client
 											XGetWindowAttributes(this->mainClass->display,cc->frameWindow,&frameattr);
-											r.x=frameattr.x+2;
-											r.y=frameattr.y+16;
+											r.x=frameattr.x+this->mainClass->sideBarSize;
+											r.y=frameattr.y+this->mainClass->titleBarSize;
 											r.width=ttattr.width;
 											r.height=ttattr.height;
 											this->LFSWM2_sendConfigureEvent(cc->contentWindow,r);
 											cc->frameWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(cc->frameWindow,this->mainClass->rootWindow);
+											cc->contentWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(cc->contentWindow,this->mainClass->rootWindow);
 										}
 									}
 						}
@@ -244,7 +245,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 									XMoveResizeWindow(this->mainClass->display,cc->frameWindow,changes.x,changes.y,changes.width+(this->mainClass->sideBarSize*3),changes.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+2);//TODO//constant yuck
 
 									XMoveWindow(this->mainClass->display,cc->contentWindow,this->mainClass->sideBarSize,this->mainClass->titleBarSize);
-									cc->clientWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(cc->contentWindow,this->mainClass->rootWindow);
+									cc->contentWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(cc->contentWindow,this->mainClass->rootWindow);
 									cc->frameWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(cc->frameWindow,this->mainClass->rootWindow);
 									cc->LFSWM2_resizeControls();
 									XSync(this->mainClass->display,false);
@@ -401,44 +402,6 @@ void LFSWM2_eventsClass::LFSWM2_doClientMsg(Window id,XClientMessageEvent *e)
 				}
 		}
 
-#if 0
-	if(e->message_type==this->mainClass->atoms.at("_NET_WM_STATE") && e->format==32)
-		{
-			for(int j=0;j<5;j++)
-				{
-					fprintf(stderr,"atom %i= ",j);
-					this->mainClass->DEBUG_printAtom(e->data.l[j]);
-	
-					if(e->data.l[j]==this->mainClass->atoms.at("_NET_WM_STATE_ABOVE"))
-						{
-							this->mainClass->mainWindowClass->LFSWM2_changeState(id,e->data.l[0],e->data.l[1]);
-							ccmessage=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(id));
-							if(ccmessage!=NULL)
-						{
-							if(e->data.l[0]==NET_WM_STATE_REMOVE)
-								{
-									ccmessage->onTop=false;
-									//goto exitit;
-									//this->mainClass->LFSWM2_popXErrorHandler();
-									return;
-								}
-							XMapWindow(this->mainClass->display,ccmessage->frameWindow);
-							XRaiseWindow(this->mainClass->display,ccmessage->frameWindow);
-							ccmessage->onTop=true;
-							ccmessage->onBottom=false;
-							this->mainClass->mainWindowClass->LFSWM2_changeState(ccmessage->contentWindow,NET_WM_STATE_REMOVE,this->mainClass->atoms.at("_NET_WM_STATE_BELOW"));
-
-							this->LFSWM2_moveToTop(ccmessage->contentWindow);
-							this->mainClass->needsRestack=true;
-						}
-					//goto exitit;
-				//	this->mainClass->LFSWM2_popXErrorHandler();
-					return;
-				}
-				
-				}
-		}
-#else
 	if(e->message_type==this->mainClass->atoms.at("_NET_WM_STATE") && e->format==32)
 		{
 			this->mainClass->LFSWM2_pushXErrorHandler();
@@ -505,11 +468,9 @@ Atom (nil) name=(null)
 								}
 							XLowerWindow(this->mainClass->display,ccmessage->frameWindow);
 							ccmessage->onBottom=true;
-							//this->LFSWM2_moveToBottom(ccmessage->contentWindow);
 							this->mainClass->needsRestack=true;
 						}
 						goto exitit;
-					return;
 				}
 {
 			int how=e->data.l[0];
@@ -522,7 +483,6 @@ Atom (nil) name=(null)
 exitit:
 			this->mainClass->LFSWM2_popXErrorHandler();
 		}
-#endif
 	this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(id);
 }
 

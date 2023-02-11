@@ -116,7 +116,7 @@ void LFSWM2_clientClass::adjustContentWindow(void)
 	XResizeWindow(this->mainClass->display,this->contentWindow,
 	this->frameWindowRect.width-((this->mainClass->sideBarSize+BORDER_WIDTH)*2),
 	this->frameWindowRect.height-(this->mainClass->bottomBarSize+BORDER_WIDTH)-this->mainClass->titleBarSize);
-	this->clientWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->contentWindow,this->mainClass->rootWindow);
+	this->contentWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->contentWindow,this->mainClass->rootWindow);
 }
 
 bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
@@ -128,12 +128,14 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 				this->sx=e->xmotion.x;
 				this->sy=e->xmotion.y;
 				steps=0;
+				this->setWindowRects(false);
 				break;
 
 			case ButtonRelease:
 				this->buttonDown=false;
 				this->sx=0;
 				this->sy=0;
+				this->setWindowRects(false);
 				break;
 			case MotionNotify:
 				if(buttonDown==true)
@@ -142,57 +144,57 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 						this->steps++;
 						if(this->steps>this->smoothness)
 							{
-								this->setWindowRects(false);
+								//this->setWindowRects(false);
 								if(e->xany.window==this->topLeftDragger)
 									{
 										ce.x=e->xmotion.x_root-this->sx;
 										ce.y=e->xmotion.y_root-this->sy;
-										ce.width=this->clientWindowRect.width-(e->xmotion.x-this->sx);
-										ce.height=this->clientWindowRect.height-(e->xmotion.y-this->sy);
+										ce.width=this->contentWindowRect.width-(e->xmotion.x-this->sx);
+										ce.height=this->contentWindowRect.height-(e->xmotion.y-this->sy);
 									}
 								if(e->xany.window==this->topRightDragger)
 									{
 										ce.x=this->frameWindowRect.x;
 										ce.y=e->xmotion.y_root-this->sy;
-										ce.width=this->clientWindowRect.width+(e->xmotion.x-this->sx);
-										ce.height=this->clientWindowRect.height-(e->xmotion.y-this->sy);
+										ce.width=this->contentWindowRect.width+(e->xmotion.x-this->sx);
+										ce.height=this->contentWindowRect.height-(e->xmotion.y-this->sy);
 									}
 								if(e->xany.window==this->bottomLeftDragger)
 									{
 										ce.x=e->xmotion.x_root-this->sx;
 										ce.y=this->frameWindowRect.y;
-										ce.width=this->clientWindowRect.width-(e->xmotion.x-this->sx);
-										ce.height=this->clientWindowRect.height+(e->xmotion.y-this->sy);
+										ce.width=this->contentWindowRect.width-(e->xmotion.x-this->sx);
+										ce.height=this->contentWindowRect.height+(e->xmotion.y-this->sy);
 									}
 								if(e->xany.window==this->bottomRightDragger)
 									{
 										ce.x=this->frameWindowRect.x;
 										ce.y=this->frameWindowRect.y;
-										ce.width=this->clientWindowRect.width+(e->xmotion.x-this->sx);
-										ce.height=this->clientWindowRect.height+(e->xmotion.y-this->sy);
+										ce.width=this->contentWindowRect.width+(e->xmotion.x-this->sx);
+										ce.height=this->contentWindowRect.height+(e->xmotion.y-this->sy);
 									}
 
 								if(e->xany.window==this->bottomDragger)
 									{
 										ce.x=this->frameWindowRect.x;
 										ce.y=this->frameWindowRect.y;
-										ce.width=this->clientWindowRect.width;
-										ce.height=this->clientWindowRect.height+(e->xmotion.y-this->sy);
+										ce.width=this->contentWindowRect.width;
+										ce.height=this->contentWindowRect.height+(e->xmotion.y-this->sy);
 									}
 
 								if(e->xany.window==this->leftSideDragger)
 									{
 										ce.x=e->xmotion.x_root-this->sx;
 										ce.y=this->frameWindowRect.y;
-										ce.width=this->clientWindowRect.width-(e->xmotion.x-this->sx);
-										ce.height=this->clientWindowRect.height;
+										ce.width=this->contentWindowRect.width-(e->xmotion.x-this->sx);
+										ce.height=this->contentWindowRect.height;
 									}
 								if(e->xany.window==this->rightSideDragger)
 									{
 										ce.x=this->frameWindowRect.x;
 										ce.y=this->frameWindowRect.y;
-										ce.width=this->clientWindowRect.width+(e->xmotion.x-this->sx);
-										ce.height=this->clientWindowRect.height;
+										ce.width=this->contentWindowRect.width+(e->xmotion.x-this->sx);
+										ce.height=this->contentWindowRect.height;
 									}
 
 								ce.display=this->mainClass->display;
@@ -204,7 +206,7 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 								ce.border_width=BORDER_WIDTH;//TODO//
 								ce.value_mask=CWWidth|CWHeight|CWX|CWY;
 								XSendEvent(this->mainClass->display,this->contentWindow,true,StructureNotifyMask,(XEvent*)&ce);
-								this->setWindowRects();
+								//this->setWindowRects();
 								this->steps=0;
 								return(true);
 							}
@@ -333,7 +335,7 @@ void LFSWM2_clientClass::LFSWM2_maxWindow(void)
 
 void LFSWM2_clientClass::setWindowRects(bool resize)
 {
-	this->clientWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->contentWindow,this->mainClass->rootWindow);
+	this->contentWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->contentWindow,this->mainClass->rootWindow);
 	this->frameWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->frameWindow,this->mainClass->rootWindow);
 
 	if(resize==true)
