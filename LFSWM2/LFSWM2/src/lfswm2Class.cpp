@@ -362,6 +362,17 @@ void LFSWM2_Class::LFSWM2_setCurrentDesktop(unsigned long i,bool force)
 #ifdef __DEBUG__
 void LFSWM2_Class::DEBUG_printAtom(Atom a)
 {
-	fprintf(stderr,"Atom %p name=%s\n",a,XGetAtomName(this->display,a));
+	char		*name=NULL;
+
+	this->LFSWM2_pushXErrorHandler();
+		name=XGetAtomName(this->display,a);
+		if(name!=NULL)
+			{
+				fprintf(stderr,"Atom %p name=%s\n",a,name);
+				XFree(name);
+			}
+		else
+			fprintf(stderr,"Unknown atom %p\n",a);
+	this->LFSWM2_popXErrorHandler();
 }
 #endif

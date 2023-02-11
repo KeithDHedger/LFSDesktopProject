@@ -344,7 +344,6 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 			XAllowEvents(this->mainClass->display,ReplayPointer,CurrentTime);
 		}
 }
-static bool noswitch=false;
 
 void LFSWM2_eventsClass::LFSWM2_doClientMsg(Window id,XClientMessageEvent *e)
 {
@@ -367,7 +366,8 @@ void LFSWM2_eventsClass::LFSWM2_doClientMsg(Window id,XClientMessageEvent *e)
 			if(ccmessage!=NULL)
 				{
 					this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,(void*)&ccmessage->contentWindow,1);
-					XSetInputFocus(this->mainClass->display,e->window,RevertToParent,CurrentTime);
+					//XSetInputFocus(this->mainClass->display,e->window,RevertToParent,CurrentTime);
+					XSetInputFocus(this->mainClass->display,ccmessage->contentWindow,RevertToNone,CurrentTime);
 					this->mainClass->needsRestack=true;
 				}
 			return;
@@ -375,7 +375,6 @@ void LFSWM2_eventsClass::LFSWM2_doClientMsg(Window id,XClientMessageEvent *e)
 
 	if(e->message_type==this->mainClass->atoms.at("_NET_CURRENT_DESKTOP") && e->format==32)
 		{
-		
 			if(e->window==this->mainClass->rootWindow)
 				{
 					this->mainClass->LFSWM2_setCurrentDesktop(e->data.l[0]);
@@ -402,8 +401,48 @@ void LFSWM2_eventsClass::LFSWM2_doClientMsg(Window id,XClientMessageEvent *e)
 				}
 		}
 
+#if 0
 	if(e->message_type==this->mainClass->atoms.at("_NET_WM_STATE") && e->format==32)
 		{
+			for(int j=0;j<5;j++)
+				{
+					fprintf(stderr,"atom %i= ",j);
+					this->mainClass->DEBUG_printAtom(e->data.l[j]);
+	
+					if(e->data.l[j]==this->mainClass->atoms.at("_NET_WM_STATE_ABOVE"))
+						{
+							this->mainClass->mainWindowClass->LFSWM2_changeState(id,e->data.l[0],e->data.l[1]);
+							ccmessage=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(id));
+							if(ccmessage!=NULL)
+						{
+							if(e->data.l[0]==NET_WM_STATE_REMOVE)
+								{
+									ccmessage->onTop=false;
+									//goto exitit;
+									//this->mainClass->LFSWM2_popXErrorHandler();
+									return;
+								}
+							XMapWindow(this->mainClass->display,ccmessage->frameWindow);
+							XRaiseWindow(this->mainClass->display,ccmessage->frameWindow);
+							ccmessage->onTop=true;
+							ccmessage->onBottom=false;
+							this->mainClass->mainWindowClass->LFSWM2_changeState(ccmessage->contentWindow,NET_WM_STATE_REMOVE,this->mainClass->atoms.at("_NET_WM_STATE_BELOW"));
+
+							this->LFSWM2_moveToTop(ccmessage->contentWindow);
+							this->mainClass->needsRestack=true;
+						}
+					//goto exitit;
+				//	this->mainClass->LFSWM2_popXErrorHandler();
+					return;
+				}
+				
+				}
+		}
+#else
+	if(e->message_type==this->mainClass->atoms.at("_NET_WM_STATE") && e->format==32)
+		{
+			this->mainClass->LFSWM2_pushXErrorHandler();
+
 /*
 Atom 0x14d name=_NET_WM_STATE
 data[0]=0x1
@@ -439,6 +478,8 @@ Atom (nil) name=(null)
 							if(e->data.l[0]==NET_WM_STATE_REMOVE)
 								{
 									ccmessage->onTop=false;
+									goto exitit;
+									//this->mainClass->LFSWM2_popXErrorHandler();
 									return;
 								}
 							XMapWindow(this->mainClass->display,ccmessage->frameWindow);
@@ -450,6 +491,8 @@ Atom (nil) name=(null)
 							this->LFSWM2_moveToTop(ccmessage->contentWindow);
 							this->mainClass->needsRestack=true;
 						}
+					goto exitit;
+				//	this->mainClass->LFSWM2_popXErrorHandler();
 					return;
 				}
 
@@ -462,6 +505,8 @@ Atom (nil) name=(null)
 							if(e->data.l[0]==NET_WM_STATE_REMOVE)
 								{
 									ccmessage->onBottom=false;
+									goto exitit;
+									//this->mainClass->LFSWM2_popXErrorHandler();
 									return;
 								}
 							XLowerWindow(this->mainClass->display,ccmessage->frameWindow);
@@ -469,16 +514,22 @@ Atom (nil) name=(null)
 							this->LFSWM2_moveToBottom(ccmessage->contentWindow);
 							this->mainClass->needsRestack=true;
 						}
+						goto exitit;
+					//	this->mainClass->LFSWM2_popXErrorHandler();
 					return;
 				}
-
+{
 			int how=e->data.l[0];
 			for (int i=1; i <= 2; i++)
 				{
 					if (e->data.l[i] != 0)
 						this->mainClass->mainWindowClass->LFSWM2_changeState(id,how,e->data.l[i]);
 				}
+}
+exitit:
+			this->mainClass->LFSWM2_popXErrorHandler();
 		}
+#endif
 	this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(id);
 }
 
@@ -522,7 +573,7 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)
 			ccs=this->mainClass->mainWindowClass->LFSWM2_getClientClass(v[0]);
 			if(ccs!=NULL)
 				{
-					XSetInputFocus(this->mainClass->display,ccs->contentWindow,RevertToParent,CurrentTime);
+					XSetInputFocus(this->mainClass->display,ccs->contentWindow,RevertToNone,CurrentTime);
 				}
 		}
 

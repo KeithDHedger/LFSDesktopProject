@@ -1,4 +1,5 @@
 0.2.2
+Removed some debugging info.
 Restore windows to respective desktops/states on startup.
 Done sticky window.
 
