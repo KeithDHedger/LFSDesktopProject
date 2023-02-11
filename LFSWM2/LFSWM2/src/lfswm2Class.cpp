@@ -346,28 +346,16 @@ void LFSWM2_Class::LFSWM2_setDeskCount(unsigned long val)
 	this->needsRestack=true;
 }
 
-void LFSWM2_Class::LFSWM2_setCurrentDesktop(unsigned long i)
+void LFSWM2_Class::LFSWM2_setCurrentDesktop(unsigned long i,bool force)
 {
 	LFSWM2_clientClass	*cc;
 
-	if(this->currentDesktop!=i)
+	if((this->currentDesktop!=i) || (force==true))
 		{
 			this->needsRestack=true;
 			this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_CURRENT_DESKTOP"),XA_CARDINAL,32,&i,1);
 			this->currentDesktop=i;
-			this->needsRestack=true;
-
-			for(int j=this->mainWindowClass->windowIDList.size()-1;j>=0;j--)
-				{
-					cc=this->mainWindowClass->LFSWM2_getClientClass(this->mainWindowClass->windowIDList.at(j));
-					if(cc!=NULL)
-						{
-							if(cc->onDesk==this->currentDesktop)
-								cc->LFSWM2_showWindow();
-							else
-								cc->LFSWM2_hideWindow();
-						}
-				}
+			this->mainWindowClass->LFSWM2_setVisibilityForDesk(this->currentDesktop);
 		}
 }
 

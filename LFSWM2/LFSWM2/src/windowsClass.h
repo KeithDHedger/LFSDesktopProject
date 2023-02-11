@@ -73,6 +73,8 @@ class LFSWM2_windowClass
 		Window								LFSWM2_getParentWindow(Window id);
 		void									LFSWM2_reloadWindowState(Window id);
 
+		void									LFSWM2_setVisibilityForDesk(unsigned long desk);
+
 //clients
 		void									LFSWM2_buildClientList(void);
 		void									LFSWM2_createClient(Window id);

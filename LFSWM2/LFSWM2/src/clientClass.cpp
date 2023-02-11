@@ -364,6 +364,7 @@ void LFSWM2_clientClass::LFSWM2_setWMState(XEvent *e)
 
 	this->onBottom=false;
 	this->onTop=false;
+	this->visibleOnAllDesks=false;
 
 	states=(Atom*)this->mainClass->mainWindowClass->LFSWM2_getFullProp(e->xproperty.window,this->mainClass->atoms.at("_NET_WM_STATE"),XA_ATOM,32,&n);
 
@@ -376,9 +377,14 @@ void LFSWM2_clientClass::LFSWM2_setWMState(XEvent *e)
 				}
 		}
 
+	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atoms.at("_NET_WM_STATE_STICKY")))
+		{
+			this->visibleOnAllDesks=true;
+		}
+
 	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atoms.at("_NET_WM_STATE_FULLSCREEN")))
 		{
-			fprintf(stderr,"got _NET_WM_STATE_FULLSCREEN\n");
+			fprintf(stderr,"got _NET_WM_STATE_FULLSCREEN TODO\n");
 		}
 
 	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atoms.at("_NET_WM_STATE_BELOW")))

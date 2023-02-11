@@ -1,3 +1,7 @@
+0.2.2
+Restore windows to respective desktops/states on startup.
+Done sticky window.
+
 0.2.1
 Code clean.
 Removed bits of legacy code.

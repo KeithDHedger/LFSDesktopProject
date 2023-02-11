@@ -135,7 +135,7 @@ class LFSWM2_Class
 		void					LFSWM2_initRootWindow(void);
 		void					LFSWM2_setDeskCount(unsigned long val);
 		unsigned long		LFSWM2_getDesktopCount(void);
-		void					LFSWM2_setCurrentDesktop(unsigned long i);
+		void					LFSWM2_setCurrentDesktop(unsigned long i,bool force=false);
 
 		static int			LFSWM2_wmDetected(Display *display,XErrorEvent *e);
 		static int			LFSWM2_xError(Display *display,XErrorEvent *e);
@@ -198,6 +198,8 @@ class LFSWM2_Class
 #ifdef __DEBUG__
 		void					DEBUG_printAtom(Atom a);
 #endif
+
+		bool		tb=false;
 
 	private:
 //vars

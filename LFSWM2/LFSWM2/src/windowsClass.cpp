@@ -131,9 +131,14 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			XSetWindowAttributes	wa;
 			int					offy;
 			int					offx;
+			long int				*desktopset=NULL;
+			long unsigned int	nitems_return=0;
+	
 
 			if(this->LFSWM2_getWindowType(id)==this->mainClass->atoms.at("_NET_WM_WINDOW_TYPE_DOCK"))
 				return;
+
+			desktopset=(long int*)this->mainClass->mainWindowClass->LFSWM2_getProp(id,this->mainClass->atoms.at("_NET_WM_DESKTOP"),XA_CARDINAL,&nitems_return);
 
 			XGetWindowAttributes(this->mainClass->display,id,&x_window_attrs);
 			if(x_window_attrs.override_redirect||x_window_attrs.map_state!=IsViewable)
@@ -187,10 +192,18 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			v[6]=this->mainClass->atoms.at("_NET_WM_STATE_ABOVE");
 			v[7]=this->mainClass->atoms.at("_NET_WM_STATE_BELOW");
 
-			cc->onDesk=this->mainClass->currentDesktop;
+
+			if(desktopset!=NULL)
+				{
+					cc->onDesk=*desktopset;
+				}
+			else
+				{
+					cc->onDesk=this->mainClass->currentDesktop;
+				}
+
 			this->LFSWM2_setProp(id,this->mainClass->atoms.at("_NET_WM_ALLOWED_ACTIONS"),XA_ATOM,32,v,8);
 			this->LFSWM2_setProp(cc->contentWindow,this->mainClass->atoms.at("_NET_WM_DESKTOP"),XA_CARDINAL,32,(void*)&cc->onDesk,1);
-//setprop(root,NET_CLIENT_LIST_STACKING,XA_WINDOW,32,v,n);
 
 			this->LFSWM2_setClientList(id,true);
 
@@ -292,19 +305,20 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			XMapWindow(this->mainClass->display,cc->shadeButton);
 
 			cc->LFSWM2_setWindowName();
+
 			unsigned long	n=0;
 			Atom				*states=(Atom*)this->LFSWM2_getFullProp(id,this->mainClass->atoms.at("_NET_WM_STATE"),XA_ATOM,32,&n);
 //check no longer maxed
-			if(n>1)
+			for(int j=0;j<n;j++)
 				{
-					if((n>1) && (states[0]==this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_VERT")) && (states[1]==this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ")))
+					if((states[j]==this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_VERT")) || (states[j]==this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ")))
 						cc->isMaximized=true;
-					else
-						cc->isMaximized=false;
+					if(states[j]==this->mainClass->atoms.at("_NET_WM_STATE_STICKY"))
+						cc->visibleOnAllDesks=true;
 				}
 			this->LFSWM2_reloadWindowState(id);
+			this->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,(void*)&cc->contentWindow,1);
 
-			this->mainClass->mainEventClass->LFSWM2_moveToTop(cc->contentWindow);
 			if(cc->windowType==NORMALWINDOW)
 				XAddToSaveSet(this->mainClass->display,id);
 			this->mainClass->needsRestack=true;
@@ -453,6 +467,7 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 	bool					handled;
 	bool					unmax=true;
 
+//TODO//clean
 	cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(id));
 	if(cc==NULL)
 		return;
@@ -482,13 +497,13 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 
 	if((n>0) && (states[0]==this->mainClass->atoms.at("_NET_WM_STATE_ABOVE")))
 		{
-		fprintf(stderr,"_NET_WM_STATE_ABOVE\n");
+		//fprintf(stderr,"_NET_WM_STATE_ABOVE\n");
 			cc->onTop=true;
 		}
 
 	if((n>0) && (states[0]==this->mainClass->atoms.at("_NET_WM_STATE_BELOW")))
 		{
-		fprintf(stderr,"_NET_WM_STATE_BELOW\n");
+		//fprintf(stderr,"_NET_WM_STATE_BELOW\n");
 			cc->onBottom=true;
 		}
 
@@ -700,6 +715,29 @@ void LFSWM2_windowClass::LFSWM2_setClientList(Window id,bool addwindow)
 
 void LFSWM2_windowClass::LFSWM2_setWindowState(Window w,long state)
 {
-	long data[2]={state,None};
+	long		data[2]={state,None};
 	XChangeProperty(this->mainClass->display,w,this->mainClass->atoms.at("WM_STATE"),this->mainClass->atoms.at("WM_STATE"),32,PropModeReplace,(unsigned char *)data,2);
 }
+
+void LFSWM2_windowClass::LFSWM2_setVisibilityForDesk(unsigned long desk)
+{
+	LFSWM2_clientClass	*cc;
+
+	for(int j=this->windowIDList.size()-1;j>=0;j--)
+		{
+			cc=this->LFSWM2_getClientClass(this->windowIDList.at(j));
+			if(cc!=NULL)
+				{
+					if(cc->visibleOnAllDesks==true)
+						cc->onDesk=desk;
+					if((cc->onDesk==desk) )
+						{
+							this->LFSWM2_setProp(cc->contentWindow,this->mainClass->atoms.at("_NET_WM_DESKTOP"),XA_CARDINAL,32,&cc->onDesk,1);
+							cc->LFSWM2_showWindow();
+						}
+					else
+						cc->LFSWM2_hideWindow();
+				}
+		}
+}
+
