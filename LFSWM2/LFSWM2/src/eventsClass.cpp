@@ -479,20 +479,16 @@ Atom (nil) name=(null)
 								{
 									ccmessage->onTop=false;
 									goto exitit;
-									//this->mainClass->LFSWM2_popXErrorHandler();
-									return;
 								}
 							XMapWindow(this->mainClass->display,ccmessage->frameWindow);
 							XRaiseWindow(this->mainClass->display,ccmessage->frameWindow);
 							ccmessage->onTop=true;
 							ccmessage->onBottom=false;
 							this->mainClass->mainWindowClass->LFSWM2_changeState(ccmessage->contentWindow,NET_WM_STATE_REMOVE,this->mainClass->atoms.at("_NET_WM_STATE_BELOW"));
-
 							this->LFSWM2_moveToTop(ccmessage->contentWindow);
 							this->mainClass->needsRestack=true;
 						}
 					goto exitit;
-				//	this->mainClass->LFSWM2_popXErrorHandler();
 					return;
 				}
 
@@ -506,8 +502,6 @@ Atom (nil) name=(null)
 								{
 									ccmessage->onBottom=false;
 									goto exitit;
-									//this->mainClass->LFSWM2_popXErrorHandler();
-									return;
 								}
 							XLowerWindow(this->mainClass->display,ccmessage->frameWindow);
 							ccmessage->onBottom=true;
@@ -515,7 +509,6 @@ Atom (nil) name=(null)
 							this->mainClass->needsRestack=true;
 						}
 						goto exitit;
-					//	this->mainClass->LFSWM2_popXErrorHandler();
 					return;
 				}
 {
