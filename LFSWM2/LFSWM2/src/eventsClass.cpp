@@ -216,8 +216,8 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 												this->mainClass->mainWindowClass->LFSWM2_changeState(cc->contentWindow,NET_WM_STATE_REMOVE,this->mainClass->atoms.at("_NET_WM_STATE_ABOVE"));
 												this->mainClass->mainWindowClass->LFSWM2_changeState(cc->contentWindow,NET_WM_STATE_TOGGLE,this->mainClass->atoms.at("_NET_WM_STATE_BELOW"));
 												cc->onBottom=!cc->onBottom;
-												if(cc->onBottom==true)
-													this->LFSWM2_moveToBottom(cc->contentWindow);
+												//if(cc->onBottom==true)
+												//	this->LFSWM2_moveToBottom(cc->contentWindow);
 												this->mainClass->needsRestack=true;
 											}
 										this->mainClass->LFSWM2_popXErrorHandler();
@@ -511,7 +511,7 @@ Atom (nil) name=(null)
 								}
 							XLowerWindow(this->mainClass->display,ccmessage->frameWindow);
 							ccmessage->onBottom=true;
-							this->LFSWM2_moveToBottom(ccmessage->contentWindow);
+							//this->LFSWM2_moveToBottom(ccmessage->contentWindow);
 							this->mainClass->needsRestack=true;
 						}
 						goto exitit;
@@ -591,7 +591,7 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)
 									middleindex++;
 									bottomindex++;
 									continue;
-									}
+								}
 							else if((ccs->onTop==true) )
 								{
 									sl.insert(sl.begin()+middleindex,ccs->frameWindow);
@@ -605,8 +605,8 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)
 
 					if(ccs->onTop==true)
 						{
-							sl.emplace(sl.begin(),ccs->frameWindow);
-							cl.emplace(cl.begin(),ccs->contentWindow);
+							sl.insert(sl.begin()+middleindex,ccs->frameWindow);
+							cl.insert(cl.begin()+middleindex,ccs->contentWindow);
 							topindex++;
 							middleindex++;
 							bottomindex++;
