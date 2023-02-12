@@ -81,7 +81,7 @@ class LFSWM2_clientClass
 		void				LFSWM2_setWMState(XEvent *e);
 
 		int				dragsize=16;
-		int				smoothness=20;
+		int				smoothness=5;
 
 	private:
 		bool				buttonDown=false;

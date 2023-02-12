@@ -1,4 +1,5 @@
 0.2.2
+Fixed drag top left.
 Fixed multple 'on top' windows.
 Removed some debugging info.
 Restore windows to respective desktops/states on startup.

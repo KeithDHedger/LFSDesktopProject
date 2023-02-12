@@ -135,7 +135,8 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 				this->buttonDown=false;
 				this->sx=0;
 				this->sy=0;
-				this->setWindowRects(false);
+				this->setWindowRects(true);
+				this->adjustContentWindow();
 				break;
 			case MotionNotify:
 				if(buttonDown==true)
@@ -144,7 +145,6 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 						this->steps++;
 						if(this->steps>this->smoothness)
 							{
-								//this->setWindowRects(false);
 								if(e->xany.window==this->topLeftDragger)
 									{
 										ce.x=e->xmotion.x_root-this->sx;
@@ -205,10 +205,13 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 								ce.send_event=True;
 								ce.border_width=BORDER_WIDTH;//TODO//
 								ce.value_mask=CWWidth|CWHeight|CWX|CWY;
+								ce.detail=Above;
+								ce.above=None;
+
 								XSendEvent(this->mainClass->display,this->contentWindow,true,StructureNotifyMask,(XEvent*)&ce);
-								//this->setWindowRects();
+								XSync(this->mainClass->display,false);
 								this->steps=0;
-								return(true);
+								break;
 							}
 					}
 				break;

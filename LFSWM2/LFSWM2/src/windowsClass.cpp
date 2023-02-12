@@ -158,7 +158,7 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 
 			cc->frameWindow=XCreateSimpleWindow(this->mainClass->display,this->mainClass->rootWindow,offx,offy,x_window_attrs.width+(this->mainClass->sideBarSize*3),x_window_attrs.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH+2,BORDER_WIDTH,this->mainClass->frameFG->pixel,this->mainClass->frameBG->pixel);
 
-			XSelectInput(this->mainClass->display,cc->frameWindow,SubstructureRedirectMask|SubstructureNotifyMask|ButtonPressMask|PointerMotionMask|ButtonReleaseMask|ExposureMask|PropertyChangeMask);
+			XSelectInput(this->mainClass->display,cc->frameWindow,StructureNotifyMask|SubstructureRedirectMask|SubstructureNotifyMask|ButtonPressMask|PointerMotionMask|ButtonReleaseMask|ExposureMask|PropertyChangeMask);
 
 			cc->windowType=this->LFSWM2_getWindowType(id);
 			cc->contentWindow=id;
