@@ -41,11 +41,12 @@ LFSWM2_messageClass::~LFSWM2_messageClass(void)
 	alarm(0);
 }
 
-LFSWM2_messageClass::LFSWM2_messageClass(LFSWM2_Class *mainclass)
+LFSWM2_messageClass::LFSWM2_messageClass(LFSWM2_Class *mainclass,int newkey)
 {
 	this->mainClass=mainclass;
 	theMainClass=mainclass;
 
+	this->key=newkey;
 	if((this->queueID=msgget(this->key,IPC_CREAT|0660))==-1)
 		fprintf(stderr,"Can't create message queue\n");
 

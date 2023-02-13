@@ -34,7 +34,7 @@ class LFSWM2_messageClass
 
 	public:
 
-	LFSWM2_messageClass(LFSWM2_Class *mainClass);
+	LFSWM2_messageClass(LFSWM2_Class *mainClass,int newkey);
 	~LFSWM2_messageClass(void);
 
 //functions

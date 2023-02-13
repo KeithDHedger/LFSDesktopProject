@@ -227,10 +227,14 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
+LFSTK_CFLAGS = @LFSTK_CFLAGS@
+LFSTK_LIBS = @LFSTK_LIBS@
 LIBOBJS = @LIBOBJS@
 LIBS = $(X11_LIBS) \
 			$(XINERAMA_LIBS) \
-			$(XFT_LIBS)
+			$(XFT_LIBS) \
+			$(LFSTK_LIBS) \
+			-lm
 
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
@@ -306,6 +310,7 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 			$(X11_CFLAGS) \
 			$(XINERAMA_CFLAGS) \
 			$(XFT_CFLAGS) \
+			$(LFSTK_CFLAGS) \
 			-DPREFIX=\""${prefix}\"" \
 			-DDATADIR=\""${pkgdatadir}"\" \
 			-DSYSCONFDIR=\""${sysconfdir}/${PACKAGE}"\" \
@@ -754,7 +759,6 @@ uninstall-man: uninstall-man1
 
 .PRECIOUS: Makefile
 
-			-lm
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

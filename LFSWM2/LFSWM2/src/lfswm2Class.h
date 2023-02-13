@@ -35,6 +35,9 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <getopt.h>
+
+#include <lfstk/LFSTKGlobals.h>
 
 #define __DEBUG__
 
@@ -46,7 +49,7 @@ template <typename t> void move(std::vector<t>& v,size_t oldIndex,size_t newInde
 		std::rotate(v.begin() + oldIndex, v.begin() + oldIndex + 1, v.begin() + newIndex + 1);
 }
 
-struct rectStruct
+struct rectStructure
 {
 	int			x;
 	int			y;
@@ -104,23 +107,14 @@ static unsigned char maximizeWindowBits[]=
 #define NET_WM_STATE_ADD 1
 #define NET_WM_STATE_TOGGLE 2
 
-#define MAX_MSG_SIZE 4096
-
 //source (data[0]) client messgae:0=no source  1=application 2=pager
 enum MESSAGESOURCE {NOSRC=0,APPLICATIONSRC,PAGERSRC};
 enum MESSAGETYPE {REFRESHTHEME,QUITLFSWM,RESTARTLFSWM,NOMSG};
-enum MESSAGEFORWHO {DESKTOP_MSG=1000,WMANAGER_MSG};
-
-struct msgBuffer
-{
-	long		mType;
-	char		mText[MAX_MSG_SIZE];
-};
 
 struct controlData
 {
-	rectStruct	boundingBox;
-	rectStruct	pixmapBox;
+	rectStructure	boundingBox;
+	rectStructure	pixmapBox;
 	int			startX;
 };
 
@@ -129,7 +123,7 @@ static LFSWM2_Class	*theMainClass=NULL;
 class LFSWM2_Class
 {
 	public:
-		LFSWM2_Class(void);
+		LFSWM2_Class(int argc,char **argv);
 		~LFSWM2_Class(void);
 
 		void					LFSWM2_initRootWindow(void);
@@ -150,13 +144,14 @@ class LFSWM2_Class
 		Display				*display;
 		Window				rootWindow;
 		Visual				*defaultVisual;
+		Colormap				defaultColourmap;
 		int					blackColour;
 		int					whiteColour;
 		GC					mainGC;
 		unsigned int			screen;
 		int					depth;
 		int					numberOfMonitors;
-		std::vector<rectStruct>	monitors;
+		std::vector<rectStructure>	monitors;
 
 		int					displayWidth;
 		int					displayHeight;
@@ -200,9 +195,12 @@ class LFSWM2_Class
 #endif
 
 		bool		tb=false;
-
+		int					msgQueueKey=999;
 	private:
+		void					cliOptions(int argc,char **argv);
+
 //vars
+		LFSTK_lib			*lfstkLib=NULL;
 		XErrorHandler		lastXErrorHandler;
 };
 

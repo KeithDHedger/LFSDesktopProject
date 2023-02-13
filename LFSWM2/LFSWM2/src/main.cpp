@@ -28,77 +28,13 @@
 
 #include <X11/Xlib.h>
 
-#include "config.h"
 #include "lfswm2Class.h"
-#include "eventsClass.h"
-#include "windowsClass.h"
 
 LFSWM2_Class			*mainLFSWM2Class;
-LFSWM2_eventsClass	*mainEventClass;
-LFSWM2_windowClass	*mainWindowClass;
-
-struct option long_options[] =
-	{
-		{"long1",1,0,'l'},
-		{"version",0,0,'v'},
-		{"help",0,0,'?'},
-		{0, 0, 0, 0}
-	};
-
-void printhelp(void)
-{
-printf("Usage: lfswm2 [OPTION]\n"
-	"A CLI application\n"
-	" -l, --long1	Do somthing good\n"
-	" -v, --version	output version information and exit\n"
-	" -h, -?, --help	print this help\n\n"
-	"Report bugs to kdhedger@yahoo.co.uk\n"
-	);
-}
 
 int main(int argc, char **argv)
 {
-	int c;
-	while (1)
-		{
-		int option_index = 0;
-		c = getopt_long (argc, argv, "v?h:l:",long_options, &option_index);
-		if (c == -1)
-			break;
-
-		switch (c)
-			{
-			case 'l':
-				printf("Arg=%s\n",optarg);
-				break;
-		
-			case 'v':
-				printf("lfswm2 %s\n",VERSION);
-				return 0;
-				break;
-
-			case '?':
-			case 'h':
-				printhelp();
-				return 0;
-				break;
-
-			default:
-				fprintf(stderr,"?? Unknown argument ??\n");
-				return UNKNOWNARG;
-			break;
-			}
-		}
-	
-	if (optind < argc)
-		{
-			printf("non-option ARGV-elements: ");
-			while (optind < argc)
-				printf("%s ", argv[optind++]);
-			printf("\n");
-		}
-
-	mainLFSWM2Class=new LFSWM2_Class();
+	mainLFSWM2Class=new LFSWM2_Class(argc,argv);
 	mainLFSWM2Class->mainEventClass->LFSWM2_mainEventLoop();
 
 	return(0);

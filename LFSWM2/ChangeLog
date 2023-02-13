@@ -1,3 +1,10 @@
+0.2.3
+Fixed fallback colours.
+Added -f,-b and -t options to set forecolour,backcolour and textcolour of window frame decorations.
+Added '-k' option to set message key.
+Added lfstklib ( for future stuff).
+Minor visual fix.
+
 0.2.2
 Fixed drag top left.
 Fixed multple 'on top' windows.

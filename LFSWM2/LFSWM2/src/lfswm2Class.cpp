@@ -33,11 +33,11 @@ LFSWM2_Class::~LFSWM2_Class(void)
 {
 }
 
-LFSWM2_Class::LFSWM2_Class(void)
+LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 {
 	int					cnt=0;
 	XineramaScreenInfo	*p=NULL;
-	rectStruct			monrect;
+	rectStructure		monrect;
 
 	this->display=XOpenDisplay(NULL);
 	if(this->display==NULL)
@@ -56,6 +56,7 @@ LFSWM2_Class::LFSWM2_Class(void)
 
 	this->rootWindow=DefaultRootWindow(this->display);
 	this->defaultVisual=DefaultVisual(this->display,this->screen);
+	this->defaultColourmap=DefaultColormap(this->display,this->screen);
 	this->blackColour=BlackPixel(this->display,this->screen);
 	this->whiteColour=WhitePixel(this->display,this->screen);
 	this->mainGC=XCreateGC(this->display,this->rootWindow,0,NULL);
@@ -91,12 +92,12 @@ LFSWM2_Class::LFSWM2_Class(void)
 		}
 
 	this->LFSWM2_initRootWindow();
-	XSetErrorHandler(&LFSWM2_Class::LFSWM2_xError);
+	XSetInputFocus(this->display,rootWindow,RevertToNone,CurrentTime);
+	this->lastXErrorHandler=XSetErrorHandler(&LFSWM2_Class::LFSWM2_xError);
 
-//	this->frameBG=this->mainWindowClass->LFSWM2_xftLoadColour("#5E3300","#808080");
-	this->frameBG=this->mainWindowClass->LFSWM2_xftLoadColour("#4194FE","#808080");
-	this->frameFG=this->mainWindowClass->LFSWM2_xftLoadColour("#948069","#808080");
-	this->frameText=this->mainWindowClass->LFSWM2_xftLoadColour("rgb:ff/ff/ff","#808080");
+	this->frameBG=this->mainWindowClass->LFSWM2_xftLoadColour("#4194FE","grey");
+	this->frameFG=this->mainWindowClass->LFSWM2_xftLoadColour("#000000","white");
+	this->frameText=this->mainWindowClass->LFSWM2_xftLoadColour("rgb:ff/ff/ff","black");
 	this->frameFont=XftFontOpenName(this->display,this->screen,"sans-serif:size=14:bold");
 
 	this->closeBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)deleteWindowBits,deleteWindowSize,deleteWindowSize);
@@ -119,7 +120,10 @@ LFSWM2_Class::LFSWM2_Class(void)
 
 	this->mainWindowClass->init();
 
-	this->messages=new LFSWM2_messageClass(this);
+	this->lfstkLib=new LFSTK_lib(true);
+	this->cliOptions(argc,argv);
+
+	this->messages=new LFSWM2_messageClass(this,this->msgQueueKey);
 }
 
 void LFSWM2_Class::LFSWM2_pushXErrorHandler(void)
@@ -357,6 +361,73 @@ void LFSWM2_Class::LFSWM2_setCurrentDesktop(unsigned long i,bool force)
 			this->currentDesktop=i;
 			this->mainWindowClass->LFSWM2_setVisibilityForDesk(this->currentDesktop);
 		}
+}
+
+void LFSWM2_Class::cliOptions(int argc,char **argv)
+{
+	struct option long_options[]=
+		{
+			{"key",1,0,'k'},
+			{"backcolour",1,0,'b'},
+			{"forecolour",1,0,'f'},
+			{"textcolour",1,0,'t'},
+			{"version",0,0,'v'},
+			{"help",0,0,'?'},
+			{0, 0, 0, 0}
+		};
+
+	int		c;
+	int		key=-1;
+	char		*prefsfile;
+
+	while(true)
+		{
+			int option_index=0;
+			c=getopt_long (argc,argv,"v?hk:b:f:t:",long_options,&option_index);
+			if(c==-1)
+				break;
+
+			switch(c)
+				{
+					case 'k':
+						key=atoi(optarg);
+						break;		
+					case 'b':
+						this->frameBG=this->mainWindowClass->LFSWM2_xftLoadColour(optarg,"grey");
+						break;		
+					case 'f':
+						this->frameFG=this->mainWindowClass->LFSWM2_xftLoadColour(optarg,"white");
+						break;		
+					case 't':
+						this->frameText=this->mainWindowClass->LFSWM2_xftLoadColour(optarg,"black");
+						break;		
+					case 'v':
+						printf("lfswm2 %s\n",123);
+						exit(0);
+						break;
+					case '?':
+					case 'h':
+						printf("Usage: lfswm2 [OPTION]\n"
+							   "LFS Wnindow Manager\n"
+								"- k, --key Set message queue key\n"
+								" -v, --version	output version information and exit\n"
+								" -h, -?, --help	print this help\n\n"
+								"Report bugs to kdhedger@gmail.com\n"
+								);
+						exit(0);
+						break;
+					default:
+						fprintf(stderr,"?? Unknown argument ??\n");
+						exit(1);
+						break;
+				}
+		}
+	prefsfile=this->lfstkLib->LFSTK_oneLiner("sed -n '2p' \"%s/.config/LFS/lfsappearance.rc\"",getenv("HOME"));
+	if(prefsfile!=NULL)
+		this->msgQueueKey=atoi(prefsfile);
+	if(key!=-1)
+		this->msgQueueKey=key;
+	//fprintf(stderr,"pref=%s key=%i msgQueueKey=%i\n",prefsfile,key,this->msgQueueKey);
 }
 
 #ifdef __DEBUG__

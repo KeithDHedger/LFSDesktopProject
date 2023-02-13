@@ -31,7 +31,9 @@ LFSWM2_windowClass::LFSWM2_windowClass(LFSWM2_Class *mainclass)
 
 void LFSWM2_windowClass::init(void)
 {
-	this->LFSWM2_buildClientList();
+	this->mainClass->LFSWM2_pushXErrorHandler();
+		this->LFSWM2_buildClientList();
+	this->mainClass->LFSWM2_popXErrorHandler();
 }
 
 void LFSWM2_windowClass::LFSWM2_buildClientList(void)
@@ -83,28 +85,26 @@ struct fontColour* LFSWM2_windowClass::LFSWM2_xftLoadColour(const char *name,con
 	XftColor				color;
 	struct fontColour	*c;
 	XColor				tc,sc;
-	Visual				*visual=DefaultVisual(this->mainClass->display,this->mainClass->screen);
-	Colormap				colormap=DefaultColormap(this->mainClass->display,this->mainClass->screen);
+	//Visual				*visual=DefaultVisual(this->mainClass->display,this->mainClass->screen);
+	//Colormap				colormap=DefaultColormap(this->mainClass->display,this->mainClass->screen);
 
-	if((draw=XftDrawCreate(this->mainClass->display,this->mainClass->rootWindow,this->mainClass->defaultVisual,colormap))==NULL)
+	if((draw=XftDrawCreate(this->mainClass->display,this->mainClass->rootWindow,this->mainClass->defaultVisual,this->mainClass->defaultColourmap))==NULL)
 		return NULL;
 
-	if(!XftColorAllocName(this->mainClass->display,this->mainClass->defaultVisual,colormap,name,&color))
+	if(!XftColorAllocName(this->mainClass->display,this->mainClass->defaultVisual,this->mainClass->defaultColourmap,name,&color))
 		{
-			fprintf(stderr,"Can't alloc colour %s, using fallback %s",name,fallback);	
-			if(!XftColorAllocName(this->mainClass->display,this->mainClass->defaultVisual,colormap,fallback,&color))
-				{	
-					XftDrawDestroy(draw);
-					return NULL;
-				}
+			fprintf(stderr,"Can't alloc colour %s, using fallback %s\n",name,fallback);	
+			XftColorAllocName(this->mainClass->display,this->mainClass->defaultVisual,this->mainClass->defaultColourmap,fallback,&color);
+			XAllocNamedColor(this->mainClass->display,this->mainClass->defaultColourmap,fallback,&sc,&tc);
 		}
+	else
+		XAllocNamedColor(this->mainClass->display,this->mainClass->defaultColourmap,name,&sc,&tc);
 
-	XAllocNamedColor(this->mainClass->display,colormap,name,&sc,&tc);
 	c=new struct fontColour;
 	c->draw=draw;
 	c->color=color;
-	c->visual=visual;
-	c->colormap=colormap;
+	c->visual=this->mainClass->defaultVisual;
+	c->colormap=this->mainClass->defaultColourmap;
 	c->pixel=sc.pixel;
 
 	return c;
@@ -326,10 +326,10 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 	XSync(this->mainClass->display,false);
 }
 
-rectStruct LFSWM2_windowClass::LFSWM2_getWindowRect(Window id,Window parent,bool dotranslate)
+rectStructure LFSWM2_windowClass::LFSWM2_getWindowRect(Window id,Window parent,bool dotranslate)
 {
 	XWindowAttributes	attr;
-	rectStruct			r={0,0,0,0};
+	rectStructure			r={0,0,0,0};
 	Window				wr;
 
 	XGetWindowAttributes(this->mainClass->display,id,&attr);
@@ -644,7 +644,7 @@ void LFSWM2_windowClass::LFSWM2_removeProp(Window w,Atom state)
 
 void LFSWM2_windowClass::LFSWM2_refreshFrame(LFSWM2_clientClass *cc,XExposeEvent *e)//TODO//prevent flicker
 {
-	rectStruct r=cc->frameWindowRect;
+	rectStructure r=cc->frameWindowRect;
 
 	if(e!=NULL)
 		{
@@ -668,10 +668,10 @@ void LFSWM2_windowClass::LFSWM2_refreshFrame(LFSWM2_clientClass *cc,XExposeEvent
 		}
 
 //buttons
-	cc->drawMouseLeave(cc->closeButton,this->mainClass->closeBitMap,this->mainClass->closeControlStruct);
-	cc->drawMouseLeave(cc->maximizeButton,this->mainClass->maximizeBitMap,this->mainClass->maximizeControlStruct);
-	cc->drawMouseLeave(cc->minimizeButton,this->mainClass->minimizeBitMap,this->mainClass->minimizeControlStruct);
-	cc->drawMouseLeave(cc->shadeButton,this->mainClass->shadeBitMap,this->mainClass->shadeControlStruct);
+	cc->LFSWM2_drawMouseLeave(cc->closeButton,this->mainClass->closeBitMap,this->mainClass->closeControlStruct);
+	cc->LFSWM2_drawMouseLeave(cc->maximizeButton,this->mainClass->maximizeBitMap,this->mainClass->maximizeControlStruct);
+	cc->LFSWM2_drawMouseLeave(cc->minimizeButton,this->mainClass->minimizeBitMap,this->mainClass->minimizeControlStruct);
+	cc->LFSWM2_drawMouseLeave(cc->shadeButton,this->mainClass->shadeBitMap,this->mainClass->shadeControlStruct);
 }
 
 Window LFSWM2_windowClass::LFSWM2_getParentWindow(Window id)

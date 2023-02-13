@@ -56,7 +56,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						}
 				}
 
-//f//printf(stderr,"evnttype=%i\n",e.type);
+//fprintf(stderr,"evnttype=%i\n",e.type);
 			if(this->mainClass->messages->whatMsg==QUITLFSWM)
 				break;
 
@@ -111,6 +111,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 					case MotionNotify:
 						{
 							bool domove=false;
+							cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xmotion.window);
 							if(cc!=NULL)
 								{
 									if((cc->frameWindow==e.xmotion.window) && (e.xmotion.state==Button1Mask))
@@ -125,7 +126,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 											int ydiff=e.xbutton.y_root-start.y_root;
 											XWindowAttributes	ttattr;
 											XWindowAttributes	frameattr;
-											rectStruct r;
+											rectStructure r;
 											XGetWindowAttributes(this->mainClass->display,cc->contentWindow,&ttattr);
 											XMoveWindow(this->mainClass->display,cc->frameWindow,attr.x+xdiff,attr.y+ydiff);
 								//notify client
@@ -326,11 +327,11 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 											cc->LFSWM2_setWindowName();
 											this->mainClass->mainWindowClass->LFSWM2_refreshFrame(cc,NULL);
 										}
-									if(e.xproperty.atom=this->mainClass->atoms.at("_NET_WM_USER_TIME"))
-										{
-											this->mainClass->needsRestack=false;
-											break;
-										}
+//									if(e.xproperty.atom=this->mainClass->atoms.at("_NET_WM_USER_TIME"))
+//										{
+//											this->mainClass->needsRestack=false;
+//											break;
+//										}
 
 								}
 						}
@@ -389,9 +390,11 @@ void LFSWM2_eventsClass::LFSWM2_doClientMsg(Window id,XClientMessageEvent *e)
 			ccmessage=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(e->window));
 			if(ccmessage!=NULL)
 				{
-					this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,(void*)&ccmessage->contentWindow,1);
-					//XSetInputFocus(this->mainClass->display,e->window,RevertToParent,CurrentTime);
-					XSetInputFocus(this->mainClass->display,ccmessage->contentWindow,RevertToNone,CurrentTime);
+					this->mainClass->LFSWM2_pushXErrorHandler();
+						this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,(void*)&ccmessage->contentWindow,1);
+						XSetInputFocus(this->mainClass->display,ccmessage->contentWindow,RevertToPointerRoot,CurrentTime);
+					this->mainClass->LFSWM2_popXErrorHandler();
+
 					this->mainClass->needsRestack=true;
 				}
 			return;
@@ -509,7 +512,7 @@ exitit:
 	this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(id);
 }
 
-void LFSWM2_eventsClass::LFSWM2_sendConfigureEvent(Window wid,rectStruct r)
+void LFSWM2_eventsClass::LFSWM2_sendConfigureEvent(Window wid,rectStructure r)
 {
 	XConfigureEvent	ce;
 
@@ -549,7 +552,9 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)
 			ccs=this->mainClass->mainWindowClass->LFSWM2_getClientClass(v[0]);
 			if(ccs!=NULL)
 				{
-					XSetInputFocus(this->mainClass->display,ccs->contentWindow,RevertToNone,CurrentTime);
+					this->mainClass->LFSWM2_pushXErrorHandler();
+						XSetInputFocus(this->mainClass->display,ccs->contentWindow,RevertToPointerRoot,CurrentTime);
+					this->mainClass->LFSWM2_popXErrorHandler();
 				}
 		}
 

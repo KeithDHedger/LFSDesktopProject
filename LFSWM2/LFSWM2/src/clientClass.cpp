@@ -76,7 +76,7 @@ void LFSWM2_clientClass::LFSWM2_setWindowName(void)
 	this->mainClass->LFSWM2_popXErrorHandler();
 }
 
-void LFSWM2_clientClass::drawMouseEnter(Window id,controlData data,Pixmap pm)
+void LFSWM2_clientClass::drawMouseEnter(Window id,Pixmap pm,controlData data)
 {
 	XSetForeground(this->mainClass->display,this->mainClass->mainGC,this->mainClass->frameFG->pixel);
 	XSetClipMask(this->mainClass->display,this->mainClass->mainGC,None);
@@ -84,13 +84,14 @@ void LFSWM2_clientClass::drawMouseEnter(Window id,controlData data,Pixmap pm)
 	XDrawRectangle(this->mainClass->display,id,this->mainClass->mainGC,1,1,data.boundingBox.width-2,data.boundingBox.height-2);
 }
 
-void LFSWM2_clientClass::drawMouseLeave(Window id,Pixmap pm,controlData data)
+void LFSWM2_clientClass::LFSWM2_drawMouseLeave(Window id,Pixmap pm,controlData data)
 {
 	XSetForeground(this->mainClass->display,this->mainClass->mainGC,this->mainClass->frameBG->pixel);
 	XSetClipMask(this->mainClass->display,this->mainClass->mainGC,None);
 	XFillRectangle(this->mainClass->display,id,this->mainClass->mainGC,0,0,data.boundingBox.width+10,data.boundingBox.height+10);
  
-  	XSetForeground(this->mainClass->display,this->mainClass->mainGC,this->mainClass->whiteColour);
+  	XSetForeground(this->mainClass->display,this->mainClass->mainGC,this->mainClass->frameText->pixel);
+  //	XSetForeground(this->mainClass->display,this->mainClass->mainGC,this->mainClass->whiteColour);
 	XSetClipOrigin(this->mainClass->display,this->mainClass->mainGC,data.pixmapBox.x,data.pixmapBox.y);
 	XSetClipMask(this->mainClass->display,this->mainClass->mainGC,pm);
 	XFillRectangle(this->mainClass->display,id,this->mainClass->mainGC,0,0,20,20);
@@ -114,8 +115,8 @@ void LFSWM2_clientClass::LFSWM2_sendCloseWindow(void)
 void LFSWM2_clientClass::adjustContentWindow(void)
 {
 	XResizeWindow(this->mainClass->display,this->contentWindow,
-	this->frameWindowRect.width-((this->mainClass->sideBarSize+BORDER_WIDTH)*2),
-	this->frameWindowRect.height-(this->mainClass->bottomBarSize+BORDER_WIDTH)-this->mainClass->titleBarSize);
+	this->frameWindowRect.width-(this->mainClass->sideBarSize*3),
+	this->frameWindowRect.height-(this->mainClass->bottomBarSize+BORDER_WIDTH)-this->mainClass->titleBarSize-2);
 	this->contentWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->contentWindow,this->mainClass->rootWindow);
 }
 
@@ -258,8 +259,10 @@ bool LFSWM2_clientClass::LFSWM2_handleControls(XEvent *e)
 	switch(e->type)
 		{
 			case EnterNotify:
+				this->drawMouseEnter(e->xany.window,pm,data);
+				break;
 			case LeaveNotify:
-				this->drawMouseLeave(e->xany.window,pm,data);
+				this->LFSWM2_drawMouseLeave(e->xany.window,pm,data);
 				break;
 			case ButtonPress:
 				if(e->xbutton.window==this->closeButton)
@@ -320,7 +323,7 @@ void LFSWM2_clientClass::LFSWM2_maxWindow(void)
 		}
 	else
 		{
-			rectStruct rr=this->mainClass->monitors.at(0);
+			rectStructure rr=this->mainClass->monitors.at(0);
 			rr.width=this->mainClass->monitors.at(0).width-((this->mainClass->sideBarSize+BORDER_WIDTH)*3);//TODO//
 			rr.height=this->mainClass->monitors.at(0).height-(this->mainClass->titleBarSize+this->mainClass->bottomBarSize+(BORDER_WIDTH*2));
 			rr.x=this->mainClass->sideBarSize;

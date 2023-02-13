@@ -34,7 +34,7 @@ class LFSWM2_eventsClass
 		~LFSWM2_eventsClass(void);
 
 		void			LFSWM2_mainEventLoop(void);
-		void			LFSWM2_sendConfigureEvent(Window wid,struct rectStruct r);
+		void			LFSWM2_sendConfigureEvent(Window wid,struct rectStructure r);
 		void			LFSWM2_doClientMsg(Window id,XClientMessageEvent *e);
 		void			LFSWM2_moveToTop(Window id);
 		void			LFSWM2_moveToBottom(Window id);
