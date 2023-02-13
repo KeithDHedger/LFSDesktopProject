@@ -85,8 +85,6 @@ struct fontColour* LFSWM2_windowClass::LFSWM2_xftLoadColour(const char *name,con
 	XftColor				color;
 	struct fontColour	*c;
 	XColor				tc,sc;
-	//Visual				*visual=DefaultVisual(this->mainClass->display,this->mainClass->screen);
-	//Colormap				colormap=DefaultColormap(this->mainClass->display,this->mainClass->screen);
 
 	if((draw=XftDrawCreate(this->mainClass->display,this->mainClass->rootWindow,this->mainClass->defaultVisual,this->mainClass->defaultColourmap))==NULL)
 		return NULL;
