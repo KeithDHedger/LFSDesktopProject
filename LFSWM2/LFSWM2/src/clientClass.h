@@ -91,6 +91,9 @@ class LFSWM2_clientClass
 		bool				buttonDown=false;
 		int				sx=0;
 		int				sy=0;
+		rectStructure	clientPreFSRect;
+		rectStructure	framePreFSRect;
+
 		void				drawMouseEnter(Window id,Pixmap pm,controlData data);
 		bool				doResizeDraggers(XEvent *e);
 		void				setWindowRects(bool resize=true);

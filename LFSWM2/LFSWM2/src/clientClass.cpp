@@ -316,9 +316,11 @@ void LFSWM2_clientClass::LFSWM2_fullscreenWindow(void)
 {
 	if(this->isFullscreen==true)
 		{
-			XMoveResizeWindow(this->mainClass->display,this->frameWindow,this->framePreMaxRect.x,this->framePreMaxRect.y,this->framePreMaxRect.width,this->framePreMaxRect.height);
-			XMoveResizeWindow(this->mainClass->display,this->contentWindow,this->clientPreMaxRect.x,this->clientPreMaxRect.y,this->clientPreMaxRect.width,this->clientPreMaxRect.height);
+			XMoveResizeWindow(this->mainClass->display,this->frameWindow,this->framePreFSRect.x,this->framePreFSRect.y,this->framePreFSRect.width,this->framePreFSRect.height);
+			XMoveResizeWindow(this->mainClass->display,this->contentWindow,this->clientPreFSRect.x,this->clientPreFSRect.y,this->clientPreFSRect.width,this->clientPreFSRect.height);
 			this->isFullscreen=false;
+			this->setWindowRects();
+			this->adjustContentWindow();
 		}
 	else
 		{		
@@ -328,8 +330,8 @@ void LFSWM2_clientClass::LFSWM2_fullscreenWindow(void)
 					geometryStruct	mg={this->mainClass->monitors.at(j).x,this->mainClass->monitors.at(j).y,(unsigned)this->mainClass->monitors.at(j).width,(unsigned)this->mainClass->monitors.at(j).height,0};
 					if(this->mainClass->lfstkLib->LFSTK_pointInRect(&fp,&mg))
 						{
-							this->framePreMaxRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->frameWindow,this->mainClass->rootWindow,false);
-							this->clientPreMaxRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->contentWindow,this->mainClass->rootWindow,false);
+							this->framePreFSRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->frameWindow,this->mainClass->rootWindow,false);
+							this->clientPreFSRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->contentWindow,this->mainClass->rootWindow,false);
 							XMoveResizeWindow(this->mainClass->display,this->frameWindow,this->mainClass->monitors.at(j).x,this->mainClass->monitors.at(j).y,this->mainClass->monitors.at(j).width,this->mainClass->monitors.at(j).height);
 							XSync(this->mainClass->display,false);
 							this->setWindowRects(true);
@@ -338,7 +340,6 @@ void LFSWM2_clientClass::LFSWM2_fullscreenWindow(void)
 				}
 			this->isFullscreen=true;
 		}
-	this->setWindowRects();
 }
 
 void LFSWM2_clientClass::LFSWM2_maxWindow(void)
