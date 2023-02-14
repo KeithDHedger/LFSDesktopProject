@@ -506,11 +506,9 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 			cc->onBottom=true;
 		}
 
-//	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atoms.at("_NET_WM_STATE_FULLSCREEN")))
-
 	if((n>0) && (states[0]==this->mainClass->atoms.at("_NET_WM_STATE_FULLSCREEN")))
 		{
-		fprintf(stderr,"_NET_WM_STATE_FULLSCREEN\n");
+		//fprintf(stderr,"_NET_WM_STATE_FULLSCREEN\n");
 			cc->isFullscreen=true;
 		}
 
