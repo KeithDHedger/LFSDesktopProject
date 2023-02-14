@@ -23,9 +23,6 @@
 #include <stdlib.h>
 #include <getopt.h>
 
-#define UNKNOWNARG -100
-#define MAX(a, b) ((a) > (b) ? (a) : (b))
-
 #include <X11/Xlib.h>
 
 #include "lfswm2Class.h"

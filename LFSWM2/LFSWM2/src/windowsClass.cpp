@@ -154,7 +154,8 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 
 			cc=new LFSWM2_clientClass(this->mainClass,id);
 
-			cc->frameWindow=XCreateSimpleWindow(this->mainClass->display,this->mainClass->rootWindow,offx,offy,x_window_attrs.width+(this->mainClass->sideBarSize*3),x_window_attrs.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH+2,BORDER_WIDTH,this->mainClass->frameFG->pixel,this->mainClass->frameBG->pixel);
+		//	cc->frameWindow=XCreateSimpleWindow(this->mainClass->display,this->mainClass->rootWindow,offx,offy,x_window_attrs.width+(this->mainClass->sideBarSize*3),x_window_attrs.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH+2,BORDER_WIDTH,this->mainClass->frameFG->pixel,this->mainClass->frameBG->pixel);
+			cc->frameWindow=XCreateSimpleWindow(this->mainClass->display,this->mainClass->rootWindow,offx,offy,x_window_attrs.width+(this->mainClass->sideBarSize*3),x_window_attrs.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH,BORDER_WIDTH,this->mainClass->frameFG->pixel,this->mainClass->frameBG->pixel);
 
 			XSelectInput(this->mainClass->display,cc->frameWindow,StructureNotifyMask|SubstructureRedirectMask|SubstructureNotifyMask|ButtonPressMask|PointerMotionMask|ButtonReleaseMask|ExposureMask|PropertyChangeMask);
 
@@ -327,7 +328,7 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 rectStructure LFSWM2_windowClass::LFSWM2_getWindowRect(Window id,Window parent,bool dotranslate)
 {
 	XWindowAttributes	attr;
-	rectStructure			r={0,0,0,0};
+	rectStructure		r={0,0,0,0};
 	Window				wr;
 
 	XGetWindowAttributes(this->mainClass->display,id,&attr);
@@ -503,6 +504,14 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 		{
 		//fprintf(stderr,"_NET_WM_STATE_BELOW\n");
 			cc->onBottom=true;
+		}
+
+//	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atoms.at("_NET_WM_STATE_FULLSCREEN")))
+
+	if((n>0) && (states[0]==this->mainClass->atoms.at("_NET_WM_STATE_FULLSCREEN")))
+		{
+		fprintf(stderr,"_NET_WM_STATE_FULLSCREEN\n");
+			cc->isFullscreen=true;
 		}
 
 //TODO//

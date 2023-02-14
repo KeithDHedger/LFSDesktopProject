@@ -363,6 +363,20 @@ void LFSWM2_Class::LFSWM2_setCurrentDesktop(unsigned long i,bool force)
 		}
 }
 
+void LFSWM2_Class::printHelp(void)
+{
+	printf(	"Usage: lfswm2 [OPTION]\n"
+			"LFS Window Manager\n"
+			"- k, --key\n\tSet message queue key\n"
+			"- b, --backcolour\n\tSet frame back colour\n"
+			"- f, --forecolour\n\tSet frame fore colour\n"
+			"- t, --textcolour\n\tSet frame text colour\n"
+			" -v, --version\n\tOutput version information and exit\n"
+			" -h, -?, --help\n\tPrint this help\n\n"
+			"Report bugs to kdhedger@gmail.com\n"
+		);
+}
+
 void LFSWM2_Class::cliOptions(int argc,char **argv)
 {
 	struct option long_options[]=
@@ -407,13 +421,7 @@ void LFSWM2_Class::cliOptions(int argc,char **argv)
 						break;
 					case '?':
 					case 'h':
-						printf("Usage: lfswm2 [OPTION]\n"
-							   "LFS Wnindow Manager\n"
-								"- k, --key Set message queue key\n"
-								" -v, --version	output version information and exit\n"
-								" -h, -?, --help	print this help\n\n"
-								"Report bugs to kdhedger@gmail.com\n"
-								);
+						this->printHelp();
 						exit(0);
 						break;
 					default:
@@ -427,7 +435,6 @@ void LFSWM2_Class::cliOptions(int argc,char **argv)
 		this->msgQueueKey=atoi(prefsfile);
 	if(key!=-1)
 		this->msgQueueKey=key;
-	//fprintf(stderr,"pref=%s key=%i msgQueueKey=%i\n",prefsfile,key,this->msgQueueKey);
 }
 
 #ifdef __DEBUG__

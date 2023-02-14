@@ -50,6 +50,7 @@ class LFSWM2_clientClass
 		bool				onBottom=false;
 		bool				isMaximized=false;
 		bool				isMinimized=false;
+		bool				isFullscreen=false;
 		rectStructure	contentWindowRect;
 		rectStructure	frameWindowRect;
 		rectStructure	clientPreMaxRect;
@@ -74,12 +75,15 @@ class LFSWM2_clientClass
 		void				LFSWM2_hideWindow(void);
 		void				LFSWM2_minWindow(void);
 		void				LFSWM2_maxWindow(void);
+		void				LFSWM2_fullscreenWindow(void);
+
 		void				LFSWM2_sendCloseWindow(void);
 		void				LFSWM2_resizeControls(void);
 
 		void				LFSWM2_setWMState(XEvent *e);
 
 		void				LFSWM2_drawMouseLeave(Window id,Pixmap pm,struct controlData data);
+
 		int				dragsize=16;
 		int				smoothness=5;
 

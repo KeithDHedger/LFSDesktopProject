@@ -189,6 +189,7 @@ class LFSWM2_Class
 		LFSWM2_eventsClass	*mainEventClass;
 		LFSWM2_windowClass	*mainWindowClass;
 		LFSWM2_messageClass	*messages;
+		LFSTK_lib			*lfstkLib;
 
 #ifdef __DEBUG__
 		void					DEBUG_printAtom(Atom a);
@@ -198,9 +199,9 @@ class LFSWM2_Class
 		int					msgQueueKey=999;
 	private:
 		void					cliOptions(int argc,char **argv);
+		void					printHelp(void);
 
 //vars
-		LFSTK_lib			*lfstkLib=NULL;
 		XErrorHandler		lastXErrorHandler;
 };
 

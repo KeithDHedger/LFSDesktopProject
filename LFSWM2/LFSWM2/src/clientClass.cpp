@@ -115,8 +115,8 @@ void LFSWM2_clientClass::LFSWM2_sendCloseWindow(void)
 void LFSWM2_clientClass::adjustContentWindow(void)
 {
 	XResizeWindow(this->mainClass->display,this->contentWindow,
-	this->frameWindowRect.width-(this->mainClass->sideBarSize*3),
-	this->frameWindowRect.height-(this->mainClass->bottomBarSize+BORDER_WIDTH)-this->mainClass->titleBarSize-2);
+	this->frameWindowRect.width-(this->mainClass->sideBarSize*2),
+	this->frameWindowRect.height-(this->mainClass->bottomBarSize+BORDER_WIDTH)-this->mainClass->titleBarSize);
 	this->contentWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->contentWindow,this->mainClass->rootWindow);
 }
 
@@ -210,7 +210,6 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 								ce.above=None;
 
 								XSendEvent(this->mainClass->display,this->contentWindow,true,StructureNotifyMask,(XEvent*)&ce);
-								XSync(this->mainClass->display,false);
 								this->steps=0;
 								break;
 							}
@@ -313,6 +312,35 @@ void LFSWM2_clientClass::LFSWM2_minWindow(void)
 	this->LFSWM2_hideWindow();
 }
 
+void LFSWM2_clientClass::LFSWM2_fullscreenWindow(void)
+{
+	if(this->isFullscreen==true)
+		{
+			XMoveResizeWindow(this->mainClass->display,this->frameWindow,this->framePreMaxRect.x,this->framePreMaxRect.y,this->framePreMaxRect.width,this->framePreMaxRect.height);
+			XMoveResizeWindow(this->mainClass->display,this->contentWindow,this->clientPreMaxRect.x,this->clientPreMaxRect.y,this->clientPreMaxRect.width,this->clientPreMaxRect.height);
+			this->isFullscreen=false;
+		}
+	else
+		{		
+			pointStruct	fp={this->frameWindowRect.x,this->frameWindowRect.y};
+			for(unsigned int j=0;j<this->mainClass->numberOfMonitors;j++)
+				{
+					geometryStruct	mg={this->mainClass->monitors.at(j).x,this->mainClass->monitors.at(j).y,(unsigned)this->mainClass->monitors.at(j).width,(unsigned)this->mainClass->monitors.at(j).height,0};
+					if(this->mainClass->lfstkLib->LFSTK_pointInRect(&fp,&mg))
+						{
+							this->framePreMaxRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->frameWindow,this->mainClass->rootWindow,false);
+							this->clientPreMaxRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->contentWindow,this->mainClass->rootWindow,false);
+							XMoveResizeWindow(this->mainClass->display,this->frameWindow,this->mainClass->monitors.at(j).x,this->mainClass->monitors.at(j).y,this->mainClass->monitors.at(j).width,this->mainClass->monitors.at(j).height);
+							XSync(this->mainClass->display,false);
+							this->setWindowRects(true);
+							this->adjustContentWindow();
+						}
+				}
+			this->isFullscreen=true;
+		}
+	this->setWindowRects();
+}
+
 void LFSWM2_clientClass::LFSWM2_maxWindow(void)
 {
 	if(this->isMaximized==true)
@@ -390,10 +418,46 @@ void LFSWM2_clientClass::LFSWM2_setWMState(XEvent *e)
 			this->visibleOnAllDesks=true;
 		}
 
-	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atoms.at("_NET_WM_STATE_FULLSCREEN")))
-		{
-			fprintf(stderr,"got _NET_WM_STATE_FULLSCREEN TODO\n");
-		}
+//	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atoms.at("_NET_WM_STATE_FULLSCREEN")))
+//		{
+//			//cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(id));
+//			//	if(cc==NULL)
+////struct geometryStruct
+////{
+////	int						x,y;
+////	unsigned				w,h;
+////	unsigned				monitor;
+////};
+////bool LFSTK_lib::LFSTK_pointInRect(pointStruct *point,geometryStruct *geom)
+//
+//			fprintf(stderr,"got _NET_WM_STATE_FULLSCREEN TODO\n");
+//geometryStruct	 nm={this->frameWindowRect.x,this->frameWindowRect.y,(unsigned)this->frameWindowRect.width,(unsigned)this->frameWindowRect.height,0};
+//pointStruct		fp={this->frameWindowRect.x,this->frameWindowRect.y};
+//			for(unsigned int j=0;j<this->mainClass->numberOfMonitors;j++)
+//				{
+//geometryStruct	 fg={this->mainClass->monitors.at(j).x,this->mainClass->monitors.at(j).y,(unsigned)this->mainClass->monitors.at(j).width,(unsigned)this->mainClass->monitors.at(j).height,0};
+//				fprintf(stderr,"min num=%i\n",j);
+//				if(this->mainClass->lfstkLib->LFSTK_pointInRect(&fp,&fg))
+//				{
+//						fprintf(stderr,"in monitor\n");
+//						this->LFSWM2_fullscreenWindow();
+//						break;
+//						
+//				}
+//				//this->monitors
+//				//if((this->frameWindowRect.x>this->mainClass->monitorData[j].monX) && (this->frameWindowRect.xn<this->mainClass->monitorData[j].monW+monitorData[j].monX) && (this->frameWindowRect.y>this->mainClass->monitorData[j].monY) && (this->frameWindowRect.y<this->mainClass->monitorData[j].this->mainClass->monH+monitorData[j].monY))
+//					//{
+//					//}
+//				}
+//			/*
+//			for(unsigned int j=0;j<numberOfMonitors;j++)
+//		{
+//			if((root_x_return>monitorData[j].monX) && (root_x_return<monitorData[j].monW+monitorData[j].monX) && (root_y_return>monitorData[j].monY) && (root_y_return<monitorData[j].monH+monitorData[j].monY))
+//				return(j);
+//		}
+//
+//			*/
+//		}
 
 	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atoms.at("_NET_WM_STATE_BELOW")))
 		{

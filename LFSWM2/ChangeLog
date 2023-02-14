@@ -1,4 +1,5 @@
 0.2.3
+Fixed resizing.
 Fixed fallback colours.
 Added -f,-b and -t options to set forecolour,backcolour and textcolour of window frame decorations.
 Added '-k' option to set message key.

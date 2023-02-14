@@ -17,3 +17,4 @@ LIBS =		$(X11_LIBS) \
 			$(XFT_LIBS) \
 			$(LFSTK_LIBS) \
 			-lm
+
