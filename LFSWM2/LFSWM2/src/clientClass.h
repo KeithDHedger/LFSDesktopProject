@@ -49,7 +49,6 @@ class LFSWM2_clientClass
 		bool				onTop=false;
 		bool				onBottom=false;
 		bool				isMaximized=false;
-		bool				isMinimized=false;
 		bool				isFullscreen=false;
 		rectStructure	contentWindowRect;
 		rectStructure	frameWindowRect;
@@ -73,8 +72,7 @@ class LFSWM2_clientClass
 
 		void				LFSWM2_showWindow(void);
 		void				LFSWM2_hideWindow(void);
-		void				LFSWM2_minWindow(void);
-		void				LFSWM2_maxWindow(void);
+		void				LFSWM2_maxWindow(bool ismaxed,bool force=false);
 		void				LFSWM2_fullscreenWindow(void);
 
 		void				LFSWM2_sendCloseWindow(void);

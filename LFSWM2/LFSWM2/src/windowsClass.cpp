@@ -464,53 +464,47 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 	Window				w=id;
 	unsigned long		n=0;
 	bool					handled;
-	bool					unmax=true;
+	bool					maxit=false;
+	bool					ishidden=false;
 
-//TODO//clean
 	cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(id));
 	if(cc==NULL)
-		return;
+		{
+			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(id);
+			if(cc==NULL)
+				return;
+		}
 
 	Atom *states=(Atom*)this->LFSWM2_getFullProp(id,this->mainClass->atoms.at("_NET_WM_STATE"),XA_ATOM,32,&n);
+	cc->onTop=false;
+	cc->onBottom=false;
+	cc->isFullscreen=false;
 
-//check no longer maxed
-	if(cc->isMaximized==true)
+	for(int j=0;j<n;j++)
 		{
-			bool unmaxit=true;
-			if(n>1)
-				{
-					if((n==2) && (states[0]==this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_VERT")) || (states[1]==this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ")))
-						unmaxit=false;
-				}
-			cc->LFSWM2_maxWindow();
+			if(states[j]==this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_VERT") || states[j]==this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ"))
+				maxit=true;	
+			if(states[j]==this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN"))
+				ishidden=true;
+			if(states[j]==this->mainClass->atoms.at("_NET_WM_STATE_BELOW"))
+				cc->onBottom=true;
+			if(states[j]==this->mainClass->atoms.at("_NET_WM_STATE_ABOVE"))
+				cc->onTop=true;
 		}
 
-//check for maxim
-	if((n>1) && (cc->isMaximized==false))
-		{
-			if((states[0]==this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_VERT")) && (states[1]==this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ")))
-				{
-					cc->LFSWM2_maxWindow();
-				}
-		}
+	cc->LFSWM2_maxWindow(maxit);
+	if(ishidden==false)
+		cc->LFSWM2_showWindow();
+	else
+		cc->LFSWM2_hideWindow();
 
-	if((n>0) && (states[0]==this->mainClass->atoms.at("_NET_WM_STATE_ABOVE")))
-		{
-		//fprintf(stderr,"_NET_WM_STATE_ABOVE\n");
-			cc->onTop=true;
-		}
+	return;
 
-	if((n>0) && (states[0]==this->mainClass->atoms.at("_NET_WM_STATE_BELOW")))
-		{
-		//fprintf(stderr,"_NET_WM_STATE_BELOW\n");
-			cc->onBottom=true;
-		}
-
-	if((n>0) && (states[0]==this->mainClass->atoms.at("_NET_WM_STATE_FULLSCREEN")))
-		{
-		//fprintf(stderr,"_NET_WM_STATE_FULLSCREEN\n");
-			cc->isFullscreen=true;
-		}
+//	if((n>0) && (states[0]==this->mainClass->atoms.at("_NET_WM_STATE_FULLSCREEN")))
+//		{
+//		//fprintf(stderr,"_NET_WM_STATE_FULLSCREEN\n");
+//			cc->isFullscreen=true;
+//		}
 
 //TODO//
 #if 0
@@ -580,23 +574,9 @@ void LFSWM2_windowClass::LFSWM2_changeState(Window id,int how,Atom state)
 
 	if(cc!=NULL)
 		{
-			if(state=this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN"))
-				clientprop=&cc->isMinimized;
-			else if((state=this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_VERT")) || (state=this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ")))
-				clientprop=&cc->isMaximized;
-
-			switch(how)
-				{
-					case NET_WM_STATE_REMOVE:
-						*clientprop=false;
-						break;
-					case NET_WM_STATE_ADD:
-						*clientprop=true;
-						break;
-					case NET_WM_STATE_TOGGLE:
-						*clientprop=!*clientprop;
-						break;
-				}
+			this->LFSWM2_reloadWindowState(cc->contentWindow);
+//TODO//		if(state=this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN"))
+//TODO//				clientprop=&cc->isMinimized;
 		}
 }
 

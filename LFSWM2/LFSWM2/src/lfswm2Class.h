@@ -110,6 +110,7 @@ static unsigned char maximizeWindowBits[]=
 //source (data[0]) client messgae:0=no source  1=application 2=pager
 enum MESSAGESOURCE {NOSRC=0,APPLICATIONSRC,PAGERSRC};
 enum MESSAGETYPE {REFRESHTHEME,QUITLFSWM,RESTARTLFSWM,NOMSG};
+enum TRISTATE {INVALID=-1,LOGIC0=0,LOGIC1=1};
 
 struct controlData
 {

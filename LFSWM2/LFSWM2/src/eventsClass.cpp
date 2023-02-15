@@ -200,7 +200,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						//fprintf(stderr,"GravityNotify eventnumber %i\n",when++);
 						break;
 					case ResizeRequest:
-						fprintf(stderr,"ResizeRequest eventnumber %i\n",when++);
+						//fprintf(stderr,"ResizeRequest eventnumber %i\n",when++);
 						break;
 					case ConfigureRequest:
 						{
@@ -312,6 +312,8 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 											if(cc!=NULL)
 												{
 													cc->LFSWM2_setWMState(&e);
+													//XSync(this->mainClass->display,false);
+													//this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(cc->contentWindow);
 													XSync(this->mainClass->display,false);
 													this->mainClass->needsRestack=true;
 												}
@@ -320,18 +322,22 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 									if(e.xproperty.atom=this->mainClass->atoms.at("_NET_WM_NAME"))
 										{	
 											cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xproperty.window);
-											if(cc==NULL)
-												break;
+											if(cc!=NULL)
+											{
+												//break;
 
 											cc->LFSWM2_setWindowName();
 											this->mainClass->mainWindowClass->LFSWM2_refreshFrame(cc,NULL);
+											}
 										}
 //									if(e.xproperty.atom=this->mainClass->atoms.at("_NET_WM_USER_TIME"))
 //										{
 //											this->mainClass->needsRestack=false;
 //											break;
 //										}
-
+									cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xproperty.window);
+									if(cc!=NULL)
+										this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(cc->contentWindow);
 								}
 						}
 						//fprintf(stderr,"PropertyNotify OUT eventnumber %i atom name=%s\n",when++,XGetAtomName(this->mainClass->display,e.xproperty.atom));
@@ -362,6 +368,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 			if(this->mainClass->needsRestack==true)
 				{
+					
 					this->LFSWM2_restack();
 					this->mainClass->needsRestack=false;
 				}
@@ -393,7 +400,9 @@ void LFSWM2_eventsClass::LFSWM2_doClientMsg(Window id,XClientMessageEvent *e)
 			if(ccmessage!=NULL)
 				{
 					this->mainClass->LFSWM2_pushXErrorHandler();
+						ccmessage->LFSWM2_showWindow();
 						this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,(void*)&ccmessage->contentWindow,1);
+						this->mainClass->mainWindowClass->LFSWM2_removeProp(e->window,this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN"));
 						XSetInputFocus(this->mainClass->display,ccmessage->contentWindow,RevertToPointerRoot,CurrentTime);
 					this->mainClass->LFSWM2_popXErrorHandler();
 
@@ -423,9 +432,8 @@ void LFSWM2_eventsClass::LFSWM2_doClientMsg(Window id,XClientMessageEvent *e)
 		{
 			if(e->data.l[0]==IconicState)
 				{
-					ccmessage=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(e->window));
-					if(ccmessage!=NULL)
-						ccmessage->LFSWM2_minWindow();
+					this->mainClass->mainWindowClass->LFSWM2_addState(e->window,this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN"));
+					this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(e->window);
 					return;
 				}
 		}

@@ -272,7 +272,9 @@ bool LFSWM2_clientClass::LFSWM2_handleControls(XEvent *e)
 
 				if(e->xbutton.window==this->maximizeButton)
 					{
-						retval=true;//TOFIX
+					//break;
+					//	retval=true;//TOFIX
+					//	this->LFSWM2_maxWindow(true);
 						if(this->isMaximized==true)
 							{
 								this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ"));
@@ -282,16 +284,17 @@ bool LFSWM2_clientClass::LFSWM2_handleControls(XEvent *e)
 							{
 								this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ"));
 								this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_VERT"));
-							}
-						this->LFSWM2_maxWindow();
+							}	
+						this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(this->contentWindow);				
 					}
 					
 				if(e->xbutton.window==this->minimizeButton)
 					{
-						XIconifyWindow(this->mainClass->display,this->contentWindow,this->mainClass->screen);
-
+						this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN"));
+						this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(this->contentWindow);
 						retval=true;
 					}
+
 				if(e->xbutton.window==this->shadeButton)
 					{
 						retval=true;
@@ -303,13 +306,6 @@ bool LFSWM2_clientClass::LFSWM2_handleControls(XEvent *e)
 		}
 
 	return(retval);
-}
-
-void LFSWM2_clientClass::LFSWM2_minWindow(void)
-{
-	this->isMinimized=true;
-	this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN"));
-	this->LFSWM2_hideWindow();
 }
 
 void LFSWM2_clientClass::LFSWM2_fullscreenWindow(void)
@@ -342,29 +338,30 @@ void LFSWM2_clientClass::LFSWM2_fullscreenWindow(void)
 		}
 }
 
-void LFSWM2_clientClass::LFSWM2_maxWindow(void)
+void LFSWM2_clientClass::LFSWM2_maxWindow(bool ismaxed,bool force)
 {
-	if(this->isMaximized==true)
+	if((ismaxed==this->isMaximized) && (force==false))
+		return;
+
+	if(ismaxed==true)
 		{
-			XMoveResizeWindow(this->mainClass->display,this->frameWindow,this->framePreMaxRect.x,this->framePreMaxRect.y,this->framePreMaxRect.width,this->framePreMaxRect.height);
-			XMoveResizeWindow(this->mainClass->display,this->contentWindow,this->clientPreMaxRect.x,this->clientPreMaxRect.y,this->clientPreMaxRect.width,this->clientPreMaxRect.height);
-			this->isMaximized=false;
-		}
-	else
-		{
+			this->framePreMaxRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->frameWindow,this->mainClass->rootWindow,false);
+			this->clientPreMaxRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->contentWindow,this->mainClass->rootWindow,false);
 			rectStructure rr=this->mainClass->monitors.at(0);
 			rr.width=this->mainClass->monitors.at(0).width-((this->mainClass->sideBarSize+BORDER_WIDTH)*3);//TODO//
 			rr.height=this->mainClass->monitors.at(0).height-(this->mainClass->titleBarSize+this->mainClass->bottomBarSize+(BORDER_WIDTH*2));
 			rr.x=this->mainClass->sideBarSize;
 			rr.y=this->mainClass->titleBarSize;
 
-			this->framePreMaxRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->frameWindow,this->mainClass->rootWindow,false);
-			this->clientPreMaxRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->contentWindow,this->mainClass->rootWindow,false);
-//TODO// screen size?
 			XMoveResizeWindow(this->mainClass->display,this->frameWindow,this->mainClass->monitors.at(0).x,this->mainClass->monitors.at(0).y,this->mainClass->monitors.at(0).width,this->mainClass->monitors.at(0).height);
 			XMoveResizeWindow(this->mainClass->display,this->contentWindow,rr.x,rr.y,rr.width,rr.height);
-			this->isMaximized=true;
 		}
+	else
+		{
+			XMoveResizeWindow(this->mainClass->display,this->frameWindow,this->framePreMaxRect.x,this->framePreMaxRect.y,this->framePreMaxRect.width,this->framePreMaxRect.height);
+			XMoveResizeWindow(this->mainClass->display,this->contentWindow,this->clientPreMaxRect.x,this->clientPreMaxRect.y,this->clientPreMaxRect.width,this->clientPreMaxRect.height);
+		}
+	this->isMaximized=ismaxed;
 	this->setWindowRects();
 }
 
