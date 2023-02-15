@@ -1,4 +1,6 @@
 0.2.3
+Fixed spurious desktop changes.
+Fixed fullscreen window by 3rd party.
 Fixed min/max window by 3rd party.
 Fixed resizing.
 Fixed fallback colours.

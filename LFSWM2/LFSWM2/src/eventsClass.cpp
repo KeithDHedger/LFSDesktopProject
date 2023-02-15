@@ -288,10 +288,10 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						break;
 					case PropertyNotify:
 						{
-							//fprintf(stderr,"PropertyNotify IN eventnumber %i atom name=%s\n",when++,XGetAtomName(this->mainClass->display,e.xproperty.atom));
+							fprintf(stderr,"PropertyNotify IN eventnumber %i atom name=%s\n",when++,XGetAtomName(this->mainClass->display,e.xproperty.atom));
 							LFSWM2_clientClass	*cc;
 
-							if(false)
+							if(true)
 								{
 									fprintf(stderr,"PropertyNotify eventnumber %i\n",when++);
 									fprintf(stderr,"type=%i 28=PropertyNotify\n",e.xproperty.type);
@@ -312,10 +312,9 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 											if(cc!=NULL)
 												{
 													cc->LFSWM2_setWMState(&e);
-													//XSync(this->mainClass->display,false);
-													//this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(cc->contentWindow);
 													XSync(this->mainClass->display,false);
 													this->mainClass->needsRestack=true;
+													break;
 												}
 										}
 
@@ -328,6 +327,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 											cc->LFSWM2_setWindowName();
 											this->mainClass->mainWindowClass->LFSWM2_refreshFrame(cc,NULL);
+											break;
 											}
 										}
 //									if(e.xproperty.atom=this->mainClass->atoms.at("_NET_WM_USER_TIME"))
@@ -514,7 +514,7 @@ Atom (nil) name=(null)
 					if(ccmessage!=NULL)
 						{
 							this->mainClass->mainWindowClass->LFSWM2_changeState(id,e->data.l[0],e->data.l[1]);
-							ccmessage->LFSWM2_fullscreenWindow();
+							//ccmessage->LFSWM2_fullscreenWindow();
 						}
 					goto exitit;
 				}

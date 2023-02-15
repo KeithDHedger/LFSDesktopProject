@@ -308,18 +308,13 @@ bool LFSWM2_clientClass::LFSWM2_handleControls(XEvent *e)
 	return(retval);
 }
 
-void LFSWM2_clientClass::LFSWM2_fullscreenWindow(void)
+void LFSWM2_clientClass::LFSWM2_fullscreenWindow(bool isfull,bool force)
 {
-	if(this->isFullscreen==true)
+	if((isfull==this->isFullscreen) && (force==false))
+		return;
+
+	if(isfull==true)
 		{
-			XMoveResizeWindow(this->mainClass->display,this->frameWindow,this->framePreFSRect.x,this->framePreFSRect.y,this->framePreFSRect.width,this->framePreFSRect.height);
-			XMoveResizeWindow(this->mainClass->display,this->contentWindow,this->clientPreFSRect.x,this->clientPreFSRect.y,this->clientPreFSRect.width,this->clientPreFSRect.height);
-			this->isFullscreen=false;
-			this->setWindowRects();
-			this->adjustContentWindow();
-		}
-	else
-		{		
 			pointStruct	fp={this->frameWindowRect.x,this->frameWindowRect.y};
 			for(unsigned int j=0;j<this->mainClass->numberOfMonitors;j++)
 				{
@@ -334,8 +329,17 @@ void LFSWM2_clientClass::LFSWM2_fullscreenWindow(void)
 							this->adjustContentWindow();
 						}
 				}
-			this->isFullscreen=true;
 		}
+	else
+		{
+			XMoveResizeWindow(this->mainClass->display,this->frameWindow,this->framePreFSRect.x,this->framePreFSRect.y,this->framePreFSRect.width,this->framePreFSRect.height);
+			XMoveResizeWindow(this->mainClass->display,this->contentWindow,this->clientPreFSRect.x,this->clientPreFSRect.y,this->clientPreFSRect.width,this->clientPreFSRect.height);
+			this->isFullscreen=false;
+			this->setWindowRects();
+			this->adjustContentWindow();
+		}
+	this->isFullscreen=isfull;
+	this->setWindowRects();
 }
 
 void LFSWM2_clientClass::LFSWM2_maxWindow(bool ismaxed,bool force)

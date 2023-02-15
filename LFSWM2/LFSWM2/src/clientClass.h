@@ -54,6 +54,9 @@ class LFSWM2_clientClass
 		rectStructure	frameWindowRect;
 		rectStructure	clientPreMaxRect;
 		rectStructure	framePreMaxRect;
+		rectStructure	clientPreFSRect;
+		rectStructure	framePreFSRect;
+
 		bool				nameIsUTF=false;
 		bool				moveToTop=false;
 	
@@ -73,7 +76,7 @@ class LFSWM2_clientClass
 		void				LFSWM2_showWindow(void);
 		void				LFSWM2_hideWindow(void);
 		void				LFSWM2_maxWindow(bool ismaxed,bool force=false);
-		void				LFSWM2_fullscreenWindow(void);
+		void				LFSWM2_fullscreenWindow(bool isfull,bool force=false);
 
 		void				LFSWM2_sendCloseWindow(void);
 		void				LFSWM2_resizeControls(void);
@@ -89,8 +92,6 @@ class LFSWM2_clientClass
 		bool				buttonDown=false;
 		int				sx=0;
 		int				sy=0;
-		rectStructure	clientPreFSRect;
-		rectStructure	framePreFSRect;
 
 		void				drawMouseEnter(Window id,Pixmap pm,controlData data);
 		bool				doResizeDraggers(XEvent *e);

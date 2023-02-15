@@ -164,6 +164,8 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			cc->contentWindowRect=this->LFSWM2_getWindowRect(id,this->mainClass->rootWindow);
 			cc->framePreMaxRect=this->LFSWM2_getWindowRect(id,this->mainClass->rootWindow);
 			cc->clientPreMaxRect=this->LFSWM2_getWindowRect(id,this->mainClass->rootWindow);
+			cc->clientPreFSRect=this->LFSWM2_getWindowRect(id,this->mainClass->rootWindow);
+			cc->framePreFSRect=this->LFSWM2_getWindowRect(id,this->mainClass->rootWindow);
 			cc->contentWindowRect.y-=this->mainClass->titleBarSize;
 			cc->frameWindowRect=this->LFSWM2_getWindowRect(cc->frameWindow,this->mainClass->rootWindow);
 			this->clientList[id]=cc;
@@ -466,6 +468,7 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 	bool					handled;
 	bool					maxit=false;
 	bool					ishidden=false;
+	bool					isfull=false;
 
 	cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(id));
 	if(cc==NULL)
@@ -478,7 +481,6 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 	Atom *states=(Atom*)this->LFSWM2_getFullProp(id,this->mainClass->atoms.at("_NET_WM_STATE"),XA_ATOM,32,&n);
 	cc->onTop=false;
 	cc->onBottom=false;
-	cc->isFullscreen=false;
 
 	for(int j=0;j<n;j++)
 		{
@@ -490,21 +492,18 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 				cc->onBottom=true;
 			if(states[j]==this->mainClass->atoms.at("_NET_WM_STATE_ABOVE"))
 				cc->onTop=true;
+			if(states[j]==this->mainClass->atoms.at("_NET_WM_STATE_FULLSCREEN"))
+				isfull=true;
 		}
 
 	cc->LFSWM2_maxWindow(maxit);
+	cc->LFSWM2_fullscreenWindow(isfull);
 	if(ishidden==false)
 		cc->LFSWM2_showWindow();
 	else
 		cc->LFSWM2_hideWindow();
 
 	return;
-
-//	if((n>0) && (states[0]==this->mainClass->atoms.at("_NET_WM_STATE_FULLSCREEN")))
-//		{
-//		//fprintf(stderr,"_NET_WM_STATE_FULLSCREEN\n");
-//			cc->isFullscreen=true;
-//		}
 
 //TODO//
 #if 0
