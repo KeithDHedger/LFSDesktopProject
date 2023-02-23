@@ -27,7 +27,7 @@
 
 #include "lfswm2Class.h"
 
-const char *atomNames[]={"_NET_WM_WINDOW_TYPE_MENU","_NET_ACTIVE_WINDOW","_NET_CLIENT_LIST","_NET_CLIENT_LIST_STACKING","_NET_CLOSE_WINDOW","_NET_CURRENT_DESKTOP","_NET_DESKTOP_GEOMETRY","_NET_DESKTOP_VIEWPORT","_NET_FRAME_EXTENTS","_NET_NUMBER_OF_DESKTOPS","_NET_REQUEST_FRAME_EXTENTS","_NET_SUPPORTED","_NET_SUPPORTING_WM_CHECK","_NET_WM_ACTION_CHANGE_DESKTOP","_NET_WM_ACTION_CLOSE","_NET_WM_ACTION_FULLSCREEN","_NET_WM_ACTION_MINIMIZE","_NET_WM_ALLOWED_ACTIONS","_NET_WM_DESKTOP","_NET_WM_ICON_NAME","_NET_WM_NAME","_NET_WM_STATE","_NET_WM_STATE_ABOVE","_NET_WM_STATE_BELOW","_NET_WM_STATE_FULLSCREEN","_NET_WM_STATE_HIDDEN","_NET_WM_STATE_SKIP_TASKBAR","_NET_WM_VISIBLE_ICON_NAME","_NET_WM_VISIBLE_NAME","_NET_WM_WINDOW_TYPE","_NET_WM_WINDOW_TYPE_DOCK","_NET_WORKAREA","_NET_WM_WINDOW_TYPE_DESKTOP","_NET_WM_WINDOW_TYPE_NORMAL","_NET_WM_STATE_STICKY","_NET_WM_ACTION_MAXIMIZE_HORZ","_NET_WM_ACTION_MAXIMIZE_VERT","_NET_WM_STATE_MAXIMIZED_VERT","_NET_WM_STATE_MAXIMIZED_HORZ","UTF8_STRING","MOTIF_WM_HINTS","WM_CHANGE_STATE","WM_DELETE_WINDOW","WM_PROTOCOLS","WM_STATE","_NET_WM_WINDOW_TYPE_DIALOG","_NET_WM_WINDOW_TYPE_TOOL","_MOTIF_WM_HINTS","_NET_WM_PID","_NET_WM_USER_TIME",NULL};
+const char *atomNames[]={"_NET_WM_WINDOW_TYPE_MENU","_NET_ACTIVE_WINDOW","_NET_CLIENT_LIST","_NET_CLIENT_LIST_STACKING","_NET_CLOSE_WINDOW","_NET_CURRENT_DESKTOP","_NET_DESKTOP_GEOMETRY","_NET_DESKTOP_VIEWPORT","_NET_FRAME_EXTENTS","_NET_NUMBER_OF_DESKTOPS","_NET_REQUEST_FRAME_EXTENTS","_NET_SUPPORTED","_NET_SUPPORTING_WM_CHECK","_NET_WM_ACTION_CHANGE_DESKTOP","_NET_WM_ACTION_CLOSE","_NET_WM_ACTION_FULLSCREEN","_NET_WM_ACTION_MINIMIZE","_NET_WM_ALLOWED_ACTIONS","_NET_WM_DESKTOP","_NET_WM_ICON_NAME","_NET_WM_NAME","_NET_WM_STATE","_NET_WM_STATE_ABOVE","_NET_WM_STATE_BELOW","_NET_WM_STATE_FULLSCREEN","_NET_WM_STATE_HIDDEN","_NET_WM_STATE_SKIP_TASKBAR","_NET_WM_VISIBLE_ICON_NAME","_NET_WM_VISIBLE_NAME","_NET_WM_WINDOW_TYPE","_NET_WM_WINDOW_TYPE_DOCK","_NET_WORKAREA","_NET_WM_WINDOW_TYPE_DESKTOP","_NET_WM_WINDOW_TYPE_NORMAL","_NET_WM_STATE_STICKY","_NET_WM_ACTION_MAXIMIZE_HORZ","_NET_WM_ACTION_MAXIMIZE_VERT","_NET_WM_STATE_MAXIMIZED_VERT","_NET_WM_STATE_MAXIMIZED_HORZ","UTF8_STRING","MOTIF_WM_HINTS","WM_CHANGE_STATE","WM_DELETE_WINDOW","WM_PROTOCOLS","WM_STATE","_NET_WM_WINDOW_TYPE_DIALOG","_NET_WM_WINDOW_TYPE_TOOL","_MOTIF_WM_HINTS","_NET_WM_PID","_NET_WM_USER_TIME","WM_TRANSIENT_FOR",NULL};
 
 LFSWM2_Class::~LFSWM2_Class(void)
 {
@@ -181,8 +181,13 @@ void LFSWM2_Class::LFSWM2_initRootWindow(void)
 			this->atoms.at("_NET_WM_ACTION_MAXIMIZE_HORZ"),
 			this->atoms.at("_NET_WM_ACTION_MAXIMIZE_VERT"),
 			this->atoms.at("_NET_WM_STATE_MAXIMIZED_VERT"),
-			this->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ")
+			this->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ"),
+			this->atoms.at("WM_CHANGE_STATE"),
+			this->atoms.at("WM_DELETE_WINDOW"),
+			this->atoms.at("WM_PROTOCOLS"),
+			this->atoms.at("WM_STATE")
 		};
+
 	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_SUPPORTED"),XA_ATOM,32,(void*)globalAtoms.data(),globalAtoms.size());
 	long geometry[2]={this->displayWidth,this->displayHeight};
 	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_DESKTOP_GEOMETRY"),XA_CARDINAL,32,geometry,2);
@@ -190,7 +195,7 @@ void LFSWM2_Class::LFSWM2_initRootWindow(void)
 
 int LFSWM2_Class::LFSWM2_wmDetected(Display *display,XErrorEvent *e)
 {
-	fprintf(stderr,"already running wm ... TODO\n");
+	fprintf(stderr,"A window manager is already running, not starting ...\n");
 	exit(2);
 	return 0;
 }
@@ -331,7 +336,7 @@ int LFSWM2_Class::LFSWM2_xError(Display *display,XErrorEvent *e)
 	char			error_text[MAX_ERROR_TEXT_LENGTH];
 
 	XGetErrorText(display,e->error_code,error_text,sizeof(error_text));
-	fprintf(stderr,"Received X error:\nRequest: %i %s\n%i %s Resource ID: %x\n",int(e->request_code),X_REQUEST_CODE_NAMES[e->request_code],int(e->error_code),error_text,e->resourceid);
+	fprintf(stderr,"Received X error:\nRequest: %i %s\n%i %s Resource ID: %x\n",int(e->request_code),X_REQUEST_CODE_NAMES[e->request_code],int(e->error_code),error_text,(unsigned int)e->resourceid);
 	return 0;
 }
 
@@ -347,19 +352,16 @@ void LFSWM2_Class::LFSWM2_setDeskCount(unsigned long val)
 
 	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_NUMBER_OF_DESKTOPS"),XA_CARDINAL,32,&val,1);
 	this->numberOfDesktops=val;
-	this->needsRestack=true;
 }
 
-void LFSWM2_Class::LFSWM2_setCurrentDesktop(unsigned long i,bool force)
+void LFSWM2_Class::LFSWM2_setCurrentDesktop(unsigned long i,bool force,bool dovis)
 {
-	LFSWM2_clientClass	*cc;
-
 	if((this->currentDesktop!=i) || (force==true))
 		{
-			this->needsRestack=true;
 			this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_CURRENT_DESKTOP"),XA_CARDINAL,32,&i,1);
 			this->currentDesktop=i;
-			this->mainWindowClass->LFSWM2_setVisibilityForDesk(this->currentDesktop);
+			if(dovis==true)
+				this->mainWindowClass->LFSWM2_setVisibilityForDesk(this->currentDesktop);
 		}
 }
 
@@ -377,7 +379,7 @@ void LFSWM2_Class::printHelp(void)
 		);
 }
 
-void LFSWM2_Class::cliOptions(int argc,char **argv)
+void LFSWM2_Class::cliOptions(int argc,char **argv)//TODO//
 {
 	struct option long_options[]=
 		{
@@ -416,7 +418,7 @@ void LFSWM2_Class::cliOptions(int argc,char **argv)
 						this->frameText=this->mainWindowClass->LFSWM2_xftLoadColour(optarg,"black");
 						break;		
 					case 'v':
-						printf("lfswm2 %s\n",123);
+						printf("LFSWM2 %s\n",VERSION);
 						exit(0);
 						break;
 					case '?':
@@ -446,11 +448,18 @@ void LFSWM2_Class::DEBUG_printAtom(Atom a)
 		name=XGetAtomName(this->display,a);
 		if(name!=NULL)
 			{
-				fprintf(stderr,"Atom %p name=%s\n",a,name);
+				fprintf(stderr,"Atom %p name=%s\n",(void*)a,name);
 				XFree(name);
 			}
 		else
-			fprintf(stderr,"Unknown atom %p\n",a);
+			fprintf(stderr,"Unknown atom %p\n",(void*)a);
 	this->LFSWM2_popXErrorHandler();
+}
+
+void LFSWM2_Class::DEBUG_printEventData(XEvent *e,bool verbose)
+{
+	const char*	names[]={"ERROR","ERROR","KeyPress","KeyRelease","ButtonPress","ButtonRelease","MotionNotify","EnterNotify","LeaveNotify","FocusIn","FocusOut","KeymapNotify","Expose","GraphicsExpose","NoExpose","VisibilityNotify","CreateNotify","DestroyNotify","UnmapNotify","MapNotify","MapRequest","ReparentNotify","ConfigureNotify","ConfigureRequest","GravityNotify","ResizeRequest","CirculateNotify","CirculateRequest","PropertyNotify","SelectionClear","SelectionRequest","SelectionNotify","ColormapNotify","ClientMessage","MappingNotify","GenericEvent"};
+
+	fprintf(stderr,"Event name=%s\n",names[e->type]);
 }
 #endif

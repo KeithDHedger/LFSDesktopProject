@@ -43,7 +43,7 @@ class LFSWM2_clientClass
 		Window			frameWindow=0;
 		std::string		name="";
 		int				windowType=-1;
-		bool				visible=false;
+		bool				visible=true;
 		unsigned long	onDesk=0;
 		bool				visibleOnAllDesks=false;
 		bool				onTop=false;
@@ -85,6 +85,11 @@ class LFSWM2_clientClass
 
 		void				LFSWM2_drawMouseLeave(Window id,Pixmap pm,struct controlData data);
 
+		bool				LFSWM2_doFrameMoveEvents(XEvent *e);
+		void				LFSWM2_refreshFrame(XExposeEvent *e=NULL);
+
+		bool				LFSWM2_handleEvents(XEvent *e);
+
 		int				dragsize=16;
 		int				smoothness=5;
 
@@ -92,12 +97,14 @@ class LFSWM2_clientClass
 		bool				buttonDown=false;
 		int				sx=0;
 		int				sy=0;
+		int				steps;
 
 		void				drawMouseEnter(Window id,Pixmap pm,controlData data);
 		bool				doResizeDraggers(XEvent *e);
 		void				setWindowRects(bool resize=true);
 		void				adjustContentWindow(void);
-		int				steps;
+		void				resizeContentWindow(rectStructure r);
+
 
 };
 

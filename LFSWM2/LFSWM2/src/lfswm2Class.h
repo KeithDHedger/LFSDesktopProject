@@ -39,6 +39,8 @@
 
 #include <lfstk/LFSTKGlobals.h>
 
+#include "config.h"
+
 #define __DEBUG__
 
 template <typename t> void move(std::vector<t>& v,size_t oldIndex,size_t newIndex)
@@ -80,25 +82,25 @@ class LFSWM2_messageClass;
 #define CONTROL_GAP 24
 
 #define deleteWindowSize 8
-static unsigned char deleteWindowBits[]=
+__attribute__((unused)) static unsigned char deleteWindowBits[]=
 {
 	0x81,0x42,0x24,0x18,0x18,0x24,0x42,0x81
 };
 
 #define shadeWindowSize 8
-static unsigned char shadeWindowBits[]=
+__attribute__((unused)) static unsigned char shadeWindowBits[]=
 {
    0xff, 0x00, 0xff, 0x7e, 0x3c, 0x18, 0x00, 0x00
 };
 
 #define minimizeWindowSize 8
-static unsigned char minimizeWindowBits[]=
+__attribute__((unused)) static unsigned char minimizeWindowBits[]=
 {
    0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00, 0x00
 };
 
 #define maximizeWindowSize 8
-static unsigned char maximizeWindowBits[]=
+__attribute__((unused)) static unsigned char maximizeWindowBits[]=
 {
    0x18, 0x18, 0x18, 0xff, 0xff, 0x18, 0x18, 0x18
 };
@@ -119,7 +121,7 @@ struct controlData
 	int			startX;
 };
 
-static LFSWM2_Class	*theMainClass=NULL;
+__attribute__((unused)) static LFSWM2_Class	*theMainClass=NULL;
 
 class LFSWM2_Class
 {
@@ -130,7 +132,7 @@ class LFSWM2_Class
 		void					LFSWM2_initRootWindow(void);
 		void					LFSWM2_setDeskCount(unsigned long val);
 		unsigned long		LFSWM2_getDesktopCount(void);
-		void					LFSWM2_setCurrentDesktop(unsigned long i,bool force=false);
+		void					LFSWM2_setCurrentDesktop(unsigned long i,bool force=false,bool dovis=true);
 
 		static int			LFSWM2_wmDetected(Display *display,XErrorEvent *e);
 		static int			LFSWM2_xError(Display *display,XErrorEvent *e);
@@ -185,7 +187,8 @@ class LFSWM2_Class
 		Cursor				bottomLeftCursor;
 		Cursor				leftCursor;
 		Cursor				rootCursor;
-		bool					needsRestack=false;
+		int					restackCnt=-1;
+		bool					doingMove=false;
 
 		LFSWM2_eventsClass	*mainEventClass;
 		LFSWM2_windowClass	*mainWindowClass;
@@ -194,6 +197,7 @@ class LFSWM2_Class
 
 #ifdef __DEBUG__
 		void					DEBUG_printAtom(Atom a);
+		void					DEBUG_printEventData(XEvent *e,bool verbose);
 #endif
 
 		bool		tb=false;

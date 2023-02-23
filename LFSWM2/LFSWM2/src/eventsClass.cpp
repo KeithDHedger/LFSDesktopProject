@@ -31,8 +31,6 @@ LFSWM2_eventsClass::LFSWM2_eventsClass(LFSWM2_Class *mainclass)
 	this->mainClass=mainclass;
 }
 
-static bool donemove=false;
-
 void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 {
 	XWindowAttributes	attr;
@@ -43,6 +41,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 	bool					firstrun=true;
 
 	this->mainClass->LFSWM2_setCurrentDesktop(this->mainClass->currentDesktop,true);
+	this->LFSWM2_restack();
 
 	while(true)
 		{
@@ -51,12 +50,13 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 				{
 					if(XPending(this->mainClass->display)==0)
 						{
+							this->mainClass->restackCnt=0;
 							this->LFSWM2_restack();
 							firstrun=false;
 						}
 				}
 
-//fprintf(stderr,"evnttype=%i\n",e.type);
+//this->mainClass->DEBUG_printEventData(&e,false);
 			if(this->mainClass->messages->whatMsg==QUITLFSWM)
 				break;
 
@@ -65,6 +65,12 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 			if(cccontrol!=NULL)
 				{
 					if(cccontrol->LFSWM2_handleControls(&e)==true)
+						continue;
+				}
+			cccontrol=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xany.window);
+			if(cccontrol!=NULL)
+				{
+					if(cccontrol->LFSWM2_handleEvents(&e)==true)
 						continue;
 				}
 
@@ -90,73 +96,29 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						//fprintf(stderr,"ButtonRelease eventnumber %i\n",when++);
 						start.subwindow=None;
 						cc=NULL;
-						donemove=false;
-						break;
+						this->mainClass->doingMove=false;
+						this->mainClass->restackCnt=0;
 						break;
 					case ButtonPress:
-						//fprintf(stderr,"ButtonPress eventnumber %i\n",when++);
+						fprintf(stderr,"ButtonPress eventnumber %i\n",when++);
 						start=e.xbutton;
-						donemove=false;
+						this->mainClass->doingMove=false;
+						this->mainClass->restackCnt=0;
 						cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xbutton.window);
 						if(cc!=NULL)
 							{
+								cc->frameWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(cc->frameWindow,this->mainClass->rootWindow);
 								XGetWindowAttributes(this->mainClass->display,cc->frameWindow, &attr);
-								if((e.xbutton.state&Mod4Mask)==Mod4Mask)//TODO//???windows key for now used to move window wihout restating
+								if((e.xbutton.state&Mod4Mask)==Mod4Mask)//TODO//???windows key for now used to move window wihout restacking
 									break;
 								this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,&cc->contentWindow,1);
-								this->mainClass->needsRestack=true;
 								XAllowEvents(this->mainClass->display,ReplayPointer,e.xbutton.time);
 							}
 						break;
 					case MotionNotify:
-						{
-							bool domove=false;
-							cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xmotion.window);
-							if(cc!=NULL)
-								{
-									if((cc->frameWindow==e.xmotion.window) && (e.xmotion.state==Button1Mask))
-										domove=true;
-
-									if((cc->contentWindow==e.xmotion.window) && (e.xmotion.state==Button1Mask+Mod4Mask))
-										domove=true;
-							
-									if(domove==true)
-										{
-											int xdiff=e.xbutton.x_root-start.x_root;
-											int ydiff=e.xbutton.y_root-start.y_root;
-											XWindowAttributes	ttattr;
-											XWindowAttributes	frameattr;
-											rectStructure r;
-											XGetWindowAttributes(this->mainClass->display,cc->contentWindow,&ttattr);
-											XMoveWindow(this->mainClass->display,cc->frameWindow,attr.x+xdiff,attr.y+ydiff);
-								//notify client
-											XGetWindowAttributes(this->mainClass->display,cc->frameWindow,&frameattr);
-											r.x=frameattr.x+this->mainClass->sideBarSize;
-											r.y=frameattr.y+this->mainClass->titleBarSize;
-											r.width=ttattr.width;
-											r.height=ttattr.height;
-											this->LFSWM2_sendConfigureEvent(cc->contentWindow,r);
-											cc->frameWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(cc->frameWindow,this->mainClass->rootWindow);
-											cc->contentWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(cc->contentWindow,this->mainClass->rootWindow);
-										}
-									}
-						}
+						//fprintf(stderr,"MotionNotify\n");
 						break;
-
 					case Expose:
-						{
-						//fprintf(stderr,"Expose IN eventnumber %i\n",when++);
-							LFSWM2_clientClass	*cc;
-							const char			*name;
-
-							if(e.xexpose.count>0)
-								break;
-
-							cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xexpose.window);
-							if(cc!=NULL)
-								this->mainClass->mainWindowClass->LFSWM2_refreshFrame(cc,&(e.xexpose));
-						//fprintf(stderr,"Expose OUT eventnumber %i\n",when++);
-						}
 						break;
 					case FocusIn:
 						//fprintf(stderr,"FocusIn eventnumber %i\n",when++);
@@ -177,20 +139,16 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						//fprintf(stderr,"CreateNotify eventnumber %i\n",when++);
 						break;
 					case DestroyNotify:
-						cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xdestroywindow.event);
-						if(cc!=NULL)
-							delete cc;
 						break;
 					case UnmapNotify:
-						//fprintf(stderr,"UnmapNotify IN eventnumber %i\n",when++);
 						break;
 					case MapNotify:
-						//fprintf(stderr,"MapNotify window=%x when=%i\n",e.xmap.window,when++);
 						break;
+						//fprintf(stderr,"MapNotify window=%x when=%i\n",e.xmap.window,when++);
 					case MapRequest:
-						//fprintf(stderr,"MapRequest window=%x when=%i\n",e.xmaprequest.window,when++);
+						//fprintf(stderr,"MapRequest >>>>>>>>>>>>>>>>>window=%x when=%i\n",e.xmaprequest.window,when++);
 						XMapWindow(this->mainClass->display,e.xmaprequest.window);
-						XRaiseWindow(this->mainClass->display,e.xmap.window);
+						XRaiseWindow(this->mainClass->display,e.xmaprequest.window);
 						this->mainClass->mainWindowClass->LFSWM2_createClient(e.xmaprequest.window);
 						break;
 					case ReparentNotify:
@@ -202,84 +160,87 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 					case ResizeRequest:
 						//fprintf(stderr,"ResizeRequest eventnumber %i\n",when++);
 						break;
-					case ConfigureRequest:
-						{
-							LFSWM2_clientClass	*cc;
-							XWindowChanges		changes;
-							//fprintf(stderr,"ConfigureRequest eventnumber %i\n",when++);
-							this->mainClass->LFSWM2_pushXErrorHandler();
-							if(false)
-								{
-									fprintf(stderr,"ConfigureRequest eventnumber %i\n",when++);
-									fprintf(stderr,"type=%i 23=ConfigureRequest\n",e.xconfigurerequest.type);
-									fprintf(stderr,"send_event=%p \n",e.xconfigurerequest.send_event);
-									fprintf(stderr,"display=%p \n",e.xconfigurerequest.display);
-									fprintf(stderr,"parent=%p \n",e.xconfigurerequest.parent);
-									fprintf(stderr,"window=%p \n",e.xconfigurerequest.window);
-									fprintf(stderr,"x=%p \n",e.xconfigurerequest.x);
-									fprintf(stderr,"y=%p \n",e.xconfigurerequest.y);
-									fprintf(stderr,"width=%p \n",e.xconfigurerequest.width);
-									fprintf(stderr,"height=%p \n",e.xconfigurerequest.height);
-									fprintf(stderr,"border_width=%p \n",e.xconfigurerequest.border_width);
-									fprintf(stderr,"above=%p \n",e.xconfigurerequest.above);
-									fprintf(stderr,"detail=%p \n",e.xconfigurerequest.detail);
-									fprintf(stderr,"value_mask=%p \n",e.xconfigurerequest.value_mask);
-								}
-							if(e.xconfigurerequest.detail==Below)
-								{
-									cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
-									if(cc!=NULL)
-										{
-											this->mainClass->mainWindowClass->LFSWM2_changeState(cc->contentWindow,NET_WM_STATE_REMOVE,this->mainClass->atoms.at("_NET_WM_STATE_ABOVE"));
-											this->mainClass->mainWindowClass->LFSWM2_changeState(cc->contentWindow,NET_WM_STATE_TOGGLE,this->mainClass->atoms.at("_NET_WM_STATE_BELOW"));
-											cc->onBottom=!cc->onBottom;
-											this->mainClass->needsRestack=true;
-										}
-									this->mainClass->LFSWM2_popXErrorHandler();
-									break;
-								}
-
-							this->mainClass->LFSWM2_popXErrorHandler();
-							// Copy fields from e to changes.
-							changes.x=e.xconfigurerequest.x;
-							changes.y=e.xconfigurerequest.y;
-							changes.width=e.xconfigurerequest.width;
-							changes.height=e.xconfigurerequest.height;
-							changes.border_width=e.xconfigurerequest.border_width;
-							changes.sibling=e.xconfigurerequest.above;
-							changes.stack_mode=e.xconfigurerequest.detail;
-
-							if(e.xconfigurerequest.send_event==false)
-								{
-									if(e.xconfigurerequest.value_mask==0xc)
-										{
-											cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
-											if(e.xconfigurerequest.parent==this->mainClass->rootWindow)//TODO/ugly xterm hack!!
-												XMoveResizeWindow(this->mainClass->display,e.xconfigurerequest.window,changes.x,changes.y,changes.width+(this->mainClass->sideBarSize*3),changes.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);											
-											else
-												XMoveWindow(this->mainClass->display,e.xconfigurerequest.window,this->mainClass->sideBarSize,this->mainClass->titleBarSize);
-											break;
-										}
-								}
-	
-							cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
-							if(cc!=NULL)
-								{
-									XConfigureWindow(this->mainClass->display,e.xconfigurerequest.window,e.xconfigurerequest.value_mask,&changes);
-									XMoveResizeWindow(this->mainClass->display,cc->frameWindow,changes.x,changes.y,changes.width+(this->mainClass->sideBarSize*3),changes.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);
-									XMoveWindow(this->mainClass->display,cc->contentWindow,this->mainClass->sideBarSize,this->mainClass->titleBarSize);
-									cc->contentWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(cc->contentWindow,this->mainClass->rootWindow);
-									cc->frameWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(cc->frameWindow,this->mainClass->rootWindow);
-									cc->LFSWM2_resizeControls();
-									XSync(this->mainClass->display,false);
-								}
-							else
-								{
-									XConfigureWindow(this->mainClass->display,e.xconfigurerequest.window,e.xconfigurerequest.value_mask,&changes);
-									XSync(this->mainClass->display,false);
-								}
-						}
-						break;
+					case ConfigureRequest://TODO//NEXT
+					break;
+//						{
+//							//fprintf(stderr,"ConfigureRequest eventnumber %i\n",when++);
+//							LFSWM2_clientClass	*cc;
+//							XWindowChanges		changes;
+//							this->mainClass->LFSWM2_pushXErrorHandler();
+//							if(false)
+//								{
+//									fprintf(stderr,"ConfigureRequest eventnumber %i\n",when++);
+//									fprintf(stderr,"type=%i 23=ConfigureRequest\n",e.xconfigurerequest.type);
+//									fprintf(stderr,"send_event=%i \n",e.xconfigurerequest.send_event);
+//									fprintf(stderr,"display=%p \n",e.xconfigurerequest.display);
+//									fprintf(stderr,"parent=%p \n",(void*)e.xconfigurerequest.parent);
+//									fprintf(stderr,"window=%p \n",(void*)e.xconfigurerequest.window);
+//									fprintf(stderr,"x=%i \n",e.xconfigurerequest.x);
+//									fprintf(stderr,"y=%i \n",e.xconfigurerequest.y);
+//									fprintf(stderr,"width=%i \n",e.xconfigurerequest.width);
+//									fprintf(stderr,"height=%i \n",e.xconfigurerequest.height);
+//									fprintf(stderr,"border_width=%i \n",e.xconfigurerequest.border_width);
+//									fprintf(stderr,"above=%p \n",(void*)e.xconfigurerequest.above);
+//									fprintf(stderr,"detail=%x \n",e.xconfigurerequest.detail);
+//									fprintf(stderr,"value_mask=%p \n",(void*)e.xconfigurerequest.value_mask);
+//								}
+//							if(e.xconfigurerequest.detail==Below)
+//								{
+//									cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
+//									if(cc!=NULL)
+//										{
+//											this->mainClass->mainWindowClass->LFSWM2_changeState(cc->contentWindow,NET_WM_STATE_REMOVE,this->mainClass->atoms.at("_NET_WM_STATE_ABOVE"));
+//											this->mainClass->mainWindowClass->LFSWM2_changeState(cc->contentWindow,NET_WM_STATE_TOGGLE,this->mainClass->atoms.at("_NET_WM_STATE_BELOW"));
+//											cc->onBottom=!cc->onBottom;
+//											this->mainClass->restackCnt=1;
+//										}
+//									this->mainClass->LFSWM2_popXErrorHandler();
+//									break;
+//								}
+//
+//							this->mainClass->LFSWM2_popXErrorHandler();
+//							// Copy fields from e to changes.
+//							changes.x=e.xconfigurerequest.x;
+//							changes.y=e.xconfigurerequest.y;
+//							changes.width=e.xconfigurerequest.width;
+//							changes.height=e.xconfigurerequest.height;
+//							changes.border_width=e.xconfigurerequest.border_width;
+//							changes.sibling=e.xconfigurerequest.above;
+//							changes.stack_mode=e.xconfigurerequest.detail;
+//
+//							if(e.xconfigurerequest.send_event==false)
+//								{
+//									if(e.xconfigurerequest.value_mask==0xc)
+//										{
+//											cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
+//											if(e.xconfigurerequest.parent==this->mainClass->rootWindow)//TODO/ugly xterm hack!!
+//												XMoveResizeWindow(this->mainClass->display,e.xconfigurerequest.window,changes.x,changes.y,changes.width+(this->mainClass->sideBarSize*3),changes.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);											
+//											else
+//												XMoveWindow(this->mainClass->display,e.xconfigurerequest.window,this->mainClass->sideBarSize,this->mainClass->titleBarSize);
+//											this->mainClass->restackCnt=1;
+//											break;
+//										}
+//								}
+//	
+//							cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
+//							if(cc!=NULL)
+//								{
+//									XConfigureWindow(this->mainClass->display,e.xconfigurerequest.window,e.xconfigurerequest.value_mask,&changes);
+//									XMoveResizeWindow(this->mainClass->display,cc->frameWindow,changes.x,changes.y,changes.width+(this->mainClass->sideBarSize*3),changes.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);
+//									XMoveWindow(this->mainClass->display,cc->contentWindow,this->mainClass->sideBarSize,this->mainClass->titleBarSize);
+//									cc->contentWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(cc->contentWindow,this->mainClass->rootWindow);
+//									cc->frameWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(cc->frameWindow,this->mainClass->rootWindow);
+//									cc->LFSWM2_resizeControls();
+//									XSync(this->mainClass->display,false);
+//								}
+//							else
+//								{
+//									XConfigureWindow(this->mainClass->display,e.xconfigurerequest.window,e.xconfigurerequest.value_mask,&changes);
+//									XSync(this->mainClass->display,false);
+//								}
+//								this->mainClass->restackCnt=1;
+//						}
+//						break;
 					case CirculateNotify:
 						//fprintf(stderr,"CirculateNotify eventnumber %i\n",when++);
 						break;
@@ -288,59 +249,63 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						break;
 					case PropertyNotify:
 						{
-							fprintf(stderr,"PropertyNotify IN eventnumber %i atom name=%s\n",when++,XGetAtomName(this->mainClass->display,e.xproperty.atom));
+							//fprintf(stderr,"PropertyNotify IN eventnumber %i atom name=%s\n",when++,XGetAtomName(this->mainClass->display,e.xproperty.atom));
 							LFSWM2_clientClass	*cc;
-
-							if(true)
+							this->mainClass->restackCnt++;//???
+							if(false)
 								{
 									fprintf(stderr,"PropertyNotify eventnumber %i\n",when++);
 									fprintf(stderr,"type=%i 28=PropertyNotify\n",e.xproperty.type);
-									fprintf(stderr,"window=%p \n",e.xproperty.window);
+									fprintf(stderr,"window=%p \n",(void*)e.xproperty.window);
 									if(e.xproperty.state==PropertyNewValue)
-										fprintf(stderr,"state=%p =PropertyNewValue \n",e.xproperty.state);
+										fprintf(stderr,"state=%x =PropertyNewValue \n",e.xproperty.state);
 									else
-										fprintf(stderr,"state=%p =PropertyDelete \n",e.xproperty.state);
-									fprintf(stderr,"send_event=%p\n",e.xproperty.send_event);
+										fprintf(stderr,"state=%x =PropertyDelete \n",e.xproperty.state);
+									fprintf(stderr,"send_event=%i\n",e.xproperty.send_event);
 									this->mainClass->DEBUG_printAtom(e.xproperty.atom);
 								}
 
+
 							if((e.xproperty.state==PropertyNewValue) || (e.xproperty.state==PropertyDelete))
 								{
-									if(e.xproperty.atom=this->mainClass->atoms.at("WM_STATE"))
+									if(e.xproperty.atom==this->mainClass->atoms.at("_NET_WM_DESKTOP"))
 										{
+											if(e.xproperty.window==this->mainClass->rootWindow)
+												{
+												}
+											break;
+										}
+
+									
+									if(e.xproperty.atom==this->mainClass->atoms.at("_NET_WM_STATE"))
+										{
+											fprintf(stderr,"PropertyNotify OUT WM_STATE eventnumber %i\n",when++);
 											cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xproperty.window);
 											if(cc!=NULL)
 												{
 													cc->LFSWM2_setWMState(&e);
-													XSync(this->mainClass->display,false);
-													this->mainClass->needsRestack=true;
 													break;
 												}
 										}
 
-									if(e.xproperty.atom=this->mainClass->atoms.at("_NET_WM_NAME"))
+									if(e.xproperty.atom==this->mainClass->atoms.at("_NET_WM_NAME"))
 										{	
 											cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xproperty.window);
 											if(cc!=NULL)
-											{
-												//break;
-
-											cc->LFSWM2_setWindowName();
-											this->mainClass->mainWindowClass->LFSWM2_refreshFrame(cc,NULL);
-											break;
-											}
+												{
+													cc->LFSWM2_setWindowName();
+													cc->LFSWM2_refreshFrame(NULL);
+													//fprintf(stderr,"PropertyNotify OUT _NET_WM_NAME eventnumber %i\n",when++);
+													break;
+												}
 										}
-//									if(e.xproperty.atom=this->mainClass->atoms.at("_NET_WM_USER_TIME"))
-//										{
-//											this->mainClass->needsRestack=false;
-//											break;
-//										}
+
 									cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xproperty.window);
 									if(cc!=NULL)
 										this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(cc->contentWindow);
 								}
 						}
-						//fprintf(stderr,"PropertyNotify OUT eventnumber %i atom name=%s\n",when++,XGetAtomName(this->mainClass->display,e.xproperty.atom));
+						fprintf(stderr,"PropertyNotify OUT eventnumber %i\n",when++);
 						break;
 					case SelectionClear:
 						//fprintf(stderr,"SelectionClear eventnumber %i\n",when++);
@@ -362,15 +327,23 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						//fprintf(stderr,"MappingNotify eventnumber %i\n",when++);
 						break;
 					case KeymapNotify:
-					//	fprintf(stderr,"KeymapNotify eventnumber %i\n",when++);
+						//fprintf(stderr,"KeymapNotify eventnumber %i\n",when++);
 						break;
+					default:
+						break;
+						continue;
 				}
 
-			if(this->mainClass->needsRestack==true)
+			if(this->mainClass->doingMove==false)
 				{
-					
-					this->LFSWM2_restack();
-					this->mainClass->needsRestack=false;
+					this->mainClass->restackCnt--;
+					if(this->mainClass->restackCnt<0)
+						{
+							this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CURRENT_DESKTOP"),XA_CARDINAL,32,&this->mainClass->currentDesktop,1);
+							this->mainClass->mainWindowClass->LFSWM2_setVisibilityForDesk(this->mainClass->currentDesktop);
+							this->LFSWM2_restack();
+							this->mainClass->restackCnt=1;
+						}
 				}
 			XAllowEvents(this->mainClass->display,ReplayPointer,CurrentTime);
 		}
@@ -394,19 +367,33 @@ void LFSWM2_eventsClass::LFSWM2_doClientMsg(Window id,XClientMessageEvent *e)
 //	this->mainClass->DEBUG_printAtom(e->data.l[1]);
 //	this->mainClass->DEBUG_printAtom(e->message_type);
 
+	if(e->message_type==this->mainClass->atoms.at("_NET_WM_DESKTOP") && e->format==32)
+		{
+			ccmessage=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(e->window));
+			if(ccmessage!=NULL)
+				{
+					this->mainClass->mainWindowClass->LFSWM2_setProp(e->window,this->mainClass->atoms.at("_NET_WM_DESKTOP"),XA_CARDINAL,32,&e->data.l[0],1);
+					ccmessage->onDesk=e->data.l[0];
+					return;
+				}
+			else
+				return;
+		}
+
 	if(e->message_type==this->mainClass->atoms.at("_NET_ACTIVE_WINDOW") && e->format==32)
 		{
 			ccmessage=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(e->window));
 			if(ccmessage!=NULL)
 				{
 					this->mainClass->LFSWM2_pushXErrorHandler();
-						ccmessage->LFSWM2_showWindow();
+						this->mainClass->LFSWM2_setCurrentDesktop(ccmessage->onDesk);
 						this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,(void*)&ccmessage->contentWindow,1);
 						this->mainClass->mainWindowClass->LFSWM2_removeProp(e->window,this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN"));
+						ccmessage->visible=true;
+						XRaiseWindow(this->mainClass->display,ccmessage->contentWindow);
 						XSetInputFocus(this->mainClass->display,ccmessage->contentWindow,RevertToPointerRoot,CurrentTime);
 					this->mainClass->LFSWM2_popXErrorHandler();
 
-					this->mainClass->needsRestack=true;
 				}
 			return;
 		}
@@ -415,9 +402,17 @@ void LFSWM2_eventsClass::LFSWM2_doClientMsg(Window id,XClientMessageEvent *e)
 		{
 			if(e->window==this->mainClass->rootWindow)
 				{
-					this->mainClass->LFSWM2_setCurrentDesktop(e->data.l[0]);
-					this->mainClass->needsRestack=true;
+					if(this->mainClass->currentDesktop!=(unsigned long)e->data.l[0])
+						{
+							this->mainClass->currentDesktop=(unsigned long)e->data.l[0];
+							this->mainClass->restackCnt++;
+							return;
+						}
+					this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CURRENT_DESKTOP"),XA_CARDINAL,32,&this->mainClass->currentDesktop,1);
+					this->mainClass->restackCnt++;
+					return;
 				}
+			return;
 		}
 
 	if(e->message_type==this->mainClass->atoms.at("_NET_CLOSE_WINDOW") && e->format==32)
@@ -454,21 +449,8 @@ data[3]=0x2
 Atom 0x2 name=SECONDARY
 data[4]=(nil)
 Atom (nil) name=(null)
-
 */
-//	this->mainClass->DEBUG_printAtom(e->message_type);//Atom 0x14d name=_NET_WM_STATE
-//	for(int j=0;j<5;j++)
-//		{
-//			fprintf(stderr,"data[%i]=%p\n",j,e->data.l[j]);
-//			this->mainClass->DEBUG_printAtom(e->data.l[j]);
-//		}
-//data[0]=0x1 -> NET_WM_STATE_ADD
-//data[1]=0x14e -> NET_WM_STATE_ABOVE
-//data[3]=0x2 -> 0-unk,1-normal app,2-pager ->PAGERSRC
-//id window
-//how=e->data.l[0]
-
-			if(e->data.l[1]==this->mainClass->atoms.at("_NET_WM_STATE_ABOVE"))
+			if(e->data.l[1]==(long)this->mainClass->atoms.at("_NET_WM_STATE_ABOVE"))
 				{
 					this->mainClass->mainWindowClass->LFSWM2_changeState(id,e->data.l[0],e->data.l[1]);
 					ccmessage=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(id));
@@ -485,13 +467,13 @@ Atom (nil) name=(null)
 							ccmessage->onBottom=false;
 							this->mainClass->mainWindowClass->LFSWM2_changeState(ccmessage->contentWindow,NET_WM_STATE_REMOVE,this->mainClass->atoms.at("_NET_WM_STATE_BELOW"));
 							this->LFSWM2_moveToTop(ccmessage->contentWindow);
-							this->mainClass->needsRestack=true;
+							this->mainClass->restackCnt++;
 						}
 					goto exitit;
 					return;
 				}
 
-			else if(e->data.l[1]==this->mainClass->atoms.at("_NET_WM_STATE_BELOW"))
+			else if(e->data.l[1]==(long)this->mainClass->atoms.at("_NET_WM_STATE_BELOW"))
 				{
 					this->mainClass->mainWindowClass->LFSWM2_changeState(id,e->data.l[0],e->data.l[1]);
 					ccmessage=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(id));
@@ -504,17 +486,16 @@ Atom (nil) name=(null)
 								}
 							XLowerWindow(this->mainClass->display,ccmessage->frameWindow);
 							ccmessage->onBottom=true;
-							this->mainClass->needsRestack=true;
+							this->mainClass->restackCnt++;
 						}
 					goto exitit;
 				}
-			else if(e->data.l[1]==this->mainClass->atoms.at("_NET_WM_STATE_FULLSCREEN") && e->format==32)
+			else if(e->data.l[1]==(long)this->mainClass->atoms.at("_NET_WM_STATE_FULLSCREEN") && e->format==32)
 				{
 					ccmessage=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(e->window));
 					if(ccmessage!=NULL)
 						{
 							this->mainClass->mainWindowClass->LFSWM2_changeState(id,e->data.l[0],e->data.l[1]);
-							//ccmessage->LFSWM2_fullscreenWindow();
 						}
 					goto exitit;
 				}
@@ -578,7 +559,7 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)
 				}
 		}
 
-	for(int j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
+	for(long unsigned j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
 		{
 			ccs=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(j));
 			if((ccs!=NULL) && ((v!=NULL)))
@@ -633,7 +614,7 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)
 				}
 		}
 
-	for(int j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
+	for(long unsigned j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
 		{
 			if(this->mainClass->mainWindowClass->LFSWM2_getWindowType(this->mainClass->mainWindowClass->windowIDList.at(j))==DOCKWINDOW)
 				{
@@ -654,11 +635,13 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)
 	this->mainClass->mainWindowClass->windowIDList=cl;
 	this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CLIENT_LIST"),XA_WINDOW,32,cl.data(),cl.size());
 	this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CLIENT_LIST_STACKING"),XA_WINDOW,32,cl.data(),cl.size());
+	//this->mainClass->mainWindowClass->LFSWM2_setVisibilityForDesk(this->mainClass->currentDesktop);
+
 }
 
 void LFSWM2_eventsClass::LFSWM2_moveToTop(Window id)
 {
-	for(int j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
+	for(long unsigned j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
 		{
 			if(this->mainClass->mainWindowClass->windowIDList.at(j)==id)
 				{
@@ -670,7 +653,7 @@ void LFSWM2_eventsClass::LFSWM2_moveToTop(Window id)
 
 void LFSWM2_eventsClass::LFSWM2_moveToBottom(Window id)
 {
-	for(int j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
+	for(long unsigned j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
 		{
 			if(this->mainClass->mainWindowClass->windowIDList.at(j)==id)
 				{

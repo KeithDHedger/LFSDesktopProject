@@ -29,15 +29,7 @@ class LFSWM2_Class;
 #include "lfswm2Class.h"
 #include "clientClass.h"
 
-
 enum {NORMALWINDOW=0,DESKTOPWINDOW,DOCKWINDOW,MENUWINDOW,DIALOGWINDOW,TOOLWINDOW};
-/*
-"_NET_WM_WINDOW_TYPE_NORMAL"
-"_NET_WM_WINDOW_TYPE_DESKTOP"
-"_NET_WM_WINDOW_TYPE_DOCK"
-"_NET_WM_WINDOW_TYPE_MENU"
-"_NET_WM_WINDOW_TYPE_DIALOG"
-*/
 
 struct fontColour
 {
@@ -85,7 +77,6 @@ class LFSWM2_windowClass
 
 //graphics
 		struct fontColour					*LFSWM2_xftLoadColour(const char *name,const char *fallback);
-		void									LFSWM2_refreshFrame(LFSWM2_clientClass *cc,XExposeEvent *e=NULL);
 
 //vars
 		LFSWM2_Class							*mainClass;

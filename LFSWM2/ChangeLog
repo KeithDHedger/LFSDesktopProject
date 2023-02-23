@@ -1,4 +1,11 @@
 0.2.3
+Moved more events to client class.
+Code clean.
+Fixed frame position when framing.
+Code clean.
+Fixed min/max/below/above/alldesks AGAIN!
+Sped up window drag move.
+Fixed to flicker when changing desktops.
 Fixed spurious desktop changes.
 Fixed fullscreen window by 3rd party.
 Fixed min/max window by 3rd party.

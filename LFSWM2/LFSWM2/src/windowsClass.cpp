@@ -43,7 +43,6 @@ void LFSWM2_windowClass::LFSWM2_buildClientList(void)
 	Window			*toplevelwindows;
 	unsigned int		windowscnt;
 	std::string		windowname;
-	unsigned long	n=0;
 
 	XQueryTree(this->mainClass->display,this->mainClass->rootWindow,&returned_root,&returned_parent,&toplevelwindows,&windowscnt);
 	for(unsigned int i=0;i<windowscnt;++i)
@@ -76,7 +75,7 @@ void LFSWM2_windowClass::LFSWM2_destroyClient(Window id)
 		{
 			delete cc;
 		}
-	this->mainClass->needsRestack=true;
+	this->mainClass->restackCnt++;
 }
 
 struct fontColour* LFSWM2_windowClass::LFSWM2_xftLoadColour(const char *name,const char *fallback)
@@ -133,7 +132,7 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			long unsigned int	nitems_return=0;
 	
 
-			if(this->LFSWM2_getWindowType(id)==this->mainClass->atoms.at("_NET_WM_WINDOW_TYPE_DOCK"))
+			if(this->LFSWM2_getWindowType(id)==(int)this->mainClass->atoms.at("_NET_WM_WINDOW_TYPE_DOCK"))
 				return;
 
 			desktopset=(long int*)this->mainClass->mainWindowClass->LFSWM2_getProp(id,this->mainClass->atoms.at("_NET_WM_DESKTOP"),XA_CARDINAL,&nitems_return);
@@ -142,22 +141,21 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			if(x_window_attrs.override_redirect||x_window_attrs.map_state!=IsViewable)
 				return;
 
-			if(x_window_attrs.x-2<0)
+			if(x_window_attrs.x-this->mainClass->sideBarSize<0)
 				offx=0;
 			else
-				offx=x_window_attrs.x-2;
+				offx=x_window_attrs.x-this->mainClass->sideBarSize;
 
-			if(x_window_attrs.y-16-2<0)
+			if(x_window_attrs.y-this->mainClass->sideBarSize-BORDER_WIDTH<0)
 				offy=0;
 			else
-				offy=x_window_attrs.y-16-2;
+				offy=x_window_attrs.y-this->mainClass->titleBarSize-BORDER_WIDTH;
 
 			cc=new LFSWM2_clientClass(this->mainClass,id);
 
-		//	cc->frameWindow=XCreateSimpleWindow(this->mainClass->display,this->mainClass->rootWindow,offx,offy,x_window_attrs.width+(this->mainClass->sideBarSize*3),x_window_attrs.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH+2,BORDER_WIDTH,this->mainClass->frameFG->pixel,this->mainClass->frameBG->pixel);
 			cc->frameWindow=XCreateSimpleWindow(this->mainClass->display,this->mainClass->rootWindow,offx,offy,x_window_attrs.width+(this->mainClass->sideBarSize*3),x_window_attrs.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH,BORDER_WIDTH,this->mainClass->frameFG->pixel,this->mainClass->frameBG->pixel);
 
-			XSelectInput(this->mainClass->display,cc->frameWindow,StructureNotifyMask|SubstructureRedirectMask|SubstructureNotifyMask|ButtonPressMask|PointerMotionMask|ButtonReleaseMask|ExposureMask|PropertyChangeMask);
+			XSelectInput(this->mainClass->display,cc->frameWindow,SubstructureRedirectMask|ButtonPressMask|ButtonReleaseMask|ExposureMask|PointerMotionMask);
 
 			cc->windowType=this->LFSWM2_getWindowType(id);
 			cc->contentWindow=id;
@@ -193,15 +191,10 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			v[6]=this->mainClass->atoms.at("_NET_WM_STATE_ABOVE");
 			v[7]=this->mainClass->atoms.at("_NET_WM_STATE_BELOW");
 
-
 			if(desktopset!=NULL)
-				{
-					cc->onDesk=*desktopset;
-				}
+				cc->onDesk=*desktopset;
 			else
-				{
-					cc->onDesk=this->mainClass->currentDesktop;
-				}
+				cc->onDesk=this->mainClass->currentDesktop;
 
 			this->LFSWM2_setProp(id,this->mainClass->atoms.at("_NET_WM_ALLOWED_ACTIONS"),XA_ATOM,32,v,8);
 			this->LFSWM2_setProp(cc->contentWindow,this->mainClass->atoms.at("_NET_WM_DESKTOP"),XA_CARDINAL,32,(void*)&cc->onDesk,1);
@@ -275,7 +268,7 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			this->mainClass->closeControlStruct.pixmapBox={wposy,wposy,8,8};
 			this->mainClass->closeControlStruct.startX=cc->frameWindowRect.width-offset;
 
-			cc->closeButton=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.width-offset,0,this->mainClass->titleBarSize,wh,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWSaveUnder,&wa);
+			cc->closeButton=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.width-offset,0,this->mainClass->titleBarSize,wh,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
 			XSelectInput(this->mainClass->display,cc->closeButton,ButtonPressMask|EnterWindowMask|LeaveWindowMask);
 			XMapWindow(this->mainClass->display,cc->closeButton);
 //max
@@ -283,7 +276,7 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			this->mainClass->maximizeControlStruct.boundingBox={cc->frameWindowRect.width-offset,0,wh,wh};
 			this->mainClass->maximizeControlStruct.pixmapBox={wposy,wposy,8,8};
 			this->mainClass->maximizeControlStruct.startX=cc->frameWindowRect.width-offset;
-			cc->maximizeButton=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.width-offset,0,this->mainClass->titleBarSize,wh,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWSaveUnder,&wa);
+			cc->maximizeButton=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.width-offset,0,this->mainClass->titleBarSize,wh,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
 			XSelectInput(this->mainClass->display,cc->maximizeButton,ButtonPressMask|EnterWindowMask|LeaveWindowMask);
 			XMapWindow(this->mainClass->display,cc->maximizeButton);
 
@@ -292,7 +285,7 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			this->mainClass->minimizeControlStruct.boundingBox={cc->frameWindowRect.width-offset,0,wh,wh};
 			this->mainClass->minimizeControlStruct.pixmapBox={wposy,wposy,8,8};
 			this->mainClass->minimizeControlStruct.startX=cc->frameWindowRect.width-offset;
-			cc->minimizeButton=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.width-offset,0,this->mainClass->titleBarSize,wh,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWSaveUnder,&wa);
+			cc->minimizeButton=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.width-offset,0,this->mainClass->titleBarSize,wh,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
 			XSelectInput(this->mainClass->display,cc->minimizeButton,ButtonPressMask|EnterWindowMask|LeaveWindowMask);
 			XMapWindow(this->mainClass->display,cc->minimizeButton);
 
@@ -301,7 +294,7 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			this->mainClass->shadeControlStruct.boundingBox={cc->frameWindowRect.width-offset,0,wh,wh};
 			this->mainClass->shadeControlStruct.pixmapBox={wposy,wposy,8,8};
 			this->mainClass->shadeControlStruct.startX=cc->frameWindowRect.width-offset;
-			cc->shadeButton=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.width-offset,0,this->mainClass->titleBarSize,wh,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWSaveUnder,&wa);
+			cc->shadeButton=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.width-offset,0,this->mainClass->titleBarSize,wh,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
 			XSelectInput(this->mainClass->display,cc->shadeButton,ButtonPressMask|EnterWindowMask|LeaveWindowMask);
 			XMapWindow(this->mainClass->display,cc->shadeButton);
 
@@ -310,7 +303,7 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			unsigned long	n=0;
 			Atom				*states=(Atom*)this->LFSWM2_getFullProp(id,this->mainClass->atoms.at("_NET_WM_STATE"),XA_ATOM,32,&n);
 //check no longer maxed
-			for(int j=0;j<n;j++)
+			for(long unsigned j=0;j<n;j++)
 				{
 					if((states[j]==this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_VERT")) || (states[j]==this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ")))
 						cc->isMaximized=true;
@@ -322,7 +315,7 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 
 			if(cc->windowType==NORMALWINDOW)
 				XAddToSaveSet(this->mainClass->display,id);
-			this->mainClass->needsRestack=true;
+			this->mainClass->restackCnt++;
 		}
 	XSync(this->mainClass->display,false);
 }
@@ -463,9 +456,7 @@ void* LFSWM2_windowClass::LFSWM2_getProp(Window w,Atom prop,Atom type,long unsig
 void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 {
 	LFSWM2_clientClass	*cc;
-	Window				w=id;
 	unsigned long		n=0;
-	bool					handled;
 	bool					maxit=false;
 	bool					ishidden=false;
 	bool					isfull=false;
@@ -481,13 +472,17 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 	Atom *states=(Atom*)this->LFSWM2_getFullProp(id,this->mainClass->atoms.at("_NET_WM_STATE"),XA_ATOM,32,&n);
 	cc->onTop=false;
 	cc->onBottom=false;
+	cc->visible=true;
 
-	for(int j=0;j<n;j++)
+	for(long unsigned j=0;j<n;j++)
 		{
 			if(states[j]==this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_VERT") || states[j]==this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ"))
 				maxit=true;	
 			if(states[j]==this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN"))
-				ishidden=true;
+				{
+					cc->visible=false;
+					ishidden=true;
+				}
 			if(states[j]==this->mainClass->atoms.at("_NET_WM_STATE_BELOW"))
 				cc->onBottom=true;
 			if(states[j]==this->mainClass->atoms.at("_NET_WM_STATE_ABOVE"))
@@ -498,11 +493,12 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 
 	cc->LFSWM2_maxWindow(maxit);
 	cc->LFSWM2_fullscreenWindow(isfull);
-	if(ishidden==false)
+	if((ishidden==false) && (cc->onDesk==this->mainClass->currentDesktop) && (cc->visible==true))
 		cc->LFSWM2_showWindow();
 	else
 		cc->LFSWM2_hideWindow();
 
+	this->mainClass->restackCnt++;
 	return;
 
 //TODO//
@@ -552,7 +548,6 @@ bool LFSWM2_windowClass::LFSWM2_hasState(Window w,Atom state)
 void LFSWM2_windowClass::LFSWM2_changeState(Window id,int how,Atom state)
 {
 	LFSWM2_clientClass	*cc;
-	bool					*clientprop=NULL;
 
 	cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(id);
 	switch(how)
@@ -572,11 +567,7 @@ void LFSWM2_windowClass::LFSWM2_changeState(Window id,int how,Atom state)
 		}
 
 	if(cc!=NULL)
-		{
-			this->LFSWM2_reloadWindowState(cc->contentWindow);
-//TODO//		if(state=this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN"))
-//TODO//				clientprop=&cc->isMinimized;
-		}
+		this->LFSWM2_reloadWindowState(cc->contentWindow);
 }
 
 void LFSWM2_windowClass::LFSWM2_addState(Window w,Atom state)
@@ -607,7 +598,6 @@ void LFSWM2_windowClass::LFSWM2_addState(Window w,Atom state)
 		XFree(old);
 }
 
-
 void LFSWM2_windowClass::LFSWM2_removeProp(Window w,Atom state)
 {
 	unsigned long	n=0;
@@ -624,38 +614,6 @@ void LFSWM2_windowClass::LFSWM2_removeProp(Window w,Atom state)
 
 	if(v!=NULL)
 		XFree(v);
-}
-
-void LFSWM2_windowClass::LFSWM2_refreshFrame(LFSWM2_clientClass *cc,XExposeEvent *e)//TODO//prevent flicker
-{
-	rectStructure r=cc->frameWindowRect;
-
-	if(e!=NULL)
-		{
-			if(e->count!=0)
-				return;
-		}	
-
-	XSetForeground(this->mainClass->display,this->mainClass->mainGC,this->mainClass->frameBG->pixel);
-	XSetClipMask(this->mainClass->display,this->mainClass->mainGC,None);
-	XFillRectangle(this->mainClass->display,cc->frameWindow,this->mainClass->mainGC,0,0,r.width,r.height);
-
-	XSetForeground(this->mainClass->display,this->mainClass->mainGC,this->mainClass->frameText->pixel);
-	XSetClipMask(this->mainClass->display,this->mainClass->mainGC,None);
-	XftDrawChange(this->mainClass->frameText->draw,cc->frameWindow);
-	if(cc->name.length()>0)
-		{
-			if(cc->nameIsUTF==true)
-				XftDrawStringUtf8(this->mainClass->frameText->draw,&(this->mainClass->frameText->color),this->mainClass->frameFont,10,12,(XftChar8 *)cc->name.c_str(),strlen(cc->name.c_str()));
-			else
-				XftDrawString8(this->mainClass->frameText->draw,&(this->mainClass->frameText->color),this->mainClass->frameFont,10,12,(XftChar8 *)cc->name.c_str(),strlen(cc->name.c_str()));
-		}
-
-//buttons
-	cc->LFSWM2_drawMouseLeave(cc->closeButton,this->mainClass->closeBitMap,this->mainClass->closeControlStruct);
-	cc->LFSWM2_drawMouseLeave(cc->maximizeButton,this->mainClass->maximizeBitMap,this->mainClass->maximizeControlStruct);
-	cc->LFSWM2_drawMouseLeave(cc->minimizeButton,this->mainClass->minimizeBitMap,this->mainClass->minimizeControlStruct);
-	cc->LFSWM2_drawMouseLeave(cc->shadeButton,this->mainClass->shadeBitMap,this->mainClass->shadeControlStruct);
 }
 
 Window LFSWM2_windowClass::LFSWM2_getParentWindow(Window id)
@@ -686,7 +644,7 @@ void LFSWM2_windowClass::LFSWM2_setClientList(Window id,bool addwindow)
 		}
 	else
 		{
-			for(int j=0;j<this->windowIDList.size();j++)
+			for(long unsigned j=0;j<this->windowIDList.size();j++)
 				{
 					if(this->windowIDList.at(j)==id)
 						{
@@ -706,19 +664,19 @@ void LFSWM2_windowClass::LFSWM2_setWindowState(Window w,long state)
 void LFSWM2_windowClass::LFSWM2_setVisibilityForDesk(unsigned long desk)
 {
 	LFSWM2_clientClass	*cc;
-
+	
 	for(int j=this->windowIDList.size()-1;j>=0;j--)
 		{
 			cc=this->LFSWM2_getClientClass(this->windowIDList.at(j));
 			if(cc!=NULL)
 				{
 					if(cc->visibleOnAllDesks==true)
-						cc->onDesk=desk;
-					if((cc->onDesk==desk) )
 						{
+							cc->onDesk=desk;
 							this->LFSWM2_setProp(cc->contentWindow,this->mainClass->atoms.at("_NET_WM_DESKTOP"),XA_CARDINAL,32,&cc->onDesk,1);
-							cc->LFSWM2_showWindow();
 						}
+					if((cc->onDesk==desk) && (cc->visible==true))
+						cc->LFSWM2_showWindow();
 					else
 						cc->LFSWM2_hideWindow();
 				}
