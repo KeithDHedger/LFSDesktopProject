@@ -310,6 +310,12 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 					if(states[j]==this->mainClass->atoms.at("_NET_WM_STATE_STICKY"))
 						cc->visibleOnAllDesks=true;
 				}
+
+			XGetTransientForHint(this->mainClass->display,id,&cc->transientFor);
+			if(cc->transientFor!=0)
+				{
+				//TODO//
+				}
 			this->LFSWM2_reloadWindowState(id);
 			this->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,(void*)&cc->contentWindow,1);
 
@@ -497,6 +503,8 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 		cc->LFSWM2_showWindow();
 	else
 		cc->LFSWM2_hideWindow();
+
+//	XGetTransientForHint(this->mainClass->display,id,&cc->transientFor);
 
 	this->mainClass->restackCnt++;
 	return;

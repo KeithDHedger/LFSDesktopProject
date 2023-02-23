@@ -586,7 +586,9 @@ this->mainClass->DEBUG_printEventData(e,false);
 				break;
 			case ConfigureRequest://TODO//NEXT
 				{
-						//fprintf(stderr,"ConfigureRequest eventnumber\n");
+					//if(this->transientFor!=0)//TODO//
+					//	break;
+					//fprintf(stderr,"ConfigureRequest transientFor %p\n",this->transientFor);
 					XWindowChanges	changes;
 
 					this->mainClass->LFSWM2_pushXErrorHandler();
@@ -630,10 +632,10 @@ this->mainClass->DEBUG_printEventData(e,false);
 						{
 							if(e->xconfigurerequest.value_mask==0xc)
 								{
-									//if(e->xconfigurerequest.parent==this->mainClass->rootWindow)//TODO/ugly xterm hack!!
-									//	XMoveResizeWindow(this->mainClass->display,e->xconfigurerequest.window,changes.x,changes.y,changes.width+(this->mainClass->sideBarSize*3),changes.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);											
-									//else
-									//XMoveWindow(this->mainClass->display,e->xconfigurerequest.window,this->mainClass->sideBarSize,this->mainClass->titleBarSize);
+									if(e->xconfigurerequest.parent==this->mainClass->rootWindow)//TODO/ugly xterm hack!!
+										XMoveResizeWindow(this->mainClass->display,e->xconfigurerequest.window,changes.x,changes.y,changes.width+(this->mainClass->sideBarSize*3),changes.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);											
+									else
+									XMoveWindow(this->mainClass->display,e->xconfigurerequest.window,this->mainClass->sideBarSize,this->mainClass->titleBarSize);
 									this->mainClass->restackCnt=1;
 									break;
 								}

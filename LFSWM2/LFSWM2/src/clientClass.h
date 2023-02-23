@@ -41,6 +41,8 @@ class LFSWM2_clientClass
 
 		Window			contentWindow=0;
 		Window			frameWindow=0;
+		Window			transientFor=0;
+
 		std::string		name="";
 		int				windowType=-1;
 		bool				visible=true;

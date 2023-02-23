@@ -161,86 +161,24 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						//fprintf(stderr,"ResizeRequest eventnumber %i\n",when++);
 						break;
 					case ConfigureRequest://TODO//NEXT
-					break;
-//						{
-//							//fprintf(stderr,"ConfigureRequest eventnumber %i\n",when++);
-//							LFSWM2_clientClass	*cc;
-//							XWindowChanges		changes;
-//							this->mainClass->LFSWM2_pushXErrorHandler();
-//							if(false)
-//								{
-//									fprintf(stderr,"ConfigureRequest eventnumber %i\n",when++);
-//									fprintf(stderr,"type=%i 23=ConfigureRequest\n",e.xconfigurerequest.type);
-//									fprintf(stderr,"send_event=%i \n",e.xconfigurerequest.send_event);
-//									fprintf(stderr,"display=%p \n",e.xconfigurerequest.display);
-//									fprintf(stderr,"parent=%p \n",(void*)e.xconfigurerequest.parent);
-//									fprintf(stderr,"window=%p \n",(void*)e.xconfigurerequest.window);
-//									fprintf(stderr,"x=%i \n",e.xconfigurerequest.x);
-//									fprintf(stderr,"y=%i \n",e.xconfigurerequest.y);
-//									fprintf(stderr,"width=%i \n",e.xconfigurerequest.width);
-//									fprintf(stderr,"height=%i \n",e.xconfigurerequest.height);
-//									fprintf(stderr,"border_width=%i \n",e.xconfigurerequest.border_width);
-//									fprintf(stderr,"above=%p \n",(void*)e.xconfigurerequest.above);
-//									fprintf(stderr,"detail=%x \n",e.xconfigurerequest.detail);
-//									fprintf(stderr,"value_mask=%p \n",(void*)e.xconfigurerequest.value_mask);
-//								}
-//							if(e.xconfigurerequest.detail==Below)
-//								{
-//									cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
-//									if(cc!=NULL)
-//										{
-//											this->mainClass->mainWindowClass->LFSWM2_changeState(cc->contentWindow,NET_WM_STATE_REMOVE,this->mainClass->atoms.at("_NET_WM_STATE_ABOVE"));
-//											this->mainClass->mainWindowClass->LFSWM2_changeState(cc->contentWindow,NET_WM_STATE_TOGGLE,this->mainClass->atoms.at("_NET_WM_STATE_BELOW"));
-//											cc->onBottom=!cc->onBottom;
-//											this->mainClass->restackCnt=1;
-//										}
-//									this->mainClass->LFSWM2_popXErrorHandler();
-//									break;
-//								}
-//
-//							this->mainClass->LFSWM2_popXErrorHandler();
-//							// Copy fields from e to changes.
-//							changes.x=e.xconfigurerequest.x;
-//							changes.y=e.xconfigurerequest.y;
-//							changes.width=e.xconfigurerequest.width;
-//							changes.height=e.xconfigurerequest.height;
-//							changes.border_width=e.xconfigurerequest.border_width;
-//							changes.sibling=e.xconfigurerequest.above;
-//							changes.stack_mode=e.xconfigurerequest.detail;
-//
-//							if(e.xconfigurerequest.send_event==false)
-//								{
-//									if(e.xconfigurerequest.value_mask==0xc)
-//										{
-//											cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
-//											if(e.xconfigurerequest.parent==this->mainClass->rootWindow)//TODO/ugly xterm hack!!
-//												XMoveResizeWindow(this->mainClass->display,e.xconfigurerequest.window,changes.x,changes.y,changes.width+(this->mainClass->sideBarSize*3),changes.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);											
-//											else
-//												XMoveWindow(this->mainClass->display,e.xconfigurerequest.window,this->mainClass->sideBarSize,this->mainClass->titleBarSize);
-//											this->mainClass->restackCnt=1;
-//											break;
-//										}
-//								}
-//	
-//							cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
-//							if(cc!=NULL)
-//								{
-//									XConfigureWindow(this->mainClass->display,e.xconfigurerequest.window,e.xconfigurerequest.value_mask,&changes);
-//									XMoveResizeWindow(this->mainClass->display,cc->frameWindow,changes.x,changes.y,changes.width+(this->mainClass->sideBarSize*3),changes.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);
-//									XMoveWindow(this->mainClass->display,cc->contentWindow,this->mainClass->sideBarSize,this->mainClass->titleBarSize);
-//									cc->contentWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(cc->contentWindow,this->mainClass->rootWindow);
-//									cc->frameWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(cc->frameWindow,this->mainClass->rootWindow);
-//									cc->LFSWM2_resizeControls();
-//									XSync(this->mainClass->display,false);
-//								}
-//							else
-//								{
-//									XConfigureWindow(this->mainClass->display,e.xconfigurerequest.window,e.xconfigurerequest.value_mask,&changes);
-//									XSync(this->mainClass->display,false);
-//								}
-//								this->mainClass->restackCnt=1;
-//						}
-//						break;
+						cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
+						if((cc==NULL))
+							{
+								LFSWM2_clientClass	*cc;
+								XWindowChanges		changes;
+								changes.x=e.xconfigurerequest.x;
+								changes.y=e.xconfigurerequest.y;
+								changes.width=e.xconfigurerequest.width;
+								changes.height=e.xconfigurerequest.height;
+								changes.border_width=e.xconfigurerequest.border_width;
+								changes.sibling=e.xconfigurerequest.above;
+								changes.stack_mode=e.xconfigurerequest.detail;
+
+								XConfigureWindow(this->mainClass->display,e.xconfigurerequest.window,e.xconfigurerequest.value_mask,&changes);
+								this->mainClass->restackCnt=1;
+								break;
+							}
+						break;
 					case CirculateNotify:
 						//fprintf(stderr,"CirculateNotify eventnumber %i\n",when++);
 						break;
