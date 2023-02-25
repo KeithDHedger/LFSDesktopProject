@@ -34,12 +34,10 @@ LFSWM2_clientClass::~LFSWM2_clientClass(void)
 		this->mainClass->mainWindowClass->LFSWM2_deleteClientEntry(this->contentWindow);
 
 		XRemoveFromSaveSet(this->mainClass->display,this->contentWindow);	
-		//XUnmapSubwindows(this->mainClass->display,this->frameWindow);
-		//XUnmapWindow(this->mainClass->display,this->frameWindow);
-		//XDestroySubwindows(this->mainClass->display,this->frameWindow);
-		XDestroyWindow(this->mainClass->display,this->frameWindow);
-		XDestroyWindow(this->mainClass->display,this->contentWindow);
-		//XSync(this->mainClass->display,true);
+		if(this->transientFor==None)
+			XReparentWindow(this->mainClass->display,this->contentWindow,this->mainClass->rootWindow,this->frameWindowRect.x+this->mainClass->sideBarSize,frameWindowRect.y+this->mainClass->titleBarSize);
+		else
+			XReparentWindow(this->mainClass->display,this->contentWindow,this->mainClass->rootWindow,-10000,-10000);
 	this->mainClass->LFSWM2_popXErrorHandler();
 }
 
@@ -555,8 +553,8 @@ this->mainClass->DEBUG_printEventData(e,false);
 			case UnmapNotify:
 				{
 					//fprintf(stderr,">>>>>>>>>>>>>>>UnmapNotify IN eventnumber win=%p event=%p\n",e->xmap.window,e->xmap.event);
-					long data[2]= { WithdrawnState,None };
-					XChangeProperty(this->mainClass->display,this->frameWindow,this->mainClass->atoms.at("WM_STATE"),this->mainClass->atoms.at("WM_STATE"),32,PropModeReplace,(unsigned char *)data,2);
+					//long data[2]= { WithdrawnState,None };
+					//XChangeProperty(this->mainClass->display,this->frameWindow,this->mainClass->atoms.at("WM_STATE"),this->mainClass->atoms.at("WM_STATE"),32,PropModeReplace,(unsigned char *)data,2);
 					this->mainClass->mainWindowClass->LFSWM2_setClientList(this->contentWindow,false);
 					this->visible=false;
 					XUnmapWindow(this->mainClass->display,this->frameWindow);
@@ -566,8 +564,8 @@ this->mainClass->DEBUG_printEventData(e,false);
 			case DestroyNotify:
 				{
 					//fprintf(stderr,">>>>>>>>>>>>>>>DestroyNotify IN eventnumber win=%p event=%p\n",e->xdestroywindow.window,e->xdestroywindow.event);
-					long data[2]= { WithdrawnState,None };
-					XChangeProperty(this->mainClass->display,this->frameWindow,this->mainClass->atoms.at("WM_STATE"),this->mainClass->atoms.at("WM_STATE"),32,PropModeReplace,(unsigned char *)data,2);
+					//long data[2]= { WithdrawnState,None };
+				//	XChangeProperty(this->mainClass->display,this->frameWindow,this->mainClass->atoms.at("WM_STATE"),this->mainClass->atoms.at("WM_STATE"),32,PropModeReplace,(unsigned char *)data,2);
 					delete this;
 					return(true);
 				}
@@ -576,8 +574,8 @@ this->mainClass->DEBUG_printEventData(e,false);
 				//fprintf(stderr,"MapNotify window=%p \n",e->xmap.window);
 				{
 					this->onDesk=this->mainClass->currentDesktop;//TODO//transient for
-					long data[2]= { NormalState,None };
-					XChangeProperty(this->mainClass->display,this->frameWindow,this->mainClass->atoms.at("WM_STATE"),this->mainClass->atoms.at("WM_STATE"),32,PropModeReplace,(unsigned char *)data,2);
+					//long data[2]= { NormalState,None };
+				//	XChangeProperty(this->mainClass->display,this->frameWindow,this->mainClass->atoms.at("WM_STATE"),this->mainClass->atoms.at("WM_STATE"),32,PropModeReplace,(unsigned char *)data,2);
 					this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(e->xmaprequest.window);
 					XMapWindow(this->mainClass->display,e->xmaprequest.window);
 					XRaiseWindow(this->mainClass->display,e->xmaprequest.window);

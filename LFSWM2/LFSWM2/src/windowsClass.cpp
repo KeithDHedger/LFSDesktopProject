@@ -315,11 +315,13 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			if(cc->transientFor!=0)
 				{
 				//TODO//
+				XMoveWindow(this->mainClass->display,cc->frameWindow,20,20);
 				}
 			this->LFSWM2_reloadWindowState(id);
 			this->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,(void*)&cc->contentWindow,1);
 
-			if(cc->windowType==NORMALWINDOW)
+		//	if(cc->windowType==NORMALWINDOW)
+			//if(cc->transientFor==None)
 				XAddToSaveSet(this->mainClass->display,id);
 			this->mainClass->restackCnt++;
 		}

@@ -31,8 +31,31 @@ LFSWM2_Class			*mainLFSWM2Class;
 
 int main(int argc, char **argv)
 {
+	bool					loop=false;
+	LFSWM2_clientClass	*cc;
+
 	mainLFSWM2Class=new LFSWM2_Class(argc,argv);
 	mainLFSWM2Class->mainEventClass->LFSWM2_mainEventLoop();
+
+	do
+		{
+			loop=false;
+			for(auto& x:mainLFSWM2Class->mainWindowClass->clientList)
+				{
+    					cc=mainLFSWM2Class->mainWindowClass->LFSWM2_getClientClass(x.first);
+					if((cc!=NULL))
+						{
+    							if(cc->transientFor!=None)
+   								cc->LFSWM2_sendCloseWindow();
+
+    							delete cc;
+    							loop=true;
+    							XSync(mainLFSWM2Class->display,false);
+    							break;
+						}
+ 	 			}
+		}
+	while(loop==true);
 
 	return(0);
 }

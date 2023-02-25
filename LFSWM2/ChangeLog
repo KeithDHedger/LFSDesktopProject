@@ -1,4 +1,6 @@
 0.2.3
+Fixed transient windows closing.
+Fixed exiting.
 Moved more events to client class.
 Code clean.
 Fixed frame position when framing.
