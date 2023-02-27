@@ -1,4 +1,6 @@
 0.2.3
+Fixed widget drag eesize.
+Fixed window placing.
 Fixed transient windows closing.
 Fixed exiting.
 Moved more events to client class.

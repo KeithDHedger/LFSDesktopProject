@@ -458,8 +458,10 @@ void LFSWM2_Class::DEBUG_printAtom(Atom a)
 
 void LFSWM2_Class::DEBUG_printEventData(XEvent *e,bool verbose)
 {
-	const char*	names[]={"ERROR","ERROR","KeyPress","KeyRelease","ButtonPress","ButtonRelease","MotionNotify","EnterNotify","LeaveNotify","FocusIn","FocusOut","KeymapNotify","Expose","GraphicsExpose","NoExpose","VisibilityNotify","CreateNotify","DestroyNotify","UnmapNotify","MapNotify","MapRequest","ReparentNotify","ConfigureNotify","ConfigureRequest","GravityNotify","ResizeRequest","CirculateNotify","CirculateRequest","PropertyNotify","SelectionClear","SelectionRequest","SelectionNotify","ColormapNotify","ClientMessage","MappingNotify","GenericEvent"};
 
-	fprintf(stderr,"Event name=%s\n",names[e->type]);
+const char* names[][2]={{"ERROR","0"},{"ERROR","0"},{"KeyPress","0"},{"KeyRelease","0"},{"ButtonPress","0"},{"ButtonRelease","0"},{"MotionNotify","0"},{"EnterNotify","0"},{"LeaveNotify","0"},{"FocusIn","0"},{"FocusOut","0"},{"KeymapNotify","0"},{"Expose","0"},{"GraphicsExpose","0"},{"NoExpose","0"},{"VisibilityNotify","0"},{"CreateNotify","1"},{"DestroyNotify","1"},{"UnmapNotify","1"},{"MapNotify","1"},{"MapRequest","1"},{"ReparentNotify","0"},{"ConfigureNotify","1"},{"ConfigureRequest","1"},{"GravityNotify","0"},{"ResizeRequest","1"},{"CirculateNotify","0"},{"CirculateRequest","0"},{"PropertyNotify","1"},{"SelectionClear","0"},{"SelectionRequest","0"},{"SelectionNotify","0"},{"ColormapNotify","0"},{"ClientMessage","1"},{"MappingNotify","0"},{"GenericEvent","0"}};
+
+	if(names[e->type][1][0]=='1')
+		fprintf(stderr,"Event name=%s: type=%i\n",names[e->type][0],e->type);
 }
 #endif

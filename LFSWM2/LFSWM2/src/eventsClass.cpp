@@ -100,7 +100,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						this->mainClass->restackCnt=0;
 						break;
 					case ButtonPress:
-						fprintf(stderr,"ButtonPress eventnumber %i\n",when++);
+						//fprintf(stderr,"ButtonPress eventnumber %i\n",when++);
 						start=e.xbutton;
 						this->mainClass->doingMove=false;
 						this->mainClass->restackCnt=0;
@@ -243,7 +243,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 										this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(cc->contentWindow);
 								}
 						}
-						fprintf(stderr,"PropertyNotify OUT eventnumber %i\n",when++);
+						//fprintf(stderr,"PropertyNotify OUT eventnumber %i\n",when++);
 						break;
 					case SelectionClear:
 						//fprintf(stderr,"SelectionClear eventnumber %i\n",when++);
@@ -445,7 +445,7 @@ Atom (nil) name=(null)
 						this->mainClass->mainWindowClass->LFSWM2_changeState(id,how,e->data.l[i]);
 				}
 }
-exitit:
+exitit://TODO//just to even up poperror to be removed.
 			this->mainClass->LFSWM2_popXErrorHandler();
 		}
 	this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(id);

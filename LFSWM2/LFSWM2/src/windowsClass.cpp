@@ -165,7 +165,7 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			cc->clientPreFSRect=this->LFSWM2_getWindowRect(id,this->mainClass->rootWindow);
 			cc->framePreFSRect=this->LFSWM2_getWindowRect(id,this->mainClass->rootWindow);
 			cc->contentWindowRect.y-=this->mainClass->titleBarSize;
-			cc->frameWindowRect=this->LFSWM2_getWindowRect(cc->frameWindow,this->mainClass->rootWindow);
+			cc->frameWindowRect={offx,offy,x_window_attrs.width+(this->mainClass->sideBarSize*3),x_window_attrs.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH};
 			this->clientList[id]=cc;
 			this->clientList[cc->frameWindow]=cc;
 
@@ -315,14 +315,14 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			if(cc->transientFor!=0)
 				{
 				//TODO//
-				XMoveWindow(this->mainClass->display,cc->frameWindow,20,20);
+				//XMoveWindow(this->mainClass->display,cc->frameWindow,20,20);
 				}
 			this->LFSWM2_reloadWindowState(id);
 			this->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,(void*)&cc->contentWindow,1);
 
 		//	if(cc->windowType==NORMALWINDOW)
 			//if(cc->transientFor==None)
-				XAddToSaveSet(this->mainClass->display,id);
+			XAddToSaveSet(this->mainClass->display,id);
 			this->mainClass->restackCnt++;
 		}
 	XSync(this->mainClass->display,false);

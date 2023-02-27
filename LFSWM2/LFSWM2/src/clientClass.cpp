@@ -566,6 +566,27 @@ this->mainClass->DEBUG_printEventData(e,false);
 					//fprintf(stderr,">>>>>>>>>>>>>>>DestroyNotify IN eventnumber win=%p event=%p\n",e->xdestroywindow.window,e->xdestroywindow.event);
 					//long data[2]= { WithdrawnState,None };
 				//	XChangeProperty(this->mainClass->display,this->frameWindow,this->mainClass->atoms.at("WM_STATE"),this->mainClass->atoms.at("WM_STATE"),32,PropModeReplace,(unsigned char *)data,2);
+
+					bool					loop=false;
+					LFSWM2_clientClass	*cc;
+					do
+						{
+							loop=false;
+contloop:
+							for(auto& x:this->mainClass->mainWindowClass->clientList)
+								{
+				    					cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(x.first);
+									if((cc!=NULL) && (cc->transientFor==this->contentWindow))
+										{
+				   							cc->LFSWM2_sendCloseWindow();
+				   							XUnmapWindow(this->mainClass->display, cc->frameWindow);
+				   							delete cc;
+				   							goto contloop;
+   										}
+ 	 							}
+						}
+					while(loop==true);
+
 					delete this;
 					return(true);
 				}
@@ -591,20 +612,20 @@ this->mainClass->DEBUG_printEventData(e,false);
 
 					this->mainClass->LFSWM2_pushXErrorHandler();
 #if 0
-					fprintf(stderr,"ConfigureRequest eventnumber %i\n",when++);
-					fprintf(stderr,"type=%i 23=ConfigureRequest\n",e.xconfigurerequest.type);
-					fprintf(stderr,"send_event=%i \n",e.xconfigurerequest.send_event);
-					fprintf(stderr,"display=%p \n",e.xconfigurerequest.display);
-					fprintf(stderr,"parent=%p \n",(void*)e.xconfigurerequest.parent);
-					fprintf(stderr,"window=%p \n",(void*)e.xconfigurerequest.window);
-					fprintf(stderr,"x=%i \n",e.xconfigurerequest.x);
-					fprintf(stderr,"y=%i \n",e.xconfigurerequest.y);
-					fprintf(stderr,"width=%i \n",e.xconfigurerequest.width);
-					fprintf(stderr,"height=%i \n",e.xconfigurerequest.height);
-					fprintf(stderr,"border_width=%i \n",e.xconfigurerequest.border_width);
-					fprintf(stderr,"above=%p \n",(void*)e.xconfigurerequest.above);
-					fprintf(stderr,"detail=%x \n",e.xconfigurerequest.detail);
-					fprintf(stderr,"value_mask=%p \n",(void*)e.xconfigurerequest.value_mask);
+					fprintf(stderr,"ConfigureRequest\n");
+					fprintf(stderr,"type=%i 23=ConfigureRequest\n",e->xconfigurerequest.type);
+					fprintf(stderr,"send_event=%i \n",e->xconfigurerequest.send_event);
+					fprintf(stderr,"display=%p \n",e->xconfigurerequest.display);
+					fprintf(stderr,"parent=%p \n",(void*)e->xconfigurerequest.parent);
+					fprintf(stderr,"window=%p \n",(void*)e->xconfigurerequest.window);
+					fprintf(stderr,"x=%i \n",e->xconfigurerequest.x);
+					fprintf(stderr,"y=%i \n",e->xconfigurerequest.y);
+					fprintf(stderr,"width=%i \n",e->xconfigurerequest.width);
+					fprintf(stderr,"height=%i \n",e->xconfigurerequest.height);
+					fprintf(stderr,"border_width=%i \n",e->xconfigurerequest.border_width);
+					fprintf(stderr,"above=%p \n",(void*)e->xconfigurerequest.above);
+					fprintf(stderr,"detail=%x \n",e->xconfigurerequest.detail);
+					fprintf(stderr,"value_mask=%p \n",(void*)e->xconfigurerequest.value_mask);
 #endif
 					if(e->xconfigurerequest.detail==Below)
 						{
@@ -613,6 +634,7 @@ this->mainClass->DEBUG_printEventData(e,false);
 							this->onBottom=!this->onBottom;
 							this->mainClass->restackCnt=1;
 							this->mainClass->LFSWM2_popXErrorHandler();
+							return(true);
 							break;
 						}
 
@@ -633,19 +655,31 @@ this->mainClass->DEBUG_printEventData(e,false);
 									if(e->xconfigurerequest.parent==this->mainClass->rootWindow)//TODO/ugly xterm hack!!
 										XMoveResizeWindow(this->mainClass->display,e->xconfigurerequest.window,changes.x,changes.y,changes.width+(this->mainClass->sideBarSize*3),changes.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);											
 									else
-									XMoveWindow(this->mainClass->display,e->xconfigurerequest.window,this->mainClass->sideBarSize,this->mainClass->titleBarSize);
+										XMoveWindow(this->mainClass->display,e->xconfigurerequest.window,this->mainClass->sideBarSize,this->mainClass->titleBarSize);
+									this->adjustContentWindow();
 									this->mainClass->restackCnt=1;
-									break;
+									return(true);
 								}
-						}
 
-					XConfigureWindow(this->mainClass->display,e->xconfigurerequest.window,e->xconfigurerequest.value_mask,&changes);
-					XMoveResizeWindow(this->mainClass->display,this->frameWindow,changes.x,changes.y,changes.width+(this->mainClass->sideBarSize*3),changes.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);
-					XMoveWindow(this->mainClass->display,this->contentWindow,this->mainClass->sideBarSize,this->mainClass->titleBarSize);
-					this->contentWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->contentWindow,this->mainClass->rootWindow);
-					this->frameWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->frameWindow,this->mainClass->rootWindow);
-					this->LFSWM2_resizeControls();
-					this->mainClass->restackCnt=1;
+							changes.x=this->mainClass->sideBarSize;
+							changes.y=this->mainClass->titleBarSize;
+							XConfigureWindow(this->mainClass->display,e->xconfigurerequest.window,e->xconfigurerequest.value_mask,&changes);
+							XMoveResizeWindow(this->mainClass->display,this->frameWindow,this->frameWindowRect.x,this->frameWindowRect.y,changes.width+(this->mainClass->sideBarSize*3),changes.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);
+							this->mainClass->restackCnt=1;
+							return(true);	
+						}
+					//else//TODO//MMMMMmmmmmmm???
+						{
+							XConfigureWindow(this->mainClass->display,e->xconfigurerequest.window,e->xconfigurerequest.value_mask,&changes);
+							XMoveResizeWindow(this->mainClass->display,this->frameWindow,changes.x,changes.y,changes.width+(this->mainClass->sideBarSize*3),changes.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);
+							XMoveWindow(this->mainClass->display,this->contentWindow,this->mainClass->sideBarSize,this->mainClass->titleBarSize);
+							this->contentWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->contentWindow,this->mainClass->rootWindow);
+							this->frameWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->frameWindow,this->mainClass->rootWindow);
+							this->LFSWM2_resizeControls();
+							this->LFSWM2_resizeControls();
+							this->mainClass->restackCnt=1;
+							//return(true);
+						}
 				}
 				break;
 		}

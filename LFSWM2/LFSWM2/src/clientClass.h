@@ -95,6 +95,7 @@ class LFSWM2_clientClass
 		int				dragsize=16;
 		int				smoothness=5;
 
+		void				setWindowRects(bool resize=true);
 	private:
 		bool				buttonDown=false;
 		int				sx=0;
@@ -103,7 +104,6 @@ class LFSWM2_clientClass
 
 		void				drawMouseEnter(Window id,Pixmap pm,controlData data);
 		bool				doResizeDraggers(XEvent *e);
-		void				setWindowRects(bool resize=true);
 		void				adjustContentWindow(void);
 		void				resizeContentWindow(rectStructure r);
 
