@@ -1,3 +1,10 @@
+0.2.4
+Done position window title left/centre/right.
+Added -p/--titleposition to command line options.
+Done center window title vertically.
+Changed rect to use same structure as lfslib.
+Added -F/--font to command line options.
+
 0.2.3
 Fixed widget drag eesize.
 Fixed window placing.

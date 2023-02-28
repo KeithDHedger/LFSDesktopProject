@@ -164,7 +164,6 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
 						if((cc==NULL))
 							{
-								LFSWM2_clientClass	*cc;
 								XWindowChanges		changes;
 								changes.x=e.xconfigurerequest.x;
 								changes.y=e.xconfigurerequest.y;
@@ -200,7 +199,9 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 									else
 										fprintf(stderr,"state=%x =PropertyDelete \n",e.xproperty.state);
 									fprintf(stderr,"send_event=%i\n",e.xproperty.send_event);
+#ifdef __DEBUG__
 									this->mainClass->DEBUG_printAtom(e.xproperty.atom);
+#endif
 								}
 
 
@@ -451,7 +452,7 @@ exitit://TODO//just to even up poperror to be removed.
 	this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(id);
 }
 
-void LFSWM2_eventsClass::LFSWM2_sendConfigureEvent(Window wid,rectStructure r)
+void LFSWM2_eventsClass::LFSWM2_sendConfigureEvent(Window wid,rectStruct r)
 {
 	XConfigureEvent	ce;
 
@@ -460,8 +461,8 @@ void LFSWM2_eventsClass::LFSWM2_sendConfigureEvent(Window wid,rectStructure r)
 	ce.window=wid;
 	ce.x=r.x;
 	ce.y=r.y;
-	ce.width=r.width;
-	ce.height=r.height;
+	ce.width=r.w;
+	ce.height=r.h;
 	ce.border_width=2;//TODO//
 	ce.above=None;
 	ce.override_redirect=False;

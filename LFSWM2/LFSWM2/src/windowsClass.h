@@ -61,7 +61,7 @@ class LFSWM2_windowClass
 		void									LFSWM2_changeState(Window id,int how,Atom state);
 		bool									LFSWM2_hasState(Window w,Atom state);
 
-		rectStructure						LFSWM2_getWindowRect(Window id,Window parent,bool dotranslate=true);
+		rectStruct						LFSWM2_getWindowRect(Window id,Window parent,bool dotranslate=true);
 		Window								LFSWM2_getParentWindow(Window id);
 		void									LFSWM2_reloadWindowState(Window id);
 

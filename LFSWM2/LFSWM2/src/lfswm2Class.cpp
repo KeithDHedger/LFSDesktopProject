@@ -37,7 +37,7 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 {
 	int					cnt=0;
 	XineramaScreenInfo	*p=NULL;
-	rectStructure		monrect;
+	rectStruct		monrect;
 
 	this->display=XOpenDisplay(NULL);
 	if(this->display==NULL)
@@ -73,10 +73,9 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 						{
 							monrect.x=p[x].x_org;
 							monrect.y=p[x].y_org;
-							monrect.width=p[x].width;
-							monrect.height=p[x].height;
+							monrect.w=p[x].width;
+							monrect.h=p[x].height;
 							this->monitors.push_back(monrect);
-							//monrect.debugPrint();
 						}
 				}
 			free(p);
@@ -98,7 +97,7 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 	this->frameBG=this->mainWindowClass->LFSWM2_xftLoadColour("#4194FE","grey");
 	this->frameFG=this->mainWindowClass->LFSWM2_xftLoadColour("#000000","white");
 	this->frameText=this->mainWindowClass->LFSWM2_xftLoadColour("rgb:ff/ff/ff","black");
-	this->frameFont=XftFontOpenName(this->display,this->screen,"sans-serif:size=14:bold");
+	this->frameFont=XftFontOpenName(this->display,this->screen,"sans:size=14:bold");
 
 	this->closeBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)deleteWindowBits,deleteWindowSize,deleteWindowSize);
 	this->maximizeBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)maximizeWindowBits,maximizeWindowSize,maximizeWindowSize);
@@ -369,10 +368,12 @@ void LFSWM2_Class::printHelp(void)
 {
 	printf(	"Usage: lfswm2 [OPTION]\n"
 			"LFS Window Manager\n"
-			"- k, --key\n\tSet message queue key\n"
-			"- b, --backcolour\n\tSet frame back colour\n"
-			"- f, --forecolour\n\tSet frame fore colour\n"
-			"- t, --textcolour\n\tSet frame text colour\n"
+			"-k, --key\n\tSet message queue key\n"
+			"-b, --backcolour\n\tSet frame back colour\n"
+			"-f, --forecolour\n\tSet frame fore colour\n"
+			"-t, --textcolour\n\tSet frame text colour\n"
+			"-F, --font\n\tSet font string ( default: 'sans:size=14:bold' )\n"
+			"-p, --titleposition\n\tSet window name position ( 1=left. 2=center( default ), 3=right )\n"
 			" -v, --version\n\tOutput version information and exit\n"
 			" -h, -?, --help\n\tPrint this help\n\n"
 			"Report bugs to kdhedger@gmail.com\n"
@@ -387,6 +388,8 @@ void LFSWM2_Class::cliOptions(int argc,char **argv)//TODO//
 			{"backcolour",1,0,'b'},
 			{"forecolour",1,0,'f'},
 			{"textcolour",1,0,'t'},
+			{"font",1,0,'F'},
+			{"titleposition",1,0,'p'},
 			{"version",0,0,'v'},
 			{"help",0,0,'?'},
 			{0, 0, 0, 0}
@@ -399,7 +402,7 @@ void LFSWM2_Class::cliOptions(int argc,char **argv)//TODO//
 	while(true)
 		{
 			int option_index=0;
-			c=getopt_long (argc,argv,"v?hk:b:f:t:",long_options,&option_index);
+			c=getopt_long (argc,argv,"v?hk:b:f:t:F:p:",long_options,&option_index);
 			if(c==-1)
 				break;
 
@@ -407,16 +410,22 @@ void LFSWM2_Class::cliOptions(int argc,char **argv)//TODO//
 				{
 					case 'k':
 						key=atoi(optarg);
-						break;		
+						break;
 					case 'b':
 						this->frameBG=this->mainWindowClass->LFSWM2_xftLoadColour(optarg,"grey");
-						break;		
+						break;
 					case 'f':
 						this->frameFG=this->mainWindowClass->LFSWM2_xftLoadColour(optarg,"white");
-						break;		
+						break;
 					case 't':
 						this->frameText=this->mainWindowClass->LFSWM2_xftLoadColour(optarg,"black");
-						break;		
+						break;
+					case 'F':
+						this->frameFont=XftFontOpenName(this->display,this->screen,optarg);
+						break;
+					case 'p':
+						this->titlePosition=atoi(optarg);
+						break;
 					case 'v':
 						printf("LFSWM2 %s\n",VERSION);
 						exit(0);
@@ -458,10 +467,18 @@ void LFSWM2_Class::DEBUG_printAtom(Atom a)
 
 void LFSWM2_Class::DEBUG_printEventData(XEvent *e,bool verbose)
 {
-
-const char* names[][2]={{"ERROR","0"},{"ERROR","0"},{"KeyPress","0"},{"KeyRelease","0"},{"ButtonPress","0"},{"ButtonRelease","0"},{"MotionNotify","0"},{"EnterNotify","0"},{"LeaveNotify","0"},{"FocusIn","0"},{"FocusOut","0"},{"KeymapNotify","0"},{"Expose","0"},{"GraphicsExpose","0"},{"NoExpose","0"},{"VisibilityNotify","0"},{"CreateNotify","1"},{"DestroyNotify","1"},{"UnmapNotify","1"},{"MapNotify","1"},{"MapRequest","1"},{"ReparentNotify","0"},{"ConfigureNotify","1"},{"ConfigureRequest","1"},{"GravityNotify","0"},{"ResizeRequest","1"},{"CirculateNotify","0"},{"CirculateRequest","0"},{"PropertyNotify","1"},{"SelectionClear","0"},{"SelectionRequest","0"},{"SelectionNotify","0"},{"ColormapNotify","0"},{"ClientMessage","1"},{"MappingNotify","0"},{"GenericEvent","0"}};
+	const char* names[][2]={{"ERROR","0"},{"ERROR","0"},{"KeyPress","0"},{"KeyRelease","0"},{"ButtonPress","0"},{"ButtonRelease","0"},{"MotionNotify","0"},{"EnterNotify","0"},{"LeaveNotify","0"},{"FocusIn","0"},{"FocusOut","0"},{"KeymapNotify","0"},{"Expose","0"},{"GraphicsExpose","0"},{"NoExpose","0"},{"VisibilityNotify","0"},{"CreateNotify","1"},{"DestroyNotify","1"},{"UnmapNotify","1"},{"MapNotify","1"},{"MapRequest","1"},{"ReparentNotify","0"},{"ConfigureNotify","1"},{"ConfigureRequest","1"},{"GravityNotify","0"},{"ResizeRequest","1"},{"CirculateNotify","0"},{"CirculateRequest","0"},{"PropertyNotify","1"},{"SelectionClear","0"},{"SelectionRequest","0"},{"SelectionNotify","0"},{"ColormapNotify","0"},{"ClientMessage","1"},{"MappingNotify","0"},{"GenericEvent","0"}};
 
 	if(names[e->type][1][0]=='1')
 		fprintf(stderr,"Event name=%s: type=%i\n",names[e->type][0],e->type);
 }
+
+void LFSWM2_Class::DEBUG_printRect(rectStruct r)
+{
+	fprintf(stderr,"x=%i\n",x);
+	fprintf(stderr,"y=%i\n",y);
+	fprintf(stderr,"width=%i\n",w);
+	fprintf(stderr,"height=%i\n",h);
+}
+
 #endif

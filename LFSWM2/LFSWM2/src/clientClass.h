@@ -52,12 +52,12 @@ class LFSWM2_clientClass
 		bool				onBottom=false;
 		bool				isMaximized=false;
 		bool				isFullscreen=false;
-		rectStructure	contentWindowRect;
-		rectStructure	frameWindowRect;
-		rectStructure	clientPreMaxRect;
-		rectStructure	framePreMaxRect;
-		rectStructure	clientPreFSRect;
-		rectStructure	framePreFSRect;
+		rectStruct	contentWindowRect;
+		rectStruct	frameWindowRect;
+		rectStruct	clientPreMaxRect;
+		rectStruct	framePreMaxRect;
+		rectStruct	clientPreFSRect;
+		rectStruct	framePreFSRect;
 
 		bool				nameIsUTF=false;
 		bool				moveToTop=false;
@@ -95,7 +95,6 @@ class LFSWM2_clientClass
 		int				dragsize=16;
 		int				smoothness=5;
 
-		void				setWindowRects(bool resize=true);
 	private:
 		bool				buttonDown=false;
 		int				sx=0;
@@ -105,8 +104,9 @@ class LFSWM2_clientClass
 		void				drawMouseEnter(Window id,Pixmap pm,controlData data);
 		bool				doResizeDraggers(XEvent *e);
 		void				adjustContentWindow(void);
-		void				resizeContentWindow(rectStructure r);
-
+		void				resizeContentWindow(rectStruct r);
+		void				setWindowRects(bool resize=true);
+		rectStruct		setTitlePosition(void);
 
 };
 

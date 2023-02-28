@@ -41,7 +41,7 @@
 
 #include "config.h"
 
-#define __DEBUG__
+//#define __DEBUG__
 
 template <typename t> void move(std::vector<t>& v,size_t oldIndex,size_t newIndex)
 {
@@ -50,23 +50,6 @@ template <typename t> void move(std::vector<t>& v,size_t oldIndex,size_t newInde
 	else        
 		std::rotate(v.begin() + oldIndex, v.begin() + oldIndex + 1, v.begin() + newIndex + 1);
 }
-
-struct rectStructure
-{
-	int			x;
-	int			y;
-	int			width;
-	int			height;
-#ifdef __DEBUG__
-	void			debugPrint(void)
-		{
-			fprintf(stderr,"x=%i\n",x);
-			fprintf(stderr,"y=%i\n",y);
-			fprintf(stderr,"width=%i\n",width);
-			fprintf(stderr,"height=%i\n",height);
-		};
-#endif
-};
 
 class LFSWM2_windowClass;
 class LFSWM2_eventsClass;
@@ -116,8 +99,8 @@ enum TRISTATE {INVALID=-1,LOGIC0=0,LOGIC1=1};
 
 struct controlData
 {
-	rectStructure	boundingBox;
-	rectStructure	pixmapBox;
+	rectStruct	boundingBox;
+	rectStruct	pixmapBox;
 	int			startX;
 };
 
@@ -154,7 +137,7 @@ class LFSWM2_Class
 		unsigned int			screen;
 		int					depth;
 		int					numberOfMonitors;
-		std::vector<rectStructure>	monitors;
+		std::vector<rectStruct>	monitors;
 
 		int					displayWidth;
 		int					displayHeight;
@@ -170,6 +153,8 @@ class LFSWM2_Class
 		int					titleBarSize=20;
 		int					sideBarSize=2;
 		int					bottomBarSize=8;
+		int					titlePosition=2;
+
 		struct controlData	closeControlStruct;
 		struct controlData	maximizeControlStruct;
 		struct controlData	minimizeControlStruct;
@@ -198,6 +183,7 @@ class LFSWM2_Class
 #ifdef __DEBUG__
 		void					DEBUG_printAtom(Atom a);
 		void					DEBUG_printEventData(XEvent *e,bool verbose);
+		void					DEBUG_printRect(rectStruct r);
 #endif
 
 		bool		tb=false;
