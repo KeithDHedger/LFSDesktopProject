@@ -38,6 +38,7 @@ LFSWM2_clientClass::~LFSWM2_clientClass(void)
 			XReparentWindow(this->mainClass->display,this->contentWindow,this->mainClass->rootWindow,this->frameWindowRect.x+this->mainClass->sideBarSize,frameWindowRect.y+this->mainClass->titleBarSize);
 		else
 			XReparentWindow(this->mainClass->display,this->contentWindow,this->mainClass->rootWindow,-10000,-10000);
+		XUnmapWindow(this->mainClass->display,this->frameWindow);
 	this->mainClass->LFSWM2_popXErrorHandler();
 }
 
@@ -260,7 +261,7 @@ bool LFSWM2_clientClass::LFSWM2_handleControls(XEvent *e)
 			data=this->mainClass->shadeControlStruct;
 		}
 
-	retval=true;
+	retval=false;
 	switch(e->type)
 		{
 			case Expose:
@@ -292,6 +293,7 @@ bool LFSWM2_clientClass::LFSWM2_handleControls(XEvent *e)
 								this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_VERT"));
 							}	
 						this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(this->contentWindow);				
+						retval=true;
 					}
 					
 				if(e->xbutton.window==this->minimizeButton)

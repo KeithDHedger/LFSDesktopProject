@@ -1,4 +1,5 @@
 0.2.4
+Done focusing windows when switching desks.
 Done position window title left/centre/right.
 Added -p/--titleposition to command line options.
 Done center window title vertically.

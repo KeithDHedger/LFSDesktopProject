@@ -475,10 +475,17 @@ void LFSWM2_Class::DEBUG_printEventData(XEvent *e,bool verbose)
 
 void LFSWM2_Class::DEBUG_printRect(rectStruct r)
 {
-	fprintf(stderr,"x=%i\n",x);
-	fprintf(stderr,"y=%i\n",y);
-	fprintf(stderr,"width=%i\n",w);
-	fprintf(stderr,"height=%i\n",h);
+	fprintf(stderr,"x=%i\n",r.x);
+	fprintf(stderr,"y=%i\n",r.y);
+	fprintf(stderr,"width=%i\n",r.w);
+	fprintf(stderr,"height=%i\n",r.h);
+}
+
+const char* LFSWM2_Class::DEBUG_printBool(bool b)
+{
+	if(b==true)
+		return("True");
+	return("False");
 }
 
 #endif

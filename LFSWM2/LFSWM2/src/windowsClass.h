@@ -29,7 +29,7 @@ class LFSWM2_Class;
 #include "lfswm2Class.h"
 #include "clientClass.h"
 
-enum {NORMALWINDOW=0,DESKTOPWINDOW,DOCKWINDOW,MENUWINDOW,DIALOGWINDOW,TOOLWINDOW};
+enum {NORMALWINDOW=0,DESKTOPWINDOW,DOCKWINDOW,MENUWINDOW,DIALOGWINDOW,TOOLWINDOW,UNKNOWNTYPE};
 
 struct fontColour
 {
@@ -61,7 +61,7 @@ class LFSWM2_windowClass
 		void									LFSWM2_changeState(Window id,int how,Atom state);
 		bool									LFSWM2_hasState(Window w,Atom state);
 
-		rectStruct						LFSWM2_getWindowRect(Window id,Window parent,bool dotranslate=true);
+		rectStruct							LFSWM2_getWindowRect(Window id,Window parent,bool dotranslate=true);
 		Window								LFSWM2_getParentWindow(Window id);
 		void									LFSWM2_reloadWindowState(Window id);
 

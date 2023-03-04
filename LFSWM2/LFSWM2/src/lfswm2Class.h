@@ -41,7 +41,7 @@
 
 #include "config.h"
 
-//#define __DEBUG__
+#define __DEBUG__
 
 template <typename t> void move(std::vector<t>& v,size_t oldIndex,size_t newIndex)
 {
@@ -184,6 +184,7 @@ class LFSWM2_Class
 		void					DEBUG_printAtom(Atom a);
 		void					DEBUG_printEventData(XEvent *e,bool verbose);
 		void					DEBUG_printRect(rectStruct r);
+		const char			*DEBUG_printBool(bool b);
 #endif
 
 		bool		tb=false;

@@ -109,12 +109,23 @@ struct fontColour* LFSWM2_windowClass::LFSWM2_xftLoadColour(const char *name,con
 
 void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 {
+	if(this->LFSWM2_getWindowType(id)==MENUWINDOW)
+		{
+			this->LFSWM2_setClientList(id,true);
+			XRaiseWindow(this->mainClass->display,id);
+			this->mainClass->restackCnt=1;
+			XSetInputFocus(this->mainClass->display,id,RevertToNone,CurrentTime);
+			return;
+		}
+
 	if(this->LFSWM2_getWindowType(id)==DOCKWINDOW)
 		{
 			this->LFSWM2_setClientList(id,true);
 			XRaiseWindow(this->mainClass->display,id);
+			this->mainClass->restackCnt=1;
 			return;
 		}
+
 
 	if(this->clientList.count(id)>0)
 		{
@@ -131,10 +142,6 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			long int				*desktopset=NULL;
 			long unsigned int	nitems_return=0;
 	
-
-			if(this->LFSWM2_getWindowType(id)==(int)this->mainClass->atoms.at("_NET_WM_WINDOW_TYPE_DOCK"))
-				return;
-
 			desktopset=(long int*)this->mainClass->mainWindowClass->LFSWM2_getProp(id,this->mainClass->atoms.at("_NET_WM_DESKTOP"),XA_CARDINAL,&nitems_return);
 
 			XGetWindowAttributes(this->mainClass->display,id,&x_window_attrs);
@@ -352,7 +359,7 @@ int LFSWM2_windowClass::LFSWM2_getWindowType(Window id)
 	int				status;
 	unsigned char	*propret=NULL;
 	unsigned long	dl;
-	int				retval=NORMALWINDOW;
+	int				retval=UNKNOWNTYPE;
 
 	status=XGetWindowProperty(this->mainClass->display,id,this->mainClass->atoms.at("_NET_WM_WINDOW_TYPE"),0L,sizeof (Atom),false,XA_ATOM,&da,&di,&dl,&dl,&propret);
 /*
@@ -362,7 +369,7 @@ int LFSWM2_windowClass::LFSWM2_getWindowType(Window id)
 "_NET_WM_WINDOW_TYPE_MENU"
 "_NET_WM_WINDOW_TYPE_DIALOG"
 "_NET_WM_WINDOW_TYPE_TOOL"
-enum {NORMALWINDOW=0,DESKTOPWINDOW,DOCKWINDOW,MENUWINDOW,DIALOGWINDOW,TOOLWINDOW};
+enum {NORMALWINDOW=0,DESKTOPWINDOW,DOCKWINDOW,MENUWINDOW,DIALOGWINDOW,TOOLWINDOW,UNKNOWNTYPE};
 */
 	if (status==Success&&propret)
 		{
