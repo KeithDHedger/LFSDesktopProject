@@ -21,11 +21,8 @@
 #ifndef _CLIENTCLASS_
 #define _CLIENTCLASS_
 
-#include <X11/Xlib.h>
-
 class LFSWM2_Class;
 #include "lfswm2Class.h"
-
 class LFSWM2_clientClass
 {
 	public:
@@ -104,10 +101,9 @@ class LFSWM2_clientClass
 		void				drawMouseEnter(Window id,Pixmap pm,controlData data);
 		bool				doResizeDraggers(XEvent *e);
 		void				adjustContentWindow(void);
-		void				resizeContentWindow(rectStruct r);
+		void				resizeContentWindow(rectStruct r,bool moveorigin=true);
 		void				setWindowRects(bool resize=true);
 		rectStruct		setTitlePosition(void);
-
 };
 
 #endif

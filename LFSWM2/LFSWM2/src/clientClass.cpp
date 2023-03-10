@@ -134,12 +134,13 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 	switch(e->type)
 		{
 			case ButtonPress:
-				this->buttonDown=true;
-				this->sx=e->xmotion.x;
-				this->sy=e->xmotion.y;
-				steps=0;
-				this->setWindowRects(false);
-				this->mainClass->doingMove=false;
+				{
+					this->buttonDown=true;
+					this->sx=e->xmotion.x;
+					this->sy=e->xmotion.y;
+					steps=0;
+					this->setWindowRects(false);
+				}
 				break;
 
 			case ButtonRelease:
@@ -150,6 +151,7 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 				this->adjustContentWindow();
 				this->mainClass->doingMove=false;
 				break;
+
 			case MotionNotify:
 				if(buttonDown==true)
 					{
@@ -209,18 +211,12 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 										r.h=this->contentWindowRect.h;
 									}
 
-								this->resizeContentWindow(r);
+								this->resizeContentWindow(r,false);
 								this->steps=0;
 								break;
 							}
 					}
 				break;
-
-//			case Expose:
-//				cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(ee.xexpose.window);
-//				if(cc!=NULL)
-//					cc->LFSWM2_refreshFrame((XExposeEvent*)&ee);
-//				break;
 		}
 	return(true);
 }
@@ -722,7 +718,7 @@ contloop:
 	return(false);
 }
 
-void LFSWM2_clientClass::resizeContentWindow(rectStruct r)
+void LFSWM2_clientClass::resizeContentWindow(rectStruct r,bool moveorigin)
 {
 	XConfigureRequestEvent	ce;
 
@@ -733,7 +729,12 @@ void LFSWM2_clientClass::resizeContentWindow(rectStruct r)
 	ce.serial=0;
 	ce.send_event=True;
 	ce.border_width=BORDER_WIDTH;//TODO//
-	ce.value_mask=CWWidth|CWHeight|CWX|CWY;
+
+	if(moveorigin==true)
+		ce.value_mask=CWWidth|CWHeight|CWX|CWY;
+	else
+		ce.value_mask=CWWidth|CWHeight;
+		
 	ce.detail=Above;
 	ce.above=None;
 	ce.x=r.x;

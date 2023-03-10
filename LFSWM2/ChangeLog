@@ -1,4 +1,7 @@
 0.2.4
+Fixed not focusing in xterm.
+Smoothed out resizing windows.
+Added Xcomposite library.
 Done focusing windows when switching desks.
 Done position window title left/centre/right.
 Added -p/--titleposition to command line options.

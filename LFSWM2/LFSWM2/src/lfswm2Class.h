@@ -27,6 +27,11 @@
 #include <X11/Xft/Xft.h>
 #include <X11/cursorfont.h>
 #include <X11/extensions/Xinerama.h>
+#include <X11/extensions/XShm.h>
+#include <X11/extensions/Xcomposite.h>
+
+#include <sys/ipc.h>
+#include <sys/shm.h>
 
 #include <stdio.h>
 #include <unistd.h>
@@ -43,7 +48,7 @@
 
 #define __DEBUG__
 
-template <typename t> void move(std::vector<t>& v,size_t oldIndex,size_t newIndex)
+template <typename t> void move(std::vector<t>& v,size_t oldIndex,size_t newIndex)//TODO//
 {
 	if(oldIndex>newIndex)
 		std::rotate(v.rend() - oldIndex - 1, v.rend() - oldIndex, v.rend() - newIndex);

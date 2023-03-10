@@ -94,11 +94,10 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						if(cc!=NULL)
 							{
 								inmenu=false;
-								cc->frameWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(cc->frameWindow,this->mainClass->rootWindow);
-								XGetWindowAttributes(this->mainClass->display,cc->frameWindow, &attr);
 								if((e.xbutton.state&Mod4Mask)==Mod4Mask)//TODO//???windows key for now used to move window wihout restacking
 									break;
 								this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,&cc->contentWindow,1);
+								XSetInputFocus(this->mainClass->display,cc->contentWindow,RevertToNone,CurrentTime);
 								XAllowEvents(this->mainClass->display,ReplayPointer,e.xbutton.time);
 							}
 						break;
