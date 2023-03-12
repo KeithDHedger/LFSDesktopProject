@@ -1,4 +1,8 @@
 0.2.4
+Moved bottom leftright draggers to top.
+Done shade window.
+Done windows with no controls?
+Removed Xcomposite library.
 Fixed not focusing in xterm.
 Smoothed out resizing windows.
 Added Xcomposite library.

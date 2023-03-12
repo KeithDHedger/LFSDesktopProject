@@ -270,7 +270,6 @@ void LFSWM2_eventsClass::LFSWM2_doClientMsg(Window id,XClientMessageEvent *e)
 
 	if(e->message_type==this->mainClass->atoms.at("_NET_WM_DESKTOP") && e->format==32)
 		{
-		//fprintf(stderr,"_NET_WM_DESKTOP\n");
 			ccmessage=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(e->window));
 			if(ccmessage!=NULL)
 				{
@@ -307,6 +306,9 @@ void LFSWM2_eventsClass::LFSWM2_doClientMsg(Window id,XClientMessageEvent *e)
 		{
 			if(e->window==this->mainClass->rootWindow)
 				{
+					if((unsigned long)e->data.l[0]>this->mainClass->numberOfDesktops)
+						return;
+
 					if(this->mainClass->currentDesktop!=(unsigned long)e->data.l[0])
 						{
 							this->mainClass->currentDesktop=(unsigned long)e->data.l[0];

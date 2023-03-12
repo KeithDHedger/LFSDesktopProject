@@ -150,6 +150,7 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 				this->setWindowRects(true);
 				this->adjustContentWindow();
 				this->mainClass->doingMove=false;
+				this->isShaded=false;
 				break;
 
 			case MotionNotify:
@@ -302,6 +303,16 @@ bool LFSWM2_clientClass::LFSWM2_handleControls(XEvent *e)
 
 				if(e->xbutton.window==this->shadeButton)
 					{
+						if(this->isShaded==false)
+							{
+								this->clientPreShade=this->contentWindowRect.h;
+								this->resizeContentWindow({this->frameWindowRect.x,this->frameWindowRect.y,this->contentWindowRect.w,1},false);
+							}
+						else
+							{
+								this->resizeContentWindow({this->frameWindowRect.x,this->frameWindowRect.y,this->contentWindowRect.w,this->clientPreShade},false);
+							}
+						this->isShaded=!this->isShaded;
 						retval=true;
 					}
 
@@ -392,6 +403,7 @@ void LFSWM2_clientClass::setWindowRects(bool resize)
 void LFSWM2_clientClass::LFSWM2_showWindow(void)
 {
 		XMapWindow(this->mainClass->display,this->frameWindow);
+		XSetInputFocus(this->mainClass->display,this->contentWindow,RevertToPointerRoot,CurrentTime);
 }
 
 void LFSWM2_clientClass::LFSWM2_hideWindow(void)
@@ -522,6 +534,8 @@ void LFSWM2_clientClass::LFSWM2_refreshFrame(XExposeEvent *e)//TODO//prevent fli
 {
 	rectStruct	r;
 
+//if(this->nodecs==true)
+//	return;
 	if((e!=NULL) && (e->count!=0))
 		return;
 

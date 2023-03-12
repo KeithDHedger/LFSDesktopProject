@@ -49,16 +49,24 @@ class LFSWM2_clientClass
 		bool				onBottom=false;
 		bool				isMaximized=false;
 		bool				isFullscreen=false;
-		rectStruct	contentWindowRect;
-		rectStruct	frameWindowRect;
-		rectStruct	clientPreMaxRect;
-		rectStruct	framePreMaxRect;
-		rectStruct	clientPreFSRect;
-		rectStruct	framePreFSRect;
+		bool				isShaded=false;
+		bool				canMaximize=false;
+		bool				canMinimize=false;
+		bool				canResize=false;
+
+		rectStruct		contentWindowRect;
+		rectStruct		frameWindowRect;
+		rectStruct		clientPreMaxRect;
+		rectStruct		framePreMaxRect;
+		rectStruct		clientPreFSRect;
+		rectStruct		framePreFSRect;
+		int				clientPreShade;
 
 		bool				nameIsUTF=false;
 		bool				moveToTop=false;
-	
+
+		motifHints		mwmHints;
+
 		Window			closeButton;
 		Window			maximizeButton;
 		Window			minimizeButton;
@@ -92,6 +100,7 @@ class LFSWM2_clientClass
 		int				dragsize=16;
 		int				smoothness=5;
 
+bool nodecs=false;
 	private:
 		bool				buttonDown=false;
 		int				sx=0;
