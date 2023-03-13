@@ -31,6 +31,20 @@ const char *atomNames[]={"_NET_WM_WINDOW_TYPE_MENU","_NET_ACTIVE_WINDOW","_NET_C
 
 LFSWM2_Class::~LFSWM2_Class(void)
 {
+	XftFontClose(this->display,this->frameFont);
+	delete this->mainEventClass;
+	delete this->mainWindowClass;
+	delete this->messages;
+	delete this->lfstkLib;
+
+	XFreeGC(this->display,this->mainGC);
+	XftDrawDestroy(this->frameText->draw);
+	XftDrawDestroy(this->frameBG->draw);
+	XftDrawDestroy(this->frameFG->draw);
+	delete this->frameText;
+	delete this->frameBG;
+	delete this->frameFG;
+	XCloseDisplay(this->display);
 }
 
 LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
@@ -424,6 +438,7 @@ void LFSWM2_Class::cliOptions(int argc,char **argv)//TODO//
 						this->frameText=this->mainWindowClass->LFSWM2_xftLoadColour(optarg,"black");
 						break;
 					case 'F':
+						XftFontClose(this->display,this->frameFont);
 						this->frameFont=XftFontOpenName(this->display,this->screen,optarg);
 						break;
 					case 'p':
@@ -446,7 +461,10 @@ void LFSWM2_Class::cliOptions(int argc,char **argv)//TODO//
 		}
 	prefsfile=this->lfstkLib->LFSTK_oneLiner("sed -n '2p' \"%s/.config/LFS/lfsappearance.rc\"",getenv("HOME"));
 	if(prefsfile!=NULL)
-		this->msgQueueKey=atoi(prefsfile);
+		{
+			this->msgQueueKey=atoi(prefsfile);
+			free(prefsfile);
+		}
 	if(key!=-1)
 		this->msgQueueKey=key;
 }

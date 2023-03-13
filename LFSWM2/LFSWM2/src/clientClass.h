@@ -36,12 +36,12 @@ class LFSWM2_clientClass
 //vars
 		LFSWM2_Class		*mainClass;
 
-		Window			contentWindow=0;
-		Window			frameWindow=0;
-		Window			transientFor=0;
+		Window			contentWindow=None;
+		Window			frameWindow=None;
+		Window			transientFor=None;
 
 		std::string		name="";
-		int				windowType=-1;
+		int				windowType=0;
 		bool				visible=true;
 		unsigned long	onDesk=0;
 		bool				visibleOnAllDesks=false;
@@ -67,18 +67,18 @@ class LFSWM2_clientClass
 
 		motifHints		mwmHints;
 
-		Window			closeButton;
-		Window			maximizeButton;
-		Window			minimizeButton;
-		Window			shadeButton;
+		Window			closeButton=None;
+		Window			maximizeButton=None;
+		Window			minimizeButton=None;
+		Window			shadeButton=None;
 
-		Window			topLeftDragger;
-		Window			topRightDragger;;
-		Window			bottomLeftDragger;
-		Window			bottomRightDragger;
-		Window			leftSideDragger;
-		Window			rightSideDragger;
-		Window			bottomDragger;
+		Window			topLeftDragger=None;
+		Window			topRightDragger=None;;
+		Window			bottomLeftDragger=None;
+		Window			bottomRightDragger=None;
+		Window			leftSideDragger=None;
+		Window			rightSideDragger=None;
+		Window			bottomDragger=None;
 
 		void				LFSWM2_showWindow(void);
 		void				LFSWM2_hideWindow(void);

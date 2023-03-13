@@ -36,8 +36,8 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 	XWindowAttributes	attr;
 	XButtonEvent			start;
 	int					when=0;
-	LFSWM2_clientClass	*cc;
-	LFSWM2_clientClass	*cccontrol;
+	LFSWM2_clientClass	*cc=NULL;
+	LFSWM2_clientClass	*cccontrol=NULL;
 	bool					firstrun=true;
 	bool					overide=false;
 	bool					inmenu=false;
@@ -205,6 +205,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 								{
 									if(e.xmap.window!=v[0])
 										inmenu=true;
+									XFree(v);
 								}
 						}
 						break;
@@ -226,6 +227,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 								{
 									if((long unsigned int)v[0]!=this->mainClass->currentDesktop)
 										inmenu=false;
+									XFree(v);
 								}
 					
 							this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CURRENT_DESKTOP"),XA_CARDINAL,32,&this->mainClass->currentDesktop,1);
@@ -239,6 +241,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 										{
 											if(this->mainClass->mainWindowClass->LFSWM2_getWindowType(v[0])!=UNKNOWNTYPE)
 												XSetInputFocus(this->mainClass->display,v[0],RevertToNone,CurrentTime);
+											XFree(v);
 										}
 								}
 
@@ -533,6 +536,7 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)
 	this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CLIENT_LIST"),XA_WINDOW,32,cl.data(),cl.size());
 	this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CLIENT_LIST_STACKING"),XA_WINDOW,32,cl.data(),cl.size());
 	//this->mainClass->mainWindowClass->LFSWM2_setVisibilityForDesk(this->mainClass->currentDesktop);
+	XFree(v);
 }
 
 void LFSWM2_eventsClass::LFSWM2_moveToTop(Window id)

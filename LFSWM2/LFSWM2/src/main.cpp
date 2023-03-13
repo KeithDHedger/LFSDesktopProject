@@ -56,6 +56,6 @@ int main(int argc, char **argv)
  	 			}
 		}
 	while(loop==true);
-
+	delete mainLFSWM2Class;
 	return(0);
 }

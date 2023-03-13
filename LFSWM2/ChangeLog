@@ -1,3 +1,6 @@
+0.2.5
+Fixed memory leaks.
+
 0.2.4
 Moved bottom leftright draggers to top.
 Done shade window.

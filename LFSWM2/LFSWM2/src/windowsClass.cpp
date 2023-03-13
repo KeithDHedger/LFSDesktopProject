@@ -40,13 +40,15 @@ void LFSWM2_windowClass::LFSWM2_buildClientList(void)
 {
 	Window			returned_root;
 	Window			returned_parent;
-	Window			*toplevelwindows;
+	Window			*toplevelwindows=NULL;
 	unsigned int		windowscnt;
 	std::string		windowname;
 
 	XQueryTree(this->mainClass->display,this->mainClass->rootWindow,&returned_root,&returned_parent,&toplevelwindows,&windowscnt);
 	for(unsigned int i=0;i<windowscnt;++i)
 		this->LFSWM2_createClient(toplevelwindows[i]);
+	if(toplevelwindows!=NULL)
+		XFree(toplevelwindows);
 }
 
 void LFSWM2_windowClass::LFSWM2_deleteClientEntry(Window id)
@@ -139,13 +141,13 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			XSetWindowAttributes	wa;
 			int					offy;
 			int					offx;
-			long int				*desktopset=NULL;
+			long int				*setdesktop=NULL;
 			long unsigned int	nitems_return=0;
 			motifHints			*hints=NULL;
 			Atom					*allowed=NULL;
+			int					thisdesk=-1;
 
 			hints=(motifHints*)this->mainClass->mainWindowClass->LFSWM2_getProp(id,this->mainClass->atoms.at("_MOTIF_WM_HINTS"),this->mainClass->atoms.at("_MOTIF_WM_HINTS"),&nitems_return);
-			desktopset=(long int*)this->mainClass->mainWindowClass->LFSWM2_getProp(id,this->mainClass->atoms.at("_NET_WM_DESKTOP"),XA_CARDINAL,&nitems_return);
 			if(hints!=NULL)
 				{
 					if(hints->decorations==0)
@@ -153,8 +155,17 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 							this->LFSWM2_setClientList(id,true);
 							XRaiseWindow(this->mainClass->display,id);
 							this->mainClass->restackCnt=1;
+							XFree(hints);
 							return;
 						}
+					XFree(hints);
+				}
+
+			setdesktop=(long int*)this->mainClass->mainWindowClass->LFSWM2_getProp(id,this->mainClass->atoms.at("_NET_WM_DESKTOP"),XA_CARDINAL,&nitems_return);
+			if(setdesktop!=NULL)
+				{
+					thisdesk=*setdesktop;
+					XFree(setdesktop);
 				}
 
 			XGetWindowAttributes(this->mainClass->display,id,&x_window_attrs);
@@ -178,6 +189,7 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 					cc->canMaximize=(hints->decorations & MWM_DECOR_MAXIMIZE);
 					cc->canMinimize=(hints->decorations & MWM_DECOR_MINIMIZE);
 					//this->mainClass->DEBUG_printMWMHints(hints);
+					XFree(hints);
 				}
 
 			allowed=(Atom*)this->LFSWM2_getProp(id,this->mainClass->atoms.at("_NET_WM_ALLOWED_ACTIONS"),XA_ATOM,&nitems_return);
@@ -191,6 +203,7 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 							if(allowed[j]==this->mainClass->atoms.at("_NET_WM_ACTION_MINIMIZE"))
 								cc->canMinimize=true;
 						}
+					XFree(allowed);
 				}
 
 			if((this->LFSWM2_getWindowType(id)==NORMALWINDOW) || (this->LFSWM2_getWindowType(id)==UNKNOWNTYPE))//TODO//MMMMMmmmmmmm
@@ -242,8 +255,8 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			if(cc->canResize==true)
 				v[vcnt++]=this->mainClass->atoms.at("_NET_WM_ACTION_RESIZE");
 
-			if(desktopset!=NULL)
-				cc->onDesk=*desktopset;
+			if(thisdesk!=-1)
+				cc->onDesk=thisdesk;
 			else
 				cc->onDesk=this->mainClass->currentDesktop;
 
@@ -383,6 +396,7 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			//if(cc->transientFor==None)
 			XAddToSaveSet(this->mainClass->display,id);
 			this->mainClass->restackCnt++;
+			XFree(states);
 		}
 	XSync(this->mainClass->display,false);
 }
@@ -444,6 +458,7 @@ enum {NORMALWINDOW=0,DESKTOPWINDOW,DOCKWINDOW,MENUWINDOW,DIALOGWINDOW,TOOLWINDOW
 
 					XFree(x);
 				}
+			XFree(propret);
 		}
 	return(retval);
 }
@@ -568,6 +583,7 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 //	XGetTransientForHint(this->mainClass->display,id,&cc->transientFor);
 
 	this->mainClass->restackCnt++;
+	XFree(states);
 	return;
 
 //TODO//
@@ -696,6 +712,8 @@ Window LFSWM2_windowClass::LFSWM2_getParentWindow(Window id)
 		if(!XQueryTree(this->mainClass->display,id,&root,&parent,&children,&num_children))
 			{
 				this->mainClass->LFSWM2_popXErrorHandler();
+				if(children!=NULL)
+					XFree((char*)children);
 				return(0);
 			}
 

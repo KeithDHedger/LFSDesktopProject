@@ -459,6 +459,9 @@ void LFSWM2_clientClass::LFSWM2_setWMState(XEvent *e)
 			XSync(this->mainClass->display,false);
 			this->mainClass->restackCnt++;
 		}
+
+	if(states!=NULL)
+		XFree(states);
 }
 
 bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
