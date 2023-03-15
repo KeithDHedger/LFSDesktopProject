@@ -66,6 +66,7 @@ class LFSWM2_clientClass
 		bool				moveToTop=false;
 
 		motifHints		mwmHints;
+		XSizeHints		*sizeHints=NULL;
 
 		Window			closeButton=None;
 		Window			maximizeButton=None;

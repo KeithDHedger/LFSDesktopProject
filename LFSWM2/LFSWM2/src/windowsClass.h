@@ -60,6 +60,7 @@ class LFSWM2_windowClass
 		void									LFSWM2_setWindowState(Window w,long state);
 		void									LFSWM2_changeState(Window id,int how,Atom state);
 		bool									LFSWM2_hasState(Window w,Atom state);
+		hintsDataStruct						LFSWM2_getWindowHints(Window wid,bool movewindow=false);
 
 		rectStruct							LFSWM2_getWindowRect(Window id,Window parent,bool dotranslate=true);
 		Window								LFSWM2_getParentWindow(Window id);
@@ -69,7 +70,7 @@ class LFSWM2_windowClass
 
 //clients
 		void									LFSWM2_buildClientList(void);
-		void									LFSWM2_createClient(Window id);
+		bool									LFSWM2_createClient(Window id);
 		void									LFSWM2_destroyClient(Window id);
 		LFSWM2_clientClass					*LFSWM2_getClientClass(Window id);
 		void									LFSWM2_deleteClientEntry(Window id);

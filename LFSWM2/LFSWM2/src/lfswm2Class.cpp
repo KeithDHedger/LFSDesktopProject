@@ -38,20 +38,24 @@ LFSWM2_Class::~LFSWM2_Class(void)
 	delete this->lfstkLib;
 
 	XFreeGC(this->display,this->mainGC);
-	XftDrawDestroy(this->frameText->draw);
-	XftDrawDestroy(this->frameBG->draw);
-	XftDrawDestroy(this->frameFG->draw);
-	delete this->frameText;
-	delete this->frameBG;
-	delete this->frameFG;
+
+	this->freeFontColour(this->frameText);
+	this->freeFontColour(this->frameBG);
+	this->freeFontColour(this->frameFG);
 	XCloseDisplay(this->display);
+}
+
+void LFSWM2_Class::freeFontColour(fontColour *fc)
+{
+	XftDrawDestroy(fc->draw);
+	delete fc;
 }
 
 LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 {
 	int					cnt=0;
 	XineramaScreenInfo	*p=NULL;
-	rectStruct		monrect;
+	rectStruct			monrect;
 
 	this->display=XOpenDisplay(NULL);
 	if(this->display==NULL)
@@ -137,6 +141,7 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 	this->cliOptions(argc,argv);
 
 	this->messages=new LFSWM2_messageClass(this,this->msgQueueKey);
+	//this->runLevel=RL_NORMAL;
 }
 
 void LFSWM2_Class::LFSWM2_pushXErrorHandler(void)
@@ -391,6 +396,7 @@ void LFSWM2_Class::printHelp(void)
 			"-t, --textcolour\n\tSet frame text colour\n"
 			"-F, --font\n\tSet font string ( default: 'sans:size=14:bold' )\n"
 			"-p, --titleposition\n\tSet window name position ( 1=left. 2=center( default ), 3=right )\n"
+			"-w, --windowposition\n\tSet new window position ( NOPLACE=0, UNDERMOUSE=1, CENTREMMONITOR=2 ( default ), CENTRESCREEN=3 )\n"
 			" -v, --version\n\tOutput version information and exit\n"
 			" -h, -?, --help\n\tPrint this help\n\n"
 			"Report bugs to kdhedger@gmail.com\n"
@@ -407,6 +413,7 @@ void LFSWM2_Class::cliOptions(int argc,char **argv)//TODO//
 			{"textcolour",1,0,'t'},
 			{"font",1,0,'F'},
 			{"titleposition",1,0,'p'},
+			{"windowposition",1,0,'w'},
 			{"version",0,0,'v'},
 			{"help",0,0,'?'},
 			{0, 0, 0, 0}
@@ -419,7 +426,7 @@ void LFSWM2_Class::cliOptions(int argc,char **argv)//TODO//
 	while(true)
 		{
 			int option_index=0;
-			c=getopt_long (argc,argv,"v?hk:b:f:t:F:p:",long_options,&option_index);
+			c=getopt_long (argc,argv,"v?hk:b:f:t:F:p:w:",long_options,&option_index);
 			if(c==-1)
 				break;
 
@@ -429,12 +436,15 @@ void LFSWM2_Class::cliOptions(int argc,char **argv)//TODO//
 						key=atoi(optarg);
 						break;
 					case 'b':
+						this->freeFontColour(this->frameBG);
 						this->frameBG=this->mainWindowClass->LFSWM2_xftLoadColour(optarg,"grey");
 						break;
 					case 'f':
+						this->freeFontColour(this->frameFG);
 						this->frameFG=this->mainWindowClass->LFSWM2_xftLoadColour(optarg,"white");
 						break;
 					case 't':
+						this->freeFontColour(this->frameText);
 						this->frameText=this->mainWindowClass->LFSWM2_xftLoadColour(optarg,"black");
 						break;
 					case 'F':
@@ -444,17 +454,23 @@ void LFSWM2_Class::cliOptions(int argc,char **argv)//TODO//
 					case 'p':
 						this->titlePosition=atoi(optarg);
 						break;
+					case 'w':
+						this->windowPlacement=atoi(optarg);
+						break;
 					case 'v':
 						printf("LFSWM2 %s\n",VERSION);
+						delete this;
 						exit(0);
 						break;
 					case '?':
 					case 'h':
 						this->printHelp();
+						delete this;
 						exit(0);
 						break;
 					default:
 						fprintf(stderr,"?? Unknown argument ??\n");
+						delete this;
 						exit(1);
 						break;
 				}
@@ -559,6 +575,36 @@ void LFSWM2_Class::DEBUG_printMWMHints(motifHints *h)
 		}
 
 	fprintf(stderr,"\n");
+}
+
+void LFSWM2_Class::DEBUG_prinWindowAttributes(Window id)
+{
+	XWindowAttributes 	xa;
+
+	XGetWindowAttributes(this->display,id,(XWindowAttributes*)&xa);
+
+	fprintf(stderr,"window=%p\n",id);
+	fprintf(stderr,"x=%i y=%i\n",xa.x,xa.y);
+	fprintf(stderr,"width=%i height=%i\n",xa.width,xa.height);
+	fprintf(stderr,"border_width=%p\n",xa.border_width);
+	fprintf(stderr,"depth=%p\n",xa.depth);
+	fprintf(stderr,"visual=%p\n",xa.visual);
+	fprintf(stderr,"root=%p\n",xa.root);
+	fprintf(stderr,"class=%p\n",xa.c_class);
+	fprintf(stderr,"bit_gravity=%p\n",xa.bit_gravity);
+	fprintf(stderr,"win_gravity=%p\n",xa.win_gravity);
+	fprintf(stderr,"backing_store=%p\n",xa.backing_store);
+	fprintf(stderr,"backing_planes=%p\n",xa.backing_planes);
+	fprintf(stderr,"backing_pixel=%p\n",xa.backing_pixel);
+	fprintf(stderr,"save_under=%s\n",this->DEBUG_printBool(xa.save_under));
+	fprintf(stderr,"colormap=%p\n",xa.colormap);
+	fprintf(stderr,"map_installed=%s\n",this->DEBUG_printBool(xa.map_installed));
+	fprintf(stderr,"map_state=%p\n",xa.map_state);
+	fprintf(stderr,"all_event_masks=%p\n",xa.all_event_masks);
+	fprintf(stderr,"your_event_mask=%p\n",xa.your_event_mask);
+	fprintf(stderr,"do_not_propagate_mask=%p\n",xa.do_not_propagate_mask);
+	fprintf(stderr,"override_redirect=%s\n",this->DEBUG_printBool(xa.override_redirect));
+	fprintf(stderr,"screen=%p\n\n",xa.screen);
 }
 
 #endif

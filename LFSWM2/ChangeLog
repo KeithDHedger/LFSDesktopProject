@@ -1,4 +1,8 @@
 0.2.5
+GUI tweaks.
+Fixed cli options v/h/?.
+Done centre window on monitor option.
+Added default window placement to cli options.
 Fixed memory leaks.
 
 0.2.4

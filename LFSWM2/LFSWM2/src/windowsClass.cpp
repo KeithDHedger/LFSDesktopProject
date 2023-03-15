@@ -31,9 +31,9 @@ LFSWM2_windowClass::LFSWM2_windowClass(LFSWM2_Class *mainclass)
 
 void LFSWM2_windowClass::init(void)
 {
-	this->mainClass->LFSWM2_pushXErrorHandler();
-		this->LFSWM2_buildClientList();
-	this->mainClass->LFSWM2_popXErrorHandler();
+//	this->mainClass->LFSWM2_pushXErrorHandler();
+//		this->LFSWM2_buildClientList();
+//	this->mainClass->LFSWM2_popXErrorHandler();
 }
 
 void LFSWM2_windowClass::LFSWM2_buildClientList(void)
@@ -109,7 +109,84 @@ struct fontColour* LFSWM2_windowClass::LFSWM2_xftLoadColour(const char *name,con
 	return c;
 }
 
-void LFSWM2_windowClass::LFSWM2_createClient(Window id)
+hintsDataStruct LFSWM2_windowClass::LFSWM2_getWindowHints(Window wid,bool movewindow)
+{
+	hintsDataStruct	hints;
+	long				dummy;
+
+	XGetWindowAttributes(this->mainClass->display,wid,&hints.xa);
+	hints.sh=XAllocSizeHints();
+	hints.sh->flags=0;
+	XGetWMNormalHints(this->mainClass->display,wid,hints.sh,&dummy);
+
+	if(hints.xa.x-this->mainClass->sideBarSize<0)
+		hints.pt.x=0;
+	else
+		hints.pt.x=hints.xa.x-this->mainClass->sideBarSize;
+
+	if(hints.xa.y-this->mainClass->sideBarSize-BORDER_WIDTH<0)
+		hints.pt.y=0;
+	else
+		hints.pt.y=hints.xa.y-this->mainClass->titleBarSize-BORDER_WIDTH;
+
+	hints.valid=true;
+	
+	if(this->mainClass->runLevel!=RL_STARTUP && ( (hints.sh->flags & (USPosition|PPosition))==0))
+		{
+			Window			root_return;
+			Window			child_return;
+			int				root_x_return;
+			int				root_y_return;
+			int				win_x_return;
+			int				win_y_return;
+			unsigned int		mask_return;
+			int				inmonitor;
+
+			switch(this->mainClass->windowPlacement)
+				{
+					case NOPLACE:
+						break;
+					case UNDERMOUSE:
+						{
+							XQueryPointer(this->mainClass->display,wid,&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return,&mask_return);
+							hints.pt.x=root_x_return-(hints.xa.width/2);
+							hints.pt.y=root_y_return-(hints.xa.height/2);
+
+							if(hints.pt.x<0)
+								hints.pt.x=0;
+							if(hints.pt.x+hints.xa.width>this->mainClass->displayWidth)
+								hints.pt.x=this->mainClass->displayWidth-hints.xa.width;
+							if(hints.pt.y<0)
+								hints.pt.y=0;
+							if(hints.pt.y+hints.xa.height>this->mainClass->displayHeight)
+								hints.pt.y=this->mainClass->displayHeight-hints.xa.height;
+						}
+						break;
+
+					case CENTREMMONITOR:	
+						XQueryPointer(this->mainClass->display,wid,&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return,&mask_return);
+						for(unsigned int j=0;j<this->mainClass->numberOfMonitors;j++)
+							{
+								if((root_x_return>this->mainClass->monitors.at(j).x) && (root_x_return<this->mainClass->monitors.at(j).w+this->mainClass->monitors.at(j).x) && (root_y_return>this->mainClass->monitors.at(j).y) && (root_y_return<this->mainClass->monitors.at(j).h+this->mainClass->monitors.at(j).y))
+									inmonitor=j;
+									break;
+							}
+						hints.pt.x=this->mainClass->monitors.at(inmonitor).x+((this->mainClass->monitors.at(inmonitor).w/2)-(hints.xa.width/2));
+						hints.pt.y=this->mainClass->monitors.at(inmonitor).y+((this->mainClass->monitors.at(inmonitor).h/2)-(hints.xa.height/2));
+						break;
+
+					case CENTRESCREEN:
+						hints.pt.x=(this->mainClass->displayWidth/2)-(hints.xa.width/2);
+						hints.pt.y=(this->mainClass->displayHeight/2)-(hints.xa.height/2);
+						break;
+				}
+			if(movewindow==true)
+				XMoveWindow(this->mainClass->display,wid,hints.pt.x,hints.pt.y);
+		}
+	return(hints);
+}
+
+bool LFSWM2_windowClass::LFSWM2_createClient(Window id)
 {
 	if(this->LFSWM2_getWindowType(id)==MENUWINDOW)
 		{
@@ -117,7 +194,7 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			XRaiseWindow(this->mainClass->display,id);
 			this->mainClass->restackCnt=1;
 			XSetInputFocus(this->mainClass->display,id,RevertToNone,CurrentTime);
-			return;
+			return(false);
 		}
 
 	if(this->LFSWM2_getWindowType(id)==DOCKWINDOW)
@@ -125,27 +202,25 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			this->LFSWM2_setClientList(id,true);
 			XRaiseWindow(this->mainClass->display,id);
 			this->mainClass->restackCnt=1;
-			return;
+			return(false);
 		}
-
 
 	if(this->clientList.count(id)>0)
 		{
-			XMapWindow(this->mainClass->display,this->clientList.at(id)->frameWindow);
 			XRaiseWindow(this->mainClass->display,this->clientList.at(id)->frameWindow);
+			return(false);
 		}
 	else
 		{
 			LFSWM2_clientClass	*cc;
 			XWindowAttributes	x_window_attrs;
 			XSetWindowAttributes	wa;
-			int					offy;
-			int					offx;
 			long int				*setdesktop=NULL;
 			long unsigned int	nitems_return=0;
 			motifHints			*hints=NULL;
 			Atom					*allowed=NULL;
 			int					thisdesk=-1;
+			hintsDataStruct		hs;
 
 			hints=(motifHints*)this->mainClass->mainWindowClass->LFSWM2_getProp(id,this->mainClass->atoms.at("_MOTIF_WM_HINTS"),this->mainClass->atoms.at("_MOTIF_WM_HINTS"),&nitems_return);
 			if(hints!=NULL)
@@ -153,12 +228,12 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 					if(hints->decorations==0)
 						{
 							this->LFSWM2_setClientList(id,true);
+							XMapWindow(this->mainClass->display,id);
 							XRaiseWindow(this->mainClass->display,id);
 							this->mainClass->restackCnt=1;
 							XFree(hints);
-							return;
+							return(false);
 						}
-					XFree(hints);
 				}
 
 			setdesktop=(long int*)this->mainClass->mainWindowClass->LFSWM2_getProp(id,this->mainClass->atoms.at("_NET_WM_DESKTOP"),XA_CARDINAL,&nitems_return);
@@ -168,21 +243,16 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 					XFree(setdesktop);
 				}
 
+			long			dummy;
 			XGetWindowAttributes(this->mainClass->display,id,&x_window_attrs);
+
 			if(x_window_attrs.override_redirect||x_window_attrs.map_state!=IsViewable)
-				return;
-
-			if(x_window_attrs.x-this->mainClass->sideBarSize<0)
-				offx=0;
-			else
-				offx=x_window_attrs.x-this->mainClass->sideBarSize;
-
-			if(x_window_attrs.y-this->mainClass->sideBarSize-BORDER_WIDTH<0)
-				offy=0;
-			else
-				offy=x_window_attrs.y-this->mainClass->titleBarSize-BORDER_WIDTH;
+				return(false);
 
 			cc=new LFSWM2_clientClass(this->mainClass,id);
+			hs=this->LFSWM2_getWindowHints(id);
+			cc->sizeHints=hs.sh;
+			XMoveWindow(this->mainClass->display,id,hs.pt.x,hs.pt.y);
 
 			if(hints!=NULL)
 				{
@@ -190,6 +260,7 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 					cc->canMinimize=(hints->decorations & MWM_DECOR_MINIMIZE);
 					//this->mainClass->DEBUG_printMWMHints(hints);
 					XFree(hints);
+					hints=NULL;
 				}
 
 			allowed=(Atom*)this->LFSWM2_getProp(id,this->mainClass->atoms.at("_NET_WM_ALLOWED_ACTIONS"),XA_ATOM,&nitems_return);
@@ -213,7 +284,7 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 					cc->canResize=true;
 				}
 
-			cc->frameWindow=XCreateSimpleWindow(this->mainClass->display,this->mainClass->rootWindow,offx,offy,x_window_attrs.width+(this->mainClass->sideBarSize*3),x_window_attrs.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH,BORDER_WIDTH,this->mainClass->frameFG->pixel,this->mainClass->frameBG->pixel);
+			cc->frameWindow=XCreateSimpleWindow(this->mainClass->display,this->mainClass->rootWindow,hs.pt.x,hs.pt.y,x_window_attrs.width+(this->mainClass->sideBarSize*3),x_window_attrs.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH,BORDER_WIDTH,this->mainClass->frameFG->pixel,this->mainClass->frameBG->pixel);
 			XSelectInput(this->mainClass->display,cc->frameWindow,SubstructureRedirectMask|ButtonPressMask|ButtonReleaseMask|ExposureMask|PointerMotionMask);
 
 			cc->windowType=this->LFSWM2_getWindowType(id);
@@ -224,7 +295,7 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			cc->clientPreFSRect=this->LFSWM2_getWindowRect(id,this->mainClass->rootWindow);
 			cc->framePreFSRect=this->LFSWM2_getWindowRect(id,this->mainClass->rootWindow);
 			cc->contentWindowRect.y-=this->mainClass->titleBarSize;
-			cc->frameWindowRect={offx,offy,x_window_attrs.width+(this->mainClass->sideBarSize*3),x_window_attrs.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH};
+			cc->frameWindowRect={hs.pt.x,hs.pt.y,x_window_attrs.width+(this->mainClass->sideBarSize*3),x_window_attrs.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH};
 			this->clientList[id]=cc;
 			this->clientList[cc->frameWindow]=cc;
 
@@ -273,14 +344,13 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 
 				cc->topLeftDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,0,0,cc->dragsize,cc->dragsize,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
 				XSelectInput(this->mainClass->display,cc->topLeftDragger,ButtonPressMask|PointerMotionMask|ButtonReleaseMask);
-				XMapWindow(this->mainClass->display,cc->topLeftDragger);
+
 //top righht dragger
 				wa.win_gravity=NorthEastGravity;
 				wa.cursor=this->mainClass->topRightCursor;
 
 				cc->topRightDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.w-cc->dragsize,0,cc->dragsize,cc->dragsize,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
 				XSelectInput(this->mainClass->display,cc->topRightDragger,ButtonPressMask|PointerMotionMask|ButtonReleaseMask);
-				XMapWindow(this->mainClass->display,cc->topRightDragger);
 
 //bottom dragger
 				wa.win_gravity=SouthWestGravity;
@@ -288,22 +358,18 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 
 				cc->bottomDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,0,cc->frameWindowRect.h-cc->dragsize,cc->frameWindowRect.w,cc->dragsize,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
 				XSelectInput(this->mainClass->display,cc->bottomDragger,ButtonPressMask|PointerMotionMask|ButtonReleaseMask);
-				XMapWindow(this->mainClass->display,cc->bottomDragger);
 
 //left side dragger
 				wa.win_gravity=NorthWestGravity;
 				wa.cursor=this->mainClass->leftCursor;
 				cc->leftSideDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,0,cc->dragsize,cc->dragsize,cc->frameWindowRect.h-(cc->dragsize*2),0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
 				XSelectInput(this->mainClass->display,cc->leftSideDragger,ButtonPressMask|PointerMotionMask|ButtonReleaseMask);
-				XMapWindow(this->mainClass->display,cc->leftSideDragger);
 
 //right side dragger
 				wa.win_gravity=NorthEastGravity;
 				wa.cursor=this->mainClass->rightCursor;
 				cc->rightSideDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.w-cc->dragsize,cc->dragsize,cc->dragsize,cc->frameWindowRect.h-(cc->dragsize*2),0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
 				XSelectInput(this->mainClass->display,cc->rightSideDragger,ButtonPressMask|PointerMotionMask|ButtonReleaseMask);
-				XMapWindow(this->mainClass->display,cc->rightSideDragger);
-
 
 //bottom rite dragger
 				wa.win_gravity=SouthEastGravity;
@@ -311,8 +377,6 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 
 				cc->bottomRightDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.w-cc->dragsize,cc->frameWindowRect.h-cc->dragsize,cc->dragsize,cc->dragsize,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
 				XSelectInput(this->mainClass->display,cc->bottomRightDragger,ButtonPressMask|PointerMotionMask|ButtonReleaseMask);
-				XMapWindow(this->mainClass->display,cc->bottomRightDragger);
-
 
 //bottom left dragger
 				wa.win_gravity=SouthWestGravity;
@@ -320,7 +384,6 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 
 				cc->bottomLeftDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,0,cc->frameWindowRect.h-cc->dragsize,cc->dragsize,cc->dragsize,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
 				XSelectInput(this->mainClass->display,cc->bottomLeftDragger,ButtonPressMask|PointerMotionMask|ButtonReleaseMask);
-				XMapWindow(this->mainClass->display,cc->bottomLeftDragger);
 			}
 
 //controls
@@ -339,7 +402,6 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 
 			cc->closeButton=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.w-offset,0,this->mainClass->titleBarSize,wh,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
 			XSelectInput(this->mainClass->display,cc->closeButton,ButtonPressMask|EnterWindowMask|LeaveWindowMask);
-			XMapWindow(this->mainClass->display,cc->closeButton);
 //max
 			if(cc->canMaximize==true)
 				{
@@ -349,7 +411,6 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 					this->mainClass->maximizeControlStruct.startX=cc->frameWindowRect.w-offset;
 					cc->maximizeButton=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.w-offset,0,this->mainClass->titleBarSize,wh,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
 					XSelectInput(this->mainClass->display,cc->maximizeButton,ButtonPressMask|EnterWindowMask|LeaveWindowMask);
-					XMapWindow(this->mainClass->display,cc->maximizeButton);
 				}
 //min
 			if(cc->canMinimize==true)
@@ -360,7 +421,6 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 					this->mainClass->minimizeControlStruct.startX=cc->frameWindowRect.w-offset;
 					cc->minimizeButton=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.w-offset,0,this->mainClass->titleBarSize,wh,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
 					XSelectInput(this->mainClass->display,cc->minimizeButton,ButtonPressMask|EnterWindowMask|LeaveWindowMask);
-					XMapWindow(this->mainClass->display,cc->minimizeButton);
 				}
 //shade
 			offset+=CONTROL_GAP;
@@ -369,7 +429,6 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			this->mainClass->shadeControlStruct.startX=cc->frameWindowRect.w-offset;
 			cc->shadeButton=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.w-offset,0,this->mainClass->titleBarSize,wh,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
 			XSelectInput(this->mainClass->display,cc->shadeButton,ButtonPressMask|EnterWindowMask|LeaveWindowMask);
-			XMapWindow(this->mainClass->display,cc->shadeButton);
 
 			cc->LFSWM2_setWindowName();
 
@@ -392,13 +451,15 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			this->LFSWM2_reloadWindowState(id);
 			this->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,(void*)&cc->contentWindow,1);
 
-		//	if(cc->windowType==NORMALWINDOW)
-			//if(cc->transientFor==None)
 			XAddToSaveSet(this->mainClass->display,id);
 			this->mainClass->restackCnt++;
-			XFree(states);
+			if(states!=NULL)
+				XFree(states);
+
+			XMapWindow(this->mainClass->display,cc->frameWindow);
+			XMapSubwindows(this->mainClass->display,cc->frameWindow);
 		}
-	XSync(this->mainClass->display,false);
+	return(true);
 }
 
 rectStruct LFSWM2_windowClass::LFSWM2_getWindowRect(Window id,Window parent,bool dotranslate)

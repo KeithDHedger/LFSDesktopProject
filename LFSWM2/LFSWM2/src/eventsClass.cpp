@@ -42,7 +42,15 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 	bool					overide=false;
 	bool					inmenu=false;
 
-	this->mainClass->LFSWM2_setCurrentDesktop(this->mainClass->currentDesktop,true);
+	this->mainClass->runLevel=RL_STARTUP;
+	this->mainClass->LFSWM2_pushXErrorHandler();
+		this->mainClass->mainWindowClass->LFSWM2_buildClientList();
+	this->mainClass->LFSWM2_popXErrorHandler();
+	this->mainClass->runLevel=RL_NORMAL;
+
+														this->mainClass->runLevel=RL_NORMAL;
+	this->mainClass->restackCnt=0;
+	this->mainClass->LFSWM2_setCurrentDesktop(this->mainClass->currentDesktop,false);
 	this->LFSWM2_restack();
 
 	while(true)
@@ -55,6 +63,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 							this->mainClass->restackCnt=0;
 							this->LFSWM2_restack();
 							firstrun=false;
+
 						}
 				}
 
@@ -79,6 +88,8 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 			switch(e.type)
 				{
+					case Expose:
+						break;
 					case ButtonRelease:
 						//fprintf(stderr,"ButtonRelease eventnumber %i\n",when++);
 						start.subwindow=None;
@@ -102,7 +113,12 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 							}
 						break;
 					case MapRequest:
-						//fprintf(stderr,"MapRequest >>>>>>>>>>>>>>>>>window=%x when=%i\n",e.xmaprequest.window,when++);
+							cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xmaprequest.window);
+							if(cc==NULL)
+								{
+									hintsDataStruct	hs=this->mainClass->mainWindowClass->LFSWM2_getWindowHints(e.xmaprequest.window,true);
+									XFree(hs.sh);
+								}
 						XMapWindow(this->mainClass->display,e.xmaprequest.window);
 						this->mainClass->mainWindowClass->LFSWM2_createClient(e.xmaprequest.window);
 						XRaiseWindow(this->mainClass->display,e.xmaprequest.window);
@@ -251,6 +267,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 				}
 			XAllowEvents(this->mainClass->display,ReplayPointer,CurrentTime);
 		}
+	this->mainClass->runLevel=RL_SHUTDOWN;
 }
 
 void LFSWM2_eventsClass::LFSWM2_doClientMsg(Window id,XClientMessageEvent *e)

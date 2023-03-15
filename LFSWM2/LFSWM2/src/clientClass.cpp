@@ -39,6 +39,8 @@ LFSWM2_clientClass::~LFSWM2_clientClass(void)
 		else
 			XReparentWindow(this->mainClass->display,this->contentWindow,this->mainClass->rootWindow,-10000,-10000);
 		XUnmapWindow(this->mainClass->display,this->frameWindow);
+		if(this->sizeHints!=NULL)
+			XFree(this->sizeHints);
 	this->mainClass->LFSWM2_popXErrorHandler();
 }
 
