@@ -1,4 +1,9 @@
 0.2.5
+Fixed moving windows when starting up.
+Fixed menus AGAIN!
+Done no placement.
+Done open on center screen.
+Done open window under mouse.
 GUI tweaks.
 Fixed cli options v/h/?.
 Done centre window on monitor option.

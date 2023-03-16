@@ -39,8 +39,11 @@ LFSWM2_clientClass::~LFSWM2_clientClass(void)
 		else
 			XReparentWindow(this->mainClass->display,this->contentWindow,this->mainClass->rootWindow,-10000,-10000);
 		XUnmapWindow(this->mainClass->display,this->frameWindow);
+
 		if(this->sizeHints!=NULL)
 			XFree(this->sizeHints);
+		if(this->sizeHints!=NULL)
+			XFree(this->mwmHints);
 	this->mainClass->LFSWM2_popXErrorHandler();
 }
 
@@ -375,7 +378,7 @@ void LFSWM2_clientClass::LFSWM2_maxWindow(bool ismaxed,bool force)
 		{
 			this->framePreMaxRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->frameWindow,this->mainClass->rootWindow,false);
 			this->clientPreMaxRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->contentWindow,this->mainClass->rootWindow,false);
-			rectStruct rr=this->mainClass->monitors.at(0);
+			rectStruct rr={this->mainClass->monitors.at(0).x,this->mainClass->monitors.at(0).y,(int)this->mainClass->monitors.at(0).w,(int)this->mainClass->monitors.at(0).h};
 			rr.w=this->mainClass->monitors.at(0).w-((this->mainClass->sideBarSize+BORDER_WIDTH)*3);//TODO//
 			rr.h=this->mainClass->monitors.at(0).h-(this->mainClass->titleBarSize+this->mainClass->bottomBarSize+(BORDER_WIDTH*2));
 			rr.x=this->mainClass->sideBarSize;
@@ -405,7 +408,6 @@ void LFSWM2_clientClass::setWindowRects(bool resize)
 void LFSWM2_clientClass::LFSWM2_showWindow(void)
 {
 		XMapWindow(this->mainClass->display,this->frameWindow);
-		XSetInputFocus(this->mainClass->display,this->contentWindow,RevertToPointerRoot,CurrentTime);
 }
 
 void LFSWM2_clientClass::LFSWM2_hideWindow(void)
@@ -461,7 +463,6 @@ void LFSWM2_clientClass::LFSWM2_setWMState(XEvent *e)
 			XSync(this->mainClass->display,false);
 			this->mainClass->restackCnt++;
 		}
-
 	if(states!=NULL)
 		XFree(states);
 }

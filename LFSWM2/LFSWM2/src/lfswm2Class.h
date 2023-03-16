@@ -137,8 +137,8 @@ __attribute__((unused)) static unsigned char maximizeWindowBits[]=
 enum MESSAGESOURCE {NOSRC=0,APPLICATIONSRC,PAGERSRC};
 enum MESSAGETYPE {REFRESHTHEME,QUITLFSWM,RESTARTLFSWM,NOMSG};
 enum TRISTATE {INVALID=-1,LOGIC0=0,LOGIC1=1};
-enum {NOPLACE=0,UNDERMOUSE,CENTREMMONITOR,CENTRESCREEN,MOUSEMONITOR};
 enum RUNLEVEL {RL_STARTUP,RL_NORMAL,RL_SHUTDOWN};
+enum {NOPLACE=0,UNDERMOUSE,CENTREMMONITOR,CENTRESCREEN,MOUSEMONITOR};
 
 struct controlData
 {
@@ -180,9 +180,10 @@ class LFSWM2_Class
 		unsigned int			screen;
 		int					depth;
 		int					numberOfMonitors;
-		std::vector<rectStruct>	monitors;
+		std::vector<geometryStruct>	monitors;
 		RUNLEVEL				runLevel=RL_STARTUP;
 		int					windowPlacement=CENTREMMONITOR;
+
 		int					displayWidth;
 		int					displayHeight;
 		Window				supporting;
@@ -216,8 +217,6 @@ class LFSWM2_Class
 		Cursor				bottomLeftCursor;
 		Cursor				leftCursor;
 		Cursor				rootCursor;
-
-		int					initialWindowPosition=MOUSEMONITOR;
 		int					restackCnt=-1;
 		bool					doingMove=false;
 
@@ -233,13 +232,15 @@ class LFSWM2_Class
 		const char			*DEBUG_printBool(bool b);
 		void					DEBUG_printMWMHints(motifHints *h);
 		void					DEBUG_prinWindowAttributes(Window id);
+
 #endif
 
+		bool		tb=false;
 		int					msgQueueKey=999;
 	private:
 		void					cliOptions(int argc,char **argv);
 		void					printHelp(void);
-		void					freeFontColour(fontColour *fc);
+		void 				freeFontColour(fontColour *fc);
 
 //vars
 		XErrorHandler		lastXErrorHandler;

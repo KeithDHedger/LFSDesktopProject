@@ -55,7 +55,7 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 {
 	int					cnt=0;
 	XineramaScreenInfo	*p=NULL;
-	rectStruct			monrect;
+	geometryStruct		monrect;
 
 	this->display=XOpenDisplay(NULL);
 	if(this->display==NULL)
@@ -93,6 +93,7 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 							monrect.y=p[x].y_org;
 							monrect.w=p[x].width;
 							monrect.h=p[x].height;
+							monrect.monitor=x;
 							this->monitors.push_back(monrect);
 						}
 				}
@@ -141,7 +142,6 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 	this->cliOptions(argc,argv);
 
 	this->messages=new LFSWM2_messageClass(this,this->msgQueueKey);
-	//this->runLevel=RL_NORMAL;
 }
 
 void LFSWM2_Class::LFSWM2_pushXErrorHandler(void)
@@ -459,18 +459,15 @@ void LFSWM2_Class::cliOptions(int argc,char **argv)//TODO//
 						break;
 					case 'v':
 						printf("LFSWM2 %s\n",VERSION);
-						delete this;
 						exit(0);
 						break;
 					case '?':
 					case 'h':
 						this->printHelp();
-						delete this;
 						exit(0);
 						break;
 					default:
 						fprintf(stderr,"?? Unknown argument ??\n");
-						delete this;
 						exit(1);
 						break;
 				}
