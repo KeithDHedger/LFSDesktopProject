@@ -75,6 +75,8 @@ template <typename t> void move(std::vector<t>& v,size_t oldIndex,size_t newInde
 #define MWM_DECOR_MINIMIZE (1L << 5)
 #define MWM_DECOR_MAXIMIZE (1L << 6)
 
+#define CWMyframe		(1<<8)
+
 struct motifHints
 {
 	long			flags;
@@ -148,6 +150,8 @@ struct controlData
 };
 
 __attribute__((unused)) static LFSWM2_Class	*theMainClass=NULL;
+
+using namespace std;
 
 class LFSWM2_Class
 {
@@ -232,6 +236,8 @@ class LFSWM2_Class
 		const char			*DEBUG_printBool(bool b);
 		void					DEBUG_printMWMHints(motifHints *h);
 		void					DEBUG_prinWindowAttributes(Window id);
+		void					DEBUG_printHintsDataStruct(Window wid);
+		void					DEBUG_printBinary(int num);
 
 #endif
 

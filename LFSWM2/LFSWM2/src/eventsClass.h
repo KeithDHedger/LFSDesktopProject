@@ -40,7 +40,7 @@ class LFSWM2_eventsClass
 		void			LFSWM2_moveToBottom(Window id);
 		void			LFSWM2_restack(void);
 
-
+int sy=0;
 //vars
 		LFSWM2_Class	*mainClass;
 	private:

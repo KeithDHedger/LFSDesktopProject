@@ -604,4 +604,73 @@ void LFSWM2_Class::DEBUG_prinWindowAttributes(Window id)
 	fprintf(stderr,"screen=%p\n\n",xa.screen);
 }
 
+/*
+struct hintsDataStruct
+{
+	pointStruct			pt;
+	XSizeHints			*sh;
+	XWindowAttributes	xa;
+	bool					valid=false;
+};
+struct motifHints
+{
+	long			flags;
+	long			functions;
+	long			decorations;
+	long			inputmode;
+	long			status;
+};
+*/
+void LFSWM2_Class::DEBUG_printHintsDataStruct(Window wid)
+{
+	hintsDataStruct hs;
+	motifHints		*hints=NULL;
+	long unsigned int	nitems_return=0;
+
+	hints=(motifHints*)this->mainWindowClass->LFSWM2_getProp(wid,this->atoms.at("_MOTIF_WM_HINTS"),this->atoms.at("_MOTIF_WM_HINTS"),&nitems_return);
+
+	hs=this->mainWindowClass->LFSWM2_getWindowHints(wid);
+	fprintf(stderr,"window=%p\n",wid);
+
+	if(hints!=NULL)
+		this->DEBUG_printMWMHints(hints);
+	fprintf(stderr,"pt.x=%i pt.y=%i\n",hs.pt.x,hs.pt.y);
+
+	if(hs.sh!=NULL)
+		{
+			if((hs.sh->flags & USPosition)==true)
+				{
+					fprintf(stderr,"hints.x=%i hints.y=%i\n",hs.sh->x,hs.sh->y);	
+				}
+			if((hs.sh->flags & (USSize|PSize))!=0)
+				{
+					fprintf(stderr,"USSize|PSize hints.width=%i hints.height=%i\n",hs.sh->width,hs.sh->height);	
+				}
+			fprintf(stderr,"hints.base_width=%i hints.base_height=%i\n",hs.sh->base_width,hs.sh->base_height);	
+			XFree(hs.sh);
+		}
+
+	if(hints!=NULL)
+		XFree(hints);
+}
+
+void LFSWM2_Class::DEBUG_printBinary(int num)
+{
+	std::string	buf="";
+	int			i=64;
+	int			sp=0;
+	cerr<<"0x"<<std::hex<<num<<" ";
+	for(;num && i;--i,num/=2)
+		{
+			buf="01"[num % 2]+buf;
+			sp++;
+			if(sp==4)
+				{
+					sp=0;
+					buf=" "+buf;
+				}
+		}
+	cerr<<buf<<endl;
+}
+
 #endif

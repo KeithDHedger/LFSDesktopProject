@@ -160,6 +160,7 @@ void addDesktopFiles(int catnum,const char *catname)//TODO//
 
 	for(int j=0;j<catagoryCnt;j++)
 		{
+	//	std::cerr<<catagoryMenus[j]->label<<std::endl;
 			cat=".*Categorie.*";
 			cat+=catagoryMenus[j]->label;
 			exp=cat;
@@ -168,31 +169,38 @@ void addDesktopFiles(int catnum,const char *catname)//TODO//
 				{
 					ss.str("");
 					file.open(find->data[entries].path.c_str(),std::ifstream::in);
-					ss<<file.rdbuf();
-					file.close();
-					if(std::regex_search(ss.str(),exp))
+					if(file.is_open())
 						{
-							menuEntryStruct *me=new menuEntryStruct;
-							std::string holsss=ss.str();
-							//name
-							std::regex_search(holsss,m,expname,std::regex_constants::match_not_eol|std::regex_constants::match_not_bol );
-							me->name=strdup(m.str(1).c_str());
-							//exec
-							std::regex_search(holsss,m,expexec,std::regex_constants::match_not_eol|std::regex_constants::match_not_bol);
-							me->exec=strdup(m.str(1).c_str());
-							//interm
-							if(std::regex_search(holsss,m,expterm,std::regex_constants::match_not_eol|std::regex_constants::match_not_bol))
-								me->inTerm=true;
-							else
-								me->inTerm=false;
-							//icon
-							if(std::regex_search(holsss,m,expicon,std::regex_constants::match_not_eol|std::regex_constants::match_not_bol))
-								me->icon=strdup(m.str(1).c_str());
-							else
-								me->icon=strdup("empty");
-							entrydata[entries]=me;
-							fname.push_back(entries);
+							ss<<file.rdbuf();
+							file.close();
+							if(std::regex_search(ss.str(),exp))
+								{
+									menuEntryStruct *me=new menuEntryStruct;
+									std::string holsss=ss.str();
+									//name
+									std::regex_search(holsss,m,expname,std::regex_constants::match_not_eol|std::regex_constants::match_not_bol );
+									me->name=strdup(m.str(1).c_str());
+									//exec
+									std::regex_search(holsss,m,expexec,std::regex_constants::match_not_eol|std::regex_constants::match_not_bol);
+									me->exec=strdup(m.str(1).c_str());
+									//interm
+									if(std::regex_search(holsss,m,expterm,std::regex_constants::match_not_eol|std::regex_constants::match_not_bol))
+										me->inTerm=true;
+									else
+										me->inTerm=false;
+									//icon
+									if(std::regex_search(holsss,m,expicon,std::regex_constants::match_not_eol|std::regex_constants::match_not_bol))
+										me->icon=strdup(m.str(1).c_str());
+									else
+										me->icon=strdup("empty");
+									entrydata[entries]=me;
+									fname.push_back(entries);
+								}
 						}
+//					else
+//						{
+//							std::cerr<<"Can't open file: "<<find->data[entries].path<<std::endl;
+//						}
 				}
 
 			if(fname.size()>0)

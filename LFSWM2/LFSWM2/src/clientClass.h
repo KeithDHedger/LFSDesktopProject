@@ -20,6 +20,9 @@
 
 #ifndef _CLIENTCLASS_
 #define _CLIENTCLASS_
+#include <stdio.h>
+#include <stdlib.h>
+#include <cstdlib>
 
 class LFSWM2_Class;
 #include "lfswm2Class.h"
@@ -34,11 +37,11 @@ class LFSWM2_clientClass
 		bool				LFSWM2_handleControls(XEvent *e);
 
 //vars
-		LFSWM2_Class		*mainClass;
+		LFSWM2_Class		*mainClass=NULL;
 
-		Window			contentWindow=0;
-		Window			frameWindow=0;
-		Window			transientFor=0;
+		Window			contentWindow=None;
+		Window			frameWindow=None;
+		Window			transientFor=None;
 
 		std::string		name="";
 		int				windowType=-1;
@@ -102,6 +105,9 @@ class LFSWM2_clientClass
 		int				smoothness=5;
 
 bool nodecs=false;
+		void				adjustContentWindow(void);
+		void				resizeContentWindow(rectStruct r,bool moveorigin=true);
+		void				setWindowRects(bool resize=true);
 	private:
 		bool				buttonDown=false;
 		int				sx=0;
@@ -110,10 +116,10 @@ bool nodecs=false;
 
 		void				drawMouseEnter(Window id,Pixmap pm,controlData data);
 		bool				doResizeDraggers(XEvent *e);
-		void				adjustContentWindow(void);
-		void				resizeContentWindow(rectStruct r,bool moveorigin=true);
-		void				setWindowRects(bool resize=true);
 		rectStruct		setTitlePosition(void);
+
+		void				resizeContentWindow(int w,int h,bool useframerect=false);
+		void				resizeFrameWindow(void);
 };
 
 #endif

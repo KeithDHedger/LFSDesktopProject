@@ -66,6 +66,10 @@ class LFSWM2_windowClass
 		Window								LFSWM2_getParentWindow(Window id);
 		void									LFSWM2_reloadWindowState(Window id);
 
+		void									LFSWM2_resizeWindow(Window id,int w,int h);
+		void									LFSWM2_moveWindow(Window id,int x,int y);
+		void									LFSWM2_moveResizeWindow(Window id,int x,int y,int w,int h);
+
 		void									LFSWM2_setVisibilityForDesk(unsigned long desk);
 
 //clients
