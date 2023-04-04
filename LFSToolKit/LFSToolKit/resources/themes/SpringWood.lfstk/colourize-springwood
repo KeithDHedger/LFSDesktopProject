@@ -1,0 +1,12 @@
+#!/bin/bash
+
+find -iname "*.png" | while read file
+	do
+
+	if [ ! -L "$file" ];then
+		echo Converting "$file" ...
+#		convert "$file" -fill "#000000" -colorize 49,23,0  -brightness-contrast 10x5 "$file"
+		convert "$file" -fill "#000000"  -modulate 124,100,141 "$file"
+
+	fi
+done
