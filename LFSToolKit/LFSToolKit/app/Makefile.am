@@ -20,11 +20,13 @@ OldBrownWooddir = ${prefix}/share/themes/OldBrownWood.lfstk
 Steeldir = ${prefix}/share/themes/Steel.lfstk
 Winterdir = ${prefix}/share/themes/Winter.lfstk
 OldyXmasdir = ${prefix}/share/themes/OldyXmas.lfstk
+Springdir = ${prefix}/share/themes/SpringWood.lfstk
 
 AllHallows_DATA = ../resources/themes/AllHallows.lfstk/*.png ../resources/themes/AllHallows.lfstk/*.rc
 OldBrownWood_DATA = ../resources/themes/OldBrownWood.lfstk/*.png ../resources/themes/OldBrownWood.lfstk/*.rc
 Steel_DATA = ../resources/themes/Steel.lfstk/*.png ../resources/themes/Steel.lfstk/*.rc
 Winter_DATA = ../resources/themes/Winter.lfstk/*.png ../resources/themes/Winter.lfstk/*.rc
 OldyXmas_DATA = ../resources/themes/OldyXmas.lfstk/*.png ../resources/themes/OldyXmas.lfstk/*.rc
+Spring_DATA = ../resources/themes/SpringWood.lfstk/*.png ../resources/themes/SpringWood.lfstk/*.rc
 
-DISTCLEANFILES = lfstoolkit.rc
+DISTCLEANFILES = lfstoolkit.rc .deps

@@ -79,7 +79,7 @@ if test "$enable_warn_debug" = "yes"; then
 	AC_DEFINE([_WARN_ENABLEDEBUG_], [], [Enable warn debug code])
 fi
 
-AC_CONFIG_FILES([lfstk.pc LFSToolKit/resources/themes/AllHallows.lfstk/lfstoolkit.rc LFSToolKit/resources/themes/OldBrownWood.lfstk/lfstoolkit.rc LFSToolKit/resources/themes/OldyXmas.lfstk/lfstoolkit.rc LFSToolKit/resources/themes/Steel.lfstk/lfstoolkit.rc LFSToolKit/resources/themes/Winter.lfstk/lfstoolkit.rc])
+AC_CONFIG_FILES([lfstk.pc LFSToolKit/resources/themes/AllHallows.lfstk/lfstoolkit.rc LFSToolKit/resources/themes/OldBrownWood.lfstk/lfstoolkit.rc LFSToolKit/resources/themes/OldyXmas.lfstk/lfstoolkit.rc LFSToolKit/resources/themes/Steel.lfstk/lfstoolkit.rc LFSToolKit/resources/themes/Winter.lfstk/lfstoolkit.rc LFSToolKit/resources/themes/SpringWood.lfstk/lfstoolkit.rc])
 
 AC_OUTPUT(Makefile LFSToolKit/app/Makefile  docs/Makefile)
 

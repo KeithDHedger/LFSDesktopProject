@@ -104,7 +104,8 @@ CONFIG_CLEAN_FILES = lfstk.pc \
 	LFSToolKit/resources/themes/OldBrownWood.lfstk/lfstoolkit.rc \
 	LFSToolKit/resources/themes/OldyXmas.lfstk/lfstoolkit.rc \
 	LFSToolKit/resources/themes/Steel.lfstk/lfstoolkit.rc \
-	LFSToolKit/resources/themes/Winter.lfstk/lfstoolkit.rc
+	LFSToolKit/resources/themes/Winter.lfstk/lfstoolkit.rc \
+	LFSToolKit/resources/themes/SpringWood.lfstk/lfstoolkit.rc
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -197,6 +198,7 @@ am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.h.in \
 	$(top_srcdir)/LFSToolKit/resources/themes/AllHallows.lfstk/lfstoolkit.rc.in \
 	$(top_srcdir)/LFSToolKit/resources/themes/OldBrownWood.lfstk/lfstoolkit.rc.in \
 	$(top_srcdir)/LFSToolKit/resources/themes/OldyXmas.lfstk/lfstoolkit.rc.in \
+	$(top_srcdir)/LFSToolKit/resources/themes/SpringWood.lfstk/lfstoolkit.rc.in \
 	$(top_srcdir)/LFSToolKit/resources/themes/Steel.lfstk/lfstoolkit.rc.in \
 	$(top_srcdir)/LFSToolKit/resources/themes/Winter.lfstk/lfstoolkit.rc.in \
 	AUTHORS COPYING ChangeLog INSTALL NEWS README compile \
@@ -449,6 +451,8 @@ LFSToolKit/resources/themes/OldyXmas.lfstk/lfstoolkit.rc: $(top_builddir)/config
 LFSToolKit/resources/themes/Steel.lfstk/lfstoolkit.rc: $(top_builddir)/config.status $(top_srcdir)/LFSToolKit/resources/themes/Steel.lfstk/lfstoolkit.rc.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 LFSToolKit/resources/themes/Winter.lfstk/lfstoolkit.rc: $(top_builddir)/config.status $(top_srcdir)/LFSToolKit/resources/themes/Winter.lfstk/lfstoolkit.rc.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+LFSToolKit/resources/themes/SpringWood.lfstk/lfstoolkit.rc: $(top_builddir)/config.status $(top_srcdir)/LFSToolKit/resources/themes/SpringWood.lfstk/lfstoolkit.rc.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 mostlyclean-libtool:

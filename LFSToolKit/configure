@@ -17344,7 +17344,7 @@ printf "%s\n" "#define _WARN_ENABLEDEBUG_ /**/" >>confdefs.h
 
 fi
 
-ac_config_files="$ac_config_files lfstk.pc LFSToolKit/resources/themes/AllHallows.lfstk/lfstoolkit.rc LFSToolKit/resources/themes/OldBrownWood.lfstk/lfstoolkit.rc LFSToolKit/resources/themes/OldyXmas.lfstk/lfstoolkit.rc LFSToolKit/resources/themes/Steel.lfstk/lfstoolkit.rc LFSToolKit/resources/themes/Winter.lfstk/lfstoolkit.rc"
+ac_config_files="$ac_config_files lfstk.pc LFSToolKit/resources/themes/AllHallows.lfstk/lfstoolkit.rc LFSToolKit/resources/themes/OldBrownWood.lfstk/lfstoolkit.rc LFSToolKit/resources/themes/OldyXmas.lfstk/lfstoolkit.rc LFSToolKit/resources/themes/Steel.lfstk/lfstoolkit.rc LFSToolKit/resources/themes/Winter.lfstk/lfstoolkit.rc LFSToolKit/resources/themes/SpringWood.lfstk/lfstoolkit.rc"
 
 
 ac_config_files="$ac_config_files Makefile LFSToolKit/app/Makefile docs/Makefile"
@@ -18468,6 +18468,7 @@ do
     "LFSToolKit/resources/themes/OldyXmas.lfstk/lfstoolkit.rc") CONFIG_FILES="$CONFIG_FILES LFSToolKit/resources/themes/OldyXmas.lfstk/lfstoolkit.rc" ;;
     "LFSToolKit/resources/themes/Steel.lfstk/lfstoolkit.rc") CONFIG_FILES="$CONFIG_FILES LFSToolKit/resources/themes/Steel.lfstk/lfstoolkit.rc" ;;
     "LFSToolKit/resources/themes/Winter.lfstk/lfstoolkit.rc") CONFIG_FILES="$CONFIG_FILES LFSToolKit/resources/themes/Winter.lfstk/lfstoolkit.rc" ;;
+    "LFSToolKit/resources/themes/SpringWood.lfstk/lfstoolkit.rc") CONFIG_FILES="$CONFIG_FILES LFSToolKit/resources/themes/SpringWood.lfstk/lfstoolkit.rc" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "LFSToolKit/app/Makefile") CONFIG_FILES="$CONFIG_FILES LFSToolKit/app/Makefile" ;;
     "docs/Makefile") CONFIG_FILES="$CONFIG_FILES docs/Makefile" ;;

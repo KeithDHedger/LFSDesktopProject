@@ -1,32 +1,32 @@
-font DejaVu Sans:size=8:bold
-monofont DejaVu Sans Mono:size=14
-usetheme true
-themepath @prefix@/share/themes/Winter.lfstk
-buttontile @prefix@/share/themes/Winter.lfstk/button.png
-windowtile @prefix@/share/themes/Winter.lfstk/window.png
-font_active black
-font_normal white
-cursorcolour blue
-menuitem_font_inactive grey40
-menuitem_font_prelight dark blue
-menuitemtile @prefix@/share/themes/Winter.lfstk/menuitem.png
-window_active #4C9BFF
-window_normal #4C9BFF
-menuitem_active #643b00
-menuitem_normal #976115
-button_inactive #A7BAC6
-button_prelight #DAEAFD
-button_active #71A9CC
-button_normal #BBCEEC
-font_inactive grey80
-font_prelight light blue
 autotextcolour false
-sbtroughcolour light blue
-menuitem_inactive #945800
-menuitem_prelight #976115
+button_active #71A9CC
+button_inactive #A7BAC6
+button_normal #BBCEEC
+button_prelight #DAEAFD
+buttontile @prefix@/share/themes/Winter.lfstk/button.png
+cursorcolour blue
+font_active black
+font_inactive grey80
+font_normal white
+font_prelight light blue
+font sans:size=8
 listtroughcolour #639DC5
-menuitem_font DejaVu Sans Mono:size=10:bold
-window_inactive #4C9BFF
-window_prelight #4C9BFF
+menuitem_active #71A9CC
 menuitem_font_active black
+menuitem_font_inactive grey40
 menuitem_font_normal white
+menuitem_font_prelight dark blue
+menuitem_font sans:size=8
+menuitem_inactive #A7BAC6
+menuitem_normal #BBCEEC
+menuitem_prelight #DAEAFD
+menuitemtile @prefix@/share/themes/Winter.lfstk/menuitem.png
+monofont DejaVu Sans Mono:size=14
+sbtroughcolour light blue
+themepath @prefix@/share/themes/Winter.lfstk
+usetheme true
+window_active #4C9BFF
+window_inactive #4C9BFF
+window_normal #4C9BFF
+window_prelight #4C9BFF
+windowtile @prefix@/share/themes/Winter.lfstk/window.png
