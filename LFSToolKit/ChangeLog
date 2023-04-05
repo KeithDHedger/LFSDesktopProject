@@ -1,4 +1,6 @@
 0.5.1
+Install default colour scheme to ~/.config/LFS on first run of library.
+Added default colour scheme.
 Fixed about example.
 Fixed not not setting button font colour form prefs.
 Set default time out in app class.

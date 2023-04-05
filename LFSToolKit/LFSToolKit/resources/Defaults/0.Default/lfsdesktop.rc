@@ -1,0 +1,15 @@
+fontface sans:size=14
+gridsize 48
+iconsize 48
+icontheme ""
+labelalpha 0.4
+excludelist ""
+includelist .*
+refreshrate 2
+termcommand xterm -e 
+showextension false
+doubleclickexe false
+gridborderleft 2
+gridborderrite 15
+labelbackground grey60
+labelforeground white

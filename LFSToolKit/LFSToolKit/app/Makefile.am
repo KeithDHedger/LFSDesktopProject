@@ -22,6 +22,9 @@ Winterdir = ${prefix}/share/themes/Winter.lfstk
 OldyXmasdir = ${prefix}/share/themes/OldyXmas.lfstk
 Springdir = ${prefix}/share/themes/SpringWood.lfstk
 
+defaultGroupdir = ${prefix}/share/LFSToolKit/Defaults/0.Default
+defaultGroup_DATA = ../resources/Defaults/0.Default/*.rc
+
 AllHallows_DATA = ../resources/themes/AllHallows.lfstk/*.png ../resources/themes/AllHallows.lfstk/*.rc
 OldBrownWood_DATA = ../resources/themes/OldBrownWood.lfstk/*.png ../resources/themes/OldBrownWood.lfstk/*.rc
 Steel_DATA = ../resources/themes/Steel.lfstk/*.png ../resources/themes/Steel.lfstk/*.rc

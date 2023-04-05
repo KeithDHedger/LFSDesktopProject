@@ -42,40 +42,40 @@ class LFSTK_lib
 		~LFSTK_lib();
 
 		const char		*LFSTK_getGlobalString(int state,int type);
-		void			LFSTK_setGlobalString(int state,int type,const char *str);
-		bool			LFSTK_getAutoLabelColour(void);
-		void			LFSTK_setAutoLabelColour(bool toset);
-		bool			LFSTK_getUseTheme(void);
-		void			LFSTK_setUseTheme(bool use);
+		void				LFSTK_setGlobalString(int state,int type,const char *str);
+		bool				LFSTK_getAutoLabelColour(void);
+		void				LFSTK_setAutoLabelColour(bool toset);
+		bool				LFSTK_getUseTheme(void);
+		void				LFSTK_setUseTheme(bool use);
 		const char		*LFSTK_getThemePath(void);
-		void			LFSTK_setThemePath(char *path);
+		void				LFSTK_setThemePath(char *path);
 
 		const char		*bestFontColour(long pixel);
 		static bool		LFSTK_gadgetEvent(void *self,XEvent *e,int type);
 
-		char			*LFSTK_findThemedIcon(const char *theme,const char *icon,const char *catagory);
-		bool			LFSTK_pointInRect(pointStruct *point,geometryStruct *geom);
+		char				*LFSTK_findThemedIcon(const char *theme,const char *icon,const char *catagory);
+		bool				LFSTK_pointInRect(pointStruct *point,geometryStruct *geom);
 		unsigned long	LFSTK_getColourFromName(Display *display,Colormap cm,const char *name);
 
 //graphics
-		void			LFSTK_setCairoSurface(Display *display,Window window,Visual *visual,cairo_surface_t **sfc,cairo_t **cr,int width,int height);
+		void				LFSTK_setCairoSurface(Display *display,Window window,Visual *visual,cairo_surface_t **sfc,cairo_t **cr,int width,int height);
 		cairo_surface_t	*LFSTK_createSurfaceFromPath(const char *path);
 		cairo_surface_t	*LFSTK_cairo_image_surface_create_from_jpeg(const char *filename);
 		Pixmap			LFSTK_getWindowPixmap(Display *display,Window win);
 
 //files
-		char			*LFSTK_oneLiner(const char* fmt,...);
+		char				*LFSTK_oneLiner(const char* fmt,...);
 		std::string		LFSTK_oneLiner(const std::string fmt,...);
-		char			*LFSTK_getMimeType(const char* path);
+		char				*LFSTK_getMimeType(const char* path);
 		std::string		LFSTK_grepInFile(const std::string filepath,const std::string needle);
 		std::string		LFSTK_getNthNeedle(const std::string haystack,int needlecnt,const std::string delimiter=" ");
 
 //colours and prefs
-		void			LFSTK_setColourFromName(Display *display,Colormap cm,colourStruct *colptr,const char *name);
-		void			LFSTK_reloadPrefs(void);
+		void				LFSTK_setColourFromName(Display *display,Colormap cm,colourStruct *colptr,const char *name);
+		void				LFSTK_reloadPrefs(void);
 
 //utils
-		char			*LFSTK_cleanString(const char *str);
+		char				*LFSTK_cleanString(const char *str);
 //messaging		
 //debug
 //

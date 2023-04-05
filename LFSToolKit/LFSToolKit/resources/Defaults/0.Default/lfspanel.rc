@@ -1,0 +1,11 @@
+panelpos -2
+onmonitor 1
+panelgrav 1
+panelwidth -2
+gadgetsleft AWw
+panelheight 32
+termcommand xterm -e 
+gadgetsright MDCL
+restartcommand sudo /sbin/reboot
+shutdowncommand sudo /sbin/shutdown -h now
+logoutcommand rm /tmp/${USER}-lfssession.pid
