@@ -91,12 +91,12 @@ menuStruct				**setNameMenuItems=NULL;
 LFSTK_menuClass			*setMenu=NULL;
 
 int						setCnt;
-char					*wd;
+char						*wd;
 int						parentWindow=-1;
 int						queueID=-1;
-char					*themePath=strdup("");
-char					*sbTroughColour=strdup("grey50");
-char					*listTroughColour=strdup("grey50");
+char						*themePath=strdup("");
+char						*sbTroughColour=strdup("grey50");
+char						*listTroughColour=strdup("grey50");
 
 void addSet(void)
 {

@@ -173,6 +173,7 @@ bool coleditCB(void *p,void* ud)
 
 	if(pw==-1)
 		pw=wc->window;
+
 	if((ed->mouseEvent->state & Button3Mask)!=0)
 		{
 			char *col=NULL;
@@ -297,6 +298,8 @@ int main(int argc, char **argv)
 			sx+=GADGETWIDTH+BORDER;
 			previeColourEdit[j]=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString(prefsnames[j]),sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 			previeColourEdit[j]->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
+			previeColourEdit[j]->LFSTK_setContextWindow(NULL);
+
 			sy+=YSPACING;
 			sx=BORDER;
 		}

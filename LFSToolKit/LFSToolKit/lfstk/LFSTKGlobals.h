@@ -70,7 +70,7 @@ enum {CANCEL=0,APPLY};
 enum {NONE=0,LEFT,CENTRE,RIGHT,AUTO,MENU,PRESERVEASPECT,TOOLBAR};
 enum gadgetState {NORMALCOLOUR=0,PRELIGHTCOLOUR,ACTIVECOLOUR,INACTIVECOLOUR,MAXCOLOURS};
 
-enum {BUTTONGADGET=1,MENUBUTTONGADGET,LINEEDITGADGET,LABELGADGET,TOGGLEGADGET,IMAGEGADGET,LISTGADGET,DIALOGGADGET,MULTILINEGADGET,SCROLLBARGADGET,MENUGADGET,MENUITEMGADGET,MULTIGADGET};
+enum {BUTTONGADGET=1,MENUBUTTONGADGET,LINEEDITGADGET,LABELGADGET,TOGGLEGADGET,IMAGEGADGET,LISTGADGET,DIALOGGADGET,MULTILINEGADGET,SCROLLBARGADGET,MENUGADGET,MENUITEMGADGET,MULTIGADGET,TRANSPARENTGADGET,NOGADGET};
 //enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
 enum {NORMAL=0,ABOVEALL,BELOWALL};
 
@@ -298,24 +298,25 @@ class	LFSTK_listGadgetClass;
 struct listData
 {
 	LFSTK_listGadgetClass	*mainObject;
-	unsigned				userData;
+	unsigned					userData;
 };
 
 struct gadgetStruct
 {
 	colourStruct			*colour=NULL;
-	bevelType				bevel=BEVELNONE;
-	indicatorType			indic=NOINDICATOR;
-	int						state=NORMALCOLOUR;
-	int						reserveSpace=0;
+	bevelType			bevel=BEVELNONE;
+	indicatorType		indic=NOINDICATOR;
+	int					state=NORMALCOLOUR;
+	int					reserveSpace=0;
 	bool					buttonTile=false;
-	geometryStruct			gadgetGeom={0,0,1,1};
-	geometryStruct			indicatorGeom={0,0,1,1};
+	geometryStruct		gadgetGeom={0,0,1,1};
+	geometryStruct		indicatorGeom={0,0,1,1};
 	bool					hasIndicator=false;
 	bool					useWindowPixmap=false;
 	bool					geomRelativeToMainWindow=false;
 	bool					showLink=false;
 	bool					showBroken=false;
+	
 };
 
 class LFSTK_applicationClass;

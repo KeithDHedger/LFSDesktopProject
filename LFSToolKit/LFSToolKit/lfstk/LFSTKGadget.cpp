@@ -405,6 +405,9 @@ void LFSTK_gadgetClass::clearBox(gadgetStruct* details)
 	if(this->isActive==false)
 		details->colour=&this->colourNames[INACTIVECOLOUR];
 
+	if(this->isTransparent==true)
+		details->colour=&this->wc->windowColourNames[NORMALCOLOUR];
+
 	if(this->useTile==true)
 		{
 			if(details->buttonTile==true)

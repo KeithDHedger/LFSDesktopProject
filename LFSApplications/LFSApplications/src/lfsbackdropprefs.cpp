@@ -70,14 +70,14 @@ LFSTK_menuClass			*monitorModeMenu=NULL;
 monitorInfo				monitors[20]={{NULL,0},};
 int						selectedMonitor=0;
 
-char					*wd=NULL;
+char						*wd=NULL;
 Window					parentWindow=-1;
 
 //prefs
-char					*mainPrefs;
-char					*monitorPrefs;
+char						*mainPrefs;
+char						*monitorPrefs;
 int						backdropMode=0;
-bool					multiMode=false;
+bool						multiMode=false;
 
 //modes
 const char				*modeLabel[5]={"Stretch","Tile","Centre","Scale","Zoom"};
@@ -90,6 +90,33 @@ bool doQuit(void *p,void* ud)
 	apc->exitValue=0;
 	apc->mainLoop=false;
 	return(false);
+}
+
+bool coleditCB(void *p,void* ud)
+{
+	int					pw=parentWindow;
+	LFSTK_lineEditClass	*ed=static_cast<LFSTK_lineEditClass*>(p);
+
+	if(ed==NULL)
+		return(true);
+
+	if(pw==-1)
+		pw=wc->window;
+
+	//ud=static_cast<LFSTK_lineEditClass*>(ud);
+	if((ed->mouseEvent->state & Button3Mask)!=0)
+		{
+			char *col=NULL;
+#ifdef _ENABLEDEBUG_
+			col=apc->globalLib->LFSTK_oneLiner("LD_LIBRARY_PATH=../LFSToolKit/LFSToolKit/app/.libs LFSApplications/app/lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr());
+#else
+			col=apc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr());
+#endif
+			if(strlen(col)>0)
+				ed->LFSTK_setBuffer(col);
+			free(col);
+		}
+	return(true);
 }
 
 bool buttonCB(void *p,void* ud)
@@ -301,6 +328,9 @@ int main(int argc, char **argv)
 //colour
 	label=new LFSTK_labelClass(wc,"Root Colour",BORDER,sy,GADGETWIDTH,GADGETHITE);
 	rootColourEdit=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString("colour"),(BORDER*2)+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	rootColourEdit->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
+	rootColourEdit->LFSTK_setContextWindow(NULL);
+	
 	sy+=YSPACING;
 //mode
 	rootModeMenu=new menuStruct*[5];

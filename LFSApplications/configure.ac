@@ -1,12 +1,13 @@
 AC_INIT([LFSApplications],[0.2.0],[PROJ],[LFSApplications])
 
-AC_CONFIG_HEADER([config.h])
+#AC_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADERS([config.h])
 AC_PROG_CXX
 
 AM_INIT_AUTOMAKE
 
 AC_PROG_CC
-AC_HEADER_STDC
+#AC_HEADER_STDC
 
 X11_MODULES="x11 >= 1.6.2"
 PKG_CHECK_MODULES(X11, $X11_MODULES)
@@ -42,5 +43,6 @@ if test "$enable_debug" = "yes"; then
 	AC_DEFINE([_ENABLEDEBUG_], [], [Enable debug code])
 fi
 
-AC_OUTPUT(Makefile LFSApplications/app/Makefile)
-
+#AC_OUTPUT(Makefile LFSApplications/app/Makefile)
+AC_CONFIG_FILES(Makefile LFSApplications/app/Makefile)
+AC_OUTPUT

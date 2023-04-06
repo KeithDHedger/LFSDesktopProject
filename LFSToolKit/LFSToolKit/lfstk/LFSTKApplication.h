@@ -39,10 +39,10 @@ class LFSTK_applicationClass
 
 		void						LFSTK_addWindow(windowInitStruct *wi,const char *name);
 		void						LFSTK_addToolWindow(windowInitStruct *wi);
-		int							LFSTK_runApp(void);
-		int							LFSTK_runWindowLoop(int window);
-		int							LFSTK_runWindowLoop(LFSTK_windowClass *win);
-		int							LFSTK_findWindow(LFSTK_windowClass *win);
+		int						LFSTK_runApp(void);
+		int						LFSTK_runWindowLoop(int window);
+		int						LFSTK_runWindowLoop(LFSTK_windowClass *win);
+		int						LFSTK_findWindow(LFSTK_windowClass *win);
 
 //timers
 		void						LFSTK_setTimer(int seconds);
@@ -50,34 +50,34 @@ class LFSTK_applicationClass
 
 //gui
 		bool						mainLoop=false;
-		int							exitValue=0;
-		Display						*display;
-		int							screen;
-		Visual						*visual;
-		Window						rootWindow;		
+		int						exitValue=0;
+		Display					*display;
+		int						screen;
+		Visual					*visual;
+		Window					rootWindow;		
 		Colormap					cm;
-		int							depth;
-		int							blackColour;
-		int							whiteColour;
+		int						depth;
+		int						blackColour;
+		int						whiteColour;
 
 		bool						gotARGB=false;
-		int							displayWidth=0;
-		int							displayHeight=0;
+		int						displayWidth=0;
+		int						displayHeight=0;
 
 //globals
 		bool						isDragging=false;
-		LFSTK_lib					*globalLib=NULL;
-		std::vector<windowData>		*windows;
-		LFSTK_windowClass			*mainWindow=NULL;
+		LFSTK_lib				*globalLib=NULL;
+		std::vector<windowData>	*windows;
+		LFSTK_windowClass		*mainWindow=NULL;
 		char						*configDir=NULL;
 		char						*userHome=NULL;
 		char						*iconThemeName=NULL;
 
 	private:
-		int							displayNum;
+		int						displayNum;
 		bool						useTimer=false;
-		int							timer=-1;
-		callbackStruct				callBacks;
+		int						timer=-1;
+		callbackStruct			callBacks;
 };
 
 #endif

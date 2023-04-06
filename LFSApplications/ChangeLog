@@ -1,4 +1,5 @@
 0.2.0
+Fixed colour entries in prefs dialogs.
 Fixed seg fault on applying lfspanelprefs settings.
 Fixed about dialog.
 Updated for new lfstk API's.

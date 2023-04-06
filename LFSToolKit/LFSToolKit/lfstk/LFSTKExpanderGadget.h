@@ -64,11 +64,11 @@ class LFSTK_ExpanderGadgetClass : public LFSTK_gadgetClass
 		bool					stretchY=false;
 		lockType				lockX=LOCKTOCENTRE;
 		lockType				lockY=LOCKTOTOP;
-		stretchType				gadgetStretch=NOCHANGE;
-		int						spacing=BORDER;
+		stretchType			gadgetStretch=NOCHANGE;
+		int					spacing=BORDER;
 		bool					done=false;
 		std::vector<hitRect>	hitRects;
-		int						spacePad=16;
+		int					spacePad=16;
 		bool					liveUpdate=false;
 	private:
 		void					updateInternalGadgets(geometryStruct oldgadggeom);

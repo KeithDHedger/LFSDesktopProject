@@ -140,7 +140,7 @@ int main(int argc, char **argv)
 	seperator->LFSTK_setStyle(BEVELNONE);
 	seperator->gadgetDetails.buttonTile=false;
 	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
-	seperator->LFSTK_setUseWindowPixmap(true);
+
 	sy+=YSPACING;
 
 //quit

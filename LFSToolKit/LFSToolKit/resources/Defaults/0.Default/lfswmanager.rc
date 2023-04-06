@@ -3,10 +3,10 @@ desktops 6
 placement 2
 titlefont sans:size=14:bold
 liveupdate 15
-wminactive_frame #9B9184
+wminactive_frame #C8C8C8
 rescanprefs 4
 termcommand xterm -m  -l -e 
 widgetcolour white
-wmactive_fill #5E3300
-wmactive_frame #948069
-wminactive_fill #836C51
+wmactive_fill #898989
+wmactive_frame #BEBEBE
+wminactive_fill #BCBCBC

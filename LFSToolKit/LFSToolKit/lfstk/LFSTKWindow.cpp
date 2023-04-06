@@ -140,6 +140,9 @@ void LFSTK_windowClass::initWindow(bool loadvars)
 	this->isActive=true;
 	this->useTile=false;
 	this->gadgetMap.clear();
+	//XSetBackground(this->app->display,this->gc,this->windowColourNames[NORMALCOLOUR].pixel);
+	//XSetBackground(this->app->display,this->gc, WhitePixel(this->app->display, 0));
+	//std::cerr<<this->windowColourNames[NORMALCOLOUR].pixel<<std::endl;
 }
 
 /**
@@ -225,7 +228,7 @@ LFSTK_windowClass::~LFSTK_windowClass()
  */
 LFSTK_windowClass::LFSTK_windowClass()
 {
-	return;
+	return;//TODO//MMMMMmmmmm
 	this->initWindow(false);
 	this->setWindowGeom(0,0,0,0,WINDSETALL);
 	this->gadgetMap.clear();

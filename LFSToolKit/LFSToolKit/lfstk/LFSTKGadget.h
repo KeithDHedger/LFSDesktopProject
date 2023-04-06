@@ -73,21 +73,22 @@ class LFSTK_gadgetClass
 		bool					isDoubleClick=false;
 		unsigned int			currentButton=-1;
 		long					gadgetEventMask=(ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|ButtonMotionMask|FocusChangeMask|KeyReleaseMask|KeyPressMask);
-		XEvent					*xEvent=NULL;
+		XEvent				*xEvent=NULL;
 
 //context window
-		LFSTK_windowClass 		*LFSTK_getContextWindow(void);
+		LFSTK_windowClass 	*LFSTK_getContextWindow(void);
 		void					LFSTK_setContextWindow(LFSTK_windowClass *wc);
-		int						windowNumber=-1;
+		int					windowNumber=-1;
 
 //DnD routines etc
 		virtual void			LFSTK_dropData(propertyStruct* data);
 
-		dropDataStruct			droppedData={DROPINVALID,NULL,-1,-1};
+		dropDataStruct		droppedData={DROPINVALID,NULL,-1,-1};
 
 //odds
-		Window					LFSTK_getWindow(void);
+		Window				LFSTK_getWindow(void);
 		void					LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned int w,unsigned int h,int gravity=NorthWestGravity);
+		bool					isTransparent=false;
 
 //callbacks
 		void					LFSTK_setIgnores(bool runcb,bool ignoreorphanmod);
@@ -95,14 +96,14 @@ class LFSTK_gadgetClass
 		void					LFSTK_setKeyCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud);
 		void					LFSTK_setGadgetDropCallBack(bool (*dropped)(void*,propertyStruct *data,void*),void* ud=NULL);
 		void					LFSTK_setCallBacks(callbackStruct cbs);
-		callbackStruct			callBacks;
+		callbackStruct		callBacks;
 
 //colours
 		colourStruct			fontColourNames[MAXCOLOURS]={NULL,};
 		colourStruct			colourNames[MAXCOLOURS]={NULL,};
 
 		void					LFSTK_setColourName(int p,const char* colour);
-		const char				*LFSTK_getColourName(int p);
+		const char			*LFSTK_getColourName(int p);
 		void					LFSTK_setFontString(const char *s,bool setfontdata=false);
 		void					LFSTK_setFontColourName(int p,const char* colour,bool usewindow);
 		void					LFSTK_reloadColours(void);
@@ -112,16 +113,16 @@ class LFSTK_gadgetClass
 		void					LFSTK_setCairoFontDataParts(const char* fmt,...);
 
 		void					LFSTK_setLabel(const char *newlabel,bool clearwindow=true);
-		const char				*LFSTK_getLabel(void);
+		const char			*LFSTK_getLabel(void);
 		void					LFSTK_setLabelGravity(int orient);
 
 //grahics
 		void					drawImage();
 		void					LFSTK_setIndicator(indicatorType indictype);
-		cairo_status_t 			LFSTK_setImageFromPath(const char *file,int orient,bool scale);
-		void 					LFSTK_setImageFromSurface(cairo_surface_t *sfc,int orient,bool scale);
+		cairo_status_t 		LFSTK_setImageFromPath(const char *file,int orient,bool scale);
+		void 				LFSTK_setImageFromSurface(cairo_surface_t *sfc,int orient,bool scale);
 
-		int						LFSTK_gadgetOnMonitor(void);
+		int					LFSTK_gadgetOnMonitor(void);
 		void					LFSTK_setTile(const char *path,int size);
 		void					LFSTK_setUseWindowTile(bool usebutton);
 		void					LFSTK_setUseWindowPixmap(bool usepixmap);
@@ -130,19 +131,19 @@ class LFSTK_gadgetClass
 //geometry
 		void					LFSTK_getGeom(geometryStruct *geom);
 		void					LFSTK_getGeomWindowRelative(geometryStruct *geom,Window win);
-		double					LFSTK_getTextRealWidth(const char* text);
-		int						LFSTK_getTextWidth(const char* text);
-		int						LFSTK_getTextHeight(const char* text);
+		double				LFSTK_getTextRealWidth(const char* text);
+		int					LFSTK_getTextWidth(const char* text);
+		int					LFSTK_getTextHeight(const char* text);
 		void					LFSTK_setGadgetSize(int width,int height);
 
 //fonts
 		void					LFSTK_setCairoFontData(void);
 
-		LFSTK_windowClass		*wc;
+		LFSTK_windowClass	*wc;
 
-		Window					parent;
-		GC						gc;
-		Window					window;
+		Window				parent;
+		GC					gc;
+		Window				window;
 
 		bool					drawLabelBG=false;
 		bool					autoLabelBGColour=false;
@@ -157,12 +158,12 @@ class LFSTK_gadgetClass
 		bool					isSubMenu;
 		bool					showIndicator;
 		gadgetStruct			gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NORMALCOLOUR,0,false,{0,0,0,0},{0,0,0,0},false,false,false,false,false};
-		const char				*monoFontString=NULL;
+		const char			*monoFontString=NULL;
 
 //user data
 		void					*userData=NULL;
 		XButtonEvent			*mouseEvent=NULL;
-		XKeyEvent				*keyEvent=NULL;
+		XKeyEvent			*keyEvent=NULL;
 		bool					toParent=false;
 		bool					isMapped=false;
 //context
@@ -171,17 +172,17 @@ class LFSTK_gadgetClass
 	private:
 		void					initGadget(void);
 		void					selectBevel(bool mousedown);
-		cairo_surface_t			*link=NULL;
-		cairo_surface_t			*broken=NULL;
+		cairo_surface_t		*link=NULL;
+		cairo_surface_t		*broken=NULL;
 
 	protected:
-		mappedListener			*ml=NULL;
+		mappedListener		*ml=NULL;
 		void					drawBox(geometryStruct* g,gadgetState state,bevelType bevel);
 		void					drawIndicator(gadgetStruct* details);
-		bevelType				getActiveBevel(void);
+		bevelType			getActiveBevel(void);
 
 		unsigned				pad;
-		geometryStruct			gadgetGeom;
+		geometryStruct		gadgetGeom;
 
 //font and label stuff
 		char					*label=NULL;
@@ -189,35 +190,35 @@ class LFSTK_gadgetClass
 
 		cairo_text_extents_t	textExtents;
 		cairo_font_extents_t	fontExtents;
-		cairo_font_weight_t		weight;
-		cairo_font_slant_t		slant;
-		int						fontSize;
+		cairo_font_weight_t	weight;
+		cairo_font_slant_t	slant;
+		int					fontSize;
 		char					*fontName=NULL;
-		double					maxTextHeight;
+		double				maxTextHeight;
 
 		bool					inWindow;
 		bool					isActive;
 		bool					autoLabelColour=false;
-		int						labelGravity;
+		int					labelGravity;
 
-		bevelType				style;
-		int						labelOffset;
+		bevelType			style;
+		int					labelOffset;
 		unsigned int			iconSize;
 
 //graphics
-		cairo_t					*cr=NULL;
+		cairo_t				*cr=NULL;
 		cairo_surface_t 		*sfc=NULL;
-		cairo_surface_t			*cImage=NULL;
-		cairo_pattern_t			*pattern=NULL;
+		cairo_surface_t		*cImage=NULL;
+		cairo_pattern_t		*pattern=NULL;
 		
-		int						imageWidth=0;
-		int						imageHeight=0;
-		int						imageGravity=CENTRE;
-		float					ratio;
+		int					imageWidth=0;
+		int					imageHeight=0;
+		int					imageGravity=CENTRE;
+		float				ratio;
 		bool					useTile;
 
-		bevelType				newbevel=BEVELOUT;
-		gadgetState				state=NORMALCOLOUR;
+		bevelType			newbevel=BEVELOUT;
+		gadgetState			state=NORMALCOLOUR;
 
 //gadget graphics details
 		void					drawGagetDetails(void);
@@ -227,19 +228,19 @@ class LFSTK_gadgetClass
 
 //drag stuff
 		bool					canDrag=false;
-		int						mouseDownX=0;
-		int						mouseDownY=0;
-		int						snap=1;
-		double					alpha=1.0;
+		int					mouseDownX=0;
+		int					mouseDownY=0;
+		int					snap=1;
+		double				alpha=1.0;
 		bool					allowX=true;
 		bool					allowY=true;
-		int						minX=-1;
-		int						maxX=-1;
-		int						minY=-1;
-		int						maxY=-1;
+		int					minX=-1;
+		int					maxX=-1;
+		int					minY=-1;
+		int					maxY=-1;
 
 //context
-		LFSTK_windowClass		*contextWC=NULL;
+		LFSTK_windowClass	*contextWC=NULL;
 };
 
 #endif

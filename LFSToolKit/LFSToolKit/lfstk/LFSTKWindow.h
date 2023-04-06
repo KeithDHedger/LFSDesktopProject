@@ -70,7 +70,7 @@ class LFSTK_windowClass
 		void					LFSTK_hideWindow(void);
 		void					LFSTK_setWindowTitle(const char *title);
 
-		void 					LFSTK_clearWindow(bool cleargadgets=false);
+		void 				LFSTK_clearWindow(bool cleargadgets=false);
 		void					LFSTK_resizeWindow(int w,int h,bool tellx=true);
 		void					LFSTK_moveWindow(int x,int y,bool tellx=true);
 		const geometryStruct	*LFSTK_getWindowGeom(void);
@@ -89,23 +89,23 @@ class LFSTK_windowClass
 		void					LFSTK_setWindowType(const char *type);
 		void					LFSTK_setTransientFor(Window w);
 
-		int						LFSTK_getMonitorCount(void);
-		const monitorStruct		*LFSTK_getMonitorData(int monitor);
-		const monitorStruct		*LFSTK_getMonitors(void);
+		int					LFSTK_getMonitorCount(void);
+		const monitorStruct	*LFSTK_getMonitorData(int monitor);
+		const monitorStruct	*LFSTK_getMonitors(void);
 	
 		void					LFSTK_reloadGlobals(void);
 		void					LFSTK_setXProperty(Atom property,Atom type,int format,void *dataptr,int propcnt);
 		void					LFSTK_sendMessage(const char *msg,unsigned long data0,unsigned long data1,unsigned long data2,unsigned long data3,unsigned long data4);
 
-		int						LFSTK_windowOnMonitor(void);
+		int					LFSTK_windowOnMonitor(void);
 
 		void					LFSTK_setTile(const char *path,int size);
 
 //gadget management
 		void					LFSTK_addMappedListener(int mapwindow,mappedListener* ml);
-		mappedListener			*LFSTK_getMappedListener(int window);
-		int						LFSTK_gadgetCount(void);
-		LFSTK_gadgetClass		*LFSTK_findGadgetByPos(int x,int y);
+		mappedListener		*LFSTK_getMappedListener(int window);
+		int					LFSTK_gadgetCount(void);
+		LFSTK_gadgetClass	*LFSTK_findGadgetByPos(int x,int y);
 		bool					LFSTK_deleteGadget(LFSTK_gadgetClass *gadget);
 		void					LFSTK_redrawAllGadgets(void);
 
@@ -113,53 +113,53 @@ class LFSTK_windowClass
 		void					LFSTK_initDnD(bool acceptwindowdrops=false);
 		Atom					LFSTK_getDnDAtom(int atomnum);
 		void					LFSTK_handleDnD(XEvent *event);
-		dropDataStruct			droppedData={DROPINVALID,NULL,-1,-1};
+		dropDataStruct		droppedData={DROPINVALID,NULL,-1,-1};
 		bool					acceptOnThis=false;
-		LFSTK_gadgetClass		*dropGadget;
+		LFSTK_gadgetClass	*dropGadget;
 		void					LFSTK_setWindowDropCallBack(bool (*dropped)(LFSTK_windowClass*,void*),void* ud);
-		callbackStruct			callBacks;
+		callbackStruct		callBacks;
 
 //window graphics
 		void					LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h,bool updategadgets=false);
-		Pixmap					px=None;
+		Pixmap				px=None;
 		bool					usePixmap=false;
-		Window					window;
-		GC						gc;
+		Window				window;
+		GC					gc;
 		cairo_surface_t 		*sfc=NULL;
-		cairo_t					*cr=NULL;
-		cairo_pattern_t			*pattern=NULL;
+		cairo_t				*cr=NULL;
+		cairo_pattern_t		*pattern=NULL;
 
 		char					*fontString;
 		char					*fontColourNames[MAXCOLOURS]={NULL,};
 		colourStruct			windowColourNames[MAXCOLOURS]={{NULL,0,{0,0,0,0}},};
 		bool					autoLabelColour=false;
-		LFSTK_lib				*globalLib;
+		LFSTK_lib			*globalLib;
 
 //user data and dirs
-		Window					parentWindow=None;
+		Window				parentWindow=None;
 		bool					useTile;
 		bool					acceptDnd;
 		void					*userData=NULL;
-		LFSTK_gadgetClass		*popupFromGadget=NULL;
+		LFSTK_gadgetClass	*popupFromGadget=NULL;
 
-		std::map<int,mappedListener*> *LFSTK_getGadgets(void);
+		std::map<int,mappedListener*>	*LFSTK_getGadgets(void);
 
 //events etc
 		void					LFSTK_setDoubleClickTime(unsigned interval);
 		unsigned				dbClick=500;
 		bool					popupLoop=false;
-		int						LFSTK_handleWindowEvents(XEvent *event);
+		int					LFSTK_handleWindowEvents(XEvent *event);
 		bool					mainLoop=false;
 		bool					mainLoopQuit=false;
 		bool					isVisible=false;
 		bool					passEventToRoot=false;
 
 //copy/paste buffer etc
-		std::string				clipBuffer;
-		std::map<int,mappedListener*> gadgetMap;
+		std::string			clipBuffer;
+		std::map<int,mappedListener*>	gadgetMap;
 
 //app
-		LFSTK_applicationClass	*app=NULL;
+		LFSTK_applicationClass			*app=NULL;
 
 	protected:
 		bool					isActive;
@@ -175,24 +175,24 @@ class LFSTK_windowClass
 
 //DnD routines
 		void					LFSTK_dropData(propertyStruct* data);
-		propertyStruct			*readProperty(Window src,Atom property);
-		std::string				getAtomName(Atom a);
+		propertyStruct		*readProperty(Window src,Atom property);
+		std::string			getAtomName(Atom a);
 		Atom					pickTargetFromList(Atom* atom_list,int nitems);
 		Atom					pickTargetFromTargets(propertyStruct* p);
 		Atom					pickTargetFromAtoms(Atom t1, Atom t2, Atom t3);
 
 		bool					isSticky;
-		int						monitorCount;
-		monitorStruct			*monitors;
-		geometryStruct			windowGeom;
+		int					monitorCount;
+		monitorStruct		*monitors;
+		geometryStruct		windowGeom;
 
 
 //Atoms etc for Xdnd/cut/copy/paste
 		Atom					dNdAtoms[DNDATOMCOUNT];
 		std::map<std::string,int> dNdTypes;
 		Atom					toBeRequested;
-		Window					sourceWindow;
-		int						xDnDVersion;
+		Window				sourceWindow;
+		int					xDnDVersion;
 };
 
 #endif

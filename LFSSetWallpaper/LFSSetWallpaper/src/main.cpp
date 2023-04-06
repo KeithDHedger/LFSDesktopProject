@@ -30,14 +30,16 @@
 #include <getopt.h>
 #include <unistd.h>
 #include <string.h>
+#include <ostream>
 
 #include "config.h"
 
+#include <lfstk/LFSTKGlobals.h>
 #include <lfstk/LFSTKPrefsClass.h>
 
 #define UNKNOWNARG -100
 
-enum imageMode {STRETCH=0,TILE,CENTRE,SCALED,ZOOMED};
+enum imageMode {WALLSTRETCH=0,WALLTILE,WALLCENTRE,WALLSCALED,WALLZOOMED};
 
 struct	monitors
 {
@@ -53,7 +55,7 @@ char			*wallpaperPath=NULL;
 
 Imlib_Image	buffer;
 
-Display*	display;
+Display		*display;
 Window		rootWin;
 int			displayWidth;
 int			displayHeight;
@@ -67,13 +69,14 @@ Pixmap		backDropPixmap;
 int			mainColour=0x808080;
 
 int			backdropMode=STRETCH;
-char		*prefsPath;
+char			*prefsPath;
 char*		monitorRCPath;
 int			numberOfMonitors=0;
 int			currentMonitor;
-bool		multiMode=false;
+bool			multiMode=false;
 
-monitors	*monitorData;
+LFSTK_lib 	*lib;
+monitors		*monitorData;
 
 struct option long_options[] =
 {
@@ -154,13 +157,13 @@ void blitToMonitorPos(int mode,const char* path,int x,int y,int w,int h)
 
 	switch(mode)
 		{
-		case STRETCH:
+		case WALLSTRETCH:
 			imlib_context_set_image(buffer);
 			imlib_context_set_cliprect(x,y,w,h);
 			imlib_blend_image_onto_image(image,0,0,0,imagew,imageh,x,y,w,h);
 			break;
 
-		case TILE:
+		case WALLTILE:
 			numx=(w/imagew)+1;
 			numy=(h/imageh)+1;
 			imlib_context_set_image(buffer);
@@ -172,7 +175,7 @@ void blitToMonitorPos(int mode,const char* path,int x,int y,int w,int h)
 				}
 			break;
 
-		case CENTRE:
+		case WALLCENTRE:
 			xoffset=(w/2)-(imagew/2);
 			yoffset=(h/2)-(imageh/2);
 
@@ -181,7 +184,7 @@ void blitToMonitorPos(int mode,const char* path,int x,int y,int w,int h)
 			imlib_blend_image_onto_image(image,0,0,0,imagew,imageh,xoffset+x,yoffset+y,imagew,imageh);
 			break;
 
-		case SCALED:
+		case WALLSCALED:
 			if(imagew>imageh)
 				{
 					maxdim=w;
@@ -205,7 +208,7 @@ void blitToMonitorPos(int mode,const char* path,int x,int y,int w,int h)
 			imlib_blend_image_onto_image(image,0,0,0,imagew,imageh,x+xoffset,y+yoffset,finalw,finalh);
 			break;
 
-		case ZOOMED:
+		case WALLZOOMED:
 			wratio=((float)w/imagew);
 			hratio=((float)h/imageh);
 			if(wratio>hratio)
@@ -270,14 +273,14 @@ void loadPrefs(void)
 		{
 			{prefs.LFSTK_hashFromKey("backdrop"),{TYPESTRING,"backdrop","",false,0}},
 			{prefs.LFSTK_hashFromKey("mainmode"),{TYPEINT,"mainmode","",false,0}},
-			{prefs.LFSTK_hashFromKey("colour"),{TYPEINT,"colour","",false,0}},
+			{prefs.LFSTK_hashFromKey("colour"),{TYPESTRING,"colour","",false,0}},
 			{prefs.LFSTK_hashFromKey("multimode"),{TYPEBOOL,"multimode","",false,0}}
 		};
 
 	prefs.LFSTK_loadVarsFromFile(prefsPath);
 	wallpaperPath=strdup(prefs.LFSTK_getCString("backdrop"));
 	backdropMode=prefs.LFSTK_getInt("mainmode");
-	mainColour=prefs.LFSTK_getInt("colour");
+	mainColour=lib->LFSTK_getColourFromName(display,DefaultColormap(display,DefaultScreen(display)),prefs.LFSTK_getCString("colour"));
 	multiMode=prefs.LFSTK_getBool("multimode");
 }
 
@@ -289,6 +292,8 @@ int main(int argc,char **argv)
 	XineramaScreenInfo	*p=NULL;
 	int c;
 	char				*command;
+
+	lib=new LFSTK_lib(true);
 
 	asprintf(&prefsPath,"%s/.config/LFS/lfssetwallpaper.rc",getenv("HOME"));
 	asprintf(&command,"mkdir -vp %s/.config/LFS/ 2>&1 >/dev/null",getenv("HOME"));
@@ -406,6 +411,7 @@ int main(int argc,char **argv)
 	free(prefsPath);
 	free(wallpaperPath);
 	fflush(NULL);
+	delete lib;
 
 	return(0);
 }
