@@ -1,4 +1,6 @@
 0.2.0
+Ignore desktopfiles with nodisplay=true.
+Improved startup speed of appmenu.
 Use new prefs class.
 Fixed random spacing appearing in right gadgets.
 Added notifications to launchers ( can be disabled ).
