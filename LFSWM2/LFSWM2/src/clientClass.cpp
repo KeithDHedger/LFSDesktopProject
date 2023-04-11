@@ -122,6 +122,9 @@ void LFSWM2_clientClass::adjustContentWindow(void)
 	XWindowAttributes	frameattr;
 	rectStruct		r;
 
+	if(this->isFullscreen==true)
+		return;
+
 	XGetWindowAttributes(this->mainClass->display,this->frameWindow,&frameattr);
 	r.x=frameattr.x+this->mainClass->sideBarSize;
 	r.y=frameattr.y+this->mainClass->titleBarSize;
@@ -141,6 +144,7 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 		{
 			case ButtonPress:
 				{
+					this->LFSWM2_unSpecial();
 					this->buttonDown=true;
 					this->sx=e->xmotion.x;
 					this->sy=e->xmotion.y;
@@ -210,15 +214,9 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 
 								if(e->xany.window==this->leftSideDragger)
 									{
-//fprintf(stderr,"old x=%i new x=%i\n",this->frameWindowRect.x,e->xmotion.x_root-this->sx);
-//fprintf(stderr,"old w=%i new w=%i\n",this->frameWindowRect.w,this->frameWindowRect.w-(e->xmotion.x-this->sx));
 										r.x=e->xmotion.x_root-this->sx;
 										r.w=this->frameWindowRect.w-(e->xmotion.x-this->sx);
 										ce.value_mask=CWWidth|CWX|CWMyframe;
-									//	r.y=this->frameWindowRect.y;
-										//r.w=this->frameWindowRect.w-(e->xmotion.x-this->sx);
-									//	r.h=this->contentWindowRect.h;
-										//XMoveResizeWindow(this->mainClass->display,this->frameWindow,r.x,r.y,r.w,r.h);
 									}
 								if(e->xany.window==this->rightSideDragger)
 									{
@@ -226,16 +224,6 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 										ce.value_mask=CWWidth|CWMyframe;
 									}
 
-								//this->mainClass->DEBUG_printRect(r);
-
-//XMoveWindow(this->mainClass->display,this->frameWindow,r.x,r.y);
-//XMoveResizeWindow(this->mainClass->display,this->frameWindow,r.x,r.y,r.w,r.h);
-//this->frameWindowRect.x=r.x;
-//this->frameWindowRect.y=r.y;
-//this->frameWindowRect.w=r.w;
-//this->frameWindowRect.h=r.h;
-
-//XResizeWindow(this->mainClass->display,this->contentWindow,r.w-4,r.h-28);
 								ce.display=this->mainClass->display;
 								ce.parent=this->frameWindow;
 								ce.window=this->contentWindow;
@@ -243,9 +231,6 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 								ce.serial=0;
 								ce.send_event=false;
 								ce.border_width=BORDER_WIDTH;//TODO//
-								//ce.value_mask=CWWidth|CWHeight|CWX|CWY|CWMyframe;
-								//ce.value_mask=CWWidth|CWHeight|CWX|CWY;
-								//ce.value_mask=CWWidth|CWHeight;
 								ce.detail=Above;
 								ce.above=None;
 								ce.x=r.x;
@@ -254,7 +239,6 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 								ce.height=r.h;
 
 								XSendEvent(this->mainClass->display,this->contentWindow,true,StructureNotifyMask,(XEvent*)&ce);
-								
 								this->steps=0;
 								break;
 							}
@@ -281,6 +265,18 @@ void LFSWM2_clientClass::resizeContentWindow(int w,int h,bool useframerect)
 void LFSWM2_clientClass::resizeFrameWindow(void)
 {
 	XResizeWindow(this->mainClass->display,this->frameWindow,this->contentWindowRect.w+(this->mainClass->sideBarSize*2),this->contentWindowRect.h+(this->mainClass->titleBarSize+this->mainClass->bottomBarSize));
+}
+
+void LFSWM2_clientClass::LFSWM2_unSpecial(void)
+{
+	if(this->isMaximized==true)
+		{
+			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ"));
+			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_VERT"));
+			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN"));
+			this->isMaximized=false;
+		}
+	this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(this->contentWindow);
 }
 
 bool LFSWM2_clientClass::LFSWM2_handleControls(XEvent *e)
@@ -349,11 +345,11 @@ bool LFSWM2_clientClass::LFSWM2_handleControls(XEvent *e)
 							{
 								this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ"));
 								this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_VERT"));
-							}	
-						this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(this->contentWindow);				
+							}
+						this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(this->contentWindow);
 						retval=true;
 					}
-					
+
 				if(e->xbutton.window==this->minimizeButton)
 					{
 						this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN"));
@@ -366,12 +362,14 @@ bool LFSWM2_clientClass::LFSWM2_handleControls(XEvent *e)
 					{
 						if(this->isShaded==false)
 							{
-								this->clientPreShade=this->contentWindowRect.h;
-								this->resizeContentWindow({this->frameWindowRect.x,this->frameWindowRect.y,this->contentWindowRect.w,1},false);
+								this->clientPreShade=this->frameWindowRect.h;
+								XResizeWindow(this->mainClass->display,this->frameWindow,this->frameWindowRect.w,this->mainClass->titleBarSize+this->mainClass->bottomBarSize);
+								XMoveWindow(this->mainClass->display,this->contentWindow,this->frameWindowRect.w+1,this->frameWindowRect.y);
 							}
 						else
 							{
-								this->resizeContentWindow({this->frameWindowRect.x,this->frameWindowRect.y,this->contentWindowRect.w,this->clientPreShade},false);
+								XResizeWindow(this->mainClass->display,this->frameWindow,this->frameWindowRect.w,this->clientPreShade);
+								XMoveWindow(this->mainClass->display,this->contentWindow,this->mainClass->sideBarSize,this->mainClass->titleBarSize);
 							}
 						this->isShaded=!this->isShaded;
 						retval=true;
@@ -401,26 +399,18 @@ void LFSWM2_clientClass::LFSWM2_fullscreenWindow(bool isfull,bool force)
 					if(this->mainClass->lfstkLib->LFSTK_pointInRect(&fp,&mg))
 						{
 							this->setWindowRects();
-							this->clientPreFSRect={
-							this->frameWindowRect.x,
-							this->frameWindowRect.y,
-							this->frameWindowRect.w-(this->mainClass->sideBarSize*3),
-							this->frameWindowRect.h-this->mainClass->bottomBarSize-this->mainClass->titleBarSize
-							};
-
-							r.x=0-BORDER_WIDTH-this->mainClass->sideBarSize;
-							r.y=0-this->mainClass->titleBarSize;
-							r.w=this->mainClass->monitors.at(j).w-BORDER_WIDTH-this->mainClass->sideBarSize;
-							r.h=this->mainClass->monitors.at(j).h;
-							this->resizeContentWindow(r);
+							this->clientPreFSRect=this->frameWindowRect;
+							XMoveResizeWindow(this->mainClass->display,this->frameWindow,mg.x,mg.y,mg.w,mg.h);
+							XMoveResizeWindow(this->mainClass->display,this->contentWindow,mg.x,mg.y,mg.w,mg.h);
 						}
 				}
 		}
 	else
 		{
-			this->resizeContentWindow(this->clientPreFSRect);
-			this->isFullscreen=false;
+			XMoveResizeWindow(this->mainClass->display,this->frameWindow,this->clientPreFSRect.x,this->clientPreFSRect.y,this->clientPreFSRect.w,this->clientPreFSRect.h);
+			XMoveResizeWindow(this->mainClass->display,this->contentWindow,this->mainClass->sideBarSize,this->mainClass->titleBarSize,this->clientPreFSRect.w-(this->mainClass->sideBarSize*3),this->clientPreFSRect.h-this->mainClass->bottomBarSize-this->mainClass->titleBarSize);
 		}
+
 	this->isFullscreen=isfull;
 	this->setWindowRects();
 }
@@ -532,10 +522,6 @@ bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 			XEvent ee;
 			XNextEvent(this->mainClass->display,&ee);
 
-//fprintf(stderr,"------------------------");
-//this->mainClass->DEBUG_printEventData(&ee,false);
-//fprintf(stderr,"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-
 			switch (ee.type)
 				{
 					case Expose:
@@ -558,7 +544,7 @@ bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 						break;
 				}
 		}
-		
+
 	return(true);
 }
 
@@ -567,8 +553,7 @@ rectStruct LFSWM2_clientClass::setTitlePosition(void)
 	rectStruct	r=this->frameWindowRect;
 	XGlyphInfo	extents;
 	int			namewidth;
-	int			controlcnt=4;//TODO//reset to number of controls
-	int			offset=CONTROL_GAP*controlcnt;
+	int			offset=(this->controlCnt+1)*(deleteWindowSize)+(CONTROL_GAP);
 
 	if(this->nameIsUTF==true)
 		XftTextExtentsUtf8(this->mainClass->display,this->mainClass->frameFont,(XftChar8*)this->name.c_str(),this->name.length(),&extents);	
@@ -596,8 +581,6 @@ void LFSWM2_clientClass::LFSWM2_refreshFrame(XExposeEvent *e)//TODO//prevent fli
 {
 	rectStruct	r;
 
-//if(this->nodecs==true)
-//	return;
 	if((e!=NULL) && (e->count!=0))
 		return;
 
@@ -628,7 +611,7 @@ void LFSWM2_clientClass::LFSWM2_refreshFrame(XExposeEvent *e)//TODO//prevent fli
 
 bool LFSWM2_clientClass::LFSWM2_handleEvents(XEvent *e)
 {
-this->mainClass->DEBUG_printEventData(e,false);
+//this->mainClass->DEBUG_printEventData(e,false);
 
 	switch(e->type)
 		{
@@ -642,7 +625,7 @@ this->mainClass->DEBUG_printEventData(e,false);
 					if((this->frameWindow==e->xmotion.window) && (e->xmotion.state==Button1Mask))
 						domove=true;
 					if((this->contentWindow==e->xmotion.window) && (e->xmotion.state==Button1Mask+Mod4Mask))
-						domove=true;
+						domove=!this->isFullscreen;
 
 					if(domove==true)
 						{
@@ -663,9 +646,6 @@ this->mainClass->DEBUG_printEventData(e,false);
 
 			case UnmapNotify:
 				{
-					//fprintf(stderr,">>>>>>>>>>>>>>>UnmapNotify IN eventnumber win=%p event=%p\n",e->xmap.window,e->xmap.event);
-					//long data[2]= { WithdrawnState,None };
-					//XChangeProperty(this->mainClass->display,this->frameWindow,this->mainClass->atoms.at("WM_STATE"),this->mainClass->atoms.at("WM_STATE"),32,PropModeReplace,(unsigned char *)data,2);
 					this->mainClass->mainWindowClass->LFSWM2_setClientList(this->contentWindow,false);
 					this->visible=false;
 					XUnmapWindow(this->mainClass->display,this->frameWindow);
@@ -674,10 +654,6 @@ this->mainClass->DEBUG_printEventData(e,false);
 				break;
 			case DestroyNotify:
 				{
-					//fprintf(stderr,">>>>>>>>>>>>>>>DestroyNotify IN eventnumber win=%p event=%p\n",e->xdestroywindow.window,e->xdestroywindow.event);
-					//long data[2]= { WithdrawnState,None };
-				//	XChangeProperty(this->mainClass->display,this->frameWindow,this->mainClass->atoms.at("WM_STATE"),this->mainClass->atoms.at("WM_STATE"),32,PropModeReplace,(unsigned char *)data,2);
-
 					bool					loop=false;
 					LFSWM2_clientClass	*cc;
 					do
@@ -703,67 +679,61 @@ contloop:
 				}
 				break;
 			case MapNotify:
-				fprintf(stderr,"from client event MapNotify window=%p \n",e->xmap.window);
-				{
-					this->onDesk=this->mainClass->currentDesktop;//TODO//transient for
-					//long data[2]= { NormalState,None };
-				//	XChangeProperty(this->mainClass->display,this->frameWindow,this->mainClass->atoms.at("WM_STATE"),this->mainClass->atoms.at("WM_STATE"),32,PropModeReplace,(unsigned char *)data,2);
-					this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(e->xmaprequest.window);
-					XMapWindow(this->mainClass->display,e->xmaprequest.window);
-					XRaiseWindow(this->mainClass->display,e->xmaprequest.window);
-					return(true);
-				}
+			//	std::cerr<<"MapNotify"<<std::endl;
 				break;
 
 			case ConfigureNotify:
+#if 0
+					fprintf(stderr,"ConfigureNotify\n");
+					fprintf(stderr,"type=%i 23=ConfigureRequest\n",e->xconfigure.type);
+					fprintf(stderr,"send_event=%s \n",this->mainClass->DEBUG_printBool(e->xconfigure.send_event));
+					fprintf(stderr,"display=%p \n",e->xconfigure.display);
+					fprintf(stderr,"window=%p \n",(void*)e->xconfigure.window);
+					fprintf(stderr,"x=%i \n",e->xconfigure.x);
+					fprintf(stderr,"y=%i \n",e->xconfigure.y);
+					fprintf(stderr,"width=%i \n",e->xconfigure.width);
+					fprintf(stderr,"height=%i \n",e->xconfigure.height);
+					fprintf(stderr,"border_width=%i \n",e->xconfigure.border_width);
+					fprintf(stderr,"above=%p \n",(void*)e->xconfigure.above);
+#endif
 				break;
 
 			case ConfigureRequest://TODO//NEXT
 				{
-				fprintf(stderr,"from client event ConfigureRequest window=%p \n",e->xconfigurerequest.window);
-				this->mainClass->DEBUG_printBinary(e->xconfigurerequest.value_mask);
-				cerr<<e->xconfigurerequest.value_mask<<" "<<e->xconfigurerequest.send_event<<endl;
-				//return(false);
+					XRaiseWindow(this->mainClass->display,this->frameWindow);
+					this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,&this->contentWindow,1);
+					XSetInputFocus(this->mainClass->display,this->contentWindow,RevertToNone,CurrentTime);
+
 					int			woff=4;
 					int			hoff=28;
 					rectStruct	r;
-#if 1
-//					fprintf(stderr,"ConfigureRequest\n");
-//					fprintf(stderr,"type=%i 23=ConfigureRequest\n",e->xconfigurerequest.type);
+#if 0
+					fprintf(stderr,"ConfigureRequest\n");
+					fprintf(stderr,"type=%i 23=ConfigureRequest\n",e->xconfigurerequest.type);
 					fprintf(stderr,"send_event=%s \n",this->mainClass->DEBUG_printBool(e->xconfigurerequest.send_event));
-//					fprintf(stderr,"display=%p \n",e->xconfigurerequest.display);
-//					fprintf(stderr,"parent=%p \n",(void*)e->xconfigurerequest.parent);
+					fprintf(stderr,"display=%p \n",e->xconfigurerequest.display);
+					fprintf(stderr,"parent=%p \n",(void*)e->xconfigurerequest.parent);
 					fprintf(stderr,"window=%p \n",(void*)e->xconfigurerequest.window);
 					fprintf(stderr,"x=%i \n",e->xconfigurerequest.x);
 					fprintf(stderr,"y=%i \n",e->xconfigurerequest.y);
 					fprintf(stderr,"width=%i \n",e->xconfigurerequest.width);
 					fprintf(stderr,"height=%i \n",e->xconfigurerequest.height);
-//					fprintf(stderr,"border_width=%i \n",e->xconfigurerequest.border_width);
-//					fprintf(stderr,"above=%p \n",(void*)e->xconfigurerequest.above);
-//					fprintf(stderr,"detail=%x \n",e->xconfigurerequest.detail);
+					fprintf(stderr,"border_width=%i \n",e->xconfigurerequest.border_width);
+					fprintf(stderr,"above=%p \n",(void*)e->xconfigurerequest.above);
+					fprintf(stderr,"detail=%x \n",e->xconfigurerequest.detail);
 					fprintf(stderr,"value_mask=%p \n",(void*)e->xconfigurerequest.value_mask);
 #endif
-					//fprintf(stderr,"from client event ConfigureRequest window=%p \n",e->xconfigurerequest.window);
 					//if(this->transientFor!=0)//TODO//
 					//	break;
-					//fprintf(stderr,"ConfigureRequest transientFor %p\n",this->transientFor);
-				//	XWindowChanges	changes;
-
-					//this->mainClass->LFSWM2_pushXErrorHandler();
 
 					if(e->xconfigurerequest.value_mask==0xc && e->xconfigurerequest.send_event==0x0)
-					{
-					cerr<<"not send =xc"<<endl;
-						return(false);
+						{
+							return(false);
 						}
 					if(e->xconfigurerequest.value_mask==0xf && e->xconfigurerequest.send_event==0x0)
-					{
-						cerr<<"not send =xf"<<endl;
-					return(false);
+						{
+							return(false);
 						}
-//f//printf(stderr,"value_mask=%p ",e->xconfigurerequest.value_mask);
-//fprintf(stderr,"send_event=%p\n",e->xconfigurerequest.send_event);
-//this->mainClass->DEBUG_printBinary(e->xconfigurerequest.value_mask);
 
 					if(((e->xconfigurerequest.value_mask & CWMyframe)==CWMyframe) && (e->xconfigurerequest.window==this->contentWindow))
 						{
@@ -771,8 +741,8 @@ contloop:
 								{
 									switch(e->xconfigurerequest.value_mask)
 										{
-											case 0x105:
 											case 0x104:
+											case 0x105:
 											case 0x108:
 											case 0x109:
 											case 0x10c:
@@ -781,29 +751,20 @@ contloop:
 												r={e->xconfigurerequest.x,e->xconfigurerequest.y,e->xconfigurerequest.width,e->xconfigurerequest.height};
 												XMoveResizeWindow(this->mainClass->display,this->frameWindow,r.x,r.y,r.w,r.h);
 												this->frameWindowRect=r;
-												//return(true);
+												break;
 										}
 								}
 						}
 					else
 						{
-						return(false);
-						break;
-//							if((e->xconfigurerequest.value_mask==0xc) && (e->xconfigurerequest.send_event==0x0))
-//								{
-//									rectStruct	r={e->xconfigurerequest.x,e->xconfigurerequest.y,e->xconfigurerequest.width+woff,e->xconfigurerequest.height+hoff};
-//									XMoveResizeWindow(this->mainClass->display,this->frameWindow,r.x,r.y,r.w,r.h);
-//									this->frameWindowRect=r;
-//								}
 							if((e->xconfigurerequest.value_mask==0xc) && (e->xconfigurerequest.send_event==0x0))
 								{
 									rectStruct	r={e->xconfigurerequest.x,e->xconfigurerequest.y,e->xconfigurerequest.width+woff,e->xconfigurerequest.height+hoff};
 									XMoveResizeWindow(this->mainClass->display,this->frameWindow,r.x,r.y,r.w,r.h);
 									this->frameWindowRect=r;
-									//return(true);
 									break;
 								}
-//
+
 							if((e->xconfigurerequest.value_mask==0xf) && (e->xconfigurerequest.send_event==0x0))
 								{
 									rectStruct	r={e->xconfigurerequest.x,e->xconfigurerequest.y,e->xconfigurerequest.width+woff,e->xconfigurerequest.height+hoff};
@@ -826,11 +787,9 @@ contloop:
 							this->mainClass->mainWindowClass->LFSWM2_changeState(this->contentWindow,NET_WM_STATE_TOGGLE,this->mainClass->atoms.at("_NET_WM_STATE_BELOW"));
 							this->onBottom=!this->onBottom;
 							this->mainClass->restackCnt=1;
-							//this->mainClass->LFSWM2_popXErrorHandler();
 							return(true);
 							break;
 						}
-					//this->mainClass->LFSWM2_popXErrorHandler();
 					return(false);
 				}
 				break;
@@ -854,7 +813,7 @@ void LFSWM2_clientClass::resizeContentWindow(rectStruct r,bool moveorigin)
 		ce.value_mask=CWWidth|CWHeight|CWX|CWY;
 	else
 		ce.value_mask=CWWidth|CWHeight;
-		
+
 	ce.detail=Above;
 	ce.above=None;
 	ce.x=r.x;

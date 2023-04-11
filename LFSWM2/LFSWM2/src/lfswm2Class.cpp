@@ -125,7 +125,7 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 
 	this->LFSWM2_setDeskCount(this->numberOfDesktops);
 	this->LFSWM2_setCurrentDesktop(this->currentDesktop);
-	
+
 	this->topLeftCursor=XCreateFontCursor(this->display,XC_top_left_corner);
 	this->topRightCursor=XCreateFontCursor(this->display,XC_top_right_corner);
 	this->rightCursor=XCreateFontCursor(this->display,XC_right_side);
@@ -640,13 +640,13 @@ void LFSWM2_Class::DEBUG_printHintsDataStruct(Window wid)
 		{
 			if((hs.sh->flags & USPosition)==true)
 				{
-					fprintf(stderr,"hints.x=%i hints.y=%i\n",hs.sh->x,hs.sh->y);	
+					fprintf(stderr,"hints.x=%i hints.y=%i\n",hs.sh->x,hs.sh->y);
 				}
 			if((hs.sh->flags & (USSize|PSize))!=0)
 				{
-					fprintf(stderr,"USSize|PSize hints.width=%i hints.height=%i\n",hs.sh->width,hs.sh->height);	
+					fprintf(stderr,"USSize|PSize hints.width=%i hints.height=%i\n",hs.sh->width,hs.sh->height);
 				}
-			fprintf(stderr,"hints.base_width=%i hints.base_height=%i\n",hs.sh->base_width,hs.sh->base_height);	
+			fprintf(stderr,"hints.base_width=%i hints.base_height=%i\n",hs.sh->base_width,hs.sh->base_height);
 			XFree(hs.sh);
 		}
 

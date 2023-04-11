@@ -101,8 +101,11 @@ class LFSWM2_clientClass
 
 		bool				LFSWM2_handleEvents(XEvent *e);
 
+		void				LFSWM2_unSpecial(void);
+
 		int				dragsize=16;
 		int				smoothness=5;
+		int				controlCnt=0;
 
 bool nodecs=false;
 		void				adjustContentWindow(void);
@@ -113,6 +116,8 @@ bool nodecs=false;
 		int				sx=0;
 		int				sy=0;
 		int				steps;
+bool ivemovedit=false;
+rectStruct		resizerrect;
 
 		void				drawMouseEnter(Window id,Pixmap pm,controlData data);
 		bool				doResizeDraggers(XEvent *e);
