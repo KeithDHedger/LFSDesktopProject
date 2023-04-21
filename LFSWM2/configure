@@ -620,6 +620,8 @@ LTLIBOBJS
 LIBOBJS
 LFSTK_LIBS
 LFSTK_CFLAGS
+XRENDER_LIBS
+XRENDER_CFLAGS
 XFT_LIBS
 XFT_CFLAGS
 XINERAMA_LIBS
@@ -736,6 +738,8 @@ XINERAMA_CFLAGS
 XINERAMA_LIBS
 XFT_CFLAGS
 XFT_LIBS
+XRENDER_CFLAGS
+XRENDER_LIBS
 LFSTK_CFLAGS
 LFSTK_LIBS'
 
@@ -1389,6 +1393,10 @@ Some influential environment variables:
               linker flags for XINERAMA, overriding pkg-config
   XFT_CFLAGS  C compiler flags for XFT, overriding pkg-config
   XFT_LIBS    linker flags for XFT, overriding pkg-config
+  XRENDER_CFLAGS
+              C compiler flags for XRENDER, overriding pkg-config
+  XRENDER_LIBS
+              linker flags for XRENDER, overriding pkg-config
   LFSTK_CFLAGS
               C compiler flags for LFSTK, overriding pkg-config
   LFSTK_LIBS  linker flags for LFSTK, overriding pkg-config
@@ -4034,6 +4042,116 @@ printf "%s\n" "yes" >&6; }
 fi
 
 
+
+XRENDER_MODULES="xrender >= 0.9.10"
+
+pkg_failed=no
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $XRENDER_MODULES" >&5
+printf %s "checking for $XRENDER_MODULES... " >&6; }
+
+if test -n "$XRENDER_CFLAGS"; then
+    pkg_cv_XRENDER_CFLAGS="$XRENDER_CFLAGS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { printf "%s\n" "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"\$XRENDER_MODULES\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "$XRENDER_MODULES") 2>&5
+  ac_status=$?
+  printf "%s\n" "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_XRENDER_CFLAGS=`$PKG_CONFIG --cflags "$XRENDER_MODULES" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+if test -n "$XRENDER_LIBS"; then
+    pkg_cv_XRENDER_LIBS="$XRENDER_LIBS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { printf "%s\n" "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"\$XRENDER_MODULES\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "$XRENDER_MODULES") 2>&5
+  ac_status=$?
+  printf "%s\n" "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_XRENDER_LIBS=`$PKG_CONFIG --libs "$XRENDER_MODULES" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+
+
+
+if test $pkg_failed = yes; then
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+
+if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+        _pkg_short_errors_supported=yes
+else
+        _pkg_short_errors_supported=no
+fi
+        if test $_pkg_short_errors_supported = yes; then
+	        XRENDER_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "$XRENDER_MODULES" 2>&1`
+        else
+	        XRENDER_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "$XRENDER_MODULES" 2>&1`
+        fi
+	# Put the nasty error message in config.log where it belongs
+	echo "$XRENDER_PKG_ERRORS" >&5
+
+	as_fn_error $? "Package requirements ($XRENDER_MODULES) were not met:
+
+$XRENDER_PKG_ERRORS
+
+Consider adjusting the PKG_CONFIG_PATH environment variable if you
+installed software in a non-standard prefix.
+
+Alternatively, you may set the environment variables XRENDER_CFLAGS
+and XRENDER_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details." "$LINENO" 5
+elif test $pkg_failed = untried; then
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+	{ { printf "%s\n" "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+printf "%s\n" "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "The pkg-config script could not be found or is too old.  Make sure it
+is in your PATH or set the PKG_CONFIG environment variable to the full
+path to pkg-config.
+
+Alternatively, you may set the environment variables XRENDER_CFLAGS
+and XRENDER_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details.
+
+To get pkg-config, see <http://pkg-config.freedesktop.org/>.
+See \`config.log' for more details" "$LINENO" 5; }
+else
+	XRENDER_CFLAGS=$pkg_cv_XRENDER_CFLAGS
+	XRENDER_LIBS=$pkg_cv_XRENDER_LIBS
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+
+fi
+
+
+
+#XCOMPOSITE_MODULES="xcomposite >= 0.4.5"
+#PKG_CHECK_MODULES(XCOMPOSITE, $XCOMPOSITE_MODULES)
+#AC_SUBST(XCOMPOSITE_CFLAGS)
+#AC_SUBST(XCOMPOSITE_LIBS)
+
+#XSHMFENCE_MODULES="xshmfence >= 1.3"
+#PKG_CHECK_MODULES(XSHMFENCE, $XSHMFENCE_MODULES)
+#AC_SUBST(XSHMFENCE_CFLAGS)
+#AC_SUBST(XSHMFENCE_LIBS)
+#
+#XEXT_MODULES="xext >= 1.3.4"
+#PKG_CHECK_MODULES(XEXT, $XEXT_MODULES)
+#AC_SUBST(XEXT_CFLAGS)
+#AC_SUBST(XEXT_LIBS)
 
 LFSTK_MODULES="lfstk >= 0.5.1"
 

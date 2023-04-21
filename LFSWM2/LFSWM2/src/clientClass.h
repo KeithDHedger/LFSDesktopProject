@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <cstdlib>
+#include <X11/extensions/Xrender.h>
 
 class LFSWM2_Class;
 #include "lfswm2Class.h"
@@ -68,7 +69,7 @@ class LFSWM2_clientClass
 		bool				nameIsUTF=false;
 		bool				moveToTop=false;
 
-		motifHints		*mwmHints;
+		motifHints		*mwmHints=NULL;
 		XSizeHints		*sizeHints=NULL;
 
 		Window			closeButton=None;
@@ -106,18 +107,28 @@ class LFSWM2_clientClass
 		int				dragsize=16;
 		int				smoothness=5;
 		int				controlCnt=0;
-
+		int				minWidth;
+		int				minHeight;
+		Window			resizeWindow=None;
+		bool				finishedResize=true;
+		bool				buttonDown=false;
 bool nodecs=false;
 		void				adjustContentWindow(void);
 		void				resizeContentWindow(rectStruct r,bool moveorigin=true);
 		void				setWindowRects(bool resize=true);
 	private:
-		bool				buttonDown=false;
 		int				sx=0;
 		int				sy=0;
 		int				steps;
-bool ivemovedit=false;
-rectStruct		resizerrect;
+
+		Pixmap			currentRootPixmap=None;
+		Picture			windowPicture=None;
+		Picture			primaryPicture=None;
+		XRenderPictureAttributes	pa;
+		XRenderPictFormat		*picFormat;
+		int				ow;
+		int				oh;
+		XImage			*resizeImage=NULL;
 
 		void				drawMouseEnter(Window id,Pixmap pm,controlData data);
 		bool				doResizeDraggers(XEvent *e);
@@ -125,6 +136,8 @@ rectStruct		resizerrect;
 
 		void				resizeContentWindow(int w,int h,bool useframerect=false);
 		void				resizeFrameWindow(void);
+
+		void				resetContentWindow(void);
 };
 
 #endif

@@ -73,7 +73,12 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 			if(cccontrol!=NULL)
 				{
 					if(cccontrol->LFSWM2_handleControls(&e)==true)
+					{
+						//if(cccontrol->buttonDown==false)
+						//	XMoveWindow(this->mainClass->display,cccontrol->resizeWindow,-100000,-100000);
+					//		XMoveResizeWindow(this->mainClass->display,cccontrol->resizeWindow,-10,-10,1,1);
 						continue;
+						}
 				}
 			cccontrol=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xany.window);
 			if(cccontrol!=NULL)
@@ -85,7 +90,9 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 							this->mainClass->doingMove=false;
 							cccontrol=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xany.window);//in case window has died
 							if(cccontrol!=NULL)
-								cccontrol->adjustContentWindow();
+								{
+									cccontrol->adjustContentWindow();
+								}
 							cccontrol=NULL;
 							e.type=0;
 							this->mainClass->restackCnt=0;
@@ -99,6 +106,10 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						start.subwindow=None;
 						cc=NULL;
 						this->mainClass->doingMove=false;
+
+
+
+
 						break;
 					case ButtonPress:
 						//fprintf(stderr,"ButtonPress eventnumber %i\n",when++);
@@ -197,6 +208,9 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 											if((e.xconfigurerequest.value_mask & (CWX|CWY)) == (CWX|CWY))
 												cc->setWindowRects(true);
+											//if(cc->buttonDown==false)
+												XMoveWindow(this->mainClass->display,cc->resizeWindow,-100000,-100000);
+
 										}
 									else
 										{
@@ -311,6 +325,9 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						//std::cout<<"DestroyNotify from main event loop"<<std::endl;
 						break;
 					default:
+//						cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xclient.window);
+//						if(cc!=NULL)
+//							XMoveWindow(this->mainClass->display,cc->resizeWindow,-100000,-100000);
 						if(overide==false)
 							this->mainClass->restackCnt=2;
 						break;

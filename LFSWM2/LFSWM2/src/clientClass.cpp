@@ -23,6 +23,8 @@
 LFSWM2_clientClass::LFSWM2_clientClass(LFSWM2_Class *mainclass,Window id)
 {
 	this->mainClass=mainclass;
+	this->picFormat=XRenderFindStandardFormat(this->mainClass->display,PictStandardRGB24);
+	this->pa.subwindow_mode=IncludeInferiors;
 }
 
 LFSWM2_clientClass::~LFSWM2_clientClass(void)
@@ -42,8 +44,12 @@ LFSWM2_clientClass::~LFSWM2_clientClass(void)
 
 		if(this->sizeHints!=NULL)
 			XFree(this->sizeHints);
-		if(this->sizeHints!=NULL)
+		if(this->mwmHints!=NULL)
 			XFree(this->mwmHints);
+
+		if(resizeWindow!=None)
+			XDestroyWindow(this->mainClass->display,this->resizeWindow);
+
 	this->mainClass->LFSWM2_popXErrorHandler();
 }
 
@@ -135,10 +141,18 @@ void LFSWM2_clientClass::adjustContentWindow(void)
 	this->setWindowRects(true);
 }
 
+void LFSWM2_clientClass::resetContentWindow(void)
+{
+	XMoveResizeWindow(this->mainClass->display,this->contentWindow,this->mainClass->sideBarSize,this->mainClass->titleBarSize,this->frameWindowRect.w-(this->mainClass->sideBarSize*2),this->frameWindowRect.h-(this->mainClass->titleBarSize+this->mainClass->bottomBarSize));
+}
+
 bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 {
 	rectStruct				r;
-	XConfigureRequestEvent	ce;
+	XSizeHints				xh;
+	long						dummy;
+	int						contenthadjust=this->mainClass->titleBarSize+this->mainClass->bottomBarSize;
+	int						contentwadjust=this->mainClass->sideBarSize*2;;
 
 	switch(e->type)
 		{
@@ -150,18 +164,64 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 					this->sy=e->xmotion.y;
 					steps=0;
 					this->setWindowRects(false);
+
+					switch(this->mainClass->resizeMode)
+						{
+							case FASTRESIZE:
+								XMoveWindow(this->mainClass->display,this->contentWindow,this->frameWindowRect.w+10,0);
+								break;
+							case LIVERESIZE:
+								break;
+							case SIZERESIZE:
+								break;
+							case SCALERESIZE:
+								{
+									this->currentRootPixmap=XCreatePixmap(this->mainClass->display,this->contentWindow,this->contentWindowRect.w,this->contentWindowRect.h,this->mainClass->depth);
+									XSetClipMask(this->mainClass->display,this->mainClass->mainGC,None);
+									XSetClipOrigin(this->mainClass->display, this->mainClass->mainGC,0,0);
+									this->resizeImage=XGetImage(this->mainClass->display,this->contentWindow,0,0,this->contentWindowRect.w,this->contentWindowRect.h, AllPlanes, ZPixmap);
+
+									XSetClipMask(this->mainClass->display,this->mainClass->mainGC,None);
+									XSetClipOrigin(this->mainClass->display,this->mainClass->mainGC,0,0);
+									XPutImage(this->mainClass->display,this->currentRootPixmap, this->mainClass->mainGC,this->resizeImage,0,0,0,0,this->contentWindowRect.w,this->contentWindowRect.h);
+
+									this->ow=this->contentWindowRect.w;
+									this->oh=this->contentWindowRect.h;								
+									this->resizeWindow=XCreateSimpleWindow(this->mainClass->display,this->frameWindow,2,20,this->contentWindowRect.w,this->contentWindowRect.h,BORDER_WIDTH,this->mainClass->frameFG->pixel,this->mainClass->frameBG->pixel);
+									XMoveWindow(this->mainClass->display,this->contentWindow,this->mainClass->displayWidth+10,0);
+									XMapWindow(this->mainClass->display,this->resizeWindow);
+									XRaiseWindow(this->mainClass->display,this->resizeWindow);
+									primaryPicture=XRenderCreatePicture(this->mainClass->display,this->currentRootPixmap,picFormat,CPSubwindowMode,&pa);
+									windowPicture=XRenderCreatePicture(this->mainClass->display,this->resizeWindow,picFormat,CPSubwindowMode,&pa);
+
+									XRenderComposite(this->mainClass->display,PictOpSrc,primaryPicture,0,windowPicture,0,0,0,0,0,0,this->ow,this->oh);
+								}
+								break;
+						}
 				}
 				break;
 
 			case ButtonRelease:
+
 				this->buttonDown=false;
 				this->sx=0;
 				this->sy=0;
-				this->setWindowRects(true);
-				this->resizeContentWindow(0,0,true);
 				this->mainClass->doingMove=false;
 				this->isShaded=false;
-				this->adjustContentWindow();
+
+				this->setWindowRects(true);
+				this->resetContentWindow();
+
+				if(currentRootPixmap!=None)
+					XFreePixmap(this->mainClass->display,this->currentRootPixmap);
+				if(primaryPicture!=None)
+					XRenderFreePicture(this->mainClass->display,this->primaryPicture);
+				if(windowPicture!=None)
+					XRenderFreePicture(this->mainClass->display,this->windowPicture);
+				if(resizeImage!=NULL)
+					XDestroyImage(this->resizeImage);
+
+				XMoveResizeWindow(this->mainClass->display,this->resizeWindow,this->mainClass->displayWidth+10,0,1,1);
 				break;
 
 			case MotionNotify:
@@ -175,7 +235,6 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 								r.y=this->frameWindowRect.y;
 								r.w=this->frameWindowRect.w;
 								r.h=this->frameWindowRect.h;
-								ce.value_mask=0;
 
 								if(e->xany.window==this->topLeftDragger)
 									{
@@ -183,62 +242,75 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 										r.y=e->xmotion.y_root-this->sy;
 										r.w=this->frameWindowRect.w-(e->xmotion.x-this->sx);
 										r.h=this->frameWindowRect.h-(e->xmotion.y-this->sy);
-										ce.value_mask=CWHeight|CWWidth|CWY|CWX|CWMyframe;
 									}
 								if(e->xany.window==this->topRightDragger)
 									{
 										r.y=e->xmotion.y_root-this->sy;
 										r.w=this->frameWindowRect.w+(e->xmotion.x-this->sx);
 										r.h=this->frameWindowRect.h-(e->xmotion.y-this->sy);
-										ce.value_mask=CWHeight|CWWidth|CWY|CWMyframe;
 									}
 								if(e->xany.window==this->bottomLeftDragger)
 									{
 										r.x=e->xmotion.x_root-this->sx;
 										r.w=this->frameWindowRect.w-(e->xmotion.x-this->sx);
 										r.h=this->frameWindowRect.h+(e->xmotion.y-this->sy);
-										ce.value_mask=CWHeight|CWX|CWMyframe;
 									}
 								if(e->xany.window==this->bottomRightDragger)
 									{
 										r.w=this->frameWindowRect.w+(e->xmotion.x-this->sx);
 										r.h=this->frameWindowRect.h+(e->xmotion.y-this->sy);
-										ce.value_mask=CWHeight|CWWidth|CWMyframe;
 									}
 
 								if(e->xany.window==this->bottomDragger)
 									{
 										r.h=this->frameWindowRect.h+(e->xmotion.y-this->sy);
-										ce.value_mask=CWHeight|CWMyframe;
 									}
 
 								if(e->xany.window==this->leftSideDragger)
 									{
 										r.x=e->xmotion.x_root-this->sx;
 										r.w=this->frameWindowRect.w-(e->xmotion.x-this->sx);
-										ce.value_mask=CWWidth|CWX|CWMyframe;
 									}
 								if(e->xany.window==this->rightSideDragger)
 									{
 										r.w=this->frameWindowRect.w+(e->xmotion.x-this->sx);
-										ce.value_mask=CWWidth|CWMyframe;
 									}
 
-								ce.display=this->mainClass->display;
-								ce.parent=this->frameWindow;
-								ce.window=this->contentWindow;
-								ce.type=ConfigureRequest;
-								ce.serial=0;
-								ce.send_event=false;
-								ce.border_width=BORDER_WIDTH;//TODO//
-								ce.detail=Above;
-								ce.above=None;
-								ce.x=r.x;
-								ce.y=r.y;
-								ce.width=r.w;
-								ce.height=r.h;
+								XGetWMNormalHints(this->mainClass->display,this->contentWindow,&xh,&dummy);
+								if(r.w-contentwadjust<xh.min_width)
+									break;
+								if(r.h-contenthadjust<xh.min_height)
+									break;
 
-								XSendEvent(this->mainClass->display,this->contentWindow,true,StructureNotifyMask,(XEvent*)&ce);
+								this->frameWindowRect=r;
+
+								XMoveResizeWindow(this->mainClass->display,this->frameWindow,r.x,r.y,r.w,r.h);
+								if(this->mainClass->resizeMode==SCALERESIZE)
+									{
+										XResizeWindow(this->mainClass->display,this->resizeWindow,r.w-contentwadjust,r.h-contenthadjust);
+										double x_scale=(double)ow /((double)this->frameWindowRect.w-(double)(2*this->mainClass->sideBarSize));
+										double y_scale=(double)oh /((double)this->frameWindowRect.h-(double)(this->mainClass->titleBarSize+this->mainClass->bottomBarSize));
+										XTransform transform_matrix1=
+											{{
+												{XDoubleToFixed(x_scale),XDoubleToFixed(0),XDoubleToFixed(0)},
+												{XDoubleToFixed(0),XDoubleToFixed(y_scale),XDoubleToFixed(0)},
+												{XDoubleToFixed(0),XDoubleToFixed(0),XDoubleToFixed(1.0)}  
+											}};
+										XResizeWindow(this->mainClass->display,this->contentWindow,r.w-contentwadjust,r.h-contenthadjust);
+										XRenderSetPictureTransform(this->mainClass->display,primaryPicture,&transform_matrix1);
+										XRenderComposite(this->mainClass->display,PictOpSrc,primaryPicture,0,windowPicture,0,0,0,0,0,0,r.w-contentwadjust,r.h-contenthadjust);
+
+										this->steps=0;
+										break;
+									}
+
+								if(this->mainClass->resizeMode==LIVERESIZE)
+									XResizeWindow(this->mainClass->display,this->contentWindow,r.w-contentwadjust,r.h-contenthadjust);
+								else
+									{
+										XMoveWindow(this->mainClass->display,this->contentWindow,this->frameWindowRect.w+10,0);
+										XSync(this->mainClass->display,false);
+									}
 								this->steps=0;
 								break;
 							}
@@ -285,7 +357,7 @@ bool LFSWM2_clientClass::LFSWM2_handleControls(XEvent *e)
 	Pixmap				pm=0;
 	struct controlData	data;
 
-	if((e->xany.window==this->topLeftDragger) || (e->xany.window==this->bottomRightDragger) || (e->xany.window==this->topRightDragger) || (e->xany.window==this->bottomLeftDragger)|| (e->xany.window==this->bottomDragger)|| (e->xany.window==this->leftSideDragger)|| (e->xany.window==this->rightSideDragger))
+	if((this->isShaded==false) && ((e->xany.window==this->topLeftDragger) || (e->xany.window==this->bottomRightDragger) || (e->xany.window==this->topRightDragger) || (e->xany.window==this->bottomLeftDragger)|| (e->xany.window==this->bottomDragger)|| (e->xany.window==this->leftSideDragger)|| (e->xany.window==this->rightSideDragger)))
 		{
 			retval=this->doResizeDraggers(e);
 			return(true);
@@ -362,6 +434,7 @@ bool LFSWM2_clientClass::LFSWM2_handleControls(XEvent *e)
 					{
 						if(this->isShaded==false)
 							{
+								this->setWindowRects(true);
 								this->clientPreShade=this->frameWindowRect.h;
 								XResizeWindow(this->mainClass->display,this->frameWindow,this->frameWindowRect.w,this->mainClass->titleBarSize+this->mainClass->bottomBarSize);
 								XMoveWindow(this->mainClass->display,this->contentWindow,this->frameWindowRect.w+1,this->frameWindowRect.y);
@@ -392,6 +465,7 @@ void LFSWM2_clientClass::LFSWM2_fullscreenWindow(bool isfull,bool force)
 
 	if(isfull==true)
 		{
+			this->setWindowRects();
 			pointStruct	fp={this->frameWindowRect.x,this->frameWindowRect.y};
 			for(int j=0;j<this->mainClass->numberOfMonitors;j++)
 				{
@@ -401,14 +475,14 @@ void LFSWM2_clientClass::LFSWM2_fullscreenWindow(bool isfull,bool force)
 							this->setWindowRects();
 							this->clientPreFSRect=this->frameWindowRect;
 							XMoveResizeWindow(this->mainClass->display,this->frameWindow,mg.x,mg.y,mg.w,mg.h);
-							XMoveResizeWindow(this->mainClass->display,this->contentWindow,mg.x,mg.y,mg.w,mg.h);
+							XMoveResizeWindow(this->mainClass->display,this->contentWindow,0,0,mg.w,mg.h);
 						}
 				}
 		}
 	else
 		{
 			XMoveResizeWindow(this->mainClass->display,this->frameWindow,this->clientPreFSRect.x,this->clientPreFSRect.y,this->clientPreFSRect.w,this->clientPreFSRect.h);
-			XMoveResizeWindow(this->mainClass->display,this->contentWindow,this->mainClass->sideBarSize,this->mainClass->titleBarSize,this->clientPreFSRect.w-(this->mainClass->sideBarSize*3),this->clientPreFSRect.h-this->mainClass->bottomBarSize-this->mainClass->titleBarSize);
+			XMoveResizeWindow(this->mainClass->display,this->contentWindow,this->mainClass->sideBarSize,this->mainClass->titleBarSize,this->clientPreFSRect.w-(this->mainClass->sideBarSize*2),this->clientPreFSRect.h-this->mainClass->bottomBarSize-this->mainClass->titleBarSize);
 		}
 
 	this->isFullscreen=isfull;
@@ -425,7 +499,7 @@ void LFSWM2_clientClass::LFSWM2_maxWindow(bool ismaxed,bool force)
 			this->framePreMaxRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->frameWindow,this->mainClass->rootWindow,false);
 			this->clientPreMaxRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->contentWindow,this->mainClass->rootWindow,false);
 			rectStruct rr={this->mainClass->monitors.at(0).x,this->mainClass->monitors.at(0).y,(int)this->mainClass->monitors.at(0).w,(int)this->mainClass->monitors.at(0).h};
-			rr.w=this->mainClass->monitors.at(0).w-((this->mainClass->sideBarSize+BORDER_WIDTH)*3);//TODO//
+			rr.w=this->mainClass->monitors.at(0).w-((this->mainClass->sideBarSize+BORDER_WIDTH)*2);//TODO//
 			rr.h=this->mainClass->monitors.at(0).h-(this->mainClass->titleBarSize+this->mainClass->bottomBarSize+(BORDER_WIDTH*2));
 			rr.x=this->mainClass->sideBarSize;
 			rr.y=this->mainClass->titleBarSize;
@@ -538,6 +612,9 @@ bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 						break;
 					case ButtonRelease:
 						{
+							if(this->isShaded==true)
+								return(true);
+
 							this->adjustContentWindow();
 							return(true);
 						}
@@ -553,7 +630,7 @@ rectStruct LFSWM2_clientClass::setTitlePosition(void)
 	rectStruct	r=this->frameWindowRect;
 	XGlyphInfo	extents;
 	int			namewidth;
-	int			offset=(this->controlCnt+1)*(deleteWindowSize)+(CONTROL_GAP);
+	int			offset=this->controlCnt*CONTROL_GAP;
 
 	if(this->nameIsUTF==true)
 		XftTextExtentsUtf8(this->mainClass->display,this->mainClass->frameFont,(XftChar8*)this->name.c_str(),this->name.length(),&extents);	
@@ -587,8 +664,13 @@ void LFSWM2_clientClass::LFSWM2_refreshFrame(XExposeEvent *e)//TODO//prevent fli
 	r=this->frameWindowRect;
 
 	XSetClipMask(this->mainClass->display,this->mainClass->mainGC,None);
+	XSetClipOrigin(this->mainClass->display, this->mainClass->mainGC,0,0);
 	XSetForeground(this->mainClass->display,this->mainClass->mainGC,this->mainClass->frameBG->pixel);
-	XFillRectangle(this->mainClass->display,this->frameWindow,this->mainClass->mainGC,0,0,r.w,r.h);
+
+	//if(this->mainClass->resizeMode==SCALERESIZE)
+			XFillRectangle(this->mainClass->display,this->frameWindow,this->mainClass->mainGC,0,0,r.w,this->mainClass->titleBarSize);
+	//else
+	//	XFillRectangle(this->mainClass->display,this->frameWindow,this->mainClass->mainGC,0,0,r.w,r.h);
 
 	XSetForeground(this->mainClass->display,this->mainClass->mainGC,this->mainClass->frameText->pixel);
 	XftDrawChange(this->mainClass->frameText->draw,this->frameWindow);
@@ -617,7 +699,9 @@ bool LFSWM2_clientClass::LFSWM2_handleEvents(XEvent *e)
 		{
 			case ButtonRelease:
 				this->adjustContentWindow();
+				//XMoveResizeWindow(this->mainClass->display,this->resizeWindow,-10,-10,1,1);
 				break;
+
 			case MotionNotify:
 				{
 					bool domove=false;
@@ -635,6 +719,7 @@ bool LFSWM2_clientClass::LFSWM2_handleEvents(XEvent *e)
 						}
 					break;
 				}
+
 			case Expose:
 				{
 					if(e->xexpose.count>0)
@@ -652,6 +737,7 @@ bool LFSWM2_clientClass::LFSWM2_handleEvents(XEvent *e)
 					return(true);
 				}
 				break;
+
 			case DestroyNotify:
 				{
 					bool					loop=false;
@@ -683,22 +769,122 @@ contloop:
 				break;
 
 			case ConfigureNotify:
-#if 0
-					fprintf(stderr,"ConfigureNotify\n");
-					fprintf(stderr,"type=%i 23=ConfigureRequest\n",e->xconfigure.type);
-					fprintf(stderr,"send_event=%s \n",this->mainClass->DEBUG_printBool(e->xconfigure.send_event));
-					fprintf(stderr,"display=%p \n",e->xconfigure.display);
-					fprintf(stderr,"window=%p \n",(void*)e->xconfigure.window);
-					fprintf(stderr,"x=%i \n",e->xconfigure.x);
-					fprintf(stderr,"y=%i \n",e->xconfigure.y);
-					fprintf(stderr,"width=%i \n",e->xconfigure.width);
-					fprintf(stderr,"height=%i \n",e->xconfigure.height);
-					fprintf(stderr,"border_width=%i \n",e->xconfigure.border_width);
-					fprintf(stderr,"above=%p \n",(void*)e->xconfigure.above);
-#endif
 				break;
 
-			case ConfigureRequest://TODO//NEXT
+			case ConfigureRequest:
+				{
+#if 0
+					unsigned long	mask=e->xconfigurerequest.value_mask;
+
+					if(((mask & CWMyframe)==CWMyframe) && (e->xconfigurerequest.parent==this->frameWindow))
+						{
+						std::cerr<<"here"<<std::endl;
+							mask &= ~(CWMyframe);
+							XWindowAttributes 	xa;
+							int					what=0;
+							rectStruct			r=this->frameWindowRect;
+							XSizeHints			xh;
+							long					dummy;
+							int					contenthadjust=this->mainClass->titleBarSize+this->mainClass->bottomBarSize;
+							int					contentwadjust=this->mainClass->sideBarSize*2;;
+
+							XGetWMNormalHints(this->mainClass->display,this->contentWindow,&xh,&dummy);
+							if(e->xconfigurerequest.width-contentwadjust<xh.min_width)
+								break;
+							if(e->xconfigurerequest.height-contenthadjust<xh.min_height)
+								break;
+
+							XGetWindowAttributes(this->mainClass->display,this->frameWindow,(XWindowAttributes*)&xa);
+							if(e->xconfigurerequest.x==xa.x)
+								mask &= ~(CWX);
+							if(e->xconfigurerequest.y==xa.y)
+								mask &= ~(CWY);
+							if(e->xconfigurerequest.width==xa.width)
+								mask &= ~(CWWidth);
+							if(e->xconfigurerequest.height==xa.height)
+								mask &= ~(CWHeight);
+
+							if((mask&CWX)==CWX)
+								{
+									what=1;
+									r.x=e->xconfigurerequest.x;
+								}
+							if((mask&CWY)==CWY)
+								{
+									what=1;
+									r.y=e->xconfigurerequest.y;
+								}
+							if((mask&CWWidth)==CWWidth)
+								{
+									what|=2;
+									r.w=e->xconfigurerequest.width;
+								}
+							if((mask&CWHeight)==CWHeight)
+								{
+									what|=2;
+									r.h=e->xconfigurerequest.height;
+								}
+
+std::cerr<<this->mainClass->resizeMode<<" "<<what<<std::endl;
+							switch(what)
+								{
+									case 1:
+										XMoveWindow(this->mainClass->display,this->frameWindow,r.x,r.y);
+										break;
+									case 2:
+										{
+											XResizeWindow(this->mainClass->display,this->frameWindow,r.w,r.h);
+											//XSync(this->mainClass->display,false);
+											//this->setWindowRects(true);
+											//XMoveWindow(this->mainClass->display,this->contentWindow,3,20);
+//											if(this->mainClass->resizeMode==FASTRESIZE)
+//												{
+//													XSync(this->mainClass->display,true);
+//													return(true);
+//												}
+											//if(this->mainClass->resizeMode!=FASTRESIZE)
+												{
+													XResizeWindow(this->mainClass->display,this->contentWindow,this->frameWindowRect.w-contentwadjust,this->frameWindowRect.h-contenthadjust);
+											//XSync(this->mainClass->display,false);
+												}
+											this->setWindowRects(true);
+										}
+										break;
+									case 3:
+										{
+											XMoveResizeWindow(this->mainClass->display,this->frameWindow,r.x,r.y,r.w,r.h);
+											//XSync(this->mainClass->display,false);
+											//this->setWindowRects(true);
+											//XMoveWindow(this->mainClass->display,this->contentWindow,3,20);
+											//if(this->mainClass->resizeMode==FASTRESIZE)
+											//	{
+												//	XUnmapWindow(this->mainClass->display,this->contentWindow);
+											//		XSync(this->mainClass->display,true);
+											//		return(true);
+											//	}
+										//	if(this->mainClass->resizeMode!=FASTRESIZE)
+												{
+													XResizeWindow(this->mainClass->display,this->contentWindow,this->frameWindowRect.w-contentwadjust,this->frameWindowRect.h-contenthadjust);
+												}
+											//XSync(this->mainClass->display,false);
+											this->setWindowRects(true);
+										}
+										break;
+								}
+							return(true);
+						}
+					else
+						{
+							XSync(this->mainClass->display,true);
+						}
+#endif
+					XRaiseWindow(this->mainClass->display,this->frameWindow);
+					this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,&this->contentWindow,1);
+					XSetInputFocus(this->mainClass->display,this->contentWindow,RevertToNone,CurrentTime);
+				}
+				break;
+
+			case ConfigureRequest+100://TODO//NEXT
 				{
 					XRaiseWindow(this->mainClass->display,this->frameWindow);
 					this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,&this->contentWindow,1);
@@ -726,6 +912,21 @@ contloop:
 					//if(this->transientFor!=0)//TODO//
 					//	break;
 
+//    XWindowChanges xwc;
+//        xwc.x = e->xconfigurerequest.x;
+//        xwc.y = e->xconfigurerequest.y;
+//        xwc.width = e->xconfigurerequest.width;
+//        xwc.height = e->xconfigurerequest.height;
+//        xwc.border_width = e->xconfigurerequest.border_width;
+//
+//XConfigureWindow(this->mainClass->display,this->frameWindow, (unsigned) e->xconfigurerequest.value_mask, &xwc);
+// xwc.x =3;
+//  xwc.y=20;
+////XConfigureWindow(this->mainClass->display,this->contentWindow, (unsigned) e->xconfigurerequest.value_mask, &xwc);
+//XMoveWindow(this->mainClass->display,this->contentWindow,3,20);
+//return(true);
+//
+
 					if(e->xconfigurerequest.value_mask==0xc && e->xconfigurerequest.send_event==0x0)
 						{
 							return(false);
@@ -735,8 +936,114 @@ contloop:
 							return(false);
 						}
 
+
 					if(((e->xconfigurerequest.value_mask & CWMyframe)==CWMyframe) && (e->xconfigurerequest.window==this->contentWindow))
 						{
+									XWindowAttributes 	xa;
+
+									XGetWindowAttributes(this->mainClass->display,this->frameWindow,(XWindowAttributes*)&xa);
+
+    /* clean up buggy requests that set all flags */
+#if 0
+    if ((e->xconfigurerequest.value_mask & CWX) && (e->xconfigurerequest.x == xa.x))
+    {
+        e->xconfigurerequest.value_mask &= ~CWX;
+    }
+    if ((e->xconfigurerequest.value_mask & CWY) && (e->xconfigurerequest.y == xa.y))
+    {
+        e->xconfigurerequest.value_mask &= ~CWY;
+    }
+    if ((e->xconfigurerequest.value_mask & CWWidth) && (e->xconfigurerequest.width == xa.width))
+    {
+        e->xconfigurerequest.value_mask &= ~CWWidth;
+    }
+    if ((e->xconfigurerequest.value_mask & CWHeight) && (e->xconfigurerequest.height == xa.height))
+    {
+        e->xconfigurerequest.value_mask &= ~CWHeight;
+    }
+#endif
+
+#if 0
+					//	{
+							if(e->xconfigurerequest.send_event==true)
+								{
+								//std::cerr<<"if(e->xconfigurerequest.send_event==true) "<<(e->xconfigurerequest.value_mask & CWHeight)<<std::endl;
+								//this->mainClass->DEBUG_printBinary(e->xconfigurerequest.value_mask);
+
+
+									if((e->xconfigurerequest.value_mask & CWX)!=0)
+										xa.x=e->xconfigurerequest.x;
+									if((e->xconfigurerequest.value_mask & CWY)!=0)
+										xa.y=e->xconfigurerequest.y;
+									if((e->xconfigurerequest.value_mask & CWWidth)!=0)
+										xa.width=e->xconfigurerequest.width;
+									if((e->xconfigurerequest.value_mask & CWHeight)!=0)
+										xa.height=e->xconfigurerequest.height;
+
+									if(((e->xconfigurerequest.value_mask & CWX)!=0) || ((e->xconfigurerequest.value_mask & CWY)!=0))
+										XMoveWindow(this->mainClass->display,this->frameWindow,xa.x,xa.y);
+									
+									if(((e->xconfigurerequest.value_mask & CWWidth)!=0) || ((e->xconfigurerequest.value_mask & CWHeight)!=0))
+									{
+									std::cerr<<">>>>>>>>>>>>>>>>>>"<<std::endl;
+										XResizeWindow(this->mainClass->display,this->frameWindow,xa.width,xa.height);
+										//XResizeWindow(this->mainClass->display,this->contentWindow,xa.width-(this->mainClass->sideBarSize*2),xa.height);
+									}
+										//this->resizeContentWindow(xa.width,xa.height,false);
+									/*
+									XResizeWindow(this->mainClass->display,this->contentWindow,w-(this->mainClass->sideBarSize*2),h-(this->mainClass->titleBarSize+this->mainClass->bottomBarSize));
+			this->contentWindowRect={this->contentWindowRect.x,this->contentWindowRect.y,w-(this->mainClass->sideBarSize*2),h-(this->mainClass->titleBarSize+this->mainClass->bottomBarSize)};
+
+									*/
+
+									r={xa.x,xa.y,xa.width,xa.height};
+									this->mainClass->DEBUG_printRect(r);
+									this->setWindowRects(true);
+									//this->adjustContentWindow();
+									//this->mainClass->restackCnt=1;
+
+
+					r.x=this->frameWindowRect.x+this->mainClass->sideBarSize;
+					r.y=this->frameWindowRect.y+this->mainClass->titleBarSize;
+					r.w=this->frameWindowRect.w-this->mainClass->sideBarSize*2;
+					r.h=this->frameWindowRect.h-this->mainClass->titleBarSize-this->mainClass->bottomBarSize;
+					XResizeWindow(this->mainClass->display,this->contentWindow,r.w,r.h);
+					this->adjustContentWindow();
+					this->mainClass->restackCnt=1;
+															{
+//										XEvent event;
+//  memset(&event, 0, sizeof(event));
+//  event.type = Expose;
+//  event.xexpose.display = this->mainClass->display;
+//  XSendEvent(this->mainClass->display,this->contentWindow, False, ExposureMask, &event);
+//  }
+
+
+
+
+									return(false);
+									//this->mainClass->DEBUG_printRect((rectStruct)xa);
+									//this->frameWindowRect=r;
+									//this->adjustContentWindow();
+//									switch(e->xconfigurerequest.value_mask & (CWWidth|CWHeight|CWX|CWY))
+//										{
+//											case CWX:
+//											case 0x4:
+//											case 0x5:
+//											case 0x8:
+//											case 0x9:
+//											case 0xc:
+//											case 0xe:
+//											case 0xf:
+//												r={e->xconfigurerequest.x,e->xconfigurerequest.y,e->xconfigurerequest.width,e->xconfigurerequest.height};
+//												XMoveResizeWindow(this->mainClass->display,this->frameWindow,r.x,r.y,r.w,r.h);
+//												this->frameWindowRect=r;
+//												break;
+//										}
+								}
+						}
+
+#else
 							if(e->xconfigurerequest.send_event==true)
 								{
 									switch(e->xconfigurerequest.value_mask)
@@ -751,10 +1058,21 @@ contloop:
 												r={e->xconfigurerequest.x,e->xconfigurerequest.y,e->xconfigurerequest.width,e->xconfigurerequest.height};
 												XMoveResizeWindow(this->mainClass->display,this->frameWindow,r.x,r.y,r.w,r.h);
 												this->frameWindowRect=r;
+												//if((e->xconfigurerequest.value_mask & CWMyframe)==CWMyframe)
+												//	XMoveWindow(this->mainClass->display,this->contentWindow,10000,10000);
 												break;
 										}
+//										{
+//										XEvent event;
+//  memset(&event, 0, sizeof(event));
+//  event.type = Expose;
+//  event.xexpose.display = this->mainClass->display;
+//  XSendEvent(this->mainClass->display,this->contentWindow, False, ExposureMask, &event);
+//  }
+
 								}
 						}
+#endif
 					else
 						{
 							if((e->xconfigurerequest.value_mask==0xc) && (e->xconfigurerequest.send_event==0x0))

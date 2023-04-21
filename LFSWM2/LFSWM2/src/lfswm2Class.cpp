@@ -27,7 +27,7 @@
 
 #include "lfswm2Class.h"
 
-const char *atomNames[]={"_NET_WM_WINDOW_TYPE_MENU","_NET_ACTIVE_WINDOW","_NET_CLIENT_LIST","_NET_CLIENT_LIST_STACKING","_NET_CLOSE_WINDOW","_NET_CURRENT_DESKTOP","_NET_DESKTOP_GEOMETRY","_NET_DESKTOP_VIEWPORT","_NET_FRAME_EXTENTS","_NET_NUMBER_OF_DESKTOPS","_NET_REQUEST_FRAME_EXTENTS","_NET_SUPPORTED","_NET_SUPPORTING_WM_CHECK","_NET_WM_ACTION_CHANGE_DESKTOP","_NET_WM_ACTION_CLOSE","_NET_WM_ACTION_FULLSCREEN","_NET_WM_ACTION_MINIMIZE","_NET_WM_ACTION_MAXIMIZE_HORZ","_NET_WM_ACTION_MAXIMIZE_VERT","_NET_WM_ACTION_RESIZE","_NET_WM_ALLOWED_ACTIONS","_NET_WM_DESKTOP","_NET_WM_ICON_NAME","_NET_WM_NAME","_NET_WM_STATE","_NET_WM_STATE_ABOVE","_NET_WM_STATE_BELOW","_NET_WM_STATE_FULLSCREEN","_NET_WM_STATE_HIDDEN","_NET_WM_STATE_SKIP_TASKBAR","_NET_WM_VISIBLE_ICON_NAME","_NET_WM_VISIBLE_NAME","_NET_WM_WINDOW_TYPE","_NET_WM_WINDOW_TYPE_DOCK","_NET_WORKAREA","_NET_WM_WINDOW_TYPE_DESKTOP","_NET_WM_WINDOW_TYPE_NORMAL","_NET_WM_STATE_STICKY","_NET_WM_STATE_MAXIMIZED_VERT","_NET_WM_STATE_MAXIMIZED_HORZ","UTF8_STRING","MOTIF_WM_HINTS","WM_CHANGE_STATE","WM_DELETE_WINDOW","WM_PROTOCOLS","WM_STATE","_NET_WM_WINDOW_TYPE_DIALOG","_NET_WM_WINDOW_TYPE_TOOL","_MOTIF_WM_HINTS","_NET_WM_PID","_NET_WM_USER_TIME","WM_TRANSIENT_FOR","_XROOTPMAP_ID",NULL};
+const char *atomNames[]={"_NET_WM_WINDOW_TYPE_MENU","_NET_ACTIVE_WINDOW","_NET_CLIENT_LIST","_NET_CLIENT_LIST_STACKING","_NET_CLOSE_WINDOW","_NET_CURRENT_DESKTOP","_NET_DESKTOP_GEOMETRY","_NET_DESKTOP_VIEWPORT","_NET_FRAME_EXTENTS","_NET_NUMBER_OF_DESKTOPS","_NET_REQUEST_FRAME_EXTENTS","_NET_SUPPORTED","_NET_SUPPORTING_WM_CHECK","_NET_WM_ACTION_CHANGE_DESKTOP","_NET_WM_ACTION_CLOSE","_NET_WM_ACTION_FULLSCREEN","_NET_WM_ACTION_MINIMIZE","_NET_WM_ACTION_MAXIMIZE_HORZ","_NET_WM_ACTION_MAXIMIZE_VERT","_NET_WM_ACTION_RESIZE","_NET_WM_ALLOWED_ACTIONS","_NET_WM_DESKTOP","_NET_WM_ICON_NAME","_NET_WM_NAME","_NET_WM_STATE","_NET_WM_STATE_ABOVE","_NET_WM_STATE_BELOW","_NET_WM_STATE_FULLSCREEN","_NET_WM_STATE_HIDDEN","_NET_WM_STATE_SKIP_TASKBAR","_NET_WM_VISIBLE_ICON_NAME","_NET_WM_VISIBLE_NAME","_NET_WM_WINDOW_TYPE","_NET_WM_WINDOW_TYPE_DOCK","_NET_WORKAREA","_NET_WM_WINDOW_TYPE_DESKTOP","_NET_WM_WINDOW_TYPE_NORMAL","_NET_WM_STATE_STICKY","_NET_WM_STATE_MAXIMIZED_VERT","_NET_WM_STATE_MAXIMIZED_HORZ","UTF8_STRING","MOTIF_WM_HINTS","WM_CHANGE_STATE","WM_DELETE_WINDOW","WM_PROTOCOLS","WM_STATE","_NET_WM_WINDOW_TYPE_DIALOG","_NET_WM_WINDOW_TYPE_TOOL","_MOTIF_WM_HINTS","_WM_NORMAL_HINTS","_NET_WM_PID","_NET_WM_USER_TIME","WM_TRANSIENT_FOR","_XROOTPMAP_ID",NULL};
 
 LFSWM2_Class::~LFSWM2_Class(void)
 {
@@ -206,6 +206,7 @@ void LFSWM2_Class::LFSWM2_initRootWindow(void)
 			this->atoms.at("WM_PROTOCOLS"),
 			this->atoms.at("WM_STATE"),
 			this->atoms.at("_MOTIF_WM_HINTS"),
+			this->atoms.at("_WM_NORMAL_HINTS"),
 			this->atoms.at("_XROOTPMAP_ID")
 		};
 
@@ -397,6 +398,7 @@ void LFSWM2_Class::printHelp(void)
 			"-F, --font\n\tSet font string ( default: 'sans:size=14:bold' )\n"
 			"-p, --titleposition\n\tSet window name position ( 1=left. 2=center( default ), 3=right )\n"
 			"-w, --windowposition\n\tSet new window position ( NOPLACE=0, UNDERMOUSE=1, CENTREMMONITOR=2 ( default ), CENTRESCREEN=3 )\n"
+			"-r, --resizemode\n\tSet resizing mode ( FASTRESIZE=0, LIVERESIZE=1 ( default ), SIZERESIZE=2, SCALERESIZE=3 )\n"
 			" -v, --version\n\tOutput version information and exit\n"
 			" -h, -?, --help\n\tPrint this help\n\n"
 			"Report bugs to kdhedger@gmail.com\n"
@@ -414,6 +416,7 @@ void LFSWM2_Class::cliOptions(int argc,char **argv)//TODO//
 			{"font",1,0,'F'},
 			{"titleposition",1,0,'p'},
 			{"windowposition",1,0,'w'},
+			{"resizemode",1,0,'r'},
 			{"version",0,0,'v'},
 			{"help",0,0,'?'},
 			{0, 0, 0, 0}
@@ -426,7 +429,7 @@ void LFSWM2_Class::cliOptions(int argc,char **argv)//TODO//
 	while(true)
 		{
 			int option_index=0;
-			c=getopt_long (argc,argv,"v?hk:b:f:t:F:p:w:",long_options,&option_index);
+			c=getopt_long (argc,argv,"v?hk:b:f:t:F:p:w:r:",long_options,&option_index);
 			if(c==-1)
 				break;
 
@@ -456,6 +459,9 @@ void LFSWM2_Class::cliOptions(int argc,char **argv)//TODO//
 						break;
 					case 'w':
 						this->windowPlacement=atoi(optarg);
+						break;
+					case 'r':
+						this->resizeMode=atoi(optarg);
 						break;
 					case 'v':
 						printf("LFSWM2 %s\n",VERSION);
@@ -671,6 +677,23 @@ void LFSWM2_Class::DEBUG_printBinary(int num)
 				}
 		}
 	cerr<<buf<<endl;
+}
+
+void LFSWM2_Class::DEBUG_printConfigureRequestStruct(XEvent *e)
+{
+	fprintf(stderr,"ConfigureRequest\n");
+	fprintf(stderr,"type=%i 23=ConfigureRequest\n",e->xconfigurerequest.type);
+	fprintf(stderr,"send_event=%s \n",this->DEBUG_printBool(e->xconfigurerequest.send_event));
+	fprintf(stderr,"display=%p \n",e->xconfigurerequest.display);
+	fprintf(stderr,"parent=%p \n",(void*)e->xconfigurerequest.parent);
+	fprintf(stderr,"window=%p \n",(void*)e->xconfigurerequest.window);
+	fprintf(stderr,"x=%i \n",e->xconfigurerequest.x);
+	fprintf(stderr,"y=%i \n",e->xconfigurerequest.y);
+	fprintf(stderr,"width=%i \n",e->xconfigurerequest.width);
+	fprintf(stderr,"height=%i \n",e->xconfigurerequest.height);
+	fprintf(stderr,"border_width=%i \n",e->xconfigurerequest.border_width);
+	fprintf(stderr,"above=%p \n",(void*)e->xconfigurerequest.above);
+	fprintf(stderr,"detail=%x \n",e->xconfigurerequest.detail);
 }
 
 #endif

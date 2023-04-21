@@ -1,4 +1,7 @@
 0.2.5
+Fixed memory leaks.
+Added more cli options.
+Resize window tweaks.
 Fixed title position.
 Fixd about boxes being reshown.
 Fixed moving windows when starting up.

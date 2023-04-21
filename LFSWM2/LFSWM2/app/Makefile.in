@@ -231,6 +231,7 @@ LFSTK_CFLAGS = @LFSTK_CFLAGS@
 LFSTK_LIBS = @LFSTK_LIBS@
 LIBOBJS = @LIBOBJS@
 LIBS = $(X11_LIBS) \
+			$(XRENDER_LIBS) \
 			$(XINERAMA_LIBS) \
 			$(XFT_LIBS) \
 			$(LFSTK_LIBS) \
@@ -261,6 +262,8 @@ XFT_CFLAGS = @XFT_CFLAGS@
 XFT_LIBS = @XFT_LIBS@
 XINERAMA_CFLAGS = @XINERAMA_CFLAGS@
 XINERAMA_LIBS = @XINERAMA_LIBS@
+XRENDER_CFLAGS = @XRENDER_CFLAGS@
+XRENDER_LIBS = @XRENDER_LIBS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -310,6 +313,7 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 			$(X11_CFLAGS) \
 			$(XINERAMA_CFLAGS) \
 			$(XFT_CFLAGS) \
+			$(XRENDER_CFLAGS) \
 			$(LFSTK_CFLAGS) \
 			-DPREFIX=\""${prefix}\"" \
 			-DDATADIR=\""${pkgdatadir}"\" \

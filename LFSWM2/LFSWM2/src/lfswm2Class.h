@@ -141,6 +141,7 @@ enum MESSAGETYPE {REFRESHTHEME,QUITLFSWM,RESTARTLFSWM,NOMSG};
 enum TRISTATE {INVALID=-1,LOGIC0=0,LOGIC1=1};
 enum RUNLEVEL {RL_STARTUP,RL_NORMAL,RL_SHUTDOWN};
 enum {NOPLACE=0,UNDERMOUSE,CENTREMMONITOR,CENTRESCREEN,MOUSEMONITOR};
+enum RESIZEMODE {FASTRESIZE=0,LIVERESIZE,SIZERESIZE,SCALERESIZE};
 
 struct controlData
 {
@@ -194,6 +195,7 @@ class LFSWM2_Class
 		std::map<const char*,Atom>	atoms;
 
 //theme
+		int					resizeMode=LIVERESIZE;
 //colours
 		struct fontColour	*frameBG;
 		struct fontColour	*frameFG;
@@ -237,6 +239,7 @@ class LFSWM2_Class
 		void					DEBUG_printMWMHints(motifHints *h);
 		void					DEBUG_prinWindowAttributes(Window id);
 		void					DEBUG_printHintsDataStruct(Window wid);
+		void					DEBUG_printConfigureRequestStruct(XEvent *e);
 		void					DEBUG_printBinary(int num);
 
 #endif
