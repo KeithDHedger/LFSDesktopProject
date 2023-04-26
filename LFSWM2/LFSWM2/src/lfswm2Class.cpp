@@ -118,10 +118,10 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 	this->frameText=this->mainWindowClass->LFSWM2_xftLoadColour("rgb:ff/ff/ff","black");
 	this->frameFont=XftFontOpenName(this->display,this->screen,"sans:size=14:bold");
 
-	this->closeBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)deleteWindowBits,deleteWindowSize,deleteWindowSize);
-	this->maximizeBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)maximizeWindowBits,maximizeWindowSize,maximizeWindowSize);
-	this->minimizeBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)minimizeWindowBits,minimizeWindowSize,minimizeWindowSize);
-	this->shadeBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)shadeWindowBits,shadeWindowSize,shadeWindowSize);
+	this->closeBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)deleteWindowBits,defaultControlBitmapSize,defaultControlBitmapSize);
+	this->maximizeBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)maximizeWindowBits,defaultControlBitmapSize,defaultControlBitmapSize);
+	this->minimizeBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)minimizeWindowBits,defaultControlBitmapSize,defaultControlBitmapSize);
+	this->shadeBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)shadeWindowBits,defaultControlBitmapSize,defaultControlBitmapSize);
 
 	this->LFSWM2_setDeskCount(this->numberOfDesktops);
 	this->LFSWM2_setCurrentDesktop(this->currentDesktop);
@@ -137,9 +137,50 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 	XDefineCursor(this->display,this->rootWindow,this->rootCursor);
 
 	this->mainWindowClass->init();
-
 	this->lfstkLib=new LFSTK_lib(true);
+
+	this->prefs.prefsMap=
+		{
+			{this->prefs.LFSTK_hashFromKey("theme"),{TYPESTRING,"theme","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("desktops"),{TYPEINT,"desktops","",false,6}},
+			{this->prefs.LFSTK_hashFromKey("placement"),{TYPEINT,"placement","",false,2}},
+			{this->prefs.LFSTK_hashFromKey("titlefont"),{TYPESTRING,"titlefont","sans:size=14:bold",false,0}},
+			{this->prefs.LFSTK_hashFromKey("titleposition"),{TYPEINT,"titleposition","",false,2}},
+			{this->prefs.LFSTK_hashFromKey("titlebarsize"),{TYPEINT,"titlebarsize","",false,20}},
+			{this->prefs.LFSTK_hashFromKey("leftsidebarsize"),{TYPEINT,"leftsidebarsize","",false,2}},
+			{this->prefs.LFSTK_hashFromKey("ritesidebarsize"),{TYPEINT,"ritesidebarsize","",false,2}},
+			{this->prefs.LFSTK_hashFromKey("framebg"),{TYPESTRING,"framebg","grey",false,15}},
+			{this->prefs.LFSTK_hashFromKey("framefg"),{TYPESTRING,"framefg","white",false,0}},
+			{this->prefs.LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","black",false,0}},
+			{this->prefs.LFSTK_hashFromKey("rescanprefs"),{TYPEINT,"rescanprefs","",false,10}},
+			{this->prefs.LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","",false,0}},
+			{this->prefs.LFSTK_hashFromKey("resizemode"),{TYPEINT,"resizemode","",false,2}}
+		};
+
+	this->prefsPath=getenv("HOME");
+	this->prefsPath+="/.config/LFS/lfswm2.rc";
+	this->prefs.LFSTK_loadVarsFromFile(prefsPath.c_str());
+	//this->prefs.LFSTK_saveVarsToFile("-");
+
+	this->freeFontColour(this->frameBG);
+	this->frameBG=this->mainWindowClass->LFSWM2_xftLoadColour(this->prefs.LFSTK_getCString("framebg"),"grey");
+	this->freeFontColour(this->frameFG);
+	this->frameFG=this->mainWindowClass->LFSWM2_xftLoadColour(this->prefs.LFSTK_getCString("framefg"),"white");
+	this->freeFontColour(this->frameText);
+	this->frameText=this->mainWindowClass->LFSWM2_xftLoadColour(this->prefs.LFSTK_getCString("textcolour"),"black");
+	XftFontClose(this->display,this->frameFont);
+	this->frameFont=XftFontOpenName(this->display,this->screen,this->prefs.LFSTK_getCString("titlefont"));
+	this->titlePosition=this->prefs.LFSTK_getInt("titleposition");
+	this->titleBarSize=this->prefs.LFSTK_getInt("titlebarsize");
+	this->leftSideBarSize=this->prefs.LFSTK_getInt("leftsidebarsize");
+	this->riteSideBarSize=this->prefs.LFSTK_getInt("ritesidebarsize");
+	this->useTheme=this->prefs.LFSTK_getBool("usetheme");
+	this->resizeMode=this->prefs.LFSTK_getInt("resizemode");
+
 	this->cliOptions(argc,argv);
+
+	if(this->useTheme==true)
+		this->mainWindowClass->LFSWM2_loadTheme(this->prefs.LFSTK_getString("theme"));
 
 	this->messages=new LFSWM2_messageClass(this,this->msgQueueKey);
 }
@@ -694,6 +735,7 @@ void LFSWM2_Class::DEBUG_printConfigureRequestStruct(XEvent *e)
 	fprintf(stderr,"border_width=%i \n",e->xconfigurerequest.border_width);
 	fprintf(stderr,"above=%p \n",(void*)e->xconfigurerequest.above);
 	fprintf(stderr,"detail=%x \n",e->xconfigurerequest.detail);
+	this->DEBUG_printBinary(e->xconfigurerequest.value_mask);
 }
 
 #endif

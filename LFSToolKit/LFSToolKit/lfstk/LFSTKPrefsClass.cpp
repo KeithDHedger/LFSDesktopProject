@@ -187,6 +187,16 @@ unsigned long LFSTK_prefsClass::LFSTK_hashFromKey(const char *key)
 	return(hash);
 }
 
+unsigned long LFSTK_prefsClass::LFSTK_hashFromKey(std::string key)
+{
+	unsigned long hash=0;
+
+	for(int i=0;i<key.length();i++)
+		hash=31*hash+key.at(i);
+
+	return(hash);
+}
+
 /**
 * Get c type string.
 * \param key.

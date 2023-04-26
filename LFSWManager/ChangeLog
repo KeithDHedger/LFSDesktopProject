@@ -1,4 +1,6 @@
 0.1.3
+Fixed prefs naming.
+Fixed multi #define.
 Minor fix to frame reparenting.
 Fixed draging window to flip desktops.
 Added -N switch to force no theme.

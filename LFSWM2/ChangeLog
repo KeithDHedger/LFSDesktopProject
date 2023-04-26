@@ -1,3 +1,10 @@
+0.2.6
+Fixed memory leak.
+Fixed various gui glitches.
+Fixed dragsize from widget.
+Code clean.
+Started theming.
+
 0.2.5
 Fixed memory leaks.
 Added more cli options.

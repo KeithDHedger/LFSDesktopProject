@@ -80,6 +80,7 @@ class LFSTK_prefsClass
 		int				LFSTK_getInt(unsigned long key);
 
 		unsigned long	LFSTK_hashFromKey(const char *key);
+		unsigned long	LFSTK_hashFromKey(std::string key);
 
 	private:
 		const char		*bools[2]={"false","true"};

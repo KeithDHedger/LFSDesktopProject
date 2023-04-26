@@ -94,6 +94,15 @@ struct hintsDataStruct
 	bool					valid=false;
 };
 
+struct controlData
+{
+	GC			controlGC=None;
+	int			startX=0;
+	const char	*activeName="";
+	const char	*prelightName="";
+	const char	*pressedName="";
+};
+
 class LFSWM2_windowClass;
 class LFSWM2_eventsClass;
 class LFSWM2_clientClass;
@@ -106,6 +115,11 @@ class LFSWM2_messageClass;
 
 #define BORDER_WIDTH 0
 #define CONTROL_GAP 24
+
+#define defaultControlBitmapSize 8
+#define defaultControlSize 20
+#define defaultControlSpacing 2
+#define defaultControlXYOffset (defaultControlSize/2)-(defaultControlBitmapSize/2)
 
 #define deleteWindowSize 8
 __attribute__((unused)) static unsigned char deleteWindowBits[]=
@@ -142,13 +156,6 @@ enum TRISTATE {INVALID=-1,LOGIC0=0,LOGIC1=1};
 enum RUNLEVEL {RL_STARTUP,RL_NORMAL,RL_SHUTDOWN};
 enum {NOPLACE=0,UNDERMOUSE,CENTREMMONITOR,CENTRESCREEN,MOUSEMONITOR};
 enum RESIZEMODE {FASTRESIZE=0,LIVERESIZE,SIZERESIZE,SCALERESIZE};
-
-struct controlData
-{
-	rectStruct	boundingBox;
-	rectStruct	pixmapBox;
-	int			startX;
-};
 
 __attribute__((unused)) static LFSWM2_Class	*theMainClass=NULL;
 
@@ -196,20 +203,25 @@ class LFSWM2_Class
 
 //theme
 		int					resizeMode=LIVERESIZE;
+		LFSTK_prefsClass		prefs;
+		std::string			prefsPath;
+		bool					useTheme=false;
+		int					controlSize=CONTROL_GAP;
+		int					buttonOffset=8;
+		int					buttonXSpacing=2;
+		int					buttonYOffset=0;
+		int					titleBarSize=20;
+		int					leftSideBarSize=2;
+		int					riteSideBarSize=2;
+		int					bottomBarSize=8;
+		int					titlePosition=2;
+
 //colours
 		struct fontColour	*frameBG;
 		struct fontColour	*frameFG;
 		struct fontColour	*frameText;
 		XftFont				*frameFont;
-		int					titleBarSize=20;
-		int					sideBarSize=2;
-		int					bottomBarSize=8;
-		int					titlePosition=2;
 
-		struct controlData	closeControlStruct;
-		struct controlData	maximizeControlStruct;
-		struct controlData	minimizeControlStruct;
-		struct controlData	shadeControlStruct;
 		Pixmap				closeBitMap;
 		Pixmap				maximizeBitMap;
 		Pixmap				minimizeBitMap;

@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <cstdlib>
 #include <X11/extensions/Xrender.h>
+#include <X11/extensions/shape.h>
 
 class LFSWM2_Class;
 #include "lfswm2Class.h"
@@ -56,7 +57,9 @@ class LFSWM2_clientClass
 		bool				isShaded=false;
 		bool				canMaximize=false;
 		bool				canMinimize=false;
+		bool				canShade=false;
 		bool				canResize=false;
+		bool				isActive=false;
 
 		rectStruct		contentWindowRect;
 		rectStruct		frameWindowRect;
@@ -77,6 +80,11 @@ class LFSWM2_clientClass
 		Window			minimizeButton=None;
 		Window			shadeButton=None;
 
+		struct controlData	closeControlStruct;
+		struct controlData	maximizeControlStruct;
+		struct controlData	minimizeControlStruct;
+		struct controlData	shadeControlStruct;
+
 		Window			topLeftDragger=None;
 		Window			topRightDragger=None;
 		Window			bottomLeftDragger=None;
@@ -96,9 +104,10 @@ class LFSWM2_clientClass
 		void				LFSWM2_setWMState(XEvent *e);
 
 		void				LFSWM2_drawMouseLeave(Window id,Pixmap pm,struct controlData data);
+		//void				LFSWM2_drawMouseLeave(Window id,Pixmap pm,const char *partname);
 
 		bool				LFSWM2_doFrameMoveEvents(XEvent *e);
-		void				LFSWM2_refreshFrame(XExposeEvent *e=NULL);
+		//void				LFSWM2_refreshFrame(XExposeEvent *e=NULL);
 
 		bool				LFSWM2_handleEvents(XEvent *e);
 
@@ -116,6 +125,11 @@ bool nodecs=false;
 		void				adjustContentWindow(void);
 		void				resizeContentWindow(rectStruct r,bool moveorigin=true);
 		void				setWindowRects(bool resize=true);
+		rectStruct		setTitlePosition(void);
+
+		Pixmap			mask=None;
+	GC				maskGC=None;
+
 	private:
 		int				sx=0;
 		int				sy=0;
@@ -132,7 +146,6 @@ bool nodecs=false;
 
 		void				drawMouseEnter(Window id,Pixmap pm,controlData data);
 		bool				doResizeDraggers(XEvent *e);
-		rectStruct		setTitlePosition(void);
 
 		void				resizeContentWindow(int w,int h,bool useframerect=false);
 		void				resizeFrameWindow(void);

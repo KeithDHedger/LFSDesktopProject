@@ -47,7 +47,7 @@ args	wmPrefs[]=
 args	themeRC[]=
 {
 	{"button_offset",TYPEINT,&theme.buttonOffset},
-	{"button_spacing",TYPEINT,&theme.buttonSpacing},
+	{"button_spacing",TYPEINT,&theme.buttonXSpacing},
 	{"active_text_color",TYPESTRING,&fontColours[TEXTCOLOUR]},
 	{"inactive_text_color",TYPESTRING,&fontColours[INACTIVEFRAME]},
 	{"title_vertical_offset_active",TYPEINT,&theme.titleOffset},

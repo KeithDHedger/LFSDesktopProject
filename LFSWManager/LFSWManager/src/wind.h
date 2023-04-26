@@ -23,8 +23,12 @@
 
 #include "config.h"
 
+#ifndef MIN
 #define MIN(a,b) ((a)<(b) ? (a) : (b))
+#endif
+#ifndef MAX
 #define MAX(a,b) ((a)>(b) ? (a) : (b))
+#endif
 
 #define NELEM(v) (sizeof v / sizeof v[0])
 
@@ -138,7 +142,7 @@ struct	themeStruct
 	Pixmap			pixmaps[NUMBEROFPARTS];
 	Pixmap			masks[NUMBEROFPARTS];
 	int				buttonOffset;
-	int				buttonSpacing;
+	int				buttonXSpacing;
 	int				titleOffset;
 };
 

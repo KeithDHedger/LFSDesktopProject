@@ -33,11 +33,80 @@ enum {NORMALWINDOW=0,DESKTOPWINDOW,DOCKWINDOW,MENUWINDOW,DIALOGWINDOW,TOOLWINDOW
 
 struct fontColour
 {
-	XftColor color;
-	XftDraw *draw;
-	Visual *visual;
-	Colormap colormap;
-	unsigned int pixel;
+	XftColor			color;
+	XftDraw			*draw;
+	Visual			*visual;
+	Colormap			colormap;
+	unsigned int		pixel;
+};
+
+struct themeStruct
+{
+	std::string						pathToTheme;
+	int								titleBarHeight;
+	int								leftWidth;
+	int								rightWidth;
+	int								bottomHeight;
+	int								buttonOffset;
+	int								buttonYOffset;
+	int								buttonXSpacing;
+	int								closeButtonSize;
+	int								middleOffset;
+	int								middleAdjust;
+	int								titleAlignment;
+	std::map<unsigned long,bool>		gotPart;
+	std::map<unsigned long,int>		partsWidth;
+	std::map<unsigned long,int>		partsHeight;
+	std::map<unsigned long,Pixmap>	pixmaps;
+	std::map<unsigned long,Pixmap>	masks;
+};
+
+static const char *themePartNames[]=
+{
+	"top-left-active",
+	"top-left-inactive",
+	"top-right-active",
+	"top-right-inactive",
+	"title-1-active",
+	"title-1-inactive",
+	"title-2-active",
+	"title-2-inactive",
+	"title-3-active",
+	"title-3-inactive",
+	"title-4-active",
+	"title-4-inactive",
+	"title-5-active",
+	"title-5-inactive",
+	"left-active",
+	"left-inactive",
+	"right-active",
+	"right-inactive",
+	"bottom-left-active",
+	"bottom-left-inactive",
+	"bottom-active",
+	"bottom-inactive",
+	"bottom-right-active",
+	"bottom-right-inactive",
+	"close-active",
+	"close-inactive",
+	"close-prelight",
+	"close-pressed",
+	"maximize-active",
+	"maximize-inactive",
+	"maximize-prelight",
+	"maximize-pressed",
+	"hide-active",
+	"hide-inactive",
+	"hide-prelight",
+	"hide-pressed",
+	"shade-active",
+	"shade-inactive",
+	"shade-prelight",
+	"shade-pressed",
+	"menu-inactive",
+	"menu-prelight",
+	"menu-pressed",
+	NULL
 };
 
 class LFSWM2_windowClass
@@ -82,6 +151,20 @@ class LFSWM2_windowClass
 
 //graphics
 		struct fontColour					*LFSWM2_xftLoadColour(const char *name,const char *fallback);
+//theme
+		themeStruct							theme;
+		void									LFSWM2_loadTheme(std::string);
+		void									LFSWM2_refreshFrame(LFSWM2_clientClass *cc,XExposeEvent *e=NULL);
+		void 								LFSWM2_refreshThemeFrame(LFSWM2_clientClass *cc);
+
+//		std::string							leftTop;
+//		std::string							middleTop;
+//		std::string							rightTop;
+//		std::string							leftSide;
+//		std::string							rightSide;
+//		std::string							leftBottom;
+//		std::string							middleBottom;
+//		std::string							rightBottom;
 
 //vars
 		LFSWM2_Class							*mainClass;
