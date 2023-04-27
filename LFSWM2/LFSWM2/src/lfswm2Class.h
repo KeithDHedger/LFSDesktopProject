@@ -98,9 +98,7 @@ struct controlData
 {
 	GC			controlGC=None;
 	int			startX=0;
-	const char	*activeName="";
-	const char	*prelightName="";
-	const char	*pressedName="";
+	std::string	controlName;
 };
 
 class LFSWM2_windowClass;

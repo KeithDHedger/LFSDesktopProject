@@ -152,12 +152,15 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						break;
 
 					case ConfigureRequest://TODO//NEXT
-						fprintf(stderr,"ConfigureRequest from main event loop window=%x when=%i\n",e.xmaprequest.window,when++);
+						//fprintf(stderr,"ConfigureRequest from main event loop window=%x when=%i\n",e.xmaprequest.window,when++);
+						//this->mainClass->DEBUG_printConfigureRequestStruct(&e);
 						{
 							LFSWM2_clientClass	*cc;
 							cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
 							if(cc!=NULL)		
-								{						
+								{
+									if(cc->isShaded==true)
+										break;
 									if(e.xconfigurerequest.value_mask!=0x40)
 										{
 											XWindowAttributes 	xa;
@@ -172,7 +175,8 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 									cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
 									if(cc!=NULL)
 										{
-											if((e.xconfigurerequest.value_mask & (CWWidth|CWHeight|CWX|CWY)) !=0)
+											//if((e.xconfigurerequest.value_mask & (CWWidth|CWHeight|CWX|CWY)) !=0)
+											if((e.xconfigurerequest.value_mask & (CWWidth|CWHeight)) !=0)
 												{
 													XWindowChanges	ch;
 
@@ -278,7 +282,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 											if(cc!=NULL)
 												{
 													cc->LFSWM2_setWindowName();
-													cc->mainClass->mainWindowClass->LFSWM2_refreshFrame(NULL);
+													cc->mainClass->mainWindowClass->LFSWM2_refreshFrame(cc,NULL);
 													//fprintf(stderr,"PropertyNotify OUT _NET_WM_NAME eventnumber %i\n",when++);
 													break;
 												}

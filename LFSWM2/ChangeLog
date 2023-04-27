@@ -4,8 +4,8 @@ Fixed various gui glitches.
 Fixed dragsize from widget.
 Code clean.
 Started theming.
-
 0.2.5
+Fixed resize flicker.
 Fixed memory leaks.
 Added more cli options.
 Resize window tweaks.

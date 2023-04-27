@@ -102,12 +102,16 @@ void LFSWM2_clientClass::LFSWM2_setWindowName(void)
 
 void LFSWM2_clientClass::drawMouseEnter(Window id,Pixmap pm,controlData data)
 {
+	std::string cn=data.controlName+"-prelight";
+	if(this->isActive==false)
+		cn=data.controlName+"-inactive";
+
 	if(this->mainClass->useTheme==true)
 		{
-			XSetClipMask(this->mainClass->display,this->mainClass->mainGC,this->mainClass->mainWindowClass->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(data.prelightName)]);
+			XSetClipMask(this->mainClass->display,this->mainClass->mainGC,this->mainClass->mainWindowClass->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(cn)]);
 			XSetClipOrigin(this->mainClass->display,this->mainClass->mainGC,0,0);
-			XCopyArea(this->mainClass->display,this->mainClass->mainWindowClass->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(data.prelightName)],id,this->mainClass->mainGC,0,0,this->mainClass->mainWindowClass->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(data.prelightName)],this->mainClass->mainWindowClass->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(data.prelightName)],0,0);
-			XShapeCombineMask(this->mainClass->display,id,ShapeBounding,0,0,this->mainClass->mainWindowClass->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(data.prelightName)],ShapeSet);
+			XCopyArea(this->mainClass->display,this->mainClass->mainWindowClass->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(cn)],id,this->mainClass->mainGC,0,0,this->mainClass->mainWindowClass->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(cn)],this->mainClass->mainWindowClass->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(cn)],0,0);
+			XShapeCombineMask(this->mainClass->display,id,ShapeBounding,0,0,this->mainClass->mainWindowClass->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(cn)],ShapeSet);
 			return;
 		}
 
@@ -119,12 +123,16 @@ void LFSWM2_clientClass::drawMouseEnter(Window id,Pixmap pm,controlData data)
 
 void LFSWM2_clientClass::LFSWM2_drawMouseLeave(Window id,Pixmap pm,controlData data)
 {
+	std::string cn=data.controlName+"-active";
+	if(this->isActive==false)
+		cn=data.controlName+"-inactive";
+
 	if(this->mainClass->useTheme==true)
 		{
-			XSetClipMask(this->mainClass->display,this->mainClass->mainGC,this->mainClass->mainWindowClass->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(data.activeName)]);
+			XSetClipMask(this->mainClass->display,this->mainClass->mainGC,this->mainClass->mainWindowClass->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(cn)]);
 			XSetClipOrigin(this->mainClass->display,this->mainClass->mainGC,0,0);
-			XCopyArea(this->mainClass->display,this->mainClass->mainWindowClass->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(data.activeName)],id,this->mainClass->mainGC,0,0,this->mainClass->mainWindowClass->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(data.activeName)],this->mainClass->mainWindowClass->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(data.activeName)],0,0);
-			XShapeCombineMask(this->mainClass->display,id,ShapeBounding,0,0,this->mainClass->mainWindowClass->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(data.activeName)],ShapeSet);
+			XCopyArea(this->mainClass->display,this->mainClass->mainWindowClass->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(cn)],id,this->mainClass->mainGC,0,0,this->mainClass->mainWindowClass->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(cn)],this->mainClass->mainWindowClass->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(cn)],0,0);
+			XShapeCombineMask(this->mainClass->display,id,ShapeBounding,0,0,this->mainClass->mainWindowClass->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(cn)],ShapeSet);
 			return;
 		}
 
@@ -336,11 +344,17 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 									}
 
 								if(this->mainClass->resizeMode==LIVERESIZE)
-									XResizeWindow(this->mainClass->display,this->contentWindow,r.w-contentwadjust,r.h-contenthadjust);
+									{
+										this->contentWindowRect={this->mainClass->leftSideBarSize,this->mainClass->titleBarSize,r.w-contentwadjust,r.h-contenthadjust};
+										this->frameWindowRect={r.x,r.y,r.w,r.h};
+										XResizeWindow(this->mainClass->display,this->contentWindow,r.w-contentwadjust,r.h-contenthadjust);
+										//XResizeWindow(this->mainClass->display,this->contentWindow,r.w,r.h);
+										//XSync(this->mainClass->display,false);
+									}
 								else
 									{
 										XMoveWindow(this->mainClass->display,this->contentWindow,this->frameWindowRect.w+10,0);
-										XSync(this->mainClass->display,false);
+										//XSync(this->mainClass->display,false);
 									}
 								this->steps=0;
 								break;
@@ -379,6 +393,7 @@ void LFSWM2_clientClass::LFSWM2_unSpecial(void)
 			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN"));
 			this->isMaximized=false;
 		}
+	this->isShaded=false;
 	this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(this->contentWindow);
 }
 
@@ -467,8 +482,8 @@ bool LFSWM2_clientClass::LFSWM2_handleControls(XEvent *e)
 							{
 								this->setWindowRects(true);
 								this->clientPreShade=this->frameWindowRect.h;
+								XMoveWindow(this->mainClass->display,this->contentWindow,this->frameWindowRect.w+10,this->frameWindowRect.y);
 								XResizeWindow(this->mainClass->display,this->frameWindow,this->frameWindowRect.w,this->mainClass->titleBarSize+this->mainClass->bottomBarSize);
-								XMoveWindow(this->mainClass->display,this->contentWindow,this->frameWindowRect.w+10000,this->frameWindowRect.y);
 								this->setWindowRects(true);
 							}
 						else
@@ -604,7 +619,7 @@ void LFSWM2_clientClass::LFSWM2_setWMState(XEvent *e)
 		{
 			this->onBottom=true;
 			XLowerWindow(this->mainClass->display,this->contentWindow);
-			XSync(this->mainClass->display,false);
+			////XSync(this->mainClass->display,false);
 			this->mainClass->restackCnt++;
 		}
 
@@ -613,7 +628,7 @@ void LFSWM2_clientClass::LFSWM2_setWMState(XEvent *e)
 			this->onTop=true;
 			XRaiseWindow(this->mainClass->display,this->contentWindow);
 			this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,&this->contentWindow,1);
-			XSync(this->mainClass->display,false);
+			////XSync(this->mainClass->display,false);
 			this->mainClass->restackCnt++;
 		}
 	if(states!=NULL)
@@ -795,10 +810,14 @@ bool LFSWM2_clientClass::LFSWM2_handleEvents(XEvent *e)
 
 			case Expose:
 				{
-					if(e->xexpose.count>0)
+				//fprintf(stderr,"expose\n");
+					if(e->xexpose.count!=0)
 						break;
-
-					this->mainClass->mainWindowClass->LFSWM2_refreshFrame(this,(XExposeEvent*)e);
+					else
+					{
+						this->mainClass->mainWindowClass->LFSWM2_refreshFrame(this,(XExposeEvent*)e);
+						return(true);
+						}
 				}
 				break;
 
@@ -846,14 +865,16 @@ contloop:
 
 			case ConfigureRequest:
 				{
+				break;
 					XRaiseWindow(this->mainClass->display,this->frameWindow);
 					this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,&this->contentWindow,1);
 					XSetInputFocus(this->mainClass->display,this->contentWindow,RevertToNone,CurrentTime);
 				}
 				break;
 
-			case ConfigureRequest+100://TODO//NEXT
+			case ConfigureRequest+1000://TODO//NEXT
 				{
+				//break;
 					XRaiseWindow(this->mainClass->display,this->frameWindow);
 					this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,&this->contentWindow,1);
 					XSetInputFocus(this->mainClass->display,this->contentWindow,RevertToNone,CurrentTime);
@@ -935,6 +956,8 @@ contloop:
 					return(false);
 				}
 				break;
+			default:
+				return(false);
 		}
 	return(false);
 }
