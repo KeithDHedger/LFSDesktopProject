@@ -244,7 +244,7 @@ class LFSWM2_Class
 #ifdef __DEBUG__
 		void					DEBUG_printAtom(Atom a);
 		void					DEBUG_printEventData(XEvent *e,bool verbose);
-		void					DEBUG_printRect(rectStruct r);
+		void					DEBUG_printRect(rectStruct r,const char *data="");
 		const char			*DEBUG_printBool(bool b);
 		void					DEBUG_printMWMHints(motifHints *h);
 		void					DEBUG_prinWindowAttributes(Window id);

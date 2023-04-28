@@ -1068,11 +1068,9 @@ void	 LFSWM2_windowClass::LFSWM2_loadTheme(std::string themename)
 
 	while(themePartNames[cnt]!=NULL)
 		{
-			//this->theme.gotPart[themePartNames[cnt]]=false;
 			this->theme.gotPart[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]=false;
 			this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]=0;
 			this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]=0;
-			//this->theme.partsWidth[themePartNames[cnt]]=0;
 			this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]=0;
 			this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]=0;
 			this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]=0;

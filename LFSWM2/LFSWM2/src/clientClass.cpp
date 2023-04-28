@@ -199,8 +199,8 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 				{
 					this->LFSWM2_unSpecial();
 					this->buttonDown=true;
-					this->sx=e->xmotion.x;
-					this->sy=e->xmotion.y;
+					this->sx=e->xbutton.x;
+					this->sy=e->xbutton.y;
 					steps=0;
 					this->setWindowRects(false);
 
@@ -241,7 +241,6 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 				break;
 
 			case ButtonRelease:
-
 				this->buttonDown=false;
 				this->sx=0;
 				this->sy=0;
@@ -317,9 +316,15 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 
 								XGetWMNormalHints(this->mainClass->display,this->contentWindow,&xh,&dummy);
 								if(r.w-contentwadjust<xh.min_width)
-									break;
+									{
+										this->buttonDown=false;
+										break;
+									}
 								if(r.h-contenthadjust<xh.min_height)
-									break;
+									{
+										this->buttonDown=false;
+										break;
+									}
 
 								this->frameWindowRect=r;
 
@@ -346,7 +351,6 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 								if(this->mainClass->resizeMode==LIVERESIZE)
 									{
 										this->contentWindowRect={this->mainClass->leftSideBarSize,this->mainClass->titleBarSize,r.w-contentwadjust,r.h-contenthadjust};
-										this->frameWindowRect={r.x,r.y,r.w,r.h};
 										XResizeWindow(this->mainClass->display,this->contentWindow,r.w-contentwadjust,r.h-contenthadjust);
 										//XResizeWindow(this->mainClass->display,this->contentWindow,r.w,r.h);
 										//XSync(this->mainClass->display,false);

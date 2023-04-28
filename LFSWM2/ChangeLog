@@ -1,4 +1,5 @@
 0.2.6
+Added install default prefs file on 1st run if not exists, ( ~/.config/LFS/lfswm2.rc ).
 Fixed memory leak.
 Fixed various gui glitches.
 Fixed dragsize from widget.

@@ -159,8 +159,11 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 
 	this->prefsPath=getenv("HOME");
 	this->prefsPath+="/.config/LFS/lfswm2.rc";
+	if(access(this->prefsPath.c_str(),F_OK)!=F_OK)
+		this->prefs.LFSTK_saveVarsToFile(this->prefsPath.c_str());
+
 	this->prefs.LFSTK_loadVarsFromFile(prefsPath.c_str());
-	//this->prefs.LFSTK_saveVarsToFile("-");
+//this->prefs.LFSTK_saveVarsToFile("-");
 
 	this->freeFontColour(this->frameBG);
 	this->frameBG=this->mainWindowClass->LFSWM2_xftLoadColour(this->prefs.LFSTK_getCString("framebg"),"grey");
@@ -554,12 +557,17 @@ void LFSWM2_Class::DEBUG_printEventData(XEvent *e,bool verbose)
 		fprintf(stderr,"Event name=%s: type=%i\n",names[e->type][0],e->type);
 }
 
-void LFSWM2_Class::DEBUG_printRect(rectStruct r)
+void LFSWM2_Class::DEBUG_printRect(rectStruct r,const char *data)
 {
-	fprintf(stderr,"x=%i\n",r.x);
-	fprintf(stderr,"y=%i\n",r.y);
-	fprintf(stderr,"width=%i\n",r.w);
-	fprintf(stderr,"height=%i\n",r.h);
+	std::cerr<<data<<std::endl;
+	std::cerr<<"x="<<r.x<<std::endl;
+	std::cerr<<"y="<<r.y<<std::endl;
+	std::cerr<<"w="<<r.w<<std::endl;
+	std::cerr<<"h="<<r.h<<std::endl;
+//	fprintf(stderr,"x=%i\n",r.x);
+//	fprintf(stderr,"y=%i\n",r.y);
+//	fprintf(stderr,"width=%i\n",r.w);
+//	fprintf(stderr,"height=%i\n",r.h);
 }
 
 const char* LFSWM2_Class::DEBUG_printBool(bool b)

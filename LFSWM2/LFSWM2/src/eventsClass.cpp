@@ -96,6 +96,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 							cccontrol=NULL;
 							e.type=0;
 							this->mainClass->restackCnt=0;
+							continue;
 						}
 				}
 
@@ -169,32 +170,30 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 												break;
 										}
 								}
-//this->mainClass->DEBUG_printConfigureRequestStruct(&e);
+
 							if(e.xconfigurerequest.send_event==false)
 								{
 									cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
 									if(cc!=NULL)
 										{
-											//if((e.xconfigurerequest.value_mask & (CWWidth|CWHeight|CWX|CWY)) !=0)
 											if((e.xconfigurerequest.value_mask & (CWWidth|CWHeight)) !=0)
 												{
 													XWindowChanges	ch;
 
-													ch.x=e.xconfigurerequest.x;
-													ch.y=e.xconfigurerequest.y;
-													ch.width=e.xconfigurerequest.width;
-													ch.height=e.xconfigurerequest.height;
-													XConfigureWindow(this->mainClass->display,cc->contentWindow,e.xconfigurerequest.value_mask& (CWWidth|CWHeight),&ch);
-	
 													ch.width=e.xconfigurerequest.width+this->mainClass->riteSideBarSize+this->mainClass->leftSideBarSize;
 													ch.height=e.xconfigurerequest.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize;
-													XConfigureWindow(this->mainClass->display,cc->frameWindow,(CWWidth|CWHeight),&ch);
+													if(cc->buttonDown==false)
+														XResizeWindow(this->mainClass->display,cc->frameWindow,e.xconfigurerequest.width+this->mainClass->riteSideBarSize+this->mainClass->leftSideBarSize,e.xconfigurerequest.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);
+													ch.width=e.xconfigurerequest.width;
+													ch.height=e.xconfigurerequest.height;
+													XResizeWindow(this->mainClass->display,cc->contentWindow,ch.width,ch.height);
 												}
 
-											//if((e.xconfigurerequest.value_mask & (CWX|CWY)) == (CWX|CWY))
-												cc->setWindowRects(true);
-											if(cc->buttonDown==false)
+											cc->setWindowRects(true);
+
+											if((cc->buttonDown==false) && (this->mainClass->resizeMode==SCALERESIZE))
 												XMoveWindow(this->mainClass->display,cc->resizeWindow,-100000,-100000);
+											break;
 										}
 									else
 										{
