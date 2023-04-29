@@ -54,6 +54,7 @@ struct themeStruct
 	int								middleOffset;
 	int								middleAdjust;
 	int								titleAlignment;
+	bool								fullWidthTitle;
 	std::map<unsigned long,bool>		gotPart;
 	std::map<unsigned long,int>		partsWidth;
 	std::map<unsigned long,int>		partsHeight;
@@ -103,6 +104,7 @@ static const char *themePartNames[]=
 	"shade-inactive",
 	"shade-prelight",
 	"shade-pressed",
+	"menu-active",
 	"menu-inactive",
 	"menu-prelight",
 	"menu-pressed",

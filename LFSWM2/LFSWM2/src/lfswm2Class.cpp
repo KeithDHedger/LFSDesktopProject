@@ -564,10 +564,6 @@ void LFSWM2_Class::DEBUG_printRect(rectStruct r,const char *data)
 	std::cerr<<"y="<<r.y<<std::endl;
 	std::cerr<<"w="<<r.w<<std::endl;
 	std::cerr<<"h="<<r.h<<std::endl;
-//	fprintf(stderr,"x=%i\n",r.x);
-//	fprintf(stderr,"y=%i\n",r.y);
-//	fprintf(stderr,"width=%i\n",r.w);
-//	fprintf(stderr,"height=%i\n",r.h);
 }
 
 const char* LFSWM2_Class::DEBUG_printBool(bool b)

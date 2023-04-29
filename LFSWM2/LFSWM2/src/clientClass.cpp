@@ -185,6 +185,127 @@ void LFSWM2_clientClass::resetContentWindow(void)
 	XMoveResizeWindow(this->mainClass->display,this->contentWindow,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize,this->frameWindowRect.w-this->mainClass->leftSideBarSize-this->mainClass->riteSideBarSize,this->frameWindowRect.h-this->mainClass->titleBarSize-this->mainClass->bottomBarSize);
 }
 
+#if 0
+bool LFSWM2_clientClass::doResizeDraggers2(XEvent *ed)
+{
+	bool			loop=true;
+	rectStruct	r;
+int lastx=0;
+int lastw=0;
+int evnum=0;
+int neww=0;
+int lastwx;
+
+	while(loop==true)
+		{
+			XEvent e;
+			XNextEvent(this->mainClass->display,&e);
+			//this->mainClass->DEBUG_printEventData(&e,false);
+			switch(e.type)
+				{
+					case Expose:
+						{
+						//fprintf(stderr,"expose\n");
+							if(e.xexpose.count!=0)
+								break;
+							else
+								{
+									this->mainClass->mainWindowClass->LFSWM2_refreshFrame(this,(XExposeEvent*)&e);
+								}
+						}
+						break;
+
+					case ButtonPress:
+						{
+							this->buttonDown=true;
+							this->sx=e.xbutton.x;
+							this->sy=e.xbutton.y;
+							this->steps=0;
+							this->mainClass->doingMove=true;
+							neww=this->frameWindowRect.w;
+							//XGrabPointer(this->mainClass->display,Button1,Mod4Mask,this->topLeftDragger,False,ButtonPressMask|ButtonReleaseMask|PointerMotionMask,GrabModeSync,GrabModeSync,None,None);
+lastwx=this->frameWindowRect.w+this->frameWindowRect.x;
+						}
+						break;
+					case ButtonRelease:
+						{
+						XUngrabPointer(this->mainClass->display, CurrentTime);
+							loop=false;
+							this->buttonDown=false;
+							this->mainClass->doingMove=false;
+
+				this->mainClass->doingMove=false;
+				this->isShaded=false;
+
+				this->setWindowRects(true);
+				this->resetContentWindow();
+
+				if(currentRootPixmap!=None)
+					XFreePixmap(this->mainClass->display,this->currentRootPixmap);
+				if(primaryPicture!=None)
+					XRenderFreePicture(this->mainClass->display,this->primaryPicture);
+				if(windowPicture!=None)
+					XRenderFreePicture(this->mainClass->display,this->windowPicture);
+				if(resizeImage!=NULL)
+					XDestroyImage(this->resizeImage);
+
+				XMoveResizeWindow(this->mainClass->display,this->resizeWindow,this->mainClass->displayWidth+10,0,1,1);
+				this->mainClass->doingMove=false;
+
+							continue;
+						}
+						break;
+					case MotionNotify:
+						{
+							if(buttonDown==true)
+								{
+									this->steps++;
+									///if(this->steps>this->smoothness)
+										{
+//											r.x=this->frameWindowRect.x;
+//											r.y=this->frameWindowRect.y;
+//											r.w=this->frameWindowRect.w;
+											r.h=this->frameWindowRect.h;
+
+											if(e.xmotion.window==this->topLeftDragger)
+												{
+												std::cerr<<"evnum="<<evnum++<<std::endl;
+												std::cerr<<"time="<<e.xmotion.time<<std::endl;
+												std::cerr<<"neww="<<neww<<std::endl;
+												std::cerr<<"lastx="<<lastx<<std::endl;
+												std::cerr<<"lastw="<<lastw<<std::endl;
+												std::cerr<<"r.x=e.xmotion.x_root-this->sx="<<e.xmotion.x_root-this->sx<<std::endl;
+												std::cerr<<"r.w=this->frameWindowRect.w-(e.xmotion.x-this->sx)"<<this->frameWindowRect.w-(e.xmotion.x-this->sx)<<std::endl;
+													r.x=e.xmotion.x_root-this->sx;
+													r.y=e.xmotion.y_root-this->sy;
+													//r.w=this->frameWindowRect.w-(e.xmotion.x-this->sx);
+													r.w=lastwx-r.x;
+													//r.w=this->frameWindowRect.w-(e.xmotion.x_root);
+													//r.w=neww+(e.xmotion.x-this->sx);
+													//neww+=(e.xmotion.x-this->sx);
+													//r.w=neww;
+													//r.w+=neww;
+													//r.h=this->frameWindowRect.h-(e.xmotion.y-this->sy);
+													//r.h=this->frameWindowRect.h-(e.xmotion.y-this->sy);
+													this->mainClass->DEBUG_printRect(r);
+												}
+											this->frameWindowRect=r;
+											XMoveResizeWindow(this->mainClass->display,this->frameWindow,r.x,r.y,r.w,r.h);
+											//this->setWindowRects(true);
+											this->steps=0;
+											lastx=r.x;
+											lastw=r.w;
+											break;
+										}
+								}
+						}
+						break;
+			}
+		}
+return(true);
+}
+#endif
+
 bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 {
 	rectStruct				r;
@@ -200,9 +321,12 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 					this->LFSWM2_unSpecial();
 					this->buttonDown=true;
 					this->sx=e->xbutton.x;
+					this->rsx=e->xbutton.x_root;
+					this->rsy=e->xbutton.y_root;
 					this->sy=e->xbutton.y;
 					steps=0;
 					this->setWindowRects(false);
+					this->dragRect=this->frameWindowRect;
 
 					switch(this->mainClass->resizeMode)
 						{
@@ -237,6 +361,8 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 								}
 								break;
 						}
+					this->mainClass->doingMove=true;
+
 				}
 				break;
 
@@ -244,7 +370,6 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 				this->buttonDown=false;
 				this->sx=0;
 				this->sy=0;
-				this->mainClass->doingMove=false;
 				this->isShaded=false;
 
 				this->setWindowRects(true);
@@ -260,6 +385,7 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 					XDestroyImage(this->resizeImage);
 
 				XMoveResizeWindow(this->mainClass->display,this->resizeWindow,this->mainClass->displayWidth+10,0,1,1);
+				this->mainClass->doingMove=false;
 				break;
 
 			case MotionNotify:
@@ -278,40 +404,40 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 									{
 										r.x=e->xmotion.x_root-this->sx;
 										r.y=e->xmotion.y_root-this->sy;
-										r.w=this->frameWindowRect.w-(e->xmotion.x-this->sx);
-										r.h=this->frameWindowRect.h-(e->xmotion.y-this->sy);
+										r.w=this->dragRect.w-(e->xmotion.x_root-this->rsx);
+										r.h=this->dragRect.h-(e->xmotion.y_root-this->rsy);
 									}
 								if(e->xany.window==this->topRightDragger)
 									{
 										r.y=e->xmotion.y_root-this->sy;
-										r.w=this->frameWindowRect.w+(e->xmotion.x-this->sx);
-										r.h=this->frameWindowRect.h-(e->xmotion.y-this->sy);
+										r.w=this->dragRect.w+(e->xmotion.x_root-this->rsx);
+										r.h=this->dragRect.h-(e->xmotion.y_root-this->rsy);
 									}
 								if(e->xany.window==this->bottomLeftDragger)
 									{
 										r.x=e->xmotion.x_root-this->sx;
-										r.w=this->frameWindowRect.w-(e->xmotion.x-this->sx);
-										r.h=this->frameWindowRect.h+(e->xmotion.y-this->sy);
+										r.w=this->dragRect.w-(e->xmotion.x_root-this->rsx);
+										r.h=this->dragRect.h+(e->xmotion.y_root-this->rsy);
 									}
 								if(e->xany.window==this->bottomRightDragger)
 									{
-										r.w=this->frameWindowRect.w+(e->xmotion.x-this->sx);
-										r.h=this->frameWindowRect.h+(e->xmotion.y-this->sy);
+										r.w=this->dragRect.w+(e->xmotion.x_root-this->rsx);
+										r.h=this->dragRect.h+(e->xmotion.y_root-this->rsy);
 									}
 
 								if(e->xany.window==this->bottomDragger)
 									{
-										r.h=this->frameWindowRect.h+(e->xmotion.y-this->sy);
+										r.h=this->dragRect.h+(e->xmotion.y_root-this->rsy);
 									}
 
 								if(e->xany.window==this->leftSideDragger)
 									{
 										r.x=e->xmotion.x_root-this->sx;
-										r.w=this->frameWindowRect.w-(e->xmotion.x-this->sx);
+										r.w=this->dragRect.w-(e->xmotion.x_root-this->rsx);
 									}
 								if(e->xany.window==this->rightSideDragger)
 									{
-										r.w=this->frameWindowRect.w+(e->xmotion.x-this->sx);
+										r.w=this->dragRect.w+(e->xmotion.x_root-this->rsx);
 									}
 
 								XGetWMNormalHints(this->mainClass->display,this->contentWindow,&xh,&dummy);
@@ -358,6 +484,7 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 								else
 									{
 										XMoveWindow(this->mainClass->display,this->contentWindow,this->frameWindowRect.w+10,0);
+										//XMoveWindow(this->mainClass->display,this->contentWindow,100,100);
 										//XSync(this->mainClass->display,false);
 									}
 								this->steps=0;
@@ -409,11 +536,16 @@ bool LFSWM2_clientClass::LFSWM2_handleControls(XEvent *e)
 
 	if((this->isShaded==false) && ((e->xany.window==this->topLeftDragger) || (e->xany.window==this->bottomRightDragger) || (e->xany.window==this->topRightDragger) || (e->xany.window==this->bottomLeftDragger)|| (e->xany.window==this->bottomDragger)|| (e->xany.window==this->leftSideDragger)|| (e->xany.window==this->rightSideDragger)))
 		{
+		//if(e->xany.window==this->topLeftDragger)
+		//	retval=this->doResizeDraggers2(e);
+	//	else
 			retval=this->doResizeDraggers(e);
+			//retval=this->doResizeDraggersDebug(e);
+			//fprintf(stderr,">>>>>>>>>>>>>>>>>>\n");
 			return(true);
 		}
 
-	if((e->xany.window!=this->closeButton) && (e->xany.window!=this->maximizeButton) && (e->xany.window!=this->minimizeButton) && (e->xany.window!=this->shadeButton))
+	if((e->xany.window!=this->closeButton) && (e->xany.window!=this->maximizeButton) && (e->xany.window!=this->minimizeButton) && (e->xany.window!=this->shadeButton) && (e->xany.window!=this->menuButton))
 		return(false);
 
 	if(e->xany.window==this->closeButton)
@@ -435,6 +567,11 @@ bool LFSWM2_clientClass::LFSWM2_handleControls(XEvent *e)
 		{
 			pm=this->mainClass->shadeBitMap;
 			data=this->shadeControlStruct;
+		}
+	if(e->xany.window==this->menuButton)
+		{
+			pm=this->mainClass->menuBitMap;
+			data=this->menuControlStruct;
 		}
 
 	retval=false;
@@ -703,6 +840,8 @@ rectStruct LFSWM2_clientClass::setTitlePosition(void)
 				r.x=r.w-namewidth-offset;
 				break;
 		}
+	r.w=namewidth;
+	r.h=extents.height;
 	return(r);
 }
 
@@ -796,6 +935,7 @@ bool LFSWM2_clientClass::LFSWM2_handleEvents(XEvent *e)
 
 			case MotionNotify:
 				{
+				//std::cerr<<"MotionNotify"<<std::endl;
 					bool domove=false;
 
 					if((this->frameWindow==e->xmotion.window) && (e->xmotion.state==Button1Mask))
@@ -865,10 +1005,12 @@ contloop:
 				break;
 
 			case ConfigureNotify:
+			//std::cerr<<"client ConfigureNotify"<<std::endl;
 				break;
 
 			case ConfigureRequest:
 				{
+		//	std::cerr<<"client ConfigureRequest"<<std::endl;
 				break;
 					XRaiseWindow(this->mainClass->display,this->frameWindow);
 					this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,&this->contentWindow,1);
@@ -878,7 +1020,7 @@ contloop:
 
 			case ConfigureRequest+1000://TODO//NEXT
 				{
-				//break;
+				break;
 					XRaiseWindow(this->mainClass->display,this->frameWindow);
 					this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,&this->contentWindow,1);
 					XSetInputFocus(this->mainClass->display,this->contentWindow,RevertToNone,CurrentTime);

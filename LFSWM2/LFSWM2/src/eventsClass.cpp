@@ -95,7 +95,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 								}
 							cccontrol=NULL;
 							e.type=0;
-							this->mainClass->restackCnt=0;
+							this->mainClass->restackCnt=1;
 							continue;
 						}
 				}
@@ -153,6 +153,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						break;
 
 					case ConfigureRequest://TODO//NEXT
+					//break;
 						//fprintf(stderr,"ConfigureRequest from main event loop window=%x when=%i\n",e.xmaprequest.window,when++);
 						//this->mainClass->DEBUG_printConfigureRequestStruct(&e);
 						{
@@ -316,6 +317,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 			if(this->mainClass->doingMove==false)
 				{
+				//fprintf(stderr,"this->mainClass->doingMove==false eventnumber %i\n",when++);
 					this->mainClass->restackCnt--;
 					if(this->mainClass->restackCnt<1)
 						{

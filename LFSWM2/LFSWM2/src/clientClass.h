@@ -79,11 +79,13 @@ class LFSWM2_clientClass
 		Window			maximizeButton=None;
 		Window			minimizeButton=None;
 		Window			shadeButton=None;
+		Window			menuButton=None;
 
-		struct controlData	closeControlStruct;
-		struct controlData	maximizeControlStruct;
-		struct controlData	minimizeControlStruct;
-		struct controlData	shadeControlStruct;
+		controlData		closeControlStruct;
+		controlData		maximizeControlStruct;
+		controlData		minimizeControlStruct;
+		controlData		shadeControlStruct;
+		controlData		menuControlStruct;
 
 		Window			topLeftDragger=None;
 		Window			topRightDragger=None;
@@ -114,13 +116,15 @@ class LFSWM2_clientClass
 		void				LFSWM2_unSpecial(void);
 
 		int				dragsize=16;
-		int				smoothness=5;
+		int				smoothness=2;
 		int				controlCnt=0;
 		int				minWidth;
 		int				minHeight;
 		Window			resizeWindow=None;
 		bool				finishedResize=true;
 		bool				buttonDown=false;
+		int				riteButtonsWidth=0;
+
 bool nodecs=false;
 		void				adjustContentWindow(void);
 		void				resizeContentWindow(rectStruct r,bool moveorigin=true);
@@ -128,12 +132,20 @@ bool nodecs=false;
 		rectStruct		setTitlePosition(void);
 
 		Pixmap			mask=None;
-	GC				maskGC=None;
+		GC				maskGC=None;
 
 	private:
 		int				sx=0;
+		int				rsx=0;
+		int				rsy=0;
 		int				sy=0;
 		int				steps;
+int lastwx=0;
+int lasthy=0;
+int lastxx=0;
+int lastyy=0;
+		rectStruct		dragRect;
+
 
 		Pixmap			currentRootPixmap=None;
 		Picture			windowPicture=None;
@@ -146,6 +158,8 @@ bool nodecs=false;
 
 		void				drawMouseEnter(Window id,Pixmap pm,controlData data);
 		bool				doResizeDraggers(XEvent *e);
+		//bool				doResizeDraggers2(XEvent *ed);
+
 
 		void				resizeContentWindow(int w,int h,bool useframerect=false);
 		void				resizeFrameWindow(void);

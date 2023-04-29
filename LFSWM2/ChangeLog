@@ -1,4 +1,7 @@
 0.2.6
+Started window manager menu.
+Theming done ( mostly ).
+Fixed drag resizeing glitches.
 Added install default prefs file on 1st run if not exists, ( ~/.config/LFS/lfswm2.rc ).
 Fixed memory leak.
 Fixed various gui glitches.

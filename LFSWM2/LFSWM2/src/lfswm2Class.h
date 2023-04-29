@@ -224,6 +224,7 @@ class LFSWM2_Class
 		Pixmap				maximizeBitMap;
 		Pixmap				minimizeBitMap;
 		Pixmap				shadeBitMap;
+		Pixmap				menuBitMap;
 
 		Cursor				topLeftCursor;
 		Cursor				topRightCursor;
