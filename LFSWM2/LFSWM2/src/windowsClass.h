@@ -156,6 +156,10 @@ class LFSWM2_windowClass
 //theme
 		themeStruct							theme;
 		void									LFSWM2_loadTheme(std::string);
+		void									LFSWM2_reloadTheme(void);
+		void									LFSWM2_setControlRect(Window wid,controlData *data,std::string xname,std::string yname,std::string wname,std::string hname);
+		void									LFSWM2_setControlRects(LFSWM2_clientClass *cc);
+
 		void									LFSWM2_refreshFrame(LFSWM2_clientClass *cc,XExposeEvent *e=NULL);
 		void 								LFSWM2_refreshThemeFrame(LFSWM2_clientClass *cc);
 

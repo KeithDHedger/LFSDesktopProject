@@ -67,17 +67,35 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 			if(this->mainClass->messages->whatMsg==QUITLFSWM)
 				break;
+			if(this->mainClass->messages->whatMsg==REFRESHTHEME)
+				{
+					this->mainClass->mainWindowClass->LFSWM2_reloadTheme();
+					this->mainClass->messages->whatMsg=NOMSG;
+					LFSWM2_clientClass *ccs;
+					for(long unsigned j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
+						{
+							ccs=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(j));
+							if(ccs!=NULL)
+								{
+									XShapeCombineMask(this->mainClass->display,ccs->frameWindow,ShapeBounding,0,0,None,ShapeSet);
+									ccs->setWindowRects(true);
+									this->mainClass->mainWindowClass->LFSWM2_setControlRects(ccs);
+									ccs->resetContentWindow();
+									this->mainClass->mainWindowClass->LFSWM2_refreshFrame(ccs);
+									ccs->resizeMode=this->mainClass->resizeMode;
+								}
+						}
+					this->mainClass->restackCnt=1;
+					this->noRestack=false;
+				}
 
 			XNextEvent(this->mainClass->display,&e);
 			cccontrol=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(e.xany.window));
 			if(cccontrol!=NULL)
 				{
 					if(cccontrol->LFSWM2_handleControls(&e)==true)
-					{
-						//if(cccontrol->buttonDown==false)
-						//	XMoveWindow(this->mainClass->display,cccontrol->resizeWindow,-100000,-100000);
-					//		XMoveResizeWindow(this->mainClass->display,cccontrol->resizeWindow,-10,-10,1,1);
-						continue;
+						{
+							continue;
 						}
 				}
 			cccontrol=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xany.window);
@@ -87,7 +105,6 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 					if(cccontrol->LFSWM2_handleEvents(&e)==true)
 						{
 							overide=true;
-							this->mainClass->doingMove=false;
 							cccontrol=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xany.window);//in case window has died
 							if(cccontrol!=NULL)
 								{
@@ -106,16 +123,10 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						//fprintf(stderr,"ButtonRelease eventnumber %i\n",when++);
 						start.subwindow=None;
 						cc=NULL;
-						this->mainClass->doingMove=false;
-
-
-
-
 						break;
 					case ButtonPress:
 						//fprintf(stderr,"ButtonPress eventnumber %i\n",when++);
 						start=e.xbutton;
-						this->mainClass->doingMove=false;
 						this->mainClass->restackCnt=0;
 						this->sy=e.xbutton.y;
 						cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xbutton.window);
@@ -192,7 +203,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 											cc->setWindowRects(true);
 
-											if((cc->buttonDown==false) && (this->mainClass->resizeMode==SCALERESIZE))
+											if((cc->buttonDown==false) && (cc->resizeMode==SCALERESIZE))
 												XMoveWindow(this->mainClass->display,cc->resizeWindow,-100000,-100000);
 											break;
 										}
@@ -315,12 +326,12 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						break;
 				}
 
-			if(this->mainClass->doingMove==false)
+			if(this->noRestack==false)
 				{
-				//fprintf(stderr,"this->mainClass->doingMove==false eventnumber %i\n",when++);
 					this->mainClass->restackCnt--;
 					if(this->mainClass->restackCnt<1)
 						{
+							//fprintf(stderr,"this->mainClass->restackCnt<1 eventnumber %i\n",when++);
 							Atom					*v=NULL;
 							long unsigned int	n;
 							v=(Atom*)this->mainClass->mainWindowClass->LFSWM2_getProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CURRENT_DESKTOP"),XA_CARDINAL,&n);
@@ -349,6 +360,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 							overide=false;
 						}
 				}
+
 			XAllowEvents(this->mainClass->display,ReplayPointer,CurrentTime);
 		}
 }

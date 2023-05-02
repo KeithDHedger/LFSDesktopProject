@@ -118,10 +118,11 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 	this->frameText=this->mainWindowClass->LFSWM2_xftLoadColour("rgb:ff/ff/ff","black");
 	this->frameFont=XftFontOpenName(this->display,this->screen,"sans:size=14:bold");
 
-	this->closeBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)deleteWindowBits,defaultControlBitmapSize,defaultControlBitmapSize);
-	this->maximizeBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)maximizeWindowBits,defaultControlBitmapSize,defaultControlBitmapSize);
-	this->minimizeBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)minimizeWindowBits,defaultControlBitmapSize,defaultControlBitmapSize);
-	this->shadeBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)shadeWindowBits,defaultControlBitmapSize,defaultControlBitmapSize);
+	this->closeBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)deleteWindowBits,DEFAULTCONTROLBITMAPSIZE,DEFAULTCONTROLBITMAPSIZE);
+	this->maximizeBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)maximizeWindowBits,DEFAULTCONTROLBITMAPSIZE,DEFAULTCONTROLBITMAPSIZE);
+	this->minimizeBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)minimizeWindowBits,DEFAULTCONTROLBITMAPSIZE,DEFAULTCONTROLBITMAPSIZE);
+	this->shadeBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)shadeWindowBits,DEFAULTCONTROLBITMAPSIZE,DEFAULTCONTROLBITMAPSIZE);
+	this->menuBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)menuWindowBits,DEFAULTCONTROLBITMAPSIZE,DEFAULTCONTROLBITMAPSIZE);
 
 	this->LFSWM2_setDeskCount(this->numberOfDesktops);
 	this->LFSWM2_setCurrentDesktop(this->currentDesktop);
@@ -179,6 +180,7 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 	this->riteSideBarSize=this->prefs.LFSTK_getInt("ritesidebarsize");
 	this->useTheme=this->prefs.LFSTK_getBool("usetheme");
 	this->resizeMode=this->prefs.LFSTK_getInt("resizemode");
+	this->buttonYOffset=(this->titleBarSize/2)-(DEFAULTCONTROLSIZE/2);
 
 	this->cliOptions(argc,argv);
 

@@ -43,7 +43,7 @@ class LFSWM2_messageClass
 		LFSWM2_Class		*mainClass;
 
 		int				queueID=-1;
-		int				key=777;
+		int				key=999;
 		int				delay=2;
 //messages
 		int				whatMsg=-1;

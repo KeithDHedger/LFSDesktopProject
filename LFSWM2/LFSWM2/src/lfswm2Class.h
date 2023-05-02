@@ -98,6 +98,7 @@ struct controlData
 {
 	GC			controlGC=None;
 	int			startX=0;
+	rectStruct  controlRect;
 	std::string	controlName;
 };
 
@@ -114,33 +115,38 @@ class LFSWM2_messageClass;
 #define BORDER_WIDTH 0
 #define CONTROL_GAP 24
 
-#define defaultControlBitmapSize 8
-#define defaultControlSize 20
-#define defaultControlSpacing 2
-#define defaultControlXYOffset (defaultControlSize/2)-(defaultControlBitmapSize/2)
+#define DEFAULTCONTROLBITMAPSIZE 8
+#define DEFAULTCONTROLSIZE 20
+#define DEFAULTCONTROLSPACING 2
+#define DEFAULTCONTROLXYOFFSET (DEFAULTCONTROLSIZE/2)-(DEFAULTCONTROLBITMAPSIZE/2)
 
-#define deleteWindowSize 8
+//#define deleteWindowSize 8
 __attribute__((unused)) static unsigned char deleteWindowBits[]=
 {
 	0x81,0x42,0x24,0x18,0x18,0x24,0x42,0x81
 };
 
-#define shadeWindowSize 8
+//#define shadeWindowSize 8
 __attribute__((unused)) static unsigned char shadeWindowBits[]=
 {
    0xff, 0x00, 0xff, 0x7e, 0x3c, 0x18, 0x00, 0x00
 };
 
-#define minimizeWindowSize 8
+//#define minimizeWindowSize 8
 __attribute__((unused)) static unsigned char minimizeWindowBits[]=
 {
    0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00, 0x00
 };
 
-#define maximizeWindowSize 8
+//#define maximizeWindowSize 8
 __attribute__((unused)) static unsigned char maximizeWindowBits[]=
 {
    0x18, 0x18, 0x18, 0xff, 0xff, 0x18, 0x18, 0x18
+};
+
+__attribute__((unused)) static unsigned char menuWindowBits[]=
+{
+   0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff
 };
 
 #define NET_WM_STATE_REMOVE 0
@@ -235,7 +241,6 @@ class LFSWM2_Class
 		Cursor				leftCursor;
 		Cursor				rootCursor;
 		int					restackCnt=-1;
-		bool					doingMove=false;
 
 		LFSWM2_eventsClass	*mainEventClass;
 		LFSWM2_windowClass	*mainWindowClass;
@@ -255,12 +260,11 @@ class LFSWM2_Class
 
 #endif
 
-		bool		tb=false;
 		int					msgQueueKey=999;
+		void 				freeFontColour(fontColour *fc);
 	private:
 		void					cliOptions(int argc,char **argv);
 		void					printHelp(void);
-		void 				freeFontColour(fontColour *fc);
 
 //vars
 		XErrorHandler		lastXErrorHandler;

@@ -61,6 +61,8 @@ class LFSWM2_clientClass
 		bool				canResize=false;
 		bool				isActive=false;
 
+		int				resizeMode=0;
+
 		rectStruct		contentWindowRect;
 		rectStruct		frameWindowRect;
 		rectStruct		clientPreMaxRect;
@@ -97,26 +99,27 @@ class LFSWM2_clientClass
 
 		void				LFSWM2_showWindow(void);
 		void				LFSWM2_hideWindow(void);
-		void				LFSWM2_maxWindow(bool ismaxed,bool force=false);
 		void				LFSWM2_fullscreenWindow(bool isfull,bool force=false);
 
+		void				LFSWM2_maxWindow(bool ismaxed,bool force=false);
+		void				LFSWM2_maxWindow(void);
+		void				LFSWM2_minWindow(void);
+		void				LFSWM2_shadeWindow(void);
 		void				LFSWM2_sendCloseWindow(void);
+
 		void				LFSWM2_resizeControls(void);
 
 		void				LFSWM2_setWMState(XEvent *e);
 
 		void				LFSWM2_drawMouseLeave(Window id,Pixmap pm,struct controlData data);
-		//void				LFSWM2_drawMouseLeave(Window id,Pixmap pm,const char *partname);
 
 		bool				LFSWM2_doFrameMoveEvents(XEvent *e);
-		//void				LFSWM2_refreshFrame(XExposeEvent *e=NULL);
-
 		bool				LFSWM2_handleEvents(XEvent *e);
 
 		void				LFSWM2_unSpecial(void);
 
 		int				dragsize=16;
-		int				smoothness=2;
+		int				smoothness=4;//TODO//
 		int				controlCnt=0;
 		int				minWidth;
 		int				minHeight;
@@ -125,7 +128,7 @@ class LFSWM2_clientClass
 		bool				buttonDown=false;
 		int				riteButtonsWidth=0;
 
-bool nodecs=false;
+//bool nodecs=false;
 		void				adjustContentWindow(void);
 		void				resizeContentWindow(rectStruct r,bool moveorigin=true);
 		void				setWindowRects(bool resize=true);
@@ -134,18 +137,16 @@ bool nodecs=false;
 		Pixmap			mask=None;
 		GC				maskGC=None;
 
+		void				resetContentWindow(void);//TODO//all the routines need redoing
 	private:
 		int				sx=0;
 		int				rsx=0;
 		int				rsy=0;
 		int				sy=0;
 		int				steps;
-int lastwx=0;
-int lasthy=0;
-int lastxx=0;
-int lastyy=0;
-		rectStruct		dragRect;
+		bool				inControl=false;
 
+		rectStruct		dragRect;
 
 		Pixmap			currentRootPixmap=None;
 		Picture			windowPicture=None;
@@ -157,14 +158,14 @@ int lastyy=0;
 		XImage			*resizeImage=NULL;
 
 		void				drawMouseEnter(Window id,Pixmap pm,controlData data);
+		void				drawMousePressed(Window id,Pixmap pm,controlData data);
 		bool				doResizeDraggers(XEvent *e);
-		//bool				doResizeDraggers2(XEvent *ed);
-
+		void				showWMMenu(int x,int y);
+		static bool		wmCB(void *p,void* ud);
 
 		void				resizeContentWindow(int w,int h,bool useframerect=false);
 		void				resizeFrameWindow(void);
 
-		void				resetContentWindow(void);
 };
 
 #endif
