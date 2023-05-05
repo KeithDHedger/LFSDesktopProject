@@ -110,7 +110,7 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 {
 	if(this->LFSWM2_getWindowType(id)==MENUWINDOW)
 		{
-			//this->LFSWM2_setClientList(id,false);
+			this->LFSWM2_setClientList(id,true);
 			XRaiseWindow(this->mainClass->display,id);
 			this->mainClass->restackCnt=1;
 			XSetInputFocus(this->mainClass->display,id,RevertToNone,CurrentTime);
@@ -133,7 +133,7 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			return;
 		}
 
-//	if(this->LFSWM2_getWindowType(id)==UNKNOWNTYPE)
+	if(this->LFSWM2_getWindowType(id)==UNKNOWNTYPE)
 //		{
 ////			//this->LFSWM2_setClientList(id,false);
 ////			if(this->LFSWM2_hasState(id,this->mainClass->atoms.at("_NET_WM_STATE_BELOW")))
@@ -141,7 +141,7 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 ////			if(this->LFSWM2_hasState(id,this->mainClass->atoms.at("_NET_WM_STATE_ABOVE")))
 ////				XRaiseWindow(this->mainClass->display,id);
 ////			//this->mainClass->restackCnt=1;
-//			return;
+			return;
 //		}
 
 	if(this->clientList.count(id)>0)
@@ -487,6 +487,13 @@ enum {NORMALWINDOW=0,DESKTOPWINDOW,DOCKWINDOW,MENUWINDOW,DIALOGWINDOW,TOOLWINDOW
 					XFree(x);
 				}
 			XFree(propret);
+		}
+	if(retval==UNKNOWNTYPE)
+		{
+			Window w=None;
+			XGetTransientForHint(this->mainClass->display,id,&w);
+			if(w==None)
+				retval=NORMALWINDOW;
 		}
 	return(retval);
 }
