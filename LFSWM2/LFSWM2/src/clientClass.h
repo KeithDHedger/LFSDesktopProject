@@ -129,6 +129,7 @@ class LFSWM2_clientClass
 		int				riteButtonsWidth=0;
 
 //bool nodecs=false;
+		bool				doneRestack=false;
 		void				adjustContentWindow(void);
 		void				resizeContentWindow(rectStruct r,bool moveorigin=true);
 		void				setWindowRects(bool resize=true);

@@ -886,7 +886,7 @@ bool LFSWM2_clientClass::LFSWM2_handleEvents(XEvent *e)
 						{
 							this->mainClass->mainEventClass->noRestack=true;
 							this->LFSWM2_doFrameMoveEvents(e);
-							this->mainClass->restackCnt=1;
+							this->mainClass->restackCnt=2;
 							return(true);
 						}
 					break;

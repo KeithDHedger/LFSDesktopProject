@@ -31,6 +31,9 @@ const char *atomNames[]={"_NET_WM_WINDOW_TYPE_MENU","_NET_ACTIVE_WINDOW","_NET_C
 
 LFSWM2_Class::~LFSWM2_Class(void)
 {
+	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_CLIENT_LIST"),XA_WINDOW,32,NULL,0);
+	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_CLIENT_LIST_STACKING"),XA_WINDOW,32,NULL,0);
+
 	XftFontClose(this->display,this->frameFont);
 	delete this->mainEventClass;
 	delete this->mainWindowClass;
@@ -42,6 +45,13 @@ LFSWM2_Class::~LFSWM2_Class(void)
 	this->freeFontColour(this->frameText);
 	this->freeFontColour(this->frameBG);
 	this->freeFontColour(this->frameFG);
+//	this->mainWindowClass->LFSWM2_removeProp(this->rootWindow,this->atoms.at("_NET_CLIENT_LIST"));
+//	this->mainWindowClass->LFSWM2_removeProp(this->rootWindow,this->atoms.at("_NET_CLIENT_LIST_STACKING"));
+
+	//this->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CLIENT_LIST"),XA_WINDOW,32,NULL,0);
+	//this->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CLIENT_LIST_STACKING"),XA_WINDOW,32,NULL,0);
+
+	XFlush(this->display);
 	XCloseDisplay(this->display);
 }
 
@@ -259,6 +269,9 @@ void LFSWM2_Class::LFSWM2_initRootWindow(void)
 	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_SUPPORTED"),XA_ATOM,32,(void*)globalAtoms.data(),globalAtoms.size());
 	long geometry[2]={this->displayWidth,this->displayHeight};
 	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atoms.at("_NET_DESKTOP_GEOMETRY"),XA_CARDINAL,32,geometry,2);
+
+	this->mainWindowClass->LFSWM2_removeProp(this->rootWindow,this->atoms.at("_NET_CLIENT_LIST"));
+	this->mainWindowClass->LFSWM2_removeProp(this->rootWindow,this->atoms.at("_NET_CLIENT_LIST_STACKING"));
 }
 
 int LFSWM2_Class::LFSWM2_wmDetected(Display *display,XErrorEvent *e)

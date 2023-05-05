@@ -322,7 +322,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 //						if(cc!=NULL)
 //							XMoveWindow(this->mainClass->display,cc->resizeWindow,-100000,-100000);
 						if(overide==false)
-							this->mainClass->restackCnt=2;
+							this->mainClass->restackCnt=2;//TODO//
 						break;
 				}
 
@@ -558,121 +558,138 @@ void LFSWM2_eventsClass::LFSWM2_sendConfigureEvent(Window wid,rectStruct r)
 
 void LFSWM2_eventsClass::LFSWM2_restack(void)
 {
-	LFSWM2_clientClass	*ccs;
-	std::vector<Window>	sl;
-	std::vector<Window>	cl;
-	Atom					*v=NULL;
 	long unsigned int	nitems_return;
-	int					middleindex=0;
-	int					bottomindex=0;
-	int					topindex=0;
-
-	cl.clear();
-	sl.clear();
+	Atom					*v=NULL;
+	std::vector<Window>	framel;
+	LFSWM2_clientClass	*cc=NULL;
+	LFSWM2_clientClass	*cct=NULL;
+	int					activewindowpos=-1;
+	std::vector<Window>	sl;
+	int					cnt=0;
+	Window				wid;
 
 	v=(Atom*)this->mainClass->mainWindowClass->LFSWM2_getProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,&nitems_return);
 
-	for(long unsigned j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
+	for(int a=0;a<this->mainClass->mainWindowClass->windowIDList.size();a++)
 		{
-			ccs=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(j));
-			if(ccs!=NULL)
+			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(a));
+			if(cc!=NULL)
 				{
-					if((v!=NULL) && (ccs->contentWindow==v[0]) && (ccs->isActive==false))
+					cc->doneRestack=false;
+					if((v!=NULL) && (cc->contentWindow==v[0]) && (cc->isActive==false))
 						{
-							ccs->isActive=true;
-							ccs->mainClass->mainWindowClass->LFSWM2_refreshFrame(ccs);
+							cc->isActive=true;
+							cc->mainClass->mainWindowClass->LFSWM2_refreshFrame(cc);
+							move(this->mainClass->mainWindowClass->windowIDList,a,0);
 						}
-					else if((v!=NULL) && (ccs->contentWindow!=v[0]) && (ccs->isActive==true))
+					else if((v!=NULL) && (cc->contentWindow!=v[0]) && (cc->isActive==true))
 						{
-							ccs->isActive=false;
-							ccs->mainClass->mainWindowClass->LFSWM2_refreshFrame(ccs);
+							cc->isActive=false;
+							cc->mainClass->mainWindowClass->LFSWM2_refreshFrame(cc);
 						}
 				}
 		}
 
-	for(long unsigned j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
-		{
-			ccs=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(j));
-			if((ccs!=NULL) && ((v!=NULL)))
+	sl=this->mainClass->mainWindowClass->windowIDList;
+
+	do
+		{			
+			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(sl.at(cnt));
+			if((cc!=NULL) && (cc->doneRestack==false))
 				{
-					if(ccs->contentWindow==v[0])//TODO//oribble!!!!!
+					cc->doneRestack=true;
+					if(cc->transientFor!=None)
 						{
-							if((ccs->onBottom==false))
+							cct=this->mainClass->mainWindowClass->LFSWM2_getClientClass(cc->transientFor);
+							std::vector<Window>::iterator it=std::find(std::begin(sl),std::end(sl),cc->transientFor);
+							activewindowpos=std::distance(std::begin(sl),it);
+							if((activewindowpos!=1) )
 								{
-									sl.insert(sl.begin()+topindex,ccs->frameWindow);
-									cl.insert(cl.begin()+topindex,ccs->contentWindow);
-									middleindex++;
-									bottomindex++;
-									continue;
+									if(cct->isActive==true)
+										{
+											if(cnt==0)
+												move(sl,cnt,0);
+											else
+												{
+													move(sl,cnt,activewindowpos);
+													cnt=-1;
+												}
+										}
 								}
-							else if((ccs->onTop==true) )
-								{
-									sl.insert(sl.begin()+middleindex,ccs->frameWindow);
-									cl.insert(cl.begin()+middleindex,ccs->contentWindow);
-									topindex=middleindex;
-									middleindex++;
-									bottomindex++;
-									continue;
-								}
-						}
-
-					if(ccs->onTop==true)
-						{
-							sl.insert(sl.begin()+middleindex,ccs->frameWindow);
-							cl.insert(cl.begin()+middleindex,ccs->contentWindow);
-							topindex++;
-							middleindex++;
-							bottomindex++;
-							continue;
-						}
-
-					if((ccs->onBottom==false) && (ccs->onTop==false))
-						{
-							sl.insert(sl.begin()+middleindex,ccs->frameWindow);
-							cl.insert(cl.begin()+middleindex,ccs->contentWindow);
-							middleindex++;
-							bottomindex++;
-							continue;
-						}
-
-					if(ccs->onBottom==true)
-						{
-							sl.insert(sl.begin()+bottomindex,ccs->frameWindow);
-							cl.insert(cl.begin()+bottomindex,ccs->contentWindow);
-							bottomindex++;
-							continue;
 						}
 				}
+			cnt++;
 		}
+	while((cnt<sl.size()));
 
-	for(long unsigned j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
+	framel.clear();
+	for(int j=0;j<sl.size();j++)
 		{
-			if(this->mainClass->mainWindowClass->LFSWM2_getWindowType(this->mainClass->mainWindowClass->windowIDList.at(j))==DOCKWINDOW)
-				{
-					sl.emplace(sl.begin(),this->mainClass->mainWindowClass->windowIDList.at(j));
-					cl.emplace(cl.begin(),this->mainClass->mainWindowClass->windowIDList.at(j));
-					continue;
-				}
-			if(this->mainClass->mainWindowClass->LFSWM2_getWindowType(this->mainClass->mainWindowClass->windowIDList.at(j))==MENUWINDOW)
-				{
-					sl.emplace(sl.begin(),this->mainClass->mainWindowClass->windowIDList.at(j));
-					cl.emplace(cl.begin(),this->mainClass->mainWindowClass->windowIDList.at(j));
-					continue;
-				}
-			if(this->mainClass->mainWindowClass->LFSWM2_getWindowType(this->mainClass->mainWindowClass->windowIDList.at(j))==DESKTOPWINDOW)
-				{
-					sl.push_back(this->mainClass->mainWindowClass->windowIDList.at(j));
-					cl.push_back(this->mainClass->mainWindowClass->windowIDList.at(j));
-					continue;
-				}
+			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(sl.at(j));
+			if(cc!=NULL)	
+				framel.push_back(cc->frameWindow);
+			else
+				framel.push_back(sl.at(j));
 		}
 
-	XRestackWindows(this->mainClass->display,sl.data(),sl.size());
+//above
+	for(int j=0;j<framel.size();j++)
+		{
+			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(framel.at(j));
+			if(cc!=NULL)
+				wid=cc->contentWindow;
+			else
+				wid=framel.at(j);
+			if(this->mainClass->mainWindowClass->LFSWM2_hasState(wid,this->mainClass->atoms.at("_NET_WM_STATE_ABOVE")))
+				move(framel,j,0);
+		}
 
-	this->mainClass->mainWindowClass->windowIDList=cl;
-	this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CLIENT_LIST"),XA_WINDOW,32,cl.data(),cl.size());
-	this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CLIENT_LIST_STACKING"),XA_WINDOW,32,cl.data(),cl.size());
+	for(int j=0;j<framel.size();j++)
+		{
+			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(framel.at(j));
+			if(cc!=NULL)
+				wid=cc->contentWindow;
+			else
+				wid=framel.at(j);
+				
+			if((this->mainClass->mainWindowClass->LFSWM2_getWindowType(wid)==DOCKWINDOW))
+				move(framel,j,0);
+			if((this->mainClass->mainWindowClass->LFSWM2_getWindowType(wid)==MENUWINDOW))
+				move(framel,j,0);
+		}
+
+//below
+	for(int j=framel.size()-1;j>-1;j--)
+		{
+			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(framel.at(j));
+			if(cc!=NULL)
+				wid=cc->contentWindow;
+			else
+				wid=framel.at(j);
+			if(this->mainClass->mainWindowClass->LFSWM2_hasState(wid,this->mainClass->atoms.at("_NET_WM_STATE_BELOW")))
+				move(framel,j,framel.size()-1);
+		}
+
+	for(int j=framel.size()-1;j>-1;j--)
+		{
+			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(framel.at(j));
+			if(cc!=NULL)
+				wid=cc->contentWindow;
+			else
+				wid=framel.at(j);
+			if((this->mainClass->mainWindowClass->LFSWM2_getWindowType(wid)==DESKTOPWINDOW))
+				move(framel,j,framel.size()-1);
+		}
+
+	XRestackWindows(this->mainClass->display,framel.data(),framel.size());
+
+	this->mainClass->mainWindowClass->windowIDList=sl;
+
+	this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CLIENT_LIST"),XA_WINDOW,32,sl.data(),sl.size());
+	this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CLIENT_LIST_STACKING"),XA_WINDOW,32,sl.data(),sl.size());
 	XFree(v);
+	this->mainClass->mainWindowClass->windowIDList=sl;
+
 }
 
 void LFSWM2_eventsClass::LFSWM2_moveToTop(Window id)

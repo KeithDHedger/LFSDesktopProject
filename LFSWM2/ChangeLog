@@ -1,4 +1,8 @@
+1.0.0
+Version bump.
+
 0.2.6
+Fixed restacking.
 Code clean.
 Fixed control position/sizes when changing themes on the fly.
 Fixed segfault when switching resize modes.

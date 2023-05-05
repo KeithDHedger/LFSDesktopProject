@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+
 enum {MOUNTDISK=1,UNMOUNTDISK,EJECTDISK};
 int checkForNTFS(const char *arg)
 {

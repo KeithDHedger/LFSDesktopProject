@@ -110,7 +110,7 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 {
 	if(this->LFSWM2_getWindowType(id)==MENUWINDOW)
 		{
-			this->LFSWM2_setClientList(id,true);
+			//this->LFSWM2_setClientList(id,false);
 			XRaiseWindow(this->mainClass->display,id);
 			this->mainClass->restackCnt=1;
 			XSetInputFocus(this->mainClass->display,id,RevertToNone,CurrentTime);
@@ -127,11 +127,23 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 
 	if(this->LFSWM2_getWindowType(id)==DESKTOPWINDOW)
 		{
-			this->LFSWM2_setClientList(id,true);
+			//this->LFSWM2_setClientList(id,true);
 			XLowerWindow(this->mainClass->display,id);
 			this->mainClass->restackCnt=1;
 			return;
 		}
+
+	if(this->LFSWM2_getWindowType(id)==UNKNOWNTYPE)
+		{
+//			//this->LFSWM2_setClientList(id,false);
+//			if(this->LFSWM2_hasState(id,this->mainClass->atoms.at("_NET_WM_STATE_BELOW")))
+//				XLowerWindow(this->mainClass->display,id);
+//			if(this->LFSWM2_hasState(id,this->mainClass->atoms.at("_NET_WM_STATE_ABOVE")))
+//				XRaiseWindow(this->mainClass->display,id);
+//			//this->mainClass->restackCnt=1;
+			return;
+		}
+
 	if(this->clientList.count(id)>0)
 		{
 			XMapWindow(this->mainClass->display,this->clientList.at(id)->frameWindow);
