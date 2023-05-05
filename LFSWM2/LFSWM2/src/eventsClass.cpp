@@ -601,18 +601,21 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)
 					if(cc->transientFor!=None)
 						{
 							cct=this->mainClass->mainWindowClass->LFSWM2_getClientClass(cc->transientFor);
-							std::vector<Window>::iterator it=std::find(std::begin(sl),std::end(sl),cc->transientFor);
-							activewindowpos=std::distance(std::begin(sl),it);
-							if((activewindowpos!=1) )
+							if(cct!=NULL)
 								{
-									if(cct->isActive==true)
+									std::vector<Window>::iterator it=std::find(std::begin(sl),std::end(sl),cc->transientFor);
+									activewindowpos=std::distance(std::begin(sl),it);
+									if((activewindowpos!=1) )
 										{
-											if(cnt==0)
-												move(sl,cnt,0);
-											else
+											if(cct->isActive==true)
 												{
-													move(sl,cnt,activewindowpos);
-													cnt=-1;
+													if(cnt==0)
+														move(sl,cnt,0);
+													else
+														{
+															move(sl,cnt,activewindowpos);
+															cnt=-1;
+														}
 												}
 										}
 								}

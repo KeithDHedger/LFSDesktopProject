@@ -1,4 +1,5 @@
 1.0.0
+Fixed segfault with certain windows like xephyr.
 Version bump.
 
 0.2.6

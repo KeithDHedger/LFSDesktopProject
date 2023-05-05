@@ -133,16 +133,16 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			return;
 		}
 
-	if(this->LFSWM2_getWindowType(id)==UNKNOWNTYPE)
-		{
-//			//this->LFSWM2_setClientList(id,false);
-//			if(this->LFSWM2_hasState(id,this->mainClass->atoms.at("_NET_WM_STATE_BELOW")))
-//				XLowerWindow(this->mainClass->display,id);
-//			if(this->LFSWM2_hasState(id,this->mainClass->atoms.at("_NET_WM_STATE_ABOVE")))
-//				XRaiseWindow(this->mainClass->display,id);
-//			//this->mainClass->restackCnt=1;
-			return;
-		}
+//	if(this->LFSWM2_getWindowType(id)==UNKNOWNTYPE)
+//		{
+////			//this->LFSWM2_setClientList(id,false);
+////			if(this->LFSWM2_hasState(id,this->mainClass->atoms.at("_NET_WM_STATE_BELOW")))
+////				XLowerWindow(this->mainClass->display,id);
+////			if(this->LFSWM2_hasState(id,this->mainClass->atoms.at("_NET_WM_STATE_ABOVE")))
+////				XRaiseWindow(this->mainClass->display,id);
+////			//this->mainClass->restackCnt=1;
+//			return;
+//		}
 
 	if(this->clientList.count(id)>0)
 		{
