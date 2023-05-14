@@ -1,4 +1,6 @@
 1.0.0
+Fixed hole in titlebar when shaded.
+Fixed dock windows being on top.
 Minor menu gui fix.
 Fixed segfault with certain windows like xephyr.
 Version bump.

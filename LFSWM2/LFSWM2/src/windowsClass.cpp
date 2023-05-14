@@ -1168,14 +1168,15 @@ void LFSWM2_windowClass::LFSWM2_refreshThemeFrame(LFSWM2_clientClass *cc)
 	std::string	fullpartname;
 	std::string	activepart="-active";
 
-	int	part1w=0;
-	int	part2w=0;
-	int	part3w=0;
-	int	part4w=0;
-	int	part5w=0;
+	int			part1w=0;
+	int			part2w=0;
+	int			part3w=0;
+	int			part4w=0;
+	int			part5w=0;
+	int			startx=0;
 
-	Pixmap pm;
-	GC		pmgc;
+	Pixmap		pm;
+	GC			pmgc;
 
 	r=cc->frameWindowRect;
 
@@ -1205,113 +1206,6 @@ void LFSWM2_windowClass::LFSWM2_refreshThemeFrame(LFSWM2_clientClass *cc)
 
 	XSetFillStyle(this->mainClass->display,pmgc,FillTiled);
 	XSetFillStyle(this->mainClass->display,cc->maskGC,FillTiled);
-
-	rectStruct tr=cc->setTitlePosition();
-//this->mainClass->DEBUG_printRect(r,"frame windwow rect");
-//this->mainClass->DEBUG_printRect(tr,"part3 rect");
-
-	if(this->theme.fullWidthTitle==false)
-		{
-			part3w=tr.w;
-			part2w=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("title-2-active")];
-			part4w=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("title-4-active")];
-			part1w=tr.x-part2w;
-			part5w=r.w-(tr.x+tr.w+part4w);
-		}
-	else
-		{
-			part1w=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("top-left-active")];
-			part2w=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("title-2-active")];
-			part4w=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("title-4-active")];
-			part3w=r.w-(part1w+part2w+part4w+cc->riteButtonsWidth);
-			part5w=r.w-(part3w);
-		}
-
-//std::cerr<<"part1="<<part1w<<" part2="<<part2w<<" part3="<<part3w<<" part4="<<part4w<<" part5="<<part5w<<std::endl;
-int startx=0;
-//left title
-	fullpartname="title-1"+activepart;
-
-	XSetClipMask(this->mainClass->display,pmgc,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XSetClipOrigin(this->mainClass->display,pmgc,0,0);
-	XSetTSOrigin(this->mainClass->display,pmgc,0,0);
-	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XFillRectangle(this->mainClass->display,pm,pmgc,startx,0,part1w,this->mainClass->titleBarSize);
-
-//	XSetFillStyle(this->mainClass->display,cc->maskGC,FillSolid);
-
-	XSetClipMask(this->mainClass->display,pmgc,None);
-	XSetClipOrigin(this->mainClass->display,pmgc,startx,0);
-	XSetTSOrigin(this->mainClass->display,pmgc,startx,0);
-	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XFillRectangle(this->mainClass->display,pm,pmgc,startx,0,part1w,this->mainClass->titleBarSize);
-	startx+=part1w;
-
-//left mid title
-	fullpartname="title-2"+activepart;
-
-	XSetClipMask(this->mainClass->display,pmgc,None);
-	XSetClipOrigin(this->mainClass->display,pmgc,startx,0);
-	XSetTSOrigin(this->mainClass->display,pmgc,startx,0);
-	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XFillRectangle(this->mainClass->display,pm,pmgc,startx,0,part2w,this->mainClass->titleBarSize);
-
-	//XSetFillStyle(this->mainClass->display,cc->maskGC,FillTiled);
-	XSetClipOrigin(this->mainClass->display,cc->maskGC,startx,0);
-	XSetTSOrigin(this->mainClass->display,cc->maskGC,startx,0);
-	XSetTile(this->mainClass->display,cc->maskGC,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XFillRectangle(this->mainClass->display,cc->mask,cc->maskGC,startx,0,part2w,this->mainClass->titleBarSize);
-
-
-//XSetFillStyle(this->mainClass->display,cc->maskGC,FillSolid);
-	startx+=part2w;
-
-//middle
-	fullpartname="title-3"+activepart;
-
-	XSetClipMask(this->mainClass->display,pmgc,None);
-	XSetClipOrigin(this->mainClass->display,pmgc,startx,0);
-	XSetTSOrigin(this->mainClass->display,pmgc,startx,0);
-	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XFillRectangle(this->mainClass->display,pm,pmgc,startx,0,part3w,this->mainClass->titleBarSize);
-
-	//XSetFillStyle(this->mainClass->display,cc->maskGC,FillTiled);
-	XSetClipOrigin(this->mainClass->display,cc->maskGC,startx,0);
-	XSetTSOrigin(this->mainClass->display,cc->maskGC,startx,0);
-	XSetTile(this->mainClass->display,cc->maskGC,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XFillRectangle(this->mainClass->display,cc->mask,cc->maskGC,startx,0,part3w,this->mainClass->titleBarSize);
-	startx+=part3w;
-
-//right mid title
-	fullpartname="title-4"+activepart;
-	XSetClipMask(this->mainClass->display,pmgc,None);
-	XSetClipOrigin(this->mainClass->display,pmgc,startx,0);
-	XSetTSOrigin(this->mainClass->display,pmgc,startx,0);
-	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XFillRectangle(this->mainClass->display,pm,pmgc,startx,0,part4w,this->mainClass->titleBarSize);
-
-	//XSetFillStyle(this->mainClass->display,cc->maskGC,FillTiled);
-	XSetClipOrigin(this->mainClass->display,cc->maskGC,startx,0);
-	XSetTSOrigin(this->mainClass->display,cc->maskGC,startx,0);
-	XSetTile(this->mainClass->display,cc->maskGC,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XFillRectangle(this->mainClass->display,cc->mask,cc->maskGC,startx,0,part4w,this->mainClass->titleBarSize);
-	startx+=part4w;
-
-//right title
-	fullpartname="title-5"+activepart;
-
-	XSetClipMask(this->mainClass->display,pmgc,None);
-	XSetClipOrigin(this->mainClass->display,pmgc,startx,0);
-	XSetTSOrigin(this->mainClass->display,pmgc,startx,0);
-	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XFillRectangle(this->mainClass->display,pm,pmgc,startx,0,part5w,this->mainClass->titleBarSize);
-
-//	XSetFillStyle(this->mainClass->display,cc->maskGC,FillTiled);
-	XSetClipOrigin(this->mainClass->display,cc->maskGC,startx,0);
-	XSetTSOrigin(this->mainClass->display,cc->maskGC,startx,0);
-	XSetTile(this->mainClass->display,cc->maskGC,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XFillRectangle(this->mainClass->display,cc->mask,cc->maskGC,startx,0,part5w,this->mainClass->titleBarSize);
-	startx+=part4w;
 
 //left side
 	fullpartname="left"+activepart;
@@ -1372,6 +1266,106 @@ int startx=0;
 	XSetClipOrigin(this->mainClass->display,pmgc,cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
 	XCopyArea(this->mainClass->display,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],pm,pmgc,0,0,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
 	XCopyArea(this->mainClass->display,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->mask,cc->maskGC,0,0,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+
+//titlebar
+	rectStruct tr=cc->setTitlePosition();
+//this->mainClass->DEBUG_printRect(r,"frame windwow rect");
+//this->mainClass->DEBUG_printRect(tr,"part3 rect");
+
+	if(this->theme.fullWidthTitle==false)
+		{
+			part3w=tr.w;
+			part2w=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("title-2-active")];
+			part4w=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("title-4-active")];
+			part1w=tr.x-part2w;
+			part5w=r.w-(tr.x+tr.w+part4w);
+		}
+	else
+		{
+			part1w=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("top-left-active")];
+			part2w=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("title-2-active")];
+			part4w=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("title-4-active")];
+			part3w=r.w-(part1w+part2w+part4w+cc->riteButtonsWidth);
+			part5w=r.w-(part3w);
+		}
+
+//std::cerr<<"part1="<<part1w<<" part2="<<part2w<<" part3="<<part3w<<" part4="<<part4w<<" part5="<<part5w<<std::endl;
+	startx=0;
+//left title
+	fullpartname="title-1"+activepart;
+
+	XSetFillStyle(this->mainClass->display,cc->maskGC,FillSolid);
+	XSetClipMask(this->mainClass->display,pmgc,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XSetClipOrigin(this->mainClass->display,pmgc,0,0);
+	XSetTSOrigin(this->mainClass->display,pmgc,0,0);
+	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XFillRectangle(this->mainClass->display,pm,pmgc,startx,0,part1w,this->mainClass->titleBarSize);
+
+	XSetClipMask(this->mainClass->display,pmgc,None);
+	XSetClipOrigin(this->mainClass->display,pmgc,startx,0);
+	XSetTSOrigin(this->mainClass->display,pmgc,startx,0);
+	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XFillRectangle(this->mainClass->display,pm,pmgc,startx,0,part1w,this->mainClass->titleBarSize);
+	startx+=part1w;
+
+//left mid title
+	fullpartname="title-2"+activepart;
+
+	XSetClipMask(this->mainClass->display,pmgc,None);
+	XSetClipOrigin(this->mainClass->display,pmgc,startx,0);
+	XSetTSOrigin(this->mainClass->display,pmgc,startx,0);
+	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XFillRectangle(this->mainClass->display,pm,pmgc,startx,0,part2w,this->mainClass->titleBarSize);
+
+	XSetClipOrigin(this->mainClass->display,cc->maskGC,startx,0);
+	XSetTSOrigin(this->mainClass->display,cc->maskGC,startx,0);
+	XSetTile(this->mainClass->display,cc->maskGC,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XFillRectangle(this->mainClass->display,cc->mask,cc->maskGC,startx,0,part2w,this->mainClass->titleBarSize);
+	startx+=part2w;
+
+//middle
+	fullpartname="title-3"+activepart;
+
+	XSetClipMask(this->mainClass->display,pmgc,None);
+	XSetClipOrigin(this->mainClass->display,pmgc,startx,0);
+	XSetTSOrigin(this->mainClass->display,pmgc,startx,0);
+	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XFillRectangle(this->mainClass->display,pm,pmgc,startx,0,part3w,this->mainClass->titleBarSize);
+
+	XSetClipOrigin(this->mainClass->display,cc->maskGC,startx,0);
+	XSetTSOrigin(this->mainClass->display,cc->maskGC,startx,0);
+	XSetTile(this->mainClass->display,cc->maskGC,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XFillRectangle(this->mainClass->display,cc->mask,cc->maskGC,startx,0,part3w,this->mainClass->titleBarSize);
+	startx+=part3w;
+
+//right mid title
+	fullpartname="title-4"+activepart;
+	XSetClipMask(this->mainClass->display,pmgc,None);
+	XSetClipOrigin(this->mainClass->display,pmgc,startx,0);
+	XSetTSOrigin(this->mainClass->display,pmgc,startx,0);
+	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XFillRectangle(this->mainClass->display,pm,pmgc,startx,0,part4w,this->mainClass->titleBarSize);
+
+	XSetClipOrigin(this->mainClass->display,cc->maskGC,startx,0);
+	XSetTSOrigin(this->mainClass->display,cc->maskGC,startx,0);
+	XSetTile(this->mainClass->display,cc->maskGC,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XFillRectangle(this->mainClass->display,cc->mask,cc->maskGC,startx,0,part4w,this->mainClass->titleBarSize);
+	startx+=part4w;
+
+//right title
+	fullpartname="title-5"+activepart;
+
+	XSetClipMask(this->mainClass->display,pmgc,None);
+	XSetClipOrigin(this->mainClass->display,pmgc,startx,0);
+	XSetTSOrigin(this->mainClass->display,pmgc,startx,0);
+	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XFillRectangle(this->mainClass->display,pm,pmgc,startx,0,part5w,this->mainClass->titleBarSize);
+
+	XSetClipOrigin(this->mainClass->display,cc->maskGC,startx,0);
+	XSetTSOrigin(this->mainClass->display,cc->maskGC,startx,0);
+	XSetTile(this->mainClass->display,cc->maskGC,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XFillRectangle(this->mainClass->display,cc->mask,cc->maskGC,startx,0,part5w,this->mainClass->titleBarSize);
+	startx+=part4w;
 
 //top left
 	fullpartname="top-left"+activepart;

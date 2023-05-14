@@ -656,9 +656,15 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)
 				wid=framel.at(j);
 				
 			if((this->mainClass->mainWindowClass->LFSWM2_getWindowType(wid)==DOCKWINDOW))
-				move(framel,j,0);
+				{
+					if(this->mainClass->mainWindowClass->LFSWM2_hasState(wid,this->mainClass->atoms.at("_NET_WM_STATE_BELOW")))
+						this->mainClass->mainWindowClass->LFSWM2_removeProp(wid,this->mainClass->atoms.at("_NET_WM_STATE_BELOW"));//TODO//MMMMMmmmmmm
+					move(framel,j,0);
+				}
 			if((this->mainClass->mainWindowClass->LFSWM2_getWindowType(wid)==MENUWINDOW))
-				move(framel,j,0);
+				{
+					move(framel,j,0);
+				}
 		}
 
 //below
