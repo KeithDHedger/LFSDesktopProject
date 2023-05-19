@@ -135,7 +135,7 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 	this->menuBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)menuWindowBits,DEFAULTCONTROLBITMAPSIZE,DEFAULTCONTROLBITMAPSIZE);
 
 	this->LFSWM2_setDeskCount(this->numberOfDesktops);
-	this->LFSWM2_setCurrentDesktop(this->currentDesktop);//TODO//get from rootwin
+	this->LFSWM2_setCurrentDesktopFromRoot();
 
 	this->topLeftCursor=XCreateFontCursor(this->display,XC_top_left_corner);
 	this->topRightCursor=XCreateFontCursor(this->display,XC_top_right_corner);
@@ -448,6 +448,19 @@ void LFSWM2_Class::LFSWM2_setCurrentDesktop(unsigned long i,bool force,bool dovi
 			this->currentDesktop=i;
 			if(dovis==true)
 				this->mainWindowClass->LFSWM2_setVisibilityForDesk(this->currentDesktop);
+		}
+}
+
+void LFSWM2_Class::LFSWM2_setCurrentDesktopFromRoot(void)
+{
+	Atom					*v=NULL;
+	long unsigned int	n;
+
+	v=(Atom*)this->mainWindowClass->LFSWM2_getProp(this->rootWindow,this->atoms.at("_NET_CURRENT_DESKTOP"),XA_CARDINAL,&n);
+	if(v!=NULL)
+		{
+			this->LFSWM2_setCurrentDesktop((long unsigned int)v[0]);
+			XFree(v);
 		}
 }
 

@@ -1,4 +1,5 @@
 1.0.0
+If prop "_NET_CURRENT_DESKTOP" is available on startup select that desktop.
 Fixed getting bottom bar size from prefs.
 Fixed window losing focus.
 Added force dockwindows to top, bottom or set by app to prefs.
