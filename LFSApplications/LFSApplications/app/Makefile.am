@@ -14,6 +14,8 @@ lfsbackdropprefs_SOURCES = ../src/lfsbackdropprefs.cpp
 
 lfspanelprefs_SOURCES = ../src/lfspanelprefs.cpp
 
+lfswm2prefs_SOURCES = ../src/lfswm2prefs.cpp
+
 lfsabout_SOURCES = ../src/lfsabout.cpp
 
 lfsruncommand_SOURCES = ../src/lfsruncommand.cpp
@@ -26,4 +28,4 @@ lfscolourchooser_SOURCES = ../src/lfscolourchooser.cpp
 
 man1_MANS = ../resources/man/lfsapplications.1
 
-bin_PROGRAMS =  lfsappearance lfstkprefs lfswmprefs lfsdesktopprefs lfsbackdropprefs lfspanelprefs lfsabout lfsruncommand lfsmimeeditor lfsfontselect lfscolourchooser
+bin_PROGRAMS =  lfsappearance lfstkprefs lfswmprefs lfsdesktopprefs lfsbackdropprefs lfspanelprefs lfswm2prefs lfsabout lfsruncommand lfsmimeeditor lfsfontselect lfscolourchooser

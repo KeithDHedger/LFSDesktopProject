@@ -1,4 +1,7 @@
 1.0.0
+Fixed getting bottom bar size from prefs.
+Fixed window losing focus.
+Added force dockwindows to top, bottom or set by app to prefs.
 Fixed hole in titlebar when shaded.
 Fixed dock windows being on top.
 Minor menu gui fix.

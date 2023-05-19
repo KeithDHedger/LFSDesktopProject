@@ -122,14 +122,29 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			this->LFSWM2_setClientList(id,true);
 			XRaiseWindow(this->mainClass->display,id);
 			this->mainClass->restackCnt=1;
+			switch(this->mainClass->forceDockStackingOrder)
+				{
+					case FORCEABOVE:
+						this->LFSWM2_removeProp(id,this->mainClass->atoms.at("_NET_WM_STATE_BELOW"));
+						this->LFSWM2_addState(id,this->mainClass->atoms.at("_NET_WM_STATE_ABOVE"));
+						break;
+					case FORCEBELOW:
+						this->LFSWM2_removeProp(id,this->mainClass->atoms.at("_NET_WM_STATE_ABOVE"));
+						this->LFSWM2_addState(id,this->mainClass->atoms.at("_NET_WM_STATE_BELOW"));
+						break;
+					default:
+						break;
+				}
 			return;
 		}
 
 	if(this->LFSWM2_getWindowType(id)==DESKTOPWINDOW)
 		{
-			//this->LFSWM2_setClientList(id,true);
+			this->LFSWM2_setClientList(id,true);
 			XLowerWindow(this->mainClass->display,id);
 			this->mainClass->restackCnt=1;
+			if(this->LFSWM2_hasState(id,this->mainClass->atoms.at("_NET_WM_STATE_ABOVE")))
+				this->LFSWM2_removeProp(id,this->mainClass->atoms.at("_NET_WM_STATE_ABOVE"));
 			return;
 		}
 
@@ -1030,6 +1045,7 @@ void	 LFSWM2_windowClass::LFSWM2_reloadTheme(void)
 	this->mainClass->titlePosition=this->mainClass->prefs.LFSTK_getInt("titleposition");
 	this->mainClass->leftSideBarSize=this->mainClass->prefs.LFSTK_getInt("leftsidebarsize");
 	this->mainClass->riteSideBarSize=this->mainClass->prefs.LFSTK_getInt("ritesidebarsize");
+	this->mainClass->bottomBarSize=this->mainClass->prefs.LFSTK_getInt("bottombarsize");
 	this->mainClass->useTheme=this->mainClass->prefs.LFSTK_getBool("usetheme");
 	this->mainClass->resizeMode=this->mainClass->prefs.LFSTK_getInt("resizemode");
 

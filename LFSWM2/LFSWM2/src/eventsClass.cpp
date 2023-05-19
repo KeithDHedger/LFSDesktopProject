@@ -350,8 +350,8 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 									v=(Atom*)this->mainClass->mainWindowClass->LFSWM2_getProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,&n);
 									if(v!=NULL)
 										{
-											if(this->mainClass->mainWindowClass->LFSWM2_getWindowType(v[0])!=UNKNOWNTYPE)
-												XSetInputFocus(this->mainClass->display,v[0],RevertToNone,CurrentTime);
+											//if(this->mainClass->mainWindowClass->LFSWM2_getWindowType(v[0])!=UNKNOWNTYPE)
+											////	XSetInputFocus(this->mainClass->display,v[0],RevertToNone,CurrentTime);
 											XFree(v);
 										}
 								}
@@ -657,9 +657,9 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)
 				
 			if((this->mainClass->mainWindowClass->LFSWM2_getWindowType(wid)==DOCKWINDOW))
 				{
-					if(this->mainClass->mainWindowClass->LFSWM2_hasState(wid,this->mainClass->atoms.at("_NET_WM_STATE_BELOW")))
-						this->mainClass->mainWindowClass->LFSWM2_removeProp(wid,this->mainClass->atoms.at("_NET_WM_STATE_BELOW"));//TODO//MMMMMmmmmmm
-					move(framel,j,0);
+					if(!this->mainClass->mainWindowClass->LFSWM2_hasState(wid,this->mainClass->atoms.at("_NET_WM_STATE_BELOW")))
+						if(!this->mainClass->mainWindowClass->LFSWM2_hasState(wid,this->mainClass->atoms.at("_NET_WM_STATE_ABOVE")))
+							move(framel,j,0);
 				}
 			if((this->mainClass->mainWindowClass->LFSWM2_getWindowType(wid)==MENUWINDOW))
 				{

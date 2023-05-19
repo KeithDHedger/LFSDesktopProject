@@ -135,7 +135,7 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 	this->menuBitMap=XCreateBitmapFromData(this->display,this->rootWindow,(const char*)menuWindowBits,DEFAULTCONTROLBITMAPSIZE,DEFAULTCONTROLBITMAPSIZE);
 
 	this->LFSWM2_setDeskCount(this->numberOfDesktops);
-	this->LFSWM2_setCurrentDesktop(this->currentDesktop);
+	this->LFSWM2_setCurrentDesktop(this->currentDesktop);//TODO//get from rootwin
 
 	this->topLeftCursor=XCreateFontCursor(this->display,XC_top_left_corner);
 	this->topRightCursor=XCreateFontCursor(this->display,XC_top_right_corner);
@@ -160,9 +160,11 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 			{this->prefs.LFSTK_hashFromKey("titlebarsize"),{TYPEINT,"titlebarsize","",false,20}},
 			{this->prefs.LFSTK_hashFromKey("leftsidebarsize"),{TYPEINT,"leftsidebarsize","",false,2}},
 			{this->prefs.LFSTK_hashFromKey("ritesidebarsize"),{TYPEINT,"ritesidebarsize","",false,2}},
+			{this->prefs.LFSTK_hashFromKey("bottombarsize"),{TYPEINT,"bottombarsize","",false,8}},
 			{this->prefs.LFSTK_hashFromKey("framebg"),{TYPESTRING,"framebg","grey",false,15}},
 			{this->prefs.LFSTK_hashFromKey("framefg"),{TYPESTRING,"framefg","white",false,0}},
 			{this->prefs.LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","black",false,0}},
+			{this->prefs.LFSTK_hashFromKey("forcedocksstack"),{TYPEINT,"forcedocksstack","",false,1}},
 			{this->prefs.LFSTK_hashFromKey("rescanprefs"),{TYPEINT,"rescanprefs","",false,10}},
 			{this->prefs.LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","",false,0}},
 			{this->prefs.LFSTK_hashFromKey("resizemode"),{TYPEINT,"resizemode","",false,2}}
@@ -188,8 +190,10 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 	this->titleBarSize=this->prefs.LFSTK_getInt("titlebarsize");
 	this->leftSideBarSize=this->prefs.LFSTK_getInt("leftsidebarsize");
 	this->riteSideBarSize=this->prefs.LFSTK_getInt("ritesidebarsize");
+	this->bottomBarSize=this->prefs.LFSTK_getInt("bottombarsize");
 	this->useTheme=this->prefs.LFSTK_getBool("usetheme");
 	this->resizeMode=this->prefs.LFSTK_getInt("resizemode");
+	this->forceDockStackingOrder=this->prefs.LFSTK_getInt("forcedocksstack");
 	this->buttonYOffset=(this->titleBarSize/2)-(DEFAULTCONTROLSIZE/2);
 
 	this->cliOptions(argc,argv);
@@ -198,6 +202,7 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 		this->mainWindowClass->LFSWM2_loadTheme(this->prefs.LFSTK_getString("theme"));
 
 	this->messages=new LFSWM2_messageClass(this,this->msgQueueKey);
+	this->messages->delay=this->prefs.LFSTK_getInt("rescanprefs");
 }
 
 void LFSWM2_Class::LFSWM2_pushXErrorHandler(void)

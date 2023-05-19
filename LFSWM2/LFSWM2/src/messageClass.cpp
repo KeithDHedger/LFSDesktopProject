@@ -60,7 +60,7 @@ bool LFSWM2_messageClass::LFSWM2_readMsg(void)
 	msgBuffer	buffer;
 	
 	buffer.mText[0]=0;
-	retcode=msgrcv(this->queueID,&buffer,MAX_MSG_SIZE,WMANAGER_MSG,IPC_NOWAIT);
+	retcode=msgrcv(this->queueID,&buffer,MAX_MSG_SIZE,LFSWM2_MSG,IPC_NOWAIT);
 
 	if(retcode>0)
 		{

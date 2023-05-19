@@ -46,7 +46,7 @@
 
 #include "config.h"
 
-#define __DEBUG__
+//#define __DEBUG__
 
 template <typename t> void move(std::vector<t>& v,size_t oldIndex,size_t newIndex)//TODO//
 {
@@ -160,6 +160,7 @@ enum TRISTATE {INVALID=-1,LOGIC0=0,LOGIC1=1};
 enum RUNLEVEL {RL_STARTUP,RL_NORMAL,RL_SHUTDOWN};
 enum {NOPLACE=0,UNDERMOUSE,CENTREMMONITOR,CENTRESCREEN,MOUSEMONITOR};
 enum RESIZEMODE {FASTRESIZE=0,LIVERESIZE,SIZERESIZE,SCALERESIZE};
+enum DOCKSTACKORDER {APPSET=0,FORCEABOVE,FORCEBELOW};
 
 __attribute__((unused)) static LFSWM2_Class	*theMainClass=NULL;
 
@@ -219,6 +220,7 @@ class LFSWM2_Class
 		int					riteSideBarSize=2;
 		int					bottomBarSize=8;
 		int					titlePosition=2;
+		int					forceDockStackingOrder=FORCEABOVE;
 
 //colours
 		struct fontColour	*frameBG;

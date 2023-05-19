@@ -89,7 +89,7 @@ POST_UNINSTALL = :
 bin_PROGRAMS = lfsappearance$(EXEEXT) lfstkprefs$(EXEEXT) \
 	lfswmprefs$(EXEEXT) lfsdesktopprefs$(EXEEXT) \
 	lfsbackdropprefs$(EXEEXT) lfspanelprefs$(EXEEXT) \
-	lfsabout$(EXEEXT) lfsruncommand$(EXEEXT) \
+	lfswm2prefs$(EXEEXT) lfsabout$(EXEEXT) lfsruncommand$(EXEEXT) \
 	lfsmimeeditor$(EXEEXT) lfsfontselect$(EXEEXT) \
 	lfscolourchooser$(EXEEXT)
 subdir = LFSApplications/app
@@ -135,6 +135,9 @@ lfsruncommand_LDADD = $(LDADD)
 am_lfstkprefs_OBJECTS = ../src/lfstkprefs.$(OBJEXT)
 lfstkprefs_OBJECTS = $(am_lfstkprefs_OBJECTS)
 lfstkprefs_LDADD = $(LDADD)
+am_lfswm2prefs_OBJECTS = ../src/lfswm2prefs.$(OBJEXT)
+lfswm2prefs_OBJECTS = $(am_lfswm2prefs_OBJECTS)
+lfswm2prefs_LDADD = $(LDADD)
 am_lfswmprefs_OBJECTS = ../src/lfswmprefs.$(OBJEXT)
 lfswmprefs_OBJECTS = $(am_lfswmprefs_OBJECTS)
 lfswmprefs_LDADD = $(LDADD)
@@ -162,7 +165,8 @@ am__depfiles_remade = ../src/$(DEPDIR)/lfsabout.Po \
 	../src/$(DEPDIR)/lfsmimeeditor.Po \
 	../src/$(DEPDIR)/lfspanelprefs.Po \
 	../src/$(DEPDIR)/lfsruncommand.Po \
-	../src/$(DEPDIR)/lfstkprefs.Po ../src/$(DEPDIR)/lfswmprefs.Po
+	../src/$(DEPDIR)/lfstkprefs.Po ../src/$(DEPDIR)/lfswm2prefs.Po \
+	../src/$(DEPDIR)/lfswmprefs.Po
 am__mv = mv -f
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -182,13 +186,13 @@ SOURCES = $(lfsabout_SOURCES) $(lfsappearance_SOURCES) \
 	$(lfsdesktopprefs_SOURCES) $(lfsfontselect_SOURCES) \
 	$(lfsmimeeditor_SOURCES) $(lfspanelprefs_SOURCES) \
 	$(lfsruncommand_SOURCES) $(lfstkprefs_SOURCES) \
-	$(lfswmprefs_SOURCES)
+	$(lfswm2prefs_SOURCES) $(lfswmprefs_SOURCES)
 DIST_SOURCES = $(lfsabout_SOURCES) $(lfsappearance_SOURCES) \
 	$(lfsbackdropprefs_SOURCES) $(lfscolourchooser_SOURCES) \
 	$(lfsdesktopprefs_SOURCES) $(lfsfontselect_SOURCES) \
 	$(lfsmimeeditor_SOURCES) $(lfspanelprefs_SOURCES) \
 	$(lfsruncommand_SOURCES) $(lfstkprefs_SOURCES) \
-	$(lfswmprefs_SOURCES)
+	$(lfswm2prefs_SOURCES) $(lfswmprefs_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -372,6 +376,7 @@ lfswmprefs_SOURCES = ../src/lfswmprefs.cpp
 lfsdesktopprefs_SOURCES = ../src/lfsdesktopprefs.cpp
 lfsbackdropprefs_SOURCES = ../src/lfsbackdropprefs.cpp
 lfspanelprefs_SOURCES = ../src/lfspanelprefs.cpp
+lfswm2prefs_SOURCES = ../src/lfswm2prefs.cpp
 lfsabout_SOURCES = ../src/lfsabout.cpp
 lfsruncommand_SOURCES = ../src/lfsruncommand.cpp
 lfsmimeeditor_SOURCES = ../src/lfsmimeeditor.cpp
@@ -520,6 +525,12 @@ lfsruncommand$(EXEEXT): $(lfsruncommand_OBJECTS) $(lfsruncommand_DEPENDENCIES) $
 lfstkprefs$(EXEEXT): $(lfstkprefs_OBJECTS) $(lfstkprefs_DEPENDENCIES) $(EXTRA_lfstkprefs_DEPENDENCIES) 
 	@rm -f lfstkprefs$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(lfstkprefs_OBJECTS) $(lfstkprefs_LDADD) $(LIBS)
+../src/lfswm2prefs.$(OBJEXT): ../src/$(am__dirstamp) \
+	../src/$(DEPDIR)/$(am__dirstamp)
+
+lfswm2prefs$(EXEEXT): $(lfswm2prefs_OBJECTS) $(lfswm2prefs_DEPENDENCIES) $(EXTRA_lfswm2prefs_DEPENDENCIES) 
+	@rm -f lfswm2prefs$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(lfswm2prefs_OBJECTS) $(lfswm2prefs_LDADD) $(LIBS)
 ../src/lfswmprefs.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
 
@@ -544,6 +555,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfspanelprefs.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfsruncommand.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfstkprefs.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfswm2prefs.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfswmprefs.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
@@ -748,6 +760,7 @@ distclean: distclean-am
 	-rm -f ../src/$(DEPDIR)/lfspanelprefs.Po
 	-rm -f ../src/$(DEPDIR)/lfsruncommand.Po
 	-rm -f ../src/$(DEPDIR)/lfstkprefs.Po
+	-rm -f ../src/$(DEPDIR)/lfswm2prefs.Po
 	-rm -f ../src/$(DEPDIR)/lfswmprefs.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
@@ -804,6 +817,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ../src/$(DEPDIR)/lfspanelprefs.Po
 	-rm -f ../src/$(DEPDIR)/lfsruncommand.Po
 	-rm -f ../src/$(DEPDIR)/lfstkprefs.Po
+	-rm -f ../src/$(DEPDIR)/lfswm2prefs.Po
 	-rm -f ../src/$(DEPDIR)/lfswmprefs.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic

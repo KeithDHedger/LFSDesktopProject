@@ -180,6 +180,12 @@ bool buttonCB(void *p,void* ud)
 					system(command);
 					free(command);
 				}
+			if(strcmp((char*)ud,"LFSWM2PREFS")==0)
+				{
+					asprintf(&command,"%slfswm2prefs &",libpath,wc->window);
+					system(command);
+					free(command);
+				}
 			if(strcmp((char*)ud,"PANELPREFS")==0)
 				{
 					asprintf(&command,"%slfspanelprefs &",libpath,wc->window);
@@ -296,6 +302,12 @@ int main(int argc, char **argv)
 	launchButton=new LFSTK_buttonClass(wc,"WM Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	launchButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"WMPREFS");
 	launchLabel=new LFSTK_labelClass(wc,"Launch Window Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,LEFT);
+	launchLabel->LFSTK_setLabelGravity(LEFT);
+	sy+=YSPACING;
+//lfswm2
+	launchButton=new LFSTK_buttonClass(wc,"LFSWM2 Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	launchButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"LFSWM2PREFS");
+	launchLabel=new LFSTK_labelClass(wc,"Launch LFSWM2 Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,LEFT);
 	launchLabel->LFSTK_setLabelGravity(LEFT);
 	sy+=YSPACING;
 //panel

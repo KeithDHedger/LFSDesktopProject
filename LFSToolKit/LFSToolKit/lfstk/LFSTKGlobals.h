@@ -40,28 +40,28 @@
 #include <sys/msg.h>
 
 
-#define COPYRITE			"Copyright © 2013-2021 K.D.Hedger"
-#define PERSONAL			"keithdhedger@gmail.com"
-#define	MYWEBSITE			"https://keithdhedger.github.io/"
+#define COPYRITE			"Copyright © 2013-2023 K.D.Hedger"
+#define PERSONAL			"kdhedger68713@gmail.com"
+#define	MYWEBSITE		"https://keithdhedger.github.io/"
 
-#define DEFAULTFONT			"sans:size=10"
-#define DISCLOSURESIZE		6
+#define DEFAULTFONT		"sans:size=10"
+#define DISCLOSURESIZE	6
 
-#define USERDATA(x)			(void*)(long)(x)
-#define GETUSERDATA(x)		(long)x
+#define USERDATA(x)		(void*)(long)(x)
+#define GETUSERDATA(x)	(long)x
 
-#define DIALOGWIDTH			450
-#define DIALOGHITE			800
+#define DIALOGWIDTH		450
+#define DIALOGHITE		800
 #define DIALOGMIDDLE		DIALOGWIDTH/2
 
-#define GADGETWIDTH			80
-#define GADGETHITE			24
-#define HALFGADGETWIDTH		GADGETWIDTH/2
+#define GADGETWIDTH		80
+#define GADGETHITE		24
+#define HALFGADGETWIDTH	GADGETWIDTH/2
 
-#define BORDER				16
+#define BORDER			16
 #define YSPACING			32
 #define HALFYSPACING		YSPACING/2
-#define BUTTONGRAV			NorthWestGravity
+#define BUTTONGRAV		NorthWestGravity
 
 #define TRIANGLESIZE		8u
 #define CHECKBOXSIZE		12u
@@ -83,9 +83,9 @@ enum dropDataType {DROPINVALID=0,DROPTEXT,DROPURI};
 
 struct geometryStruct
 {
-	int						x,y;
-	unsigned				w,h;
-	unsigned				monitor;
+	int			x,y;
+	unsigned		w,h;
+	unsigned		monitor;
 };
 
 
@@ -94,7 +94,7 @@ __attribute__((unused)) static bool	showFileData=true;
 __attribute__((unused)) static void debugFunc(const char *file,const char *func,int line,const char *fmt, ...)
 {
 	va_list		ap;
-	char		*buffer,*subbuffer;
+	char			*buffer,*subbuffer;
 	const char	*bools[]={"false","true"};
 
 	buffer=(char*)alloca(512);
@@ -367,7 +367,7 @@ struct msgBuffer
 	char mText[MAX_MSG_SIZE];
 };
 
-enum {DESKTOP_MSG=1000,WMANAGER_MSG,PANEL_MSG,WALLPAPER_MSG,TOOLKIT_MSG,APPEARANCE_PREFS_MSG,BACKDROP_PREFS_MSG,DESKTOP_PREFS_MSG,PANEL_PREFS_MSG,TK_PREFS_MSG,WMANAGER_PREFS_MSG};
+enum {DESKTOP_MSG=1000,WMANAGER_MSG,PANEL_MSG,WALLPAPER_MSG,TOOLKIT_MSG,LFSWM2_MSG,APPEARANCE_PREFS_MSG,BACKDROP_PREFS_MSG,DESKTOP_PREFS_MSG,PANEL_PREFS_MSG,TK_PREFS_MSG,WMANAGER_PREFS_MSG,LFSWM2_PREFS_MSG};
 
 #include "LFSTKPrefsClass.h"
 #include "LFSTKLib.h"
