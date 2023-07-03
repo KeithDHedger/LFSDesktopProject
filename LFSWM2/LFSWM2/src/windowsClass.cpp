@@ -176,6 +176,8 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			hintsDataStruct		hs;
 			int					thisdesk=-1;
 
+int holdx;
+int holdy;
 			hints=(motifHints*)this->mainClass->mainWindowClass->LFSWM2_getProp(id,this->mainClass->atoms.at("_MOTIF_WM_HINTS"),this->mainClass->atoms.at("_MOTIF_WM_HINTS"),&nitems_return);
 			setdesktop=(long int*)this->mainClass->mainWindowClass->LFSWM2_getProp(id,this->mainClass->atoms.at("_NET_WM_DESKTOP"),XA_CARDINAL,&nitems_return);
 			if(setdesktop!=NULL)
@@ -207,7 +209,13 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			cc=new LFSWM2_clientClass(this->mainClass,id);
 			hs=this->LFSWM2_getWindowHints(id);
 			cc->sizeHints=hs.sh;
-			XMoveWindow(this->mainClass->display,id,hs.pt.x,hs.pt.y);
+			holdx=hs.pt.x;
+			holdy=hs.pt.y;
+cc->firstx=hs.pt.x;
+cc->firsty=hs.pt.y;
+
+			//XMoveWindow(this->mainClass->display,id,hs.pt.x,hs.pt.y);
+			XMoveWindow(this->mainClass->display,id,-1000,-1000);
 			cc->mwmHints=hints;
 
 			if(hints!=NULL)
@@ -244,7 +252,8 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 					cc->canResize=true;
 				}
 
-			cc->frameWindow=XCreateWindow(this->mainClass->display,this->mainClass->rootWindow,hs.pt.x,hs.pt.y,x_window_attrs.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),x_window_attrs.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH,BORDER_WIDTH,CopyFromParent,InputOutput,CopyFromParent,0,&wa);
+//			cc->frameWindow=XCreateWindow(this->mainClass->display,this->mainClass->rootWindow,hs.pt.x,hs.pt.y,x_window_attrs.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),x_window_attrs.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH,BORDER_WIDTH,CopyFromParent,InputOutput,CopyFromParent,0,&wa);
+			cc->frameWindow=XCreateWindow(this->mainClass->display,this->mainClass->rootWindow,-1000,-1000,x_window_attrs.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),x_window_attrs.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH,BORDER_WIDTH,CopyFromParent,InputOutput,CopyFromParent,0,&wa);
 			XSelectInput(this->mainClass->display,cc->frameWindow,SubstructureRedirectMask|ButtonPressMask|ButtonReleaseMask|ExposureMask|PointerMotionMask);
 
 			cc->windowType=this->LFSWM2_getWindowType(id);
@@ -255,7 +264,8 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			cc->clientPreFSRect=this->LFSWM2_getWindowRect(id,this->mainClass->rootWindow);
 			cc->framePreFSRect=this->LFSWM2_getWindowRect(id,this->mainClass->rootWindow);
 			cc->contentWindowRect.y-=this->mainClass->titleBarSize;
-			cc->frameWindowRect={hs.pt.x,hs.pt.y,x_window_attrs.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),x_window_attrs.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH};
+			//cc->frameWindowRect={hs.pt.x,hs.pt.y,x_window_attrs.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),x_window_attrs.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH};
+			cc->frameWindowRect={-1000,-1000,x_window_attrs.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),x_window_attrs.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH};
 			cc->resizeWindow=XCreateSimpleWindow(this->mainClass->display,cc->frameWindow,-10,-10,1,1,BORDER_WIDTH,this->mainClass->frameFG->pixel,this->mainClass->frameBG->pixel);
 			cc->resizeMode=this->mainClass->resizeMode;
 
@@ -269,12 +279,12 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			attributes.win_gravity=NorthWestGravity;
 			XReparentWindow(this->mainClass->display,id,cc->frameWindow,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize-(BORDER_WIDTH*2));
 
-			XChangeWindowAttributes(this->mainClass->display,id, CWWinGravity, &attributes);
+			XChangeWindowAttributes(this->mainClass->display,id,CWWinGravity,&attributes);
 			XMapWindow(this->mainClass->display,cc->frameWindow);
 			XSelectInput(this->mainClass->display,cc->contentWindow,PropertyChangeMask|StructureNotifyMask);
 			this->LFSWM2_setWindowState(id,NormalState);
 
-			this->mainClass->mainEventClass->LFSWM2_sendConfigureEvent(id,cc->contentWindowRect);
+			//this->mainClass->mainEventClass->LFSWM2_sendConfigureEvent(id,cc->contentWindowRect);
 			XGrabButton(this->mainClass->display,Button1,0,id,False,ButtonPressMask,GrabModeSync,GrabModeAsync,None,None);
 			XGrabButton(this->mainClass->display,Button1,Mod4Mask,id,False,ButtonPressMask|ButtonReleaseMask|PointerMotionMask,GrabModeAsync,GrabModeAsync,None,None);
 
@@ -422,7 +432,7 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 				//TODO//
 				//XMoveWindow(this->mainClass->display,cc->frameWindow,20,20);
 				}
-			this->LFSWM2_reloadWindowState(id);
+			//this->LFSWM2_reloadWindowState(id);
 			this->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,(void*)&cc->contentWindow,1);
 
 			XAddToSaveSet(this->mainClass->display,id);
@@ -430,8 +440,12 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 			if(states!=NULL)
 				XFree(states);
 
-			XMapSubwindows(this->mainClass->display,cc->frameWindow);	
-			XRaiseWindow(this->mainClass->display,id);
+//	XSync(this->mainClass->display,true);
+
+//XMoveWindow(this->mainClass->display,cc->frameWindow,holdx,holdy);
+			//XMapSubwindows(this->mainClass->display,cc->frameWindow);	
+			//XRaiseWindow(this->mainClass->display,id);
+
 
 			this->LFSWM2_setControlRects(cc);
 			if(this->mainClass->useTheme==true)
@@ -439,9 +453,17 @@ void LFSWM2_windowClass::LFSWM2_createClient(Window id)
 					this->LFSWM2_refreshThemeFrame(cc);
 					return;
 				}
-		}
+	//XSync(this->mainClass->display,false);
+//Cc->firstx=hs.pt.x;
+//Cc->firsty=hs.pt.y;
 
+
+
+		}
+//this->mainClass->restackCnt=0;
+//
 	XSync(this->mainClass->display,false);
+	this->mainClass->restackCnt=0;
 }
 
 rectStruct LFSWM2_windowClass::LFSWM2_getWindowRect(Window id,Window parent,bool dotranslate)

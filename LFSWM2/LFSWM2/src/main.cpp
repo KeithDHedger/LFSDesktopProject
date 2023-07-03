@@ -35,6 +35,7 @@ int main(int argc, char **argv)
 	LFSWM2_clientClass	*cc;
 
 	mainLFSWM2Class=new LFSWM2_Class(argc,argv);
+	//std::cout<<LFSWM2_PREFS_MSG<<std::endl;
 	mainLFSWM2Class->mainEventClass->LFSWM2_mainEventLoop();
 
 	do

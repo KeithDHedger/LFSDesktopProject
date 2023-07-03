@@ -39,6 +39,9 @@ class LFSWM2_clientClass
 		bool				LFSWM2_handleControls(XEvent *e);
 
 //vars
+		bool				first=true;
+		int				firstx=-10000;
+		int				firsty=-10000;
 		LFSWM2_Class		*mainClass=NULL;
 
 		Window			contentWindow=None;

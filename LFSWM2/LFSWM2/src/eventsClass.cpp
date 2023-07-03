@@ -89,6 +89,26 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 					this->noRestack=false;
 				}
 
+			for(int j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
+				{
+					cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(j));
+					if(cc!=NULL)
+						{
+							if(cc->first==true)
+								{
+									XMoveWindow(this->mainClass->display,cc->frameWindow,cc->firstx,cc->firsty);
+									this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(cc->contentWindow);
+									XMapSubwindows(this->mainClass->display,cc->frameWindow);	
+									XRaiseWindow(this->mainClass->display,cc->contentWindow);
+									cc->first=false;
+									XSync(this->mainClass->display,false);
+								}
+						}
+				}
+
+
+
+
 			XNextEvent(this->mainClass->display,&e);
 			cccontrol=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(e.xany.window));
 			if(cccontrol!=NULL)
@@ -330,7 +350,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 				{
 					this->mainClass->restackCnt--;
 					if(this->mainClass->restackCnt<1)
-						{
+						{	
 							//fprintf(stderr,"this->mainClass->restackCnt<1 eventnumber %i\n",when++);
 							Atom					*v=NULL;
 							long unsigned int	n;
@@ -569,6 +589,33 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)
 	Window				wid;
 
 	v=(Atom*)this->mainClass->mainWindowClass->LFSWM2_getProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,&nitems_return);
+
+//for(int j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
+//	{
+//	cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(j));
+//	if(cc!=NULL)
+//	{
+//	if(cc->first==true)
+//		{
+//		std::cout<<cc->frameWindowRect.x<<std::endl;
+//		std::cout<<cc->firstx<<std::endl;
+//		std::cout<<cc->firsty<<std::endl;
+//		//this->mainClass->mainEventClass->LFSWM2_sendConfigureEvent(cc->contentWindow,cc->contentWindowRect);
+//		//XMoveWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.x,cc->frameWindowRect.y);
+//		//XMoveWindow(this->mainClass->display,cc->frameWindow,500,500);
+//		XMoveWindow(this->mainClass->display,cc->frameWindow,cc->firstx,cc->firsty);
+//		this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(cc->contentWindow);
+//			XMapSubwindows(this->mainClass->display,cc->frameWindow);	
+//			XRaiseWindow(this->mainClass->display,cc->contentWindow);
+//			cc->first=false;
+//XSync(this->mainClass->display,false);
+//		}
+//	}
+//	//std::cout<<"\n"<<std::endl;
+//	}
+
+
+
 
 	for(int a=0;a<this->mainClass->mainWindowClass->windowIDList.size();a++)
 		{
