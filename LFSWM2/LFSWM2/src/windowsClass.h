@@ -145,11 +145,13 @@ class LFSWM2_windowClass
 
 //clients
 		void									LFSWM2_buildClientList(void);
-		void									LFSWM2_createClient(Window id);
+		bool									LFSWM2_createClient(Window id,hintsDataStruct premaphs);
 		void									LFSWM2_destroyClient(Window id);
 		LFSWM2_clientClass					*LFSWM2_getClientClass(Window id);
 		void									LFSWM2_deleteClientEntry(Window id);
 		void									LFSWM2_setClientList(Window id,bool addwindow);
+		void									LFSWM2_freeHints(hintsDataStruct hs);
+
 
 //graphics
 		struct fontColour					*LFSWM2_xftLoadColour(const char *name,const char *fallback);

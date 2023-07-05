@@ -47,6 +47,13 @@
 #include "config.h"
 
 //#define __DEBUG__
+//#define __DEVEL__
+//TODO// add to prefs dialog
+#ifdef __DEVEL__
+#define MOVEKEYS (Mod4Mask|ControlMask)
+#else
+#define MOVEKEYS (Mod4Mask)
+#endif
 
 template <typename t> void move(std::vector<t>& v,size_t oldIndex,size_t newIndex)//TODO//
 {
@@ -89,8 +96,9 @@ struct motifHints
 struct hintsDataStruct
 {
 	pointStruct			pt;
-	XSizeHints			*sh;
+	XSizeHints			*sh=NULL;
 	XWindowAttributes	xa;
+	motifHints			*mHints=NULL;	
 	bool					valid=false;
 };
 

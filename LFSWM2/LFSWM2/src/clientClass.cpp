@@ -30,6 +30,8 @@ LFSWM2_clientClass::LFSWM2_clientClass(LFSWM2_Class *mainclass,Window id)
 LFSWM2_clientClass::~LFSWM2_clientClass(void)
 {
 	this->mainClass->LFSWM2_pushXErrorHandler();
+
+		this->mainClass->mainWindowClass->LFSWM2_freeHints(this->windowHints);
 		this->mainClass->mainWindowClass->LFSWM2_setClientList(this->contentWindow,false);
 
 		this->mainClass->mainWindowClass->LFSWM2_deleteClientEntry(this->frameWindow);
@@ -40,29 +42,24 @@ LFSWM2_clientClass::~LFSWM2_clientClass(void)
 			XReparentWindow(this->mainClass->display,this->contentWindow,this->mainClass->rootWindow,this->frameWindowRect.x+this->mainClass->leftSideBarSize,frameWindowRect.y+this->mainClass->titleBarSize);
 		else
 			XReparentWindow(this->mainClass->display,this->contentWindow,this->mainClass->rootWindow,-10000,-10000);
-		XUnmapWindow(this->mainClass->display,this->frameWindow);
 
-		if(this->sizeHints!=NULL)
-			XFree(this->sizeHints);
-		if(this->mwmHints!=NULL)
-			XFree(this->mwmHints);
+		XUnmapWindow(this->mainClass->display,this->frameWindow);
 
 		if(resizeWindow!=None)
 			XDestroyWindow(this->mainClass->display,this->resizeWindow);
 
-	if(this->closeControlStruct.controlGC!=None)
-		XFreeGC(this->mainClass->display,this->closeControlStruct.controlGC);
-	if(this->maximizeControlStruct.controlGC!=None)
-		XFreeGC(this->mainClass->display,this->maximizeControlStruct.controlGC);
-	if(this->minimizeControlStruct.controlGC!=None)
-		XFreeGC(this->mainClass->display,this->minimizeControlStruct.controlGC);
-	if(this->shadeControlStruct.controlGC!=None)
-		XFreeGC(this->mainClass->display,this->shadeControlStruct.controlGC);
-	if(this->menuControlStruct.controlGC!=None)
-		XFreeGC(this->mainClass->display,this->menuControlStruct.controlGC);
-
-	if(this->maskGC!=None)
-		XFreeGC(this->mainClass->display,this->maskGC);
+		if(this->closeControlStruct.controlGC!=None)
+			XFreeGC(this->mainClass->display,this->closeControlStruct.controlGC);
+		if(this->maximizeControlStruct.controlGC!=None)
+			XFreeGC(this->mainClass->display,this->maximizeControlStruct.controlGC);
+		if(this->minimizeControlStruct.controlGC!=None)
+			XFreeGC(this->mainClass->display,this->minimizeControlStruct.controlGC);
+		if(this->shadeControlStruct.controlGC!=None)
+			XFreeGC(this->mainClass->display,this->shadeControlStruct.controlGC);
+		if(this->menuControlStruct.controlGC!=None)
+			XFreeGC(this->mainClass->display,this->menuControlStruct.controlGC);
+		if(this->maskGC!=None)
+			XFreeGC(this->mainClass->display,this->maskGC);
 
 	this->mainClass->LFSWM2_popXErrorHandler();
 }
@@ -879,7 +876,8 @@ bool LFSWM2_clientClass::LFSWM2_handleEvents(XEvent *e)
 
 					if((this->frameWindow==e->xmotion.window) && (e->xmotion.state==Button1Mask))
 						domove=true;
-					if((this->contentWindow==e->xmotion.window) && (e->xmotion.state==Button1Mask+Mod4Mask))
+					//if((this->contentWindow==e->xmotion.window) && (e->xmotion.state==Button1Mask+(Mod4Mask|ShiftMask)))
+					if((this->contentWindow==e->xmotion.window) && (e->xmotion.state==Button1Mask+(MOVEKEYS)))
 						domove=!this->isFullscreen;
 
 					if(domove==true)
@@ -990,4 +988,28 @@ void LFSWM2_clientClass::resizeContentWindow(rectStruct r,bool moveorigin)
 	ce.height=r.h;
 
 	XSendEvent(this->mainClass->display,this->contentWindow,true,StructureNotifyMask,(XEvent*)&ce);
+}
+
+void LFSWM2_clientClass::renderFrame(bool isfirst,int x,int y)
+{
+	if(isfirst==true)
+		{
+			this->firstx=x;
+			this->firsty=y;
+		}
+	else
+		{
+
+
+			XMapWindow(this->mainClass->display,this->contentWindow);
+			XMapSubwindows(this->mainClass->display,this->contentWindow);	
+			this->setWindowRects(true);
+			XMoveWindow(this->mainClass->display,this->frameWindow,this->firstx,this->firsty);
+			XMapSubwindows(this->mainClass->display,this->frameWindow);	
+			this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(this->contentWindow);
+			this->rendered=true;
+			this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,(void*)&this->contentWindow,1);
+			this->mainClass->mainWindowClass->LFSWM2_refreshThemeFrame(this);
+			this->mainClass->restackCnt=0;
+		}
 }

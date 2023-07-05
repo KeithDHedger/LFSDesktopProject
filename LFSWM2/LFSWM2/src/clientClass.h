@@ -33,15 +33,16 @@ class LFSWM2_clientClass
 	public:
 		LFSWM2_clientClass(LFSWM2_Class *mainclass,Window id);
 		~LFSWM2_clientClass(void);
+//int hx=0;
+//int hy=0;
 
 		void				LFSWM2_setWindowName(void);
-
 		bool				LFSWM2_handleControls(XEvent *e);
-
+		void				renderFrame(bool isfirst,int x=0,int y=0);
 //vars
-		bool				first=true;
-		int				firstx=-10000;
-		int				firsty=-10000;
+		bool				rendered=false;
+//		int				firstx=-10000;
+//		int				firsty=-10000;
 		LFSWM2_Class		*mainClass=NULL;
 
 		Window			contentWindow=None;
@@ -77,8 +78,10 @@ class LFSWM2_clientClass
 		bool				nameIsUTF=false;
 		bool				moveToTop=false;
 
-		motifHints		*mwmHints=NULL;
-		XSizeHints		*sizeHints=NULL;
+		////motifHints		*mwmHints=NULL;
+		////XSizeHints		*sizeHints=NULL;
+
+		hintsDataStruct	windowHints;
 
 		Window			closeButton=None;
 		Window			maximizeButton=None;
@@ -160,6 +163,10 @@ class LFSWM2_clientClass
 		int				ow;
 		int				oh;
 		XImage			*resizeImage=NULL;
+
+		bool				first=true;
+		int				firstx=-10000;
+		int				firsty=-10000;
 
 		void				drawMouseEnter(Window id,Pixmap pm,controlData data);
 		void				drawMousePressed(Window id,Pixmap pm,controlData data);

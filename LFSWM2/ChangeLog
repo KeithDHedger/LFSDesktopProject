@@ -1,4 +1,5 @@
 1.0.0
+Done swtich desktops via scroll wheel.
 Fixed flicker when window first opens.
 If prop "_NET_CURRENT_DESKTOP" is available on startup select that desktop.
 Fixed getting bottom bar size from prefs.
