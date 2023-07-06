@@ -1,7 +1,4 @@
 LFSWM2 has now replaced LFSWmanager and is pretty much done.
 
 TODO
-Need configure app ( at the moment configure is via file ~/.config/LFS/lfswm2.rc ).
-Needs some graphics tweaking for full screen desktop windows and full screen "ABOVE" windows.
-Needs some code cleaning.
 Switch desktops via mouse thumb wheeel.

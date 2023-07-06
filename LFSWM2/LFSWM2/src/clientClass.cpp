@@ -485,7 +485,10 @@ bool LFSWM2_clientClass::wmCB(void *p,void* ud)
 	if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"On Top")==0)
 		{
 			if(cc->onTop==false)
-				cc->mainClass->mainWindowClass->LFSWM2_addState(cc->contentWindow,cc->mainClass->atoms.at("_NET_WM_STATE_ABOVE"));
+				{
+					cc->mainClass->mainWindowClass->LFSWM2_addState(cc->contentWindow,cc->mainClass->atoms.at("_NET_WM_STATE_ABOVE"));
+					cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atoms.at("_NET_WM_STATE_BELOW"));
+				}
 			else
 				cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atoms.at("_NET_WM_STATE_ABOVE"));
 			cc->mainClass->mainEventClass->LFSWM2_restack();
@@ -493,7 +496,10 @@ bool LFSWM2_clientClass::wmCB(void *p,void* ud)
 	if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"On Bottom")==0)
 		{
 			if(cc->onBottom==false)
-				cc->mainClass->mainWindowClass->LFSWM2_addState(cc->contentWindow,cc->mainClass->atoms.at("_NET_WM_STATE_BELOW"));
+				{
+					cc->mainClass->mainWindowClass->LFSWM2_addState(cc->contentWindow,cc->mainClass->atoms.at("_NET_WM_STATE_BELOW"));
+					cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atoms.at("_NET_WM_STATE_ABOVE"));
+				}
 			else
 				cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atoms.at("_NET_WM_STATE_BELOW"));
 			cc->mainClass->mainEventClass->LFSWM2_restack();
