@@ -831,6 +831,10 @@ bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 							int xdiff=ee.xbutton.x_root-e->xbutton.x_root;
 							int ydiff=ee.xbutton.y_root-e->xbutton.y_root;
 							XMoveWindow(this->mainClass->display,this->frameWindow,this->frameWindowRect.x+xdiff,this->frameWindowRect.y+ydiff);
+						//	if(ee.xbutton.x_root<50)
+						//	{
+								//this->mainClass->LFSWM2_setCurrentDesktop(this->mainClass->c,bool force,bool dovis)
+						//		}
 						}
 						break;
 					case ButtonPress:

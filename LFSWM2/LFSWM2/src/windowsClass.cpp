@@ -241,7 +241,7 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 
 			wa.win_gravity=NorthWestGravity;
 			cc->frameWindow=XCreateWindow(this->mainClass->display,this->mainClass->rootWindow,-1000000,-1000000,premaphs.xa.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),premaphs.xa.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH,BORDER_WIDTH,CopyFromParent,InputOutput,CopyFromParent,0,&wa);
-			XSelectInput(this->mainClass->display,cc->frameWindow,SubstructureRedirectMask|ButtonPressMask|ButtonReleaseMask|KeyReleaseMask|ExposureMask|PointerMotionMask);
+			XSelectInput(this->mainClass->display,cc->frameWindow,SubstructureRedirectMask|ButtonPressMask|ButtonReleaseMask|ExposureMask|PointerMotionMask);
 
 			cc->windowType=this->LFSWM2_getWindowType(id);
 			cc->contentWindow=id;
@@ -274,7 +274,7 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 			XGrabButton(this->mainClass->display,Button1,0,id,False,ButtonPressMask,GrabModeSync,GrabModeAsync,None,None);
 			XGrabButton(this->mainClass->display,Button1,(MOVEKEYS),id,False,ButtonPressMask|ButtonReleaseMask|PointerMotionMask,GrabModeAsync,GrabModeAsync,None,None);
 			XGrabButton(this->mainClass->display,Button2,0,id,True,0,GrabModeSync,GrabModeAsync,None,None);
-			XGrabKey(this->mainClass->display,XK_Escape,0,id,False,GrabModeSync,GrabModeAsync);
+			XGrabKey(this->mainClass->display,XKeysymToKeycode(this->mainClass->display,XK_Escape),(MOVEKEYS),id,False,GrabModeSync,GrabModeAsync);
 
 			Atom		v[8];
 			int		vcnt=3;
