@@ -1,4 +1,7 @@
 1.0.0
+Added 'ESC+MOVEKEYS' to un-fullscreen, ( MOVEKEYS are mod keys to be used, set in lfswm2Class.h, to be moved to prefs ).
+Fixed hide controls in fullscreen.
+Fixed maximize to correct monitor.
 Done swtich desktops via scroll wheel.
 Fixed flicker when window first opens.
 If prop "_NET_CURRENT_DESKTOP" is available on startup select that desktop.

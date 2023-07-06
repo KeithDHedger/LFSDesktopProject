@@ -48,9 +48,9 @@
 
 //#define __DEBUG__
 //#define __DEVEL__
-//TODO// add to prefs dialog
 #ifdef __DEVEL__
-#define MOVEKEYS (Mod4Mask|ControlMask)
+//TODO// add to prefs dialog
+#define MOVEKEYS (Mod4Mask|ShiftMask)
 #else
 #define MOVEKEYS (Mod4Mask)
 #endif

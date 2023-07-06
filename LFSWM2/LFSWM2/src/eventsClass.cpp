@@ -90,23 +90,6 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 					this->mainClass->restackCnt=1;
 					this->noRestack=false;
 				}
-//
-//			for(int j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
-//				{
-//					cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(j));
-//					if(cc!=NULL)
-//						{
-//							if(cc->first==true)
-//								{
-//									this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(cc->contentWindow);
-//									XMoveWindow(this->mainClass->display,cc->frameWindow,cc->firstx,cc->firsty);
-//									XMapSubwindows(this->mainClass->display,cc->frameWindow);	
-//									XRaiseWindow(this->mainClass->display,cc->contentWindow);
-//									cc->first=false;
-//									//XSync(this->mainClass->display,false);
-//								}
-//						}
-//				}
 
 			XNextEvent(this->mainClass->display,&e);
 //fprintf(stderr,"default %i\n",when++);
@@ -138,8 +121,6 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						}
 				}
 
-
-
 			for(int j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
 				{
 					cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(j));
@@ -147,25 +128,27 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						{
 							if(cc->rendered==false)
 								{
-								//cc->rendered=true;
 									cc->renderFrame(false);
-//									XMoveWindow(this->mainClass->display,cc->frameWindow,cc->firstx,cc->firsty);
-//									XMapSubwindows(this->mainClass->display,cc->frameWindow);	
-//									//XRaiseWindow(this->mainClass->display,cc->contentWindow);
-//									//XRaiseWindow(this->mainClass->display,cc->frameWindow);
-//									this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(cc->contentWindow);
-//									cc->rendered=true;
-//									//XSync(this->mainClass->display,false);
 									continue;
 								}
 						}
 				}
 
-
-
-
 			switch(e.type)
 				{
+					case KeyRelease:
+								//fprintf(stderr,"KeyRelease -> eventsClass.cpp keycode=%x %x %x\n",e.xkey.keycode,XK_Escape,XKeysymToKeycode(this->mainClass->display,XK_Escape));
+						if((e.xkey.keycode==XKeysymToKeycode(this->mainClass->display,XK_Escape)) && (e.xkey.state&(MOVEKEYS))==(MOVEKEYS))
+							{
+								cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xkey.window);
+								if(cc!=NULL)
+									{
+										if(cc->isFullscreen==true)
+												cc->LFSWM2_fullscreenWindow(false);
+									}
+							}
+						break;
+
 					case ButtonRelease:
 //						fprintf(stderr,"ButtonRelease eventnumber %i button number %i win=%x time=%d\n",when++,e.xbutton.button,e.xbutton.window,e.xbutton.time);
 						if((e.xbutton.window==this->mainClass->rootWindow) && (e.xbutton.time-lasttime>250))

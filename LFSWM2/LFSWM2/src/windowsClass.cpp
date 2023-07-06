@@ -241,7 +241,7 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 
 			wa.win_gravity=NorthWestGravity;
 			cc->frameWindow=XCreateWindow(this->mainClass->display,this->mainClass->rootWindow,-1000000,-1000000,premaphs.xa.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),premaphs.xa.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH,BORDER_WIDTH,CopyFromParent,InputOutput,CopyFromParent,0,&wa);
-			XSelectInput(this->mainClass->display,cc->frameWindow,SubstructureRedirectMask|ButtonPressMask|ButtonReleaseMask|ExposureMask|PointerMotionMask);
+			XSelectInput(this->mainClass->display,cc->frameWindow,SubstructureRedirectMask|ButtonPressMask|ButtonReleaseMask|KeyReleaseMask|ExposureMask|PointerMotionMask);
 
 			cc->windowType=this->LFSWM2_getWindowType(id);
 			cc->contentWindow=id;
@@ -268,12 +268,13 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 
 			XChangeWindowAttributes(this->mainClass->display,id,CWWinGravity,&attributes);
 			XMapWindow(this->mainClass->display,cc->frameWindow);
-			XSelectInput(this->mainClass->display,cc->contentWindow,PropertyChangeMask|StructureNotifyMask);
+			XSelectInput(this->mainClass->display,cc->contentWindow,PropertyChangeMask|StructureNotifyMask|KeyReleaseMask);
 			this->LFSWM2_setWindowState(id,NormalState);
 
 			XGrabButton(this->mainClass->display,Button1,0,id,False,ButtonPressMask,GrabModeSync,GrabModeAsync,None,None);
 			XGrabButton(this->mainClass->display,Button1,(MOVEKEYS),id,False,ButtonPressMask|ButtonReleaseMask|PointerMotionMask,GrabModeAsync,GrabModeAsync,None,None);
 			XGrabButton(this->mainClass->display,Button2,0,id,True,0,GrabModeSync,GrabModeAsync,None,None);
+			XGrabKey(this->mainClass->display,XK_Escape,0,id,False,GrabModeSync,GrabModeAsync);
 
 			Atom		v[8];
 			int		vcnt=3;
@@ -1451,6 +1452,10 @@ void LFSWM2_windowClass::LFSWM2_setControlRects(LFSWM2_clientClass *cc)
 						};
 				}
 			XMoveResizeWindow(this->mainClass->display,cc->menuButton,cc->menuControlStruct.controlRect.x,cc->menuControlStruct.controlRect.y,cc->menuControlStruct.controlRect.w,cc->menuControlStruct.controlRect.h);
+			if(cc->isFullscreen==false)
+				XMapWindow(this->mainClass->display,cc->menuButton);
+			else
+				XUnmapWindow(this->mainClass->display,cc->menuButton);
 
 //close
 			if(this->mainClass->useTheme==true)
@@ -1477,6 +1482,10 @@ void LFSWM2_windowClass::LFSWM2_setControlRects(LFSWM2_clientClass *cc)
 						};
 				}
 			XMoveResizeWindow(this->mainClass->display,cc->closeButton,cc->closeControlStruct.controlRect.x,cc->closeControlStruct.controlRect.y,cc->closeControlStruct.controlRect.w,cc->closeControlStruct.controlRect.h);
+			if(cc->isFullscreen==false)
+				XMapWindow(this->mainClass->display,cc->closeButton);
+			else
+				XUnmapWindow(this->mainClass->display,cc->closeButton);
 
 //max
 			if(cc->canMaximize==true)
@@ -1505,6 +1514,10 @@ void LFSWM2_windowClass::LFSWM2_setControlRects(LFSWM2_clientClass *cc)
 								};
 						}
 					XMoveResizeWindow(this->mainClass->display,cc->maximizeButton,cc->maximizeControlStruct.controlRect.x,cc->maximizeControlStruct.controlRect.y,cc->maximizeControlStruct.controlRect.w,cc->maximizeControlStruct.controlRect.h);
+					if(cc->isFullscreen==false)
+						XMapWindow(this->mainClass->display,cc->maximizeButton);
+					else
+						XUnmapWindow(this->mainClass->display,cc->maximizeButton);
 				}
 
 //min
@@ -1534,6 +1547,10 @@ void LFSWM2_windowClass::LFSWM2_setControlRects(LFSWM2_clientClass *cc)
 									};
 								}
 					XMoveResizeWindow(this->mainClass->display,cc->minimizeButton,cc->minimizeControlStruct.controlRect.x,cc->minimizeControlStruct.controlRect.y,cc->minimizeControlStruct.controlRect.w,cc->minimizeControlStruct.controlRect.h);
+					if(cc->isFullscreen==false)
+						XMapWindow(this->mainClass->display,cc->minimizeButton);
+					else
+						XUnmapWindow(this->mainClass->display,cc->minimizeButton);
 				}
 
 //shade
@@ -1565,6 +1582,10 @@ void LFSWM2_windowClass::LFSWM2_setControlRects(LFSWM2_clientClass *cc)
 								};
 						}
 					XMoveResizeWindow(this->mainClass->display,cc->shadeButton,cc->shadeControlStruct.controlRect.x,cc->shadeControlStruct.controlRect.y,cc->shadeControlStruct.controlRect.w,cc->shadeControlStruct.controlRect.h);
+					if(cc->isFullscreen==false)
+						XMapWindow(this->mainClass->display,cc->shadeButton);
+					else
+						XUnmapWindow(this->mainClass->display,cc->shadeButton);
 				}
 			cc->riteButtonsWidth=offset;
 }

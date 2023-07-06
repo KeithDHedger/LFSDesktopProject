@@ -676,6 +676,7 @@ void LFSWM2_clientClass::LFSWM2_fullscreenWindow(bool isfull,bool force)
 						{
 							this->setWindowRects();
 							this->clientPreFSRect=this->frameWindowRect;
+							this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_FULLSCREEN"));
 							XMoveResizeWindow(this->mainClass->display,this->frameWindow,mg.x,mg.y,mg.w,mg.h);
 							XMoveResizeWindow(this->mainClass->display,this->contentWindow,0,0,mg.w,mg.h);
 						}
@@ -683,30 +684,44 @@ void LFSWM2_clientClass::LFSWM2_fullscreenWindow(bool isfull,bool force)
 		}
 	else
 		{
+			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_FULLSCREEN"));
 			XMoveResizeWindow(this->mainClass->display,this->frameWindow,this->clientPreFSRect.x,this->clientPreFSRect.y,this->clientPreFSRect.w,this->clientPreFSRect.h);
 			XMoveResizeWindow(this->mainClass->display,this->contentWindow,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize,this->clientPreFSRect.w-(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),this->clientPreFSRect.h-this->mainClass->bottomBarSize-this->mainClass->titleBarSize);
 		}
 
 	this->isFullscreen=isfull;
 	this->setWindowRects();
+	this->mainClass->mainWindowClass->LFSWM2_setControlRects(this);
 }
 
 void LFSWM2_clientClass::LFSWM2_maxWindow(bool ismaxed,bool force)
 {
+	int	monnum=0;
+
 	if((ismaxed==this->isMaximized) && (force==false))
 		return;
 
 	if(ismaxed==true)
 		{
+			pointStruct	fp={this->frameWindowRect.x,this->frameWindowRect.y};
+			for(int j=0;j<this->mainClass->numberOfMonitors;j++)
+				{
+					geometryStruct	mg={this->mainClass->monitors.at(j).x,this->mainClass->monitors.at(j).y,(unsigned)this->mainClass->monitors.at(j).w,(unsigned)this->mainClass->monitors.at(j).h,0};
+					if(this->mainClass->lfstkLib->LFSTK_pointInRect(&fp,&mg))
+						{
+							monnum=j;
+							break;
+						}
+				}
 			this->framePreMaxRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->frameWindow,this->mainClass->rootWindow,false);
 			this->clientPreMaxRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->contentWindow,this->mainClass->rootWindow,false);
-			rectStruct rr={this->mainClass->monitors.at(0).x,this->mainClass->monitors.at(0).y,(int)this->mainClass->monitors.at(0).w,(int)this->mainClass->monitors.at(0).h};
-			rr.w=this->mainClass->monitors.at(0).w-((this->mainClass->leftSideBarSize+BORDER_WIDTH+this->mainClass->riteSideBarSize+BORDER_WIDTH));//TODO//
-			rr.h=this->mainClass->monitors.at(0).h-(this->mainClass->titleBarSize+this->mainClass->bottomBarSize+(BORDER_WIDTH*2));
+			rectStruct rr={this->mainClass->monitors.at(monnum).x,this->mainClass->monitors.at(monnum).y,(int)this->mainClass->monitors.at(monnum).w,(int)this->mainClass->monitors.at(monnum).h};
+			rr.w=this->mainClass->monitors.at(monnum).w-((this->mainClass->leftSideBarSize+BORDER_WIDTH+this->mainClass->riteSideBarSize+BORDER_WIDTH));//TODO//
+			rr.h=this->mainClass->monitors.at(monnum).h-(this->mainClass->titleBarSize+this->mainClass->bottomBarSize+(BORDER_WIDTH*2));
 			rr.x=this->mainClass->leftSideBarSize;
 			rr.y=this->mainClass->titleBarSize;
 
-			XMoveResizeWindow(this->mainClass->display,this->frameWindow,this->mainClass->monitors.at(0).x,this->mainClass->monitors.at(0).y,this->mainClass->monitors.at(0).w,this->mainClass->monitors.at(0).h);
+			XMoveResizeWindow(this->mainClass->display,this->frameWindow,this->mainClass->monitors.at(monnum).x,this->mainClass->monitors.at(monnum).y,this->mainClass->monitors.at(monnum).w,this->mainClass->monitors.at(monnum).h);
 			XMoveResizeWindow(this->mainClass->display,this->contentWindow,rr.x,rr.y,rr.w,rr.h);
 		}
 	else
@@ -865,6 +880,11 @@ bool LFSWM2_clientClass::LFSWM2_handleEvents(XEvent *e)
 {
 	switch(e->type)
 		{
+			case KeyRelease:
+				if(e->xkey.state==XK_Escape)
+					fprintf(stderr,"KeyRelease -> LFSWM2_handleEvents\n");
+			break;
+
 			case ButtonRelease:
 				this->adjustContentWindow();
 				break;
@@ -876,7 +896,6 @@ bool LFSWM2_clientClass::LFSWM2_handleEvents(XEvent *e)
 
 					if((this->frameWindow==e->xmotion.window) && (e->xmotion.state==Button1Mask))
 						domove=true;
-					//if((this->contentWindow==e->xmotion.window) && (e->xmotion.state==Button1Mask+(Mod4Mask|ShiftMask)))
 					if((this->contentWindow==e->xmotion.window) && (e->xmotion.state==Button1Mask+(MOVEKEYS)))
 						domove=!this->isFullscreen;
 
