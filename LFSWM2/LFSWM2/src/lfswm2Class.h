@@ -185,6 +185,8 @@ class LFSWM2_Class
 		unsigned long		LFSWM2_getDesktopCount(void);
 		void					LFSWM2_setCurrentDesktop(unsigned long i,bool force=false,bool dovis=true);
 		void					LFSWM2_setCurrentDesktopFromRoot(void);
+		unsigned long		LFSWM2_getLowerDesktop(unsigned long cd);
+		unsigned long		LFSWM2_getHigherDesktop(unsigned long cd);
 
 		static int			LFSWM2_wmDetected(Display *display,XErrorEvent *e);
 		static int			LFSWM2_xError(Display *display,XErrorEvent *e);

@@ -811,6 +811,8 @@ void LFSWM2_clientClass::LFSWM2_setWMState(XEvent *e)
 bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 {
 	LFSWM2_clientClass	*cc;
+	int					lastx=0;
+	int					direction=-1;
 
 	while(true)
 		{
@@ -828,14 +830,33 @@ bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 						break;
 					case MotionNotify:
 						{
+							if(lastx<ee.xbutton.x_root)
+								direction=1;
+							else
+								direction=0;
+							
 							int xdiff=ee.xbutton.x_root-e->xbutton.x_root;
 							int ydiff=ee.xbutton.y_root-e->xbutton.y_root;
 							XMoveWindow(this->mainClass->display,this->frameWindow,this->frameWindowRect.x+xdiff,this->frameWindowRect.y+ydiff);
-						//	if(ee.xbutton.x_root<50)
-						//	{
-								//this->mainClass->LFSWM2_setCurrentDesktop(this->mainClass->c,bool force,bool dovis)
-						//		}
+	
+							if((ee.xbutton.x_root<20) && (direction==0))
+								{
+									this->onDesk=this->mainClass->LFSWM2_getLowerDesktop(this->onDesk);
+									this->mainClass->LFSWM2_setCurrentDesktop(this->onDesk);
+									XWarpPointer(this->mainClass->display,None,None,0,0,0,0,this->mainClass->displayWidth-20,0);
+									direction=-1;
+									ee.xbutton.x_root=100000;
+								}
+
+							if((ee.xbutton.x_root>this->mainClass->displayWidth-20) && (direction==1))
+								{
+									this->onDesk=this->mainClass->LFSWM2_getHigherDesktop(this->onDesk);
+									this->mainClass->LFSWM2_setCurrentDesktop(this->onDesk);
+									XWarpPointer(this->mainClass->display,None,None,0,0,0,0,(-this->mainClass->displayWidth-20),0);
+									ee.xbutton.x_root=-1;
+								}
 						}
+						lastx=ee.xbutton.x_root;
 						break;
 					case ButtonPress:
 						this->mainClass->mainEventClass->noRestack=true;

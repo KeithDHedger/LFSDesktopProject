@@ -428,7 +428,7 @@ int LFSWM2_Class::LFSWM2_xError(Display *display,XErrorEvent *e)
 
 unsigned long LFSWM2_Class::LFSWM2_getDesktopCount(void)
 {
-	return(this->currentDesktop);
+	return(this->numberOfDesktops);
 }
 
 void LFSWM2_Class::LFSWM2_setDeskCount(unsigned long val)
@@ -563,6 +563,28 @@ void LFSWM2_Class::cliOptions(int argc,char **argv)//TODO//
 		}
 	if(key!=-1)
 		this->msgQueueKey=key;
+}
+
+unsigned long LFSWM2_Class::LFSWM2_getLowerDesktop(unsigned long cd)
+{
+	int nd;
+
+	nd=(int)cd;
+	nd--;
+	if(nd<0)
+		nd=this->LFSWM2_getDesktopCount()-1;
+	return((unsigned long)nd);
+}
+
+unsigned long LFSWM2_Class::LFSWM2_getHigherDesktop(unsigned long cd)
+{
+	int nd;
+
+	nd=(int)cd;
+	nd++;
+	if(nd>=this->LFSWM2_getDesktopCount())
+		nd=0;
+	return((unsigned long)nd);
 }
 
 #ifdef __DEBUG__

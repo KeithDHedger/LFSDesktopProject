@@ -92,8 +92,6 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 				}
 
 			XNextEvent(this->mainClass->display,&e);
-//fprintf(stderr,"default %i\n",when++);
-//this->mainClass->DEBUG_printEventData(&e,true);
 			cccontrol=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(e.xany.window));
 			if(cccontrol!=NULL)
 				{

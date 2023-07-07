@@ -1,4 +1,5 @@
 1.0.0
+Done dragging window off left/right edge of screen changes current desktop.
 Fixed 'ESC+MOVEKEYS' getting wrong key.
 Fixed 'above/Below' fom window menu button.
 Added 'ESC+MOVEKEYS' to un-fullscreen, ( MOVEKEYS are mod keys to be used, set in lfswm2Class.h, to be moved to prefs ).

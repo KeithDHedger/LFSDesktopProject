@@ -263,7 +263,6 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 
 			XSetWindowAttributes attributes;//TODO//
 			attributes.win_gravity=NorthWestGravity;
-			////XUnmapWindow(this->mainClass->display,id);////
 			XReparentWindow(this->mainClass->display,id,cc->frameWindow,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize-(BORDER_WIDTH*2));
 
 			XChangeWindowAttributes(this->mainClass->display,id,CWWinGravity,&attributes);
