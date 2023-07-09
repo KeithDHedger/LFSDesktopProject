@@ -271,9 +271,9 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 			this->LFSWM2_setWindowState(id,NormalState);
 
 			XGrabButton(this->mainClass->display,Button1,0,id,False,ButtonPressMask,GrabModeSync,GrabModeAsync,None,None);
-			XGrabButton(this->mainClass->display,Button1,(MOVEKEYS),id,False,ButtonPressMask|ButtonReleaseMask|PointerMotionMask,GrabModeAsync,GrabModeAsync,None,None);
+			XGrabButton(this->mainClass->display,Button1,(this->mainClass->modKeys),id,False,ButtonPressMask|ButtonReleaseMask|PointerMotionMask,GrabModeAsync,GrabModeAsync,None,None);
 			XGrabButton(this->mainClass->display,Button2,0,id,True,0,GrabModeSync,GrabModeAsync,None,None);
-			XGrabKey(this->mainClass->display,XKeysymToKeycode(this->mainClass->display,XK_Escape),(MOVEKEYS),id,False,GrabModeSync,GrabModeAsync);
+			XGrabKey(this->mainClass->display,XKeysymToKeycode(this->mainClass->display,XK_Escape),(this->mainClass->modKeys),id,False,GrabModeSync,GrabModeAsync);
 
 			Atom		v[8];
 			int		vcnt=3;
@@ -1037,7 +1037,9 @@ void	 LFSWM2_windowClass::LFSWM2_reloadTheme(void)
 	this->mainClass->bottomBarSize=this->mainClass->prefs.LFSTK_getInt("bottombarsize");
 	this->mainClass->useTheme=this->mainClass->prefs.LFSTK_getBool("usetheme");
 	this->mainClass->resizeMode=this->mainClass->prefs.LFSTK_getInt("resizemode");
+	this->mainClass->modKeys=this->mainClass->prefs.LFSTK_getInt("modkeys");
 
+fprintf(stderr,"modkeys=%i\n",this->mainClass->modKeys);
 	if(this->mainClass->useTheme==true)
 		this->LFSWM2_loadTheme(this->mainClass->prefs.LFSTK_getString("theme"));
 }

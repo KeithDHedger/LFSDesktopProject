@@ -71,6 +71,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 				break;
 			if(this->mainClass->messages->whatMsg==REFRESHTHEME)
 				{
+					int mokeyshold=this->mainClass->modKeys;
 					this->mainClass->mainWindowClass->LFSWM2_reloadTheme();
 					this->mainClass->messages->whatMsg=NOMSG;
 					LFSWM2_clientClass *ccs;
@@ -79,12 +80,21 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 							ccs=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(j));
 							if(ccs!=NULL)
 								{
-									XShapeCombineMask(this->mainClass->display,ccs->frameWindow,ShapeBounding,0,0,None,ShapeSet);
-									ccs->setWindowRects(true);
-									this->mainClass->mainWindowClass->LFSWM2_setControlRects(ccs);
-									ccs->resetContentWindow();
-									this->mainClass->mainWindowClass->LFSWM2_refreshFrame(ccs);
-									ccs->resizeMode=this->mainClass->resizeMode;
+									if(ccs->isFullscreen==false)
+										{
+											XShapeCombineMask(this->mainClass->display,ccs->frameWindow,ShapeBounding,0,0,None,ShapeSet);
+											ccs->setWindowRects(true);
+											this->mainClass->mainWindowClass->LFSWM2_setControlRects(ccs);
+											ccs->resetContentWindow();
+											this->mainClass->mainWindowClass->LFSWM2_refreshFrame(ccs);
+											ccs->resizeMode=this->mainClass->resizeMode;
+										}
+									
+									XUngrabButton(this->mainClass->display,Button1,mokeyshold,ccs->contentWindow);
+									XGrabButton(this->mainClass->display,Button1,(this->mainClass->modKeys),ccs->contentWindow,False,ButtonPressMask|ButtonReleaseMask|PointerMotionMask,GrabModeAsync,GrabModeAsync,None,None);
+									XUngrabKey(this->mainClass->display,XKeysymToKeycode(this->mainClass->display,XK_Escape),mokeyshold,ccs->contentWindow);
+									XGrabKey(this->mainClass->display,XKeysymToKeycode(this->mainClass->display,XK_Escape),(this->mainClass->modKeys),ccs->contentWindow,False,GrabModeSync,GrabModeAsync);
+
 								}
 						}
 					this->mainClass->restackCnt=1;
@@ -135,8 +145,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 			switch(e.type)
 				{
 					case KeyRelease:
-								//fprintf(stderr,"KeyRelease -> eventsClass.cpp keycode=%x %x %x\n",e.xkey.keycode,XK_Escape,XKeysymToKeycode(this->mainClass->display,XK_Escape));
-						if((e.xkey.keycode==XKeysymToKeycode(this->mainClass->display,XK_Escape)) && (e.xkey.state&(MOVEKEYS))==(MOVEKEYS))
+						if((e.xkey.keycode==XKeysymToKeycode(this->mainClass->display,XK_Escape)) && (e.xkey.state&(this->mainClass->modKeys))==(this->mainClass->modKeys))
 							{
 								cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xkey.window);
 								if(cc!=NULL)
@@ -172,7 +181,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						cc=NULL;
 						break;
 					case ButtonPress:
-//						fprintf(stderr,"ButtonPress eventnumber %i\n",when++);
+						//fprintf(stderr,"ButtonPress eventnumber %i\n",when++);
 						start=e.xbutton;
 						this->mainClass->restackCnt=0;
 						this->sy=e.xbutton.y;
@@ -180,7 +189,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						if(cc!=NULL)
 							{
 								inmenu=false;
-								if((e.xbutton.state&(MOVEKEYS))==(MOVEKEYS))//TODO//???windows key for now used to move window wihout restacking
+								if((e.xbutton.state&(this->mainClass->modKeys))==(this->mainClass->modKeys))//TODO//???windows key for now used to move window wihout restacking
 									break;
 
 								this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,&cc->contentWindow,1);

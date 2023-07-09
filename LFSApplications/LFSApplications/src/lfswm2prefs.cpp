@@ -31,6 +31,8 @@
 #define RESIZEMENUSIZE	4
 #define TITLEPOSMENUSIZE	3
 #define FORCEMENUSIZE	3
+#define MODS1MENUSIZE	8
+#define MODS2MENUSIZE	5
 
 LFSTK_applicationClass	*apc=NULL;
 LFSTK_prefsClass			prefs;
@@ -87,6 +89,26 @@ menuStruct				**forceDockStackMenus;
 const char				*forceDockStackMenuNames[]={"Set By App","Force Above","Force Below"};
 LFSTK_menuClass			*forceDockStackMenu=NULL;
 
+//modkeys 1
+LFSTK_buttonClass		*modkeys1WindowMenu=NULL;
+LFSTK_lineEditClass		*modkeys1WindowEdit=NULL;
+menuStruct				**modkeys1Menus;
+const char				*modkeys1MenuNames[]={"None","Shift","Caps Lock","Shift+Caps Lock","Control","Shift+Control","Caps Lock+Control","Shift+Caps Lock+Control"};
+//const char				*modkeys1MenuNames[]={"None","Shift","Caps Lock","Control"};
+LFSTK_menuClass			*modkeys1Menu=NULL;
+
+//modkeys 2
+LFSTK_buttonClass		*modkeys2WindowMenu=NULL;
+LFSTK_lineEditClass		*modkeys2WindowEdit=NULL;
+menuStruct				**modkeys2Menus;
+const char				*modkeys2MenuNames[]={"Mod1","Mod2","Mod3","Mod4","Mod5"};
+LFSTK_menuClass			*modkeys2Menu=NULL;
+
+std::string				m1="None";
+std::string				m2="Mod1";
+long unsigned			mk1=0;
+long unsigned			mk2=8;
+
 LFSTK_lineEditClass		*titleBarSizeEdit=NULL;
 LFSTK_lineEditClass		*bottomBarSizeEdit=NULL;
 LFSTK_lineEditClass		*leftBarSizeEdit=NULL;
@@ -106,7 +128,10 @@ int						prefsPlacementTemp=2;
 int						prefsResizeTemp=2;
 int						titlePosTemp=1;
 int						forceDockStackTemp=1;
+int						prefsModkeys1Temp=0;
 
+int						modKey1=0;
+int						modKey2=0;
 //msg
 int						queueID=-1;
 
@@ -120,11 +145,19 @@ bool doQuit(void *p,void* ud)
 bool buttonCB(void *p,void* ud)
 {
 	const fontDataStruct	*fd;
-	//char					*buffer;
 	msgBuffer			mbuffer;
 
 	if(ud!=NULL)
 		{
+			if(strcmp((char*)ud,"MODKEYS1")==0)
+				{
+					modkeys1Menu->LFSTK_showMenu();
+				}
+			if(strcmp((char*)ud,"MODKEYS2")==0)
+				{
+					modkeys2Menu->LFSTK_showMenu();
+				}
+
 			if(strcmp((char*)ud,"FORCEDOCKSTACK")==0)
 				{
 					forceDockStackMenu->LFSTK_showMenu();
@@ -185,10 +218,13 @@ bool buttonCB(void *p,void* ud)
 							{prefs.LFSTK_hashFromKey("desktops"),{TYPEINT,"desktops","",false,atoi(deskCountEdit->LFSTK_getCStr())}},
 							{prefs.LFSTK_hashFromKey("resizemode"),{TYPEINT,"resizemode","",false,prefsResizeTemp}},
 							{prefs.LFSTK_hashFromKey("rescanprefs"),{TYPEINT,"rescanprefs","",false,atoi(rescanEdit->LFSTK_getCStr())}},
-							{prefs.LFSTK_hashFromKey("forcedocksstack"),{TYPEINT,"forcedocksstack","",false,forceDockStackTemp}}
+							{prefs.LFSTK_hashFromKey("forcedocksstack"),{TYPEINT,"forcedocksstack","",false,forceDockStackTemp}},
+
+							{prefs.LFSTK_hashFromKey("modkeys"),{TYPEINT,"modkeys","",false,prefsModkeys1Temp}}
 						};
 
 					prefs.LFSTK_saveVarsToFile(envFile);
+					//prefs.LFSTK_saveVarsToFile("-");
 					mbuffer.mType=LFSWM2_MSG;
 					sprintf(mbuffer.mText,"reloadtheme");
 					if((msgsnd(queueID,&mbuffer,strlen(mbuffer.mText)+1,0))==-1)
@@ -212,6 +248,28 @@ bool resizeMenuCB(void *p,void* ud)
 	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
 	resizeWindowEdit->LFSTK_setBuffer(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel());
 	prefsResizeTemp=(int)(long)ud;
+	return(true);
+}
+
+bool modskeyMenuCB(void *p,void* ud)
+{
+	std::string str=modkeys1WindowMenu->LFSTK_getLabel();
+
+	if((unsigned long)ud<8)
+		{
+			m1=static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel();
+			mk1=(long unsigned)ud;
+		}
+	else
+		{
+			m2=static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel();
+			mk2=(long unsigned)ud;
+		}
+	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
+
+	str=m1+"+"+m2;
+	modkeys1WindowEdit->LFSTK_setBuffer(str.c_str());
+	prefsModkeys1Temp=mk1+mk2;
 	return(true);
 }
 
@@ -335,7 +393,8 @@ int main(int argc, char **argv)
 			{prefs.LFSTK_hashFromKey("forcedocksstack"),{TYPEINT,"forcedocksstack","",false,1}},
 			{prefs.LFSTK_hashFromKey("rescanprefs"),{TYPEINT,"rescanprefs","",false,10}},
 			{prefs.LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","",false,0}},
-			{prefs.LFSTK_hashFromKey("resizemode"),{TYPEINT,"resizemode","",false,2}}
+			{prefs.LFSTK_hashFromKey("resizemode"),{TYPEINT,"resizemode","",false,2}},
+			{prefs.LFSTK_hashFromKey("modkeys"),{TYPEINT,"modkeys","",false,64}}
 		};
 
 	asprintf(&envFile,"%s/lfswm2.rc",apc->configDir);
@@ -378,6 +437,28 @@ int main(int argc, char **argv)
 			forceDockStackMenus[j]=new menuStruct;
 			forceDockStackMenus[j]->label=strdup(forceDockStackMenuNames[j]);
 			forceDockStackMenus[j]->userData=(void*)j;
+		}
+
+	modkeys1Menus=new menuStruct*[MODS1MENUSIZE];
+	for(long j=0;j<MODS1MENUSIZE;j++)
+		{
+			modkeys1Menus[j]=new menuStruct;
+			modkeys1Menus[j]->label=strdup(modkeys1MenuNames[j]);
+			//if(j==0)
+				modkeys1Menus[j]->userData=(void*)j;
+			//	modkeys1Menus[j]->userData=0;
+			//else
+				//modkeys1Menus[j]->userData=(void*)(unsigned long)(1<<(j-1));
+			
+			//fprintf(stderr,"menu ud=%x\n",modkeys1Menus[j]->userData);
+		}
+	modkeys2Menus=new menuStruct*[MODS2MENUSIZE];
+	for(long j=0;j<MODS2MENUSIZE;j++)
+		{
+			modkeys2Menus[j]=new menuStruct;
+			modkeys2Menus[j]->label=strdup(modkeys2MenuNames[j]);
+			modkeys2Menus[j]->userData=(void*)(unsigned long)(1<<(j+3));
+			//modkeys2Menus[j]->userData=(void*)(unsigned long)(1<<(j));
 		}
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
@@ -515,6 +596,52 @@ int main(int argc, char **argv)
 	forceDockStackWindowEdit=new LFSTK_lineEditClass(wc,forceDockStackMenuNames[prefs.LFSTK_getInt("forcedocksstack")],sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 	sx=BORDER;
+
+//modkeys1
+	modkeys1WindowMenu=new LFSTK_buttonClass(wc,"Mod Keys 1",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	modkeys1WindowMenu->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"MODKEYS1");
+	modkeys1Menu=new LFSTK_menuClass(wc,BORDER+GADGETWIDTH,sy,1,1);
+	modkeys1Menu->LFSTK_setMouseCallBack(NULL,modskeyMenuCB,NULL);
+	modkeys1Menu->LFSTK_addMainMenus(modkeys1Menus,MODS1MENUSIZE);
+	sx+=GADGETWIDTH+BORDER;
+
+//modkeys2
+	modkeys2WindowMenu=new LFSTK_buttonClass(wc,"Mod Keys 2",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	modkeys2WindowMenu->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"MODKEYS2");
+	modkeys2Menu=new LFSTK_menuClass(wc,BORDER+GADGETWIDTH,sy,1,1);
+	modkeys2Menu->LFSTK_setMouseCallBack(NULL,modskeyMenuCB,NULL);
+	modkeys2Menu->LFSTK_addMainMenus(modkeys2Menus,MODS2MENUSIZE);
+
+	sx+=GADGETWIDTH+BORDER;
+	std::string name;
+
+	prefsModkeys1Temp=prefs.LFSTK_getInt("modkeys");
+
+	mk1=prefsModkeys1Temp&7;
+	name=modkeys1MenuNames[prefsModkeys1Temp&7];
+	m1=name;
+	name+="+";
+	
+	int cnt=0;
+	int mult=3;
+	for(int j=0;j<6;j++)
+		{
+			if(((((prefs.LFSTK_getInt("modkeys")&0xf8)>>mult)) & 1)==1)
+				{
+					cnt=j;
+					break;
+				}
+			mult++;
+		}
+	name+=modkeys2MenuNames[cnt];
+	m2=modkeys2MenuNames[cnt];
+	mk2=prefs.LFSTK_getInt("modkeys")&0xf8;
+
+	prefsModkeys1Temp=prefs.LFSTK_getInt("modkeys");
+	modkeys1WindowEdit=new LFSTK_lineEditClass(wc,name.c_str(),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
+	sx=BORDER;
+
 
 //line
 	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);

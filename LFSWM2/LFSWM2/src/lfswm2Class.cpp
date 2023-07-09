@@ -167,7 +167,8 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 			{this->prefs.LFSTK_hashFromKey("forcedocksstack"),{TYPEINT,"forcedocksstack","",false,1}},
 			{this->prefs.LFSTK_hashFromKey("rescanprefs"),{TYPEINT,"rescanprefs","",false,10}},
 			{this->prefs.LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","",false,0}},
-			{this->prefs.LFSTK_hashFromKey("resizemode"),{TYPEINT,"resizemode","",false,2}}
+			{this->prefs.LFSTK_hashFromKey("resizemode"),{TYPEINT,"resizemode","",false,2}},
+			{this->prefs.LFSTK_hashFromKey("modkeys"),{TYPEINT,"modkeys","",false,MOVEKEYS}}
 		};
 
 	this->prefsPath=getenv("HOME");
@@ -194,8 +195,9 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 	this->useTheme=this->prefs.LFSTK_getBool("usetheme");
 	this->resizeMode=this->prefs.LFSTK_getInt("resizemode");
 	this->forceDockStackingOrder=this->prefs.LFSTK_getInt("forcedocksstack");
-	this->buttonYOffset=(this->titleBarSize/2)-(DEFAULTCONTROLSIZE/2);
+	this->modKeys=this->prefs.LFSTK_getInt("modkeys");
 
+	this->buttonYOffset=(this->titleBarSize/2)-(DEFAULTCONTROLSIZE/2);
 	this->cliOptions(argc,argv);
 
 	if(this->useTheme==true)

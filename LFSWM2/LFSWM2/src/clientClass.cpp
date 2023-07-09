@@ -911,11 +911,6 @@ bool LFSWM2_clientClass::LFSWM2_handleEvents(XEvent *e)
 {
 	switch(e->type)
 		{
-			case KeyRelease:
-				if(e->xkey.state==XK_Escape)
-					fprintf(stderr,"KeyRelease -> LFSWM2_handleEvents\n");
-			break;
-
 			case ButtonRelease:
 				this->adjustContentWindow();
 				break;
@@ -927,7 +922,7 @@ bool LFSWM2_clientClass::LFSWM2_handleEvents(XEvent *e)
 
 					if((this->frameWindow==e->xmotion.window) && (e->xmotion.state==Button1Mask))
 						domove=true;
-					if((this->contentWindow==e->xmotion.window) && (e->xmotion.state==Button1Mask+(MOVEKEYS)))
+					if((this->contentWindow==e->xmotion.window) && (e->xmotion.state==Button1Mask+(this->mainClass->modKeys)))
 						domove=!this->isFullscreen;
 
 					if(domove==true)
@@ -998,9 +993,6 @@ contloop:
 
 			case ConfigureRequest:
 				{
-				//TODO//
-		//	std::cerr<<"client ConfigureRequest"<<std::endl;
-				//break;
 					XRaiseWindow(this->mainClass->display,this->frameWindow);
 					this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,&this->contentWindow,1);
 					XSetInputFocus(this->mainClass->display,this->contentWindow,RevertToNone,CurrentTime);

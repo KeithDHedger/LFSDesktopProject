@@ -47,10 +47,8 @@
 #include "config.h"
 
 //#define __DEBUG__
-//#define __DEVEL__
-#ifdef __DEVEL__
-//TODO// add to prefs dialog
-#define MOVEKEYS (Mod4Mask|ShiftMask)
+#ifdef __DEBUG__
+#define MOVEKEYS (Mod4Mask|ControlMask)
 #else
 #define MOVEKEYS (Mod4Mask)
 #endif
@@ -211,7 +209,7 @@ class LFSWM2_Class
 		std::vector<geometryStruct>	monitors;
 		RUNLEVEL				runLevel=RL_STARTUP;
 		int					windowPlacement=CENTREMMONITOR;
-
+		int					modKeys=32;
 		int					displayWidth;
 		int					displayHeight;
 		Window				supporting;
