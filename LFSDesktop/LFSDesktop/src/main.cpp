@@ -162,7 +162,7 @@ Atom                    xa_prop[3];
   
      if(xa!=None)
          XChangeProperty(apc->display,wc->window,xa,XA_ATOM,32,PropModeReplace,(unsigned char *)&xa_prop,2);
-fprintf(stderr,"win=0x%x\n",wc->window);
+//fprintf(stderr,"win=0x%x\n",wc->window);
 
 
 			xa=XInternAtom(apc->display,"_NET_WM_STATE",False);
