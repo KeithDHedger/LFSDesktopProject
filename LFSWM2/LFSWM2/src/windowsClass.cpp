@@ -123,6 +123,7 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 {
 	if(this->LFSWM2_getWindowType(id)==MENUWINDOW)
 		{
+		//fprintf(stderr,"MENUWINDOW=0x%x\n",id);
 			this->LFSWM2_setClientList(id,true);
 			XRaiseWindow(this->mainClass->display,id);
 			this->mainClass->restackCnt=1;
@@ -132,6 +133,7 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 
 	if(this->LFSWM2_getWindowType(id)==DOCKWINDOW)
 		{
+		//fprintf(stderr,"DOCKWINDOW=0x%x\n",id);
 			this->LFSWM2_setClientList(id,true);
 			XRaiseWindow(this->mainClass->display,id);
 			this->mainClass->restackCnt=1;
@@ -153,16 +155,21 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 
 	if(this->LFSWM2_getWindowType(id)==DESKTOPWINDOW)
 		{
+	//	fprintf(stderr,"DESKTOPWINDOW=0x%x\n",id);
 			this->LFSWM2_setClientList(id,true);
 			XLowerWindow(this->mainClass->display,id);
-			this->mainClass->restackCnt=1;
-			if(this->LFSWM2_hasState(id,this->mainClass->atoms.at("_NET_WM_STATE_ABOVE")))
-				this->LFSWM2_removeProp(id,this->mainClass->atoms.at("_NET_WM_STATE_ABOVE"));
+			this->LFSWM2_removeProp(id,this->mainClass->atoms.at("_NET_WM_STATE_ABOVE"));
+			this->LFSWM2_addState(id,this->mainClass->atoms.at("_NET_WM_STATE_BELOW"));
+			this->mainClass->restackCnt=0;
+			this->mainClass->mainEventClass->LFSWM2_restack();
 			return(false);
 		}
 
 	if(this->LFSWM2_getWindowType(id)==UNKNOWNTYPE)
-			return(false);
+	{
+	//fprintf(stderr,"UNKNOWNTYPE=0x%x\n",id);
+			//return(false);
+		}
 
 	if(this->clientList.count(id)>0)
 		{
@@ -190,8 +197,11 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 				{
 					if(premaphs.mHints->decorations==0)
 						{
+						//fprintf(stderr,"if(premaphs.mHints!=NULL) id=0x%x\n",id);
 							this->LFSWM2_setClientList(id,true);
-							XRaiseWindow(this->mainClass->display,id);
+							//XRaiseWindow(this->mainClass->display,id);
+							XLowerWindow(this->mainClass->display,id);
+
 							this->mainClass->restackCnt=1;
 							return(false);
 						}
@@ -495,13 +505,13 @@ enum {NORMALWINDOW=0,DESKTOPWINDOW,DOCKWINDOW,MENUWINDOW,DIALOGWINDOW,TOOLWINDOW
 				}
 			XFree(propret);
 		}
-	if(retval==UNKNOWNTYPE)
-		{
-			Window w=None;
-			XGetTransientForHint(this->mainClass->display,id,&w);
-			if(w==None)
-				retval=NORMALWINDOW;
-		}
+//	if(retval==UNKNOWNTYPE)
+//		{
+//			Window w=None;
+//			XGetTransientForHint(this->mainClass->display,id,&w);
+//			if(w==None)
+//				retval=NORMALWINDOW;
+//		}
 	return(retval);
 }
 

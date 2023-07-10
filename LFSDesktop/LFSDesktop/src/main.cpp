@@ -153,6 +153,25 @@ int main(int argc, char **argv)
 	apc->LFSTK_addWindow(wi,"Desktop");
 	wc=apc->mainWindow;
 	wc->passEventToRoot=true;
+Atom                    xa;
+Atom                    xa_prop[3];
+
+ xa=XInternAtom(apc->display,"_NET_WM_ALLOWED_ACTIONS",False);
+     xa_prop[0]=XInternAtom(apc->display,"_NET_WM_STATE_STICKY",False);
+     xa_prop[1]=XInternAtom(apc->display,"_NET_WM_STATE_BELOW",False);
+  
+     if(xa!=None)
+         XChangeProperty(apc->display,wc->window,xa,XA_ATOM,32,PropModeReplace,(unsigned char *)&xa_prop,2);
+fprintf(stderr,"win=0x%x\n",wc->window);
+
+
+			xa=XInternAtom(apc->display,"_NET_WM_STATE",False);
+			xa_prop[0]=XInternAtom(apc->display,"_NET_WM_STATE_BELOW",False);
+			if(xa!=None)
+				XChangeProperty(apc->display,wc->window,xa,XA_ATOM,32,PropModeReplace,(unsigned char *)&xa_prop,1);
+			XLowerWindow(apc->display,wc->window);
+
+
 
 //TODO//debug to go
 #ifdef _ENABLEDEBUG_

@@ -750,12 +750,12 @@ void LFSWM2_clientClass::setWindowRects(bool resize)
 
 void LFSWM2_clientClass::LFSWM2_showWindow(void)
 {
-		XMapWindow(this->mainClass->display,this->frameWindow);
+	XMapWindow(this->mainClass->display,this->frameWindow);
 }
 
 void LFSWM2_clientClass::LFSWM2_hideWindow(void)
 {
-		XUnmapWindow(this->mainClass->display,this->frameWindow);
+	XUnmapWindow(this->mainClass->display,this->frameWindow);
 }
 
 void LFSWM2_clientClass::LFSWM2_resizeControls(void)
@@ -806,6 +806,7 @@ void LFSWM2_clientClass::LFSWM2_setWMState(XEvent *e)
 		}
 	if(states!=NULL)
 		XFree(states);
+	this->mainClass->mainEventClass->noRestack=false;
 }
 
 bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)

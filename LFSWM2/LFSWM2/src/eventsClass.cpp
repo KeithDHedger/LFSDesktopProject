@@ -107,6 +107,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 				{
 					if(cccontrol->LFSWM2_handleControls(&e)==true)
 						{
+							this->noRestack=false;
 							continue;
 						}
 				}
@@ -116,6 +117,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 					overide=false;
 					if(cccontrol->LFSWM2_handleEvents(&e)==true)
 						{
+							this->noRestack=false;
 							overide=true;
 							cccontrol=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xany.window);//in case window has died
 							if(cccontrol!=NULL)
@@ -137,6 +139,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 							if(cc->rendered==false)
 								{
 									cc->renderFrame(false);
+							this->noRestack=false;
 									continue;
 								}
 						}
@@ -160,6 +163,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 //						fprintf(stderr,"ButtonRelease eventnumber %i button number %i win=%x time=%d\n",when++,e.xbutton.button,e.xbutton.window,e.xbutton.time);
 						if((e.xbutton.window==this->mainClass->rootWindow) && (e.xbutton.time-lasttime>250))
 							{
+							this->noRestack=false;
 								int	direction=1;
 								int cd=this->mainClass->currentDesktop;
 								if(e.xbutton.button==Button4)
@@ -181,6 +185,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						cc=NULL;
 						break;
 					case ButtonPress:
+							this->noRestack=false;
 						//fprintf(stderr,"ButtonPress eventnumber %i\n",when++);
 						start=e.xbutton;
 						this->mainClass->restackCnt=0;
@@ -200,6 +205,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 					case MapNotify:
 						{
 						//fprintf(stderr,"MapNotify main event loop window=%x when=%i\n",e.xmap.window,when++);
+							this->noRestack=false;
 							Atom					*v=NULL;
 							long unsigned int	nitems_return;
 
@@ -217,6 +223,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 					case MapRequest:
 						{
+							this->noRestack=false;
 						//fprintf(stderr,"MapRequest main event loop window=%x when=%i\n",e.xmaprequest.window,when++);
 							XWindowAttributes	x_window_attrs;
 							hintsDataStruct		hs;
@@ -232,6 +239,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						break;
 
 					case ConfigureRequest://TODO//NEXT
+							this->noRestack=false;
 						//fprintf(stderr,"ConfigureRequest from main event loop window=%x when=%i\n",e.xmaprequest.window,when++);
 						//this->mainClass->DEBUG_printConfigureRequestStruct(&e);
 						{
@@ -337,6 +345,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 								{
 									if(e.xproperty.atom==this->mainClass->atoms.at("_NET_WM_DESKTOP"))
 										{
+										this->noRestack=false;
 											if(e.xproperty.window==this->mainClass->rootWindow)
 												{
 												}
@@ -344,7 +353,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 										}
 
 									if(e.xproperty.atom==this->mainClass->atoms.at("_NET_WM_STATE"))
-										{
+										{this->noRestack=false;
 											//fprintf(stderr,"PropertyNotify OUT WM_STATE eventnumber %i\n",when++);
 											cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xproperty.window);
 											if(cc!=NULL)
@@ -378,6 +387,8 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 					case ClientMessage:
 						//fprintf(stderr,"ClientMessage eventnumber %i\n",when++);
+						this->noRestack=false;
+						this->mainClass->restackCnt=0;
 						this->LFSWM2_doClientMsg(e.xclient.window,&e.xclient);
 						break;
 
@@ -407,8 +418,11 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 								}
 
 							this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CURRENT_DESKTOP"),XA_CARDINAL,32,&this->mainClass->currentDesktop,1);
+//XSynchronize(this->mainClass->display,true);
+//XSync(this->mainClass->display,false);
 							this->LFSWM2_restack();
 							this->mainClass->mainWindowClass->LFSWM2_setVisibilityForDesk(this->mainClass->currentDesktop);
+//XSynchronize(this->mainClass->display,false);
 //							if(inmenu==false)
 //								{
 //									v=(Atom*)this->mainClass->mainWindowClass->LFSWM2_getProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,&n);
@@ -620,7 +634,7 @@ void LFSWM2_eventsClass::LFSWM2_sendConfigureEvent(Window wid,rectStruct r)
 	XSendEvent(this->mainClass->display,wid,true,StructureNotifyMask,(XEvent*)&ce);
 }
 
-void LFSWM2_eventsClass::LFSWM2_restack(void)
+void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 {
 	long unsigned int	nitems_return;
 	Atom					*v=NULL;
@@ -744,28 +758,37 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)
 				move(framel,j,framel.size()-1);
 		}
 
-	for(int j=framel.size()-1;j>-1;j--)
+//dont include desktop windows in stacking
+	int cntj=framel.size()-1;
+	do
 		{
-			//cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(framel.at(j));
-			//if(cc!=NULL)
-			//	wid=cc->contentWindow;
-			//else
-				wid=framel.at(j);
+			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(framel.at(cntj));
+			wid=framel.at(cntj);
 			if((this->mainClass->mainWindowClass->LFSWM2_getWindowType(wid)==DESKTOPWINDOW))
-			{
-				move(framel,j,framel.size()-1);
+				{
+					framel.erase(framel.begin()+cntj);
+					XLowerWindow(this->mainClass->display,wid);
+					cntj=framel.size()-1;
+					continue;
 				}
-				//move(framel,j,0);
+			cntj--;
 		}
+	while(cntj>-1);
 
 	XRestackWindows(this->mainClass->display,framel.data(),framel.size());
 
+#if 1
 	this->mainClass->mainWindowClass->windowIDList=sl;
-
 	this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CLIENT_LIST"),XA_WINDOW,32,sl.data(),sl.size());
 	this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CLIENT_LIST_STACKING"),XA_WINDOW,32,sl.data(),sl.size());
+#else
+	this->mainClass->mainWindowClass->windowIDList=framel;
+	this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CLIENT_LIST"),XA_WINDOW,32,framel.data(),framel.size());
+	this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_CLIENT_LIST_STACKING"),XA_WINDOW,32,framel.data(),framel.size());
+
+#endif
+	this->mainClass->mainEventClass->noRestack=true;
 	XFree(v);
-	this->mainClass->mainWindowClass->windowIDList=sl;
 }
 
 void LFSWM2_eventsClass::LFSWM2_moveToTop(Window id)
