@@ -9,5 +9,5 @@ to update docs.
 
 https://keithdhedger.github.io/LFSDesktopProject/
 
-WARNING!
-LFSWM2 will be an upgrade to the LFSWManager, it is usable but far from finished ( no drag resize etc ), so please don't use it for real until this warning is removed.
+INFORMATION!
+LFSWM2 Should be used in place of LFSWManager.
