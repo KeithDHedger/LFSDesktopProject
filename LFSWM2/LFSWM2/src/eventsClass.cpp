@@ -646,6 +646,9 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 	int					cnt=0;
 	Window				wid;
 
+	if(this->mainClass->mainWindowClass->windowIDList.size()==0)
+		return;
+
 	v=(Atom*)this->mainClass->mainWindowClass->LFSWM2_getProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,&nitems_return);
 
 	for(int a=0;a<this->mainClass->mainWindowClass->windowIDList.size();a++)
