@@ -782,13 +782,13 @@ LFSTK_windowClass::LFSTK_windowClass(windowInitStruct *wi,LFSTK_applicationClass
 {
 	XSetWindowAttributes	wa;
 	Atom					wm_delete_window;
-	XClassHint				classHint;
+	XClassHint			classHint;
 	Atom					xa;
-	Atom					xa_prop[3];
+	Atom					xa_prop[4];
 	bool					gotargb;
-	XVisualInfo				visual_template;
-	XVisualInfo				*visual_list=NULL;
-	int						nxvisuals=0;
+	XVisualInfo			visual_template;
+	XVisualInfo			*visual_list=NULL;
+	int					nxvisuals=0;
 
 	this->app=app;
 	this->setWindowGeom(wi->x,wi->y,wi->w,wi->h,WINDSETALL);

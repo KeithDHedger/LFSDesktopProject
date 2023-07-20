@@ -33,9 +33,9 @@ void LFSTK_toolWindowClass::windowClassInitCommon(windowInitStruct *wi)
 {
 	XSetWindowAttributes	wa;
 	Atom					wm_delete_window;
-	XClassHint				classHint;
+	XClassHint			classHint;
 	Atom					xa;
-	Atom					xa_prop[3];
+	Atom					xa_prop[4];
 
 	this->app=wi->app;
 	this->setWindowGeom(wi->x,wi->y,wi->w,wi->h,WINDSETALL);
