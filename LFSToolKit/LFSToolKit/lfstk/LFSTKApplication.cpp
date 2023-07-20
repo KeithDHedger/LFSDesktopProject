@@ -92,7 +92,7 @@ LFSTK_applicationClass::LFSTK_applicationClass()
 
 	this->userHome=getenv("HOME");
 	asprintf(&this->configDir,"%s/.config/LFS",this->userHome);
-	this->iconThemeName=this->globalLib->LFSTK_oneLiner("head '%s'/lfsdesktop.rc|grep -i icontheme|awk '{print $2}'",this->configDir);
+	this->iconThemeName=this->globalLib->LFSTK_oneLiner("cat '%s'/lfsdesktop.rc|grep -i icontheme|awk '{print $2}'",this->configDir);
 }
 
 /**

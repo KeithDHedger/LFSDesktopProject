@@ -29,22 +29,44 @@ if [ ! -e ~/.config/LFS ];then
 	mkdir -vp ~/.config/LFS
 fi
 
-if [ ! -e ~/.config/LFS/lfswmanager.rc ];then
-	cat > ~/.config/LFS/lfswmanager.rc <<EOF
-wmactive_frame black
-wmactive_fill cyan
-wminactive_frame black
-wminactive_fill white
-widgetcolour black
-titlefont sans:size=12
+if [ ! -e ~/.config/LFS/lfswm2.rc ];then
+	cat > ~/.config/LFS/lfswm2.rc <<EOF
 theme ""
-termcommand xterm -e 
-placement 2
+framebg grey
+framefg white
+modkeys 64
 desktops 6
-liveupdate 20
-rescanprefs 30
-EOF
+usetheme false
+placement 2
+titlefont sans:size=14:bold
+resizemode 2
+textcolour black
+rescanprefs 10
+titleposition 2
+titlebarsize 20
+bottombarsize 8
+forcedocksstack 1
+leftsidebarsize 2
+ritesidebarsize 2
 fi
+
+#lfswmanager is deprecated
+#if [ ! -e ~/.config/LFS/lfswmanager.rc ];then
+#	cat > ~/.config/LFS/lfswmanager.rc <<EOF
+#wmactive_frame black
+#wmactive_fill cyan
+#wminactive_frame black
+#wminactive_fill white
+#widgetcolour black
+#titlefont sans:size=12
+#theme ""
+#termcommand xterm -e 
+#placement 2
+#desktops 6
+#liveupdate 20
+#rescanprefs 30
+#EOF
+#fi
 
 if [ ! -e ~/.config/LFS/lfspanel.rc ];then
 	cat > ~/.config/LFS/lfspanel.rc <<EOF
@@ -137,7 +159,9 @@ EOF
 fi
 
 lfssetwallpaper
-lfswmanager &
+#lfswmanager is deprecated
+#lfswmanager &
+lfswm2 &
 lfswmpid=$?
 sleep 1
 lfsdesktop &

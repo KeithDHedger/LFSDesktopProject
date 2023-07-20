@@ -352,12 +352,13 @@ void LFSTK_findClass::LFSTK_findFiles(const char *dir,bool multi)
 	struct stat	filestat;
 	int			retstat;
 	dataStruct	datas;
-	char		*filepath;
+	char			*filepath;
 
 	fc=this;
 	if(multi==false)
 		this->deleteData();
-	filepath=(char*)alloca(PATH_MAX);
+
+	filepath=(char*)malloc(PATH_MAX);
 	dirhandle=opendir(dir);
 	if(dirhandle!=NULL)
 		{
@@ -435,5 +436,6 @@ void LFSTK_findClass::LFSTK_findFiles(const char *dir,bool multi)
 		closedir(dirhandle);
 	}
 	this->dataCnt=this->data.size();
+	free(filepath);
 }
 

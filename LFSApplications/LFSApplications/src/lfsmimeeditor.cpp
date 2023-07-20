@@ -281,11 +281,11 @@ bool returnKeyPressed(void *p,void* ud)
 
 int main(int argc, char **argv)
 {
-	XEvent	event;
-	int		sy=BORDER;
-	char	*command;
-	char	*tempfolder=(char*)alloca(256);
-	LFSTK_labelClass	*infolabel;
+	XEvent				event;
+	int					sy=BORDER;
+	char					*command;
+	char					*tempfolder=(char*)malloc(256);
+	LFSTK_labelClass		*infolabel;
 
 	sprintf(tempfolder,"/tmp/lfsmimedir-XXXXXX");
 	workDir=mkdtemp(tempfolder);
@@ -381,5 +381,6 @@ int main(int argc, char **argv)
 	free(appsPath);
 	free(mimeTypesPath);
 	free(mimeTypesFile);
+	free(tempfolder);
 	return(retval);
 }

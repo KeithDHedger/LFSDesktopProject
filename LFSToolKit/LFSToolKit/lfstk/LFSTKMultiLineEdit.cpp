@@ -234,7 +234,7 @@ void LFSTK_multiLineEditClass::drawText(void)
 	cairo_text_extents_t	partextents;
 	cairo_text_extents_t	charextents;
 	int						offline=0;
-	long					maxlines=0;
+	long						maxlines=0;
 	int						calcmax=0;
 	int						linewithcursor=0;
 
@@ -284,21 +284,27 @@ void LFSTK_multiLineEditClass::drawText(void)
 				if(lines.at(j)->cursorPos!=-1)
 					{
 						char 	*data;
-						char	undercurs[2];
-						char	*aftercursor;
+						//char		*undercurs[2];
+						std::string	undercursstr="  ";
+						char		*aftercursor;
 						
 						asprintf(&data,"%s",lines.at(j)->line);
-						undercurs[0]=data[lines.at(j)->cursorPos];
-						undercurs[1]=0;
-						if(undercurs[0]==0)
-							undercurs[0]=' ';
+						//undercurs[0]=data[lines.at(j)->cursorPos];
+						undercursstr[0]=data[lines.at(j)->cursorPos];
+						//undercurs[1]=0;
+						undercursstr[1]=0;
+						//if(undercurs[0]==0)
+						if(undercursstr.at(0)==0)
+							undercursstr[0]=' ';
+							//undercurs[0]=' ';
 
 						data[lines.at(j)->cursorPos]=0;
 						aftercursor=&data[lines.at(j)->cursorPos+1];
 //1stbit
 						cairo_show_text(this->cr,data);
 						cairo_text_extents (this->cr,data,&partextents);
-						cairo_text_extents (this->cr,undercurs,&charextents);
+						//cairo_text_extents (this->cr,undercurs,&charextents);
+						cairo_text_extents (this->cr,undercursstr.c_str(),&charextents);
 						cairo_set_source_rgba(this->cr,this->cursorColour.RGBAColour.r,this->cursorColour.RGBAColour.g,this->cursorColour.RGBAColour.b,this->cursorColour.RGBAColour.a);
 
 						cairo_rectangle(this->cr,partextents.x_advance+0.5+this->pad,yoffset-this->fontExtents.ascent,charextents.x_advance-0.5,this->fontExtents.ascent+this->fontExtents.descent);
@@ -306,7 +312,8 @@ void LFSTK_multiLineEditClass::drawText(void)
 //secondbit
 						cairo_move_to(this->cr,partextents.x_advance+this->pad,yoffset);
 						cairo_set_source_rgba(this->cr,1.0,1.0,1.0,1.0);
-						cairo_show_text(this->cr,undercurs);
+						//cairo_show_text(this->cr,undercurs);
+						cairo_show_text(this->cr,undercursstr.c_str());
 //3rdbit
 						cairo_set_source_rgba(this->cr,0.0,0.0,0.0,1.0);
 						if(lines.at(j)->cursorPos<strlen(lines.at(j)->line))

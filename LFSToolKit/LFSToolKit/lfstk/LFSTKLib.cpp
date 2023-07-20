@@ -587,9 +587,9 @@ breakReturn:
 */
 std::string LFSTK_lib::LFSTK_oneLiner(const std::string fmt,...)
 {
-	FILE		*fp;
+	FILE			*fp;
 	va_list		ap;
-	char		*buffer=(char*)alloca(MAXBUFFER);
+	char			*buffer=(char*)malloc(MAXBUFFER);
 	std::string	str="";
 
 	va_start(ap, fmt);
@@ -636,6 +636,7 @@ std::string LFSTK_lib::LFSTK_oneLiner(const std::string fmt,...)
 			pclose(fp);
 			str=buffer;
 		}
+	free(buffer);
 	return(str);
 }
 
@@ -647,12 +648,12 @@ std::string LFSTK_lib::LFSTK_oneLiner(const std::string fmt,...)
 */
 char* LFSTK_lib::LFSTK_oneLiner(const char* fmt,...)
 {
-	FILE	*fp;
+	FILE		*fp;
 	va_list	ap;
-	char	*buffer,*subbuffer;
+	char		*buffer,*subbuffer;
 
-	buffer=(char*)alloca(MAXBUFFER);
-	subbuffer=(char*)alloca(MAXBUFFER);
+	buffer=(char*)malloc(MAXBUFFER);
+	subbuffer=(char*)malloc(MAXBUFFER);
 
 	buffer[0]=0;
 	subbuffer[0]=0;
@@ -697,8 +698,10 @@ char* LFSTK_lib::LFSTK_oneLiner(const char* fmt,...)
 						buffer[strlen(buffer)-1]=0;
 				}
 			pclose(fp);
+			free(subbuffer);
 			return(strdup(buffer));
 		}
+	free(subbuffer);
 	return(NULL);
 }
 
@@ -871,8 +874,7 @@ cairo_surface_t* LFSTK_lib::LFSTK_cairo_image_surface_create_from_jpeg(const cha
 	const unsigned char		*data;
 	int						infile;
 	struct stat				stat;
-	char					magic[]="\xff\xd8\xff";
-
+	std::string				magicstr="\xff\xd8\xff";
    // open input file
 	if((infile=open(filename,O_RDONLY))==-1)
 		return(NULL);
@@ -892,7 +894,7 @@ cairo_surface_t* LFSTK_lib::LFSTK_cairo_image_surface_create_from_jpeg(const cha
 	char *ptr=(char*)data;
 	bool flag=true;
 	for(int j=0;j<3;j++)
-		if(ptr[j]!=magic[j])
+		if(ptr[j]!=magicstr.at(j))
 			flag=false;
 
 	close(infile);

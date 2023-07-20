@@ -128,7 +128,7 @@ void addSet(void)
 void setPreviewData(void);
 bool menuCB(void *p,void* ud)
 {
-	char				*buffer=(char*)alloca(PATH_MAX);
+	char		*buffer=(char*)malloc(PATH_MAX);
 
 	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
 	const char *label=static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel();
@@ -227,6 +227,7 @@ bool menuCB(void *p,void* ud)
 	themePath=strdup(prefs.LFSTK_getCString("themepath"));
 
 	setPreviewData();
+	free(buffer);
 	return(true);
 }
 

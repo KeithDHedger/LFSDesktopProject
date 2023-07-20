@@ -26,8 +26,6 @@ sysmodmap=/etc/X11/app-defaults/.Xmodmap
 xcursorsfile=$HOME/xinits/XDefaults/XCursorsfile
 customcolours=$HOME/xinits/XDefaults/XDefaults
 
-LFSVERSION="9.0"
-
 # merge in defaults and keymaps
 
 if [ -f $xcursorsfile ]; then
