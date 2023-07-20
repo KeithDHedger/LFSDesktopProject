@@ -258,7 +258,7 @@ void LFSTK_windowClass::LFSTK_setWindowPixmap(Pixmap pixmap,int w,int h,bool upd
 	cairo_surface_t	*surfaceto=NULL;
 	cairo_surface_t	*surfacefrom=NULL;
 	cairo_t			*cr=NULL;
-	cairo_status_t	status;
+	cairo_status_t	status=CAIRO_STATUS_SUCCESS;
 
 	if(pixmap==None)
 		{
