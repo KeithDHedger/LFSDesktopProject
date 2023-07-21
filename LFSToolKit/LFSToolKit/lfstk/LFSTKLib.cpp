@@ -875,7 +875,6 @@ cairo_surface_t* LFSTK_lib::LFSTK_cairo_image_surface_create_from_jpeg(const cha
 	int						infile;
 	struct stat				stat;
 	std::string				magicstr="\xff\xd8\xff";
-	//char		m[10]={'\xff','\xd8','\xff',0,0,0,0,0,0,0};
    // open input file
 	if((infile=open(filename,O_RDONLY))==-1)
 		return(NULL);
@@ -896,7 +895,6 @@ cairo_surface_t* LFSTK_lib::LFSTK_cairo_image_surface_create_from_jpeg(const cha
 	bool flag=true;
 	for(int j=0;j<3;j++)
 		if(ptr[j]!=magicstr.at(j))
-		//if(ptr[j]!=m[j])
 			flag=false;
 
 	close(infile);

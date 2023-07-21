@@ -33,16 +33,12 @@ class LFSWM2_clientClass
 	public:
 		LFSWM2_clientClass(LFSWM2_Class *mainclass,Window id);
 		~LFSWM2_clientClass(void);
-//int hx=0;
-//int hy=0;
 
 		void				LFSWM2_setWindowName(void);
 		bool				LFSWM2_handleControls(XEvent *e);
 		void				renderFrame(bool isfirst,int x=0,int y=0);
 //vars
 		bool				rendered=false;
-//		int				firstx=-10000;
-//		int				firsty=-10000;
 		LFSWM2_Class		*mainClass=NULL;
 
 		Window			contentWindow=None;
@@ -77,9 +73,6 @@ class LFSWM2_clientClass
 
 		bool				nameIsUTF=false;
 		bool				moveToTop=false;
-
-		////motifHints		*mwmHints=NULL;
-		////XSizeHints		*sizeHints=NULL;
 
 		hintsDataStruct	windowHints;
 
@@ -121,6 +114,7 @@ class LFSWM2_clientClass
 
 		bool				LFSWM2_doFrameMoveEvents(XEvent *e);
 		bool				LFSWM2_handleEvents(XEvent *e);
+		void				LFSWM2_setFrameExtents(void);
 
 		void				LFSWM2_unSpecial(void);
 

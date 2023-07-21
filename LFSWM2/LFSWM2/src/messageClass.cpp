@@ -77,5 +77,4 @@ bool LFSWM2_messageClass::LFSWM2_readMsg(void)
 				}
 		}
 	return(false);
-
 }

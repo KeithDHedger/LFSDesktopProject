@@ -73,7 +73,7 @@ void LFSWM2_clientClass::LFSWM2_setWindowName(void)
 	this->name="";
 	this->mainClass->LFSWM2_pushXErrorHandler();
 
-	namex=(char*)this->mainClass->mainWindowClass->LFSWM2_getProp(this->contentWindow,this->mainClass->atoms.at("_NET_WM_NAME"),this->mainClass->atoms.at("UTF8_STRING"),&nitems_return);
+	namex=(char*)this->mainClass->mainWindowClass->LFSWM2_getProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_NAME")),this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("UTF8_STRING")),&nitems_return);
 	if (namex!=NULL)
 		{
 			this->name=namex;
@@ -170,9 +170,9 @@ void LFSWM2_clientClass::LFSWM2_sendCloseWindow(void)
 
 	em.type=ClientMessage;
 	em.window=this->contentWindow;
-	em.message_type=this->mainClass->atoms.at("WM_PROTOCOLS");
+	em.message_type=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("WM_PROTOCOLS"));
 	em.format=32;
-	em.data.l[0]=this->mainClass->atoms.at("WM_DELETE_WINDOW");;
+	em.data.l[0]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("WM_DELETE_WINDOW"));;
 	em.data.l[1]=CurrentTime;
 	XSendEvent(this->mainClass->display,this->contentWindow,false,NoEventMask,(XEvent *)&em);
 	this->visible=false;
@@ -195,6 +195,7 @@ void LFSWM2_clientClass::adjustContentWindow(void)
 
 	this->mainClass->mainEventClass->LFSWM2_sendConfigureEvent(this->contentWindow,r);
 	this->setWindowRects(true);
+	this->LFSWM2_setFrameExtents();
 }
 
 void LFSWM2_clientClass::resetContentWindow(void)
@@ -385,9 +386,19 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 									{
 										XMoveWindow(this->mainClass->display,this->contentWindow,this->frameWindowRect.w+10,0);
 									}
+
+								this->LFSWM2_setFrameExtents();
 								this->steps=0;
 								break;
 							}
+
+//this->setWindowRects(true);
+
+
+
+
+
+
 					}
 				break;
 		}
@@ -417,9 +428,9 @@ void LFSWM2_clientClass::LFSWM2_unSpecial(void)
 {
 	if(this->isMaximized==true)
 		{
-			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ"));
-			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_VERT"));
-			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN"));
+			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_HORZ")));
+			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_VERT")));
+			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN")));
 			this->isMaximized=false;
 		}
 	this->isShaded=false;
@@ -430,20 +441,20 @@ void LFSWM2_clientClass::LFSWM2_maxWindow(void)
 {
 	if(this->isMaximized==true)
 		{
-			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ"));
-			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_VERT"));
+			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_HORZ")));
+			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_VERT")));
 		}
 	else
 		{
-			this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_HORZ"));
-			this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_MAXIMIZED_VERT"));
+			this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_HORZ")));
+			this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_VERT")));
 		}
 	this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(this->contentWindow);
 }
 
 void LFSWM2_clientClass::LFSWM2_minWindow(void)
 {
-	this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_HIDDEN"));
+	this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN")));
 	this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(this->contentWindow);
 	this->LFSWM2_hideWindow();
 }
@@ -480,28 +491,28 @@ bool LFSWM2_clientClass::wmCB(void *p,void* ud)
 	if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Fullscreen")==0)
 		{
 			cc->LFSWM2_fullscreenWindow(true,true);
-			cc->mainClass->mainWindowClass->LFSWM2_addState(cc->contentWindow,cc->mainClass->atoms.at("_NET_WM_STATE_FULLSCREEN"));
+			cc->mainClass->mainWindowClass->LFSWM2_addState(cc->contentWindow,cc->mainClass->atomshashed.at(cc->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_FULLSCREEN")));
 		}
 	if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"On Top")==0)
 		{
 			if(cc->onTop==false)
 				{
-					cc->mainClass->mainWindowClass->LFSWM2_addState(cc->contentWindow,cc->mainClass->atoms.at("_NET_WM_STATE_ABOVE"));
-					cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atoms.at("_NET_WM_STATE_BELOW"));
+					cc->mainClass->mainWindowClass->LFSWM2_addState(cc->contentWindow,cc->mainClass->atomshashed.at(cc->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
+					cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atomshashed.at(cc->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
 				}
 			else
-				cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atoms.at("_NET_WM_STATE_ABOVE"));
+				cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atomshashed.at(cc->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
 			cc->mainClass->mainEventClass->LFSWM2_restack();
 		}
 	if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"On Bottom")==0)
 		{
 			if(cc->onBottom==false)
 				{
-					cc->mainClass->mainWindowClass->LFSWM2_addState(cc->contentWindow,cc->mainClass->atoms.at("_NET_WM_STATE_BELOW"));
-					cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atoms.at("_NET_WM_STATE_ABOVE"));
+					cc->mainClass->mainWindowClass->LFSWM2_addState(cc->contentWindow,cc->mainClass->atomshashed.at(cc->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
+					cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atomshashed.at(cc->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
 				}
 			else
-				cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atoms.at("_NET_WM_STATE_BELOW"));
+				cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atomshashed.at(cc->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
 			cc->mainClass->mainEventClass->LFSWM2_restack();
 		}
 
@@ -682,7 +693,7 @@ void LFSWM2_clientClass::LFSWM2_fullscreenWindow(bool isfull,bool force)
 						{
 							this->setWindowRects();
 							this->clientPreFSRect=this->frameWindowRect;
-							this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_FULLSCREEN"));
+							this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_FULLSCREEN")));
 							XMoveResizeWindow(this->mainClass->display,this->frameWindow,mg.x,mg.y,mg.w,mg.h);
 							XMoveResizeWindow(this->mainClass->display,this->contentWindow,0,0,mg.w,mg.h);
 						}
@@ -690,7 +701,7 @@ void LFSWM2_clientClass::LFSWM2_fullscreenWindow(bool isfull,bool force)
 		}
 	else
 		{
-			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atoms.at("_NET_WM_STATE_FULLSCREEN"));
+			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_FULLSCREEN")));
 			XMoveResizeWindow(this->mainClass->display,this->frameWindow,this->clientPreFSRect.x,this->clientPreFSRect.y,this->clientPreFSRect.w,this->clientPreFSRect.h);
 			XMoveResizeWindow(this->mainClass->display,this->contentWindow,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize,this->clientPreFSRect.w-(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),this->clientPreFSRect.h-this->mainClass->bottomBarSize-this->mainClass->titleBarSize);
 		}
@@ -774,7 +785,7 @@ void LFSWM2_clientClass::LFSWM2_setWMState(XEvent *e)
 	this->onTop=false;
 	this->visibleOnAllDesks=false;
 
-	states=(Atom*)this->mainClass->mainWindowClass->LFSWM2_getFullProp(e->xproperty.window,this->mainClass->atoms.at("_NET_WM_STATE"),XA_ATOM,32,&n);
+	states=(Atom*)this->mainClass->mainWindowClass->LFSWM2_getFullProp(e->xproperty.window,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE")),XA_ATOM,32,&n);
 
 	if(n>0)
 		{
@@ -785,23 +796,23 @@ void LFSWM2_clientClass::LFSWM2_setWMState(XEvent *e)
 				}
 		}
 
-	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atoms.at("_NET_WM_STATE_STICKY")))
+	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_STICKY"))))
 		{
 			this->visibleOnAllDesks=true;
 		}
 
-	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atoms.at("_NET_WM_STATE_BELOW")))
+	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW"))))
 		{
 			this->onBottom=true;
 			XLowerWindow(this->mainClass->display,this->contentWindow);
 			this->mainClass->restackCnt++;
 		}
 
-	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atoms.at("_NET_WM_STATE_ABOVE")))
+	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE"))))
 		{
 			this->onTop=true;
 			XRaiseWindow(this->mainClass->display,this->contentWindow);
-			this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,&this->contentWindow,1);
+			this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,&this->contentWindow,1);
 			this->mainClass->restackCnt++;
 		}
 	if(states!=NULL)
@@ -942,9 +953,9 @@ bool LFSWM2_clientClass::LFSWM2_handleEvents(XEvent *e)
 					if(e->xexpose.count!=0)
 						break;
 					else
-					{
-						this->mainClass->mainWindowClass->LFSWM2_refreshFrame(this,(XExposeEvent*)e);
-						return(true);
+						{
+							this->mainClass->mainWindowClass->LFSWM2_refreshFrame(this,(XExposeEvent*)e);
+							return(true);
 						}
 				}
 				break;
@@ -995,8 +1006,9 @@ contloop:
 			case ConfigureRequest:
 				{
 					XRaiseWindow(this->mainClass->display,this->frameWindow);
-					this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,&this->contentWindow,1);
+					this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,&this->contentWindow,1);
 					XSetInputFocus(this->mainClass->display,this->contentWindow,RevertToNone,CurrentTime);
+					this->LFSWM2_setFrameExtents();
 				}
 				break;
 
@@ -1051,8 +1063,17 @@ void LFSWM2_clientClass::renderFrame(bool isfirst,int x,int y)
 			XMapSubwindows(this->mainClass->display,this->frameWindow);	
 			this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(this->contentWindow);
 			this->rendered=true;
-			this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,32,(void*)&this->contentWindow,1);
-			this->mainClass->mainWindowClass->LFSWM2_refreshThemeFrame(this);
+			this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,(void*)&this->contentWindow,1);
+			if(this->mainClass->useTheme==true)
+				this->mainClass->mainWindowClass->LFSWM2_refreshThemeFrame(this);
 			this->mainClass->restackCnt=0;
 		}
+}
+
+void LFSWM2_clientClass::LFSWM2_setFrameExtents(void)
+{
+	unsigned long v[10]={(unsigned long)this->frameWindowRect.x,(unsigned long)this->frameWindowRect.w,(unsigned long)this->frameWindowRect.y,(unsigned long)this->frameWindowRect.h,0,0,0,0,0,0};
+
+	this->setWindowRects(true);
+	this->mainClass->mainWindowClass->LFSWM2_setProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_FRAME_EXTENTS")),XA_CARDINAL,32,&v,4);
 }

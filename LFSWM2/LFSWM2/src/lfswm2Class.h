@@ -96,7 +96,7 @@ struct hintsDataStruct
 	pointStruct			pt;
 	XSizeHints			*sh=NULL;
 	XWindowAttributes	xa;
-	motifHints			*mHints=NULL;	
+	motifHints			*mHints=NULL;
 	bool					valid=false;
 };
 
@@ -213,7 +213,7 @@ class LFSWM2_Class
 		int					displayWidth;
 		int					displayHeight;
 		Window				supporting;
-		std::map<const char*,Atom>	atoms;
+		std::map<unsigned long,Atom>	atomshashed;
 
 //theme
 		int					resizeMode=LIVERESIZE;
