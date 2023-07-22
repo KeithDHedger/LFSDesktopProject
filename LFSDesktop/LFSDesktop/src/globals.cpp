@@ -145,7 +145,7 @@ void setIconImage(desktopItemStruct	*cf)
 						}
 					g_key_file_free(gkf);
 					ticon=wc->app->globalLib->LFSTK_findThemedIcon(iconTheme,icon,"");
-					free(icon);
+					freeAndNull(&icon);
 				}
 				break;
 			case ISDOCUMENTSFOLDER:
@@ -192,8 +192,13 @@ void setIconImage(desktopItemStruct	*cf)
 				break;
 		}
 
-	cf->iconPath=strdup(ticon);
-	free(ticon);
+	if(ticon!=NULL)
+		{
+			cf->iconPath=strdup(ticon);
+			freeAndNull(&ticon);
+		}
+	else
+		cf->iconPath=NULL;
 }
 
 bool dialogCB(void *p,void* ud)//TODO//

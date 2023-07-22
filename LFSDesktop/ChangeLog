@@ -1,4 +1,5 @@
 0.2.0
+Fixed segfault for unreachable icon in desktop file.
 Fixed not displaying items as links properly.
 Added custom icons to desktop files.
 Fixed double click on items.

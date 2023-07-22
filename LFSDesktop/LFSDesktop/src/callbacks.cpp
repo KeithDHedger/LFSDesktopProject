@@ -135,7 +135,7 @@ bool doDeskItemMenuSelect(void *p,void* ud)
 									{
 										value=g_key_file_get_string(gkf,"Desktop Entry",G_KEY_FILE_DESKTOP_KEY_EXEC,NULL);
 										asprintf(&command,"%s &",value);
-										free(value);
+										freeAndNull(&value);
 									}
 								g_key_file_free(gkf);
 							}
