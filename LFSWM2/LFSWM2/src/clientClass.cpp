@@ -835,7 +835,7 @@ bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 			switch (ee.type)
 				{
 					case Expose:
-					fprintf(stderr,"Expose clientClass.cpp\n");
+					//fprintf(stderr,"Expose clientClass.cpp\n");
 						if(ee.xexpose.count>0)
 							break;
 						cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(ee.xexpose.window);
@@ -844,7 +844,7 @@ bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 						break;
 					case MotionNotify:
 						{
-						fprintf(stderr,"MotionNotify clientClass.cpp\n");
+						//fprintf(stderr,"MotionNotify clientClass.cpp\n");
 							if(lastx<ee.xbutton.x_root)
 								direction=1;
 							else
