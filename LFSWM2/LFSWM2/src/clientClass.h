@@ -28,6 +28,9 @@
 
 class LFSWM2_Class;
 #include "lfswm2Class.h"
+
+#define SKIPTIME 10
+
 class LFSWM2_clientClass
 {
 	public:

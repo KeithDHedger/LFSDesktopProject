@@ -1,4 +1,5 @@
 1.0.0
+Made frame move more responsive.
 Added _NET_FRAME_EXTENTS prop to windodows.
 Fixed visual glitch when not using theme.
 Fixed startup with no extant windows.

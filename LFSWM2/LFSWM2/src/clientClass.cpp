@@ -825,6 +825,7 @@ bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 	LFSWM2_clientClass	*cc;
 	int					lastx=0;
 	int					direction=-1;
+	int					lasttime=0;
 
 	while(true)
 		{
@@ -852,7 +853,11 @@ bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 							
 							int xdiff=ee.xbutton.x_root-e->xbutton.x_root;
 							int ydiff=ee.xbutton.y_root-e->xbutton.y_root;
-							XMoveWindow(this->mainClass->display,this->frameWindow,this->frameWindowRect.x+xdiff,this->frameWindowRect.y+ydiff);
+							if(ee.xmotion.time>lasttime+SKIPTIME)
+								{
+									lasttime=ee.xmotion.time;
+									XMoveWindow(this->mainClass->display,this->frameWindow,this->frameWindowRect.x+xdiff,this->frameWindowRect.y+ydiff);
+								}
 	
 							if((ee.xbutton.x_root<20) && (direction==0))
 								{
