@@ -619,7 +619,7 @@ bool LFSWM2_clientClass::LFSWM2_handleControls(XEvent *e)
 	switch(e->type)
 		{
 			case Expose:
-				//fprintf(stderr,"Expose\n");
+				//fprintf(stderr,"Expose clientClass.cpp\n");
 				break;
 			case EnterNotify:
 				this->inControl=true;
@@ -829,11 +829,13 @@ bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 	while(true)
 		{
 			XEvent ee;
+			sleep(0.1);
 			XNextEvent(this->mainClass->display,&ee);
 
 			switch (ee.type)
 				{
 					case Expose:
+					fprintf(stderr,"Expose clientClass.cpp\n");
 						if(ee.xexpose.count>0)
 							break;
 						cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(ee.xexpose.window);
@@ -842,6 +844,7 @@ bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 						break;
 					case MotionNotify:
 						{
+						fprintf(stderr,"MotionNotify clientClass.cpp\n");
 							if(lastx<ee.xbutton.x_root)
 								direction=1;
 							else
@@ -859,8 +862,7 @@ bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 									direction=-1;
 									ee.xbutton.x_root=100000;
 								}
-
-							if((ee.xbutton.x_root>this->mainClass->displayWidth-20) && (direction==1))
+							else 	if((ee.xbutton.x_root>this->mainClass->displayWidth-20) && (direction==1))
 								{
 									this->onDesk=this->mainClass->LFSWM2_getHigherDesktop(this->onDesk);
 									this->mainClass->LFSWM2_setCurrentDesktop(this->onDesk);
