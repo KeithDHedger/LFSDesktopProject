@@ -33,7 +33,7 @@ int					panelGravity=PANELNORTH;
 int					queueID;
 msgBuffer			buffer;
 
-char				*desktopTheme=NULL;
+const char			*desktopTheme=NULL;
 const char			*panelID="";
 bool				realMainLoop=true;
 

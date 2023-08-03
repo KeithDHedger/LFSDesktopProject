@@ -51,7 +51,7 @@ fi
 
 if [ "X$action" = "Xdeploy" ];then
 	runCommand 	"sudo make distclean"
-	runCommand 	"./configure --prefix=/usr"
+	runCommand 	"./configure --prefix=/usr --libdir=/usr/lib64"
 	runCommand 	"sudo make uninstall"
 	runCommand 	"make $MAKEFLAGS"
 	runCommand 	"sudo make install"

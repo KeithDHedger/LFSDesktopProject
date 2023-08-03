@@ -236,6 +236,7 @@ int main(int argc,char **argv)
 	//tfont=mainwind->globalLib->LFSTK_loadFont(mainwind->app->display,mainwind->screen,itemfont);
 	//iconSize=tfont->size;
 			iconSize=32;
+
 	//free(tfont);
 
 			if(argc>1)
@@ -248,7 +249,8 @@ int main(int argc,char **argv)
 
 			loadPrefs(env);
 
-			desktopTheme=mainwind->globalLib->LFSTK_oneLiner("cat %s/lfsdesktop.rc|grep icontheme|awk '{print $2}'",apc->configDir);
+			//desktopTheme=mainwind->globalLib->LFSTK_oneLiner("cat %s/lfsdesktop.rc|grep icontheme|awk '{print $2}'",apc->configDir);
+			desktopTheme=mainwind->globalLib->desktopIconTheme.c_str();
 			mons=mainwind->LFSTK_getMonitorData(onMonitor);
 
 			rightOffset=0;
@@ -339,8 +341,8 @@ int main(int argc,char **argv)
 
 			free(env);
 
-			if(desktopTheme!=NULL)
-				free(desktopTheme);
+			//if(desktopTheme!=NULL)
+			//	free(desktopTheme);
 
 			launcherList	*freell;
 			while(ll!=NULL)

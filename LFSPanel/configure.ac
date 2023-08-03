@@ -1,13 +1,12 @@
 
 AC_INIT([LFSPanel],[0.2.0],[PROJ],[LFSPanel])
 
-AC_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADERS([config.h])
 AC_PROG_CXX
 
 AM_INIT_AUTOMAKE
 
 AC_PROG_CC
-AC_HEADER_STDC
 
 X11_MODULES="x11 >= 1.6.2"
 PKG_CHECK_MODULES(X11, $X11_MODULES)
@@ -70,5 +69,6 @@ if test "$enable_warn_debug" = "yes"; then
 	AC_DEFINE([_WARN_ENABLEDEBUG_], [], [Enable warn debug code])
 fi
 
-AC_OUTPUT(Makefile LFSPanel/app/Makefile)
+AC_CONFIG_FILES([Makefile LFSPanel/app/Makefile])
+AC_OUTPUT
 

@@ -80,7 +80,7 @@ extern int					queueID;
 extern msgBuffer			buffer;
 extern bool					realMainLoop;
 
-extern char					*desktopTheme;
+extern const char			*desktopTheme;
 extern const char			*panelID;
 
 extern int					refreshRate;

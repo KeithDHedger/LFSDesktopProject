@@ -1,13 +1,12 @@
 
 AC_INIT([LFSWManager],[0.1.3],[PROJ],[LFSWManager])
 
-AC_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADERS([config.h])
 AC_PROG_CXX
 
 AM_INIT_AUTOMAKE
 
 AC_PROG_CC
-AC_HEADER_STDC
 
 XEXT_MODULES="xext >= 1.3.2"
 PKG_CHECK_MODULES(XEXT, $XEXT_MODULES)
@@ -78,5 +77,6 @@ if test "$enable_debug" = "yes"; then
 	AC_DEFINE([_ENABLEDEBUG_], [], [Enable debug code])
 fi
 
-AC_OUTPUT(Makefile LFSWManager/app/Makefile)
+AC_CONFIG_FILES([Makefile LFSWManager/app/Makefile])
+AC_OUTPUT
 
