@@ -69,10 +69,12 @@ class LFSTK_lib
 		char				*LFSTK_getMimeType(const char* path);
 		std::string		LFSTK_grepInFile(const std::string filepath,const std::string needle);
 		std::string		LFSTK_getNthNeedle(const std::string haystack,int needlecnt,const std::string delimiter=" ");
+		void				LFSTK_getFileInfo(const char* path,fileInformation* info);
 
 //colours and prefs
 		void				LFSTK_setColourFromName(Display *display,Colormap cm,colourStruct *colptr,const char *name);
 		void				LFSTK_reloadPrefs(void);
+		void				LFSTK_loadDesktopIconTheme(void);
 
 //utils
 		char				*LFSTK_cleanString(const char *str);
@@ -81,6 +83,7 @@ class LFSTK_lib
 //
 //new prefs
 		LFSTK_prefsClass	prefs;
+		std::string		desktopIconTheme="gnome";
 	private:
 		cairo_surface_t	*cairo_image_surface_create_from_jpeg_mem(const unsigned char* data, size_t len);
 };

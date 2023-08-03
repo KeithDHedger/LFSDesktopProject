@@ -17,18 +17,18 @@ exit $retval
 #include "../config.h"
 #include "lfstk/LFSTKGlobals.h"
 
-#define BOXLABEL			"Get Path To Themed Icon"
+#define BOXLABEL			"Get Paths And Theme Information"
 
-LFSTK_applicationClass		*apc=NULL;
-LFSTK_windowClass			*wc=NULL;
+LFSTK_applicationClass	*apc=NULL;
+LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass			*label=NULL;
 LFSTK_labelClass			*personal=NULL;
 LFSTK_labelClass			*copyrite=NULL;
-LFSTK_buttonClass			*seperator=NULL;
-LFSTK_buttonClass			*quit=NULL;
-LFSTK_buttonClass			*getIconPath=NULL;
-LFSTK_lineEditClass			*mimeEdit=NULL;
-LFSTK_lineEditClass			*catEdit=NULL;
+LFSTK_buttonClass		*seperator=NULL;
+LFSTK_buttonClass		*quit=NULL;
+LFSTK_buttonClass		*getIconPath=NULL;
+LFSTK_lineEditClass		*mimeEdit=NULL;
+LFSTK_lineEditClass		*fileInfoEdit=NULL;
 
 bool doQuit(void *p,void* ud)
 {
@@ -40,8 +40,10 @@ bool doQuit(void *p,void* ud)
 bool getPath(void *p,void* ud)
 {
 	char	*iconpath=NULL;
+	fileInformation	fileinfo;
 
-	iconpath=(char*)apc->globalLib->LFSTK_findThemedIcon(apc->iconThemeName,mimeEdit->LFSTK_getCStr(),catEdit->LFSTK_getCStr());
+	apc->globalLib->LFSTK_loadDesktopIconTheme();
+	iconpath=(char*)apc->globalLib->LFSTK_findThemedIcon(apc->iconThemeName,mimeEdit->LFSTK_getCStr(),"");
 
 	if(iconpath!=NULL)
 		{
@@ -49,8 +51,19 @@ bool getPath(void *p,void* ud)
 			free(iconpath);
 		}
 	else
-		printf("No icon found for '%s' in '%s'\n",mimeEdit->LFSTK_getCStr(),catEdit->LFSTK_getCStr());
+		printf("No icon found for '%s' in '%s'\n",mimeEdit->LFSTK_getCStr(),fileInfoEdit->LFSTK_getCStr());
 
+
+	apc->globalLib->LFSTK_getFileInfo(fileInfoEdit->LFSTK_getCStr(),&fileinfo);
+	if(fileinfo.isValid==true)
+		{
+			std::cout<<"Info for file "<<fileInfoEdit->LFSTK_getCStr()<<":"<<std::endl;
+			std::cout<<"Mimetype="<<fileinfo.mimeType<<std::endl;
+			std::cout<<"Icon file="<<fileinfo.iconPath<<std::endl;
+			std::cout<<"Icon theme="<<fileinfo.themeName<<std::endl;
+			std::cout<<"File size="<<fileinfo.fileSize<<std::endl;
+			std::cout<<"isLink="<<fileinfo.isLink<<std::endl;
+		}
 	return(true);
 }
 
@@ -74,22 +87,22 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //mime edit
-	label=new LFSTK_labelClass(wc,"Icon Name",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
+	label=new LFSTK_labelClass(wc,"Icon Name For",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	label->LFSTK_setCairoFontDataParts("B");
 	sy+=GADGETHITE;
 
 	mimeEdit=new LFSTK_lineEditClass(wc,"drive-harddisk",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
-//catagory edit
-	label=new LFSTK_labelClass(wc,"Catagory",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
+//fileinfo  edit
+	label=new LFSTK_labelClass(wc,"File Information For",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	label->LFSTK_setCairoFontDataParts("B");
 	sy+=GADGETHITE;
-	catEdit=new LFSTK_lineEditClass(wc,"devices",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
+	fileInfoEdit=new LFSTK_lineEditClass(wc,"index.html",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
 //get path to icon
-	getIconPath=new LFSTK_buttonClass(wc,"Get Path",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	getIconPath=new LFSTK_buttonClass(wc,"Information",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	cbs.mouseReleaseCallback=getPath;
 	cbs.validCallbacks=(MOUSERELEASECB);
 	getIconPath->LFSTK_setCallBacks(cbs);

@@ -651,7 +651,6 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
-MIMTYPE
 LFSTK_LIBS
 LFSTK_CFLAGS
 LIBUDEV_LIBS
@@ -6105,56 +6104,13 @@ fi
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $enable_suidhelper" >&5
 printf "%s\n" "$enable_suidhelper" >&6; }
 
-# Extract the first word of "mimetype ", so it can be a program name with args.
-set dummy mimetype ; ac_word=$2
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-printf %s "checking for $ac_word... " >&6; }
-if test ${ac_cv_prog_MIMTYPE+y}
-then :
-  printf %s "(cached) " >&6
-else $as_nop
-  if test -n "$MIMTYPE"; then
-  ac_cv_prog_MIMTYPE="$MIMTYPE" # Let the user override the test.
-else
-as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  case $as_dir in #(((
-    '') as_dir=./ ;;
-    */) ;;
-    *) as_dir=$as_dir/ ;;
-  esac
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
-    ac_cv_prog_MIMTYPE="true"
-    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-  test -z "$ac_cv_prog_MIMTYPE" && ac_cv_prog_MIMTYPE="false"
-fi
-fi
-MIMTYPE=$ac_cv_prog_MIMTYPE
-if test -n "$MIMTYPE"; then
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $MIMTYPE" >&5
-printf "%s\n" "$MIMTYPE" >&6; }
-else
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-fi
-
-
-if test $MIMTYPE = false; then
-	{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: No File-MimeInfo!" >&5
-printf "%s\n" "$as_me: No File-MimeInfo!" >&6;}
-	{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: You can download it from here:" >&5
-printf "%s\n" "$as_me: You can download it from here:" >&6;}
-	as_fn_error $? "https://cpan.metacpan.org/authors/id/M/MI/MICHIELB/" "$LINENO" 5
-fi
+#AC_CHECK_PROG(MIMTYPE, mimetype ,true,false)
+#if test $MIMTYPE = false; then
+#	AC_MSG_NOTICE([No File-MimeInfo!])
+#
+#	AC_MSG_NOTICE([You can download it from here:])
+#	AC_MSG_ERROR([https://cpan.metacpan.org/authors/id/M/MI/MICHIELB/])
+#fi
 
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether to build dbug functions" >&5
 printf %s "checking whether to build dbug functions... " >&6; }

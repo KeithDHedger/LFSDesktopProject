@@ -325,6 +325,11 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	this->previewMode=new LFSTK_labelClass(this->dialog,"",DIALOGWIDTH,yoffset,PREVIEWWIDTH,16,NorthWestGravity);
 	this->previewMode->LFSTK_setFontString(this->previewMode->monoFontString);
 	this->previewMode->LFSTK_setCairoFontData();
+	yoffset+=GADGETHITE;
+//link
+	this->previewIsLink=new LFSTK_labelClass(this->dialog,"",DIALOGWIDTH,yoffset,PREVIEWWIDTH,16,NorthWestGravity);
+	this->previewIsLink->LFSTK_setFontString(this->previewMode->monoFontString);
+	this->previewIsLink->LFSTK_setCairoFontData();
 }
 
 bool LFSTK_fileDialogClass::LFSTK_isValid(void)
@@ -365,48 +370,6 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(const char *dir,const char *tit
 }
 
 /**
-* Find themed icon from mimetype
-* \param const char *mimetype
-* \return char*
-* \note Caller owns return value and must free.
-*/
-char* LFSTK_fileDialogClass::findThemedIconFromMime(const char *mimetype)
-{
-	char		*theme=NULL;
-	char		*iconpath=NULL;
-	const char	*iconthemes[3];
-	const char	*iconfolders[2];
-
-	theme=this->wc->app->globalLib->LFSTK_oneLiner("head '%s'/lfsdesktop.rc|grep -i icontheme|awk '{print $2}'",this->wc->app->configDir);
-	if(theme==NULL)
-		asprintf(&theme,"gnome");
-
-	iconthemes[0]=theme;
-	iconthemes[1]="hicolor";
-	iconthemes[2]="gnome";
-
-	iconfolders[0]="~/.icons";
-	iconfolders[1]="/usr/share/icons";
-	iconpath=NULL;
-
-	for(int j=0;j<2;j++)
-		{
-			for(int k=0;k<3;k++)
-				{
-					iconpath=this->wc->app->globalLib->LFSTK_oneLiner("find %s/\"%s\"/*/mime* %s/\"%s\"/*/places -iname \"*%s.*\" 2>/dev/null|sort -Vr|head -n1 2>/dev/null",iconfolders[j],iconthemes[k],iconfolders[j],iconthemes[k],mimetype);
-					if((iconpath!=NULL) && (strlen(iconpath)>1))
-						goto breakReturn;
-					if(iconpath!=NULL)
-						free(iconpath);
-					iconpath=NULL;
-				}
-		}
-breakReturn:
-	free(theme);
-	return(iconpath);
-}
-
-/**
 * Get current selection
 * \return const char*
 * \note Return is owned by TK don't free.
@@ -422,12 +385,9 @@ const char* LFSTK_fileDialogClass::LFSTK_getCurrentFileSelection(void)
 void LFSTK_fileDialogClass::setPreviewData(bool fromlist)
 {
 	char		*mt=NULL;
-	char		*convmt=NULL;
-	char		*iconpath=NULL;
-	char		*testmime=NULL;
-	char		*ptr=NULL;
-	struct stat	buf;
 	char		*statdata=NULL;
+	fileInformation	info;
+	std::string		previewlabel="";
 
 	if(this->dialogType!=FILEDIALOG)
 		return;
@@ -450,86 +410,30 @@ void LFSTK_fileDialogClass::setPreviewData(bool fromlist)
 	else
 		asprintf(&mt,"%s",this->dirEdit->LFSTK_getCStr());
 
-	convmt=this->wc->globalLib->LFSTK_getMimeType(mt);
-	this->previewMimeType->LFSTK_setLabel(convmt);
-	this->previewFileName->LFSTK_setLabel(this->LFSTK_getCurrentFileSelection());
-	if(stat(mt,&buf)==0)
-		{
-			asprintf(&statdata,"Size:%i",buf.st_size);
-			this->previewSize->LFSTK_setLabel(statdata);
-			free(statdata);
-			asprintf(&statdata,"Mode:%o",buf.st_mode & 07777);
-			this->previewMode->LFSTK_setLabel(statdata);
-			free(statdata);
-		}
+	this->wc->globalLib->LFSTK_getFileInfo(mt,&info);
 
-	for(int j=0;j<strlen(convmt);j++)
-		{
-			if(convmt[j]=='/')
-				convmt[j]='-';
-		}
-
-	if((strcmp(convmt,"image-jpeg")==0) || (strcmp(convmt,"image-png")==0))
-		iconpath=strdup(mt);
-	else if(strcasecmp(&mt[strlen(mt)-8],".desktop")==0)
-		{
-			GKeyFile *kf=g_key_file_new();
-			if(g_key_file_load_from_file(kf,mt,G_KEY_FILE_NONE,NULL))
-				{
-					char *iiconpath=g_key_file_get_value(kf,"Desktop Entry",G_KEY_FILE_DESKTOP_KEY_ICON,NULL);
-					if(iiconpath!=NULL)
-						{
-							iconpath=wc->app->globalLib->LFSTK_findThemedIcon(this->wc->app->iconThemeName,iiconpath,"");
-							if(iconpath==NULL)
-								iconpath=strdup("/usr/share/icons/gnome/256x256/mimetypes/text-x-generic.png");
-							free(iiconpath);
-						}
-					else
-						iconpath=strdup("/usr/share/icons/gnome/256x256/mimetypes/text-x-generic.png");
-					g_key_file_free(kf);
-				}
-			else
-				{
-					iconpath=strdup("/usr/share/icons/gnome/256x256/mimetypes/text-x-generic.png");
-				}
-		}
+	this->previewMimeType->LFSTK_setLabel(info.mimeType.c_str());
+	if((info.mimeType.compare("image/jpeg")==0) || (info.mimeType.compare("image/png")==0))
+		this->tux->LFSTK_setImageFromPath(mt,PRESERVEASPECT,true);
 	else
-		{
-			iconpath=this->findThemedIconFromMime(convmt);
-			if((iconpath!=NULL) && (strlen(iconpath)<2) || (iconpath==NULL))
-				{
-					asprintf(&testmime,"gnome-mime-%s",convmt);
-					ptr=strrchr(testmime,'-');
-					ptr[0]=0;
-					iconpath=this->findThemedIconFromMime(testmime);
-					free(testmime);
-				}
+		this->tux->LFSTK_setImageFromPath(info.iconPath.c_str(),PRESERVEASPECT,true);
 
-			if((iconpath!=NULL) && (strlen(iconpath)<2) || (iconpath==NULL))
-				{
-					ptr=strchr(convmt,'-');
-					ptr++;
-					asprintf(&testmime,"gnome-mime-application-%s",ptr);
-					iconpath=this->findThemedIconFromMime(testmime);
-					free(testmime);
-				}
+	this->previewFileName->LFSTK_setLabel(this->LFSTK_getCurrentFileSelection());
+	previewlabel+="Size:"+std::to_string(info.fileSize);
+	this->previewSize->LFSTK_setLabel(previewlabel.c_str());
+	asprintf(&statdata,"Mode:%o",info.fileMode);
+	this->previewMode->LFSTK_setLabel(statdata);
+	free(statdata);
 
-			if((iconpath!=NULL) && (strlen(iconpath)<2) || (iconpath==NULL))
-				{
-					if(iconpath!=NULL)
-						free(iconpath);
-					iconpath=strdup("/usr/share/icons/gnome/256x256/mimetypes/text-x-generic.png");
-				}
-		}
+	if(info.isLink==true)
+		this->previewIsLink->LFSTK_setLabel("Symlink");
+	else
+		this->previewIsLink->LFSTK_setLabel("");
 
-	this->tux->LFSTK_setImageFromPath(iconpath,PRESERVEASPECT,true);
 	this->wc->LFSTK_clearWindow();
 	this->tux->LFSTK_clearWindow();
 	this->wc->LFSTK_clearWindow();
-
 	free(mt);
-	free(convmt);
-	free(iconpath);
 }
 
 /**

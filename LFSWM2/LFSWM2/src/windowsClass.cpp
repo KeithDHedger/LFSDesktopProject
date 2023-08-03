@@ -122,6 +122,7 @@ void LFSWM2_windowClass::LFSWM2_freeHints(hintsDataStruct hs)
 
 bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 {
+//this->mainClass->LFSWM2_pushXErrorHandler();
 	if(this->LFSWM2_getWindowType(id)==MENUWINDOW)
 		{
 		//fprintf(stderr,"MENUWINDOW=0x%x\n",id);
@@ -171,6 +172,7 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 	{
 	//fprintf(stderr,"UNKNOWNTYPE=0x%x\n",id);
 			//return(false);
+			
 		}
 
 	if(this->clientList.count(id)>0)

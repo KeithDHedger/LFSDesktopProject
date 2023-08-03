@@ -52,16 +52,16 @@ struct	desktopItemStruct
 	char								*itemPath=NULL;
 	char								*label=NULL;
 	char								*iconPath=NULL;
-	int									posx=-1;
-	int									posy=-1;
+	int								posx=-1;
+	int								posy=-1;
 	bool								hasCustomIcon=false;
 	char								*pathToCustomIcon=NULL;
 	bool								isADisk=false;
 	bool								isAFolder=false;
 	bool								mounted=false;
-	int									type=ISINVALID;
+	int								type=ISINVALID;
 	bool								isSymLink=false;
-	LFSTK_buttonClass					*item=NULL;
+	LFSTK_buttonClass				*item=NULL;
 	bool								dirty=false;
 };
 

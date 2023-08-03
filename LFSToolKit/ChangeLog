@@ -55,6 +55,7 @@ Added main loop to app class.
 Added new application class.
 
 0.4.6
+Improved getting file mimetype and themed icon.
 Fixed website address in about box.
 Fixed input focus on list gadgets.
 Fixed list gadget expanding/shrinking in both x/y.

@@ -32,9 +32,10 @@ BLACK='\e[0;30m'
 BLUE='\e[0;34m'
 NORMAL="\e[0;0m"
 
+MAKEFLAGS=${MAKEFLAGS:-"-j3"}
 runCommand ()
 {
-	for app in "LFSToolKit" "LFSWManager" "LFSDesktop" "LFSSetWallpaper" "LFSApplications" "LFSPanel"
+	for app in "LFSToolKit" "LFSWManager" "LFSWM2" "LFSDesktop" "LFSSetWallpaper" "LFSApplications" "LFSPanel"
 		do
 			pushd $app
 				echo -e "${RED}Running $1 in ${GREEN}$app${RED} ... ${NORMAL}"
@@ -43,23 +44,29 @@ runCommand ()
 		done
 }
 
+if [ "X$action" = "Xdistclean" ];then
+	runCommand 	"sudo make distclean"
+	exit 0
+fi
+
 if [ "X$action" = "Xdeploy" ];then
 	runCommand 	"sudo make distclean"
 	runCommand 	"./configure --prefix=/usr"
 	runCommand 	"sudo make uninstall"
-	runCommand 	"sudo make -j4 install"
+	runCommand 	"make $MAKEFLAGS"
+	runCommand 	"sudo make install"
 	exit 0
 fi
 
 if [ "X$action" = "Xdeploy-test" ];then
 	runCommand 	"make distclean"
 	runCommand 	"./configure --prefix=/usr"
-	runCommand 	"make -j4 install DESTDIR=/tmp/lfsdesktop"
+	runCommand 	"make $MAKEFLAGS"
+	runCommand 	"make install DESTDIR=/tmp/lfsdesktop"
 	exit 0
 fi
 
-
-for app in "LFSToolKit" "LFSWManager" "LFSDesktop" "LFSSetWallpaper" "LFSApplications" "LFSPanel"
+for app in "LFSToolKit" "LFSWManager" "LFSWM2" "LFSDesktop" "LFSSetWallpaper" "LFSApplications" "LFSPanel"
 	do
 		pushd $app
 			echo -e "${RED}Running $action in ${GREEN}$app${RED} ... ${NORMAL}"

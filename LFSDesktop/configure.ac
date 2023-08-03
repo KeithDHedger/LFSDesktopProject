@@ -57,12 +57,13 @@ if test $enable_suidhelper = "yes" ;then
 fi
 AC_MSG_RESULT($enable_suidhelper)
 
-AC_CHECK_PROG(MIMTYPE, mimetype ,true,false)
-if test $MIMTYPE = false; then
-	AC_MSG_NOTICE([No File-MimeInfo!])
-	AC_MSG_NOTICE([You can download it from here:])
-	AC_MSG_ERROR([https://cpan.metacpan.org/authors/id/M/MI/MICHIELB/])
-fi
+#AC_CHECK_PROG(MIMTYPE, mimetype ,true,false)
+#if test $MIMTYPE = false; then
+#	AC_MSG_NOTICE([No File-MimeInfo!])
+#	
+#	AC_MSG_NOTICE([You can download it from here:])
+#	AC_MSG_ERROR([https://cpan.metacpan.org/authors/id/M/MI/MICHIELB/])
+#fi
 
 AC_MSG_CHECKING(whether to build dbug functions)
 AC_ARG_ENABLE(debug,AS_HELP_STRING([--enable-debug],[Enable debug code]),

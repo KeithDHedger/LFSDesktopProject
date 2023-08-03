@@ -32,6 +32,8 @@
 #include <dirent.h>
 
 #include <glib.h>
+#include <gio/gio.h>
+
 #include <cairo.h>
 #include <cairo-xlib.h>
 
@@ -215,9 +217,22 @@ __attribute__((unused)) static void freeAndNull(char **data)
 
 struct args
 {
-	const char*				name;
-	int						type;
-	void*					data;
+	const char	*name;
+	int			type;
+	void			*data;
+};
+
+struct fileInformation
+{
+	bool			isValid=false;
+	bool			isLink=false;
+	bool			isDir=false;
+	mode_t		fileMode=0;
+	int			fileSize=0;
+	std::string	mimeType="";
+	std::string	iconPath="";
+	std::string	themeName="";
+	std::string	symbolicName="";
 };
 
 class LFSTK_windowClass;

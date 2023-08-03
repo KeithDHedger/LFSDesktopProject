@@ -290,6 +290,24 @@ void LFSTK_lib::LFSTK_reloadPrefs(void)
 	asprintf(&env,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
 	this->prefs.LFSTK_loadVarsFromFile(env);
 	free(env);
+
+	this->LFSTK_loadDesktopIconTheme();
+}
+
+/**
+* Load current desktop Icon themee.
+*/
+void LFSTK_lib::LFSTK_loadDesktopIconTheme(void)
+{
+	std::string	desktheme="";
+	std::string	th="";
+	gchar		*tstr;
+	desktheme=desktheme+getenv("HOME")+"/.config/LFS/lfsdesktop.rc";
+	th=this->LFSTK_grepInFile(desktheme,"icontheme");
+	th.replace(th.find("icontheme"),9,"");
+	tstr=strdup(th.c_str());
+	this->desktopIconTheme=g_strstrip(tstr);
+	g_free(tstr);
 }
 
 /**
@@ -1063,3 +1081,113 @@ std::string	LFSTK_lib::LFSTK_getNthNeedle(const std::string haystack,int needlec
 	return("");
 }
 
+/**
+* Get file information.
+* \param const char* path.
+* \param fileInformation* info.
+*/
+void LFSTK_lib::LFSTK_getFileInfo(const char* path,fileInformation* info)
+{
+	struct stat	sb;
+	GError		*error;
+	GFile		*file;
+	GFileInfo	*file_info;
+	char			*icon=NULL;
+	std::string	data;
+	size_t		pos;
+	std::string th;
+
+	if(lstat(path,&sb)==-1)
+		{
+			info->isValid=false;
+		}
+	else
+		{
+			if(access(path,F_OK)!=F_OK)
+				{
+					info->isValid=false;
+					if((sb.st_mode & S_IFMT)==S_IFLNK)
+						{
+							info->isLink=true;
+							info->mimeType="inode/symlink";
+						}
+					else
+						{
+							info->mimeType="application/octet-stream";
+						}
+					if((sb.st_mode & S_IFMT)==S_IFDIR)
+						info->isDir=true;
+					info->fileMode=sb.st_mode & 07777;
+					info->themeName=this->desktopIconTheme;
+					icon=this->LFSTK_findThemedIcon(info->themeName.c_str(),"application-octet-stream","");
+					info->iconPath=icon;
+					free(icon);
+					return;
+				}
+
+			info->isValid=true;
+			if((sb.st_mode & S_IFMT)==S_IFLNK)
+				info->isLink=true;
+			info->fileSize=sb.st_size;
+			if((sb.st_mode & S_IFMT)==S_IFDIR)
+				info->isDir=true;
+			info->fileMode=sb.st_mode & 07777;
+			info->mimeType="application/octet-stream";
+
+			file=g_file_new_for_path(path);
+			file_info=g_file_query_info(file,"standard::*",G_FILE_QUERY_INFO_NONE,NULL,&error);
+			th=g_file_info_get_content_type(file_info);
+			if(th.length()!=0)
+				info->mimeType=th;
+			else
+				info->mimeType="application/octet-stream";
+
+			data=info->mimeType;
+			pos=data.find("/");
+			while(pos!=std::string::npos)
+				{
+					data.replace(pos,1,"-");
+					pos=data.find("/",pos+1);
+    				}
+
+			info->themeName=this->desktopIconTheme;
+			icon=this->LFSTK_findThemedIcon(info->themeName.c_str(),data.c_str(),"");
+			if(icon!=NULL)
+				{
+					info->iconPath=icon;
+					free(icon);
+				}
+			else
+				{
+					data=info->mimeType;
+					pos=data.find("/");
+					icon=this->LFSTK_findThemedIcon(info->themeName.c_str(),data.erase(pos,std::string::npos).c_str(),"");
+					if(icon!=NULL)
+						{
+							info->iconPath=icon;
+							free(icon);
+						}
+				}
+
+			if(strcasecmp(&path[strlen(path)-8],".desktop")==0)
+				{
+					char			*iconpath=NULL;
+					GKeyFile		*kf=g_key_file_new();
+					if(g_key_file_load_from_file(kf,path,G_KEY_FILE_NONE,NULL))
+						{
+							char *iiconpath=g_key_file_get_value(kf,"Desktop Entry",G_KEY_FILE_DESKTOP_KEY_ICON,NULL);
+							if(iiconpath!=NULL)
+								{
+									iconpath=this->LFSTK_findThemedIcon(this->desktopIconTheme.c_str(),iiconpath,"");
+									if(iconpath!=NULL)
+										{
+											info->iconPath=iconpath;
+											free(iconpath);
+										}
+									free(iiconpath);
+								}
+							g_key_file_free(kf);
+						}
+				}
+		}
+}

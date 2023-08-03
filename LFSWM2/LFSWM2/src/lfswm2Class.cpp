@@ -116,6 +116,7 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 	this->LFSWM2_initRootWindow();
 
 	XSetInputFocus(this->display,rootWindow,RevertToNone,CurrentTime);
+	//XSetInputFocus(this->display,None,RevertToNone,0);
 	this->lastXErrorHandler=XSetErrorHandler(&LFSWM2_Class::LFSWM2_xError);
 
 	this->frameBG=this->mainWindowClass->LFSWM2_xftLoadColour("#4194FE","grey");

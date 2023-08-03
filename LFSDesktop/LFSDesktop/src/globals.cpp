@@ -97,108 +97,80 @@ void createDesktopGadget(LFSTK_windowClass *window)
 //set icon
 void setIconImage(desktopItemStruct	*cf)
 {
-	char	*ticon=NULL;
-	char	*out=NULL;
-
 	if(cf->hasCustomIcon==true)
 		{
-			//TODO//
 			return;
 		}
+
 	switch(cf->type)
 		{
 			case ISHDDDISK:
 				cf->isSymLink=false;
-				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-harddisk","devices");
+				cf->iconPath=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-harddisk","devices");
 				break;
 			case ISUSBHDD:
 				cf->isSymLink=false;
-				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-usb","devices");
+				cf->iconPath=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-usb","devices");
 				break;
 			case ISTHUMBDISK:
 				cf->isSymLink=false;
-				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-removable","devices");
+				cf->iconPath=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-removable","devices");
 				break;
 			case ISCDROM:
-				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-cdrom","devices");
+				cf->iconPath=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-cdrom","devices");
 				cf->isSymLink=false;
 				break;
 			case ISDVDROM:
 				cf->isSymLink=false;
-				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-dvd","devices");
+				cf->iconPath=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-dvd","devices");
 				break;
 			case ISIPOD:
 				cf->isSymLink=false;
-				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-ipod","devices");
+				cf->iconPath=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-ipod","devices");
 				break;
 			case ISSSD:
 				cf->isSymLink=false;
-				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-flash","devices");
+				cf->iconPath=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-flash","devices");
 				break;
 			case ISDESKTOPFILE:
 				{
-					GKeyFile	*gkf=g_key_file_new();
-					char		*icon=NULL;
+					fileInformation fileinfo;
+					apc->globalLib->LFSTK_getFileInfo(cf->itemPath,&fileinfo);
+					cf->isSymLink=fileinfo.isLink;
+					cf->iconPath=strdup(fileinfo.iconPath.c_str());
+				break;
+					GKeyFile		*gkf=g_key_file_new();
+					char			*icon=NULL;
 					if(g_key_file_load_from_file(gkf,cf->itemPath,G_KEY_FILE_NONE,NULL)==true)
 						{
 							icon=g_key_file_get_string(gkf,"Desktop Entry",G_KEY_FILE_DESKTOP_KEY_ICON,NULL);
 						}
 					g_key_file_free(gkf);
-					ticon=wc->app->globalLib->LFSTK_findThemedIcon(iconTheme,icon,"");
+					cf->iconPath=wc->app->globalLib->LFSTK_findThemedIcon(iconTheme,icon,"");
 					freeAndNull(&icon);
 				}
 				break;
 			case ISDOCUMENTSFOLDER:
-				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-documents","places");
+				cf->iconPath=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"-documents","places");
 				break;
 			case ISHOMEFOLDER:
-				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"user-home","places");
+				cf->iconPath=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"user-home","places");
 				break;
 			case ISCOMPUTER:
-				ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"computer","devices");
+				cf->iconPath=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"computer","devices");
 				break;
 			case ISIMAGEFILE:
-				ticon=strdup(cf->itemPath);
+				cf->iconPath=strdup(cf->itemPath);
 				break;
 			default:
-				cf->isSymLink=false;
-				out=apc->globalLib->LFSTK_oneLiner("mimetype '%s'|sed 's/^.*\\///'",cf->itemPath);
-				if(strcmp(out,"symlink")==0)
-					{
-						cf->isSymLink=true;
-						char *rp=NULL;
-						rp=realpath(cf->itemPath,rp);
-						if(rp!=NULL)
-							{
-								free(out);
-								out=apc->globalLib->LFSTK_oneLiner("mimetype '%s'|sed 's/^.*\\///'",rp);
-								ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,out,"");
-								free(rp);
-							}
-						else
-							ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"application-octet-stream","mimetypes");
-					}
-				else
-					{
-						if(out!=NULL)
-							{
-								ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,out,"");
-							}
-					}
-				if(ticon==NULL)
-					ticon=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"text-x-generic","mimetypes");
-				if(out!=NULL)
-					free(out);
+				{
+					fileInformation fileinfo;
+					apc->globalLib->LFSTK_getFileInfo(cf->itemPath,&fileinfo);
+					cf->isSymLink=fileinfo.isLink;
+					cf->iconPath=strdup(fileinfo.iconPath.c_str());
+				}
 				break;
 		}
-
-	if(ticon!=NULL)
-		{
-			cf->iconPath=strdup(ticon);
-			freeAndNull(&ticon);
-		}
-	else
-		cf->iconPath=NULL;
 }
 
 bool dialogCB(void *p,void* ud)//TODO//

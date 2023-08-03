@@ -57,10 +57,10 @@ class LFSTK_fileDialogClass
 		void					LFSTK_showFileDialog(const char *dir,const char *title);
 		bool					LFSTK_isValid(void);
 		void					LFSTK_getLastFolder(void);
-		const char				*LFSTK_getCurrentDir(void);
-		const char				*LFSTK_getCurrentFile(void);
-		const char				*LFSTK_getCurrentPath(void);
-		const char				*LFSTK_getCurrentFileSelection(void);
+		const char			*LFSTK_getCurrentDir(void);
+		const char			*LFSTK_getCurrentFile(void);
+		const char			*LFSTK_getCurrentPath(void);
+		const char			*LFSTK_getCurrentFileSelection(void);
 		void					LFSTK_setWorkingDir(const char *dir);
 		void					LFSTK_setRequestType(bool type);
 		bool					LFSTK_getRequestType(void);
@@ -69,12 +69,11 @@ class LFSTK_fileDialogClass
 		bool					useThumbs=false;
 
 	private:
-		char					*findThemedIconFromMime(const char *mimetype);
 		void					setPreviewData(bool fromlist);
 //TODO
 		void					resizeWindow(int w,int h);
 
-		const char				*recentsName="universal";
+		const char			*recentsName="universal";
 		unsigned				fileListCnt=0;
 		char					*currentDir=NULL;
 		char					*currentFile=NULL;
@@ -85,13 +84,13 @@ class LFSTK_fileDialogClass
 		bool					mainLoop;
 		bool					apply;
 		bool					dialogType;
-		cairo_surface_t			*fileImage;
-		cairo_surface_t			*folderImage;
-		cairo_surface_t			*imageImage;
-		cairo_surface_t			*fileImageLink;
-		cairo_surface_t			*folderImageLink;
-		cairo_surface_t			*imageImageLink;
-		cairo_surface_t			*brokenLink;
+		cairo_surface_t		*fileImage;
+		cairo_surface_t		*folderImage;
+		cairo_surface_t		*imageImage;
+		cairo_surface_t		*fileImageLink;
+		cairo_surface_t		*folderImageLink;
+		cairo_surface_t		*imageImageLink;
+		cairo_surface_t		*brokenLink;
 
 		bool					showHidden=false;
 		LFSTK_imageClass		*tux=NULL;
@@ -99,6 +98,7 @@ class LFSTK_fileDialogClass
 		LFSTK_labelClass		*previewSize;
 		LFSTK_labelClass		*previewFileName;
 		LFSTK_labelClass		*previewMode;
+		LFSTK_labelClass		*previewIsLink;
 
 		LFSTK_windowClass		*wc;
 		LFSTK_windowClass		*dialog;
