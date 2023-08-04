@@ -441,6 +441,7 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 				XFree(states);
 
 			this->LFSWM2_setControlRects(cc);
+			cc->LFSWM2_setFrameExtents();
 		}
 	this->mainClass->restackCnt=0;
 	return(true);
@@ -857,6 +858,7 @@ hintsDataStruct LFSWM2_windowClass::LFSWM2_getWindowHints(Window wid,bool movewi
 	
 	hints.valid=true;
 
+#if 1
 	if(this->mainClass->runLevel!=RL_STARTUP && ( (hints.sh->flags & (USPosition|PPosition))==0))
 		{
 			Window			root_return;
@@ -913,6 +915,7 @@ hintsDataStruct LFSWM2_windowClass::LFSWM2_getWindowHints(Window wid,bool movewi
 			if(movewindow==true)
 				XMoveWindow(this->mainClass->display,wid,hints.pt.x,hints.pt.y);
 		}
+#endif
 	return(hints);
 }
 

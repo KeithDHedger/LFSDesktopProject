@@ -44,7 +44,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 	int					lastbutton=-1;
 	int					lasttime=0;
 
-XSynchronize(this->mainClass->display,true);
+//XSynchronize(this->mainClass->display,true);
 	this->mainClass->runLevel=RL_STARTUP;
 	this->mainClass->LFSWM2_pushXErrorHandler();
 		this->mainClass->mainWindowClass->LFSWM2_buildClientList();
@@ -206,7 +206,7 @@ XSynchronize(this->mainClass->display,true);
 						break;
 					case MapNotify:
 						{
-						fprintf(stderr,"MapNotify main event loop window=%x when=%i\n",e.xmap.window,when++);
+						//fprintf(stderr,"MapNotify main event loop window=%x when=%i\n",e.xmap.window,when++);
 							this->noRestack=false;
 							Atom					*v=NULL;
 							long unsigned int	nitems_return;
@@ -226,12 +226,15 @@ XSynchronize(this->mainClass->display,true);
 					case MapRequest:
 						{
 							this->noRestack=false;
-						fprintf(stderr,"MapRequest main event loop window=%x when=%i\n",e.xmaprequest.window,when++);
+					//	fprintf(stderr,"MapRequest main event loop window=%x when=%i\n",e.xmaprequest.window,when++);
 							XWindowAttributes	x_window_attrs;
 							hintsDataStruct		hs;
 
 							XGetWindowAttributes(this->mainClass->display,e.xmaprequest.window,&x_window_attrs);
+							//fprintf(stderr,"x=%i\n",x_window_attrs.x);
 							hs=this->mainClass->mainWindowClass->LFSWM2_getWindowHints(e.xmaprequest.window);
+							//fprintf(stderr,"hs.pt.x=%i\n",hs.pt.x);
+							//fprintf(stderr,"hs..sh.x=%i\n",hs.sh->x);
 							XMoveWindow(this->mainClass->display,e.xmaprequest.window,-100000,-100000);
 							XMapWindow(this->mainClass->display,e.xmaprequest.window);
 							if(this->mainClass->mainWindowClass->LFSWM2_createClient(e.xmaprequest.window,hs)==false)
@@ -242,7 +245,7 @@ XSynchronize(this->mainClass->display,true);
 
 					case ConfigureRequest://TODO//NEXT
 							this->noRestack=false;
-						fprintf(stderr,"ConfigureRequest from main event loop window=%x when=%i\n",e.xmaprequest.window,when++);
+						//fprintf(stderr,"ConfigureRequest from main event loop window=%x when=%i\n",e.xmaprequest.window,when++);
 						//this->mainClass->DEBUG_printConfigureRequestStruct(&e);
 						{
 							LFSWM2_clientClass	*cc;
@@ -261,13 +264,11 @@ XSynchronize(this->mainClass->display,true);
 //										}
 //								}
 //
-fprintf(stderr,"00000000000000000000\n");
 							if(e.xconfigurerequest.send_event==false)
 								{
 									cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
 									if(cc!=NULL)
 										{
-fprintf(stderr,"1111111111111111111111111111\n");
 											if((e.xconfigurerequest.value_mask & (CWWidth|CWHeight)) !=0)
 												{
 													XWindowChanges	ch;
@@ -286,7 +287,6 @@ fprintf(stderr,"1111111111111111111111111111\n");
 											if((cc->buttonDown==false) && (cc->resizeMode==SCALERESIZE))
 												XMoveWindow(this->mainClass->display,cc->resizeWindow,-100000,-100000);
 											break;
-fprintf(stderr,"5555555555555555555555555555555555\n");
 										}
 									else
 										{
@@ -300,13 +300,11 @@ fprintf(stderr,"5555555555555555555555555555555555\n");
 											changes.sibling=e.xconfigurerequest.above;
 											changes.stack_mode=e.xconfigurerequest.detail;
 
-fprintf(stderr,"666666666666666666666666666666\n");
 											XConfigureWindow(this->mainClass->display,e.xconfigurerequest.window,e.xconfigurerequest.value_mask,&changes);
 											this->mainClass->restackCnt=1;
 											
 											break;
 
-fprintf(stderr,"88888888888888888888888888888\n");
 											if((e.xconfigurerequest.value_mask & (CWX|CWY)) == (CWX|CWY))
 												{
 													XWindowChanges ch;
@@ -327,14 +325,12 @@ fprintf(stderr,"88888888888888888888888888888\n");
 													XConfigureWindow(this->mainClass->display,e.xconfigurerequest.window,e.xconfigurerequest.value_mask& (CWWidth|CWHeight),&ch);
 												}
 										}
-fprintf(stderr,"9999999999999999999999999\n");
-
 								}
 							break;
 						}
 
 					case PropertyNotify:
-						fprintf(stderr,"PropertyNotify IN eventnumber %i atom name=%s\n",when++,XGetAtomName(this->mainClass->display,e.xproperty.atom));
+						//fprintf(stderr,"PropertyNotify IN eventnumber %i atom name=%s\n",when++,XGetAtomName(this->mainClass->display,e.xproperty.atom));
 						{
 							LFSWM2_clientClass	*cc;
 							this->mainClass->restackCnt++;//???
@@ -398,15 +394,15 @@ fprintf(stderr,"9999999999999999999999999\n");
 						break;
 
 					case ClientMessage:
-						fprintf(stderr,"ClientMessage eventnumber %i\n",when++);
+						//fprintf(stderr,"ClientMessage eventnumber %i\n",when++);
 						this->noRestack=false;
 						this->mainClass->restackCnt=0;
-						this->LFSWM2_doClientMsg(e.xclient.window,&e.xclient)
-						;fprintf(stderr,"ClientMessage <<<<<<<<<<<<<<eventnumber %i\n",when++);
+						this->LFSWM2_doClientMsg(e.xclient.window,&e.xclient);
+						//;fprintf(stderr,"ClientMessage <<<<<<<<<<<<<<eventnumber %i\n",when++);
 						break;
 
 					case DestroyNotify:
-						std::cout<<"DestroyNotify from main event loop"<<std::endl;
+						//std::cout<<"DestroyNotify from main event loop"<<std::endl;
 						break;
 					default:
 						//fprintf(stderr,"default eventnumber %i\n",when++);

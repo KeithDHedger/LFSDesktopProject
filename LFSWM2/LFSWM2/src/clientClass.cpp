@@ -167,7 +167,7 @@ void LFSWM2_clientClass::LFSWM2_drawMouseLeave(Window id,Pixmap pm,controlData d
 void LFSWM2_clientClass::LFSWM2_sendCloseWindow(void)
 {
 	XClientMessageEvent	em;
-
+//this->mainClass->mainWindowClass->LFSWM2_windowClass::LFSWM2_removeProp(this->contentWindow,this->mainClass->prefs.LFSTK_hashFromKey("_NET_FRAME_EXTENTS"));
 	em.type=ClientMessage;
 	em.window=this->contentWindow;
 	em.message_type=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("WM_PROTOCOLS"));
@@ -195,7 +195,6 @@ void LFSWM2_clientClass::adjustContentWindow(void)
 
 	this->mainClass->mainEventClass->LFSWM2_sendConfigureEvent(this->contentWindow,r);
 	this->setWindowRects(true);
-	this->LFSWM2_setFrameExtents();
 }
 
 void LFSWM2_clientClass::resetContentWindow(void)
@@ -272,7 +271,6 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 
 				this->setWindowRects(true);
 				this->resetContentWindow();
-
 				if(this->currentRootPixmap!=None)
 					XFreePixmap(this->mainClass->display,this->currentRootPixmap);
 				if(this->primaryPicture!=None)
@@ -387,7 +385,6 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 										XMoveWindow(this->mainClass->display,this->contentWindow,this->frameWindowRect.w+10,0);
 									}
 
-								this->LFSWM2_setFrameExtents();
 								this->steps=0;
 								break;
 							}
@@ -989,15 +986,14 @@ contloop:
 				    					cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(x.first);
 									if((cc!=NULL) && (cc->transientFor==this->contentWindow))
 										{
-				   							cc->LFSWM2_sendCloseWindow();
 				   							XUnmapWindow(this->mainClass->display, cc->frameWindow);
+				   							cc->LFSWM2_sendCloseWindow();
 				   							delete cc;
 				   							goto contloop;
    										}
  	 							}
 						}
 					while(loop==true);
-
 					delete this;
 					return(true);
 				}
@@ -1016,7 +1012,6 @@ contloop:
 					this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,&this->contentWindow,1);
 					//XSetInputFocus(this->mainClass->display,None,RevertToNone,0);
 					XSetInputFocus(this->mainClass->display,this->contentWindow,RevertToNone,CurrentTime);
-					this->LFSWM2_setFrameExtents();
 				}
 				break;
 
@@ -1080,8 +1075,6 @@ void LFSWM2_clientClass::renderFrame(bool isfirst,int x,int y)
 
 void LFSWM2_clientClass::LFSWM2_setFrameExtents(void)
 {
-	unsigned long v[10]={(unsigned long)this->frameWindowRect.x,(unsigned long)this->frameWindowRect.w,(unsigned long)this->frameWindowRect.y,(unsigned long)this->frameWindowRect.h,0,0,0,0,0,0};
-
-	this->setWindowRects(true);
+	unsigned long v[10]={(unsigned long)this->mainClass->leftSideBarSize,(unsigned long)this->mainClass->riteSideBarSize,(unsigned long)this->mainClass->titleBarSize,(unsigned long)this->mainClass->bottomBarSize,0,0,0,0,0};
 	this->mainClass->mainWindowClass->LFSWM2_setProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_FRAME_EXTENTS")),XA_CARDINAL,32,&v,4);
 }
