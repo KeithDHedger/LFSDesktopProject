@@ -268,8 +268,7 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 				this->sx=0;
 				this->sy=0;
 				this->isShaded=false;
-
-				this->setWindowRects(true);
+				this->adjustContentWindow();
 				this->resetContentWindow();
 				if(this->currentRootPixmap!=None)
 					XFreePixmap(this->mainClass->display,this->currentRootPixmap);
@@ -341,21 +340,23 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 										r.w=this->dragRect.w+(e->xmotion.x_root-this->rsx);
 									}
 
-								XGetWMNormalHints(this->mainClass->display,this->contentWindow,&xh,&dummy);
-								if(r.w-contentwadjust<xh.min_width)
+								if(XGetWMNormalHints(this->mainClass->display,this->contentWindow,&xh,&dummy)!=0)
 									{
-										this->buttonDown=false;
-										break;
-									}
-								if(r.h-contenthadjust<xh.min_height)
-									{
-										this->buttonDown=false;
-										break;
+										if(r.w-contentwadjust<xh.min_width)
+											{
+												this->buttonDown=false;
+												break;
+											}
+										if(r.h-contenthadjust<xh.min_height)
+											{
+												this->buttonDown=false;
+												break;
+											}
 									}
 
 								this->frameWindowRect=r;
-
 								XMoveResizeWindow(this->mainClass->display,this->frameWindow,r.x,r.y,r.w,r.h);
+
 								if(this->resizeMode==SCALERESIZE)
 									{
 										XResizeWindow(this->mainClass->display,this->resizeWindow,r.w-contentwadjust,r.h-contenthadjust);
@@ -388,14 +389,6 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 								this->steps=0;
 								break;
 							}
-
-//this->setWindowRects(true);
-
-
-
-
-
-
 					}
 				break;
 		}
@@ -793,6 +786,12 @@ void LFSWM2_clientClass::LFSWM2_setWMState(XEvent *e)
 				}
 		}
 
+	if(!this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN"))))
+		{
+			this->visible=true;
+			this->LFSWM2_showWindow();
+		}
+
 	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_STICKY"))))
 		{
 			this->visibleOnAllDesks=true;
@@ -863,6 +862,7 @@ bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 									XWarpPointer(this->mainClass->display,None,None,0,0,0,0,this->mainClass->displayWidth-20,0);
 									direction=-1;
 									ee.xbutton.x_root=100000;
+									this->mainClass->mainWindowClass->LFSWM2_setProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_CURRENT_DESKTOP")),XA_CARDINAL,32,&this->onDesk,1);
 								}
 							else 	if((ee.xbutton.x_root>this->mainClass->displayWidth-20) && (direction==1))
 								{
@@ -870,6 +870,7 @@ bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 									this->mainClass->LFSWM2_setCurrentDesktop(this->onDesk);
 									XWarpPointer(this->mainClass->display,None,None,0,0,0,0,(-this->mainClass->displayWidth-20),0);
 									ee.xbutton.x_root=-1;
+									this->mainClass->mainWindowClass->LFSWM2_setProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_CURRENT_DESKTOP")),XA_CARDINAL,32,&this->onDesk,1);
 								}
 						}
 						lastx=ee.xbutton.x_root;
@@ -999,7 +1000,7 @@ contloop:
 				}
 				break;
 			case MapNotify:
-			//	std::cerr<<"MapNotify"<<std::endl;
+				//std::cerr<<"MapNotify"<<std::endl;
 				break;
 
 			case ConfigureNotify:

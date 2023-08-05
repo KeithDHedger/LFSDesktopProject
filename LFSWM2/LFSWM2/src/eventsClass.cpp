@@ -140,7 +140,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 							if(cc->rendered==false)
 								{
 									cc->renderFrame(false);
-							this->noRestack=false;
+									this->noRestack=false;
 									continue;
 								}
 						}
@@ -231,10 +231,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 							hintsDataStruct		hs;
 
 							XGetWindowAttributes(this->mainClass->display,e.xmaprequest.window,&x_window_attrs);
-							//fprintf(stderr,"x=%i\n",x_window_attrs.x);
 							hs=this->mainClass->mainWindowClass->LFSWM2_getWindowHints(e.xmaprequest.window);
-							//fprintf(stderr,"hs.pt.x=%i\n",hs.pt.x);
-							//fprintf(stderr,"hs..sh.x=%i\n",hs.sh->x);
 							XMoveWindow(this->mainClass->display,e.xmaprequest.window,-100000,-100000);
 							XMapWindow(this->mainClass->display,e.xmaprequest.window);
 							if(this->mainClass->mainWindowClass->LFSWM2_createClient(e.xmaprequest.window,hs)==false)
@@ -361,7 +358,8 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 										}
 
 									if(e.xproperty.atom==this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE")))
-										{this->noRestack=false;
+										{
+											this->noRestack=false;
 											//fprintf(stderr,"PropertyNotify OUT WM_STATE eventnumber %i\n",when++);
 											cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xproperty.window);
 											if(cc!=NULL)
@@ -416,34 +414,17 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 				{
 					this->mainClass->restackCnt--;
 					if(this->mainClass->restackCnt<1)
-						{	
+						{
 							//fprintf(stderr,"this->mainClass->restackCnt<1 eventnumber %i\n",when++);
 							Atom					*v=NULL;
 							long unsigned int	n;
 							v=(Atom*)this->mainClass->mainWindowClass->LFSWM2_getProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_CURRENT_DESKTOP")),XA_CARDINAL,&n);
-							if(v!=NULL)
-								{
-									if((long unsigned int)v[0]!=this->mainClass->currentDesktop)
-										inmenu=false;
-									XFree(v);
-								}
+
+							this->LFSWM2_restack();
+							if((v!=NULL) && (this->mainClass->currentDesktop!=(long unsigned int)v[0]))
+								this->mainClass->mainWindowClass->LFSWM2_setVisibilityForDesk(this->mainClass->currentDesktop);
 
 							this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_CURRENT_DESKTOP")),XA_CARDINAL,32,&this->mainClass->currentDesktop,1);
-//XSynchronize(this->mainClass->display,true);
-//XSync(this->mainClass->display,false);
-							this->LFSWM2_restack();
-							this->mainClass->mainWindowClass->LFSWM2_setVisibilityForDesk(this->mainClass->currentDesktop);
-//XSynchronize(this->mainClass->display,false);
-//							if(inmenu==false)
-//								{
-//									v=(Atom*)this->mainClass->mainWindowClass->LFSWM2_getProp(this->mainClass->rootWindow,this->mainClass->atoms.at("_NET_ACTIVE_WINDOW"),XA_WINDOW,&n);
-//									if(v!=NULL)
-//										{
-//											//if(this->mainClass->mainWindowClass->LFSWM2_getWindowType(v[0])!=UNKNOWNTYPE)
-//											////	XSetInputFocus(this->mainClass->display,v[0],RevertToNone,CurrentTime);
-//											XFree(v);
-//										}
-//								}
 
 							this->mainClass->restackCnt=1;
 							overide=false;
@@ -518,10 +499,12 @@ void LFSWM2_eventsClass::LFSWM2_doClientMsg(Window id,XClientMessageEvent *e)
 						{
 							this->mainClass->currentDesktop=(unsigned long)e->data.l[0];
 							this->mainClass->restackCnt++;
+							this->noRestack=true;
 							return;
 						}
 					this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_CURRENT_DESKTOP")),XA_CARDINAL,32,&this->mainClass->currentDesktop,1);
 					this->mainClass->restackCnt++;
+					this->noRestack=true;
 					return;
 				}
 			return;

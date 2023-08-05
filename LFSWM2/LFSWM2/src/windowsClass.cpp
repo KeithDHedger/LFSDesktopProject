@@ -197,6 +197,12 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 					thisdesk=*setdesktop;
 					XFree(setdesktop);
 				}
+			else
+				{
+					thisdesk=this->mainClass->currentDesktop;
+				}
+			if(thisdesk==-1)
+				thisdesk=this->mainClass->currentDesktop;
 
 			if(premaphs.mHints!=NULL)
 				{
@@ -311,10 +317,12 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 				v[vcnt++]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_RESIZE"));
 			}
 
-			if(setdesktop!=NULL)
+			//if(setdesktop!=NULL)
+			//if(setdesktop!=NULL)
+			//	cc->onDesk=thisdesk;
+			//else
+			//	cc->onDesk=this->mainClass->currentDesktop;
 				cc->onDesk=thisdesk;
-			else
-				cc->onDesk=this->mainClass->currentDesktop;
 
 			this->LFSWM2_setProp(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ALLOWED_ACTIONS")),XA_ATOM,32,v,vcnt);
 			this->LFSWM2_setProp(cc->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_DESKTOP")),XA_CARDINAL,32,(void*)&cc->onDesk,1);
