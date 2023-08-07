@@ -101,8 +101,9 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 					this->mainClass->restackCnt=1;
 					this->noRestack=false;
 				}
-
+//sleep(0.1);
 			XNextEvent(this->mainClass->display,&e);
+			//this->mainClass->DEBUG_printEventData(&e,false);
 			cccontrol=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(e.xany.window));
 			if(cccontrol!=NULL)
 				{
@@ -164,7 +165,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 //						fprintf(stderr,"ButtonRelease eventnumber %i button number %i win=%x time=%d\n",when++,e.xbutton.button,e.xbutton.window,e.xbutton.time);
 						if((e.xbutton.window==this->mainClass->rootWindow) && (e.xbutton.time-lasttime>250))
 							{
-							this->noRestack=false;
+								this->noRestack=false;
 								int	direction=1;
 								int cd=this->mainClass->currentDesktop;
 								if(e.xbutton.button==Button4)
@@ -186,7 +187,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						cc=NULL;
 						break;
 					case ButtonPress:
-							this->noRestack=false;
+						this->noRestack=false;
 						//fprintf(stderr,"ButtonPress eventnumber %i\n",when++);
 						start=e.xbutton;
 						this->mainClass->restackCnt=0;
@@ -200,10 +201,11 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 								this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,&cc->contentWindow,1);
 								XSetInputFocus(this->mainClass->display,cc->contentWindow,RevertToNone,CurrentTime);
-								//XSetInputFocus(this->mainClass->display,None,RevertToNone,0);
 								XAllowEvents(this->mainClass->display,ReplayPointer,e.xbutton.time);
+								XRaiseWindow(this->mainClass->display,cc->contentWindow);
 							}
 						break;
+
 					case MapNotify:
 						{
 						//fprintf(stderr,"MapNotify main event loop window=%x when=%i\n",e.xmap.window,when++);
@@ -225,8 +227,8 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 					case MapRequest:
 						{
+						//fprintf(stderr,"MapRequest main event loop window=%x when=%i\n",e.xmap.window,when++);
 							this->noRestack=false;
-					//	fprintf(stderr,"MapRequest main event loop window=%x when=%i\n",e.xmaprequest.window,when++);
 							XWindowAttributes	x_window_attrs;
 							hintsDataStruct		hs;
 
@@ -241,10 +243,9 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						break;
 
 					case ConfigureRequest://TODO//NEXT
-							this->noRestack=false;
-						//fprintf(stderr,"ConfigureRequest from main event loop window=%x when=%i\n",e.xmaprequest.window,when++);
-						//this->mainClass->DEBUG_printConfigureRequestStruct(&e);
+							//fprintf(stderr,"ConfigureRequest from main event loop window=%x when=%i\n",e.xmaprequest.window,when++);
 						{
+							this->noRestack=false;
 							LFSWM2_clientClass	*cc;
 							
 //							cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
@@ -266,17 +267,34 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 									cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
 									if(cc!=NULL)
 										{
+											XWindowChanges	ch;
+											cc->configCnt++;
+											if((cc->isBorderless==true) && (cc->configCnt<MAXCONFIGCNT))
+												break;
+											cc->configCnt=0;
 											if((e.xconfigurerequest.value_mask & (CWWidth|CWHeight)) !=0)
 												{
-													XWindowChanges	ch;
 
 													ch.width=e.xconfigurerequest.width+this->mainClass->riteSideBarSize+this->mainClass->leftSideBarSize;
 													ch.height=e.xconfigurerequest.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize;
-													if(cc->buttonDown==false)
-														XResizeWindow(this->mainClass->display,cc->frameWindow,e.xconfigurerequest.width+this->mainClass->riteSideBarSize+this->mainClass->leftSideBarSize,e.xconfigurerequest.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);
+													if((cc->buttonDown==false) || (cc->isBorderless==false))
+														{
+															if(cc->isBorderless==true)
+																	XResizeWindow(this->mainClass->display,cc->frameWindow,e.xconfigurerequest.width,e.xconfigurerequest.height);
+															else
+																XResizeWindow(this->mainClass->display,cc->frameWindow,e.xconfigurerequest.width+this->mainClass->riteSideBarSize+this->mainClass->leftSideBarSize,e.xconfigurerequest.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);
+														}
 													ch.width=e.xconfigurerequest.width;
 													ch.height=e.xconfigurerequest.height;
 													XResizeWindow(this->mainClass->display,cc->contentWindow,ch.width,ch.height);
+												}
+											
+											if((e.xconfigurerequest.value_mask & (CWX|CWY)) !=0)
+												{
+													ch.x=e.xconfigurerequest.x;
+													ch.y=e.xconfigurerequest.y;
+													XMoveWindow(this->mainClass->display,cc->frameWindow,ch.x,ch.y);
+													break;
 												}
 
 											cc->setWindowRects(true);
@@ -287,7 +305,6 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 										}
 									else
 										{
-
 											XWindowChanges		changes;
 											changes.x=e.xconfigurerequest.x;
 											changes.y=e.xconfigurerequest.y;
@@ -396,7 +413,6 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						this->noRestack=false;
 						this->mainClass->restackCnt=0;
 						this->LFSWM2_doClientMsg(e.xclient.window,&e.xclient);
-						//;fprintf(stderr,"ClientMessage <<<<<<<<<<<<<<eventnumber %i\n",when++);
 						break;
 
 					case DestroyNotify:
@@ -643,7 +659,7 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 
 	if(this->mainClass->mainWindowClass->windowIDList.size()==0)
 		return;
-
+//fprintf(stderr,"crapwin=0x%x\n",crapwin);
 	v=(Atom*)this->mainClass->mainWindowClass->LFSWM2_getProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,&nitems_return);
 
 	for(int a=0;a<this->mainClass->mainWindowClass->windowIDList.size();a++)
@@ -666,6 +682,20 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 							cc->mainClass->mainWindowClass->LFSWM2_refreshFrame(cc);
 						}
 				}
+//			else
+//			{
+//				//if(v[0]==a)
+//				if(this->mainClass->mainWindowClass->windowIDList.at(a)==crapwin)
+//				{
+//				fprintf(stderr,"v0=%x a=%x\n",v[0],this->mainClass->mainWindowClass->windowIDList.at(a));
+//					if(crapwin!=0)
+//					{
+//						move(this->mainClass->mainWindowClass->windowIDList,a,0);
+//						//XLowerWindow(this->mainClass->display,crapwin);
+//						crapwin=0;
+//						}
+//						}
+//			}
 		}
 
 	sl=this->mainClass->mainWindowClass->windowIDList;
@@ -709,10 +739,29 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 			if(cc!=NULL)	
 				framel.push_back(cc->frameWindow);
 			else
+			{
 				framel.push_back(sl.at(j));
+//			//				else
+//			{
+//				//if(v[0]==a)
+//				if(this->mainClass->mainWindowClass->windowIDList.at(j)==crapwin)
+//				{
+//				fprintf(stderr,"v0=%x a=%x\n",v[0],this->mainClass->mainWindowClass->windowIDList.at(j));
+//					if(crapwin!=0)
+//					{
+//						move(this->mainClass->mainWindowClass->windowIDList,j,0);
+//						crapwin=0;
+//						}
+//						}
+//			}
+				}
 		}
-
+//if(v!=NULL)
+//	{
+//		move(this->mainClass->mainWindowClass->windowIDList,v[0],0);
+//	}
 //above
+#if 1
 	for(int j=0;j<framel.size();j++)
 		{
 			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(framel.at(j));
@@ -743,7 +792,6 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 					move(framel,j,0);
 				}
 		}
-
 //below
 	for(int j=framel.size()-1;j>-1;j--)
 		{
@@ -772,6 +820,8 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 			cntj--;
 		}
 	while(cntj>-1);
+#endif
+//framel.erase(framel.begin()+framel.size()-1);
 
 	XRestackWindows(this->mainClass->display,framel.data(),framel.size());
 

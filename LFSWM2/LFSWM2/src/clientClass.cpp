@@ -29,20 +29,29 @@ LFSWM2_clientClass::LFSWM2_clientClass(LFSWM2_Class *mainclass,Window id)
 
 LFSWM2_clientClass::~LFSWM2_clientClass(void)
 {
-	this->mainClass->LFSWM2_pushXErrorHandler();
+	XWindowAttributes	x_window_attrs;
 
+	this->mainClass->LFSWM2_pushXErrorHandler();
 		this->mainClass->mainWindowClass->LFSWM2_freeHints(this->windowHints);
 		this->mainClass->mainWindowClass->LFSWM2_setClientList(this->contentWindow,false);
 
 		this->mainClass->mainWindowClass->LFSWM2_deleteClientEntry(this->frameWindow);
 		this->mainClass->mainWindowClass->LFSWM2_deleteClientEntry(this->contentWindow);
 
-		XRemoveFromSaveSet(this->mainClass->display,this->contentWindow);	
-		if(this->transientFor==None)
-			XReparentWindow(this->mainClass->display,this->contentWindow,this->mainClass->rootWindow,this->frameWindowRect.x+this->mainClass->leftSideBarSize,frameWindowRect.y+this->mainClass->titleBarSize);
+		if(this->isBorderless==true)
+			{
+				XGetWindowAttributes(this->mainClass->display,this->frameWindow,&x_window_attrs);
+				XReparentWindow(this->mainClass->display,this->contentWindow,this->mainClass->rootWindow,x_window_attrs.x,x_window_attrs.y);
+			}
 		else
-			XReparentWindow(this->mainClass->display,this->contentWindow,this->mainClass->rootWindow,-10000,-10000);
+			{
+				if(this->transientFor==None)
+					XReparentWindow(this->mainClass->display,this->contentWindow,this->mainClass->rootWindow,this->frameWindowRect.x+this->mainClass->leftSideBarSize,frameWindowRect.y+this->mainClass->titleBarSize);
+				else
+					XReparentWindow(this->mainClass->display,this->contentWindow,this->mainClass->rootWindow,-10000,-1000);
+			}
 
+		XRemoveFromSaveSet(this->mainClass->display,this->contentWindow);	
 		XUnmapWindow(this->mainClass->display,this->frameWindow);
 
 		if(resizeWindow!=None)
@@ -186,6 +195,8 @@ void LFSWM2_clientClass::adjustContentWindow(void)
 
 	if(this->isFullscreen==true)
 		return;
+	if(this->isBorderless==true)
+		return;
 
 	XGetWindowAttributes(this->mainClass->display,this->frameWindow,&frameattr);
 	r.x=frameattr.x+this->mainClass->leftSideBarSize;
@@ -199,6 +210,8 @@ void LFSWM2_clientClass::adjustContentWindow(void)
 
 void LFSWM2_clientClass::resetContentWindow(void)
 {
+	if(this->isBorderless==true)
+		return;
 	XMoveResizeWindow(this->mainClass->display,this->contentWindow,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize,this->frameWindowRect.w-this->mainClass->leftSideBarSize-this->mainClass->riteSideBarSize,this->frameWindowRect.h-this->mainClass->titleBarSize-this->mainClass->bottomBarSize);
 }
 
@@ -209,6 +222,9 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 	long						dummy;
 	int						contenthadjust=this->mainClass->titleBarSize+this->mainClass->bottomBarSize;
 	int						contentwadjust=this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize;
+
+	if(this->isBorderless==true)
+		return(true);
 
 	switch(e->type)
 		{
@@ -397,6 +413,9 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 
 void LFSWM2_clientClass::resizeContentWindow(int w,int h,bool useframerect)
 {
+	if(this->isBorderless==true)
+		return;
+
 	if(useframerect==true)
 		{
 			XResizeWindow(this->mainClass->display,this->contentWindow,this->frameWindowRect.w-(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),this->frameWindowRect.h-(this->mainClass->titleBarSize+this->mainClass->bottomBarSize));
@@ -742,6 +761,9 @@ void LFSWM2_clientClass::LFSWM2_maxWindow(bool ismaxed,bool force)
 
 void LFSWM2_clientClass::setWindowRects(bool resize)
 {
+	if(this->isBorderless==true)
+		return;
+
 	this->contentWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->contentWindow,this->mainClass->rootWindow);
 	this->frameWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->frameWindow,this->mainClass->rootWindow);
 
@@ -761,6 +783,9 @@ void LFSWM2_clientClass::LFSWM2_hideWindow(void)
 
 void LFSWM2_clientClass::LFSWM2_resizeControls(void)
 {
+	if(this->isBorderless==true)
+		return;
+
 	XResizeWindow(this->mainClass->display,this->bottomDragger,this->frameWindowRect.w,this->dragsize);
 	XResizeWindow(this->mainClass->display,this->leftSideDragger,this->dragsize,this->frameWindowRect.h-(this->dragsize*2));
 	XResizeWindow(this->mainClass->display,this->rightSideDragger,this->dragsize,this->frameWindowRect.h-(this->dragsize*2));
@@ -823,6 +848,9 @@ bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 	int					direction=-1;
 	int					lasttime=0;
 
+	if(this->isBorderless==true)
+		return(true);
+
 	while(true)
 		{
 			XEvent ee;
@@ -875,6 +903,7 @@ bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 						}
 						lastx=ee.xbutton.x_root;
 						break;
+						
 					case ButtonPress:
 						this->mainClass->mainEventClass->noRestack=true;
 						break;
@@ -899,6 +928,8 @@ rectStruct LFSWM2_clientClass::setTitlePosition(void)
 	XGlyphInfo	extents;
 	int			namewidth;
 	int			offset=this->controlCnt*CONTROL_GAP;
+	if(this->isBorderless==true)
+		return(r);
 
 	if(this->nameIsUTF==true)
 		XftTextExtentsUtf8(this->mainClass->display,this->mainClass->frameFont,(XftChar8*)this->name.c_str(),this->name.length(),&extents);	
@@ -1009,6 +1040,9 @@ contloop:
 
 			case ConfigureRequest:
 				{
+				//this->configCnt++;
+				//	if(this->configCnt<8)
+				//		break;
 					XRaiseWindow(this->mainClass->display,this->frameWindow);
 					this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,&this->contentWindow,1);
 					//XSetInputFocus(this->mainClass->display,None,RevertToNone,0);
@@ -1058,24 +1092,37 @@ void LFSWM2_clientClass::renderFrame(bool isfirst,int x,int y)
 		}
 	else
 		{
-
-
 			XMapWindow(this->mainClass->display,this->contentWindow);
 			XMapSubwindows(this->mainClass->display,this->contentWindow);	
 			this->setWindowRects(true);
+			this->rendered=true;
+			this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,(void*)&this->contentWindow,1);
+			this->mainClass->restackCnt=0;
+			if(this->isBorderless==true)
+				{
+					XMoveWindow(this->mainClass->display,this->frameWindow,this->firstx+this->mainClass->leftSideBarSize,this->firsty+this->mainClass->titleBarSize);
+					XMoveWindow(this->mainClass->display,this->contentWindow,0,0);
+					return;
+				}
+
 			XMoveWindow(this->mainClass->display,this->frameWindow,this->firstx,this->firsty);
 			XMapSubwindows(this->mainClass->display,this->frameWindow);	
 			this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(this->contentWindow);
-			this->rendered=true;
-			this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,(void*)&this->contentWindow,1);
 			if(this->mainClass->useTheme==true)
 				this->mainClass->mainWindowClass->LFSWM2_refreshThemeFrame(this);
-			this->mainClass->restackCnt=0;
 		}
 }
 
 void LFSWM2_clientClass::LFSWM2_setFrameExtents(void)
 {
-	unsigned long v[10]={(unsigned long)this->mainClass->leftSideBarSize,(unsigned long)this->mainClass->riteSideBarSize,(unsigned long)this->mainClass->titleBarSize,(unsigned long)this->mainClass->bottomBarSize,0,0,0,0,0};
-	this->mainClass->mainWindowClass->LFSWM2_setProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_FRAME_EXTENTS")),XA_CARDINAL,32,&v,4);
+	if(this->isBorderless==false)
+		{
+			unsigned long v[10]={(unsigned long)this->mainClass->leftSideBarSize,(unsigned long)this->mainClass->riteSideBarSize,(unsigned long)this->mainClass->titleBarSize,(unsigned long)this->mainClass->bottomBarSize,0,0,0,0,0};
+			this->mainClass->mainWindowClass->LFSWM2_setProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_FRAME_EXTENTS")),XA_CARDINAL,32,&v,4);
+		}
+	else
+		{
+			unsigned long v[10]={0,0,0,0,0,0,0,0,0};
+			this->mainClass->mainWindowClass->LFSWM2_setProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_FRAME_EXTENTS")),XA_CARDINAL,32,&v,4);
+		}
 }

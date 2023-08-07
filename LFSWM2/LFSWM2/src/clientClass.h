@@ -30,6 +30,7 @@ class LFSWM2_Class;
 #include "lfswm2Class.h"
 
 #define SKIPTIME 10
+#define MAXCONFIGCNT 8
 
 class LFSWM2_clientClass
 {
@@ -64,7 +65,10 @@ class LFSWM2_clientClass
 		bool				canResize=false;
 		bool				isActive=false;
 
+		bool				isBorderless=false;
+
 		int				resizeMode=0;
+		int				configCnt=0;
 
 		rectStruct		contentWindowRect;
 		rectStruct		frameWindowRect;

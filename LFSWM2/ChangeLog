@@ -1,3 +1,6 @@
+1.0.1
+Fixes for apps using those god awful client side decorations.
+
 1.0.0
 Minor gui fixes.
 Fixed frame extents prop.

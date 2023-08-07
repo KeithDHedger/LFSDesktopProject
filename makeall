@@ -33,6 +33,9 @@ BLUE='\e[0;34m'
 NORMAL="\e[0;0m"
 
 MAKEFLAGS=${MAKEFLAGS:-"-j3"}
+export MAKEFLAGS
+export PATH
+
 runCommand ()
 {
 	for app in "LFSToolKit" "LFSWManager" "LFSWM2" "LFSDesktop" "LFSSetWallpaper" "LFSApplications" "LFSPanel"

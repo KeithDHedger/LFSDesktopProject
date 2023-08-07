@@ -650,6 +650,8 @@ MWM_HINTS_DECORATIONS
 */
 void LFSWM2_Class::DEBUG_printMWMHints(motifHints *h)
 {
+	if(h==NULL)
+		return;
 	const char	*flagnames[]={"MWM_DECOR_AL","MWM_DECOR_BORDER","MWM_DECOR_RESIZEH","MWM_DECOR_TITLE","MWM_DECOR_MENU","MWM_DECOR_MINIMIZE","MWM_DECOR_MAXIMIZE"};
 	const char	*funcnames[]={"MWM_FUNC_ALL","MWM_FUNC_RESIZE","MWM_FUNC_MOVE","MWM_FUNC_MINIMIZE","MWM_FUNC_MAXIMIZE","MWM_FUNC_CLOSE"};
 	bool			notall=h->decorations & MWM_DECOR_ALL;
@@ -781,6 +783,7 @@ void LFSWM2_Class::DEBUG_printConfigureRequestStruct(XEvent *e)
 {
 	fprintf(stderr,"ConfigureRequest\n");
 	fprintf(stderr,"type=%i 23=ConfigureRequest\n",e->xconfigurerequest.type);
+	fprintf(stderr,"serial=%i\n",e->xconfigurerequest.serial);
 	fprintf(stderr,"send_event=%s \n",this->DEBUG_printBool(e->xconfigurerequest.send_event));
 	fprintf(stderr,"display=%p \n",e->xconfigurerequest.display);
 	fprintf(stderr,"parent=%p \n",(void*)e->xconfigurerequest.parent);

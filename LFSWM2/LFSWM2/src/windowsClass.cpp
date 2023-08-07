@@ -42,13 +42,29 @@ void LFSWM2_windowClass::LFSWM2_buildClientList(void)
 	unsigned int		windowscnt;
 	std::string		windowname;
 	hintsDataStruct	hs;
-
+//XWindowAttributes	x_window_attrs;
 	XQueryTree(this->mainClass->display,this->mainClass->rootWindow,&returned_root,&returned_parent,&toplevelwindows,&windowscnt);
 	for(unsigned int i=0;i<windowscnt;++i)
 		{
 			hs=this->LFSWM2_getWindowHints(toplevelwindows[i]);
+		//	int s=XGetWindowAttributes(this->mainClass->display,toplevelwindows[i],&x_window_attrs);
+						//	fprintf(stderr,"status=%i\n",s);
+						//	this->mainClass->DEBUG_prinWindowAttributes(toplevelwindows[i]);
+						//	//this->mainClass->DEBUG_printMWMHints(hs.mHints);
+						//	this->mainClass->DEBUG_printHintsDataStruct(toplevelwindows[i]);
 			if(this->LFSWM2_createClient(toplevelwindows[i],hs)==false)
 				this->LFSWM2_freeHints(hs);
+
+//							hs=this->mainClass->mainWindowClass->LFSWM2_getWindowHints(toplevelwindows[i]);
+//							XMoveWindow(this->mainClass->display,toplevelwindows[i],-100000,-100000);
+//							XMapWindow(this->mainClass->display,toplevelwindows[i]);
+//							if(this->mainClass->mainWindowClass->LFSWM2_createClient(toplevelwindows[i],hs)==false)
+//								this->mainClass->mainWindowClass->LFSWM2_freeHints(hs);
+//							XMoveResizeWindow(this->mainClass->display,toplevelwindows[i],this->mainClass->leftSideBarSize,this->mainClass->titleBarSize,x_window_attrs.width,x_window_attrs.height);
+//
+
+
+
 		}
 	if(toplevelwindows!=NULL)
 		XFree(toplevelwindows);
@@ -123,6 +139,7 @@ void LFSWM2_windowClass::LFSWM2_freeHints(hintsDataStruct hs)
 bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 {
 //this->mainClass->LFSWM2_pushXErrorHandler();
+//XSelectInput(this->mainClass->display,id,-1);
 	if(this->LFSWM2_getWindowType(id)==MENUWINDOW)
 		{
 		//fprintf(stderr,"MENUWINDOW=0x%x\n",id);
@@ -174,7 +191,6 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 			//return(false);
 			
 		}
-
 	if(this->clientList.count(id)>0)
 		{
 			XMapWindow(this->mainClass->display,this->clientList.at(id)->frameWindow);
@@ -203,18 +219,14 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 				}
 			if(thisdesk==-1)
 				thisdesk=this->mainClass->currentDesktop;
+bool noborder=false;
 
 			if(premaphs.mHints!=NULL)
 				{
 					if(premaphs.mHints->decorations==0)
 						{
-						//fprintf(stderr,"if(premaphs.mHints!=NULL) id=0x%x\n",id);
-							this->LFSWM2_setClientList(id,true);
-							//XRaiseWindow(this->mainClass->display,id);
-							XLowerWindow(this->mainClass->display,id);
-
 							this->mainClass->restackCnt=1;
-							return(false);
+							noborder=true;
 						}
 				}
 			XGetWindowAttributes(this->mainClass->display,id,&x_window_attrs);
@@ -224,6 +236,7 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 				}
 
 			cc=new LFSWM2_clientClass(this->mainClass,id);
+			cc->isBorderless=noborder;
 			cc->windowHints=premaphs;
 			cc->renderFrame(true,premaphs.pt.x,premaphs.pt.y);
 
@@ -246,6 +259,7 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 					XFree(allowed);
 				}
 
+
 			if(this->LFSWM2_getWindowType(id)==NORMALWINDOW)
 				{
 					cc->canMaximize=true;
@@ -259,9 +273,19 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 					cc->canMinimize=true;
 					cc->canResize=true;
 				}
+if(cc->isBorderless==true)
+{
+					cc->canMaximize=false;
+					cc->canMinimize=false;
+					cc->canResize=false;
 
+}
 			wa.win_gravity=NorthWestGravity;
-			cc->frameWindow=XCreateWindow(this->mainClass->display,this->mainClass->rootWindow,-1000000,-1000000,premaphs.xa.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),premaphs.xa.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH,BORDER_WIDTH,CopyFromParent,InputOutput,CopyFromParent,0,&wa);
+			if(cc->isBorderless==false)
+				cc->frameWindow=XCreateWindow(this->mainClass->display,this->mainClass->rootWindow,-1000000,-1000000,premaphs.xa.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),premaphs.xa.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH,BORDER_WIDTH,CopyFromParent,InputOutput,CopyFromParent,0,&wa);
+			else
+				cc->frameWindow=XCreateWindow(this->mainClass->display,this->mainClass->rootWindow,-1000000,-1000000,premaphs.xa.width,premaphs.xa.height,BORDER_WIDTH,CopyFromParent,InputOutput,CopyFromParent,0,&wa);
+			
 			XSelectInput(this->mainClass->display,cc->frameWindow,SubstructureRedirectMask|ButtonPressMask|ButtonReleaseMask|ExposureMask|PointerMotionMask);
 
 			cc->windowType=this->LFSWM2_getWindowType(id);
@@ -272,7 +296,10 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 			cc->clientPreFSRect=this->LFSWM2_getWindowRect(id,this->mainClass->rootWindow);
 			cc->framePreFSRect=this->LFSWM2_getWindowRect(id,this->mainClass->rootWindow);
 			cc->contentWindowRect.y-=this->mainClass->titleBarSize;
-			cc->frameWindowRect={-1000000,-1000000,premaphs.xa.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),premaphs.xa.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH};
+			if(cc->isBorderless==false)
+				cc->frameWindowRect={-1000000,-1000000,premaphs.xa.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),premaphs.xa.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH};
+			else
+				cc->frameWindowRect={-1000000,-1000000,premaphs.xa.width,premaphs.xa.height};
 			cc->resizeWindow=XCreateSimpleWindow(this->mainClass->display,cc->frameWindow,-10,-10,1,1,BORDER_WIDTH,this->mainClass->frameFG->pixel,this->mainClass->frameBG->pixel);
 			cc->resizeMode=this->mainClass->resizeMode;
 
@@ -284,7 +311,10 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 
 			XSetWindowAttributes attributes;//TODO//
 			attributes.win_gravity=NorthWestGravity;
-			XReparentWindow(this->mainClass->display,id,cc->frameWindow,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize-(BORDER_WIDTH*2));
+			if(cc->isBorderless==false)
+				XReparentWindow(this->mainClass->display,id,cc->frameWindow,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize-(BORDER_WIDTH*2));
+			else
+				XReparentWindow(this->mainClass->display,id,cc->frameWindow,0,0);
 
 			XChangeWindowAttributes(this->mainClass->display,id,CWWinGravity,&attributes);
 			XMapWindow(this->mainClass->display,cc->frameWindow);
@@ -379,6 +409,8 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 				}
 
 //controls
+if(cc->isBorderless==false)
+{
 			wa.win_gravity=NorthWestGravity;
 			wa.save_under=true;
 //menu
@@ -389,6 +421,7 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 
 //rite hand controls	
 			wa.win_gravity=NorthEastGravity;
+
 //close
 			cc->closeControlStruct.controlName="close";
 			cc->closeButton=XCreateWindow(this->mainClass->display,cc->frameWindow,0,0,1,1,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
@@ -423,6 +456,7 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 					XSelectInput(this->mainClass->display,cc->shadeButton,ButtonPressMask|ButtonReleaseMask|EnterWindowMask|LeaveWindowMask);
 					cc->controlCnt++;
 				}
+}
 
 			cc->LFSWM2_setWindowName();
 
@@ -994,6 +1028,9 @@ void LFSWM2_windowClass::LFSWM2_refreshFrame(LFSWM2_clientClass *cc,XExposeEvent
 	if(cc==NULL)
 		return;
 
+	if(cc->isBorderless==true)
+		return;
+
 	if(this->mainClass->useTheme==true)
 		{
 			this->LFSWM2_refreshThemeFrame(cc);
@@ -1195,6 +1232,9 @@ void LFSWM2_windowClass::LFSWM2_refreshThemeFrame(LFSWM2_clientClass *cc)
 
 	Pixmap		pm;
 	GC			pmgc;
+
+	if(cc->isBorderless==true)
+		return;
 
 	r=cc->frameWindowRect;
 
@@ -1443,6 +1483,9 @@ void LFSWM2_windowClass::LFSWM2_setControlRects(LFSWM2_clientClass *cc)
 	int	offset;
 	int wh=DEFAULTCONTROLSIZE;
 //menu
+	if(cc->isBorderless==true)
+		return;
+
 	if(this->mainClass->useTheme==true)
 		{
 			cc->menuControlStruct.controlRect=
