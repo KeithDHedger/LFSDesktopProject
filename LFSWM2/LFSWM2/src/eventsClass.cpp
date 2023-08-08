@@ -70,6 +70,16 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 			if(this->mainClass->messages->whatMsg==QUITLFSWM)
 				break;
+
+			if(this->mainClass->messages->whatMsg==RESTARTLFSWM)
+				{
+					char self[PATH_MAX]={0};
+					int nchar=readlink("/proc/self/exe",self,sizeof self);
+					if(nchar>1)
+						execv(self,this->mainClass->argv);
+					continue;
+				}
+
 			if(this->mainClass->messages->whatMsg==REFRESHTHEME)
 				{
 					int mokeyshold=this->mainClass->modKeys;
@@ -95,13 +105,12 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 									XGrabButton(this->mainClass->display,Button1,(this->mainClass->modKeys),ccs->contentWindow,False,ButtonPressMask|ButtonReleaseMask|PointerMotionMask,GrabModeAsync,GrabModeAsync,None,None);
 									XUngrabKey(this->mainClass->display,XKeysymToKeycode(this->mainClass->display,XK_Escape),mokeyshold,ccs->contentWindow);
 									XGrabKey(this->mainClass->display,XKeysymToKeycode(this->mainClass->display,XK_Escape),(this->mainClass->modKeys),ccs->contentWindow,False,GrabModeSync,GrabModeAsync);
-
 								}
 						}
 					this->mainClass->restackCnt=1;
 					this->noRestack=false;
 				}
-//sleep(0.1);
+
 			XNextEvent(this->mainClass->display,&e);
 			//this->mainClass->DEBUG_printEventData(&e,false);
 			cccontrol=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(e.xany.window));

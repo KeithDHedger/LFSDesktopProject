@@ -70,6 +70,11 @@ bool LFSWM2_messageClass::LFSWM2_readMsg(void)
 					whatMsg=REFRESHTHEME;
 					return(true);
 				}
+			if(strcmp(buffer.mText,"restartwm")==0)
+				{
+					this->whatMsg=RESTARTLFSWM;
+					return(true);
+				}
 			if(strcmp(buffer.mText,"quit")==0)
 				{
 					this->whatMsg=QUITLFSWM;

@@ -69,6 +69,7 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 			exit(1);
 		}
 
+this->argv=argv;
 	this->mainEventClass=new LFSWM2_eventsClass(this);
 
 	this->screen=DefaultScreen(this->display);
@@ -116,7 +117,6 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 	this->LFSWM2_initRootWindow();
 
 	XSetInputFocus(this->display,rootWindow,RevertToNone,CurrentTime);
-	//XSetInputFocus(this->display,None,RevertToNone,0);
 	this->lastXErrorHandler=XSetErrorHandler(&LFSWM2_Class::LFSWM2_xError);
 
 	this->frameBG=this->mainWindowClass->LFSWM2_xftLoadColour("#4194FE","grey");
@@ -476,7 +476,7 @@ void LFSWM2_Class::printHelp(void)
 			"-r, --resizemode\n\tSet resizing mode ( FASTRESIZE=0, LIVERESIZE=1 ( default ), SIZERESIZE=2, SCALERESIZE=3 )\n"
 			" -v, --version\n\tOutput version information and exit\n"
 			" -h, -?, --help\n\tPrint this help\n\n"
-			"Report bugs to kdhedger@gmail.com\n"
+			"Report bugs to kdhedger68713@gmail.com\n"
 		);
 }
 

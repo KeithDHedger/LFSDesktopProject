@@ -273,6 +273,7 @@ class LFSWM2_Class
 
 		int					msgQueueKey=999;
 		void 				freeFontColour(fontColour *fc);
+		char					**argv;
 	private:
 		void					cliOptions(int argc,char **argv);
 		void					printHelp(void);
