@@ -732,6 +732,31 @@ struct motifHints
 	long			status;
 };
 */
+
+void LFSWM2_Class::DEBUG_printCurrentHintsDataStruct(hintsDataStruct hs)
+{
+
+	if(hs.mHints!=NULL)
+		this->DEBUG_printMWMHints(hs.mHints);
+	fprintf(stderr,"pt.x=%i pt.y=%i\n",hs.pt.x,hs.pt.y);
+
+	if(hs.sh!=NULL)
+		{
+			fprintf(stderr,"hints.flags=%i\n",hs.sh->flags);
+			fprintf(stderr,"hints.x=%i\n",hs.sh->x);
+			fprintf(stderr,"hints.y=%i\n",hs.sh->y);
+			fprintf(stderr,"hints.width=%i\n",hs.sh->width);
+			fprintf(stderr,"hints.height=%i\n",hs.sh->height);
+			fprintf(stderr,"hints.min_width=%i\n",hs.sh->min_width);
+			fprintf(stderr,"hints.min_height=%i\n",hs.sh->min_height);
+			fprintf(stderr,"hints.max_width=%i\n",hs.sh->max_width);
+			fprintf(stderr,"hints.max_height=%i\n",hs.sh->max_height);
+			fprintf(stderr,"hints.base_width=%i\n",hs.sh->base_width);
+			fprintf(stderr,"hints.base_height=%i\n",hs.sh->base_height);
+			this->DEBUG_printBinary(hs.sh->flags);
+		}
+}
+
 void LFSWM2_Class::DEBUG_printHintsDataStruct(Window wid)
 {
 	hintsDataStruct hs;
@@ -741,6 +766,7 @@ void LFSWM2_Class::DEBUG_printHintsDataStruct(Window wid)
 	hints=(motifHints*)this->mainWindowClass->LFSWM2_getProp(wid,this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_MOTIF_WM_HINTS")),this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_MOTIF_WM_HINTS")),&nitems_return);
 
 	hs=this->mainWindowClass->LFSWM2_getWindowHints(wid);
+	
 	fprintf(stderr,"window=%p\n",wid);
 
 	if(hints!=NULL)
@@ -760,9 +786,7 @@ void LFSWM2_Class::DEBUG_printHintsDataStruct(Window wid)
 			fprintf(stderr,"hints.max_height=%i\n",hs.sh->max_height);
 			fprintf(stderr,"hints.base_width=%i\n",hs.sh->base_width);
 			fprintf(stderr,"hints.base_height=%i\n",hs.sh->base_height);
-			fprintf(stderr,"hints.flags=%i\n",hs.sh->flags);
-			fprintf(stderr,"hints.flags=%i\n",hs.sh->flags);
-			fprintf(stderr,"hints.flags=%i\n",hs.sh->flags);
+			this->DEBUG_printBinary(hs.sh->flags);
 //			if((hs.sh->flags & USPosition)==true)
 //				{
 //					fprintf(stderr,"hints.x=%i hints.y=%i\n",hs.sh->x,hs.sh->y);

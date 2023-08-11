@@ -268,6 +268,7 @@ class LFSWM2_Class
 		void					DEBUG_printHintsDataStruct(Window wid);
 		void					DEBUG_printConfigureRequestStruct(XEvent *e);
 		void					DEBUG_printBinary(int num);
+		void					DEBUG_printCurrentHintsDataStruct(hintsDataStruct hs);
 
 #endif
 

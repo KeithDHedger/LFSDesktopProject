@@ -239,6 +239,7 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 					//cc->canClose=(premaphs.mHints->decorations & MWM_FUNC_CLOSE);
 					cc->canMaximize=(premaphs.mHints->decorations & MWM_DECOR_MAXIMIZE);
 					cc->canMinimize=(premaphs.mHints->decorations & MWM_DECOR_MINIMIZE);
+					cc->canResize=(premaphs.mHints->decorations & MWM_DECOR_RESIZEH);
 				}
 			allowed=(Atom*)this->LFSWM2_getProp(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ALLOWED_ACTIONS")),XA_ATOM,&nitems_return);
 			if(allowed!=NULL)
@@ -254,7 +255,7 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 				}
 			cc->canClose=true;//TODO//
 
-			if((this->LFSWM2_getWindowType(id)==NORMALWINDOW))// || (this->LFSWM2_getWindowType(id)==UNKNOWNTYPE))
+			if((this->LFSWM2_getWindowType(id)==NORMALWINDOW))
 				{
 					cc->canMaximize=true;
 					cc->canMinimize=true;
@@ -263,21 +264,21 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 
 			if(this->LFSWM2_getWindowType(id)==UNKNOWNTYPE)
 				{
-					cc->windowHints=this->LFSWM2_getWindowHints(id);
-					if((cc->windowHints.sh->min_width!=cc->windowHints.sh->max_width) || (cc->windowHints.sh->min_height!=cc->windowHints.sh->max_height))
+					cc->canMaximize=false;
+					cc->canMinimize=false;
+					cc->canResize=false;
+					if(cc->windowHints.sh->flags==0)
 						{
 							cc->canMaximize=true;
 							cc->canMinimize=true;
 							cc->canResize=true;
 						}
-				}
-
-		//	if((premaphs.mHints!=NULL) && (premaphs.mHints->functions==MWM_FUNC_ALL))
-			if((cc->windowHints.mHints!=NULL) && (cc->windowHints.mHints->functions==MWM_FUNC_ALL))
-				{
-					cc->canMaximize=true;
-					cc->canMinimize=true;
-					cc->canResize=true;
+					else if((cc->windowHints.sh->max_width==0) || (cc->windowHints.sh->max_height==0))
+						{
+							cc->canMaximize=true;
+							cc->canMinimize=true;
+							cc->canResize=true;
+						}
 				}
 
 			if(cc->isBorderless==true)
@@ -885,7 +886,7 @@ hintsDataStruct LFSWM2_windowClass::LFSWM2_getWindowHints(Window wid,bool movewi
 	XGetWindowAttributes(this->mainClass->display,wid,&hints.xa);
 	hints.sh=XAllocSizeHints();
 	hints.sh->flags=0;
-	XGetWMNormalHints(this->mainClass->display,wid,hints.sh,&dummy);
+	hints.valid=XGetWMNormalHints(this->mainClass->display,wid,hints.sh,&dummy);
 
 	if(hints.xa.x-this->mainClass->leftSideBarSize<0)
 		hints.pt.x=0;
@@ -903,8 +904,8 @@ hintsDataStruct LFSWM2_windowClass::LFSWM2_getWindowHints(Window wid,bool movewi
 		}
 
 	hints.mHints=(motifHints*)this->mainClass->mainWindowClass->LFSWM2_getProp(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_MOTIF_WM_HINTS")),this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_MOTIF_WM_HINTS")),&nitems_return);
-	
-	hints.valid=true;
+
+	//hints.valid=true;
 
 #if 1
 	if(this->mainClass->runLevel!=RL_STARTUP && ( (hints.sh->flags & (USPosition|PPosition))==0))
