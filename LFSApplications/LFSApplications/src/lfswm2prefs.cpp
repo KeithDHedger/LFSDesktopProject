@@ -225,7 +225,7 @@ bool buttonCB(void *p,void* ud)
 					prefs.LFSTK_saveVarsToFile(envFile);
 					//prefs.LFSTK_saveVarsToFile("-");
 					mbuffer.mType=LFSWM2_MSG;
-					sprintf(mbuffer.mText,"reloadtheme");
+					sprintf(mbuffer.mText,"restartwm");
 					if((msgsnd(queueID,&mbuffer,strlen(mbuffer.mText)+1,0))==-1)
 						fprintf(stderr,"Can't send message :(\n");
 					return(true);
