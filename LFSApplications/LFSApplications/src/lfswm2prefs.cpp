@@ -122,7 +122,6 @@ LFSTK_toggleButtonClass	*useTheme=NULL;
 char						*envFile=NULL;
 int						parentWindow=-1;
 
-
 //prefs
 int						prefsPlacementTemp=2;
 int						prefsResizeTemp=2;
@@ -608,7 +607,7 @@ int main(int argc, char **argv)
 //modkeys2
 	modkeys2WindowMenu=new LFSTK_buttonClass(wc,"Mod Keys 2",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	modkeys2WindowMenu->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"MODKEYS2");
-	modkeys2Menu=new LFSTK_menuClass(wc,BORDER+GADGETWIDTH,sy,1,1);
+	modkeys2Menu=new LFSTK_menuClass(wc,(BORDER+GADGETWIDTH)*2,sy,1,1);
 	modkeys2Menu->LFSTK_setMouseCallBack(NULL,modskeyMenuCB,NULL);
 	modkeys2Menu->LFSTK_addMainMenus(modkeys2Menus,MODS2MENUSIZE);
 
