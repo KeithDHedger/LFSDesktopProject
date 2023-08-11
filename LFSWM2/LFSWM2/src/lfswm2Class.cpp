@@ -69,7 +69,7 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 			exit(1);
 		}
 
-this->argv=argv;
+	this->argv=argv;
 	this->mainEventClass=new LFSWM2_eventsClass(this);
 
 	this->screen=DefaultScreen(this->display);
@@ -192,6 +192,11 @@ this->argv=argv;
 	this->resizeMode=this->prefs.LFSTK_getInt("resizemode");
 	this->forceDockStackingOrder=this->prefs.LFSTK_getInt("forcedocksstack");
 	this->modKeys=this->prefs.LFSTK_getInt("modkeys");
+	this->windowPlacement=this->prefs.LFSTK_getInt("placement");
+
+#ifdef __DEBUG__
+	this->modKeys=MOVEKEYS;
+#endif
 
 	this->buttonYOffset=(this->titleBarSize/2)-(DEFAULTCONTROLSIZE/2);
 	this->cliOptions(argc,argv);
@@ -744,15 +749,30 @@ void LFSWM2_Class::DEBUG_printHintsDataStruct(Window wid)
 
 	if(hs.sh!=NULL)
 		{
-			if((hs.sh->flags & USPosition)==true)
-				{
-					fprintf(stderr,"hints.x=%i hints.y=%i\n",hs.sh->x,hs.sh->y);
-				}
-			if((hs.sh->flags & (USSize|PSize))!=0)
-				{
-					fprintf(stderr,"USSize|PSize hints.width=%i hints.height=%i\n",hs.sh->width,hs.sh->height);
-				}
-			fprintf(stderr,"hints.base_width=%i hints.base_height=%i\n",hs.sh->base_width,hs.sh->base_height);
+			fprintf(stderr,"hints.flags=%i\n",hs.sh->flags);
+			fprintf(stderr,"hints.x=%i\n",hs.sh->x);
+			fprintf(stderr,"hints.y=%i\n",hs.sh->y);
+			fprintf(stderr,"hints.width=%i\n",hs.sh->width);
+			fprintf(stderr,"hints.height=%i\n",hs.sh->height);
+			fprintf(stderr,"hints.min_width=%i\n",hs.sh->min_width);
+			fprintf(stderr,"hints.min_height=%i\n",hs.sh->min_height);
+			fprintf(stderr,"hints.max_width=%i\n",hs.sh->max_width);
+			fprintf(stderr,"hints.max_height=%i\n",hs.sh->max_height);
+			fprintf(stderr,"hints.base_width=%i\n",hs.sh->base_width);
+			fprintf(stderr,"hints.base_height=%i\n",hs.sh->base_height);
+			fprintf(stderr,"hints.flags=%i\n",hs.sh->flags);
+			fprintf(stderr,"hints.flags=%i\n",hs.sh->flags);
+			fprintf(stderr,"hints.flags=%i\n",hs.sh->flags);
+//			if((hs.sh->flags & USPosition)==true)
+//				{
+//					fprintf(stderr,"hints.x=%i hints.y=%i\n",hs.sh->x,hs.sh->y);
+//				}
+//			if((hs.sh->flags & (USSize|PSize))!=0)
+//				{
+//					fprintf(stderr,"USSize|PSize hints.width=%i hints.height=%i\n",hs.sh->width,hs.sh->height);
+//				}
+//			fprintf(stderr,"hints.base_width=%i hints.base_height=%i\n",hs.sh->base_width,hs.sh->base_height);
+//			fprintf(stderr,"hints.base_width=%i hints.base_height=%i\n",hs.sh->base_width,hs.sh->base_height);
 			XFree(hs.sh);
 		}
 

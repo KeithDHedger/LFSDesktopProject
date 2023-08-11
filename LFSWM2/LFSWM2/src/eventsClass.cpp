@@ -243,7 +243,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 							XGetWindowAttributes(this->mainClass->display,e.xmaprequest.window,&x_window_attrs);
 							hs=this->mainClass->mainWindowClass->LFSWM2_getWindowHints(e.xmaprequest.window);
-							XMoveWindow(this->mainClass->display,e.xmaprequest.window,-100000,-100000);
+							XMoveWindow(this->mainClass->display,e.xmaprequest.window,-1000000,-1000000);
 							XMapWindow(this->mainClass->display,e.xmaprequest.window);
 							if(this->mainClass->mainWindowClass->LFSWM2_createClient(e.xmaprequest.window,hs)==false)
 								this->mainClass->mainWindowClass->LFSWM2_freeHints(hs);
@@ -252,25 +252,19 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						break;
 
 					case ConfigureRequest://TODO//NEXT
-							//fprintf(stderr,"ConfigureRequest from main event loop window=%x when=%i\n",e.xmaprequest.window,when++);
+						//fprintf(stderr,"ConfigureRequest from main event loop window=%x when=%i\n",e.xmaprequest.window,when++);
 						{
 							this->noRestack=false;
 							LFSWM2_clientClass	*cc;
-							
-//							cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
-//							if(cc!=NULL)		
+							//this->mainClass->DEBUG_printConfigureRequestStruct(&e);
+							cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
+//							if((cc!=NULL) && (cc->configCnt==0))
 //								{
-//									if(cc->isShaded==true)
-//										break;
-//									if(e.xconfigurerequest.value_mask!=0x40)
-//										{
-//											XWindowAttributes 	xa;
-//											XGetWindowAttributes(this->mainClass->display,e.xconfigurerequest.window,(XWindowAttributes*)&xa);
-//											if(xa.map_state==0)
-//												break;
-//										}
+//									if(e.xconfigurerequest.value_mask==0xf)
+//										e.xconfigurerequest.value_mask=e.xconfigurerequest.value_mask&0xc;
 //								}
-//
+							if((e.xconfigurerequest.x<0) || (e.xconfigurerequest.y<0))
+								break;
 							if(e.xconfigurerequest.send_event==false)
 								{
 									cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
@@ -830,6 +824,19 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 		}
 	while(cntj>-1);
 #endif
+//above
+//TODO//
+	for(int j=0;j<framel.size();j++)
+		{
+			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(framel.at(j));
+			if(cc!=NULL)
+				wid=cc->contentWindow;
+			else
+				wid=framel.at(j);
+			if(this->mainClass->mainWindowClass->LFSWM2_hasState(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE"))))
+				move(framel,j,0);
+		}
+
 //framel.erase(framel.begin()+framel.size()-1);
 
 	XRestackWindows(this->mainClass->display,framel.data(),framel.size());

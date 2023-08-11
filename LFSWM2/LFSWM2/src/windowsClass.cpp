@@ -138,15 +138,14 @@ void LFSWM2_windowClass::LFSWM2_freeHints(hintsDataStruct hs)
 
 bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 {
-//this->mainClass->LFSWM2_pushXErrorHandler();
-//XSelectInput(this->mainClass->display,id,-1);
 	if(this->LFSWM2_getWindowType(id)==MENUWINDOW)
 		{
 		//fprintf(stderr,"MENUWINDOW=0x%x\n",id);
 			this->LFSWM2_setClientList(id,true);
 			XRaiseWindow(this->mainClass->display,id);
 			this->LFSWM2_addState(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
-			this->mainClass->restackCnt=1;
+			this->mainClass->restackCnt=0;
+			this->mainClass->mainEventClass->noRestack=false;
 			XSetInputFocus(this->mainClass->display,id,RevertToNone,CurrentTime);
 			return(false);
 		}
@@ -185,12 +184,6 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 			return(false);
 		}
 
-	if(this->LFSWM2_getWindowType(id)==UNKNOWNTYPE)
-	{
-	//fprintf(stderr,"UNKNOWNTYPE=0x%x\n",id);
-			//return(false);
-			
-		}
 	if(this->clientList.count(id)>0)
 		{
 			XMapWindow(this->mainClass->display,this->clientList.at(id)->frameWindow);
@@ -205,6 +198,7 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 			long unsigned int	nitems_return=0;
 			Atom					*allowed=NULL;
 			int					thisdesk=-1;
+			bool					noborder=false;
 
 			setdesktop=(long int*)this->mainClass->mainWindowClass->LFSWM2_getProp(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_DESKTOP")),XA_CARDINAL,&nitems_return);
 
@@ -219,7 +213,8 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 				}
 			if(thisdesk==-1)
 				thisdesk=this->mainClass->currentDesktop;
-bool noborder=false;
+
+
 
 			if(premaphs.mHints!=NULL)
 				{
@@ -239,13 +234,12 @@ bool noborder=false;
 			cc->isBorderless=noborder;
 			cc->windowHints=premaphs;
 			cc->renderFrame(true,premaphs.pt.x,premaphs.pt.y);
-
 			if(premaphs.mHints!=NULL)
 				{
+					//cc->canClose=(premaphs.mHints->decorations & MWM_FUNC_CLOSE);
 					cc->canMaximize=(premaphs.mHints->decorations & MWM_DECOR_MAXIMIZE);
 					cc->canMinimize=(premaphs.mHints->decorations & MWM_DECOR_MINIMIZE);
 				}
-
 			allowed=(Atom*)this->LFSWM2_getProp(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ALLOWED_ACTIONS")),XA_ATOM,&nitems_return);
 			if(allowed!=NULL)
 				{
@@ -258,28 +252,41 @@ bool noborder=false;
 						}
 					XFree(allowed);
 				}
+			cc->canClose=true;//TODO//
 
-
-			if(this->LFSWM2_getWindowType(id)==NORMALWINDOW)
+			if((this->LFSWM2_getWindowType(id)==NORMALWINDOW))// || (this->LFSWM2_getWindowType(id)==UNKNOWNTYPE))
 				{
 					cc->canMaximize=true;
 					cc->canMinimize=true;
 					cc->canResize=true;
 				}
 
-			if((premaphs.mHints!=NULL) && (premaphs.mHints->functions==MWM_FUNC_ALL))
+			if(this->LFSWM2_getWindowType(id)==UNKNOWNTYPE)
+				{
+					cc->windowHints=this->LFSWM2_getWindowHints(id);
+					if((cc->windowHints.sh->min_width!=cc->windowHints.sh->max_width) || (cc->windowHints.sh->min_height!=cc->windowHints.sh->max_height))
+						{
+							cc->canMaximize=true;
+							cc->canMinimize=true;
+							cc->canResize=true;
+						}
+				}
+
+		//	if((premaphs.mHints!=NULL) && (premaphs.mHints->functions==MWM_FUNC_ALL))
+			if((cc->windowHints.mHints!=NULL) && (cc->windowHints.mHints->functions==MWM_FUNC_ALL))
 				{
 					cc->canMaximize=true;
 					cc->canMinimize=true;
 					cc->canResize=true;
 				}
-if(cc->isBorderless==true)
-{
+
+			if(cc->isBorderless==true)
+				{
 					cc->canMaximize=false;
 					cc->canMinimize=false;
 					cc->canResize=false;
+				}
 
-}
 			wa.win_gravity=NorthWestGravity;
 			if(cc->isBorderless==false)
 				cc->frameWindow=XCreateWindow(this->mainClass->display,this->mainClass->rootWindow,-1000000,-1000000,premaphs.xa.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),premaphs.xa.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH,BORDER_WIDTH,CopyFromParent,InputOutput,CopyFromParent,0,&wa);
@@ -332,27 +339,22 @@ if(cc->isBorderless==true)
 			v[1]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_CLOSE"));
 			v[2]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_FULLSCREEN"));
 
-		if(cc->canMaximize==true)
-			{
-				v[vcnt++]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_MAXIMIZE_HORZ"));
-				v[vcnt++]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_MAXIMIZE_VERT"));
-			}
-		if(cc->canMinimize==true)
-			{
-				v[vcnt++]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_MINIMIZE"));
-			}
+			if(cc->canMaximize==true)
+				{
+					v[vcnt++]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_MAXIMIZE_HORZ"));
+					v[vcnt++]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_MAXIMIZE_VERT"));
+				}
+			if(cc->canMinimize==true)
+				{
+					v[vcnt++]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_MINIMIZE"));
+				}
 
-		if(cc->canResize==true)
-			{
-				v[vcnt++]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_RESIZE"));
-			}
+			if(cc->canResize==true)
+				{
+					v[vcnt++]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_RESIZE"));
+				}
 
-			//if(setdesktop!=NULL)
-			//if(setdesktop!=NULL)
-			//	cc->onDesk=thisdesk;
-			//else
-			//	cc->onDesk=this->mainClass->currentDesktop;
-				cc->onDesk=thisdesk;
+			cc->onDesk=thisdesk;
 
 			this->LFSWM2_setProp(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ALLOWED_ACTIONS")),XA_ATOM,32,v,vcnt);
 			this->LFSWM2_setProp(cc->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_DESKTOP")),XA_CARDINAL,32,(void*)&cc->onDesk,1);
@@ -423,11 +425,14 @@ if(cc->isBorderless==false)
 			wa.win_gravity=NorthEastGravity;
 
 //close
+			if(cc->canClose==true)
+				{
 			cc->closeControlStruct.controlName="close";
 			cc->closeButton=XCreateWindow(this->mainClass->display,cc->frameWindow,0,0,1,1,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
 			cc->closeControlStruct.controlGC=XCreateGC(this->mainClass->display,cc->closeButton,0,NULL);
 			XSelectInput(this->mainClass->display,cc->closeButton,ButtonPressMask|ButtonReleaseMask|EnterWindowMask|LeaveWindowMask);
 			cc->controlCnt=1;
+			}
 //max
 			if(cc->canMaximize==true)
 				{
@@ -470,6 +475,7 @@ if(cc->isBorderless==false)
 					if(states[j]==this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_STICKY")))
 						cc->visibleOnAllDesks=true;
 				}
+
 			XGetTransientForHint(this->mainClass->display,id,&cc->transientFor);
 			if(cc->transientFor!=0)
 				{
@@ -1514,6 +1520,8 @@ void LFSWM2_windowClass::LFSWM2_setControlRects(LFSWM2_clientClass *cc)
 		XUnmapWindow(this->mainClass->display,cc->menuButton);
 
 //close
+	if(cc->canClose==true)
+		{
 	if(this->mainClass->useTheme==true)
 		{
 			offset=this->theme.buttonOffset+this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("close-active")]+this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("right-active")];
@@ -1542,6 +1550,7 @@ void LFSWM2_windowClass::LFSWM2_setControlRects(LFSWM2_clientClass *cc)
 		XMapWindow(this->mainClass->display,cc->closeButton);
 	else
 		XUnmapWindow(this->mainClass->display,cc->closeButton);
+}
 
 //max
 	if(cc->canMaximize==true)

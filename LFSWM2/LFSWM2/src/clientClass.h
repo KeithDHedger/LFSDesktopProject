@@ -63,6 +63,7 @@ class LFSWM2_clientClass
 		bool				canMinimize=false;
 		bool				canShade=false;
 		bool				canResize=false;
+		bool				canClose=false;
 		bool				isActive=false;
 
 		bool				isBorderless=false;
@@ -144,6 +145,8 @@ class LFSWM2_clientClass
 
 		Pixmap			mask=None;
 		GC				maskGC=None;
+int origx=0;
+int origy=0;
 
 		void				resetContentWindow(void);//TODO//all the routines need redoing
 	private:

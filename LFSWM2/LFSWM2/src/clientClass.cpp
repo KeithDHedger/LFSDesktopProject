@@ -1096,6 +1096,7 @@ void LFSWM2_clientClass::renderFrame(bool isfirst,int x,int y)
 			XMapSubwindows(this->mainClass->display,this->contentWindow);	
 			this->setWindowRects(true);
 			this->rendered=true;
+			//XMoveWindow(this->mainClass->display,this->frameWindow,this->origx,this->origy);
 			this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,(void*)&this->contentWindow,1);
 			this->mainClass->restackCnt=0;
 			if(this->isBorderless==true)

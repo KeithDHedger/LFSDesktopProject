@@ -1,4 +1,6 @@
 1.0.1
+Minor window type fixes.
+Position fixes for badly placed windows.
 Added "restartwm" to messages.
 Fixes for apps using those god awful client side decorations.
 
