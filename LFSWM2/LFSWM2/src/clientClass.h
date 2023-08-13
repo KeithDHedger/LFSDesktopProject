@@ -65,8 +65,9 @@ class LFSWM2_clientClass
 		bool				canResize=false;
 		bool				canClose=false;
 		bool				isActive=false;
-
+		bool				isWithdrawn=false;
 		bool				isBorderless=false;
+		bool				isHidden=false;
 
 		int				resizeMode=0;
 		int				configCnt=0;
@@ -104,8 +105,11 @@ class LFSWM2_clientClass
 		Window			rightSideDragger=None;
 		Window			bottomDragger=None;
 
-		void				LFSWM2_showWindow(void);
-		void				LFSWM2_hideWindow(void);
+//		void				LFSWM2_showWindow(void);
+//		void				LFSWM2_hideWindow(void);
+		void				LFSWM2_showWindow(bool checkstate=false);
+		void				LFSWM2_hideWindow(bool withdraw=false);
+
 		void				LFSWM2_fullscreenWindow(bool isfull,bool force=false);
 
 		void				LFSWM2_maxWindow(bool ismaxed,bool force=false);
@@ -158,6 +162,7 @@ int origy=0;
 		bool				inControl=false;
 
 		rectStruct		dragRect;
+		rectStruct		holdFrameRect={-1,-1,-1,-1};
 
 		Pixmap			currentRootPixmap=None;
 		Picture			windowPicture=None;

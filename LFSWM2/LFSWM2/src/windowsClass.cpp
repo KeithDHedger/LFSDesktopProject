@@ -658,14 +658,16 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 	cc->onTop=false;
 	cc->onBottom=false;
 	cc->visible=true;
+	cc->isHidden=false;
 
 	for(long unsigned j=0;j<n;j++)
 		{
 			if(states[j]==this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_VERT"))|| states[j]==this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_HORZ")))
 				maxit=true;
-			if(states[j]==this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN")))
+			if(states[j]==this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN")))//TODO//about boxes
 				{
 					cc->visible=false;
+					cc->isHidden=true;
 					ishidden=true;
 				}
 			if(states[j]==this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")))
@@ -678,12 +680,12 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 
 	cc->LFSWM2_maxWindow(maxit);
 	cc->LFSWM2_fullscreenWindow(isfull);
-	if(cc->rendered==true)////
+	if(cc->rendered==true)
 		{
-			if((ishidden==false) && (cc->onDesk==this->mainClass->currentDesktop) && (cc->visible==true))
-				cc->LFSWM2_showWindow();
+			if((cc->onDesk==this->mainClass->currentDesktop) && (ishidden==false))
+				cc->LFSWM2_showWindow(true);
 			else
-				cc->LFSWM2_hideWindow();
+				cc->LFSWM2_hideWindow(false);
 		}
 	this->mainClass->restackCnt++;
 	XFree(states);
@@ -869,10 +871,10 @@ void LFSWM2_windowClass::LFSWM2_setVisibilityForDesk(unsigned long desk)
 							cc->onDesk=desk;
 							this->LFSWM2_setProp(cc->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_DESKTOP")),XA_CARDINAL,32,&cc->onDesk,1);
 						}
-					if((cc->onDesk==desk) && (cc->visible==true))
-						cc->LFSWM2_showWindow();
+					if(cc->onDesk==desk)
+						cc->LFSWM2_showWindow(true);
 					else
-						cc->LFSWM2_hideWindow();
+						cc->LFSWM2_hideWindow(false);
 				}
 		}
 }

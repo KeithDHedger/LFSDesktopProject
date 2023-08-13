@@ -771,15 +771,40 @@ void LFSWM2_clientClass::setWindowRects(bool resize)
 		this->LFSWM2_resizeControls();
 }
 
-void LFSWM2_clientClass::LFSWM2_showWindow(void)
+void LFSWM2_clientClass::LFSWM2_showWindow(bool checkstate)
 {
+	if((checkstate==true) && ((this->isWithdrawn==true) || (this->isHidden==true)))
+		return;
+
+	this->visible=true;
+	if(this->isWithdrawn==true)
+		this->mainClass->mainWindowClass->LFSWM2_setWindowState(this->contentWindow,NormalState);
+	this->isWithdrawn=false;
+	this->isHidden=false;
 	XMapWindow(this->mainClass->display,this->frameWindow);
 }
 
-void LFSWM2_clientClass::LFSWM2_hideWindow(void)
+void LFSWM2_clientClass::LFSWM2_hideWindow(bool withdraw)
 {
+	this->visible=false;
+	if(withdraw==true)
+		{
+			this->holdFrameRect=this->frameWindowRect;
+			this->isWithdrawn=true;
+			this->mainClass->mainWindowClass->LFSWM2_setWindowState(this->contentWindow,WithdrawnState);
+		}
 	XUnmapWindow(this->mainClass->display,this->frameWindow);
 }
+
+//void LFSWM2_clientClass::LFSWM2_showWindow(void)
+//{
+//	XMapWindow(this->mainClass->display,this->frameWindow);
+//}
+//
+//void LFSWM2_clientClass::LFSWM2_hideWindow(void)
+//{
+//	XUnmapWindow(this->mainClass->display,this->frameWindow);
+//}
 
 void LFSWM2_clientClass::LFSWM2_resizeControls(void)
 {
@@ -996,13 +1021,21 @@ bool LFSWM2_clientClass::LFSWM2_handleEvents(XEvent *e)
 				}
 				break;
 
+			case MapNotify:
+				{
+					//std::cerr<<"client MapNotify"<<std::endl;
+				}
+				break;
 			case UnmapNotify:
 				{
-					this->mainClass->mainWindowClass->LFSWM2_setClientList(this->contentWindow,false);
-					this->visible=false;
-					XUnmapWindow(this->mainClass->display,this->frameWindow);
+					this->LFSWM2_hideWindow(true);
 					return(true);
 				}
+				break;
+
+			case MapRequest:
+				//std::cerr<<"client MapRequest"<<std::endl;
+				this->LFSWM2_showWindow(false);
 				break;
 
 			case DestroyNotify:
@@ -1030,24 +1063,22 @@ contloop:
 					return(true);
 				}
 				break;
-			case MapNotify:
-				//std::cerr<<"MapNotify"<<std::endl;
-				break;
 
 			case ConfigureNotify:
-			//std::cerr<<"client ConfigureNotify"<<std::endl;
+				//std::cerr<<"client ConfigureNotify"<<std::endl;
 				break;
 
 			case ConfigureRequest:
-				{
-				//this->configCnt++;
-				//	if(this->configCnt<8)
-				//		break;
-					XRaiseWindow(this->mainClass->display,this->frameWindow);
-					this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,&this->contentWindow,1);
-					//XSetInputFocus(this->mainClass->display,None,RevertToNone,0);
-					XSetInputFocus(this->mainClass->display,this->contentWindow,RevertToNone,CurrentTime);
-				}
+				//fprintf(stderr,"isframed=%s",this->mainClass->DEBUG_printBool(this->rendered));
+				if(this->isBorderless==true)
+					return(false);
+				if(this->holdFrameRect.w==-1)
+					return(false);
+				this->frameWindowRect=this->holdFrameRect;
+				XMoveWindow(this->mainClass->display,this->frameWindow,this->frameWindowRect.x,this->frameWindowRect.y);
+				XRaiseWindow(this->mainClass->display,this->frameWindow);
+				this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,&this->contentWindow,1);
+				XSetInputFocus(this->mainClass->display,this->contentWindow,RevertToNone,CurrentTime);
 				break;
 
 			default:

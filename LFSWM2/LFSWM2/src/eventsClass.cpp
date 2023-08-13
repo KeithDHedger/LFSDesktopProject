@@ -159,13 +159,14 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 			switch(e.type)
 				{
 					case KeyRelease:
+						fprintf(stderr,"e.xkey.keycode=%i\n",e.xkey.keycode);
 						if((e.xkey.keycode==XKeysymToKeycode(this->mainClass->display,XK_Escape)) && (e.xkey.state&(this->mainClass->modKeys))==(this->mainClass->modKeys))
 							{
 								cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xkey.window);
 								if(cc!=NULL)
 									{
 										if(cc->isFullscreen==true)
-												cc->LFSWM2_fullscreenWindow(false);
+											cc->LFSWM2_fullscreenWindow(false);
 									}
 							}
 						break;
@@ -196,8 +197,8 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						cc=NULL;
 						break;
 					case ButtonPress:
-						this->noRestack=false;
 						//fprintf(stderr,"ButtonPress eventnumber %i\n",when++);
+						this->noRestack=false;
 						start=e.xbutton;
 						this->mainClass->restackCnt=0;
 						this->sy=e.xbutton.y;
@@ -236,7 +237,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 					case MapRequest:
 						{
-						//fprintf(stderr,"MapRequest main event loop window=%x when=%i\n",e.xmap.window,when++);
+							//fprintf(stderr,"MapRequest main event loop window=%x when=%i\n",e.xmap.window,when++);
 							this->noRestack=false;
 							XWindowAttributes	x_window_attrs;
 							hintsDataStruct		hs;
@@ -256,15 +257,10 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						{
 							this->noRestack=false;
 							LFSWM2_clientClass	*cc;
-							//this->mainClass->DEBUG_printConfigureRequestStruct(&e);
 							cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
-//							if((cc!=NULL) && (cc->configCnt==0))
-//								{
-//									if(e.xconfigurerequest.value_mask==0xf)
-//										e.xconfigurerequest.value_mask=e.xconfigurerequest.value_mask&0xc;
-//								}
 							if((e.xconfigurerequest.x<0) || (e.xconfigurerequest.y<0))
 								break;
+
 							if(e.xconfigurerequest.send_event==false)
 								{
 									cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
@@ -842,6 +838,24 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 	XRestackWindows(this->mainClass->display,framel.data(),framel.size());
 
 	this->mainClass->mainWindowClass->windowIDList=sl;
+
+	int cntk=sl.size()-1;
+	do
+		{
+			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(sl.at(cntk));
+			wid=sl.at(cntk);
+			if((cc!=NULL) && (cc->isWithdrawn==true))
+				{
+					sl.erase(sl.begin()+cntk);
+					XLowerWindow(this->mainClass->display,wid);
+					cntk=sl.size()-1;
+					continue;
+				}
+			cntk--;
+		}
+	while(cntk>-1);
+
+
 	this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_CLIENT_LIST")),XA_WINDOW,32,sl.data(),sl.size());
 	this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_CLIENT_LIST_STACKING")),XA_WINDOW,32,sl.data(),sl.size());
 
