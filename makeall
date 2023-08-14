@@ -35,44 +35,62 @@ NORMAL="\e[0;0m"
 MAKEFLAGS=${MAKEFLAGS:-"-j3"}
 export MAKEFLAGS
 export PATH
+BUILDOLDWM=0
+
+if [ $BUILDOLDWM -eq 1 ];then
+	BUILDLFSWMANAGER="LFSWManager"
+else
+	BUILDLFSWMANAGER=""
+fi
+
+CHANGEUSER=keithhedger
 
 runCommand ()
 {
-	for app in "LFSToolKit" "LFSWManager" "LFSWM2" "LFSDesktop" "LFSSetWallpaper" "LFSApplications" "LFSPanel"
-		do
-			pushd $app
-				echo -e "${RED}Running $1 in ${GREEN}$app${RED} ... ${NORMAL}"
-				$1||true
-			popd
-		done
+	echo -e "${RED}Running $1 in ${GREEN}$app${RED} ... ${NORMAL}"
+	
+	 $1
 }
 
-if [ "X$action" = "Xdistclean" ];then
-	runCommand 	"sudo make distclean"
-	exit 0
-fi
+distclean ()
+{
+	runCommand "make distclean"
+}
 
-if [ "X$action" = "Xdeploy" ];then
-	runCommand 	"sudo make distclean"
-	runCommand 	"./configure --prefix=/usr --libdir=/usr/lib64"
-	runCommand 	"sudo make uninstall"
-	runCommand 	"make $MAKEFLAGS"
-	runCommand 	"sudo make install"
-	exit 0
-fi
+uninstall ()
+{
+	runCommand "make distclean"||true
+	runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib64"
+	runCommand "make uninstall"
+}
 
-if [ "X$action" = "Xdeploy-test" ];then
-	runCommand 	"make distclean"
-	runCommand 	"./configure --prefix=/usr"
-	runCommand 	"make $MAKEFLAGS"
-	runCommand 	"make install DESTDIR=/tmp/lfsdesktop"
-	exit 0
-fi
+deploy ()
+{
+	runCommand "make distclean"||true
+	runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib64"
+	runCommand "make $MAKEFLAGS"
+	runCommand "make install"
+}
 
-for app in "LFSToolKit" "LFSWManager" "LFSWM2" "LFSDesktop" "LFSSetWallpaper" "LFSApplications" "LFSPanel"
+deploytest ()
+{
+	runCommand "make distclean"||true
+	runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib64"
+	runCommand "make $MAKEFLAGS"
+	runCommand "make install DESTDIR=/tmp/lfsdesktop-deploy"
+}
+
+ownit ()
+{
+	echo -e "${RED}Owning and touching files in ${GREEN}$(basename $(pwd))${RED} ... ${NORMAL}"
+	runCommand "chown -vR $CHANGEUSER:$CHANGEUSER ."
+	runCommand "find -mindepth 1 -exec touch {} ;"
+}
+
+for app in "LFSToolKit" $BUILDLFSWMANAGER "LFSWM2" "LFSDesktop" "LFSSetWallpaper" "LFSApplications" "LFSPanel"
 	do
 		pushd $app
 			echo -e "${RED}Running $action in ${GREEN}$app${RED} ... ${NORMAL}"
-			$action||true
+			$action
 		popd
 	done

@@ -159,7 +159,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 			switch(e.type)
 				{
 					case KeyRelease:
-						fprintf(stderr,"e.xkey.keycode=%i\n",e.xkey.keycode);
+						//fprintf(stderr,"e.xkey.keycode=%i\n",e.xkey.keycode);
 						if((e.xkey.keycode==XKeysymToKeycode(this->mainClass->display,XK_Escape)) && (e.xkey.state&(this->mainClass->modKeys))==(this->mainClass->modKeys))
 							{
 								cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xkey.window);
