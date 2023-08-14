@@ -48,8 +48,7 @@ CHANGEUSER=keithhedger
 runCommand ()
 {
 	echo -e "${RED}Running $1 in ${GREEN}$app${RED} ... ${NORMAL}"
-	
-	 $1
+	$1||true
 }
 
 distclean ()
