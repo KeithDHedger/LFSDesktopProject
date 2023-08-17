@@ -30,32 +30,42 @@ class LFSTK_menuClass
 		~LFSTK_menuClass();
 		LFSTK_menuClass(LFSTK_windowClass *wc,int x,int y,unsigned w,unsigned h);
 
-		void								LFSTK_addMainMenus(menuStruct **menus,int menucnt);
-		void								LFSTK_showMenu(void);
+		void									LFSTK_addMainMenus(menuStruct **menus,int menucnt);
+		void									LFSTK_showMenu(void);
 
 		int									x;
 		int									y;
-		unsigned							w;
-		unsigned							h;
+		unsigned								w;
+		unsigned								h;
 		LFSTK_windowClass					*parentwc;
-		
-		void								LFSTK_setMouseCallBack(bool (*downcb)(void*,void*),bool (*releasecb)(void*,void*),void* ud);
-		void								LFSTK_freeMenus(menuStruct **menus,int menucnt);
+		int									maxMenusDisplayed=0;
+		int									menuHeight=0;
+		bool									isScrollable=false;
+		LFSTK_buttonClass					*upButton=NULL;
+		LFSTK_buttonClass					*downButton=NULL;
+		int									topMenu=0;
+
+
+		void									LFSTK_setMouseCallBack(bool (*downcb)(void*,void*),bool (*releasecb)(void*,void*),void* ud);
+		void									LFSTK_freeMenus(menuStruct **menus,int menucnt);
 		int									LFSTK_getTextWidthForFont(const char *text);
 
-		bool								mainLoop=false;
+		bool									mainLoop=false;
 		LFSTK_toolWindowClass				*mainMenuWindow=NULL;
 		std::vector<LFSTK_toolWindowClass*>	*subwindows;
 
-	private:		
-		menuStruct							**mainMenu=NULL;
+		static bool							menuScroll(void *object,void* userdata);
 		int									mainMenuCnt=0;
+	private:		
+		void 								resizeMenu(void);
+
+		menuStruct							**mainMenu=NULL;
 		callbackStruct						callBacks;
 
 		cairo_font_weight_t					weight=CAIRO_FONT_WEIGHT_NORMAL;
 		cairo_font_slant_t					slant=CAIRO_FONT_SLANT_NORMAL;
 		int									fontSize=10;
-		char								*fontName=NULL;
+		char									*fontName=NULL;
 		const char							*fontDesc=NULL;
 };
 

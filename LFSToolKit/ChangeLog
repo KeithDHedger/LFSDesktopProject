@@ -1,4 +1,8 @@
 0.5.1
+Moved all monitor data/fnctios to main application class.
+Fixed getting correct monitor for window.
+Added scrollable menu.
+Fixed makeall script.
 Fixed stack smashing errors.
 Set exapander gadget to use window back colour.
 Install default colour scheme to ~/.config/LFS on first run of library.

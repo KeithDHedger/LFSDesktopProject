@@ -43,7 +43,6 @@ void LFSTK_toolWindowClass::windowClassInitCommon(windowInitStruct *wi)
 	this->fontString=NULL;
 	this->isActive=false;
 	this->acceptDnd=false;
-	this->loadMonitorData();
 
 	wa.win_gravity=NorthWestGravity;
 	wa.override_redirect=wi->overRide;

@@ -37,7 +37,7 @@ class LFSTK_gadgetClass
 //window events
 		virtual void			LFSTK_clearWindow(void);
 		virtual void			LFSTK_resizeWindow(int w,int h);
-		virtual void			LFSTK_moveGadget(int w,int h);
+		virtual void			LFSTK_moveGadget(int x,int y);
 		void					LFSTK_showGadget(void);
 		void					LFSTK_hideGadget(void);
 		void					LFSTK_reParentWindow(Window win,int newx,int newy);
@@ -122,7 +122,7 @@ class LFSTK_gadgetClass
 		cairo_status_t 		LFSTK_setImageFromPath(const char *file,int orient,bool scale);
 		void 				LFSTK_setImageFromSurface(cairo_surface_t *sfc,int orient,bool scale);
 
-		int					LFSTK_gadgetOnMonitor(void);
+		int					LFSTK_gadgetOnWhichMonitor(void);
 		void					LFSTK_setTile(const char *path,int size);
 		void					LFSTK_setUseWindowTile(bool usebutton);
 		void					LFSTK_setUseWindowPixmap(bool usepixmap);

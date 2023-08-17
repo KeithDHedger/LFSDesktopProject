@@ -197,8 +197,6 @@ LFSTK_windowClass::~LFSTK_windowClass()
 	if(this->app==NULL)
 		delete this->globalLib;
 
-	free(this->monitors);
-
 	if(!this->gadgetMap.empty())
 		{
 			for (std::map<int,mappedListener*>::iterator it=this->gadgetMap.begin();it!=this->gadgetMap.end();++it)
@@ -619,74 +617,29 @@ bool LFSTK_windowClass::LFSTK_getActive(void)
 }
 
 /**
-* Load size and position of monitors.
-*/
-void LFSTK_windowClass::loadMonitorData(void)
-{
-	int					cnt=-1;
-	XineramaScreenInfo	*p=NULL;
-
-	cnt=ScreenCount(this->app->display);
-	p=XineramaQueryScreens(this->app->display,&cnt);
-	if(p!=NULL)
-		{
-			if(cnt>0)
-				{
-					this->monitors=(monitorStruct*)calloc(sizeof(monitorStruct),cnt);
-					this->monitorCount=cnt;
-
-					for (int j=0; j<cnt; j++)
-						{
-							monitors[j].x=p[j].x_org;
-							monitors[j].y=p[j].y_org;
-							monitors[j].w=p[j].width;
-							monitors[j].h=p[j].height;
-						}
-				}
-			XFree(p);
-		}
-}
-
-/**
-* Get number of monitors.
-* \return int Monitor cnt;
-*/
-
-int LFSTK_windowClass::LFSTK_getMonitorCount(void)
-{
-	return(this->monitorCount);
-}
-
-/**
-* Get monitor data.
-* \param monitor Monitor number.
-* \return monitorsStruct* Monitor struct pointer;
-* \note Do not free returned result;
-*/
-
-const monitorStruct* LFSTK_windowClass::LFSTK_getMonitorData(int monitor)
-{
-	return(&(this->monitors[monitor]));
-}
-
-/**
 * Get window monitor.
 * \return unsigned Monitor that window top left is on;
 */
 
 int LFSTK_windowClass::LFSTK_windowOnMonitor(void)
 {
-	int thisx=this->windowGeom.x;
-	int thisy=this->windowGeom.y;
+	Window				child;
+	XWindowAttributes	xwa;
+	int					x,y;
+
+	XTranslateCoordinates(this->app->display,this->window,this->app->rootWindow,0,0,&x,&y,&child );
+
+	int thisx=x;
+	int thisy=y;
 
 	if(thisx<0)
 		thisx=0;
 	if(thisy<0)
 		thisy=0;
 
-	for(int j=0; j<this->monitorCount; j++)
+	for(int j=0; j<this->app->monitorCount; j++)
 		{
-			if((thisx>=monitors[j].x) && (thisx<(monitors[j].x+monitors[j].w)) && (thisy>=monitors[j].y) && (thisy<(monitors[j].y+monitors[j].h)))
+			if((thisx>=this->app->monitors[j].x) && (thisx<(this->app->monitors[j].x+this->app->monitors[j].w)) && (thisy>=this->app->monitors[j].y) && (thisy<(this->app->monitors[j].y+this->app->monitors[j].h)))
 				return(j);
 		}
 	return(-1);
@@ -710,8 +663,6 @@ void LFSTK_windowClass::windowClassInitCommon(windowInitStruct *wi)
 	this->fontString=NULL;
 	this->isActive=false;
 	this->acceptDnd=false;
-
-	this->loadMonitorData();
 
 	wa.win_gravity=NorthWestGravity;
 	wa.override_redirect=wi->overRide;
@@ -796,8 +747,6 @@ LFSTK_windowClass::LFSTK_windowClass(windowInitStruct *wi,LFSTK_applicationClass
 	this->fontString=NULL;
 	this->isActive=false;
 	this->acceptDnd=false;
-
-	this->loadMonitorData();
 
 	wa.win_gravity=NorthWestGravity;
 	wa.override_redirect=wi->overRide;
@@ -943,16 +892,6 @@ void LFSTK_windowClass::LFSTK_hideWindow(void)
 void LFSTK_windowClass::LFSTK_setXProperty(Atom property,Atom type,int format,void *dataptr,int propcnt)
 {
 	XChangeProperty(this->app->display,this->window,property,type,format,PropModeReplace,(const unsigned char*)dataptr,propcnt);
-}
-
-/**
-* Get monitors array.
-* \return Const pointer to monitor array.
-* \note Do not free returned structure.
-*/
-const monitorStruct* LFSTK_windowClass::LFSTK_getMonitors(void)
-{
-	return(this->monitors);
 }
 
 /**

@@ -23,12 +23,21 @@
 
 #include <vector>
 #include <signal.h>
+#include <X11/extensions/Xinerama.h>
+
+struct	monitorStruct
+{
+	int				x;
+	int				y;
+	int				w;
+	int				h;
+};
 
 struct windowData
 {
 	LFSTK_windowClass	*window=NULL;
-	bool				loopFlag=false;
-	bool				showing=false;
+	bool					loopFlag=false;
+	bool					showing=false;
 };
 
 class LFSTK_applicationClass
@@ -43,6 +52,12 @@ class LFSTK_applicationClass
 		int						LFSTK_runWindowLoop(int window);
 		int						LFSTK_runWindowLoop(LFSTK_windowClass *win);
 		int						LFSTK_findWindow(LFSTK_windowClass *win);
+
+//monitors
+		void						LFSTK_loadMonitorData(void);
+		int						LFSTK_getMonitorCount(void);
+		const monitorStruct		*LFSTK_getMonitorData(int monitor);
+		const monitorStruct		*LFSTK_getMonitors(void);
 
 //timers
 		void						LFSTK_setTimer(int seconds);
@@ -59,6 +74,8 @@ class LFSTK_applicationClass
 		int						depth;
 		int						blackColour;
 		int						whiteColour;
+		monitorStruct			*monitors=NULL;
+		int						monitorCount;
 
 		bool						gotARGB=false;
 		int						displayWidth=0;

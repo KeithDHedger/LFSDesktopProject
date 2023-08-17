@@ -275,7 +275,7 @@ struct callbackStruct
 	void					*keyUserData=NULL;
 	bool					runTheCallback=true;
 	bool					ignoreOrphanModKeys=true;
-	int						validCallbacks=NOCB;
+	int					validCallbacks=NOCB;
 };
 
 struct pointStruct
@@ -342,11 +342,11 @@ struct windowInitStruct
 	int						w=1;
 	int						h=1;
 	const char				*name="";
-	bool					overRide=false;
-	bool					loadVars=true;
-	bool					shutDisplayOnExit=false;
+	bool						overRide=false;
+	bool						loadVars=true;
+	bool						shutDisplayOnExit=false;
 	const char				*windowType="_NET_WM_WINDOW_TYPE_NORMAL";
-	bool					decorated=true;
+	bool						decorated=true;
 	int						level=NORMAL;
 	Display					*display=NULL;
 	LFSTK_windowClass		*wc=NULL;
@@ -357,7 +357,7 @@ struct windowInitStruct
 class	LFSTK_menuClass;
 struct menuStruct
 {
-	char					*label=NULL;
+	char						*label=NULL;
 	int						imageType=0;
 	union					imageData
 		{
@@ -365,10 +365,10 @@ struct menuStruct
 			cairo_surface_t	*surface;
 		}					data={NULL};
 
-	bool					hasSubMenu=false;
+	bool						hasSubMenu=false;
 	menuStruct				**subMenus=NULL;
 	int						subMenuCnt=0;
-	void					*userData=NULL;
+	void						*userData=NULL;
 };
 
 //messaging

@@ -27,14 +27,6 @@
 #include <cairo-xlib.h>
 #include <map>
 
-struct	monitorStruct
-{
-	int				x;
-	int				y;
-	int				w;
-	int				h;
-};
-
 /**
 * Drop data structure.
 * \param type 0=text, 1=uri, -1 invalid.
@@ -88,10 +80,6 @@ class LFSTK_windowClass
 		bool					LFSTK_getSticky(void);
 		void					LFSTK_setWindowType(const char *type);
 		void					LFSTK_setTransientFor(Window w);
-
-		int					LFSTK_getMonitorCount(void);
-		const monitorStruct	*LFSTK_getMonitorData(int monitor);
-		const monitorStruct	*LFSTK_getMonitors(void);
 	
 		void					LFSTK_reloadGlobals(void);
 		void					LFSTK_setXProperty(Atom property,Atom type,int format,void *dataptr,int propcnt);
@@ -164,7 +152,6 @@ class LFSTK_windowClass
 	protected:
 		bool					isActive;
 		char					*windowName;
-		void					loadMonitorData(void);
 		void					initWindow(bool loadvars);
 	
 	private:
@@ -182,8 +169,6 @@ class LFSTK_windowClass
 		Atom					pickTargetFromAtoms(Atom t1, Atom t2, Atom t3);
 
 		bool					isSticky;
-		int					monitorCount;
-		monitorStruct		*monitors;
 		geometryStruct		windowGeom;
 
 

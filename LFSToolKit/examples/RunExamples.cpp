@@ -25,7 +25,8 @@ exit $retval
 #include "../config.h"
 #include "lfstk/LFSTKGlobals.h"
 
-#define BOXLABEL			"Examples"
+#define BOXLABEL				"Examples"
+#define MAKEFLAGS			"-j10"
 
 LFSTK_applicationClass		*apc=NULL;
 LFSTK_windowClass			*wc=NULL;
@@ -44,13 +45,14 @@ bool doQuit(void *p,void* ud)
 	return(false);
 }
 
+
 bool buttonCB(void *p,void* ud)
 {
 	char	*command;
 	if(ud!=NULL)
 		{
 			if(makeLib->LFSTK_getValue()==true)
-				system("(cd ..;make -j4)");
+				system("(pushd ..;make " MAKEFLAGS ";popd)");
 
 			asprintf(&command,"%s %s &",(const char*)ud,dbg);
 			retValOfCommand=system(command);

@@ -51,9 +51,14 @@ runCommand ()
 	$1||true
 }
 
-distclean ()
+distcleanup ()
 {
 	runCommand "make distclean"
+}
+
+cleanup ()
+{
+	runCommand "make clean"||true
 }
 
 uninstall ()
@@ -77,6 +82,12 @@ deploytest ()
 	runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib64"
 	runCommand "make $MAKEFLAGS"
 	runCommand "make install DESTDIR=/tmp/lfsdesktop-deploy"
+}
+
+makeit ()
+{
+	runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib64"
+	runCommand "make $MAKEFLAGS"
 }
 
 ownit ()

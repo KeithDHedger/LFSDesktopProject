@@ -251,7 +251,7 @@ int main(int argc,char **argv)
 
 			//desktopTheme=mainwind->globalLib->LFSTK_oneLiner("cat %s/lfsdesktop.rc|grep icontheme|awk '{print $2}'",apc->configDir);
 			desktopTheme=mainwind->globalLib->desktopIconTheme.c_str();
-			mons=mainwind->LFSTK_getMonitorData(onMonitor);
+			mons=apc->LFSTK_getMonitorData(onMonitor);
 
 			rightOffset=0;
 			leftOffset=0;

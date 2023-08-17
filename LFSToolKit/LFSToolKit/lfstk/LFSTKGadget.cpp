@@ -1547,31 +1547,32 @@ cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int or
 * \return unsigned Monitor that gadget top left is on;
 */
 
-int LFSTK_gadgetClass::LFSTK_gadgetOnMonitor(void)
+int LFSTK_gadgetClass::LFSTK_gadgetOnWhichMonitor(void)
 {
-	int	tx=this->gadgetGeom.x;
-	int	ty=this->gadgetGeom.y;
+	geometryStruct	g;
+	int				tx=this->gadgetGeom.x;
+	int				ty=this->gadgetGeom.y;
 
-	const geometryStruct	*g=this->wc->LFSTK_getWindowGeom();
+	this->LFSTK_getGeomWindowRelative(&g,this->wc->app->rootWindow);
 
 	if(tx>=0)
-		tx=(g->x)+this->gadgetGeom.x;
+		tx=(g.x)+this->gadgetGeom.x;
 	else
-		tx=(g->w+g->x)-abs(this->gadgetGeom.x);
+		tx=(g.w+g.x)-abs(this->gadgetGeom.x);
 
 	if(ty>=0)
-		ty=(g->y)+this->gadgetGeom.y;
+		ty=(g.y)+this->gadgetGeom.y;
 	else
-		ty=(g->h+g->y)-abs(this->gadgetGeom.y);
+		ty=(g.h+g.y)-abs(this->gadgetGeom.y);
 
 	if(tx<0)
 		tx=0;
 	if(ty<0)
 		ty=0;
 
-	const monitorStruct* monitors=this->wc->LFSTK_getMonitors();
+	const monitorStruct* monitors=this->wc->app->LFSTK_getMonitors();
 
-	for(int j=0;j<this->wc->LFSTK_getMonitorCount();j++)
+	for(int j=0;j<this->wc->app->LFSTK_getMonitorCount();j++)
 		{
 			if((tx>=monitors[j].x) && (tx<(monitors[j].x+monitors[j].w)) && (ty>=monitors[j].y) && (ty<(monitors[j].y+monitors[j].h)))
 				return(j);
@@ -1726,7 +1727,6 @@ void LFSTK_gadgetClass::LFSTK_moveGadget(int x,int y)
 	this->gadgetGeom.x=x;
 	this->gadgetGeom.y=y;
 	XMoveWindow(this->wc->app->display,this->window,x,y);
-	this->LFSTK_clearWindow();//TESTING//
 }
 
 /**

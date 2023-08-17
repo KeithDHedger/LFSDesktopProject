@@ -22,17 +22,17 @@ exit $retval
 #include "lfstk/LFSTKGlobals.h"
 
 #define BOXLABEL			"Menu Example"
-#define NUMMENUS			16
+#define NUMMENUS			32
 
-LFSTK_applicationClass		*apc=NULL;
-LFSTK_windowClass			*wc=NULL;
+LFSTK_applicationClass	*apc=NULL;
+LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass			*label=NULL;
 LFSTK_labelClass			*personal=NULL;
 LFSTK_labelClass			*copyrite=NULL;
-LFSTK_buttonClass			*seperator=NULL;
-LFSTK_buttonClass			*quit=NULL;
-LFSTK_listGadgetClass		*list=NULL;
-LFSTK_menuClass				*menu=NULL;
+LFSTK_buttonClass		*seperator=NULL;
+LFSTK_buttonClass		*quit=NULL;
+LFSTK_listGadgetClass	*list=NULL;
+LFSTK_menuClass			*menu=NULL;
 
 bool doQuit(void *p,void* ud)
 {
@@ -51,8 +51,6 @@ bool menuCB(void *p,void* ud)
 bool buttonCB(void *p,void* ud)
 {
 	menu->LFSTK_showMenu();
-	return(true);
-	menu->mainMenuWindow->LFSTK_showWindow(true);
 	return(true);
 }
 
@@ -100,6 +98,7 @@ int main(int argc, char **argv)
 	wc->LFSTK_clearWindow(true);
 
 	menu=new LFSTK_menuClass(wc,DIALOGMIDDLE-HALFGADGETWIDTH,hsy+GADGETHITE,1,1);
+	menu->menuHeight=2000;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();
@@ -116,10 +115,15 @@ int main(int argc, char **argv)
 			mms[j]->userData=USERDATA(j+1);
 			mms[j]->imageType=NOTHUMB;
 		}
-	free(mms[12]->label);
-	mms[12]->label=strdup("--");
+//	free(mms[12]->label);
+//	mms[12]->label=strdup("--");
 	free(mms[2]->label);
 	mms[2]->label=strdup("A really long label that will over flow");
+
+//	free(mms[18]->label);
+//	mms[18]->label=strdup("--");
+//	free(mms[22]->label);
+//	mms[22]->label=strdup("--");
 
 	mms[0]->imageType=FILETHUMB;
 	mms[0]->data.imagePath=strdup("./AspellGUI.png");

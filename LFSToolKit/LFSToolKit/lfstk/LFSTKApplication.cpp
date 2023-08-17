@@ -36,6 +36,7 @@ LFSTK_applicationClass::~LFSTK_applicationClass()
 #ifdef _ENABLEDEBUG_
 	cairo_debug_reset_static_data();
 #endif
+	free(this->monitors);
 }
 
 /**
@@ -79,6 +80,8 @@ LFSTK_applicationClass::LFSTK_applicationClass()
 				}
 		}
 	XFree(visual_list);
+
+	this->LFSTK_loadMonitorData();
 
 	this->cm=XCreateColormap(this->display,this->rootWindow,this->visual,AllocNone);
 	this->displayWidth=DisplayWidth(this->display,this->screen);
@@ -332,3 +335,65 @@ int LFSTK_applicationClass::LFSTK_findWindow(LFSTK_windowClass *win)
 	return(-1);
 }
 
+/**
+* Load size and position of monitors.
+*/
+void LFSTK_applicationClass::LFSTK_loadMonitorData(void)//TODO//
+{
+	int					cnt=-1;
+	XineramaScreenInfo	*p=NULL;
+
+	if(this->monitors!=NULL)
+		free(this->monitors);
+
+	cnt=ScreenCount(this->display);
+	p=XineramaQueryScreens(this->display,&cnt);
+	if(p!=NULL)
+		{
+			if(cnt>0)
+				{
+					this->monitors=(monitorStruct*)calloc(sizeof(monitorStruct),cnt);
+					this->monitorCount=cnt;
+
+					for (int j=0; j<cnt; j++)
+						{
+							monitors[j].x=p[j].x_org;
+							monitors[j].y=p[j].y_org;
+							monitors[j].w=p[j].width;
+							monitors[j].h=p[j].height;
+							//fprintf(stderr,"j=%i x=%i y=%i w=%i h=%i\n",j,monitors[j].x,monitors[j].y,monitors[j].w,monitors[j].h);
+						}
+				}
+			XFree(p);
+		}
+}
+
+/**
+* Get number of monitors.
+* \return int Monitor cnt;
+*/
+int LFSTK_applicationClass::LFSTK_getMonitorCount(void)
+{
+	return(this->monitorCount);
+}
+
+/**
+* Get monitor data.
+* \param monitor Monitor number.
+* \return monitorsStruct* Monitor struct pointer;
+* \note Do not free returned result;
+*/
+const monitorStruct* LFSTK_applicationClass::LFSTK_getMonitorData(int monitor)
+{
+	return(&(this->monitors[monitor]));
+}
+
+/**
+* Get monitors array.
+* \return Const pointer to monitor array.
+* \note Do not free returned structure.
+*/
+const monitorStruct* LFSTK_applicationClass::LFSTK_getMonitors(void)
+{
+	return(this->monitors);
+}

@@ -152,7 +152,7 @@ bool buttonCB(void *p,void* ud)
 					fd=fopen(monitorPrefs,"w");
 					if(fd!=NULL)
 						{
-							for(long j=0;j<wc->LFSTK_getMonitorCount();j++)
+							for(long j=0;j<apc->LFSTK_getMonitorCount();j++)
 								fprintf(fd,"%i\n%s\n",monitors[j].mode,monitors[j].path);
 							fclose(fd);
 						}
@@ -247,7 +247,7 @@ void loadMonitorInfo(void)
 		}
 	else
 		{
-			for(int j=0;j<wc->LFSTK_getMonitorCount();j++)
+			for(int j=0;j<apc->LFSTK_getMonitorCount();j++)
 				{
 					monitors[j].mode=0;
 					monitors[j].path=strdup("");
@@ -357,8 +357,8 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //monitors
-	monitorsMenu=new menuStruct*[wc->LFSTK_getMonitorCount()];
-	for(long j=0;j<wc->LFSTK_getMonitorCount();j++)
+	monitorsMenu=new menuStruct*[apc->LFSTK_getMonitorCount()];
+	for(long j=0;j<apc->LFSTK_getMonitorCount();j++)
 		{
 			monitorsMenu[j]=new menuStruct;
 			asprintf(&monitorsMenu[j]->label,"Monitor %i",j);
@@ -371,7 +371,7 @@ int main(int argc, char **argv)
 	monitorsMenuButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SHOWMONITORMENU");
 	monitorSelectMenu=new LFSTK_menuClass(wc,BORDER+GADGETWIDTH,sy,1,1);
 	monitorSelectMenu->LFSTK_setMouseCallBack(NULL,monitorMenuCB,NULL);
-	monitorSelectMenu->LFSTK_addMainMenus(monitorsMenu,wc->LFSTK_getMonitorCount());
+	monitorSelectMenu->LFSTK_addMainMenus(monitorsMenu,apc->LFSTK_getMonitorCount());
 
 	loadMonitorInfo();
 	sy+=YSPACING;

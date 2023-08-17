@@ -23,20 +23,20 @@ exit $retval
 
 #define BOXLABEL			"Basic Button Window"
 
-LFSTK_applicationClass		*apc=NULL;
-LFSTK_windowClass			*wc=NULL;
+LFSTK_applicationClass	*apc=NULL;
+LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass			*label=NULL;
 LFSTK_labelClass			*personal=NULL;
 LFSTK_labelClass			*copyrite=NULL;
-LFSTK_buttonClass			*seperator=NULL;
-LFSTK_buttonClass			*quit=NULL;
-LFSTK_buttonClass			*inactivebutton=NULL;
-LFSTK_buttonClass			*normalbutton=NULL;
-LFSTK_buttonClass			*ignoredButton=NULL;
-LFSTK_buttonClass			*leftButton=NULL;
-LFSTK_buttonClass			*centreButton=NULL;
-LFSTK_buttonClass			*rightButton=NULL;
-LFSTK_buttonClass			*dropButton=NULL;
+LFSTK_buttonClass		*seperator=NULL;
+LFSTK_buttonClass		*quit=NULL;
+LFSTK_buttonClass		*inactivebutton=NULL;
+LFSTK_buttonClass		*normalbutton=NULL;
+LFSTK_buttonClass		*ignoredButton=NULL;
+LFSTK_buttonClass		*leftButton=NULL;
+LFSTK_buttonClass		*centreButton=NULL;
+LFSTK_buttonClass		*rightButton=NULL;
+LFSTK_buttonClass		*dropButton=NULL;
 
 bool						show=true;
 
