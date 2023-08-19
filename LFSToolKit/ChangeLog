@@ -1,4 +1,5 @@
 0.5.1
+Fixed scrolling sub menus.
 Moved all monitor data/fnctios to main application class.
 Fixed getting correct monitor for window.
 Added scrollable menu.

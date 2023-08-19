@@ -22,7 +22,11 @@ exit $retval
 #include "lfstk/LFSTKGlobals.h"
 
 #define BOXLABEL			"Menu Example"
-#define NUMMENUS			32
+#define MAINNUMMENUS		8
+#define SUB1NUMMENUS		24
+#define SUB2NUMMENUS		32
+#define SUBSUB1NUMMENUS	48
+
 
 LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*wc=NULL;
@@ -104,9 +108,9 @@ int main(int argc, char **argv)
 	wc->LFSTK_showWindow();
 	wc->LFSTK_clearWindow(true);
 
-	menuStruct	**mms=new menuStruct*[NUMMENUS];
+	menuStruct	**mms=new menuStruct*[MAINNUMMENUS];
 
-	for (int j=0; j<NUMMENUS; j++)
+	for (int j=0; j<MAINNUMMENUS; j++)
 		{
 			mms[j]=new menuStruct;
 			asprintf(&mms[j]->label,"menu %i",j);
@@ -115,27 +119,24 @@ int main(int argc, char **argv)
 			mms[j]->userData=USERDATA(j+1);
 			mms[j]->imageType=NOTHUMB;
 		}
-//	free(mms[12]->label);
-//	mms[12]->label=strdup("--");
+	free(mms[1]->label);
+	mms[1]->label=strdup("--");
 	free(mms[2]->label);
-	mms[2]->label=strdup("A really long label that will over flow");
+	mms[2]->label=strdup("A really long label that will expand the menu width");
 
-//	free(mms[18]->label);
-//	mms[18]->label=strdup("--");
-//	free(mms[22]->label);
-//	mms[22]->label=strdup("--");
-
+	free(mms[3]->label);
+	mms[3]->label=strdup("--");
 	mms[0]->imageType=FILETHUMB;
 	mms[0]->data.imagePath=strdup("./AspellGUI.png");
-	mms[10]->imageType=FILETHUMB;
-	mms[10]->data.imagePath=strdup("./casper2.JPG");
-	mms[12]->imageType=CAIROTHUMB;
-	mms[12]->data.surface=wc->globalLib->LFSTK_createSurfaceFromPath("./ManPageEditor.png");
+	mms[1]->imageType=FILETHUMB;
+	mms[1]->data.imagePath=strdup("./casper2.JPG");
+	mms[4]->imageType=CAIROTHUMB;
+	mms[4]->data.surface=wc->globalLib->LFSTK_createSurfaceFromPath("./ManPageEditor.png");
 
 	mms[2]->hasSubMenu=true;
-	mms[2]->subMenuCnt=NUMMENUS;
-	mms[2]->subMenus=new menuStruct*[NUMMENUS];
-	for (int j=0; j<NUMMENUS; j++)
+	mms[2]->subMenuCnt=SUB1NUMMENUS;
+	mms[2]->subMenus=new menuStruct*[SUB1NUMMENUS];
+	for (int j=0; j<SUB1NUMMENUS; j++)
 		{
 			mms[2]->subMenus[j]=new menuStruct;
 			asprintf(&mms[2]->subMenus[j]->label,"sub menu -2 %i",j);
@@ -146,10 +147,10 @@ int main(int argc, char **argv)
 		}
 
 	mms[6]->hasSubMenu=true;
-	mms[6]->subMenuCnt=NUMMENUS;
+	mms[6]->subMenuCnt=SUB2NUMMENUS;
 
-	mms[6]->subMenus=new menuStruct*[NUMMENUS];
-	for (int j=0; j<NUMMENUS; j++)
+	mms[6]->subMenus=new menuStruct*[SUB2NUMMENUS];
+	for (int j=0; j<SUB2NUMMENUS; j++)
 		{
 			mms[6]->subMenus[j]=new menuStruct;
 			asprintf(&mms[6]->subMenus[j]->label,"sub menu 6 - %i",j);
@@ -166,10 +167,10 @@ int main(int argc, char **argv)
 	mms[6]->subMenus[5]->label=strdup("--");
 
 	mms[6]->subMenus[4]->hasSubMenu=true;
-	mms[6]->subMenus[4]->subMenuCnt=NUMMENUS;
+	mms[6]->subMenus[4]->subMenuCnt=SUBSUB1NUMMENUS;
 
-	mms[6]->subMenus[4]->subMenus=new menuStruct*[NUMMENUS];
-	for (int j=0; j<NUMMENUS; j++)
+	mms[6]->subMenus[4]->subMenus=new menuStruct*[SUBSUB1NUMMENUS];
+	for (int j=0; j<SUBSUB1NUMMENUS; j++)
 		{
 			mms[6]->subMenus[4]->subMenus[j]=new menuStruct;
 			asprintf(&mms[6]->subMenus[4]->subMenus[j]->label,"sub sub menu 6 - %i",j);
@@ -181,7 +182,7 @@ int main(int argc, char **argv)
 		}
 
 	menu->LFSTK_setMouseCallBack(NULL,menuCB,NULL);
-	menu->LFSTK_addMainMenus(mms,NUMMENUS);
+	menu->LFSTK_addMainMenus(mms,MAINNUMMENUS);
 
 	int retval=apc->LFSTK_runApp();
 

@@ -32,14 +32,28 @@ class LFSTK_menuItemClass : public LFSTK_buttonClass
 		~LFSTK_menuItemClass();
 
 		LFSTK_menuItemClass(LFSTK_toolWindowClass* parentwc,LFSTK_menuClass *mainmenu,int x,int y,unsigned w,unsigned h,menuStruct *menu,int labelgrav=LEFT);
-		bool			mouseExit(XButtonEvent *e);
-		bool			mouseEnter(XButtonEvent *e);
 
-		LFSTK_menuClass	*menu=NULL;
+		bool						mouseExit(XButtonEvent *e);
+		bool						mouseEnter(XButtonEvent *e);
 
+		LFSTK_menuClass			*menu=NULL;
+		static bool				menuItemScroll(void *object,void* userdata);
+
+		int						x;
+		int						y;
+		int						w;
+		int						h;
 	private:
-		LFSTK_toolWindowClass				*subwc=NULL;
-		menuStruct							*menuData=NULL;
+		void						resizeMenu(int newsize);
+		int						maxMenusDisplayed=0;
+		int						menuHeight=0;
+		bool						isScrollable=false;
+		LFSTK_buttonClass		*upButton=NULL;
+		LFSTK_buttonClass		*downButton=NULL;
+		int						topMenu=0;
+
+		LFSTK_toolWindowClass	*subwc=NULL;
+		menuStruct				*menuData=NULL;
 };
 
 #endif

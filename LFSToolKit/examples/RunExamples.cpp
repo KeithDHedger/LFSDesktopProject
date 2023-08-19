@@ -8,7 +8,7 @@ fi
 
 (
 	cd ..
-	make -j4
+	make ${MAKEFLAGS:--j4}
 )
 
 APPNAME=$(basename $0 .cpp)

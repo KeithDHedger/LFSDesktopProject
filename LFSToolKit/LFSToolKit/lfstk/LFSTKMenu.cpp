@@ -72,7 +72,6 @@ void LFSTK_menuClass::resizeMenu(void)
 	Window				dw;
 	int					halfhite=GADGETHITE/2;
 	int					sy=0;
-	const geometryStruct	*geom=this->mainMenuWindow->LFSTK_getWindowGeom();
 	int					regetmenh=0;
 	int					monnum;
 	const monitorStruct	*m;
@@ -95,7 +94,7 @@ void LFSTK_menuClass::resizeMenu(void)
 			this->menuHeight=((this->menuHeight/GADGETHITE)*GADGETHITE);
 			if(this->menuHeight<=GADGETHITE)
 				return;;//TODO//
-			this->mainMenuWindow->LFSTK_resizeWindow(geom->w,this->menuHeight,true);
+			this->mainMenuWindow->LFSTK_resizeWindow(this->w,this->menuHeight,true);
 
 			for (std::map<int,mappedListener*>::iterator it=this->mainMenuWindow->gadgetMap.begin();it!=this->mainMenuWindow->gadgetMap.end();++it)
 				{
@@ -115,7 +114,7 @@ void LFSTK_menuClass::resizeMenu(void)
 			this->upButton->LFSTK_setMouseCallBack(NULL,this->menuScroll,(void*)this);
 			this->upButton->userData=USERDATA(1);
 			if(this->downButton==NULL)
-				this->downButton=new LFSTK_buttonClass(this->mainMenuWindow,">>>>",0,this->menuHeight-halfhite,this->w,halfhite);
+				this->downButton=new LFSTK_buttonClass(this->mainMenuWindow,">>>>",0,this->menuHeight-halfhite,this->w,halfhite);/////////////////>>>>>>>>>>>>>>>>>
 			else
 				this->downButton->LFSTK_moveGadget(0,this->menuHeight-(halfhite));
 			this->downButton->LFSTK_setMouseCallBack(NULL,this->menuScroll,(void*)this);
@@ -126,7 +125,8 @@ void LFSTK_menuClass::resizeMenu(void)
 		{
 			this->menuHeight=regetmenh;
 			sy=0;
-			this->mainMenuWindow->LFSTK_resizeWindow(geom->w,this->menuHeight,true);
+			this->mainMenuWindow->LFSTK_resizeWindow(this->w,this->menuHeight,true);
+			//this->mainMenuWindow->LFSTK_resizeWindow(400,this->menuHeight,true);
 			for (std::map<int,mappedListener*>::iterator it=this->mainMenuWindow->gadgetMap.begin();it!=this->mainMenuWindow->gadgetMap.end();++it)
 				{
 					mappedListener	*ml=it->second;
@@ -225,6 +225,9 @@ void LFSTK_menuClass::LFSTK_showMenu(void)
 		}
 }
 
+/**
+* Scroll menus.
+*/
 bool LFSTK_menuClass::menuScroll(void *object,void* userdata)
 {
 	LFSTK_buttonClass	*button=static_cast<LFSTK_buttonClass*>(object);
@@ -306,6 +309,7 @@ bool LFSTK_menuClass::menuScroll(void *object,void* userdata)
 		}
 	return(true);
 }
+
 /**
 * Add main menus to class.
 * \param menuStruct **menus, Pointer to array of prefilled menuStruct's.
@@ -382,7 +386,6 @@ void LFSTK_menuClass::LFSTK_addMainMenus(menuStruct **menus,int menucnt)
 			sy=hite/2;
 		}
 	this->mainMenuWindow=new LFSTK_toolWindowClass(win,this->parentwc->app);
-	//this->mainMenuWindow->loadMonitorData();
 	delete win;
 
 	for(int j=0;j<this->mainMenuCnt;j++)

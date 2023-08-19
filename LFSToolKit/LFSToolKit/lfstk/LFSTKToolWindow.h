@@ -34,6 +34,8 @@ class LFSTK_toolWindowClass : public LFSTK_windowClass
 		LFSTK_toolWindowClass(Display *disp,LFSTK_windowClass *wc,const char *windowtype,int x,int y,int w,int h,const char* name,LFSTK_applicationClass *app);
 		LFSTK_toolWindowClass(windowInitStruct *wi,LFSTK_applicationClass *app);
 
+//int globaly=0;
+
 	protected:
 	private:
 		void	windowClassInitCommon(windowInitStruct *wi);

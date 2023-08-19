@@ -805,6 +805,10 @@ LFSTK_windowClass::LFSTK_windowClass(windowInitStruct *wi,LFSTK_applicationClass
 				break;
 		}
 	this->gadgetMap.clear();
+	this->x=wi->x;
+	this->y=wi->y;
+	this->x=wi->w;
+	this->y=wi->h;
 }
 
 /**

@@ -130,7 +130,15 @@ LFSTK_toolWindowClass::LFSTK_toolWindowClass(Display *disp,LFSTK_windowClass *wc
 
 	this->windowClassInitCommon(wi);
 	this->gadgetMap.clear();
+//	this->y=y;
 	delete wi;
+
+//	int					trcx;
+//	int					trcy;
+//	Window				dw;
+//XTranslateCoordinates(this->app->display,this->window,this->app->rootWindow,0,0,&trcx,&trcy,&dw);
+//this->globaly=trcy;
+
 }
 
 LFSTK_toolWindowClass::LFSTK_toolWindowClass()

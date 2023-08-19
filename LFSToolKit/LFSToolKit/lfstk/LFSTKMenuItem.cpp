@@ -73,6 +73,12 @@ LFSTK_menuItemClass::LFSTK_menuItemClass(LFSTK_toolWindowClass* parentwc,LFSTK_m
 	this->LFSTK_setLabelGravity(labelgrav);
 	this->menuData=menu;
 	this->menu=mainmenu;
+	this->x=x;
+	this->y=y;
+	this->w=w;
+	this->h=h;
+	//this->py=parentwc->y;
+	//this->parentwc=parentwc;
 }
 
 /**
@@ -97,24 +103,78 @@ bool LFSTK_menuItemClass::mouseExit(XButtonEvent *e)
 }
 
 /**
+* Reset main menu size and add scroll buttons.
+*/
+void LFSTK_menuItemClass::resizeMenu(int newsize)
+{
+	int	halfhite=GADGETHITE/2;
+	int	sy=0;
+
+	this->topMenu=0;
+	this->menuHeight=((newsize/GADGETHITE)*GADGETHITE)+GADGETHITE;
+	this->maxMenusDisplayed=(this->menuHeight/GADGETHITE)+1;
+	this->subwc->LFSTK_resizeWindow(this->w,this->menuHeight,true);
+	if(this->isScrollable==true)
+		sy=halfhite;
+
+	for (std::map<int,mappedListener*>::iterator it=this->subwc->gadgetMap.begin();it!=this->subwc->gadgetMap.end();++it)
+		{
+			mappedListener	*ml=it->second;
+
+			if((ml!=NULL) && (ml->type==MENUITEMGADGET))
+				{
+					ml->gadget->LFSTK_moveGadget(0,sy);
+					sy+=GADGETHITE;
+				}
+		}
+
+	if(this->upButton==NULL)
+		this->upButton=new LFSTK_buttonClass(this->subwc,"<<<<",0,0,this->w,halfhite);
+	else
+		this->upButton->LFSTK_moveGadget(0,0);
+	this->upButton->LFSTK_setMouseCallBack(NULL,this->menuItemScroll,(void*)this);
+	this->upButton->userData=USERDATA(1);
+	if(this->downButton==NULL)
+		this->downButton=new LFSTK_buttonClass(this->subwc,">>>>",0,this->menuHeight-halfhite,this->w,halfhite);
+	else
+		this->downButton->LFSTK_moveGadget(0,this->menuHeight-halfhite);
+	this->downButton->LFSTK_setMouseCallBack(NULL,this->menuItemScroll,(void*)this);
+	this->downButton->userData=USERDATA(2);
+	this->maxMenusDisplayed=(this->menuHeight/GADGETHITE)+1;
+
+	if(this->isScrollable==false)
+		{
+			if(this->upButton!=NULL)
+				this->upButton->LFSTK_moveGadget(0,-100);
+			if(this->downButton!=NULL)
+				this->downButton->LFSTK_moveGadget(0,-100);
+		}
+}
+
+/**
 * Mouse enter callback.
 * \param e XButtonEvent passed from mainloop->listener.
 * \return Return true if event fully handeled or false to pass it on.
 */
 bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 {
-	double			txtwid=0;
-	double			maxtxtwid=0;
-	int				finaltxtwid;
-	int				gotsubmenu=this->pad*4;
-	int				gotthumb=LEFT;
-	int				winshrink=0;
-	int				hite=GADGETHITE;
-	Window			sink;
-	Window			childwindow;
-	int				sinkx;
-	int				sinky;
-	unsigned int	buttonmask;
+	double				txtwid=0;
+	double				maxtxtwid=0;
+	int					finaltxtwid;
+	int					gotsubmenu=this->pad*4;
+	int					gotthumb=LEFT;
+	int					winshrink=0;
+	int					hite=GADGETHITE;
+	Window				sink;
+	Window				childwindow;
+	int					sinkx;
+	int					sinky;
+	unsigned int			buttonmask;
+	int					trcx;
+	int					trcy;
+	Window				dw;
+	const monitorStruct	*m;
+	int					monnum;
 
 	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
 		return(true);
@@ -135,7 +195,7 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 			XEvent	event;
 			XEvent	lookevent;
 			bool	gotlooked=false;
-	
+
 			if(this->subwc==NULL)
 				{
 					for(int j=0;j<this->menuData->subMenuCnt;j++)
@@ -148,20 +208,21 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 								gotsubmenu=GADGETHITE;
 							if(this->menuData->subMenus[j]->imageType!=NOTHUMB)
 								gotthumb=MENU;
-							if(strcmp(this->menuData->subMenus[j]->label,"--")==0)
-								winshrink+=(GADGETHITE-SEPARATORHITE);
+							//if(strcmp(this->menuData->subMenus[j]->label,"--")==0)
+							//	winshrink+=(GADGETHITE-SEPARATORHITE);
 						}
 					if(gotthumb==MENU)
 						maxtxtwid+=GADGETHITE+gotsubmenu;
 					else
 						maxtxtwid+=gotsubmenu;
-					
+					this->w=maxtxtwid;
 					this->subwc=new LFSTK_toolWindowClass(this->wc->app->display,this->wc,"_NET_WM_WINDOW_TYPE_MENU",this->gadgetGeom.x,this->gadgetGeom.y,maxtxtwid,GADGETHITE*this->menuData->subMenuCnt-winshrink,"menu window",this->wc->app);
+
 					for(int j=0; j<this->menuData->subMenuCnt; j++)
 						{
 							hite=GADGETHITE;
-							if(strcmp(this->menuData->subMenus[j]->label,"--")==0)
-								hite=SEPARATORHITE;
+							//if(strcmp(this->menuData->subMenus[j]->label,"--")==0)
+							//	hite=SEPARATORHITE;
 
 							label=new LFSTK_menuItemClass(this->subwc,this->menu,0,sy,maxtxtwid,hite,this->menuData->subMenus[j],gotthumb);
 							label->LFSTK_setMouseCallBack(this->callBacks.mousePressCallback,this->callBacks.mouseReleaseCallback,this->menuData->subMenus[j]->userData);
@@ -173,9 +234,27 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 						}
 					this->menu->subwindows->push_back(this->subwc);
 				}
+
+
+			if(this->subwc!=NULL)
+				{
+					monnum=this->wc->LFSTK_windowOnMonitor();
+					m=this->subwc->app->LFSTK_getMonitorData(monnum);
+
+					if((this->menuData->subMenuCnt*GADGETHITE)>m->h-e->y_root)
+						{
+							this->isScrollable=true;
+							this->resizeMenu((m->h-e->y_root)-GADGETHITE);
+						}
+					else
+						{
+							this->isScrollable=false;
+							this->resizeMenu((this->menuData->subMenuCnt*GADGETHITE)-GADGETHITE);
+						}
+				}
 			this->subwc->mainLoop=true;
 			this->subwc->LFSTK_showWindow(true);
- 
+
 			while(this->subwc->mainLoop==true)
 				{
 					if(XPending(this->wc->app->display))
@@ -222,6 +301,8 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 					switch(event.type)
 						{
 							case ButtonRelease:
+								if(ml->type==BUTTONGADGET)
+									continue;
 								for(int j=0;j<this->menu->subwindows->size();j++)
 									{
 										this->menu->subwindows->at(j)->LFSTK_hideWindow();
@@ -243,7 +324,6 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 									}
 								break;
 						}
-
 
 					gotlooked=XCheckTypedWindowEvent(this->wc->app->display,this->subwc->window,EnterNotify,&lookevent);
 					if(gotlooked==false)
@@ -277,6 +357,93 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 								}
 						}
 				}
+		}
+	return(true);
+}
+
+/**
+* Scroll menus.
+*/
+bool LFSTK_menuItemClass::menuItemScroll(void *object,void* userdata)
+{
+	LFSTK_buttonClass	*button=static_cast<LFSTK_buttonClass*>(object);
+	LFSTK_menuItemClass	*menuc=static_cast<LFSTK_menuItemClass*>(userdata);
+	geometryStruct		geom;
+	int					offset;
+	int					cnt;
+
+	if((long)button->userData==1)
+		{
+			cnt=0;
+			menuc->topMenu-=(menuc->maxMenusDisplayed-2);
+			offset=menuc->topMenu;
+
+			if(menuc->topMenu<0)
+				{
+					menuc->topMenu=0;
+					offset=0;
+				}
+
+			for (std::map<int,mappedListener*>::iterator it=menuc->subwc->gadgetMap.begin();it!=menuc->subwc->gadgetMap.end();++it)
+				{
+					mappedListener	*ml=it->second;
+					if((ml!=NULL) && (ml->type==MENUITEMGADGET))
+						{
+							ml->gadget->LFSTK_getGeom(&geom);
+							//ml->gadget->LFSTK_moveGadget(geom.x,cnt+(GADGETHITE/2));
+							ml->gadget->LFSTK_moveGadget(0,cnt+(GADGETHITE/2));
+							cnt+=GADGETHITE;
+						}
+				}
+
+			for (std::map<int,mappedListener*>::iterator it=menuc->subwc->gadgetMap.begin();it!=menuc->subwc->gadgetMap.end();++it)
+				{
+					mappedListener	*ml=it->second;
+					if((ml!=NULL) && (ml->type==MENUITEMGADGET))// && (ml->gadget==gadget))
+						{
+							ml->gadget->LFSTK_getGeom(&geom);
+							geom.y=geom.y-((offset)*GADGETHITE);
+							//ml->gadget->LFSTK_moveGadget(geom.x,geom.y);
+							ml->gadget->LFSTK_moveGadget(0,geom.y);
+						}
+				}
+			return(true);
+		}
+
+	if((long)button->userData==2)
+		{
+			menuc->topMenu+=(menuc->maxMenusDisplayed-2);
+			offset=menuc->topMenu;
+			cnt=0;
+
+			if((menuc->topMenu+(menuc->maxMenusDisplayed-2))>menuc->menuData->subMenuCnt)
+				{
+					menuc->topMenu=menuc->menuData->subMenuCnt-(menuc->maxMenusDisplayed-2);
+					offset=menuc->topMenu;
+				}
+
+			for (std::map<int,mappedListener*>::iterator it=menuc->subwc->gadgetMap.begin();it!=menuc->subwc->gadgetMap.end();++it)
+				{
+					mappedListener	*ml=it->second;
+					if((ml!=NULL) && (ml->type==MENUITEMGADGET))// && (ml->gadget==gadget))
+						{
+							ml->gadget->LFSTK_getGeom(&geom);
+							ml->gadget->LFSTK_moveGadget(0,cnt+(GADGETHITE/2));
+							cnt+=GADGETHITE;
+						}
+				}
+
+			for (std::map<int,mappedListener*>::iterator it=menuc->subwc->gadgetMap.begin();it!=menuc->subwc->gadgetMap.end();++it)
+				{
+					mappedListener	*ml=it->second;
+					if((ml!=NULL) && (ml->type==MENUITEMGADGET))// && (ml->gadget==gadget))
+						{
+							ml->gadget->LFSTK_getGeom(&geom);
+							geom.y=geom.y-((offset)*GADGETHITE);
+							ml->gadget->LFSTK_moveGadget(0,geom.y);
+						}
+				}
+			return(true);
 		}
 	return(true);
 }
