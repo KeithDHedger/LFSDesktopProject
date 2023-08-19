@@ -101,7 +101,7 @@ void sendNotify(const char *name,const char *message)//TODO//could be better
 {
 #ifdef _GOTNOTIFYSEND_
 	char	*command;
-	asprintf(&command,"notify-send -u low -t 2000 -i stock_dialog-info \"%s\" \"%s ...\"",name,message);
+	asprintf(&command,"notify-send -u low -t 2000 -i stock_dialog-info \"%s\" \"%s ...\" &",name,message);
 	system(command);
 	free(command);
 #endif

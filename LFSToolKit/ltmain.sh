@@ -7956,7 +7956,7 @@ func_mode_link ()
 	# Find the relevant object directory and library name.
 	if test yes = "$installed"; then
 	  if test ! -f "$lt_sysroot$libdir/$linklib" && test -f "$abs_ladir/$linklib"; then
-	    func_warning "library '$lib' was moved."
+	    #func_warning "library '$lib' was moved."
 	    dir=$ladir
 	    absdir=$abs_ladir
 	    libdir=$abs_ladir
@@ -8524,7 +8524,7 @@ func_mode_link ()
 		  test -z "$libdir" && \
 		    func_fatal_error "'$deplib' is not a valid libtool archive"
 		  test "$absdir" != "$libdir" && \
-		    func_warning "'$deplib' seems to be moved"
+		    #func_warning "'$deplib' seems to be moved"
 
 		  path=-L$absdir
 		fi
