@@ -12,3 +12,6 @@ https://keithdhedger.github.io/LFSDesktopProject/
 INFORMATION!
 
 LFSWM2 Should be used in place of LFSWManager.
+
+Non essential files  have been removed from the repo, you now need to use ( for example )./autogen --prefix=/usr --libdir=/usr/lib64
+
