@@ -77,8 +77,6 @@ LFSTK_menuItemClass::LFSTK_menuItemClass(LFSTK_toolWindowClass* parentwc,LFSTK_m
 	this->y=y;
 	this->w=w;
 	this->h=h;
-	//this->py=parentwc->y;
-	//this->parentwc=parentwc;
 }
 
 /**
@@ -245,6 +243,8 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 						{
 							this->isScrollable=true;
 							this->resizeMenu((m->h-e->y_root)-GADGETHITE);
+							if(this->upButton!=NULL)
+								this->upButton->LFSTK_setIgnores(false,true);
 						}
 					else
 						{
@@ -303,6 +303,7 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 							case ButtonRelease:
 								if(ml->type==BUTTONGADGET)
 									continue;
+
 								for(int j=0;j<this->menu->subwindows->size();j++)
 									{
 										this->menu->subwindows->at(j)->LFSTK_hideWindow();
@@ -378,10 +379,15 @@ bool LFSTK_menuItemClass::menuItemScroll(void *object,void* userdata)
 			menuc->topMenu-=(menuc->maxMenusDisplayed-2);
 			offset=menuc->topMenu;
 
+			if(menuc->downButton!=NULL)
+				menuc->downButton->LFSTK_setIgnores(true,true);
+				
 			if(menuc->topMenu<0)
 				{
 					menuc->topMenu=0;
 					offset=0;
+					if(menuc->upButton!=NULL)
+						menuc->upButton->LFSTK_setIgnores(false,true);
 				}
 
 			for (std::map<int,mappedListener*>::iterator it=menuc->subwc->gadgetMap.begin();it!=menuc->subwc->gadgetMap.end();++it)
@@ -390,7 +396,6 @@ bool LFSTK_menuItemClass::menuItemScroll(void *object,void* userdata)
 					if((ml!=NULL) && (ml->type==MENUITEMGADGET))
 						{
 							ml->gadget->LFSTK_getGeom(&geom);
-							//ml->gadget->LFSTK_moveGadget(geom.x,cnt+(GADGETHITE/2));
 							ml->gadget->LFSTK_moveGadget(0,cnt+(GADGETHITE/2));
 							cnt+=GADGETHITE;
 						}
@@ -403,7 +408,6 @@ bool LFSTK_menuItemClass::menuItemScroll(void *object,void* userdata)
 						{
 							ml->gadget->LFSTK_getGeom(&geom);
 							geom.y=geom.y-((offset)*GADGETHITE);
-							//ml->gadget->LFSTK_moveGadget(geom.x,geom.y);
 							ml->gadget->LFSTK_moveGadget(0,geom.y);
 						}
 				}
@@ -416,10 +420,15 @@ bool LFSTK_menuItemClass::menuItemScroll(void *object,void* userdata)
 			offset=menuc->topMenu;
 			cnt=0;
 
+			if(menuc->upButton!=NULL)
+				menuc->upButton->LFSTK_setIgnores(true,true);
+
 			if((menuc->topMenu+(menuc->maxMenusDisplayed-2))>menuc->menuData->subMenuCnt)
 				{
 					menuc->topMenu=menuc->menuData->subMenuCnt-(menuc->maxMenusDisplayed-2);
 					offset=menuc->topMenu;
+					if(menuc->downButton!=NULL)
+						menuc->downButton->LFSTK_setIgnores(false,true);
 				}
 
 			for (std::map<int,mappedListener*>::iterator it=menuc->subwc->gadgetMap.begin();it!=menuc->subwc->gadgetMap.end();++it)

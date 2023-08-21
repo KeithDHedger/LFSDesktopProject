@@ -43,7 +43,10 @@ else
 	BUILDLFSWMANAGER=""
 fi
 
+#Set this to your own user name
 CHANGEUSER=keithhedger
+#Set this if needed.
+LIBDIRSUFFIX=64
 
 runCommand ()
 {
@@ -64,14 +67,14 @@ cleanup ()
 uninstall ()
 {
 	runCommand "make distclean"||true
-	runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib64"
+	runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib${LIBDIRSUFFIX}"
 	runCommand "make uninstall"
 }
 
 deploy ()
 {
 	runCommand "make distclean"||true
-	runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib64"
+	runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib${LIBDIRSUFFIX}"
 	runCommand "make $MAKEFLAGS"
 	runCommand "make install"
 }
@@ -79,14 +82,14 @@ deploy ()
 deploytest ()
 {
 	runCommand "make distclean"||true
-	runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib64"
+	runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib${LIBDIRSUFFIX}"
 	runCommand "make $MAKEFLAGS"
 	runCommand "make install DESTDIR=/tmp/lfsdesktop-deploy"
 }
 
 makeit ()
 {
-	runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib64"
+	runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib${LIBDIRSUFFIX}"
 	runCommand "make $MAKEFLAGS"
 }
 

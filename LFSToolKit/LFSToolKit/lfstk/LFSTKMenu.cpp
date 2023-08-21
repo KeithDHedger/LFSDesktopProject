@@ -163,6 +163,8 @@ void LFSTK_menuClass::LFSTK_showMenu(void)
 	this->mainMenuWindow->app->LFSTK_loadMonitorData();
 
 	this->resizeMenu();
+	if(this->upButton!=NULL)
+		this->upButton->LFSTK_setIgnores(false,true);
 	this->mainMenuWindow->LFSTK_showWindow(true);
 	this->mainMenuWindow->LFSTK_setKeepAbove(true);
 
@@ -171,6 +173,9 @@ void LFSTK_menuClass::LFSTK_showMenu(void)
 	XTranslateCoordinates(this->parentwc->app->display,this->parentwc->window,this->parentwc->app->rootWindow,this->x,this->y,&x,&y,&dw);
 	this->mainMenuWindow->LFSTK_moveWindow(x,y,true);
 	XSetInputFocus(this->parentwc->app->display,this->mainMenuWindow->window,RevertToNone,CurrentTime);
+
+	if(this->upButton!=NULL)
+		this->upButton->LFSTK_setIgnores(false,true);
 
 	while(XPending(this->parentwc->app->display))
 		{
@@ -242,10 +247,15 @@ bool LFSTK_menuClass::menuScroll(void *object,void* userdata)
 			menuc->topMenu-=(menuc->maxMenusDisplayed-2);
 			offset=menuc->topMenu;
 
+			if(menuc->downButton!=NULL)
+				menuc->downButton->LFSTK_setIgnores(true,true);
+
 			if(menuc->topMenu<0)
 				{
 					menuc->topMenu=0;
 					offset=0;
+					if(menuc->upButton!=NULL)
+						menuc->upButton->LFSTK_setIgnores(false,true);
 				}
 
 			for (std::map<int,mappedListener*>::iterator it=menuc->mainMenuWindow->gadgetMap.begin();it!=menuc->mainMenuWindow->gadgetMap.end();++it)
@@ -278,10 +288,15 @@ bool LFSTK_menuClass::menuScroll(void *object,void* userdata)
 			offset=menuc->topMenu;
 			cnt=0;
 
+			if(menuc->upButton!=NULL)
+				menuc->upButton->LFSTK_setIgnores(true,true);
+
 			if((menuc->topMenu+(menuc->maxMenusDisplayed-2))>menuc->mainMenuCnt)
 				{
 					menuc->topMenu=menuc->mainMenuCnt-(menuc->maxMenusDisplayed-2);
 					offset=menuc->topMenu;
+					if(menuc->downButton!=NULL)
+						menuc->downButton->LFSTK_setIgnores(false,true);
 				}
 
 			for (std::map<int,mappedListener*>::iterator it=menuc->mainMenuWindow->gadgetMap.begin();it!=menuc->mainMenuWindow->gadgetMap.end();++it)

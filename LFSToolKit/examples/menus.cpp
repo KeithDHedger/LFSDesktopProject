@@ -22,7 +22,7 @@ exit $retval
 #include "lfstk/LFSTKGlobals.h"
 
 #define BOXLABEL			"Menu Example"
-#define MAINNUMMENUS		8
+#define MAINNUMMENUS		64
 #define SUB1NUMMENUS		24
 #define SUB2NUMMENUS		32
 #define SUBSUB1NUMMENUS	48
