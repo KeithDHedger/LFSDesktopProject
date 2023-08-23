@@ -61,6 +61,9 @@ bool windowAllCB(void *p,void* ud)
 {
 	geometryStruct geom;
 
+	if(static_cast<LFSTK_menuClass*>(ud)->mainMenuCnt==0)
+		return(true);
+
 	static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getGeom(&geom);
 
 	static_cast<LFSTK_menuClass*>(ud)->x=geom.x;
@@ -165,6 +168,7 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 	unsigned long	rafter;
 	unsigned long	n=0;
 	XTextProperty	textpropreturn;
+	Status			st;
 
 	if (!XQueryTree(mainwind->app->display,wind,&root,&parent,&children,&n_children))
 		return None;
@@ -187,23 +191,13 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 			if (!hasProp(mainwind->app->display,children[j],WM_STATE))
 				continue;
 
-			if (!hasWindowProp(children[j],NET_WM_WINDOW_TYPE_NORMAL,NET_WM_WINDOW_TYPE))
-				continue;
+			//if (!hasWindowProp(children[j],NET_WM_WINDOW_TYPE_NORMAL,NET_WM_WINDOW_TYPE))
+			//	continue;
 
 			/* Got one */
 			thewin=children[j];
 			winid=children[j];
-			XFetchName(mainwind->app->display,children[j],&wname);
-			if(wname==NULL)
-				{
-					if(XGetWMName(mainwind->app->display,children[j],&textpropreturn)!=0)
-						wname=strdup((char*)textpropreturn.value);
-					else
-						{
-							printError("Can't determine window name...");
-							wname=strdup("Untitled...");
-						}
-				}
+			st=XFetchName(mainwind->app->display,children[j],&wname);
 		}
 
 	thewin=None;
@@ -225,8 +219,15 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 			ptr=NULL;
 			count=32;
 			n=0;
-			XGetWindowProperty(mainwind->app->display,winid,NET_WM_DESKTOP,0L,count,false,XA_CARDINAL,&rtype,&rfmt,&n,&rafter,(unsigned char **)&ptr);
 
+			if(strlen(wname)==0)
+				{
+					st=XGetWindowProperty( mainwind->app->display,winid,NET_WM_NAME,0,count,false,UTF8_STRING,&rtype,&rfmt,&n,&rafter,(unsigned char **)&ptr);
+					if(st==Success && n != 0 && ptr != NULL)
+						wname=strdup((char*)ptr);
+				}
+
+			XGetWindowProperty(mainwind->app->display,winid,NET_WM_DESKTOP,0L,count,false,XA_CARDINAL,&rtype,&rfmt,&n,&rafter,(unsigned char **)&ptr);
 			if(thisdesktop==true)
 				{
 					windowDeskList[windowDeskListCnt]=new menuStruct;

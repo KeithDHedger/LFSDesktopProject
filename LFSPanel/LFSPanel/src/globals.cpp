@@ -56,6 +56,8 @@ Atom				NET_WM_WINDOW_TYPE_DIALOG=None;
 Atom				NET_WM_DESKTOP=None;
 Atom				NET_WM_WINDOW_TYPE=None;
 Atom				NET_WM_STATE=None;
+Atom				NET_WM_NAME=None;
+Atom				UTF8_STRING=None;
 
 void setSizes(int *x,int *y,int *w,int *h,int *size,int *grav,bool fromleft)
 {

@@ -21,6 +21,7 @@ libtool
 *.BAK
 *.bak
 *.libs/
+*/m4/
 HOLD/
 LFSToolKit/examples/*example
 LFSToolKit/examples/*.html

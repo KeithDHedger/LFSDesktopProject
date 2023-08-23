@@ -5,6 +5,7 @@ EXTRA_DIST = lfstk.pc.in
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = lfstk.pc
 DISTCLEANFILES = lfstk.pc
+#ACLOCAL_AMFLAGS = "-I m4"
 
 .PHONY: docs
 

@@ -220,6 +220,8 @@ int main(int argc,char **argv)
 			NET_WM_DESKTOP=XInternAtom(mainwind->app->display,"_NET_WM_DESKTOP",False);
 			NET_WM_WINDOW_TYPE=XInternAtom(mainwind->app->display,"_NET_WM_WINDOW_TYPE",False);
 			NET_WM_STATE=XInternAtom(mainwind->app->display,"_NET_WM_STATE",False);
+			NET_WM_NAME=XInternAtom(mainwind->app->display,"_NET_WM_NAME",False);
+			UTF8_STRING=XInternAtom(mainwind->app->display,"UTF8_STRING",False);
 
 			env=mainwind->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir);
 			key=atoi(env);

@@ -1,0 +1,29 @@
+#!/bin/bash
+
+find -name "Makefile.in" -exec git rm -r '{}' \;
+find -name "m4" -exec git rm -r '{}' \;
+find -name "configure" -exec git rm -r '{}' \;
+find -name "compile" -exec git rm -r '{}' \;
+find -name "install-sh" -exec git rm -r '{}' \;
+find -name "ltmain.sh" -exec git rm -r '{}' \;
+find -name "missing" -exec git rm -r '{}' \;
+find -name "COPYING" -exec git rm -r '{}' \;
+find -name "NEWS" -exec git rm -r '{}' \;
+find -name "depcomp" -exec git rm -r '{}' \;
+find -name "AUTHORS" -exec git rm -r '{}' \;
+find -name "INSTALL" -exec git rm -r '{}' \;
+find -name "aclocal.m4" -exec git rm -r '{}' \;
+
+find -name "Makefile.in" -delete
+find -name "configure" -delete
+find -name "compile" -delete
+find -name "install-sh" -delete
+find -name "ltmain.sh" -delete
+find -name "missing" -delete
+find -name "COPYING" -delete
+find -name "NEWS" -delete
+find -name "depcomp" -delete
+find -name "AUTHORS" -delete
+find -name "INSTALL" -delete
+find -name "aclocal.m4" -delete
+find -name "m4" -exec rm -rv {} \;

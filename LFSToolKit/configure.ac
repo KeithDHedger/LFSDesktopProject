@@ -8,13 +8,14 @@ m4_define([lfstk_version],[LFSTOOLKIT_MAJ_N.LFSTOOLKIT_MIN_N.LFSTOOLKIT_REV_N])
 
 AC_INIT([LFSToolKit],[0.5.1],[PROJ],[LFSToolKit])
 
-AC_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADERS([config.h])
 AC_PROG_CXX
+#AC_CONFIG_MACRO_DIRS()
 
 AM_INIT_AUTOMAKE
 
 AC_PROG_CC
-AC_HEADER_STDC
+
 LT_INIT([disable-static])
 
 # libtool
@@ -86,5 +87,6 @@ fi
 
 AC_CONFIG_FILES([lfstk.pc LFSToolKit/resources/themes/AllHallows.lfstk/lfstoolkit.rc LFSToolKit/resources/themes/OldBrownWood.lfstk/lfstoolkit.rc LFSToolKit/resources/themes/OldyXmas.lfstk/lfstoolkit.rc LFSToolKit/resources/themes/Steel.lfstk/lfstoolkit.rc LFSToolKit/resources/themes/Winter.lfstk/lfstoolkit.rc LFSToolKit/resources/themes/SpringWood.lfstk/lfstoolkit.rc])
 
-AC_OUTPUT(Makefile LFSToolKit/app/Makefile  docs/Makefile)
+AC_CONFIG_FILES([Makefile LFSToolKit/app/Makefile  docs/Makefile])
+AC_OUTPUT
 

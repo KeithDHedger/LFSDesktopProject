@@ -102,6 +102,8 @@ extern Atom					NET_WM_WINDOW_TYPE_DIALOG;
 extern Atom					NET_WM_DESKTOP;
 extern Atom					NET_WM_WINDOW_TYPE;
 extern Atom					NET_WM_STATE;
+extern Atom					NET_WM_NAME;
+extern Atom					UTF8_STRING;
 
 void printError(const char *err);
 void setSizes(int *x,int *y,int *w,int *h,int *size,int *grav,bool fromleft);

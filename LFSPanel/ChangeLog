@@ -1,4 +1,6 @@
 0.2.0
+Fixed segfault on window list.
+Fixed blank window names on window list.
 Send notify async in case deamon not running.
 Ignore desktopfiles with nodisplay=true.
 Improved startup speed of appmenu.
