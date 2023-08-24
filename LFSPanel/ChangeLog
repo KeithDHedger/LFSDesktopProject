@@ -1,4 +1,5 @@
 0.2.0
+Fixed menu items from bad window names.
 Fixed segfault on window list.
 Fixed blank window names on window list.
 Send notify async in case deamon not running.

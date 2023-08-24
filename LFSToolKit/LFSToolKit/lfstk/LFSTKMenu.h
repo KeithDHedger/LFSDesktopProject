@@ -56,10 +56,10 @@ class LFSTK_menuClass
 
 		static bool							menuScroll(void *object,void* userdata);
 		int									mainMenuCnt=0;
+		menuStruct							**mainMenu=NULL;
 	private:		
 		void 								resizeMenu(void);
 
-		menuStruct							**mainMenu=NULL;
 		callbackStruct						callBacks;
 
 		cairo_font_weight_t					weight=CAIRO_FONT_WEIGHT_NORMAL;

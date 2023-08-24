@@ -446,6 +446,8 @@ void LFSTK_menuClass::LFSTK_freeMenus(menuStruct **menus,int menucnt)
 			delete menus[j];
 		}
 	delete[] menus;
+	this->mainMenu=NULL;
+	this->mainMenuCnt=0;
 }
 
 /**

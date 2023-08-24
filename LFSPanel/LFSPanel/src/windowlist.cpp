@@ -32,9 +32,11 @@ menuStruct			**windowDeskList=NULL;
 LFSTK_menuClass		*windowDeskMenu=NULL;
 int					windowDeskListCnt=0;
 
-int					updateWindowCnt=0;
 const char			*possibleError="Unknown";
 int					currentDesktop;
+
+Window doTreeWalk(Window wind,bool thisdesktop);
+void updateWindowMenu(bool global);
 
 void sendClientMessage(Window win,const char *msg,unsigned long data0,unsigned long data1,unsigned long data2,unsigned long data3,unsigned long data4)
 {
@@ -60,6 +62,29 @@ void sendClientMessage(Window win,const char *msg,unsigned long data0,unsigned l
 bool windowAllCB(void *p,void* ud)
 {
 	geometryStruct geom;
+	if(ud==windowDeskMenu)
+		{
+			LFSTK_menuClass	*mc=static_cast<LFSTK_menuClass*>(ud);
+			if(mc->mainMenuCnt>0)
+				{
+					mc->LFSTK_freeMenus(mc->mainMenu,mc->mainMenuCnt);
+					windowDeskList=new menuStruct*[MAXWINDOWSINLIST];
+					windowDeskListCnt=0;
+				}
+			updateWindowMenu(false);
+		}
+
+	if(ud==windowAllMenu)
+		{
+			LFSTK_menuClass	*mc=static_cast<LFSTK_menuClass*>(ud);
+			if(mc->mainMenuCnt>0)
+				{
+					mc->LFSTK_freeMenus(mc->mainMenu,mc->mainMenuCnt);
+					windowAllList=new menuStruct*[MAXWINDOWSINLIST];
+					windowAllListCnt=0;
+				}
+				updateWindowMenu(true);
+			}
 
 	if(static_cast<LFSTK_menuClass*>(ud)->mainMenuCnt==0)
 		return(true);
@@ -79,8 +104,6 @@ bool windowAllMenuCB(void *p,void* ud)
 	winid=(Window)(ud);
 	possibleError="Can't activate window";
 	sendClientMessage(winid,"_NET_ACTIVE_WINDOW",0,0,0,0,0);
-	updateWindowCnt=WINDOWREFRESH+100;
-	updateWindowMenu();
 	return(true);
 }
 
@@ -191,9 +214,6 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 			if (!hasProp(mainwind->app->display,children[j],WM_STATE))
 				continue;
 
-			//if (!hasWindowProp(children[j],NET_WM_WINDOW_TYPE_NORMAL,NET_WM_WINDOW_TYPE))
-			//	continue;
-
 			/* Got one */
 			thewin=children[j];
 			winid=children[j];
@@ -227,11 +247,14 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 						wname=strdup((char*)ptr);
 				}
 
+			for(int j=0;j<strlen(wname);j++)
+				if(!isalnum(wname[j]))
+					wname[j]=' ';
+
 			XGetWindowProperty(mainwind->app->display,winid,NET_WM_DESKTOP,0L,count,false,XA_CARDINAL,&rtype,&rfmt,&n,&rafter,(unsigned char **)&ptr);
 			if(thisdesktop==true)
 				{
 					windowDeskList[windowDeskListCnt]=new menuStruct;
-					windowDeskList[windowDeskListCnt]->label=strdup(wname);
 					windowDeskList[windowDeskListCnt]->label=strdup(wname);
 					windowDeskList[windowDeskListCnt++]->userData=(void*)winid;
 				}
@@ -265,50 +288,29 @@ void getCurrentDesktop(void)
 		currentDesktop=1;
 }
 
-void updateWindowMenu(void)
+void updateWindowMenu(bool global)
 {
 	Window			win;
 
-	updateWindowCnt++;
-	if(updateWindowCnt>=WINDOWREFRESH)
-		updateWindowCnt=0;
-	else
-		return;
-
 	getCurrentDesktop();
+	win=mainwind->app->rootWindow;
 
-	if(windowDesk!=NULL)
+	if(global==false)
 		{
-			windowDeskList=new menuStruct*[MAXWINDOWSINLIST];
-			for(int j=0;j<MAXWINDOWSINLIST;j++)
-				windowDeskList[j]=NULL;
-			win=mainwind->app->rootWindow;
 			windowDeskListCnt=0;
 			while(win!=None)
 				win=doTreeWalk(win,true);
 			if(windowDeskListCnt>0)
-				{
-					windowDeskMenu->LFSTK_addMainMenus(windowDeskList,windowDeskListCnt);
-					windowDesk->LFSTK_setActive(true);
-				}
-			else
-				windowDesk->LFSTK_setActive(false);
+				windowDeskMenu->LFSTK_addMainMenus(windowDeskList,windowDeskListCnt);
 		}
 
-	if(windowAll!=NULL)
+	if(global==true)
 		{
-			windowAllList=new menuStruct*[MAXWINDOWSINLIST];
 			windowAllListCnt=0;
-			win=mainwind->app->rootWindow;
 			while(win!=None)
 				win=doTreeWalk(win,false);
 			if(windowAllListCnt>0)
-				{
-					windowAllMenu->LFSTK_addMainMenus(windowAllList,windowAllListCnt);
-					windowAll->LFSTK_setActive(true);
-				}
-			else
-				windowAll->LFSTK_setActive(false);
+				windowAllMenu->LFSTK_addMainMenus(windowAllList,windowAllListCnt);
 		}
 }
 
@@ -346,8 +348,9 @@ int addWindowDeskMenu(int x,int y,int grav,bool fromleft)
 	windowDeskMenu->LFSTK_setMouseCallBack(NULL,windowAllMenuCB,NULL);
 	windowDeskListCnt=-1;
 	windowAllListCnt=-1;
-	updateWindowCnt=WINDOWREFRESH;
-	updateWindowMenu();
+	windowDeskList=new menuStruct*[MAXWINDOWSINLIST];
+	for(int j=0;j<MAXWINDOWSINLIST;j++)
+		windowDeskList[j]=NULL;
 	
 	return(width);
 }
@@ -388,5 +391,9 @@ int addWindowMenu(int x,int y,int grav,bool fromleft)
 
 	windowDeskListCnt=-1;
 	windowAllListCnt=-1;
+	windowAllList=new menuStruct*[MAXWINDOWSINLIST];
+	for(int j=0;j<MAXWINDOWSINLIST;j++)
+		windowAllList[j]=NULL;
+
 	return(width);
 }

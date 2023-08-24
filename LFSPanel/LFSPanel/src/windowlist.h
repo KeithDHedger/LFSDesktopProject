@@ -23,6 +23,7 @@
 #define _WINDOWLIST_
 
 #define MAXWINDOWSINLIST 512
+#include <ctype.h>
 
 typedef struct
 {
