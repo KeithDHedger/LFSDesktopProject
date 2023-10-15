@@ -99,9 +99,6 @@ bool timerCB(LFSTK_applicationClass *p,void* ud)
 	if(cpuButton!=NULL)
 		updateCpuStats();
 
-	//if((windowAll!=NULL) || (windowDesk!=NULL))
-	//	updateWindowMenu();
-
 	if(scwindow!=NULL)
 		updateSlider();
 

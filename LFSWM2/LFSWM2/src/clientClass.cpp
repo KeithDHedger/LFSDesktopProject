@@ -35,6 +35,7 @@ LFSWM2_clientClass::~LFSWM2_clientClass(void)
 		this->mainClass->mainWindowClass->LFSWM2_freeHints(this->windowHints);
 		this->mainClass->mainWindowClass->LFSWM2_setClientList(this->contentWindow,false);
 
+	//if(this->frameWindow!=None)
 		this->mainClass->mainWindowClass->LFSWM2_deleteClientEntry(this->frameWindow);
 		this->mainClass->mainWindowClass->LFSWM2_deleteClientEntry(this->contentWindow);
 
@@ -301,6 +302,7 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 				this->resizeImage=None;
 
 				XMoveResizeWindow(this->mainClass->display,this->resizeWindow,this->mainClass->displayWidth+10,0,1,1);
+				this->setWindowRects(true);
 				this->mainClass->restackCnt=0;
 				break;
 
@@ -474,7 +476,8 @@ void LFSWM2_clientClass::LFSWM2_shadeWindow(void)
 				{
 					this->setWindowRects(true);
 					this->clientPreShade=this->frameWindowRect.h;
-					XMoveWindow(this->mainClass->display,this->contentWindow,this->frameWindowRect.w+10,this->frameWindowRect.y);
+					XMoveWindow(this->mainClass->display,this->contentWindow,this->frameWindowRect.w+10,this->frameWindowRect.y-10000);
+					XSync(this->mainClass->display,false);
 					XResizeWindow(this->mainClass->display,this->frameWindow,this->frameWindowRect.w,this->mainClass->titleBarSize+this->mainClass->bottomBarSize);
 					this->setWindowRects(true);
 				}
@@ -1051,7 +1054,8 @@ contloop:
 				    					cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(x.first);
 									if((cc!=NULL) && (cc->transientFor==this->contentWindow))
 										{
-				   							XUnmapWindow(this->mainClass->display, cc->frameWindow);
+											if(cc->frameWindow!=None)
+				   								XUnmapWindow(this->mainClass->display,cc->frameWindow);
 				   							cc->LFSWM2_sendCloseWindow();
 				   							delete cc;
 				   							goto contloop;

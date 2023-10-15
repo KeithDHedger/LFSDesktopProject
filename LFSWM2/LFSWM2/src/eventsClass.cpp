@@ -93,12 +93,16 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 								{
 									if(ccs->isFullscreen==false)
 										{
-											XShapeCombineMask(this->mainClass->display,ccs->frameWindow,ShapeBounding,0,0,None,ShapeSet);
-											ccs->setWindowRects(true);
-											this->mainClass->mainWindowClass->LFSWM2_setControlRects(ccs);
-											ccs->resetContentWindow();
-											this->mainClass->mainWindowClass->LFSWM2_refreshFrame(ccs);
-											ccs->resizeMode=this->mainClass->resizeMode;
+											//if(ccs->frameWindow!=None)
+											if(ccs->isBorderless==false)
+												{
+													XShapeCombineMask(this->mainClass->display,ccs->frameWindow,ShapeBounding,0,0,None,ShapeSet);
+													ccs->setWindowRects(true);
+													this->mainClass->mainWindowClass->LFSWM2_setControlRects(ccs);
+													ccs->resetContentWindow();
+													this->mainClass->mainWindowClass->LFSWM2_refreshFrame(ccs);
+													ccs->resizeMode=this->mainClass->resizeMode;
+												}
 										}
 									
 									XUngrabButton(this->mainClass->display,Button1,mokeyshold,ccs->contentWindow);
@@ -278,9 +282,10 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 													ch.height=e.xconfigurerequest.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize;
 													if((cc->buttonDown==false) || (cc->isBorderless==false))
 														{
-															if(cc->isBorderless==true)
-																	XResizeWindow(this->mainClass->display,cc->frameWindow,e.xconfigurerequest.width,e.xconfigurerequest.height);
-															else
+															if(cc->isBorderless==false)
+																//fprintf(stderr,"no border\n");
+																	//XResizeWindow(this->mainClass->display,cc->frameWindow,e.xconfigurerequest.width,e.xconfigurerequest.height);
+															//else
 																XResizeWindow(this->mainClass->display,cc->frameWindow,e.xconfigurerequest.width+this->mainClass->riteSideBarSize+this->mainClass->leftSideBarSize,e.xconfigurerequest.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);
 														}
 													ch.width=e.xconfigurerequest.width;
@@ -292,7 +297,9 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 												{
 													ch.x=e.xconfigurerequest.x;
 													ch.y=e.xconfigurerequest.y;
-													XMoveWindow(this->mainClass->display,cc->frameWindow,ch.x,ch.y);
+														//if(cc->frameWindow!=None)
+													if(cc->isBorderless==false)
+														XMoveWindow(this->mainClass->display,cc->frameWindow,ch.x,ch.y);
 													break;
 												}
 
@@ -572,8 +579,12 @@ Atom (nil) name=(null)
 									ccmessage->onTop=false;
 									goto exitit;
 								}
-							XMapWindow(this->mainClass->display,ccmessage->frameWindow);
-							XRaiseWindow(this->mainClass->display,ccmessage->frameWindow);
+									//if(ccmessage->frameWindow!=None)
+							if(ccmessage->isBorderless==false)
+								{
+									XMapWindow(this->mainClass->display,ccmessage->frameWindow);
+									XRaiseWindow(this->mainClass->display,ccmessage->frameWindow);
+								}
 							ccmessage->onTop=true;
 							ccmessage->onBottom=false;
 							this->mainClass->mainWindowClass->LFSWM2_changeState(ccmessage->contentWindow,NET_WM_STATE_REMOVE,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
@@ -595,7 +606,9 @@ Atom (nil) name=(null)
 									ccmessage->onBottom=false;
 									goto exitit;
 								}
-							XLowerWindow(this->mainClass->display,ccmessage->frameWindow);
+//	if(ccmessage->frameWindow!=None)
+							if(ccmessage->isBorderless==false)
+								XLowerWindow(this->mainClass->display,ccmessage->frameWindow);
 							ccmessage->onBottom=true;
 							this->mainClass->restackCnt++;
 						}
@@ -644,6 +657,7 @@ void LFSWM2_eventsClass::LFSWM2_sendConfigureEvent(Window wid,rectStruct r)
 	XSendEvent(this->mainClass->display,wid,true,StructureNotifyMask,(XEvent*)&ce);
 }
 
+//TODO//needs serious tidying!!!
 void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 {
 	long unsigned int	nitems_return;
@@ -736,7 +750,10 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 		{
 			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(sl.at(j));
 			if(cc!=NULL)	
-				framel.push_back(cc->frameWindow);
+				if(cc->frameWindow!=None)
+					framel.push_back(cc->frameWindow);
+				else
+					framel.push_back(cc->contentWindow);
 			else
 			{
 				framel.push_back(sl.at(j));
@@ -761,6 +778,7 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 //	}
 //above
 #if 1
+#if 0
 	for(int j=0;j<framel.size();j++)
 		{
 			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(framel.at(j));
@@ -769,8 +787,12 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 			else
 				wid=framel.at(j);
 			if(this->mainClass->mainWindowClass->LFSWM2_hasState(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE"))))
+			{
+			
 				move(framel,j,0);
+				}
 		}
+#endif
 
 	for(int j=0;j<framel.size();j++)
 		{
@@ -800,7 +822,9 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 			else
 				wid=framel.at(j);
 			if(this->mainClass->mainWindowClass->LFSWM2_hasState(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW"))))
-				move(framel,j,framel.size()-1);
+				{
+					move(framel,j,framel.size()-1);
+				}
 		}
 
 //dont include desktop windows in stacking

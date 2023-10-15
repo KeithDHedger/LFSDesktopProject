@@ -22,15 +22,13 @@
 
 //all windows
 LFSTK_buttonClass	*windowAll=NULL;
-menuStruct			**windowAllList=NULL;
-LFSTK_menuClass		*windowAllMenu=NULL;
-int					windowAllListCnt=0;
-
 //this desktop list
 LFSTK_buttonClass	*windowDesk=NULL;
-menuStruct			**windowDeskList=NULL;
-LFSTK_menuClass		*windowDeskMenu=NULL;
-int					windowDeskListCnt=0;
+
+//menus
+menuStruct			**windowList=NULL;
+int					windowListCnt=0;
+LFSTK_menuClass		*windowMenu=NULL;
 
 const char			*possibleError="Unknown";
 int					currentDesktop;
@@ -62,29 +60,21 @@ void sendClientMessage(Window win,const char *msg,unsigned long data0,unsigned l
 bool windowAllCB(void *p,void* ud)
 {
 	geometryStruct geom;
-	if(ud==windowDeskMenu)
-		{
-			LFSTK_menuClass	*mc=static_cast<LFSTK_menuClass*>(ud);
-			if(mc->mainMenuCnt>0)
-				{
-					mc->LFSTK_freeMenus(mc->mainMenu,mc->mainMenuCnt);
-					windowDeskList=new menuStruct*[MAXWINDOWSINLIST];
-					windowDeskListCnt=0;
-				}
-			updateWindowMenu(false);
-		}
+	bool				what;
 
-	if(ud==windowAllMenu)
+	if(p==windowAll)
+		what=true;
+	else
+		what=false;
+
+	LFSTK_menuClass	*mc=static_cast<LFSTK_menuClass*>(ud);
+	if(mc->mainMenuCnt>0)
 		{
-			LFSTK_menuClass	*mc=static_cast<LFSTK_menuClass*>(ud);
-			if(mc->mainMenuCnt>0)
-				{
-					mc->LFSTK_freeMenus(mc->mainMenu,mc->mainMenuCnt);
-					windowAllList=new menuStruct*[MAXWINDOWSINLIST];
-					windowAllListCnt=0;
-				}
-				updateWindowMenu(true);
-			}
+			mc->LFSTK_freeMenus(mc->mainMenu,mc->mainMenuCnt);
+			windowList=new menuStruct*[MAXWINDOWSINLIST];
+			windowListCnt=0;
+		}
+	updateWindowMenu(what);
 
 	if(static_cast<LFSTK_menuClass*>(ud)->mainMenuCnt==0)
 		return(true);
@@ -157,7 +147,6 @@ bool isHidden(Window win)
 	if( hasWindowProp(win,NET_WM_STATE,NET_WM_STATE_HIDDEN) )
 		return(true);
 	return(false);
-
 }
 
 /*
@@ -169,7 +158,6 @@ bool isVisible(Display *dpy,Window win)
 	MyXWindowAttributes xwa;
 
 	XGetWindowAttributes(dpy, win, (XWindowAttributes*)&xwa);
-
 	ok=(xwa.classe==InputOutput) && (xwa.map_state==IsViewable);
 
 	return ok;
@@ -180,13 +168,13 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 	Window			root,parent;
 	Window			*children;
 	Window			thewin;
-	unsigned int	n_children;
+	unsigned int		n_children;
 	int				i;
 	unsigned long	winid;
-	char			*wname;
-	void			*ptr=NULL;
+	char				*wname;
+	void				*ptr=NULL;
 	unsigned long	count=32;
-	Atom			rtype;
+	Atom				rtype;
 	int				rfmt;
 	unsigned long	rafter;
 	unsigned long	n=0;
@@ -252,18 +240,9 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 					wname[j]=' ';
 
 			XGetWindowProperty(mainwind->app->display,winid,NET_WM_DESKTOP,0L,count,false,XA_CARDINAL,&rtype,&rfmt,&n,&rafter,(unsigned char **)&ptr);
-			if(thisdesktop==true)
-				{
-					windowDeskList[windowDeskListCnt]=new menuStruct;
-					windowDeskList[windowDeskListCnt]->label=strdup(wname);
-					windowDeskList[windowDeskListCnt++]->userData=(void*)winid;
-				}
-			else
-				{
-					windowAllList[windowAllListCnt]=new menuStruct;
-					windowAllList[windowAllListCnt]->label=strdup(wname);
-					windowAllList[windowAllListCnt++]->userData=(void*)winid;
-				}
+			windowList[windowListCnt]=new menuStruct;
+			windowList[windowListCnt]->label=strdup(wname);
+			windowList[windowListCnt++]->userData=(void*)winid;
 		}
 
 	if(wname!=NULL)
@@ -295,23 +274,11 @@ void updateWindowMenu(bool global)
 	getCurrentDesktop();
 	win=mainwind->app->rootWindow;
 
-	if(global==false)
-		{
-			windowDeskListCnt=0;
-			while(win!=None)
-				win=doTreeWalk(win,true);
-			if(windowDeskListCnt>0)
-				windowDeskMenu->LFSTK_addMainMenus(windowDeskList,windowDeskListCnt);
-		}
-
-	if(global==true)
-		{
-			windowAllListCnt=0;
-			while(win!=None)
-				win=doTreeWalk(win,false);
-			if(windowAllListCnt>0)
-				windowAllMenu->LFSTK_addMainMenus(windowAllList,windowAllListCnt);
-		}
+	windowListCnt=0;
+	while(win!=None)
+		win=doTreeWalk(win,global);
+	if(windowListCnt>0)
+		windowMenu->LFSTK_addMainMenus(windowList,windowListCnt);
 }
 
 int addWindowDeskMenu(int x,int y,int grav,bool fromleft)
@@ -324,12 +291,11 @@ int addWindowDeskMenu(int x,int y,int grav,bool fromleft)
 	int		thisgrav=grav;
 	int		iconsize=16;
 
-	if(windowDeskMenu!=NULL)
+	if(windowDesk!=NULL)
 		{
 			printError("Duplicate current desktop window selector");
 			return(0);
 		}
-
 	setSizes(&xpos,&ypos,&width,&height,&iconsize,&thisgrav,fromleft);
 
 	windowDesk=new LFSTK_buttonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
@@ -342,16 +308,17 @@ int addWindowDeskMenu(int x,int y,int grav,bool fromleft)
 	else
 		windowDesk->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",LEFT,true);
 
-	windowDeskMenu=new LFSTK_menuClass(mainwind,xpos,ypos+panelHeight,1,1);
 
-	windowDesk->LFSTK_setMouseCallBack(NULL,windowAllCB,(void*)windowDeskMenu);
-	windowDeskMenu->LFSTK_setMouseCallBack(NULL,windowAllMenuCB,NULL);
-	windowDeskListCnt=-1;
-	windowAllListCnt=-1;
-	windowDeskList=new menuStruct*[MAXWINDOWSINLIST];
-	for(int j=0;j<MAXWINDOWSINLIST;j++)
-		windowDeskList[j]=NULL;
-	
+	if(windowMenu==NULL)
+		{
+			windowMenu=new LFSTK_menuClass(mainwind,xpos,ypos+panelHeight,1,1);
+			windowMenu->LFSTK_setMouseCallBack(NULL,windowAllMenuCB,NULL);
+			windowListCnt=-1;
+			windowList=new menuStruct*[MAXWINDOWSINLIST];
+			for(int j=0;j<MAXWINDOWSINLIST;j++)
+				windowList[j]=NULL;
+		}
+	windowDesk->LFSTK_setMouseCallBack(NULL,windowAllCB,(void*)windowMenu);
 	return(width);
 }
 
@@ -383,17 +350,15 @@ int addWindowMenu(int x,int y,int grav,bool fromleft)
 	else
 		windowAll->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",LEFT,true);
 
-
-	windowAllMenu=new LFSTK_menuClass(mainwind,xpos,ypos+panelHeight,1,1);
-
-	windowAll->LFSTK_setMouseCallBack(NULL,windowAllCB,(void*)windowAllMenu);
-	windowAllMenu->LFSTK_setMouseCallBack(NULL,windowAllMenuCB,NULL);
-
-	windowDeskListCnt=-1;
-	windowAllListCnt=-1;
-	windowAllList=new menuStruct*[MAXWINDOWSINLIST];
-	for(int j=0;j<MAXWINDOWSINLIST;j++)
-		windowAllList[j]=NULL;
-
+	if(windowMenu==NULL)
+		{
+			windowMenu=new LFSTK_menuClass(mainwind,xpos,ypos+panelHeight,1,1);
+			windowMenu->LFSTK_setMouseCallBack(NULL,windowAllMenuCB,NULL);
+			windowListCnt=-1;
+			windowList=new menuStruct*[MAXWINDOWSINLIST];
+			for(int j=0;j<MAXWINDOWSINLIST;j++)
+				windowList[j]=NULL;
+		}
+	windowAll->LFSTK_setMouseCallBack(NULL,windowAllCB,(void*)windowMenu);
 	return(width);
 }

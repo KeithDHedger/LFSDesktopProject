@@ -343,9 +343,6 @@ int main(int argc,char **argv)
 
 			free(env);
 
-			//if(desktopTheme!=NULL)
-			//	free(desktopTheme);
-
 			launcherList	*freell;
 			while(ll!=NULL)
 				{
@@ -381,8 +378,7 @@ int main(int argc,char **argv)
 
 			delete appMenu;
 			delete logoutMenu;
-			delete windowAllMenu;
-			delete windowDeskMenu;
+			delete windowMenu;
 			
 			free(iconL);
 			free(iconM);
@@ -393,7 +389,7 @@ int main(int argc,char **argv)
 			cpuButton=NULL;
 			windowAll=NULL;
 			windowDesk=NULL;
-			windowDeskMenu=NULL;
+			windowMenu=NULL;
 			appButton=NULL;
 			launcherSide=NOLAUNCHERS;
 			delete apc;

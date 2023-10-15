@@ -292,9 +292,15 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 			if(cc->isBorderless==false)
 				cc->frameWindow=XCreateWindow(this->mainClass->display,this->mainClass->rootWindow,-1000000,-1000000,premaphs.xa.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),premaphs.xa.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH,BORDER_WIDTH,CopyFromParent,InputOutput,CopyFromParent,0,&wa);
 			else
-				cc->frameWindow=XCreateWindow(this->mainClass->display,this->mainClass->rootWindow,-1000000,-1000000,premaphs.xa.width,premaphs.xa.height,BORDER_WIDTH,CopyFromParent,InputOutput,CopyFromParent,0,&wa);
-			
-			XSelectInput(this->mainClass->display,cc->frameWindow,SubstructureRedirectMask|ButtonPressMask|ButtonReleaseMask|ExposureMask|PointerMotionMask);
+			//{
+				//cc->frameWindow=XCreateWindow(this->mainClass->display,this->mainClass->rootWindow,-1000000,-1000000,premaphs.xa.width,premaphs.xa.height,BORDER_WIDTH,CopyFromParent,InputOutput,CopyFromParent,0,&wa);
+			//	fprintf(stderr,"is borderless\n");
+				cc->frameWindow=None;
+				//}
+	
+//	if(cc->frameWindow!=None)
+			if(cc->isBorderless==false)
+				XSelectInput(this->mainClass->display,cc->frameWindow,SubstructureRedirectMask|ButtonPressMask|ButtonReleaseMask|ExposureMask|PointerMotionMask);
 
 			cc->windowType=this->LFSWM2_getWindowType(id);
 			cc->contentWindow=id;
@@ -306,26 +312,35 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 			cc->contentWindowRect.y-=this->mainClass->titleBarSize;
 			if(cc->isBorderless==false)
 				cc->frameWindowRect={-1000000,-1000000,premaphs.xa.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),premaphs.xa.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH};
-			else
-				cc->frameWindowRect={-1000000,-1000000,premaphs.xa.width,premaphs.xa.height};
-			cc->resizeWindow=XCreateSimpleWindow(this->mainClass->display,cc->frameWindow,-10,-10,1,1,BORDER_WIDTH,this->mainClass->frameFG->pixel,this->mainClass->frameBG->pixel);
+//			else
+//			{
+//				//cc->frameWindowRect={-1000000,-1000000,premaphs.xa.width,premaphs.xa.height};
+//				//cc->resizeWindow=XCreateSimpleWindow(this->mainClass->display,cc->frameWindow,-10,-10,1,1,BORDER_WIDTH,this->mainClass->frameFG->pixel,this->mainClass->frameBG->pixel);
+//				//XResizeWindow(this->mainClass->display,cc->frameWindow,1,1);
+//				
+//}
 			cc->resizeMode=this->mainClass->resizeMode;
-
-			cc->mask=XCreatePixmap(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.w,cc->frameWindowRect.h,1);
-			cc->maskGC=XCreateGC(this->mainClass->display,cc->mask,0,NULL);
-
+			if(cc->isBorderless==false)
+				{
+					cc->mask=XCreatePixmap(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.w,cc->frameWindowRect.h,1);
+					cc->maskGC=XCreateGC(this->mainClass->display,cc->mask,0,NULL);
+				}
 			this->clientList[id]=cc;
-			this->clientList[cc->frameWindow]=cc;
+//	if(cc->frameWindow!=None)
+			if(cc->isBorderless==false)
+				this->clientList[cc->frameWindow]=cc;
 
 			XSetWindowAttributes attributes;//TODO//
 			attributes.win_gravity=NorthWestGravity;
 			if(cc->isBorderless==false)
 				XReparentWindow(this->mainClass->display,id,cc->frameWindow,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize-(BORDER_WIDTH*2));
-			else
-				XReparentWindow(this->mainClass->display,id,cc->frameWindow,0,0);
+			//else
+			//	XReparentWindow(this->mainClass->display,id,cc->frameWindow,0,0);
 
 			XChangeWindowAttributes(this->mainClass->display,id,CWWinGravity,&attributes);
-			XMapWindow(this->mainClass->display,cc->frameWindow);
+//	if(cc->frameWindow!=None)
+			if(cc->isBorderless==false)
+				XMapWindow(this->mainClass->display,cc->frameWindow);
 			XSelectInput(this->mainClass->display,cc->contentWindow,PropertyChangeMask|StructureNotifyMask|KeyReleaseMask);
 			this->LFSWM2_setWindowState(id,NormalState);
 
@@ -977,6 +992,9 @@ void LFSWM2_windowClass::LFSWM2_resizeWindow(Window id,int w,int h)
 	cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(id);
 	if(cc!=NULL)
 		{
+			if(cc->isBorderless==true)
+				return;
+
 			XWindowChanges		changes;
 			unsigned int			value_mask=CWWidth|CWHeight;
 			changes.width=w;
