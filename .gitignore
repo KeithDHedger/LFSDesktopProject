@@ -50,3 +50,17 @@ lfstoolkit.rc
 sortedcats
 TODO
 
+LFSToolKit/examples/*.desktop
+LFSToolKit/examples/ManPageEditor.lnk.png
+
+AUTHORS
+COPYING
+INSTALL
+NEWS
+Makefile.in
+aclocal.m4
+configure
+depcomp
+install-sh
+missing
+

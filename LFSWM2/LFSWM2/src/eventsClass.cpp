@@ -787,8 +787,7 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 			else
 				wid=framel.at(j);
 			if(this->mainClass->mainWindowClass->LFSWM2_hasState(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE"))))
-			{
-			
+				{
 				move(framel,j,0);
 				}
 		}
