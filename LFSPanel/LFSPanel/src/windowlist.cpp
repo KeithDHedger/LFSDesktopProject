@@ -247,7 +247,6 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 					windowList[windowListCnt]->label=strdup(wname);
 					windowList[windowListCnt++]->userData=(void*)winid;
 				}
-
 		}
 
 	if(wname!=NULL)
