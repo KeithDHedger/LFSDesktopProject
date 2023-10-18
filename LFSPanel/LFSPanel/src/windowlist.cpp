@@ -206,6 +206,7 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 			thewin=children[j];
 			winid=children[j];
 			st=XFetchName(mainwind->app->display,children[j],&wname);
+			break;
 		}
 
 	thewin=None;
@@ -222,32 +223,35 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 				break;
 		}
 
-	if(winid!=-1)
+	if(wname!=NULL)
 		{
-			ptr=NULL;
-			count=32;
-			n=0;
-
-			if(strlen(wname)==0)
+			if(winid!=-1)
 				{
-					st=XGetWindowProperty( mainwind->app->display,winid,NET_WM_NAME,0,count,false,UTF8_STRING,&rtype,&rfmt,&n,&rafter,(unsigned char **)&ptr);
-					if(st==Success && n != 0 && ptr != NULL)
-						wname=strdup((char*)ptr);
+					ptr=NULL;
+					count=32;
+					n=0;
+
+					if(strlen(wname)==0)
+						{
+							st=XGetWindowProperty( mainwind->app->display,winid,NET_WM_NAME,0,count,false,UTF8_STRING,&rtype,&rfmt,&n,&rafter,(unsigned char **)&ptr);
+							if(st==Success && n != 0 && ptr != NULL)
+								wname=strdup((char*)ptr);
+						}
+
+					for(int j=0;j<strlen(wname);j++)
+						if(!isalnum(wname[j]))
+							wname[j]=' ';
+
+					XGetWindowProperty(mainwind->app->display,winid,NET_WM_DESKTOP,0L,count,false,XA_CARDINAL,&rtype,&rfmt,&n,&rafter,(unsigned char **)&ptr);
+					windowList[windowListCnt]=new menuStruct;
+					windowList[windowListCnt]->label=strdup(wname);
+					windowList[windowListCnt++]->userData=(void*)winid;
 				}
 
-			for(int j=0;j<strlen(wname);j++)
-				if(!isalnum(wname[j]))
-					wname[j]=' ';
-
-			XGetWindowProperty(mainwind->app->display,winid,NET_WM_DESKTOP,0L,count,false,XA_CARDINAL,&rtype,&rfmt,&n,&rafter,(unsigned char **)&ptr);
-			windowList[windowListCnt]=new menuStruct;
-			windowList[windowListCnt]->label=strdup(wname);
-			windowList[windowListCnt++]->userData=(void*)winid;
 		}
 
 	if(wname!=NULL)
 		XFree(wname);
-
 	XFree(ptr);
 	XFree(children);
 	return thewin;

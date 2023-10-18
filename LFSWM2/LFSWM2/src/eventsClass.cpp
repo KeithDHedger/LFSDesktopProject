@@ -672,6 +672,7 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 
 	if(this->mainClass->mainWindowClass->windowIDList.size()==0)
 		return;
+
 //fprintf(stderr,"crapwin=0x%x\n",crapwin);
 	v=(Atom*)this->mainClass->mainWindowClass->LFSWM2_getProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,&nitems_return);
 
@@ -809,6 +810,7 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 				}
 			if((this->mainClass->mainWindowClass->LFSWM2_getWindowType(wid)==MENUWINDOW))
 				{
+					XRaiseWindow(this->mainClass->display,wid);
 					move(framel,j,0);
 				}
 		}
@@ -823,6 +825,7 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 			if(this->mainClass->mainWindowClass->LFSWM2_hasState(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW"))))
 				{
 					move(framel,j,framel.size()-1);
+					XLowerWindow(this->mainClass->display,wid);
 				}
 		}
 
@@ -849,12 +852,42 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 		{
 			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(framel.at(j));
 			if(cc!=NULL)
+			{
+				wid=cc->contentWindow;
+				}
+			else
+			{
+				wid=framel.at(j);
+					//XRaiseWindow(this->mainClass->display,wid);
+				}
+			if(this->mainClass->mainWindowClass->LFSWM2_hasState(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE"))))
+				{
+					//XRaiseWindow(this->mainClass->display,wid);
+					move(framel,j,0);
+					//move(framel,j,framel.size()-1);
+				}
+		}
+
+	for(int j=0;j<framel.size();j++)
+		{
+			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(framel.at(j));
+			if(cc!=NULL)
 				wid=cc->contentWindow;
 			else
 				wid=framel.at(j);
-			if(this->mainClass->mainWindowClass->LFSWM2_hasState(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE"))))
-				move(framel,j,0);
+				
+			if((this->mainClass->mainWindowClass->LFSWM2_getWindowType(wid)==MENUWINDOW))
+				{
+					XRaiseWindow(this->mainClass->display,wid);
+					//move(framel,j,0);
+				//	move(framel,j,framel.size()-1);
+				}
 		}
+
+
+
+
+
 
 //framel.erase(framel.begin()+framel.size()-1);
 
