@@ -63,4 +63,6 @@ configure
 depcomp
 install-sh
 missing
-
+compile
+ltmain.sh
+*.html

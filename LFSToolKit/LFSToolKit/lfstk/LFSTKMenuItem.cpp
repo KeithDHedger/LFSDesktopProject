@@ -254,6 +254,7 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 				}
 			this->subwc->mainLoop=true;
 			this->subwc->LFSTK_showWindow(true);
+			this->subwc->LFSTK_setKeepAbove(true);
 
 			while(this->subwc->mainLoop==true)
 				{
