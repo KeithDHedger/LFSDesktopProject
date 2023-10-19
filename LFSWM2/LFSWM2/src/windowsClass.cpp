@@ -214,8 +214,6 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 			if(thisdesk==-1)
 				thisdesk=this->mainClass->currentDesktop;
 
-
-
 			if(premaphs.mHints!=NULL)
 				{
 					if(premaphs.mHints->decorations==0)
@@ -292,13 +290,8 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 			if(cc->isBorderless==false)
 				cc->frameWindow=XCreateWindow(this->mainClass->display,this->mainClass->rootWindow,-1000000,-1000000,premaphs.xa.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),premaphs.xa.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH,BORDER_WIDTH,CopyFromParent,InputOutput,CopyFromParent,0,&wa);
 			else
-			//{
-				//cc->frameWindow=XCreateWindow(this->mainClass->display,this->mainClass->rootWindow,-1000000,-1000000,premaphs.xa.width,premaphs.xa.height,BORDER_WIDTH,CopyFromParent,InputOutput,CopyFromParent,0,&wa);
-			//	fprintf(stderr,"is borderless\n");
 				cc->frameWindow=None;
-				//}
 	
-//	if(cc->frameWindow!=None)
 			if(cc->isBorderless==false)
 				XSelectInput(this->mainClass->display,cc->frameWindow,SubstructureRedirectMask|ButtonPressMask|ButtonReleaseMask|ExposureMask|PointerMotionMask);
 
@@ -312,13 +305,7 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 			cc->contentWindowRect.y-=this->mainClass->titleBarSize;
 			if(cc->isBorderless==false)
 				cc->frameWindowRect={-1000000,-1000000,premaphs.xa.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),premaphs.xa.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH};
-//			else
-//			{
-//				//cc->frameWindowRect={-1000000,-1000000,premaphs.xa.width,premaphs.xa.height};
-//				//cc->resizeWindow=XCreateSimpleWindow(this->mainClass->display,cc->frameWindow,-10,-10,1,1,BORDER_WIDTH,this->mainClass->frameFG->pixel,this->mainClass->frameBG->pixel);
-//				//XResizeWindow(this->mainClass->display,cc->frameWindow,1,1);
-//				
-//}
+
 			cc->resizeMode=this->mainClass->resizeMode;
 			if(cc->isBorderless==false)
 				{
@@ -326,7 +313,6 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 					cc->maskGC=XCreateGC(this->mainClass->display,cc->mask,0,NULL);
 				}
 			this->clientList[id]=cc;
-//	if(cc->frameWindow!=None)
 			if(cc->isBorderless==false)
 				this->clientList[cc->frameWindow]=cc;
 
@@ -334,11 +320,9 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 			attributes.win_gravity=NorthWestGravity;
 			if(cc->isBorderless==false)
 				XReparentWindow(this->mainClass->display,id,cc->frameWindow,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize-(BORDER_WIDTH*2));
-			//else
-			//	XReparentWindow(this->mainClass->display,id,cc->frameWindow,0,0);
 
 			XChangeWindowAttributes(this->mainClass->display,id,CWWinGravity,&attributes);
-//	if(cc->frameWindow!=None)
+
 			if(cc->isBorderless==false)
 				XMapWindow(this->mainClass->display,cc->frameWindow);
 			XSelectInput(this->mainClass->display,cc->contentWindow,PropertyChangeMask|StructureNotifyMask|KeyReleaseMask);
@@ -427,57 +411,57 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 				}
 
 //controls
-if(cc->isBorderless==false)
-{
-			wa.win_gravity=NorthWestGravity;
-			wa.save_under=true;
+			if(cc->isBorderless==false)
+				{
+					wa.win_gravity=NorthWestGravity;
+					wa.save_under=true;
 //menu
-			cc->menuControlStruct.controlName="menu";
-			cc->menuButton=XCreateWindow(this->mainClass->display,cc->frameWindow,0,0,1,1,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
-			cc->menuControlStruct.controlGC=XCreateGC(this->mainClass->display,cc->menuButton,0,NULL);
-			XSelectInput(this->mainClass->display,cc->menuButton,ButtonPressMask|ButtonReleaseMask|EnterWindowMask|LeaveWindowMask);
+					cc->menuControlStruct.controlName="menu";
+					cc->menuButton=XCreateWindow(this->mainClass->display,cc->frameWindow,0,0,1,1,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
+					cc->menuControlStruct.controlGC=XCreateGC(this->mainClass->display,cc->menuButton,0,NULL);
+					XSelectInput(this->mainClass->display,cc->menuButton,ButtonPressMask|ButtonReleaseMask|EnterWindowMask|LeaveWindowMask);
 
 //rite hand controls	
-			wa.win_gravity=NorthEastGravity;
+					wa.win_gravity=NorthEastGravity;
 
 //close
-			if(cc->canClose==true)
-				{
-			cc->closeControlStruct.controlName="close";
-			cc->closeButton=XCreateWindow(this->mainClass->display,cc->frameWindow,0,0,1,1,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
-			cc->closeControlStruct.controlGC=XCreateGC(this->mainClass->display,cc->closeButton,0,NULL);
-			XSelectInput(this->mainClass->display,cc->closeButton,ButtonPressMask|ButtonReleaseMask|EnterWindowMask|LeaveWindowMask);
-			cc->controlCnt=1;
-			}
+					if(cc->canClose==true)
+						{
+							cc->closeControlStruct.controlName="close";
+							cc->closeButton=XCreateWindow(this->mainClass->display,cc->frameWindow,0,0,1,1,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
+							cc->closeControlStruct.controlGC=XCreateGC(this->mainClass->display,cc->closeButton,0,NULL);
+							XSelectInput(this->mainClass->display,cc->closeButton,ButtonPressMask|ButtonReleaseMask|EnterWindowMask|LeaveWindowMask);
+							cc->controlCnt=1;
+						}
 //max
-			if(cc->canMaximize==true)
-				{
-					cc->maximizeControlStruct.controlName="maximize";
-					cc->maximizeButton=XCreateWindow(this->mainClass->display,cc->frameWindow,0,0,1,1,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
-					cc->maximizeControlStruct.controlGC=XCreateGC(this->mainClass->display,cc->maximizeButton,0,NULL);
-					XSelectInput(this->mainClass->display,cc->maximizeButton,ButtonPressMask|ButtonReleaseMask|EnterWindowMask|LeaveWindowMask);
-					cc->controlCnt++;
-				}
+					if(cc->canMaximize==true)
+						{
+							cc->maximizeControlStruct.controlName="maximize";
+							cc->maximizeButton=XCreateWindow(this->mainClass->display,cc->frameWindow,0,0,1,1,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
+							cc->maximizeControlStruct.controlGC=XCreateGC(this->mainClass->display,cc->maximizeButton,0,NULL);
+							XSelectInput(this->mainClass->display,cc->maximizeButton,ButtonPressMask|ButtonReleaseMask|EnterWindowMask|LeaveWindowMask);
+							cc->controlCnt++;
+						}
 //min
-			if(cc->canMinimize==true)
-				{
-					cc->minimizeControlStruct.controlName="hide";
-					cc->minimizeButton=XCreateWindow(this->mainClass->display,cc->frameWindow,0,0,1,1,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
-					cc->minimizeControlStruct.controlGC=XCreateGC(this->mainClass->display,cc->minimizeButton,0,NULL);
-					XSelectInput(this->mainClass->display,cc->minimizeButton,ButtonPressMask|ButtonReleaseMask|EnterWindowMask|LeaveWindowMask);
-					cc->controlCnt++;
-				}
+					if(cc->canMinimize==true)
+						{
+							cc->minimizeControlStruct.controlName="hide";
+							cc->minimizeButton=XCreateWindow(this->mainClass->display,cc->frameWindow,0,0,1,1,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
+							cc->minimizeControlStruct.controlGC=XCreateGC(this->mainClass->display,cc->minimizeButton,0,NULL);
+							XSelectInput(this->mainClass->display,cc->minimizeButton,ButtonPressMask|ButtonReleaseMask|EnterWindowMask|LeaveWindowMask);
+							cc->controlCnt++;
+						}
 //shade
-			if((this->theme.gotPart[this->mainClass->prefs.LFSTK_hashFromKey("shade-active")]==true) || (this->mainClass->useTheme==false))
-				{
-					cc->shadeControlStruct.controlName="shade";
-					cc->canShade=true;
-					cc->shadeButton=XCreateWindow(this->mainClass->display,cc->frameWindow,10,10,1,1,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
-					cc->shadeControlStruct.controlGC=XCreateGC(this->mainClass->display,cc->shadeButton,0,NULL);
-					XSelectInput(this->mainClass->display,cc->shadeButton,ButtonPressMask|ButtonReleaseMask|EnterWindowMask|LeaveWindowMask);
-					cc->controlCnt++;
+					if((this->theme.gotPart[this->mainClass->prefs.LFSTK_hashFromKey("shade-active")]==true) || (this->mainClass->useTheme==false))
+						{
+							cc->shadeControlStruct.controlName="shade";
+							cc->canShade=true;
+							cc->shadeButton=XCreateWindow(this->mainClass->display,cc->frameWindow,10,10,1,1,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
+							cc->shadeControlStruct.controlGC=XCreateGC(this->mainClass->display,cc->shadeButton,0,NULL);
+							XSelectInput(this->mainClass->display,cc->shadeButton,ButtonPressMask|ButtonReleaseMask|EnterWindowMask|LeaveWindowMask);
+							cc->controlCnt++;
+						}
 				}
-}
 
 			cc->LFSWM2_setWindowName();
 

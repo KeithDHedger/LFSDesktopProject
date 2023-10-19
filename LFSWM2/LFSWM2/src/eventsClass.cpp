@@ -151,6 +151,8 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 					cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(j));
 					if(cc!=NULL)
 						{
+						if(cc->isBorderless==true)
+							continue;
 							if(cc->rendered==false)
 								{
 									cc->renderFrame(false);
@@ -245,13 +247,21 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 							this->noRestack=false;
 							XWindowAttributes	x_window_attrs;
 							hintsDataStruct		hs;
-
 							XGetWindowAttributes(this->mainClass->display,e.xmaprequest.window,&x_window_attrs);
-							hs=this->mainClass->mainWindowClass->LFSWM2_getWindowHints(e.xmaprequest.window);
-							XMoveWindow(this->mainClass->display,e.xmaprequest.window,-1000000,-1000000);
 							XMapWindow(this->mainClass->display,e.xmaprequest.window);
+							hs=this->mainClass->mainWindowClass->LFSWM2_getWindowHints(e.xmaprequest.window);
+							if((hs.mHints!=NULL) && (hs.mHints->decorations==0))
+								{
+									XGetWindowAttributes(this->mainClass->display,e.xmaprequest.window,&x_window_attrs);
+									break;
+								}
+							XMoveWindow(this->mainClass->display,e.xmaprequest.window,-1000000,-1000000);
+							//XMapWindow(this->mainClass->display,e.xmaprequest.window);
 							if(this->mainClass->mainWindowClass->LFSWM2_createClient(e.xmaprequest.window,hs)==false)
 								this->mainClass->mainWindowClass->LFSWM2_freeHints(hs);
+							
+							LFSWM2_clientClass	*cc;
+							cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
 							XMoveResizeWindow(this->mainClass->display,e.xmaprequest.window,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize,x_window_attrs.width,x_window_attrs.height);
 						}
 						break;
@@ -273,7 +283,14 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 											XWindowChanges	ch;
 											cc->configCnt++;
 											if((cc->isBorderless==true) && (cc->configCnt<MAXCONFIGCNT))
+												{
+													XWindowAttributes	x_window_attrs;
+													XGetWindowAttributes(this->mainClass->display,e.xconfigurerequest.window,&x_window_attrs);
+													hintsDataStruct		hs;
+													hs=this->mainClass->mainWindowClass->LFSWM2_getWindowHints(e.xconfigurerequest.window);
+													XMoveResizeWindow(this->mainClass->display,e.xconfigurerequest.window,hs.pt.x,hs.pt.y,hs.sh->min_width,hs.sh->min_height);
 												break;
+												}
 											cc->configCnt=0;
 											if((e.xconfigurerequest.value_mask & (CWWidth|CWHeight)) !=0)
 												{
@@ -283,9 +300,6 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 													if((cc->buttonDown==false) || (cc->isBorderless==false))
 														{
 															if(cc->isBorderless==false)
-																//fprintf(stderr,"no border\n");
-																	//XResizeWindow(this->mainClass->display,cc->frameWindow,e.xconfigurerequest.width,e.xconfigurerequest.height);
-															//else
 																XResizeWindow(this->mainClass->display,cc->frameWindow,e.xconfigurerequest.width+this->mainClass->riteSideBarSize+this->mainClass->leftSideBarSize,e.xconfigurerequest.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);
 														}
 													ch.width=e.xconfigurerequest.width;
@@ -297,7 +311,6 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 												{
 													ch.x=e.xconfigurerequest.x;
 													ch.y=e.xconfigurerequest.y;
-														//if(cc->frameWindow!=None)
 													if(cc->isBorderless==false)
 														XMoveWindow(this->mainClass->display,cc->frameWindow,ch.x,ch.y);
 													break;

@@ -280,6 +280,12 @@ void LFSWM2_Class::LFSWM2_initRootWindow(void)
 
 	this->mainWindowClass->LFSWM2_removeProp(this->rootWindow,this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_CLIENT_LIST")));
 	this->mainWindowClass->LFSWM2_removeProp(this->rootWindow,this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_CLIENT_LIST_STACKING")));
+
+	// Finally create the WM_CHECK window to announce our EWMH support.
+	wmCheckWin=XCreateWindow(this->display,this->rootWindow,0,0,1,1,0,CopyFromParent,InputOnly,CopyFromParent,0,NULL);
+	this->mainWindowClass->LFSWM2_setProp(this->wmCheckWin,this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_SUPPORTING_WM_CHECK")),XA_WINDOW,32,&wmCheckWin,1);
+	this->mainWindowClass->LFSWM2_setProp(this->wmCheckWin,this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_NAME")),this->atomshashed.at(this->prefs.LFSTK_hashFromKey("UTF8_STRING")),8,(void*)PACKAGE_NAME,strlen(PACKAGE_NAME));
+	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_SUPPORTING_WM_CHECK")),XA_WINDOW,32,&wmCheckWin,1);
 }
 
 int LFSWM2_Class::LFSWM2_wmDetected(Display *display,XErrorEvent *e)

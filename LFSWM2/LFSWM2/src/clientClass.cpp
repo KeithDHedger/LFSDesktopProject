@@ -1069,11 +1069,13 @@ contloop:
 				break;
 
 			case ConfigureNotify:
-				//std::cerr<<"client ConfigureNotify"<<std::endl;
+				//std::cerr<<">>>>>>>>>>>>>>>>>client ConfigureNotify"<<std::endl;
+				//fprintf(stderr,"e->xconfigurerequest.y=%i\n",e->xconfigurerequest.y);
 				break;
 
 			case ConfigureRequest:
 				//fprintf(stderr,"isframed=%s",this->mainClass->DEBUG_printBool(this->rendered));
+				//fprintf(stderr,">>>>>>>>>>>>>>>>>>>>>e->xconfigurerequest.y=%i\n",e->xconfigurerequest.y);
 				if(this->isBorderless==true)
 					return(false);
 				if(this->holdFrameRect.w==-1)

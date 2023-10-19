@@ -281,6 +281,7 @@ class LFSWM2_Class
 
 //vars
 		XErrorHandler		lastXErrorHandler;
+		Window				wmCheckWin;
 };
 
 #endif
