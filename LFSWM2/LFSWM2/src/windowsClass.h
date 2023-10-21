@@ -143,6 +143,8 @@ class LFSWM2_windowClass
 
 		void									LFSWM2_setVisibilityForDesk(unsigned long desk);
 
+		bool									LFSWM2_checkValidWindow(Window wid);
+
 //clients
 		void									LFSWM2_buildClientList(void);
 		bool									LFSWM2_createClient(Window id,hintsDataStruct premaphs);
@@ -151,7 +153,7 @@ class LFSWM2_windowClass
 		void									LFSWM2_deleteClientEntry(Window id);
 		void									LFSWM2_setClientList(Window id,bool addwindow);
 		void									LFSWM2_freeHints(hintsDataStruct hs);
-
+		bool									LFSWM2_createUnframedWindow(Window wid);
 
 //graphics
 		struct fontColour					*LFSWM2_xftLoadColour(const char *name,const char *fallback);

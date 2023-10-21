@@ -47,25 +47,14 @@ void LFSWM2_windowClass::LFSWM2_buildClientList(void)
 	for(unsigned int i=0;i<windowscnt;++i)
 		{
 			hs=this->LFSWM2_getWindowHints(toplevelwindows[i]);
-		//	int s=XGetWindowAttributes(this->mainClass->display,toplevelwindows[i],&x_window_attrs);
-						//	fprintf(stderr,"status=%i\n",s);
-						//	this->mainClass->DEBUG_prinWindowAttributes(toplevelwindows[i]);
-						//	//this->mainClass->DEBUG_printMWMHints(hs.mHints);
-						//	this->mainClass->DEBUG_printHintsDataStruct(toplevelwindows[i]);
+			if((hs.mHints!=NULL) && (hs.mHints->decorations==0))
+				if(this->LFSWM2_createUnframedWindow(toplevelwindows[i])==true)
+					continue;
+
 			if(this->LFSWM2_createClient(toplevelwindows[i],hs)==false)
 				this->LFSWM2_freeHints(hs);
-
-//							hs=this->mainClass->mainWindowClass->LFSWM2_getWindowHints(toplevelwindows[i]);
-//							XMoveWindow(this->mainClass->display,toplevelwindows[i],-100000,-100000);
-//							XMapWindow(this->mainClass->display,toplevelwindows[i]);
-//							if(this->mainClass->mainWindowClass->LFSWM2_createClient(toplevelwindows[i],hs)==false)
-//								this->mainClass->mainWindowClass->LFSWM2_freeHints(hs);
-//							XMoveResizeWindow(this->mainClass->display,toplevelwindows[i],this->mainClass->leftSideBarSize,this->mainClass->titleBarSize,x_window_attrs.width,x_window_attrs.height);
-//
-
-
-
 		}
+
 	if(toplevelwindows!=NULL)
 		XFree(toplevelwindows);
 }
@@ -136,53 +125,91 @@ void LFSWM2_windowClass::LFSWM2_freeHints(hintsDataStruct hs)
 		XFree(hs.mHints);
 }
 
+bool LFSWM2_windowClass::LFSWM2_createUnframedWindow(Window wid)
+{
+	int	wtype;
+
+	wtype=this->LFSWM2_getWindowType(wid);
+	switch(wtype)//for later
+		{
+			case DOCKWINDOW:
+				switch(this->mainClass->forceDockStackingOrder)
+					{
+						case FORCEABOVE:
+							this->LFSWM2_removeProp(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
+							this->LFSWM2_addState(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
+							break;
+						case FORCEBELOW:
+							this->LFSWM2_removeProp(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
+							this->LFSWM2_addState(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
+							break;
+						default:
+							break;
+					}
+				this->LFSWM2_setClientList(wid,true);
+				return(true);
+				break;
+			case NORMALWINDOW:
+			case DIALOGWINDOW:
+			case TOOLWINDOW:
+			case DESKTOPWINDOW:
+				{
+					this->LFSWM2_setClientList(wid,true);
+					return(true);
+					break;
+				}
+		}
+
+	return(false);
+}
+
 bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 {
-	if(this->LFSWM2_getWindowType(id)==MENUWINDOW)
-		{
-		//fprintf(stderr,"MENUWINDOW=0x%x\n",id);
-			this->LFSWM2_setClientList(id,true);
-			XRaiseWindow(this->mainClass->display,id);
-			this->LFSWM2_addState(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
-			this->mainClass->restackCnt=0;
-			this->mainClass->mainEventClass->noRestack=false;
-			XSetInputFocus(this->mainClass->display,id,RevertToNone,CurrentTime);
-			return(false);
-		}
+//	if(this->LFSWM2_getWindowType(id)==MENUWINDOW)
+//		{
+//		//fprintf(stderr,"MENUWINDOW=0x%x\n",id);
+//			this->LFSWM2_setClientList(id,true);
+//			XRaiseWindow(this->mainClass->display,id);
+//			this->LFSWM2_addState(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
+//			this->mainClass->restackCnt=0;
+//			this->mainClass->mainEventClass->noRestack=false;
+//			XSetInputFocus(this->mainClass->display,id,RevertToNone,CurrentTime);
+//			return(false);
+//		}
 
-	if(this->LFSWM2_getWindowType(id)==DOCKWINDOW)
-		{
-		//fprintf(stderr,"DOCKWINDOW=0x%x\n",id);
-			this->LFSWM2_setClientList(id,true);
-			XRaiseWindow(this->mainClass->display,id);
-			this->mainClass->restackCnt=1;
-			switch(this->mainClass->forceDockStackingOrder)
-				{
-					case FORCEABOVE:
-						this->LFSWM2_removeProp(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
-						this->LFSWM2_addState(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
-						break;
-					case FORCEBELOW:
-						this->LFSWM2_removeProp(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
-						this->LFSWM2_addState(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
-						break;
-					default:
-						break;
-				}
-			return(false);
-		}
-
-	if(this->LFSWM2_getWindowType(id)==DESKTOPWINDOW)
-		{
-	//	fprintf(stderr,"DESKTOPWINDOW=0x%x\n",id);
-			this->LFSWM2_setClientList(id,true);
-			XLowerWindow(this->mainClass->display,id);
-			this->LFSWM2_removeProp(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
-			this->LFSWM2_addState(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
-			this->mainClass->restackCnt=0;
-			this->mainClass->mainEventClass->LFSWM2_restack();
-			return(false);
-		}
+//	if(this->LFSWM2_getWindowType(id)==DOCKWINDOW)
+//		{
+//		//fprintf(stderr,"DOCKWINDOW=0x%x\n",id);
+//			this->LFSWM2_setClientList(id,true);
+//			XRaiseWindow(this->mainClass->display,id);
+//			this->mainClass->restackCnt=1;
+//			switch(this->mainClass->forceDockStackingOrder)
+//				{
+//					case FORCEABOVE:
+//						this->LFSWM2_removeProp(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
+//						this->LFSWM2_addState(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
+//						break;
+//					case FORCEBELOW:
+//						this->LFSWM2_removeProp(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
+//						this->LFSWM2_addState(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
+//						break;
+//					default:
+//						break;
+//				}
+//			return(false);
+//		}
+//
+//	if(this->LFSWM2_getWindowType(id)==DESKTOPWINDOW)
+//		{
+//	//	fprintf(stderr,"DESKTOPWINDOW=0x%x\n",id);
+//			this->LFSWM2_setClientList(id,true);
+//			XLowerWindow(this->mainClass->display,id);
+//			this->LFSWM2_removeProp(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
+//			this->LFSWM2_addState(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
+//			this->mainClass->restackCnt=0;
+//			this->mainClass->mainEventClass->LFSWM2_restack();
+//			return(false);
+//		}
 
 	if(this->clientList.count(id)>0)
 		{
@@ -878,13 +905,28 @@ void LFSWM2_windowClass::LFSWM2_setVisibilityForDesk(unsigned long desk)
 		}
 }
 
+bool LFSWM2_windowClass::LFSWM2_checkValidWindow(Window wid)
+{
+	bool					dummy=0;
+	XWindowAttributes	xa;
+
+	this->mainClass->LFSWM2_pushXErrorHandler();
+		dummy=XGetWindowAttributes(this->mainClass->display,wid,&xa);
+	this->mainClass->LFSWM2_popXErrorHandler();
+	return(dummy);
+}
+
 hintsDataStruct LFSWM2_windowClass::LFSWM2_getWindowHints(Window wid,bool movewindow)
 {
 	hintsDataStruct		hints;
 	long					dummy;
 	long unsigned int	nitems_return=0;
 
+	if(this->LFSWM2_checkValidWindow(wid)==false)
+		return(hints);
+
 	XGetWindowAttributes(this->mainClass->display,wid,&hints.xa);
+
 	hints.sh=XAllocSizeHints();
 	hints.sh->flags=0;
 	hints.valid=XGetWMNormalHints(this->mainClass->display,wid,hints.sh,&dummy);

@@ -93,7 +93,7 @@ struct motifHints
 
 struct hintsDataStruct
 {
-	pointStruct			pt;
+	pointStruct			pt={0,0};
 	XSizeHints			*sh=NULL;
 	XWindowAttributes	xa;
 	motifHints			*mHints=NULL;

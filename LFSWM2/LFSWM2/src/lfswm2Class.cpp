@@ -224,6 +224,7 @@ void LFSWM2_Class::LFSWM2_initRootWindow(void)
 	XSelectInput(this->display,this->rootWindow,StructureNotifyMask|ExposureMask|ButtonPress|ButtonReleaseMask|EnterWindowMask|LeaveWindowMask|SubstructureRedirectMask|SubstructureNotifyMask|ButtonPressMask);
 	XSync(this->display,false);
 
+//XSynchronize(this->display,true);
 	std::vector<Atom>	globalAtoms=
 		{
 			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),
@@ -286,6 +287,8 @@ void LFSWM2_Class::LFSWM2_initRootWindow(void)
 	this->mainWindowClass->LFSWM2_setProp(this->wmCheckWin,this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_SUPPORTING_WM_CHECK")),XA_WINDOW,32,&wmCheckWin,1);
 	this->mainWindowClass->LFSWM2_setProp(this->wmCheckWin,this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_NAME")),this->atomshashed.at(this->prefs.LFSTK_hashFromKey("UTF8_STRING")),8,(void*)PACKAGE_NAME,strlen(PACKAGE_NAME));
 	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_SUPPORTING_WM_CHECK")),XA_WINDOW,32,&wmCheckWin,1);
+//	fprintf(stderr,"wmCheckWin=%p\n",wmCheckWin);
+	XSync(this->display,true);
 }
 
 int LFSWM2_Class::LFSWM2_wmDetected(Display *display,XErrorEvent *e)

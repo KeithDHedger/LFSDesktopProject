@@ -853,12 +853,14 @@ void LFSWM2_clientClass::LFSWM2_setWMState(XEvent *e)
 	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW"))))
 		{
 			this->onBottom=true;
+			this->onTop=false;
 			XLowerWindow(this->mainClass->display,this->contentWindow);
 			this->mainClass->restackCnt++;
 		}
 
 	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE"))))
 		{
+			this->onBottom=false;
 			this->onTop=true;
 			XRaiseWindow(this->mainClass->display,this->contentWindow);
 			this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,&this->contentWindow,1);
