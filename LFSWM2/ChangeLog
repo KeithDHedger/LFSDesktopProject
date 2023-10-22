@@ -1,4 +1,6 @@
 1.0.1
+Correctly set _NET_CLIENT_LIST_STACKING/_NET_CLIENT_LIST.
+Better stacking.
 More fixes for undecorated/popup windows.
 Fixes for undecorated windows.
 Done withdraw window.

@@ -987,6 +987,7 @@ rectStruct LFSWM2_clientClass::setTitlePosition(void)
 
 bool LFSWM2_clientClass::LFSWM2_handleEvents(XEvent *e)
 {
+//this->mainClass->DEBUG_printEventData(e,true);
 	switch(e->type)
 		{
 			case ButtonRelease:
@@ -1033,6 +1034,7 @@ bool LFSWM2_clientClass::LFSWM2_handleEvents(XEvent *e)
 				break;
 			case UnmapNotify:
 				{
+				//fprintf(stderr,"UnmapNotify from client\n");
 					this->LFSWM2_hideWindow(true);
 					return(true);
 				}
@@ -1045,6 +1047,7 @@ bool LFSWM2_clientClass::LFSWM2_handleEvents(XEvent *e)
 
 			case DestroyNotify:
 				{
+				//fprintf(stderr,"DestroyNotify from client\n");
 					bool					loop=false;
 					LFSWM2_clientClass	*cc;
 					do
@@ -1088,7 +1091,6 @@ contloop:
 				this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,&this->contentWindow,1);
 				XSetInputFocus(this->mainClass->display,this->contentWindow,RevertToNone,CurrentTime);
 				break;
-
 			default:
 				return(false);
 		}
@@ -1135,7 +1137,6 @@ void LFSWM2_clientClass::renderFrame(bool isfirst,int x,int y)
 			XMapSubwindows(this->mainClass->display,this->contentWindow);	
 			this->setWindowRects(true);
 			this->rendered=true;
-			//XMoveWindow(this->mainClass->display,this->frameWindow,this->origx,this->origy);
 			this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,(void*)&this->contentWindow,1);
 			this->mainClass->restackCnt=0;
 			if(this->isBorderless==true)
