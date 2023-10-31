@@ -29,10 +29,10 @@ enum dataType {TYPEINVALID,TYPESTRING,TYPEBOOL,TYPEINT};
 
 struct prefsData
 {
-	dataType	type;
+	dataType		type;
 	std::string	keyName;
 	std::string	strData;
-	bool		boolData;
+	bool			boolData;
 	int			intData;
 };
 

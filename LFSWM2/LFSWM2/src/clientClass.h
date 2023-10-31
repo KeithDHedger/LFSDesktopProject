@@ -48,6 +48,7 @@ class LFSWM2_clientClass
 		Window			contentWindow=None;
 		Window			frameWindow=None;
 		Window			transientFor=None;
+		GC				frameGC=None;
 
 		std::string		name="";
 		int				windowType=-1;
@@ -105,8 +106,6 @@ class LFSWM2_clientClass
 		Window			rightSideDragger=None;
 		Window			bottomDragger=None;
 
-//		void				LFSWM2_showWindow(void);
-//		void				LFSWM2_hideWindow(void);
 		void				LFSWM2_showWindow(bool checkstate=false);
 		void				LFSWM2_hideWindow(bool withdraw=false);
 
@@ -146,13 +145,8 @@ class LFSWM2_clientClass
 		void				resizeContentWindow(rectStruct r,bool moveorigin=true);
 		void				setWindowRects(bool resize=true);
 		rectStruct		setTitlePosition(void);
-
-		Pixmap			mask=None;
-		GC				maskGC=None;
-int origx=0;
-int origy=0;
-
 		void				resetContentWindow(void);//TODO//all the routines need redoing
+
 	private:
 		int				sx=0;
 		int				rsx=0;
@@ -185,7 +179,6 @@ int origy=0;
 
 		void				resizeContentWindow(int w,int h,bool useframerect=false);
 		void				resizeFrameWindow(void);
-
 };
 
 #endif

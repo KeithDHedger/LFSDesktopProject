@@ -78,8 +78,13 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 	this->depth=DefaultDepth(this->display,this->screen);
 
 	this->rootWindow=DefaultRootWindow(this->display);
-	this->defaultVisual=DefaultVisual(this->display,this->screen);
-	this->defaultColourmap=DefaultColormap(this->display,this->screen);
+
+	XVisualInfo vinfo;
+	XMatchVisualInfo(this->display,this->screen,32,TrueColor,&vinfo);
+	this->defaultVisual=vinfo.visual;
+	this->depth=vinfo.depth;
+
+	this->defaultColourmap=XCreateColormap(this->display,this->rootWindow,this->defaultVisual,AllocNone);
 	this->blackColour=BlackPixel(this->display,this->screen);
 	this->whiteColour=WhitePixel(this->display,this->screen);
 	this->mainGC=XCreateGC(this->display,this->rootWindow,0,NULL);
@@ -164,7 +169,8 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 			{this->prefs.LFSTK_hashFromKey("rescanprefs"),{TYPEINT,"rescanprefs","",false,10}},
 			{this->prefs.LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","",false,0}},
 			{this->prefs.LFSTK_hashFromKey("resizemode"),{TYPEINT,"resizemode","",false,2}},
-			{this->prefs.LFSTK_hashFromKey("modkeys"),{TYPEINT,"modkeys","",false,MOVEKEYS}}
+			{this->prefs.LFSTK_hashFromKey("modkeys"),{TYPEINT,"modkeys","",false,MOVEKEYS}},
+			{this->prefs.LFSTK_hashFromKey("framealpha"),{TYPEINT,"framealpha","",false,0xff}}
 		};
 
 	this->prefsPath=getenv("HOME");
@@ -176,9 +182,13 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 //this->prefs.LFSTK_saveVarsToFile("-");
 
 	this->freeFontColour(this->frameBG);
-	this->frameBG=this->mainWindowClass->LFSWM2_xftLoadColour(this->prefs.LFSTK_getCString("framebg"),"grey");
+	this->frameBG=this->mainWindowClass->LFSWM2_xftLoadColour(this->prefs.LFSTK_getCString("framebg"),"#ff969696");
 	this->freeFontColour(this->frameFG);
 	this->frameFG=this->mainWindowClass->LFSWM2_xftLoadColour(this->prefs.LFSTK_getCString("framefg"),"white");
+
+	this->frameAlpha=this->prefs.LFSTK_getInt("framealpha");
+	this->frameAlpha=this->frameAlpha<<24;
+
 	this->freeFontColour(this->frameText);
 	this->frameText=this->mainWindowClass->LFSWM2_xftLoadColour(this->prefs.LFSTK_getCString("textcolour"),"black");
 	XftFontClose(this->display,this->frameFont);

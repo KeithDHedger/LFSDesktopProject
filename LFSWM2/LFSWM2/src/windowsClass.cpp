@@ -165,52 +165,6 @@ bool LFSWM2_windowClass::LFSWM2_createUnframedWindow(Window wid)
 
 bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 {
-//	if(this->LFSWM2_getWindowType(id)==MENUWINDOW)
-//		{
-//		//fprintf(stderr,"MENUWINDOW=0x%x\n",id);
-//			this->LFSWM2_setClientList(id,true);
-//			XRaiseWindow(this->mainClass->display,id);
-//			this->LFSWM2_addState(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
-//			this->mainClass->restackCnt=0;
-//			this->mainClass->mainEventClass->noRestack=false;
-//			XSetInputFocus(this->mainClass->display,id,RevertToNone,CurrentTime);
-//			return(false);
-//		}
-
-//	if(this->LFSWM2_getWindowType(id)==DOCKWINDOW)
-//		{
-//		//fprintf(stderr,"DOCKWINDOW=0x%x\n",id);
-//			this->LFSWM2_setClientList(id,true);
-//			XRaiseWindow(this->mainClass->display,id);
-//			this->mainClass->restackCnt=1;
-//			switch(this->mainClass->forceDockStackingOrder)
-//				{
-//					case FORCEABOVE:
-//						this->LFSWM2_removeProp(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
-//						this->LFSWM2_addState(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
-//						break;
-//					case FORCEBELOW:
-//						this->LFSWM2_removeProp(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
-//						this->LFSWM2_addState(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
-//						break;
-//					default:
-//						break;
-//				}
-//			return(false);
-//		}
-//
-//	if(this->LFSWM2_getWindowType(id)==DESKTOPWINDOW)
-//		{
-//	//	fprintf(stderr,"DESKTOPWINDOW=0x%x\n",id);
-//			this->LFSWM2_setClientList(id,true);
-//			XLowerWindow(this->mainClass->display,id);
-//			this->LFSWM2_removeProp(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
-//			this->LFSWM2_addState(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
-//			this->mainClass->restackCnt=0;
-//			this->mainClass->mainEventClass->LFSWM2_restack();
-//			return(false);
-//		}
-
 	if(this->clientList.count(id)>0)
 		{
 			XMapWindow(this->mainClass->display,this->clientList.at(id)->frameWindow);
@@ -314,10 +268,16 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 				}
 
 			wa.win_gravity=NorthWestGravity;
+
+			wa.colormap =this->mainClass->defaultColourmap;
+			wa.border_pixel=0;
+
 			if(cc->isBorderless==false)
-				cc->frameWindow=XCreateWindow(this->mainClass->display,this->mainClass->rootWindow,-1000000,-1000000,premaphs.xa.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),premaphs.xa.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH,BORDER_WIDTH,CopyFromParent,InputOutput,CopyFromParent,0,&wa);
+				cc->frameWindow=XCreateWindow(this->mainClass->display,DefaultRootWindow(this->mainClass->display),-1000000,-1000000,premaphs.xa.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),premaphs.xa.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH,BORDER_WIDTH,this->mainClass->depth,InputOutput,this->mainClass->defaultVisual,CWColormap | CWBorderPixel ,&wa);
 			else
 				cc->frameWindow=None;
+
+//fprintf(stderr,"wid=0x%x\n",cc->frameWindow);
 	
 			if(cc->isBorderless==false)
 				XSelectInput(this->mainClass->display,cc->frameWindow,SubstructureRedirectMask|ButtonPressMask|ButtonReleaseMask|ExposureMask|PointerMotionMask);
@@ -335,10 +295,7 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 
 			cc->resizeMode=this->mainClass->resizeMode;
 			if(cc->isBorderless==false)
-				{
-					cc->mask=XCreatePixmap(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.w,cc->frameWindowRect.h,1);
-					cc->maskGC=XCreateGC(this->mainClass->display,cc->mask,0,NULL);
-				}
+				cc->frameGC=XCreateGC(this->mainClass->display,cc->frameWindow,0,0);
 			this->clientList[id]=cc;
 			if(cc->isBorderless==false)
 				this->clientList[cc->frameWindow]=cc;
@@ -948,9 +905,6 @@ hintsDataStruct LFSWM2_windowClass::LFSWM2_getWindowHints(Window wid,bool movewi
 
 	hints.mHints=(motifHints*)this->mainClass->mainWindowClass->LFSWM2_getProp(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_MOTIF_WM_HINTS")),this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_MOTIF_WM_HINTS")),&nitems_return);
 
-	//hints.valid=true;
-
-#if 1
 	if(this->mainClass->runLevel!=RL_STARTUP && ( (hints.sh->flags & (USPosition|PPosition))==0))
 		{
 			Window			root_return;
@@ -1007,7 +961,6 @@ hintsDataStruct LFSWM2_windowClass::LFSWM2_getWindowHints(Window wid,bool movewi
 			if(movewindow==true)
 				XMoveWindow(this->mainClass->display,wid,hints.pt.x,hints.pt.y);
 		}
-#endif
 	return(hints);
 }
 
@@ -1091,14 +1044,16 @@ void LFSWM2_windowClass::LFSWM2_refreshFrame(LFSWM2_clientClass *cc,XExposeEvent
 	else
 		{
 			r=cc->frameWindowRect;
+			long unsigned	col=(this->mainClass->frameAlpha|(this->mainClass->frameBG->pixel&0xffffff));
+ 
+			XSetClipMask(this->mainClass->display,cc->frameGC,None);
+			XSetClipOrigin(this->mainClass->display,cc->frameGC,0,0);
+			XSetFillStyle(this->mainClass->display,cc->frameGC,FillSolid);
+			XSetForeground(this->mainClass->display,cc->frameGC,col);
 
-			XSetClipMask(this->mainClass->display,this->mainClass->mainGC,None);
-			XSetClipOrigin(this->mainClass->display,this->mainClass->mainGC,0,0);
-			XSetForeground(this->mainClass->display,this->mainClass->mainGC,this->mainClass->frameBG->pixel);
+//fprintf(stderr,">>>frameAlpha=%x this->mainClass->frameBG->pixel=%x both=%x\n",this->mainClass->frameAlpha,this->mainClass->frameBG->pixel,(this->mainClass->frameAlpha|(this->mainClass->frameBG->pixel)&0xffffff));
+			XFillRectangle(this->mainClass->display,cc->frameWindow,cc->frameGC,0,0,r.w,r.h);
 
-			XFillRectangle(this->mainClass->display,cc->frameWindow,this->mainClass->mainGC,0,0,r.w,r.h);
-
-			XSetForeground(this->mainClass->display,this->mainClass->mainGC,this->mainClass->frameText->pixel);
 			XftDrawChange(this->mainClass->frameText->draw,cc->frameWindow);
 
 			if(cc->name.length()>0)
@@ -1142,6 +1097,8 @@ void	 LFSWM2_windowClass::LFSWM2_reloadTheme(void)
 	this->mainClass->useTheme=this->mainClass->prefs.LFSTK_getBool("usetheme");
 	this->mainClass->resizeMode=this->mainClass->prefs.LFSTK_getInt("resizemode");
 	this->mainClass->modKeys=this->mainClass->prefs.LFSTK_getInt("modkeys");
+	this->mainClass->frameAlpha=this->mainClass->prefs.LFSTK_getInt("framealpha");
+	this->mainClass->frameAlpha=this->mainClass->frameAlpha<<24;
 
 	if(this->mainClass->useTheme==true)
 		this->LFSWM2_loadTheme(this->mainClass->prefs.LFSTK_getString("theme"));
@@ -1167,6 +1124,8 @@ void	 LFSWM2_windowClass::LFSWM2_loadTheme(std::string themename)
 			this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]=0;
 			cnt++;
 		}
+
+	this->mainClass->titlePosition=2;
 	this->theme.titleBarHeight=0;
 	this->theme.leftWidth=0;
 	this->theme.rightWidth=0;
@@ -1266,7 +1225,6 @@ void	 LFSWM2_windowClass::LFSWM2_loadTheme(std::string themename)
 		this->theme.fullWidthTitle=true;
 	else
 		this->theme.fullWidthTitle=false;
-	///std::<<this->theme.fullWidthTitle<<std::endl;
 }
 
 void LFSWM2_windowClass::LFSWM2_refreshThemeFrame(LFSWM2_clientClass *cc)
@@ -1282,9 +1240,13 @@ void LFSWM2_windowClass::LFSWM2_refreshThemeFrame(LFSWM2_clientClass *cc)
 	int			part4w=0;
 	int			part5w=0;
 	int			startx=0;
+	int			rightpad=0;
 
 	Pixmap		pm;
 	GC			pmgc;
+	GC			maskgc;
+	Pixmap		mask;
+	rectStruct	tr;
 
 	if(cc->isBorderless==true)
 		return;
@@ -1297,92 +1259,74 @@ void LFSWM2_windowClass::LFSWM2_refreshThemeFrame(LFSWM2_clientClass *cc)
 	pm=XCreatePixmap(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.w,cc->frameWindowRect.h,this->mainClass->depth);
 	pmgc=XCreateGC(this->mainClass->display,pm,0,NULL);
 
-	XSetClipMask(this->mainClass->display,pmgc,None);
 	XSetClipOrigin(this->mainClass->display,pmgc,0,0);
-	XSetForeground(this->mainClass->display,pmgc,this->mainClass->frameFG->pixel);
 	XSetFillStyle(this->mainClass->display,pmgc,FillSolid);
+	XSetForeground(this->mainClass->display,pmgc,0);
 	XFillRectangle(this->mainClass->display,pm,pmgc,0,0,cc->frameWindowRect.w,cc->frameWindowRect.h);
 
 //reset window mask
-	if(cc->mask!=None)
-		XFreePixmap(this->mainClass->display,cc->mask);
-	cc->mask=XCreatePixmap(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.w,cc->frameWindowRect.h,1);
-	if(cc->maskGC!=None)
-		XFreeGC(this->mainClass->display,cc->maskGC);
-	cc->maskGC=XCreateGC(this->mainClass->display,cc->mask,0,NULL);
-	XSetFillStyle(this->mainClass->display,cc->maskGC,FillSolid);
-	XSetClipOrigin(this->mainClass->display,cc->maskGC,0,0);
-	XSetForeground(this->mainClass->display,cc->maskGC,this->mainClass->whiteColour);
-	XFillRectangle(this->mainClass->display,cc->mask,cc->maskGC,0,0,cc->frameWindowRect.w,cc->frameWindowRect.h);
+	mask=XCreatePixmap(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.w,cc->frameWindowRect.h,1);
+	maskgc=XCreateGC(this->mainClass->display,mask,0,NULL);
 
+	XSetFillStyle(this->mainClass->display,maskgc,FillSolid);
+	XSetClipOrigin(this->mainClass->display,maskgc,0,0);
+	XSetForeground(this->mainClass->display,maskgc,0);
+	XFillRectangle(this->mainClass->display,mask,maskgc,0,0,cc->frameWindowRect.w,cc->frameWindowRect.h);
+
+//set for tiling
+	XSetClipMask(this->mainClass->display,pmgc,None);
 	XSetFillStyle(this->mainClass->display,pmgc,FillTiled);
-	XSetFillStyle(this->mainClass->display,cc->maskGC,FillTiled);
+
+	XSetClipMask(this->mainClass->display,maskgc,None);
+	XSetFillStyle(this->mainClass->display,maskgc,FillTiled);
 
 //left side
 	fullpartname="left"+activepart;
-
-	XSetClipMask(this->mainClass->display,pmgc,None);
-	XSetClipOrigin(this->mainClass->display,pmgc,0,0);
 	XSetTSOrigin(this->mainClass->display,pmgc,0,0);
 	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
 	XFillRectangle(this->mainClass->display,pm,pmgc,0,this->theme.titleBarHeight,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.titleBarHeight-this->theme.bottomHeight);
 
-	//XSetClipMask(this->mainClass->display,cc->maskGC,None);
-	XSetClipOrigin(this->mainClass->display,cc->maskGC,0,0);
-	XSetTSOrigin(this->mainClass->display,cc->maskGC,0,0);
-	XSetTile(this->mainClass->display,cc->maskGC,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XFillRectangle(this->mainClass->display,cc->mask,cc->maskGC,0,this->theme.titleBarHeight,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.titleBarHeight-this->theme.bottomHeight);
+	XSetTSOrigin(this->mainClass->display,maskgc,0,0);
+	XSetTile(this->mainClass->display,maskgc,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XFillRectangle(this->mainClass->display,mask,maskgc,0,this->theme.titleBarHeight,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.titleBarHeight-this->theme.bottomHeight);
 
 //rite side
 	fullpartname="right"+activepart;
-
-	XSetClipMask(this->mainClass->display,pmgc,None);
-	XSetClipOrigin(this->mainClass->display,pmgc,0,0);
 	XSetTSOrigin(this->mainClass->display,pmgc,cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.titleBarHeight);//TODO//
 	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
 	XFillRectangle(this->mainClass->display,pm,pmgc,cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.titleBarHeight,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.titleBarHeight-this->theme.bottomHeight);
 
-	XSetClipOrigin(this->mainClass->display,cc->maskGC,0,0);
-	XSetTSOrigin(this->mainClass->display,cc->maskGC,cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.titleBarHeight);//TODO//
-	XSetTile(this->mainClass->display,cc->maskGC,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XFillRectangle(this->mainClass->display,cc->mask,cc->maskGC,cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.titleBarHeight,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.titleBarHeight-this->theme.bottomHeight);
+	XSetTSOrigin(this->mainClass->display,maskgc,cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.titleBarHeight);//TODO//
+	XSetTile(this->mainClass->display,maskgc,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XFillRectangle(this->mainClass->display,mask,maskgc,cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.titleBarHeight,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.titleBarHeight-this->theme.bottomHeight);
 
 //bottom
 	fullpartname="bottom"+activepart;
-
-	XSetClipMask(this->mainClass->display,pmgc,None);
-	XSetClipOrigin(this->mainClass->display,pmgc,0,0);
 	XSetTSOrigin(this->mainClass->display,pmgc,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
 	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
 	XFillRectangle(this->mainClass->display,pm,pmgc,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("bottom-left-active")],cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("bottom-right-active")]-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("bottom-left-active")],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
 
-	//XSetClipMask(this->mainClass->display,pmgc,None);
-	XSetClipOrigin(this->mainClass->display,cc->maskGC,0,0);
-	XSetTSOrigin(this->mainClass->display,cc->maskGC,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("bottom-left-active")],cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XSetTile(this->mainClass->display,cc->maskGC,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XFillRectangle(this->mainClass->display,cc->mask,cc->maskGC,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("bottom-left-active")],cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("bottom-right-active")]-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("bottom-left-active")],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XSetTSOrigin(this->mainClass->display,maskgc,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("bottom-left-active")],cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XSetTile(this->mainClass->display,maskgc,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XFillRectangle(this->mainClass->display,mask,maskgc,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("bottom-left-active")],cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("bottom-right-active")]-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("bottom-left-active")],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
 
 //bottom left
 	fullpartname="bottom-left"+activepart;
-
-	XSetClipMask(this->mainClass->display,pmgc,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XSetClipOrigin(this->mainClass->display,pmgc,0,cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
 	XCopyArea(this->mainClass->display,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],pm,pmgc,0,0,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],0,cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XCopyArea(this->mainClass->display,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->mask,cc->maskGC,0,0,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],0,cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+
+	XCopyArea(this->mainClass->display,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],mask,maskgc,0,0,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],0,cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
 
 //botttom rite
 	fullpartname="bottom-right"+activepart;
-
-	XSetClipMask(this->mainClass->display,pmgc,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
 	XSetClipOrigin(this->mainClass->display,pmgc,cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
 	XCopyArea(this->mainClass->display,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],pm,pmgc,0,0,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XCopyArea(this->mainClass->display,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->mask,cc->maskGC,0,0,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+
+	XCopyArea(this->mainClass->display,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],mask,maskgc,0,0,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
 
 //titlebar
-	rectStruct tr=cc->setTitlePosition();
-//this->mainClass->DEBUG_printRect(r,"frame windwow rect");
-//this->mainClass->DEBUG_printRect(tr,"part3 rect");
+	tr=cc->setTitlePosition();
 
+	startx=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("top-left"+activepart)];
 	if(this->theme.fullWidthTitle==false)
 		{
 			part3w=tr.w;
@@ -1393,112 +1337,79 @@ void LFSWM2_windowClass::LFSWM2_refreshThemeFrame(LFSWM2_clientClass *cc)
 		}
 	else
 		{
-			part1w=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("top-left-active")];
+			part1w=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("title-1-active")]+this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("top-left-active")]+this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("top-left-active")];
 			part2w=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("title-2-active")];
 			part4w=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("title-4-active")];
-			part3w=r.w-(part1w+part2w+part4w+cc->riteButtonsWidth);
+			part3w=r.w-(part1w+part2w+part4w+cc->riteButtonsWidth+19);
 			part5w=r.w-(part3w);
 		}
 
-//std::cerr<<"part1="<<part1w<<" part2="<<part2w<<" part3="<<part3w<<" part4="<<part4w<<" part5="<<part5w<<std::endl;
-	startx=0;
 //left title
 	fullpartname="title-1"+activepart;
-
-	XSetFillStyle(this->mainClass->display,cc->maskGC,FillSolid);
-	XSetClipMask(this->mainClass->display,pmgc,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XSetClipOrigin(this->mainClass->display,pmgc,0,0);
 	XSetTSOrigin(this->mainClass->display,pmgc,0,0);
 	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
 	XFillRectangle(this->mainClass->display,pm,pmgc,startx,0,part1w,this->mainClass->titleBarSize);
 
-	XSetClipMask(this->mainClass->display,pmgc,None);
-	XSetClipOrigin(this->mainClass->display,pmgc,startx,0);
-	XSetTSOrigin(this->mainClass->display,pmgc,startx,0);
-	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XFillRectangle(this->mainClass->display,pm,pmgc,startx,0,part1w,this->mainClass->titleBarSize);
+	XSetTSOrigin(this->mainClass->display,maskgc,startx,0);
+	XSetTile(this->mainClass->display,maskgc,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XFillRectangle(this->mainClass->display,mask,maskgc,startx,0,part1w,this->mainClass->titleBarSize);
 	startx+=part1w;
 
 //left mid title
 	fullpartname="title-2"+activepart;
-
-	XSetClipMask(this->mainClass->display,pmgc,None);
-	XSetClipOrigin(this->mainClass->display,pmgc,startx,0);
 	XSetTSOrigin(this->mainClass->display,pmgc,startx,0);
 	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
 	XFillRectangle(this->mainClass->display,pm,pmgc,startx,0,part2w,this->mainClass->titleBarSize);
 
-	XSetClipOrigin(this->mainClass->display,cc->maskGC,startx,0);
-	XSetTSOrigin(this->mainClass->display,cc->maskGC,startx,0);
-	XSetTile(this->mainClass->display,cc->maskGC,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XFillRectangle(this->mainClass->display,cc->mask,cc->maskGC,startx,0,part2w,this->mainClass->titleBarSize);
+	XSetTSOrigin(this->mainClass->display,maskgc,startx,0);
+	XSetTile(this->mainClass->display,maskgc,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XFillRectangle(this->mainClass->display,mask,maskgc,startx,0,part2w,this->mainClass->titleBarSize);
 	startx+=part2w;
 
 //middle
 	fullpartname="title-3"+activepart;
-
-	XSetClipMask(this->mainClass->display,pmgc,None);
-	XSetClipOrigin(this->mainClass->display,pmgc,startx,0);
 	XSetTSOrigin(this->mainClass->display,pmgc,startx,0);
 	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
 	XFillRectangle(this->mainClass->display,pm,pmgc,startx,0,part3w,this->mainClass->titleBarSize);
 
-	XSetClipOrigin(this->mainClass->display,cc->maskGC,startx,0);
-	XSetTSOrigin(this->mainClass->display,cc->maskGC,startx,0);
-	XSetTile(this->mainClass->display,cc->maskGC,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XFillRectangle(this->mainClass->display,cc->mask,cc->maskGC,startx,0,part3w,this->mainClass->titleBarSize);
+	XSetTSOrigin(this->mainClass->display,maskgc,startx,0);
+	XSetTile(this->mainClass->display,maskgc,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XFillRectangle(this->mainClass->display,mask,maskgc,startx,0,part3w,this->mainClass->titleBarSize);
 	startx+=part3w;
 
 //right mid title
 	fullpartname="title-4"+activepart;
-	XSetClipMask(this->mainClass->display,pmgc,None);
-	XSetClipOrigin(this->mainClass->display,pmgc,startx,0);
 	XSetTSOrigin(this->mainClass->display,pmgc,startx,0);
 	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
 	XFillRectangle(this->mainClass->display,pm,pmgc,startx,0,part4w,this->mainClass->titleBarSize);
 
-	XSetClipOrigin(this->mainClass->display,cc->maskGC,startx,0);
-	XSetTSOrigin(this->mainClass->display,cc->maskGC,startx,0);
-	XSetTile(this->mainClass->display,cc->maskGC,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XFillRectangle(this->mainClass->display,cc->mask,cc->maskGC,startx,0,part4w,this->mainClass->titleBarSize);
+	XSetTSOrigin(this->mainClass->display,maskgc,startx,0);
+	XSetTile(this->mainClass->display,maskgc,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XFillRectangle(this->mainClass->display,mask,maskgc,startx,0,part4w,this->mainClass->titleBarSize);
 	startx+=part4w;
 
 //right title
 	fullpartname="title-5"+activepart;
-
-	XSetClipMask(this->mainClass->display,pmgc,None);
-	XSetClipOrigin(this->mainClass->display,pmgc,startx,0);
 	XSetTSOrigin(this->mainClass->display,pmgc,startx,0);
 	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
 	XFillRectangle(this->mainClass->display,pm,pmgc,startx,0,part5w,this->mainClass->titleBarSize);
 
-	XSetClipOrigin(this->mainClass->display,cc->maskGC,startx,0);
-	XSetTSOrigin(this->mainClass->display,cc->maskGC,startx,0);
-	XSetTile(this->mainClass->display,cc->maskGC,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XFillRectangle(this->mainClass->display,cc->mask,cc->maskGC,startx,0,part5w,this->mainClass->titleBarSize);
+	XSetTSOrigin(this->mainClass->display,maskgc,startx,0);
+	XSetTile(this->mainClass->display,maskgc,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XFillRectangle(this->mainClass->display,mask,maskgc,startx,0,part5w,this->mainClass->titleBarSize);
 	startx+=part4w;
 
 //top left
 	fullpartname="top-left"+activepart;
-	
-	XSetClipMask(this->mainClass->display,pmgc,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XSetClipOrigin(this->mainClass->display,pmgc,0,0);
 	XCopyArea(this->mainClass->display,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],pm,pmgc,0,0,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],0,0);
-	XCopyArea(this->mainClass->display,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->mask,cc->maskGC,0,0,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],0,0);
 
+	XCopyArea(this->mainClass->display,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],mask,maskgc,0,0,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],0,0);
+	
 //top rite
 	fullpartname="top-right"+activepart;
-	
-	XSetClipMask(this->mainClass->display,pmgc,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XSetClipOrigin(this->mainClass->display,pmgc,cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],0);
 	XCopyArea(this->mainClass->display,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],pm,pmgc,0,0,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],0);
-	XCopyArea(this->mainClass->display,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->mask,cc->maskGC,0,0,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],0);
 
-	XSetFillStyle(this->mainClass->display,cc->maskGC,FillSolid);
-	XSetClipMask(this->mainClass->display,cc->maskGC,None);
-	XSetClipOrigin(this->mainClass->display,cc->maskGC,0,0);
-	XSetForeground(this->mainClass->display,cc->maskGC,this->mainClass->whiteColour);
-	XFillRectangle(this->mainClass->display,cc->mask,cc->maskGC,this->theme.leftWidth,this->theme.titleBarHeight,cc->frameWindowRect.w-this->theme.leftWidth-this->theme.rightWidth,cc->frameWindowRect.h-this->theme.titleBarHeight-this->theme.bottomHeight);
+	XCopyArea(this->mainClass->display,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],mask,maskgc,0,0,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],0);
 
 	XSetForeground(this->mainClass->display,pmgc,this->mainClass->frameText->pixel);
 	XftDrawChange(this->mainClass->frameText->draw,pm);
@@ -1506,28 +1417,30 @@ void LFSWM2_windowClass::LFSWM2_refreshThemeFrame(LFSWM2_clientClass *cc)
 	if(cc->name.length()>0)
 		{
 			r=cc->setTitlePosition();
+			if(this->theme.gotPart[this->mainClass->prefs.LFSTK_hashFromKey("title-2"+activepart)]==true)
+				r.x=r.x+(this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("title-2"+activepart)]/2);
 			if(cc->nameIsUTF==true)
 				XftDrawStringUtf8(this->mainClass->frameText->draw,&(this->mainClass->frameText->color),this->mainClass->frameFont,r.x,r.y,(XftChar8*)cc->name.c_str(),strlen(cc->name.c_str()));
 			else
 				XftDrawString8(this->mainClass->frameText->draw,&(this->mainClass->frameText->color),this->mainClass->frameFont,r.x,r.y,(XftChar8*)cc->name.c_str(),strlen(cc->name.c_str()));
 		}
 
-	XSetClipMask(this->mainClass->display,this->mainClass->mainGC,None);
-	XSetClipOrigin(this->mainClass->display,this->mainClass->mainGC,0,0);
-	XCopyArea(this->mainClass->display,pm,cc->frameWindow,this->mainClass->mainGC,0,0,cc->frameWindowRect.w,cc->frameWindowRect.h,0,0);
+//copy to frame window
+	XSetClipMask(this->mainClass->display,cc->frameGC,None);
+	XSetClipOrigin(this->mainClass->display,cc->frameGC,0,0);
 
-	if(cc->isFullscreen==true)
-		{
-			XSetFillStyle(this->mainClass->display,cc->maskGC,FillSolid);
-			XSetClipOrigin(this->mainClass->display,cc->maskGC,0,0);
-			XSetForeground(this->mainClass->display,cc->maskGC,this->mainClass->whiteColour);
-			XFillRectangle(this->mainClass->display,cc->mask,cc->maskGC,0,0,cc->frameWindowRect.w,cc->frameWindowRect.h);
-		}
+	XCopyArea(this->mainClass->display,pm,cc->frameWindow,cc->frameGC,0,0,cc->frameWindowRect.w,cc->frameWindowRect.h,0,0);
 
-	XShapeCombineMask(this->mainClass->display,cc->frameWindow,ShapeBounding,0,0,cc->mask,ShapeSet);
-	
+	XSetFillStyle(this->mainClass->display,maskgc,FillSolid);
+	XSetForeground(this->mainClass->display,maskgc,this->mainClass->whiteColour);
+	XFillRectangle(this->mainClass->display,mask,maskgc,this->theme.leftWidth,this->theme.titleBarHeight,cc->frameWindowRect.w-this->theme.leftWidth-this->theme.rightWidth,cc->frameWindowRect.h-this->theme.titleBarHeight-this->theme.bottomHeight);
+
+ 	XShapeCombineMask(this->mainClass->display,cc->frameWindow,ShapeBounding,0,0,mask,ShapeSet);
+
 	XFreePixmap(this->mainClass->display,pm);
 	XFreeGC(this->mainClass->display,pmgc);
+	XFreePixmap(this->mainClass->display,mask);
+	XFreeGC(this->mainClass->display,maskgc);
 }
 
 void LFSWM2_windowClass::LFSWM2_setControlRects(LFSWM2_clientClass *cc)

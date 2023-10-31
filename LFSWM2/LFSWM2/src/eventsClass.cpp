@@ -91,6 +91,11 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 							ccs=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(j));
 							if(ccs!=NULL)
 								{
+									if(this->mainClass->mainWindowClass->theme.gotPart[this->mainClass->prefs.LFSTK_hashFromKey("menu-active")]==false)
+										XMoveWindow(this->mainClass->display,ccs->menuButton,-1000,-1000);
+									if(this->mainClass->mainWindowClass->theme.gotPart[this->mainClass->prefs.LFSTK_hashFromKey("shade-active")]==false)
+										XMoveWindow(this->mainClass->display,ccs->shadeButton,-1000,-1000);
+
 									if(ccs->isFullscreen==false)
 										{
 											if(ccs->isBorderless==false)
@@ -452,7 +457,6 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						break;
 				}
 
-#if 1
 			if(this->noRestack==false)
 				{
 					this->mainClass->restackCnt--;
@@ -473,7 +477,6 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 							overide=false;
 						}
 				}
-#endif
 			XAllowEvents(this->mainClass->display,ReplayPointer,CurrentTime);
 		}
 }

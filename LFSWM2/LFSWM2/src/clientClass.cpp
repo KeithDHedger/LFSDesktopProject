@@ -68,8 +68,8 @@ LFSWM2_clientClass::~LFSWM2_clientClass(void)
 			XFreeGC(this->mainClass->display,this->shadeControlStruct.controlGC);
 		if(this->menuControlStruct.controlGC!=None)
 			XFreeGC(this->mainClass->display,this->menuControlStruct.controlGC);
-		if(this->maskGC!=None)
-			XFreeGC(this->mainClass->display,this->maskGC);
+		if(this->frameGC!=None)
+			XFreeGC(this->mainClass->display,this->frameGC);
 
 	this->mainClass->LFSWM2_popXErrorHandler();
 }
@@ -111,18 +111,19 @@ void LFSWM2_clientClass::LFSWM2_setWindowName(void)
 
 void LFSWM2_clientClass::drawMousePressed(Window id,Pixmap pm,controlData data)
 {
-	std::string cn=data.controlName+"-pressed";
+	std::string		cn=data.controlName+"-pressed";
+	long unsigned	col=(0xff000000|(~this->mainClass->frameFG->pixel&0xffffff));
 
 	if(this->mainClass->useTheme==true)
 		{
-			XSetClipMask(this->mainClass->display,this->mainClass->mainGC,this->mainClass->mainWindowClass->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(cn)]);
-			XSetClipOrigin(this->mainClass->display,this->mainClass->mainGC,0,0);
-			XCopyArea(this->mainClass->display,this->mainClass->mainWindowClass->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(cn)],id,this->mainClass->mainGC,0,0,this->mainClass->mainWindowClass->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(cn)],this->mainClass->mainWindowClass->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(cn)],0,0);
+			XSetClipMask(this->mainClass->display,this->frameGC,this->mainClass->mainWindowClass->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(cn)]);
+			XSetClipOrigin(this->mainClass->display,this->frameGC,0,0);
+			XCopyArea(this->mainClass->display,this->mainClass->mainWindowClass->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(cn)],id,this->frameGC,0,0,this->mainClass->mainWindowClass->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(cn)],this->mainClass->mainWindowClass->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(cn)],0,0);
 			XShapeCombineMask(this->mainClass->display,id,ShapeBounding,0,0,this->mainClass->mainWindowClass->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(cn)],ShapeSet);
 			return;
 		}
 
-	XSetForeground(this->mainClass->display,data.controlGC,this->mainClass->frameFG->pixel);
+	XSetForeground(this->mainClass->display,data.controlGC,col);
 	XSetClipMask(this->mainClass->display,data.controlGC,None);
 	XSetLineAttributes(this->mainClass->display,data.controlGC,2,LineSolid,CapNotLast,JoinMiter);
 	XDrawRectangle(this->mainClass->display,id,data.controlGC,1,1,DEFAULTCONTROLSIZE-2,DEFAULTCONTROLSIZE-2);
@@ -130,20 +131,22 @@ void LFSWM2_clientClass::drawMousePressed(Window id,Pixmap pm,controlData data)
 
 void LFSWM2_clientClass::drawMouseEnter(Window id,Pixmap pm,controlData data)
 {
-	std::string cn=data.controlName+"-prelight";
+	std::string		cn=data.controlName+"-prelight";
+	long unsigned	col=(0xff000000|(this->mainClass->frameFG->pixel&0xffffff));
+
 	if(this->isActive==false)
 		cn=data.controlName+"-inactive";
 
 	if(this->mainClass->useTheme==true)
 		{
-			XSetClipMask(this->mainClass->display,this->mainClass->mainGC,this->mainClass->mainWindowClass->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(cn)]);
-			XSetClipOrigin(this->mainClass->display,this->mainClass->mainGC,0,0);
-			XCopyArea(this->mainClass->display,this->mainClass->mainWindowClass->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(cn)],id,this->mainClass->mainGC,0,0,this->mainClass->mainWindowClass->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(cn)],this->mainClass->mainWindowClass->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(cn)],0,0);
+			XSetClipMask(this->mainClass->display,this->frameGC,this->mainClass->mainWindowClass->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(cn)]);
+			XSetClipOrigin(this->mainClass->display,this->frameGC,0,0);
+			XCopyArea(this->mainClass->display,this->mainClass->mainWindowClass->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(cn)],id,this->frameGC,0,0,this->mainClass->mainWindowClass->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(cn)],this->mainClass->mainWindowClass->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(cn)],0,0);
 			XShapeCombineMask(this->mainClass->display,id,ShapeBounding,0,0,this->mainClass->mainWindowClass->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(cn)],ShapeSet);
 			return;
 		}
 
-	XSetForeground(this->mainClass->display,data.controlGC,this->mainClass->frameFG->pixel);
+	XSetForeground(this->mainClass->display,data.controlGC,col);
 	XSetClipMask(this->mainClass->display,data.controlGC,None);
 	XSetLineAttributes(this->mainClass->display,data.controlGC,2,LineSolid,CapNotLast,JoinMiter);
 	XDrawRectangle(this->mainClass->display,id,data.controlGC,1,1,DEFAULTCONTROLSIZE-2,DEFAULTCONTROLSIZE-2);
@@ -151,24 +154,28 @@ void LFSWM2_clientClass::drawMouseEnter(Window id,Pixmap pm,controlData data)
 
 void LFSWM2_clientClass::LFSWM2_drawMouseLeave(Window id,Pixmap pm,controlData data)
 {
-	std::string cn=data.controlName+"-active";
+	std::string		cn=data.controlName+"-active";
+	long unsigned	col=(this->mainClass->frameAlpha|(this->mainClass->frameBG->pixel&0xffffff));
+
 	if(this->isActive==false)
 		cn=data.controlName+"-inactive";
 
 	if(this->mainClass->useTheme==true)
 		{
-			XSetClipMask(this->mainClass->display,this->mainClass->mainGC,this->mainClass->mainWindowClass->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(cn)]);
-			XSetClipOrigin(this->mainClass->display,this->mainClass->mainGC,0,0);
-			XCopyArea(this->mainClass->display,this->mainClass->mainWindowClass->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(cn)],id,this->mainClass->mainGC,0,0,this->mainClass->mainWindowClass->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(cn)],this->mainClass->mainWindowClass->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(cn)],0,0);
+			XSetClipMask(this->mainClass->display,this->frameGC,this->mainClass->mainWindowClass->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(cn)]);
+			XSetClipOrigin(this->mainClass->display,this->frameGC,0,0);
+			XCopyArea(this->mainClass->display,this->mainClass->mainWindowClass->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(cn)],id,this->frameGC,0,0,this->mainClass->mainWindowClass->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(cn)],this->mainClass->mainWindowClass->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(cn)],0,0);
 			XShapeCombineMask(this->mainClass->display,id,ShapeBounding,0,0,this->mainClass->mainWindowClass->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(cn)],ShapeSet);
 			return;
 		}
 
-	XSetForeground(this->mainClass->display,data.controlGC,this->mainClass->frameBG->pixel);
+	XSetForeground(this->mainClass->display,data.controlGC,col);
+	XSetFillStyle(this->mainClass->display,data.controlGC,FillSolid);
 	XSetClipMask(this->mainClass->display,data.controlGC,None);
 	XFillRectangle(this->mainClass->display,id,data.controlGC,0,0,DEFAULTCONTROLSIZE,DEFAULTCONTROLSIZE);
 
-  	XSetForeground(this->mainClass->display,data.controlGC,this->mainClass->frameText->pixel);
+	col=(0xff000000|(this->mainClass->frameText->pixel&0xffffff));
+  	XSetForeground(this->mainClass->display,data.controlGC,col);
 	XSetClipOrigin(this->mainClass->display,data.controlGC,DEFAULTCONTROLXYOFFSET,DEFAULTCONTROLXYOFFSET);
 	XSetClipMask(this->mainClass->display,data.controlGC,pm);
 	XFillRectangle(this->mainClass->display,id,data.controlGC,DEFAULTCONTROLXYOFFSET,DEFAULTCONTROLXYOFFSET,DEFAULTCONTROLBITMAPSIZE,DEFAULTCONTROLBITMAPSIZE);

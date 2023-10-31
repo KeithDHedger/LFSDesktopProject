@@ -46,7 +46,7 @@
 
 #include "config.h"
 
-#define __DEBUG__
+//#define __DEBUG__
 #ifdef __DEBUG__
 #define MOVEKEYS (Mod4Mask|ControlMask)
 #else
@@ -199,6 +199,7 @@ class LFSWM2_Class
 		Display				*display;
 		Window				rootWindow;
 		Visual				*defaultVisual;
+//		XVisualInfo			defaultVisual;
 		Colormap				defaultColourmap;
 		int					blackColour;
 		int					whiteColour;
@@ -236,6 +237,7 @@ class LFSWM2_Class
 		struct fontColour	*frameFG;
 		struct fontColour	*frameText;
 		XftFont				*frameFont;
+		unsigned long		frameAlpha;
 
 		Pixmap				closeBitMap;
 		Pixmap				maximizeBitMap;
