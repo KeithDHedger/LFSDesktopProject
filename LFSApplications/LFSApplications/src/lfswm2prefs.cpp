@@ -109,6 +109,7 @@ std::string				m2="Mod1";
 long unsigned			mk1=0;
 long unsigned			mk2=8;
 
+LFSTK_lineEditClass		*frameAlphaEdit=NULL;
 LFSTK_lineEditClass		*titleBarSizeEdit=NULL;
 LFSTK_lineEditClass		*bottomBarSizeEdit=NULL;
 LFSTK_lineEditClass		*leftBarSizeEdit=NULL;
@@ -204,6 +205,7 @@ bool buttonCB(void *p,void* ud)
 							{prefs.LFSTK_hashFromKey("framefg"),{TYPESTRING,"framefg",previeColourEdit[FRAMEFG]->LFSTK_getCStr(),false,0}},
 							{prefs.LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour",previeColourEdit[TEXTCOL]->LFSTK_getCStr(),false,0}},
 							{prefs.LFSTK_hashFromKey("titlebarsize"),{TYPEINT,"titlebarsize","",false,atoi(titleBarSizeEdit->LFSTK_getCStr())}},
+							{prefs.LFSTK_hashFromKey("framealpha"),{TYPEINT,"framealpha","",false,atoi(frameAlphaEdit->LFSTK_getCStr())}},
 							{prefs.LFSTK_hashFromKey("bottombarsize"),{TYPEINT,"bottombarsize","",false,atoi(bottomBarSizeEdit->LFSTK_getCStr())}},
 							{prefs.LFSTK_hashFromKey("leftsidebarsize"),{TYPEINT,"leftsidebarsize","",false,atoi(leftBarSizeEdit->LFSTK_getCStr())}},
 							{prefs.LFSTK_hashFromKey("ritesidebarsize"),{TYPEINT,"ritesidebarsize","",false,atoi(rightBarSizeEdit->LFSTK_getCStr())}},
@@ -225,7 +227,7 @@ bool buttonCB(void *p,void* ud)
 					prefs.LFSTK_saveVarsToFile(envFile);
 					//prefs.LFSTK_saveVarsToFile("-");
 					mbuffer.mType=LFSWM2_MSG;
-					sprintf(mbuffer.mText,"restartwm");
+					sprintf(mbuffer.mText,"reloadtheme");
 					if((msgsnd(queueID,&mbuffer,strlen(mbuffer.mText)+1,0))==-1)
 						fprintf(stderr,"Can't send message :(\n");
 					return(true);
@@ -393,7 +395,8 @@ int main(int argc, char **argv)
 			{prefs.LFSTK_hashFromKey("rescanprefs"),{TYPEINT,"rescanprefs","",false,10}},
 			{prefs.LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","",false,0}},
 			{prefs.LFSTK_hashFromKey("resizemode"),{TYPEINT,"resizemode","",false,2}},
-			{prefs.LFSTK_hashFromKey("modkeys"),{TYPEINT,"modkeys","",false,64}}
+			{prefs.LFSTK_hashFromKey("modkeys"),{TYPEINT,"modkeys","",false,64}},
+			{prefs.LFSTK_hashFromKey("framealpha"),{TYPEINT,"framealpha","",false,255}}
 		};
 
 	asprintf(&envFile,"%s/lfswm2.rc",apc->configDir);
@@ -483,6 +486,13 @@ int main(int argc, char **argv)
 			sy+=YSPACING;
 			sx=BORDER;
 		}
+
+//frame alpha
+	label=new LFSTK_labelClass(wc,"Frame Alpha",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
+	sx+=GADGETWIDTH+BORDER;
+	frameAlphaEdit=new LFSTK_lineEditClass(wc,std::to_string(prefs.LFSTK_getInt("framealpha")).c_str(),sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
+	sx=BORDER;
 
 //title bar size
 	label=new LFSTK_labelClass(wc,"Title Bar Size",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
