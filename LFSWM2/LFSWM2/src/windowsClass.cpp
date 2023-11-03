@@ -1106,6 +1106,18 @@ void	 LFSWM2_windowClass::LFSWM2_reloadTheme(void)
 
 void	 LFSWM2_windowClass::LFSWM2_loadTheme(std::string themename)
 {
+	std::string	com;
+	float		a=(float)(this->mainClass->frameAlpha>>24)/256.0;
+	if(a<0.5)
+		a=0.5;
+	com="rm -r " + this->mainClass->tmpFolderName + ";mkdir -p " + this->mainClass->tmpFolderName + ";cp -r '" + themename + "'/* " + this->mainClass->tmpFolderName;//*/
+	system(com.c_str());//*/
+
+	com=std::string(getenv("HOME")) + "/.config/LFS/themeScript " + this->mainClass->tmpFolderName + " &>/dev/null";
+	//fprintf(stderr,"com=%s\n",com.c_str());
+	//com="convert " + this->mainClass->tmpFolderName + "/xfwm4/{*.xpm,*.png} -set filename: '%t' -alpha set -background none -channel A -evaluate multiply " + std::to_string(a) + " +channel " + this->mainClass->tmpFolderName +"/xfwm4/%[filename:].png";//*/
+	system(com.c_str());
+
 	Imlib_Image	image;
 	int			cnt=0;
 	int			hite=0;
@@ -1134,12 +1146,15 @@ void	 LFSWM2_windowClass::LFSWM2_loadTheme(std::string themename)
 	this->theme.buttonOffset=0;
 	this->theme.titleAlignment=2;
 	this->theme.fullWidthTitle=false;
-	this->theme.pathToTheme=this->mainClass->prefs.LFSTK_getString("theme");
+	//this->theme.pathToTheme=this->mainClass->prefs.LFSTK_getString("theme");
+	//this->theme.pathToTheme="/tmp/themeout/";
+	this->theme.pathToTheme=this->mainClass->tmpFolderName;
 
 	cnt=0;
 	while(themePartNames[cnt]!=NULL)
 		{
 			filepath=this->theme.pathToTheme+"/xfwm4/"+themePartNames[cnt]+".png";
+			//fprintf(stderr,"filepath=%s\n",filepath.c_str());
 			image=imlib_load_image(filepath.c_str());
 			if(image==NULL)
 				{
@@ -1160,8 +1175,78 @@ void	 LFSWM2_windowClass::LFSWM2_loadTheme(std::string themename)
 
 					imlib_context_set_drawable(this->mainClass->rootWindow);
 					imlib_image_set_has_alpha(1);
-					imlib_render_pixmaps_for_whole_image(&this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])],&this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]);
+#if 0
+Pixmap picn;
+					//imlib_render_pixmaps_for_whole_image(&picn,&this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]);
 					imlib_free_image();
+ imlib_image_decache_file	(filepath.c_str())	;
+	Imlib_Image	imagef;
+
+		imagef=imlib_load_image(filepath.c_str());
+				imlib_context_set_image(imagef);
+int h=imlib_image_get_height();
+int w=imlib_image_get_width();
+imlib_context_set_drawable(this->mainClass->rootWindow);
+imlib_image_set_has_alpha(1);
+
+Imlib_Image	img3= imlib_create_image(w,h);
+imlib_context_set_image( img3 );
+imlib_image_set_has_alpha( 1 );
+imlib_context_set_color( 0, 0, 0, 100 );
+imlib_image_fill_rectangle( 0, 0,w, h );
+fprintf(stderr,"path=%s w=%i h=%i\n",filepath.c_str(),w,h);
+imlib_context_set_image( imagef );
+//imlib_image_set_has_alpha( 1 );
+imlib_image_copy_alpha_to_image( img3, 0, 0 );
+Pixmap pic1;
+Pixmap mask1;
+#endif
+//imlib_render_pixmaps_for_whole_image(&this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])],&mask1);
+imlib_render_pixmaps_for_whole_image(&this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])],&this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]);
+					imlib_free_image();
+imlib_image_decache_file	(filepath.c_str())	;
+/*
+
+
+
+Pixmap pn;
+Pixmap pn1;
+Pixmap pm;
+Pixmap ppic;
+
+Pixmap pic1;
+Pixmap mask1;
+
+
+
+		//			imlib_render_pixmaps_for_whole_image(&this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])],&this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]);
+					//imlib_render_pixmaps_for_whole_image(&pic1,&mask1);
+//Pixmap pic2=pic1;
+//Pixmap mask2=mask1;
+//imlib_free_pixmap_and_mask(pic1);
+//
+//	Imlib_Image	img3= imlib_create_image(this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])] );
+//imlib_context_set_image( img3 );
+//imlib_image_set_has_alpha( 1 );
+//imlib_context_set_color( 0, 0, 0, 150 );
+//imlib_image_fill_rectangle( 0, 0,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])], this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])] );
+
+imlib_context_set_image( image );
+imlib_image_set_has_alpha( 1 );
+imlib_context_set_color( 0, 0, 0, 10 );
+
+imlib_image_copy_alpha_to_image( image, 0, 0 );
+//Pixmap pn;
+//XFreePixmap(this->mainClass->display,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]);
+//XSync(this->mainClass->display,false);
+
+					//imlib_render_pixmaps_for_whole_image(&ppic,&pn1);
+					imlib_render_pixmaps_for_whole_image(&this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])],&this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]);
+//this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]=ppic;
+//this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]=pn1;
+
+*/
+
 				}
 			else
 				{

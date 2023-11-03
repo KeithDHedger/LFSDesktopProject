@@ -259,6 +259,7 @@ class LFSWM2_Class
 		LFSWM2_windowClass	*mainWindowClass;
 		LFSWM2_messageClass	*messages;
 		LFSTK_lib			*lfstkLib;
+		std::string			tmpFolderName;
 
 #ifdef __DEBUG__
 		void					DEBUG_printAtom(Atom a);

@@ -1,4 +1,5 @@
 1.0.1
+Done stacking transient windows.
 Non-themed window borders can now be translucent.
 Now uses full 32b truecolour windows for transparency,
 Correctly set _NET_CLIENT_LIST_STACKING/_NET_CLIENT_LIST.

@@ -48,6 +48,9 @@ LFSWM2_Class::~LFSWM2_Class(void)
 
 	XFlush(this->display);
 	XCloseDisplay(this->display);
+
+	std::string com="rm -r " + this->tmpFolderName;
+	system(com.c_str());
 }
 
 void LFSWM2_Class::freeFontColour(fontColour *fc)
@@ -61,6 +64,7 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 	int					cnt=0;
 	XineramaScreenInfo	*p=NULL;
 	geometryStruct		monrect;
+	char					tmpfoldertemplate[]="/tmp/.LFSWM2-XXXXXX";
 
 	this->display=XOpenDisplay(NULL);
 	if(this->display==NULL)
@@ -147,6 +151,8 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 	this->leftCursor=XCreateFontCursor(this->display,XC_left_side);
 	this->rootCursor=XCreateFontCursor(this->display,XC_left_ptr);
 	XDefineCursor(this->display,this->rootWindow,this->rootCursor);
+
+	this->tmpFolderName=mkdtemp(tmpfoldertemplate);
 
 	this->mainWindowClass->init();
 	this->lfstkLib=new LFSTK_lib(true);

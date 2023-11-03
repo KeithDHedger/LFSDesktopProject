@@ -698,8 +698,11 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 	int					wtype;
 	Atom					*v=NULL;
 	LFSWM2_clientClass	*cc=NULL;
+	int					a=0;
 
 	v=(Atom*)this->mainClass->mainWindowClass->LFSWM2_getProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,&nitems_return);
+
+
 
 	if((v!=NULL) && (v[0]!=None))
 		{
@@ -734,6 +737,39 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 				}
 		}
 
+	for(int j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
+		{
+			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(j));
+			if(cc!=NULL)
+				{
+					cc->doneRestack=false;
+				}
+		}
+
+//move transients
+	a=0;
+	while(a<this->mainClass->mainWindowClass->windowIDList.size())
+		{
+			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(a));
+			if(cc!=NULL)
+				{
+					if((cc->transientFor!=0) && (cc->doneRestack==false))
+						{
+							for(int b=0;b<this->mainClass->mainWindowClass->windowIDList.size();b++)
+								{
+									if((this->mainClass->mainWindowClass->windowIDList.at(b)==cc->transientFor) && ((v!=NULL) && (this->mainClass->mainWindowClass->windowIDList.at(b)==v[0])))
+										{
+											cc->doneRestack=true;
+											move(this->mainClass->mainWindowClass->windowIDList,a,0);
+											a=0;
+											continue;
+										}
+								}
+						}
+				}
+			a++;
+		}
+
 	if(v!=NULL)
 		XFree(v);
 
@@ -754,9 +790,11 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 			switch(wtype)
 				{
 					case MENUWINDOW:
+						//menus
 						towlmenu.push_back(fromwl.at(j));
 						break;
 					case DESKTOPWINDOW:
+						//desktop windows
 						towldesktop.push_back(fromwl.at(j));
 						break;
 					case NORMALWINDOW:
@@ -787,12 +825,21 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 								towlnormal.push_back(fromwl.at(j));	
 						break;
 					case DOCKWINDOW:
+						//panels
 						towlpanel.push_back(fromwl.at(j));
 						break;
 				}
 		}
-	towl=towlmenu;
-	towl.insert(towl.end(),towlpanel.begin(),towlpanel.end());
+
+	if(towlmenu.size()!=0)
+		{
+			towl=towlmenu;
+			towl.insert(towl.end(),towlpanel.begin(),towlpanel.end());
+		}
+	else
+		towl=towlpanel;
+
+//	towl.insert(towl.end(),towlpanel.begin(),towlpanel.end());
 	towl.insert(towl.end(),towlabove.begin(),towlabove.end());
 	towl.insert(towl.end(),towlnormal.begin(),towlnormal.end());
 	towl.insert(towl.end(),towlbelow.begin(),towlbelow.end());
