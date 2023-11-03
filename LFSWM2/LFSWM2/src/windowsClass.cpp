@@ -133,22 +133,22 @@ bool LFSWM2_windowClass::LFSWM2_createUnframedWindow(Window wid)
 	switch(wtype)//for later
 		{
 			case DOCKWINDOW:
-				switch(this->mainClass->forceDockStackingOrder)
-					{
-						case FORCEABOVE:
-							this->LFSWM2_removeProp(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
-							this->LFSWM2_addState(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
-							break;
-						case FORCEBELOW:
-							this->LFSWM2_removeProp(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
-							this->LFSWM2_addState(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
-							break;
-						default:
-							break;
-					}
-				this->LFSWM2_setClientList(wid,true);
-				return(true);
-				break;
+//				switch(this->mainClass->forceDockStackingOrder)
+//					{
+//						case FORCEABOVE:
+//							this->LFSWM2_removeProp(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
+//							this->LFSWM2_addState(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
+//							break;
+//						case FORCEBELOW:
+//							this->LFSWM2_removeProp(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
+//							this->LFSWM2_addState(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
+//							break;
+//						default:
+//							break;
+//					}
+//				this->LFSWM2_setClientList(wid,true);
+//				return(true);
+//				break;
 			case NORMALWINDOW:
 			case DIALOGWINDOW:
 			case TOOLWINDOW:

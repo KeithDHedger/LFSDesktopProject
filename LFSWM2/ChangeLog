@@ -1,4 +1,5 @@
 1.0.1
+Temp removed scale resize.
 Done stacking transient windows.
 Non-themed window borders can now be translucent.
 Now uses full 32b truecolour windows for transparency,

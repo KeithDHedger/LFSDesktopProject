@@ -826,7 +826,10 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 						break;
 					case DOCKWINDOW:
 						//panels
-						towlpanel.push_back(fromwl.at(j));
+						if(this->mainClass->forceDockStackingOrder==APPSET)
+							towlnormal.push_back(fromwl.at(j));	
+						else
+							towlpanel.push_back(fromwl.at(j));
 						break;
 				}
 		}
@@ -834,15 +837,23 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 	if(towlmenu.size()!=0)
 		{
 			towl=towlmenu;
-			towl.insert(towl.end(),towlpanel.begin(),towlpanel.end());
+			if(this->mainClass->forceDockStackingOrder==FORCEABOVE)
+				towl.insert(towl.end(),towlpanel.begin(),towlpanel.end());
 		}
 	else
-		towl=towlpanel;
+		{
+			if(this->mainClass->forceDockStackingOrder==FORCEABOVE)
+				towl=towlpanel;
+		}
 
 //	towl.insert(towl.end(),towlpanel.begin(),towlpanel.end());
 	towl.insert(towl.end(),towlabove.begin(),towlabove.end());
 	towl.insert(towl.end(),towlnormal.begin(),towlnormal.end());
 	towl.insert(towl.end(),towlbelow.begin(),towlbelow.end());
+
+	if(this->mainClass->forceDockStackingOrder==FORCEBELOW)
+		towl.insert(towl.end(),towlpanel.begin(),towlpanel.end());
+
 	towl.insert(towl.end(),towldesktop.begin(),towldesktop.end());
 
 	XRestackWindows(this->mainClass->display,towl.data(),towl.size());

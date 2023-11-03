@@ -28,7 +28,7 @@
 #define EDITBOXWIDTH		GADGETWIDTH*4
 #define BOXLABEL			"LFS WM Prefs"
 #define COLOURBUTTONS	3
-#define RESIZEMENUSIZE	4
+#define RESIZEMENUSIZE	2
 #define TITLEPOSMENUSIZE	3
 #define FORCEMENUSIZE	3
 #define MODS1MENUSIZE	8
@@ -72,7 +72,8 @@ LFSTK_menuClass			*placeMenu=NULL;
 LFSTK_buttonClass		*resizeWindowMenu=NULL;
 LFSTK_lineEditClass		*resizeWindowEdit=NULL;
 menuStruct				**resizeMenus;
-const char				*resizeMenuNames[]={"Fast Resize","Live Resize","TBD","Scale Resize"};
+//const char				*resizeMenuNames[]={"Fast Resize","Live Resize","TBD","Scale Resize"};
+const char				*resizeMenuNames[]={"Fast Resize","Live Resize"};
 LFSTK_menuClass			*resizeMenu=NULL;
 
 //title postion
@@ -134,6 +135,7 @@ int						modKey1=0;
 int						modKey2=0;
 //msg
 int						queueID=-1;
+bool						reloadwm=false;
 
 bool doQuit(void *p,void* ud)
 {
@@ -146,6 +148,7 @@ bool buttonCB(void *p,void* ud)
 {
 	const fontDataStruct	*fd;
 	msgBuffer			mbuffer;
+	//reloadwm=false;
 
 	if(ud!=NULL)
 		{
@@ -176,6 +179,7 @@ bool buttonCB(void *p,void* ud)
 			if(strcmp((char*)ud,"SHOWPLACEMENU")==0)
 				{
 					placeMenu->LFSTK_showMenu();
+					reloadwm=true;
 				}
 
 			if(strcmp((char*)ud,"SELECTFONT")==0)
@@ -227,9 +231,13 @@ bool buttonCB(void *p,void* ud)
 					prefs.LFSTK_saveVarsToFile(envFile);
 					//prefs.LFSTK_saveVarsToFile("-");
 					mbuffer.mType=LFSWM2_MSG;
-					sprintf(mbuffer.mText,"reloadtheme");
+					if(reloadwm==true)
+						sprintf(mbuffer.mText,"restartwm");
+					else
+						sprintf(mbuffer.mText,"reloadtheme");
 					if((msgsnd(queueID,&mbuffer,strlen(mbuffer.mText)+1,0))==-1)
 						fprintf(stderr,"Can't send message :(\n");
+					reloadwm=false;
 					return(true);
 				}
 		}
@@ -249,6 +257,7 @@ bool resizeMenuCB(void *p,void* ud)
 	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
 	resizeWindowEdit->LFSTK_setBuffer(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel());
 	prefsResizeTemp=(int)(long)ud;
+	reloadwm=true;
 	return(true);
 }
 
@@ -260,11 +269,13 @@ bool modskeyMenuCB(void *p,void* ud)
 		{
 			m1=static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel();
 			mk1=(long unsigned)ud;
+			reloadwm=true;
 		}
 	else
 		{
 			m2=static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel();
 			mk2=(long unsigned)ud;
+			reloadwm=true;
 		}
 	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
 
@@ -287,6 +298,7 @@ bool forceDockStackMenuCB(void *p,void* ud)
 	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
 	forceDockStackWindowEdit->LFSTK_setBuffer(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel());
 	forceDockStackTemp=(int)(long)ud;
+	reloadwm=true;
 	return(true);
 }
 

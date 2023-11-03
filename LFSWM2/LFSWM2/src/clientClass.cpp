@@ -557,8 +557,9 @@ void LFSWM2_clientClass::showWMMenu(int x,int y)
 	LFSTK_windowClass		*wc=NULL;
 	LFSTK_menuClass			*menu=NULL;
 
-	int			NUMMENUS=14;
-	const char	*menuitemlabels[]={"Maximize","Minimize","Shade","Fullscreen","--","On Top","On Bottom","--","Fast Resize","Live Resize","Scale Resize","Close","--","About"};
+	int			NUMMENUS=12;
+//	const char	*menuitemlabels[]={"Maximize","Minimize","Shade","Fullscreen","--","On Top","On Bottom","--","Fast Resize","Live Resize","Scale Resize","Close","--","About"};
+	const char	*menuitemlabels[]={"Maximize","Minimize","Shade","Fullscreen","--","On Top","On Bottom","--","Fast Resize","Live Resize","Close","--","About"};
 
 	apc=new LFSTK_applicationClass();
 	apc->LFSTK_addWindow(NULL,"");
