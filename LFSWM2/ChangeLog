@@ -1,4 +1,5 @@
 1.0.1
+Stacking fixes.
 Temp removed scale resize.
 Done stacking transient windows.
 Non-themed window borders can now be translucent.

@@ -30,7 +30,7 @@
 #define COLOURBUTTONS	3
 #define RESIZEMENUSIZE	2
 #define TITLEPOSMENUSIZE	3
-#define FORCEMENUSIZE	3
+#define FORCEMENUSIZE	2
 #define MODS1MENUSIZE	8
 #define MODS2MENUSIZE	5
 
@@ -87,7 +87,8 @@ LFSTK_menuClass			*titlePosMenu=NULL;
 LFSTK_buttonClass		*forceDockStackWindowMenu=NULL;
 LFSTK_lineEditClass		*forceDockStackWindowEdit=NULL;
 menuStruct				**forceDockStackMenus;
-const char				*forceDockStackMenuNames[]={"Set By App","Force Above","Force Below"};
+//const char				*forceDockStackMenuNames[]={"Set By App","Force Above","Force Below"};
+const char				*forceDockStackMenuNames[]={"Force Above","Force Below"};
 LFSTK_menuClass			*forceDockStackMenu=NULL;
 
 //modkeys 1
@@ -297,7 +298,7 @@ bool forceDockStackMenuCB(void *p,void* ud)
 {
 	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
 	forceDockStackWindowEdit->LFSTK_setBuffer(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel());
-	forceDockStackTemp=(int)(long)ud;
+	forceDockStackTemp=(int)(long)ud+1;
 	reloadwm=true;
 	return(true);
 }
@@ -614,7 +615,7 @@ int main(int argc, char **argv)
 	forceDockStackMenu->LFSTK_addMainMenus(forceDockStackMenus,FORCEMENUSIZE);
 
 	sx+=GADGETWIDTH+BORDER;
-	forceDockStackWindowEdit=new LFSTK_lineEditClass(wc,forceDockStackMenuNames[prefs.LFSTK_getInt("forcedocksstack")],sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+	forceDockStackWindowEdit=new LFSTK_lineEditClass(wc,forceDockStackMenuNames[prefs.LFSTK_getInt("forcedocksstack")-1],sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 	sx=BORDER;
 

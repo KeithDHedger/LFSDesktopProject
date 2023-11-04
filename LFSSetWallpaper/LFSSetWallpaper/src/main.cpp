@@ -243,18 +243,21 @@ void initBackdrop(void)
 	imlib_context_set_color((mainColour/65536),(mainColour/256) & 0xff,mainColour & 0xff,0xff);
 	imlib_image_fill_rectangle(0,0,displayWidth,displayHeight);
 
-	if(multiMode==false)
+	if((wallpaperPath!=NULL) && (strcmp(wallpaperPath,"\"\"")!=0))
 		{
-			blitToMonitorPos(backdropMode,wallpaperPath,0,0,displayWidth,displayHeight);
-		}
-	else
-		{
-			for(int j=0;j<numberOfMonitors;j++)
+			if(multiMode==false)
 				{
-					if((monitorData[j].monW!=-1) && (monitorData[j].monitorPath!=NULL))
+					blitToMonitorPos(backdropMode,wallpaperPath,0,0,displayWidth,displayHeight);
+				}
+			else
+				{
+					for(int j=0;j<numberOfMonitors;j++)
 						{
-							blitToMonitorPos(monitorData[j].monMode,monitorData[j].monitorPath,monitorData[j].monX,monitorData[j].monY,monitorData[j].monW,monitorData[j].monH);
-						}	
+							if((monitorData[j].monW!=-1) && (monitorData[j].monitorPath!=NULL))
+								{
+									blitToMonitorPos(monitorData[j].monMode,monitorData[j].monitorPath,monitorData[j].monX,monitorData[j].monY,monitorData[j].monW,monitorData[j].monH);
+								}	
+						}
 				}
 		}
 

@@ -702,8 +702,6 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 
 	v=(Atom*)this->mainClass->mainWindowClass->LFSWM2_getProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,&nitems_return);
 
-
-
 	if((v!=NULL) && (v[0]!=None))
 		{
 			hintsDataStruct		hs;
@@ -826,27 +824,15 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 						break;
 					case DOCKWINDOW:
 						//panels
-						if(this->mainClass->forceDockStackingOrder==APPSET)
-							towlnormal.push_back(fromwl.at(j));	
-						else
-							towlpanel.push_back(fromwl.at(j));
+						towlpanel.push_back(fromwl.at(j));
 						break;
 				}
 		}
 
-	if(towlmenu.size()!=0)
-		{
-			towl=towlmenu;
-			if(this->mainClass->forceDockStackingOrder==FORCEABOVE)
-				towl.insert(towl.end(),towlpanel.begin(),towlpanel.end());
-		}
-	else
-		{
-			if(this->mainClass->forceDockStackingOrder==FORCEABOVE)
-				towl=towlpanel;
-		}
+	towl=towlmenu;
 
-//	towl.insert(towl.end(),towlpanel.begin(),towlpanel.end());
+	if(this->mainClass->forceDockStackingOrder==FORCEABOVE)
+		towl.insert(towl.end(),towlpanel.begin(),towlpanel.end());
 	towl.insert(towl.end(),towlabove.begin(),towlabove.end());
 	towl.insert(towl.end(),towlnormal.begin(),towlnormal.end());
 	towl.insert(towl.end(),towlbelow.begin(),towlbelow.end());

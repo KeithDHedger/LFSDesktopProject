@@ -1,4 +1,5 @@
 0.2.0
+Removed unnecessary meunitem  from dock stacking.
 Temp removed scale resize.
 Added frame alpha ( 0-255 ) to lfswm2 prefs.
 Added new lfswm2prefs.
