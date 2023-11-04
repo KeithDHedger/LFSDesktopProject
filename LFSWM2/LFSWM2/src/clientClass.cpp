@@ -541,8 +541,8 @@ bool LFSWM2_clientClass::wmCB(void *p,void* ud)
 		cc->resizeMode=FASTRESIZE;
 	if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Live Resize")==0)
 		cc->resizeMode=LIVERESIZE;
-	if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Scale Resize")==0)
-		cc->resizeMode=SCALERESIZE;
+//	if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Scale Resize")==0)
+//		cc->resizeMode=SCALERESIZE;
 
 	if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"About")==0)
 		system("lfsabout &");
@@ -557,9 +557,9 @@ void LFSWM2_clientClass::showWMMenu(int x,int y)
 	LFSTK_windowClass		*wc=NULL;
 	LFSTK_menuClass			*menu=NULL;
 
-	int			NUMMENUS=12;
+	int			NUMMENUS=14;
 //	const char	*menuitemlabels[]={"Maximize","Minimize","Shade","Fullscreen","--","On Top","On Bottom","--","Fast Resize","Live Resize","Scale Resize","Close","--","About"};
-	const char	*menuitemlabels[]={"Maximize","Minimize","Shade","Fullscreen","--","On Top","On Bottom","--","Fast Resize","Live Resize","Close","--","About"};
+	const char	*menuitemlabels[]={"Maximize","Minimize","Shade","Fullscreen","--","On Top","On Bottom","--","Fast Resize","Live Resize","--","Close","--","About"};
 
 	apc=new LFSTK_applicationClass();
 	apc->LFSTK_addWindow(NULL,"");
