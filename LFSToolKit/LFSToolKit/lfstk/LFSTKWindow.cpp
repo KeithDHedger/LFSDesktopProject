@@ -552,11 +552,7 @@ void LFSTK_windowClass::LFSTK_setWindowColourName(int p,const char* colour)
 	this->windowColourNames[p].RGBAColour.b=((this->windowColourNames[p].pixel>>0) & 0xff)/256.0;
 
 	if(p==NORMALCOLOUR)
-	{
-
 		this->windowNormalAlpha=this->windowColourNames[NORMALCOLOUR].RGBAColour.a;
-			fprintf(stderr,"windowNormalAlpha=%f\n",this->windowNormalAlpha);
-		}
 }
 
 /**

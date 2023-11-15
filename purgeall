@@ -22,7 +22,7 @@
 PREFIX="/usr"
 STAGING=
 
-for arg in LFSToolKit LFSSetWallpaper LFSDesktop LFSWManager LFSPanel LFSApplications
+for arg in LFSToolKit LFSSetWallpaper LFSDesktop LFSWManager LFSPanel LFSApplications LFSDock
 	do
 		pushd ${arg}
 			if [ $arg = "LFSToolKit" ];then

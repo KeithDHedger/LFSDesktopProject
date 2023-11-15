@@ -120,7 +120,7 @@ if [[ $action = "help" ]];then
 	exit
 fi
 
-for app in "LFSToolKit" $BUILDLFSWMANAGER "LFSWM2" "LFSDesktop" "LFSSetWallpaper" "LFSApplications" "LFSPanel"
+for app in "LFSToolKit" $BUILDLFSWMANAGER "LFSWM2" "LFSDesktop" "LFSSetWallpaper" "LFSApplications" "LFSPanel" "LFSDock"
 	do
 		pushd $app
 			echo -e "${RED}Running $action in ${GREEN}$app${RED} ... ${NORMAL}"

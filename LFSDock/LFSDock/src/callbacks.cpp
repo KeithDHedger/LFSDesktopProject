@@ -99,8 +99,6 @@ bool timerCB(LFSTK_applicationClass *p,void* ud)
 	return(true);
 }
 
-#define DOCK_MSG 2000
-
 void readMsg(void)
 {
 	int		retcode;

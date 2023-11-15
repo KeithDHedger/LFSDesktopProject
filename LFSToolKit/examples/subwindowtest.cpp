@@ -58,8 +58,6 @@ bool transButtonCB(void *p,void* ud)
 	LFSTK_buttonClass	*button=NULL;
 	long					subwin=(long)ud;
 
-		fprintf(stderr,"windowNormalAlpha=%f\n",apc->windows->at(subwin).window->windowNormalAlpha);
-
 	apc->LFSTK_runWindowLoop(subwin);
 	return(true);
 }
