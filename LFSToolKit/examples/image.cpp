@@ -104,6 +104,7 @@ int main(int argc, char **argv)
 	tux=new LFSTK_imageClass(wc,NULL,DIALOGMIDDLE-(IMAGESIZE/2),sy,IMAGESIZE,IMAGESIZE,BUTTONGRAV,true);
 	tux->LFSTK_setImageFromPath("./AspellGUI.png",PRESERVEASPECT,true);
 	//tux->LFSTK_setMouseCallBack(NULL,buttonCB,NULL);
+	//tux->LFSTK_setAlpha(1);
 	tux->LFSTK_setCanDrag(true);
 	//tux->LFSTK_snapSize(24);
 	tux->LFSTK_setTile(NULL,0);

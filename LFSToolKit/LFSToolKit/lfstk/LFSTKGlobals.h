@@ -291,14 +291,14 @@ struct rectStruct
 
 struct	cairoColor
 {
-	double					r,g,b,a;
+	double				r,g,b,a;
 };
 
 struct colourStruct
 {
 	char					*name;
 	long					pixel;
-	cairoColor				RGBAColour;
+	cairoColor			RGBAColour;
 };
 
 class	LFSTK_gadgetClass;
@@ -331,7 +331,6 @@ struct gadgetStruct
 	bool					geomRelativeToMainWindow=false;
 	bool					showLink=false;
 	bool					showBroken=false;
-	
 };
 
 class LFSTK_applicationClass;

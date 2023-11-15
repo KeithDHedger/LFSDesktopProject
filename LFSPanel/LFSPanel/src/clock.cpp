@@ -62,6 +62,8 @@ int addClock(int x,int y,int grav)
 		xpos=x-width;
 
 	clockButton=new LFSTK_labelClass(mainwind,"--:--:--",xpos,0,width,panelHeight,CENTRE,grav);
-	
+
+	setGadgetDetails(clockButton);
+
 	return(retval);
 }

@@ -44,6 +44,25 @@ enum {XDNDENTER=0,XDNDPOSITION,XDNDSTATUS,XDNDTYPELIST,XDNDACTIONCOPY,XDNDDROP,X
 
 enum setWindowGeomFlags {WINDSETXY,WINDSETWH,WINDSETALL};
 
+//motif hints
+#define MWM_HINTS_FUNCTIONS (1L << 0)
+#define MWM_HINTS_DECORATIONS (1L << 1)
+
+#define MWM_FUNC_ALL (1L << 0)
+#define MWM_FUNC_RESIZE (1L << 1)
+#define MWM_FUNC_MOVE (1L << 2)
+#define MWM_FUNC_MINIMIZE (1L << 3)
+#define MWM_FUNC_MAXIMIZE (1L << 4)
+#define MWM_FUNC_CLOSE (1L << 5)
+
+#define MWM_DECOR_ALL (1L << 0)
+#define MWM_DECOR_BORDER (1L << 1)
+#define MWM_DECOR_RESIZEH (1L << 2)
+#define MWM_DECOR_TITLE (1L << 3)
+#define MWM_DECOR_MENU (1L << 4)
+#define MWM_DECOR_MINIMIZE (1L << 5)
+#define MWM_DECOR_MAXIMIZE (1L << 6)
+
 /**
  * \brief Window class for LFSToolKit.
  * \note The main window class MUST be passed to child widgets.
@@ -72,6 +91,7 @@ class LFSTK_windowClass
 		void					LFSTK_setFontColourName(int p,const char *colour);
 		void					LFSTK_setWindowColourName(int p,const char* colour);
 		void					LFSTK_setDecorated(bool isDecorated);
+		void					LFSTK_setDecorations(bool canmax=true,bool canmin=true,bool canresize=true,bool canclose=true);
 		void					LFSTK_setKeepAbove(bool set);
 		void					LFSTK_setKeepBelow(bool set);
 		void					LFSTK_setActive(bool set);
@@ -116,6 +136,8 @@ class LFSTK_windowClass
 		cairo_surface_t 		*sfc=NULL;
 		cairo_t				*cr=NULL;
 		cairo_pattern_t		*pattern=NULL;
+		Visual				*visual;
+		Colormap				cmap;
 
 		char					*fontString;
 		char					*fontColourNames[MAXCOLOURS]={NULL,};
@@ -126,6 +148,7 @@ class LFSTK_windowClass
 		int					y;
 		int					w;
 		int					h;
+		double				windowNormalAlpha=-1;
 
 //user data and dirs
 		Window				parentWindow=None;

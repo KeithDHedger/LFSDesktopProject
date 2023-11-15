@@ -1,4 +1,5 @@
 0.2.0
+Added extra options to lfspanelprefs.
 Removed unnecessary meunitem  from dock stacking.
 Temp removed scale resize.
 Added frame alpha ( 0-255 ) to lfswm2 prefs.

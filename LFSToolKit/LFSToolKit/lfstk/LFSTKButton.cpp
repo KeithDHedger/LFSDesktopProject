@@ -58,8 +58,18 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* lab
 
 	wa.win_gravity=gravity;
 	wa.save_under=true;
+//	wa.border_pixel=0;
+//	wa.background_pixel=0;
+//
+//	XVisualInfo vinfo;
+//	XMatchVisualInfo(this->wc->app->display,DefaultScreen(this->wc->app->display),32,TrueColor,&vinfo);
+//
+//	this->visual=vinfo.visual;
+//	this->cmap=XCreateColormap(this->wc->app->display,DefaultRootWindow(this->wc->app->display),this->visual,AllocNone);
+//	wa.colormap=this->cmap;
 
 	this->window=XCreateWindow(this->wc->app->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWSaveUnder,&wa);
+	//this->window=XCreateWindow(this->wc->app->display,this->parent,x,y,w,h,0,32,InputOutput,CopyFromParent,(CWColormap | CWBorderPixel| CWBackPixel|CWWinGravity|CWSaveUnder),&wa);
 	this->gc=XCreateGC(this->wc->app->display,this->window,0,NULL);
 
 	this->wc->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->window,this->wc->app->visual,&this->sfc,&this->cr,w,h);

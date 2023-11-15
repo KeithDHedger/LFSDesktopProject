@@ -176,6 +176,8 @@ int addSlider(int x,int y,int grav,bool fromleft)
 	volumeButton->LFSTK_setToggleStyle(TOGGLENORMAL);
 	volumeButton->LFSTK_setMouseCallBack(NULL,sliderCB,(void*)volumeButton->LFSTK_getLabel());
 
+	setGadgetDetails(volumeButton);//TODO//
+
 	iconH=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"volume-high","");
 	iconM=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"volume-medium","");
 	iconL=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"volume-low","");

@@ -107,7 +107,7 @@ void LFSTK_gadgetClass::LFSTK_setFontColourName(int p,const char* colour,bool us
 	this->fontColourNames[p].pixel=tc.pixel;
 
 	if(usewindow==true)
-		col=this->wc->windowColourNames[0];
+		col=this->wc->windowColourNames[0];//TODO//
 
 	if((this->autoLabelColour==true) && (p!=INACTIVECOLOUR))
 		{
@@ -183,21 +183,49 @@ void LFSTK_gadgetClass::LFSTK_setLabelBGColour(const char* colour,double alpha)
 * Set the colour name for gadget.
 * \param p Gadget state.
 * \param colour Colour name.
-* \note state is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2,INACTIVECOLOUR=3.
+* \note State is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2,INACTIVECOLOUR=3.
+* \note Alpha of colour is set to alpha of window normal, unless specifically set.
 */
 void LFSTK_gadgetClass::LFSTK_setColourName(int p,const char* colour)
 {
-	XColor tc,sc;
+	XColor		tc,sc;
+	std::string	str=colour;
+	int			alphaint=-1;
+
 	if(this->colourNames[p].name!=NULL)
 		free(this->colourNames[p].name);
+
 	this->colourNames[p].name=strdup(colour);
-	XAllocNamedColor(this->wc->app->display,this->wc->app->cm,colour,&sc,&tc);
+
+	if(str.at(0)=='#')
+		{
+			if(str.length()>7)
+				{
+					alphaint=std::stoi (str.substr(1,2),nullptr,16);
+					str.erase(str.begin()+1,str.begin()+3);
+				}
+		}
+
+	XAllocNamedColor(this->wc->app->display,this->wc->app->cm,str.c_str(),&sc,&tc);
 	this->colourNames[p].pixel=sc.pixel;
 
 	this->colourNames[p].RGBAColour.r=((this->colourNames[p].pixel>>16) & 0xff)/256.0;
 	this->colourNames[p].RGBAColour.g=((this->colourNames[p].pixel>>8) & 0xff)/256.0;
 	this->colourNames[p].RGBAColour.b=((this->colourNames[p].pixel>>0) & 0xff)/256.0;
-	this->colourNames[p].RGBAColour.a=1.0;
+
+	if(alphaint!=-1)
+		this->colourNames[p].RGBAColour.a=alphaint/256.0;
+	else
+		this->colourNames[p].RGBAColour.a=this->wc->windowColourNames[NORMALCOLOUR].RGBAColour.a;
+//	
+//
+//if(p==PRELIGHTCOLOUR)
+//{
+//fprintf(stderr,"window alpha=%f\n",this->wc->windowColourNames[p].RGBAColour.a);
+//	fprintf(stderr,"r=%f g=%f b=%f a=%f\n",this->colourNames[p].RGBAColour.r,this->colourNames[p].RGBAColour.g,this->colourNames[p].RGBAColour.b,this->colourNames[p].RGBAColour.a);
+//		std::cout<<"str="<<str<<" alpha="<<alphaint<<std::endl;
+//fprintf(stderr,"clstring=%s\n",colour);
+//}
 }
 
 /**
@@ -244,6 +272,7 @@ void LFSTK_gadgetClass::initGadget(void)
 	this->imageWidth=0;
 	this->gadgetAcceptsDnD=false;
 	this->showIndicator=true;
+	this->LFSTK_setAlpha(this->wc->windowColourNames[NORMALCOLOUR].RGBAColour.a);
 }
 
 /**
@@ -433,6 +462,7 @@ void LFSTK_gadgetClass::clearBox(gadgetStruct* details)
 			cairo_save(this->cr);
 				cairo_reset_clip(this->cr);
 				cairo_set_source_rgba(this->cr,details->colour->RGBAColour.r,details->colour->RGBAColour.g,details->colour->RGBAColour.b,details->colour->RGBAColour.a);
+				cairo_set_operator(this->cr,CAIRO_OPERATOR_SOURCE);
 				cairo_paint(this->cr);
 			cairo_restore(this->cr);
 		}
@@ -467,12 +497,14 @@ void LFSTK_gadgetClass::drawBevel(geometryStruct* geom,bevelType bevel)
 		cairo_set_antialias (this->cr,CAIRO_ANTIALIAS_NONE);
 		cairo_set_line_width(this->cr,1.0);
 		cairo_set_source_rgba(this->cr,tlcolour.r,tlcolour.g,tlcolour.b,1.0);
+		cairo_set_operator(this->cr,CAIRO_OPERATOR_SOURCE);
 		cairo_move_to(this->cr,geom->x+1,geom->h+geom->y+1);
 		cairo_line_to(this->cr,geom->x+1,geom->y+1);
 		cairo_line_to(this->cr,geom->x+geom->w,geom->y+1);
 		cairo_stroke(this->cr);
 		
 		cairo_set_source_rgba(this->cr,brcolour.r,brcolour.g,brcolour.b,1.0);
+		cairo_set_operator(this->cr,CAIRO_OPERATOR_SOURCE);
 		cairo_move_to(this->cr,geom->x+geom->w,geom->y+1);
 		cairo_line_to(this->cr,geom->x+geom->w,geom->y+geom->h);
 		cairo_line_to(this->cr,geom->x+1,geom->y+geom->h);
@@ -573,6 +605,7 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 							}
 
 						cairo_set_source_rgba(this->cr,colptr->r,colptr->g,colptr->b,colptr->a);
+						cairo_set_operator(this->cr,CAIRO_OPERATOR_SOURCE);
 						cairo_rectangle(this->cr,labelrect.x,labelrect.y,labelrect.w,labelrect.h);
 						cairo_fill(this->cr);
 					}		
@@ -1589,7 +1622,7 @@ void LFSTK_gadgetClass::LFSTK_setTile(const char *path,int size)
 {
 	cairo_surface_t	*tempimage;
 	cairo_status_t	cs=CAIRO_STATUS_SUCCESS;
-	char			*suffix=NULL;
+	char				*suffix=NULL;
 
 	if(this->pattern!=NULL)
 		{

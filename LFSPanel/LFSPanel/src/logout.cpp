@@ -102,6 +102,8 @@ int  addLogout(int x,int y,int grav,bool fromleft)
 	else
 		logoutButton->LFSTK_setImageFromPath(DATADIR "/pixmaps/exit.png",LEFT,true);
 
+	setGadgetDetails(logoutButton);
+
 	logoutButton->LFSTK_setMouseCallBack(NULL,logoutCB,NULL);
 	logoutMenu=new LFSTK_menuClass(mainwind,xpos,ypos+panelHeight,1,1);
 

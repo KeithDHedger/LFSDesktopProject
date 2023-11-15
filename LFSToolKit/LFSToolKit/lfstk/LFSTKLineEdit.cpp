@@ -305,6 +305,7 @@ void LFSTK_lineEditClass::drawLabel(void)
 	cairo_save(this->cr);
 		cairo_reset_clip(this->cr);
 		cairo_set_source_rgba(this->cr,this->colourNames[NORMALCOLOUR].RGBAColour.r,this->colourNames[NORMALCOLOUR].RGBAColour.g,this->colourNames[NORMALCOLOUR].RGBAColour.b,this->colourNames[NORMALCOLOUR].RGBAColour.a);
+		cairo_set_operator(this->cr,CAIRO_OPERATOR_SOURCE);
 		cairo_paint(this->cr);
 	cairo_restore(this->cr);
 

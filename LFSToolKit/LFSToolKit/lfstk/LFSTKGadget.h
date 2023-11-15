@@ -144,6 +144,8 @@ class LFSTK_gadgetClass
 		Window				parent;
 		GC					gc;
 		Window				window;
+		Visual				*visual;
+		Colormap				cmap;
 
 		bool					drawLabelBG=false;
 		bool					autoLabelBGColour=false;

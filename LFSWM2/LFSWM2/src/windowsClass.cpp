@@ -153,6 +153,7 @@ bool LFSWM2_windowClass::LFSWM2_createUnframedWindow(Window wid)
 			case DIALOGWINDOW:
 			case TOOLWINDOW:
 			case DESKTOPWINDOW:
+			case UNKNOWNTYPE:
 				{
 					this->LFSWM2_setClientList(wid,true);
 					return(true);
@@ -209,17 +210,75 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 					return(false);
 				}
 
+//			if(this->LFSWM2_getWindowType(id)==UNKNOWNTYPE)
+//				fprintf(stderr,"id=0x%x\n",id);
+//				{
+//					Atom	xa;
+//	Atom	xa_prop[1];
+//
+//	xa=XInternAtom(this->mainClass->display,"_NET_WM_WINDOW_TYPE",False);
+//	xa_prop[0]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_NORMAL"));
+//
+//	if(xa!=None)
+//		XChangeProperty(this->mainClass->display,id,xa,XA_ATOM,32,PropModeReplace,(unsigned char *)&xa_prop,1);
+//cc->windowType=NORMALWINDOW;
+////					cc->canMaximize=false;
+////					cc->canMinimize=false;
+////					cc->canResize=false;
+////					cc->canClose=false;
+////					if(cc->windowHints.sh->flags==0)
+////						{
+////							cc->canMaximize=true;
+////							cc->canMinimize=true;
+////							cc->canResize=true;
+////							cc->canClose=true;
+////							cc->isBorderless=false;
+//////						}
+//////					else if((cc->windowHints.sh->max_width==0) || (cc->windowHints.sh->max_height==0))
+//////						{
+//////							cc->canMaximize=true;
+//////							cc->canMinimize=true;
+//////							cc->canResize=true;
+//////							cc->canClose=true;
+//////						}
+//				}
+
+
+
+
+
+
 			cc=new LFSWM2_clientClass(this->mainClass,id);
 			cc->isBorderless=noborder;
 			cc->windowHints=premaphs;
 			cc->renderFrame(true,premaphs.pt.x,premaphs.pt.y);
+
+
+
+			if((this->LFSWM2_getWindowType(id)==NORMALWINDOW) )
+				{
+					cc->canMaximize=true;
+					cc->canMinimize=true;
+					cc->canResize=true;
+					cc->canClose=true;
+				}
+
+//fprintf(stderr,"premaphs.mHints=%p\n",premaphs.mHints);
 			if(premaphs.mHints!=NULL)
 				{
+					//cc->isBorderless=false;
+					cc->canMaximize=false;
+					cc->canMinimize=false;
+					cc->canClose=false;
+
+				fprintf(stderr,">>>>premaphs.mHints->functions & MWM_FUNC_CLOSE=%x MWM_FUNC_CLOSE=%x\n",premaphs.mHints->functions,MWM_FUNC_CLOSE);
+					cc->canClose=(premaphs.mHints->functions & MWM_FUNC_CLOSE);
 					//cc->canClose=(premaphs.mHints->decorations & MWM_FUNC_CLOSE);
 					cc->canMaximize=(premaphs.mHints->decorations & MWM_DECOR_MAXIMIZE);
 					cc->canMinimize=(premaphs.mHints->decorations & MWM_DECOR_MINIMIZE);
 					cc->canResize=(premaphs.mHints->decorations & MWM_DECOR_RESIZEH);
 				}
+
 			allowed=(Atom*)this->LFSWM2_getProp(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ALLOWED_ACTIONS")),XA_ATOM,&nitems_return);
 			if(allowed!=NULL)
 				{
@@ -232,32 +291,45 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 						}
 					XFree(allowed);
 				}
-			cc->canClose=true;//TODO//
+			//cc->canClose=true;//TODO//
 
-			if((this->LFSWM2_getWindowType(id)==NORMALWINDOW))
-				{
-					cc->canMaximize=true;
-					cc->canMinimize=true;
-					cc->canResize=true;
-				}
+//			if((this->LFSWM2_getWindowType(id)==NORMALWINDOW))
+//				{
+//					cc->canMaximize=true;
+//					cc->canMinimize=true;
+//					cc->canResize=true;
+//				}
 
 			if(this->LFSWM2_getWindowType(id)==UNKNOWNTYPE)
 				{
-					cc->canMaximize=false;
-					cc->canMinimize=false;
-					cc->canResize=false;
-					if(cc->windowHints.sh->flags==0)
-						{
+//					Atom	xa;
+//	Atom	xa_prop[1];
+
+//	xa=XInternAtom(this->mainClass->display,"_NET_WM_WINDOW_TYPE",False);
+//	xa_prop[0]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_NORMAL"));
+
+//	if(xa!=None)
+//		XChangeProperty(this->mainClass->display,id,xa,XA_ATOM,32,PropModeReplace,(unsigned char *)&xa_prop,1);
+//cc->windowType=NORMALWINDOW;
+//					cc->canMaximize=false;
+//					cc->canMinimize=false;
+//					cc->canResize=false;
+//					cc->canClose=false;
+//					if(cc->windowHints.sh->flags==0)
+//						{
 							cc->canMaximize=true;
 							cc->canMinimize=true;
 							cc->canResize=true;
-						}
-					else if((cc->windowHints.sh->max_width==0) || (cc->windowHints.sh->max_height==0))
-						{
-							cc->canMaximize=true;
-							cc->canMinimize=true;
-							cc->canResize=true;
-						}
+							cc->canClose=true;
+							cc->isBorderless=false;
+//						}
+//					else if((cc->windowHints.sh->max_width==0) || (cc->windowHints.sh->max_height==0))
+//						{
+//							cc->canMaximize=true;
+//							cc->canMinimize=true;
+//							cc->canResize=true;
+//							cc->canClose=true;
+//						}
 				}
 
 			if(cc->isBorderless==true)
@@ -265,6 +337,7 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 					cc->canMaximize=false;
 					cc->canMinimize=false;
 					cc->canResize=false;
+					cc->canClose=false;
 				}
 
 			wa.win_gravity=NorthWestGravity;
@@ -336,6 +409,11 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 			if(cc->canResize==true)
 				{
 					v[vcnt++]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_RESIZE"));
+				}
+
+			if(cc->canClose==true)
+				{
+					v[vcnt++]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_CLOSE"));
 				}
 
 			cc->onDesk=thisdesk;

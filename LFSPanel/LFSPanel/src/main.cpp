@@ -45,6 +45,10 @@ void loadPrefs(const char *env)
 	onMonitor=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("onmonitor"));
 	panelPos=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelpos"));
 	panelGravity=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelgrav"));
+	useTheme=prefs.LFSTK_getBool(prefs.LFSTK_hashFromKey("usetheme"));
+	panelColour=prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("panelcolour"));
+	panelTextColour=prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("textcolour"));
+	noButtons=prefs.LFSTK_getBool(prefs.LFSTK_hashFromKey("nobuttons"));
 }
 
 void addLeftGadgets(void)
@@ -196,7 +200,12 @@ int main(int argc,char **argv)
 						{prefs.LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","l",false,0}},
 
 						{prefs.LFSTK_hashFromKey("panelpos"),{TYPEINT,"panelpos","",false,0}},
-						{prefs.LFSTK_hashFromKey("panelgrav"),{TYPEINT,"panelgrav","",false,0}}
+						{prefs.LFSTK_hashFromKey("panelgrav"),{TYPEINT,"panelgrav","",false,0}},
+
+						{prefs.LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","",false,0}},
+						{prefs.LFSTK_hashFromKey("nobuttons"),{TYPEBOOL,"nobuttons","",false,0}},
+						{prefs.LFSTK_hashFromKey("panelcolour"),{TYPESTRING,"panelcolour","",false,0}},
+						{prefs.LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","black",false,0}}
 					};
 	realMainLoop=true;
 	
@@ -257,6 +266,12 @@ int main(int argc,char **argv)
 
 			rightOffset=0;
 			leftOffset=0;
+
+			if(useTheme==false)
+				{
+					mainwind->LFSTK_setTile(NULL,0);
+					mainwind->LFSTK_setWindowColourName(NORMALCOLOUR,panelColour);
+				}
 
 			addLeftGadgets();
 			addRightGadgets();

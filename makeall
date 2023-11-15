@@ -54,6 +54,21 @@ runCommand ()
 	$1||true
 }
 
+help ()
+{
+	echo "Usage:"
+	echo "	makeall OPTION"
+	echo
+	echo "OPTIONS:"
+	echo -e "${RED}distcleanup${NORMAL}\n\trun 'make distclean' on all project folders"
+	echo -e "${RED}cleanup\n\t${NORMAL}run 'make clean' on all project folders"
+	echo -e "${RED}uninstall\n\t${NORMAL}run 'make distclean;./autogen.sh --prefix=/usr --libdir=/usr/lib${LIBDIRSUFFIX};make uninstall' on all project folders"
+	echo -e "${RED}deploy\n\t${NORMAL}run 'make distclean;./autogen.sh --prefix=/usr --libdir=/usr/lib${LIBDIRSUFFIX};make $MAKEFLAGS;make install' on all project folders"
+	echo -e "${RED}deploytest\n\t${NORMAL}run 'make distclean;./autogen.sh --prefix=/usr --libdir=/usr/lib${LIBDIRSUFFIX};make $MAKEFLAGS;make install DESTDIR=/tmp/lfsdesktop-deploy' on all project folders"
+	echo -e "${RED}makeit\n\t${NORMAL}run './autogen.sh --prefix=/usr --libdir=/usr/lib${LIBDIRSUFFIX};make $MAKEFLAGS' on all project folders"
+	echo -e "${RED}ownit\n\t${NORMAL}run 'chown -vR $CHANGEUSER:$CHANGEUSER .;find -mindepth 1 -exec touch {} ;' on all project folders"
+}
+
 distcleanup ()
 {
 	runCommand "make distclean"
@@ -99,6 +114,11 @@ ownit ()
 	runCommand "chown -vR $CHANGEUSER:$CHANGEUSER ."
 	runCommand "find -mindepth 1 -exec touch {} ;"
 }
+
+if [[ $action = "help" ]];then
+	help
+	exit
+fi
 
 for app in "LFSToolKit" $BUILDLFSWMANAGER "LFSWM2" "LFSDesktop" "LFSSetWallpaper" "LFSApplications" "LFSPanel"
 	do

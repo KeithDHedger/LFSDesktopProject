@@ -687,6 +687,7 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 	std::vector<Window>	towldesktop;
 	std::vector<Window>	towlbelow;
 	std::vector<Window>	towlnormal;
+	//std::vector<Window>	towlunknown;
 	std::vector<Window>	towlabove;
 	std::vector<Window>	towlpanel;
 	std::vector<Window>	towlmenu;
@@ -775,6 +776,7 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 	towldesktop.clear();
 	towlbelow.clear();
 	towlnormal.clear();
+	//towlunknown.clear();
 	towlabove.clear();
 	towlpanel.clear();
 	towlmenu.clear();
@@ -798,6 +800,7 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 					case NORMALWINDOW:
 					case DIALOGWINDOW:
 					case TOOLWINDOW:
+					//case UNKNOWNTYPE:
 						if(this->mainClass->mainWindowClass->LFSWM2_hasState(fromwl.at(j),this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW"))))
 							{
 								cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(fromwl.at(j));
@@ -817,11 +820,26 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 								break;
 							}
 						cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(fromwl.at(j));
-							if(cc!=NULL)
-								towlnormal.push_back(cc->frameWindow);	
-							else
-								towlnormal.push_back(fromwl.at(j));	
+						if(cc!=NULL)
+						{
+							//if (wtype==UNKNOWNTYPE)
+								fprintf(stderr,"wid=0x%x\n",fromwl.at(j));
+							towlnormal.push_back(cc->frameWindow);	
+							}
+						else
+							towlnormal.push_back(fromwl.at(j));	
 						break;
+//					case UNKNOWNTYPE:
+//						cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(fromwl.at(j));
+//						if(cc!=NULL)
+//						{
+//							if (wtype==UNKNOWNTYPE)
+//								fprintf(stderr,"wid=0x%x\n",fromwl.at(j));
+//							towlnormal.push_back(cc->frameWindow);	
+//							}
+//						else
+//							towlnormal.push_back(fromwl.at(j));	
+//						break;
 					case DOCKWINDOW:
 						//panels
 						towlpanel.push_back(fromwl.at(j));
@@ -860,7 +878,9 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 		}
 	this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_CLIENT_LIST")),XA_WINDOW,32,netclientwl.data(),netclientwl.size());
 
-
+//this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_CLIENT_LIST_STACKING")),XA_WINDOW,32,netclientwl.data(),netclientwl.size());
+//
+//
 	for(int j=towl.size()-1;j>-1;j--)
 		{
 			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(towl.at(j));
@@ -876,6 +896,7 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 				}
 		}
 	this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_CLIENT_LIST_STACKING")),XA_WINDOW,32,netclientstackwl.data(),netclientstackwl.size());
+	//XRestackWindows(this->mainClass->display,towl.data(),towl.size());
 
 }
 

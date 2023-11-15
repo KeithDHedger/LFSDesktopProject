@@ -1,3 +1,9 @@
+0.5.2
+Added support for colour names including a 8 bit alpha def eg "#80ff00ff".
+Added transparent windows ( see examples/subwindows ).
+Loads of gui fixes.
+Moved to 32bit tru colour windows.
+
 0.5.1
 Minor gui fix on scrollable menus.
 Fixed scrolling sub menus.

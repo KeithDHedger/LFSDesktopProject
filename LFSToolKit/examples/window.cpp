@@ -56,6 +56,7 @@ int main(int argc, char **argv)
 	sy+=200;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
+	//wc->LFSTK_setDecorations(true,true,true,true);
 	wc->LFSTK_showWindow();
 	//fprintf(stderr,"%s\n",wc->globalLib->LFSTK_getGlobalString(-1,TYPEMONOFONT));
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());

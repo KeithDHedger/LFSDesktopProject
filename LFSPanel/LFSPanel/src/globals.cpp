@@ -22,20 +22,28 @@
 
 //prefs
 LFSTK_prefsClass	prefs;
+/*
+			{prefs.LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","",useTheme->LFSTK_getValue(),0}},
+			{prefs.LFSTK_hashFromKey("panelcolour"),{TYPESTRING,"panelcolour",panelColourEdit->LFSTK_getCStr(),false,0}},
 
+*/
 int					panelHeight=16;
 int					panelWidth=-1;
 const monitorStruct	*mons=NULL;
 int					onMonitor=0;
 int					panelPos=PANELCENTRE;
 int					panelGravity=PANELNORTH;
+bool					useTheme=true;
+const char			*panelColour="";
+const char			*panelTextColour="";
+bool					noButtons=false;
 
 int					queueID;
 msgBuffer			buffer;
 
 const char			*desktopTheme=NULL;
 const char			*panelID="";
-bool				realMainLoop=true;
+bool					realMainLoop=true;
 
 int					refreshRate=1;
 
@@ -146,3 +154,20 @@ void dropDesktopFile(const char *data,launcherList *launcher)
 		}
 }
 
+void setGadgetDetails(LFSTK_gadgetClass *gadget)
+{
+	if(useTheme==false)
+		{
+			gadget->LFSTK_setAlpha(1.0);
+			gadget->LFSTK_setTile(NULL,0);
+			gadget->LFSTK_setColourName(NORMALCOLOUR,panelColour);
+			gadget->LFSTK_setFontColourName(NORMALCOLOUR,panelTextColour,true);
+			if(noButtons==true)
+				{
+					gadget->gadgetDetails.bevel=BEVELNONE;
+					gadget->LFSTK_setColourName(PRELIGHTCOLOUR,panelColour);
+					gadget->LFSTK_setColourName(ACTIVECOLOUR,panelColour);
+					gadget->LFSTK_setColourName(INACTIVECOLOUR,panelColour);
+				}
+		}
+}

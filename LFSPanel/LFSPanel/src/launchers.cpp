@@ -149,6 +149,9 @@ int addLaunchers(int x,int y,int grav,bool fromleft)
 				loopll->bc->LFSTK_setImageFromPath(icon,LEFT,true);
 			else
 				loopll->bc->LFSTK_setImageFromPath(DATADIR "/pixmaps/command.png",LEFT,true);
+
+			setGadgetDetails(loopll->bc);
+
 			if(icon!=NULL)
 				free(icon);
 			loopll=loopll->next;

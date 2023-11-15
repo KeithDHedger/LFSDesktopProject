@@ -1,4 +1,5 @@
 0.2.0
+Added extra prefs to handle transparent windows, etc.
 Fixed occasional segfault in window menu.
 Fixed menu items from bad window names.
 Fixed segfault on window list.

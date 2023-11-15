@@ -311,6 +311,7 @@ int addWindowDeskMenu(int x,int y,int grav,bool fromleft)
 	else
 		windowDesk->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",LEFT,true);
 
+	setGadgetDetails(windowDesk);
 
 	if(windowMenu==NULL)
 		{
@@ -344,6 +345,8 @@ int addWindowMenu(int x,int y,int grav,bool fromleft)
 
 	windowAll=new LFSTK_buttonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
 	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"computer","");
+
+	setGadgetDetails(windowAll);
 
 	if(icon!=NULL)
 		{

@@ -37,10 +37,10 @@
 
 struct Hints
 {
-	unsigned long  flags;
+	unsigned long	flags;
 	unsigned long	functions;
 	unsigned long	decorations;
-	long			inputMode;
+	long				inputMode;
 	unsigned long	status;
 };
 
@@ -369,10 +369,13 @@ void LFSTK_windowClass::LFSTK_clearWindow(bool cleargadgets)
 		}
 	else
 		{
+
 			cairo_save(this->cr);
 				cairo_reset_clip (this->cr);
-				cairo_set_source_rgba(this->cr,this->windowColourNames[state].RGBAColour.r,this->windowColourNames[state].RGBAColour.g,this->windowColourNames[state].RGBAColour.b,this->windowColourNames[state].RGBAColour.a);
-				cairo_paint(this->cr);
+					cairo_set_source_rgba(this->cr,this->windowColourNames[state].RGBAColour.r,this->windowColourNames[state].RGBAColour.g,this->windowColourNames[state].RGBAColour.b,this->windowColourNames[state].RGBAColour.a);
+					cairo_set_operator(this->cr,CAIRO_OPERATOR_SOURCE);
+					cairo_paint(this->cr);
+					cairo_surface_flush (this->sfc);
 			cairo_restore(this->cr);
 		}
 }
@@ -390,8 +393,18 @@ void LFSTK_windowClass::LFSTK_resizeWindow(int w,int h,bool tellx)
 	if(tellx==true)
 		XResizeWindow(this->app->display,this->window,w,h);
 
-	this->globalLib->LFSTK_setCairoSurface(this->app->display,this->window,this->app->visual,&this->sfc,&this->cr,w,h);
-	this->LFSTK_clearWindow();
+//cairo_xlib_surface_set_drawable (this->sfc,
+//                                 this->window,
+//                                 w,
+//                                 h);
+//XSync(this->app->display,false);
+  	this->globalLib->LFSTK_setCairoSurface(this->app->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+//	this->LFSTK_clearWindow();
+
+//XUnmapWindow(this->app->display,this->window);
+//XSync(this->app->display,false);
+//XMapWindow(this->app->display,this->window);
+//XSync(this->app->display,false);
 }
 
 /**
@@ -445,6 +458,55 @@ void LFSTK_windowClass::LFSTK_setDecorated(bool isDecorated)
 }
 
 /**
+* Set window decorations.
+* \param bool canmax=true,bool canmin=true,bool canresize=true.
+//motif
+#define MWM_HINTS_FUNCTIONS (1L << 0)
+#define MWM_HINTS_DECORATIONS (1L << 1)
+
+#define MWM_FUNC_ALL (1L << 0)
+#define MWM_FUNC_RESIZE (1L << 1)
+#define MWM_FUNC_MOVE (1L << 2)
+#define MWM_FUNC_MINIMIZE (1L << 3)
+#define MWM_FUNC_MAXIMIZE (1L << 4)
+#define MWM_FUNC_CLOSE (1L << 5)
+
+#define MWM_DECOR_ALL (1L << 0)
+#define MWM_DECOR_BORDER (1L << 1)
+#define MWM_DECOR_RESIZEH (1L << 2)
+#define MWM_DECOR_TITLE (1L << 3)
+#define MWM_DECOR_MENU (1L << 4)
+#define MWM_DECOR_MINIMIZE (1L << 5)
+#define MWM_DECOR_MAXIMIZE (1L << 6)
+*/
+void LFSTK_windowClass::LFSTK_setDecorations(bool canmax,bool canmin,bool canresize,bool canclose)
+{
+	Atom		xa_prop[10];
+	Hints	hints;
+
+	hints.flags=MWM_HINTS_DECORATIONS;
+	hints.decorations=MWM_DECOR_BORDER;
+	hints.functions=0;
+	hints.inputMode=0;
+	hints.status=0;
+
+	if(canmax==true)
+		hints.decorations|=MWM_DECOR_MAXIMIZE;
+	if(canmin==true)
+		hints.decorations|=MWM_DECOR_MINIMIZE;
+	if(canresize==true)
+		hints.decorations|=MWM_DECOR_RESIZEH;
+	if(canclose==true)
+		hints.functions|=MWM_FUNC_CLOSE;
+
+	xa_prop[9]=XInternAtom(this->app->display,"_MOTIF_WM_HINTS",True);
+	if(xa_prop[9]!=None)
+		XChangeProperty(this->app->display,this->window,xa_prop[9],xa_prop[9],32,PropModeReplace,(unsigned char *)&hints,5);
+
+}
+
+
+/**
 * Set the colour name for font.
 * \param p Font state.
 * \param colour Colour name.
@@ -465,19 +527,36 @@ void LFSTK_windowClass::LFSTK_setFontColourName(int p,const char *colour)
 */
 void LFSTK_windowClass::LFSTK_setWindowColourName(int p,const char* colour)
 {
-	XColor tc,sc;
+	XColor		tc,sc;
+	std::string	str=colour;
+	int			alphaint=255;
 
 	if(this->windowColourNames[p].name!=NULL)
 		free(this->windowColourNames[p].name);
 
 	this->windowColourNames[p].name=strdup(colour);
-	XAllocNamedColor(this->app->display,this->app->cm,colour,&sc,&tc);
+	if(str.at(0)=='#')
+		{
+			if(str.length()>7)
+				{
+					alphaint=std::stoi (str.substr(1,2),nullptr,16);
+					str.erase(str.begin()+1,str.begin()+3);
+				}
+		}
+	XAllocNamedColor(this->app->display,this->app->cm,str.c_str(),&sc,&tc);
 	this->windowColourNames[p].pixel=tc.pixel;
 
+	this->windowColourNames[p].RGBAColour.a=alphaint/256.0;
 	this->windowColourNames[p].RGBAColour.r=((this->windowColourNames[p].pixel>>16) & 0xff)/256.0;
 	this->windowColourNames[p].RGBAColour.g=((this->windowColourNames[p].pixel>>8) & 0xff)/256.0;
 	this->windowColourNames[p].RGBAColour.b=((this->windowColourNames[p].pixel>>0) & 0xff)/256.0;
-	this->windowColourNames[p].RGBAColour.a=1.0;
+
+	if(p==NORMALCOLOUR)
+	{
+
+		this->windowNormalAlpha=this->windowColourNames[NORMALCOLOUR].RGBAColour.a;
+			fprintf(stderr,"windowNormalAlpha=%f\n",this->windowNormalAlpha);
+		}
 }
 
 /**
@@ -753,16 +832,29 @@ LFSTK_windowClass::LFSTK_windowClass(windowInitStruct *wi,LFSTK_applicationClass
 	wa.override_redirect=wi->overRide;
 	wm_delete_window=XInternAtom(this->app->display,"WM_DELETE_WINDOW",0);
 
+	XVisualInfo vinfo;
+	XMatchVisualInfo(this->app->display, DefaultScreen(this->app->display), 32, TrueColor, &vinfo);
+
+	this->visual=vinfo.visual;
+	this->cmap=XCreateColormap(this->app->display, DefaultRootWindow(this->app->display), this->visual, AllocNone);
+
 	if(wi->app->gotARGB==true)
 		{
-			wa.colormap=this->app->cm;
+			//fprintf(stderr,"got argb\n");
+			//wa.colormap=this->app->cm;
+			wa.colormap=this->cmap;
 			wa.border_pixel=0;
 			wa.background_pixel=0;
 
-			this->window=XCreateWindow(this->app->display,this->app->rootWindow,wi->x,wi->y,wi->w,wi->h,0,this->app->depth,InputOutput,this->app->visual,CWColormap | CWBorderPixel |CWWinGravity|CWOverrideRedirect,&wa);
+			//this->window=XCreateWindow(this->app->display,this->app->rootWindow,wi->x,wi->y,wi->w,wi->h,0,this->app->depth,InputOutput,this->app->visual,CWColormap | CWBorderPixel |CWWinGravity|CWOverrideRedirect,&wa);
+			this->window=XCreateWindow(this->app->display,this->app->rootWindow,wi->x,wi->y,wi->w,wi->h,0,vinfo.depth,InputOutput,this->visual,(CWColormap | CWBorderPixel| CWBackPixel |CWWinGravity|CWOverrideRedirect),&wa);
+				//this->setWindowGeom(0,0,wi->w,wi->h,WINDSETALL);
+
 		}
 	else
 		{
+		//fprintf(stderr,"no got argb\n");
+		//exit(0);
 			this->window=XCreateWindow(this->app->display,this->app->rootWindow,wi->x,wi->y,wi->w,wi->h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWOverrideRedirect,&wa);
 		}
 	XSelectInput(this->app->display,this->window,SubstructureRedirectMask|StructureNotifyMask|ButtonPressMask | ButtonReleaseMask|ButtonMotionMask | ExposureMask | EnterWindowMask|LeaveWindowMask|FocusChangeMask|SelectionClear|SelectionRequest|KeyReleaseMask|KeyPressMask);
@@ -1405,7 +1497,20 @@ void LFSTK_windowClass::sendUTF8(XSelectionRequestEvent *sev)
 static	bool flag=false;
 static	geometryStruct	oldwindowGeom{0,0,0,0};
 int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
-{
+{	
+			//this->LFSTK_clearWindow(false);
+
+//if(this->customwindow==true)
+//{
+//			cairo_save(this->cr);
+//				cairo_reset_clip (this->cr);
+//				cairo_set_source_rgba(this->cr,0,0.1,.4,0.2);
+//				cairo_paint(this->cr);
+//			cairo_restore(this->cr);
+//			return(1);
+//
+//}
+
 	int	retval=0;
 	switch(event->type)
 		{			
@@ -1476,8 +1581,7 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 							flag=true;
 						}
 					this->LFSTK_resizeWindow(event->xconfigurerequest.width,event->xconfigurerequest.height,false);
-					this->globalLib->LFSTK_setCairoSurface(this->app->display,this->window,this->app->visual,&this->sfc,&this->cr,event->xconfigurerequest.width,event->xconfigurerequest.height);
-					this->LFSTK_clearWindow(false);
+					this->LFSTK_clearWindow();
 
 					if((this->windowGeom.w!=oldwindowGeom.w) ||(this->windowGeom.h!=oldwindowGeom.h))
 						{

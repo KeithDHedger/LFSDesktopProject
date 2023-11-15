@@ -86,6 +86,7 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 	cairo_save(this->shapecr);
 		cairo_reset_clip(this->shapecr);
 		cairo_set_source_surface(this->cr,this->cImage,xoffset,yoffset);
+		cairo_set_operator(this->cr,CAIRO_OPERATOR_SOURCE);
 		cairo_paint_with_alpha(this->cr,this->alpha);
 		cairo_set_operator(this->shapecr,CAIRO_OPERATOR_CLEAR);
 		cairo_rectangle(this->shapecr,0,0,this->gadgetGeom.w,this->gadgetGeom.h);
@@ -115,7 +116,10 @@ LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* image
 
 	wa.win_gravity=gravity;
 	wa.save_under=true;
+	//this->window=XCreateWindow(this->wc->app->display,this->parent,x,y,w,this->gadgetGeom.h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWSaveUnder,&wa);
+
 	this->window=XCreateWindow(this->wc->app->display,this->parent,x,y,w,this->gadgetGeom.h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWSaveUnder,&wa);
+
 	this->gc=XCreateGC(this->wc->app->display,this->window,0,NULL);
 	this->wc->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->window,this->wc->app->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_setCairoFontData();

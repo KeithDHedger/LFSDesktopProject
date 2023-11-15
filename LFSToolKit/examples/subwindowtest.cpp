@@ -19,14 +19,16 @@ exit $retval
 
 #define BOXLABEL			"Sub Window Test"
 
-LFSTK_applicationClass		*apc=NULL;
-LFSTK_windowClass			*wc=NULL;
+LFSTK_applicationClass	*apc=NULL;
+LFSTK_windowClass		*wc=NULL;
+LFSTK_windowClass		*transwc=NULL;
 LFSTK_labelClass			*label=NULL;
 LFSTK_labelClass			*personal=NULL;
 LFSTK_labelClass			*copyrite=NULL;
-LFSTK_buttonClass			*seperator=NULL;
-LFSTK_buttonClass			*quit=NULL;
-LFSTK_buttonClass			*test=NULL;
+LFSTK_buttonClass		*seperator=NULL;
+LFSTK_buttonClass		*quit=NULL;
+LFSTK_buttonClass		*test=NULL;
+LFSTK_buttonClass		*transtest=NULL;
 
 bool doQuit(void *p,void* ud)
 {
@@ -45,15 +47,34 @@ bool doSubQuit(void *p,void* ud)
 bool buttonCB(void *p,void* ud)
 {
 	LFSTK_buttonClass	*button=NULL;
-	long				subwin=(long)ud;
+	long					subwin=(long)ud;
 
 	apc->LFSTK_runWindowLoop(subwin);
 	return(true);
 }
 
+bool transButtonCB(void *p,void* ud)
+{
+	LFSTK_buttonClass	*button=NULL;
+	long					subwin=(long)ud;
+
+		fprintf(stderr,"windowNormalAlpha=%f\n",apc->windows->at(subwin).window->windowNormalAlpha);
+
+	apc->LFSTK_runWindowLoop(subwin);
+	return(true);
+}
+
+bool doTransSubQuit(void *p,void* ud)
+{
+	long	subwin=(long)ud;
+	apc->windows->at(subwin).loopFlag=false;
+	return(false);
+}
+
 int cnt=1;
 bool timerCB(LFSTK_applicationClass *p,void* ud)
 {
+return(true);
 	printf("From window %s\n",ud);
 	printf("Timer callback number %i of 10\n",cnt);
 	cnt++;
@@ -72,11 +93,25 @@ int main(int argc, char **argv)
 	apc->LFSTK_addWindow(NULL,BOXLABEL);
 	wc=apc->mainWindow;
 	wc->userData=USERDATA("Main Window");
+	//wc->LFSTK_setWindowColourName(NORMALCOLOUR,"#20ff0000");
+
 	apc->LFSTK_addWindow(NULL,"SUB WINDOW");
 	apc->windows->back().window->LFSTK_resizeWindow(400,400,true);
 	apc->windows->back().window->userData=USERDATA("Sub Window");
 	button=new LFSTK_buttonClass(apc->windows->back().window,"Close",200-HALFGADGETWIDTH,200,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setMouseCallBack(NULL,doSubQuit,(void*)apc->windows->size()-1);
+
+	apc->LFSTK_addWindow(NULL,"TRANSPARENT SUB WINDOW");
+	apc->windows->back().window->LFSTK_resizeWindow(400,400,true);
+	apc->windows->back().window->userData=USERDATA("Trans Sub Window");
+	apc->windows->back().window->LFSTK_setTile(NULL,0);
+	apc->windows->back().window->LFSTK_setWindowColourName(NORMALCOLOUR,"#40ff0000");
+	//apc->windows->back().window->customwindow=true;
+
+	button=new LFSTK_buttonClass(apc->windows->back().window,"Close",200-HALFGADGETWIDTH,200,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	button->LFSTK_setMouseCallBack(NULL,doTransSubQuit,(void*)apc->windows->size()-1);
+//button->LFSTK_setColourName(NORMALCOLOUR,"#20ffff00");
+	button->LFSTK_setTile(NULL,0);
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	label->LFSTK_setCairoFontDataParts("sB",20);
@@ -96,8 +131,12 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //test
-	test=new LFSTK_buttonClass(wc,"Sub-Window",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	test->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)apc->windows->size()-1);
+	test=new LFSTK_buttonClass(wc,"Sub-Window",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
+	test->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)apc->windows->size()-2);
+	sy+=YSPACING;
+
+	transtest=new LFSTK_buttonClass(wc,"Transparent Sub-Window",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
+	transtest->LFSTK_setMouseCallBack(NULL,transButtonCB,(void*)apc->windows->size()-1);
 	sy+=YSPACING;
 
 //quit

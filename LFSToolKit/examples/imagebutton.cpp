@@ -19,17 +19,18 @@ exit $retval
 
 #define BOXLABEL			"Image Buttons"
 
-LFSTK_applicationClass		*apc=NULL;
-LFSTK_windowClass			*wc=NULL;
+LFSTK_applicationClass	*apc=NULL;
+LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass			*label=NULL;
 LFSTK_labelClass			*personal=NULL;
 LFSTK_labelClass			*copyrite=NULL;
-LFSTK_buttonClass			*imagebuttonL=NULL;
-LFSTK_buttonClass			*imagebuttonC=NULL;
-LFSTK_buttonClass			*imagebuttonR=NULL;
-LFSTK_buttonClass			*imagebuttonT=NULL;
-LFSTK_buttonClass			*seperator=NULL;
-LFSTK_buttonClass			*quit=NULL;
+LFSTK_buttonClass		*imagebuttonL=NULL;
+LFSTK_buttonClass		*imagebuttonC=NULL;
+LFSTK_buttonClass		*imagebuttonR=NULL;
+LFSTK_buttonClass		*imagebuttonT=NULL;
+LFSTK_buttonClass		*imagebuttonNA=NULL;
+LFSTK_buttonClass		*seperator=NULL;
+LFSTK_buttonClass		*quit=NULL;
 
 bool doQuit(void *p,void* ud)
 {
@@ -98,6 +99,14 @@ int main(int argc, char **argv)
 	imagebuttonR->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA(0xdeadbeef4));
 	imagebuttonR->LFSTK_setImageFromPath("./casper2.JPG",MENU,true);
 	sy+=YSPACING;
+
+//image button no alpha
+	imagebuttonNA=new LFSTK_buttonClass(wc,"Image No Alpha",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*2,BUTTONGRAV);
+	imagebuttonNA->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA(0xdeadbeef5));
+	imagebuttonNA->LFSTK_setImageFromPath("./casper2.JPG",LEFT,true);
+	imagebuttonNA->LFSTK_setLabelGravity(CENTRE);
+	imagebuttonNA->LFSTK_setAlpha(255);
+	sy+=YSPACING*2;
 
 //line
 	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);

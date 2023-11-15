@@ -75,9 +75,13 @@ extern const monitorStruct	*mons;
 extern int					onMonitor;
 extern int					panelPos;
 extern int					panelGravity;
+extern bool					useTheme;
+extern const char			*panelColour;
+extern const char			*panelTextColour;
+extern bool					noButtons;
 
 extern int					queueID;
-extern msgBuffer			buffer;
+extern msgBuffer				buffer;
 extern bool					realMainLoop;
 
 extern const char			*desktopTheme;
@@ -109,5 +113,6 @@ void printError(const char *err);
 void setSizes(int *x,int *y,int *w,int *h,int *size,int *grav,bool fromleft);
 void dropDesktopFile(const char *data,launcherList *launcher);
 void sendNotify(const char *message1,const char *message2);
+void setGadgetDetails(LFSTK_gadgetClass *gadget);
 
 #endif

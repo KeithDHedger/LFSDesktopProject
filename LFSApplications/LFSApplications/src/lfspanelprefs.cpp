@@ -30,11 +30,11 @@
 #define BOXLABEL	"LFS Panel Prefs"
 
 LFSTK_applicationClass		*apc=NULL;
-LFSTK_prefsClass			prefs;
+LFSTK_prefsClass				prefs;
 LFSTK_windowClass			*wc=NULL;
-LFSTK_labelClass			*label=NULL;
-LFSTK_labelClass			*personal=NULL;
-LFSTK_labelClass			*copyrite=NULL;
+LFSTK_labelClass				*label=NULL;
+LFSTK_labelClass				*personal=NULL;
+LFSTK_labelClass				*copyrite=NULL;
 LFSTK_buttonClass			*seperator=NULL;
 LFSTK_buttonClass			*quit=NULL;
 LFSTK_buttonClass			*apply=NULL;
@@ -66,6 +66,11 @@ LFSTK_menuClass				*gravMenu=NULL;
 LFSTK_lineEditClass			*panelOnMonitor=NULL;
 LFSTK_lineEditClass			*panelLeftGadgets=NULL;
 LFSTK_lineEditClass			*panelrightGadgets=NULL;
+
+LFSTK_toggleButtonClass		*useTheme=NULL;
+LFSTK_toggleButtonClass		*noButtons=NULL;
+LFSTK_lineEditClass			*panelColourEdit=NULL;
+LFSTK_lineEditClass			*panelTextColourEdit=NULL;
 
 std::map<int,const char*>	panelWidthConvertToStr={{-1,"Fill"},{-2,"Shrink"}};
 std::map<int,const char*>	panelPosConvertToStr={{-1,"Left"},{-2,"Centre"},{-3,"Right"}};
@@ -119,6 +124,10 @@ void getEdits(void)
 			{prefs.LFSTK_hashFromKey("shutdowncommand"),{TYPESTRING,"shutdowncommand",shutdown->LFSTK_getCStr(),false,0}},
 			{prefs.LFSTK_hashFromKey("gadgetsright"),{TYPESTRING,"gadgetsright",panelrightGadgets->LFSTK_getCStr(),false,0}},
 			{prefs.LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft",panelLeftGadgets->LFSTK_getCStr(),false,0}},
+			{prefs.LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","",useTheme->LFSTK_getValue(),0}},
+			{prefs.LFSTK_hashFromKey("nobuttons"),{TYPEBOOL,"nobuttons","",noButtons->LFSTK_getValue(),0}},
+			{prefs.LFSTK_hashFromKey("panelcolour"),{TYPESTRING,"panelcolour",panelColourEdit->LFSTK_getCStr(),false,0}},
+			{prefs.LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour",panelTextColourEdit->LFSTK_getCStr(),false,0}},
 		};
 }
 
@@ -192,6 +201,10 @@ void setEdits(void)
 	shutdown->LFSTK_setBuffer(prefs.LFSTK_getCString("shutdowncommand"));
 	panelLeftGadgets->LFSTK_setBuffer(prefs.LFSTK_getCString("gadgetsleft"));
 	panelrightGadgets->LFSTK_setBuffer(prefs.LFSTK_getCString("gadgetsright"));
+	useTheme->LFSTK_setValue(prefs.LFSTK_getBool("usetheme"));
+	noButtons->LFSTK_setValue(prefs.LFSTK_getBool("nobuttons"));
+	panelColourEdit->LFSTK_setBuffer(prefs.LFSTK_getCString("panelcolour"));
+	panelTextColourEdit->LFSTK_setBuffer(prefs.LFSTK_getCString("textcolour"));
 }
 
 void getPrefs(void)
@@ -211,6 +224,10 @@ void getPrefs(void)
 			{prefs.LFSTK_hashFromKey("shutdowncommand"),{TYPESTRING,"shutdowncommand","",false,0}},
 			{prefs.LFSTK_hashFromKey("gadgetsright"),{TYPESTRING,"gadgetsright","",false,0}},
 			{prefs.LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","",false,0}},
+			{prefs.LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","",true,0}},
+			{prefs.LFSTK_hashFromKey("nobuttons"),{TYPEBOOL,"nobuttons","",false,0}},
+			{prefs.LFSTK_hashFromKey("panelcolour"),{TYPESTRING,"panelcolour","",false,0}},
+			{prefs.LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","black",false,0}},
 		};
 
 	asprintf(&env,"%s/%s",apc->configDir,panelNameEdit->LFSTK_getCStr());
@@ -391,6 +408,25 @@ int main(int argc, char **argv)
 	gravMenu->LFSTK_setMouseCallBack(NULL,panelGravCB,NULL);
 	gravMenu->LFSTK_addMainMenus(panelGravMenu,4);
 	panelGravEdit=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
+
+//use theme
+	useTheme=new LFSTK_toggleButtonClass(wc,"Use Theme",BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
+	useTheme->LFSTK_setValue(prefs.LFSTK_getBool("usetheme"));
+
+//no button graphics
+	noButtons=new LFSTK_toggleButtonClass(wc,"No Button Graphics",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
+	noButtons->LFSTK_setValue(prefs.LFSTK_getBool("nobuttons"));
+	sy+=YSPACING;
+
+//panel colour
+	label=new LFSTK_labelClass(wc,"Panel Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
+	panelColourEdit=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
+	
+//panel text colour
+	label=new LFSTK_labelClass(wc,"Text Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
+	panelTextColourEdit=new LFSTK_lineEditClass(wc,"black",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
 //on monitor

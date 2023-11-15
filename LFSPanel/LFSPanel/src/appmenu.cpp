@@ -277,6 +277,9 @@ int addAppmenu(int x,int y,int grav,bool fromleft)
 	appButton=new LFSTK_buttonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
 	appButton->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",LEFT,true);
 	appButton->LFSTK_setMouseCallBack(NULL,buttonCB,NULL);
+
+	setGadgetDetails(appButton);
+
 	appMenu=new LFSTK_menuClass(mainwind,xpos,ypos+panelHeight,1,1);
 
 	addEntries();
@@ -319,6 +322,13 @@ int addAppmenu(int x,int y,int grav,bool fromleft)
 	appMenu->LFSTK_setMouseCallBack(NULL,menuCB,NULL);
 	appMenu->LFSTK_addMainMenus(catagoryMenus,catagoryCnt);
 	XMapWindow(mainwind->app->display,appButton->LFSTK_getWindow());
+
+//	if(useTheme==false)
+//		{
+//			appButton->LFSTK_setTile(NULL,0);
+//			appButton->LFSTK_setFontColourName(NORMALCOLOUR,panelTextColour,true);//TODO//
+//		}
+
 	appButton->LFSTK_clearWindow();
 
 	return(width);
