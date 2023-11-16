@@ -36,6 +36,7 @@ void LFSTK_toolWindowClass::windowClassInitCommon(windowInitStruct *wi)
 	XClassHint			classHint;
 	Atom					xa;
 	Atom					xa_prop[4];
+	XVisualInfo			vinfo;
 
 	this->app=wi->app;
 	this->setWindowGeom(wi->x,wi->y,wi->w,wi->h,WINDSETALL);
@@ -48,13 +49,18 @@ void LFSTK_toolWindowClass::windowClassInitCommon(windowInitStruct *wi)
 	wa.override_redirect=wi->overRide;
 	wm_delete_window=XInternAtom(this->app->display,"WM_DELETE_WINDOW",0);
 
+	XMatchVisualInfo(this->app->display, DefaultScreen(this->app->display), 32, TrueColor, &vinfo);
+
+	this->visual=vinfo.visual;
+	this->cmap=XCreateColormap(this->app->display, DefaultRootWindow(this->app->display), this->visual, AllocNone);
+
+
 	if(wi->app->gotARGB==true)
 		{
-			wa.colormap=this->app->cm;
+			wa.colormap=this->cmap;
 			wa.border_pixel=0;
 			wa.background_pixel=0;
-
-			this->window=XCreateWindow(this->app->display,this->app->rootWindow,wi->x,wi->y,wi->w,wi->h,0,this->app->depth,InputOutput,this->app->visual,CWColormap | CWBorderPixel |CWWinGravity|CWOverrideRedirect,&wa);
+			this->window=XCreateWindow(this->app->display,this->app->rootWindow,wi->x,wi->y,wi->w,wi->h,0,vinfo.depth,InputOutput,this->visual,(CWColormap | CWBorderPixel| CWBackPixel |CWWinGravity|CWOverrideRedirect),&wa);
 		}
 	else
 		{
@@ -84,6 +90,7 @@ void LFSTK_toolWindowClass::windowClassInitCommon(windowInitStruct *wi)
 	this->LFSTK_setFontString((char*)DEFAULTFONT);
 	this->LFSTK_setDecorated(wi->decorated);
 	this->initWindow(wi->loadVars);
+
 
 	if(this->globalLib->LFSTK_getUseTheme()==true)
 		this->LFSTK_setTile(this->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);

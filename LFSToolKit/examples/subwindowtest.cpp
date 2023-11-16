@@ -105,6 +105,9 @@ int main(int argc, char **argv)
 	apc->windows->back().window->LFSTK_setTile(NULL,0);
 	apc->windows->back().window->LFSTK_setWindowColourName(NORMALCOLOUR,"#40ff0000");
 	//apc->windows->back().window->customwindow=true;
+	label=new LFSTK_labelClass(apc->windows->back().window,BOXLABEL,0,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
+	label->LFSTK_setCairoFontDataParts("sB",20);
+	label->LFSTK_setTile(NULL,0);
 
 	button=new LFSTK_buttonClass(apc->windows->back().window,"Close",200-HALFGADGETWIDTH,200,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setMouseCallBack(NULL,doTransSubQuit,(void*)apc->windows->size()-1);

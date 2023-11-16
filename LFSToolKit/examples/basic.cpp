@@ -25,6 +25,8 @@ exit $retval
 
 LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*wc=NULL;
+LFSTK_windowClass		*popWindow=NULL;
+
 LFSTK_labelClass			*label=NULL;
 LFSTK_labelClass			*personal=NULL;
 LFSTK_labelClass			*copyrite=NULL;
@@ -88,6 +90,7 @@ bool mouseCB(void *p,void* ud)
 		{
 			printf(">>>%s<<<\n",(const char*)ud);
 			//wc->LFSTK_setKeepBelow(false);
+			popWindow->LFSTK_hideWindow();
 
 		}
 	return(true);
@@ -97,7 +100,14 @@ bool moveCB(LFSTK_gadgetClass*p,void* ud)
 {
 	if(ud!=NULL)
 		{
+			XEvent			event;
+			geometryStruct	geom;
 			printf(">>>Mouse In %s<<<\n",(const char*)ud);
+
+			p->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);	
+			popWindow->LFSTK_moveWindow(geom.x,geom.y-GADGETHITE,true);
+			popWindow->LFSTK_showWindow();
+			popWindow->LFSTK_clearWindow(true);
 		}
 	return(true);
 }
@@ -107,6 +117,7 @@ bool exitCB(LFSTK_gadgetClass*p,void* ud)
 	if(ud!=NULL)
 		{
 			printf(">>>Mouse Out %s<<<\n",(const char*)ud);
+			popWindow->LFSTK_hideWindow();
 		}
 	return(true);
 }
@@ -216,8 +227,6 @@ int main(int argc, char **argv)
 	leftButton->LFSTK_setKeyCallBack(NULL,keyCB,USERDATA("Key Left"));
 	leftButton->LFSTK_setMouseCallBack(NULL,mouseCB,USERDATA("Left"));
 	leftButton->LFSTK_setMouseMoveCallBack(moveCB,exitCB,USERDATA("Left Enter/Exit"));
-	//leftButton->LFSTK_setMouseMoveCallBack(NULL,exitCB,USERDATA("Left Exit"));
-	//leftButton->LFSTK_setMouseMoveCallBack(moveCB,NULL,USERDATA("Left Exit"));
 	sy+=YSPACING;
 
 //centre
@@ -235,7 +244,6 @@ int main(int argc, char **argv)
 	dropButton->LFSTK_setKeyCallBack(NULL,keyCB,USERDATA("Key Drop"));
 	dropButton->LFSTK_setMouseCallBack(NULL,mouseCB,USERDATA("Drop"));
 	dropButton->LFSTK_setGadgetDropCallBack(gadgetDrop,NULL);
-	//dropButton->LFSTK_setGadgetDropCallBack(NULL,NULL);
 	dropButton->gadgetAcceptsDnD=true;
 	sy+=YSPACING;
 
@@ -282,8 +290,17 @@ int main(int argc, char **argv)
 
 	//wc->LFSTK_showWindow();
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
-	//apc->LFSTK_setTimer(2);
-	//apc->LFSTK_setTimerCallBack(timerCB,NULL);
+	apc->LFSTK_setTimer(2);
+	apc->LFSTK_setTimerCallBack(timerCB,NULL);
+
+	popWindow=new LFSTK_toolWindowClass(apc->display,wc,"_NET_WM_WINDOW_TYPE_MENU",0,0,200,100,"lfstkpopup",apc);
+	LFSTK_labelClass *poplabel=new LFSTK_labelClass(popWindow,"This is a mouse enter callback",0,0,GADGETWIDTH*8,GADGETHITE,WestGravity);
+	poplabel->LFSTK_setCairoFontDataParts("sB",20);
+	poplabel->LFSTK_setTile(NULL,0);
+
+	popWindow->LFSTK_resizeWindow(poplabel->LFSTK_getTextRealWidth("This is a mouse enter callback"),GADGETHITE);
+	popWindow->LFSTK_setWindowColourName(NORMALCOLOUR,"#c0808080");
+	//popWindow->LFSTK_setTile(NULL,0);
 	int retval=apc->LFSTK_runApp();
 
 	delete apc;

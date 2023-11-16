@@ -814,6 +814,7 @@ LFSTK_windowClass::LFSTK_windowClass(windowInitStruct *wi,LFSTK_applicationClass
 	XVisualInfo			visual_template;
 	XVisualInfo			*visual_list=NULL;
 	int					nxvisuals=0;
+	XVisualInfo			vinfo;
 
 	this->app=app;
 	this->setWindowGeom(wi->x,wi->y,wi->w,wi->h,WINDSETALL);
@@ -826,7 +827,6 @@ LFSTK_windowClass::LFSTK_windowClass(windowInitStruct *wi,LFSTK_applicationClass
 	wa.override_redirect=wi->overRide;
 	wm_delete_window=XInternAtom(this->app->display,"WM_DELETE_WINDOW",0);
 
-	XVisualInfo vinfo;
 	XMatchVisualInfo(this->app->display, DefaultScreen(this->app->display), 32, TrueColor, &vinfo);
 
 	this->visual=vinfo.visual;
@@ -834,21 +834,14 @@ LFSTK_windowClass::LFSTK_windowClass(windowInitStruct *wi,LFSTK_applicationClass
 
 	if(wi->app->gotARGB==true)
 		{
-			//fprintf(stderr,"got argb\n");
-			//wa.colormap=this->app->cm;
 			wa.colormap=this->cmap;
 			wa.border_pixel=0;
 			wa.background_pixel=0;
 
-			//this->window=XCreateWindow(this->app->display,this->app->rootWindow,wi->x,wi->y,wi->w,wi->h,0,this->app->depth,InputOutput,this->app->visual,CWColormap | CWBorderPixel |CWWinGravity|CWOverrideRedirect,&wa);
 			this->window=XCreateWindow(this->app->display,this->app->rootWindow,wi->x,wi->y,wi->w,wi->h,0,vinfo.depth,InputOutput,this->visual,(CWColormap | CWBorderPixel| CWBackPixel |CWWinGravity|CWOverrideRedirect),&wa);
-				//this->setWindowGeom(0,0,wi->w,wi->h,WINDSETALL);
-
 		}
 	else
 		{
-		//fprintf(stderr,"no got argb\n");
-		//exit(0);
 			this->window=XCreateWindow(this->app->display,this->app->rootWindow,wi->x,wi->y,wi->w,wi->h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWOverrideRedirect,&wa);
 		}
 	XSelectInput(this->app->display,this->window,SubstructureRedirectMask|StructureNotifyMask|ButtonPressMask | ButtonReleaseMask|ButtonMotionMask | ExposureMask | EnterWindowMask|LeaveWindowMask|FocusChangeMask|SelectionClear|SelectionRequest|KeyReleaseMask|KeyPressMask);
@@ -880,7 +873,7 @@ LFSTK_windowClass::LFSTK_windowClass(windowInitStruct *wi,LFSTK_applicationClass
 	else
 		this->useTile=false;
 
-	this->globalLib->LFSTK_setCairoSurface(this->app->display,this->window,this->app->visual,&this->sfc,&this->cr,wi->w,wi->h);
+	this->globalLib->LFSTK_setCairoSurface(this->app->display,this->window,this->visual,&this->sfc,&this->cr,wi->w,wi->h);
 
 	switch(wi->level)
 		{

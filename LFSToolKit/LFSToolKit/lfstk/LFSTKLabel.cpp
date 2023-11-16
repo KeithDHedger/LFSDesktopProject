@@ -45,9 +45,20 @@ LFSTK_labelClass::LFSTK_labelClass(LFSTK_windowClass* parentwc,const char* label
 
 	wa.win_gravity=bgrav;
 	wa.save_under=true;
-	this->window=XCreateWindow(this->wc->app->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
+	wa.border_pixel=0;
+	wa.background_pixel=0;
+
+	XVisualInfo vinfo;
+	XMatchVisualInfo(this->wc->app->display, DefaultScreen(this->wc->app->display), 32, TrueColor, &vinfo);
+
+	this->visual=vinfo.visual;
+	this->cmap=XCreateColormap(this->wc->app->display,DefaultRootWindow(this->wc->app->display),this->visual,AllocNone);
+	wa.colormap=this->cmap;
+
+	this->window=XCreateWindow(this->wc->app->display,this->parent,x,y,w,h,0,vinfo.depth,InputOutput,this->visual,(CWColormap | CWBorderPixel| CWBackPixel |CWWinGravity),&wa);
+
 	this->gc=XCreateGC(this->wc->app->display,this->window,0,NULL);
-	this->wc->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->window,this->wc->app->visual,&this->sfc,&this->cr,w,h);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_setCairoFontData();
 	XSelectInput(this->wc->app->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
