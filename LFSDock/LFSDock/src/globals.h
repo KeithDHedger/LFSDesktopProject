@@ -82,8 +82,6 @@ extern msgBuffer				buffer;
 extern bool					realMainLoop;
 
 extern const char			*desktopTheme;
-// const char			*panelID;
-
 extern int					refreshRate;
 
 extern int					iconSize;
@@ -91,7 +89,6 @@ extern int					iconSize;
 //panel window
 extern LFSTK_applicationClass	*apc;
 extern LFSTK_windowClass	*mainwind;
-extern int					rightOffset;
 extern int					leftOffset;
 extern int					launcherSide;
 

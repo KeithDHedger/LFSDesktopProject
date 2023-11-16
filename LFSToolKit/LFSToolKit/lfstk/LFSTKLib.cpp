@@ -341,19 +341,29 @@ const char* LFSTK_lib::bestFontColour(long pixel)
 */
 bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 {
-	bool				retval=true;
+	bool					retval=true;
 	LFSTK_gadgetClass	*gadget=NULL;
 	geometryStruct		geom;
+	Window				sink;
+	Window				childwindow;
+	int					sinkx;
+	int					sinky;
+	unsigned int			buttonmask;
 
 	gadget=static_cast<LFSTK_gadgetClass*>(self);
 	gadget->xEvent=e;
 
+	XQueryPointer(gadget->wc->app->display,gadget->wc->app->rootWindow,&sink,&childwindow,&sinkx,&sinky,&sinkx,&sinky,&buttonmask);
 	switch (e->type)
 		{
 			case EnterNotify:
+				if(buttonmask!=0)
+					gadget->noRunCB=true;
 				retval=gadget->mouseEnter(&e->xbutton);
 				break;
 			case LeaveNotify:
+				if(buttonmask!=0)
+					gadget->noRunCB=true;
 				retval=gadget->mouseExit(&e->xbutton);
 				break;
 			case ButtonRelease:
@@ -380,6 +390,7 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 					}
 
 				retval=gadget->mouseUp(&e->xbutton);
+				gadget->noRunCB=false;
 				break;
 
 			case ButtonPress:

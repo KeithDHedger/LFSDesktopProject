@@ -42,7 +42,6 @@ int					queueID;
 msgBuffer			buffer;
 
 const char			*desktopTheme=NULL;
-// char			*panelID="";
 bool					realMainLoop=true;
 
 int					refreshRate=1;
@@ -52,22 +51,21 @@ int					iconSize=16;
 //panel window
 LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*mainwind=NULL;
-int						rightOffset=0;
 int						leftOffset=0;
 int						launcherSide=NOLAUNCHERS;
 
 //atoms
-Atom				WM_STATE=None;
-Atom				NET_WM_WINDOW_TYPE_NORMAL=None;
-Atom				NET_WM_STATE_HIDDEN=None;
-Atom				NET_WM_WINDOW_TYPE_DIALOG=None;
-Atom				NET_WM_DESKTOP=None;
-Atom				NET_WM_WINDOW_TYPE=None;
-Atom				NET_WM_STATE=None;
-Atom				NET_WM_NAME=None;
-Atom				UTF8_STRING=None;
+Atom						WM_STATE=None;
+Atom						NET_WM_WINDOW_TYPE_NORMAL=None;
+Atom						NET_WM_STATE_HIDDEN=None;
+Atom						NET_WM_WINDOW_TYPE_DIALOG=None;
+Atom						NET_WM_DESKTOP=None;
+Atom						NET_WM_WINDOW_TYPE=None;
+Atom						NET_WM_STATE=None;
+Atom						NET_WM_NAME=None;
+Atom						UTF8_STRING=None;
 
-const char			*possibleError="Unknown";
+const char				*possibleError="Unknown";
 
 void setSizes(int *x,int *y,int *w,int *h,int *size,int *grav,bool fromleft)
 {
@@ -114,6 +112,7 @@ void sendNotify(const char *name,const char *message)//TODO//could be better
 #ifdef _GOTNOTIFYSEND_
 	char	*command;
 	asprintf(&command,"notify-send -u low -t 2000 -i stock_dialog-info \"%s\" \"%s ...\" &",name,message);
+fprintf(stderr,"%s\n",command);
 	system(command);
 	free(command);
 #endif

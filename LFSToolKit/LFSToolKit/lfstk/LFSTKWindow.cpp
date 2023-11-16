@@ -632,9 +632,7 @@ void LFSTK_windowClass::LFSTK_setKeepAbove(bool set)
 		xclient.data.l[0] =_NET_WM_STATE_REMOVE;
 	xclient.data.l[1] =xa1;
 	xclient.data.l[2]=0;
-//	XSendEvent(this->app->display,this->app->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
-	XSendEvent(this->app->display,this->window,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
-	XRaiseWindow(this->app->display,this->window);
+	XSendEvent(this->app->display,this->app->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
 }
 
 /**
@@ -1493,20 +1491,7 @@ void LFSTK_windowClass::sendUTF8(XSelectionRequestEvent *sev)
 static	bool flag=false;
 static	geometryStruct	oldwindowGeom{0,0,0,0};
 int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
-{	
-			//this->LFSTK_clearWindow(false);
-
-//if(this->customwindow==true)
-//{
-//			cairo_save(this->cr);
-//				cairo_reset_clip (this->cr);
-//				cairo_set_source_rgba(this->cr,0,0.1,.4,0.2);
-//				cairo_paint(this->cr);
-//			cairo_restore(this->cr);
-//			return(1);
-//
-//}
-
+{
 	int	retval=0;
 	switch(event->type)
 		{			

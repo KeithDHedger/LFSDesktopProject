@@ -316,6 +316,7 @@ void LFSTK_gadgetClass::LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* 
 */
 void LFSTK_gadgetClass::LFSTK_setKeyCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud)
 {
+	this->callBacks.validCallbacks=this->callBacks.validCallbacks & ALLCB & (~(KEYPRESSCB|KEYRELEASECB));
 	if(downcb!=NULL)
 		this->callBacks.validCallbacks|=KEYPRESSCB;
 	if(releasecb!=NULL)
@@ -324,7 +325,7 @@ void LFSTK_gadgetClass::LFSTK_setKeyCallBack(bool (*downcb)(void *,void*),bool (
 	this->callBacks.keyReleaseCallback=releasecb;
 	this->callBacks.keyUserData=ud;
 	this->callBacks.runTheCallback=true;
-	this->callBacks.ignoreOrphanModKeys=true;
+//	this->callBacks.ignoreOrphanModKeys=true;
 }
 
 /**
@@ -337,11 +338,36 @@ void LFSTK_gadgetClass::LFSTK_setKeyCallBack(bool (*downcb)(void *,void*),bool (
 */
 void LFSTK_gadgetClass::LFSTK_setGadgetDropCallBack(bool (*dropped)(void*,propertyStruct *data,void*),void* ud)
 {
-	this->callBacks.validCallbacks|=GADGETDROPCB;
+	this->callBacks.validCallbacks=this->callBacks.validCallbacks & ALLCB & (~GADGETDROPCB);
+	if(dropped!=NULL)
+		this->callBacks.validCallbacks|=GADGETDROPCB;
 	this->callBacks.droppedGadgetCallback=dropped;
 	this->callBacks.droppedUserData=ud;
 	this->callBacks.runTheCallback=true;
-	this->callBacks.ignoreOrphanModKeys=true;
+//			this->callBacks.ignoreOrphanModKeys=true;
+}
+
+/**
+* Set mouse enter/exit callback for widget.
+* \param entercb mouse enter callback.
+* \param exitcb mouse exit callback.
+* \note Format for callback is "bool functioname(void *p,void* ud)"
+* \note First param passed to callback is pointer to object.
+* \note Second param passed to callback is user data.
+*/
+void LFSTK_gadgetClass::LFSTK_setMouseMoveCallBack(bool (*entercb)(LFSTK_gadgetClass*,void*),bool (*exitcb)(LFSTK_gadgetClass*,void*),void* ud)
+{
+	this->callBacks.validCallbacks=this->callBacks.validCallbacks & ALLCB & (~(MOUSEENTERCB|MOUSEEXITCB));
+	if(entercb!=NULL)
+		this->callBacks.validCallbacks|=MOUSEENTERCB;
+
+	if(exitcb!=NULL)
+		this->callBacks.validCallbacks|=MOUSEEXITCB;
+	this->callBacks.mouseEnterCallback=entercb;
+	this->callBacks.mouseExitCallback=exitcb;
+	this->callBacks.mouseMoveUserData=ud;
+	this->callBacks.runTheCallback=true;
+//	this->callBacks.ignoreOrphanModKeys=true;
 }
 
 /**
@@ -354,6 +380,7 @@ void LFSTK_gadgetClass::LFSTK_setGadgetDropCallBack(bool (*dropped)(void*,proper
 */
 void LFSTK_gadgetClass::LFSTK_setMouseCallBack(bool (*downcb)(void*,void*),bool (*releasecb)(void*,void*),void* ud)
 {
+	this->callBacks.validCallbacks=this->callBacks.validCallbacks & ALLCB & (~(MOUSEPRESSCB|MOUSERELEASECB));
 	if(downcb!=NULL)
 		this->callBacks.validCallbacks|=MOUSEPRESSCB;
 	if(releasecb!=NULL)
@@ -362,7 +389,7 @@ void LFSTK_gadgetClass::LFSTK_setMouseCallBack(bool (*downcb)(void*,void*),bool 
 	this->callBacks.mouseReleaseCallback=releasecb;
 	this->callBacks.mouseUserData=ud;
 	this->callBacks.runTheCallback=true;
-	this->callBacks.ignoreOrphanModKeys=true;
+//	this->callBacks.ignoreOrphanModKeys=true;
 }
 
 /**
@@ -731,6 +758,7 @@ bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 			if(this->toParent==true)
 				return(false);
 		}
+
 	return(retval);
 }
 
@@ -746,6 +774,7 @@ bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 	this->mouseDownX=e->x;
 	this->mouseDownY=e->y;
 	this->keyEvent=NULL;
+
 //no callbacks
 	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
 		return(true);
@@ -774,10 +803,12 @@ bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 */
 bool LFSTK_gadgetClass::mouseExit(XButtonEvent *e)
 {
+	bool retval=true;
+
 	this->keyEvent=NULL;
 
 //no callbacks
-	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
+	if((this->callBacks.runTheCallback==false) || (this->isActive==false) )
 		return(true);
 
 	if(strcmp(this->label,"--")==0)
@@ -787,8 +818,13 @@ bool LFSTK_gadgetClass::mouseExit(XButtonEvent *e)
 	this->gadgetDetails.state=NORMALCOLOUR;
 	this->LFSTK_clearWindow();
 	this->inWindow=false;
+
+	if((this->callBacks.validCallbacks & MOUSEEXITCB) && (this->noRunCB==false))
+		retval=this->callBacks.mouseExitCallback(this,this->callBacks.mouseMoveUserData);
+
 	if(this->toParent==true)
 		return(false);
+
 	return(true);
 }
 
@@ -799,10 +835,12 @@ bool LFSTK_gadgetClass::mouseExit(XButtonEvent *e)
 */
 bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 {
+	bool retval=true;
+
 	this->keyEvent=NULL;
 
 //no callbacks
-	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
+	if((this->callBacks.runTheCallback==false) || (this->isActive==false) )
 		return(true);
 
 	if(strcmp(this->label,"--")==0)
@@ -812,8 +850,13 @@ bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 	this->gadgetDetails.state=PRELIGHTCOLOUR;
 	this->LFSTK_clearWindow();
 	this->inWindow=true;
+
+	if((this->callBacks.validCallbacks & MOUSEENTERCB) && (this->noRunCB==false))
+		retval=this->callBacks.mouseEnterCallback(this,this->callBacks.mouseMoveUserData);
+
 	if(this->toParent==true)
 		return(false);
+
 	return(true);
 }
 

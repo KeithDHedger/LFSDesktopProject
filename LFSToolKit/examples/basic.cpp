@@ -87,6 +87,26 @@ bool mouseCB(void *p,void* ud)
 	if(ud!=NULL)
 		{
 			printf(">>>%s<<<\n",(const char*)ud);
+			//wc->LFSTK_setKeepBelow(false);
+
+		}
+	return(true);
+}
+
+bool moveCB(LFSTK_gadgetClass*p,void* ud)
+{
+	if(ud!=NULL)
+		{
+			printf(">>>Mouse In %s<<<\n",(const char*)ud);
+		}
+	return(true);
+}
+
+bool exitCB(LFSTK_gadgetClass*p,void* ud)
+{
+	if(ud!=NULL)
+		{
+			printf(">>>Mouse Out %s<<<\n",(const char*)ud);
 		}
 	return(true);
 }
@@ -195,7 +215,11 @@ int main(int argc, char **argv)
 	leftButton->LFSTK_setLabelGravity(LEFT);
 	leftButton->LFSTK_setKeyCallBack(NULL,keyCB,USERDATA("Key Left"));
 	leftButton->LFSTK_setMouseCallBack(NULL,mouseCB,USERDATA("Left"));
+	leftButton->LFSTK_setMouseMoveCallBack(moveCB,exitCB,USERDATA("Left Enter/Exit"));
+	//leftButton->LFSTK_setMouseMoveCallBack(NULL,exitCB,USERDATA("Left Exit"));
+	//leftButton->LFSTK_setMouseMoveCallBack(moveCB,NULL,USERDATA("Left Exit"));
 	sy+=YSPACING;
+
 //centre
 	centreButton=new LFSTK_buttonClass(wc,"Label Centre",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE);
 	centreButton->LFSTK_setLabelGravity(CENTRE);
@@ -211,6 +235,7 @@ int main(int argc, char **argv)
 	dropButton->LFSTK_setKeyCallBack(NULL,keyCB,USERDATA("Key Drop"));
 	dropButton->LFSTK_setMouseCallBack(NULL,mouseCB,USERDATA("Drop"));
 	dropButton->LFSTK_setGadgetDropCallBack(gadgetDrop,NULL);
+	//dropButton->LFSTK_setGadgetDropCallBack(NULL,NULL);
 	dropButton->gadgetAcceptsDnD=true;
 	sy+=YSPACING;
 
@@ -252,12 +277,13 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
+	wc->LFSTK_setKeepAbove(true);
 	//wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),apc->displayWidth,apc->displayHeight);
 
 	//wc->LFSTK_showWindow();
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
-	apc->LFSTK_setTimer(2);
-	apc->LFSTK_setTimerCallBack(timerCB,NULL);
+	//apc->LFSTK_setTimer(2);
+	//apc->LFSTK_setTimerCallBack(timerCB,NULL);
 	int retval=apc->LFSTK_runApp();
 
 	delete apc;

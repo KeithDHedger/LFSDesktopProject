@@ -1,3 +1,11 @@
+0.6.0
+Fixed version number in .pc file.
+Fixed spurious enter/exit callbacks when clicking gadget.
+Fixed set/unset keep above/below.
+Fixed setting gadget callbacks to NULL to stop callback.
+Fixed setting enter/exit, mouse pressed/released separately.
+Added callback for mouse enter/exit.
+
 0.5.2
 Added support for colour names including a 8 bit alpha def eg "#80ff00ff".
 Added transparent windows ( see examples/subwindows ).

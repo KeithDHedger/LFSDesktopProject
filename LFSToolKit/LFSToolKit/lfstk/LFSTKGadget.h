@@ -96,6 +96,9 @@ class LFSTK_gadgetClass
 		void					LFSTK_setKeyCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud);
 		void					LFSTK_setGadgetDropCallBack(bool (*dropped)(void*,propertyStruct *data,void*),void* ud=NULL);
 		void					LFSTK_setCallBacks(callbackStruct cbs);
+		void					LFSTK_setMouseMoveCallBack(bool (*entercb)(LFSTK_gadgetClass*,void*),bool (*exitcb)(LFSTK_gadgetClass*,void*),void* ud);
+		bool					noRunCB=false;
+
 		callbackStruct		callBacks;
 
 //colours
@@ -116,7 +119,7 @@ class LFSTK_gadgetClass
 		const char			*LFSTK_getLabel(void);
 		void					LFSTK_setLabelGravity(int orient);
 
-//grahics
+//graphics
 		void					drawImage();
 		void					LFSTK_setIndicator(indicatorType indictype);
 		cairo_status_t 		LFSTK_setImageFromPath(const char *file,int orient,bool scale);

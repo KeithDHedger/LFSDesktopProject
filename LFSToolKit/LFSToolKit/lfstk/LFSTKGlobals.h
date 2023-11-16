@@ -240,22 +240,24 @@ class LFSTK_gadgetClass;
 class LFSTK_applicationClass;
 #define	NOCB				0x0
 #define	MOUSEPRESSCB		0x1
-#define	MOUSERELEASECB		0x2
-#define	KEYPRESSCB			0x4
+#define	MOUSERELEASECB	0x2
+#define	KEYPRESSCB		0x4
 #define	KEYRELEASECB		0x8
 #define	WINDOWDROPCB		0x10
 #define	GADGETDROPCB		0x20
-#define	DOUBLECLICKCB		0x40
-#define	TIMERCB				0x80
-#define ALLCB				0x8F
+#define	DOUBLECLICKCB	0x40
+#define	TIMERCB			0x80
+#define	MOUSEENTERCB		0x100
+#define	MOUSEEXITCB		0x200
+#define ALLCB			0x2ff
 
 struct propertyStruct
 {
 	unsigned char	*data;
 	int				format;
 	int				nitems;
-	Atom			type;
-	char			*mimeType;
+	Atom				type;
+	char				*mimeType;
 	int				dropX=-1;
 	int				dropY=-1;
 };
@@ -270,12 +272,16 @@ struct callbackStruct
 	bool					(*droppedGadgetCallback)(void*,propertyStruct *data,void*)=NULL;
 	bool					(*doubleClickCallback)(void*,void*)=NULL;
 	bool					(*timerCallback)(LFSTK_applicationClass*,void*)=NULL;
+	bool					(*mouseEnterCallback)(LFSTK_gadgetClass*,void*)=NULL;
+	bool					(*mouseExitCallback)(LFSTK_gadgetClass*,void*)=NULL;
+	void					*mouseMoveUserData=NULL;
 	void					*mouseUserData=NULL;
 	void					*droppedUserData=NULL;
 	void					*keyUserData=NULL;
 	bool					runTheCallback=true;
 	bool					ignoreOrphanModKeys=true;
 	int					validCallbacks=NOCB;
+	
 };
 
 struct pointStruct

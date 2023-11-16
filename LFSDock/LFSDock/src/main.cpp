@@ -30,7 +30,6 @@
 #include "slider.h"
 
 #define RCNAME "lfsdock"
-#define REFRESHMULTI 4
 
 void loadPrefs(const char *env)
 {
@@ -46,7 +45,7 @@ void loadPrefs(const char *env)
 	noButtons=prefs.LFSTK_getBool(prefs.LFSTK_hashFromKey("nobuttons"));
 }
 
-void addLeftGadgets(void)
+void addGadgets(void)
 {
 	int	offset=leftOffset;
 
@@ -121,20 +120,16 @@ int main(int argc,char **argv)
 						{prefs.LFSTK_hashFromKey("panelwidth"),{TYPEINT,"panelwidth","",false,0}},
 						{prefs.LFSTK_hashFromKey("onmonitor"),{TYPEINT,"onmonitor","",false,0}},
 
-						{prefs.LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","xterm -e ",false,0}},
-						{prefs.LFSTK_hashFromKey("logoutcommand"),{TYPESTRING,"logoutcommand","xterm",false,0}},
-						{prefs.LFSTK_hashFromKey("restartcommand"),{TYPESTRING,"restartcommand","xterm",false,0}},
-						{prefs.LFSTK_hashFromKey("shutdowncommand"),{TYPESTRING,"shutdowncommand","xterm",false,0}},
-						{prefs.LFSTK_hashFromKey("gadgetsright"),{TYPESTRING,"gadgetsright","L",false,0}},
-						{prefs.LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","l",false,0}},
-
 						{prefs.LFSTK_hashFromKey("panelpos"),{TYPEINT,"panelpos","",false,0}},
 						{prefs.LFSTK_hashFromKey("panelgrav"),{TYPEINT,"panelgrav","",false,0}},
 
 						{prefs.LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","",false,0}},
 						{prefs.LFSTK_hashFromKey("nobuttons"),{TYPEBOOL,"nobuttons","",false,0}},
 						{prefs.LFSTK_hashFromKey("panelcolour"),{TYPESTRING,"panelcolour","",false,0}},
-						{prefs.LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","black",false,0}}
+						{prefs.LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","black",false,0}},
+
+						{prefs.LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","xterm -e ",false,0}},
+						{prefs.LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","l",false,0}},
 					};
 	realMainLoop=true;
 	
@@ -179,7 +174,6 @@ int main(int argc,char **argv)
 			desktopTheme=mainwind->globalLib->desktopIconTheme.c_str();
 			mons=apc->LFSTK_getMonitorData(onMonitor);
 
-			rightOffset=0;
 			leftOffset=0;
 
 			if(useTheme==false)
@@ -188,15 +182,15 @@ int main(int argc,char **argv)
 					mainwind->LFSTK_setWindowColourName(NORMALCOLOUR,panelColour);
 				}
 
-		addLeftGadgets();
+			addGadgets();
 
-			if((leftOffset==0) && (rightOffset==0))
+			if(leftOffset==0)
 				{
 					fprintf(stderr,"Not using empty panel ...\n");
 					exit(0);
 				}
 
-			psize=leftOffset+abs(rightOffset);
+			psize=leftOffset;
 			px=mons->x;
 			py=mons->y;
 			switch(panelGravity)
