@@ -633,6 +633,7 @@ void LFSTK_windowClass::LFSTK_setKeepAbove(bool set)
 	xclient.data.l[1] =xa1;
 	xclient.data.l[2]=0;
 	XSendEvent(this->app->display,this->app->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
+	XRaiseWindow(this->app->display,this->window);
 }
 
 /**
