@@ -57,6 +57,7 @@ struct launcherList
 {
 	launcherList		*next=NULL;
 	LFSTK_buttonClass	*bc=NULL;
+	LFSTK_labelClass		*label=NULL;
 	char				*icon=NULL;
 	menuEntryStruct		entry;
 };

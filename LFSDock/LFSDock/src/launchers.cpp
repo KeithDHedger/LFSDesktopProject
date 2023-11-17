@@ -26,7 +26,42 @@
 
 #include "launchers.h"
 
+LFSTK_windowClass		*popWindow=NULL;
+
+bool moveCB(LFSTK_gadgetClass*p,void* ud)
+{
+	if(ud!=NULL)
+		{
+			XEvent			event;
+			geometryStruct	geom;
+			printf(">>>Mouse In %p<<<\n",(launcherList*)ud);
+			LFSTK_labelClass	*label=NULL;
+			label=((launcherList*)ud)->label;
+popWindow->LFSTK_resizeWindow(((launcherList*)ud)->label->LFSTK_getTextRealWidth("This is a mouse enter callback"),GADGETHITE);
+//popWindow->LFSTK_resizeWindow(100,GADGETHITE);
+fprintf(stderr,"label=%s\n",((launcherList*)ud)->entry.name);
+label->LFSTK_setLabel(((launcherList*)ud)->entry.name,true);
+label->LFSTK_clearWindow();
+			p->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);	
+			popWindow->LFSTK_moveWindow(geom.x,geom.y-GADGETHITE,true);
+			popWindow->LFSTK_showWindow();
+			popWindow->LFSTK_clearWindow(true);
+		}
+	return(true);
+}
+
+bool exitCB(LFSTK_gadgetClass*p,void* ud)
+{
+	if(ud!=NULL)
+		{
+			printf(">>>Mouse Out %s<<<\n",(const char*)ud);
+			popWindow->LFSTK_hideWindow();
+		}
+	return(true);
+}
+
 launcherList	*ll=NULL;
+std::string	popUpString;
 
 void addALAuncher(const char *fpath,menuEntryStruct	*entry)
 {
@@ -134,6 +169,15 @@ int addLaunchers(int x,int y,int grav,bool fromleft)
 	sx=xpos;
 	sy=ypos;
 
+	popWindow=new LFSTK_toolWindowClass(apc->display,mainwind,"_NET_WM_WINDOW_TYPE_MENU",0,0,200,100,"lfstkpopup",apc);
+	//poplabel->LFSTK_setCairoFontDataParts("sB",20);
+	//poplabel->LFSTK_setTile(NULL,0);
+
+	//popWindow->LFSTK_resizeWindow(poplabel->LFSTK_getTextRealWidth("This is a mouse enter callback"),GADGETHITE);
+	popWindow->LFSTK_setWindowColourName(NORMALCOLOUR,"#c0808080");
+
+
+
 	loopll=ll;
 	while(loopll!=NULL)
 		{
@@ -141,6 +185,10 @@ int addLaunchers(int x,int y,int grav,bool fromleft)
 			loopll->bc=new LFSTK_buttonClass(mainwind,"",sx,sy,width,height,thisgrav);
 			loopll->bc->LFSTK_setMouseCallBack(NULL,launcherCB,(void*)loopll);
 			loopll->bc->LFSTK_setGadgetDropCallBack(gadgetDrop,(void*)loopll);
+	
+	loopll->label=new LFSTK_labelClass(popWindow,loopll->entry.name,0,0,GADGETWIDTH*8,GADGETHITE,WestGravity);
+			loopll->bc->LFSTK_setMouseMoveCallBack(moveCB,exitCB,USERDATA(loopll));
+fprintf(stderr,"name=>>%s<<\n",loopll->entry.name);
 			loopll->bc->gadgetAcceptsDnD=true;
 
 			if((loopll->icon!=NULL) && (desktopTheme!=NULL))
