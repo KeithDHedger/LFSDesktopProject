@@ -22,6 +22,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
+#include <filesystem>
+#include <iostream>
+#include <fstream>
 
 #include "config.h"
 #include <lfstk/LFSTKGlobals.h>
@@ -33,17 +36,9 @@
 #ifndef _GLOBALS_
 #define _GLOBALS_
 
-#define WINHELPER DATADIR "/scripts/PanelHelperWinList"
-#define BWIDTH 64
-#define SPACING 10
-#define WINDOWREFRESH 2
-#define RCNAME "lfsdock"
-#define REFRESHMULTI 4
-
 enum PANELXPOS {PANELLEFT=-1,PANELCENTRE=-2,PANELRIGHT=-3};
-enum PANELYPOS {PANELTOP=-1,PANELBOTTOM=-3};
 enum PANELSIZE {PANELFULL=-1,PANELSHRINK=-2};
-enum PANELGRAVITY {PANELABS=0,PANELNORTH,PANELEAST,PANELSOUTH,PANELWEST};
+enum PANELGRAVITY {PANELNORTH=1,PANELSOUTH=2};
 
 struct menuEntryStruct
 {
@@ -55,28 +50,33 @@ struct menuEntryStruct
 
 struct launcherList
 {
-	launcherList		*next=NULL;
+	launcherList			*next=NULL;
 	LFSTK_buttonClass	*bc=NULL;
-	LFSTK_labelClass		*label=NULL;
-	char				*icon=NULL;
+	char					*icon=NULL;
 	menuEntryStruct		entry;
 };
 
-enum {NOLAUNCHERS,LAUNCHERINLEFT,LAUNCHERINRITE};
+enum {NOLAUNCHERS,LAUNCHERINLEFT};
 
 //prefs
 extern LFSTK_prefsClass		prefs;
+extern std::string			configDir;
+extern std::string			launchersDir;
+extern std::string			configFile;
+extern LFSTK_windowClass		*popWindow;
+extern LFSTK_labelClass		*popLabel;
+extern launcherList			*ll;
+extern int					iconSize;
+extern int					posMultiplier;
 
-extern int					panelHeight;
+extern int					panelSize;
 extern int					panelWidth;
 extern const monitorStruct	*mons;
 extern int					onMonitor;
 extern int					panelPos;
 extern int					panelGravity;
-extern bool					useTheme;
-extern const char			*panelColour;
 extern const char			*panelTextColour;
-extern bool					noButtons;
+extern int					extraSpace;
 
 extern int					queueID;
 extern msgBuffer				buffer;
@@ -85,7 +85,6 @@ extern bool					realMainLoop;
 extern const char			*desktopTheme;
 extern int					refreshRate;
 
-extern int					iconSize;
 
 //panel window
 extern LFSTK_applicationClass	*apc;

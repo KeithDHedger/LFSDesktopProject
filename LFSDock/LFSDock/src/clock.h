@@ -22,7 +22,7 @@
 #ifndef _CLOCK_
 #define _CLOCK_
 
-extern LFSTK_labelClass	*clockButton;
+extern LFSTK_buttonClass	*clockButton;
 
 int addClock(int x,int y,int grav);
 void updateClock(void);

@@ -30,9 +30,9 @@ LFSTK_applicationClass::~LFSTK_applicationClass()
 	delete this->globalLib;
 	delete this->windows;
 	XCloseDisplay(this->display);
-	free(this->configDir);
-	if(this->iconThemeName!=NULL)
-		free(this->iconThemeName);
+	//free(this->configDir);
+	//if(this->iconThemeName!=NULL)
+	//	free(this->iconThemeName);
 #ifdef _ENABLEDEBUG_
 	cairo_debug_reset_static_data();
 #endif
@@ -94,8 +94,8 @@ LFSTK_applicationClass::LFSTK_applicationClass()
 	this->displayNum=ConnectionNumber(this->display);
 
 	this->userHome=getenv("HOME");
-	asprintf(&this->configDir,"%s/.config/LFS",this->userHome);
-	this->iconThemeName=this->globalLib->LFSTK_oneLiner("cat '%s'/lfsdesktop.rc|grep -i icontheme|awk '{print $2}'",this->configDir);
+	this->configDir=this->userHome + std::string("/.config/LFS");
+	this->iconThemeName=this->globalLib->LFSTK_oneLiner("cat '%s'/lfsdesktop.rc|grep -i icontheme|awk '{print $2}'",this->configDir.c_str());
 }
 
 /**

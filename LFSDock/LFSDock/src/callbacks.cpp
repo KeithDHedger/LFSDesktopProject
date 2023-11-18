@@ -113,3 +113,55 @@ void readMsg(void)
 		}
 	buffer.mText[0]=0;
 }
+
+bool exitCB(LFSTK_gadgetClass*p,void* ud)
+{
+	if(ud!=NULL)
+		{
+			launcherList		*ll;
+			ll=(launcherList*)ud;
+			geometryStruct	geom2;
+			int				adj;
+adj=extraSpace*posMultiplier;
+//			if(posMultiplier==-1)
+//				adj=-extraSpace;
+//			else
+//				adj=extraSpace;
+			//printf(">>>Mouse Out %s<<<\n",ll->entry.name);
+			p->LFSTK_getGeom(&geom2);	
+			p->LFSTK_moveGadget(geom2.x,geom2.y+adj);
+			popWindow->LFSTK_hideWindow();
+		}
+	return(true);
+}
+
+bool moveCB(LFSTK_gadgetClass*p,void* ud)
+{
+	if(ud!=NULL)
+		{
+			geometryStruct	geom;
+			launcherList		*ll;
+			int				width;
+			int				adj;
+
+			adj=extraSpace*posMultiplier;
+			ll=(launcherList*)ud;
+
+//			printf(">>>Mouse In %s<<<\n",ll->entry.name);
+			p->LFSTK_getGeom(&geom);	
+			p->LFSTK_moveGadget(geom.x,geom.y-adj);
+			popLabel->LFSTK_setLabel(ll->entry.name);
+			popLabel->LFSTK_setFontString(prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("font")),true);
+			width=popLabel->LFSTK_getTextRealWidth(ll->entry.name);
+			popWindow->LFSTK_resizeWindow(width,GADGETHITE);
+			p->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);	
+
+			if(posMultiplier==1)
+				popWindow->LFSTK_moveWindow(geom.x-(width/2)+(geom.w/2),geom.y-(GADGETHITE),true);
+			else
+				popWindow->LFSTK_moveWindow(geom.x-(width/2)+(geom.w/2),iconSize+extraSpace,true);
+			popWindow->LFSTK_showWindow();
+			popWindow->LFSTK_clearWindow(true);
+		}
+	return(true);
+}

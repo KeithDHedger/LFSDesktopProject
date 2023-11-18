@@ -22,21 +22,23 @@
 
 //prefs
 LFSTK_prefsClass	prefs;
-/*
-			{prefs.LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","",useTheme->LFSTK_getValue(),0}},
-			{prefs.LFSTK_hashFromKey("panelcolour"),{TYPESTRING,"panelcolour",panelColourEdit->LFSTK_getCStr(),false,0}},
+std::string			configDir;
+std::string			launchersDir;
+std::string			configFile;
+LFSTK_windowClass	*popWindow=NULL;
+LFSTK_labelClass		*popLabel=NULL;
+launcherList			*ll=NULL;
+int					iconSize=16;
+int					posMultiplier=1;
 
-*/
-int					panelHeight=16;
+int					panelSize=2;
 int					panelWidth=-1;
 const monitorStruct	*mons=NULL;
 int					onMonitor=0;
 int					panelPos=PANELCENTRE;
 int					panelGravity=PANELNORTH;
-bool					useTheme=true;
-const char			*panelColour="";
 const char			*panelTextColour="";
-bool					noButtons=false;
+int					extraSpace=16;
 
 int					queueID;
 msgBuffer			buffer;
@@ -46,7 +48,6 @@ bool					realMainLoop=true;
 
 int					refreshRate=1;
 
-int					iconSize=16;
 
 //panel window
 LFSTK_applicationClass	*apc=NULL;
@@ -69,8 +70,8 @@ const char				*possibleError="Unknown";
 
 void setSizes(int *x,int *y,int *w,int *h,int *size,int *grav,bool fromleft)
 {
-	*w=panelHeight;
-	*h=panelHeight;
+	*w=iconSize;
+	*h=iconSize;
 	*size=(*w)-12;
 
 	switch(*grav)
@@ -89,32 +90,14 @@ void setSizes(int *x,int *y,int *w,int *h,int *size,int *grav,bool fromleft)
 					}
 				*y=0;
 				break;
-
-			case PANELEAST:
-			case PANELWEST:
-				if(fromleft==true)
-					{
-						*grav=NorthWestGravity;
-						*y=*x;
-					}
-				else
-					{
-						*grav=SouthWestGravity;
-						*y=*x-*h+1;
-					}
-				*x=0;
-				break;
 		}
 }
 
 void sendNotify(const char *name,const char *message)//TODO//could be better
 {
 #ifdef _GOTNOTIFYSEND_
-	char	*command;
-	asprintf(&command,"notify-send -u low -t 2000 -i stock_dialog-info \"%s\" \"%s ...\" &",name,message);
-fprintf(stderr,"%s\n",command);
-	system(command);
-	free(command);
+	std::string	com=std::string("notify-send -u low -t 2000 -i stock_dialog-info \"" + std::string(name) + " " + std::string(message) + " ...\" &");
+	system(com.c_str());
 #endif
 }
 
@@ -130,7 +113,7 @@ void dropDesktopFile(const char *data,launcherList *launcher)
 			cleanstr=apc->globalLib->LFSTK_cleanString((const char*)line.c_str());
 			if((strrchr(cleanstr,'.')!=NULL) && (strcmp(strrchr(cleanstr,'.'),".desktop")==0))
 				{
-					asprintf(&command,"mkdir -p '%s/launchers-DOCK';cp -nP '%s' '%s/launchers-DOCK'",apc->configDir,cleanstr,apc->configDir);
+					asprintf(&command,"mkdir -p '%s/launchers-DOCK';cp -nP '%s' '%s/launchers-DOCK'",apc->configDir.c_str(),cleanstr,apc->configDir.c_str());
 					ptr=strrchr(cleanstr,'/');
 					sendNotify("Adding launcher ",++ptr);
 					system(command);
@@ -157,18 +140,12 @@ void dropDesktopFile(const char *data,launcherList *launcher)
 
 void setGadgetDetails(LFSTK_gadgetClass *gadget)
 {
-	if(useTheme==false)
-		{
-			gadget->LFSTK_setAlpha(1.0);
-			gadget->LFSTK_setTile(NULL,0);
-			gadget->LFSTK_setColourName(NORMALCOLOUR,panelColour);
-			gadget->LFSTK_setFontColourName(NORMALCOLOUR,panelTextColour,true);
-			if(noButtons==true)
-				{
-					gadget->gadgetDetails.bevel=BEVELNONE;
-					gadget->LFSTK_setColourName(PRELIGHTCOLOUR,panelColour);
-					gadget->LFSTK_setColourName(ACTIVECOLOUR,panelColour);
-					gadget->LFSTK_setColourName(INACTIVECOLOUR,panelColour);
-				}
-		}
+	gadget->LFSTK_setAlpha(1.0);
+	gadget->LFSTK_setTile(NULL,0);
+	gadget->LFSTK_setColourName(NORMALCOLOUR,"#00000000");
+	gadget->LFSTK_setFontColourName(NORMALCOLOUR,panelTextColour,true);
+	gadget->gadgetDetails.bevel=BEVELNONE;
+	gadget->LFSTK_setColourName(PRELIGHTCOLOUR,"#00000000");
+	gadget->LFSTK_setColourName(ACTIVECOLOUR,"#00000000");
+	gadget->LFSTK_setColourName(INACTIVECOLOUR,"#00000000");
 }

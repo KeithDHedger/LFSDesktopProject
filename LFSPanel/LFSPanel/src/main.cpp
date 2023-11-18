@@ -204,7 +204,7 @@ int main(int argc,char **argv)
 
 						{prefs.LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","",false,0}},
 						{prefs.LFSTK_hashFromKey("nobuttons"),{TYPEBOOL,"nobuttons","",false,0}},
-						{prefs.LFSTK_hashFromKey("panelcolour"),{TYPESTRING,"panelcolour","",false,0}},
+						{prefs.LFSTK_hashFromKey("panelcolour"),{TYPESTRING,"panelcolour","white",false,0}},
 						{prefs.LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","black",false,0}}
 					};
 	realMainLoop=true;
@@ -232,7 +232,7 @@ int main(int argc,char **argv)
 			NET_WM_NAME=XInternAtom(mainwind->app->display,"_NET_WM_NAME",False);
 			UTF8_STRING=XInternAtom(mainwind->app->display,"UTF8_STRING",False);
 
-			env=mainwind->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir);
+			env=mainwind->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str());
 			key=atoi(env);
 			freeAndNull(&env);
 
@@ -253,10 +253,10 @@ int main(int argc,char **argv)
 			if(argc>1)
 				{
 					panelID=argv[1];
-					asprintf(&env,"%s/%s-%s.rc",apc->configDir,RCNAME,panelID);
+					asprintf(&env,"%s/%s-%s.rc",apc->configDir.c_str(),RCNAME,panelID);
 				}
 			else
-				asprintf(&env,"%s/%s.rc",apc->configDir,RCNAME);
+				asprintf(&env,"%s/%s.rc",apc->configDir.c_str(),RCNAME);
 
 			loadPrefs(env);
 
@@ -311,6 +311,8 @@ int main(int argc,char **argv)
 								case PANELRIGHT:
 									px=mons->x+mons->w-psize;
 									break;
+								default:
+									px=panelPos;
 							}
 						break;
 
@@ -344,8 +346,10 @@ int main(int argc,char **argv)
 								break;
 								case PANELRIGHT:
 									py=mons->y+mons->h-panelHeight;
-								break;
-							}
+									break;
+								default:
+									py=panelPos;
+						}
 						break;
 				}
 

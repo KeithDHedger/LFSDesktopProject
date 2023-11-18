@@ -364,12 +364,12 @@ void LFSTK_windowClass::LFSTK_clearWindow(bool cleargadgets)
 			cairo_save(this->cr);
 				cairo_reset_clip (this->cr);
 				cairo_set_source(this->cr,this->pattern);
+				cairo_set_operator(this->cr,CAIRO_OPERATOR_SOURCE);
 				cairo_paint(this->cr);
 			cairo_restore(this->cr);
 		}
 	else
 		{
-
 			cairo_save(this->cr);
 				cairo_reset_clip (this->cr);
 					cairo_set_source_rgba(this->cr,this->windowColourNames[state].RGBAColour.r,this->windowColourNames[state].RGBAColour.g,this->windowColourNames[state].RGBAColour.b,this->windowColourNames[state].RGBAColour.a);
@@ -390,21 +390,11 @@ void LFSTK_windowClass::LFSTK_clearWindow(bool cleargadgets)
 void LFSTK_windowClass::LFSTK_resizeWindow(int w,int h,bool tellx)
 {
 	this->setWindowGeom(0,0,w,h,WINDSETWH);
+ 	this->globalLib->LFSTK_setCairoSurface(this->app->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
 	if(tellx==true)
 		XResizeWindow(this->app->display,this->window,w,h);
-
-//cairo_xlib_surface_set_drawable (this->sfc,
-//                                 this->window,
-//                                 w,
-//                                 h);
-//XSync(this->app->display,false);
   	this->globalLib->LFSTK_setCairoSurface(this->app->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
-//	this->LFSTK_clearWindow();
-
-//XUnmapWindow(this->app->display,this->window);
-//XSync(this->app->display,false);
-//XMapWindow(this->app->display,this->window);
-//XSync(this->app->display,false);
+	this->LFSTK_clearWindow(true);
 }
 
 /**
@@ -1555,7 +1545,8 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 							oldwindowGeom=this->windowGeom;
 							flag=true;
 						}
-					this->LFSTK_resizeWindow(event->xconfigurerequest.width,event->xconfigurerequest.height,false);
+					if(event->xconfigure.send_event==true)
+						this->LFSTK_resizeWindow(event->xconfigure.width,event->xconfigure.height,false);
 					this->LFSTK_clearWindow();
 
 					if((this->windowGeom.w!=oldwindowGeom.w) ||(this->windowGeom.h!=oldwindowGeom.h))

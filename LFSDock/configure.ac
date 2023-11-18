@@ -1,5 +1,5 @@
 
-AC_INIT([LFSDock],[0.1.0],[PROJ],[LFSPanel])
+AC_INIT([LFSDock],[0.1.0],[PROJ],[LFSDock])
 
 AC_CONFIG_HEADERS([config.h])
 AC_PROG_CXX

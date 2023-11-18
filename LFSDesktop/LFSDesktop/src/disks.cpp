@@ -239,7 +239,7 @@ continueWithLoop:
 
 							for(unsigned j=0;j<desktopItems.size();j++)
 								{
-									if((diskUUID!=NULL) && (desktopItems.at(j).item!=NULL))
+									if((diskUUID!=NULL) && (desktopItems.at(j).item!=NULL))//TODO//
 										{
 											if(strcmp(diskUUID,desktopItems.at(j).uuid)==0)
 												{

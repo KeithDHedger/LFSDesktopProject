@@ -162,10 +162,10 @@ bool LFSTK_fileDialogClass::LFSTK_getRequestType(void)
 */
 void LFSTK_fileDialogClass::LFSTK_setWorkingDir(const char *dir)
 {
-	char	*holddir;
+	char		*holddir;//TODO//
 //in case dir doesnt exist
 	if(access(dir,F_OK)!=0)
-		holddir=strdup(this->wc->app->userHome);
+		holddir=strdup(this->wc->app->userHome.c_str());//TODO//
 //in case dir=this->currentDir
 	else
 		holddir=strdup(dir);
@@ -443,11 +443,11 @@ void LFSTK_fileDialogClass::LFSTK_getLastFolder(void)
 {
 	if(this->currentDir!=NULL)
 		free(this->currentDir);
-	this->currentDir=this->wc->app->globalLib->LFSTK_oneLiner("grep -i '%s' '%s/dialoglast.rc'|awk -F= '{print $NF}'",this->recentsName,this->wc->app->configDir);
+	this->currentDir=this->wc->app->globalLib->LFSTK_oneLiner("grep -i '%s' '%s/dialoglast.rc'|awk -F= '{print $NF}'",this->recentsName,this->wc->app->configDir.c_str());
 	if(strlen(this->currentDir)<2)
 		{
 			free(this->currentDir);
-			this->currentDir=strdup(this->wc->app->userHome);
+			this->currentDir=strdup(this->wc->app->userHome.c_str());//TODO//
 		}
 }
 
@@ -613,7 +613,7 @@ void LFSTK_fileDialogClass::setFileData(void)
 				freeAndNull(&this->currentPath);
 			this->currentPath=strdup(this->dirEdit->LFSTK_getCStr());
 
-			asprintf(&lastdir,"sed -i '/%s=/d' '%s/dialoglast.rc';echo '%s=%s'|cat - '%s/dialoglast.rc'|sort -uo '%s/dialoglast.rc'",this->recentsName,this->wc->app->configDir,this->recentsName,this->currentDir,this->wc->app->configDir,this->wc->app->configDir);
+			asprintf(&lastdir,"sed -i '/%s=/d' '%s/dialoglast.rc';echo '%s=%s'|cat - '%s/dialoglast.rc'|sort -uo '%s/dialoglast.rc'",this->recentsName,this->wc->app->configDir.c_str(),this->recentsName,this->currentDir,this->wc->app->configDir.c_str(),this->wc->app->configDir.c_str());
 			system(lastdir);
 			free(lastdir);
 		}

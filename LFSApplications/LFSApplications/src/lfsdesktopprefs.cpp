@@ -221,8 +221,7 @@ int main(int argc, char **argv)
 			{prefs.LFSTK_hashFromKey("doubleclickexe"),{TYPEBOOL,"doubleclickexe","",false,0}}
 		};
 
-
-	asprintf(&envFile,"%s/lfsdesktop.rc",apc->configDir);
+	asprintf(&envFile,"%s/lfsdesktop.rc",apc->configDir.c_str());
 	prefs.LFSTK_loadVarsFromFile(envFile);
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
@@ -326,7 +325,7 @@ int main(int argc, char **argv)
 	if(parentWindow!=-1)
 		wc->LFSTK_setTransientFor(parentWindow);
 
-	buffer=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir);
+	buffer=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str());
 	if((queueID=msgget(atoi(buffer),IPC_CREAT|0660))==-1)
 		fprintf(stderr,"Can't create message queue :( ...\n");
 	free(buffer);

@@ -43,7 +43,7 @@ bool getPath(void *p,void* ud)
 	fileInformation	fileinfo;
 
 	apc->globalLib->LFSTK_loadDesktopIconTheme();
-	iconpath=(char*)apc->globalLib->LFSTK_findThemedIcon(apc->iconThemeName,mimeEdit->LFSTK_getCStr(),"");
+	iconpath=(char*)apc->globalLib->LFSTK_findThemedIcon(apc->iconThemeName.c_str(),mimeEdit->LFSTK_getCStr(),"");
 
 	if(iconpath!=NULL)
 		{

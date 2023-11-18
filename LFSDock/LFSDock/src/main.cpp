@@ -34,15 +34,12 @@
 void loadPrefs(const char *env)
 {
 	prefs.LFSTK_loadVarsFromFile(env);
-	panelHeight=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelheight"));
+	panelSize=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelsize"));
 	panelWidth=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelwidth"));
 	onMonitor=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("onmonitor"));
 	panelPos=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelpos"));
 	panelGravity=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelgrav"));
-	useTheme=prefs.LFSTK_getBool(prefs.LFSTK_hashFromKey("usetheme"));
-	panelColour=prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("panelcolour"));
 	panelTextColour=prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("textcolour"));
-	noButtons=prefs.LFSTK_getBool(prefs.LFSTK_hashFromKey("nobuttons"));
 }
 
 void addGadgets(void)
@@ -57,7 +54,7 @@ void addGadgets(void)
 					offset+=addClock(offset,mons->y,NorthWestGravity);
 					break;
 				case 'S':
-					offset+=panelHeight;
+					offset+=iconSize;
 					break;
 				case 'l':
 					if(launcherSide==NOLAUNCHERS)
@@ -69,7 +66,7 @@ void addGadgets(void)
 						printError("Duplicate launcher widget");
 					break;
 				case 's':
-					offset+=addSlider(offset,mons->y,panelGravity,true);
+					offset+=addSlider(offset,mons->y,panelGravity,true);//TODO//
 					break;
 				}
 		}
@@ -104,6 +101,29 @@ bool windowDrop(LFSTK_windowClass *lwc,void* ud)
 	return(true);
 }
 
+void sanityCheck(void)
+{
+	namespace fs=std::filesystem;
+
+	if(!fs::exists(fs::status(launchersDir)))
+		fs::create_directories(launchersDir);
+	if(!fs::exists(fs::status(configFile)))
+		{
+			std::ofstream rcfile;
+			rcfile.open (configFile);
+			rcfile<<"panelpos -2\n";
+			rcfile<<"onmonitor 0\n";
+			rcfile<<"panelgrav 2\n";
+			rcfile<<"panelwidth -2\n";
+			rcfile<<"textcolour black\n";
+			rcfile<<"gadgetsleft lC\n";
+			rcfile<<"panelsize 3\n";
+			rcfile<<"termcommand kkterminal -m -l -e \n";
+			rcfile<<"font Arial:size=16\n";
+			rcfile.close();
+		}
+}
+
 int main(int argc,char **argv)
 {
 	char				*env;
@@ -114,22 +134,25 @@ int main(int argc,char **argv)
 	timeval				tv={0,0};
 	int					key=666;
 	int					refreshmulti=0;
-	
+
+	configDir=getenv("HOME") + std::string("/.config/LFS/");
+	launchersDir=configDir + std::string("launchers-DOCK");
+	configFile=configDir + std::string("lfsdock.rc");
+	sanityCheck();
+
 	prefs.prefsMap={
-						{prefs.LFSTK_hashFromKey("panelheight"),{TYPEINT,"panelheight","",false,0}},
+						{prefs.LFSTK_hashFromKey("panelsize"),{TYPEINT,"panelsize","",false,1}},
 						{prefs.LFSTK_hashFromKey("panelwidth"),{TYPEINT,"panelwidth","",false,0}},
 						{prefs.LFSTK_hashFromKey("onmonitor"),{TYPEINT,"onmonitor","",false,0}},
 
 						{prefs.LFSTK_hashFromKey("panelpos"),{TYPEINT,"panelpos","",false,0}},
 						{prefs.LFSTK_hashFromKey("panelgrav"),{TYPEINT,"panelgrav","",false,0}},
 
-						{prefs.LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","",false,0}},
-						{prefs.LFSTK_hashFromKey("nobuttons"),{TYPEBOOL,"nobuttons","",false,0}},
-						{prefs.LFSTK_hashFromKey("panelcolour"),{TYPESTRING,"panelcolour","",false,0}},
 						{prefs.LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","black",false,0}},
 
 						{prefs.LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","xterm -e ",false,0}},
 						{prefs.LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","l",false,0}},
+						{prefs.LFSTK_hashFromKey("font"),{TYPESTRING,"font","l",false,0}},
 					};
 	realMainLoop=true;
 	
@@ -155,7 +178,7 @@ int main(int argc,char **argv)
 			NET_WM_NAME=XInternAtom(mainwind->app->display,"_NET_WM_NAME",False);
 			UTF8_STRING=XInternAtom(mainwind->app->display,"UTF8_STRING",False);
 
-			env=mainwind->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir);
+			env=mainwind->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str());
 			key=atoi(env);
 			freeAndNull(&env);
 
@@ -165,22 +188,36 @@ int main(int argc,char **argv)
 			if((queueID=msgget(key,IPC_CREAT|0660))==-1)
 				fprintf(stderr,"Can't create message queue\n");
 
-			iconSize=32;
-
-			asprintf(&env,"%s/%s.rc",apc->configDir,RCNAME);
+			asprintf(&env,"%s",configFile.c_str());
 
 			loadPrefs(env);
+			if(panelGravity==1)
+				posMultiplier=-1;
+			else
+				posMultiplier=1;
+
+			switch(panelSize)
+				{
+					case 2:
+						iconSize=48;
+						break;
+					case 3:
+						iconSize=64;
+						break;
+					case 4:
+						iconSize=96;
+						break;
+					default:
+						iconSize=32;
+				}
 
 			desktopTheme=mainwind->globalLib->desktopIconTheme.c_str();
 			mons=apc->LFSTK_getMonitorData(onMonitor);
 
 			leftOffset=0;
 
-			if(useTheme==false)
-				{
-					mainwind->LFSTK_setTile(NULL,0);
-					mainwind->LFSTK_setWindowColourName(NORMALCOLOUR,panelColour);
-				}
+			mainwind->LFSTK_setTile(NULL,0);
+			mainwind->LFSTK_setWindowColourName(NORMALCOLOUR,"#00000000");
 
 			addGadgets();
 
@@ -196,7 +233,7 @@ int main(int argc,char **argv)
 			switch(panelGravity)
 				{
 					case PANELSOUTH:
-						py=mons->y+mons->h-panelHeight;
+						py=mons->y+mons->h-iconSize;
 					case PANELNORTH:
 						switch(panelWidth)
 							{
@@ -219,46 +256,22 @@ int main(int argc,char **argv)
 								case PANELRIGHT:
 									px=mons->x+mons->w-psize;
 									break;
-							}
-						break;
-
-					case PANELEAST:
-							px=mons->x+mons->w-panelHeight;
-					case PANELWEST:
-						switch(panelWidth)
-							{
-								case PANELFULL:
-									panelWidth=panelHeight;
-									panelHeight=mons->h;
-									panelPos=PANELLEFT;
-									break;
-								case PANELSHRINK:
-									panelWidth=panelHeight;
-									panelHeight=psize;
-								break;
 								default:
-									thold=panelWidth;
-									panelWidth=panelHeight;
-									panelHeight=thold;
-								break;
-							}
-						switch(panelPos)
-							{
-								case PANELLEFT:
-									py=mons->y;
+									px=panelPos;
 									break;
-								case PANELCENTRE:
-									py=((mons->h/2)-(panelHeight/2))+mons->y;
-								break;
-								case PANELRIGHT:
-									py=mons->y+mons->h-panelHeight;
-								break;
 							}
 						break;
 				}
 
-			mainwind->LFSTK_resizeWindow(panelWidth,panelHeight,true);
-			mainwind->LFSTK_moveWindow(px,py,true);
+			mainwind->LFSTK_resizeWindow(panelWidth,iconSize+extraSpace,true);
+			if(posMultiplier==1)
+				{
+					mainwind->LFSTK_moveWindow(px,py-extraSpace,true);
+				}
+			else
+				{
+					mainwind->LFSTK_moveWindow(px,py,true);
+				}
 			mainwind->LFSTK_showWindow(true);
 			mainwind->LFSTK_setKeepAbove(true);
 

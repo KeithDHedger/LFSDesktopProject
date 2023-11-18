@@ -72,14 +72,16 @@ bool doTransSubQuit(void *p,void* ud)
 int cnt=1;
 bool timerCB(LFSTK_applicationClass *p,void* ud)
 {
-return(true);
 	printf("From window %s\n",ud);
 	printf("Timer callback number %i of 10\n",cnt);
 	cnt++;
 	if(cnt<11)
 		return(true);
 	else
-		return(false);
+		{
+	//transtest->LFSTK_setGadgetSize(100,100);
+			return(false);
+		}
 }
 
 int main(int argc, char **argv)

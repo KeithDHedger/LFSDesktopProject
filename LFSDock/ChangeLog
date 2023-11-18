@@ -1,3 +1,12 @@
 0.1.0
+Prefs file is ~/.config/LFS/lfsdock.rc
+Tweaked prefs name.
+Removed unused defines.
+Fixed stting absolute position.
+Fixed clock.
+Set font details.
+Dock can only be north or south gravity.
+Dock size now set to 32, 48, 64 or 128. 
+Removed unused code.
 Script updates.
 First commit of lfsdock.

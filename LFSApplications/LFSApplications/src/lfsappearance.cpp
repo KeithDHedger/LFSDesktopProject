@@ -113,16 +113,16 @@ void makeGroup(const char *grpname)
 	char	*grp;
 	char	*command;
 
-	asprintf(&grp,"%s/lfsgroupsprefs/%s",apc->configDir,grpname);
+	asprintf(&grp,"%s/lfsgroupsprefs/%s",apc->configDir.c_str(),grpname);
 	if(fileExists(grp)!=0)
 		mkdir(grp,0755);
 
-	asprintf(&command,"cp \"%s\"/lfs*.rc \"%s\"",apc->configDir,grp);
+	asprintf(&command,"cp \"%s\"/lfs*.rc \"%s\"",apc->configDir.c_str(),grp);
 	system(command);
 
 	free(command);
 	free(grp);
-	asprintf(&command,"echo -e \"%s\n%s\" > \"%s/lfsappearance.rc\"",currentSet->LFSTK_getCStr(),key->LFSTK_getCStr(),apc->configDir);
+	asprintf(&command,"echo -e \"%s\n%s\" > \"%s/lfsappearance.rc\"",currentSet->LFSTK_getCStr(),key->LFSTK_getCStr(),apc->configDir.c_str());
 	system(command);
 	free(command);
 }
@@ -132,16 +132,16 @@ void setGroup(void)
 	char	*command;
 	char	*grp;
 
-	asprintf(&grp,"%s/lfsgroupsprefs/%s",apc->configDir,currentSet->LFSTK_getCStr());
+	asprintf(&grp,"%s/lfsgroupsprefs/%s",apc->configDir.c_str(),currentSet->LFSTK_getCStr());
 	if(fileExists(grp)==0)
 		{
-			asprintf(&command,"cp \"%s/lfsgroupsprefs/%s/\"lfs*.rc \"%s\"",apc->configDir,currentSet->LFSTK_getCStr(),apc->configDir);
+			asprintf(&command,"cp \"%s/lfsgroupsprefs/%s/\"lfs*.rc \"%s\"",apc->configDir.c_str(),currentSet->LFSTK_getCStr(),apc->configDir.c_str());
 			system(command);
 			free(command);
 		}
 	free(grp);
 
-	asprintf(&command,"echo -e \"%s\n%s\" > \"%s/lfsappearance.rc\"",currentSet->LFSTK_getCStr(),key->LFSTK_getCStr(),apc->configDir);
+	asprintf(&command,"echo -e \"%s\n%s\" > \"%s/lfsappearance.rc\"",currentSet->LFSTK_getCStr(),key->LFSTK_getCStr(),apc->configDir.c_str());
 	system(command);
 	free(command);
 }
@@ -217,7 +217,7 @@ void addGroup(void)
 	char	*command;
 	int		menucnt;
 
-	asprintf(&command,"%s/lfsgroupsprefs",apc->configDir);
+	asprintf(&command,"%s/lfsgroupsprefs",apc->configDir.c_str());
 
 	find->LFSTK_findFiles(command,false);
 	find->LFSTK_sortByName();
@@ -363,14 +363,14 @@ int main(int argc, char **argv)
 	setMenu->LFSTK_setMouseCallBack(NULL,menuCB,NULL);
 	setMenu->LFSTK_addMainMenus(groupNameMenuItems,find->LFSTK_getDataCount()+2);
 
-	buffer=wc->globalLib->LFSTK_oneLiner("sed -n '1p' %s/lfsappearance.rc",apc->configDir);
+	buffer=wc->globalLib->LFSTK_oneLiner("sed -n '1p' %s/lfsappearance.rc",apc->configDir.c_str());
 	currentSet=new LFSTK_lineEditClass(wc,buffer,BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,BUTTONGRAV);
 	hrs.push_back({BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,currentSet});
 	free(buffer);
 	sy+=YSPACING;
 
 //msg key
-	buffer=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir);
+	buffer=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str());
 	launchLabel=new LFSTK_labelClass(wc,"Msg Key",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	hrs.push_back({BORDER,sy,GADGETWIDTH,GADGETHITE,launchLabel});
 	key=new LFSTK_lineEditClass(wc,buffer,BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,BUTTONGRAV);

@@ -94,7 +94,7 @@ int main(int argc, char **argv)
 
 	list=list=new LFSTK_listGadgetClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2)-LGAP,LISTHITE);
 
-	thist=wc->globalLib->LFSTK_oneLiner("head -n1 '%s/%s'",apc->configDir,"command.max");
+	thist=wc->globalLib->LFSTK_oneLiner("head -n1 '%s/%s'",apc->configDir.c_str(),"command.max");
 
 	maxHistory=MAXHISTORY;
 	if((thist!=NULL) && (thist[0]!=0))
@@ -106,7 +106,7 @@ int main(int argc, char **argv)
 	if(argv[1]!=NULL)
 		maxHistory=atoi(argv[1]);
 
-	asprintf(&commandfile,"%s/%s",apc->configDir,"command.hist");
+	asprintf(&commandfile,"%s/%s",apc->configDir.c_str(),"command.hist");
 	list->LFSTK_setListFromFile(commandfile,false);
 	list->LFSTK_setMouseCallBack(NULL,select,NULL);
 	sy+=LISTHITE+8;

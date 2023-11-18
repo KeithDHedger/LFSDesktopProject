@@ -106,12 +106,6 @@ bool sliderCB(void *p,void* ud)
 							case PANELSOUTH:
 								scwindow->LFSTK_moveWindow(geom.x,geom.y-SCROLLBARWIDTH,true);
 								break;
-							case PANELEAST:
-								scwindow->LFSTK_moveWindow(geom.x-SCROLLBARWIDTH,geom.y,true);
-								break;
-							case PANELWEST:
-								scwindow->LFSTK_moveWindow(geom.x+geom.w,geom.y,true);
-								break;
 						}
 					scwindow->LFSTK_showWindow(true);
 					scwindow->LFSTK_redrawAllGadgets();
@@ -192,18 +186,9 @@ int addSlider(int x,int y,int grav,bool fromleft)
 	win->y=100;
 	bool direction=false;
 
-	if((panelGravity==PANELWEST) || (panelGravity==PANELEAST))
-		{
-			w=16;
-			h=100;
-			direction=true;
-		}
-	else
-		{
-			w=100;
-			h=16;
-			direction=false;
-		}
+	w=100;
+	h=16;
+	direction=false;
 
 	win->w=w;
 	win->h=h;

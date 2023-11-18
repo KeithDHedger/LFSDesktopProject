@@ -26,43 +26,6 @@
 
 #include "launchers.h"
 
-LFSTK_windowClass		*popWindow=NULL;
-
-bool moveCB(LFSTK_gadgetClass*p,void* ud)
-{
-	if(ud!=NULL)
-		{
-			XEvent			event;
-			geometryStruct	geom;
-			printf(">>>Mouse In %p<<<\n",(launcherList*)ud);
-			LFSTK_labelClass	*label=NULL;
-			label=((launcherList*)ud)->label;
-popWindow->LFSTK_resizeWindow(((launcherList*)ud)->label->LFSTK_getTextRealWidth("This is a mouse enter callback"),GADGETHITE);
-//popWindow->LFSTK_resizeWindow(100,GADGETHITE);
-fprintf(stderr,"label=%s\n",((launcherList*)ud)->entry.name);
-label->LFSTK_setLabel(((launcherList*)ud)->entry.name,true);
-label->LFSTK_clearWindow();
-			p->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);	
-			popWindow->LFSTK_moveWindow(geom.x,geom.y-GADGETHITE,true);
-			popWindow->LFSTK_showWindow();
-			popWindow->LFSTK_clearWindow(true);
-		}
-	return(true);
-}
-
-bool exitCB(LFSTK_gadgetClass*p,void* ud)
-{
-	if(ud!=NULL)
-		{
-			printf(">>>Mouse Out %s<<<\n",(const char*)ud);
-			popWindow->LFSTK_hideWindow();
-		}
-	return(true);
-}
-
-launcherList	*ll=NULL;
-std::string	popUpString;
-
 void addALAuncher(const char *fpath,menuEntryStruct	*entry)
 {
 	size_t		start_pos=0;
@@ -148,10 +111,10 @@ int launcherBuildCB(const char *fpath,const struct stat *sb,int typeflag)
 
 int addLaunchers(int x,int y,int grav,bool fromleft)
 {
-	char			*launchers;
-	launcherList	*loopll;
+	char				*launchers;
+	launcherList		*loopll;
 	ll=NULL;
-	char			*icon=NULL;
+	char				*icon=NULL;
 	int				xpos=x;
 	int				ypos=y;
 	int				width=0;
@@ -160,8 +123,9 @@ int addLaunchers(int x,int y,int grav,bool fromleft)
 	int				iconsize=16;
 	int				maxwidth=0;
 	int				sx,sy;
+	int				adj;
 
-	asprintf(&launchers,"%s/launchers-DOCK",apc->configDir);
+	asprintf(&launchers,"%s/launchers-DOCK",apc->configDir.c_str());
 	ftw(launchers,launcherBuildCB,16);
 
 	setSizes(&xpos,&ypos,&width,&height,&iconsize,&thisgrav,fromleft);
@@ -170,23 +134,23 @@ int addLaunchers(int x,int y,int grav,bool fromleft)
 	sy=ypos;
 
 	popWindow=new LFSTK_toolWindowClass(apc->display,mainwind,"_NET_WM_WINDOW_TYPE_MENU",0,0,200,100,"lfstkpopup",apc);
-	//poplabel->LFSTK_setCairoFontDataParts("sB",20);
-	//poplabel->LFSTK_setTile(NULL,0);
-
-	//popWindow->LFSTK_resizeWindow(poplabel->LFSTK_getTextRealWidth("This is a mouse enter callback"),GADGETHITE);
+	popLabel=new LFSTK_labelClass(popWindow,"ANAME",0,0,GADGETWIDTH*8,GADGETHITE,WestGravity);
+	popLabel->LFSTK_setCairoFontDataParts("sB",20);
+	popLabel->LFSTK_setTile(NULL,0);
 	popWindow->LFSTK_setWindowColourName(NORMALCOLOUR,"#c0808080");
 
-
-
+	if(posMultiplier==-1)
+		adj=0;
+	else
+		adj=extraSpace;
 	loopll=ll;
 	while(loopll!=NULL)
 		{
 			icon=NULL;
-			loopll->bc=new LFSTK_buttonClass(mainwind,"",sx,sy,width,height,thisgrav);
+			loopll->bc=new LFSTK_buttonClass(mainwind,"",sx,sy+adj,width,height,thisgrav);
 			loopll->bc->LFSTK_setMouseCallBack(NULL,launcherCB,(void*)loopll);
 			loopll->bc->LFSTK_setGadgetDropCallBack(gadgetDrop,(void*)loopll);
 	
-	loopll->label=new LFSTK_labelClass(popWindow,loopll->entry.name,0,0,GADGETWIDTH*8,GADGETHITE,WestGravity);
 			loopll->bc->LFSTK_setMouseMoveCallBack(moveCB,exitCB,USERDATA(loopll));
 fprintf(stderr,"name=>>%s<<\n",loopll->entry.name);
 			loopll->bc->gadgetAcceptsDnD=true;

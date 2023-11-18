@@ -1019,6 +1019,7 @@ void LFSTK_gadgetClass::drawImage()
 	cairo_save(this->cr);
 		cairo_reset_clip (this->cr);
 		cairo_translate(this->cr,xoffset,yoffset);
+//		cairo_scale(this->cr,this->imageXextraScale,this->imageYextraScale);
 		cairo_set_source_surface(this->cr,this->cImage,0,0);
 		cairo_paint_with_alpha(this->cr,this->alpha);
 
@@ -1733,7 +1734,7 @@ void LFSTK_gadgetClass::LFSTK_setGadgetSize(int width,int height)
 	this->gadgetDetails.gadgetGeom.h=height;
 	this->gadgetGeom.w=width;
 	this->gadgetGeom.h=height;
-	this->wc->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->window,this->wc->app->visual,&this->sfc,&this->cr,width,height);
+	this->wc->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->window,this->visual,&this->sfc,&this->cr,width,height);
 }
 
 /**

@@ -129,7 +129,7 @@ void dropDesktopFile(const char *data,launcherList *launcher)
 			cleanstr=apc->globalLib->LFSTK_cleanString((const char*)line.c_str());
 			if((strrchr(cleanstr,'.')!=NULL) && (strcmp(strrchr(cleanstr,'.'),".desktop")==0))
 				{
-					asprintf(&command,"mkdir -p '%s/launchers-%s';cp -nP '%s' '%s/launchers-%s'",apc->configDir,panelID,cleanstr,apc->configDir,panelID);
+					asprintf(&command,"mkdir -p '%s/launchers-%s';cp -nP '%s' '%s/launchers-%s'",apc->configDir.c_str(),panelID,cleanstr,apc->configDir.c_str(),panelID);
 					ptr=strrchr(cleanstr,'/');
 					sendNotify("Adding launcher ",++ptr);
 					system(command);

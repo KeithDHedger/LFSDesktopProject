@@ -527,14 +527,14 @@ int main(int argc, char **argv)
 	apc->LFSTK_addWindow(NULL,BOXLABEL);
 	wc=apc->mainWindow;
 
-	command=apc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir);
+	command=apc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str());
 	key=atoi(command);
 	freeAndNull(&command);
 
 	if((queueID=msgget(key,IPC_CREAT|0660))==-1)
 		fprintf(stderr,"Can't create message queue\n");
 
-	wd=strdup(apc->configDir);
+	wd=strdup(apc->configDir.c_str());
 	tileDialog=new LFSTK_fileDialogClass(wc,"Select File",wd,false);
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);

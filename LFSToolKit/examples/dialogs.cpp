@@ -109,7 +109,7 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //files and folders
-	asprintf(&wd,"%s",apc->userHome);
+	asprintf(&wd,"%s",apc->userHome.c_str());
 	filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",wd,FILEDIALOG);
 	//filedialogfile->useThumbs=true;
 	//filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",NULL,FILEDIALOG);

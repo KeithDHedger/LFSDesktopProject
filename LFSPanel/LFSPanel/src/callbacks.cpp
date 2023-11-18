@@ -88,8 +88,6 @@ bool timerCB(LFSTK_applicationClass *p,void* ud)
 	if(buttonmask!=0)
 		return(true);
 
-	readMsg();
-
 	if(clockButton!=NULL)
 		updateClock();
 
@@ -103,44 +101,4 @@ bool timerCB(LFSTK_applicationClass *p,void* ud)
 		updateSlider();
 
 	return(true);
-}
-
-void readMsg(void)
-{
-	int		retcode;
-	char	*command=NULL;
-	FILE	*fd=NULL;
-	char	buff[2048];
-	char	*comstring=NULL;
-	char	*forwhom;
-
-	buffer.mText[0]=0;
-	retcode=msgrcv(queueID,&buffer,MAX_MSG_SIZE,PANEL_MSG,IPC_NOWAIT);
-
-	comstring=strdup(buffer.mText);
-	command=strtok(comstring," ");
-	forwhom=strtok(NULL," ");
-
-	if(forwhom==NULL)
-		{
-			free(comstring);
-			return;
-		}
-
-	if(strcmp(forwhom,panelID)!=0)
-		{
-			if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
-				fprintf(stderr,"Can't send message :(\n");
-			free(comstring);
-			return;
-		}
-
-	if((command!=NULL) && (strcmp(command,"quitpanel")==0))
-		{
-			apc->mainLoop=false;
-			realMainLoop=false;
-		}
-	free(comstring);
-
-	buffer.mText[0]=0;
 }

@@ -25,5 +25,6 @@ bool launcherCB(void *p,void* ud);
 bool gadgetDrop(void *lwc,propertyStruct *data,void* ud);
 bool timerCB(LFSTK_applicationClass *p,void* ud);
 void readMsg(void);
-
+bool exitCB(LFSTK_gadgetClass*p,void* ud);
+bool moveCB(LFSTK_gadgetClass*p,void* ud);
 #endif

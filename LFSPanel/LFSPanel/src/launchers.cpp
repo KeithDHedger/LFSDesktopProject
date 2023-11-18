@@ -126,7 +126,7 @@ int addLaunchers(int x,int y,int grav,bool fromleft)
 	int				maxwidth=0;
 	int				sx,sy;
 
-	asprintf(&launchers,"%s/launchers-%s",apc->configDir,panelID);
+	asprintf(&launchers,"%s/launchers-%s",apc->configDir.c_str(),panelID);
 	ftw(launchers,launcherBuildCB,16);
 
 	setSizes(&xpos,&ypos,&width,&height,&iconsize,&thisgrav,fromleft);

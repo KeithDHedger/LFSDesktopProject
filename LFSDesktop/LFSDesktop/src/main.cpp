@@ -136,7 +136,7 @@ int main(int argc, char **argv)
 
 	apc=new LFSTK_applicationClass();
 
-	command=apc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir);
+	command=apc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str());
 	key=atoi(command);
 	freeAndNull(&command);
 
@@ -180,7 +180,7 @@ Atom                    xa_prop[3];
 #endif
 apc->globalLib->LFSTK_setUseTheme(false);
 	wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),apc->displayWidth,apc->displayHeight);
-	asprintf(&cachePath,"%s/lfsdesktop/cache",apc->configDir);
+	asprintf(&cachePath,"%s/lfsdesktop/cache",apc->configDir.c_str());
 	asprintf(&command,"mkdir -p %s 2>&1 >/dev/null",cachePath);
 	system(command);
 	free(command);
@@ -190,7 +190,7 @@ apc->globalLib->LFSTK_setUseTheme(false);
 	asprintf(&documentsPath,"%s/Documents",getenv("HOME"));
 	mkdir(documentsPath,0755);
 
-	asprintf(&prefsPath,"%s/lfsdesktop.rc",apc->configDir);
+	asprintf(&prefsPath,"%s/lfsdesktop.rc",apc->configDir.c_str());
 
 	loadPrefs();
 

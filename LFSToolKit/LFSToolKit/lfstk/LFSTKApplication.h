@@ -86,9 +86,9 @@ class LFSTK_applicationClass
 		LFSTK_lib				*globalLib=NULL;
 		std::vector<windowData>	*windows;
 		LFSTK_windowClass		*mainWindow=NULL;
-		char						*configDir=NULL;
-		char						*userHome=NULL;
-		char						*iconThemeName=NULL;
+		std::string				configDir="";
+		std::string				userHome="";
+		std::string				iconThemeName="";
 
 	private:
 		int						displayNum;

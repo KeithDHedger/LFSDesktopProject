@@ -24,7 +24,8 @@
 
 #include "globals.h"
 
-LFSTK_labelClass	*clockButton=NULL;
+//LFSTK_labelClass	*clockButton=NULL;
+LFSTK_buttonClass	*clockButton=NULL;
 
 void updateClock(void)
 {
@@ -42,14 +43,8 @@ void updateClock(void)
 int addClock(int x,int y,int grav)
 {
 	int	xpos=0;
-	int width=BWIDTH;
+	int width=iconSize;
 	int	retval=width;
-
-	if((panelGravity==PANELEAST) || (panelGravity==PANELWEST))
-		{
-			printError("Clock not allowed with this panel's orientation.");
-			return(0);
-		}
 
 	if(clockButton!=NULL)
 		{
@@ -61,9 +56,14 @@ int addClock(int x,int y,int grav)
 	else
 		xpos=x-width;
 
-	clockButton=new LFSTK_labelClass(mainwind,"--:--:--",xpos,0,width,panelHeight,CENTRE,grav);
+	clockButton=new LFSTK_buttonClass(mainwind,"--:--:--",xpos,0,iconSize,iconSize+extraSpace,NorthWestGravity);
+	clockButton->LFSTK_setFontString(prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("font")),true);
 
-	setGadgetDetails(clockButton);
+	clockButton->LFSTK_setIgnores(false,false);
+	clockButton->LFSTK_setTile(NULL,0);
+	clockButton->LFSTK_setColourName(NORMALCOLOUR,"#80ffffff");
+	clockButton->LFSTK_setFontColourName(NORMALCOLOUR,panelTextColour,true);
+	clockButton->gadgetDetails.bevel=BEVELIN;
 
 	return(retval);
 }

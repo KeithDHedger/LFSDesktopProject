@@ -174,6 +174,8 @@ class LFSTK_gadgetClass
 //context
 		contextPostition		contextWindowPos=CONTEXTRIGHT;
 
+//double	imageXextraScale=1.0;
+//double	imageYextraScale=1.0;
 	private:
 		void					initGadget(void);
 		void					selectBevel(bool mousedown);
