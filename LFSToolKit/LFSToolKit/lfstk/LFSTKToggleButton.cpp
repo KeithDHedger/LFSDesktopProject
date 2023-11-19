@@ -99,6 +99,8 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 */
 bool LFSTK_toggleButtonClass::mouseEnter(XButtonEvent *e)
 {
+	bool retval=true;
+
 	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
 		return(true);
 
@@ -114,6 +116,10 @@ bool LFSTK_toggleButtonClass::mouseEnter(XButtonEvent *e)
 		}
 
 	this->inWindow=true;
+
+	if((this->callBacks.validCallbacks & MOUSEENTERCB) && (this->noRunCB==false))
+		retval=this->callBacks.mouseEnterCallback(this,this->callBacks.mouseMoveUserData);
+
 	LFSTK_gadgetClass::LFSTK_clearWindow();
 	return(true);
 }
@@ -125,6 +131,8 @@ bool LFSTK_toggleButtonClass::mouseEnter(XButtonEvent *e)
 */
 bool LFSTK_toggleButtonClass::mouseExit(XButtonEvent *e)
 {
+	bool retval=true;
+
 	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
 		return(true);
 
@@ -144,6 +152,10 @@ bool LFSTK_toggleButtonClass::mouseExit(XButtonEvent *e)
 		}
 
 	this->inWindow=false;
+
+	if((this->callBacks.validCallbacks & MOUSEEXITCB) && (this->noRunCB==false))
+		retval=this->callBacks.mouseExitCallback(this,this->callBacks.mouseMoveUserData);
+
 	LFSTK_gadgetClass::LFSTK_clearWindow();
 	return(true);
 }

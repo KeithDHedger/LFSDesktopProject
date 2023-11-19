@@ -38,21 +38,14 @@ void updateClock(void)
 
 	strftime(clockbuffer,255,"%I:%M:%S",timeinfo);
 	clockButton->LFSTK_setLabel(clockbuffer);
-	//clockButton->drawLabelBG=true;
-	//clockButton->autoLabelBGColour=true;
-//			clockButton->LFSTK_clearWindow();
-//clockButton->LFSTK_setLabelBGColour(1.0,1,1.0,1.0);
-//	clockButton->drawLabelBG=true;
-//	//clockButton->autoLabelBGColour=true;
-clockButton->LFSTK_clearWindow();
-			XFlush(apc->display);
-	
+	clockButton->LFSTK_clearWindow();
+	XFlush(apc->display);
 }
 
 int addClock(int x,int y,int grav)
 {
 	int	xpos=0;
-	int width=iconSize;
+	int	width=iconSize;
 	int	retval=width;
 
 	if(clockButton!=NULL)

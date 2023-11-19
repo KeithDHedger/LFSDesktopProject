@@ -35,6 +35,7 @@ char					*iconL=NULL;
 char					*iconZ=NULL;
 int						oldVolVal=-1;
 char					label[32];
+bool					isUp=false;
 
 void setLabel(void)
 {
@@ -161,22 +162,58 @@ void updateSlider(void)//TODO//when large icon
 		}							
 }
 
+bool volExitCB(LFSTK_gadgetClass*p,void* ud)
+{
+	geometryStruct	geom2;
+	int				adj;
+
+	if(volumeButton->LFSTK_getValue()==1)
+		return(true);
+	adj=extraSpace*posMultiplier;
+	p->LFSTK_getGeom(&geom2);	
+	p->LFSTK_moveGadget(geom2.x,geom2.y+adj);
+	isUp=false;
+	return(true);
+}
+
+bool volMoveCB(LFSTK_gadgetClass*p,void* ud)
+{
+	geometryStruct	geom;
+	int				adj;
+
+	if(isUp==true)
+		return(true);
+
+	adj=extraSpace*posMultiplier;
+	p->LFSTK_getGeom(&geom);	
+	p->LFSTK_moveGadget(geom.x,geom.y-adj);
+	isUp=true;
+	return(true);
+}
+
 int addSlider(int x,int y,int grav,bool fromleft)
 {
-	int						xpos=x;
-	int						ypos=y;
-	int						width=0;
-	int						height=0;
-	int						thisgrav=grav;
-	int						iconsize=16;
-	char						*label=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"%s \" $4}'|tr -d '[]'",SLIDERLABEL);
+	int		xpos=x;
+	int		ypos=y;
+	int		width=0;
+	int		height=0;
+	int		thisgrav=grav;
+	int		iconsize=16;
+	int		adj;
+	char		*label=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"%s \" $4}'|tr -d '[]'",SLIDERLABEL);
+
+	if(posMultiplier==-1)
+		adj=0;
+	else
+		adj=extraSpace;
 
 	getAlsaVolume(false,-1);
 	setSizes(&xpos,&ypos,&width,&height,&iconsize,&thisgrav,fromleft);
 	
-	volumeButton=new LFSTK_toggleButtonClass(mainwind,label,xpos,ypos,iconSize,iconSize+extraSpace,thisgrav);
+	volumeButton=new LFSTK_toggleButtonClass(mainwind,label,xpos,ypos+adj,iconSize,iconSize,thisgrav);
 	volumeButton->LFSTK_setToggleStyle(TOGGLENORMAL);
 	volumeButton->LFSTK_setMouseCallBack(NULL,sliderCB,(void*)volumeButton->LFSTK_getLabel());
+	volumeButton->LFSTK_setMouseMoveCallBack(volMoveCB,volExitCB,USERDATA(0));
 
 	setGadgetDetails(volumeButton);
 	volumeButton->LFSTK_setAlpha(1.0);

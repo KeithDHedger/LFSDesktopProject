@@ -84,6 +84,17 @@ bool buttonCB(void *p,void* ud)
 	return(true);
 }
 
+bool enterCB(LFSTK_gadgetClass*p,void* ud)
+{
+	printf(">>>Mouse Enter<<<\n");
+	return(true);
+}
+
+bool exitCB(LFSTK_gadgetClass*p,void* ud)
+{
+	printf(">>>Mouse Exit<<<\n");
+	return(true);
+}
 
 int main(int argc, char **argv)
 {
@@ -112,6 +123,7 @@ int main(int argc, char **argv)
 //toggle button	
 	toggle=new LFSTK_toggleButtonClass(wc,"Toggle",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETWIDTH);
 	toggle->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)toggle->LFSTK_getLabel());
+	toggle->LFSTK_setMouseMoveCallBack(enterCB,exitCB,USERDATA(0));
 	toggle->LFSTK_setToggleStyle(TOGGLENORMAL);
 	toggle->userData=USERDATA(1);
 
