@@ -31,6 +31,7 @@ extern LFSTK_scrollBarClass		*vsb;
 extern char						*iconH;
 extern char						*iconM;
 extern char						*iconL;
+extern char						*iconZ;
 extern int						oldVolVal;
 
 void setIcon(void);

@@ -38,6 +38,15 @@ void updateClock(void)
 
 	strftime(clockbuffer,255,"%I:%M:%S",timeinfo);
 	clockButton->LFSTK_setLabel(clockbuffer);
+	//clockButton->drawLabelBG=true;
+	//clockButton->autoLabelBGColour=true;
+//			clockButton->LFSTK_clearWindow();
+//clockButton->LFSTK_setLabelBGColour(1.0,1,1.0,1.0);
+//	clockButton->drawLabelBG=true;
+//	//clockButton->autoLabelBGColour=true;
+clockButton->LFSTK_clearWindow();
+			XFlush(apc->display);
+	
 }
 
 int addClock(int x,int y,int grav)
@@ -56,14 +65,22 @@ int addClock(int x,int y,int grav)
 	else
 		xpos=x-width;
 
-	clockButton=new LFSTK_buttonClass(mainwind,"--:--:--",xpos,0,iconSize,iconSize+extraSpace,NorthWestGravity);
+	clockButton=new LFSTK_buttonClass(mainwind,"--:--:--",xpos,((iconSize+extraSpace)/2)-(GADGETHITE/2),iconSize,GADGETHITE,NorthWestGravity);
+
 	clockButton->LFSTK_setFontString(prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("font")),true);
+
+	setGadgetDetails(clockButton);
+	clockButton->LFSTK_setAlpha(1.0);
 
 	clockButton->LFSTK_setIgnores(false,false);
 	clockButton->LFSTK_setTile(NULL,0);
-	clockButton->LFSTK_setColourName(NORMALCOLOUR,"#80ffffff");
+
+	clockButton->LFSTK_setColourName(NORMALCOLOUR,panelBGColour);
 	clockButton->LFSTK_setFontColourName(NORMALCOLOUR,panelTextColour,true);
-	clockButton->gadgetDetails.bevel=BEVELIN;
+	clockButton->LFSTK_setStyle(BEVELNONE);
+
+	clockButton->drawLabelBG=true;
+	clockButton->autoLabelBGColour=true;
 
 	return(retval);
 }

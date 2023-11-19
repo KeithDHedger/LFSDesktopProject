@@ -117,7 +117,7 @@ bool selectThemeFolder(void *object,void* ud)
 			fd->LFSTK_setBuffer(basename(buffer));
 			free(buffer);
 			free(wd);
-			wd=strdup(themeDialog->LFSTK_getCurrentDir());			
+			wd=strdup(themeDialog->LFSTK_getCurrentDir());
 		}
 	return(true);
 }
@@ -230,7 +230,7 @@ int main(int argc, char **argv)
 	personal->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
 //theme
-	asprintf(&wd,"%s/.icons",apc->userHome);
+	asprintf(&wd,"%s/.icons",apc->userHome.c_str());
 	themeDialog=new LFSTK_fileDialogClass(wc,"Select Theme",wd,FOLDERDIALOG);
 	button=new LFSTK_buttonClass(wc,"Select Theme",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	themeEditBox=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString("icontheme"),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);

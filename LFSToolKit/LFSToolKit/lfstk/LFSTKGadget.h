@@ -130,7 +130,10 @@ class LFSTK_gadgetClass
 		void					LFSTK_setUseWindowTile(bool usebutton);
 		void					LFSTK_setUseWindowPixmap(bool usepixmap);
 		void					LFSTK_setAlpha(double alph);
+		void					LFSTK_setStyle(bevelType s);
 
+std::string			imagePath;
+bool					noClear=false;
 //geometry
 		void					LFSTK_getGeom(geometryStruct *geom);
 		void					LFSTK_getGeomWindowRelative(geometryStruct *geom,Window win);

@@ -306,6 +306,7 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 
 	midprev=DIALOGWIDTH+PREVIEWWIDTH-(PREVIEWWIDTH/2);
 	this->tux=new LFSTK_imageClass(this->dialog,NULL,midprev-(PREVIEWWIDTH/2)-(BORDER/4),BORDER,PREVIEWWIDTH,PREVIEWWIDTH,PRESERVEASPECT,true);
+
 //filename
 	this->previewFileName=new LFSTK_labelClass(this->dialog,"",DIALOGWIDTH,yoffset,PREVIEWWIDTH,16,NorthWestGravity);
 	this->previewFileName->LFSTK_setFontString(this->previewFileName->monoFontString);

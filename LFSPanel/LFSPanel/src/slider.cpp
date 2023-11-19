@@ -26,13 +26,14 @@
 #include "globals.h"
 
 LFSTK_scrollBarClass	*vsb=NULL;
-LFSTK_windowClass		*scwindow=NULL;
+LFSTK_windowClass	*scwindow=NULL;
 bool					windowVisible=false;
 LFSTK_toggleButtonClass	*volumeButton;
 char					*iconH=NULL;
 char					*iconM=NULL;
 char					*iconL=NULL;
-int						oldVolVal=-1;
+char					*iconZ=NULL;
+int					oldVolVal=-1;
 char					label[32];
 
 void setLabel(void)
@@ -78,11 +79,17 @@ int getAlsaVolume(bool setvol,int volume)
 void setIcon(void)
 {
 	int vol=vsb->LFSTK_getValue();
-	if(vol<21)
+
+	if(vol<16)
+		volumeButton->LFSTK_setImageFromPath(iconZ,TOOLBAR,true);
+
+	if((vol>=16) && (vol<32))
 		volumeButton->LFSTK_setImageFromPath(iconL,TOOLBAR,true);
-	if((vol>21) && (vol<41))
+
+	if((vol>=32) && (vol<48))
 		volumeButton->LFSTK_setImageFromPath(iconM,TOOLBAR,true);
-	if(vol>42)
+
+	if(vol>=48)
 		volumeButton->LFSTK_setImageFromPath(iconH,TOOLBAR,true);
 }
 
@@ -181,6 +188,7 @@ int addSlider(int x,int y,int grav,bool fromleft)
 	iconH=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"volume-high","");
 	iconM=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"volume-medium","");
 	iconL=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"volume-low","");
+	iconZ=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"volume-zero","");
 
 	char	*vol=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print $3}'");
 

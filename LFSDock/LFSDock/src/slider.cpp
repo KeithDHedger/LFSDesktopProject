@@ -32,6 +32,7 @@ LFSTK_toggleButtonClass	*volumeButton;
 char					*iconH=NULL;
 char					*iconM=NULL;
 char					*iconL=NULL;
+char					*iconZ=NULL;
 int						oldVolVal=-1;
 char					label[32];
 
@@ -41,7 +42,6 @@ void setLabel(void)
 	sprintf(label,"Vol %i%%",value);
 	volumeButton->LFSTK_setLabel((const char*)label);
 	setIcon();
-	volumeButton->LFSTK_clearWindow();
 }
 
 int getAlsaVolume(bool setvol,int volume)
@@ -78,11 +78,17 @@ int getAlsaVolume(bool setvol,int volume)
 void setIcon(void)
 {
 	int vol=vsb->LFSTK_getValue();
-	if(vol<21)
+
+	if(vol<16)
+		volumeButton->LFSTK_setImageFromPath(iconZ,TOOLBAR,true);
+
+	if((vol>=16) && (vol<32))
 		volumeButton->LFSTK_setImageFromPath(iconL,TOOLBAR,true);
-	if((vol>21) && (vol<41))
+
+	if((vol>=32) && (vol<48))
 		volumeButton->LFSTK_setImageFromPath(iconM,TOOLBAR,true);
-	if(vol>42)
+
+	if(vol>=48)
 		volumeButton->LFSTK_setImageFromPath(iconH,TOOLBAR,true);
 }
 
@@ -94,17 +100,17 @@ bool sliderCB(void *p,void* ud)
 	Window					dw;
 
 	if(p!=NULL)
-		{
+		{	
 			if(bc->LFSTK_getValue()==1)
 				{
 					bc->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);
 					switch(panelGravity)
 						{
 							case PANELNORTH:
-								scwindow->LFSTK_moveWindow(geom.x,geom.y+geom.h,true);
+								scwindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(SLIDERWIDTH/2),geom.y+geom.h,true);
 								break;
 							case PANELSOUTH:
-								scwindow->LFSTK_moveWindow(geom.x,geom.y-SCROLLBARWIDTH,true);
+								scwindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(SLIDERWIDTH/2),geom.y-SCROLLBARWIDTH,true);
 								break;
 						}
 					scwindow->LFSTK_showWindow(true);
@@ -116,7 +122,7 @@ bool sliderCB(void *p,void* ud)
 					scwindow->LFSTK_hideWindow();
 					apc->windows->at(apc->LFSTK_findWindow(scwindow)).showing=false;
 				}
-			bc->LFSTK_clearWindow();
+			//bc->LFSTK_clearWindow();
 		}
 	return(true);
 }
@@ -140,7 +146,7 @@ bool valChanged(void *p,void* ud)
 	return(true);
 }
 
-void updateSlider(void)
+void updateSlider(void)//TODO//when large icon
 {
 	int		volume;
 
@@ -150,6 +156,8 @@ void updateSlider(void)
 			vsb->LFSTK_setValue(volume);
 			oldVolVal=vsb->LFSTK_getValue();
 			setLabel();
+			volumeButton->LFSTK_clearWindow();
+			XFlush(apc->display);
 		}							
 }
 
@@ -161,25 +169,39 @@ int addSlider(int x,int y,int grav,bool fromleft)
 	int						height=0;
 	int						thisgrav=grav;
 	int						iconsize=16;
-	char					*label=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"%s \" $4}'|tr -d '[]'",SLIDERLABEL);
+	char						*label=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"%s \" $4}'|tr -d '[]'",SLIDERLABEL);
 
 	getAlsaVolume(false,-1);
 	setSizes(&xpos,&ypos,&width,&height,&iconsize,&thisgrav,fromleft);
 	
-	volumeButton=new LFSTK_toggleButtonClass(mainwind,label,xpos,ypos,width,height,thisgrav);
+	volumeButton=new LFSTK_toggleButtonClass(mainwind,label,xpos,ypos,iconSize,iconSize+extraSpace,thisgrav);
 	volumeButton->LFSTK_setToggleStyle(TOGGLENORMAL);
 	volumeButton->LFSTK_setMouseCallBack(NULL,sliderCB,(void*)volumeButton->LFSTK_getLabel());
 
-	setGadgetDetails(volumeButton);//TODO//
+	setGadgetDetails(volumeButton);
+	volumeButton->LFSTK_setAlpha(1.0);
+	volumeButton->LFSTK_setStyle(BEVELNONE);
+
+	volumeButton->LFSTK_setColourName(NORMALCOLOUR,panelBGColour);
+	volumeButton->LFSTK_setColourName(PRELIGHTCOLOUR,panelBGColour);
+	volumeButton->LFSTK_setColourName(ACTIVECOLOUR,panelBGColour);
+
+	volumeButton->LFSTK_setFontColourName(NORMALCOLOUR,panelTextColour,true);
+	volumeButton->LFSTK_setFontColourName(PRELIGHTCOLOUR,panelTextColour,true);
+	volumeButton->LFSTK_setFontColourName(ACTIVECOLOUR,panelTextColour,true);
+
+	volumeButton->drawLabelBG=true;
+	volumeButton->autoLabelBGColour=true;
 
 	iconH=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"volume-high","");
 	iconM=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"volume-medium","");
 	iconL=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"volume-low","");
+	iconZ=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"volume-zero","");
 
-	char	*vol=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print $3}'");
+	char		*vol=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print $3}'");
 
 	windowInitStruct	*win;
-	int					w,h;
+	int				w,h;
 	
 	win=new windowInitStruct;
 	win->x=100;
@@ -201,7 +223,8 @@ int addSlider(int x,int y,int grav,bool fromleft)
 	vsb->LFSTK_setScale(0,64);
 	vsb->LFSTK_setValue(atoi(vol));
 	vsb->reverse=direction;
-	setIcon();
+	volumeButton->LFSTK_setImageFromPath(iconL,TOOLBAR,true);
+	volumeButton->LFSTK_clearWindow();
 	free(vol);
 	free(label);
 

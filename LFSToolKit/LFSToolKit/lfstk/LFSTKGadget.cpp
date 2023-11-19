@@ -551,7 +551,7 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 	int				labely;
 	cairoColor		lcol;
 	cairoColor		*colptr=&this->labelBGColour.RGBAColour;
-	geometryStruct	labelrect;
+	geometryStruct	labelrect=details->gadgetGeom;
 	int				labh;
 	int				laby;
 
@@ -1021,6 +1021,7 @@ void LFSTK_gadgetClass::drawImage()
 		cairo_translate(this->cr,xoffset,yoffset);
 //		cairo_scale(this->cr,this->imageXextraScale,this->imageYextraScale);
 		cairo_set_source_surface(this->cr,this->cImage,0,0);
+		cairo_set_operator(this->cr,CAIRO_OPERATOR_OVER);
 		cairo_paint_with_alpha(this->cr,this->alpha);
 
 		if(this->gadgetDetails.showLink==true)
@@ -1038,7 +1039,6 @@ void LFSTK_gadgetClass::drawImage()
 				cairo_set_source_surface(this->cr,this->broken,0,0);
 				cairo_paint_with_alpha(this->cr,this->alpha);
 			}
-
 	cairo_restore(this->cr);
 }
 
@@ -1523,6 +1523,9 @@ cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int or
 	float			height;
 	char			*suffix=NULL;
 
+	if((file==NULL) || (this->imagePath.compare(file)==0))
+		return(CAIRO_STATUS_SUCCESS);
+
 	this->useImage=false;
 	this->gotIcon=false;
 	if(file==NULL)
@@ -1546,7 +1549,7 @@ cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int or
 					return(CAIRO_STATUS_INVALID_FORMAT);
 				}
 		}
-
+	this->imagePath=file;
 	width=cairo_image_surface_get_width(tempimage);
 	height=cairo_image_surface_get_height(tempimage);
 
@@ -1906,4 +1909,11 @@ void LFSTK_gadgetClass::LFSTK_setCallBacks(callbackStruct cbs)
 	this->callBacks=cbs;
 }
 
-
+/**
+* Set gadget style.
+* \param s Gadget style.
+*/
+void LFSTK_gadgetClass::LFSTK_setStyle(bevelType s)
+{
+	this->style=s;
+}

@@ -76,6 +76,8 @@ extern int					onMonitor;
 extern int					panelPos;
 extern int					panelGravity;
 extern const char			*panelTextColour;
+extern const char			*panelBGColour;
+
 extern int					extraSpace;
 
 extern int					queueID;

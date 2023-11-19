@@ -38,6 +38,7 @@ int					onMonitor=0;
 int					panelPos=PANELCENTRE;
 int					panelGravity=PANELNORTH;
 const char			*panelTextColour="";
+const char			*panelBGColour="";
 int					extraSpace=16;
 
 int					queueID;

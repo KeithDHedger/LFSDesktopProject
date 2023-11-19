@@ -31,15 +31,6 @@ LFSTK_buttonClass::LFSTK_buttonClass()
 }
 
 /**
-* Set buton style.
-* \param s Button style.
-*/
-void LFSTK_buttonClass::LFSTK_setStyle(bevelType s)
-{
-	this->style=s;
-}
-
-/**
 * Main button constructor.
 *
 * \param parentwc Main parent window class.

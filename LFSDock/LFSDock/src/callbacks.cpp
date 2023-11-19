@@ -122,12 +122,8 @@ bool exitCB(LFSTK_gadgetClass*p,void* ud)
 			ll=(launcherList*)ud;
 			geometryStruct	geom2;
 			int				adj;
-adj=extraSpace*posMultiplier;
-//			if(posMultiplier==-1)
-//				adj=-extraSpace;
-//			else
-//				adj=extraSpace;
-			//printf(">>>Mouse Out %s<<<\n",ll->entry.name);
+
+			adj=extraSpace*posMultiplier;
 			p->LFSTK_getGeom(&geom2);	
 			p->LFSTK_moveGadget(geom2.x,geom2.y+adj);
 			popWindow->LFSTK_hideWindow();

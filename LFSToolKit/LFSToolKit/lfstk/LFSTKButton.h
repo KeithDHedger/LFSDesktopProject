@@ -34,8 +34,6 @@ class LFSTK_buttonClass : public LFSTK_gadgetClass
 
 		bool	keyRelease(XKeyEvent *e);
 		bool	keyPress(XKeyEvent *e);
-
-		void	LFSTK_setStyle(bevelType s);
 };
 
 #endif

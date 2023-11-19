@@ -40,6 +40,7 @@ void loadPrefs(const char *env)
 	panelPos=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelpos"));
 	panelGravity=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelgrav"));
 	panelTextColour=prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("textcolour"));
+	panelBGColour=prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("panelbgcolour"));
 }
 
 void addGadgets(void)
@@ -120,6 +121,7 @@ void sanityCheck(void)
 			rcfile<<"panelsize 3\n";
 			rcfile<<"termcommand kkterminal -m -l -e \n";
 			rcfile<<"font Arial:size=16\n";
+			rcfile<<"panelbgcolour #80ffffff\n";
 			rcfile.close();
 		}
 }
@@ -152,7 +154,8 @@ int main(int argc,char **argv)
 
 						{prefs.LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","xterm -e ",false,0}},
 						{prefs.LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","l",false,0}},
-						{prefs.LFSTK_hashFromKey("font"),{TYPESTRING,"font","l",false,0}},
+						{prefs.LFSTK_hashFromKey("font"),{TYPESTRING,"font","",false,0}},
+						{prefs.LFSTK_hashFromKey("panelbgcolour"),{TYPESTRING,"panelbgcolour","",false,0}},
 					};
 	realMainLoop=true;
 	
