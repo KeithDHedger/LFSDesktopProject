@@ -1,21 +1,21 @@
 /*
  *
- * ©K. D. Hedger. Sat  6 Feb 13:59:35 GMT 2021 keithdhedger@gmail.com
+ * ©K. D. Hedger. Sun 19 Nov 19:09:02 GMT 2023 keithdhedger@gmail.com
 
- * This file (callbacks.cpp) is part of LFSPanel.
+ * This file (callbacks.cpp) is part of LFSDock.
 
- * LFSPanel is free software: you can redistribute it and/or modify
+ * LFSDock is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
- * at your option) any later version.
+ * (at your option) any later version.
 
- * LFSPanel is distributed in the hope that it will be useful,
+ * LFSDock is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with LFSPanel.  If not, see <http://www.gnu.org/licenses/>.
+ * along with LFSDock.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "globals.h"
@@ -77,17 +77,6 @@ bool gadgetDrop(void *lwc,propertyStruct *data,void* ud)
 
 bool timerCB(LFSTK_applicationClass *p,void* ud)
 {
- 	Window			sink;
-	Window			childwindow;
-	int				sinkx;
-	int				sinky;
-	unsigned int	buttonmask;
-
-	XQueryPointer(apc->display,apc->rootWindow,&sink,&childwindow,&sinkx,&sinky,&sinkx,&sinky,&buttonmask);
-
-	if(buttonmask!=0)
-		return(true);
-
 	readMsg();
 
 	if(clockButton!=NULL)
@@ -131,7 +120,7 @@ bool exitCB(LFSTK_gadgetClass*p,void* ud)
 	return(true);
 }
 
-bool moveCB(LFSTK_gadgetClass*p,void* ud)
+bool enterCB(LFSTK_gadgetClass*p,void* ud)
 {
 	if(ud!=NULL)
 		{

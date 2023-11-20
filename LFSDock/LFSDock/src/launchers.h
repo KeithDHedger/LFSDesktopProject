@@ -26,6 +26,6 @@
 
 extern launcherList		*ll;
 
-int addLaunchers(int x,int y,int grav,bool fromleft);
+int addLaunchers(int x,int y,int grav);
 
 #endif

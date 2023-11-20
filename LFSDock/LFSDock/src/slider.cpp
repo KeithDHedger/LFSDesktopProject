@@ -1,41 +1,38 @@
 /*
  *
- * ©K. D. Hedger. Thu  3 Jan 12:11:08 GMT 2019 keithdhedger@gmail.com
+ * ©K. D. Hedger. Sun 19 Nov 19:09:57 GMT 2023 keithdhedger@gmail.com
 
- * This file (slider.cpp) is part of LFSPanel.
+ * This file (slider.cpp) is part of LFSDock.
 
- * LFSPanel is free software: you can redistribute it and/or modify
+ * LFSDock is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
- * at your option) any later version.
+ * (at your option) any later version.
 
- * LFSPanel is distributed in the hope that it will be useful,
+ * LFSDock is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with LFSPanel.  If not, see <http://www.gnu.org/licenses/>.
+ * along with LFSDock.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <alsa/asoundlib.h>
 
 #include "globals.h"
 
-LFSTK_scrollBarClass	*vsb=NULL;
+LFSTK_scrollBarClass		*vsb=NULL;
 LFSTK_windowClass		*scwindow=NULL;
-bool					windowVisible=false;
+bool						windowVisible=false;
 LFSTK_toggleButtonClass	*volumeButton;
-char					*iconH=NULL;
-char					*iconM=NULL;
-char					*iconL=NULL;
-char					*iconZ=NULL;
+char						*iconH=NULL;
+char						*iconM=NULL;
+char						*iconL=NULL;
+char						*iconZ=NULL;
 int						oldVolVal=-1;
-char					label[32];
-bool					isUp=false;
+char						label[32];
+bool						sliderIsUp=false;
 
 void setLabel(void)
 {
@@ -48,11 +45,11 @@ void setLabel(void)
 int getAlsaVolume(bool setvol,int volume)
 {
 	long					value=-1;
-	snd_mixer_t				*handle;
+	snd_mixer_t			*handle;
 	snd_mixer_selem_id_t	*sid;
 	snd_mixer_elem_t		*elem;
-	const char				*card="default";
-	const char				*selem_name="Master";
+	const char			*card="default";
+	const char			*selem_name="Master";
 
 	snd_mixer_open(&handle,0);
 	snd_mixer_attach(handle,card);
@@ -123,7 +120,6 @@ bool sliderCB(void *p,void* ud)
 					scwindow->LFSTK_hideWindow();
 					apc->windows->at(apc->LFSTK_findWindow(scwindow)).showing=false;
 				}
-			//bc->LFSTK_clearWindow();
 		}
 	return(true);
 }
@@ -133,7 +129,7 @@ bool valChanged(void *p,void* ud)
 	LFSTK_scrollBarClass	*sb=NULL;
 	char					*command;
 	char					*vol;
-	int						volume=-1;
+	int					volume=-1;
 
 	if(p!=NULL)
 		{
@@ -147,7 +143,7 @@ bool valChanged(void *p,void* ud)
 	return(true);
 }
 
-void updateSlider(void)//TODO//when large icon
+void updateSlider(void)
 {
 	int		volume;
 
@@ -172,7 +168,7 @@ bool volExitCB(LFSTK_gadgetClass*p,void* ud)
 	adj=extraSpace*posMultiplier;
 	p->LFSTK_getGeom(&geom2);	
 	p->LFSTK_moveGadget(geom2.x,geom2.y+adj);
-	isUp=false;
+	sliderIsUp=false;
 	return(true);
 }
 
@@ -181,36 +177,27 @@ bool volMoveCB(LFSTK_gadgetClass*p,void* ud)
 	geometryStruct	geom;
 	int				adj;
 
-	if(isUp==true)
+	if(sliderIsUp==true)
 		return(true);
 
 	adj=extraSpace*posMultiplier;
 	p->LFSTK_getGeom(&geom);	
 	p->LFSTK_moveGadget(geom.x,geom.y-adj);
-	isUp=true;
+	sliderIsUp=true;
 	return(true);
 }
 
-int addSlider(int x,int y,int grav,bool fromleft)
+int addSlider(int x,int y,int grav)
 {
-	int		xpos=x;
-	int		ypos=y;
-	int		width=0;
-	int		height=0;
-	int		thisgrav=grav;
-	int		iconsize=16;
-	int		adj;
-	char		*label=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"%s \" $4}'|tr -d '[]'",SLIDERLABEL);
-
-	if(posMultiplier==-1)
-		adj=0;
-	else
-		adj=extraSpace;
+	char				*vol=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print $3}'");
+	char				*label=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"%s \" $4}'|tr -d '[]'",SLIDERLABEL);//TODO//
+	windowInitStruct	*win=new windowInitStruct;;
+	int				w,h;
+	bool				direction=false;
 
 	getAlsaVolume(false,-1);
-	setSizes(&xpos,&ypos,&width,&height,&iconsize,&thisgrav,fromleft);
 	
-	volumeButton=new LFSTK_toggleButtonClass(mainwind,label,xpos,ypos+adj,iconSize,iconSize,thisgrav);
+	volumeButton=new LFSTK_toggleButtonClass(mainwind,label,x,y,iconSize,iconSize);
 	volumeButton->LFSTK_setToggleStyle(TOGGLENORMAL);
 	volumeButton->LFSTK_setMouseCallBack(NULL,sliderCB,(void*)volumeButton->LFSTK_getLabel());
 	volumeButton->LFSTK_setMouseMoveCallBack(volMoveCB,volExitCB,USERDATA(0));
@@ -235,20 +222,10 @@ int addSlider(int x,int y,int grav,bool fromleft)
 	iconL=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"volume-low","");
 	iconZ=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"volume-zero","");
 
-	char		*vol=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print $3}'");
-
-	windowInitStruct	*win;
-	int				w,h;
-	
-	win=new windowInitStruct;
 	win->x=100;
 	win->y=100;
-	bool direction=false;
-
 	w=100;
 	h=16;
-	direction=false;
-
 	win->w=w;
 	win->h=h;
 	apc->LFSTK_addToolWindow(win);
@@ -265,6 +242,6 @@ int addSlider(int x,int y,int grav,bool fromleft)
 	free(vol);
 	free(label);
 
-	return(width);
+	return(iconSize);
 }
 

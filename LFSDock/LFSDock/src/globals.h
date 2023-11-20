@@ -1,21 +1,21 @@
 /*
  *
- * ©K. D. Hedger. Sun 20 Sep 14:41:04 BST 2015 keithdhedger@gmail.com
+ * ©K. D. Hedger. Sun 19 Nov 19:08:47 GMT 2023 keithdhedger@gmail.com
 
- * This file (globals.h) is part of LFSPanel.
+ * This file (globals.h) is part of LFSDock.
 
- * LFSPanel is free software: you can redistribute it and/or modify
+ * LFSDock is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
- * at your option) any later version.
+ * (at your option) any later version.
 
- * LFSPanel is distributed in the hope that it will be useful,
+ * LFSDock is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with LFSPanel.  If not, see <http://www.gnu.org/licenses/>.
+ * along with LFSDock.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <unistd.h>
@@ -32,6 +32,7 @@
 #include "callbacks.h"
 #include "clock.h"
 #include "slider.h"
+#include "desktopSwitcher.h"
 
 #ifndef _GLOBALS_
 #define _GLOBALS_
@@ -59,56 +60,54 @@ struct launcherList
 enum {NOLAUNCHERS,LAUNCHERINLEFT};
 
 //prefs
-extern LFSTK_prefsClass		prefs;
-extern std::string			configDir;
-extern std::string			launchersDir;
-extern std::string			configFile;
-extern LFSTK_windowClass		*popWindow;
-extern LFSTK_labelClass		*popLabel;
-extern launcherList			*ll;
-extern int					iconSize;
-extern int					posMultiplier;
+extern LFSTK_prefsClass			prefs;
+extern std::string				configDir;
+extern std::string				launchersDir;
+extern std::string				configFile;
+extern LFSTK_windowClass			*popWindow;
+extern LFSTK_labelClass			*popLabel;
+extern launcherList				*ll;
+extern int						iconSize;
+extern int						posMultiplier;
 
-extern int					panelSize;
-extern int					panelWidth;
-extern const monitorStruct	*mons;
-extern int					onMonitor;
-extern int					panelPos;
-extern int					panelGravity;
-extern const char			*panelTextColour;
-extern const char			*panelBGColour;
+extern int						panelSize;
+extern int						panelWidth;
+extern const monitorStruct		*mons;
+extern int						onMonitor;
+extern int						panelPos;
+extern int						panelGravity;
+extern const char				*panelTextColour;
+extern const char				*panelBGColour;
 
-extern int					extraSpace;
+extern int						extraSpace;
 
-extern int					queueID;
-extern msgBuffer				buffer;
-extern bool					realMainLoop;
+extern int						queueID;
+extern msgBuffer					buffer;
+extern bool						realMainLoop;
 
-extern const char			*desktopTheme;
-extern int					refreshRate;
+extern const char				*desktopTheme;
+extern int						refreshRate;
 
 
 //panel window
 extern LFSTK_applicationClass	*apc;
-extern LFSTK_windowClass	*mainwind;
-extern int					leftOffset;
-extern int					launcherSide;
+extern LFSTK_windowClass			*mainwind;
+extern int						launcherSide;
 
 //atoms
-extern Atom					WM_STATE;
-extern Atom					NET_WM_WINDOW_TYPE_NORMAL;
-extern Atom					NET_WM_STATE_HIDDEN;
-extern Atom					NET_WM_WINDOW_TYPE_DIALOG;
-extern Atom					NET_WM_DESKTOP;
-extern Atom					NET_WM_WINDOW_TYPE;
-extern Atom					NET_WM_STATE;
-extern Atom					NET_WM_NAME;
-extern Atom					UTF8_STRING;
+extern Atom						WM_STATE;
+extern Atom						NET_WM_WINDOW_TYPE_NORMAL;
+extern Atom						NET_WM_STATE_HIDDEN;
+extern Atom						NET_WM_WINDOW_TYPE_DIALOG;
+extern Atom						NET_WM_DESKTOP;
+extern Atom						NET_WM_WINDOW_TYPE;
+extern Atom						NET_WM_STATE;
+extern Atom						NET_WM_NAME;
+extern Atom						UTF8_STRING;
 
-extern const char			*possibleError;
+extern const char				*possibleError;
 
 void printError(const char *err);
-void setSizes(int *x,int *y,int *w,int *h,int *size,int *grav,bool fromleft);
 void dropDesktopFile(const char *data,launcherList *launcher);
 void sendNotify(const char *message1,const char *message2);
 void setGadgetDetails(LFSTK_gadgetClass *gadget);

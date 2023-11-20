@@ -18,10 +18,7 @@
  * along with LFSPanel.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #include <ftw.h>
-#include <stdio.h>
-#include <string>
 #include <glib.h>
 
 #include "launchers.h"
@@ -109,51 +106,34 @@ int launcherBuildCB(const char *fpath,const struct stat *sb,int typeflag)
 	return(0);
 }
 
-int addLaunchers(int x,int y,int grav,bool fromleft)
+int addLaunchers(int x,int y,int grav)
 {
 	char				*launchers;
-	launcherList		*loopll;
-	ll=NULL;
+	launcherList		*loopll=NULL;
 	char				*icon=NULL;
 	int				xpos=x;
 	int				ypos=y;
-	int				width=0;
-	int				height=0;
-	int				thisgrav=grav;
-	int				iconsize=16;
-	int				maxwidth=0;
-	int				sx,sy;
-	int				adj;
 
 	asprintf(&launchers,"%s/launchers-DOCK",apc->configDir.c_str());
 	ftw(launchers,launcherBuildCB,16);
 
-	setSizes(&xpos,&ypos,&width,&height,&iconsize,&thisgrav,fromleft);
-	maxwidth=width;
-	sx=xpos;
-	sy=ypos;
-
-	popWindow=new LFSTK_toolWindowClass(apc->display,mainwind,"_NET_WM_WINDOW_TYPE_MENU",0,0,200,100,"lfstkpopup",apc);
+	popWindow=new LFSTK_toolWindowClass(apc->display,mainwind,"_NET_WM_WINDOW_TYPE_MENU",0,0,100,100,"lfstkpopup",apc);
 	popLabel=new LFSTK_labelClass(popWindow,"ANAME",0,0,GADGETWIDTH*8,GADGETHITE,WestGravity);
 	popLabel->LFSTK_setCairoFontDataParts("sB",20);
 	popLabel->LFSTK_setTile(NULL,0);
 	popWindow->LFSTK_setWindowColourName(NORMALCOLOUR,"#c0808080");
 
-	if(posMultiplier==-1)
-		adj=0;
-	else
-		adj=extraSpace;
 	loopll=ll;
 	while(loopll!=NULL)
 		{
 			icon=NULL;
-			loopll->bc=new LFSTK_buttonClass(mainwind,"",sx,sy+adj,width,height,thisgrav);
+			loopll->bc=new LFSTK_buttonClass(mainwind,"",xpos,ypos,iconSize,iconSize);
 			loopll->bc->LFSTK_setMouseCallBack(NULL,launcherCB,(void*)loopll);
 			loopll->bc->LFSTK_setGadgetDropCallBack(gadgetDrop,(void*)loopll);
 	
-			loopll->bc->LFSTK_setMouseMoveCallBack(moveCB,exitCB,USERDATA(loopll));
-fprintf(stderr,"name=>>%s<<\n",loopll->entry.name);
+			loopll->bc->LFSTK_setMouseMoveCallBack(enterCB,exitCB,USERDATA(loopll));
 			loopll->bc->gadgetAcceptsDnD=true;
+fprintf(stderr,"name=>>%s x=%i<<\n",loopll->entry.name,xpos);
 
 			if((loopll->icon!=NULL) && (desktopTheme!=NULL))
 				icon=apc->globalLib->LFSTK_findThemedIcon(desktopTheme,loopll->icon,"");
@@ -167,18 +147,9 @@ fprintf(stderr,"name=>>%s<<\n",loopll->entry.name);
 			if(icon!=NULL)
 				free(icon);
 			loopll=loopll->next;
-			if((grav==PANELNORTH) || (grav==PANELSOUTH))
-				{
-					if(fromleft==false)
-						sx-=width;
-					else
-						sx+=width;
-				}
-			else
-				sy+=height;
-			maxwidth+=width;
+			xpos+=iconSize;
 		}
 	free(launchers);
 
-	return(maxwidth-width);
+	return(xpos);
 }

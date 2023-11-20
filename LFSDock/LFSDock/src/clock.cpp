@@ -1,30 +1,25 @@
 /*
  *
- * ©K. D. Hedger. Mon 21 Sep 13:41:36 BST 2015 keithdhedger@gmail.com
+ * ©K. D. Hedger. Sun 19 Nov 19:09:27 GMT 2023 keithdhedger@gmail.com
 
- * This file (clock.cpp) is part of LFSPanel.
+ * This file (clock.cpp) is part of LFSDock.
 
- * LFSPanel is free software: you can redistribute it and/or modify
+ * LFSDock is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
- * at your option) any later version.
+ * (at your option) any later version.
 
- * LFSPanel is distributed in the hope that it will be useful,
+ * LFSDock is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with LFSPanel.  If not, see <http://www.gnu.org/licenses/>.
+ * along with LFSDock.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#include <unistd.h>
-#include <signal.h>
-#include <ctime>
 
 #include "globals.h"
 
-//LFSTK_labelClass	*clockButton=NULL;
 LFSTK_buttonClass	*clockButton=NULL;
 
 void updateClock(void)
@@ -44,25 +39,15 @@ void updateClock(void)
 
 int addClock(int x,int y,int grav)
 {
-	int	xpos=0;
-	int	width=iconSize;
-	int	retval=width;
-
 	if(clockButton!=NULL)
 		{
 			printError("Duplicate clock");
 			return(0);
 		}
-	if(grav==NorthWestGravity)
-		xpos=x;
-	else
-		xpos=x-width;
 
-	clockButton=new LFSTK_buttonClass(mainwind,"--:--:--",xpos,((iconSize+extraSpace)/2)-(GADGETHITE/2),iconSize,GADGETHITE,NorthWestGravity);
-
-	clockButton->LFSTK_setFontString(prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("font")),true);
-
+	clockButton=new LFSTK_buttonClass(mainwind,"--:--:--",x,y+(iconSize/2)-(GADGETHITE/2),iconSize,GADGETHITE);
 	setGadgetDetails(clockButton);
+	clockButton->LFSTK_setFontString(prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("font")),true);
 	clockButton->LFSTK_setAlpha(1.0);
 
 	clockButton->LFSTK_setIgnores(false,false);
@@ -75,5 +60,5 @@ int addClock(int x,int y,int grav)
 	clockButton->drawLabelBG=true;
 	clockButton->autoLabelBGColour=true;
 
-	return(retval);
+	return(iconSize);
 }

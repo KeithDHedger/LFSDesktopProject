@@ -1,8 +1,8 @@
 /*
  *
- * ©K. D. Hedger. Sun 19 Nov 19:09:41 GMT 2023 keithdhedger@gmail.com
+ * ©K. D. Hedger. Sun 19 Nov 19:12:44 GMT 2023 keithdhedger@gmail.com
 
- * This file (clock.h) is part of LFSDock.
+ * This file (desktopSwitcher.h) is part of LFSDock.
 
  * LFSDock is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,13 @@
  * along with LFSDock.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _CLOCK_
-#define _CLOCK_
+#ifndef _DESKTOPSWITCHER_
+#define _DESKTOPSWITCHER_
 
-extern LFSTK_buttonClass	*clockButton;
+#include "globals.h"
 
-int addClock(int x,int y,int grav);
-void updateClock(void);
+extern LFSTK_toggleButtonClass	*switchButton;
+
+int addDesktopSwitcer(int x,int y,int grav);
 
 #endif

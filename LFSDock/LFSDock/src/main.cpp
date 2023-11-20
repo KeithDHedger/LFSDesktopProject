@@ -1,21 +1,21 @@
 /*
  *
- * ©K. D. Hedger. Mon  7 Sep 13:20:24 BST 2015 keithdhedger@gmail.com
+ * ©K. D. Hedger. Sun 19 Nov 19:08:13 GMT 2023 keithdhedger@gmail.com
 
- * This file (lfswmprefs.cpp) is part of LFSApplications.
+ * This file (main.cpp) is part of LFSDock.
 
- * LFSApplications is free software: you can redistribute it and/or modify
+ * LFSDock is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation,either version 3 of the License,or
- * at your option) any later version.
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
 
- * LFSApplications is distributed in the hope that it will be useful,
+ * LFSDock is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with LFSApplications.  If not,see <http://www.gnu.org/licenses/>.
+ * along with LFSDock.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <unistd.h>
@@ -31,6 +31,8 @@
 
 #define RCNAME "lfsdock"
 
+int	windowWidth=0;
+
 void loadPrefs(const char *env)
 {
 	prefs.LFSTK_loadVarsFromFile(env);
@@ -45,34 +47,42 @@ void loadPrefs(const char *env)
 
 void addGadgets(void)
 {
-	int	offset=leftOffset;
+	int	offset=0;
+	int	adj;
+
+	if(posMultiplier==-1)
+		adj=0;
+	else
+		adj=extraSpace;
 
 	for(int j=0; j<prefs.LFSTK_getStringObject("gadgetsleft")->length();j++)
 		{
 			switch(prefs.LFSTK_getStringObject("gadgetsleft")->at(j))
 				{
 				case 'C':
-					offset+=addClock(offset,mons->y,NorthWestGravity);
+					offset+=addClock(offset,adj,NorthWestGravity);
 					break;
-				case 'S':
-					offset+=iconSize;
+				case 's':
+					offset+=8;
 					break;
 				case 'l':
 					if(launcherSide==NOLAUNCHERS)
 						{
 							launcherSide=LAUNCHERINLEFT;
-							offset+=addLaunchers(offset,mons->y,panelGravity,true);
+							offset+=addLaunchers(offset,adj,panelGravity);
 						}
 					else
 						printError("Duplicate launcher widget");
 					break;
-				case 's':
-					offset+=addSlider(offset,mons->y,panelGravity,true);//TODO//
+				case 'S':
+					offset+=addSlider(offset,adj,panelGravity);
+					break;
+				case 'D':
+					offset+=addDesktopSwitcer(offset,adj,panelGravity);
 					break;
 				}
 		}
-	offset++;
-	leftOffset=offset;
+	windowWidth=offset;
 }
 
 int errHandler(Display *dpy,XErrorEvent *e)
@@ -128,14 +138,14 @@ void sanityCheck(void)
 
 int main(int argc,char **argv)
 {
-	char				*env;
-	XEvent				event;
-	int					psize;
-	int					thold;
-	int					px,py;
-	timeval				tv={0,0};
-	int					key=666;
-	int					refreshmulti=0;
+	char		*env;
+	XEvent	event;
+	int		psize;
+	int		thold;
+	int		px,py;
+	timeval	tv={0,0};
+	int		key=666;
+	int		refreshmulti=0;
 
 	configDir=getenv("HOME") + std::string("/.config/LFS/");
 	launchersDir=configDir + std::string("launchers-DOCK");
@@ -217,20 +227,17 @@ int main(int argc,char **argv)
 			desktopTheme=mainwind->globalLib->desktopIconTheme.c_str();
 			mons=apc->LFSTK_getMonitorData(onMonitor);
 
-			leftOffset=0;
-
 			mainwind->LFSTK_setTile(NULL,0);
 			mainwind->LFSTK_setWindowColourName(NORMALCOLOUR,"#00000000");
-
+			windowWidth=0;
 			addGadgets();
-
-			if(leftOffset==0)
+			if(windowWidth==0)
 				{
-					fprintf(stderr,"Not using empty panel ...\n");
+					fprintf(stderr,"Not using empty dock ...\n");
 					exit(0);
 				}
 
-			psize=leftOffset;
+			psize=windowWidth;
 			px=mons->x;
 			py=mons->y;
 			switch(panelGravity)
@@ -268,13 +275,10 @@ int main(int argc,char **argv)
 
 			mainwind->LFSTK_resizeWindow(panelWidth,iconSize+extraSpace,true);
 			if(posMultiplier==1)
-				{
-					mainwind->LFSTK_moveWindow(px,py-extraSpace,true);
-				}
+				mainwind->LFSTK_moveWindow(px,py-extraSpace,true);
 			else
-				{
-					mainwind->LFSTK_moveWindow(px,py,true);
-				}
+				mainwind->LFSTK_moveWindow(px,py,true);
+
 			mainwind->LFSTK_showWindow(true);
 			mainwind->LFSTK_setKeepAbove(true);
 

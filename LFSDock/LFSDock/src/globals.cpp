@@ -1,59 +1,57 @@
 /*
  *
- * ©K. D. Hedger. Sun 20 Sep 14:41:10 BST 2015 keithdhedger@gmail.com
+ * ©K. D. Hedger. Sun 19 Nov 19:08:31 GMT 2023 keithdhedger@gmail.com
 
- * This file (globals.cpp) is part of LFSPanel.
+ * This file (globals.cpp) is part of LFSDock.
 
- * LFSPanel is free software: you can redistribute it and/or modify
+ * LFSDock is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
- * at your option) any later version.
+ * (at your option) any later version.
 
- * LFSPanel is distributed in the hope that it will be useful,
+ * LFSDock is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with LFSPanel.  If not, see <http://www.gnu.org/licenses/>.
+ * along with LFSDock.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "globals.h"
 
 //prefs
 LFSTK_prefsClass	prefs;
-std::string			configDir;
-std::string			launchersDir;
-std::string			configFile;
-LFSTK_windowClass	*popWindow=NULL;
-LFSTK_labelClass		*popLabel=NULL;
-launcherList			*ll=NULL;
-int					iconSize=16;
-int					posMultiplier=1;
+std::string				configDir;
+std::string				launchersDir;
+std::string				configFile;
+LFSTK_windowClass		*popWindow=NULL;
+LFSTK_labelClass			*popLabel=NULL;
+launcherList				*ll=NULL;
+int						iconSize=16;
+int						posMultiplier=1;
 
-int					panelSize=2;
-int					panelWidth=-1;
-const monitorStruct	*mons=NULL;
-int					onMonitor=0;
-int					panelPos=PANELCENTRE;
-int					panelGravity=PANELNORTH;
-const char			*panelTextColour="";
-const char			*panelBGColour="";
-int					extraSpace=16;
+int						panelSize=2;
+int						panelWidth=-1;
+const monitorStruct		*mons=NULL;
+int						onMonitor=0;
+int						panelPos=PANELCENTRE;
+int						panelGravity=PANELNORTH;
+const char				*panelTextColour="";
+const char				*panelBGColour="";
+int						extraSpace=16;
 
-int					queueID;
-msgBuffer			buffer;
+int						queueID;
+msgBuffer				buffer;
 
-const char			*desktopTheme=NULL;
-bool					realMainLoop=true;
+const char				*desktopTheme=NULL;
+bool						realMainLoop=true;
 
-int					refreshRate=1;
-
+int						refreshRate=1;
 
 //panel window
 LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*mainwind=NULL;
-int						leftOffset=0;
 int						launcherSide=NOLAUNCHERS;
 
 //atoms
@@ -68,31 +66,6 @@ Atom						NET_WM_NAME=None;
 Atom						UTF8_STRING=None;
 
 const char				*possibleError="Unknown";
-
-void setSizes(int *x,int *y,int *w,int *h,int *size,int *grav,bool fromleft)
-{
-	*w=iconSize;
-	*h=iconSize;
-	*size=(*w)-12;
-
-	switch(*grav)
-		{
-			case PANELNORTH:
-			case PANELSOUTH:
-				if(fromleft==true)
-					{
-						*grav=NorthWestGravity;
-						*x=*x;
-					}
-				else
-					{
-						*grav=NorthEastGravity;
-						*x=*x-*w+1;
-					}
-				*y=0;
-				break;
-		}
-}
 
 void sendNotify(const char *name,const char *message)//TODO//could be better
 {
