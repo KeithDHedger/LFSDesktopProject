@@ -104,6 +104,7 @@ extern Atom						NET_WM_WINDOW_TYPE;
 extern Atom						NET_WM_STATE;
 extern Atom						NET_WM_NAME;
 extern Atom						UTF8_STRING;
+extern Atom						NET_CURRENT_DESKTOP;
 
 extern const char				*possibleError;
 

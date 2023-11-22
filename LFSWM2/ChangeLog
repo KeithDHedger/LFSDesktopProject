@@ -1,4 +1,6 @@
 1.0.1
+Fixed setting wrong window property whene dragging window to nex/prev desktop.
+Fixed telling root window to change desktops.
 Stacking fixes.
 Temp removed scale resize.
 Done stacking transient windows.

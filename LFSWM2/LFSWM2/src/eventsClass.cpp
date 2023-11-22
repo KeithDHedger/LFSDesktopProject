@@ -376,8 +376,8 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						}
 
 					case PropertyNotify:
-						//fprintf(stderr,"PropertyNotify IN eventnumber %i atom name=%s\n",when++,XGetAtomName(this->mainClass->display,e.xproperty.atom));
 						{
+						//fprintf(stderr,"PropertyNotify IN eventnumber %i atom name=%s\n",when++,XGetAtomName(this->mainClass->display,e.xproperty.atom));
 							LFSWM2_clientClass	*cc;
 							this->mainClass->restackCnt++;//???
 							if(false)
@@ -397,11 +397,13 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 							if((e.xproperty.state==PropertyNewValue) || (e.xproperty.state==PropertyDelete))
 								{
-									if(e.xproperty.atom==this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_DESKTOP")))
+									if(e.xproperty.atom==this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_CURRENT_DESKTOP")))
 										{
-										this->noRestack=false;
 											if(e.xproperty.window==this->mainClass->rootWindow)
 												{
+													this->noRestack=false;
+													this->mainClass->restackCnt=0;
+													this->mainClass->LFSWM2_setCurrentDesktopFromRoot();
 												}
 											break;
 										}
@@ -823,7 +825,7 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 						if(cc!=NULL)
 						{
 							//if (wtype==UNKNOWNTYPE)
-								fprintf(stderr,"wid=0x%x\n",fromwl.at(j));
+								//fprintf(stderr,"wid=0x%x\n",fromwl.at(j));
 							towlnormal.push_back(cc->frameWindow);	
 							}
 						else

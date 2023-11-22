@@ -1201,3 +1201,38 @@ void LFSTK_lib::LFSTK_getFileInfo(const char* path,fileInformation* info)
 				}
 		}
 }
+
+/**
+* Get single property from window.
+* \param Display *display display connection.
+* \param Window win window to get property for.
+* \param Atom prop property resuested.
+* \param Atom wanttype requested property type.
+* \return propReturn prop structure.
+*/
+propReturn LFSTK_lib::LFSTK_getSingleProp(Display *display,Window win,Atom prop,Atom wanttype)
+{
+	int				result=-1;
+	Atom				actual_type_return;
+	int				actual_format_return;
+	unsigned long	nitems_return;
+	unsigned long	bytes_after_return;
+	unsigned char	*prop_return;
+	propReturn		propr;
+	char				*ptr;
+
+	result=XGetWindowProperty(display,win,prop,0L,32,false,wanttype,&actual_type_return,&actual_format_return,&nitems_return,&bytes_after_return,(unsigned char**)&prop_return);
+	if(result==Success)
+		{
+			ptr=(char*)prop_return;
+			while(strlen(ptr)>0)
+				{
+					propr.strlist.push_back(ptr);
+					ptr+=(strlen(ptr)+1);
+				}
+			propr.window=(Window)(*(long unsigned*)prop_return);
+			propr.integer=(unsigned long)(*(long unsigned*)prop_return);
+			XFree(prop_return);
+		}
+	return(propr);
+}

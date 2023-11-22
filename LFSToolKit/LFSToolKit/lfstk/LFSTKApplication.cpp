@@ -55,9 +55,9 @@ void LFSTK_applicationClass::LFSTK_setTimer(int seconds)
 LFSTK_applicationClass::LFSTK_applicationClass()
 {
 	bool					gotargb;
-	XVisualInfo				visual_template;
-	XVisualInfo				*visual_list=NULL;
-	int						nxvisuals=0;
+	XVisualInfo			visual_template;
+	XVisualInfo			*visual_list=NULL;
+	int					nxvisuals=0;
 
 	this->display=XOpenDisplay(NULL);
 	if(this->display==NULL)

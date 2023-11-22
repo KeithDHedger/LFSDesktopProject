@@ -44,7 +44,7 @@ else
 fi
 
 #Set this to your own user name
-CHANGEUSER=keithhedger
+CHANGEUSER=${CHANGEUSER:-$(logname)}
 #Set this if needed.
 LIBDIRSUFFIX=64
 

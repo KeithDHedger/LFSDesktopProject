@@ -28,6 +28,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <vector>
 
 #include <dirent.h>
 
@@ -260,6 +261,13 @@ struct propertyStruct
 	char				*mimeType;
 	int				dropX=-1;
 	int				dropY=-1;
+};
+
+struct propReturn
+{
+	Window					window=None;
+	unsigned long			integer=0;
+	std::vector<std::string>	strlist;
 };
 
 struct callbackStruct

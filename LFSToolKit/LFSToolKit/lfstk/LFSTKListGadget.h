@@ -54,36 +54,36 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		~LFSTK_listGadgetClass();
 		LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const char *label,int x,int y,unsigned w,unsigned h,int gravity=NorthWestGravity);
 
-		int						LFSTK_getCurrentListItem(void);
-		void					LFSTK_updateList(void);
-		void					LFSTK_setListFromFile(const char *filepath,bool includeempty);
-		const char				*LFSTK_getSelectedLabel(void);
-		const char				*LFSTK_getLabelAtIndex(int index);
-		void					LFSTK_freeList(void);
-		void					LFSTK_appendToList(listLabelStruct data);
-		void					LFSTK_selectByIndex(int index);
-		int						LFSTK_findByLabel(const char *needle,bool select=true);
+		int								LFSTK_getCurrentListItem(void);
+		void								LFSTK_updateList(void);
+		void								LFSTK_setListFromFile(const char *filepath,bool includeempty);
+		const char						*LFSTK_getSelectedLabel(void);
+		const char						*LFSTK_getLabelAtIndex(int index);
+		void								LFSTK_freeList(void);
+		void								LFSTK_appendToList(listLabelStruct data);
+		void								LFSTK_selectByIndex(int index);
+		int								LFSTK_findByLabel(const char *needle,bool select=true);
 
-		bool					mouseExit(XButtonEvent *e) {return(true);};
-		bool					mouseEnter(XButtonEvent *e) {XSetInputFocus(this->wc->app->display,this->window,RevertToParent,CurrentTime);return(true);};
-		bool					mouseDown(XButtonEvent *e) {return(true);};//{XSetInputFocus(this->wc->app->display,this->window,RevertToParent,CurrentTime);return(true);};
-		bool					mouseUp(XButtonEvent *e);
-		bool					keyRelease(XKeyEvent *e);
+		bool								mouseExit(XButtonEvent *e) {return(true);};
+		bool								mouseEnter(XButtonEvent *e) {XSetInputFocus(this->wc->app->display,this->window,RevertToParent,CurrentTime);return(true);};
+		bool								mouseDown(XButtonEvent *e) {return(true);};//{XSetInputFocus(this->wc->app->display,this->window,RevertToParent,CurrentTime);return(true);};
+		bool								mouseUp(XButtonEvent *e);
+		bool								keyRelease(XKeyEvent *e);
 
-		void					LFSTK_resetListHeight(int newheight);
+		void								LFSTK_resetListHeight(int newheight);
 
-		unsigned				listCntNew=0;
-		int						currentItem=0;
+		unsigned							listCntNew=0;
+		int								currentItem=0;
 
-		std::vector <LFSTK_buttonClass*> *labelsArray;
+		std::vector <LFSTK_buttonClass*>	*labelsArray;
 		std::vector <listLabelStruct>	*listDataArray;
 
-		bool					freeCairoImages=true;
-		unsigned				maxShowing;
-		LFSTK_scrollBarClass	*scrollBar=NULL;
+		bool								freeCairoImages=true;
+		unsigned							maxShowing;
+		LFSTK_scrollBarClass				*scrollBar=NULL;
 	private:
-		unsigned				listOffset=0;
-		listData				*data=NULL;
+		unsigned							listOffset=0;
+		listData							*data=NULL;
 
 
 		void					freeList(void);

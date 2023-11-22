@@ -65,7 +65,7 @@ void addGadgets(void)
 				case 's':
 					offset+=8;
 					break;
-				case 'l':
+				case 'L':
 					if(launcherSide==NOLAUNCHERS)
 						{
 							launcherSide=LAUNCHERINLEFT;
@@ -127,7 +127,7 @@ void sanityCheck(void)
 			rcfile<<"panelgrav 2\n";
 			rcfile<<"panelwidth -2\n";
 			rcfile<<"textcolour black\n";
-			rcfile<<"gadgetsleft lC\n";
+			rcfile<<"gadgetsleft LCSD\n";
 			rcfile<<"panelsize 3\n";
 			rcfile<<"termcommand kkterminal -m -l -e \n";
 			rcfile<<"font Arial:size=16\n";
@@ -190,6 +190,7 @@ int main(int argc,char **argv)
 			NET_WM_STATE=XInternAtom(mainwind->app->display,"_NET_WM_STATE",False);
 			NET_WM_NAME=XInternAtom(mainwind->app->display,"_NET_WM_NAME",False);
 			UTF8_STRING=XInternAtom(mainwind->app->display,"UTF8_STRING",False);
+			NET_CURRENT_DESKTOP=XInternAtom(mainwind->app->display,"_NET_CURRENT_DESKTOP",False);
 
 			env=mainwind->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str());
 			key=atoi(env);

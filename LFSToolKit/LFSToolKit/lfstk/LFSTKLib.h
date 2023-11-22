@@ -78,6 +78,8 @@ class LFSTK_lib
 
 //utils
 		char				*LFSTK_cleanString(const char *str);
+		propReturn		LFSTK_getSingleProp(Display *display,Window win,Atom prop,Atom wanttype);
+
 //messaging		
 //debug
 //

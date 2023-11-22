@@ -271,7 +271,7 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 					cc->canMinimize=false;
 					cc->canClose=false;
 
-				fprintf(stderr,">>>>premaphs.mHints->functions & MWM_FUNC_CLOSE=%x MWM_FUNC_CLOSE=%x\n",premaphs.mHints->functions,MWM_FUNC_CLOSE);
+				//fprintf(stderr,">>>>premaphs.mHints->functions & MWM_FUNC_CLOSE=%x MWM_FUNC_CLOSE=%x\n",premaphs.mHints->functions,MWM_FUNC_CLOSE);//TODO//
 					cc->canClose=(premaphs.mHints->functions & MWM_FUNC_CLOSE);
 					//cc->canClose=(premaphs.mHints->decorations & MWM_FUNC_CLOSE);
 					cc->canMaximize=(premaphs.mHints->decorations & MWM_DECOR_MAXIMIZE);
