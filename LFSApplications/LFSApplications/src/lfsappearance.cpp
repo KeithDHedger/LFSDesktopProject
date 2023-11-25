@@ -37,29 +37,29 @@
 
 #define BOXLABEL		"LFS Appearance"
 
-LFSTK_applicationClass	*apc=NULL;
-LFSTK_windowClass		*wc=NULL;
-LFSTK_labelClass		*personal=NULL;
-LFSTK_labelClass		*copyrite=NULL;
-LFSTK_buttonClass		*seperator=NULL;
-LFSTK_buttonClass		*quit=NULL;
-LFSTK_buttonClass		*apply=NULL;
-LFSTK_buttonClass		*update=NULL;
+LFSTK_applicationClass		*apc=NULL;
+LFSTK_windowClass			*wc=NULL;
+LFSTK_labelClass				*personal=NULL;
+LFSTK_labelClass				*copyrite=NULL;
+LFSTK_buttonClass			*seperator=NULL;
+LFSTK_buttonClass			*quit=NULL;
+LFSTK_buttonClass			*apply=NULL;
+LFSTK_buttonClass			*update=NULL;
 
-LFSTK_buttonClass		*launchButton=NULL;
-LFSTK_labelClass		*launchLabel=NULL;
+LFSTK_buttonClass			*launchButton=NULL;
+LFSTK_labelClass				*launchLabel=NULL;
 
-LFSTK_menuClass			*setMenu=NULL;
-LFSTK_buttonClass		*loadSet=NULL;
-LFSTK_lineEditClass		*currentSet=NULL;
+LFSTK_menuClass				*setMenu=NULL;
+LFSTK_buttonClass			*loadSet=NULL;
+LFSTK_lineEditClass			*currentSet=NULL;
 
-LFSTK_lineEditClass		*key=NULL;
+LFSTK_lineEditClass			*key=NULL;
 LFSTK_ExpanderGadgetClass	*multi=NULL;
 
-int						queueID=-1;
+int							queueID=-1;
 
-menuStruct				**groupNameMenuItems=NULL;
-LFSTK_findClass			*find;
+menuStruct					**groupNameMenuItems=NULL;
+LFSTK_findClass				*find;
 
 bool doQuit(void *p,void* ud)
 {
@@ -190,6 +190,12 @@ bool buttonCB(void *p,void* ud)
 			if(strcmp((char*)ud,"PANELPREFS")==0)
 				{
 					asprintf(&command,"%slfspanelprefs &",libpath,wc->window);
+					system(command);
+					free(command);
+				}
+			if(strcmp((char*)ud,"DOCKPREFS")==0)
+				{
+					asprintf(&command,"%slfsdockprefs &",libpath,wc->window);
 					system(command);
 					free(command);
 				}
@@ -350,6 +356,14 @@ int main(int argc, char **argv)
 	launchButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"PANELPREFS");
 	hrs.push_back({BORDER,sy,GADGETWIDTH,GADGETHITE,launchButton});
 	launchLabel=new LFSTK_labelClass(wc,"Launch Panel Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,LEFT);
+	hrs.push_back({BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,launchLabel});
+	sy+=YSPACING;
+
+//dock
+	launchButton=new LFSTK_buttonClass(wc,"Dock Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	launchButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"DOCKPREFS");
+	hrs.push_back({BORDER,sy,GADGETWIDTH,GADGETHITE,launchButton});
+	launchLabel=new LFSTK_labelClass(wc,"Launch Dock Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,LEFT);
 	hrs.push_back({BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,launchLabel});
 	sy+=YSPACING;
 

@@ -32,10 +32,8 @@ int						iconSize=16;
 int						posMultiplier=1;
 
 int						panelSize=2;
-int						panelWidth=-1;
 const monitorStruct		*mons=NULL;
 int						onMonitor=0;
-int						panelPos=PANELCENTRE;
 int						panelGravity=PANELNORTH;
 const char				*panelTextColour="";
 const char				*panelBGColour="";

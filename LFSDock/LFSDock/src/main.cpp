@@ -37,9 +37,7 @@ void loadPrefs(const char *env)
 {
 	prefs.LFSTK_loadVarsFromFile(env);
 	panelSize=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelsize"));
-	panelWidth=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelwidth"));
 	onMonitor=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("onmonitor"));
-	panelPos=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelpos"));
 	panelGravity=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelgrav"));
 	panelTextColour=prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("textcolour"));
 	panelBGColour=prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("panelbgcolour"));
@@ -154,14 +152,9 @@ int main(int argc,char **argv)
 
 	prefs.prefsMap={
 						{prefs.LFSTK_hashFromKey("panelsize"),{TYPEINT,"panelsize","",false,1}},
-						{prefs.LFSTK_hashFromKey("panelwidth"),{TYPEINT,"panelwidth","",false,0}},
 						{prefs.LFSTK_hashFromKey("onmonitor"),{TYPEINT,"onmonitor","",false,0}},
-
-						{prefs.LFSTK_hashFromKey("panelpos"),{TYPEINT,"panelpos","",false,0}},
 						{prefs.LFSTK_hashFromKey("panelgrav"),{TYPEINT,"panelgrav","",false,0}},
-
 						{prefs.LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","black",false,0}},
-
 						{prefs.LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","xterm -e ",false,0}},
 						{prefs.LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","l",false,0}},
 						{prefs.LFSTK_hashFromKey("font"),{TYPESTRING,"font","",false,0}},
@@ -173,7 +166,6 @@ int main(int argc,char **argv)
 
 	while(realMainLoop==true)
 		{
-			panelPos=PANELCENTRE;
 			apc=new LFSTK_applicationClass();
 			apc->LFSTK_addWindow(NULL,NULL);
 
@@ -246,35 +238,11 @@ int main(int argc,char **argv)
 					case PANELSOUTH:
 						py=mons->y+mons->h-iconSize;
 					case PANELNORTH:
-						switch(panelWidth)
-							{
-								case PANELFULL:
-									panelWidth=mons->w;
-									panelPos=PANELLEFT;
-									break;
-								case PANELSHRINK:
-									panelWidth=psize;
-									break;
-							}
-						switch(panelPos)
-							{
-								case PANELLEFT:
-									px=mons->x;
-									break;
-								case PANELCENTRE:
-									px=((mons->w/2)-(psize/2))+mons->x;
-									break;
-								case PANELRIGHT:
-									px=mons->x+mons->w-psize;
-									break;
-								default:
-									px=panelPos;
-									break;
-							}
+						px=((mons->w/2)-(psize/2))+mons->x;
 						break;
 				}
 
-			mainwind->LFSTK_resizeWindow(panelWidth,iconSize+extraSpace,true);
+			mainwind->LFSTK_resizeWindow(psize,iconSize+extraSpace,true);
 			if(posMultiplier==1)
 				mainwind->LFSTK_moveWindow(px,py-extraSpace,true);
 			else

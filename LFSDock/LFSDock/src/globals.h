@@ -71,10 +71,8 @@ extern int						iconSize;
 extern int						posMultiplier;
 
 extern int						panelSize;
-extern int						panelWidth;
 extern const monitorStruct		*mons;
 extern int						onMonitor;
-extern int						panelPos;
 extern int						panelGravity;
 extern const char				*panelTextColour;
 extern const char				*panelBGColour;
