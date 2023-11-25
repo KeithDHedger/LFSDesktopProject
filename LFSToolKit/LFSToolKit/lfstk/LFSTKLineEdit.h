@@ -37,48 +37,49 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		~LFSTK_lineEditClass();
 		LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity=BUTTONGRAV);
 
-		void				LFSTK_clearWindow(void);
-		void				LFSTK_resizeWindow(int w,int h);
+		void					LFSTK_clearWindow(void);
+		void					LFSTK_resizeWindow(int w,int h);
 
-		const std::string	*LFSTK_getBuffer(void);
-		void				LFSTK_setBuffer(const char *str);
+		std::string	LFSTK_getBuffer(void);
+		void					LFSTK_setBuffer(const char *str);
 		const char			*LFSTK_getCStr(void);
 
-		void				LFSTK_setCallbackOnReturn(bool onreturn);
-		bool				LFSTK_getCallbackOnReturn(void);
+		void					LFSTK_setCallbackOnReturn(bool onreturn);
+		bool					LFSTK_getCallbackOnReturn(void);
 
-		bool				mouseDown(XButtonEvent *e);
-		bool				keyRelease(XKeyEvent *e);
-		bool				lostFocus(XEvent *e);
-		bool				gotFocus(XEvent *e);
-		bool				clientMessage(XEvent *e);
-		void				LFSTK_setFocus(void);
+		bool					mouseDown(XButtonEvent *e);
+		bool					keyRelease(XKeyEvent *e);
+		bool					lostFocus(XEvent *e);
+		bool					gotFocus(XEvent *e);
+		bool					clientMessage(XEvent *e);
+		void					LFSTK_setFocus(void);
 
-		void				LFSTK_dropData(propertyStruct* data);
-		void				LFSTK_setFormatedText(const char *txt,bool replace);
-		void				LFSTK_setCursorColourName(const char* colour);
+		void					LFSTK_dropData(propertyStruct* data);
+		void					LFSTK_setFormatedText(const char *txt,bool replace);
+		void					LFSTK_setCursorColourName(const char* colour);
+		std::string			LFSTK_getCursorColourName(void);
 
 		KeySym				LFSTK_getKey(void);
-		unsigned int		LFSTK_getModifier(void);
+		unsigned int			LFSTK_getModifier(void);
 		const char			*LFSTK_getKeySym(void);
 
 	protected:
-		colourStruct		cursorColour={NULL,0,{0.0,0.0,0.0,0.8}};
+		colourStruct			cursorColour={"",false,0,{0,0,0,0.8}};
 		double				charWidth;
-		bool				startUpMDFlag=false;
-		bool				callbackOnReturn=true;
+		bool					startUpMDFlag=false;
+		bool					callbackOnReturn=true;
 	
 	private:
-		void				drawLabel(void);
-		void				getClip(void);
-		void				setOffsetcurs(int step);
+		void					drawLabel(void);
+		void					getClip(void);
+		void					setOffsetcurs(int step);
 		std::string			buffer;
 		int					cursorPos=0;
 		int					visCursorPos=0;
-		bool				isFocused=false;
+		bool					isFocused=false;
 		int					offsetCurs=0;
 		KeySym				keysym_return;
-		unsigned int		state;
+		unsigned int			state;
 
 //contxt window
 		LFSTK_windowClass	*editWindow=NULL;

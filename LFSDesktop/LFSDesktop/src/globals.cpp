@@ -78,7 +78,8 @@ void createDesktopGadget(LFSTK_windowClass *window)
 	cf.item->LFSTK_setContextWindow(window);
 
 	cf.item->LFSTK_setLabelAutoColour(false);
-	cf.item->LFSTK_setFontColourName(NORMALCOLOUR,foreCol,false);
+	//cf.item->LFSTK_setFontColourName(NORMALCOLOUR,foreCol,false);
+	cf.item->newGadgetFGColours[NORMALCOLOUR]=cf.item->LFSTK_setColour(foreCol);
 	cf.item->LFSTK_setLabelBGColour(backCol,strtod(backAlpha,NULL));
 	cf.item->LFSTK_setFontString(fontFace,true);
 	cf.item->drawLabelBG=true;

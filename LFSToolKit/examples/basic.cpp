@@ -223,6 +223,7 @@ int main(int argc, char **argv)
 
 //left
 	leftButton=new LFSTK_buttonClass(wc,"Label Left",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE);
+//	leftButton->LFSTK_setGadgetColourPair(NORMALCOLOUR,"#000000","red");
 	leftButton->LFSTK_setLabelGravity(LEFT);
 	leftButton->LFSTK_setKeyCallBack(NULL,keyCB,USERDATA("Key Left"));
 	leftButton->LFSTK_setMouseCallBack(NULL,mouseCB,USERDATA("Left"));

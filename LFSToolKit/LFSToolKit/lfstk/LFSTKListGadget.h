@@ -63,17 +63,20 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		void								LFSTK_appendToList(listLabelStruct data);
 		void								LFSTK_selectByIndex(int index);
 		int								LFSTK_findByLabel(const char *needle,bool select=true);
-
+		
 		bool								mouseExit(XButtonEvent *e) {return(true);};
 		bool								mouseEnter(XButtonEvent *e) {XSetInputFocus(this->wc->app->display,this->window,RevertToParent,CurrentTime);return(true);};
-		bool								mouseDown(XButtonEvent *e) {return(true);};//{XSetInputFocus(this->wc->app->display,this->window,RevertToParent,CurrentTime);return(true);};
+		bool								mouseDown(XButtonEvent *e) {return(true);};
 		bool								mouseUp(XButtonEvent *e);
 		bool								keyRelease(XKeyEvent *e);
 
 		void								LFSTK_resetListHeight(int newheight);
+		int								LFSTK_getListMaxWidth(void);
 
 		unsigned							listCntNew=0;
 		int								currentItem=0;
+
+		void								LFSTK_setListItemsColours(gadgetColourType type,std::string normal,std::string prelight,std::string active,std::string inactive);
 
 		std::vector <LFSTK_buttonClass*>	*labelsArray;
 		std::vector <listLabelStruct>	*listDataArray;
@@ -85,16 +88,15 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		unsigned							listOffset=0;
 		listData							*data=NULL;
 
+		void								freeList(void);
+		void 							setCurrentItem(int item);
+		void								setNavSensitive(void);
 
-		void					freeList(void);
-		void 					setCurrentItem(int item);
-		void					setNavSensitive(void);
-
-		static bool				select(void *object,void* userdata);
-		static bool				setFocusToList(void *object,void* userdata);
-		static bool				selectKey(void *object,void* userdata);
-		static bool				scrollCB(void *object,void* userdata);
-		static bool				scrollListCB(void *object,void* userdata);
+		static bool						select(void *object,void* userdata);
+		static bool						setFocusToList(void *object,void* userdata);
+		static bool						selectKey(void *object,void* userdata);
+		static bool						scrollCB(void *object,void* userdata);
+		static bool						scrollListCB(void *object,void* userdata);
 };
 
 #endif

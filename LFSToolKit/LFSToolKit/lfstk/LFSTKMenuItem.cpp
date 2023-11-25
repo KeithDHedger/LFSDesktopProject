@@ -61,15 +61,17 @@ LFSTK_menuItemClass::LFSTK_menuItemClass(LFSTK_toolWindowClass* parentwc,LFSTK_m
 	else
 		this->useTile=false;
 
-	for(int j=0;j<MAXCOLOURS;j++)
-		this->LFSTK_setFontColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEMFONTCOLOUR),false);
+	this->LFSTK_setGadgetColours(GADGETBG,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEMENUITEM),
+										this->wc->globalLib->LFSTK_getGlobalString(PRELIGHTCOLOUR,TYPEMENUITEM),
+										this->wc->globalLib->LFSTK_getGlobalString(ACTIVECOLOUR,TYPEMENUITEM),
+										this->wc->globalLib->LFSTK_getGlobalString(INACTIVECOLOUR,TYPEMENUITEM));
 
-	this->LFSTK_setFontString(this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEMENUITEMFONT),true);
+	this->LFSTK_setGadgetColours(GADGETFG,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEMENUITEMFONTCOLOUR),
+										this->wc->globalLib->LFSTK_getGlobalString(PRELIGHTCOLOUR,TYPEMENUITEMFONTCOLOUR),
+										this->wc->globalLib->LFSTK_getGlobalString(ACTIVECOLOUR,TYPEMENUITEMFONTCOLOUR),
+										this->wc->globalLib->LFSTK_getGlobalString(INACTIVECOLOUR,TYPEMENUITEMFONTCOLOUR));
 
-	for(int j=0;j<MAXCOLOURS;j++)
-		this->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEM));
-
-	gadgetDetails= {&this->colourNames[NORMALCOLOUR],BEVELNONE,DISCLOSURE,NORMALCOLOUR,0,true,{0,0,w,h},{(int)(w-TRIANGLESIZE-(this->pad*2)),(int)((h/2)-(TRIANGLESIZE/2)+(this->pad/2)),TRIANGLESIZE,TRIANGLESIZE},menu->hasSubMenu,false,true};
+	gadgetDetails= {&this->newGadgetBGColours.at(NORMALCOLOUR),BEVELNONE,DISCLOSURE,NORMALCOLOUR,0,true,{0,0,w,h},{(int)(w-TRIANGLESIZE-(this->pad*2)),(int)((h/2)-(TRIANGLESIZE/2)+(this->pad/2)),TRIANGLESIZE,TRIANGLESIZE},menu->hasSubMenu,false,true};
 	this->LFSTK_setLabelGravity(labelgrav);
 	this->menuData=menu;
 	this->menu=mainmenu;
@@ -92,7 +94,7 @@ bool LFSTK_menuItemClass::mouseExit(XButtonEvent *e)
 	if(strcmp(this->label,"--")==0)
 		return(true);;
 
-	this->gadgetDetails.colour=&this->colourNames[NORMALCOLOUR];
+	this->gadgetDetails.colour=&this->newGadgetBGColours.at(NORMALCOLOUR);
 	this->gadgetDetails.state=NORMALCOLOUR;
 	this->gadgetDetails.bevel=BEVELOUT;
 	this->LFSTK_clearWindow();
@@ -180,7 +182,8 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 	if(strcmp(this->label,"--")==0)
 		return(true);
 
-	this->gadgetDetails.colour=&this->colourNames[PRELIGHTCOLOUR];
+	//this->gadgetDetails.colour=&this->colourNames[PRELIGHTCOLOUR];
+	this->gadgetDetails.colour=&this->newGadgetBGColours.at(PRELIGHTCOLOUR);
 	this->gadgetDetails.state=PRELIGHTCOLOUR;
 	this->gadgetDetails.bevel=BEVELOUT;
 	this->LFSTK_clearWindow();
@@ -206,8 +209,6 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 								gotsubmenu=GADGETHITE;
 							if(this->menuData->subMenus[j]->imageType!=NOTHUMB)
 								gotthumb=MENU;
-							//if(strcmp(this->menuData->subMenus[j]->label,"--")==0)
-							//	winshrink+=(GADGETHITE-SEPARATORHITE);
 						}
 					if(gotthumb==MENU)
 						maxtxtwid+=GADGETHITE+gotsubmenu;
@@ -219,8 +220,6 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 					for(int j=0; j<this->menuData->subMenuCnt; j++)
 						{
 							hite=GADGETHITE;
-							//if(strcmp(this->menuData->subMenus[j]->label,"--")==0)
-							//	hite=SEPARATORHITE;
 
 							label=new LFSTK_menuItemClass(this->subwc,this->menu,0,sy,maxtxtwid,hite,this->menuData->subMenus[j],gotthumb);
 							label->LFSTK_setMouseCallBack(this->callBacks.mousePressCallback,this->callBacks.mouseReleaseCallback,this->menuData->subMenus[j]->userData);

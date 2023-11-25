@@ -35,29 +35,20 @@ LFSTK_gadgetClass::~LFSTK_gadgetClass()
 	if(this->isMapped==true)
 		this->LFSTK_reParentWindow(this->wc->window,0,0);
 
+//TODO//
 	for(int j=NORMALCOLOUR;j<MAXCOLOURS;j++)
 		{
-			if(this->fontColourNames[j].name!=NULL)
-				{
-					free(this->fontColourNames[j].name);
-					XFreeColors(this->wc->app->display,this->wc->app->cm,(long unsigned int*)&this->fontColourNames[j].pixel,1,0);
-				}
-
-			if(this->colourNames[j].name!=NULL)
-				{
-					free(this->colourNames[j].name);
-					XFreeColors(this->wc->app->display,this->wc->app->cm,(long unsigned int*)&this->colourNames[j].pixel,1,0);
-				}
+			if(this->newGadgetFGColours.at(j).isValid==true)
+				XFreeColors(this->wc->app->display,this->wc->app->cm,(long unsigned int*)&this->newGadgetFGColours.at(j).pixel,1,0);
+			if(this->newGadgetBGColours.at(j).isValid==true)
+				XFreeColors(this->wc->app->display,this->wc->app->cm,(long unsigned int*)&this->newGadgetBGColours.at(j).pixel,1,0);
 		}
 
 	if(this->fontString!=NULL)
 		free(this->fontString);
 
-	if(this->labelBGColour.name!=NULL)
-		{
-			free(this->labelBGColour.name);
-			XFreeColors(this->wc->app->display,this->wc->app->cm,(long unsigned int*)&this->labelBGColour.pixel,1,0);
-		}
+	if(this->labelBGColour.isValid==true)
+		XFreeColors(this->wc->app->display,this->wc->app->cm,(long unsigned int*)&this->labelBGColour.pixel,1,0);
 
 	cairo_destroy(this->cr);
 
@@ -84,55 +75,6 @@ LFSTK_gadgetClass::~LFSTK_gadgetClass()
 LFSTK_gadgetClass::LFSTK_gadgetClass()
 {
 	pad=2;
-}
-
-/**
-* Set the colour name for font.
-* \param p Font state.
-* \param colour Colour name.
-* \param bool usewindow Use window colour.
-* \note state is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2,INACTIVECOLOUR=3.
-* \note font colour based on window or button back colour.
-*/
-void LFSTK_gadgetClass::LFSTK_setFontColourName(int p,const char* colour,bool usewindow)
-{
-	XColor			tc;
-	XColor			sc;
-	colourStruct	col=this->colourNames[p];
-
-	if(this->fontColourNames[p].name!=NULL)
-		free(this->fontColourNames[p].name);
-	this->fontColourNames[p].name=strdup(colour);
-	XAllocNamedColor(this->wc->app->display,this->wc->app->cm,colour,&sc,&tc);
-	this->fontColourNames[p].pixel=tc.pixel;
-
-	if(usewindow==true)
-		col=this->wc->windowColourNames[0];//TODO//
-
-	if((this->autoLabelColour==true) && (p!=INACTIVECOLOUR))
-		{
-			if(strcmp(this->wc->globalLib->bestFontColour(col.pixel),"black")==0)
-				{
-					this->fontColourNames[p].RGBAColour.r=0.0;
-					this->fontColourNames[p].RGBAColour.g=0.0;
-					this->fontColourNames[p].RGBAColour.b=0.0;
-					this->fontColourNames[p].RGBAColour.a=1.0;
-				}
-			else
-				{
-					this->fontColourNames[p].RGBAColour.r=1.0;
-					this->fontColourNames[p].RGBAColour.g=1.0;
-					this->fontColourNames[p].RGBAColour.b=1.0;
-					this->fontColourNames[p].RGBAColour.a=1.0;
-				}
-		}
-	else
-		{
-			this->fontColourNames[p].RGBAColour.r=((this->fontColourNames[p].pixel>>16) & 0xff)/256.0;
-			this->fontColourNames[p].RGBAColour.g=((this->fontColourNames[p].pixel>>8) & 0xff)/256.0;
-			this->fontColourNames[p].RGBAColour.b=((this->fontColourNames[p].pixel>>0) & 0xff)/256.0;
-			this->fontColourNames[p].RGBAColour.a=1.0;
-		}
 }
 
 /**
@@ -180,55 +122,6 @@ void LFSTK_gadgetClass::LFSTK_setLabelBGColour(const char* colour,double alpha)
 }
 
 /**
-* Set the colour name for gadget.
-* \param p Gadget state.
-* \param colour Colour name.
-* \note State is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2,INACTIVECOLOUR=3.
-* \note Alpha of colour is set to alpha of window normal, unless specifically set.
-*/
-void LFSTK_gadgetClass::LFSTK_setColourName(int p,const char* colour)
-{
-	XColor		tc,sc;
-	std::string	str=colour;
-	int			alphaint=-1;
-
-	if(this->colourNames[p].name!=NULL)
-		free(this->colourNames[p].name);
-
-	this->colourNames[p].name=strdup(colour);
-
-	if(str.at(0)=='#')
-		{
-			if(str.length()>7)
-				{
-					alphaint=std::stoi (str.substr(1,2),nullptr,16);
-					str.erase(str.begin()+1,str.begin()+3);
-				}
-		}
-
-	XAllocNamedColor(this->wc->app->display,this->wc->app->cm,str.c_str(),&sc,&tc);
-	this->colourNames[p].pixel=sc.pixel;
-
-	this->colourNames[p].RGBAColour.r=((this->colourNames[p].pixel>>16) & 0xff)/256.0;
-	this->colourNames[p].RGBAColour.g=((this->colourNames[p].pixel>>8) & 0xff)/256.0;
-	this->colourNames[p].RGBAColour.b=((this->colourNames[p].pixel>>0) & 0xff)/256.0;
-
-	if(alphaint!=-1)
-		this->colourNames[p].RGBAColour.a=alphaint/256.0;
-	else
-		this->colourNames[p].RGBAColour.a=this->wc->windowColourNames[NORMALCOLOUR].RGBAColour.a;
-//	
-//
-//if(p==PRELIGHTCOLOUR)
-//{
-//fprintf(stderr,"window alpha=%f\n",this->wc->windowColourNames[p].RGBAColour.a);
-//	fprintf(stderr,"r=%f g=%f b=%f a=%f\n",this->colourNames[p].RGBAColour.r,this->colourNames[p].RGBAColour.g,this->colourNames[p].RGBAColour.b,this->colourNames[p].RGBAColour.a);
-//		std::cout<<"str="<<str<<" alpha="<<alphaint<<std::endl;
-//fprintf(stderr,"clstring=%s\n",colour);
-//}
-}
-
-/**
 * Get the colour name for gadget.
 * \param p Gadget state.
 * \return colour Const colour name.
@@ -237,26 +130,25 @@ void LFSTK_gadgetClass::LFSTK_setColourName(int p,const char* colour)
 */
 const char* LFSTK_gadgetClass::LFSTK_getColourName(int p)
 {
-	return(this->colourNames[p].name);
+	return(newGadgetBGColours.at(p).name.c_str());
 }
 
 //needs re vamping
 void LFSTK_gadgetClass::initGadget(void)
 {
-	for(int j=0;j<MAXCOLOURS;j++)
-		this->fontColourNames[j].name=NULL;
-
-	for(int j=0;j<MAXCOLOURS;j++)
-		this->colourNames[j].name=NULL;
-
 	this->fontString=NULL;
 	this->autoLabelColour=this->wc->autoLabelColour;
 
-	for(int j=0;j<MAXCOLOURS;j++)
-		this->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON));
+	this->LFSTK_setGadgetColours(GADGETBG,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEBUTTON),
+										this->wc->globalLib->LFSTK_getGlobalString(PRELIGHTCOLOUR,TYPEBUTTON),
+										this->wc->globalLib->LFSTK_getGlobalString(ACTIVECOLOUR,TYPEBUTTON),
+										this->wc->globalLib->LFSTK_getGlobalString(INACTIVECOLOUR,TYPEBUTTON));
 
-	for(int j=0;j<MAXCOLOURS;j++)
-		this->LFSTK_setFontColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEFONTCOLOUR),false);
+	this->LFSTK_setGadgetColours(GADGETFG,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEFONTCOLOUR),
+										this->wc->globalLib->LFSTK_getGlobalString(PRELIGHTCOLOUR,TYPEFONTCOLOUR),
+										this->wc->globalLib->LFSTK_getGlobalString(ACTIVECOLOUR,TYPEFONTCOLOUR),
+										this->wc->globalLib->LFSTK_getGlobalString(INACTIVECOLOUR,TYPEFONTCOLOUR));
+
 
 	this->LFSTK_setFontString(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEFONT));
 	this->monoFontString=this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMONOFONT);
@@ -325,7 +217,6 @@ void LFSTK_gadgetClass::LFSTK_setKeyCallBack(bool (*downcb)(void *,void*),bool (
 	this->callBacks.keyReleaseCallback=releasecb;
 	this->callBacks.keyUserData=ud;
 	this->callBacks.runTheCallback=true;
-//	this->callBacks.ignoreOrphanModKeys=true;
 }
 
 /**
@@ -367,7 +258,6 @@ void LFSTK_gadgetClass::LFSTK_setMouseMoveCallBack(bool (*entercb)(LFSTK_gadgetC
 	this->callBacks.mouseExitCallback=exitcb;
 	this->callBacks.mouseMoveUserData=ud;
 	this->callBacks.runTheCallback=true;
-//	this->callBacks.ignoreOrphanModKeys=true;
 }
 
 /**
@@ -459,7 +349,7 @@ void LFSTK_gadgetClass::clearBox(gadgetStruct* details)
 		}
 
 	if(this->isActive==false)
-		details->colour=&this->colourNames[INACTIVECOLOUR];
+		details->colour=&newGadgetBGColours.at(INACTIVECOLOUR);
 
 	if(this->isTransparent==true)
 		details->colour=&this->wc->windowColourNames[NORMALCOLOUR];
@@ -614,7 +504,7 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 					{
 						if(this->autoLabelBGColour==true)
 							{
-								if(strcmp(this->wc->globalLib->bestFontColour(this->fontColourNames[details->state].pixel),"black")==0)
+								if(strcmp(this->wc->globalLib->bestFontColour(this->newGadgetFGColours.at(details->state).pixel),"black")==0)
 									{
 										lcol.r=0;
 										lcol.g=0;
@@ -638,7 +528,7 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 					}		
 
 				cairo_move_to(this->cr,labelx,labely);
-				cairo_set_source_rgba(this->cr,this->fontColourNames[details->state].RGBAColour.r,this->fontColourNames[details->state].RGBAColour.g,this->fontColourNames[details->state].RGBAColour.b,1.0);
+				cairo_set_source_rgba(this->cr,this->newGadgetFGColours.at(details->state).RGBAColour.r,this->newGadgetFGColours.at(details->state).RGBAColour.g,this->newGadgetFGColours.at(details->state).RGBAColour.b,1.0);
 				cairo_show_text(this->cr,this->label); 
 			cairo_restore(this->cr);
 		}
@@ -743,7 +633,7 @@ bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 	if(strcmp(this->label,"--")==0)
 		return(true);;
 
-	this->gadgetDetails.colour=&this->colourNames[NORMALCOLOUR];
+	this->gadgetDetails.colour=&this->newGadgetBGColours.at(NORMALCOLOUR);
 	this->gadgetDetails.state=NORMALCOLOUR;
 	this->selectBevel(false);
 	this->LFSTK_clearWindow();
@@ -782,7 +672,7 @@ bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 	if(strcmp(this->label,"--")==0)
 		return(true);;
 
-	this->gadgetDetails.colour=&this->colourNames[ACTIVECOLOUR];
+	this->gadgetDetails.colour=&this->newGadgetBGColours.at(ACTIVECOLOUR);
 	this->gadgetDetails.state=ACTIVECOLOUR;
 	this->selectBevel(true);
 	this->LFSTK_clearWindow();
@@ -814,7 +704,7 @@ bool LFSTK_gadgetClass::mouseExit(XButtonEvent *e)
 	if(strcmp(this->label,"--")==0)
 		return(true);;
 
-	this->gadgetDetails.colour=&this->colourNames[NORMALCOLOUR];
+	this->gadgetDetails.colour=&this->newGadgetBGColours.at(NORMALCOLOUR);
 	this->gadgetDetails.state=NORMALCOLOUR;
 	this->LFSTK_clearWindow();
 	this->inWindow=false;
@@ -846,7 +736,7 @@ bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 	if(strcmp(this->label,"--")==0)
 		return(true);
 
-	this->gadgetDetails.colour=&this->colourNames[PRELIGHTCOLOUR];
+	this->gadgetDetails.colour=&this->newGadgetBGColours.at(PRELIGHTCOLOUR);
 	this->gadgetDetails.state=PRELIGHTCOLOUR;
 	this->LFSTK_clearWindow();
 	this->inWindow=true;
@@ -1019,7 +909,6 @@ void LFSTK_gadgetClass::drawImage()
 	cairo_save(this->cr);
 		cairo_reset_clip (this->cr);
 		cairo_translate(this->cr,xoffset,yoffset);
-//		cairo_scale(this->cr,this->imageXextraScale,this->imageYextraScale);
 		cairo_set_source_surface(this->cr,this->cImage,0,0);
 		cairo_set_operator(this->cr,CAIRO_OPERATOR_OVER);
 		cairo_paint_with_alpha(this->cr,this->alpha);
@@ -1140,7 +1029,6 @@ int LFSTK_gadgetClass::LFSTK_getTextWidth(const char* text)
 	cairo_restore(this->cr);
 	return((int)returnextents.x_advance);
 }
-
 
 /**
 * Get height of text.
@@ -1280,10 +1168,25 @@ void LFSTK_gadgetClass::LFSTK_getGeom(geometryStruct *geom)
 */
 void LFSTK_gadgetClass::LFSTK_reloadColours(void)
 {
-	for(int j=0;j<MAXCOLOURS;j++)
-		this->LFSTK_setFontColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEFONTCOLOUR),false);
-	for(int j=0;j<MAXCOLOURS;j++)
-		this->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON));
+//TODO//
+	for(int j=NORMALCOLOUR;j<MAXCOLOURS;j++)
+		{
+			if(this->newGadgetFGColours.at(j).isValid==true)
+				XFreeColors(this->wc->app->display,this->wc->app->cm,(long unsigned int*)&this->newGadgetFGColours.at(j).pixel,1,0);
+			if(this->newGadgetBGColours.at(j).isValid==true)
+				XFreeColors(this->wc->app->display,this->wc->app->cm,(long unsigned int*)&this->newGadgetBGColours.at(j).pixel,1,0);
+		}
+
+	this->LFSTK_setGadgetColours(GADGETBG,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEBUTTON),
+										this->wc->globalLib->LFSTK_getGlobalString(PRELIGHTCOLOUR,TYPEBUTTON),
+										this->wc->globalLib->LFSTK_getGlobalString(ACTIVECOLOUR,TYPEBUTTON),
+										this->wc->globalLib->LFSTK_getGlobalString(INACTIVECOLOUR,TYPEBUTTON));
+
+	this->LFSTK_setGadgetColours(GADGETFG,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEFONTCOLOUR),
+										this->wc->globalLib->LFSTK_getGlobalString(PRELIGHTCOLOUR,TYPEFONTCOLOUR),
+										this->wc->globalLib->LFSTK_getGlobalString(ACTIVECOLOUR,TYPEFONTCOLOUR),
+										this->wc->globalLib->LFSTK_getGlobalString(INACTIVECOLOUR,TYPEFONTCOLOUR));
+
 	this->LFSTK_setFontString(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEFONT));
 	this->autoLabelColour=this->wc->autoLabelColour;
 }
@@ -1304,7 +1207,7 @@ void LFSTK_gadgetClass::drawIndicator(gadgetStruct* details)
 			case CHECK:
 				cairo_save(this->cr);
 					cairo_reset_clip (this->cr);
-					cairo_set_source_rgba(this->cr,this->colourNames[details->state].RGBAColour.r,colourNames[details->state].RGBAColour.g,colourNames[details->state].RGBAColour.b,colourNames[details->state].RGBAColour.a);
+					cairo_set_source_rgba(this->cr,this->newGadgetBGColours.at(details->state).RGBAColour.r,this->newGadgetBGColours.at(details->state).RGBAColour.g,this->newGadgetBGColours.at(details->state).RGBAColour.b,this->newGadgetBGColours.at(details->state).RGBAColour.a);
 					cairo_rectangle(this->cr,details->indicatorGeom.x,details->indicatorGeom.y,details->indicatorGeom.w,details->indicatorGeom.h);
 					cairo_fill(this->cr);
 
@@ -1335,8 +1238,7 @@ void LFSTK_gadgetClass::drawIndicator(gadgetStruct* details)
 					cairo_reset_clip (this->cr);
 					cairo_set_antialias (this->cr,CAIRO_ANTIALIAS_NONE);
 				cairo_set_line_width(this->cr,1.0);
-
-					cairo_set_source_rgba(this->cr,this->fontColourNames[details->state].RGBAColour.r,fontColourNames[details->state].RGBAColour.g,fontColourNames[details->state].RGBAColour.b,fontColourNames[details->state].RGBAColour.a);
+					cairo_set_source_rgba(this->cr,this->newGadgetFGColours.at(details->state).RGBAColour.r,this->newGadgetFGColours.at(details->state).RGBAColour.g,this->newGadgetFGColours.at(details->state).RGBAColour.b,this->newGadgetFGColours.at(details->state).RGBAColour.a);
 					cairo_move_to(this->cr,details->indicatorGeom.x,(details->gadgetGeom.h/2)-(details->indicatorGeom.h/2));
 					cairo_line_to(this->cr,details->indicatorGeom.x+details->indicatorGeom.w,details->gadgetGeom.h/2);
 					cairo_line_to(this->cr,details->indicatorGeom.x,details->indicatorGeom.y+details->indicatorGeom.h);
@@ -1391,7 +1293,7 @@ void LFSTK_gadgetClass::drawBox(geometryStruct* g,gadgetState state,bevelType be
 		}
 	cairo_save(this->cr);
 		cairo_reset_clip (this->cr);
-		cairo_set_source_rgba(this->cr,this->colourNames[state].RGBAColour.r,this->colourNames[state].RGBAColour.g,this->colourNames[state].RGBAColour.b,this->colourNames[state].RGBAColour.a);
+		cairo_set_source_rgba(this->cr,this->newGadgetBGColours.at(state).RGBAColour.r,this->newGadgetBGColours.at(state).RGBAColour.g,this->newGadgetBGColours.at(state).RGBAColour.b,this->newGadgetBGColours.at(state).RGBAColour.a);
 		cairo_paint(this->cr);
 
 		if(bevel!=BEVELNONE)
@@ -1916,4 +1818,111 @@ void LFSTK_gadgetClass::LFSTK_setCallBacks(callbackStruct cbs)
 void LFSTK_gadgetClass::LFSTK_setStyle(bevelType s)
 {
 	this->style=s;
+}
+
+/**
+* Set a colour name.
+* \param colour Colour name.
+* \note Alpha of colour is set to alpha of window normal, unless specifically set.
+* \return A populated colourStruct.
+*/
+colourStruct LFSTK_gadgetClass::LFSTK_setColour(std::string colour)
+{
+	XColor		tc,sc;
+	std::string	str=colour;
+	int			alphaint=-1;
+	colourStruct	cs;
+
+	cs.name=colour;
+
+	if(cs.name.at(0)=='#')
+		{
+			if(cs.name.length()>7)
+				{
+					alphaint=std::stoi (cs.name.substr(1,2),nullptr,16);
+					cs.name.erase(cs.name.begin()+1,cs.name.begin()+3);
+				}
+		}
+
+	if(XAllocNamedColor(this->wc->app->display,this->wc->app->cm,cs.name.c_str(),&sc,&tc)!=0)
+		{
+			cs.pixel=sc.pixel;
+			cs.RGBAColour.r=((cs.pixel>>16) & 0xff)/256.0;
+			cs.RGBAColour.g=((cs.pixel>>8) & 0xff)/256.0;
+			cs.RGBAColour.b=((cs.pixel>>0) & 0xff)/256.0;
+
+			if(alphaint!=-1)
+				cs.RGBAColour.a=alphaint/256.0;
+			else
+				cs.RGBAColour.a=this->wc->windowColourNames[NORMALCOLOUR].RGBAColour.a;
+			cs.isValid=true;
+		}
+	else
+		cs.isValid=false;
+
+	return(cs);
+}
+
+/**
+* Set gadget colours.
+* \param gadgetColourType Colour type GADGETBG GADGETFG.
+* \param std::string normal Colour name (eg "grey", "#80ff00ff").
+* \param std::string prelight		"
+* \param std::string active			"
+* \param std::string inactive		"
+*/
+void LFSTK_gadgetClass::LFSTK_setGadgetColours(gadgetColourType type,std::string normal,std::string prelight,std::string active,std::string inactive)
+{
+	colourStruct	cs;
+
+	if(type==GADGETBG)
+		{
+			this->newGadgetBGColours[NORMALCOLOUR]=this->LFSTK_setColour(normal);
+			this->newGadgetBGColours[PRELIGHTCOLOUR]=this->LFSTK_setColour(prelight);
+			this->newGadgetBGColours[ACTIVECOLOUR]=this->LFSTK_setColour(active);
+			this->newGadgetBGColours[INACTIVECOLOUR]=this->LFSTK_setColour(inactive);
+		}
+	else
+		{
+
+			this->newGadgetFGColours[INACTIVECOLOUR]=this->LFSTK_setColour(inactive);
+
+			if(this->autoLabelColour==false)
+				{
+					this->newGadgetFGColours[NORMALCOLOUR]=this->LFSTK_setColour(normal);
+					this->newGadgetFGColours[PRELIGHTCOLOUR]=this->LFSTK_setColour(prelight);
+					this->newGadgetFGColours[ACTIVECOLOUR]=this->LFSTK_setColour(active);
+				}
+			else
+				{
+					for(int j=0;j<3;j++)
+						{
+							if(strcmp(this->wc->globalLib->bestFontColour(this->newGadgetBGColours.at(j).pixel),"black")==0)
+								this->newGadgetFGColours[j]=this->LFSTK_setColour("black");
+							else
+								this->newGadgetFGColours[j]=this->LFSTK_setColour("white");
+						}
+				}
+		}
+}
+
+/**
+* Set pair of gadget colours bg/fg.
+* \param gadgetState state NORMALCOLOUR etc.
+* \param std::string back Colour BG name (eg "grey", "#80ff00ff").
+* \param std::string fore Colour FG name (eg "grey", "#80ff00ff").
+* \note will set auto colour FG if set.
+*/
+void LFSTK_gadgetClass::LFSTK_setGadgetColourPair(gadgetState state,std::string back,std::string fore)
+{
+	this->newGadgetBGColours[state]=this->LFSTK_setColour(back);
+	if(this->autoLabelColour==false)
+		this->newGadgetFGColours[state]=this->LFSTK_setColour(fore);
+	else
+		{
+			if(strcmp(this->wc->globalLib->bestFontColour(this->newGadgetBGColours.at(state).pixel),"black")==0)
+				this->newGadgetFGColours[state]=this->LFSTK_setColour("black");
+			else
+				this->newGadgetFGColours[state]=this->LFSTK_setColour("white");
+		}
 }

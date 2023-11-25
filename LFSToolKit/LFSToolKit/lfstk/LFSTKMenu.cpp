@@ -126,7 +126,6 @@ void LFSTK_menuClass::resizeMenu(void)
 			this->menuHeight=regetmenh;
 			sy=0;
 			this->mainMenuWindow->LFSTK_resizeWindow(this->w,this->menuHeight,true);
-			//this->mainMenuWindow->LFSTK_resizeWindow(400,this->menuHeight,true);
 			for (std::map<int,mappedListener*>::iterator it=this->mainMenuWindow->gadgetMap.begin();it!=this->mainMenuWindow->gadgetMap.end();++it)
 				{
 					mappedListener	*ml=it->second;
@@ -302,7 +301,7 @@ bool LFSTK_menuClass::menuScroll(void *object,void* userdata)
 			for (std::map<int,mappedListener*>::iterator it=menuc->mainMenuWindow->gadgetMap.begin();it!=menuc->mainMenuWindow->gadgetMap.end();++it)
 				{
 					mappedListener	*ml=it->second;
-					if((ml!=NULL) && (ml->type==MENUITEMGADGET))// && (ml->gadget==gadget))
+					if((ml!=NULL) && (ml->type==MENUITEMGADGET))
 						{
 							ml->gadget->LFSTK_getGeom(&geom);
 							ml->gadget->LFSTK_moveGadget(geom.x,cnt+(GADGETHITE/2));
@@ -313,7 +312,7 @@ bool LFSTK_menuClass::menuScroll(void *object,void* userdata)
 			for (std::map<int,mappedListener*>::iterator it=menuc->mainMenuWindow->gadgetMap.begin();it!=menuc->mainMenuWindow->gadgetMap.end();++it)
 				{
 					mappedListener	*ml=it->second;
-					if((ml!=NULL) && (ml->type==MENUITEMGADGET))// && (ml->gadget==gadget))
+					if((ml!=NULL) && (ml->type==MENUITEMGADGET))
 						{
 							ml->gadget->LFSTK_getGeom(&geom);
 							geom.y=geom.y-((offset)*GADGETHITE);

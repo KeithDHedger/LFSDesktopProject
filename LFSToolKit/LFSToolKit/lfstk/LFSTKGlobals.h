@@ -84,6 +84,8 @@ enum contextPostition {CONTEXTLEFT,CONTEXTRIGHT,CONTEXTATMOUSE};
 //dropdata
 enum dropDataType {DROPINVALID=0,DROPTEXT,DROPURI};
 
+enum gadgetColourType {GADGETBG,GADGETFG};
+
 struct geometryStruct
 {
 	int			x,y;
@@ -310,7 +312,8 @@ struct	cairoColor
 
 struct colourStruct
 {
-	char					*name;
+	std::string			name;
+	bool					isValid=false;
 	long					pixel;
 	cairoColor			RGBAColour;
 };

@@ -25,11 +25,8 @@
 
 LFSTK_lineEditClass::~LFSTK_lineEditClass()
 {
-	if(this->cursorColour.name!=NULL)
-		{
-			free(this->cursorColour.name);
-			XFreeColors(this->wc->app->display,this->wc->app->cm,(long unsigned int*)&this->cursorColour.pixel,1,0);
-		}
+	if(this->cursorColour.isValid==true)
+		XFreeColors(this->wc->app->display,this->wc->app->cm,(long unsigned int*)&this->cursorColour.pixel,1,0);
 }
 
 LFSTK_lineEditClass::LFSTK_lineEditClass()
@@ -112,11 +109,12 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	this->gadgetAcceptsDnD=true;
 	this->labelGravity=LEFT;
 
-	LFSTK_setColourName(NORMALCOLOUR,"white");
-	LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
-	this->charWidth=LFSTK_getTextRealWidth("X");
+	this->newGadgetBGColours[NORMALCOLOUR]=this->LFSTK_setColour("white");
+	this->newGadgetFGColours[NORMALCOLOUR]=this->LFSTK_setColour("black");
 	this->LFSTK_setCursorColourName(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPECURSORCOLOUR));
-	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false,false,false};	
+	this->charWidth=LFSTK_getTextRealWidth("X");
+
+	gadgetDetails={&this->newGadgetBGColours.at(NORMALCOLOUR),BEVELIN,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false,false,false};	
 
 	this->isFocused=false;
 	this->inWindow=false;
@@ -276,9 +274,9 @@ void LFSTK_lineEditClass::LFSTK_setBuffer(const char *str)
 * \return Return's a std::string.
 * \note Don't free the returned string.
 */
-const std::string* LFSTK_lineEditClass::LFSTK_getBuffer(void)
+std::string LFSTK_lineEditClass::LFSTK_getBuffer(void)
 {
-	return(const_cast<std::string*>(&(this->buffer)));
+	return(this->buffer);
 }
 
 /**
@@ -304,7 +302,7 @@ void LFSTK_lineEditClass::drawLabel(void)
 
 	cairo_save(this->cr);
 		cairo_reset_clip(this->cr);
-		cairo_set_source_rgba(this->cr,this->colourNames[NORMALCOLOUR].RGBAColour.r,this->colourNames[NORMALCOLOUR].RGBAColour.g,this->colourNames[NORMALCOLOUR].RGBAColour.b,this->colourNames[NORMALCOLOUR].RGBAColour.a);
+		cairo_set_source_rgba(this->cr,this->newGadgetBGColours.at(NORMALCOLOUR).RGBAColour.r,this->newGadgetBGColours.at(NORMALCOLOUR).RGBAColour.g,this->newGadgetBGColours.at(NORMALCOLOUR).RGBAColour.b,this->newGadgetBGColours.at(NORMALCOLOUR).RGBAColour.a);
 		cairo_set_operator(this->cr,CAIRO_OPERATOR_SOURCE);
 		cairo_paint(this->cr);
 	cairo_restore(this->cr);
@@ -312,7 +310,7 @@ void LFSTK_lineEditClass::drawLabel(void)
 	cairo_save(this->cr);
 		cairo_select_font_face(this->cr,this->fontName,this->slant,this->weight);
 		cairo_set_font_size(this->cr,fontSize);
-		cairo_set_source_rgba(this->cr,0.0,0,0,1.0);
+		cairo_set_source_rgba(this->cr,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.r,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.g,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.b,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.a);
 
 		if(this->LFSTK_getTextWidth("X")<=0)
 			maxchars=((this->gadgetGeom.w)/(int)((8)));
@@ -351,13 +349,13 @@ void LFSTK_lineEditClass::drawLabel(void)
 				cairo_set_source_rgba(this->cr,this->cursorColour.RGBAColour.r,this->cursorColour.RGBAColour.g,this->cursorColour.RGBAColour.b,this->cursorColour.RGBAColour.a);
 				cairo_rectangle(this->cr,partextents.x_advance+this->pad,yoffset-this->fontExtents.ascent,charextents.x_advance-0.5,this->fontExtents.ascent+this->fontExtents.descent);
 				cairo_fill(this->cr);
-				cairo_set_source_rgba(this->cr,1.0,1.0,1.0,1.0);
+				cairo_set_source_rgba(this->cr,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.r,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.g,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.b,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.a);
 			}
 //secondbit
 		cairo_move_to(this->cr,partextents.x_advance+this->pad,yoffset);
 		cairo_show_text(this->cr,undercurs);
 //3rdbit
-		cairo_set_source_rgba(this->cr,0.0,0.0,0.0,1.0);
+		cairo_set_source_rgba(this->cr,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.r,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.g,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.b,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.a);
 		cairo_show_text(this->cr,aftercursor);
 
 		free(data);
@@ -617,6 +615,15 @@ void  LFSTK_lineEditClass::LFSTK_setFormatedText(const char *txt,bool replace)
 }
 
 /**
+* Get the colour name for cursor.
+* \return std::string Colour name.
+*/
+std::string LFSTK_lineEditClass::LFSTK_getCursorColourName(void)
+{
+	return(this->cursorColour.name);
+}
+
+/**
 * Set the colour name for cursor.
 * \param colour Colour name.
 */
@@ -625,9 +632,7 @@ void LFSTK_lineEditClass::LFSTK_setCursorColourName(const char* colour)
 	XColor			tc;
 	XColor			sc;
 
-	if(this->cursorColour.name!=NULL)
-		free(this->cursorColour.name);
-	this->cursorColour.name=strdup(colour);
+	this->cursorColour.name=colour;
 	XAllocNamedColor(this->wc->app->display,this->wc->app->cm,colour,&sc,&tc);
 	this->cursorColour.pixel=tc.pixel;
 

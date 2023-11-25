@@ -95,10 +95,12 @@ LFSTK_multiLineEditClass::LFSTK_multiLineEditClass(LFSTK_windowClass* parentwc,c
 	this->gadgetAcceptsDnD=true;
 	this->labelGravity=LEFT;
 
-	LFSTK_setColourName(NORMALCOLOUR,"white");
-	LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
+
+	this->newGadgetBGColours[NORMALCOLOUR]=this->LFSTK_setColour("white");
+	this->newGadgetFGColours[NORMALCOLOUR]=this->LFSTK_setColour("black");
 	this->LFSTK_setCursorColourName(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPECURSORCOLOUR));
-	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false,false,false};
+
+	gadgetDetails={&this->newGadgetBGColours.at(NORMALCOLOUR),BEVELIN,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false,false,false};
 
 	this->topLine=0;
 	this->setDisplayLines();
@@ -168,7 +170,6 @@ bool LFSTK_multiLineEditClass::lostFocus(XEvent *e)
 			this->isFocused=false;
 		}
 	this->setDisplayLines();
-	//this->drawText();
 	return(true);
 }
 
@@ -207,11 +208,10 @@ void LFSTK_multiLineEditClass::LFSTK_setBuffer(const char *str)
 /**
 * Return the contents of the gadget.
 * \return Return's a std::string.
-* \note Don't free the returned string.
 */
-const std::string* LFSTK_multiLineEditClass::LFSTK_getBuffer(void)
+std::string LFSTK_multiLineEditClass::LFSTK_getBuffer(void)
 {
-	return(const_cast<std::string*>(&(this->buffer)));
+	return(this->buffer);
 }
 
 /**
@@ -240,14 +240,14 @@ void LFSTK_multiLineEditClass::drawText(void)
 
 	cairo_save(this->cr);
 		cairo_reset_clip(this->cr);
-		cairo_set_source_rgba(this->cr,1.0,1.0,1.0,1.0);
+		cairo_set_source_rgba(this->cr,this->newGadgetBGColours.at(NORMALCOLOUR).RGBAColour.r,this->newGadgetBGColours.at(NORMALCOLOUR).RGBAColour.g,this->newGadgetBGColours.at(NORMALCOLOUR).RGBAColour.b,this->newGadgetBGColours.at(NORMALCOLOUR).RGBAColour.a);
 		cairo_paint(this->cr);
 	cairo_restore(this->cr);
 	
 	cairo_save(this->cr);
 		cairo_select_font_face(this->cr,fontName,slant,weight);
 		cairo_set_font_size(this->cr,fontSize);
-		cairo_set_source_rgba(this->cr,0.0,0,0,1.0);
+		cairo_set_source_rgba(this->cr,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.r,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.g,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.b,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.a);
 
 		if(this->isFocused==true)
 			{
@@ -284,26 +284,20 @@ void LFSTK_multiLineEditClass::drawText(void)
 				if(lines.at(j)->cursorPos!=-1)
 					{
 						char 	*data;
-						//char		*undercurs[2];
 						std::string	undercursstr="  ";
 						char		*aftercursor;
 						
 						asprintf(&data,"%s",lines.at(j)->line);
-						//undercurs[0]=data[lines.at(j)->cursorPos];
 						undercursstr[0]=data[lines.at(j)->cursorPos];
-						//undercurs[1]=0;
 						undercursstr[1]=0;
-						//if(undercurs[0]==0)
 						if(undercursstr.at(0)==0)
 							undercursstr[0]=' ';
-							//undercurs[0]=' ';
 
 						data[lines.at(j)->cursorPos]=0;
 						aftercursor=&data[lines.at(j)->cursorPos+1];
 //1stbit
 						cairo_show_text(this->cr,data);
 						cairo_text_extents (this->cr,data,&partextents);
-						//cairo_text_extents (this->cr,undercurs,&charextents);
 						cairo_text_extents (this->cr,undercursstr.c_str(),&charextents);
 						cairo_set_source_rgba(this->cr,this->cursorColour.RGBAColour.r,this->cursorColour.RGBAColour.g,this->cursorColour.RGBAColour.b,this->cursorColour.RGBAColour.a);
 
@@ -311,11 +305,10 @@ void LFSTK_multiLineEditClass::drawText(void)
 						cairo_fill(this->cr);
 //secondbit
 						cairo_move_to(this->cr,partextents.x_advance+this->pad,yoffset);
-						cairo_set_source_rgba(this->cr,1.0,1.0,1.0,1.0);
-						//cairo_show_text(this->cr,undercurs);
+						cairo_set_source_rgba(this->cr,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.r,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.g,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.b,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.a);
 						cairo_show_text(this->cr,undercursstr.c_str());
 //3rdbit
-						cairo_set_source_rgba(this->cr,0.0,0.0,0.0,1.0);
+						cairo_set_source_rgba(this->cr,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.r,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.g,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.b,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.a);
 						if(lines.at(j)->cursorPos<strlen(lines.at(j)->line))
 							cairo_show_text(this->cr,aftercursor);
 
@@ -323,7 +316,7 @@ void LFSTK_multiLineEditClass::drawText(void)
 					}
 				else
 					{
-						cairo_set_source_rgba(this->cr,0.0,0.0,0.0,1.0);
+						cairo_set_source_rgba(this->cr,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.r,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.g,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.b,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.a);
 						cairo_show_text(this->cr,lines.at(j)->line);
 					}
 			}

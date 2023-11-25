@@ -140,9 +140,6 @@ void LFSTK_windowClass::initWindow(bool loadvars)
 	this->isActive=true;
 	this->useTile=false;
 	this->gadgetMap.clear();
-	//XSetBackground(this->app->display,this->gc,this->windowColourNames[NORMALCOLOUR].pixel);
-	//XSetBackground(this->app->display,this->gc, WhitePixel(this->app->display, 0));
-	//std::cerr<<this->windowColourNames[NORMALCOLOUR].pixel<<std::endl;
 }
 
 /**
@@ -179,16 +176,13 @@ LFSTK_windowClass::~LFSTK_windowClass()
 	if(this->fontString!=NULL)
 		free(this->fontString);
 
+//TODO//
 	for(int j=0; j<MAXCOLOURS; j++)
 		{
+			if(this->windowColourNames[j].isValid==true)
+				XFreeColors(this->app->display,this->app->cm,(long unsigned int*)&this->windowColourNames[j].pixel,1,0);
 			if(this->fontColourNames[j]!=NULL)
 				free(this->fontColourNames[j]);
-			
-			if(this->windowColourNames[j].name!=NULL)
-				{
-					free(this->windowColourNames[j].name);
-					XFreeColors(this->app->display,this->app->cm,(long unsigned int*)&this->windowColourNames[j].pixel,1,0);
-				}
 		}
 
 	if(this->windowName!=NULL)
@@ -515,16 +509,14 @@ void LFSTK_windowClass::LFSTK_setFontColourName(int p,const char *colour)
 * \param colour Colour name.
 * \note state is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2,INACTIVECOLOUR=3.
 */
+//TODO//
 void LFSTK_windowClass::LFSTK_setWindowColourName(int p,const char* colour)
 {
 	XColor		tc,sc;
 	std::string	str=colour;
 	int			alphaint=255;
 
-	if(this->windowColourNames[p].name!=NULL)
-		free(this->windowColourNames[p].name);
-
-	this->windowColourNames[p].name=strdup(colour);
+	this->windowColourNames[p].name=colour;
 	if(str.at(0)=='#')
 		{
 			if(str.length()>7)

@@ -1,4 +1,6 @@
 0.1.0
+Desktop switcher updates.
+Pop up desktop list on rollover of swticher.
 Added workspace switcher.
 Removed legacy code.
 Code clean.

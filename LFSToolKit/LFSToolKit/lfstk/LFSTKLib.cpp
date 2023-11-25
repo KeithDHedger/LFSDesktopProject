@@ -758,11 +758,9 @@ bool LFSTK_lib::LFSTK_pointInRect(pointStruct *point,geometryStruct *geom)
 void LFSTK_lib::LFSTK_setColourFromName(Display *display,Colormap cm,colourStruct *colptr,const char *name)
 {
 	XColor tc,sc;
-	if(colptr->name!=NULL)
+	if(colptr->isValid==true)
 		{
-			free(colptr->name);
-			colptr->name=strdup(name);
-
+			colptr->name=name;
 			XFreeColors(display,cm,(long unsigned int*)&colptr->pixel,1,0);
 		}
 	XAllocNamedColor(display,cm,name,&sc,&tc);

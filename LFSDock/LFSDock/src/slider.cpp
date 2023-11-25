@@ -206,13 +206,8 @@ int addSlider(int x,int y,int grav)
 	volumeButton->LFSTK_setAlpha(1.0);
 	volumeButton->LFSTK_setStyle(BEVELNONE);
 
-	volumeButton->LFSTK_setColourName(NORMALCOLOUR,panelBGColour);
-	volumeButton->LFSTK_setColourName(PRELIGHTCOLOUR,panelBGColour);
-	volumeButton->LFSTK_setColourName(ACTIVECOLOUR,panelBGColour);
-
-	volumeButton->LFSTK_setFontColourName(NORMALCOLOUR,panelTextColour,true);
-	volumeButton->LFSTK_setFontColourName(PRELIGHTCOLOUR,panelTextColour,true);
-	volumeButton->LFSTK_setFontColourName(ACTIVECOLOUR,panelTextColour,true);
+	volumeButton->LFSTK_setGadgetColours(GADGETBG,panelBGColour,panelBGColour,panelBGColour,panelBGColour);
+	volumeButton->LFSTK_setGadgetColours(GADGETBG,panelTextColour,panelTextColour,panelTextColour,panelTextColour);
 
 	volumeButton->drawLabelBG=true;
 	volumeButton->autoLabelBGColour=true;

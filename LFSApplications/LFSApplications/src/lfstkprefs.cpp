@@ -294,78 +294,181 @@ void setPreviewData(void)
 					wc->LFSTK_setTile(NULL,0);
 					wc->LFSTK_setWindowColourName(0,windowColourEdit->LFSTK_getCStr());
 				}
+//
+//			for (std::map<int,mappedListener*>::iterator it=ml->begin();it!=ml->end();++it)
+//				{
+//					mappedListener	*mls=it->second;
+//					if (mls!=NULL)
+//						{
+//							if(mls->gadget!=NULL)
+//								{
+//									if(mls->type!=LINEEDITGADGET)
+//										{
+////button
+//											mls->gadget->LFSTK_setFontString(buttonFontEdit->LFSTK_getCStr(),true);	
+//											mls->gadget-> LFSTK_setLabelAutoColour(autoColourCheck->LFSTK_getValue());
+//mls->gadget->LFSTK_setGadgetColours(GADGETBG,
+//											previeBackColourEdit[NORMALCOLOUR]->LFSTK_getBuffer(),
+//											previeBackColourEdit[PRELIGHTCOLOUR]->LFSTK_getBuffer(),
+//											previeBackColourEdit[ACTIVECOLOUR]->LFSTK_getBuffer(),
+//											previeBackColourEdit[INACTIVECOLOUR]->LFSTK_getBuffer()
+//									);
+//
+//											////for(int j=0;j<4;j++)
+//												//mls->gadget->LFSTK_setColourName(j,previeBackColourEdit[j]->LFSTK_getCStr());
+//											////	mls->gadget->newGadgetBGColours[j]=mls->gadget->LFSTK_setColour(previeBackColourEdit[j]->LFSTK_getBuffer());
+//											if(useTheme->LFSTK_getValue()==true)
+//												{
+//													if(mls->type==MENUBUTTONGADGET)
+//														mls->gadget->LFSTK_setTile(menuTileEdit->LFSTK_getCStr(),-1);
+//													else
+//														mls->gadget->LFSTK_setTile(buttonTileEdit->LFSTK_getCStr(),-1);
+//												}
+//											else
+//												mls->gadget->LFSTK_setTile(NULL,0);
+//											if(mls->type==MENUBUTTONGADGET)
+//												mls->gadget->LFSTK_setFontString(menuFontEdit->LFSTK_getCStr(),true);
+////font
+////mls->gadget-> LFSTK_setLabelAutoColour(true);
+//mls->gadget->LFSTK_setGadgetColours(GADGETBG,
+//											std::string("white"),
+//											std::string("green"),
+//											std::string("green"),
+//											std::string("green")
+//											//previeFontColourEdit[PRELIGHTCOLOUR]->LFSTK_getBuffer(),
+//											//previeFontColourEdit[ACTIVECOLOUR]->LFSTK_getBuffer(),
+//											//previeFontColourEdit[INACTIVECOLOUR]->LFSTK_getBuffer()
+//									);
+//											//std::string normal,std::string prelight,std::string active,std::string inactive)
+//											//for(int j=0;j<4;j++)
+//											//	mls->gadget->LFSTK_clearWindow();
+//												//mls->gadget->LFSTK_setFontColourName(j,previeFontColourEdit[j]->LFSTK_getCStr(),false);
+//											////	mls->gadget->newGadgetFGColours[j]=mls->gadget->LFSTK_setColour(previeFontColourEdit[j]->LFSTK_getBuffer());
+//												//mls->gadget->LFSTK_setFontColourName(j,previeFontColourEdit[j]->LFSTK_getCStr(),false);
+//										}
+//									else
+//										{
+//											mls->gadget->LFSTK_setFontString(monoFontEdit->LFSTK_getCStr(),true);
+//											static_cast<LFSTK_lineEditClass*>(mls->gadget)->LFSTK_setCursorColourName(cursorColourEdit->LFSTK_getCStr());
+//										}
+//								}
+//						}
+//				}
+//set examples
 
-			for (std::map<int,mappedListener*>::iterator it=ml->begin();it!=ml->end();++it)
+	for (std::map<int,mappedListener*>::iterator it=ml->begin();it!=ml->end();++it)
+		{
+			mappedListener	*mls=it->second;
+			if (mls!=NULL)
 				{
-					mappedListener	*mls=it->second;
-					if (mls!=NULL)
+					if(mls->gadget!=NULL)
 						{
-							if(mls->gadget!=NULL)
+							if(mls->type!=LINEEDITGADGET)
 								{
-									if(mls->type!=LINEEDITGADGET)
-										{
-//button
-											mls->gadget->LFSTK_setFontString(buttonFontEdit->LFSTK_getCStr(),true);	
-											mls->gadget-> LFSTK_setLabelAutoColour(autoColourCheck->LFSTK_getValue());
-											for(int j=0;j<4;j++)
-												mls->gadget->LFSTK_setColourName(j,previeBackColourEdit[j]->LFSTK_getCStr());
-
-											if(useTheme->LFSTK_getValue()==true)
-												{
-													if(mls->type==MENUBUTTONGADGET)
-														mls->gadget->LFSTK_setTile(menuTileEdit->LFSTK_getCStr(),-1);
-													else
-														mls->gadget->LFSTK_setTile(buttonTileEdit->LFSTK_getCStr(),-1);
-												}
-											else
-												mls->gadget->LFSTK_setTile(NULL,0);
-											if(mls->type==MENUBUTTONGADGET)
-												mls->gadget->LFSTK_setFontString(menuFontEdit->LFSTK_getCStr(),true);
-//font
-											for(int j=0;j<4;j++)
-												mls->gadget->LFSTK_setFontColourName(j,previeFontColourEdit[j]->LFSTK_getCStr(),false);
-										}
+									if(useTheme->LFSTK_getValue()==true)
+										mls->gadget->LFSTK_setTile(buttonTileEdit->LFSTK_getCStr(),-1);
 									else
-										{
-											mls->gadget->LFSTK_setFontString(monoFontEdit->LFSTK_getCStr(),true);
-											static_cast<LFSTK_lineEditClass*>(mls->gadget)->LFSTK_setCursorColourName(cursorColourEdit->LFSTK_getCStr());
-										}
+										mls->gadget->LFSTK_setTile(NULL,-1);
 								}
 						}
 				}
-//set examples
-//buttons
-			for(int j=0;j<4;j++)
-				previewButtons[j]->LFSTK_setColourName(NORMALCOLOUR,previeBackColourEdit[j]->LFSTK_getCStr());
-//menuitems
-			for(int j=0;j<4;j++)
-				previewMenus[j]->LFSTK_setColourName(NORMALCOLOUR,previeMenuBackColourEdit[j]->LFSTK_getCStr());
-
-			for(int j=0;j<4;j++)
-				previewMenus[j]->LFSTK_setFontString(menuFontEdit->LFSTK_getCStr(),true);
-			if(useTheme->LFSTK_getValue()==true)
-				{
-					for(int j=0;j<4;j++)
-						previewMenus[j]->LFSTK_setTile(menuTileEdit->LFSTK_getCStr(),-1);
-				}
-			
-//buttons font
-			for(int j=0;j<4;j++)
-				previewButtons[j]->LFSTK_setFontColourName(NORMALCOLOUR,previeFontColourEdit[j]->LFSTK_getCStr(),false);
-
-//menuitems font
-			for(int j=0;j<4;j++)
-				previewMenus[j]->LFSTK_setFontColourName(NORMALCOLOUR,previeMenuFontColourEdit[j]->LFSTK_getCStr(),false);
 		}
 
-	cursorColourEdit->LFSTK_setColourName(NORMALCOLOUR,cursorColourEdit->LFSTK_getCStr());
+
+
+//set use theme
+	if(useTheme->LFSTK_getValue()==true)
+		{
+			for(int j=0;j<4;j++)
+				{
+					previewButtons[j]->LFSTK_setTile(buttonTileEdit->LFSTK_getCStr(),-1);
+					previewMenus[j]->LFSTK_setTile(menuTileEdit->LFSTK_getCStr(),-1);
+				}
+		}
+	else
+		{
+			for(int j=0;j<4;j++)
+				{
+					previewButtons[j]->LFSTK_setTile(NULL,-1);
+					previewMenus[j]->LFSTK_setTile(NULL,-1);
+				}
+		}
+
+//buttons
+	for(int j=0;j<4;j++)
+		{
+			previewButtons[j]->LFSTK_setLabelAutoColour(autoColourCheck->LFSTK_getValue());
+			previewButtons[j]->LFSTK_setGadgetColourPair(NORMALCOLOUR,previeBackColourEdit[j]->LFSTK_getBuffer(),previeFontColourEdit[j]->LFSTK_getBuffer());
+		}
+//menus
+	for(int j=0;j<4;j++)
+		{
+			previewMenus[j]->LFSTK_setLabelAutoColour(autoColourCheck->LFSTK_getValue());
+			previewMenus[j]->LFSTK_setGadgetColourPair(NORMALCOLOUR,previeMenuBackColourEdit[j]->LFSTK_getBuffer(),previeMenuFontColourEdit[j]->LFSTK_getBuffer());
+		}
+//buttons font
+	for(int j=0;j<4;j++)
+		previewButtons[j]->LFSTK_setFontString(buttonFontEdit->LFSTK_getCStr(),true);
+
+//menu font
+	for(int j=0;j<4;j++)
+		previewMenus[j]->LFSTK_setFontString(menuFontEdit->LFSTK_getCStr(),true);
+
+//mono font
+	monoFontDialogButton->LFSTK_setFontString(monoFontEdit->LFSTK_getCStr(),true);
+
+//others
+//
+////menuitems
+//			for(int j=0;j<4;j++)
+//				//previewMenus[j]->LFSTK_setColourName(NORMALCOLOUR,previeMenuBackColourEdit[j]->LFSTK_getCStr());
+//				previewMenus[j]->newGadgetBGColours[NORMALCOLOUR]=previewMenus[j]->LFSTK_setColour(previeMenuBackColourEdit[j]->LFSTK_getBuffer());
+//
+//			for(int j=0;j<4;j++)
+//				previewMenus[j]->LFSTK_setFontString(menuFontEdit->LFSTK_getCStr(),true);
+//			if(useTheme->LFSTK_getValue()==true)
+//				{
+//					for(int j=0;j<4;j++)
+//						previewMenus[j]->LFSTK_setTile(menuTileEdit->LFSTK_getCStr(),-1);
+//				}
+//			
+////buttons font
+//			for(int j=0;j<4;j++)
+//				//previewButtons[j]->LFSTK_setFontColourName(NORMALCOLOUR,previeFontColourEdit[j]->LFSTK_getCStr(),false);
+//				previewButtons[j]->newGadgetFGColours[NORMALCOLOUR]=previewButtons[j]->LFSTK_setColour(previeFontColourEdit[j]->LFSTK_getBuffer());
+//
+////menuitems font
+//			for(int j=0;j<4;j++)
+//				previewMenus[j]->newGadgetFGColours[NORMALCOLOUR]=previewMenus[j]->LFSTK_setColour(previeMenuFontColourEdit[j]->LFSTK_getBuffer());
+//				//previewMenus[j]->LFSTK_setFontColourName(NORMALCOLOUR,previeMenuFontColourEdit[j]->LFSTK_getCStr(),false);
+		}
+//
+//	//cursorColourEdit->LFSTK_setColourName(NORMALCOLOUR,cursorColourEdit->LFSTK_getCStr());
+
+
+	cursorColourEdit->LFSTK_setLabelAutoColour(true);
+	cursorColourEdit->LFSTK_setGadgetColourPair(NORMALCOLOUR,cursorColourEdit->LFSTK_getBuffer(),"#808080");
 	cursorColourEdit->LFSTK_setCursorColourName("#808080");
-	scrollTroughColourEdit->LFSTK_setColourName(NORMALCOLOUR,scrollTroughColourEdit->LFSTK_getCStr());
+	//cursorColourEdit->LFSTK_setCursorColourName(cursorColourEdit->newGadgetFGColours.at(NORMALCOLOUR).name.c_str());
+
+	scrollTroughColourEdit->LFSTK_setLabelAutoColour(true);
+	scrollTroughColourEdit->LFSTK_setGadgetColourPair(NORMALCOLOUR,scrollTroughColourEdit->LFSTK_getBuffer(),"#808080");
 	scrollTroughColourEdit->LFSTK_setCursorColourName("#808080");
-	listTroughColourEdit->LFSTK_setColourName(NORMALCOLOUR,listTroughColourEdit->LFSTK_getCStr());
+
+	listTroughColourEdit->LFSTK_setLabelAutoColour(true);
+	listTroughColourEdit->LFSTK_setGadgetColourPair(NORMALCOLOUR,listTroughColourEdit->LFSTK_getBuffer(),"#808080");
 	listTroughColourEdit->LFSTK_setCursorColourName("#808080");
-	windowColourEdit->LFSTK_setColourName(NORMALCOLOUR,windowColourEdit->LFSTK_getCStr());
-	windowColourEdit->LFSTK_setCursorColourName("#808080");
+
+	//cursorColourEdit->newGadgetBGColours[NORMALCOLOUR]=cursorColourEdit->LFSTK_setColour(cursorColourEdit->LFSTK_getBuffer());
+//	//scrollTroughColourEdit->LFSTK_setColourName(NORMALCOLOUR,scrollTroughColourEdit->LFSTK_getCStr());
+//	scrollTroughColourEdit->newGadgetBGColours[NORMALCOLOUR]=scrollTroughColourEdit->LFSTK_setColour(scrollTroughColourEdit->LFSTK_getBuffer());
+//	scrollTroughColourEdit->LFSTK_setCursorColourName("#808080");
+//	//listTroughColourEdit->LFSTK_setColourName(NORMALCOLOUR,listTroughColourEdit->LFSTK_getCStr());
+//	listTroughColourEdit->newGadgetBGColours[NORMALCOLOUR]=listTroughColourEdit->LFSTK_setColour(listTroughColourEdit->LFSTK_getBuffer());
+//	listTroughColourEdit->LFSTK_setCursorColourName("#808080");
+//	//windowColourEdit->LFSTK_setColourName(NORMALCOLOUR,windowColourEdit->LFSTK_getCStr());
+//	windowColourEdit->newGadgetBGColours[NORMALCOLOUR]=windowColourEdit->LFSTK_setColour(windowColourEdit->LFSTK_getBuffer());
+//	windowColourEdit->LFSTK_setCursorColourName("#808080");
 
 	wc->LFSTK_clearWindow(true);
 }

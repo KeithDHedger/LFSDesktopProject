@@ -52,7 +52,7 @@ class LFSTK_multiLineEditClass  : public  LFSTK_lineEditClass
 		void LFSTK_clearWindow(void);
 		void LFSTK_resizeWindow(int w,int h);
 
-		const std::string* LFSTK_getBuffer(void);
+		std::string	LFSTK_getBuffer(void);
 		void LFSTK_setBuffer(const char *str);
 		const char *LFSTK_getCStr(void);
 

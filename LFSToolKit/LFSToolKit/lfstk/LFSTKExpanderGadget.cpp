@@ -71,7 +71,7 @@ LFSTK_ExpanderGadgetClass::LFSTK_ExpanderGadgetClass(LFSTK_windowClass* parentwc
 	else
 		this->useTile=false;
 
-	gadgetDetails={&this->colourNames[PRELIGHTCOLOUR],BEVELNONE,NOINDICATOR,PRELIGHTCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false,false,true};
+	gadgetDetails={&this->newGadgetBGColours.at(PRELIGHTCOLOUR),BEVELNONE,NOINDICATOR,PRELIGHTCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false,false,true};
 
 	this->hitRects.clear();
 }

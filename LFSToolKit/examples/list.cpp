@@ -103,6 +103,10 @@ int main(int argc, char **argv)
 
 //list
 	list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5);
+	list->LFSTK_setListItemsColours(GADGETBG,"white","red","blue","green");
+	list->LFSTK_setListItemsColours(GADGETFG,"black","white","white","black");
+	list->LFSTK_setGadgetColourPair(NORMALCOLOUR,"white","black");
+
 	hrs.push_back({0,0,DIALOGWIDTH-(BORDER*2),GADGETHITE*5,NULL});
 	hrs.back().gadget=list;
 	hrs.back().gadget->toParent=true;
@@ -125,18 +129,18 @@ int main(int argc, char **argv)
 
 	list->LFSTK_updateList();
 	list->LFSTK_setMouseCallBack(NULL,select,NULL);
+	fprintf(stderr,"Max list item width=%i\n",list->LFSTK_getListMaxWidth());
+
 	sy+=GADGETHITE*6;
 //TODO//
 //file list
-//	filelist=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*16,SouthGravity);
 	filelist=new LFSTK_listGadgetClass(wc,"list",0-(DIALOGWIDTH/2)+BORDER,0-(sy+GADGETHITE*10),DIALOGWIDTH-(BORDER*2),GADGETHITE*16,SouthGravity);
-	//filelist=new LFSTK_listGadgetClass(wc,"list",BORDER,-sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*16,SouthGravity);
 	filelist->LFSTK_setListFromFile("/tmp/biglist",false);
 	filelist->LFSTK_setMouseCallBack(NULL,select,USERDATA(0xdeadbeaf));
 //goto end
 	if(filelist->LFSTK_findByLabel("zcat",false)==-1)
 		printf("Not found\n");
-
+	fprintf(stderr,"Max list item width=%i\n",filelist->LFSTK_getListMaxWidth());
 	sy+=GADGETHITE*17;
 
 //line

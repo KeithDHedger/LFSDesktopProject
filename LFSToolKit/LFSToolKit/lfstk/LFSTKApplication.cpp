@@ -30,9 +30,6 @@ LFSTK_applicationClass::~LFSTK_applicationClass()
 	delete this->globalLib;
 	delete this->windows;
 	XCloseDisplay(this->display);
-	//free(this->configDir);
-	//if(this->iconThemeName!=NULL)
-	//	free(this->iconThemeName);
 #ifdef _ENABLEDEBUG_
 	cairo_debug_reset_static_data();
 #endif
@@ -245,9 +242,6 @@ int LFSTK_applicationClass::LFSTK_runApp(void)
 						this->useTimer=false;
 				}
 		}
-
-	//-->>XFlush(this->display);
-	//-->>XSync(this->display,true);
 	return(this->exitValue);
 }
 

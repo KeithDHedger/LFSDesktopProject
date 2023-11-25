@@ -120,8 +120,7 @@ bool buttonCB(void *p,void* ud)
 				{
 					for(int j=0;j<5;j++)
 						{
-							previewButtons[j]->LFSTK_setColourName(NORMALCOLOUR,previeColourEdit[j]->LFSTK_getCStr());
-							previewButtons[j]->LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
+							previewButtons[j]->LFSTK_setGadgetColourPair(NORMALCOLOUR,previeColourEdit[j]->LFSTK_getBuffer(),"black");
 							previewButtons[j]->LFSTK_clearWindow();
 						}
 					return(true);
@@ -187,8 +186,7 @@ bool coleditCB(void *p,void* ud)
 			free(col);
 			for(int j=0;j<5;j++)
 				{
-					previewButtons[j]->LFSTK_setColourName(NORMALCOLOUR,previeColourEdit[j]->LFSTK_getCStr());
-					previewButtons[j]->LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
+					previewButtons[j]->LFSTK_setGadgetColourPair(NORMALCOLOUR,previeColourEdit[j]->LFSTK_getBuffer(),"black");
 					previewButtons[j]->LFSTK_clearWindow();
 				}
 		}
@@ -292,8 +290,7 @@ int main(int argc, char **argv)
 			previewButtons[j]=new LFSTK_buttonClass(wc,previewButtonLabels[j],sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 			previewButtons[j]->LFSTK_setLabelAutoColour(true);
 			previewButtons[j]->LFSTK_setTile(NULL,0);
-			previewButtons[j]->LFSTK_setColourName(NORMALCOLOUR,prefs.LFSTK_getCString(prefsnames[j]));
-			previewButtons[j]->LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
+			previewButtons[j]->LFSTK_setGadgetColourPair(NORMALCOLOUR,prefs.LFSTK_getCString(prefsnames[j]),"black");
 			previewButtons[j]->LFSTK_setIgnores(false,true);
 			sx+=GADGETWIDTH+BORDER;
 			previeColourEdit[j]=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString(prefsnames[j]),sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);

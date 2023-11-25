@@ -72,7 +72,6 @@ LFSTK_menuClass			*placeMenu=NULL;
 LFSTK_buttonClass		*resizeWindowMenu=NULL;
 LFSTK_lineEditClass		*resizeWindowEdit=NULL;
 menuStruct				**resizeMenus;
-//const char				*resizeMenuNames[]={"Fast Resize","Live Resize","TBD","Scale Resize"};
 const char				*resizeMenuNames[]={"Fast Resize","Live Resize"};
 LFSTK_menuClass			*resizeMenu=NULL;
 
@@ -87,7 +86,6 @@ LFSTK_menuClass			*titlePosMenu=NULL;
 LFSTK_buttonClass		*forceDockStackWindowMenu=NULL;
 LFSTK_lineEditClass		*forceDockStackWindowEdit=NULL;
 menuStruct				**forceDockStackMenus;
-//const char				*forceDockStackMenuNames[]={"Set By App","Force Above","Force Below"};
 const char				*forceDockStackMenuNames[]={"Force Above","Force Below"};
 LFSTK_menuClass			*forceDockStackMenu=NULL;
 
@@ -96,7 +94,6 @@ LFSTK_buttonClass		*modkeys1WindowMenu=NULL;
 LFSTK_lineEditClass		*modkeys1WindowEdit=NULL;
 menuStruct				**modkeys1Menus;
 const char				*modkeys1MenuNames[]={"None","Shift","Caps Lock","Shift+Caps Lock","Control","Shift+Control","Caps Lock+Control","Shift+Caps Lock+Control"};
-//const char				*modkeys1MenuNames[]={"None","Shift","Caps Lock","Control"};
 LFSTK_menuClass			*modkeys1Menu=NULL;
 
 //modkeys 2
@@ -149,7 +146,6 @@ bool buttonCB(void *p,void* ud)
 {
 	const fontDataStruct	*fd;
 	msgBuffer			mbuffer;
-	//reloadwm=false;
 
 	if(ud!=NULL)
 		{
@@ -327,8 +323,7 @@ bool coleditCB(void *p,void* ud)
 			free(col);
 			for(int j=0;j<COLOURBUTTONS;j++)
 				{
-					previewButtons[j]->LFSTK_setColourName(NORMALCOLOUR,previeColourEdit[j]->LFSTK_getCStr());
-					previewButtons[j]->LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
+					previewButtons[j]->LFSTK_setGadgetColourPair(NORMALCOLOUR,previeColourEdit[j]->LFSTK_getBuffer(),"black");
 					previewButtons[j]->LFSTK_clearWindow();
 				}
 		}
@@ -459,13 +454,7 @@ int main(int argc, char **argv)
 		{
 			modkeys1Menus[j]=new menuStruct;
 			modkeys1Menus[j]->label=strdup(modkeys1MenuNames[j]);
-			//if(j==0)
-				modkeys1Menus[j]->userData=(void*)j;
-			//	modkeys1Menus[j]->userData=0;
-			//else
-				//modkeys1Menus[j]->userData=(void*)(unsigned long)(1<<(j-1));
-			
-			//fprintf(stderr,"menu ud=%x\n",modkeys1Menus[j]->userData);
+			modkeys1Menus[j]->userData=(void*)j;
 		}
 	modkeys2Menus=new menuStruct*[MODS2MENUSIZE];
 	for(long j=0;j<MODS2MENUSIZE;j++)
@@ -473,7 +462,6 @@ int main(int argc, char **argv)
 			modkeys2Menus[j]=new menuStruct;
 			modkeys2Menus[j]->label=strdup(modkeys2MenuNames[j]);
 			modkeys2Menus[j]->userData=(void*)(unsigned long)(1<<(j+3));
-			//modkeys2Menus[j]->userData=(void*)(unsigned long)(1<<(j));
 		}
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
@@ -488,8 +476,7 @@ int main(int argc, char **argv)
 			previewButtons[j]=new LFSTK_buttonClass(wc,previewButtonLabels[j],sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 			previewButtons[j]->LFSTK_setLabelAutoColour(true);
 			previewButtons[j]->LFSTK_setTile(NULL,0);
-			previewButtons[j]->LFSTK_setColourName(NORMALCOLOUR,prefs.LFSTK_getCString(prefsnames[j]));
-			previewButtons[j]->LFSTK_setFontColourName(NORMALCOLOUR,"black",false);
+			previewButtons[j]->LFSTK_setGadgetColourPair(NORMALCOLOUR,prefs.LFSTK_getCString(prefsnames[j]),"black");
 			previewButtons[j]->LFSTK_setIgnores(false,true);
 			sx+=GADGETWIDTH+BORDER;
 			previeColourEdit[j]=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString(prefsnames[j]),sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);

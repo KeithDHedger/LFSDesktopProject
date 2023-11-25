@@ -1,4 +1,7 @@
 0.6.0
+Updates to list gadget class.
+Redone colours.
+Removed more legacy code.
 Added util function to lib lcass to get single cardinal/integer/string property for window.
 Fixed mouse enter/exit callbacks in toggle.
 Fixed segfault in image class.

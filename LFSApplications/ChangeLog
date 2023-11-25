@@ -1,4 +1,7 @@
 0.2.0
+Updated prefs apps.
+Updated lfscolourchooser to include alpha component.
+Updated lfstkprefs.
 Fixed first run filedialog.
 Added extra options to lfspanelprefs.
 Removed unnecessary meunitem  from dock stacking.

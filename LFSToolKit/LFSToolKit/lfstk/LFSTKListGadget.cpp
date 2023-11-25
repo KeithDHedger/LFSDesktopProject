@@ -69,12 +69,16 @@ bool LFSTK_listGadgetClass::select(void *object,void* userdata)
 				break;				
 		}
 
-	for(int j=0;j<list->maxShowing;j++)
-		{
-			list->labelsArray->at(j)->LFSTK_setColourName(NORMALCOLOUR,list->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPELISTTROUGHCOLOUR));
-			list->labelsArray->at(j)->LFSTK_clearWindow();
-		}
-	label->LFSTK_setColourName(NORMALCOLOUR,label->LFSTK_getColourName(ACTIVECOLOUR));
+//	for(int j=0;j<list->maxShowing;j++)
+//		{
+//			if(list->useListItemsColour==false)
+//				list->labelsArray->at(j)->newGadgetBGColours[NORMALCOLOUR]=list->labelsArray->at(j)->LFSTK_setColour(list->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPELISTTROUGHCOLOUR));
+//			else
+//				list->labelsArray->at(j)->newGadgetBGColours[NORMALCOLOUR]=list->labelsArray->at(j)->LFSTK_setColour(list->listItemsBGColour.name);
+//
+//			list->labelsArray->at(j)->LFSTK_clearWindow();
+//		}
+//	label->newGadgetBGColours[NORMALCOLOUR]=label->LFSTK_setColour(label->LFSTK_getColourName(ACTIVECOLOUR));
 	label->LFSTK_clearWindow();
 
 	list->isDoubleClick=label->isDoubleClick;
@@ -179,12 +183,6 @@ void LFSTK_listGadgetClass::LFSTK_updateList(void)
 		this->scrollBar->LFSTK_setScale(0,0);
 	this->listCntNew=this->labelsArray->size();
 
-	for(int j=0;j<this->maxShowing;j++)
-		{
-			this->labelsArray->at(j)->LFSTK_setColourName(NORMALCOLOUR,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPELISTTROUGHCOLOUR));
-			this->labelsArray->at(j)->LFSTK_clearWindow();
-		}
-
 	for(int j=0;j<this->labelsArray->size();j++)
 		{
 			this->labelsArray->at(j)->LFSTK_hideGadget();
@@ -252,8 +250,8 @@ void LFSTK_listGadgetClass::LFSTK_resetListHeight(int newheight)
 					button->LFSTK_reParentWindow(this->window,1,sy);
 					button->toParent=true;
 					button->LFSTK_setLabelAutoColour(true);
-					button->LFSTK_setColourName(NORMALCOLOUR,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPELISTTROUGHCOLOUR));
-					button->gadgetDetails.colour=&button->colourNames[NORMALCOLOUR];
+					button->newGadgetBGColours[NORMALCOLOUR]=LFSTK_setColour(this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPELISTTROUGHCOLOUR));
+					button->gadgetDetails.colour=&button->newGadgetBGColours.at(NORMALCOLOUR);
 					button->gadgetDetails.state=NORMALCOLOUR;
 					button->gadgetDetails.bevel=BEVELNONE;			
 					button->LFSTK_setTile(NULL,0);
@@ -338,9 +336,9 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 	this->scrollBar->LFSTK_setValue(0);
 	this->style=BEVELIN;
 
-	this->LFSTK_setColourName(NORMALCOLOUR,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPELISTTROUGHCOLOUR));
-	this->LFSTK_setColourName(INACTIVECOLOUR,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPELISTTROUGHCOLOUR));
-	this->gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false,false,false};
+	this->newGadgetBGColours[NORMALCOLOUR]=LFSTK_setColour(this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPELISTTROUGHCOLOUR));
+	this->newGadgetBGColours[INACTIVECOLOUR]=LFSTK_setColour(this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPELISTTROUGHCOLOUR));
+	this->gadgetDetails={&this->newGadgetBGColours.at(NORMALCOLOUR),BEVELIN,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false,false,false};
 	this->clearBox(&this->gadgetDetails);
 }
 
@@ -517,3 +515,36 @@ int LFSTK_listGadgetClass::LFSTK_findByLabel(const char *needle,bool select)
 	return(-1);
 }
 
+/**
+* Set the colours for the list items.
+* \param gadgetColourType Colour type BG/FG
+* \param std::string normal Colour name.
+* \param std::string prelight Colour name.
+* \param std::string active Colour name.
+* \param std::string inactive Colour name.
+*/
+void LFSTK_listGadgetClass::LFSTK_setListItemsColours(gadgetColourType type,std::string normal,std::string prelight,std::string active,std::string inactive)
+{
+	for(int j=0;j<this->maxShowing;j++)
+		{
+			this->labelsArray->at(j)->LFSTK_setGadgetColours(type,normal,prelight,active,inactive);
+			this->labelsArray->at(j)->LFSTK_clearWindow();
+		}
+}
+
+/**
+* Get max width of list items.
+* \return with of longest item.
+*/
+int LFSTK_listGadgetClass::LFSTK_getListMaxWidth(void)
+{
+	double largest=0;
+	double thiswid=0;
+	for(int j=0;j<this->listDataArray->size();j++)
+		{
+			thiswid=4+LFSTK_getTextRealWidth(this->listDataArray->at(j).label);
+			if(thiswid>=largest)
+				largest=thiswid+4;//TODO//BEVEL?
+		}
+	return((int)(largest+0.5));
+}

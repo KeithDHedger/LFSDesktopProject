@@ -52,9 +52,7 @@ int addClock(int x,int y,int grav)
 
 	clockButton->LFSTK_setIgnores(false,false);
 	clockButton->LFSTK_setTile(NULL,0);
-
-	clockButton->LFSTK_setColourName(NORMALCOLOUR,panelBGColour);
-	clockButton->LFSTK_setFontColourName(NORMALCOLOUR,panelTextColour,true);
+	clockButton->LFSTK_setGadgetColourPair(NORMALCOLOUR,panelBGColour,panelTextColour);
 	clockButton->LFSTK_setStyle(BEVELNONE);
 
 	clockButton->drawLabelBG=true;

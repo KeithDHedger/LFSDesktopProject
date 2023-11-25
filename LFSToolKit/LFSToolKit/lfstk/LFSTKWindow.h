@@ -141,7 +141,7 @@ class LFSTK_windowClass
 
 		char					*fontString;
 		char					*fontColourNames[MAXCOLOURS]={NULL,};
-		colourStruct			windowColourNames[MAXCOLOURS]={{NULL,0,{0,0,0,0}},};
+		colourStruct			windowColourNames[MAXCOLOURS]={{},};//   {{NULL,0,{0,0,0,0}},};
 		bool					autoLabelColour=false;
 		LFSTK_lib			*globalLib;
 		int					x;

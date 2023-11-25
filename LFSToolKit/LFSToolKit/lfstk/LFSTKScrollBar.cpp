@@ -93,11 +93,12 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vert
 	this->ml->type=SCROLLBARGADGET;
 	wc->LFSTK_addMappedListener(this->window,ml);
 
-	this->LFSTK_setColourName(NORMALCOLOUR,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPESBTROUGHCOLOUR));
-	gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELIN,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false,false,false};
+
+	this->newGadgetBGColours[NORMALCOLOUR]=this->LFSTK_setColour(this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPESBTROUGHCOLOUR));
+
+	gadgetDetails={&this->newGadgetBGColours.at(NORMALCOLOUR),BEVELIN,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false,false,false};
 
 	this->verticalBar=vertical;
-
 	if(this->verticalBar==false)
 		{
 //thumb

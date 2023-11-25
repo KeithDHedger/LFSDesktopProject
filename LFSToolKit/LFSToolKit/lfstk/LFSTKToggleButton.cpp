@@ -89,7 +89,6 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 	free(pathtobit);
 
 	gadgetDetails={&this->wc->windowColourNames[NORMALCOLOUR],BEVELOUT,CHECK,NORMALCOLOUR,CHECKBOXSIZE,false,{0,0,w,h},{2,(int)((h/2)-(CHECKBOXSIZE/2)),CHECKBOXSIZE,CHECKBOXSIZE},true,false,true};
-	this->LFSTK_setFontColourName(0,this->wc->globalLib->LFSTK_getGlobalString(0,TYPEFONTCOLOUR),true);
 }
 
 /**
@@ -106,7 +105,7 @@ bool LFSTK_toggleButtonClass::mouseEnter(XButtonEvent *e)
 
 	if(this->boxStyle==TOGGLENORMAL)
 		{
-			this->gadgetDetails.colour=&this->colourNames[PRELIGHTCOLOUR];
+			this->gadgetDetails.colour=&this->newGadgetBGColours.at(PRELIGHTCOLOUR);
 			this->gadgetDetails.state=PRELIGHTCOLOUR;
 		}
 	else
@@ -139,14 +138,14 @@ bool LFSTK_toggleButtonClass::mouseExit(XButtonEvent *e)
 	if(this->toggleState==true)
 		{
 			if(this->boxStyle==TOGGLENORMAL)
-				this->gadgetDetails.colour=&this->colourNames[ACTIVECOLOUR];
+				this->gadgetDetails.colour=&this->newGadgetBGColours.at(ACTIVECOLOUR);
 			this->gadgetDetails.state=ACTIVECOLOUR;
 			this->gadgetDetails.bevel=BEVELIN;
 		}
 	else
 		{
 			if(this->boxStyle==TOGGLENORMAL)
-				this->gadgetDetails.colour=&this->colourNames[NORMALCOLOUR];
+				this->gadgetDetails.colour=&this->newGadgetBGColours.at(NORMALCOLOUR);
 			this->gadgetDetails.state=NORMALCOLOUR;
 			this->gadgetDetails.bevel=BEVELOUT;
 		}
@@ -172,7 +171,7 @@ bool LFSTK_toggleButtonClass::mouseDown(XButtonEvent *e)
 
 	if(this->boxStyle==TOGGLENORMAL)
 		{
-			this->gadgetDetails.colour=&this->colourNames[ACTIVECOLOUR];
+			this->gadgetDetails.colour=&this->newGadgetBGColours.at(ACTIVECOLOUR);
 			this->gadgetDetails.state=ACTIVECOLOUR;
 		}
 	else
@@ -254,7 +253,7 @@ void LFSTK_toggleButtonClass::LFSTK_setToggleStyle(drawStyle ds)
 
 			gadgetDetails.hasIndicator=false;
 			gadgetDetails.bevel=BEVELOUT;
-			gadgetDetails.colour=&this->colourNames[NORMALCOLOUR];
+			gadgetDetails.colour=&this->newGadgetBGColours.at(NORMALCOLOUR);
 			gadgetDetails.reserveSpace=0;
 			gadgetDetails.buttonTile=true;
 			this->showIndicator=false;
@@ -290,14 +289,14 @@ void LFSTK_toggleButtonClass::LFSTK_setValue(bool val)
 		
 			this->gadgetDetails.bevel=BEVELIN;
 			this->gadgetDetails.state=ACTIVECOLOUR;
-			if(this->useImage==true)
+			if((this->useImage==true) && (this->boxStyle!=TOGGLENORMAL))
 				this->cImage=this->checkOn;
 		}
 	else
 		{
 			this->gadgetDetails.bevel=BEVELOUT;
 			this->gadgetDetails.state=NORMALCOLOUR;
-			if(this->useImage==true)
+			if((this->useImage==true) && (this->boxStyle!=TOGGLENORMAL))
 				this->cImage=this->checkOff;
 		}
 

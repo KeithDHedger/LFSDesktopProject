@@ -117,10 +117,7 @@ void setGadgetDetails(LFSTK_gadgetClass *gadget)
 {
 	gadget->LFSTK_setAlpha(1.0);
 	gadget->LFSTK_setTile(NULL,0);
-	gadget->LFSTK_setColourName(NORMALCOLOUR,"#00000000");
-	gadget->LFSTK_setFontColourName(NORMALCOLOUR,panelTextColour,true);
 	gadget->gadgetDetails.bevel=BEVELNONE;
-	gadget->LFSTK_setColourName(PRELIGHTCOLOUR,"#00000000");
-	gadget->LFSTK_setColourName(ACTIVECOLOUR,"#00000000");
-	gadget->LFSTK_setColourName(INACTIVECOLOUR,"#00000000");
+	gadget->LFSTK_setGadgetColours(GADGETBG,"#00000000","#00000000","#00000000","#00000000");
+	gadget->	LFSTK_setGadgetColourPair(NORMALCOLOUR,"#00000000",panelTextColour);
 }

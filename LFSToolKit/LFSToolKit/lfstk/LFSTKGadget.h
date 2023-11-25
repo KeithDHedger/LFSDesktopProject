@@ -101,14 +101,16 @@ class LFSTK_gadgetClass
 
 		callbackStruct		callBacks;
 
-//colours
-		colourStruct			fontColourNames[MAXCOLOURS]={NULL,};
-		colourStruct			colourNames[MAXCOLOURS]={NULL,};
+//new colours
+		std::vector<colourStruct>	newGadgetBGColours={{},{},{},{}};
+		std::vector<colourStruct>	newGadgetFGColours={{},{},{},{}};
+		colourStruct 		LFSTK_setColour(std::string colour);
+		void					LFSTK_setGadgetColours(gadgetColourType type,std::string normal,std::string prelight,std::string active,std::string inactive);
+		void					LFSTK_setGadgetColourPair(gadgetState state,std::string back,std::string fore);
 
-		void					LFSTK_setColourName(int p,const char* colour);
+//colours
 		const char			*LFSTK_getColourName(int p);
 		void					LFSTK_setFontString(const char *s,bool setfontdata=false);
-		void					LFSTK_setFontColourName(int p,const char* colour,bool usewindow);
 		void					LFSTK_reloadColours(void);
 
 		void					LFSTK_setActive(bool active);
@@ -132,8 +134,7 @@ class LFSTK_gadgetClass
 		void					LFSTK_setAlpha(double alph);
 		void					LFSTK_setStyle(bevelType s);
 
-std::string			imagePath;
-bool					noClear=false;
+std::string			imagePath;//?????
 //geometry
 		void					LFSTK_getGeom(geometryStruct *geom);
 		void					LFSTK_getGeomWindowRelative(geometryStruct *geom,Window win);
@@ -155,7 +156,7 @@ bool					noClear=false;
 
 		bool					drawLabelBG=false;
 		bool					autoLabelBGColour=false;
-		colourStruct			labelBGColour={NULL,0,{1.0,1.0,1.0,1.0}};
+		colourStruct			labelBGColour={"",false,0,{1.0,1.0,1.0,1.0}};
 		void					LFSTK_setLabelBGColour(double r,double g,double b,double a);
 		void					LFSTK_setLabelBGColour(const char* colour,double alpha);
 
@@ -165,7 +166,7 @@ bool					noClear=false;
 		bool					gadgetAcceptsDnD;
 		bool					isSubMenu;
 		bool					showIndicator;
-		gadgetStruct			gadgetDetails={&this->colourNames[NORMALCOLOUR],BEVELOUT,NOINDICATOR,NORMALCOLOUR,0,false,{0,0,0,0},{0,0,0,0},false,false,false,false,false};
+		gadgetStruct			gadgetDetails={&this->newGadgetBGColours.at(NORMALCOLOUR),BEVELOUT,NOINDICATOR,NORMALCOLOUR,0,false,{0,0,0,0},{0,0,0,0},false,false,false,false,false};
 		const char			*monoFontString=NULL;
 
 //user data
@@ -177,8 +178,8 @@ bool					noClear=false;
 //context
 		contextPostition		contextWindowPos=CONTEXTRIGHT;
 
-//double	imageXextraScale=1.0;
-//double	imageYextraScale=1.0;
+bool					inWindow;//TODO//MMMMmmmmmmm
+
 	private:
 		void					initGadget(void);
 		void					selectBevel(bool mousedown);
@@ -206,7 +207,7 @@ bool					noClear=false;
 		char					*fontName=NULL;
 		double				maxTextHeight;
 
-		bool					inWindow;
+//		bool					inWindow;
 		bool					isActive;
 		bool					autoLabelColour=false;
 		int					labelGravity;
