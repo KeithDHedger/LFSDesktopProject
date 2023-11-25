@@ -133,7 +133,7 @@ int addLaunchers(int x,int y,int grav)
 	
 			loopll->bc->LFSTK_setMouseMoveCallBack(enterCB,exitCB,USERDATA(loopll));
 			loopll->bc->gadgetAcceptsDnD=true;
-fprintf(stderr,"name=>>%s x=%i<<\n",loopll->entry.name,xpos);
+//fprintf(stderr,"name=>>%s x=%i<<\n",loopll->entry.name,xpos);
 
 			if((loopll->icon!=NULL) && (desktopTheme!=NULL))
 				icon=apc->globalLib->LFSTK_findThemedIcon(desktopTheme,loopll->icon,"");
