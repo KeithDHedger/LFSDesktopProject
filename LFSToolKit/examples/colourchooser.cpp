@@ -16,38 +16,43 @@ rm $APPNAME
 exit $retval
 
 #endif
+#include <getopt.h>
+#include <sstream>
+#include <string>
+#include <iomanip>
 
 #include "../config.h"
 #include "lfstk/LFSTKGlobals.h"
 
 #define BOXLABEL			"Colour Chooser"
 
-LFSTK_applicationClass		*apc=NULL;
-LFSTK_windowClass			*wc=NULL;
+LFSTK_applicationClass	*apc=NULL;
+LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass			*label=NULL;
 LFSTK_labelClass			*personal=NULL;
 LFSTK_labelClass			*copyrite=NULL;
-LFSTK_buttonClass			*seperator=NULL;
-LFSTK_buttonClass			*quit=NULL;
+LFSTK_buttonClass		*seperator=NULL;
+LFSTK_buttonClass		*quit=NULL;
 LFSTK_scrollBarClass		*red=NULL;
 LFSTK_scrollBarClass		*blue=NULL;
 LFSTK_scrollBarClass		*green=NULL;
-LFSTK_lineEditClass			*box=NULL;
-LFSTK_lineEditClass			*colour=NULL;
-LFSTK_toggleButtonClass		*check=NULL;
-bool						mainLoop=true;
-Display						*display;
-char						*colourname=NULL;
+LFSTK_scrollBarClass		*alpha=NULL;
+LFSTK_lineEditClass		*box=NULL;
+LFSTK_lineEditClass		*colour=NULL;
+LFSTK_toggleButtonClass	*check=NULL;
 bool						lockStep=false;
-int	lastred=255;
-int	lastgreen=255;
-int	lastblue=255;
+int						lastred=255;
+int						lastgreen=255;
+int						lastblue=255;
+int						parentWindow=-1;
+std::stringstream		colourname;
 
 bool doQuit(void *p,void* ud)
 {
 	apc->exitValue=0;
 	apc->mainLoop=false;
-	printf("%s",colour->LFSTK_getCStr());
+	if((long)ud==1)
+		printf("%s",colour->LFSTK_getCStr());
 	return(false);
 }
 
@@ -78,26 +83,78 @@ bool scrollCB(void *p,void* ud)
 						red->LFSTK_setValue(red->LFSTK_getValue()+diff,true);
 						green->LFSTK_setValue(green->LFSTK_getValue()+diff,true);
 						break;
+					case 4:
+						break;
 				}
 		}
-	free(colourname);
 
 	lastred=red->LFSTK_getValue();
 	lastgreen=green->LFSTK_getValue();
 	lastblue=blue->LFSTK_getValue();
-
-	asprintf(&colourname,"#%02X%02X%02X",red->LFSTK_getValue(),green->LFSTK_getValue(),blue->LFSTK_getValue());
-	box->LFSTK_setColourName(NORMALCOLOUR,colourname);
-	box->LFSTK_setCursorColourName(colourname);
+	colourname.clear();
+	colourname.str(std::string());
+	colourname << "#"<<std::hex << std::uppercase<<std::setfill('0') << std::setw(2)<<alpha->LFSTK_getValue();
+	colourname << std::hex << std::uppercase<<std::setfill('0') << std::setw(2)<<red->LFSTK_getValue();
+	colourname << std::hex << std::uppercase<<std::setfill('0') << std::setw(2)<<green->LFSTK_getValue();
+	colourname << std::hex << std::uppercase<<std::setfill('0') << std::setw(2)<< blue->LFSTK_getValue();
+	box->LFSTK_setGadgetColourPair(NORMALCOLOUR,colourname.str(),"black");
+	box->LFSTK_setCursorColourName(colourname.str().c_str());
 	box->LFSTK_clearWindow();
-	colour->LFSTK_setBuffer(colourname);
+	colour->LFSTK_setBuffer(colourname.str().c_str());
+	return(true);
+}
+
+void setSliders(const char *colour)
+{
+	colourStruct		colptr;
+	colptr=box->LFSTK_setColour(std::string(colour));
+
+	red->LFSTK_setValue(colptr.RGBAColour.r*256,true);
+	green->LFSTK_setValue(colptr.RGBAColour.g*256,true);
+	blue->LFSTK_setValue(colptr.RGBAColour.b*256,true);
+	alpha->LFSTK_setValue(colptr.RGBAColour.a*256,true);
+}
+
+bool lineCB(void *p,void *ud)
+{
+	setSliders(colour->LFSTK_getCStr());
 	return(true);
 }
 
 int main(int argc, char **argv)
 {
-	XEvent	event;
-	int		sy=BORDER;
+	XEvent		event;
+	int			sy=BORDER;
+
+	int			c=0;
+	int			option_index=0;
+	const char	*shortOpts="h?w:";
+	option		longOptions[]=
+		{
+			{"window",1,0,'w'},
+			{"help",0,0,'h'},
+			{0, 0, 0, 0}
+		};
+
+	while(1)
+		{
+			option_index=0;
+			c=getopt_long_only(argc,argv,shortOpts,longOptions,&option_index);
+			if (c==-1)
+				break;
+			switch (c)
+				{
+					case 'h':
+					case '?':
+						printf("Usage:\nlfscolourchooser [ARG] - Where ARG is a colour definition either e.g. \"#ff0080\" or \"darkgreen\"\n");
+						printf("-?,-h,--help\t\tPrint this help\n");
+						printf("-w,--window\t\tSet transient for window\n");
+						exit(0);
+					case 'w':
+						parentWindow=atoi(optarg);
+						break;
+				}
+		}
 
 	apc=new LFSTK_applicationClass();
 	apc->LFSTK_addWindow(NULL,BOXLABEL);
@@ -113,11 +170,12 @@ int main(int argc, char **argv)
 	personal->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
 
-	label=new LFSTK_labelClass(wc,"R  G  B",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,LEFT);
+	label=new LFSTK_labelClass(wc,"R  G  B  A",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,LEFT);
 	label->LFSTK_setCairoFontDataParts("sB",20);
 	sy+=YSPACING;
 
-	asprintf(&colourname,"#ffff00");
+	colourname<<std::endl;
+	colourname<<"";
 	box=new LFSTK_lineEditClass(wc,"",3*BORDER+2*SCROLLBARWIDTH+GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*6,BUTTONGRAV);
 	box->LFSTK_setIgnores(false,false);
 
@@ -139,21 +197,29 @@ int main(int argc, char **argv)
 	blue->reverse=true;
 	blue->LFSTK_setValue(255);
 
+	alpha=new LFSTK_scrollBarClass(wc,true,4*BORDER+3*SCROLLBARWIDTH+14,sy,SCROLLBARWIDTH,200+GADGETHITE,BUTTONGRAV);
+	alpha->LFSTK_setScale(0,255);
+	alpha->LFSTK_setPageScroll(16);
+	alpha->reverse=true;
+	alpha->LFSTK_setValue(255);
+
 	red->LFSTK_setMouseCallBack(NULL,scrollCB,(void*)1);
 	green->LFSTK_setMouseCallBack(NULL,scrollCB,(void*)2);
 	blue->LFSTK_setMouseCallBack(NULL,scrollCB,(void*)3);
+	alpha->LFSTK_setMouseCallBack(NULL,scrollCB,(void*)4);
 
-	box->LFSTK_setColourName(NORMALCOLOUR,colourname);
-	box->LFSTK_setCursorColourName(colourname);
+	box->LFSTK_setGadgetColourPair(NORMALCOLOUR,colourname.str(),"black");
+	box->LFSTK_setCursorColourName(colourname.str().c_str());
 	box->LFSTK_setActive(false);//TODO//
 	sy+=YSPACING;
 
 	check=new LFSTK_toggleButtonClass(wc,"Lock sliders",3*BORDER+2*SCROLLBARWIDTH+GADGETWIDTH,sy+GADGETHITE*6-CHECKBOXSIZE,GADGETWIDTH,CHECKBOXSIZE,NorthWestGravity);
 	check->LFSTK_setValue(false);
 
-	colour=new LFSTK_lineEditClass(wc,"",3*BORDER+2*SCROLLBARWIDTH+GADGETWIDTH,sy+GADGETHITE*7,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
-
+	colour=new LFSTK_lineEditClass(wc,"FFFFFFFF",3*BORDER+2*SCROLLBARWIDTH+GADGETWIDTH,sy+GADGETHITE*7,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
+	colour->LFSTK_setKeyCallBack(NULL,lineCB,NULL);
 	sy+=200;
+
 //line
 	seperator=new LFSTK_buttonClass(wc,"--",0,sy,DIALOGWIDTH,GADGETHITE,BUTTONGRAV);
 	seperator->LFSTK_setStyle(BEVELNONE);
@@ -162,15 +228,25 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //quit
-	quit=new LFSTK_buttonClass(wc,"OK",(DIALOGWIDTH/2)-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
+	quit=new LFSTK_buttonClass(wc,"OK",(DIALOGWIDTH/2)-GADGETWIDTH*2,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	quit->LFSTK_setMouseCallBack(NULL,doQuit,(void*)1);
+	quit=new LFSTK_buttonClass(wc,"Cancel",(DIALOGWIDTH/2)+GADGETWIDTH,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	quit->LFSTK_setMouseCallBack(NULL,doQuit,(void*)2);
 	sy+=YSPACING;
 
+	if(argv[optind]!=NULL)
+		setSliders(argv[optind]);
+
+	if(parentWindow!=-1)
+		{
+			wc->LFSTK_setKeepAbove(true);
+			wc->LFSTK_setTransientFor(parentWindow);
+		}
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_showWindow();
 
-	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	int retval=apc->LFSTK_runApp();
+
 	delete apc;
 	return(retval);
 }
