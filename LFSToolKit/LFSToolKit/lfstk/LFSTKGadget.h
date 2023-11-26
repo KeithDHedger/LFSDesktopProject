@@ -236,7 +236,8 @@ bool					inWindow;//TODO//MMMMmmmmmmm
 		void					clearBox(gadgetStruct* details);
 		void					drawBevel(geometryStruct* geom,bevelType bevel);
 		void					drawLabel(gadgetStruct* details);
-
+int	squeezeW=0;
+int	squeezeH=0;
 //drag stuff
 		bool					canDrag=false;
 		int					mouseDownX=0;

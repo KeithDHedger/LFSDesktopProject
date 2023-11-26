@@ -103,9 +103,9 @@ int main(int argc, char **argv)
 
 //list
 	list=new LFSTK_listGadgetClass(wc,"list",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5);
-	list->LFSTK_setListItemsColours(GADGETBG,"white","red","blue","green");
+	list->LFSTK_setListItemsColours(GADGETBG,"darkgray","red","blue","green");
 	list->LFSTK_setListItemsColours(GADGETFG,"black","white","white","black");
-	list->LFSTK_setGadgetColourPair(NORMALCOLOUR,"white","black");
+	list->LFSTK_setGadgetColourPair(NORMALCOLOUR,"darkgray","black");
 
 	hrs.push_back({0,0,DIALOGWIDTH-(BORDER*2),GADGETHITE*5,NULL});
 	hrs.back().gadget=list;

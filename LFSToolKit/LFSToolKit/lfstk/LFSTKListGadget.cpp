@@ -32,6 +32,7 @@ LFSTK_listGadgetClass::~LFSTK_listGadgetClass()
 	delete this->labelsArray;
 	delete this->listDataArray;
 	delete[] this->data;
+	//XSync(this->wc->app->display,true);
 }
 
 bool LFSTK_listGadgetClass::setFocusToList(void *object,void* userdata)
@@ -246,12 +247,10 @@ void LFSTK_listGadgetClass::LFSTK_resetListHeight(int newheight)
 		{
 			for(int j=this->labelsArray->size();j<this->maxShowing;j++)
 				{
-					button=new LFSTK_buttonClass(this->wc,"",0,0,this->gadgetGeom.w-2,LABELHITE-4,NorthGravity);
+					button=new LFSTK_buttonClass(this->wc,"",0,0,this->gadgetGeom.w-(this->squeezeW+2),LABELHITE-1,NorthGravity);
 					button->LFSTK_reParentWindow(this->window,1,sy);
 					button->toParent=true;
 					button->LFSTK_setLabelAutoColour(true);
-					button->newGadgetBGColours[NORMALCOLOUR]=LFSTK_setColour(this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPELISTTROUGHCOLOUR));
-					button->gadgetDetails.colour=&button->newGadgetBGColours.at(NORMALCOLOUR);
 					button->gadgetDetails.state=NORMALCOLOUR;
 					button->gadgetDetails.bevel=BEVELNONE;			
 					button->LFSTK_setTile(NULL,0);
@@ -259,7 +258,17 @@ void LFSTK_listGadgetClass::LFSTK_resetListHeight(int newheight)
 					button->LFSTK_setCairoFontData();
 
 					this->labelsArray->push_back(button);
-					sy+=LABELHITE;
+					button->LFSTK_setGadgetColours(GADGETBG,this->labelsArray->at(0)->newGadgetBGColours.at(NORMALCOLOUR).name,
+					this->labelsArray->at(0)->newGadgetBGColours.at(PRELIGHTCOLOUR).name,
+					this->labelsArray->at(0)->newGadgetBGColours.at(ACTIVECOLOUR).name,
+					this->labelsArray->at(0)->newGadgetBGColours.at(INACTIVECOLOUR).name);
+
+					button->LFSTK_setGadgetColours(GADGETFG,this->labelsArray->at(0)->newGadgetBGColours.at(NORMALCOLOUR).name,
+					this->labelsArray->at(0)->newGadgetBGColours.at(PRELIGHTCOLOUR).name,
+					this->labelsArray->at(0)->newGadgetBGColours.at(ACTIVECOLOUR).name,
+					this->labelsArray->at(0)->newGadgetBGColours.at(INACTIVECOLOUR).name);					
+					button->gadgetDetails.colour=&button->newGadgetBGColours.at(NORMALCOLOUR);
+					sy+=(LABELHITE-1);
 				}
 		}
 
@@ -299,7 +308,9 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 	XSetWindowAttributes	wa;
 	int						sy=1;
 
-	this->LFSTK_setCommon(parentwc,"",x-1,y-1,w+2,h+2,gravity);
+	this->squeezeW=SCROLLBARWIDTH;
+
+	this->LFSTK_setCommon(parentwc,"",x,y,w,h,gravity);
 
 	wa.win_gravity=gravity;
 	wa.save_under=true;
@@ -339,6 +350,7 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 	this->newGadgetBGColours[NORMALCOLOUR]=LFSTK_setColour(this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPELISTTROUGHCOLOUR));
 	this->newGadgetBGColours[INACTIVECOLOUR]=LFSTK_setColour(this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPELISTTROUGHCOLOUR));
 	this->gadgetDetails={&this->newGadgetBGColours.at(NORMALCOLOUR),BEVELIN,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false,false,false};
+
 	this->clearBox(&this->gadgetDetails);
 }
 

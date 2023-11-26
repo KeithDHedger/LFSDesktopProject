@@ -207,7 +207,7 @@ int addSlider(int x,int y,int grav)
 	volumeButton->LFSTK_setStyle(BEVELNONE);
 
 	volumeButton->LFSTK_setGadgetColours(GADGETBG,panelBGColour,panelBGColour,panelBGColour,panelBGColour);
-	volumeButton->LFSTK_setGadgetColours(GADGETBG,panelTextColour,panelTextColour,panelTextColour,panelTextColour);
+	volumeButton->LFSTK_setGadgetColours(GADGETFG,panelTextColour,panelTextColour,panelTextColour,panelTextColour);
 
 	volumeButton->drawLabelBG=true;
 	volumeButton->autoLabelBGColour=true;

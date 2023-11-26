@@ -392,14 +392,25 @@ void LFSTK_gadgetClass::clearBox(gadgetStruct* details)
 */
 void LFSTK_gadgetClass::drawBevel(geometryStruct* geom,bevelType bevel)
 {
+/*
+struct geometryStruct
+{
+	int			x,y;
+	unsigned		w,h;
+	unsigned		monitor;
+};
+*/
 	cairoColor tlcolour;
 	cairoColor brcolour;
-
+geometryStruct geomlocal={geom->x,geom->y,geom->w,geom->h,geom->monitor};
 	if(bevel==BEVELNONE)
 		return;
-	
+	geomlocal.w-=this->squeezeW;
+	geomlocal.h-=this->squeezeH;
 	switch(bevel)
 		{
+			case BEVELSQUEEZEW:
+			case BEVELSQUEZEH:
 			case BEVELIN:
 				tlcolour={0,0,0,1};
 				brcolour={1,1,1,1};
@@ -415,16 +426,28 @@ void LFSTK_gadgetClass::drawBevel(geometryStruct* geom,bevelType bevel)
 		cairo_set_line_width(this->cr,1.0);
 		cairo_set_source_rgba(this->cr,tlcolour.r,tlcolour.g,tlcolour.b,1.0);
 		cairo_set_operator(this->cr,CAIRO_OPERATOR_SOURCE);
-		cairo_move_to(this->cr,geom->x+1,geom->h+geom->y+1);
-		cairo_line_to(this->cr,geom->x+1,geom->y+1);
-		cairo_line_to(this->cr,geom->x+geom->w,geom->y+1);
+
+		cairo_move_to(this->cr,geomlocal.x+1,geomlocal.h+geomlocal.y+1);
+		cairo_line_to(this->cr,geomlocal.x+1,geomlocal.y+1);
+		cairo_line_to(this->cr,geomlocal.x+geomlocal.w,geomlocal.y+1);
+
+//		cairo_move_to(this->cr,geom->x+1,geom->h+geom->y+1);
+//		cairo_line_to(this->cr,geom->x+1,geom->y+1);
+//		cairo_line_to(this->cr,geom->x+geom->w,geom->y+1);
 		cairo_stroke(this->cr);
 		
 		cairo_set_source_rgba(this->cr,brcolour.r,brcolour.g,brcolour.b,1.0);
 		cairo_set_operator(this->cr,CAIRO_OPERATOR_SOURCE);
-		cairo_move_to(this->cr,geom->x+geom->w,geom->y+1);
-		cairo_line_to(this->cr,geom->x+geom->w,geom->y+geom->h);
-		cairo_line_to(this->cr,geom->x+1,geom->y+geom->h);
+
+		cairo_move_to(this->cr,geomlocal.x+geomlocal.w,geomlocal.y+1);
+		cairo_line_to(this->cr,geomlocal.x+geomlocal.w,geomlocal.y+geomlocal.h);
+		cairo_line_to(this->cr,geomlocal.x+1,geomlocal.y+geomlocal.h);
+
+
+
+//		cairo_move_to(this->cr,geom->x+geom->w,geom->y+1);
+//		cairo_line_to(this->cr,geom->x+geom->w,geom->y+geom->h);
+//		cairo_line_to(this->cr,geom->x+1,geom->y+geom->h);
 		cairo_stroke(this->cr);			
 	cairo_restore(this->cr);
 }

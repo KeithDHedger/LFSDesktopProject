@@ -48,13 +48,20 @@ int addClock(int x,int y,int grav)
 	clockButton=new LFSTK_buttonClass(mainwind,"--:--:--",x,y+(iconSize/2)-(GADGETHITE/2),iconSize,GADGETHITE);
 	setGadgetDetails(clockButton);
 	clockButton->LFSTK_setFontString(prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("font")),true);
-	clockButton->LFSTK_setAlpha(1.0);
+	//clockButton->LFSTK_setAlpha(0.4);
 
 	clockButton->LFSTK_setIgnores(false,false);
 	clockButton->LFSTK_setTile(NULL,0);
+//clockButton->LFSTK_setLabelBGColour("white",1.0);
+//	clockButton->LFSTK_setLabelAutoColour(true);
+//clockButton->labelBGColour.isValid=true;
+//={"green",true,0,{1.0,1.0,1.0,1.0}};
+	//clockButton->LFSTK_setAutoLabelColour(true);
+	//clockButton->autoLabelColour=true;
+	//autoLabelColour
 	clockButton->LFSTK_setGadgetColourPair(NORMALCOLOUR,panelBGColour,panelTextColour);
 	clockButton->LFSTK_setStyle(BEVELNONE);
-
+	
 	clockButton->drawLabelBG=true;
 	clockButton->autoLabelBGColour=true;
 

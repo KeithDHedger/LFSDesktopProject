@@ -38,24 +38,6 @@ bool deskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 	switchIsUp=false;
 	return(true);
 }
-bool deskListCB(void* p,void* ud);
-
-bool deskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
-{
-	geometryStruct	geom;
-	int				adj;
-
-	if(switchIsUp==true)
-		return(true);
-
-	adj=extraSpace*posMultiplier;
-	p->LFSTK_getGeom(&geom);	
-	p->LFSTK_moveGadget(geom.x,geom.y-adj);
-	switchIsUp=true;
-	switchButton->LFSTK_setValue(true);
-	deskListCB( switchButton, ud);
-	return(true);
-}
 
 bool deskListCB(void* p,void* ud)
 {
@@ -88,6 +70,35 @@ bool deskListCB(void* p,void* ud)
 					apc->windows->at(apc->LFSTK_findWindow(switchWindow)).showing=false;
 				}
 		}
+	return(true);
+}
+
+void updateSwitcher(void)
+{
+	if((switchButton->inWindow==false) && (switchButton->LFSTK_getValue()==1) && (switchWindow->inWindow==false))
+	{
+		switchButton->LFSTK_setValue(false);
+		switchWindow->LFSTK_hideWindow();
+		apc->windows->at(apc->LFSTK_findWindow(switchWindow)).showing=false;
+		deskSwitcherExitCB(switchButton,NULL);
+		XSync(apc->display,false);
+	}
+}
+
+bool deskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
+{
+	geometryStruct	geom;
+	int				adj;
+
+	if(switchIsUp==true)
+		return(true);
+
+	adj=extraSpace*posMultiplier;
+	p->LFSTK_getGeom(&geom);	
+	p->LFSTK_moveGadget(geom.x,geom.y-adj);
+	switchIsUp=true;
+	switchButton->LFSTK_setValue(true);
+	deskListCB( switchButton, ud);
 	return(true);
 }
 

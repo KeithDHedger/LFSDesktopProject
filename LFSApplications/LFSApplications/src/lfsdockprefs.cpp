@@ -98,6 +98,24 @@ bool buttonCB(void *p,void* ud)
 	return(true);
 }
 
+bool coleditCB(void *p,void* ud)
+{
+	LFSTK_lineEditClass	*ed=static_cast<LFSTK_lineEditClass*>(p);
+
+	if(ed==NULL)
+		return(true);
+
+	if((ed->mouseEvent->state & Button2Mask)!=0)
+		{
+			char *col=NULL;
+		col=apc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%s\"",wc->window,ed->LFSTK_getCStr());
+			if(strlen(col)>0)
+				ed->LFSTK_setBuffer(col);
+			free(col);
+		}
+	return(true);
+}
+
 void getEdits(void)
 {
 	prefs.prefsMap=
@@ -290,11 +308,13 @@ int main(int argc, char **argv)
 //panel colour
 	label=new LFSTK_labelClass(wc,"Panel Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	dockBGColourEdit=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
+	dockBGColourEdit->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
 	sy+=YSPACING;
 	
 //panel text colour
 	label=new LFSTK_labelClass(wc,"Text Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	dockTextColourEdit=new LFSTK_lineEditClass(wc,"black",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
+	dockTextColourEdit->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
 	sy+=YSPACING;
 
 //on monitor

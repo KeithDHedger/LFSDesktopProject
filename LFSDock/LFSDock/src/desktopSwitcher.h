@@ -26,5 +26,6 @@
 extern LFSTK_toggleButtonClass	*switchButton;
 
 int addDesktopSwitcer(int x,int y,int grav);
+void updateSwitcher(void);
 
 #endif

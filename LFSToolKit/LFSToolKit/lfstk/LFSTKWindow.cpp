@@ -1490,9 +1490,12 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 				break;
 
 			case EnterNotify:
+				this->inWindow=true;
+
 				break;
 
 			case LeaveNotify:
+				this->inWindow=false;
 				if((event->xany.window==this->window) && (this->popupFromGadget!=NULL))
 					return(-1);
 				break;

@@ -85,6 +85,9 @@ bool timerCB(LFSTK_applicationClass *p,void* ud)
 	if(scwindow!=NULL)
 		updateSlider();
 
+	if(switchButton!=NULL)
+		updateSwitcher();
+
 	return(true);
 }
 
