@@ -756,6 +756,8 @@ void LFSTK_windowClass::windowClassInitCommon(windowInitStruct *wi)
 	classHint.res_name=this->windowName;
 	classHint.res_class=(char*)"LFSToolKit";
 	XSetClassHint(this->app->display,this->window,&classHint);
+	unsigned long pid=getpid();
+	this->LFSTK_setXProperty(XInternAtom(this->app->display,"_NET_WM_PID",False),XA_CARDINAL,32,(void *)&pid,1);
 
 	this->gc=XCreateGC(this->app->display,this->window,0,NULL);
 	this->LFSTK_setFontString((char*)DEFAULTFONT);
@@ -845,6 +847,8 @@ LFSTK_windowClass::LFSTK_windowClass(windowInitStruct *wi,LFSTK_applicationClass
 	classHint.res_name=this->windowName;
 	classHint.res_class=(char*)"LFSToolKit";
 	XSetClassHint(this->app->display,this->window,&classHint);
+	unsigned long pid=getpid();
+	this->LFSTK_setXProperty(XInternAtom(this->app->display,"_NET_WM_PID",False),XA_CARDINAL,32,(void *)&pid,1);
 
 	this->gc=XCreateGC(this->app->display,this->window,0,NULL);
 	this->LFSTK_setFontString((char*)DEFAULTFONT);
