@@ -120,16 +120,14 @@ void sanityCheck(void)
 		{
 			std::ofstream rcfile;
 			rcfile.open (configFile);
-			rcfile<<"panelpos -2\n";
+			rcfile<<"font Arial:size=16\n";
 			rcfile<<"onmonitor 0\n";
 			rcfile<<"panelgrav 2\n";
-			rcfile<<"panelwidth -2\n";
-			rcfile<<"textcolour black\n";
-			rcfile<<"gadgetsleft LCSD\n";
 			rcfile<<"panelsize 3\n";
+			rcfile<<"textcolour FF000000\n";
+			rcfile<<"gadgetsleft LCSD\n";
 			rcfile<<"termcommand kkterminal -m -l -e \n";
-			rcfile<<"font Arial:size=16\n";
-			rcfile<<"panelbgcolour #80ffffff\n";
+			rcfile<<"panelbgcolour #00000000\n";
 			rcfile.close();
 		}
 }
@@ -183,6 +181,8 @@ int main(int argc,char **argv)
 			NET_WM_NAME=XInternAtom(mainwind->app->display,"_NET_WM_NAME",False);
 			UTF8_STRING=XInternAtom(mainwind->app->display,"UTF8_STRING",False);
 			NET_CURRENT_DESKTOP=XInternAtom(mainwind->app->display,"_NET_CURRENT_DESKTOP",False);
+			WM_CLASS=XInternAtom(mainwind->app->display,"WM_CLASS",False);
+			NET_WM_PID=XInternAtom(mainwind->app->display,"_NET_WM_PID",False);
 
 			env=mainwind->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str());
 			key=atoi(env);
@@ -273,6 +273,7 @@ int main(int argc,char **argv)
 			free(iconM);
 			free(iconH);
 			clockButton=NULL;
+			switchButton=NULL;
 			launcherSide=NOLAUNCHERS;
 			delete apc;
 		}

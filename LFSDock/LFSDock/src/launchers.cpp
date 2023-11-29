@@ -23,6 +23,12 @@
 
 #include "launchers.h"
 
+//LFSTK_windowClass	*contextWindow=NULL;
+LFSTK_buttonClass	*contextButtons[NOMOREBUTONS];
+
+const char			*contextLabelData[]={"Launch","Remove From Dock","TBD","TBD",NULL};
+const char			*contextThemeIconData[]={"media-playback-start","list-remove","dialog-warning","dialog-warning"};
+
 void addALAuncher(const char *fpath,menuEntryStruct	*entry)
 {
 	size_t		start_pos=0;
@@ -81,6 +87,7 @@ int launcherBuildCB(const char *fpath,const struct stat *sb,int typeflag)
 			newlist->entry=entry;
 			newlist->next=NULL;
 			newlist->bc=NULL;
+			newlist->desktopFilePath=fpath;
 			newlist->icon=entry.icon;
 			if(ll!=NULL)
 				{
@@ -113,6 +120,13 @@ int addLaunchers(int x,int y,int grav)
 	char				*icon=NULL;
 	int				xpos=x;
 	int				ypos=y;
+	windowInitStruct	*win;
+	std::string		lc="#a0f0f0f0";
+	std::string		pc="#60a0a0a0";
+	std::string		ac="#60404040";
+	char				*iconpath=NULL;
+	int				ww;
+	int				sy=0;
 
 	asprintf(&launchers,"%s/launchers-DOCK",apc->configDir.c_str());
 	ftw(launchers,launcherBuildCB,16);
@@ -123,17 +137,57 @@ int addLaunchers(int x,int y,int grav)
 	popLabel->LFSTK_setTile(NULL,0);
 	popWindow->LFSTK_setWindowColourName(NORMALCOLOUR,"#c0808080");
 
+	win=new windowInitStruct;
+	win->app=apc;
+	win->name="";
+	win->loadVars=true;
+	win->x=100;
+	win->y=100;
+	win->w=200;
+	win->h=200;
+	win->wc=mainwind;
+	win->windowType="_NET_WM_WINDOW_TYPE_DOCK";
+	win->decorated=false;
+	win->overRide=true;
+	win->level=ABOVEALL;
+
+	apc->LFSTK_addWindow(win,"hello");
+	contextWindow=apc->windows->back().window;
+	contextWindow->LFSTK_setWindowColourName(NORMALCOLOUR,lc.c_str());
+
+	for(int j=BUTTONLAUNCH;j<NOMOREBUTONS;j++)
+		{
+			contextButtons[j]=new LFSTK_buttonClass(contextWindow,contextLabelData[j],0,sy,GADGETWIDTH*2,24,NorthWestGravity);
+			contextButtons[j]->LFSTK_setMouseCallBack(NULL,contextCB,(void*)(long)(j+1));
+			iconpath=contextWindow->globalLib->LFSTK_findThemedIcon("gnome",contextThemeIconData[j],"");
+			contextButtons[j]->LFSTK_setImageFromPath(iconpath,LEFT,true);
+
+			setGadgetDetails(contextButtons[j]);
+			contextButtons[j]->LFSTK_setCairoFontDataParts("sB",20);
+			contextButtons[j]->LFSTK_setTile(NULL,0);
+			contextButtons[j]->LFSTK_setFontString(prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("font")),true);
+			contextButtons[j]->LFSTK_setLabelAutoColour(true);
+			contextButtons[j]->LFSTK_setGadgetColours(GADGETBG,lc,pc,ac,lc);
+			contextButtons[j]->LFSTK_setGadgetColours(GADGETFG,lc,pc,ac,lc);
+
+			free(iconpath);
+			sy+=GADGETHITE;
+		}
+	ww=contextButtons[0]->LFSTK_getTextRealWidth(contextLabelData[1]);
+	contextWindow->LFSTK_resizeWindow(ww+contextButtons[0]->imageWidth+8,sy,true);
+
 	loopll=ll;
 	while(loopll!=NULL)
 		{
 			icon=NULL;
 			loopll->bc=new LFSTK_buttonClass(mainwind,"",xpos,ypos,iconSize,iconSize);
+			loopll->bc->LFSTK_setContextWindow(contextWindow);
+			loopll->bc->contextWindowPos=CONTEXTABOVECENTRE;
+			loopll->bc->userData=loopll;
 			loopll->bc->LFSTK_setMouseCallBack(NULL,launcherCB,(void*)loopll);
 			loopll->bc->LFSTK_setGadgetDropCallBack(gadgetDrop,(void*)loopll);
-	
 			loopll->bc->LFSTK_setMouseMoveCallBack(enterCB,exitCB,USERDATA(loopll));
 			loopll->bc->gadgetAcceptsDnD=true;
-//fprintf(stderr,"name=>>%s x=%i<<\n",loopll->entry.name,xpos);
 
 			if((loopll->icon!=NULL) && (desktopTheme!=NULL))
 				icon=apc->globalLib->LFSTK_findThemedIcon(desktopTheme,loopll->icon,"");

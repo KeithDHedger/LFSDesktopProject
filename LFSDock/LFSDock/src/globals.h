@@ -55,6 +55,8 @@ struct launcherList
 	LFSTK_buttonClass	*bc=NULL;
 	char					*icon=NULL;
 	menuEntryStruct		entry;
+	std::string			desktopFilePath="";
+	unsigned long		pid=0;
 };
 
 enum {NOLAUNCHERS,LAUNCHERINLEFT};
@@ -103,6 +105,8 @@ extern Atom						NET_WM_STATE;
 extern Atom						NET_WM_NAME;
 extern Atom						UTF8_STRING;
 extern Atom						NET_CURRENT_DESKTOP;
+extern Atom						WM_CLASS;
+extern Atom						NET_WM_PID;
 
 extern const char				*possibleError;
 
@@ -110,5 +114,12 @@ void printError(const char *err);
 void dropDesktopFile(const char *data,launcherList *launcher);
 void sendNotify(const char *message1,const char *message2);
 void setGadgetDetails(LFSTK_gadgetClass *gadget);
+bool hasProp(Window win,Atom atom);
+Window getNamedWindow(std::string name);
+Window getWindowByClass(std::string name);
+Window getWindowByPID(unsigned long pid);
+
+Window doTreeWalkForClass(Window wind,std::string namecheck);
+Window doTreeWalkForPID(Window wind,unsigned long pid);
 
 #endif

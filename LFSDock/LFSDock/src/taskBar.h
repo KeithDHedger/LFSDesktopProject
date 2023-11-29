@@ -1,8 +1,8 @@
 /*
  *
- * ©K. D. Hedger. Sun 19 Nov 19:09:12 GMT 2023 keithdhedger@gmail.com
+ * ©K. D. Hedger. Tue 28 Nov 11:35:30 GMT 2023 keithdhedger@gmail.com
 
- * This file (callbacks.h) is part of LFSDock.
+ * This file (taskBar.h) is part of LFSDock.
 
  * LFSDock is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,18 +18,10 @@
  * along with LFSDock.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _CALLBACKS_
-#define _CALLBACKS_
+#ifndef _TASKBAR_
+#define _TASKBAR_
 
-enum {BUTTONLAUNCH=0,BUTTONREMOVE,BUTTONTBD1,BUTTONTBD2,NOMOREBUTONS};
+#include "globals.h"
+#include "callbacks.h"
 
-extern LFSTK_windowClass	*contextWindow;
-
-bool contextCB(void *p,void* ud);
-bool launcherCB(void *p,void* ud);
-bool gadgetDrop(void *lwc,propertyStruct *data,void* ud);
-bool timerCB(LFSTK_applicationClass *p,void* ud);
-void readMsg(void);
-bool exitCB(LFSTK_gadgetClass*p,void* ud);
-bool enterCB(LFSTK_gadgetClass*p,void* ud);
 #endif

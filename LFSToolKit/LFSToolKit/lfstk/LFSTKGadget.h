@@ -179,6 +179,7 @@ std::string			imagePath;//?????
 		contextPostition		contextWindowPos=CONTEXTRIGHT;
 
 bool					inWindow;//TODO//MMMMmmmmmmm
+int					imageWidth=0;
 
 	private:
 		void					initGadget(void);
@@ -222,7 +223,7 @@ bool					inWindow;//TODO//MMMMmmmmmmm
 		cairo_surface_t		*cImage=NULL;
 		cairo_pattern_t		*pattern=NULL;
 		
-		int					imageWidth=0;
+//		int					imageWidth=0;
 		int					imageHeight=0;
 		int					imageGravity=CENTRE;
 		float				ratio;

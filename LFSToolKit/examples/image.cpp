@@ -17,7 +17,7 @@ exit $retval
 #include "../config.h"
 #include "lfstk/LFSTKGlobals.h"
 
-#define BOXLABEL		"Drag Image"
+#define BOXLABEL			"Drag Image"
 #define BOXLABEL2		"Right Click For Context"
 #define IMAGESIZE		64
 
@@ -25,19 +25,19 @@ enum {BUTTONMOUNT=0,BUTTONUNMOUNT,BUTTONEJECT,BUTTONOPEN,BUTTONADDICON,BUTTONREM
 
 LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*wc=NULL;
-LFSTK_labelClass		*label=NULL;
-LFSTK_labelClass		*personal=NULL;
-LFSTK_labelClass		*copyrite=NULL;
+LFSTK_labelClass			*label=NULL;
+LFSTK_labelClass			*personal=NULL;
+LFSTK_labelClass			*copyrite=NULL;
 LFSTK_buttonClass		*seperator=NULL;
 LFSTK_buttonClass		*quit=NULL;
-LFSTK_imageClass		*tux;
+LFSTK_imageClass			*tux;
 
 const char				*diskLabelData[]={"Mount","Unmount","Eject","Open","Custom Icon","Remove Icon",NULL};
 const char				*diskThemeIconData[]={"drive-harddisk","media-eject","media-eject","document-open","list-add","list-remove"};
-char					*iconpath=NULL;
+char						*iconpath=NULL;
 LFSTK_windowClass		*diskWindow=NULL;
 LFSTK_buttonClass		*diskButtons[NOMOREBUTONS];
-bool					sticky=false;
+bool						sticky=false;
 
 bool doQuit(void *p,void* ud)
 {
@@ -71,7 +71,7 @@ bool contextCB(void *p,void* ud)
 			//wc->popupLoop=false;
 			//printf("data=%p\n win=%i",ud,static_cast<LFSTK_gadgetClass*>(p)->windowNumber);
 			//apc->windows->at(static_cast<LFSTK_gadgetClass*>(p)->windowNumber).loopFlag=false;
-			printf("ud=%p\n",ud);
+			printf("ud=%p gadget=%p tux=%p\n",ud,lwc->popupFromGadget,tux);
 		}
 	return(true);
 }
@@ -185,6 +185,7 @@ int main(int argc, char **argv)
 		}
 	diskWindow->LFSTK_resizeWindow(GADGETWIDTH+GADGETHITE,sy,true);
 	tux->LFSTK_setContextWindow(diskWindow);
+	tux->contextWindowPos=CONTEXTABOVECENTRE;
 	tux->windowNumber=apc->windows->size()-1;
 
 	wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),apc->displayWidth,apc->displayHeight);

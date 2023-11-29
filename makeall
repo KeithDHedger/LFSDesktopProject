@@ -66,6 +66,7 @@ help ()
 	echo -e "${RED}deploy\n\t${NORMAL}run 'make distclean;./autogen.sh --prefix=/usr --libdir=/usr/lib${LIBDIRSUFFIX};make $MAKEFLAGS;make install' on all project folders"
 	echo -e "${RED}deploytest\n\t${NORMAL}run 'make distclean;./autogen.sh --prefix=/usr --libdir=/usr/lib${LIBDIRSUFFIX};make $MAKEFLAGS;make install DESTDIR=/tmp/lfsdesktop-deploy' on all project folders"
 	echo -e "${RED}makeit\n\t${NORMAL}run './autogen.sh --prefix=/usr --libdir=/usr/lib${LIBDIRSUFFIX};make $MAKEFLAGS' on all project folders"
+	echo -e "${RED}makelocal\n\t${NORMAL}run './autogen.sh --prefix=/usr --libdir=/usr/lib${LIBDIRSUFFIX} on LFSToolkit and\nCFLAGS=\"-Wfatal-errors -I/media/LinuxData/Development/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit/lfstk -L/media/LinuxData/Development/Projects/LFSDesktopProject/LFSToolKit/LFSToolKit/app/.libs\" CXXFLAGS=\"$CFLAGS\" ./configure --prefix=/usr;make $MAKEFLAGS' on all ther project folders"
 	echo -e "${RED}ownit\n\t${NORMAL}run 'chown -vR $CHANGEUSER:$CHANGEUSER .;find -mindepth 1 -exec touch {} ;' on all project folders"
 }
 
@@ -105,6 +106,21 @@ deploytest ()
 makeit ()
 {
 	runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib${LIBDIRSUFFIX}"
+	runCommand "make $MAKEFLAGS"
+}
+
+makelocal ()
+{
+	unset CFLAGS CXXFLAGS
+	if [[ "$(basename "$(pwd)")" = "LFSToolKit" ]];then
+		#runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib${LIBDIRSUFFIX}"
+		:
+	else
+		CFLAGS="-Wfatal-errors -I../LFSToolKit/LFSToolKit/lfstk -L../LFSToolKit/LFSToolKit/app/.libs"
+		CXXFLAGS="$CFLAGS"
+		export CFLAGS CXXFLAGS
+		runCommand "./autogen.sh --prefix=/usr"
+	fi
 	runCommand "make $MAKEFLAGS"
 }
 

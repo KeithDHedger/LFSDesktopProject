@@ -63,6 +63,8 @@ Atom						NET_WM_STATE=None;
 Atom						NET_WM_NAME=None;
 Atom						UTF8_STRING=None;
 Atom						NET_CURRENT_DESKTOP=None;
+Atom						WM_CLASS=None;
+Atom						NET_WM_PID=None;
 
 const char				*possibleError="Unknown";
 
@@ -119,3 +121,319 @@ void setGadgetDetails(LFSTK_gadgetClass *gadget)
 	gadget->LFSTK_setGadgetColours(GADGETBG,"#00000000","#00000000","#00000000","#00000000");
 	gadget->	LFSTK_setGadgetColourPair(NORMALCOLOUR,"#00000000",panelTextColour);
 }
+
+/*
+ * Check if window has given property
+ */
+bool hasProp(Window win,Atom atom)
+{
+	Atom				typeret;
+	int				formatret;
+	unsigned char	*propret;
+	unsigned long	bytesafter,numret;
+
+	typeret=None;
+	propret=NULL;
+	XGetWindowProperty(apc->display,win,atom,0,0,false,AnyPropertyType,&typeret,&formatret,&numret,&bytesafter,&propret);
+	if (propret)
+		XFree(propret);
+
+	if(typeret!=None)
+		return(true);
+
+	return(false);
+}
+
+bool isVisible(Window win)
+{
+	bool ok;
+	XWindowAttributes xwa;
+
+	XGetWindowAttributes(apc->display,win,(XWindowAttributes*)&xwa);
+	ok=(xwa.c_class==InputOutput) && (xwa.map_state==IsViewable);
+	return ok;
+}
+
+Window doTreeWalk(Window wind,bool thisdesktop,std::string namecheck)
+{
+	Window			root,parent;
+	Window			*children;
+	Window			thewin;
+	unsigned int		n_children;
+	int				i;
+	unsigned long	winid;
+	char				*wname;
+	void				*ptr=NULL;
+	unsigned long	count=32;
+	Atom				rtype;
+	int				rfmt;
+	unsigned long	rafter;
+	unsigned long	n=0;
+	XTextProperty	textpropreturn;
+	Status			st;
+
+	if (!XQueryTree(mainwind->app->display,wind,&root,&parent,&children,&n_children))
+		return None;
+
+	if (!children)
+		return None;
+
+	/* Check each child for WM_STATE and other validity */
+	thewin=None;
+	wname=NULL;
+	winid=-1;
+
+	for (int j=n_children-1;j>=0; j--)
+		{
+			if((thisdesktop==true) && (isVisible(children[j])==false))
+				{
+					children[j]=None; /* Don't bother descending into this one */
+					continue;
+				}
+			if (!hasProp(children[j],WM_STATE))
+				continue;
+
+//		propReturn		LFSTK_getSingleProp(Display *display,Window win,Atom prop,Atom wanttype);
+			if (hasProp(children[j],WM_CLASS))
+				{
+				//fprintf(stderr,"got class\n");
+				propReturn	pr=apc->globalLib->LFSTK_getSingleProp(apc->display,children[j],XInternAtom(apc->display,"WM_CLASS",false),XA_STRING);
+if(namecheck.length()>0)
+{
+	//if(namecheck.compare(pr.strlist.at(0))==0)
+	if(strcasecmp(namecheck.c_str(),pr.strlist.at(0).c_str())==0)
+	{
+fprintf(stderr,"strlist=%>>%s<< winid=%p\n",pr.strlist.at(0).c_str(),children[j]);
+				if(wname!=NULL)
+		XFree(wname);
+	XFree(ptr);
+	XFree(children);
+	return children[j];
+	}
+}
+				}
+
+			/* Got one */
+			thewin=children[j];
+			winid=children[j];
+			st=XFetchName(mainwind->app->display,children[j],&wname);
+					fprintf(stderr,"wname=>>%s<<\n",wname);
+
+			break;
+		}
+
+	thewin=None;
+	/* No children matched, now descend into each child */
+	for (i=(int) n_children - 1; i >= 0; i--)
+		{
+			if (children[i]==None)
+				continue;
+//			if (isHidden(children[i])==true)
+//				continue;
+			
+			thewin=doTreeWalk(children[i],thisdesktop,namecheck);
+			if (thewin != None)
+			{
+				return(thewin);
+				break;
+				}
+		}
+
+	if(wname!=NULL)
+		{
+	//	fprintf(stderr,"wname=>>%s<<\n",wname);
+			if(winid!=-1)
+				{
+					ptr=NULL;
+					count=32;
+					n=0;
+
+					if(strlen(wname)==0)
+						{
+							st=XGetWindowProperty( mainwind->app->display,winid,NET_WM_NAME,0,count,false,UTF8_STRING,&rtype,&rfmt,&n,&rafter,(unsigned char **)&ptr);
+							if(st==Success && n != 0 && ptr != NULL)
+								wname=strdup((char*)ptr);
+						}
+
+if(namecheck.length()>0)
+{
+	if(namecheck.compare(wname)==0)
+		{
+			if(wname!=NULL)
+		XFree(wname);
+	XFree(ptr);
+	XFree(children);
+	return thewin;
+		}
+}
+//					for(int j=0;j<strlen(wname);j++)
+//						if(!isalnum(wname[j]))
+//							wname[j]=' ';
+//
+//					XGetWindowProperty(mainwind->app->display,winid,NET_WM_DESKTOP,0L,count,false,XA_CARDINAL,&rtype,&rfmt,&n,&rafter,(unsigned char **)&ptr);
+//					windowList[windowListCnt]=new menuStruct;
+//					windowList[windowListCnt]->label=strdup(wname);
+//					windowList[windowListCnt++]->userData=(void*)winid;
+				}
+		}
+
+	if(wname!=NULL)
+		XFree(wname);
+	XFree(ptr);
+	XFree(children);
+	return thewin;
+}
+
+Window doTreeWalkForClass(Window wind,std::string namecheck)
+{
+	Window			root;
+	Window			parent;
+	Window			*children;
+	Window			thewin;
+	unsigned int		n_children;
+	unsigned long	winid;
+
+	if (!XQueryTree(mainwind->app->display,wind,&root,&parent,&children,&n_children))
+		return None;
+
+	if (!children)
+		return None;
+
+	/* Check each child for WM_STATE and other validity */
+	thewin=None;
+	winid=-1;
+
+	for (int j=n_children-1;j>=0;j--)
+		{
+			if(isVisible(children[j])==false)
+				{
+					children[j]=None; /* Don't bother descending into this one */
+					continue;
+				}
+			if (!hasProp(children[j],WM_STATE))
+				continue;
+
+			if (hasProp(children[j],WM_CLASS))
+				{
+					propReturn	pr=apc->globalLib->LFSTK_getSingleProp(apc->display,children[j],XInternAtom(apc->display,"WM_CLASS",false),XA_STRING);
+
+					for(int k=0;k<pr.strlist.size();k++)
+						{
+							if(strcasecmp(namecheck.c_str(),pr.strlist.at(k).c_str())==0)
+								{
+									thewin=children[j];
+									XFree(children);
+									return(thewin);
+								}
+						}
+				}
+
+			/* Got one */
+			thewin=children[j];
+			winid=children[j];
+			break;
+		}
+
+	thewin=None;
+	/* No children matched, now descend into each child */
+	for (int i=(int) n_children - 1; i >= 0; i--)
+		{
+			if (children[i]==None)
+				continue;
+			
+			thewin=doTreeWalkForClass(children[i],namecheck);
+			if (thewin != None)
+				return(thewin);
+		}
+
+	XFree(children);
+	return thewin;
+}
+
+Window doTreeWalkForPID(Window wind,unsigned long pid)
+{
+	Window			root;
+	Window			parent;
+	Window			*children;
+	Window			thewin;
+	unsigned int		n_children;
+	unsigned long	winid;
+
+	if (!XQueryTree(mainwind->app->display,wind,&root,&parent,&children,&n_children))
+		return None;
+
+	if (!children)
+		return None;
+
+	/* Check each child for WM_STATE and other validity */
+	thewin=None;
+	winid=-1;
+
+	for (int j=n_children-1;j>=0;j--)
+		{
+			if(isVisible(children[j])==false)
+				{
+					children[j]=None; /* Don't bother descending into this one */
+					continue;
+				}
+			if(!hasProp(children[j],WM_STATE))
+				continue;
+
+			if(hasProp(children[j],NET_WM_PID))
+				{
+					propReturn	pr=apc->globalLib->LFSTK_getSingleProp(apc->display,children[j],NET_WM_PID,XA_CARDINAL);
+					if(pr.integer==pid)
+						{
+							thewin=children[j];
+							XFree(children);
+							return(thewin);
+						}
+				}
+
+			/* Got one */
+			thewin=children[j];
+			winid=children[j];
+			break;
+		}
+
+	thewin=None;
+	/* No children matched, now descend into each child */
+	for (int i=(int) n_children - 1; i >= 0; i--)
+		{
+			if (children[i]==None)
+				continue;
+			
+			thewin=doTreeWalkForPID(children[i],pid);
+			if (thewin != None)
+				return(thewin);
+		}
+
+	XFree(children);
+	return thewin;
+}
+
+Window getNamedWindow(std::string name)
+{
+	Window win=None;
+	win=doTreeWalk(apc->rootWindow,true,name);
+	if(win!=None)
+		{
+		fprintf(stderr,"go win named %s at %p\n",name.c_str(),win);
+		}
+return(win);
+}
+
+Window getWindowByClass(std::string name)
+{
+	Window win=None;
+	win=doTreeWalkForClass(apc->rootWindow,name);
+	return(win);
+}
+
+Window getWindowByPID(unsigned long pid)
+{
+	Window win=None;
+	win=doTreeWalkForPID(apc->rootWindow,pid);
+	return(win);
+}
+

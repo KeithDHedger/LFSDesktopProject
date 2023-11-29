@@ -1,4 +1,7 @@
 0.1.0
+Added right click to launchers for simple context menu.
+Clicking launcher will try to raise already opened window.
+Started task bar.
 Desktop switcher updates.
 Pop up desktop list on rollover of swticher.
 Added workspace switcher.

@@ -410,12 +410,21 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 								case CONTEXTRIGHT:
 									lwc->LFSTK_moveWindow(geom.x+geom.w-wingeom->w,geom.y+(geom.h),true);
 									break;
+								case CONTEXTABOVELEFT:
+									lwc->LFSTK_moveWindow(geom.x,geom.y-(wingeom->h),true);
+									break;
+								case CONTEXTABOVECENTRE:
+									lwc->LFSTK_moveWindow(geom.x+(geom.w/2)-(wingeom->w/2),geom.y-(wingeom->h),true);
+									break;
+								case CONTEXTABOVERIGHT:
+									lwc->LFSTK_moveWindow(geom.x+geom.w-wingeom->w,geom.y-(wingeom->h),true);
+									break;
 								case CONTEXTATMOUSE:
 									break;
 							}
 						
 						gadget->wc->app->LFSTK_runWindowLoop(lwc);
-						lwc->popupFromGadget=NULL;
+						//lwc->popupFromGadget=NULL;
 						retval=true;
 						break;
 					}

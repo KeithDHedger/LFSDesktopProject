@@ -139,6 +139,9 @@ int addDesktopSwitcer(int x,int y,int grav)
 	std::string			label;
 	propertyStruct		props;
 	propReturn			pr;
+	std::string			lc="#a0f0f0f0";
+	std::string			pc="#60a0a0a0";
+	std::string			ac="#60404040";
 
 	if(switchButton!=NULL)
 		{
@@ -167,14 +170,11 @@ int addDesktopSwitcer(int x,int y,int grav)
 
 	win->x=0;
 	win->y=0;
-	win->w=1;//TODO//
-	win->h=1;//GADGETHITE*6;
+	win->w=1;
+	win->h=1;
 	apc->LFSTK_addToolWindow(win);
 	switchWindow=apc->windows->back().window;
 	switchList=new LFSTK_listGadgetClass(switchWindow,"list",0,0,2000,2000);;
-	std::string	lc="#60f0f0f0";
-	std::string	pc="#60a0a0a0";
-	std::string	ac="#60404040";
 
 	switchList->LFSTK_setStyle(BEVELNONE);
 	switchList->LFSTK_setLabelAutoColour(true);
@@ -194,12 +194,7 @@ int addDesktopSwitcer(int x,int y,int grav)
 			ls.userData=USERDATA(j-1);
 			switchList->LFSTK_appendToList(ls);
 		}
-/*
-//TODO//
-switchList->monoFontString=prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("font"));
-switchList->LFSTK_resetListHeight(2000);
-fprintf(stderr,"mfs=>>%s<<\n",switchList->monoFontString);
-*/
+
 	switchList->LFSTK_moveGadget(-1,-1);
 	switchWindow->LFSTK_resizeWindow(switchList->LFSTK_getListMaxWidth()-2,(GADGETHITE*pr.strlist.size())-4);
 

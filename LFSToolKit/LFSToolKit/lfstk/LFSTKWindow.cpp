@@ -1491,7 +1491,6 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 
 			case EnterNotify:
 				this->inWindow=true;
-
 				break;
 
 			case LeaveNotify:
