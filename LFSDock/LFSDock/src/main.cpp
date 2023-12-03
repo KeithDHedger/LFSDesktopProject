@@ -150,17 +150,21 @@ void sanityCheck(void)
 	namespace fs=std::filesystem;
 
 	if(!fs::exists(fs::status(launchersDir)))
-		fs::create_directories(launchersDir);
+		{
+			fs::create_directories(launchersDir);
+			std::string	command="cp /usr/share/applications/lfsappearance.desktop " + launchersDir;
+			system(command.c_str());
+		}
 	if(!fs::exists(fs::status(configFile)))
 		{
 			std::ofstream rcfile;
 			rcfile.open (configFile);
-			rcfile<<"font Arial:size=16\n";
+			rcfile<<"font Arial:size=10\n";
 			rcfile<<"onmonitor 0\n";
 			rcfile<<"panelgrav 2\n";
-			rcfile<<"panelsize 3\n";
+			rcfile<<"panelsize 2\n";
 			rcfile<<"textcolour FF000000\n";
-			rcfile<<"gadgetsleft LCSD\n";
+			rcfile<<"gadgetsleft LCDsssT\n";
 			rcfile<<"termcommand kkterminal -m -l -e \n";
 			rcfile<<"panelbgcolour #00000000\n";
 			rcfile.close();

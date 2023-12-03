@@ -129,7 +129,8 @@ bool launcherCB(void *p,void* ud)
 	else
 		str=apc->globalLib->LFSTK_oneLiner(std::string("exec %s %s %s &\necho $!"),prefs.LFSTK_getCString("termcommand"),whch.c_str(),args.c_str());
 	launcher->pid=std::stoul(str,nullptr,0);
-
+	if(useTaskBar==true)
+		updateTaskBar();
 	return(true);
 }
 

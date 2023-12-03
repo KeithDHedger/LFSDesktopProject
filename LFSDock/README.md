@@ -18,6 +18,7 @@ The tasklist needs to be included for the task switcher but the tasks are always
 Right click on a launcher for a simple context menu.<br>
 Clicking a launcher will either launch the app or if already launched bring it to front.<br>
 Selecting 'Launch' from the right click menu will attemt to launch an new instance, ( some single instance apps will override this ).<br>
+To add a launcher either copy a .desktop file to  ~/.config/LFS/launchers-DOCK or drag and drop one on the dock itself.<br>
 <br>
 You can use 's' for spaces as many times as you want.<br>
 <br>
