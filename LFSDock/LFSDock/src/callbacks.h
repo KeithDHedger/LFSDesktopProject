@@ -24,12 +24,11 @@
 enum {BUTTONLAUNCH=0,BUTTONREMOVE,BUTTONTBD1,BUTTONTBD2,NOMOREBUTONS};
 
 extern LFSTK_windowClass	*contextWindow;
+void sendClientMessage(Window win,const char *msg,unsigned long data0,unsigned long data1,unsigned long data2,unsigned long data3,unsigned long data4);
 
 bool contextCB(void *p,void* ud);
-bool launcherCB(void *p,void* ud);
 bool gadgetDrop(void *lwc,propertyStruct *data,void* ud);
 bool timerCB(LFSTK_applicationClass *p,void* ud);
 void readMsg(void);
-bool exitCB(LFSTK_gadgetClass*p,void* ud);
-bool enterCB(LFSTK_gadgetClass*p,void* ud);
+
 #endif

@@ -1,4 +1,5 @@
 0.6.0
+Fixed segfault with LFSTK_getSingleProp.
 List gadget visual fixes.
 Updates to list gadget class.
 Redone colours.

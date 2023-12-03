@@ -31,8 +31,6 @@
 
 #define RCNAME "lfsdock"
 
-int	windowWidth=0;
-
 void loadPrefs(const char *env)
 {
 	prefs.LFSTK_loadVarsFromFile(env);
@@ -78,9 +76,46 @@ void addGadgets(void)
 				case 'D':
 					offset+=addDesktopSwitcer(offset,adj,panelGravity);
 					break;
+				case 'T':
+					{
+						windowInitStruct		*win=new windowInitStruct;
+						std::string			lc="#a0f0f0f0";
+						std::string			pc="#60a0a0a0";
+						std::string			ac="#60404040";
+
+					win->x=0;
+						win->y=0;
+						win->w=1;
+						win->h=1;
+						apc->LFSTK_addToolWindow(win);
+						taskWindow=apc->windows->back().window;
+						//taskWindow->LFSTK_setMouseMoveCallBack(NULL,taskSwitcherExitCB,NULL);
+						taskList=new LFSTK_listGadgetClass(taskWindow,"list",0,0,2000,2000);
+
+						taskList->LFSTK_setStyle(BEVELNONE);
+						taskList->LFSTK_setLabelAutoColour(true);
+						taskList->LFSTK_setListItemsColours(GADGETBG,lc,pc,ac,lc);
+						taskList->LFSTK_setListItemsColours(GADGETFG,"red","red","red","red");
+						taskList->LFSTK_setGadgetColourPair(NORMALCOLOUR,lc,"red");
+						taskList->LFSTK_moveGadget(-1,-1);
+						taskList->LFSTK_setMouseCallBack(NULL,taskSelect,NULL);
+						//taskList->LFSTK_setMouseMoveCallBack(taskSwitcherEnterCB,taskSwitcherExitCB,NULL);
+						useTaskBar=true;
+					}
+					break;
 				}
 		}
+
 	windowWidth=offset;
+	for(int j=0;j<20;j++)
+		{
+			taskbuttons[j]=new LFSTK_buttonClass(mainwind,"",windowWidth+(j*iconSize),adj,iconSize,iconSize);
+			setGadgetDetails(taskbuttons[j]);
+			taskbuttons[j]->LFSTK_setAlpha(1.0);
+			taskbuttons[j]->LFSTK_setMouseCallBack(NULL,taskListCB,NULL);
+			taskbuttons[j]->LFSTK_setMouseMoveCallBack(taskSwitcherEnterCB,taskSwitcherExitCB,NULL);
+
+		}
 }
 
 int errHandler(Display *dpy,XErrorEvent *e)
@@ -159,8 +194,14 @@ int main(int argc,char **argv)
 						{prefs.LFSTK_hashFromKey("panelbgcolour"),{TYPESTRING,"panelbgcolour","",false,0}},
 					};
 	realMainLoop=true;
-	
+
 	XSetErrorHandler(errHandler);
+	kf=g_key_file_new();
+	gFind=new LFSTK_findClass;
+	gFind->LFSTK_setDepth(1,1);
+	gFind->LFSTK_setFileTypes(".desktop");
+	gFind->LFSTK_setFullPath(true);
+	gFind->LFSTK_findFiles("/usr/share/applications",false);
 
 	while(realMainLoop==true)
 		{
@@ -224,6 +265,7 @@ int main(int argc,char **argv)
 			mainwind->LFSTK_setWindowColourName(NORMALCOLOUR,"#00000000");
 			windowWidth=0;
 			addGadgets();
+
 			if(windowWidth==0)
 				{
 					fprintf(stderr,"Not using empty dock ...\n");
@@ -231,22 +273,23 @@ int main(int argc,char **argv)
 				}
 
 			psize=windowWidth;
-			px=mons->x;
-			py=mons->y;
-			switch(panelGravity)
-				{
-					case PANELSOUTH:
-						py=mons->y+mons->h-iconSize;
-					case PANELNORTH:
-						px=((mons->w/2)-(psize/2))+mons->x;
-						break;
-				}
+//			px=mons->x;
+//			py=mons->y;
+//			switch(panelGravity)
+//				{
+//					case PANELSOUTH:
+//						py=mons->y+mons->h-iconSize;
+//					case PANELNORTH:
+//						px=((mons->w/2)-(psize/2))+mons->x;
+//						break;
+//				}
 
 			mainwind->LFSTK_resizeWindow(psize,iconSize+extraSpace,true);
-			if(posMultiplier==1)
-				mainwind->LFSTK_moveWindow(px,py-extraSpace,true);
-			else
-				mainwind->LFSTK_moveWindow(px,py,true);
+			moveDock(0);
+//			if(posMultiplier==1)
+//				mainwind->LFSTK_moveWindow(px,py-extraSpace,true);
+//			else
+//				mainwind->LFSTK_moveWindow(px,py,true);
 
 			mainwind->LFSTK_showWindow(true);
 			mainwind->LFSTK_setKeepAbove(true);
@@ -278,5 +321,7 @@ int main(int argc,char **argv)
 			delete apc;
 		}
 	cairo_debug_reset_static_data();
+	g_key_file_free(kf);
+	delete gFind;
 	return 0;
 }

@@ -36,6 +36,7 @@ struct	dataStruct
 {
 	std::string name;
 	std::string path;
+	std::string	namesanssuffix;
 	int			fileType;
 };
 
@@ -48,33 +49,34 @@ class LFSTK_findClass
 		~LFSTK_findClass();
 		LFSTK_findClass();
 
-		void		LFSTK_setDepth(int min,int max);
-		void		LFSTK_setFindType(int type);
+		void			LFSTK_setDepth(int min,int max);
+		void			LFSTK_setFindType(int type);
 		int			LFSTK_getFindType(void);
-		void		LFSTK_setFollowLinks(bool follow);
-		bool		LFSTK_getFollowlinks(void);
-		void		LFSTK_setIncludeHidden(bool hidden);
-		bool		LFSTK_getIncludeHidden(void);
-		void		LFSTK_setFullPath(bool usefull);
-		bool		LFSTK_getFullPath(void);
-		void		LFSTK_setSort(bool down);
-		bool		LFSTK_getSort(void);
-		void		LFSTK_setIgnoreBroken(bool ignore);
-		bool		LFSTK_getIgnoreBroken(void);
-		void		LFSTK_setFileTypes(const char *suffix);
-		const char*	LFSTK_getFileTypes(void);
-		void		LFSTK_setIgnoreNavLinks(bool ignore);
-		bool		LFSTK_getIgnoreNavLinks(void);
+		void			LFSTK_setFollowLinks(bool follow);
+		bool			LFSTK_getFollowlinks(void);
+		void			LFSTK_setIncludeHidden(bool hidden);
+		bool			LFSTK_getIncludeHidden(void);
+		void			LFSTK_setFullPath(bool usefull);
+		bool			LFSTK_getFullPath(void);
+		void			LFSTK_setSort(bool down);
+		bool			LFSTK_getSort(void);
+		void			LFSTK_setIgnoreBroken(bool ignore);
+		bool			LFSTK_getIgnoreBroken(void);
+		void			LFSTK_setFileTypes(const char *suffix);
+		const char	*LFSTK_getFileTypes(void);
+		void			LFSTK_setIgnoreNavLinks(bool ignore);
+		bool			LFSTK_getIgnoreNavLinks(void);
 
 
-		void		LFSTK_findFiles(const char *dir,bool multi=false);
-		void		LFSTK_sortByName(void);
-		void		LFSTK_sortByPath(void);
-		void		LFSTK_sortByType(void);
-		void		LFSTK_sortByTypeAndName(void);
+		void			LFSTK_findFiles(const char *dir,bool multi=false);
+		void			LFSTK_sortByName(void);
+		void			LFSTK_sortByPath(void);
+		void			LFSTK_sortByType(void);
+		void			LFSTK_sortByTypeAndName(void);
 		int			LFSTK_getDataCount(void);
 		int			LFSTK_getMinDepth(void);
 		int			LFSTK_getMaxDepth(void);
+		dataStruct	*LFSTK_findNamed(std::string name,std::string suffix="");
 
 		std::vector<dataStruct> data;
 	private:

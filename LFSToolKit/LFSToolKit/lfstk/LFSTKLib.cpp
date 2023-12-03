@@ -1224,22 +1224,25 @@ propReturn LFSTK_lib::LFSTK_getSingleProp(Display *display,Window win,Atom prop,
 	int				actual_format_return;
 	unsigned long	nitems_return;
 	unsigned long	bytes_after_return;
-	unsigned char	*prop_return;
+	unsigned char	*prop_return=NULL;
 	propReturn		propr;
-	char				*ptr;
+	char				*ptr=NULL;
 
 	result=XGetWindowProperty(display,win,prop,0L,32,false,wanttype,&actual_type_return,&actual_format_return,&nitems_return,&bytes_after_return,(unsigned char**)&prop_return);
 	if(result==Success)
 		{
 			ptr=(char*)prop_return;
-			while(strlen(ptr)>0)
+			if(ptr!=NULL)
 				{
-					propr.strlist.push_back(ptr);
-					ptr+=(strlen(ptr)+1);
+					while((ptr!=NULL) && (strlen(ptr)>0))
+						{
+							propr.strlist.push_back(ptr);
+							ptr+=(strlen(ptr)+1);
+						}
+					propr.window=(Window)(*(long unsigned*)prop_return);
+					propr.integer=(unsigned long)(*(long unsigned*)prop_return);
+					XFree(prop_return);
 				}
-			propr.window=(Window)(*(long unsigned*)prop_return);
-			propr.integer=(unsigned long)(*(long unsigned*)prop_return);
-			XFree(prop_return);
 		}
 	return(propr);
 }

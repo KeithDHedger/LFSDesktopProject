@@ -439,3 +439,21 @@ void LFSTK_findClass::LFSTK_findFiles(const char *dir,bool multi)
 	free(filepath);
 }
 
+
+/**
+* Find in data list .
+* \param std::string name filename to search for.
+* \param bool includesuffix include suffix in search.
+*/
+dataStruct *LFSTK_findClass::LFSTK_findNamed(std::string name,std::string suffix)
+{
+	std::string compto=name+suffix;
+
+	for(int d=0;d<this->data.size();d++)
+		{
+			if(this->data.at(d).name.compare(compto)==0)
+				return(&this->data.at(d));
+		}
+	return(NULL);
+}
+

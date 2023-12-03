@@ -29,6 +29,110 @@ LFSTK_buttonClass	*contextButtons[NOMOREBUTONS];
 const char			*contextLabelData[]={"Launch","Remove From Dock","TBD","TBD",NULL};
 const char			*contextThemeIconData[]={"media-playback-start","list-remove","dialog-warning","dialog-warning"};
 
+bool launcherEnterCB(LFSTK_gadgetClass*p,void* ud)
+{
+	if(ud!=NULL)
+		{
+			geometryStruct	geom;
+			launcherList		*ll;
+			int				width;
+			int				adj;
+
+			adj=extraSpace*posMultiplier;
+			ll=(launcherList*)ud;
+
+//			printf(">>>Mouse In %s<<<\n",ll->entry.name);
+			p->LFSTK_getGeom(&geom);	
+			p->LFSTK_moveGadget(geom.x,geom.y-adj);
+			popLabel->LFSTK_setLabel(ll->entry.name);
+			popLabel->LFSTK_setFontString(prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("font")),true);
+			width=popLabel->LFSTK_getTextRealWidth(ll->entry.name);
+			popWindow->LFSTK_resizeWindow(width,GADGETHITE);
+			p->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);	
+
+			if(posMultiplier==1)
+				popWindow->LFSTK_moveWindow(geom.x-(width/2)+(geom.w/2),geom.y-(GADGETHITE),true);
+			else
+				popWindow->LFSTK_moveWindow(geom.x-(width/2)+(geom.w/2),iconSize+extraSpace,true);
+			popWindow->LFSTK_showWindow();
+			popWindow->LFSTK_clearWindow(true);
+		}
+	return(true);
+}
+
+bool launcherExitCB(LFSTK_gadgetClass*p,void* ud)
+{
+	if(ud!=NULL)
+		{
+			launcherList		*ll;
+			ll=(launcherList*)ud;
+			geometryStruct	geom2;
+			int				adj;
+
+			adj=extraSpace*posMultiplier;
+			p->LFSTK_getGeom(&geom2);	
+			p->LFSTK_moveGadget(geom2.x,geom2.y+adj);
+			popWindow->LFSTK_hideWindow();
+		}
+	return(true);
+}
+
+bool launcherCB(void *p,void* ud)
+{
+	launcherList		*launcher=(launcherList*)ud;
+	Window			win=None;
+	std::string		ex=launcher->entry.exec;
+	std::size_t		found;
+	std::string		command;
+	std::string		args;
+	std::string		str;
+	std::string		whch;
+
+	if(launcher==NULL)
+		return(true);
+
+	if(p!=NULL)
+		{
+			win=getWindowByClass(launcher->entry.name);
+			if(win!=None)
+				{
+					sendClientMessage(win,"_NET_ACTIVE_WINDOW",0,0,0,0,0);
+					return(true);
+				}
+			win=getWindowByPID(launcher->pid);
+			if(win!=None)
+				{
+					sendClientMessage(win,"_NET_ACTIVE_WINDOW",0,0,0,0,0);
+					return(true);
+				}
+		}
+
+
+	found=ex.find(std::string(" "));
+	if(found!=std::string::npos)
+		{
+			command=ex.substr(0,found);
+			args=ex.substr(found,-1);
+		}
+	else
+		{
+			command=ex;
+			args="";
+		}
+
+	whch=apc->globalLib->LFSTK_oneLiner(std::string("which '%s'"),command.c_str());
+
+	sendNotify("Launching ",launcher->entry.name);
+
+	if(launcher->entry.inTerm==false)
+		str=apc->globalLib->LFSTK_oneLiner(std::string("exec %s %s &\necho $!"),whch.c_str(),args.c_str());
+	else
+		str=apc->globalLib->LFSTK_oneLiner(std::string("exec %s %s %s &\necho $!"),prefs.LFSTK_getCString("termcommand"),whch.c_str(),args.c_str());
+	launcher->pid=std::stoul(str,nullptr,0);
+
+	return(true);
+}
+
 void addALAuncher(const char *fpath,menuEntryStruct	*entry)
 {
 	size_t		start_pos=0;
@@ -186,7 +290,7 @@ int addLaunchers(int x,int y,int grav)
 			loopll->bc->userData=loopll;
 			loopll->bc->LFSTK_setMouseCallBack(NULL,launcherCB,(void*)loopll);
 			loopll->bc->LFSTK_setGadgetDropCallBack(gadgetDrop,(void*)loopll);
-			loopll->bc->LFSTK_setMouseMoveCallBack(enterCB,exitCB,USERDATA(loopll));
+			loopll->bc->LFSTK_setMouseMoveCallBack(launcherEnterCB,launcherExitCB,USERDATA(loopll));
 			loopll->bc->gadgetAcceptsDnD=true;
 
 			if((loopll->icon!=NULL) && (desktopTheme!=NULL))

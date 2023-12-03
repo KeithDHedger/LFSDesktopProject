@@ -1446,7 +1446,7 @@ cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int or
 	float			ratio;
 	float			width;
 	float			height;
-	char			*suffix=NULL;
+	char				*suffix=NULL;
 
 	if((file==NULL) || (this->imagePath.compare(file)==0))
 		return(CAIRO_STATUS_SUCCESS);

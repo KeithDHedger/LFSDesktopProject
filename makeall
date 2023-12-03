@@ -48,6 +48,8 @@ CHANGEUSER=${CHANGEUSER:-$(logname)}
 #Set this if needed.
 LIBDIRSUFFIX=64
 
+BUILDFOR=${BUILDFOR:-"LFSToolKit $BUILDLFSWMANAGER LFSWM2 LFSDesktop LFSSetWallpaper LFSApplications LFSPanel LFSDock"}
+
 runCommand ()
 {
 	echo -e "${RED}Running $1 in ${GREEN}$app${RED} ... ${NORMAL}"
@@ -136,7 +138,8 @@ if [[ $action = "help" ]];then
 	exit
 fi
 
-for app in "LFSToolKit" $BUILDLFSWMANAGER "LFSWM2" "LFSDesktop" "LFSSetWallpaper" "LFSApplications" "LFSPanel" "LFSDock"
+#for app in "LFSToolKit" $BUILDLFSWMANAGER "LFSWM2" "LFSDesktop" "LFSSetWallpaper" "LFSApplications" "LFSPanel" "LFSDock"
+for app in $BUILDFOR
 	do
 		pushd $app
 			echo -e "${RED}Running $action in ${GREEN}$app${RED} ... ${NORMAL}"

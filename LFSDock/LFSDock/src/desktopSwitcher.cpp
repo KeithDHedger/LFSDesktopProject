@@ -24,6 +24,7 @@ LFSTK_toggleButtonClass	*switchButton;
 bool						switchIsUp=false;
 LFSTK_listGadgetClass	*switchList=NULL;
 LFSTK_windowClass		*switchWindow=NULL;
+int						deskCount=1;
 
 bool deskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 {
@@ -54,10 +55,10 @@ bool deskListCB(void* p,void* ud)
 					switch(panelGravity)
 						{
 							case PANELNORTH:
-								switchWindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(SLIDERWIDTH/2),geom.y+geom.h,true);
+								switchWindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(switchList->LFSTK_getListMaxWidth()/2),geom.y+geom.h,true);
 								break;
 							case PANELSOUTH:
-								switchWindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(SLIDERWIDTH/2),geom.y-(GADGETHITE*6),true);
+								switchWindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(switchList->LFSTK_getListMaxWidth()/2),geom.y-(GADGETHITE*deskCount),true);
 								break;
 						}
 					switchWindow->LFSTK_showWindow(true);
@@ -76,13 +77,12 @@ bool deskListCB(void* p,void* ud)
 void updateSwitcher(void)
 {
 	if((switchButton->inWindow==false) && (switchButton->LFSTK_getValue()==1) && (switchWindow->inWindow==false))
-	{
-		switchButton->LFSTK_setValue(false);
-		switchWindow->LFSTK_hideWindow();
-		apc->windows->at(apc->LFSTK_findWindow(switchWindow)).showing=false;
-		deskSwitcherExitCB(switchButton,NULL);
-		XSync(apc->display,false);
-	}
+		{
+			switchButton->LFSTK_setValue(false);
+			switchWindow->LFSTK_hideWindow();
+			apc->windows->at(apc->LFSTK_findWindow(switchWindow)).showing=false;
+			deskSwitcherExitCB(switchButton,NULL);
+		}
 }
 
 bool deskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
@@ -114,7 +114,6 @@ void sendPropNotifyMessage(Window win,Atom msg)
 	event.xproperty.display=apc->display;
 	event.xproperty.atom=msg;
 	event.xproperty.state=PropertyNewValue;
-
 	XSendEvent(apc->display,apc->rootWindow,False,mask,&event);
 }
 
@@ -174,7 +173,7 @@ int addDesktopSwitcer(int x,int y,int grav)
 	win->h=1;
 	apc->LFSTK_addToolWindow(win);
 	switchWindow=apc->windows->back().window;
-	switchList=new LFSTK_listGadgetClass(switchWindow,"list",0,0,2000,2000);;
+	switchList=new LFSTK_listGadgetClass(switchWindow,"list",0,0,2000,2000);
 
 	switchList->LFSTK_setStyle(BEVELNONE);
 	switchList->LFSTK_setLabelAutoColour(true);
@@ -194,7 +193,7 @@ int addDesktopSwitcer(int x,int y,int grav)
 			ls.userData=USERDATA(j-1);
 			switchList->LFSTK_appendToList(ls);
 		}
-
+	deskCount=pr.strlist.size();
 	switchList->LFSTK_moveGadget(-1,-1);
 	switchWindow->LFSTK_resizeWindow(switchList->LFSTK_getListMaxWidth()-2,(GADGETHITE*pr.strlist.size())-4);
 

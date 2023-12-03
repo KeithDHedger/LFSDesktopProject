@@ -68,6 +68,12 @@ Atom						NET_WM_PID=None;
 
 const char				*possibleError="Unknown";
 
+LFSTK_buttonClass		*taskbuttons[20];
+int						windowWidth=0;
+GKeyFile					*kf=NULL;
+LFSTK_findClass			*gFind;
+bool						useTaskBar=false;
+
 void sendNotify(const char *name,const char *message)//TODO//could be better
 {
 #ifdef _GOTNOTIFYSEND_
@@ -435,5 +441,53 @@ Window getWindowByPID(unsigned long pid)
 	Window win=None;
 	win=doTreeWalkForPID(apc->rootWindow,pid);
 	return(win);
+}
+
+void moveDock(int extra)
+{
+	int	psize;
+	int	px,py;
+
+	psize=windowWidth+extra;
+	px=mons->x;
+	py=mons->y;
+	switch(panelGravity)
+		{
+			case PANELSOUTH:
+				py=mons->y+mons->h-iconSize;
+			case PANELNORTH:
+				px=((mons->w/2)-(psize/2))+mons->x;
+				break;
+		}
+
+	if(posMultiplier==1)
+		mainwind->LFSTK_moveWindow(px,py-extraSpace,true);
+	else
+		mainwind->LFSTK_moveWindow(px,py,true);
+}
+
+std::string getWindowName(Window winid)
+{
+	propReturn	pr;
+	char			*wname;
+	Status		st;
+	std::string	returnval="???";
+
+	pr=apc->globalLib->LFSTK_getSingleProp(apc->display,winid,NET_WM_NAME,UTF8_STRING);
+	if(pr.strlist.size()>0)
+		{
+			returnval=pr.strlist.at(0);
+		}
+	else
+		{
+			st=XFetchName(apc->display,winid,&wname);
+			if(wname!=NULL)
+				{
+					returnval=wname;
+					XFree(wname);
+				}
+		}
+
+	return(returnval);
 }
 

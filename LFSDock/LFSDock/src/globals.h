@@ -30,9 +30,11 @@
 #include <lfstk/LFSTKGlobals.h>
 
 #include "callbacks.h"
+#include "launchers.h"
 #include "clock.h"
 #include "slider.h"
 #include "desktopSwitcher.h"
+#include "taskBar.h"
 
 #ifndef _GLOBALS_
 #define _GLOBALS_
@@ -88,6 +90,12 @@ extern bool						realMainLoop;
 extern const char				*desktopTheme;
 extern int						refreshRate;
 
+extern LFSTK_buttonClass			*taskbuttons[20];
+extern int						windowWidth;
+extern GKeyFile					*kf;
+extern LFSTK_findClass			*gFind;
+extern bool						useTaskBar;
+
 
 //panel window
 extern LFSTK_applicationClass	*apc;
@@ -121,5 +129,8 @@ Window getWindowByPID(unsigned long pid);
 
 Window doTreeWalkForClass(Window wind,std::string namecheck);
 Window doTreeWalkForPID(Window wind,unsigned long pid);
+void moveDock(int extra);
+std::string getWindowName(Window winid);
+
 
 #endif
