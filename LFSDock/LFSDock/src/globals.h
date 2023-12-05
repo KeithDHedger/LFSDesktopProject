@@ -61,6 +61,16 @@ struct launcherList
 	unsigned long		pid=0;
 };
 
+struct taskStruct
+{
+	std::string				taskName="";
+	std::string				taskClass[2]={"",""};
+	Window					winid=None;
+	unsigned long			pid=0;
+	std::vector<taskStruct>	tasks;
+
+};
+
 enum {NOLAUNCHERS,LAUNCHERINLEFT};
 
 //prefs
@@ -72,7 +82,13 @@ extern LFSTK_windowClass			*popWindow;
 extern LFSTK_labelClass			*popLabel;
 extern launcherList				*ll;
 extern int						iconSize;
-extern int						posMultiplier;
+extern int						normalY;
+extern int						activeY;
+extern int						extraSpace;
+extern int						deskCount;
+
+extern std::vector<taskStruct>	filltasks;
+extern std::vector<taskStruct>	tasks;
 
 extern int						panelSize;
 extern const monitorStruct		*mons;
@@ -81,7 +97,6 @@ extern int						panelGravity;
 extern const char				*panelTextColour;
 extern const char				*panelBGColour;
 
-extern int						extraSpace;
 
 extern int						queueID;
 extern msgBuffer					buffer;
@@ -115,6 +130,7 @@ extern Atom						UTF8_STRING;
 extern Atom						NET_CURRENT_DESKTOP;
 extern Atom						WM_CLASS;
 extern Atom						NET_WM_PID;
+extern Atom						NET_NUMBER_OF_DESKTOPS;
 
 extern const char				*possibleError;
 

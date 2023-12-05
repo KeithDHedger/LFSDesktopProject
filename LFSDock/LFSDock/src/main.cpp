@@ -44,19 +44,13 @@ void loadPrefs(const char *env)
 void addGadgets(void)
 {
 	int	offset=0;
-	int	adj;
-
-	if(posMultiplier==-1)
-		adj=0;
-	else
-		adj=extraSpace;
 
 	for(int j=0; j<prefs.LFSTK_getStringObject("gadgetsleft")->length();j++)
 		{
 			switch(prefs.LFSTK_getStringObject("gadgetsleft")->at(j))
 				{
 				case 'C':
-					offset+=addClock(offset,adj,NorthWestGravity);
+					offset+=addClock(offset,normalY,NorthWestGravity);
 					break;
 				case 's':
 					offset+=8;
@@ -65,16 +59,16 @@ void addGadgets(void)
 					if(launcherSide==NOLAUNCHERS)
 						{
 							launcherSide=LAUNCHERINLEFT;
-							offset+=addLaunchers(offset,adj,panelGravity);
+							offset+=addLaunchers(offset,normalY,panelGravity);
 						}
 					else
 						printError("Duplicate launcher widget");
 					break;
 				case 'S':
-					offset+=addSlider(offset,adj,panelGravity);
+					offset+=addSlider(offset,normalY,panelGravity);
 					break;
 				case 'D':
-					offset+=addDesktopSwitcer(offset,adj,panelGravity);
+					offset+=addDesktopSwitcer(offset,normalY,panelGravity);
 					break;
 				case 'T':
 					{
@@ -89,7 +83,6 @@ void addGadgets(void)
 						win->h=1;
 						apc->LFSTK_addToolWindow(win);
 						taskWindow=apc->windows->back().window;
-						//taskWindow->LFSTK_setMouseMoveCallBack(NULL,taskSwitcherExitCB,NULL);
 						taskList=new LFSTK_listGadgetClass(taskWindow,"list",0,0,2000,2000);
 
 						taskList->LFSTK_setStyle(BEVELNONE);
@@ -99,7 +92,6 @@ void addGadgets(void)
 						taskList->LFSTK_setGadgetColourPair(NORMALCOLOUR,lc,"red");
 						taskList->LFSTK_moveGadget(-1,-1);
 						taskList->LFSTK_setMouseCallBack(NULL,taskSelect,NULL);
-						//taskList->LFSTK_setMouseMoveCallBack(taskSwitcherEnterCB,taskSwitcherExitCB,NULL);
 						useTaskBar=true;
 					}
 					break;
@@ -109,12 +101,11 @@ void addGadgets(void)
 	windowWidth=offset;
 	for(int j=0;j<20;j++)
 		{
-			taskbuttons[j]=new LFSTK_buttonClass(mainwind,"",windowWidth+(j*iconSize),adj,iconSize,iconSize);
+			taskbuttons[j]=new LFSTK_buttonClass(mainwind,"",windowWidth+(j*iconSize),normalY,iconSize,iconSize);
 			setGadgetDetails(taskbuttons[j]);
 			taskbuttons[j]->LFSTK_setAlpha(1.0);
 			taskbuttons[j]->LFSTK_setMouseCallBack(NULL,taskListCB,NULL);
 			taskbuttons[j]->LFSTK_setMouseMoveCallBack(taskSwitcherEnterCB,taskSwitcherExitCB,NULL);
-
 		}
 }
 
@@ -173,14 +164,15 @@ void sanityCheck(void)
 
 int main(int argc,char **argv)
 {
-	char		*env;
-	XEvent	event;
-	int		psize;
-	int		thold;
-	int		px,py;
-	timeval	tv={0,0};
-	int		key=666;
-	int		refreshmulti=0;
+	char			*env;
+	XEvent		event;
+	int			psize;
+	int			thold;
+	int			px,py;
+	timeval		tv={0,0};
+	int			key=666;
+	int			refreshmulti=0;
+	propReturn	pr;
 
 	configDir=getenv("HOME") + std::string("/.config/LFS/");
 	launchersDir=configDir + std::string("launchers-DOCK");
@@ -228,6 +220,7 @@ int main(int argc,char **argv)
 			NET_CURRENT_DESKTOP=XInternAtom(mainwind->app->display,"_NET_CURRENT_DESKTOP",False);
 			WM_CLASS=XInternAtom(mainwind->app->display,"WM_CLASS",False);
 			NET_WM_PID=XInternAtom(mainwind->app->display,"_NET_WM_PID",False);
+			NET_NUMBER_OF_DESKTOPS=XInternAtom(mainwind->app->display,"_NET_NUMBER_OF_DESKTOPS",False);
 
 			env=mainwind->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str());
 			key=atoi(env);
@@ -243,9 +236,15 @@ int main(int argc,char **argv)
 
 			loadPrefs(env);
 			if(panelGravity==1)
-				posMultiplier=-1;
+				{
+					normalY=0;
+					activeY=extraSpace;
+				}
 			else
-				posMultiplier=1;
+				{
+					normalY=extraSpace;
+					activeY=0;
+				}
 
 			switch(panelSize)
 				{
@@ -268,6 +267,9 @@ int main(int argc,char **argv)
 			mainwind->LFSTK_setTile(NULL,0);
 			mainwind->LFSTK_setWindowColourName(NORMALCOLOUR,"#00000000");
 			windowWidth=0;
+			pr=apc->globalLib->LFSTK_getSingleProp(apc->display,apc->rootWindow,NET_NUMBER_OF_DESKTOPS,XA_CARDINAL);
+			deskCount=pr.integer;
+
 			addGadgets();
 
 			if(windowWidth==0)
@@ -277,23 +279,9 @@ int main(int argc,char **argv)
 				}
 
 			psize=windowWidth;
-//			px=mons->x;
-//			py=mons->y;
-//			switch(panelGravity)
-//				{
-//					case PANELSOUTH:
-//						py=mons->y+mons->h-iconSize;
-//					case PANELNORTH:
-//						px=((mons->w/2)-(psize/2))+mons->x;
-//						break;
-//				}
 
 			mainwind->LFSTK_resizeWindow(psize,iconSize+extraSpace,true);
 			moveDock(0);
-//			if(posMultiplier==1)
-//				mainwind->LFSTK_moveWindow(px,py-extraSpace,true);
-//			else
-//				mainwind->LFSTK_moveWindow(px,py,true);
 
 			mainwind->LFSTK_showWindow(true);
 			mainwind->LFSTK_setKeepAbove(true);

@@ -73,7 +73,7 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		void								LFSTK_resetListHeight(int newheight);
 		int								LFSTK_getListMaxWidth(void);
 
-		unsigned							listCntNew=0;
+		unsigned							listCnt=0;
 		int								currentItem=0;
 
 		void								LFSTK_setListItemsColours(gadgetColourType type,std::string normal,std::string prelight,std::string active,std::string inactive);

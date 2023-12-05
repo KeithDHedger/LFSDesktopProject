@@ -70,16 +70,6 @@ bool LFSTK_listGadgetClass::select(void *object,void* userdata)
 				break;				
 		}
 
-//	for(int j=0;j<list->maxShowing;j++)
-//		{
-//			if(list->useListItemsColour==false)
-//				list->labelsArray->at(j)->newGadgetBGColours[NORMALCOLOUR]=list->labelsArray->at(j)->LFSTK_setColour(list->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPELISTTROUGHCOLOUR));
-//			else
-//				list->labelsArray->at(j)->newGadgetBGColours[NORMALCOLOUR]=list->labelsArray->at(j)->LFSTK_setColour(list->listItemsBGColour.name);
-//
-//			list->labelsArray->at(j)->LFSTK_clearWindow();
-//		}
-//	label->newGadgetBGColours[NORMALCOLOUR]=label->LFSTK_setColour(label->LFSTK_getColourName(ACTIVECOLOUR));
 	label->LFSTK_clearWindow();
 
 	list->isDoubleClick=label->isDoubleClick;
@@ -182,7 +172,7 @@ void LFSTK_listGadgetClass::LFSTK_updateList(void)
 		this->scrollBar->LFSTK_setScale(0,this->listDataArray->size()-this->maxShowing);
 	else
 		this->scrollBar->LFSTK_setScale(0,0);
-	this->listCntNew=this->labelsArray->size();
+	this->listCnt=this->listDataArray->size();
 
 	for(int j=0;j<this->labelsArray->size();j++)
 		{

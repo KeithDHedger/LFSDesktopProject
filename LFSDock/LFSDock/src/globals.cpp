@@ -29,7 +29,13 @@ LFSTK_windowClass		*popWindow=NULL;
 LFSTK_labelClass			*popLabel=NULL;
 launcherList				*ll=NULL;
 int						iconSize=16;
-int						posMultiplier=1;
+int						normalY;
+int						activeY;
+int						extraSpace=16;
+int						deskCount=1;
+
+std::vector<taskStruct>	filltasks;
+std::vector<taskStruct>	tasks;
 
 int						panelSize=2;
 const monitorStruct		*mons=NULL;
@@ -37,7 +43,6 @@ int						onMonitor=0;
 int						panelGravity=PANELNORTH;
 const char				*panelTextColour="";
 const char				*panelBGColour="";
-int						extraSpace=16;
 
 int						queueID;
 msgBuffer				buffer;
@@ -65,6 +70,7 @@ Atom						UTF8_STRING=None;
 Atom						NET_CURRENT_DESKTOP=None;
 Atom						WM_CLASS=None;
 Atom						NET_WM_PID=None;
+Atom						NET_NUMBER_OF_DESKTOPS=None;
 
 const char				*possibleError="Unknown";
 
@@ -454,16 +460,18 @@ void moveDock(int extra)
 	switch(panelGravity)
 		{
 			case PANELSOUTH:
-				py=mons->y+mons->h-iconSize;
+				py=mons->y+mons->h-iconSize-extraSpace;
 			case PANELNORTH:
 				px=((mons->w/2)-(psize/2))+mons->x;
 				break;
 		}
 
-	if(posMultiplier==1)
-		mainwind->LFSTK_moveWindow(px,py-extraSpace,true);
-	else
+
+//	if(posMultiplier==1)
+//		mainwind->LFSTK_moveWindow(px,py-extraSpace,true);
 		mainwind->LFSTK_moveWindow(px,py,true);
+//	else
+//		mainwind->LFSTK_moveWindow(px,py,true);
 }
 
 std::string getWindowName(Window winid)

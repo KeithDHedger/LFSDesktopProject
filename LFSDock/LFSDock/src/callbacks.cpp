@@ -123,7 +123,6 @@ bool contextCB(void *p,void* ud)
 			winnum=lwc->app->LFSTK_findWindow(lwc);
 			lwc->app->windows->at(winnum).loopFlag=false;
 			launcherList *ll=(launcherList*)lwc->popupFromGadget->userData;
-			fprintf(stderr,"lpath=%s\n",ll->desktopFilePath.c_str());
 			switch(bn-1)
 				{
 					case BUTTONLAUNCH:
@@ -140,4 +139,33 @@ bool contextCB(void *p,void* ud)
 			lwc->popupFromGadget=NULL;
 		}
 	return(true);
+}
+
+void showhidetActionList(LFSTK_buttonClass *bc,LFSTK_windowClass *winc,LFSTK_listGadgetClass *list)
+{
+	geometryStruct	geom;
+	unsigned long	d;
+
+	if(bc!=NULL)
+		{	
+			d=(unsigned long)bc->userData;
+			bc->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);
+			switch(panelGravity)
+				{
+					case PANELNORTH:
+						winc->LFSTK_moveWindow(geom.x+(geom.w/2)-(list->LFSTK_getListMaxWidth()/2),geom.y+geom.h,true);
+						break;
+					case PANELSOUTH:
+						winc->LFSTK_moveWindow(geom.x+(geom.w/2)-(list->LFSTK_getListMaxWidth()/2),geom.y-(GADGETHITE*(filltasks.at(d).tasks.size()+1)),true);
+						break;
+				}
+			winc->LFSTK_showWindow(true);
+			winc->LFSTK_redrawAllGadgets();
+			apc->windows->at(apc->LFSTK_findWindow(winc)).showing=true;
+		}
+	else
+		{
+			winc->LFSTK_hideWindow();
+			apc->windows->at(apc->LFSTK_findWindow(winc)).showing=false;
+		}
 }

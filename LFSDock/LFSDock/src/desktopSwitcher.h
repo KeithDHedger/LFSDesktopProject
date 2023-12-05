@@ -23,7 +23,7 @@
 
 #include "globals.h"
 
-extern LFSTK_toggleButtonClass	*switchButton;
+extern LFSTK_buttonClass *switchButton;
 
 int addDesktopSwitcer(int x,int y,int grav);
 void updateSwitcher(void);

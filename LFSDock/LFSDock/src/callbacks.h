@@ -30,5 +30,6 @@ bool contextCB(void *p,void* ud);
 bool gadgetDrop(void *lwc,propertyStruct *data,void* ud);
 bool timerCB(LFSTK_applicationClass *p,void* ud);
 void readMsg(void);
+void showhidetActionList(LFSTK_buttonClass *bc,LFSTK_windowClass winc,LFSTK_listGadgetClass *list);
 
 #endif

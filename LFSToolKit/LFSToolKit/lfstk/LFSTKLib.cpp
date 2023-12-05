@@ -410,6 +410,9 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 								case CONTEXTRIGHT:
 									lwc->LFSTK_moveWindow(geom.x+geom.w-wingeom->w,geom.y+(geom.h),true);
 									break;
+								case CONTEXTCENTRE:
+									lwc->LFSTK_moveWindow(geom.x+(geom.w/2)-(wingeom->w/2),geom.y+(geom.h),true);
+									break;
 								case CONTEXTABOVELEFT:
 									lwc->LFSTK_moveWindow(geom.x,geom.y-(wingeom->h),true);
 									break;

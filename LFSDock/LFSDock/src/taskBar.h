@@ -24,16 +24,6 @@
 #include "globals.h"
 #include "callbacks.h"
 
-struct taskStruct
-{
-	std::string				taskName="";
-	std::string				taskClass[2]={"",""};
-	Window					winid=None;
-	unsigned long			pid=0;
-	std::vector<taskStruct>	tasks;
-
-};
-
 extern LFSTK_listGadgetClass	*taskList;
 extern LFSTK_windowClass		*taskWindow;
 

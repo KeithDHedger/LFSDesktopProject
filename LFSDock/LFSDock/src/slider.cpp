@@ -161,13 +161,11 @@ void updateSlider(void)
 bool volExitCB(LFSTK_gadgetClass*p,void* ud)
 {
 	geometryStruct	geom2;
-	int				adj;
 
 	if(volumeButton->LFSTK_getValue()==1)
 		return(true);
-	adj=extraSpace*posMultiplier;
 	p->LFSTK_getGeom(&geom2);	
-	p->LFSTK_moveGadget(geom2.x,geom2.y+adj);
+	p->LFSTK_moveGadget(geom2.x,normalY);
 	sliderIsUp=false;
 	return(true);
 }
@@ -175,14 +173,12 @@ bool volExitCB(LFSTK_gadgetClass*p,void* ud)
 bool volMoveCB(LFSTK_gadgetClass*p,void* ud)
 {
 	geometryStruct	geom;
-	int				adj;
 
 	if(sliderIsUp==true)
 		return(true);
 
-	adj=extraSpace*posMultiplier;
 	p->LFSTK_getGeom(&geom);	
-	p->LFSTK_moveGadget(geom.x,geom.y-adj);
+	p->LFSTK_moveGadget(geom.x,activeY);
 	sliderIsUp=true;
 	return(true);
 }

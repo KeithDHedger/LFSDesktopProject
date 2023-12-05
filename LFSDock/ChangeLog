@@ -1,4 +1,5 @@
 0.1.0
+Various gui fixes.
 Added taskbar gadget.
 Added right click to launchers for simple context menu.
 Clicking launcher will try to raise already opened window.

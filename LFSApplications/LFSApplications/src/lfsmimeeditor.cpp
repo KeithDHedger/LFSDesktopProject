@@ -133,7 +133,7 @@ void reWriteMimeFile(void)
 	if(file!=NULL)
 		{
 			fprintf(file,"[Default Applications]\n");
-			for(int j=0;j<mimeList->listCntNew;j++)
+			for(int j=0;j<mimeList->listCnt;j++)
 				{
 					if(j!=mimeList->currentItem)
 						{
@@ -214,7 +214,7 @@ bool doDelete(void *p,void* ud)
 	char	*command;
 	int		holdnum=mimeList->currentItem;
 
-	if(holdnum>=mimeList->listCntNew)
+	if(holdnum>=mimeList->listCnt)
 		return(true);
 	if(mimeList->LFSTK_getSelectedLabel()[0]=='[')
 		return(true);

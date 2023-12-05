@@ -23,7 +23,6 @@
 
 #include "launchers.h"
 
-//LFSTK_windowClass	*contextWindow=NULL;
 LFSTK_buttonClass	*contextButtons[NOMOREBUTONS];
 
 const char			*contextLabelData[]={"Launch","Remove From Dock","TBD","TBD",NULL};
@@ -36,24 +35,23 @@ bool launcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 			geometryStruct	geom;
 			launcherList		*ll;
 			int				width;
-			int				adj;
 
-			adj=extraSpace*posMultiplier;
 			ll=(launcherList*)ud;
 
-//			printf(">>>Mouse In %s<<<\n",ll->entry.name);
 			p->LFSTK_getGeom(&geom);	
-			p->LFSTK_moveGadget(geom.x,geom.y-adj);
+			p->LFSTK_moveGadget(geom.x,activeY);
 			popLabel->LFSTK_setLabel(ll->entry.name);
 			popLabel->LFSTK_setFontString(prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("font")),true);
 			width=popLabel->LFSTK_getTextRealWidth(ll->entry.name);
+			p->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);
 			popWindow->LFSTK_resizeWindow(width,GADGETHITE);
 			p->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);	
 
-			if(posMultiplier==1)
+			if(panelGravity==PANELSOUTH)
 				popWindow->LFSTK_moveWindow(geom.x-(width/2)+(geom.w/2),geom.y-(GADGETHITE),true);
 			else
-				popWindow->LFSTK_moveWindow(geom.x-(width/2)+(geom.w/2),iconSize+extraSpace,true);
+				popWindow->LFSTK_moveWindow(geom.x-(width/2)+(geom.w/2),geom.y+iconSize,true);
+
 			popWindow->LFSTK_showWindow();
 			popWindow->LFSTK_clearWindow(true);
 		}
@@ -67,11 +65,8 @@ bool launcherExitCB(LFSTK_gadgetClass*p,void* ud)
 			launcherList		*ll;
 			ll=(launcherList*)ud;
 			geometryStruct	geom2;
-			int				adj;
-
-			adj=extraSpace*posMultiplier;
 			p->LFSTK_getGeom(&geom2);	
-			p->LFSTK_moveGadget(geom2.x,geom2.y+adj);
+			p->LFSTK_moveGadget(geom2.x,normalY);
 			popWindow->LFSTK_hideWindow();
 		}
 	return(true);
@@ -240,7 +235,7 @@ int addLaunchers(int x,int y,int grav)
 	popLabel=new LFSTK_labelClass(popWindow,"ANAME",0,0,GADGETWIDTH*8,GADGETHITE,WestGravity);
 	popLabel->LFSTK_setCairoFontDataParts("sB",20);
 	popLabel->LFSTK_setTile(NULL,0);
-	popWindow->LFSTK_setWindowColourName(NORMALCOLOUR,"#c0808080");
+	popWindow->LFSTK_setWindowColourName(NORMALCOLOUR,lc.c_str());
 
 	win=new windowInitStruct;
 	win->app=apc;
@@ -287,7 +282,10 @@ int addLaunchers(int x,int y,int grav)
 			icon=NULL;
 			loopll->bc=new LFSTK_buttonClass(mainwind,"",xpos,ypos,iconSize,iconSize);
 			loopll->bc->LFSTK_setContextWindow(contextWindow);
-			loopll->bc->contextWindowPos=CONTEXTABOVECENTRE;
+			if(panelGravity==PANELSOUTH)
+				loopll->bc->contextWindowPos=CONTEXTABOVECENTRE;
+			else
+				loopll->bc->contextWindowPos=CONTEXTCENTRE;
 			loopll->bc->userData=loopll;
 			loopll->bc->LFSTK_setMouseCallBack(NULL,launcherCB,(void*)loopll);
 			loopll->bc->LFSTK_setGadgetDropCallBack(gadgetDrop,(void*)loopll);

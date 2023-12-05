@@ -20,10 +20,8 @@
 
 #include "taskBar.h"
 
-std::vector<taskStruct>	tasks;
 int						oldwidth=0;
 std::vector<taskStruct>	holdtasks;
-std::vector<taskStruct>	filltasks;
 LFSTK_listGadgetClass	*taskList=NULL;
 LFSTK_windowClass		*taskWindow=NULL;
 bool						taskSwitchIsUp=false;
@@ -39,7 +37,7 @@ bool showhidetTaskList(LFSTK_buttonClass	*bc,bool what)
 			switch(panelGravity)
 				{
 					case PANELNORTH:
-						taskWindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(iconSize/2),geom.y+geom.h,true);
+						taskWindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(taskList->LFSTK_getListMaxWidth()/2),geom.y+geom.h,true);
 						break;
 					case PANELSOUTH:
 						taskWindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(taskList->LFSTK_getListMaxWidth()/2),geom.y-(GADGETHITE*(filltasks.at(d).tasks.size()+1)),true);
@@ -60,11 +58,16 @@ bool showhidetTaskList(LFSTK_buttonClass	*bc,bool what)
 bool taskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 {
 	geometryStruct	geom2;
-	int				adj;
+	//int				y;
 
-	adj=extraSpace*posMultiplier;
+//	if(panelGravity==PANELNORTH)
+//		y=0;
+//	else
+//		y=extraSpace;
+
 	p->LFSTK_getGeom(&geom2);	
-	p->LFSTK_moveGadget(geom2.x,geom2.y+adj);
+	//p->LFSTK_moveGadget(geom2.x,y);
+	p->LFSTK_moveGadget(geom2.x,normalY);
 	taskSwitchIsUp=false;
 	return(true);
 }
@@ -72,7 +75,6 @@ bool taskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 bool taskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 {
 	geometryStruct		geom;
-	int					adj;
 	LFSTK_buttonClass	*bc=static_cast<LFSTK_buttonClass*>(p);
 	std::string			label;
 	listLabelStruct		ls;
@@ -81,9 +83,8 @@ bool taskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 	if(taskSwitchIsUp==true)
 		return(true);
 
-	adj=extraSpace*posMultiplier;
 	p->LFSTK_getGeom(&geom);	
-	p->LFSTK_moveGadget(geom.x,geom.y-adj);
+	p->LFSTK_moveGadget(geom.x,activeY);
 	taskSwitchIsUp=true;
 	taskList->LFSTK_freeList();
 	d=(unsigned long)bc->userData;
