@@ -29,11 +29,11 @@
 LFSTK_fileDialogClass::~LFSTK_fileDialogClass(void)
 {
 	if(this->currentDir!=NULL)
-		free(this->currentDir);
+		freeAndNull(&this->currentDir);
 	if(this->currentFile!=NULL)
-		free(this->currentFile);
+		freeAndNull(&this->currentFile);
 	if(this->currentPath!=NULL)
-		free(this->currentPath);
+		freeAndNull(&this->currentPath);
 
 	freeAndNull(&this->filter);
 	cairo_surface_destroy(this->fileImage);
@@ -53,7 +53,7 @@ void LFSTK_fileDialogClass::cleanDirPath(void)
 
 	rp=realpath(this->currentDir,NULL);
 	if(this->currentDir!=NULL)
-		free(this->currentDir);
+		freeAndNull(&this->currentDir);
 	this->currentDir=rp;
 }
 
@@ -171,7 +171,7 @@ void LFSTK_fileDialogClass::LFSTK_setWorkingDir(const char *dir)
 		holddir=strdup(dir);
 
 	if(this->currentDir!=NULL)
-		free(this->currentDir);
+		freeAndNull(&this->currentDir);
 
 	this->currentDir=holddir;
 	this->cleanDirPath();
@@ -258,9 +258,9 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 
 	windowInitStruct	*win;
 
-	win=new windowInitStruct;
+	win=new windowInitStruct;//TODO//
 	win->app=parentwc->app;
-	win->name=label;
+	win->windowName=label;
 	win->loadVars=true;
 	win->w=dwidth;
 	win->h=hite;
@@ -424,7 +424,7 @@ void LFSTK_fileDialogClass::setPreviewData(bool fromlist)
 	this->previewSize->LFSTK_setLabel(previewlabel.c_str());
 	asprintf(&statdata,"Mode:%o",info.fileMode);
 	this->previewMode->LFSTK_setLabel(statdata);
-	free(statdata);
+	freeAndNull(&statdata);
 
 	if(info.isLink==true)
 		this->previewIsLink->LFSTK_setLabel("Symlink");
@@ -434,7 +434,7 @@ void LFSTK_fileDialogClass::setPreviewData(bool fromlist)
 	this->wc->LFSTK_clearWindow();
 	this->tux->LFSTK_clearWindow();
 	this->wc->LFSTK_clearWindow();
-	free(mt);
+	freeAndNull(&mt);
 }
 
 /**
@@ -443,11 +443,11 @@ void LFSTK_fileDialogClass::setPreviewData(bool fromlist)
 void LFSTK_fileDialogClass::LFSTK_getLastFolder(void)
 {
 	if(this->currentDir!=NULL)
-		free(this->currentDir);
+		freeAndNull(&this->currentDir);
 	this->currentDir=this->wc->app->globalLib->LFSTK_oneLiner("grep -i '%s' '%s/dialoglast.rc'|awk -F= '{print $NF}'",this->recentsName,this->wc->app->configDir.c_str());
 	if(strlen(this->currentDir)<2)
 		{
-			free(this->currentDir);
+			freeAndNull(&this->currentDir);
 			this->currentDir=strdup(this->wc->app->userHome.c_str());//TODO//
 		}
 }
@@ -541,13 +541,13 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 											{
 												this->apply=false;
 												this->LFSTK_setWorkingDir(buf);
-												free(buf);
+												freeAndNull(&buf);
 												break;
 											}
 										
 										if(this->dialogType==FOLDERDIALOG)
 											{
-												free(buf);
+												freeAndNull(&buf);
 												this->apply=true;
 												this->mainLoop=false;
 												this->setFileData();
@@ -556,7 +556,7 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 										this->apply=true;
 										this->setFileData();
 										this->mainLoop=false;
-										free(buf);
+										freeAndNull(&buf);
 										break;
 									}
 
@@ -602,13 +602,13 @@ void LFSTK_fileDialogClass::setFileData(void)
 				this->currentDir=strdup(dirname(filestr));
 			else
 				this->currentDir=strdup(filestr);
-			free(filestr);
+			freeAndNull(&filestr);
 //file
 			filestr=strdup(this->dirEdit->LFSTK_getCStr());
 			if(this->currentFile!=NULL)
 				freeAndNull(&this->currentFile);
 			this->currentFile=strdup(basename(filestr));
-			free(filestr);
+			freeAndNull(&filestr);
 //path
 			if(this->currentPath!=NULL)
 				freeAndNull(&this->currentPath);
@@ -616,7 +616,7 @@ void LFSTK_fileDialogClass::setFileData(void)
 
 			asprintf(&lastdir,"sed -i '/%s=/d' '%s/dialoglast.rc';echo '%s=%s'|cat - '%s/dialoglast.rc'|sort -uo '%s/dialoglast.rc'",this->recentsName,this->wc->app->configDir.c_str(),this->recentsName,this->currentDir,this->wc->app->configDir.c_str(),this->wc->app->configDir.c_str());
 			system(lastdir);
-			free(lastdir);
+			freeAndNull(&lastdir);
 		}
 }
 

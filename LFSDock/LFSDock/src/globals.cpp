@@ -25,22 +25,18 @@ LFSTK_prefsClass	prefs;
 std::string				configDir;
 std::string				launchersDir;
 std::string				configFile;
-LFSTK_windowClass		*popWindow=NULL;
-LFSTK_labelClass			*popLabel=NULL;
 launcherList				*ll=NULL;
-int						iconSize=16;
+int						iconWidth=16;
+int						iconHeight=24;
 int						normalY;
 int						activeY;
 int						extraSpace=16;
 int						deskCount=1;
 
-std::vector<taskStruct>	filltasks;
-std::vector<taskStruct>	tasks;
-
 int						panelSize=2;
 const monitorStruct		*mons=NULL;
 int						onMonitor=0;
-int						panelGravity=PANELNORTH;
+int						panelGravity=PANELSOUTH;
 const char				*panelTextColour="";
 const char				*panelBGColour="";
 
@@ -50,19 +46,22 @@ msgBuffer				buffer;
 const char				*desktopTheme=NULL;
 bool						realMainLoop=true;
 
-int						refreshRate=1;
+int						refreshRate=500000;
 
 //panel window
 LFSTK_applicationClass	*apc=NULL;
-LFSTK_windowClass		*mainwind=NULL;
-int						launcherSide=NOLAUNCHERS;
+LFSTK_windowClass		*dockWindow=NULL;
+LFSTK_windowClass		*popActionWindow=NULL;
+LFSTK_listGadgetClass	*popActionList=NULL;
+bool						inSomeWindow=false;
+bool						gotLaunchers=false;
 
 //atoms
 Atom						WM_STATE=None;
 Atom						NET_WM_WINDOW_TYPE_NORMAL=None;
 Atom						NET_WM_STATE_HIDDEN=None;
 Atom						NET_WM_WINDOW_TYPE_DIALOG=None;
-Atom						NET_WM_DESKTOP=None;
+//Atom						NET_WM_DESKTOP=None;
 Atom						NET_WM_WINDOW_TYPE=None;
 Atom						NET_WM_STATE=None;
 Atom						NET_WM_NAME=None;
@@ -71,6 +70,7 @@ Atom						NET_CURRENT_DESKTOP=None;
 Atom						WM_CLASS=None;
 Atom						NET_WM_PID=None;
 Atom						NET_NUMBER_OF_DESKTOPS=None;
+Atom						NET_ACTIVE_WINDOW=None;
 
 const char				*possibleError="Unknown";
 
@@ -104,10 +104,10 @@ void dropDesktopFile(const char *data,launcherList *launcher)
 					ptr=strrchr(cleanstr,'/');
 					sendNotify("Adding launcher ",++ptr);
 					system(command);
-					free(command);
+					freeAndNull(&command);
 					apc->exitValue=0;
 					apc->mainLoop=false;
-					free(cleanstr);
+					freeAndNull(&cleanstr);
 					return;
 				}
 
@@ -119,8 +119,8 @@ void dropDesktopFile(const char *data,launcherList *launcher)
 						asprintf(&command,"%s %s \"%s\" &",prefs.LFSTK_getCString("termcommand"),launcher->entry.exec,cleanstr);
 						sendNotify("Running ",launcher->entry.exec);
 						system(command);
-						free(cleanstr);
-						free(command);
+						freeAndNull(&cleanstr);
+						freeAndNull(&command);
 				}
 		}
 }
@@ -166,136 +166,6 @@ bool isVisible(Window win)
 	return ok;
 }
 
-Window doTreeWalk(Window wind,bool thisdesktop,std::string namecheck)
-{
-	Window			root,parent;
-	Window			*children;
-	Window			thewin;
-	unsigned int		n_children;
-	int				i;
-	unsigned long	winid;
-	char				*wname;
-	void				*ptr=NULL;
-	unsigned long	count=32;
-	Atom				rtype;
-	int				rfmt;
-	unsigned long	rafter;
-	unsigned long	n=0;
-	XTextProperty	textpropreturn;
-	Status			st;
-
-	if (!XQueryTree(mainwind->app->display,wind,&root,&parent,&children,&n_children))
-		return None;
-
-	if (!children)
-		return None;
-
-	/* Check each child for WM_STATE and other validity */
-	thewin=None;
-	wname=NULL;
-	winid=-1;
-
-	for (int j=n_children-1;j>=0; j--)
-		{
-			if((thisdesktop==true) && (isVisible(children[j])==false))
-				{
-					children[j]=None; /* Don't bother descending into this one */
-					continue;
-				}
-			if (!hasProp(children[j],WM_STATE))
-				continue;
-
-//		propReturn		LFSTK_getSingleProp(Display *display,Window win,Atom prop,Atom wanttype);
-			if (hasProp(children[j],WM_CLASS))
-				{
-				//fprintf(stderr,"got class\n");
-				propReturn	pr=apc->globalLib->LFSTK_getSingleProp(apc->display,children[j],XInternAtom(apc->display,"WM_CLASS",false),XA_STRING);
-if(namecheck.length()>0)
-{
-	//if(namecheck.compare(pr.strlist.at(0))==0)
-	if(strcasecmp(namecheck.c_str(),pr.strlist.at(0).c_str())==0)
-	{
-fprintf(stderr,"strlist=%>>%s<< winid=%p\n",pr.strlist.at(0).c_str(),children[j]);
-				if(wname!=NULL)
-		XFree(wname);
-	XFree(ptr);
-	XFree(children);
-	return children[j];
-	}
-}
-				}
-
-			/* Got one */
-			thewin=children[j];
-			winid=children[j];
-			st=XFetchName(mainwind->app->display,children[j],&wname);
-					fprintf(stderr,"wname=>>%s<<\n",wname);
-
-			break;
-		}
-
-	thewin=None;
-	/* No children matched, now descend into each child */
-	for (i=(int) n_children - 1; i >= 0; i--)
-		{
-			if (children[i]==None)
-				continue;
-//			if (isHidden(children[i])==true)
-//				continue;
-			
-			thewin=doTreeWalk(children[i],thisdesktop,namecheck);
-			if (thewin != None)
-			{
-				return(thewin);
-				break;
-				}
-		}
-
-	if(wname!=NULL)
-		{
-	//	fprintf(stderr,"wname=>>%s<<\n",wname);
-			if(winid!=-1)
-				{
-					ptr=NULL;
-					count=32;
-					n=0;
-
-					if(strlen(wname)==0)
-						{
-							st=XGetWindowProperty( mainwind->app->display,winid,NET_WM_NAME,0,count,false,UTF8_STRING,&rtype,&rfmt,&n,&rafter,(unsigned char **)&ptr);
-							if(st==Success && n != 0 && ptr != NULL)
-								wname=strdup((char*)ptr);
-						}
-
-if(namecheck.length()>0)
-{
-	if(namecheck.compare(wname)==0)
-		{
-			if(wname!=NULL)
-		XFree(wname);
-	XFree(ptr);
-	XFree(children);
-	return thewin;
-		}
-}
-//					for(int j=0;j<strlen(wname);j++)
-//						if(!isalnum(wname[j]))
-//							wname[j]=' ';
-//
-//					XGetWindowProperty(mainwind->app->display,winid,NET_WM_DESKTOP,0L,count,false,XA_CARDINAL,&rtype,&rfmt,&n,&rafter,(unsigned char **)&ptr);
-//					windowList[windowListCnt]=new menuStruct;
-//					windowList[windowListCnt]->label=strdup(wname);
-//					windowList[windowListCnt++]->userData=(void*)winid;
-				}
-		}
-
-	if(wname!=NULL)
-		XFree(wname);
-	XFree(ptr);
-	XFree(children);
-	return thewin;
-}
-
 Window doTreeWalkForClass(Window wind,std::string namecheck)
 {
 	Window			root;
@@ -305,7 +175,7 @@ Window doTreeWalkForClass(Window wind,std::string namecheck)
 	unsigned int		n_children;
 	unsigned long	winid;
 
-	if (!XQueryTree(mainwind->app->display,wind,&root,&parent,&children,&n_children))
+	if (!XQueryTree(dockWindow->app->display,wind,&root,&parent,&children,&n_children))
 		return None;
 
 	if (!children)
@@ -371,7 +241,7 @@ Window doTreeWalkForPID(Window wind,unsigned long pid)
 	unsigned int		n_children;
 	unsigned long	winid;
 
-	if (!XQueryTree(mainwind->app->display,wind,&root,&parent,&children,&n_children))
+	if (!XQueryTree(dockWindow->app->display,wind,&root,&parent,&children,&n_children))
 		return None;
 
 	if (!children)
@@ -424,17 +294,6 @@ Window doTreeWalkForPID(Window wind,unsigned long pid)
 	return thewin;
 }
 
-Window getNamedWindow(std::string name)
-{
-	Window win=None;
-	win=doTreeWalk(apc->rootWindow,true,name);
-	if(win!=None)
-		{
-		fprintf(stderr,"go win named %s at %p\n",name.c_str(),win);
-		}
-return(win);
-}
-
 Window getWindowByClass(std::string name)
 {
 	Window win=None;
@@ -457,21 +316,16 @@ void moveDock(int extra)
 	psize=windowWidth+extra;
 	px=mons->x;
 	py=mons->y;
+
 	switch(panelGravity)
 		{
 			case PANELSOUTH:
-				py=mons->y+mons->h-iconSize-extraSpace;
+				py=mons->y+mons->h-iconWidth-extraSpace;
 			case PANELNORTH:
 				px=((mons->w/2)-(psize/2))+mons->x;
 				break;
 		}
-
-
-//	if(posMultiplier==1)
-//		mainwind->LFSTK_moveWindow(px,py-extraSpace,true);
-		mainwind->LFSTK_moveWindow(px,py,true);
-//	else
-//		mainwind->LFSTK_moveWindow(px,py,true);
+	dockWindow->LFSTK_moveWindow(px,py,true);
 }
 
 std::string getWindowName(Window winid)
@@ -495,7 +349,6 @@ std::string getWindowName(Window winid)
 					XFree(wname);
 				}
 		}
-
 	return(returnval);
 }
 

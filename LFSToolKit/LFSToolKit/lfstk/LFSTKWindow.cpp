@@ -109,10 +109,11 @@ int LFSTK_windowClass::LFSTK_gadgetCount(void)
  */
 void LFSTK_windowClass::LFSTK_setWindowTitle(const char *title)
 {
-	if(this->windowName!=NULL)
-		free(this->windowName);
-	this->windowName=strdup(title);
-	XStoreName(this->app->display,this->window,this->windowName);
+	//if(this->windowName!=NULL)
+	//	freeAndNull(&this->windowName);
+	//this->windowName=strdup(title);
+	this->windowName=title;
+	XStoreName(this->app->display,this->window,(char*)this->windowName.c_str());
 }
 
 /**
@@ -156,7 +157,7 @@ void LFSTK_windowClass::LFSTK_reloadGlobals(void)
 	this->loadGlobalColours();
 	this->isActive=true;
 	this->LFSTK_clearWindow();
-	free(env);
+	freeAndNull(&env);
 }
 
 /**
@@ -170,11 +171,13 @@ LFSTK_windowClass::~LFSTK_windowClass()
 	if(this->pattern!=NULL)
 		cairo_pattern_destroy(this->pattern);
 
-	cairo_destroy(this->cr);
-	cairo_surface_destroy(this->sfc);
+	if(this->cr!=NULL)
+		cairo_destroy(this->cr);
+	if(this->sfc!=NULL)
+		cairo_surface_destroy(this->sfc);
 
 	if(this->fontString!=NULL)
-		free(this->fontString);
+		freeAndNull(&this->fontString);
 
 //TODO//
 	for(int j=0; j<MAXCOLOURS; j++)
@@ -182,11 +185,11 @@ LFSTK_windowClass::~LFSTK_windowClass()
 			if(this->windowColourNames[j].isValid==true)
 				XFreeColors(this->app->display,this->app->cm,(long unsigned int*)&this->windowColourNames[j].pixel,1,0);
 			if(this->fontColourNames[j]!=NULL)
-				free(this->fontColourNames[j]);
+				freeAndNull(&this->fontColourNames[j]);
 		}
 
-	if(this->windowName!=NULL)
-		free(this->windowName);
+	//if(this->windowName!=NULL)
+	//	freeAndNull(&this->windowName);
 
 	if(this->app==NULL)
 		delete this->globalLib;
@@ -415,7 +418,7 @@ void LFSTK_windowClass::LFSTK_moveWindow(int x,int y,bool tellx)
 void LFSTK_windowClass::LFSTK_setFontString(const char *s)
 {
 	if(this->fontString!=NULL)
-		free(this->fontString);
+		freeAndNull(&this->fontString);
 	this->fontString=strdup(s);
 }
 
@@ -499,7 +502,7 @@ void LFSTK_windowClass::LFSTK_setDecorations(bool canmax,bool canmin,bool canres
 void LFSTK_windowClass::LFSTK_setFontColourName(int p,const char *colour)
 {
 	if(this->fontColourNames[p]!=NULL)
-		free(this->fontColourNames[p]);
+		freeAndNull(&this->fontColourNames[p]);
 	this->fontColourNames[p]=strdup(colour);
 }
 
@@ -578,13 +581,17 @@ void LFSTK_windowClass::LFSTK_setSticky(bool set)
 * Set window type.
 * \param type Window type string.
 */
-void LFSTK_windowClass::LFSTK_setWindowType(const char *type)
+//void LFSTK_windowClass::LFSTK_setWindowType(const char *type)
+void LFSTK_windowClass::LFSTK_setWindowType(Atom type)
 {
 	Atom	xa;
 	Atom	xa_prop[1];
+	//win->windowType=this->wc->app->appAtomsHashed.at(this->wc->app->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
 
-	xa=XInternAtom(this->app->display,"_NET_WM_WINDOW_TYPE",False);
-	xa_prop[0]=XInternAtom(this->app->display,type,False);
+	//xa=XInternAtom(this->app->display,"_NET_WM_WINDOW_TYPE",False);
+	xa=this->app->appAtomsHashed.at(this->app->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE"));
+	//xa_prop[0]=XInternAtom(this->app->display,type,False);
+	xa_prop[0]=type;
 
 	if(xa!=None)
 		XChangeProperty(this->app->display,this->window,xa,XA_ATOM,32,PropModeReplace,(unsigned char *)&xa_prop,1);
@@ -751,13 +758,15 @@ void LFSTK_windowClass::windowClassInitCommon(windowInitStruct *wi)
 		XChangeProperty(this->app->display,this->window,xa,XA_ATOM,32,PropModeAppend,(unsigned char *)&xa_prop,4);
 
 	this->LFSTK_setWindowType(wi->windowType);
-	this->windowName=strdup(wi->name);
-	XStoreName(this->app->display,this->window,this->windowName);
-	classHint.res_name=this->windowName;
-	classHint.res_class=(char*)"LFSToolKit";
+	//this->windowName=strdup(wi->name);
+	this->windowName=wi->windowName;
+	XStoreName(this->app->display,this->window,(char*)this->windowName.c_str());//TODO//
+	classHint.res_name=(char*)wi->appName.c_str();
+	classHint.res_class=(char*)wi->className.c_str();
 	XSetClassHint(this->app->display,this->window,&classHint);
 	unsigned long pid=getpid();
-	this->LFSTK_setXProperty(XInternAtom(this->app->display,"_NET_WM_PID",False),XA_CARDINAL,32,(void *)&pid,1);
+	//this->LFSTK_setXProperty(XInternAtom(this->app->display,"_NET_WM_PID",False),XA_CARDINAL,32,(void *)&pid,1);
+	this->LFSTK_setXProperty(this->app->appAtomsHashed.at(this->app->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_PID")),XA_CARDINAL,32,(void *)&pid,1);
 
 	this->gc=XCreateGC(this->app->display,this->window,0,NULL);
 	this->LFSTK_setFontString((char*)DEFAULTFONT);
@@ -842,10 +851,11 @@ LFSTK_windowClass::LFSTK_windowClass(windowInitStruct *wi,LFSTK_applicationClass
 		XChangeProperty(this->app->display,this->window,xa,XA_ATOM,32,PropModeAppend,(unsigned char *)&xa_prop,4);
 
 	this->LFSTK_setWindowType(wi->windowType);
-	this->windowName=strdup(wi->name);
-	XStoreName(this->app->display,this->window,this->windowName);
-	classHint.res_name=this->windowName;
-	classHint.res_class=(char*)"LFSToolKit";
+	//this->windowName=strdup(wi->name);
+	this->windowName=wi->windowName;
+	XStoreName(this->app->display,this->window,(char*)this->windowName.c_str());//TODO//
+	classHint.res_name=(char*)wi->appName.c_str();
+	classHint.res_class=(char*)wi->className.c_str();
 	XSetClassHint(this->app->display,this->window,&classHint);
 	unsigned long pid=getpid();
 	this->LFSTK_setXProperty(XInternAtom(this->app->display,"_NET_WM_PID",False),XA_CARDINAL,32,(void *)&pid,1);
@@ -901,12 +911,13 @@ LFSTK_windowClass::LFSTK_windowClass(windowInitStruct *wi)
 */
 LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bool override,bool loadvars,bool shutdisplayonexit)
 {
-	windowInitStruct *wi=new windowInitStruct;
+	windowInitStruct *wi=this->app->LFSTK_getDefaultWInit();//TODO//
+//	=new windowInitStruct;
 	wi->x=x;
 	wi->y=y;
 	wi->w=w;
 	wi->h=h;
-	wi->name=name;
+	wi->windowName=name;
 	wi->overRide=override;
 	wi->loadVars=loadvars;
 	wi->shutDisplayOnExit=shutdisplayonexit;
@@ -1212,7 +1223,7 @@ void LFSTK_windowClass::LFSTK_dropData(propertyStruct* data)
 
 	this->droppedData.type=DROPINVALID;
 	if(this->droppedData.data!=NULL)
-		free(this->droppedData.data);
+		freeAndNull(&this->droppedData.data);
 	this->droppedData.data=NULL;
 	
 	if(strcasecmp(data->mimeType,"text/plain")==0)

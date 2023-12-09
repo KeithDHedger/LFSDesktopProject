@@ -24,14 +24,15 @@
 #include "globals.h"
 #include "callbacks.h"
 
-extern LFSTK_listGadgetClass	*taskList;
-extern LFSTK_windowClass		*taskWindow;
+extern std::vector<taskStruct>	holdtasks;
+extern std::vector<taskStruct>	filltasks;
+extern std::vector<taskStruct>	tasks;
 
 bool taskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud);
-bool taskSelect(void *object,void* userdata);
 bool taskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud);
-
-void updateTaskBar();
+bool taskSelect(void *object,void* userdata);
 bool taskListCB(void* p,void* ud);
+
+void updateTaskBar(bool force=false);
 
 #endif

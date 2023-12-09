@@ -21,81 +21,40 @@
 #include "globals.h"
 
 LFSTK_buttonClass		*switchButton;
-//bool						switchIsUp=false;
-LFSTK_listGadgetClass	*switchList=NULL;
-LFSTK_windowClass		*switchWindow=NULL;
+std::vector<std::string>	deskNames;
 
 bool deskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 {
-	geometryStruct	geom2;
-
-	if((apc->windows->at(apc->LFSTK_findWindow(switchWindow)).showing==true) && (switchWindow->inWindow==true))
-		return(true);
-	p->LFSTK_getGeom(&geom2);	
-	p->LFSTK_moveGadget(geom2.x,normalY);
-	//switchIsUp=false;
+	setGadgetPosition(p,false);
+	inSomeWindow=false;
 	return(true);
-}
-
-bool deskListCB(void* p,void* ud)
-{
-	LFSTK_toggleButtonClass	*bc=static_cast<LFSTK_toggleButtonClass*>(p);
-	geometryStruct			geom;
-	int						x,y;
-	Window					dw;
-
-	if(p!=NULL)
-		{	
-			//if(bc->LFSTK_getValue()==true)
-			if((unsigned long)ud==1)
-				{
-					bc->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);
-					switch(panelGravity)
-						{
-							case PANELNORTH:
-								switchWindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(switchList->LFSTK_getListMaxWidth()/2),geom.y+geom.h,true);
-								break;
-							case PANELSOUTH:
-								switchWindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(switchList->LFSTK_getListMaxWidth()/2),geom.y-(GADGETHITE*deskCount),true);
-								break;
-						}
-					switchWindow->LFSTK_showWindow(true);
-					switchWindow->LFSTK_redrawAllGadgets();
-					apc->windows->at(apc->LFSTK_findWindow(switchWindow)).showing=true;
-				}
-			else
-				{
-					switchWindow->LFSTK_hideWindow();
-					apc->windows->at(apc->LFSTK_findWindow(switchWindow)).showing=false;
-				}
-		}
-	return(true);
-}
-
-void updateSwitcher(void)
-{
-	//if((switchButton->inWindow==false) && (switchButton->LFSTK_getValue()==1) && (switchWindow->inWindow==false))
-	if((switchButton->inWindow==false) && (switchWindow->inWindow==false))
-		{
-		//	switchButton->LFSTK_setValue(false);
-			switchWindow->LFSTK_hideWindow();
-			apc->windows->at(apc->LFSTK_findWindow(switchWindow)).showing=false;
-			deskSwitcherExitCB(switchButton,NULL);
-		}
 }
 
 bool deskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 {
-	geometryStruct	geom;
+	std::string		label;
+	listLabelStruct	ls;
 
-	//if(switchIsUp==true)
-	//	return(true);
+	setGadgetPosition(p,true);
+	popActionList->LFSTK_freeList();	
 
-	p->LFSTK_getGeom(&geom);	
-	p->LFSTK_moveGadget(geom.x,activeY);
-	//switchIsUp=true;
-	//switchButton->LFSTK_setValue(true);
-	deskListCB(switchButton,USERDATA(1));
+	for(int j=0;j<deskNames.size();j++)
+		{
+			label=deskNames.at(j);
+			ls.label=strdup((char*)label.c_str());
+			ls.imageType=NOTHUMB;
+			ls.data.imagePath=NULL;
+			ls.userData=USERDATA(DESKTOPSWITCHER);
+			popActionList->LFSTK_appendToList(ls);
+		}
+
+	popActionList->LFSTK_updateList();
+	popActionList->LFSTK_moveGadget(-1,-1);
+	popActionWindow->userData=USERDATA(DESKTOPSWITCHER);
+	popActionWindow->LFSTK_resizeWindow(popActionList->LFSTK_getListMaxWidth()-2,(GADGETHITE*deskCount)-4);
+	showhidetActionList(p,popActionWindow,popActionList);
+	inSomeWindow=true;
+
 	return(true);
 }
 
@@ -114,16 +73,13 @@ void sendPropNotifyMessage(Window win,Atom msg)
 	XSendEvent(apc->display,apc->rootWindow,False,mask,&event);
 }
 
-bool switchSelect(void *object,void* userdata)
+bool desktopSelect(void *object,void* userdata)
 {
-	LFSTK_listGadgetClass	*list=static_cast<LFSTK_listGadgetClass*>(object);
-	unsigned long			d=list->LFSTK_getCurrentListItem();
+	unsigned long	d=popActionList->LFSTK_getCurrentListItem();
 
 	XChangeProperty(apc->display,apc->rootWindow,NET_CURRENT_DESKTOP,XA_CARDINAL,32,PropModeReplace,(const unsigned char*)&d,1);
 	sendPropNotifyMessage(apc->rootWindow,NET_CURRENT_DESKTOP);
-	//switchButton->LFSTK_setValue(false);
-	deskListCB(switchButton,NULL);
-	deskSwitcherExitCB(switchButton,NULL);
+	showhidetActionList(NULL,popActionWindow,popActionList);
 	return(true);
 }
 
@@ -145,66 +101,28 @@ int addDesktopSwitcer(int x,int y,int grav)
 			return(0);
 		}
 
+	switchButton=new LFSTK_buttonClass(dockWindow,"",x,normalY,iconWidth,iconHeight);
+	setGadgetDetails(switchButton);
+	switchButton->LFSTK_setAlpha(1.0);
+	switchButton->LFSTK_setStyle(BEVELNONE);
+	switchButton->LFSTK_setMouseMoveCallBack(deskSwitcherEnterCB,deskSwitcherExitCB,NULL);
 
-			switchButton=new LFSTK_buttonClass(mainwind,"",x,normalY,iconSize,iconSize);
-			setGadgetDetails(switchButton);
-			switchButton->LFSTK_setAlpha(1.0);
-			switchButton->LFSTK_setMouseCallBack(NULL,deskListCB,NULL);
-			switchButton->LFSTK_setMouseMoveCallBack(deskSwitcherEnterCB,deskSwitcherExitCB,NULL);
-
-
-//	switchButton=new LFSTK_toggleButtonClass(mainwind,"",x,y,iconSize,iconSize);
-//	switchButton->LFSTK_setToggleStyle(TOGGLENORMAL);
-//	switchButton->LFSTK_setMouseCallBack(NULL,deskListCB,NULL);
-//	switchButton->LFSTK_setMouseMoveCallBack(deskSwitcherEnterCB,deskSwitcherExitCB,NULL);
-//
-//	setGadgetDetails(switchButton);
-//	switchButton->LFSTK_setAlpha(1.0);
-//	switchButton->LFSTK_setStyle(BEVELNONE);
-//	switchButton->LFSTK_setGadgetColours(GADGETBG,panelBGColour,panelBGColour,panelBGColour,panelBGColour);
-//	switchButton->LFSTK_setGadgetColours(GADGETFG,panelTextColour,panelTextColour,panelTextColour,panelTextColour);
-
-	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"remote-desktop","");
+	icon=dockWindow->globalLib->LFSTK_findThemedIcon(desktopTheme,"remote-desktop","");
 	if(icon!=NULL)
 		{
 			switchButton->LFSTK_setImageFromPath(icon,LEFT,true);
-			free(icon);
+			freeAndNull(&icon);
 		}
 	else
 		switchButton->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",LEFT,true);
-
-	win->x=0;
-	win->y=0;
-	win->w=1;
-	win->h=1;
-	apc->LFSTK_addToolWindow(win);
-	switchWindow=apc->windows->back().window;
-	switchList=new LFSTK_listGadgetClass(switchWindow,"list",0,0,2000,2000);
-
-	switchList->LFSTK_setStyle(BEVELNONE);
-	switchList->LFSTK_setLabelAutoColour(true);
-	switchList->LFSTK_setListItemsColours(GADGETBG,lc,pc,ac,lc);
-	switchList->LFSTK_setListItemsColours(GADGETFG,"red","red","red","red");
-	switchList->LFSTK_setGadgetColourPair(NORMALCOLOUR,lc,"red");
-
-	switchList->LFSTK_setMouseCallBack(NULL,switchSelect,NULL);
-
 
 	pr=apc->globalLib->LFSTK_getSingleProp(apc->display,apc->rootWindow,XInternAtom(apc->display,"_NET_DESKTOP_NAMES",false),XInternAtom(apc->display,"UTF8_STRING",false));
 	for(int j=0;j<deskCount;j++)
 		{
 			if(pr.strlist.size()==0)
-				label="Desktop " + std::to_string(j);
+				deskNames.push_back("Desktop " + std::to_string(j+1));
 			else
-				label=pr.strlist.at(j);
-			ls.label=strdup((char*)label.c_str());
-			ls.imageType=NOTHUMB;
-			ls.data.imagePath=NULL;
-			ls.userData=USERDATA(j-1);
-			switchList->LFSTK_appendToList(ls);
+				deskNames.push_back(pr.strlist.at(j));
 		}
-	switchList->LFSTK_moveGadget(-1,-1);
-	switchWindow->LFSTK_resizeWindow(switchList->LFSTK_getListMaxWidth()-2,(GADGETHITE*deskCount)-4);
-
-	return(iconSize);
+	return(iconWidth);
 }

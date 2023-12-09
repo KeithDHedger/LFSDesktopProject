@@ -98,7 +98,9 @@ class LFSTK_windowClass
 		bool					LFSTK_getActive(void);
 		void					LFSTK_setSticky(bool set);
 		bool					LFSTK_getSticky(void);
-		void					LFSTK_setWindowType(const char *type);
+//		void					LFSTK_setWindowType(const char *type);
+		void					LFSTK_setWindowType(Atom type);
+
 		void					LFSTK_setTransientFor(Window w);
 	
 		void					LFSTK_reloadGlobals(void);
@@ -139,7 +141,7 @@ class LFSTK_windowClass
 		Visual				*visual;
 		Colormap				cmap;
 
-		char					*fontString;
+		char					*fontString=NULL;
 		char					*fontColourNames[MAXCOLOURS]={NULL,};
 		colourStruct			windowColourNames[MAXCOLOURS]={{},};//   {{NULL,0,{0,0,0,0}},};
 		bool					autoLabelColour=false;
@@ -179,7 +181,8 @@ class LFSTK_windowClass
 
 	protected:
 		bool					isActive;
-		char					*windowName;
+		//char					*windowName=NULL;
+		std::string			windowName="LFSTK Window";
 		void					initWindow(bool loadvars);
 	
 	private:

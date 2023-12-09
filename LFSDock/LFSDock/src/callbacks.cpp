@@ -30,7 +30,7 @@ void sendClientMessage(Window win,const char *msg,unsigned long data0,unsigned l
 	event.xclient.type=ClientMessage;
 	event.xclient.serial=0;
 	event.xclient.send_event=True;
-	event.xclient.message_type=XInternAtom(mainwind->app->display,msg,False);
+	event.xclient.message_type=XInternAtom(dockWindow->app->display,msg,False);
 	event.xclient.window=win;
 	event.xclient.format=32;
 	event.xclient.data.l[0]=data0;
@@ -38,7 +38,7 @@ void sendClientMessage(Window win,const char *msg,unsigned long data0,unsigned l
 	event.xclient.data.l[2]=data2;
 	event.xclient.data.l[3]=data3;
 	event.xclient.data.l[4]=data4;
-	XSendEvent(mainwind->app->display,mainwind->app->rootWindow,False,mask,&event);
+	XSendEvent(dockWindow->app->display,dockWindow->app->rootWindow,False,mask,&event);
 }
 
 bool gadgetDrop(void *lwc,propertyStruct *data,void* ud)
@@ -66,7 +66,7 @@ bool gadgetDrop(void *lwc,propertyStruct *data,void* ud)
 								asprintf(&command,"%s %s \"%s\" &",prefs.LFSTK_getCString("termcommand"),launcher->entry.exec,line.c_str());
 							sendNotify(launcher->entry.name,line.c_str());
 							system(command);
-							free(command);
+							freeAndNull(&command);
 						}
 				}
 		}
@@ -83,13 +83,15 @@ bool timerCB(LFSTK_applicationClass *p,void* ud)
 	if(scwindow!=NULL)
 		updateSlider();
 
-	if(switchButton!=NULL)//TODO//
-		updateSwitcher();
-
 	if((contextWindow->isVisible==false) && (contextWindow->popupFromGadget!=NULL))
 		{
 			launcherExitCB(contextWindow->popupFromGadget,(void*)1);
 			contextWindow->popupFromGadget=NULL;
+		}
+
+	if((popActionWindow->isVisible==true) && (inSomeWindow==false) && (popActionWindow->inWindow==false))
+		{
+			popActionListExitCB(NULL,(void*)1);
 		}
 
 	if(useTaskBar==true)
@@ -141,22 +143,24 @@ bool contextCB(void *p,void* ud)
 	return(true);
 }
 
-void showhidetActionList(LFSTK_buttonClass *bc,LFSTK_windowClass *winc,LFSTK_listGadgetClass *list)
+void showhidetActionList(LFSTK_gadgetClass *bc,LFSTK_windowClass *winc,LFSTK_listGadgetClass *list)
 {
-	geometryStruct	geom;
-	unsigned long	d;
+	geometryStruct		geom;
+	unsigned long		d;
+	const geometryStruct	*wingeom;
 
 	if(bc!=NULL)
-		{	
+		{
+			wingeom=winc->LFSTK_getWindowGeom();
 			d=(unsigned long)bc->userData;
 			bc->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);
 			switch(panelGravity)
 				{
 					case PANELNORTH:
-						winc->LFSTK_moveWindow(geom.x+(geom.w/2)-(list->LFSTK_getListMaxWidth()/2),geom.y+geom.h,true);
+						winc->LFSTK_moveWindow(geom.x+(geom.w/2)-(list->LFSTK_getListMaxWidth()/2),geom.y+geom.h-extraSpace,true);
 						break;
 					case PANELSOUTH:
-						winc->LFSTK_moveWindow(geom.x+(geom.w/2)-(list->LFSTK_getListMaxWidth()/2),geom.y-(GADGETHITE*(filltasks.at(d).tasks.size()+1)),true);
+						winc->LFSTK_moveWindow(geom.x+(geom.w/2)-(list->LFSTK_getListMaxWidth()/2),geom.y-wingeom->h+extraSpace,true);
 						break;
 				}
 			winc->LFSTK_showWindow(true);
@@ -168,4 +172,58 @@ void showhidetActionList(LFSTK_buttonClass *bc,LFSTK_windowClass *winc,LFSTK_lis
 			winc->LFSTK_hideWindow();
 			apc->windows->at(apc->LFSTK_findWindow(winc)).showing=false;
 		}
+}
+
+void setGadgetPosition(LFSTK_gadgetClass *gadg,bool active)
+{
+	geometryStruct	geom;
+
+	gadg->LFSTK_getGeom(&geom);	
+
+	if(active==true)
+		gadg->LFSTK_moveGadget(geom.x,activeY);
+	else
+		gadg->LFSTK_moveGadget(geom.x,normalY);
+}
+
+bool popActionListEnterCB(LFSTK_gadgetClass*p,void* ud)
+{
+//fprintf(stderr,"popActionListEnterCB\n");
+	return(true);
+}
+
+bool popActionListExitCB(LFSTK_gadgetClass*p,void* ud)
+{
+//fprintf(stderr,"popActionListExitCB\n");
+	showhidetActionList(NULL,popActionWindow,popActionList);
+	return(true);
+}
+
+bool popActionWindowSelect(void *object,void* userdata)//TODO//
+{
+	listLabelStruct			ls;
+	unsigned long			wud=0;
+
+	LFSTK_listGadgetClass	*list=static_cast<LFSTK_listGadgetClass*>(object);
+	ls=list->listDataArray->at(list->LFSTK_getCurrentListItem());
+
+	LFSTK_gadgetClass *bc=static_cast<LFSTK_gadgetClass*>(ls.userData);;
+
+	wud=(unsigned long)popActionWindow->userData;
+	switch(wud)
+		{
+			case LAUNCHER:
+				launcherCB(bc,(void*)bc->userData);
+				break;
+			case TASKSWITCHER:
+				{
+					LFSTK_gadgetClass *bc=static_cast<LFSTK_gadgetClass*>(object);;
+					taskSelect(bc,(void*)ls.userData);
+				}
+				break;
+			case DESKTOPSWITCHER:
+				desktopSelect(NULL,NULL);
+				break;
+		}
+	return(true);
 }

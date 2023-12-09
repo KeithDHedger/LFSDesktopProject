@@ -351,17 +351,26 @@ struct gadgetStruct
 };
 
 class LFSTK_applicationClass;
+
+/**
+* Set various options for windows.
+*
+* \note If this structure is supplied you MUST set windowType and app.
+*/
 struct windowInitStruct
 {
 	int						x=0;
 	int						y=0;
 	int						w=1;
 	int						h=1;
-	const char				*name="";
+	//const char				*name="";
+	std::string				appName;
+	std::string				className;
+	std::string				windowName;
 	bool						overRide=false;
 	bool						loadVars=true;
 	bool						shutDisplayOnExit=false;
-	const char				*windowType="_NET_WM_WINDOW_TYPE_NORMAL";
+	Atom						windowType;
 	bool						decorated=true;
 	int						level=NORMAL;
 	Display					*display=NULL;

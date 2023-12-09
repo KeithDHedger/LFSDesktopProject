@@ -56,9 +56,9 @@ void addGadgets(void)
 					offset+=8;
 					break;
 				case 'L':
-					if(launcherSide==NOLAUNCHERS)
+					if(gotLaunchers==false)
 						{
-							launcherSide=LAUNCHERINLEFT;
+							gotLaunchers=true;
 							offset+=addLaunchers(offset,normalY,panelGravity);
 						}
 					else
@@ -71,29 +71,7 @@ void addGadgets(void)
 					offset+=addDesktopSwitcer(offset,normalY,panelGravity);
 					break;
 				case 'T':
-					{
-						windowInitStruct		*win=new windowInitStruct;
-						std::string			lc="#a0f0f0f0";
-						std::string			pc="#60a0a0a0";
-						std::string			ac="#60404040";
-
-					win->x=0;
-						win->y=0;
-						win->w=1;
-						win->h=1;
-						apc->LFSTK_addToolWindow(win);
-						taskWindow=apc->windows->back().window;
-						taskList=new LFSTK_listGadgetClass(taskWindow,"list",0,0,2000,2000);
-
-						taskList->LFSTK_setStyle(BEVELNONE);
-						taskList->LFSTK_setLabelAutoColour(true);
-						taskList->LFSTK_setListItemsColours(GADGETBG,lc,pc,ac,lc);
-						taskList->LFSTK_setListItemsColours(GADGETFG,"red","red","red","red");
-						taskList->LFSTK_setGadgetColourPair(NORMALCOLOUR,lc,"red");
-						taskList->LFSTK_moveGadget(-1,-1);
-						taskList->LFSTK_setMouseCallBack(NULL,taskSelect,NULL);
-						useTaskBar=true;
-					}
+					useTaskBar=true;
 					break;
 				}
 		}
@@ -101,7 +79,7 @@ void addGadgets(void)
 	windowWidth=offset;
 	for(int j=0;j<20;j++)
 		{
-			taskbuttons[j]=new LFSTK_buttonClass(mainwind,"",windowWidth+(j*iconSize),normalY,iconSize,iconSize);
+			taskbuttons[j]=new LFSTK_buttonClass(dockWindow,"",windowWidth+(j*iconWidth),normalY,iconWidth,iconHeight);
 			setGadgetDetails(taskbuttons[j]);
 			taskbuttons[j]->LFSTK_setAlpha(1.0);
 			taskbuttons[j]->LFSTK_setMouseCallBack(NULL,taskListCB,NULL);
@@ -164,15 +142,15 @@ void sanityCheck(void)
 
 int main(int argc,char **argv)
 {
-	char			*env;
-	XEvent		event;
-	int			psize;
-	int			thold;
-	int			px,py;
-	timeval		tv={0,0};
-	int			key=666;
-	int			refreshmulti=0;
-	propReturn	pr;
+	char				*env;
+	int				psize;
+	int				key=666;
+	propReturn		pr;
+	windowInitStruct	*win=new windowInitStruct;;
+	std::string		lc="#a0f0f0f0";
+	std::string		pc="#60a0a0a0";
+	std::string		ac="#60404040";
+	launcherList		*freell;
 
 	configDir=getenv("HOME") + std::string("/.config/LFS/");
 	launchersDir=configDir + std::string("launchers-DOCK");
@@ -193,40 +171,62 @@ int main(int argc,char **argv)
 
 	XSetErrorHandler(errHandler);
 	kf=g_key_file_new();
+	while(realMainLoop==true)
+		{
 	gFind=new LFSTK_findClass;
 	gFind->LFSTK_setDepth(1,1);
 	gFind->LFSTK_setFileTypes(".desktop");
 	gFind->LFSTK_setFullPath(true);
 	gFind->LFSTK_findFiles("/usr/share/applications",false);
 
-	while(realMainLoop==true)
-		{
 			apc=new LFSTK_applicationClass();
 			apc->LFSTK_addWindow(NULL,NULL);
 
-			mainwind=apc->mainWindow;
-			mainwind->LFSTK_initDnD(true);
-			mainwind->LFSTK_setWindowDropCallBack(windowDrop,(void*)0xdeadbeef);
+			dockWindow=apc->mainWindow;
+			dockWindow->LFSTK_initDnD(true);
+			dockWindow->LFSTK_setWindowDropCallBack(windowDrop,(void*)0xdeadbeef);
 
-			WM_STATE=XInternAtom(mainwind->app->display,"WM_STATE",False);
-			NET_WM_WINDOW_TYPE_NORMAL=XInternAtom(mainwind->app->display,"_NET_WM_WINDOW_TYPE_NORMAL",False);
-			NET_WM_STATE_HIDDEN=XInternAtom(mainwind->app->display,"_NET_WM_STATE_HIDDEN",False);
-			NET_WM_WINDOW_TYPE_DIALOG=XInternAtom(mainwind->app->display,"_NET_WM_WINDOW_TYPE_DIALOG",False);
-			NET_WM_DESKTOP=XInternAtom(mainwind->app->display,"_NET_WM_DESKTOP",False);
-			NET_WM_WINDOW_TYPE=XInternAtom(mainwind->app->display,"_NET_WM_WINDOW_TYPE",False);
-			NET_WM_STATE=XInternAtom(mainwind->app->display,"_NET_WM_STATE",False);
-			NET_WM_NAME=XInternAtom(mainwind->app->display,"_NET_WM_NAME",False);
-			UTF8_STRING=XInternAtom(mainwind->app->display,"UTF8_STRING",False);
-			NET_CURRENT_DESKTOP=XInternAtom(mainwind->app->display,"_NET_CURRENT_DESKTOP",False);
-			WM_CLASS=XInternAtom(mainwind->app->display,"WM_CLASS",False);
-			NET_WM_PID=XInternAtom(mainwind->app->display,"_NET_WM_PID",False);
-			NET_NUMBER_OF_DESKTOPS=XInternAtom(mainwind->app->display,"_NET_NUMBER_OF_DESKTOPS",False);
+			win->x=0;
+			win->y=0;
+			win->w=1;
+			win->h=1;
+			win->app=apc;
+			win->windowType=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
+			win->wc=dockWindow;
+	
+			apc->LFSTK_addToolWindow(win);
+			popActionWindow=apc->windows->back().window;
+			popActionList=new LFSTK_listGadgetClass(popActionWindow,"list",0,0,2000,2000);
 
-			env=mainwind->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str());
+			popActionList->LFSTK_setStyle(BEVELNONE);
+			popActionList->LFSTK_setLabelAutoColour(true);
+			popActionList->LFSTK_setListItemsColours(GADGETBG,lc,pc,ac,lc);
+			popActionList->LFSTK_setListItemsColours(GADGETFG,"red","red","red","red");
+			popActionList->LFSTK_setGadgetColourPair(NORMALCOLOUR,lc,"red");
+			popActionList->LFSTK_setMouseCallBack(NULL,popActionWindowSelect,NULL);
+			//popActionList->LFSTK_setMouseMoveCallBack(popActionListEnterCB,popActionListExitCB,NULL);
+
+//TODO//
+			WM_STATE=XInternAtom(dockWindow->app->display,"WM_STATE",False);
+			NET_WM_WINDOW_TYPE_NORMAL=XInternAtom(dockWindow->app->display,"_NET_WM_WINDOW_TYPE_NORMAL",False);
+			NET_WM_STATE_HIDDEN=XInternAtom(dockWindow->app->display,"_NET_WM_STATE_HIDDEN",False);
+			NET_WM_WINDOW_TYPE_DIALOG=XInternAtom(dockWindow->app->display,"_NET_WM_WINDOW_TYPE_DIALOG",False);
+			//NET_WM_DESKTOP=XInternAtom(dockWindow->app->display,"_NET_WM_DESKTOP",False);
+			NET_WM_WINDOW_TYPE=XInternAtom(dockWindow->app->display,"_NET_WM_WINDOW_TYPE",False);
+			NET_WM_STATE=XInternAtom(dockWindow->app->display,"_NET_WM_STATE",False);
+			NET_WM_NAME=XInternAtom(dockWindow->app->display,"_NET_WM_NAME",False);
+			UTF8_STRING=XInternAtom(dockWindow->app->display,"UTF8_STRING",False);
+			NET_CURRENT_DESKTOP=XInternAtom(dockWindow->app->display,"_NET_CURRENT_DESKTOP",False);
+			WM_CLASS=XInternAtom(dockWindow->app->display,"WM_CLASS",False);
+			NET_WM_PID=XInternAtom(dockWindow->app->display,"_NET_WM_PID",False);
+			NET_NUMBER_OF_DESKTOPS=XInternAtom(dockWindow->app->display,"_NET_NUMBER_OF_DESKTOPS",False);
+			NET_ACTIVE_WINDOW=XInternAtom(dockWindow->app->display,"_NET_ACTIVE_WINDOW",False);
+
+			env=dockWindow->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str());
 			key=atoi(env);
 			freeAndNull(&env);
 
-			apc->LFSTK_setTimer(refreshRate);
+			apc->LFSTK_setTimer(refreshRate,true);
 			apc->LFSTK_setTimerCallBack(timerCB,NULL);
 
 			if((queueID=msgget(key,IPC_CREAT|0660))==-1)
@@ -235,43 +235,46 @@ int main(int argc,char **argv)
 			asprintf(&env,"%s",configFile.c_str());
 
 			loadPrefs(env);
-			if(panelGravity==1)
-				{
-					normalY=0;
-					activeY=extraSpace;
-				}
-			else
-				{
-					normalY=extraSpace;
-					activeY=0;
-				}
+			freeAndNull(&env);
 
 			switch(panelSize)
 				{
 					case 2:
-						iconSize=48;
+						iconWidth=48;
 						break;
 					case 3:
-						iconSize=64;
+						iconWidth=64;
 						break;
 					case 4:
-						iconSize=96;
+						iconWidth=96;
 						break;
 					default:
-						iconSize=32;
+						iconWidth=32;
 				}
 
-			desktopTheme=mainwind->globalLib->desktopIconTheme.c_str();
-			mons=apc->LFSTK_getMonitorData(onMonitor);
+			iconHeight=iconWidth+(iconWidth/2);
+			extraSpace=iconWidth/4;
 
-			mainwind->LFSTK_setTile(NULL,0);
-			mainwind->LFSTK_setWindowColourName(NORMALCOLOUR,"#00000000");
+			if(panelGravity==1)
+				{
+					normalY=-extraSpace;
+					activeY=0;
+				}
+			else
+				{
+					normalY=0;
+					activeY=-extraSpace;
+				}
+
+			desktopTheme=dockWindow->globalLib->desktopIconTheme.c_str();
+			mons=apc->LFSTK_getMonitorData(onMonitor);
+			dockWindow->LFSTK_setTile(NULL,0);
+			dockWindow->LFSTK_setWindowColourName(NORMALCOLOUR,"#00000000");
 			windowWidth=0;
 			pr=apc->globalLib->LFSTK_getSingleProp(apc->display,apc->rootWindow,NET_NUMBER_OF_DESKTOPS,XA_CARDINAL);
 			deskCount=pr.integer;
 
 			addGadgets();
-
 			if(windowWidth==0)
 				{
 					fprintf(stderr,"Not using empty dock ...\n");
@@ -280,37 +283,41 @@ int main(int argc,char **argv)
 
 			psize=windowWidth;
 
-			mainwind->LFSTK_resizeWindow(psize,iconSize+extraSpace,true);
+			dockWindow->LFSTK_resizeWindow(psize,iconWidth+extraSpace,true);
 			moveDock(0);
 
-			mainwind->LFSTK_showWindow(true);
-			mainwind->LFSTK_setKeepAbove(true);
+			dockWindow->LFSTK_showWindow(true);
+			dockWindow->LFSTK_setKeepAbove(true);
+
+updateTaskBar(true);
 
 			int retval=apc->LFSTK_runApp();
-
-			free(env);
-
-			launcherList	*freell;
 			while(ll!=NULL)
 				{
 					freell=ll;
 					if(ll->icon!=NULL)
-						free(ll->icon);
+						freeAndNull(&ll->icon);
 					if(ll->entry.name!=NULL)
-						free(ll->entry.name);
+						freeAndNull(&ll->entry.name);
 					if(ll->entry.exec!=NULL)
-						free(ll->entry.exec);
+						freeAndNull(&ll->entry.exec);
 					ll=ll->next;
 					delete freell;
 				}
 
-			free(iconL);
-			free(iconM);
-			free(iconH);
+			freeAndNull(&iconL);
+			freeAndNull(&iconM);
+			freeAndNull(&iconH);
 			clockButton=NULL;
 			switchButton=NULL;
-			launcherSide=NOLAUNCHERS;
+			gotLaunchers=false;
+			useTaskBar=false;
+			holdtasks.clear();
+			filltasks.clear();
+			tasks.clear();
+
 			delete apc;
+			ll=NULL;
 		}
 	cairo_debug_reset_static_data();
 	g_key_file_free(kf);

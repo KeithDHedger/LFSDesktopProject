@@ -26,6 +26,6 @@
 extern LFSTK_buttonClass *switchButton;
 
 int addDesktopSwitcer(int x,int y,int grav);
-void updateSwitcher(void);
+bool desktopSelect(void *object,void* userdata);
 
 #endif

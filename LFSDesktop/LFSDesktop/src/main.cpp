@@ -145,7 +145,8 @@ int main(int argc, char **argv)
 
 	udev=udev_new();
 	windowInitStruct *wi=new windowInitStruct;
-	wi->windowType="_NET_WM_DESKTOP";
+	wi->windowType=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DESKTOP"));
+	wi->app=apc;
 	wi->overRide=true;
 	wi->level=BELOWALL;
 	wi->decorated=false;
@@ -153,7 +154,8 @@ int main(int argc, char **argv)
 	apc->LFSTK_addWindow(wi,"Desktop");
 	wc=apc->mainWindow;
 	wc->passEventToRoot=true;
-Atom                    xa;
+
+Atom                    xa;//TODO//
 Atom                    xa_prop[3];
 
  xa=XInternAtom(apc->display,"_NET_WM_ALLOWED_ACTIONS",False);
@@ -162,15 +164,12 @@ Atom                    xa_prop[3];
   
      if(xa!=None)
          XChangeProperty(apc->display,wc->window,xa,XA_ATOM,32,PropModeReplace,(unsigned char *)&xa_prop,2);
-//fprintf(stderr,"win=0x%x\n",wc->window);
 
-
-			xa=XInternAtom(apc->display,"_NET_WM_STATE",False);
-			xa_prop[0]=XInternAtom(apc->display,"_NET_WM_STATE_BELOW",False);
-			if(xa!=None)
-				XChangeProperty(apc->display,wc->window,xa,XA_ATOM,32,PropModeReplace,(unsigned char *)&xa_prop,1);
-			XLowerWindow(apc->display,wc->window);
-
+	xa=XInternAtom(apc->display,"_NET_WM_STATE",False);
+	xa_prop[0]=XInternAtom(apc->display,"_NET_WM_STATE_BELOW",False);
+	if(xa!=None)
+		XChangeProperty(apc->display,wc->window,xa,XA_ATOM,32,PropModeReplace,(unsigned char *)&xa_prop,1);
+	XLowerWindow(apc->display,wc->window);
 
 
 //TODO//debug to go
@@ -178,7 +177,7 @@ Atom                    xa_prop[3];
 	button=new LFSTK_buttonClass(wc,"quit",0,0,GADGETWIDTH,GADGETHITE);//TODO//
 	button->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
 #endif
-apc->globalLib->LFSTK_setUseTheme(false);
+	apc->globalLib->LFSTK_setUseTheme(false);
 	wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),apc->displayWidth,apc->displayHeight);
 	asprintf(&cachePath,"%s/lfsdesktop/cache",apc->configDir.c_str());
 	asprintf(&command,"mkdir -p %s 2>&1 >/dev/null",cachePath);
@@ -193,7 +192,6 @@ apc->globalLib->LFSTK_setUseTheme(false);
 	asprintf(&prefsPath,"%s/lfsdesktop.rc",apc->configDir.c_str());
 
 	loadPrefs();
-
 	apc->LFSTK_setTimer(refreshRate);
 	apc->LFSTK_setTimerCallBack(timerCB,NULL);
 
@@ -202,12 +200,13 @@ apc->globalLib->LFSTK_setUseTheme(false);
 
 	windowInitStruct	*win;
 
-	win=new windowInitStruct;
-	win->app=apc;
-	win->name="";
+	win=apc->LFSTK_getDefaultWInit();
+	//new windowInitStruct;
+	//win->app=apc;
+	win->windowName="";
 	win->loadVars=true;
 	win->wc=wc;
-	win->windowType="_NET_WM_WINDOW_TYPE_MENU";
+	win->windowType=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
 	win->decorated=false;
 	win->overRide=true;
 	win->level=ABOVEALL;
@@ -226,12 +225,13 @@ apc->globalLib->LFSTK_setUseTheme(false);
 		}
 	fileWindow->LFSTK_resizeWindow(GADGETWIDTH+16,sy,true);
 
-	win=new windowInitStruct;
-	win->app=apc;
-	win->name="";
+	//win=new windowInitStruct;
+	win=apc->LFSTK_getDefaultWInit();
+	//win->app=apc;
+	win->windowName="";
 	win->loadVars=true;
 	win->wc=wc;
-	win->windowType="_NET_WM_WINDOW_TYPE_MENU";
+	win->windowType=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
 	win->decorated=false;
 	win->overRide=true;
 	win->level=ABOVEALL;

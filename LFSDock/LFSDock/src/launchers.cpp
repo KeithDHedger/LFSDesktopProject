@@ -33,41 +33,37 @@ bool launcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 	if(ud!=NULL)
 		{
 			geometryStruct	geom;
-			launcherList		*ll;
+			launcherList		*launchlist;
 			int				width;
+			std::string		label;
+			listLabelStruct	ls;
 
-			ll=(launcherList*)ud;
+			launchlist=(launcherList*)ud;
 
-			p->LFSTK_getGeom(&geom);	
-			p->LFSTK_moveGadget(geom.x,activeY);
-			popLabel->LFSTK_setLabel(ll->entry.name);
-			popLabel->LFSTK_setFontString(prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("font")),true);
-			width=popLabel->LFSTK_getTextRealWidth(ll->entry.name);
-			p->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);
-			popWindow->LFSTK_resizeWindow(width,GADGETHITE);
-			p->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);	
-
-			if(panelGravity==PANELSOUTH)
-				popWindow->LFSTK_moveWindow(geom.x-(width/2)+(geom.w/2),geom.y-(GADGETHITE),true);
-			else
-				popWindow->LFSTK_moveWindow(geom.x-(width/2)+(geom.w/2),geom.y+iconSize,true);
-
-			popWindow->LFSTK_showWindow();
-			popWindow->LFSTK_clearWindow(true);
+			setGadgetPosition(p,true);
+			popActionList->LFSTK_freeList();	
+			label=launchlist->entry.name;
+			ls.label=strdup((char*)label.c_str());
+			ls.imageType=NOTHUMB;
+			ls.data.imagePath=NULL;
+			ls.userData=USERDATA(p);
+			popActionList->LFSTK_appendToList(ls);
+			popActionList->LFSTK_updateList();
+			popActionList->LFSTK_moveGadget(-1,-1);
+			popActionWindow->userData=USERDATA(LAUNCHER);
+			popActionWindow->LFSTK_resizeWindow(popActionList->LFSTK_getListMaxWidth()-2,GADGETHITE-2);
+			showhidetActionList(p,popActionWindow,popActionList);
+			inSomeWindow=true;
 		}
 	return(true);
 }
 
-bool launcherExitCB(LFSTK_gadgetClass*p,void* ud)
+bool launcherExitCB(LFSTK_gadgetClass *p,void* ud)
 {
 	if(ud!=NULL)
 		{
-			launcherList		*ll;
-			ll=(launcherList*)ud;
-			geometryStruct	geom2;
-			p->LFSTK_getGeom(&geom2);	
-			p->LFSTK_moveGadget(geom2.x,normalY);
-			popWindow->LFSTK_hideWindow();
+			setGadgetPosition(p,false);
+			inSomeWindow=false;
 		}
 	return(true);
 }
@@ -82,21 +78,35 @@ bool launcherCB(void *p,void* ud)
 	std::string		args;
 	std::string		str;
 	std::string		whch;
+	propReturn		pr;
 
 	if(launcher==NULL)
 		return(true);
+
+	showhidetActionList(NULL,popActionWindow,popActionList);
 
 	if(p!=NULL)
 		{
 			win=getWindowByClass(launcher->entry.name);
 			if(win!=None)
 				{
+					pr=apc->globalLib->LFSTK_getSingleProp(apc->display,apc->rootWindow,NET_ACTIVE_WINDOW,XA_WINDOW);
+					if(pr.window==win)
+						{
+							XUnmapWindow(apc->display,win);
+							return(true);
+						}
 					sendClientMessage(win,"_NET_ACTIVE_WINDOW",0,0,0,0,0);
 					return(true);
 				}
 			win=getWindowByPID(launcher->pid);
 			if(win!=None)
 				{
+					if(pr.window==win)
+						{
+							XUnmapWindow(apc->display,win);
+							return(true);
+						}
 					sendClientMessage(win,"_NET_ACTIVE_WINDOW",0,0,0,0,0);
 					return(true);
 				}
@@ -159,7 +169,7 @@ void addALAuncher(const char *fpath,menuEntryStruct	*entry)
 			while((start_pos=str.find(from,start_pos))!=std::string::npos)
 				str.replace(start_pos, from.length(),"");
 			entry->exec=strdup(str.c_str());
-			free(execstring);
+			freeAndNull(&execstring);
 		}
 	g_key_file_free(kf);
 }
@@ -202,13 +212,13 @@ int launcherBuildCB(const char *fpath,const struct stat *sb,int typeflag)
 	else
 		{
 			if(entry.name!=NULL)
-				free(entry.name);
+				freeAndNull(&entry.name);
 			if(entry.exec!=NULL)
-				free(entry.exec);
+				freeAndNull(&entry.exec);
 			if(entry.icon!=NULL)
-				free(entry.icon);
+				freeAndNull(&entry.icon);
 			if(icon!=NULL)
-				free(icon);
+				freeAndNull(&icon);
 		}
 	return(0);
 }
@@ -231,27 +241,22 @@ int addLaunchers(int x,int y,int grav)
 	asprintf(&launchers,"%s/launchers-DOCK",apc->configDir.c_str());
 	ftw(launchers,launcherBuildCB,16);
 
-	popWindow=new LFSTK_toolWindowClass(apc->display,mainwind,"_NET_WM_WINDOW_TYPE_MENU",0,0,100,100,"lfstkpopup",apc);
-	popLabel=new LFSTK_labelClass(popWindow,"ANAME",0,0,GADGETWIDTH*8,GADGETHITE,WestGravity);
-	popLabel->LFSTK_setCairoFontDataParts("sB",20);
-	popLabel->LFSTK_setTile(NULL,0);
-	popWindow->LFSTK_setWindowColourName(NORMALCOLOUR,lc.c_str());
-
 	win=new windowInitStruct;
 	win->app=apc;
-	win->name="";
+	win->windowName="";
 	win->loadVars=true;
 	win->x=100;
 	win->y=100;
 	win->w=200;
 	win->h=200;
-	win->wc=mainwind;
-	win->windowType="_NET_WM_WINDOW_TYPE_DOCK";
+	win->wc=dockWindow;
+	win->windowType=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DOCK"));
+	win->app=apc;
 	win->decorated=false;
 	win->overRide=true;
 	win->level=ABOVEALL;
 
-	apc->LFSTK_addWindow(win,"hello");
+	apc->LFSTK_addWindow(win,"");
 	contextWindow=apc->windows->back().window;
 	contextWindow->LFSTK_setWindowColourName(NORMALCOLOUR,lc.c_str());
 
@@ -270,7 +275,7 @@ int addLaunchers(int x,int y,int grav)
 			contextButtons[j]->LFSTK_setGadgetColours(GADGETBG,lc,pc,ac,lc);
 			contextButtons[j]->LFSTK_setGadgetColours(GADGETFG,lc,pc,ac,lc);
 
-			free(iconpath);
+			freeAndNull(&iconpath);
 			sy+=GADGETHITE;
 		}
 	ww=contextButtons[0]->LFSTK_getTextRealWidth(contextLabelData[1]);
@@ -280,7 +285,7 @@ int addLaunchers(int x,int y,int grav)
 	while(loopll!=NULL)
 		{
 			icon=NULL;
-			loopll->bc=new LFSTK_buttonClass(mainwind,"",xpos,ypos,iconSize,iconSize);
+			loopll->bc=new LFSTK_buttonClass(dockWindow,"",xpos,normalY,iconWidth,iconHeight);
 			loopll->bc->LFSTK_setContextWindow(contextWindow);
 			if(panelGravity==PANELSOUTH)
 				loopll->bc->contextWindowPos=CONTEXTABOVECENTRE;
@@ -302,11 +307,11 @@ int addLaunchers(int x,int y,int grav)
 			setGadgetDetails(loopll->bc);
 
 			if(icon!=NULL)
-				free(icon);
+				freeAndNull(&icon);
 			loopll=loopll->next;
-			xpos+=iconSize;
+			xpos+=iconWidth;
 		}
-	free(launchers);
+	freeAndNull(&launchers);
 
 	return(xpos);
 }

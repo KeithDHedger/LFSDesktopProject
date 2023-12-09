@@ -99,7 +99,7 @@ int main(int argc, char **argv)
 	apc->windows->back().window->LFSTK_resizeWindow(400,400,true);
 	apc->windows->back().window->userData=USERDATA("Sub Window");
 	button=new LFSTK_buttonClass(apc->windows->back().window,"Close",200-HALFGADGETWIDTH,200,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	button->LFSTK_setMouseCallBack(NULL,doSubQuit,(void*)apc->windows->size()-1);
+	button->LFSTK_setMouseCallBack(NULL,doSubQuit,(void*)(apc->windows->size()-1));
 
 	apc->LFSTK_addWindow(NULL,"TRANSPARENT SUB WINDOW");
 	apc->windows->back().window->LFSTK_resizeWindow(400,400,true);
@@ -112,7 +112,7 @@ int main(int argc, char **argv)
 	label->LFSTK_setTile(NULL,0);
 
 	button=new LFSTK_buttonClass(apc->windows->back().window,"Close",200-HALFGADGETWIDTH,200,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	button->LFSTK_setMouseCallBack(NULL,doTransSubQuit,(void*)apc->windows->size()-1);
+	button->LFSTK_setMouseCallBack(NULL,doTransSubQuit,(void*)(apc->windows->size()-1));
 //button->LFSTK_setColourName(NORMALCOLOUR,"#20ffff00");
 	button->LFSTK_setTile(NULL,0);
 
@@ -135,11 +135,11 @@ int main(int argc, char **argv)
 
 //test
 	test=new LFSTK_buttonClass(wc,"Sub-Window",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
-	test->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)apc->windows->size()-2);
+	test->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)(apc->windows->size()-2));
 	sy+=YSPACING;
 
 	transtest=new LFSTK_buttonClass(wc,"Transparent Sub-Window",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
-	transtest->LFSTK_setMouseCallBack(NULL,transButtonCB,(void*)apc->windows->size()-1);
+	transtest->LFSTK_setMouseCallBack(NULL,transButtonCB,(void*)(apc->windows->size()-1));
 	sy+=YSPACING;
 
 //quit

@@ -81,12 +81,12 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 	if(access(pathtobit,F_OK)==0)
 		{
 			this->checkOn=this->wc->globalLib->LFSTK_createSurfaceFromPath(pathtobit);
-			free(pathtobit);
+			freeAndNull(&pathtobit);
 			asprintf(&pathtobit,"%s/checkoff.png",this->wc->globalLib->LFSTK_getThemePath());
 			if(access(pathtobit,F_OK)==0)
 				this->checkOff=this->wc->globalLib->LFSTK_createSurfaceFromPath(pathtobit);
 		}
-	free(pathtobit);
+	freeAndNull(&pathtobit);
 
 	gadgetDetails={&this->wc->windowColourNames[NORMALCOLOUR],BEVELOUT,CHECK,NORMALCOLOUR,CHECKBOXSIZE,false,{0,0,w,h},{2,(int)((h/2)-(CHECKBOXSIZE/2)),CHECKBOXSIZE,CHECKBOXSIZE},true,false,true};
 }

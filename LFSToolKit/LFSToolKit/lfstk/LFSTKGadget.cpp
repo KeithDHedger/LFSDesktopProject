@@ -30,7 +30,7 @@
 LFSTK_gadgetClass::~LFSTK_gadgetClass()
 {
 	if(this->label!=NULL)
-		free(this->label);
+		freeAndNull(&this->label);
 
 	if(this->isMapped==true)
 		this->LFSTK_reParentWindow(this->wc->window,0,0);
@@ -45,12 +45,13 @@ LFSTK_gadgetClass::~LFSTK_gadgetClass()
 		}
 
 	if(this->fontString!=NULL)
-		free(this->fontString);
+		freeAndNull(&this->fontString);
 
 	if(this->labelBGColour.isValid==true)
 		XFreeColors(this->wc->app->display,this->wc->app->cm,(long unsigned int*)&this->labelBGColour.pixel,1,0);
 
-	cairo_destroy(this->cr);
+	if(this->cr!=NULL)
+		cairo_destroy(this->cr);
 
 	if(this->cImage!=NULL)
 		cairo_surface_destroy(this->cImage);
@@ -64,10 +65,11 @@ LFSTK_gadgetClass::~LFSTK_gadgetClass()
 	if(this->broken!=NULL)
 		cairo_surface_destroy(this->broken);
 
-	cairo_surface_destroy(this->sfc);
+	if(this->sfc!=NULL)
+		cairo_surface_destroy(this->sfc);
 
 	if(this->fontName!=NULL)
-		free(this->fontName);
+		freeAndNull(&this->fontName);
 
 	XFreeGC(this->wc->app->display,this->gc);
 }
@@ -97,7 +99,7 @@ Window LFSTK_gadgetClass::LFSTK_getWindow(void)
 void LFSTK_gadgetClass::LFSTK_setFontString(const char *s,bool setfontdata)
 {
 	if(this->fontString!=NULL)
-		free(this->fontString);
+		freeAndNull(&this->fontString);
 	this->fontString=strdup(s);
 
 	if(setfontdata==true)
@@ -974,7 +976,7 @@ void LFSTK_gadgetClass::LFSTK_setCairoFontData(void)
 	this->fontSize=10;
 
 	if(this->fontName!=NULL)
-		free(this->fontName);
+		freeAndNull(&this->fontName);
 	this->fontName=strdup("Sans");
 
 	str=strtok(string,":");
@@ -1002,12 +1004,12 @@ void LFSTK_gadgetClass::LFSTK_setCairoFontData(void)
 			if(found==false)
 				{
 					if(this->fontName!=NULL)
-						free(this->fontName);
+						freeAndNull(&this->fontName);
 					this->fontName=strdup(str);
 				}
 			str=strtok(NULL,":");
 		}
-	free(string);
+	freeAndNull(&string);
 
 	cairo_save(this->cr);
 		cairo_select_font_face(this->cr,this->fontName,this->slant,this->weight);
@@ -1085,7 +1087,7 @@ void LFSTK_gadgetClass::LFSTK_setCairoFontDataParts(const char* fmt,...)
 				{
 					case 'n':
 						if(this->fontName!=NULL)
-							free(this->fontName);
+							freeAndNull(&this->fontName);
 						this->fontName=strdup(va_arg(ap,char*));
 						break;
 					case 'I':
@@ -1125,7 +1127,7 @@ void LFSTK_gadgetClass::LFSTK_setCairoFontDataParts(const char* fmt,...)
 void LFSTK_gadgetClass::LFSTK_setLabel(const char *newlabel,bool clearwindow)
 {
 	if(this->label!=NULL)
-		free(this->label);
+		freeAndNull(&this->label);
 	this->label=strdup(newlabel);
 	this->LFSTK_setCairoFontData();
 	if(clearwindow==true)

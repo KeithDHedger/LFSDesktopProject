@@ -27,10 +27,10 @@ LFSTK_fontDialogClass::~LFSTK_fontDialogClass()
 {
 	for(int j=0;j<this->maxFonts;j++)
 		{
-			free(this->fontsAZ[j]);
+			freeAndNull(&this->fontsAZ[j]);
 		}
 	delete[] this->fontsAZ;
-	free(this->fontData.fontString);
+	freeAndNull(&this->fontData.fontString);
 	delete this->dialog;
 }
 
@@ -68,7 +68,7 @@ void LFSTK_fontDialogClass::buildFontString(void)
 	this->selectedFontNumber=fontlist->LFSTK_getCurrentListItem();
 
 	if(this->fontData.fontString!=NULL)
-		free(this->fontData.fontString);
+		freeAndNull(&this->fontData.fontString);
 	asprintf(&this->fontData.fontString,"%s:size=%s%s%s",this->fontsAZ[this->selectedFontNumber],this->fontsize->LFSTK_getCStr(),boldstr,italicstr);
 	asprintf(&formatstring,"ns%s%s",dobold,doitalic);
 	this->preview->LFSTK_setCairoFontDataParts(formatstring,this->fontsAZ[selectedFontNumber],atoi(this->fontsize->LFSTK_getCStr()));
@@ -77,7 +77,7 @@ void LFSTK_fontDialogClass::buildFontString(void)
 	this->fontData.fontString;
 	this->fontData.fontName=this->fontsAZ[selectedFontNumber];
 	this->fontData.isValid=true;
-	free(formatstring);
+	freeAndNull(&formatstring);
 	this->preview->LFSTK_clearWindow();
 }
 
@@ -131,7 +131,7 @@ void LFSTK_fontDialogClass::loadFontStrings(void)
 	else
 		{
 			fontcnt=atoi(out);
-			free(out);
+			freeAndNull(&out);
 		}
 
 	fontsAZ=new char*[fontcnt];
@@ -149,7 +149,7 @@ void LFSTK_fontDialogClass::loadFontStrings(void)
 				}
 			pclose(fp);
 		}
-	free(command);
+	freeAndNull(&command);
 }
 
 /*
@@ -199,18 +199,18 @@ void LFSTK_fontDialogClass::parseFontString(const char *fontstr)
 			if(font!=NULL)
 				{
 					this->fontlist->LFSTK_findByLabel(font);
-					free(font);
+					freeAndNull(&font);
 				}
 			if(fontsize!=NULL)
 				{
 					this->fontsize->LFSTK_setBuffer(fontsize);
-					free(fontsize);
+					freeAndNull(&fontsize);
 				}
 			this->boldcheck->LFSTK_setValue(bold);
 			this->italiccheck->LFSTK_setValue(italic);
 		}
 	this->LFSTK_getFontData(true);
-	free(string);
+	freeAndNull(&string);
 }
 
 /*
@@ -280,14 +280,14 @@ void LFSTK_fontDialogClass::buildDialog(void)
 	char			*sizestr[4]={0,};
 	listLabelStruct	ls;
 
-	windowInitStruct	*win;
+	windowInitStruct	*win;//TODO//
 	win=new windowInitStruct;
 	win->app=this->wc->app;
 	win->loadVars=true;
 	win->w=DIALOGWIDTH;
 	win->h=DIALOGHITE;
 	win->wc=this->wc;
-	win->name="Font Selector";
+	win->windowName="Font Selector";
 	this->dialog=new LFSTK_windowClass(win,this->wc->app);
 	delete win;
 

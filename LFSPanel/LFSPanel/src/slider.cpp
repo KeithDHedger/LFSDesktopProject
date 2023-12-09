@@ -168,12 +168,16 @@ void updateSlider(void)
 
 int addSlider(int x,int y,int grav,bool fromleft)
 {
-	int						xpos=x;
-	int						ypos=y;
-	int						width=0;
-	int						height=0;
-	int						thisgrav=grav;
-	int						iconsize=16;
+	int					xpos=x;
+	int					ypos=y;
+	int					width=0;
+	int					height=0;
+	int					thisgrav=grav;
+	int					iconsize=16;
+	windowInitStruct		*win;
+	int					w,h;
+	char					*vol;
+	bool					direction=false;
 	char					*label=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"%s \" $4}'|tr -d '[]'",SLIDERLABEL);
 
 	getAlsaVolume(false,-1);
@@ -190,15 +194,13 @@ int addSlider(int x,int y,int grav,bool fromleft)
 	iconL=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"volume-low","");
 	iconZ=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"volume-zero","");
 
-	char	*vol=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print $3}'");
-
-	windowInitStruct	*win;
-	int					w,h;
+	vol=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print $3}'");
 	
 	win=new windowInitStruct;
 	win->x=100;
 	win->y=100;
-	bool direction=false;
+	win->app=apc;
+	win->windowType=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_TOOL"));
 
 	if((panelGravity==PANELWEST) || (panelGravity==PANELEAST))
 		{

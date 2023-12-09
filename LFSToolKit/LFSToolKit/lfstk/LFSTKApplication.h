@@ -27,10 +27,10 @@
 
 struct	monitorStruct
 {
-	int				x;
-	int				y;
-	int				w;
-	int				h;
+	int					x;
+	int					y;
+	int					w;
+	int					h;
 };
 
 struct windowData
@@ -52,6 +52,7 @@ class LFSTK_applicationClass
 		int						LFSTK_runWindowLoop(int window);
 		int						LFSTK_runWindowLoop(LFSTK_windowClass *win);
 		int						LFSTK_findWindow(LFSTK_windowClass *win);
+		windowInitStruct			*LFSTK_getDefaultWInit(void);
 
 //monitors
 		void						LFSTK_loadMonitorData(void);
@@ -60,7 +61,7 @@ class LFSTK_applicationClass
 		const monitorStruct		*LFSTK_getMonitors(void);
 
 //timers
-		void						LFSTK_setTimer(int seconds);
+		void						LFSTK_setTimer(int delay,bool usemicroseconds=false);
 		void						LFSTK_setTimerCallBack(bool (*timer)(LFSTK_applicationClass*,void*),void* ud);
 
 //gui
@@ -89,10 +90,12 @@ class LFSTK_applicationClass
 		std::string				configDir="";
 		std::string				userHome="";
 		std::string				iconThemeName="";
+		std::map<unsigned long,Atom>	appAtomsHashed;
 
 	private:
 		int						displayNum;
 		bool						useTimer=false;
+		bool						useMicroSeconds=false;
 		int						timer=-1;
 		callbackStruct			callBacks;
 };

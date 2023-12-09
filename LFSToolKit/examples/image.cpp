@@ -66,7 +66,7 @@ bool contextCB(void *p,void* ud)
 	int					winnum;
 	if(p!=NULL)
 		{
-			winnum=lwc->app->LFSTK_findWindow(lwc);
+			//winnum=lwc->app->LFSTK_findWindow(lwc);
 			lwc->app->windows->at(winnum).loopFlag=false;
 			//wc->popupLoop=false;
 			//printf("data=%p\n win=%i",ud,static_cast<LFSTK_gadgetClass*>(p)->windowNumber);
@@ -158,14 +158,16 @@ int main(int argc, char **argv)
 
 	win=new windowInitStruct;
 	win->app=apc;
-	win->name="";
+	win->windowName="";
 	win->loadVars=true;
 	win->x=100;
 	win->y=100;
 	win->w=200;
 	win->h=200;
 	win->wc=wc;
-	win->windowType="_NET_WM_WINDOW_TYPE_MENU";
+	//win->windowType="_NET_WM_WINDOW_TYPE_MENU";
+	win->windowType=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_TOOL"));
+
 	win->decorated=false;
 	win->overRide=true;
 	win->level=ABOVEALL;

@@ -21,6 +21,7 @@
 #include <dirent.h>
 #include <libgen.h>
 
+#include "lfstk/LFSTKGlobals.h"
 #include "LFSTKFindClass.h"
 
 LFSTK_findClass *fc;
@@ -45,7 +46,7 @@ LFSTK_findClass::~LFSTK_findClass()
 {
 	this->deleteData();
 	if(this->fileTypes!=NULL)
-		free(this->fileTypes);
+		freeAndNull(&this->fileTypes);
 }
 
 /**
@@ -436,7 +437,7 @@ void LFSTK_findClass::LFSTK_findFiles(const char *dir,bool multi)
 		closedir(dirhandle);
 	}
 	this->dataCnt=this->data.size();
-	free(filepath);
+	freeAndNull(&filepath);
 }
 
 

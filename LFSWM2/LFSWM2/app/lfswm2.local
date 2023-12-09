@@ -1,0 +1,12 @@
+#!/bin/bash -e
+
+#©keithhedger Mon 27 Nov 12:09:16 GMT 2023 kdhedger68713@gmail.com
+
+if [[ $1 = "conf" ]];then
+	pushd ../../../
+		sudo BUILDFOR="LFSWM2" ./makeall ownit
+		BUILDFOR="LFSWM2" ./makeall makelocal
+	popd
+fi
+
+LD_LIBRARY_PATH="../../../LFSToolKit/LFSToolKit/app/.libs" ./lfswm2

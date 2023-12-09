@@ -1,4 +1,6 @@
 0.6.0
+GUI fixes.
+Removed some od legacy code.
 Added CONTEXTCENTRE to gadget context menu.
 Fixed segfault with LFSTK_getSingleProp.
 List gadget visual fixes.

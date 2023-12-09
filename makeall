@@ -36,6 +36,7 @@ MAKEFLAGS=${MAKEFLAGS:-"-j3"}
 export MAKEFLAGS
 export PATH
 BUILDOLDWM=0
+CWD=$(pwd)
 
 if [ $BUILDOLDWM -eq 1 ];then
 	BUILDLFSWMANAGER="LFSWManager"
@@ -118,7 +119,7 @@ makelocal ()
 		#runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib${LIBDIRSUFFIX}"
 		:
 	else
-		CFLAGS="-Wfatal-errors -I../LFSToolKit/LFSToolKit/lfstk -L../LFSToolKit/LFSToolKit/app/.libs"
+		CFLAGS="-Wfatal-errors -I${CWD}/LFSToolKit/LFSToolKit/lfstk/ -L${CWD}/LFSToolKit/LFSToolKit/app/.libs"
 		CXXFLAGS="$CFLAGS"
 		export CFLAGS CXXFLAGS
 		runCommand "./autogen.sh --prefix=/usr"

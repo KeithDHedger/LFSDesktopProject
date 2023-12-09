@@ -39,9 +39,8 @@
 #ifndef _GLOBALS_
 #define _GLOBALS_
 
-enum PANELXPOS {PANELLEFT=-1,PANELCENTRE=-2,PANELRIGHT=-3};
-enum PANELSIZE {PANELFULL=-1,PANELSHRINK=-2};
 enum PANELGRAVITY {PANELNORTH=1,PANELSOUTH=2};
+enum WHATSORT {LAUNCHER=100,DESKTOPSWITCHER,TASKSWITCHER};
 
 struct menuEntryStruct
 {
@@ -71,24 +70,19 @@ struct taskStruct
 
 };
 
-enum {NOLAUNCHERS,LAUNCHERINLEFT};
-
 //prefs
 extern LFSTK_prefsClass			prefs;
 extern std::string				configDir;
 extern std::string				launchersDir;
 extern std::string				configFile;
-extern LFSTK_windowClass			*popWindow;
-extern LFSTK_labelClass			*popLabel;
 extern launcherList				*ll;
-extern int						iconSize;
+extern int						iconWidth;
+extern int						iconHeight;
+
 extern int						normalY;
 extern int						activeY;
 extern int						extraSpace;
 extern int						deskCount;
-
-extern std::vector<taskStruct>	filltasks;
-extern std::vector<taskStruct>	tasks;
 
 extern int						panelSize;
 extern const monitorStruct		*mons;
@@ -110,19 +104,22 @@ extern int						windowWidth;
 extern GKeyFile					*kf;
 extern LFSTK_findClass			*gFind;
 extern bool						useTaskBar;
+extern bool						gotLaunchers;
 
 
 //panel window
 extern LFSTK_applicationClass	*apc;
-extern LFSTK_windowClass			*mainwind;
-extern int						launcherSide;
+extern LFSTK_windowClass			*dockWindow;
+extern LFSTK_windowClass			*popActionWindow;
+extern LFSTK_listGadgetClass		*popActionList;
+extern bool						inSomeWindow;
 
 //atoms
 extern Atom						WM_STATE;
 extern Atom						NET_WM_WINDOW_TYPE_NORMAL;
 extern Atom						NET_WM_STATE_HIDDEN;
 extern Atom						NET_WM_WINDOW_TYPE_DIALOG;
-extern Atom						NET_WM_DESKTOP;
+//extern Atom						NET_WM_DESKTOP;
 extern Atom						NET_WM_WINDOW_TYPE;
 extern Atom						NET_WM_STATE;
 extern Atom						NET_WM_NAME;
@@ -131,6 +128,7 @@ extern Atom						NET_CURRENT_DESKTOP;
 extern Atom						WM_CLASS;
 extern Atom						NET_WM_PID;
 extern Atom						NET_NUMBER_OF_DESKTOPS;
+extern Atom						NET_ACTIVE_WINDOW;
 
 extern const char				*possibleError;
 
@@ -139,7 +137,6 @@ void dropDesktopFile(const char *data,launcherList *launcher);
 void sendNotify(const char *message1,const char *message2);
 void setGadgetDetails(LFSTK_gadgetClass *gadget);
 bool hasProp(Window win,Atom atom);
-Window getNamedWindow(std::string name);
 Window getWindowByClass(std::string name);
 Window getWindowByPID(unsigned long pid);
 
@@ -148,5 +145,6 @@ Window doTreeWalkForPID(Window wind,unsigned long pid);
 void moveDock(int extra);
 std::string getWindowName(Window winid);
 
+void setGadgetPosition(LFSTK_gadgetClass *gadg,bool active);
 
 #endif

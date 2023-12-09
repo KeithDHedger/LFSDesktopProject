@@ -27,7 +27,7 @@ LFSTK_labelClass			*copyrite=NULL;
 LFSTK_buttonClass		*imagebuttonL=NULL;
 LFSTK_buttonClass		*imagebuttonC=NULL;
 LFSTK_buttonClass		*imagebuttonR=NULL;
-LFSTK_buttonClass		*imagebuttonT=NULL;
+LFSTK_toggleButtonClass	*imagebuttonT=NULL;
 LFSTK_buttonClass		*imagebuttonNA=NULL;
 LFSTK_buttonClass		*seperator=NULL;
 LFSTK_buttonClass		*quit=NULL;
@@ -67,7 +67,8 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //image button toolbutton
-	imagebuttonT=new LFSTK_buttonClass(wc,"Tool Button",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*2,BUTTONGRAV);
+	imagebuttonT=new LFSTK_toggleButtonClass(wc,"Toggle/Tool Button",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*2,BUTTONGRAV);
+	imagebuttonT->LFSTK_setToggleStyle(TOGGLENORMAL);
 	imagebuttonT->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA(0xdeadbeef0));
 	imagebuttonT->LFSTK_setImageFromPath("./AspellGUI.png",TOOLBAR,true);
 	sy+=YSPACING*2;

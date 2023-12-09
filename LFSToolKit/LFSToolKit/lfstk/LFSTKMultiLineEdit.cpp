@@ -36,7 +36,7 @@ LFSTK_multiLineEditClass::~LFSTK_multiLineEditClass()
 		{
 			for (int i=0; i<lines.size(); i++)
 				{
-					free(lines.at(i)->line);
+					freeAndNull(&lines.at(i)->line);
 					delete lines.at(i);
 				}
 			this->lines.clear();
@@ -312,7 +312,7 @@ void LFSTK_multiLineEditClass::drawText(void)
 						if(lines.at(j)->cursorPos<strlen(lines.at(j)->line))
 							cairo_show_text(this->cr,aftercursor);
 
-						free(data);
+						freeAndNull(&data);
 					}
 				else
 					{
@@ -528,7 +528,7 @@ void LFSTK_multiLineEditClass::LFSTK_dropData(propertyStruct* data)
 			char	*ret;
 			ret=this->wc->app->globalLib->LFSTK_cleanString((const char*)data->data);
 			this->LFSTK_setFormatedText((const char*)ret,true);
-			free(ret);
+			freeAndNull(&ret);
 		}
 
 	if(this->callBacks.validCallbacks & GADGETDROPCB)
@@ -552,7 +552,7 @@ void  LFSTK_multiLineEditClass::setDisplayLines(void)
 
 	for (int i=0; i<lines.size(); i++)
 		{
-			free(lines.at(i)->line);
+			freeAndNull(&lines.at(i)->line);
 			delete lines.at(i);
 		}
 	this->lines.clear();

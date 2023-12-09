@@ -30,6 +30,9 @@ bool contextCB(void *p,void* ud);
 bool gadgetDrop(void *lwc,propertyStruct *data,void* ud);
 bool timerCB(LFSTK_applicationClass *p,void* ud);
 void readMsg(void);
-void showhidetActionList(LFSTK_buttonClass *bc,LFSTK_windowClass winc,LFSTK_listGadgetClass *list);
+void showhidetActionList(LFSTK_gadgetClass *bc,LFSTK_windowClass *winc,LFSTK_listGadgetClass *list);
+bool popActionListEnterCB(LFSTK_gadgetClass*p,void* ud);
+bool popActionListExitCB(LFSTK_gadgetClass*p,void* ud);
+bool popActionWindowSelect(void *object,void* userdata);
 
 #endif

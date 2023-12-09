@@ -27,7 +27,7 @@ LFSTK_menuClass::~LFSTK_menuClass()
 
 	delete this->subwindows;
 	LFSTK_freeMenus(this->mainMenu,this->mainMenuCnt);
-	free(this->fontName);
+	freeAndNull(&this->fontName);
 }
 
 LFSTK_menuClass::LFSTK_menuClass(LFSTK_windowClass *wc,int x,int y,unsigned w,unsigned h)
@@ -373,9 +373,11 @@ void LFSTK_menuClass::LFSTK_addMainMenus(menuStruct **menus,int menucnt)
 
 	windowInitStruct	*win;
 
-	win=new windowInitStruct;
+	win=new windowInitStruct;//TODO//
 	win->app=this->parentwc->app;
-	win->name="lfstkmenu";
+	win->windowName="LFSTKMenu";
+	win->className="LFSTKMenu";
+	win->appName="LFSTKApplication";
 	win->loadVars=true;
 	win->x=this->x;
 	win->y=this->y;
@@ -390,7 +392,9 @@ void LFSTK_menuClass::LFSTK_addMainMenus(menuStruct **menus,int menucnt)
 	else
 		this->isScrollable=false;
 	win->wc=this->parentwc;
-	win->windowType="_NET_WM_WINDOW_TYPE_MENU";
+	//win->windowType="_NET_WM_WINDOW_TYPE_MENU";
+	win->windowType=this->parentwc->app->appAtomsHashed.at(this->parentwc->app->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
+
 	win->decorated=false;
 	win->overRide=true;
 	win->level=ABOVEALL;
@@ -435,9 +439,9 @@ void LFSTK_menuClass::LFSTK_freeMenus(menuStruct **menus,int menucnt)
 			if(menus[j]->imageType==CAIROTHUMB)
 				cairo_surface_destroy(menus[j]->data.surface);
 			if(menus[j]->imageType==FILETHUMB)
-				free(menus[j]->data.imagePath);
+				freeAndNull(&menus[j]->data.imagePath);
 			if(menus[j]->label!=NULL)
-				free(menus[j]->label);
+				freeAndNull(&menus[j]->label);
 			if(menus[j]->hasSubMenu==true)
 				{
 					this->LFSTK_freeMenus(menus[j]->subMenus,menus[j]->subMenuCnt);
@@ -468,7 +472,7 @@ int	LFSTK_menuClass::LFSTK_getTextWidthForFont(const char *text)
 	fontSize=10;
 
 	if(this->fontName!=NULL)
-		free(this->fontName);
+		freeAndNull(&this->fontName);
 
 	this->fontName=strdup("sans");
 	str=strtok(string,":");
@@ -497,12 +501,12 @@ int	LFSTK_menuClass::LFSTK_getTextWidthForFont(const char *text)
 			if(found==false)
 				{
 					if(this->fontName!=NULL)
-						free(this->fontName);
+						freeAndNull(&this->fontName);
 					this->fontName=strdup(str);
 				}
 			str=strtok(NULL,":");
 		}
-	free(string);
+	freeAndNull(&string);
 
 	this->parentwc->globalLib->LFSTK_setCairoSurface(this->parentwc->app->display,this->parentwc->window,this->parentwc->app->visual,&sfc,&cr,1,1);
 	cairo_select_font_face(cr,this->fontName,this->slant,this->weight);

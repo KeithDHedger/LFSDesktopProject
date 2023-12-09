@@ -33,6 +33,7 @@ char						*iconZ=NULL;
 int						oldVolVal=-1;
 char						label[32];
 bool						sliderIsUp=false;
+int iconSize=48;
 
 void setLabel(void)
 {
@@ -165,7 +166,7 @@ bool volExitCB(LFSTK_gadgetClass*p,void* ud)
 	if(volumeButton->LFSTK_getValue()==1)
 		return(true);
 	p->LFSTK_getGeom(&geom2);	
-	p->LFSTK_moveGadget(geom2.x,normalY);
+	p->LFSTK_moveGadget(geom2.x,normalY+extraSpace);
 	sliderIsUp=false;
 	return(true);
 }
@@ -178,22 +179,22 @@ bool volMoveCB(LFSTK_gadgetClass*p,void* ud)
 		return(true);
 
 	p->LFSTK_getGeom(&geom);	
-	p->LFSTK_moveGadget(geom.x,activeY);
+	p->LFSTK_moveGadget(geom.x,activeY+extraSpace);
 	sliderIsUp=true;
 	return(true);
 }
 
 int addSlider(int x,int y,int grav)
 {
-	char				*vol=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print $3}'");
-	char				*label=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"%s \" $4}'|tr -d '[]'",SLIDERLABEL);//TODO//
+	char				*vol=dockWindow->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print $3}'");
+	char				*label=dockWindow->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"%s \" $4}'|tr -d '[]'",SLIDERLABEL);//TODO//
 	windowInitStruct	*win=new windowInitStruct;;
 	int				w,h;
 	bool				direction=false;
 
 	getAlsaVolume(false,-1);
 	
-	volumeButton=new LFSTK_toggleButtonClass(mainwind,label,x,y,iconSize,iconSize);
+	volumeButton=new LFSTK_toggleButtonClass(dockWindow,label,x,y+extraSpace,iconSize,iconSize);
 	volumeButton->LFSTK_setToggleStyle(TOGGLENORMAL);
 	volumeButton->LFSTK_setMouseCallBack(NULL,sliderCB,(void*)volumeButton->LFSTK_getLabel());
 	volumeButton->LFSTK_setMouseMoveCallBack(volMoveCB,volExitCB,USERDATA(0));
@@ -208,10 +209,10 @@ int addSlider(int x,int y,int grav)
 	volumeButton->drawLabelBG=true;
 	volumeButton->autoLabelBGColour=true;
 
-	iconH=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"volume-high","");
-	iconM=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"volume-medium","");
-	iconL=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"volume-low","");
-	iconZ=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"volume-zero","");
+	iconH=dockWindow->globalLib->LFSTK_findThemedIcon(desktopTheme,"volume-high","");
+	iconM=dockWindow->globalLib->LFSTK_findThemedIcon(desktopTheme,"volume-medium","");
+	iconL=dockWindow->globalLib->LFSTK_findThemedIcon(desktopTheme,"volume-low","");
+	iconZ=dockWindow->globalLib->LFSTK_findThemedIcon(desktopTheme,"volume-zero","");
 
 	win->x=100;
 	win->y=100;
@@ -219,6 +220,7 @@ int addSlider(int x,int y,int grav)
 	h=16;
 	win->w=w;
 	win->h=h;
+	win->app=apc;
 	apc->LFSTK_addToolWindow(win);
 	scwindow=apc->windows->back().window;
 
@@ -230,8 +232,8 @@ int addSlider(int x,int y,int grav)
 	vsb->reverse=direction;
 	volumeButton->LFSTK_setImageFromPath(iconL,TOOLBAR,true);
 	volumeButton->LFSTK_clearWindow();
-	free(vol);
-	free(label);
+	freeAndNull(&vol);
+	freeAndNull(&label);
 
 	return(iconSize);
 }

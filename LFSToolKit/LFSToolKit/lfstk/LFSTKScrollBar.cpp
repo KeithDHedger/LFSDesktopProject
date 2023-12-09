@@ -115,7 +115,7 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vert
 			else
 				this->upLeft->LFSTK_setImageFromPath(LFSTKPIXMAPSDIR "/left.png",CENTRE,true);
 	
-			free(pathtobit);
+			freeAndNull(&pathtobit);
 //rite
 			this->downRight=new LFSTK_buttonClass(parentwc,"",0,0,h,h,gravity);
 			this->downRight->LFSTK_reParentWindow(this->window,w-h,0);
@@ -124,7 +124,7 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vert
 				this->downRight->LFSTK_setImageFromPath(pathtobit,CENTRE,true);
 			else
 				this->downRight->LFSTK_setImageFromPath(LFSTKPIXMAPSDIR "/rite.png",CENTRE,true);
-			free(pathtobit);
+			freeAndNull(&pathtobit);
 		}
 	else
 		{
@@ -141,7 +141,7 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vert
 				this->upLeft->LFSTK_setImageFromPath(pathtobit,CENTRE,true);
 			else
 				this->upLeft->LFSTK_setImageFromPath(LFSTKPIXMAPSDIR "/up.png",CENTRE,true);
-			free(pathtobit);
+			freeAndNull(&pathtobit);
 //down
 			this->downRight=new LFSTK_buttonClass(parentwc,"",x,y+h-w,w,w,gravity);
 			this->downRight->LFSTK_reParentWindow(this->window,0,h-w);
@@ -150,7 +150,7 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vert
 				this->downRight->LFSTK_setImageFromPath(pathtobit,CENTRE,true);
 			else
 				this->downRight->LFSTK_setImageFromPath(LFSTKPIXMAPSDIR "/down.png",CENTRE,true);
-			free(pathtobit);
+			freeAndNull(&pathtobit);
 		}
 
 	asprintf(&pathtobit,"%s/thumb.png",this->wc->globalLib->LFSTK_getThemePath());
@@ -158,7 +158,7 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vert
 		this->thumb->LFSTK_setImageFromPath(pathtobit,CENTRE,true);
 	else
 		this->thumb->LFSTK_setImageFromPath(LFSTKPIXMAPSDIR "/thumb.png",CENTRE,true);
-	free(pathtobit);
+	freeAndNull(&pathtobit);
 
 	this->thumb->LFSTK_setCanDrag(true);
 	this->thumb->LFSTK_setMouseCallBack(this->startThumbDrag,this->thumbClicked,(void*)this);

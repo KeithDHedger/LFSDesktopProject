@@ -123,16 +123,17 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	int					sy=0;
 	LFSTK_buttonClass	*btn;
 
-	win=new windowInitStruct;
+	win=new windowInitStruct;//TODO//
 	win->app=this->wc->app;
-	win->name="";
+	win->windowName="";
 	win->loadVars=true;
 	win->x=100;
 	win->y=100;
 	win->w=200;
 	win->h=200;
 	win->wc=this->wc;
-	win->windowType="_NET_WM_WINDOW_TYPE_MENU";
+	//win->windowType="_NET_WM_WINDOW_TYPE_MENU";
+	win->windowType=this->wc->app->appAtomsHashed.at(this->wc->app->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
 	win->decorated=false;
 	win->overRide=true;
 	win->level=ABOVEALL;
@@ -358,8 +359,8 @@ void LFSTK_lineEditClass::drawLabel(void)
 		cairo_set_source_rgba(this->cr,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.r,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.g,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.b,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.a);
 		cairo_show_text(this->cr,aftercursor);
 
-		free(data);
-		free(aftercursor);
+		freeAndNull(&data);
+		freeAndNull(&aftercursor);
 	cairo_restore(this->cr);
 }
 
@@ -564,7 +565,7 @@ void LFSTK_lineEditClass::LFSTK_dropData(propertyStruct* data)
 			char	*ret;
 			ret=this->wc->app->globalLib->LFSTK_cleanString((const char*)data->data);
 			this->LFSTK_setFormatedText((const char*)ret,true);
-			free(ret);
+			freeAndNull(&ret);
 		}
 
 	if(this->callBacks.validCallbacks & GADGETDROPCB)

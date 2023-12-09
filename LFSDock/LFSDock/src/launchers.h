@@ -24,8 +24,6 @@
 #include "globals.h"
 #include "callbacks.h"
 
-extern launcherList		*ll;
-
 bool launcherEnterCB(LFSTK_gadgetClass*p,void* ud);
 bool launcherExitCB(LFSTK_gadgetClass*p,void* ud);
 bool launcherCB(void *p,void* ud);

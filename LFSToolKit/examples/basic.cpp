@@ -291,10 +291,11 @@ int main(int argc, char **argv)
 
 	//wc->LFSTK_showWindow();
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
-	apc->LFSTK_setTimer(2);
+	apc->LFSTK_setTimer(1000000,true);
 	apc->LFSTK_setTimerCallBack(timerCB,NULL);
 
-	popWindow=new LFSTK_toolWindowClass(apc->display,wc,"_NET_WM_WINDOW_TYPE_MENU",0,0,200,100,"lfstkpopup",apc);
+	popWindow=new LFSTK_toolWindowClass(apc->display,wc,apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU")),0,0,200,100,"lfstkpopup",apc);
+
 	LFSTK_labelClass *poplabel=new LFSTK_labelClass(popWindow,"This is a mouse enter callback",0,0,GADGETWIDTH*8,GADGETHITE,WestGravity);
 	poplabel->LFSTK_setCairoFontDataParts("sB",20);
 	poplabel->LFSTK_setTile(NULL,0);

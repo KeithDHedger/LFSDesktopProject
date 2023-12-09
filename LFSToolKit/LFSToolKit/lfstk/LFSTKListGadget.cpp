@@ -118,7 +118,7 @@ void LFSTK_listGadgetClass::LFSTK_setListFromFile(const char *filepath,bool incl
 		{
 			lines=this->wc->app->globalLib->LFSTK_oneLiner("wc -l %s",filepath);
 			linecnt=atoi(lines);
-			free(lines);
+			freeAndNull(&lines);
 			file=fopen(filepath,"r");
 			if(file!=NULL)
 				{
@@ -147,7 +147,7 @@ void LFSTK_listGadgetClass::LFSTK_setListFromFile(const char *filepath,bool incl
 													}
 											}
 									}
-								free(buffer);
+								freeAndNull(&buffer);
 								userdata++;
 						}
 					fclose(file);
@@ -182,6 +182,7 @@ void LFSTK_listGadgetClass::LFSTK_updateList(void)
 					if(j<this->maxShowing)
 						{
 							this->labelsArray->at(j)->LFSTK_setLabel(this->listDataArray->at(j+this->listOffset).label);
+							this->labelsArray->at(j)->LFSTK_setStyle(BEVELNONE);
 							this->labelsArray->at(j)->userData=USERDATA(j+this->listOffset);
 							this->labelsArray->at(j)->LFSTK_setActive(true);
 							if(this->listDataArray->at(j+this->listOffset).imageType==NOTHUMB)
@@ -352,11 +353,11 @@ void LFSTK_listGadgetClass::freeList(void)
 {
 	for(int j=0;j<this->listDataArray->size();j++)
 		{
-			free(this->listDataArray->at(j).label);
+			freeAndNull(&this->listDataArray->at(j).label);
 			if((this->listDataArray->at(j).imageType==CAIROTHUMB) && (this->listDataArray->at(j).data.surface!=NULL) && (this->freeCairoImages==true))
 				cairo_surface_destroy(this->listDataArray->at(j).data.surface);
 			if((this->listDataArray->at(j).imageType==FILETHUMB) && (this->listDataArray->at(j).data.imagePath!=NULL))
-				free(this->listDataArray->at(j).data.imagePath);
+				freeAndNull(&this->listDataArray->at(j).data.imagePath);
 		}
 	this->listDataArray->clear();
 }

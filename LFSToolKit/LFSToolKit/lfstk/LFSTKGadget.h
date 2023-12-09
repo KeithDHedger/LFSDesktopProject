@@ -208,7 +208,6 @@ int					imageWidth=0;
 		char					*fontName=NULL;
 		double				maxTextHeight;
 
-//		bool					inWindow;
 		bool					isActive;
 		bool					autoLabelColour=false;
 		int					labelGravity;
@@ -223,7 +222,6 @@ int					imageWidth=0;
 		cairo_surface_t		*cImage=NULL;
 		cairo_pattern_t		*pattern=NULL;
 		
-//		int					imageWidth=0;
 		int					imageHeight=0;
 		int					imageGravity=CENTRE;
 		float				ratio;

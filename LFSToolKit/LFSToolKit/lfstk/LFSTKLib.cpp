@@ -289,7 +289,7 @@ void LFSTK_lib::LFSTK_reloadPrefs(void)
 	
 	asprintf(&env,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
 	this->prefs.LFSTK_loadVarsFromFile(env);
-	free(env);
+	freeAndNull(&env);
 
 	this->LFSTK_loadDesktopIconTheme();
 }
@@ -597,7 +597,7 @@ char* LFSTK_lib::LFSTK_findThemedIcon(const char *theme,const char *icon,const c
 					if((iconpath!=NULL) && (strlen(iconpath)>1))
 						goto breakReturn;
 					if(iconpath!=NULL)
-						free(iconpath);
+						freeAndNull(&iconpath);
 					iconpath=NULL;
 				}
 		}
@@ -610,13 +610,13 @@ char* LFSTK_lib::LFSTK_findThemedIcon(const char *theme,const char *icon,const c
 					if((iconpath!=NULL) && (strlen(iconpath)>1))
 						goto breakReturn;
 					if(iconpath!=NULL)
-						free(iconpath);
+						freeAndNull(&iconpath);
 					iconpath=NULL;
 				}
 		}
 
 breakReturn:
-	free(holdicon);
+	freeAndNull(&holdicon);
 	return(iconpath);
 }
 
@@ -677,7 +677,7 @@ std::string LFSTK_lib::LFSTK_oneLiner(const std::string fmt,...)
 			pclose(fp);
 			str=buffer;
 		}
-	free(buffer);
+	freeAndNull(&buffer);
 	return(str);
 }
 
@@ -739,10 +739,10 @@ char* LFSTK_lib::LFSTK_oneLiner(const char* fmt,...)
 						buffer[strlen(buffer)-1]=0;
 				}
 			pclose(fp);
-			free(subbuffer);
+			freeAndNull(&subbuffer);
 			return(strdup(buffer));
 		}
-	free(subbuffer);
+	freeAndNull(&subbuffer);
 	return(NULL);
 }
 
@@ -1045,13 +1045,13 @@ char* LFSTK_lib::LFSTK_cleanString(const char *str)
 	if(uristr!=NULL)
 		{
 			cleanstr=g_filename_from_uri((const char*)g_strstrip(localstr),NULL,NULL);
-			free(uristr);
+			freeAndNull(&uristr);
 		}
 	else
 		{
 			cleanstr=strdup((const char*)g_strstrip(localstr));
 		}
-	free(localstr);
+	freeAndNull(&localstr);
 	return(cleanstr);
 }
 
@@ -1141,7 +1141,7 @@ void LFSTK_lib::LFSTK_getFileInfo(const char* path,fileInformation* info)
 					info->themeName=this->desktopIconTheme;
 					icon=this->LFSTK_findThemedIcon(info->themeName.c_str(),"application-octet-stream","");
 					info->iconPath=icon;
-					free(icon);
+					freeAndNull(&icon);
 					return;
 				}
 
@@ -1175,7 +1175,7 @@ void LFSTK_lib::LFSTK_getFileInfo(const char* path,fileInformation* info)
 			if(icon!=NULL)
 				{
 					info->iconPath=icon;
-					free(icon);
+					freeAndNull(&icon);
 				}
 			else
 				{
@@ -1185,7 +1185,7 @@ void LFSTK_lib::LFSTK_getFileInfo(const char* path,fileInformation* info)
 					if(icon!=NULL)
 						{
 							info->iconPath=icon;
-							free(icon);
+							freeAndNull(&icon);
 						}
 				}
 
@@ -1202,9 +1202,9 @@ void LFSTK_lib::LFSTK_getFileInfo(const char* path,fileInformation* info)
 									if(iconpath!=NULL)
 										{
 											info->iconPath=iconpath;
-											free(iconpath);
+											freeAndNull(&iconpath);
 										}
-									free(iiconpath);
+									freeAndNull(&iiconpath);
 								}
 							g_key_file_free(kf);
 						}

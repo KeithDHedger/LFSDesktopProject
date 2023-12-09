@@ -136,19 +136,20 @@ int main(int argc, char **argv)
 
 	windowInitStruct	*win;
 
-	win=new windowInitStruct;
+	win=new windowInitStruct;//TODO//
 	win->x=100;
 	win->y=100;
 	win->w=16;
 	win->h=100;
 	//win->wc=wc;
 //	win->windowType="_NET_WM_WINDOW_TYPE_DOCK";
-//	win->decorated=true;
-//	win->overRide=true;
+	win->decorated=false;
+	win->overRide=true;
 //	win->level=ABOVEALL;
-
+	win->app=apc;
+	win->windowType=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_TOOL"));
 	apc->LFSTK_addToolWindow(win);
-	scwindow=apc->windows->back().window;
+	scwindow=apc->windows->back().window;//TODO//
 	//XReparentWindow(apc->display,scwindow->window,wc->window,20,20);
 	
 	vsb=new LFSTK_scrollBarClass(scwindow,true,0,0,16,100);

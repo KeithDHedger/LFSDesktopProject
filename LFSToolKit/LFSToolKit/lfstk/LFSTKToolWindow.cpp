@@ -49,11 +49,10 @@ void LFSTK_toolWindowClass::windowClassInitCommon(windowInitStruct *wi)
 	wa.override_redirect=wi->overRide;
 	wm_delete_window=XInternAtom(this->app->display,"WM_DELETE_WINDOW",0);
 
-	XMatchVisualInfo(this->app->display, DefaultScreen(this->app->display), 32, TrueColor, &vinfo);
+	XMatchVisualInfo(this->app->display, DefaultScreen(this->app->display),32,TrueColor,&vinfo);
 
 	this->visual=vinfo.visual;
-	this->cmap=XCreateColormap(this->app->display, DefaultRootWindow(this->app->display), this->visual, AllocNone);
-
+	this->cmap=XCreateColormap(this->app->display,DefaultRootWindow(this->app->display),this->visual,AllocNone);
 
 	if(wi->app->gotARGB==true)
 		{
@@ -80,10 +79,14 @@ void LFSTK_toolWindowClass::windowClassInitCommon(windowInitStruct *wi)
 		XChangeProperty(this->app->display,this->window,xa,XA_ATOM,32,PropModeAppend,(unsigned char *)&xa_prop,4);
 
 	this->LFSTK_setWindowType(wi->windowType);
-	this->windowName=strdup(wi->name);
-	XStoreName(this->app->display,this->window,this->windowName);
-	classHint.res_name=this->windowName;
-	classHint.res_class=(char*)"LFSToolKit";
+//	if(wi->name!=NULL)
+//		this->windowName=strdup(wi->name);
+		this->windowName=wi->windowName;
+//	else
+//		this->windowName=strdup("LFSToolWindow");
+	XStoreName(this->app->display,this->window,this->windowName.c_str());
+	classHint.res_name=(char*)wi->appName.c_str();
+	classHint.res_class=(char*)wi->className.c_str();
 	XSetClassHint(this->app->display,this->window,&classHint);
 	unsigned long pid=getpid();
 	this->LFSTK_setXProperty(XInternAtom(this->app->display,"_NET_WM_PID",False),XA_CARDINAL,32,(void *)&pid,1);
@@ -92,7 +95,6 @@ void LFSTK_toolWindowClass::windowClassInitCommon(windowInitStruct *wi)
 	this->LFSTK_setFontString((char*)DEFAULTFONT);
 	this->LFSTK_setDecorated(wi->decorated);
 	this->initWindow(wi->loadVars);
-
 
 	if(this->globalLib->LFSTK_getUseTheme()==true)
 		this->LFSTK_setTile(this->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
@@ -119,14 +121,16 @@ LFSTK_toolWindowClass::LFSTK_toolWindowClass(windowInitStruct *wi,LFSTK_applicat
 	this->gadgetMap.clear();
 }
 
-LFSTK_toolWindowClass::LFSTK_toolWindowClass(Display *disp,LFSTK_windowClass *wc,const char *windowtype,int x,int y,int w,int h,const char* name,LFSTK_applicationClass *app)
+//LFSTK_toolWindowClass::LFSTK_toolWindowClass(Display *disp,LFSTK_windowClass *wc,const char *windowtype,int x,int y,int w,int h,const char* name,LFSTK_applicationClass *app)
+LFSTK_toolWindowClass::LFSTK_toolWindowClass(Display *disp,LFSTK_windowClass *wc,Atom windowtype,int x,int y,int w,int h,const char* name,LFSTK_applicationClass *app)
 {
-	windowInitStruct *wi=new windowInitStruct;
+	windowInitStruct *wi=app->LFSTK_getDefaultWInit();//TODO//
+	//new windowInitStruct;//TODO//
 	wi->x=x;
 	wi->y=y;
 	wi->w=w;
 	wi->h=h;
-	wi->name=name;
+	wi->windowName=name;
 	wi->overRide=true;
 	wi->loadVars=true;
 	wi->shutDisplayOnExit=false;
@@ -135,7 +139,7 @@ LFSTK_toolWindowClass::LFSTK_toolWindowClass(Display *disp,LFSTK_windowClass *wc
 	wi->level=ABOVEALL;
 	wi->display=disp;
 	wi->wc=wc;
-	wi->app=app;
+	//wi->app=app;
 
 	this->windowClassInitCommon(wi);
 	this->gadgetMap.clear();

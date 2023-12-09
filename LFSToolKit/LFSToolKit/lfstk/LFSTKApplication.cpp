@@ -25,6 +25,7 @@
 */
 LFSTK_applicationClass::~LFSTK_applicationClass()
 {
+
 	for(int j=0;j<this->windows->size();j++)
 		delete this->windows->at(j).window;
 	delete this->globalLib;
@@ -33,17 +34,19 @@ LFSTK_applicationClass::~LFSTK_applicationClass()
 #ifdef _ENABLEDEBUG_
 	cairo_debug_reset_static_data();
 #endif
-	free(this->monitors);
+	freeAndNull((char**)&this->monitors);
 }
 
 /**
 * Set timer
-* \param seconds trigger callback every seconds.
+* \param int delay trigger callback every seconds.
+* \param bool usemicroseconds use micro seconds instead of seconds.
 */
-void LFSTK_applicationClass::LFSTK_setTimer(int seconds)
+void LFSTK_applicationClass::LFSTK_setTimer(int delay,bool usemicroseconds)
 {
-	this->timer=seconds;
+	this->timer=delay;
 	this->useTimer=true;
+	this->useMicroSeconds=usemicroseconds;
 }
 
 /**
@@ -55,6 +58,7 @@ LFSTK_applicationClass::LFSTK_applicationClass()
 	XVisualInfo			visual_template;
 	XVisualInfo			*visual_list=NULL;
 	int					nxvisuals=0;
+	int					cnt;
 
 	this->display=XOpenDisplay(NULL);
 	if(this->display==NULL)
@@ -93,6 +97,81 @@ LFSTK_applicationClass::LFSTK_applicationClass()
 	this->userHome=getenv("HOME");
 	this->configDir=this->userHome + std::string("/.config/LFS");
 	this->iconThemeName=this->globalLib->LFSTK_oneLiner("cat '%s'/lfsdesktop.rc|grep -i icontheme|awk '{print $2}'",this->configDir.c_str());
+
+/*
+			NET_ACTIVE_WINDOW=XInternAtom(dockWindow->app->display,"_NET_ACTIVE_WINDOW",False);
+
+*/
+//set up atoms
+	const char *appAtomNames[]={
+						"_NET_WM_WINDOW_TYPE_DESKTOP",
+						"_NET_WM_WINDOW_TYPE_DOCK",
+						"_NET_WM_WINDOW_TYPE_NORMAL",
+						"_NET_WM_WINDOW_TYPE_DIALOG",
+						"_NET_WM_WINDOW_TYPE_TOOL",
+						"_NET_WM_STATE_SKIP_TASKBAR",
+						"_NET_WM_WINDOW_TYPE_MENU",
+						"_NET_WM_WINDOW_TYPE_TOOLBAR",
+						"_NET_WM_WINDOW_TYPE_UTILITY",
+						"_NET_WM_WINDOW_TYPE_SPLASH",
+						"_NET_WM_WINDOW_TYPE",
+
+						"_NET_WM_STATE",
+						"_NET_WM_STATE_STICKY",
+						"_NET_WM_STATE_ABOVE",
+						"_NET_WM_STATE_BELOW",
+						"_NET_WM_STATE_HIDDEN",
+
+						"_NET_WM_ALLOWED_ACTIONS",
+						"_NET_WM_ACTION_CHANGE_DESKTOP",
+						"_NET_WM_PID",
+						"_NET_WM_NAME",
+
+						"_NET_ACTIVE_WINDOW",
+						"_NET_CURRENT_DESKTOP",
+						"_NET_NUMBER_OF_DESKTOPS",
+
+						"WM_CLASS",
+						"WM_STATE",
+						"WM_DELETE_WINDOW",
+						"WM_PROTOCOLS",
+						"_MOTIF_WM_HINTS",
+						"UTF8_STRING",
+						NULL};
+	cnt=0;
+	while(appAtomNames[cnt]!=NULL)
+		{
+			this->appAtomsHashed[this->globalLib->prefs.LFSTK_hashFromKey(appAtomNames[cnt])]=XInternAtom(this->display,appAtomNames[cnt],false);
+			//fprintf(stderr,"atom=%p atom name=%s\n",this->appAtomsHashed.at(this->globalLib->prefs.LFSTK_hashFromKey(appAtomNames[cnt])),appAtomNames[cnt]);
+			cnt++;
+		}
+}
+
+/**
+* Return a default windowInitStruct filled in.
+* \return inititialized structure.
+*/
+windowInitStruct* LFSTK_applicationClass::LFSTK_getDefaultWInit(void)
+{
+	windowInitStruct *wininit=new windowInitStruct;
+
+	wininit->x=0;
+	wininit->y=0;
+	wininit->w=1;
+	wininit->h=1;
+	wininit->windowName="LFSTK Window";
+	wininit->appName="LFSTKApplication";
+	wininit->className="LFSTKApplication";
+	wininit->overRide=false;
+	wininit->loadVars=true;
+	wininit->shutDisplayOnExit=false;
+	wininit->windowType=this->appAtomsHashed.at(this->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_NORMAL"));
+	wininit->decorated=true;
+	wininit->level=NORMAL;
+	wininit->display=this->display;
+	wininit->wc=NULL;
+	wininit->app=this;
+	return(wininit);
 }
 
 /**
@@ -103,28 +182,33 @@ LFSTK_applicationClass::LFSTK_applicationClass()
 * \note name can be NULL, if window is set to 1px size and type to _NET_WM_WINDOW_TYPE_DOCK.
 * \note class take ownership of wi don't delete.
 */
-void LFSTK_applicationClass::LFSTK_addWindow(windowInitStruct *wi,const char *name)
+void LFSTK_applicationClass::LFSTK_addWindow(windowInitStruct *wi,const char *name)//TODO//
 {
 	windowInitStruct	*win;
 
 	if(wi==NULL)
-		win=new windowInitStruct;
+		{
+			win=this->LFSTK_getDefaultWInit();
+			//win=new windowInitStruct;
+			//win->windowType=this->appAtomsHashed.at(this->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_NORMAL"));
+		}
 	else
 		win=wi;
 
-	win->app=this;
+	//win->app=this;
 	if(name==NULL)
 		{
-			win->name="";
+			win->windowName="";
 			win->x=-1;
 			win->y=-1;
 			win->overRide=true;
-			win->windowType="_NET_WM_WINDOW_TYPE_DOCK";
+			//win->windowType="_NET_WM_WINDOW_TYPE_DOCK";
+			win->windowType=this->appAtomsHashed.at(this->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DOCK"));
 			win->decorated=false;
 		}
 	else
-		win->name=name;
-	win->loadVars=true;
+		win->windowName=name;
+//	win->loadVars=true;
 	this->windows->push_back({new LFSTK_windowClass(win,this),false,false});
 	if(this->windows->size()==1)
 		this->mainWindow=this->windows->back().window;
@@ -143,19 +227,33 @@ void LFSTK_applicationClass::LFSTK_addToolWindow(windowInitStruct *wi)
 	windowInitStruct	*win;
 
 	if(wi==NULL)
-		win=new windowInitStruct;
+		{
+			win=this->LFSTK_getDefaultWInit();
+//			win=new windowInitStruct;
+//			win->app=this;
+			win->windowType=this->appAtomsHashed.at(this->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DOCK"));
+		}
 	else
-		win=wi;
+		{
+			win=wi;
+		}
 
-	win->app=this;
-	win->name="";
+	win->windowName="";//TODO//
 	win->loadVars=true;
-	win->windowType="_NET_WM_WINDOW_TYPE_DOCK";
+	//win->windowType="_NET_WM_WINDOW_TYPE_DOCK";
+	//win->windowType=this->appAtomsHashed.at(this->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DOCK"));
 	win->decorated=false;
 	win->overRide=true;
 	win->level=ABOVEALL;
 
-	this->windows->push_back({new LFSTK_toolWindowClass(win,this),false,false});
+	LFSTK_toolWindowClass *tw=new LFSTK_toolWindowClass(win,this);
+
+	windowData wd;
+
+	wd.window=tw;
+	wd.loopFlag=false;
+	wd.showing=false;
+	this->windows->push_back(wd);
 	delete win;
 }
 
@@ -184,7 +282,12 @@ int LFSTK_applicationClass::LFSTK_runApp(void)
 	fd_set readfd;
 	struct timeval tv={0,0};
  
-	tv.tv_sec=this->timer;
+
+	if(this->useMicroSeconds==false)
+		tv.tv_usec=this->timer*1000000;
+	else	
+		tv.tv_usec=this->timer;
+
 	FD_ZERO(&readfd);
 	FD_SET(this->displayNum,&readfd);
 // Main loop
@@ -235,7 +338,10 @@ int LFSTK_applicationClass::LFSTK_runApp(void)
 						retval=this->callBacks.timerCallback(this,this->mainWindow->userData);
 					if(retval==true)
 						{
-							tv.tv_sec=this->timer;;
+							if(this->useMicroSeconds==false)
+								tv.tv_usec=this->timer*1000000;
+							else	
+								tv.tv_usec=this->timer;
 							FD_SET(this->displayNum,&readfd);
 						}
 					else
@@ -338,7 +444,7 @@ void LFSTK_applicationClass::LFSTK_loadMonitorData(void)//TODO//
 	XineramaScreenInfo	*p=NULL;
 
 	if(this->monitors!=NULL)
-		free(this->monitors);
+		freeAndNull((char**)&this->monitors);
 
 	cnt=ScreenCount(this->display);
 	p=XineramaQueryScreens(this->display,&cnt);
