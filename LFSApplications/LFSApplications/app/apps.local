@@ -6,6 +6,7 @@ if [[ $1 = "conf" ]];then
 	pushd ../../../
 		sudo BUILDFOR="LFSApplications" ./makeall ownit
 		BUILDFOR="LFSApplications" ./makeall makelocal
+		exit 0
 	popd
 fi
 

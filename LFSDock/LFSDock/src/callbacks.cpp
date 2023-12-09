@@ -90,9 +90,7 @@ bool timerCB(LFSTK_applicationClass *p,void* ud)
 		}
 
 	if((popActionWindow->isVisible==true) && (inSomeWindow==false) && (popActionWindow->inWindow==false))
-		{
-			popActionListExitCB(NULL,(void*)1);
-		}
+		popActionListExitCB(NULL,(void*)1);
 
 	if(useTaskBar==true)
 		updateTaskBar();
@@ -172,6 +170,7 @@ void showhidetActionList(LFSTK_gadgetClass *bc,LFSTK_windowClass *winc,LFSTK_lis
 		{
 			winc->LFSTK_hideWindow();
 			apc->windows->at(apc->LFSTK_findWindow(winc)).showing=false;
+			XSync(apc->display,false);
 		}
 }
 
@@ -197,6 +196,7 @@ bool popActionListExitCB(LFSTK_gadgetClass*p,void* ud)
 {
 //fprintf(stderr,"popActionListExitCB\n");
 	showhidetActionList(NULL,popActionWindow,popActionList);
+	inSomeWindow=false;
 	return(true);
 }
 

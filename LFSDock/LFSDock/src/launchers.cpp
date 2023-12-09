@@ -238,7 +238,8 @@ int addLaunchers(int x,int y,int grav)
 	int				ww;
 	int				sy=0;
 
-	asprintf(&launchers,"%s/launchers-DOCK",apc->configDir.c_str());
+	//asprintf(&launchers,"%s/launchers-DOCK",apc->configDir.c_str());
+	asprintf(&launchers,"%s",launchersDir.c_str());
 	ftw(launchers,launcherBuildCB,16);
 
 	win=new windowInitStruct;

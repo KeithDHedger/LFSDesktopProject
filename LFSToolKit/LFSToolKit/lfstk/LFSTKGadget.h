@@ -198,7 +198,8 @@ int					imageWidth=0;
 
 //font and label stuff
 		char					*label=NULL;
-		char					*fontString=NULL;
+		//char					*fontString=NULL;
+		std::string			fontString="";
 
 		cairo_text_extents_t	textExtents;
 		cairo_font_extents_t	fontExtents;

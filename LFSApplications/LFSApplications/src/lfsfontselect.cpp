@@ -101,7 +101,7 @@ int main(int argc, char **argv)
 		}
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,NULL);
+	apc->LFSTK_addWindow(NULL,"font seleect");
 	wc=apc->mainWindow;
 
 	fontdialog=new LFSTK_fontDialogClass(wc,"Select Font",0,0,1,1,BUTTONGRAV);

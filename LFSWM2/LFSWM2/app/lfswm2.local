@@ -6,6 +6,7 @@ if [[ $1 = "conf" ]];then
 	pushd ../../../
 		sudo BUILDFOR="LFSWM2" ./makeall ownit
 		BUILDFOR="LFSWM2" ./makeall makelocal
+		exit 0
 	popd
 fi
 

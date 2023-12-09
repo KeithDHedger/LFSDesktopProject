@@ -35,7 +35,6 @@ LFSTK_gadgetClass::~LFSTK_gadgetClass()
 	if(this->isMapped==true)
 		this->LFSTK_reParentWindow(this->wc->window,0,0);
 
-//TODO//
 	for(int j=NORMALCOLOUR;j<MAXCOLOURS;j++)
 		{
 			if(this->newGadgetFGColours.at(j).isValid==true)
@@ -44,8 +43,9 @@ LFSTK_gadgetClass::~LFSTK_gadgetClass()
 				XFreeColors(this->wc->app->display,this->wc->app->cm,(long unsigned int*)&this->newGadgetBGColours.at(j).pixel,1,0);
 		}
 
-	if(this->fontString!=NULL)
-		freeAndNull(&this->fontString);
+//	if(this->fontString!=NULL)//TODO//
+//
+//		freeAndNull(&this->fontString);
 
 	if(this->labelBGColour.isValid==true)
 		XFreeColors(this->wc->app->display,this->wc->app->cm,(long unsigned int*)&this->labelBGColour.pixel,1,0);
@@ -98,9 +98,10 @@ Window LFSTK_gadgetClass::LFSTK_getWindow(void)
 */
 void LFSTK_gadgetClass::LFSTK_setFontString(const char *s,bool setfontdata)
 {
-	if(this->fontString!=NULL)
-		freeAndNull(&this->fontString);
-	this->fontString=strdup(s);
+	//if(this->fontString!=NULL)
+	//	freeAndNull(&this->fontString);
+	//this->fontString=strdup(s);
+	this->fontString=s;
 
 	if(setfontdata==true)
 		this->LFSTK_setCairoFontData();
@@ -138,7 +139,7 @@ const char* LFSTK_gadgetClass::LFSTK_getColourName(int p)
 //needs re vamping
 void LFSTK_gadgetClass::initGadget(void)
 {
-	this->fontString=NULL;
+	this->fontString="";
 	this->autoLabelColour=this->wc->autoLabelColour;
 
 	this->LFSTK_setGadgetColours(GADGETBG,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEBUTTON),
@@ -965,9 +966,10 @@ void LFSTK_gadgetClass::drawImage()
 */
 void LFSTK_gadgetClass::LFSTK_setCairoFontData(void)
 {
-	char	*string=strdup(this->fontString);
-	char	*str;
-	bool	found=false;
+	//char	*string=strdup(this->fontString);
+	char		*string=strdup(this->fontString.c_str());//TODO//
+	char		*str;
+	bool		found=false;
 	int		labelwidth=0;
 	int		labelx=0;
 

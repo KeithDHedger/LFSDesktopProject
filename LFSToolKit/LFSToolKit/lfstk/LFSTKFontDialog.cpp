@@ -277,13 +277,14 @@ bool LFSTK_fontDialogClass::LFSTK_showDialog(const char* fontstring)
 void LFSTK_fontDialogClass::buildDialog(void)
 {
 	int				sy=BORDER;
-	char			*sizestr[4]={0,};
+	char				*sizestr[4]={0,};
 	listLabelStruct	ls;
 
 	windowInitStruct	*win;//TODO//
-	win=new windowInitStruct;
-	win->app=this->wc->app;
-	win->loadVars=true;
+	win=this->wc->app->LFSTK_getDefaultWInit();
+	//new windowInitStruct;
+	//win->app=this->wc->app;
+	//win->loadVars=true;
 	win->w=DIALOGWIDTH;
 	win->h=DIALOGHITE;
 	win->wc=this->wc;

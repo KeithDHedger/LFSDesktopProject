@@ -119,26 +119,22 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	this->isFocused=false;
 	this->inWindow=false;
 
-	windowInitStruct	*win;
+	windowInitStruct		*win;
 	int					sy=0;
 	LFSTK_buttonClass	*btn;
 
-	win=new windowInitStruct;//TODO//
-	win->app=this->wc->app;
-	win->windowName="";
+	win=this->wc->app->LFSTK_getDefaultWInit();
 	win->loadVars=true;
 	win->x=100;
 	win->y=100;
 	win->w=200;
 	win->h=200;
 	win->wc=this->wc;
-	//win->windowType="_NET_WM_WINDOW_TYPE_MENU";
 	win->windowType=this->wc->app->appAtomsHashed.at(this->wc->app->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
 	win->decorated=false;
-	win->overRide=true;
 	win->level=ABOVEALL;
 
-	this->wc->app->LFSTK_addWindow(win,"edit");
+	this->wc->app->LFSTK_addWindow(win,"LFSTK Context Menu");
 	this->editWindow=this->wc->app->windows->back().window;
 	btn=new LFSTK_buttonClass(this->editWindow,"Copy",0,sy,GADGETWIDTH,24);
 	btn->userData=USERDATA(1);

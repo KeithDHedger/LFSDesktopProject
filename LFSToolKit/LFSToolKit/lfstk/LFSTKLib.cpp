@@ -60,7 +60,7 @@ LFSTK_lib::~LFSTK_lib()
 * \param type Type of string to set.
 * \param str New string.
 */
-void LFSTK_lib::LFSTK_setGlobalString(int state,int type,const char *str)//TODO//set prrefs?
+void LFSTK_lib::LFSTK_setGlobalString(int state,int type,const char *str)
 {
 	char		*ptr=NULL;
 	const char	*strstate[]={"normal","prelight","active","inactive"};

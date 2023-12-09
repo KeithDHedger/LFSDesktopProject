@@ -173,11 +173,11 @@ int main(int argc,char **argv)
 	kf=g_key_file_new();
 	while(realMainLoop==true)
 		{
-	gFind=new LFSTK_findClass;
-	gFind->LFSTK_setDepth(1,1);
-	gFind->LFSTK_setFileTypes(".desktop");
-	gFind->LFSTK_setFullPath(true);
-	gFind->LFSTK_findFiles("/usr/share/applications",false);
+			gFind=new LFSTK_findClass;
+			gFind->LFSTK_setDepth(1,1);
+			gFind->LFSTK_setFileTypes(".desktop");
+			gFind->LFSTK_setFullPath(true);
+			gFind->LFSTK_findFiles("/usr/share/applications",false);
 
 			apc=new LFSTK_applicationClass();
 			apc->LFSTK_addWindow(NULL,NULL);
@@ -188,7 +188,8 @@ int main(int argc,char **argv)
 
 			win=apc->LFSTK_getDefaultWInit();
 			win->windowType=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
-	
+			win->level=ABOVEALL;
+
 			apc->LFSTK_addToolWindow(win);
 			popActionWindow=apc->windows->back().window;
 			popActionList=new LFSTK_listGadgetClass(popActionWindow,"list",0,0,2000,2000);
@@ -227,7 +228,13 @@ int main(int argc,char **argv)
 			if((queueID=msgget(key,IPC_CREAT|0660))==-1)
 				fprintf(stderr,"Can't create message queue\n");
 
-			asprintf(&env,"%s",configFile.c_str());
+			if(argc>1)
+				{
+					asprintf(&env,"%s/lfsdock-%s.rc",configDir.c_str(),argv[1]);
+					launchersDir=configDir + std::string("/launchers-") + std::string(argv[1]);
+				}
+			else
+				asprintf(&env,"%s",configFile.c_str());
 
 			loadPrefs(env);
 			freeAndNull(&env);
