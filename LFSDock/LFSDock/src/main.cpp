@@ -146,7 +146,7 @@ int main(int argc,char **argv)
 	int				psize;
 	int				key=666;
 	propReturn		pr;
-	windowInitStruct	*win=new windowInitStruct;;
+	windowInitStruct	*win;//=new windowInitStruct;;
 	std::string		lc="#a0f0f0f0";
 	std::string		pc="#60a0a0a0";
 	std::string		ac="#60404040";
@@ -186,13 +186,8 @@ int main(int argc,char **argv)
 			dockWindow->LFSTK_initDnD(true);
 			dockWindow->LFSTK_setWindowDropCallBack(windowDrop,(void*)0xdeadbeef);
 
-			win->x=0;
-			win->y=0;
-			win->w=1;
-			win->h=1;
-			win->app=apc;
+			win=apc->LFSTK_getDefaultWInit();
 			win->windowType=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
-			win->wc=dockWindow;
 	
 			apc->LFSTK_addToolWindow(win);
 			popActionWindow=apc->windows->back().window;
@@ -289,7 +284,8 @@ int main(int argc,char **argv)
 			dockWindow->LFSTK_showWindow(true);
 			dockWindow->LFSTK_setKeepAbove(true);
 
-updateTaskBar(true);
+			if(useTaskBar==true)
+				updateTaskBar(true);
 
 			int retval=apc->LFSTK_runApp();
 			while(ll!=NULL)

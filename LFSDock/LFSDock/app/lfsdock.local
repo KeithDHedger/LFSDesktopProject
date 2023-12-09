@@ -9,4 +9,10 @@ if [[ $1 = "conf" ]];then
 	popd
 fi
 
-LD_LIBRARY_PATH="../../../LFSToolKit/LFSToolKit/app/.libs" ./lfsdock
+if [[ $USEVALGRIND -eq 1 ]];then
+	VALGRIND="valgrind --leak-check=full"
+else
+	VALGRIND=
+fi
+
+LD_LIBRARY_PATH="../../../LFSToolKit/LFSToolKit/app/.libs" $VALGRIND ./lfsdock

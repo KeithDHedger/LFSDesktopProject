@@ -287,9 +287,7 @@ int main(int argc, char **argv)
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	wc->LFSTK_setKeepAbove(true);
-	//wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),apc->displayWidth,apc->displayHeight);
 
-	//wc->LFSTK_showWindow();
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	apc->LFSTK_setTimer(1000000,true);
 	apc->LFSTK_setTimerCallBack(timerCB,NULL);
@@ -302,7 +300,7 @@ int main(int argc, char **argv)
 
 	popWindow->LFSTK_resizeWindow(poplabel->LFSTK_getTextRealWidth("This is a mouse enter callback"),GADGETHITE);
 	popWindow->LFSTK_setWindowColourName(NORMALCOLOUR,"#c0808080");
-	//popWindow->LFSTK_setTile(NULL,0);
+
 	int retval=apc->LFSTK_runApp();
 
 	delete apc;

@@ -131,6 +131,7 @@ bool contextCB(void *p,void* ud)
 						launcherCB(NULL,lwc->popupFromGadget->userData);
 						break;
 					case BUTTONREMOVE:
+						sendNotify("Removing ",ll->entry.name);
 						unlink(ll->desktopFilePath.c_str());
 						apc->exitValue=0;
 						apc->mainLoop=false;

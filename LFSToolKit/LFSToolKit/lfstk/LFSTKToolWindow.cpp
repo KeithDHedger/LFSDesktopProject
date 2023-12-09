@@ -79,11 +79,7 @@ void LFSTK_toolWindowClass::windowClassInitCommon(windowInitStruct *wi)
 		XChangeProperty(this->app->display,this->window,xa,XA_ATOM,32,PropModeAppend,(unsigned char *)&xa_prop,4);
 
 	this->LFSTK_setWindowType(wi->windowType);
-//	if(wi->name!=NULL)
-//		this->windowName=strdup(wi->name);
-		this->windowName=wi->windowName;
-//	else
-//		this->windowName=strdup("LFSToolWindow");
+	this->windowName=wi->windowName;
 	XStoreName(this->app->display,this->window,this->windowName.c_str());
 	classHint.res_name=(char*)wi->appName.c_str();
 	classHint.res_class=(char*)wi->className.c_str();
@@ -115,17 +111,25 @@ void LFSTK_toolWindowClass::windowClassInitCommon(windowInitStruct *wi)
 	this->gadgetMap.clear();
 }
 
+/**
+* Window constructor.
+* \param windowInitStruct *wi.
+* \param LFSTK_applicationClass *app.
+* \note Caller is resonsible for deleting wi.
+*/
 LFSTK_toolWindowClass::LFSTK_toolWindowClass(windowInitStruct *wi,LFSTK_applicationClass *app)
 {
 	this->windowClassInitCommon(wi);
 	this->gadgetMap.clear();
 }
 
-//LFSTK_toolWindowClass::LFSTK_toolWindowClass(Display *disp,LFSTK_windowClass *wc,const char *windowtype,int x,int y,int w,int h,const char* name,LFSTK_applicationClass *app)
+/**
+* Window constructor.
+* \param ...
+*/
 LFSTK_toolWindowClass::LFSTK_toolWindowClass(Display *disp,LFSTK_windowClass *wc,Atom windowtype,int x,int y,int w,int h,const char* name,LFSTK_applicationClass *app)
 {
-	windowInitStruct *wi=app->LFSTK_getDefaultWInit();//TODO//
-	//new windowInitStruct;//TODO//
+	windowInitStruct *wi=app->LFSTK_getDefaultWInit();
 	wi->x=x;
 	wi->y=y;
 	wi->w=w;
@@ -139,7 +143,6 @@ LFSTK_toolWindowClass::LFSTK_toolWindowClass(Display *disp,LFSTK_windowClass *wc
 	wi->level=ABOVEALL;
 	wi->display=disp;
 	wi->wc=wc;
-	//wi->app=app;
 
 	this->windowClassInitCommon(wi);
 	this->gadgetMap.clear();
