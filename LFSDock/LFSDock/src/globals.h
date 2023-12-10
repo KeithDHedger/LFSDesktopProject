@@ -25,6 +25,7 @@
 #include <filesystem>
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 
 #include "config.h"
 #include <lfstk/LFSTKGlobals.h>

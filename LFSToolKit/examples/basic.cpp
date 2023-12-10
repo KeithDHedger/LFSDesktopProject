@@ -180,7 +180,7 @@ int main(int argc, char **argv)
 //apc->globalLib->LFSTK_setGlobalString(PRELIGHTCOLOUR,TYPEWINDOW,"blue");
 //apc->globalLib->LFSTK_setGlobalString(INACTIVECOLOUR,TYPEWINDOW,"yellow");
 
-	apc->LFSTK_addWindow(NULL,BOXLABEL);
+	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
 
 	wc=apc->mainWindow;
 

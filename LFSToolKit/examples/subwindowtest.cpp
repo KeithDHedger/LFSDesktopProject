@@ -90,7 +90,7 @@ int main(int argc, char **argv)
 	LFSTK_buttonClass	*button=NULL;
 	
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,BOXLABEL);
+	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
 	wc=apc->mainWindow;
 	wc->userData=USERDATA("Main Window");
 	//wc->LFSTK_setWindowColourName(NORMALCOLOUR,"#20ff0000");

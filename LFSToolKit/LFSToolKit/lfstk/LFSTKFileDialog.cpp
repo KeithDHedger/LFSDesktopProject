@@ -258,10 +258,11 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 
 	windowInitStruct	*win;
 
-	win=new windowInitStruct;//TODO//
-	win->app=parentwc->app;
+	win=this->wc->app->LFSTK_getDefaultWInit();
+	//new windowInitStruct;//TODO//
+	//win->app=parentwc->app;
 	win->windowName=label;
-	win->loadVars=true;
+	//win->loadVars=true;
 	win->w=dwidth;
 	win->h=hite;
 	win->wc=parentwc;

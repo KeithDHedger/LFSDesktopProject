@@ -1,0 +1,9 @@
+font Arial:size=12
+onmonitor 0
+panelgrav 2
+panelsize 2
+textcolour #FF000000
+gadgetsleft LCSDsssT
+termcommand kkterminal -m -l -e 
+panelbgcolour #00000000
+

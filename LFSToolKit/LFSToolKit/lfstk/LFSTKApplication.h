@@ -46,8 +46,8 @@ class LFSTK_applicationClass
 		LFSTK_applicationClass();
 		~LFSTK_applicationClass();
 
-		void						LFSTK_addWindow(windowInitStruct *wi,const char *name);
-		void						LFSTK_addToolWindow(windowInitStruct *wi);
+		void						LFSTK_addWindow(windowInitStruct *wi,const char *name,const char *appname=NULL);
+		void						LFSTK_addToolWindow(windowInitStruct *wi,const char *appname=NULL);
 		int						LFSTK_runApp(void);
 		int						LFSTK_runWindowLoop(int window);
 		int						LFSTK_runWindowLoop(LFSTK_windowClass *win);

@@ -98,10 +98,6 @@ LFSTK_applicationClass::LFSTK_applicationClass()
 	this->configDir=this->userHome + std::string("/.config/LFS");
 	this->iconThemeName=this->globalLib->LFSTK_oneLiner("cat '%s'/lfsdesktop.rc|grep -i icontheme|awk '{print $2}'",this->configDir.c_str());
 
-/*
-			NET_ACTIVE_WINDOW=XInternAtom(dockWindow->app->display,"_NET_ACTIVE_WINDOW",False);
-
-*/
 //set up atoms
 	const char *appAtomNames[]={
 						"_NET_WM_WINDOW_TYPE_DESKTOP",
@@ -182,7 +178,7 @@ windowInitStruct* LFSTK_applicationClass::LFSTK_getDefaultWInit(void)
 * \note name can be NULL, if window is set to 1px size and type to _NET_WM_WINDOW_TYPE_DOCK.
 * \note class take ownership of wi don't delete.
 */
-void LFSTK_applicationClass::LFSTK_addWindow(windowInitStruct *wi,const char *name)
+void LFSTK_applicationClass::LFSTK_addWindow(windowInitStruct *wi,const char *name,const char *appname)
 {
 	windowInitStruct	*win;
 
@@ -204,6 +200,9 @@ void LFSTK_applicationClass::LFSTK_addWindow(windowInitStruct *wi,const char *na
 		}
 	else
 		win->windowName=name;
+	if(appname!=NULL)
+		win->appName=appname;
+	
 	this->windows->push_back({new LFSTK_windowClass(win,this),false,false});
 	if(this->windows->size()==1)
 		this->mainWindow=this->windows->back().window;
@@ -217,7 +216,7 @@ void LFSTK_applicationClass::LFSTK_addWindow(windowInitStruct *wi,const char *na
 * \note wi can be NULL, defaults are used.
 * \note class takes ownership of wi don't delete.
 */
-void LFSTK_applicationClass::LFSTK_addToolWindow(windowInitStruct *wi)
+void LFSTK_applicationClass::LFSTK_addToolWindow(windowInitStruct *wi,const char *appname)
 {
 	windowInitStruct	*win;
 
@@ -231,22 +230,13 @@ void LFSTK_applicationClass::LFSTK_addToolWindow(windowInitStruct *wi)
 			win=wi;
 		}
 
-	//win->windowName="";
-	//win->loadVars=true;
-	//win->windowType="_NET_WM_WINDOW_TYPE_DOCK";
-	//win->windowType=this->appAtomsHashed.at(this->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DOCK"));
 	win->decorated=false;
 	win->overRide=true;
 	win->level=ABOVEALL;
-	this->windows->push_back({new LFSTK_toolWindowClass(win,this),false,false});
-	//LFSTK_toolWindowClass *tw=new LFSTK_toolWindowClass(win,this);
-//
-	//windowData wd;
+	if(appname!=NULL)
+		win->appName=appname;
 
-	//wd.window=tw;
-	//wd.loopFlag=false;
-	//wd.showing=false;
-	//this->windows->push_back(wd);
+	this->windows->push_back({new LFSTK_toolWindowClass(win,this),false,false});
 	delete win;
 }
 

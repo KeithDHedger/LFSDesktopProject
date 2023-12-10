@@ -97,7 +97,7 @@ int main(int argc, char **argv)
 
 	apc=new LFSTK_applicationClass();
 	apc->globalLib->LFSTK_setUseTheme(false);
-	apc->LFSTK_addWindow(NULL,BOXLABEL);
+	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
 	wc=apc->mainWindow;
 	//wc->LFSTK_setTile(NULL,0);
 	wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),DIALOGWIDTH,sy);

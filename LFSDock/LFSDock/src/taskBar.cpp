@@ -130,8 +130,8 @@ Window doTreeWalkForTasks(Window wind)
 						{
 							if(pr.strlist.size()>1)
 								{
-									tsk.taskClass[0]=pr.strlist.at(1);
-									tsk.taskClass[1]=pr.strlist.at(0);
+									tsk.taskClass[0]=pr.strlist.at(0);
+									tsk.taskClass[1]=pr.strlist.at(1);
 								}
 							else
 								tsk.taskClass[0]=pr.strlist.at(0);
@@ -174,6 +174,11 @@ Window doTreeWalkForTasks(Window wind)
 	return thewin;
 }
 
+bool compareTaskClass(const taskStruct &a,const taskStruct &b)
+{
+	return(a.taskClass[0].compare(b.taskClass[0]));
+}
+
 void updateTaskBar(bool force)
 {
 	int						cnt=0;
@@ -203,11 +208,14 @@ void updateTaskBar(bool force)
 	if((unequal==false) && (force==false))
 		return;
 
+	std::sort(tasks.begin(),tasks.end(),compareTaskClass);
+
 	holdtasks=tasks;
 
 	filltasks.clear();
 	filltasks.push_back(tasks.at(0));
 	tasks.erase(tasks.begin());
+
 	while(tasks.size()>0)
 		{
 			skipflag=false;

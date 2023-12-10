@@ -23,11 +23,11 @@ LFSTK_fontDialogClass		*fontdialog=NULL;
 
 int main(int argc, char **argv)
 {
-	const fontDataStruct	*fd;
+	const fontDataStruct		*fd;
 	const char				*bools[]={"false","true"};
 	
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,NULL);
+	apc->LFSTK_addWindow(NULL,NULL,"LFSTKExample");//TODO//
 	wc=apc->mainWindow;
 
 	fontdialog=new LFSTK_fontDialogClass(wc,"Select Font",0,0,1,1,BUTTONGRAV);

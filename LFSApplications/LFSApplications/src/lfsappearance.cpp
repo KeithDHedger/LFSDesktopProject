@@ -272,7 +272,7 @@ int main(int argc, char **argv)
 	std::vector<hitRect>	hrs;
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,BOXLABEL);
+	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKPrefs");
 	wc=apc->mainWindow;
 
 	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,0,1,1);

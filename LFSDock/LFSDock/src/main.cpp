@@ -200,23 +200,20 @@ int main(int argc,char **argv)
 			popActionList->LFSTK_setListItemsColours(GADGETFG,"red","red","red","red");
 			popActionList->LFSTK_setGadgetColourPair(NORMALCOLOUR,lc,"red");
 			popActionList->LFSTK_setMouseCallBack(NULL,popActionWindowSelect,NULL);
-			//popActionList->LFSTK_setMouseMoveCallBack(popActionListEnterCB,popActionListExitCB,NULL);
 
-//TODO//
-			WM_STATE=XInternAtom(dockWindow->app->display,"WM_STATE",False);
-			NET_WM_WINDOW_TYPE_NORMAL=XInternAtom(dockWindow->app->display,"_NET_WM_WINDOW_TYPE_NORMAL",False);
-			NET_WM_STATE_HIDDEN=XInternAtom(dockWindow->app->display,"_NET_WM_STATE_HIDDEN",False);
-			NET_WM_WINDOW_TYPE_DIALOG=XInternAtom(dockWindow->app->display,"_NET_WM_WINDOW_TYPE_DIALOG",False);
-			//NET_WM_DESKTOP=XInternAtom(dockWindow->app->display,"_NET_WM_DESKTOP",False);
-			NET_WM_WINDOW_TYPE=XInternAtom(dockWindow->app->display,"_NET_WM_WINDOW_TYPE",False);
-			NET_WM_STATE=XInternAtom(dockWindow->app->display,"_NET_WM_STATE",False);
-			NET_WM_NAME=XInternAtom(dockWindow->app->display,"_NET_WM_NAME",False);
-			UTF8_STRING=XInternAtom(dockWindow->app->display,"UTF8_STRING",False);
-			NET_CURRENT_DESKTOP=XInternAtom(dockWindow->app->display,"_NET_CURRENT_DESKTOP",False);
-			WM_CLASS=XInternAtom(dockWindow->app->display,"WM_CLASS",False);
-			NET_WM_PID=XInternAtom(dockWindow->app->display,"_NET_WM_PID",False);
-			NET_NUMBER_OF_DESKTOPS=XInternAtom(dockWindow->app->display,"_NET_NUMBER_OF_DESKTOPS",False);
-			NET_ACTIVE_WINDOW=XInternAtom(dockWindow->app->display,"_NET_ACTIVE_WINDOW",False);
+			WM_STATE=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("WM_STATE"));
+			NET_WM_WINDOW_TYPE_NORMAL=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_NORMAL"));
+			NET_WM_STATE_HIDDEN=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN"));
+			NET_WM_WINDOW_TYPE_DIALOG=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+			NET_WM_WINDOW_TYPE=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE"));
+			NET_WM_STATE=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_STATE"));
+			NET_WM_NAME=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_NAME"));
+			UTF8_STRING=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("UTF8_STRING"));
+			NET_CURRENT_DESKTOP=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_CURRENT_DESKTOP"));
+			WM_CLASS=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("WM_CLASS"));
+			NET_WM_PID=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_PID"));
+			NET_NUMBER_OF_DESKTOPS=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_NUMBER_OF_DESKTOPS"));
+			NET_ACTIVE_WINDOW=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW"));
 
 			env=dockWindow->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str());
 			key=atoi(env);

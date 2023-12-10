@@ -61,10 +61,10 @@ bool select(void *object,void* userdata)
 int main(int argc, char **argv)
 {
 	int						sy=0;
-	std::vector<hitRect>	hrs;
+	std::vector<hitRect>		hrs;
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,BOXLABEL);
+	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
 	wc=apc->mainWindow;
 
 	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*3);

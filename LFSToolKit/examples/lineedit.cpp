@@ -71,11 +71,11 @@ bool windowDrop(LFSTK_windowClass *lwc,void* ud)
 int main(int argc, char **argv)
 {
 	int							sy=BORDER;
-	std::vector<hitRect>		hrs;
+	std::vector<hitRect>			hrs;
 	LFSTK_ExpanderGadgetClass	*multi=NULL;
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,BOXLABEL);
+	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
 	wc=apc->mainWindow;
 
 	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*3);

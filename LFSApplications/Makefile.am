@@ -4,7 +4,7 @@ SUBDIRS = LFSApplications/app
 install-exec-hook:
 	mkdir -vp $(DESTDIR)${datadir}/applications $(DESTDIR)${datadir}/pixmaps $(DESTDIR)/usr/share/xsessions $(DESTDIR)$(bindir)
 	cp LFSApplications/resources/desktopdata/lfs*.desktop $(DESTDIR)${datadir}/applications
-	cp LFSApplications/resources/desktopdata/lfs*.png $(DESTDIR)${datadir}/pixmaps
+	cp LFSApplications/resources/desktopdata/*.png $(DESTDIR)${datadir}/pixmaps
 	cp LFSApplications/resources/lfslaunchpanels $(DESTDIR)$(bindir)
 	cp LFSApplications/resources/startlfsdesktop $(DESTDIR)$(bindir)
 	cp LFSApplications/resources/lfsdesktop.desktop $(DESTDIR)/usr/share/xsessions

@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 	int	sy=0;
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,BOXLABEL);
+	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
 	wc=apc->mainWindow;
 	wc->passEventToRoot=true;
 
