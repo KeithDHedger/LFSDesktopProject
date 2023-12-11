@@ -1,4 +1,6 @@
 0.1.0
+Added refresh rate/use microseconds to prefs
+Set desktop number in desk switcher when desktop changes via 3rd party.
 Prevent tasks changing postion on bar.
 Gui fixes.
 Compacted code.

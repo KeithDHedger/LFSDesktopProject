@@ -95,6 +95,9 @@ bool timerCB(LFSTK_applicationClass *p,void* ud)
 	if(useTaskBar==true)
 		updateTaskBar();
 
+	if(switchButton!=NULL)
+		updateDeskSwitcher();
+
 	return(true);
 }
 

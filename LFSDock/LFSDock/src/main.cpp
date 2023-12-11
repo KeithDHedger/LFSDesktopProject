@@ -39,6 +39,8 @@ void loadPrefs(const char *env)
 	panelGravity=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelgrav"));
 	panelTextColour=prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("textcolour"));
 	panelBGColour=prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("panelbgcolour"));
+	refreshRate=	prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("refreshrate"));
+	useMicros=prefs.LFSTK_getBool(prefs.LFSTK_hashFromKey("usemicroseconds"));
 }
 
 void addGadgets(void)
@@ -136,6 +138,8 @@ void sanityCheck(void)
 			rcfile<<"gadgetsleft LCDsssT\n";
 			rcfile<<"termcommand kkterminal -m -l -e \n";
 			rcfile<<"panelbgcolour #00000000\n";
+			rcfile<<"refreshrate 500000\n";
+			rcfile<<"usemicroseconds false\n";
 			rcfile.close();
 		}
 }
@@ -166,6 +170,8 @@ int main(int argc,char **argv)
 						{prefs.LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","l",false,0}},
 						{prefs.LFSTK_hashFromKey("font"),{TYPESTRING,"font","",false,0}},
 						{prefs.LFSTK_hashFromKey("panelbgcolour"),{TYPESTRING,"panelbgcolour","",false,0}},
+						{prefs.LFSTK_hashFromKey("refreshrate"),{TYPEINT,"refreshrate","",false,1}},
+						{prefs.LFSTK_hashFromKey("usemicroseconds"),{TYPEBOOL,"usemicroseconds","",false,0}},
 					};
 	realMainLoop=true;
 
@@ -195,7 +201,7 @@ int main(int argc,char **argv)
 			popActionList=new LFSTK_listGadgetClass(popActionWindow,"list",0,0,2000,2000);
 
 			popActionList->LFSTK_setStyle(BEVELNONE);
-			popActionList->LFSTK_setLabelAutoColour(true);
+			popActionList->LFSTK_setLabelAutoColour(false);
 			popActionList->LFSTK_setListItemsColours(GADGETBG,lc,pc,ac,lc);
 			popActionList->LFSTK_setListItemsColours(GADGETFG,"red","red","red","red");
 			popActionList->LFSTK_setGadgetColourPair(NORMALCOLOUR,lc,"red");
@@ -219,9 +225,6 @@ int main(int argc,char **argv)
 			key=atoi(env);
 			freeAndNull(&env);
 
-			apc->LFSTK_setTimer(refreshRate,true);
-			apc->LFSTK_setTimerCallBack(timerCB,NULL);
-
 			if((queueID=msgget(key,IPC_CREAT|0660))==-1)
 				fprintf(stderr,"Can't create message queue\n");
 
@@ -235,6 +238,9 @@ int main(int argc,char **argv)
 
 			loadPrefs(env);
 			freeAndNull(&env);
+
+			apc->LFSTK_setTimer(refreshRate,useMicros);
+			apc->LFSTK_setTimerCallBack(timerCB,NULL);
 
 			switch(panelSize)
 				{

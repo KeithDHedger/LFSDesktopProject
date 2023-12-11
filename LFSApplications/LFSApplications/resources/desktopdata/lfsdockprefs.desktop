@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=LFS Dock Prefs
+Comment=Prefs for LFS Dock
+Terminal=false
+Type=Application
+Categories=Gnome;GTK;;Settings;DesktopSettings;
+Icon=LFSTKPrefs
+Exec=lfsdockprefs

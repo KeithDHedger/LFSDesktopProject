@@ -39,10 +39,10 @@ LFSTK_buttonClass			*seperator=NULL;
 LFSTK_buttonClass			*quit=NULL;
 LFSTK_buttonClass			*apply=NULL;
 
-//panel data
+//dock data
 LFSTK_buttonClass			*dockSize=NULL;
 LFSTK_lineEditClass			*dockSizeEdit=NULL;
-menuStruct					**dockSizeMenuckGrav=NULL;
+menuStruct					**dockSizeMenuGrav=NULL;
 LFSTK_menuClass				*sizeMenu=NULL;
 
 LFSTK_buttonClass			*dockGrav=NULL;
@@ -55,6 +55,9 @@ LFSTK_lineEditClass			*dockGadgets=NULL;
 
 LFSTK_lineEditClass			*dockBGColourEdit=NULL;
 LFSTK_lineEditClass			*dockTextColourEdit=NULL;
+
+LFSTK_lineEditClass			*dockRefreshEdit=NULL;
+LFSTK_toggleButtonClass		*dockUseMicro=NULL;
 
 std::map<int,const char*>	dockGravConvertToStr={{1,"North"},{2,"South"}};
 std::map<int,const char*>	dockSizeConvertToStr={{1,"Small"},{2,"Medium"},{3,"Large"},{4,"Huge"}};
@@ -128,6 +131,8 @@ void getEdits(void)
 			{prefs.LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft",dockGadgets->LFSTK_getCStr(),false,0}},
 			{prefs.LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand",termCommand->LFSTK_getCStr(),false,0}},
 			{prefs.LFSTK_hashFromKey("font"),{TYPESTRING,"font",fontEdit->LFSTK_getCStr(),false,0}},
+			{prefs.LFSTK_hashFromKey("refreshrate"),{TYPESTRING,"refreshrate",dockRefreshEdit->LFSTK_getCStr(),false,0}},
+			{prefs.LFSTK_hashFromKey("usemicroseconds"),{TYPEBOOL,"usemicroseconds","",dockUseMicro->LFSTK_getValue(),0}},
 		};
 }
 
@@ -184,6 +189,8 @@ void setEdits(void)
 	dockBGColourEdit->LFSTK_setBuffer(prefs.LFSTK_getCString("panelbgcolour"));
 	dockTextColourEdit->LFSTK_setBuffer(prefs.LFSTK_getCString("textcolour"));
 	fontEdit->LFSTK_setBuffer(prefs.LFSTK_getCString("font"));
+	dockRefreshEdit->LFSTK_setBuffer(prefs.LFSTK_getCString("refreshrate"));
+	dockUseMicro->LFSTK_setValue(prefs.LFSTK_getBool("usemicroseconds"));
 }
 
 void getPrefs(void)
@@ -200,6 +207,8 @@ void getPrefs(void)
 			{prefs.LFSTK_hashFromKey("panelbgcolour"),{TYPESTRING,"panelbgcolour","#00000000",false,0}},
 			{prefs.LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","black",false,0}},
 			{prefs.LFSTK_hashFromKey("font"),{TYPESTRING,"font","Liberation Mono:size=12",false,0}},
+			{prefs.LFSTK_hashFromKey("refreshrate"),{TYPESTRING,"refreshrate","1",false,0}},
+			{prefs.LFSTK_hashFromKey("usemicroseconds"),{TYPEBOOL,"usemicroseconds","",false,0}},
 		};
 
 	asprintf(&env,"%s/lfsdock.rc",apc->configDir.c_str());
@@ -269,16 +278,16 @@ int main(int argc, char **argv)
 	dockSize=new LFSTK_buttonClass(wc,"Panel Size",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	dockSize->LFSTK_setIndicator(DISCLOSURE);
 	dockSize->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SHOWSIZEMENU");
-	dockSizeMenuckGrav=new menuStruct*[4];
+	dockSizeMenuGrav=new menuStruct*[4];
 	for(long j=0;j<4;j++)
 		{
-			dockSizeMenuckGrav[j]=new menuStruct;
-			dockSizeMenuckGrav[j]->label=strdup(dockSizeConvertToStr[j+1]);
-			dockSizeMenuckGrav[j]->userData=(void*)(j+1);
+			dockSizeMenuGrav[j]=new menuStruct;
+			dockSizeMenuGrav[j]->label=strdup(dockSizeConvertToStr[j+1]);
+			dockSizeMenuGrav[j]->userData=(void*)(j+1);
 		}
 	sizeMenu=new LFSTK_menuClass(wc,BORDER+GADGETWIDTH,sy,1,1);
 	sizeMenu->LFSTK_setMouseCallBack(NULL,panelSizeCB,NULL);
-	sizeMenu->LFSTK_addMainMenus(dockSizeMenuckGrav,4);
+	sizeMenu->LFSTK_addMainMenus(dockSizeMenuGrav,4);
 	dockSizeEdit=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
@@ -330,6 +339,13 @@ int main(int argc, char **argv)
 //left gadgets
 	label=new LFSTK_labelClass(wc,"Gadgets",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	dockGadgets=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
+
+//set refresh rate
+	label=new LFSTK_labelClass(wc,"Refresh",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
+	dockRefreshEdit=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString("refreshrate"),BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH-(GADGETWIDTH/3),GADGETHITE,BUTTONGRAV);
+	dockUseMicro=new LFSTK_toggleButtonClass(wc,"Use uSeconds",BORDER+GADGETWIDTH+BORDER+(GADGETWIDTH-(GADGETWIDTH/3))+10,sy+(GADGETHITE/3),GADGETWIDTH,CHECKBOXSIZE,NorthWestGravity);
+	dockUseMicro->LFSTK_setValue(prefs.LFSTK_getBool("usemicroseconds"));
 	sy+=YSPACING;
 
 	setEdits();

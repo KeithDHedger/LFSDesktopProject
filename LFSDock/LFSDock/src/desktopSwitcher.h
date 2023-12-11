@@ -24,8 +24,10 @@
 #include "globals.h"
 
 extern LFSTK_buttonClass *switchButton;
+//extern LFSTK_toggleButtonClass *switchButton;
 
 int addDesktopSwitcer(int x,int y,int grav);
 bool desktopSelect(void *object,void* userdata);
+void updateDeskSwitcher(void);
 
 #endif

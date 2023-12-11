@@ -25,5 +25,5 @@ You can use 's' for spaces as many times as you want.<br>
 Gadgets can be in any order you wish.<br>
 <br>
 More gadgets to come and improvements to the graphics.<br>
-The dock looks best with a transparent background.<br>
+The dock looks best with a transparent background at the bottom.<br>
 <br>

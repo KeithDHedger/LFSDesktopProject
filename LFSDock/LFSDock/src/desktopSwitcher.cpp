@@ -21,7 +21,16 @@
 #include "globals.h"
 
 LFSTK_buttonClass		*switchButton;
+LFSTK_buttonClass		*deskLabel;
 std::vector<std::string>	deskNames;
+
+void updateDeskSwitcher(void)
+{
+	propReturn	pr;
+
+	pr=apc->globalLib->LFSTK_getSingleProp(apc->display,apc->rootWindow,NET_CURRENT_DESKTOP,XA_CARDINAL);
+	deskLabel->LFSTK_setLabel(std::to_string(pr.integer+1).c_str());
+}
 
 bool deskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 {
@@ -80,6 +89,7 @@ bool desktopSelect(void *object,void* userdata)
 	XChangeProperty(apc->display,apc->rootWindow,NET_CURRENT_DESKTOP,XA_CARDINAL,32,PropModeReplace,(const unsigned char*)&d,1);
 	sendPropNotifyMessage(apc->rootWindow,NET_CURRENT_DESKTOP);
 	showhidetActionList(NULL,popActionWindow,popActionList);
+	deskLabel->LFSTK_setLabel(std::to_string(d+1).c_str());
 	return(true);
 }
 
@@ -100,13 +110,27 @@ int addDesktopSwitcer(int x,int y,int grav)
 			printError("Duplicate switcher");
 			return(0);
 		}
-
+//TODO//
 	switchButton=new LFSTK_buttonClass(dockWindow,"",x,normalY,iconWidth,iconHeight);
 	setGadgetDetails(switchButton);
 	switchButton->LFSTK_setAlpha(1.0);
 	switchButton->LFSTK_setStyle(BEVELNONE);
 	switchButton->LFSTK_setMouseMoveCallBack(deskSwitcherEnterCB,deskSwitcherExitCB,NULL);
 
+#if 1
+	pr=apc->globalLib->LFSTK_getSingleProp(apc->display,apc->rootWindow,NET_CURRENT_DESKTOP,XA_CARDINAL);
+	int ly=0;
+	if(panelGravity==PANELSOUTH)
+		ly=normalY+iconWidth;
+	deskLabel=new LFSTK_buttonClass(dockWindow,std::to_string(pr.integer+1).c_str(),x,ly,iconWidth,GADGETHITE/2);
+	setGadgetDetails(deskLabel);
+	deskLabel->LFSTK_setFontString(prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("font")),true);
+	deskLabel->LFSTK_setIgnores(false,false);
+	deskLabel->LFSTK_setTile(NULL,0);
+	deskLabel->LFSTK_setGadgetColourPair(NORMALCOLOUR,"#c0ffffff",panelTextColour);
+	deskLabel->LFSTK_setStyle(BEVELNONE);
+	deskLabel->autoLabelBGColour=true;
+#endif
 	icon=dockWindow->globalLib->LFSTK_findThemedIcon(desktopTheme,"remote-desktop","");
 	if(icon!=NULL)
 		{

@@ -99,6 +99,7 @@ extern bool						realMainLoop;
 
 extern const char				*desktopTheme;
 extern int						refreshRate;
+extern bool						useMicros;
 
 extern LFSTK_buttonClass			*taskbuttons[20];
 extern int						windowWidth;

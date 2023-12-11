@@ -47,6 +47,7 @@ const char				*desktopTheme=NULL;
 bool						realMainLoop=true;
 
 int						refreshRate=500000;
+bool						useMicros=true;
 
 //panel window
 LFSTK_applicationClass	*apc=NULL;
