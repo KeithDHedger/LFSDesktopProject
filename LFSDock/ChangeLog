@@ -1,3 +1,11 @@
+0.2.0
+Allow DnDing multiple files.
+Removed legacy code.
+Tasks appear indock sorted by name.
+Launchers appear indock sorted by name.
+Fixed DnD.
+Code clean.
+
 0.1.0
 Added refresh rate/use microseconds to prefs
 Set desktop number in desk switcher when desktop changes via 3rd party.

@@ -25,7 +25,6 @@ LFSTK_prefsClass	prefs;
 std::string				configDir;
 std::string				launchersDir;
 std::string				configFile;
-launcherList				*ll=NULL;
 int						iconWidth=16;
 int						iconHeight=24;
 int						normalY;
@@ -62,7 +61,6 @@ Atom						WM_STATE=None;
 Atom						NET_WM_WINDOW_TYPE_NORMAL=None;
 Atom						NET_WM_STATE_HIDDEN=None;
 Atom						NET_WM_WINDOW_TYPE_DIALOG=None;
-//Atom						NET_WM_DESKTOP=None;
 Atom						NET_WM_WINDOW_TYPE=None;
 Atom						NET_WM_STATE=None;
 Atom						NET_WM_NAME=None;
@@ -89,7 +87,7 @@ void sendNotify(const char *name,const char *message)//TODO//could be better
 #endif
 }
 
-void dropDesktopFile(const char *data,launcherList *launcher)
+void dropDesktopFile(const char *data,void *launcher)//TODO//
 {
 	char			*cleanstr;
 	char			*command=NULL;
@@ -99,9 +97,9 @@ void dropDesktopFile(const char *data,launcherList *launcher)
 	while(std::getline(stream,line))
 		{
 			cleanstr=apc->globalLib->LFSTK_cleanString((const char*)line.c_str());
-			if((strrchr(cleanstr,'.')!=NULL) && (strcmp(strrchr(cleanstr,'.'),".desktop")==0))
+			if((strrchr(cleanstr,'.')!=NULL) && (strcmp(strrchr(cleanstr,'.'),".desktop")==0))//TODO//
 				{
-					asprintf(&command,"mkdir -p '%s/launchers-DOCK';cp -nP '%s' '%s/launchers-DOCK'",apc->configDir.c_str(),cleanstr,apc->configDir.c_str());
+					asprintf(&command,"mkdir -p '%s';cp -nP '%s' '%s'",launchersDir.c_str(),cleanstr,launchersDir.c_str());
 					ptr=strrchr(cleanstr,'/');
 					sendNotify("Adding launcher ",++ptr);
 					system(command);
@@ -109,20 +107,20 @@ void dropDesktopFile(const char *data,launcherList *launcher)
 					apc->exitValue=0;
 					apc->mainLoop=false;
 					freeAndNull(&cleanstr);
-					return;
 				}
 
 			if(launcher!=NULL)
 				{
-					if(launcher->entry.inTerm==false)
-						asprintf(&command,"%s \"%s\" &",launcher->entry.exec,cleanstr);
+					launcherDataStruct lds=launchersArray.at((unsigned long)launcher);
+					if(lds.inTerm==false)
+						asprintf(&command,"%s \"%s\" &",lds.exec.c_str(),cleanstr);
 					else
-						asprintf(&command,"%s %s \"%s\" &",prefs.LFSTK_getCString("termcommand"),launcher->entry.exec,cleanstr);
-						sendNotify("Running ",launcher->entry.exec);
+						asprintf(&command,"%s %s \"%s\" &",prefs.LFSTK_getCString("termcommand"),lds.exec.c_str(),cleanstr);
+						sendNotify("Running ",lds.exec.c_str());
 						system(command);
 						freeAndNull(&cleanstr);
 						freeAndNull(&command);
-				}
+			}
 		}
 }
 

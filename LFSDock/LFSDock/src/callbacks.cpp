@@ -43,32 +43,38 @@ void sendClientMessage(Window win,const char *msg,unsigned long data0,unsigned l
 
 bool gadgetDrop(void *lwc,propertyStruct *data,void* ud)
 {
-	launcherList	*launcher=(launcherList*)ud;
-	char			*command=NULL;
-
 	if(data!=NULL)
 		{
 			if(strcasecmp(data->mimeType,"text/uri-list")==0)
 				{
-					dropDesktopFile((const char*)data->data,launcher);
+					dropDesktopFile((const char*)data->data,ud);
 					return(true);
 				}
-
-			if(strcasecmp(data->mimeType,"text/plain")==0)
-				{
-					std::istringstream stream((const char*)data->data);
-					std::string line;
-					while(std::getline(stream,line))
-						{
-							if(launcher->entry.inTerm==false)
-								asprintf(&command,"%s \"%s\" &",launcher->entry.exec,line.c_str());
-							else
-								asprintf(&command,"%s %s \"%s\" &",prefs.LFSTK_getCString("termcommand"),launcher->entry.exec,line.c_str());
-							sendNotify(launcher->entry.name,line.c_str());
-							system(command);
-							freeAndNull(&command);
-						}
-				}
+//TODO//
+//			if(strcasecmp(data->mimeType,"text/plain")==0)
+//				{
+//	int		xx=(long unsigned int)ud;
+//	char		*command=NULL;
+//				fprintf(stderr,"\n\n");
+//					std::istringstream stream((const char*)data->data);
+//					std::string line;
+//					while(std::getline(stream,line))
+//						{
+//						launcherDataStruct lds=launchersArray.at((unsigned long)ud);
+//					std::cout<<"line="<<line<<" launcher num="<<(unsigned long)ud<<std::endl;
+//							if(lds.inTerm==false)
+//								asprintf(&command,"%s \"%s\" &",lds.exec.c_str(),line.c_str());
+//							else
+//								asprintf(&command,"%s %s \"%s\" &",prefs.LFSTK_getCString("termcommand"),lds.exec.c_str(),line.c_str());
+//							//sendNotify(lds.name.c_str(),line.c_str());
+//							fprintf(stderr,"command=>>%s<<\n",command);
+//							std::cout<<"name="<<lds.name;
+//							std::cout<<"\nexec="<<lds.exec<<" "<<line;
+//							std::cout<<std::endl;
+//							system(command);
+//							freeAndNull(&command);
+//						}
+//				}
 		}
 	return(true);
 }
@@ -118,22 +124,24 @@ void readMsg(void)
 
 bool contextCB(void *p,void* ud)
 {
-	LFSTK_windowClass	*lwc=static_cast<LFSTK_gadgetClass*>(p)->wc;
 	int					winnum;
-	long	 unsigned		bn=(long	 unsigned)ud;
+	LFSTK_windowClass	*lwc=static_cast<LFSTK_gadgetClass*>(p)->wc;
+	long unsigned int	whatbutton=(long unsigned int)ud;
+	launcherDataStruct	lds=launchersArray.at((long unsigned int)lwc->popupFromGadget->userData);
+
 	if(p!=NULL)
 		{
 			winnum=lwc->app->LFSTK_findWindow(lwc);
 			lwc->app->windows->at(winnum).loopFlag=false;
-			launcherList *ll=(launcherList*)lwc->popupFromGadget->userData;
-			switch(bn-1)
+
+			switch(whatbutton)
 				{
 					case BUTTONLAUNCH:
 						launcherCB(NULL,lwc->popupFromGadget->userData);
 						break;
 					case BUTTONREMOVE:
-						sendNotify("Removing ",ll->entry.name);
-						unlink(ll->desktopFilePath.c_str());
+						sendNotify("Removing ",lds.name.c_str());
+						unlink(lds.path.c_str());
 						apc->exitValue=0;
 						apc->mainLoop=false;
 						break;
@@ -197,7 +205,6 @@ bool popActionListEnterCB(LFSTK_gadgetClass*p,void* ud)
 
 bool popActionListExitCB(LFSTK_gadgetClass*p,void* ud)
 {
-//fprintf(stderr,"popActionListExitCB\n");
 	showhidetActionList(NULL,popActionWindow,popActionList);
 	inSomeWindow=false;
 	return(true);

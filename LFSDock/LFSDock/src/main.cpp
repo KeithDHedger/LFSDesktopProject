@@ -150,11 +150,10 @@ int main(int argc,char **argv)
 	int				psize;
 	int				key=666;
 	propReturn		pr;
-	windowInitStruct	*win;//=new windowInitStruct;;
+	windowInitStruct	*win;
 	std::string		lc="#a0f0f0f0";
 	std::string		pc="#60a0a0a0";
 	std::string		ac="#60404040";
-	launcherList		*freell;
 
 	configDir=getenv("HOME") + std::string("/.config/LFS/");
 	launchersDir=configDir + std::string("launchers-DOCK");
@@ -298,18 +297,6 @@ int main(int argc,char **argv)
 				updateTaskBar(true);
 
 			int retval=apc->LFSTK_runApp();
-			while(ll!=NULL)
-				{
-					freell=ll;
-					if(ll->icon!=NULL)
-						freeAndNull(&ll->icon);
-					if(ll->entry.name!=NULL)
-						freeAndNull(&ll->entry.name);
-					if(ll->entry.exec!=NULL)
-						freeAndNull(&ll->entry.exec);
-					ll=ll->next;
-					delete freell;
-				}
 
 			freeAndNull(&iconL);
 			freeAndNull(&iconM);
@@ -322,8 +309,9 @@ int main(int argc,char **argv)
 			filltasks.clear();
 			tasks.clear();
 
+			launchersArray.clear();
+			delete findlaunchers;
 			delete apc;
-			ll=NULL;
 		}
 	cairo_debug_reset_static_data();
 	g_key_file_free(kf);

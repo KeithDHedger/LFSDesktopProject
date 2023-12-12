@@ -43,7 +43,7 @@
 enum PANELGRAVITY {PANELNORTH=1,PANELSOUTH=2};
 enum WHATSORT {LAUNCHER=100,DESKTOPSWITCHER,TASKSWITCHER};
 
-struct menuEntryStruct
+struct desktopFileStruct
 {
 	char					*name=NULL;
 	char					*exec=NULL;
@@ -51,13 +51,12 @@ struct menuEntryStruct
 	bool					inTerm;
 };
 
-struct launcherList
+struct launcherDataStruct
 {
-	launcherList			*next=NULL;
-	LFSTK_buttonClass	*bc=NULL;
-	char					*icon=NULL;
-	menuEntryStruct		entry;
-	std::string			desktopFilePath="";
+	std::string			name;
+	std::string			exec;
+	std::string			path;
+	bool					inTerm;
 	unsigned long		pid=0;
 };
 
@@ -76,7 +75,7 @@ extern LFSTK_prefsClass			prefs;
 extern std::string				configDir;
 extern std::string				launchersDir;
 extern std::string				configFile;
-extern launcherList				*ll;
+//extern launcherList				*ll;
 extern int						iconWidth;
 extern int						iconHeight;
 
@@ -121,7 +120,6 @@ extern Atom						WM_STATE;
 extern Atom						NET_WM_WINDOW_TYPE_NORMAL;
 extern Atom						NET_WM_STATE_HIDDEN;
 extern Atom						NET_WM_WINDOW_TYPE_DIALOG;
-//extern Atom						NET_WM_DESKTOP;
 extern Atom						NET_WM_WINDOW_TYPE;
 extern Atom						NET_WM_STATE;
 extern Atom						NET_WM_NAME;
@@ -135,7 +133,8 @@ extern Atom						NET_ACTIVE_WINDOW;
 extern const char				*possibleError;
 
 void printError(const char *err);
-void dropDesktopFile(const char *data,launcherList *launcher);
+void dropDesktopFile(const char *data,void *launcher);
+
 void sendNotify(const char *message1,const char *message2);
 void setGadgetDetails(LFSTK_gadgetClass *gadget);
 bool hasProp(Window win,Atom atom);

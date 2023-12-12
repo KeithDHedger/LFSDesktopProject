@@ -24,10 +24,12 @@
 #include "globals.h"
 #include "callbacks.h"
 
+extern std::vector<launcherDataStruct>	launchersArray;
+extern LFSTK_findClass					*findlaunchers;
+
 bool launcherEnterCB(LFSTK_gadgetClass*p,void* ud);
 bool launcherExitCB(LFSTK_gadgetClass*p,void* ud);
 bool launcherCB(void *p,void* ud);
-
 int addLaunchers(int x,int y,int grav);
 
 #endif

@@ -23,30 +23,27 @@
 
 #include "launchers.h"
 
-LFSTK_buttonClass	*contextButtons[NOMOREBUTONS];
-
-const char			*contextLabelData[]={"Launch","Remove From Dock","TBD","TBD",NULL};
-const char			*contextThemeIconData[]={"media-playback-start","list-remove","dialog-warning","dialog-warning"};
+LFSTK_buttonClass				*contextButtons[NOMOREBUTONS];
+const char						*contextLabelData[]={"Launch","Remove From Dock","TBD","TBD",NULL};
+const char						*contextThemeIconData[]={"media-playback-start","list-remove","dialog-warning","dialog-warning"};
+std::vector<launcherDataStruct>	launchersArray;
+LFSTK_findClass					*findlaunchers=NULL;
 
 bool launcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 {
-	if(ud!=NULL)
+	if(p!=NULL)
 		{
-			geometryStruct	geom;
-			launcherList		*launchlist;
-			int				width;
-			std::string		label;
-			listLabelStruct	ls;
-
-			launchlist=(launcherList*)ud;
+			std::string			label;
+			listLabelStruct		ls;
+			launcherDataStruct	lds=launchersArray.at((long unsigned int)ud);
 
 			setGadgetPosition(p,true);
 			popActionList->LFSTK_freeList();	
-			label=launchlist->entry.name;
-			ls.label=strdup((char*)label.c_str());
+			ls.label=strdup((char*)lds.name.c_str());
 			ls.imageType=NOTHUMB;
 			ls.data.imagePath=NULL;
 			ls.userData=USERDATA(p);
+
 			popActionList->LFSTK_appendToList(ls);
 			popActionList->LFSTK_updateList();
 			popActionList->LFSTK_moveGadget(-1,-1);
@@ -60,7 +57,7 @@ bool launcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 
 bool launcherExitCB(LFSTK_gadgetClass *p,void* ud)
 {
-	if(ud!=NULL)
+	if(p!=NULL)
 		{
 			setGadgetPosition(p,false);
 			inSomeWindow=false;
@@ -70,24 +67,21 @@ bool launcherExitCB(LFSTK_gadgetClass *p,void* ud)
 
 bool launcherCB(void *p,void* ud)
 {
-	launcherList		*launcher=(launcherList*)ud;
-	Window			win=None;
-	std::string		ex=launcher->entry.exec;
-	std::size_t		found;
-	std::string		command;
-	std::string		args;
-	std::string		str;
-	std::string		whch;
-	propReturn		pr;
-
-	if(launcher==NULL)
-		return(true);
+	launcherDataStruct	lds=launchersArray.at((long unsigned int)ud);
+	Window				win=None;
+	std::string			ex=lds.exec;
+	std::size_t			found;
+	std::string			command;
+	std::string			args;
+	std::string			str;
+	std::string			whch;
+	propReturn			pr;
 
 	showhidetActionList(NULL,popActionWindow,popActionList);
 
 	if(p!=NULL)
 		{
-			win=getWindowByClass(launcher->entry.name);
+			win=getWindowByClass(lds.name);
 			if(win!=None)
 				{
 					pr=apc->globalLib->LFSTK_getSingleProp(apc->display,apc->rootWindow,NET_ACTIVE_WINDOW,XA_WINDOW);
@@ -99,7 +93,7 @@ bool launcherCB(void *p,void* ud)
 					sendClientMessage(win,"_NET_ACTIVE_WINDOW",0,0,0,0,0);
 					return(true);
 				}
-			win=getWindowByPID(launcher->pid);
+			win=getWindowByPID(lds.pid);
 			if(win!=None)
 				{
 					if(pr.window==win)
@@ -111,7 +105,6 @@ bool launcherCB(void *p,void* ud)
 					return(true);
 				}
 		}
-
 
 	found=ex.find(std::string(" "));
 	if(found!=std::string::npos)
@@ -127,19 +120,20 @@ bool launcherCB(void *p,void* ud)
 
 	whch=apc->globalLib->LFSTK_oneLiner(std::string("which '%s'"),command.c_str());
 
-	sendNotify("Launching ",launcher->entry.name);
+	sendNotify("Launching ",lds.name.c_str());
 
-	if(launcher->entry.inTerm==false)
+	if(lds.inTerm==false)
 		str=apc->globalLib->LFSTK_oneLiner(std::string("exec %s %s &\necho $!"),whch.c_str(),args.c_str());
 	else
 		str=apc->globalLib->LFSTK_oneLiner(std::string("exec %s %s %s &\necho $!"),prefs.LFSTK_getCString("termcommand"),whch.c_str(),args.c_str());
-	launcher->pid=std::stoul(str,nullptr,0);
+	lds.pid=std::stoul(str,nullptr,0);
 	if(useTaskBar==true)
 		updateTaskBar();
+
 	return(true);
 }
 
-void addALAuncher(const char *fpath,menuEntryStruct	*entry)
+void addALAuncher(const char *fpath,desktopFileStruct *entry)
 {
 	size_t		start_pos=0;
 	std::string	from;
@@ -174,59 +168,9 @@ void addALAuncher(const char *fpath,menuEntryStruct	*entry)
 	g_key_file_free(kf);
 }
 
-int launcherBuildCB(const char *fpath,const struct stat *sb,int typeflag)
-{
-	menuEntryStruct	entry;
-	char			*icon=NULL;
-	launcherList	*newlist=NULL;
-	launcherList	*looplist=NULL;
-
-	if(typeflag!=FTW_F)
-		return(0);
-
-	entry.icon=NULL;
-	entry.name=NULL;
-	entry.exec=NULL;
-	entry.inTerm=false;
-
-	addALAuncher(fpath,&entry);
-
-	if((entry.name!=NULL) && (entry.exec!=NULL))
-		{
-			newlist=new launcherList;
-			newlist->entry=entry;
-			newlist->next=NULL;
-			newlist->bc=NULL;
-			newlist->desktopFilePath=fpath;
-			newlist->icon=entry.icon;
-			if(ll!=NULL)
-				{
-					looplist=ll;
-					while(looplist->next!=NULL)
-						looplist=looplist->next;
-					looplist->next=newlist;
-				}
-			else
-				ll=newlist;
-		}
-	else
-		{
-			if(entry.name!=NULL)
-				freeAndNull(&entry.name);
-			if(entry.exec!=NULL)
-				freeAndNull(&entry.exec);
-			if(entry.icon!=NULL)
-				freeAndNull(&entry.icon);
-			if(icon!=NULL)
-				freeAndNull(&icon);
-		}
-	return(0);
-}
-
 int addLaunchers(int x,int y,int grav)
 {
 	char				*launchers;
-	launcherList		*loopll=NULL;
 	char				*icon=NULL;
 	int				xpos=x;
 	int				ypos=y;
@@ -238,11 +182,15 @@ int addLaunchers(int x,int y,int grav)
 	int				ww;
 	int				sy=0;
 
-	//asprintf(&launchers,"%s/launchers-DOCK",apc->configDir.c_str());
-	asprintf(&launchers,"%s",launchersDir.c_str());
-	ftw(launchers,launcherBuildCB,16);
 
-	win=new windowInitStruct;
+	findlaunchers=new LFSTK_findClass;
+	findlaunchers->LFSTK_setDepth(1,1);
+	findlaunchers->LFSTK_setFileTypes(".desktop");
+	findlaunchers->LFSTK_setFullPath(true);
+	findlaunchers->LFSTK_findFiles(launchersDir.c_str(),false);
+	findlaunchers->LFSTK_sortByName();
+
+	win=new windowInitStruct;//TODO//
 	win->app=apc;
 	win->windowName="";
 	win->loadVars=true;
@@ -251,7 +199,7 @@ int addLaunchers(int x,int y,int grav)
 	win->w=200;
 	win->h=200;
 	win->wc=dockWindow;
-	win->windowType=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DOCK"));
+	win->windowType=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
 	win->app=apc;
 	win->decorated=false;
 	win->overRide=true;
@@ -264,7 +212,7 @@ int addLaunchers(int x,int y,int grav)
 	for(int j=BUTTONLAUNCH;j<NOMOREBUTONS;j++)
 		{
 			contextButtons[j]=new LFSTK_buttonClass(contextWindow,contextLabelData[j],0,sy,GADGETWIDTH*2,24,NorthWestGravity);
-			contextButtons[j]->LFSTK_setMouseCallBack(NULL,contextCB,(void*)(long)(j+1));
+			contextButtons[j]->LFSTK_setMouseCallBack(NULL,contextCB,(void*)(long)(j));
 			iconpath=contextWindow->globalLib->LFSTK_findThemedIcon("gnome",contextThemeIconData[j],"");
 			contextButtons[j]->LFSTK_setImageFromPath(iconpath,LEFT,true);
 
@@ -282,37 +230,53 @@ int addLaunchers(int x,int y,int grav)
 	ww=contextButtons[0]->LFSTK_getTextRealWidth(contextLabelData[1]);
 	contextWindow->LFSTK_resizeWindow(ww+contextButtons[0]->imageWidth+8,sy,true);
 
-	loopll=ll;
-	while(loopll!=NULL)
+	desktopFileStruct	entry;
+	LFSTK_buttonClass	*bc=NULL;
+	launcherDataStruct	lds;
+	for(int l=0;l<findlaunchers->data.size();l++)
 		{
-			icon=NULL;
-			loopll->bc=new LFSTK_buttonClass(dockWindow,"",xpos,normalY,iconWidth,iconHeight);
-			loopll->bc->LFSTK_setContextWindow(contextWindow);
+			entry.icon=NULL;
+			entry.name=NULL;
+			entry.exec=NULL;
+			entry.inTerm=false;
+
+ 			addALAuncher(findlaunchers->data.at(l).path.c_str(),&entry);
+
+			lds.name=entry.name;
+			lds.exec=entry.exec;
+			lds.inTerm=entry.inTerm;
+			lds.path=findlaunchers->data.at(l).path;
+			lds.pid=0;
+ 
+			bc=new LFSTK_buttonClass(dockWindow,"",xpos,normalY,iconWidth,iconHeight);
+			bc->LFSTK_setContextWindow(contextWindow);
 			if(panelGravity==PANELSOUTH)
-				loopll->bc->contextWindowPos=CONTEXTABOVECENTRE;
+				bc->contextWindowPos=CONTEXTABOVECENTRE;
 			else
-				loopll->bc->contextWindowPos=CONTEXTCENTRE;
-			loopll->bc->userData=loopll;
-			loopll->bc->LFSTK_setMouseCallBack(NULL,launcherCB,(void*)loopll);
-			loopll->bc->LFSTK_setGadgetDropCallBack(gadgetDrop,(void*)loopll);
-			loopll->bc->LFSTK_setMouseMoveCallBack(launcherEnterCB,launcherExitCB,USERDATA(loopll));
-			loopll->bc->gadgetAcceptsDnD=true;
-
-			if((loopll->icon!=NULL) && (desktopTheme!=NULL))
-				icon=apc->globalLib->LFSTK_findThemedIcon(desktopTheme,loopll->icon,"");
+				bc->contextWindowPos=CONTEXTCENTRE;
+			bc->userData=USERDATA(l);
+			bc->LFSTK_setMouseCallBack(NULL,launcherCB,USERDATA(l));
+			bc->LFSTK_setGadgetDropCallBack(gadgetDrop,USERDATA(l));
+			bc->LFSTK_setMouseMoveCallBack(launcherEnterCB,launcherExitCB,USERDATA(l));
+			bc->gadgetAcceptsDnD=true;
+			if((entry.icon!=NULL) && (desktopTheme!=NULL))
+				icon=apc->globalLib->LFSTK_findThemedIcon(desktopTheme,entry.icon,"");
 			if(icon!=NULL)
-				loopll->bc->LFSTK_setImageFromPath(icon,LEFT,true);
+				bc->LFSTK_setImageFromPath(icon,LEFT,true);
 			else
-				loopll->bc->LFSTK_setImageFromPath(DATADIR "/pixmaps/command.png",LEFT,true);
+				bc->LFSTK_setImageFromPath(DATADIR "/pixmaps/command.png",LEFT,true);
 
-			setGadgetDetails(loopll->bc);
+			setGadgetDetails(bc);
 
 			if(icon!=NULL)
 				freeAndNull(&icon);
-			loopll=loopll->next;
+			launchersArray.push_back(lds);
+			g_free(entry.name);
+			g_free(entry.exec);
+			g_free(entry.icon);
+
 			xpos+=iconWidth;
 		}
-	freeAndNull(&launchers);
 
 	return(xpos);
 }

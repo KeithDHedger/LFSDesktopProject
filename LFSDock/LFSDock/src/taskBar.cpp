@@ -72,7 +72,7 @@ bool taskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 
 bool taskSelect(void *object,void* userdata)
 {
-	unsigned long			d=popActionList->LFSTK_getCurrentListItem();
+	unsigned long	d=popActionList->LFSTK_getCurrentListItem();
 
 	XMapWindow(apc->display,(Window)popActionList->listDataArray->at(popActionList->LFSTK_getCurrentListItem()).userData);
 	sendClientMessage((Window)popActionList->listDataArray->at(popActionList->LFSTK_getCurrentListItem()).userData,"_NET_ACTIVE_WINDOW",0,0,0,0,0);
