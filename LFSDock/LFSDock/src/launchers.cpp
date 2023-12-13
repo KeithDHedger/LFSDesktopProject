@@ -250,7 +250,7 @@ int addLaunchers(int x,int y,int grav)
  
 			bc=new LFSTK_buttonClass(dockWindow,"",xpos,normalY,iconWidth,iconHeight);
 			bc->LFSTK_setContextWindow(contextWindow);
-			if(panelGravity==PANELSOUTH)
+			if(dockGravity==PANELSOUTH)
 				bc->contextWindowPos=CONTEXTABOVECENTRE;
 			else
 				bc->contextWindowPos=CONTEXTCENTRE;

@@ -34,11 +34,11 @@
 void loadPrefs(std::string prefsfile)
 {
 	prefs.LFSTK_loadVarsFromFile(prefsfile.c_str());
-	panelSize=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelsize"));
+	dockSize=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("docksize"));
 	onMonitor=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("onmonitor"));
-	panelGravity=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelgrav"));
-	panelTextColour=prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("textcolour"));
-	panelBGColour=prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("panelbgcolour"));
+	dockGravity=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("dockgrav"));
+	dockTextColour=prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("textcolour"));
+	dockBGColour=prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("dockbgcolour"));
 	refreshRate=	prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("refreshrate"));
 	useMicros=prefs.LFSTK_getBool(prefs.LFSTK_hashFromKey("usemicroseconds"));
 }
@@ -61,16 +61,16 @@ void addGadgets(void)
 					if(gotLaunchers==false)
 						{
 							gotLaunchers=true;
-							offset+=addLaunchers(offset,normalY,panelGravity);
+							offset+=addLaunchers(offset,normalY,dockGravity);
 						}
 					else
 						printError("Duplicate launcher widget");
 					break;
 				case 'S':
-					offset+=addSlider(offset,normalY,panelGravity);
+					offset+=addSlider(offset,normalY,dockGravity);
 					break;
 				case 'D':
-					offset+=addDesktopSwitcer(offset,normalY,panelGravity);
+					offset+=addDesktopSwitcer(offset,normalY,dockGravity);
 					break;
 				case 'T':
 					useTaskBar=true;
@@ -133,12 +133,12 @@ void sanityCheck(void)
 			rcfile.open (configFile);
 			rcfile<<"font Arial:size=10\n";
 			rcfile<<"onmonitor 0\n";
-			rcfile<<"panelgrav 2\n";
-			rcfile<<"panelsize 2\n";
+			rcfile<<"dockgrav 2\n";
+			rcfile<<"docksize 2\n";
 			rcfile<<"textcolour #FF000000\n";
 			rcfile<<"gadgetsleft LCDsssT\n";
 			rcfile<<"termcommand kkterminal -m -l -e \n";
-			rcfile<<"panelbgcolour #00000000\n";
+			rcfile<<"dockbgcolour #00000000\n";
 			rcfile<<"refreshrate 500000\n";
 			rcfile<<"usemicroseconds true\n";
 			rcfile.close();
@@ -168,14 +168,14 @@ int main(int argc,char **argv)
 	sanityCheck();
 
 	prefs.prefsMap={
-						{prefs.LFSTK_hashFromKey("panelsize"),{TYPEINT,"panelsize","",false,1}},
+						{prefs.LFSTK_hashFromKey("docksize"),{TYPEINT,"docksize","",false,1}},
 						{prefs.LFSTK_hashFromKey("onmonitor"),{TYPEINT,"onmonitor","",false,0}},
-						{prefs.LFSTK_hashFromKey("panelgrav"),{TYPEINT,"panelgrav","",false,0}},
+						{prefs.LFSTK_hashFromKey("dockgrav"),{TYPEINT,"dockgrav","",false,0}},
 						{prefs.LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","black",false,0}},
 						{prefs.LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","xterm -e ",false,0}},
 						{prefs.LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","l",false,0}},
 						{prefs.LFSTK_hashFromKey("font"),{TYPESTRING,"font","",false,0}},
-						{prefs.LFSTK_hashFromKey("panelbgcolour"),{TYPESTRING,"panelbgcolour","",false,0}},
+						{prefs.LFSTK_hashFromKey("dockbgcolour"),{TYPESTRING,"dockbgcolour","",false,0}},
 						{prefs.LFSTK_hashFromKey("refreshrate"),{TYPEINT,"refreshrate","",false,1}},
 						{prefs.LFSTK_hashFromKey("usemicroseconds"),{TYPEBOOL,"usemicroseconds","",false,0}},
 					};
@@ -239,7 +239,7 @@ int main(int argc,char **argv)
 			apc->LFSTK_setTimer(refreshRate,useMicros);
 			apc->LFSTK_setTimerCallBack(timerCB,NULL);
 
-			switch(panelSize)
+			switch(dockSize)
 				{
 					case 2:
 						iconWidth=48;
@@ -257,7 +257,7 @@ int main(int argc,char **argv)
 			iconHeight=iconWidth+(iconWidth/2);
 			extraSpace=iconWidth/4;
 
-			if(panelGravity==1)
+			if(dockGravity==1)
 				{
 					normalY=-extraSpace;
 					activeY=0;

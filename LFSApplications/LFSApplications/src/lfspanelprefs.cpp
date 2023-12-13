@@ -269,7 +269,7 @@ int main(int argc, char **argv)
 {
 	XEvent			event;
 	int				sy=0;
-	long			menuuserdata[3]={-1,-2,-3};
+	long				menuuserdata[3]={-1,-2,-3};
 	int				parentWindow=-1;
 	LFSTK_findClass	*find;
 	int				c=0;

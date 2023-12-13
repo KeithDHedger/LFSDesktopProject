@@ -164,7 +164,7 @@ void showhidetActionList(LFSTK_gadgetClass *bc,LFSTK_windowClass *winc,LFSTK_lis
 			wingeom=winc->LFSTK_getWindowGeom();
 			d=(unsigned long)bc->userData;
 			bc->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);
-			switch(panelGravity)
+			switch(dockGravity)
 				{
 					case PANELNORTH:
 						winc->LFSTK_moveWindow(geom.x+(geom.w/2)-(list->LFSTK_getListMaxWidth()/2),geom.y+geom.h-extraSpace,true);

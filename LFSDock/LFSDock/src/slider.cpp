@@ -103,7 +103,7 @@ bool sliderCB(void *p,void* ud)
 			if(bc->LFSTK_getValue()==1)
 				{
 					bc->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);
-					switch(panelGravity)
+					switch(dockGravity)
 						{
 							case PANELNORTH:
 								scwindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(SLIDERWIDTH/2),geom.y+geom.h,true);
@@ -203,8 +203,8 @@ int addSlider(int x,int y,int grav)
 	volumeButton->LFSTK_setAlpha(1.0);
 	volumeButton->LFSTK_setStyle(BEVELNONE);
 
-	volumeButton->LFSTK_setGadgetColours(GADGETBG,panelBGColour,panelBGColour,panelBGColour,panelBGColour);
-	volumeButton->LFSTK_setGadgetColours(GADGETFG,panelTextColour,panelTextColour,panelTextColour,panelTextColour);
+	volumeButton->LFSTK_setGadgetColours(GADGETBG,dockBGColour,dockBGColour,dockBGColour,dockBGColour);
+	volumeButton->LFSTK_setGadgetColours(GADGETFG,dockTextColour,dockTextColour,dockTextColour,dockTextColour);
 
 	volumeButton->drawLabelBG=true;
 	volumeButton->autoLabelBGColour=true;

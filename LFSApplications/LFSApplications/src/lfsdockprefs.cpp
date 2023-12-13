@@ -72,6 +72,14 @@ LFSTK_lineEditClass			*fontEdit=NULL;
 int							dockGravityPref=2;
 int							dockSizePref=3;
 
+//dock select
+LFSTK_buttonClass			*selectDock=NULL;
+LFSTK_lineEditClass			*dockNameEdit=NULL;
+menuStruct					**dockNames=NULL;
+LFSTK_menuClass				*dockMenu=NULL;
+int							dockCnt=0;
+std::string					dockName;
+
 bool doQuit(void *p,void* ud)
 {
 	apc->exitValue=0;
@@ -85,6 +93,8 @@ bool buttonCB(void *p,void* ud)
 
 	if(ud!=NULL)
 		{
+			if(strcmp((char*)ud,"SHOWPANELMENU")==0)
+				dockMenu->LFSTK_showMenu();
 			if(strcmp((char*)ud,"SHOWGRAVMENU")==0)
 				gravMenu->LFSTK_showMenu();
 			if(strcmp((char*)ud,"SHOWSIZEMENU")==0)
@@ -124,9 +134,9 @@ void getEdits(void)
 	prefs.prefsMap=
 		{
 			{prefs.LFSTK_hashFromKey("onmonitor"),{TYPEINT,"onmonitor","",false,atoi(dockOnMonitor->LFSTK_getCStr())}},
-			{prefs.LFSTK_hashFromKey("panelgrav"),{TYPEINT,"panelgrav","",false,dockGravityPref}},
-			{prefs.LFSTK_hashFromKey("panelsize"),{TYPEINT,"panelsize","",false,dockSizePref}},
-			{prefs.LFSTK_hashFromKey("panelbgcolour"),{TYPESTRING,"panelbgcolour",dockBGColourEdit->LFSTK_getCStr(),false,0}},
+			{prefs.LFSTK_hashFromKey("dockgrav"),{TYPEINT,"dockgrav","",false,dockGravityPref}},
+			{prefs.LFSTK_hashFromKey("docksize"),{TYPEINT,"docksize","",false,dockSizePref}},
+			{prefs.LFSTK_hashFromKey("dockbgcolour"),{TYPESTRING,"dockbgcolour",dockBGColourEdit->LFSTK_getCStr(),false,0}},
 			{prefs.LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour",dockTextColourEdit->LFSTK_getCStr(),false,0}},
 			{prefs.LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft",dockGadgets->LFSTK_getCStr(),false,0}},
 			{prefs.LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand",termCommand->LFSTK_getCStr(),false,0}},
@@ -143,7 +153,7 @@ bool applyCB(void *p,void* ud)
 
 	if(ud!=NULL)
 		{
-//panel grav
+//dock grav
 			if(isdigit(dockGravEdit->LFSTK_getCStr()[0])==true)
 				dockGravityPref=atoi(dockGravEdit->LFSTK_getCStr());
 			else
@@ -157,7 +167,7 @@ bool applyCB(void *p,void* ud)
 								}
 						}
 				}
-//panel size
+//dock size
 			if(isdigit(dockSizeEdit->LFSTK_getCStr()[0])==true)
 				dockSizePref=atoi(dockSizeEdit->LFSTK_getCStr());
 			else
@@ -172,7 +182,7 @@ bool applyCB(void *p,void* ud)
 						}
 				}
 			getEdits();
-			prefsfile=apc->configDir+std::string("/lfsdock.rc");
+			prefsfile=apc->configDir+"/"+dockName;
 			prefs.LFSTK_saveVarsToFile(prefsfile.c_str());
 			//prefs.LFSTK_saveVarsToFile("-");
 		}
@@ -181,12 +191,12 @@ bool applyCB(void *p,void* ud)
 
 void setEdits(void)
 {
-	dockSizeEdit->LFSTK_setBuffer(dockSizeConvertToStr[prefs.LFSTK_getInt("panelsize")]);
-	dockGravEdit->LFSTK_setBuffer(dockGravConvertToStr[prefs.LFSTK_getInt("panelgrav")]);
+	dockSizeEdit->LFSTK_setBuffer(dockSizeConvertToStr[prefs.LFSTK_getInt("docksize")]);
+	dockGravEdit->LFSTK_setBuffer(dockGravConvertToStr[prefs.LFSTK_getInt("dockgrav")]);
 	dockOnMonitor->LFSTK_setBuffer(std::to_string(prefs.LFSTK_getInt("onmonitor")).c_str());
 	termCommand->LFSTK_setBuffer(prefs.LFSTK_getCString("termcommand"));
 	dockGadgets->LFSTK_setBuffer(prefs.LFSTK_getCString("gadgetsleft"));
-	dockBGColourEdit->LFSTK_setBuffer(prefs.LFSTK_getCString("panelbgcolour"));
+	dockBGColourEdit->LFSTK_setBuffer(prefs.LFSTK_getCString("dockbgcolour"));
 	dockTextColourEdit->LFSTK_setBuffer(prefs.LFSTK_getCString("textcolour"));
 	fontEdit->LFSTK_setBuffer(prefs.LFSTK_getCString("font"));
 	dockRefreshEdit->LFSTK_setBuffer(prefs.LFSTK_getCString("refreshrate"));
@@ -199,36 +209,47 @@ void getPrefs(void)
 
 	prefs.prefsMap=
 		{
-			{prefs.LFSTK_hashFromKey("panelsize"),{TYPEINT,"panelsize","",false,3}},
+			{prefs.LFSTK_hashFromKey("docksize"),{TYPEINT,"docksize","",false,3}},
 			{prefs.LFSTK_hashFromKey("onmonitor"),{TYPEINT,"onmonitor","",false,0}},
-			{prefs.LFSTK_hashFromKey("panelgrav"),{TYPEINT,"panelgrav","",false,2}},
+			{prefs.LFSTK_hashFromKey("dockgrav"),{TYPEINT,"dockgrav","",false,2}},
 			{prefs.LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","kkterminal -m -l -e ",false,0}},
 			{prefs.LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","LCSD",false,0}},
-			{prefs.LFSTK_hashFromKey("panelbgcolour"),{TYPESTRING,"panelbgcolour","#00000000",false,0}},
+			{prefs.LFSTK_hashFromKey("dockbgcolour"),{TYPESTRING,"dockbgcolour","#00000000",false,0}},
 			{prefs.LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","black",false,0}},
 			{prefs.LFSTK_hashFromKey("font"),{TYPESTRING,"font","Liberation Mono:size=12",false,0}},
 			{prefs.LFSTK_hashFromKey("refreshrate"),{TYPESTRING,"refreshrate","1",false,0}},
 			{prefs.LFSTK_hashFromKey("usemicroseconds"),{TYPEBOOL,"usemicroseconds","",false,0}},
 		};
 
-	asprintf(&env,"%s/lfsdock.rc",apc->configDir.c_str());
+	asprintf(&env,"%s/%s",apc->configDir.c_str(),dockName.c_str());
 	prefs.LFSTK_loadVarsFromFile(env);
 	free(env);
 }
 
-bool panelGravCB(void *p,void* ud)
+bool dockGravCB(void *p,void* ud)
 {
 	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
 	dockGravEdit->LFSTK_setBuffer(dockGravConvertToStr[(int)(long)ud]);
 	return(true);
 }
 
-bool panelSizeCB(void *p,void* ud)
+bool dockSizeCB(void *p,void* ud)
 {
 	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
 	dockSizeEdit->LFSTK_setBuffer(dockSizeConvertToStr[(int)(long)ud]);
 	return(true);
 }
+
+bool dockSelectCB(void *p,void* ud)
+{
+	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
+	dockNameEdit->LFSTK_setBuffer(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel());
+	dockName=dockNameEdit->LFSTK_getBuffer();
+	getPrefs();
+	setEdits();
+	return(true);
+}
+
 int main(int argc, char **argv)
 {
 	int				sy=0;
@@ -272,10 +293,45 @@ int main(int argc, char **argv)
 	personal->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
 
+//docks
+	LFSTK_findClass	*find;
+
+	find=new LFSTK_findClass;
+	find->LFSTK_setFindType(FILETYPE);
+	find->LFSTK_setIgnoreBroken(true);
+	find->LFSTK_setSort(true);
+	find->LFSTK_setFileTypes("lfsdock");
+	find->LFSTK_findFiles(apc->configDir.c_str(),false);
+	find->LFSTK_sortByName();
+
+	dockCnt=find->LFSTK_getDataCount();
+
+	dockNames=new menuStruct*[dockCnt];
+	for(int j=0;j<dockCnt;j++)
+		{
+			dockNames[j]=new menuStruct;
+			dockNames[j]->label=strdup(find->data.at(j).name.c_str());
+			dockNames[j]->userData=(void*)(long)j;
+		}
+
+//dock config
+//select
+	dockName="lfsdock-MAINDOCK.rc";
+	selectDock=new LFSTK_buttonClass(wc,"Dock Config",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	selectDock->LFSTK_setIndicator(DISCLOSURE);
+
+	selectDock->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SHOWPANELMENU");
+	dockMenu=new LFSTK_menuClass(wc,BORDER+GADGETWIDTH,sy,1,1);
+	dockMenu->LFSTK_setMouseCallBack(NULL,dockSelectCB,NULL);
+	dockMenu->LFSTK_addMainMenus(dockNames,dockCnt);
+
+	dockNameEdit=new LFSTK_lineEditClass(wc,dockName.c_str(),BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);	
+	sy+=YSPACING;
+
 //do prefs
 	getPrefs();
 //size
-	dockSize=new LFSTK_buttonClass(wc,"Panel Size",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	dockSize=new LFSTK_buttonClass(wc,"Dock Size",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	dockSize->LFSTK_setIndicator(DISCLOSURE);
 	dockSize->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SHOWSIZEMENU");
 	dockSizeMenuGrav=new menuStruct*[4];
@@ -286,13 +342,13 @@ int main(int argc, char **argv)
 			dockSizeMenuGrav[j]->userData=(void*)(j+1);
 		}
 	sizeMenu=new LFSTK_menuClass(wc,BORDER+GADGETWIDTH,sy,1,1);
-	sizeMenu->LFSTK_setMouseCallBack(NULL,panelSizeCB,NULL);
+	sizeMenu->LFSTK_setMouseCallBack(NULL,dockSizeCB,NULL);
 	sizeMenu->LFSTK_addMainMenus(dockSizeMenuGrav,4);
 	dockSizeEdit=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
-//panel grav
-	dockGrav=new LFSTK_buttonClass(wc,"Panel Gravity",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+//dock grav
+	dockGrav=new LFSTK_buttonClass(wc,"Dock Gravity",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	dockGrav->LFSTK_setIndicator(DISCLOSURE);
 	dockGrav->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SHOWGRAVMENU");
 	dockGravMenu=new menuStruct*[4];
@@ -303,7 +359,7 @@ int main(int argc, char **argv)
 			dockGravMenu[j]->userData=(void*)(j+1);
 		}
 	gravMenu=new LFSTK_menuClass(wc,BORDER+GADGETWIDTH,sy,1,1);
-	gravMenu->LFSTK_setMouseCallBack(NULL,panelGravCB,NULL);
+	gravMenu->LFSTK_setMouseCallBack(NULL,dockGravCB,NULL);
 	gravMenu->LFSTK_addMainMenus(dockGravMenu,2);
 	dockGravEdit=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
@@ -314,13 +370,13 @@ int main(int argc, char **argv)
 	fontEdit=new LFSTK_lineEditClass(wc,apc->globalLib->LFSTK_getGlobalString(0,TYPEFONT),BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
-//panel colour
-	label=new LFSTK_labelClass(wc,"Panel Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
+//dock colour
+	label=new LFSTK_labelClass(wc,"Dock Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	dockBGColourEdit=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	dockBGColourEdit->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
 	sy+=YSPACING;
 	
-//panel text colour
+//dock text colour
 	label=new LFSTK_labelClass(wc,"Text Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	dockTextColourEdit=new LFSTK_lineEditClass(wc,"black",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	dockTextColourEdit->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);

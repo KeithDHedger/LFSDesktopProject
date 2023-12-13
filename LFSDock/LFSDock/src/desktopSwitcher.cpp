@@ -119,7 +119,7 @@ int addDesktopSwitcer(int x,int y,int grav)
 
 	pr=apc->globalLib->LFSTK_getSingleProp(apc->display,apc->rootWindow,NET_CURRENT_DESKTOP,XA_CARDINAL);
 	int ly=0;
-	if(panelGravity==PANELSOUTH)
+	if(dockGravity==PANELSOUTH)
 		ly=normalY+iconWidth;
 
 	deskLabel=new LFSTK_buttonClass(dockWindow,std::to_string(pr.integer+1).c_str(),x,ly,iconWidth,GADGETHITE/2);
@@ -128,7 +128,7 @@ int addDesktopSwitcer(int x,int y,int grav)
 	deskLabel->LFSTK_setIgnores(false,false);
 	deskLabel->LFSTK_setTile(NULL,0);
 	deskLabel->LFSTK_setLabelAutoColour(true);
-	deskLabel->LFSTK_setGadgetColourPair(NORMALCOLOUR,panelBGColour,panelTextColour);
+	deskLabel->LFSTK_setGadgetColourPair(NORMALCOLOUR,dockBGColour,dockTextColour);
 	deskLabel->LFSTK_setStyle(BEVELNONE);
 
 	icon=dockWindow->globalLib->LFSTK_findThemedIcon(desktopTheme,"remote-desktop","");

@@ -34,12 +34,12 @@ int						activeY;
 int						extraSpace=16;
 int						deskCount=1;
 
-int						panelSize=2;
+int						dockSize=2;
 const monitorStruct		*mons=NULL;
 int						onMonitor=0;
-int						panelGravity=PANELSOUTH;
-const char				*panelTextColour="";
-const char				*panelBGColour="";
+int						dockGravity=PANELSOUTH;
+const char				*dockTextColour="";
+const char				*dockBGColour="";
 
 int						queueID;
 msgBuffer				buffer;
@@ -50,7 +50,7 @@ bool						realMainLoop=true;
 int						refreshRate=500000;
 bool						useMicros=true;
 
-//panel window
+//dock window
 LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*dockWindow=NULL;
 LFSTK_windowClass		*popActionWindow=NULL;
@@ -132,7 +132,7 @@ void setGadgetDetails(LFSTK_gadgetClass *gadget)
 	gadget->LFSTK_setTile(NULL,0);
 	gadget->gadgetDetails.bevel=BEVELNONE;
 	gadget->LFSTK_setGadgetColours(GADGETBG,"#00000000","#00000000","#00000000","#00000000");
-	gadget->	LFSTK_setGadgetColourPair(NORMALCOLOUR,"#00000000",panelTextColour);
+	gadget->	LFSTK_setGadgetColourPair(NORMALCOLOUR,"#00000000",dockTextColour);
 }
 
 /*
@@ -318,7 +318,7 @@ void moveDock(int extra)
 	px=mons->x;
 	py=mons->y;
 
-	switch(panelGravity)
+	switch(dockGravity)
 		{
 			case PANELSOUTH:
 				py=mons->y+mons->h-iconWidth-extraSpace;

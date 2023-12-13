@@ -84,12 +84,12 @@ extern int						activeY;
 extern int						extraSpace;
 extern int						deskCount;
 
-extern int						panelSize;
+extern int						dockSize;
 extern const monitorStruct		*mons;
 extern int						onMonitor;
-extern int						panelGravity;
-extern const char				*panelTextColour;
-extern const char				*panelBGColour;
+extern int						dockGravity;
+extern const char				*dockTextColour;
+extern const char				*dockBGColour;
 
 
 extern int						queueID;
@@ -108,7 +108,7 @@ extern bool						useTaskBar;
 extern bool						gotLaunchers;
 
 
-//panel window
+//dock window
 extern LFSTK_applicationClass	*apc;
 extern LFSTK_windowClass			*dockWindow;
 extern LFSTK_windowClass			*popActionWindow;

@@ -1,4 +1,6 @@
 0.2.0
+Added support for multiple docks.
+Changed some prefs names.
 Adjusted desktop switcher and clock labels.
 Allow DnDing multiple files.
 Removed legacy code.
