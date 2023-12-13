@@ -925,7 +925,7 @@ bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 								{
 									this->onDesk=this->mainClass->LFSWM2_getLowerDesktop(this->onDesk);
 									this->mainClass->LFSWM2_setCurrentDesktop(this->onDesk);
-									XWarpPointer(this->mainClass->display,None,None,0,0,0,0,this->mainClass->displayWidth-30,0);
+									XWarpPointer(this->mainClass->display,None,None,0,0,0,0,this->mainClass->displayWidth-50,0);
 									direction=-1;
 									ee.xbutton.x_root=100000;
 									this->mainClass->mainWindowClass->LFSWM2_setProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_DESKTOP")),XA_CARDINAL,32,&this->onDesk,1);
@@ -934,7 +934,7 @@ bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 								{
 									this->onDesk=this->mainClass->LFSWM2_getHigherDesktop(this->onDesk);
 									this->mainClass->LFSWM2_setCurrentDesktop(this->onDesk);
-									XWarpPointer(this->mainClass->display,None,None,0,0,0,0,(-this->mainClass->displayWidth-30),0);
+									XWarpPointer(this->mainClass->display,None,None,0,0,0,0,(-this->mainClass->displayWidth-50),0);
 									ee.xbutton.x_root=-1;
 									this->mainClass->mainWindowClass->LFSWM2_setProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_DESKTOP")),XA_CARDINAL,32,&this->onDesk,1);
 								}
