@@ -67,7 +67,6 @@ struct taskStruct
 	Window					winid=None;
 	unsigned long			pid=0;
 	std::vector<taskStruct>	tasks;
-
 };
 
 //prefs
@@ -75,7 +74,8 @@ extern LFSTK_prefsClass			prefs;
 extern std::string				configDir;
 extern std::string				launchersDir;
 extern std::string				configFile;
-//extern launcherList				*ll;
+extern std::string				whatDock;
+
 extern int						iconWidth;
 extern int						iconHeight;
 

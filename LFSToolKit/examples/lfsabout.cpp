@@ -62,6 +62,9 @@ int main(int argc, char **argv)
 	for(int j=LNAME;j<LNOMORELABELS;j++)
 		{
 			labels[j]=new LFSTK_labelClass(wc,labelTexts[j],0,sy,dw,GADGETHITE);
+//			labels[j]->LFSTK_setLabelAutoColour(true);
+//			//labels[j]->drawLabelBG=true;
+//			labels[j]->LFSTK_setGadgetColourPair(NORMALCOLOUR,wc->windowColourNames[NORMALCOLOUR].name,"red");
 			sy+=SPACING;
 		}
 	labels[LNAME]->LFSTK_setCairoFontDataParts("sB",18);

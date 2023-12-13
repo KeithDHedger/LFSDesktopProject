@@ -16,4 +16,4 @@ else
 	VALGRIND=
 fi
 
-LD_LIBRARY_PATH="../../../LFSToolKit/LFSToolKit/app/.libs" $VALGRIND ./lfsdock
+LD_LIBRARY_PATH="../../../LFSToolKit/LFSToolKit/app/.libs" $VALGRIND ./lfsdock $@

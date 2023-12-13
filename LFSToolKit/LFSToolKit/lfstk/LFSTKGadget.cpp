@@ -551,7 +551,7 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 						cairo_set_operator(this->cr,CAIRO_OPERATOR_SOURCE);
 						cairo_rectangle(this->cr,labelrect.x,labelrect.y,labelrect.w,labelrect.h);
 						cairo_fill(this->cr);
-					}		
+					}
 
 				cairo_move_to(this->cr,labelx,labely);
 				cairo_set_source_rgba(this->cr,this->newGadgetFGColours.at(details->state).RGBAColour.r,this->newGadgetFGColours.at(details->state).RGBAColour.g,this->newGadgetFGColours.at(details->state).RGBAColour.b,1.0);
@@ -1940,7 +1940,7 @@ void LFSTK_gadgetClass::LFSTK_setGadgetColours(gadgetColourType type,std::string
 * \param std::string fore Colour FG name (eg "grey", "#80ff00ff").
 * \note will set auto colour FG if set.
 */
-void LFSTK_gadgetClass::LFSTK_setGadgetColourPair(gadgetState state,std::string back,std::string fore)
+void LFSTK_gadgetClass::LFSTK_setGadgetColourPair(gadgetState state,std::string back,std::string fore)//TODO//
 {
 	this->newGadgetBGColours[state]=this->LFSTK_setColour(back);
 	if(this->autoLabelColour==false)

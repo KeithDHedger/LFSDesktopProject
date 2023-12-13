@@ -31,9 +31,9 @@
 
 #define RCNAME "lfsdock"
 
-void loadPrefs(const char *env)
+void loadPrefs(std::string prefsfile)
 {
-	prefs.LFSTK_loadVarsFromFile(env);
+	prefs.LFSTK_loadVarsFromFile(prefsfile.c_str());
 	panelSize=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelsize"));
 	onMonitor=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("onmonitor"));
 	panelGravity=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelgrav"));
@@ -126,6 +126,7 @@ void sanityCheck(void)
 			std::string	command="cp /usr/share/applications/lfsappearance.desktop " + launchersDir;
 			system(command.c_str());
 		}
+
 	if(!fs::exists(fs::status(configFile)))
 		{
 			std::ofstream rcfile;
@@ -134,12 +135,12 @@ void sanityCheck(void)
 			rcfile<<"onmonitor 0\n";
 			rcfile<<"panelgrav 2\n";
 			rcfile<<"panelsize 2\n";
-			rcfile<<"textcolour FF000000\n";
+			rcfile<<"textcolour #FF000000\n";
 			rcfile<<"gadgetsleft LCDsssT\n";
 			rcfile<<"termcommand kkterminal -m -l -e \n";
 			rcfile<<"panelbgcolour #00000000\n";
 			rcfile<<"refreshrate 500000\n";
-			rcfile<<"usemicroseconds false\n";
+			rcfile<<"usemicroseconds true\n";
 			rcfile.close();
 		}
 }
@@ -155,9 +156,15 @@ int main(int argc,char **argv)
 	std::string		pc="#60a0a0a0";
 	std::string		ac="#60404040";
 
+	if(argc>1)
+		whatDock=argv[1];
+	else
+		whatDock="MAINDOCK";
+
 	configDir=getenv("HOME") + std::string("/.config/LFS/");
-	launchersDir=configDir + std::string("launchers-DOCK");
-	configFile=configDir + std::string("lfsdock.rc");
+	launchersDir=configDir + std::string("launchers-")+whatDock;
+	configFile=configDir + std::string("lfsdock-")+whatDock+".rc";
+
 	sanityCheck();
 
 	prefs.prefsMap={
@@ -227,16 +234,7 @@ int main(int argc,char **argv)
 			if((queueID=msgget(key,IPC_CREAT|0660))==-1)
 				fprintf(stderr,"Can't create message queue\n");
 
-			if(argc>1)
-				{
-					asprintf(&env,"%s/lfsdock-%s.rc",configDir.c_str(),argv[1]);
-					launchersDir=configDir + std::string("/launchers-") + std::string(argv[1]);
-				}
-			else
-				asprintf(&env,"%s",configFile.c_str());
-
-			loadPrefs(env);
-			freeAndNull(&env);
+			loadPrefs(configFile);
 
 			apc->LFSTK_setTimer(refreshRate,useMicros);
 			apc->LFSTK_setTimerCallBack(timerCB,NULL);

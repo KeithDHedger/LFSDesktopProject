@@ -117,20 +117,20 @@ int addDesktopSwitcer(int x,int y,int grav)
 	switchButton->LFSTK_setStyle(BEVELNONE);
 	switchButton->LFSTK_setMouseMoveCallBack(deskSwitcherEnterCB,deskSwitcherExitCB,NULL);
 
-#if 1
 	pr=apc->globalLib->LFSTK_getSingleProp(apc->display,apc->rootWindow,NET_CURRENT_DESKTOP,XA_CARDINAL);
 	int ly=0;
 	if(panelGravity==PANELSOUTH)
 		ly=normalY+iconWidth;
+
 	deskLabel=new LFSTK_buttonClass(dockWindow,std::to_string(pr.integer+1).c_str(),x,ly,iconWidth,GADGETHITE/2);
 	setGadgetDetails(deskLabel);
 	deskLabel->LFSTK_setFontString(prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("font")),true);
 	deskLabel->LFSTK_setIgnores(false,false);
 	deskLabel->LFSTK_setTile(NULL,0);
-	deskLabel->LFSTK_setGadgetColourPair(NORMALCOLOUR,"#c0ffffff",panelTextColour);
+	deskLabel->LFSTK_setLabelAutoColour(true);
+	deskLabel->LFSTK_setGadgetColourPair(NORMALCOLOUR,panelBGColour,panelTextColour);
 	deskLabel->LFSTK_setStyle(BEVELNONE);
-	deskLabel->autoLabelBGColour=true;
-#endif
+
 	icon=dockWindow->globalLib->LFSTK_findThemedIcon(desktopTheme,"remote-desktop","");
 	if(icon!=NULL)
 		{

@@ -25,6 +25,8 @@ LFSTK_prefsClass	prefs;
 std::string				configDir;
 std::string				launchersDir;
 std::string				configFile;
+std::string				whatDock;
+
 int						iconWidth=16;
 int						iconHeight=24;
 int						normalY;
