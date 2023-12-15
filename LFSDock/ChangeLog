@@ -1,4 +1,6 @@
 0.2.0
+Fixed updating window names in task lists.
+Fixed task bar icons changing position.
 Added right click on task pop up list window to move window to current desktop.
 Added support for multiple docks.
 Changed some prefs names.

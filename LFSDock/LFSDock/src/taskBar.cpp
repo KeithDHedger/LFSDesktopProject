@@ -201,7 +201,7 @@ Window doTreeWalkForTasks(Window wind)
 
 bool compareTaskClass(const taskStruct &a,const taskStruct &b)
 {
-	return(a.taskClass[0].compare(b.taskClass[0]));
+	return(a.taskClass[0]<b.taskClass[0]);
 }
 
 void updateTaskBar(bool force)
@@ -216,27 +216,26 @@ void updateTaskBar(bool force)
 
 	tasks.clear();
 	doTreeWalkForTasks(apc->rootWindow);
-	if(tasks.size()==holdtasks.size())//TODO//
+	std::sort(tasks.begin(),tasks.end(),compareTaskClass);
+	if(tasks.size()==holdtasks.size())
 		{
 			for(int j=0;j<holdtasks.size();j++)
 				{
-					if(holdtasks.at(j).winid!=tasks.at(j).winid)
+					if((holdtasks.at(j).winid!=tasks.at(j).winid) || (holdtasks.at(j).taskName!=tasks.at(j).taskName))
 						{
-							break;
 							unequal=true;
+							goto skiplabel;
 						}
 				}
 		}
 	else
 		unequal=true;
 
+skiplabel:
 	if((unequal==false) && (force==false))
 		return;
 
-	std::sort(tasks.begin(),tasks.end(),compareTaskClass);
-
 	holdtasks=tasks;
-
 	filltasks.clear();
 	filltasks.push_back(tasks.at(0));
 	tasks.erase(tasks.begin());
