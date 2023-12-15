@@ -66,7 +66,6 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		
 		bool								mouseExit(XButtonEvent *e) {return(true);};
 		bool								mouseEnter(XButtonEvent *e) {XSetInputFocus(this->wc->app->display,this->window,RevertToParent,CurrentTime);return(true);};
-		bool								mouseDown(XButtonEvent *e) {return(true);};
 		bool								mouseUp(XButtonEvent *e);
 		bool								keyRelease(XKeyEvent *e);
 

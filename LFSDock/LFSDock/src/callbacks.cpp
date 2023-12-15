@@ -20,7 +20,8 @@
 
 #include "globals.h"
 
-LFSTK_windowClass	*contextWindow;
+LFSTK_windowClass	*launcherContextWindow;
+LFSTK_windowClass	*taskContextWindow;
 
 void sendClientMessage(Window win,const char *msg,unsigned long data0,unsigned long data1,unsigned long data2,unsigned long data3,unsigned long data4)
 {
@@ -89,10 +90,10 @@ bool timerCB(LFSTK_applicationClass *p,void* ud)
 	if(scwindow!=NULL)
 		updateSlider();
 
-	if((contextWindow->isVisible==false) && (contextWindow->popupFromGadget!=NULL))
+	if((launcherContextWindow->isVisible==false) && (launcherContextWindow->popupFromGadget!=NULL))
 		{
-			launcherExitCB(contextWindow->popupFromGadget,(void*)1);
-			contextWindow->popupFromGadget=NULL;
+			launcherExitCB(launcherContextWindow->popupFromGadget,(void*)1);
+			launcherContextWindow->popupFromGadget=NULL;
 		}
 
 	if((popActionWindow->isVisible==true) && (inSomeWindow==false) && (popActionWindow->inWindow==false))
@@ -173,6 +174,7 @@ void showhidetActionList(LFSTK_gadgetClass *bc,LFSTK_windowClass *winc,LFSTK_lis
 						winc->LFSTK_moveWindow(geom.x+(geom.w/2)-(list->LFSTK_getListMaxWidth()/2),geom.y-wingeom->h+extraSpace,true);
 						break;
 				}
+			winc->LFSTK_setKeepAbove(true);
 			winc->LFSTK_showWindow(true);
 			winc->LFSTK_redrawAllGadgets();
 			apc->windows->at(apc->LFSTK_findWindow(winc)).showing=true;

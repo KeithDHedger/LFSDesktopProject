@@ -62,6 +62,7 @@ bool deskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 	popActionWindow->userData=USERDATA(DESKTOPSWITCHER);
 	popActionWindow->LFSTK_resizeWindow(popActionList->LFSTK_getListMaxWidth()-2,(GADGETHITE*deskCount)-4);
 	showhidetActionList(p,popActionWindow,popActionList);
+
 	inSomeWindow=true;
 
 	return(true);

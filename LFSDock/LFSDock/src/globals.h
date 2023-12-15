@@ -129,6 +129,7 @@ extern Atom						WM_CLASS;
 extern Atom						NET_WM_PID;
 extern Atom						NET_NUMBER_OF_DESKTOPS;
 extern Atom						NET_ACTIVE_WINDOW;
+extern Atom						NET_WM_DESKTOP;
 
 extern const char				*possibleError;
 

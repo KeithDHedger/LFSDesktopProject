@@ -126,6 +126,7 @@ LFSTK_applicationClass::LFSTK_applicationClass()
 						"_NET_ACTIVE_WINDOW",
 						"_NET_CURRENT_DESKTOP",
 						"_NET_NUMBER_OF_DESKTOPS",
+						"_NET_WM_DESKTOP",
 
 						"WM_CLASS",
 						"WM_STATE",
@@ -232,7 +233,7 @@ void LFSTK_applicationClass::LFSTK_addToolWindow(windowInitStruct *wi,const char
 
 	win->decorated=false;
 	win->overRide=true;
-	win->level=ABOVEALL;
+	//win->level=ABOVEALL;
 	if(appname!=NULL)
 		win->appName=appname;
 

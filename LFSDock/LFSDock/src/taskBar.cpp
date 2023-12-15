@@ -21,6 +21,8 @@
 #include "taskBar.h"
 
 int						oldwidth=0;
+bool						movetohere=false;
+
 std::vector<taskStruct>	holdtasks;
 std::vector<taskStruct>	filltasks;
 std::vector<taskStruct>	tasks;
@@ -72,12 +74,35 @@ bool taskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 
 bool taskSelect(void *object,void* userdata)
 {
+	propReturn		pr;
 	unsigned long	d=popActionList->LFSTK_getCurrentListItem();
+	Window			win=(Window)popActionList->listDataArray->at(popActionList->LFSTK_getCurrentListItem()).userData;
 
-	XMapWindow(apc->display,(Window)popActionList->listDataArray->at(popActionList->LFSTK_getCurrentListItem()).userData);
-	sendClientMessage((Window)popActionList->listDataArray->at(popActionList->LFSTK_getCurrentListItem()).userData,"_NET_ACTIVE_WINDOW",0,0,0,0,0);
+	if(movetohere==true)
+		{
+			pr=apc->globalLib->LFSTK_getSingleProp(apc->display,apc->rootWindow,NET_CURRENT_DESKTOP,XA_CARDINAL);
+			sendClientMessage(win,"_NET_WM_DESKTOP",pr.integer,0,0,0,0);
+			movetohere=false;
+		}
+	XMapWindow(apc->display,win);
+	sendClientMessage(win,"_NET_ACTIVE_WINDOW",0,0,0,0,0);
 	inSomeWindow=false;
 	showhidetActionList(NULL,popActionWindow,popActionList);
+	return(true);
+}
+
+bool taskListCBDown(void* p,void* ud)
+{
+	Window			root_return;
+	Window			child_return;
+	int				root_x_return,root_y_return,win_x_return,win_y_return;
+	unsigned int		mask_return;
+
+	XQueryPointer(apc->display,popActionWindow->window,&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return,&mask_return);
+
+	if((mask_return & Button3Mask)!=0)
+		movetohere=true;
+
 	return(true);
 }
 

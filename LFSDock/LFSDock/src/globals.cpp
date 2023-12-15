@@ -72,6 +72,7 @@ Atom						WM_CLASS=None;
 Atom						NET_WM_PID=None;
 Atom						NET_NUMBER_OF_DESKTOPS=None;
 Atom						NET_ACTIVE_WINDOW=None;
+Atom						NET_WM_DESKTOP=None;
 
 const char				*possibleError="Unknown";
 

@@ -206,14 +206,14 @@ int addLaunchers(int x,int y,int grav)
 	win->level=ABOVEALL;
 
 	apc->LFSTK_addWindow(win,"");
-	contextWindow=apc->windows->back().window;
-	contextWindow->LFSTK_setWindowColourName(NORMALCOLOUR,lc.c_str());
+	launcherContextWindow=apc->windows->back().window;
+	launcherContextWindow->LFSTK_setWindowColourName(NORMALCOLOUR,lc.c_str());
 
 	for(int j=BUTTONLAUNCH;j<NOMOREBUTONS;j++)
 		{
-			contextButtons[j]=new LFSTK_buttonClass(contextWindow,contextLabelData[j],0,sy,GADGETWIDTH*2,24,NorthWestGravity);
+			contextButtons[j]=new LFSTK_buttonClass(launcherContextWindow,contextLabelData[j],0,sy,GADGETWIDTH*2,24,NorthWestGravity);
 			contextButtons[j]->LFSTK_setMouseCallBack(NULL,contextCB,(void*)(long)(j));
-			iconpath=contextWindow->globalLib->LFSTK_findThemedIcon("gnome",contextThemeIconData[j],"");
+			iconpath=launcherContextWindow->globalLib->LFSTK_findThemedIcon("gnome",contextThemeIconData[j],"");
 			contextButtons[j]->LFSTK_setImageFromPath(iconpath,LEFT,true);
 
 			setGadgetDetails(contextButtons[j]);
@@ -228,7 +228,7 @@ int addLaunchers(int x,int y,int grav)
 			sy+=GADGETHITE;
 		}
 	ww=contextButtons[0]->LFSTK_getTextRealWidth(contextLabelData[1]);
-	contextWindow->LFSTK_resizeWindow(ww+contextButtons[0]->imageWidth+8,sy,true);
+	launcherContextWindow->LFSTK_resizeWindow(ww+contextButtons[0]->imageWidth+8,sy,true);
 
 	desktopFileStruct	entry;
 	LFSTK_buttonClass	*bc=NULL;
@@ -249,7 +249,7 @@ int addLaunchers(int x,int y,int grav)
 			lds.pid=0;
  
 			bc=new LFSTK_buttonClass(dockWindow,"",xpos,normalY,iconWidth,iconHeight);
-			bc->LFSTK_setContextWindow(contextWindow);
+			bc->LFSTK_setContextWindow(launcherContextWindow);
 			if(dockGravity==PANELSOUTH)
 				bc->contextWindowPos=CONTEXTABOVECENTRE;
 			else

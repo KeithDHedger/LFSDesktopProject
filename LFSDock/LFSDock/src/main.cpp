@@ -199,7 +199,7 @@ int main(int argc,char **argv)
 			dockWindow->LFSTK_setWindowDropCallBack(windowDrop,(void*)0xdeadbeef);
 
 			win=apc->LFSTK_getDefaultWInit();
-			win->windowType=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
+			win->windowType=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DOCK"));
 			win->level=ABOVEALL;
 
 			apc->LFSTK_addToolWindow(win);
@@ -211,7 +211,7 @@ int main(int argc,char **argv)
 			popActionList->LFSTK_setListItemsColours(GADGETBG,lc,pc,ac,lc);
 			popActionList->LFSTK_setListItemsColours(GADGETFG,"red","red","red","red");
 			popActionList->LFSTK_setGadgetColourPair(NORMALCOLOUR,lc,"red");
-			popActionList->LFSTK_setMouseCallBack(NULL,popActionWindowSelect,NULL);
+			popActionList->LFSTK_setMouseCallBack(taskListCBDown,popActionWindowSelect,NULL);
 
 			WM_STATE=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("WM_STATE"));
 			NET_WM_WINDOW_TYPE_NORMAL=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_NORMAL"));
@@ -226,6 +226,7 @@ int main(int argc,char **argv)
 			NET_WM_PID=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_PID"));
 			NET_NUMBER_OF_DESKTOPS=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_NUMBER_OF_DESKTOPS"));
 			NET_ACTIVE_WINDOW=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW"));
+			NET_WM_DESKTOP=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_DESKTOP"));
 
 			env=dockWindow->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str());
 			key=atoi(env);

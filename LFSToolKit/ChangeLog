@@ -1,4 +1,5 @@
 0.6.0
+Added list gadget class mouse down callback.
 Set applicaion name and class correctly.
 GUI fixes.
 Removed some od legacy code.

@@ -1,4 +1,5 @@
 0.2.0
+Added right click on task pop up list window to move window to current desktop.
 Added support for multiple docks.
 Changed some prefs names.
 Adjusted desktop switcher and clock labels.

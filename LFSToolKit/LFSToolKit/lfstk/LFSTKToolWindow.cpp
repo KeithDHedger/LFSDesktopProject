@@ -102,11 +102,16 @@ void LFSTK_toolWindowClass::windowClassInitCommon(windowInitStruct *wi)
 	switch(wi->level)
 		{
 			case BELOWALL:
+				this->LFSTK_setKeepBelow(true);
 				XLowerWindow(this->app->display,this->window);
 				break;
 			case ABOVEALL:
+				this->LFSTK_setKeepAbove(true);
 				XRaiseWindow(this->app->display,this->window);
 				break;
+			default:
+				this->LFSTK_setKeepBelow(false);
+				this->LFSTK_setKeepAbove(false);
 		}
 	this->gadgetMap.clear();
 }
