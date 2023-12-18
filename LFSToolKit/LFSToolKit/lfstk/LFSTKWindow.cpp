@@ -127,10 +127,10 @@ void LFSTK_windowClass::initWindow(bool loadvars)
 	this->fontColourNames[ACTIVECOLOUR]=strdup("white");
 	this->fontColourNames[INACTIVECOLOUR]=strdup("grey80");
 
-	this->windowColourNames[NORMALCOLOUR].name=strdup("grey50");
-	this->windowColourNames[PRELIGHTCOLOUR].name=strdup("grey80");
-	this->windowColourNames[ACTIVECOLOUR].name=strdup("grey40");
-	this->windowColourNames[INACTIVECOLOUR].name=strdup("grey90");
+	this->windowColourNames[NORMALCOLOUR].name="grey50";
+	this->windowColourNames[PRELIGHTCOLOUR].name="grey80";
+	this->windowColourNames[ACTIVECOLOUR].name="grey40";
+	this->windowColourNames[INACTIVECOLOUR].name="grey90";
 
 	if(this->app==NULL)
 		this->globalLib=new LFSTK_lib(loadvars);
@@ -187,9 +187,6 @@ LFSTK_windowClass::~LFSTK_windowClass()
 			if(this->fontColourNames[j]!=NULL)
 				freeAndNull(&this->fontColourNames[j]);
 		}
-
-	//if(this->windowName!=NULL)
-	//	freeAndNull(&this->windowName);
 
 	if(this->app==NULL)
 		delete this->globalLib;

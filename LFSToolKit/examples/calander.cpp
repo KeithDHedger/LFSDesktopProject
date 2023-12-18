@@ -45,7 +45,7 @@ void setEditText(void)
 	caldata=apc->globalLib->LFSTK_runAndGet("%s %s","cal",thismonth.c_str());
 	if(holdThisMonth==currentmonth)
 		{
-			thisday=apc->globalLib->LFSTK_oneLiner("%s","date +%d");
+			thisday=apc->globalLib->LFSTK_oneLiner(std::string("%s"),"date +%d");
 			dl=thisday.length();
 			thisday=" "+thisday+" ";
 			std::string::size_type found;
@@ -111,7 +111,7 @@ int main(int argc, char **argv)
 	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
 	wc=apc->mainWindow;
 
-	thisday=apc->globalLib->LFSTK_oneLiner("%s","date +%m");
+	thisday=apc->globalLib->LFSTK_oneLiner(std::string("%s"),"date +%m");
 	currentmonth=std::stoi(thisday)-1;
 	thismonth=monthNames[currentmonth];
 
