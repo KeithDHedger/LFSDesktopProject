@@ -195,6 +195,8 @@ bool LFSTK_lineEditClass::clientMessage(XEvent *e)
 */
 bool LFSTK_lineEditClass::mouseDown(XButtonEvent *e)
 {
+	if(this->editable==false)
+		return(true);
 	this->startUpMDFlag=true;
 	this->LFSTK_setFocus();
 	if(this->isActive==false)
@@ -701,5 +703,14 @@ void LFSTK_lineEditClass::LFSTK_setCallbackOnReturn(bool onreturn)
 bool LFSTK_lineEditClass::LFSTK_getCallbackOnReturn(void)
 {
 	return(this->callbackOnReturn);
+}
+
+/**
+* Set whether editbox is editable.
+* \param bool
+*/
+void LFSTK_lineEditClass::LFSTK_setEditable(bool canedit)
+{
+	this->editable=canedit;
 }
 

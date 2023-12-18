@@ -66,6 +66,8 @@ class LFSTK_lib
 //files
 		char				*LFSTK_oneLiner(const char* fmt,...);
 		std::string		LFSTK_oneLiner(const std::string fmt,...);
+		std::vector<std::string>	LFSTK_runAndGet(const std::string fmt,...);
+
 		char				*LFSTK_getMimeType(const char* path);
 		std::string		LFSTK_grepInFile(const std::string filepath,const std::string needle);
 		std::string		LFSTK_getNthNeedle(const std::string haystack,int needlecnt,const std::string delimiter=" ");

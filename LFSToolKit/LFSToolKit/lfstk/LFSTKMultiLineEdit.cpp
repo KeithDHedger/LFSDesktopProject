@@ -134,21 +134,6 @@ void LFSTK_multiLineEditClass::LFSTK_upDateText(void)
 	this->setDisplayLines();
 }
 
-/**
-* Mouse down callback.
-* \param e XButtonEvent passed from mainloop->listener.
-* \return Return true if event fully handeled or false to pass it on.
-*/
-bool LFSTK_multiLineEditClass::mouseDown(XButtonEvent *e)
-{
-	this->startUpMDFlag=true;
-	this->LFSTK_setFocus();
-	if(this->isActive==false)
-		this->LFSTK_clearWindow();
-
-	return(true);
-}
-
 void LFSTK_multiLineEditClass::LFSTK_resizeWindow(int w,int h)
 {
 	this->gadgetGeom.w=w-(pad*2);
@@ -202,6 +187,7 @@ void LFSTK_multiLineEditClass::LFSTK_setBuffer(const char *str)
 		bufferstr="";
 	this->buffer=bufferstr;
 	this->cursorPos=strlen(bufferstr);
+	this->LFSTK_upDateText();
 	this->LFSTK_clearWindow();
 }
 
@@ -231,8 +217,8 @@ void LFSTK_multiLineEditClass::drawText(void)
 	int						len=this->cursorPos;
 	const char				*curs="";
 	double					yoffset=0;
-	cairo_text_extents_t	partextents;
-	cairo_text_extents_t	charextents;
+	cairo_text_extents_t		partextents;
+	cairo_text_extents_t		charextents;
 	int						offline=0;
 	long						maxlines=0;
 	int						calcmax=0;
@@ -258,6 +244,7 @@ void LFSTK_multiLineEditClass::drawText(void)
 								calcmax+=this->textExtents.height;
 								maxlines++;
 							}
+							
 						if(lines.at(j)->cursorPos!=-1)
 							linewithcursor=j;
 					}
@@ -276,8 +263,8 @@ void LFSTK_multiLineEditClass::drawText(void)
 
 		for (int j=0+offline;j<this->lines.size();j++)
 			{
-				yoffset+=this->textExtents.height;
-				if(yoffset>this->gadgetGeom.h-this->textExtents.height)
+				yoffset+=this->textExtents.height+0.5;
+				if(yoffset>this->gadgetGeom.h)
 					continue;
 				cairo_move_to(this->cr,this->pad,yoffset);
 //do cursor
@@ -319,8 +306,46 @@ void LFSTK_multiLineEditClass::drawText(void)
 						cairo_set_source_rgba(this->cr,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.r,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.g,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.b,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.a);
 						cairo_show_text(this->cr,lines.at(j)->line);
 					}
+
+				if(this->doHighlight==true)
+					this->highLightText();
 			}
 	cairo_restore(this->cr);
+}
+
+/**
+* Set contents to the clipboard.
+*/
+void LFSTK_multiLineEditClass::LFSTK_addHighLights(int x,int y,int len,cairoColor col)
+{
+	this->highLights.push_back({x,y,len,col});
+	this->doHighlight=true;
+}
+
+/**
+* Set contents to the clipboard.
+*/
+void LFSTK_multiLineEditClass::highLightText(void)
+{
+	int yoffset;
+	int xoffset;
+	int len;
+	cairo_text_extents_t	charextents;
+	cairo_text_extents (this->cr,"X",&charextents);
+
+	for(int j=0;j<this->highLights.size();j++)
+		{
+
+	xoffset=this->highLights.at(j).sx*(charextents.x_advance)+this->pad;
+	yoffset=this->highLights.at(j).sy*this->fontExtents.ascent;
+	len=this->highLights.at(j).len*(charextents.x_advance+0.5);
+	cairo_save(this->cr);
+		cairo_reset_clip(this->cr);
+		cairo_set_source_rgba(this->cr,this->highLights.at(j).colour.r,this->highLights.at(j).colour.g,this->highLights.at(j).colour.b,this->highLights.at(j).colour.a);
+		cairo_rectangle(this->cr,xoffset,yoffset-this->fontExtents.ascent,len,this->fontExtents.ascent+this->fontExtents.descent);
+		cairo_fill(this->cr);
+	cairo_restore(this->cr);
+	}
 }
 
 /**

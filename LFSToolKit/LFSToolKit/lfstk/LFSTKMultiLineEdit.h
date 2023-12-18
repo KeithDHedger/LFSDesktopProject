@@ -31,12 +31,20 @@
 
 struct lineStruct
 {
-	char		*line;
+	char			*line;
 	int			cursorPos;
 	double		xpos;
 	double		ypos;
 	double		width;
 	double		height;
+};
+
+struct highlightStruct
+{
+	int			sx;
+	int			sy;
+	int			len;
+	cairoColor	colour;
 };
 
 /**
@@ -56,7 +64,6 @@ class LFSTK_multiLineEditClass  : public  LFSTK_lineEditClass
 		void LFSTK_setBuffer(const char *str);
 		const char *LFSTK_getCStr(void);
 
-		bool mouseDown(XButtonEvent *e);
 		bool keyRelease(XKeyEvent *e);
 		bool lostFocus(XEvent *e);
 		bool gotFocus(XEvent *e);
@@ -66,17 +73,23 @@ class LFSTK_multiLineEditClass  : public  LFSTK_lineEditClass
 		void LFSTK_setFormatedText(const char *txt,bool replace);
 		void LFSTK_upDateText(void);
 
+		void LFSTK_addHighLights(int x,int y,int len,cairoColor col);
+
+		std::vector<highlightStruct>		highLights;
+
 	private:
+		void highLightText(void);
 		void drawText(void);
 		void getClip(void);
 
-		std::string					buffer;
-		unsigned					cursorPos;
-		bool						isFocused=false;
-		void						setDisplayLines(void);
-		int							topLine;
-		std::vector<lineStruct*>	lines;
-		bool						fromlf=false;
+		bool								doHighlight=false;
+		unsigned							cursorPos;
+		std::string						buffer;
+		bool								isFocused=false;
+		void								setDisplayLines(void);
+		int								topLine;
+		std::vector<lineStruct*>			lines;
+		bool								fromlf=false;
 };
 
 #endif

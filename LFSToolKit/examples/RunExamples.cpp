@@ -91,9 +91,6 @@ int main(int argc, char **argv)
 	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
 	wc=apc->mainWindow;
 
-//	wc=new LFSTK_windowClass(0,0,DIALOGWIDTH,DIALOGHITE,"Gadgets",false);
-//	display=wc->display;
-
 //info
 	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*4);
 
@@ -230,6 +227,10 @@ int main(int argc, char **argv)
 //lfsabout
 	hrs.push_back({GADGETWIDTH+multi->spacePad,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"LFS About",0,0,1,1)});
 	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA("./lfsabout.cpp"));
+	internalsy+=YSPACING;
+//Calendar
+	hrs.push_back({GADGETWIDTH+multi->spacePad,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Calendar",0,0,1,1)});
+	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA("./calander.cpp"));
 	internalsy+=YSPACING;
 
 //run command

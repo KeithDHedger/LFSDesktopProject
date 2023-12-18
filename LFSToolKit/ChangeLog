@@ -1,4 +1,8 @@
 0.6.0
+Changing buffer in multiline edit now auto updates lines.
+Added simple calendar to examples.
+Added multiline external process call to lib class.
+Added editable to line/multi edits.
 Added list gadget class mouse down callback.
 Set applicaion name and class correctly.
 GUI fixes.

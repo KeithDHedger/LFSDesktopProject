@@ -63,6 +63,8 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		unsigned int			LFSTK_getModifier(void);
 		const char			*LFSTK_getKeySym(void);
 
+		void					LFSTK_setEditable(bool canedit);
+
 	protected:
 		colourStruct			cursorColour={"",false,0,{0,0,0,0.8}};
 		double				charWidth;
@@ -80,6 +82,8 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		int					offsetCurs=0;
 		KeySym				keysym_return;
 		unsigned int			state;
+		bool					editable=true;
+
 
 //contxt window
 		LFSTK_windowClass	*editWindow=NULL;

@@ -625,6 +625,72 @@ breakReturn:
 * \param const std::string fmt,... standard printf fmt but only recognises "%s","%%" and "%i".
 * \return std::string.
 * \note Synchronous ONLY.
+* \note std::vector<std::string> at 0 contains all lines received.
+* \note std::vector<std::string> at nth contains individual lines.
+*/
+std::vector<std::string>	LFSTK_lib::LFSTK_runAndGet(const std::string fmt,...)
+{
+	FILE						*fp;
+	va_list					ap;
+	char						*buffer=(char*)malloc(MAXBUFFER);
+	size_t					len=MAXBUFFER-1;
+	std::string				str="";
+	std::vector<std::string>	retval;
+	std::string				complete;
+	va_start(ap, fmt);
+	int cnt=0;
+	while(cnt<fmt.length())
+		{
+			if(fmt.at(cnt)=='%')
+				{
+					cnt++;
+					switch(fmt.at(cnt))
+						{
+							case 's':
+								str+=va_arg(ap,char*);
+								break;
+							case 'i':
+								str+=std::to_string(va_arg(ap,int));
+								break;
+							case '%':
+								str+="%";
+								break;
+							default:
+								str+=fmt.at(cnt);
+								break;
+						}
+				}
+			else
+				{
+					str+=fmt.at(cnt);
+				}
+			cnt++;
+		}
+	va_end(ap);
+
+	fp=popen(str.c_str(),"r");
+	if(fp!=NULL)
+		{
+			buffer[0]=0;
+			//while(fgets(buffer,MAXBUFFER-1,fp)!=EOF)
+			while(getline(&buffer,&len,fp)!= -1)
+				{
+					complete+=buffer;
+					retval.push_back(buffer);
+					buffer[0]=0;
+				}
+			pclose(fp);
+		}
+	freeAndNull(&buffer);
+	retval.emplace(retval.begin(),complete);
+	return(retval);
+}
+
+/**
+* Execute and return stdout.
+* \param const std::string fmt,... standard printf fmt but only recognises "%s","%%" and "%i".
+* \return std::string.
+* \note Synchronous ONLY.
 */
 std::string LFSTK_lib::LFSTK_oneLiner(const std::string fmt,...)
 {
