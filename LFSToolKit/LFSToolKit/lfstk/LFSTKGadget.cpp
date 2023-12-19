@@ -1056,7 +1056,7 @@ int LFSTK_gadgetClass::LFSTK_getTextWidth(const char* text)
 	cairo_restore(this->cr);
 	return((int)returnextents.x_advance);
 }
-
+#include <cmath>
 /**
 * Get height of text.
 * \returns text height
@@ -1070,7 +1070,8 @@ int LFSTK_gadgetClass::LFSTK_getTextHeight(const char* text)
 		cairo_set_font_size(this->cr,this->fontSize);
 		cairo_text_extents(this->cr,text,&returnextents);
 	cairo_restore(this->cr);
-	return((int)(long)returnextents.height);
+	//return((int)(long)returnextents.height);
+	return(std::lround(returnextents.height));
 }
 
 /**
@@ -1845,6 +1846,7 @@ void LFSTK_gadgetClass::LFSTK_setCallBacks(callbackStruct cbs)
 void LFSTK_gadgetClass::LFSTK_setStyle(bevelType s)
 {
 	this->style=s;
+	this->gadgetDetails.bevel=s;
 }
 
 /**

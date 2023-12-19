@@ -95,7 +95,6 @@ LFSTK_multiLineEditClass::LFSTK_multiLineEditClass(LFSTK_windowClass* parentwc,c
 	this->gadgetAcceptsDnD=true;
 	this->labelGravity=LEFT;
 
-
 	this->newGadgetBGColours[NORMALCOLOUR]=this->LFSTK_setColour("white");
 	this->newGadgetFGColours[NORMALCOLOUR]=this->LFSTK_setColour("black");
 	this->LFSTK_setCursorColourName(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPECURSORCOLOUR));
@@ -111,7 +110,6 @@ LFSTK_multiLineEditClass::LFSTK_multiLineEditClass(LFSTK_windowClass* parentwc,c
 */
 void LFSTK_multiLineEditClass::LFSTK_clearWindow()
 {
-	this->gadgetDetails.bevel=BEVELIN;
 	this->drawText();
 	this->drawBevel(&this->gadgetDetails.gadgetGeom,this->gadgetDetails.bevel);
 	return;
@@ -228,6 +226,9 @@ void LFSTK_multiLineEditClass::drawText(void)
 	cairo_save(this->cr);
 		cairo_reset_clip(this->cr);
 		cairo_set_source_rgba(this->cr,this->newGadgetBGColours.at(NORMALCOLOUR).RGBAColour.r,this->newGadgetBGColours.at(NORMALCOLOUR).RGBAColour.g,this->newGadgetBGColours.at(NORMALCOLOUR).RGBAColour.b,this->newGadgetBGColours.at(NORMALCOLOUR).RGBAColour.a);
+
+//cairo_rectangle(this->cr,0,0,this->gadgetGeom.w-1,this->gadgetGeom.h-1);
+//				cairo_fill(this->cr);
 		cairo_paint(this->cr);
 	cairo_restore(this->cr);
 	
@@ -652,6 +653,8 @@ void  LFSTK_multiLineEditClass::setDisplayLines(void)
 			newline->cursorPos=0;
 			lines.push_back(newline);
 		}
+
+	this->totalTextHeight=sy+this->pad+2;
 	this->LFSTK_clearWindow();
 }
 

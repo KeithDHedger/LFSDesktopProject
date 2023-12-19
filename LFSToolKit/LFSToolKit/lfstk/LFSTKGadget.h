@@ -134,7 +134,7 @@ class LFSTK_gadgetClass
 		void					LFSTK_setAlpha(double alph);
 		void					LFSTK_setStyle(bevelType s);
 
-std::string			imagePath;//?????
+		std::string			imagePath;//?????
 //geometry
 		void					LFSTK_getGeom(geometryStruct *geom);
 		void					LFSTK_getGeomWindowRelative(geometryStruct *geom,Window win);
@@ -178,8 +178,8 @@ std::string			imagePath;//?????
 //context
 		contextPostition		contextWindowPos=CONTEXTRIGHT;
 
-bool					inWindow;//TODO//MMMMmmmmmmm
-int					imageWidth=0;
+		bool					inWindow;//TODO//MMMMmmmmmmm
+		int					imageWidth=0;
 
 	private:
 		void					initGadget(void);
@@ -236,8 +236,9 @@ int					imageWidth=0;
 		void					clearBox(gadgetStruct* details);
 		void					drawBevel(geometryStruct* geom,bevelType bevel);
 		void					drawLabel(gadgetStruct* details);
-int	squeezeW=0;
-int	squeezeH=0;
+		int					squeezeW=0;
+		int					squeezeH=0;
+
 //drag stuff
 		bool					canDrag=false;
 		int					mouseDownX=0;

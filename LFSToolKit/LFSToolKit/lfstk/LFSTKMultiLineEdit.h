@@ -76,6 +76,8 @@ class LFSTK_multiLineEditClass  : public  LFSTK_lineEditClass
 		void LFSTK_addHighLights(int x,int y,int len,cairoColor col);
 
 		std::vector<highlightStruct>		highLights;
+		double							totalTextHeight=0;
+		geometryStruct		gadgetGeom;
 
 	private:
 		void highLightText(void);

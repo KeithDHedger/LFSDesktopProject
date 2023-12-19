@@ -13,6 +13,8 @@ rm calanderexample
 exit $retval
 #endif
 
+#include <math.h>
+
 #include "../config.h"
 #include "lfstk/LFSTKGlobals.h"
 
@@ -79,6 +81,14 @@ void setImportantDates(void)
 							}
 				}
 		}
+//	editbox->LFSTK_addHighLights(0,0,32,{1.0,0.0,0,0.1});
+//	editbox->LFSTK_addHighLights(0,1,32,{0.0,1.0,0,0.1});
+//	editbox->LFSTK_addHighLights(0,2,32,{1.0,0.0,0,0.1});
+//	editbox->LFSTK_addHighLights(0,3,32,{0.0,1.0,0,0.1});
+//	editbox->LFSTK_addHighLights(0,4,32,{1.0,0.0,0,0.1});
+//	editbox->LFSTK_addHighLights(0,5,32,{0.0,1.0,0,0.1});
+//	editbox->LFSTK_addHighLights(0,6,32,{1.0,0.0,0,0.1});
+//	editbox->LFSTK_addHighLights(0,7,32,{0.0,1.0,0,0.1});
 }
 
 void setEditText(void)
@@ -178,22 +188,17 @@ int main(int argc, char **argv)
 	setEditText();
 	editbox=new LFSTK_multiLineEditClass(wc,caldata.at(0).c_str(),((DIALOGWIDTH-(BORDER+128))/2),sy,10000,10000,BUTTONGRAV);
 	txtwid=editbox->LFSTK_getTextWidth(caldata.at(1).c_str())+1;
-	txthite=editbox->LFSTK_getTextHeight(caldata.at(1).c_str())*(caldata.size()+1)-4;
-	editbox->LFSTK_resizeWindow(txtwid,txthite);
+	txthite=editbox->totalTextHeight;
+	editbox->LFSTK_moveGadget((DIALOGWIDTH/2)-(txtwid/2),sy);
+	editbox->LFSTK_resizeWindow(txtwid+2,std::floor(txthite)+2);
+
 	editbox->LFSTK_setEditable(false);
+	editbox->LFSTK_setIgnores(false,false);
 	editbox->LFSTK_addHighLights(dx,dy,dl,dayhilite);
 	setImportantDates();
-
-//	editbox->LFSTK_addHighLights(0,0,32,{1.0,0.0,0,0.1});
-//	editbox->LFSTK_addHighLights(0,1,32,{0.0,1.0,0,0.1});
-//	editbox->LFSTK_addHighLights(0,2,32,{1.0,0.0,0,0.1});
-//	editbox->LFSTK_addHighLights(0,3,32,{0.0,1.0,0,0.1});
-//	editbox->LFSTK_addHighLights(0,4,32,{1.0,0.0,0,0.1});
-//	editbox->LFSTK_addHighLights(0,5,32,{0.0,1.0,0,0.1});
-//	editbox->LFSTK_addHighLights(0,6,32,{1.0,0.0,0,0.1});
-
+	editbox->LFSTK_setStyle(BEVELNONE);
+	editbox->gadgetDetails.gadgetGeom=editbox->gadgetGeom;
 	sy+=YSPACING+txthite;
-
 
 	less=new LFSTK_buttonClass(wc,"Last Month",BORDER,sy,GADGETWIDTH*2,GADGETHITE);
 	less->LFSTK_setMouseCallBack(NULL,doPrev,NULL);
