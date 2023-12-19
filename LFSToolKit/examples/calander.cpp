@@ -16,7 +16,14 @@ exit $retval
 #include "../config.h"
 #include "lfstk/LFSTKGlobals.h"
 
-#define BOXLABEL			"Simple Calendar"
+#define BOXLABEL "Simple Calendar"
+
+struct datesStruct
+{
+	int			month;
+	int			date;
+	cairoColor	col;
+};
 
 LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*wc=NULL;
@@ -35,8 +42,44 @@ std::vector<std::string>	caldata;
 int						dx=0;
 int						dy=0;
 int						dl=0;
+cairoColor				dayhilite={1.0,0.0,1.0,0.06};
 
+//xmas day boxing day new year my birthday midsummer midwinter walpurgis
+datesStruct				mydates[]={{11,25,{0.0,0,1,0.05}},{11,26,{0.0,0,1,0.05}},{0,1,{0.0,0,1,0.05}},{6,2,{2.0,0,0,0.05}},{5,21,{0.0,1,0,0.05}},{11,21,{0.0,1,0,0.05}},{3,30,{0,0,0,0.05}},{9,31,{0,0,0,0.05}}};
+std::vector<datesStruct>	datesdata;// (mydates, mydates + (sizeof(mydates) / sizeof(datesStruct)) );
 const char				*monthNames[]={"January","February","March","April","May","June","July","August","September","October","November","December"};
+
+void setImportantDates(void)
+{
+	std::string	thisday;
+
+	caldata=apc->globalLib->LFSTK_runAndGet("%s %s","cal",thismonth.c_str());
+//do important dates
+	for(int j=0;j<datesdata.size();j++)
+		{
+			if((currentmonth==datesdata.at(j).month) )//&& (std::stoi(thisday)==datesdata.at(j).date)
+				{
+						thisday=std::to_string(datesdata.at(j).date);
+						dl=thisday.length();
+						thisday=" "+thisday+" ";
+						std::string::size_type found;
+						std::string adjstr;
+						for(int i=1;i<caldata.size();i++)
+							{
+								adjstr=" "+caldata.at(i);
+								adjstr.insert(adjstr.end()-1,' ');
+								found=adjstr.find(thisday);
+								if(found!=std::string::npos)
+									{
+										dy=i-1;
+										dx=found;
+										if(editbox!=NULL)
+											editbox->LFSTK_addHighLights(dx,dy,dl,datesdata.at(j).col);
+									}
+							}
+				}
+		}
+}
 
 void setEditText(void)
 {
@@ -57,7 +100,7 @@ void setEditText(void)
 					found=adjstr.find(thisday);
 					if(found!=std::string::npos)
 						{
-							dy=j;
+							dy=j-1;
 							dx=found;
 							return;
 						}
@@ -78,10 +121,11 @@ bool doPrev(void *p,void* ud)
 		return(true);
 	currentmonth--;	
 	thismonth=monthNames[currentmonth];
-	setEditText();
 	editbox->highLights.clear();
+	setEditText();
 	if(holdThisMonth==currentmonth)
-		editbox->LFSTK_addHighLights(dx,dy,dl,{0.0,1.0,0,0.1});
+		editbox->LFSTK_addHighLights(dx,dy,dl,dayhilite);
+	setImportantDates();
 	editbox->LFSTK_setBuffer(caldata.at(0).c_str());
 	return(true);
 }
@@ -92,10 +136,11 @@ bool doNext(void *p,void* ud)
 		return(true);
 	currentmonth++;	
 	thismonth=monthNames[currentmonth];
-	setEditText();
 	editbox->highLights.clear();
+	setEditText();
 	if(holdThisMonth==currentmonth)
-		editbox->LFSTK_addHighLights(dx,dy,dl,{0.0,1.0,0,0.1});
+		editbox->LFSTK_addHighLights(dx,dy,dl,dayhilite);
+	setImportantDates();
 	editbox->LFSTK_setBuffer(caldata.at(0).c_str());
 	return(true);
 }
@@ -115,6 +160,9 @@ int main(int argc, char **argv)
 	currentmonth=std::stoi(thisday)-1;
 	thismonth=monthNames[currentmonth];
 
+	for(int j=0;j<sizeof(mydates) / sizeof(datesStruct);j++)
+		datesdata.push_back(mydates[j]);
+	
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	label->LFSTK_setCairoFontDataParts("sB",20);
 	sy+=YSPACING;
@@ -129,12 +177,23 @@ int main(int argc, char **argv)
 	holdThisMonth=currentmonth;
 	setEditText();
 	editbox=new LFSTK_multiLineEditClass(wc,caldata.at(0).c_str(),((DIALOGWIDTH-(BORDER+128))/2),sy,10000,10000,BUTTONGRAV);
-	txtwid=editbox->LFSTK_getTextWidth(caldata.at(1).c_str());
-	txthite=editbox->LFSTK_getTextHeight(caldata.at(1).c_str())*(caldata.size());
+	txtwid=editbox->LFSTK_getTextWidth(caldata.at(1).c_str())+1;
+	txthite=editbox->LFSTK_getTextHeight(caldata.at(1).c_str())*(caldata.size()+1)-4;
 	editbox->LFSTK_resizeWindow(txtwid,txthite);
 	editbox->LFSTK_setEditable(false);
-	editbox->LFSTK_addHighLights(dx,dy,dl,{0.0,1.0,0,0.1});
+	editbox->LFSTK_addHighLights(dx,dy,dl,dayhilite);
+	setImportantDates();
+
+//	editbox->LFSTK_addHighLights(0,0,32,{1.0,0.0,0,0.1});
+//	editbox->LFSTK_addHighLights(0,1,32,{0.0,1.0,0,0.1});
+//	editbox->LFSTK_addHighLights(0,2,32,{1.0,0.0,0,0.1});
+//	editbox->LFSTK_addHighLights(0,3,32,{0.0,1.0,0,0.1});
+//	editbox->LFSTK_addHighLights(0,4,32,{1.0,0.0,0,0.1});
+//	editbox->LFSTK_addHighLights(0,5,32,{0.0,1.0,0,0.1});
+//	editbox->LFSTK_addHighLights(0,6,32,{1.0,0.0,0,0.1});
+
 	sy+=YSPACING+txthite;
+
 
 	less=new LFSTK_buttonClass(wc,"Last Month",BORDER,sy,GADGETWIDTH*2,GADGETHITE);
 	less->LFSTK_setMouseCallBack(NULL,doPrev,NULL);

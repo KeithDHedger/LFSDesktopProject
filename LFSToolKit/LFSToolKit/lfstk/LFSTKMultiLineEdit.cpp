@@ -223,6 +223,7 @@ void LFSTK_multiLineEditClass::drawText(void)
 	long						maxlines=0;
 	int						calcmax=0;
 	int						linewithcursor=0;
+	int						linenum=0;
 
 	cairo_save(this->cr);
 		cairo_reset_clip(this->cr);
@@ -263,16 +264,17 @@ void LFSTK_multiLineEditClass::drawText(void)
 
 		for (int j=0+offline;j<this->lines.size();j++)
 			{
-				yoffset+=this->textExtents.height+0.5;
+				yoffset=this->lines.at(linenum)->ypos;
 				if(yoffset>this->gadgetGeom.h)
 					continue;
 				cairo_move_to(this->cr,this->pad,yoffset);
+				linenum++;
 //do cursor
 				if(lines.at(j)->cursorPos!=-1)
 					{
-						char 	*data;
+						char 		*data;
 						std::string	undercursstr="  ";
-						char		*aftercursor;
+						char			*aftercursor;
 						
 						asprintf(&data,"%s",lines.at(j)->line);
 						undercursstr[0]=data[lines.at(j)->cursorPos];
@@ -327,25 +329,27 @@ void LFSTK_multiLineEditClass::LFSTK_addHighLights(int x,int y,int len,cairoColo
 */
 void LFSTK_multiLineEditClass::highLightText(void)
 {
-	int yoffset;
-	int xoffset;
-	int len;
+	double				yoffset;
+	int					xoffset;
+	int					len;
 	cairo_text_extents_t	charextents;
-	cairo_text_extents (this->cr,"X",&charextents);
+
+	cairo_text_extents(this->cr,"X",&charextents);
 
 	for(int j=0;j<this->highLights.size();j++)
 		{
+			xoffset=this->highLights.at(j).sx*(charextents.x_advance)+this->pad;
+			yoffset=this->lines.at(this->highLights.at(j).sy)->ypos-this->lines.at(this->highLights.at(j).sy)->height+this->pad;
+			len=this->highLights.at(j).len*(charextents.x_advance+0.5);
+			int hite=this->lines.at(this->highLights.at(j).sy)->height;
 
-	xoffset=this->highLights.at(j).sx*(charextents.x_advance)+this->pad;
-	yoffset=this->highLights.at(j).sy*this->fontExtents.ascent;
-	len=this->highLights.at(j).len*(charextents.x_advance+0.5);
-	cairo_save(this->cr);
-		cairo_reset_clip(this->cr);
-		cairo_set_source_rgba(this->cr,this->highLights.at(j).colour.r,this->highLights.at(j).colour.g,this->highLights.at(j).colour.b,this->highLights.at(j).colour.a);
-		cairo_rectangle(this->cr,xoffset,yoffset-this->fontExtents.ascent,len,this->fontExtents.ascent+this->fontExtents.descent);
-		cairo_fill(this->cr);
-	cairo_restore(this->cr);
-	}
+			cairo_save(this->cr);
+				cairo_reset_clip(this->cr);
+				cairo_set_source_rgba(this->cr,this->highLights.at(j).colour.r,this->highLights.at(j).colour.g,this->highLights.at(j).colour.b,this->highLights.at(j).colour.a);
+				cairo_rectangle(this->cr,xoffset,yoffset,len,hite);
+				cairo_fill(this->cr);
+			cairo_restore(this->cr);
+		}
 }
 
 /**
@@ -565,13 +569,14 @@ void LFSTK_multiLineEditClass::LFSTK_dropData(propertyStruct* data)
 */
 void  LFSTK_multiLineEditClass::setDisplayLines(void)
 {
-	cairo_text_extents_t	extents;
-	char					data[4096]={0,};
+	cairo_text_extents_t		extents;
+	char						data[4096]={0,};
 	int						len=0;
 	geometryStruct			geom;
 	lineStruct				*newline;
 	int						cursorpos=-1;
-	bool					donecurs=false;
+	bool						donecurs=false;
+	double					sy;
 
 	this->LFSTK_getGeom(&geom);
 
@@ -581,6 +586,11 @@ void  LFSTK_multiLineEditClass::setDisplayLines(void)
 			delete lines.at(i);
 		}
 	this->lines.clear();
+
+	cairo_select_font_face(this->cr,fontName,slant,weight);
+	cairo_set_font_size(this->cr,fontSize);
+	cairo_text_extents(this->cr,"X~!_^",&extents);
+	sy=0;
 
 	for(int j=0;j<this->buffer.length();j++)
 		{
@@ -592,10 +602,6 @@ void  LFSTK_multiLineEditClass::setDisplayLines(void)
 
 			data[len]=this->buffer.c_str()[j];
 			data[len+1]=0;
-
-			cairo_select_font_face(this->cr,fontName,slant,weight);
-			cairo_set_font_size(this->cr,fontSize);
-			cairo_text_extents(this->cr,data,&extents);
 			if(((extents.x_advance)>geom.w) || (data[len]=='\n'))
 				{
 					if(data[len]!='\n')
@@ -604,10 +610,11 @@ void  LFSTK_multiLineEditClass::setDisplayLines(void)
 					newline=new lineStruct;
 					asprintf(&newline->line,"%s",data);
 					newline->cursorPos=cursorpos;
-					newline->xpos=0;
-					newline->ypos=0;
-					newline->width=extents.width;
+					newline->xpos=this->pad;
+					newline->width=0;
 					newline->height=extents.height;
+					sy+=extents.height+0.5;
+					newline->ypos=sy;
 					lines.push_back(newline);
 					data[0]=0;
 					len=0;
@@ -630,10 +637,11 @@ void  LFSTK_multiLineEditClass::setDisplayLines(void)
 					donecurs=true;
 				}
 			newline->cursorPos=cursorpos;
-			newline->xpos=0;
-			newline->ypos=0;
-			newline->width=extents.width;
+			newline->xpos=this->pad;
+			newline->width=0;
 			newline->height=extents.height;
+			sy+=extents.height+0.5;
+			newline->ypos=sy;
 			lines.push_back(newline);
 		}
 //special case last line is newline

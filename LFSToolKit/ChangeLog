@@ -1,4 +1,5 @@
 0.6.0
+Fixed extra highlighting in multi box.
 Fixed minor memory leak in window/application class.
 Changing buffer in multiline edit now auto updates lines.
 Added simple calendar to examples.
