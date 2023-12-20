@@ -1,1 +1,1 @@
-COMMONSRC = ../src/callbacks.cpp ../src/clock.cpp ../src/desktopSwitcher.cpp ../src/globals.cpp ../src/launchers.cpp ../src/main.cpp ../src/slider.cpp ../src/taskBar.cpp
+COMMONSRC = ../src/calendar.cpp ../src/callbacks.cpp ../src/clock.cpp ../src/desktopSwitcher.cpp ../src/globals.cpp ../src/launchers.cpp ../src/main.cpp ../src/slider.cpp ../src/taskBar.cpp

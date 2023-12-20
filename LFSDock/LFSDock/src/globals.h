@@ -36,6 +36,7 @@
 #include "slider.h"
 #include "desktopSwitcher.h"
 #include "taskBar.h"
+#include "calendar.h"
 
 #ifndef _GLOBALS_
 #define _GLOBALS_

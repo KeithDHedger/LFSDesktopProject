@@ -8,6 +8,7 @@ Gadgets:<br>
 In the gadets list in ~/.config/LFS/lfsdock.rc and the prefs dialog, you can use:<br>
 L - Any .desktop files in ~/.config/LFS/launchers-DOCK.<br>
 C - Clock.<br>
+c - Calendar.<br>
 S - Alsa volume slider.<br>
 D - Desktop switcher.<br>
 s - Space.<br>

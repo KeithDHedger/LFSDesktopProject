@@ -51,30 +51,33 @@ void addGadgets(void)
 		{
 			switch(prefs.LFSTK_getStringObject("gadgetsleft")->at(j))
 				{
-				case 'C':
-					offset+=addClock(offset,normalY,NorthWestGravity);
-					break;
-				case 's':
-					offset+=8;
-					break;
-				case 'L':
-					if(gotLaunchers==false)
-						{
-							gotLaunchers=true;
-							offset+=addLaunchers(offset,normalY,dockGravity);
-						}
-					else
-						printError("Duplicate launcher widget");
-					break;
-				case 'S':
-					offset+=addSlider(offset,normalY,dockGravity);
-					break;
-				case 'D':
-					offset+=addDesktopSwitcer(offset,normalY,dockGravity);
-					break;
-				case 'T':
-					useTaskBar=true;
-					break;
+					case 'C':
+						offset+=addClock(offset,normalY,NorthWestGravity);
+						break;
+					case 's':
+						offset+=8;
+						break;
+					case 'L':
+						if(gotLaunchers==false)
+							{
+								gotLaunchers=true;
+								offset+=addLaunchers(offset,normalY,dockGravity);
+							}
+						else
+							printError("Duplicate launcher widget");
+						break;
+					case 'S':
+						offset+=addSlider(offset,normalY,dockGravity);
+						break;
+					case 'D':
+						offset+=addDesktopSwitcer(offset,normalY,dockGravity);
+						break;
+					case 'c':
+						offset+=addCalendar(offset,normalY,NorthWestGravity);
+						break;
+					case 'T':
+						useTaskBar=true;
+						break;
 				}
 		}
 

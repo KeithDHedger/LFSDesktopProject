@@ -188,7 +188,7 @@ int addSlider(int x,int y,int grav)
 {
 	char				*vol=dockWindow->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print $3}'");
 	char				*label=dockWindow->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"%s \" $4}'|tr -d '[]'",SLIDERLABEL);//TODO//
-	windowInitStruct	*win=new windowInitStruct;;
+	windowInitStruct	*win=new windowInitStruct;
 	int				w,h;
 	bool				direction=false;
 
