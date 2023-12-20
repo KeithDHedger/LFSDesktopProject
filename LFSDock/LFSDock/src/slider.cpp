@@ -200,11 +200,6 @@ int addSlider(int x,int y,int grav)
 	volumeButton->LFSTK_setMouseMoveCallBack(volMoveCB,volExitCB,USERDATA(0));
 
 	setGadgetDetails(volumeButton);
-	volumeButton->LFSTK_setAlpha(1.0);
-	volumeButton->LFSTK_setStyle(BEVELNONE);
-
-	volumeButton->LFSTK_setGadgetColours(GADGETBG,dockBGColour,dockBGColour,dockBGColour,dockBGColour);
-	volumeButton->LFSTK_setGadgetColours(GADGETFG,dockTextColour,dockTextColour,dockTextColour,dockTextColour);
 
 	volumeButton->drawLabelBG=true;
 	volumeButton->autoLabelBGColour=true;

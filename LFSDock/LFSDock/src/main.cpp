@@ -146,6 +146,20 @@ void sanityCheck(void)
 			rcfile<<"usemicroseconds true\n";
 			rcfile.close();
 		}
+
+	if(!fs::exists(fs::status(configDir + std::string("calendardates"))))
+		{
+			std::ofstream rcfile;
+			rcfile.open (configDir + std::string("calendardates"));
+			rcfile<<"11 25 1\n";
+			rcfile<<"0 1 1\n";
+			rcfile<<"6 2 2\n";
+			rcfile<<"11 21 3\n";
+			rcfile<<"5 21 3\n";
+			rcfile<<"3 30 4\n";
+			rcfile<<"9 31 4\n";
+			rcfile.close();
+		}
 }
 
 int main(int argc,char **argv)

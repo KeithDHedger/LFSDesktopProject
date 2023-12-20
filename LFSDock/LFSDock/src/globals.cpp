@@ -131,7 +131,7 @@ void setGadgetDetails(LFSTK_gadgetClass *gadget)
 {
 	gadget->LFSTK_setAlpha(1.0);
 	gadget->LFSTK_setTile(NULL,0);
-	gadget->gadgetDetails.bevel=BEVELNONE;
+	gadget->LFSTK_setStyle(BEVELNONE);
 	gadget->LFSTK_setGadgetColours(GADGETBG,"#00000000","#00000000","#00000000","#00000000");
 	gadget->	LFSTK_setGadgetColourPair(NORMALCOLOUR,"#00000000",dockTextColour);
 }

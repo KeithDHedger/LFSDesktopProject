@@ -24,6 +24,11 @@ Right clicking a task window from the pop up list will move that window to the c
 <br>
 You can use 's' for spaces as many times as you want.<br>
 <br>
+You can add date reminders to the calendar gadget via a simple text file in '~/.config/LFS/calendardates', a default file is created on 1st run if it doesn't exist.<br>
+The format is:<br>
+month date colour<br>
+where month is between 0 - 11 ( 0=January, 11=December ), date is 1- however many days in the month, colour is 0-7 and is a hard coded colour ( this may change later ), 0 is used for todays date.<br>
+<br>
 Gadgets can be in any order you wish.<br>
 <br>
 More gadgets to come and improvements to the graphics.<br>
