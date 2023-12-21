@@ -239,6 +239,7 @@ int addLaunchers(int x,int y,int grav)
 			entry.name=NULL;
 			entry.exec=NULL;
 			entry.inTerm=false;
+freeAndNull(&icon);
 
  			addALAuncher(findlaunchers->data.at(l).path.c_str(),&entry);
 
@@ -266,10 +267,11 @@ int addLaunchers(int x,int y,int grav)
 			else
 				bc->LFSTK_setImageFromPath(DATADIR "/pixmaps/command.png",LEFT,true);
 
+freeAndNull(&icon);
+//freeAndNull(&entry.icon);
 			setGadgetDetails(bc);
-
-			if(icon!=NULL)
-				freeAndNull(&icon);
+			//if(icon!=NULL)
+			//	freeAndNull(&icon);
 			launchersArray.push_back(lds);
 			g_free(entry.name);
 			g_free(entry.exec);

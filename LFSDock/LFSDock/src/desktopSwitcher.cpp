@@ -97,7 +97,6 @@ bool desktopSelect(void *object,void* userdata)
 int addDesktopSwitcer(int x,int y,int grav)
 {
 	char					*icon=NULL;
-	windowInitStruct		*win=new windowInitStruct;;
 	listLabelStruct		ls;
 	std::string			label;
 	propertyStruct		props;

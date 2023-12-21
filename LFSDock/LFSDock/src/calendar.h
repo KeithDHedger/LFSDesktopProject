@@ -36,9 +36,11 @@ struct datesStruct
 };
 
 extern LFSTK_windowClass			*calWindow;
-extern bool						calWindowVisible;
 extern LFSTK_toggleButtonClass	*calendarButton;
+extern LFSTK_multiLineEditClass	*editbox;
+extern bool						calWindowVisible;
 extern bool						calendarIsUp;
+extern std::vector<datesStruct>	datesData;
 
 int addCalendar(int x,int y,int grav);
 

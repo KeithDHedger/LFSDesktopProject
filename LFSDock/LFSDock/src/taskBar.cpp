@@ -263,7 +263,8 @@ skiplabel:
 
 	for(int j=0;j<filltasks.size();j++)
 		{
-			icon=NULL;
+//			icon=NULL;
+			freeAndNull(&icon);
 			icon=dockWindow->globalLib->LFSTK_findThemedIcon(desktopTheme,filltasks.at(j).taskClass[0].c_str(),"");
 			if(icon==NULL)
 				icon=dockWindow->globalLib->LFSTK_findThemedIcon(desktopTheme,filltasks.at(j).taskClass[1].c_str(),"");

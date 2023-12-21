@@ -561,8 +561,8 @@ char* LFSTK_lib::LFSTK_findThemedIcon(const char *theme,const char *icon,const c
 	char        *iconpath=NULL;
 	const char  *iconthemes[3];
 	const char  *iconfolders[GLOBALPIXMAPSEND];
-	bool		maskdot=false;
-	char		*holdicon=NULL;
+	bool			maskdot=false;
+	char			*holdicon=NULL;
 	
 	if(icon[0]=='/')
 		return(strdup(icon));
@@ -596,9 +596,9 @@ char* LFSTK_lib::LFSTK_findThemedIcon(const char *theme,const char *icon,const c
 
 					if((iconpath!=NULL) && (strlen(iconpath)>1))
 						goto breakReturn;
-					if(iconpath!=NULL)
-						freeAndNull(&iconpath);
-					iconpath=NULL;
+					//if(iconpath!=NULL)
+					freeAndNull(&iconpath);
+					//iconpath=NULL;
 				}
 		}
 
@@ -617,6 +617,7 @@ char* LFSTK_lib::LFSTK_findThemedIcon(const char *theme,const char *icon,const c
 
 breakReturn:
 	freeAndNull(&holdicon);
+	//freeAndNull(&iconpath);
 	return(iconpath);
 }
 
@@ -806,9 +807,11 @@ char* LFSTK_lib::LFSTK_oneLiner(const char* fmt,...)
 				}
 			pclose(fp);
 			freeAndNull(&subbuffer);
-			return(strdup(buffer));
+			//return(strdup(buffer));
+			return(buffer);
 		}
 	freeAndNull(&subbuffer);
+	freeAndNull(&buffer);
 	return(NULL);
 }
 
@@ -1223,6 +1226,8 @@ void LFSTK_lib::LFSTK_getFileInfo(const char* path,fileInformation* info)
 			file=g_file_new_for_path(path);
 			file_info=g_file_query_info(file,"standard::*",G_FILE_QUERY_INFO_NONE,NULL,&error);
 			th=g_file_info_get_content_type(file_info);
+			g_clear_object(&file);
+			g_clear_object(&file_info);
 			if(th.length()!=0)
 				info->mimeType=th;
 			else

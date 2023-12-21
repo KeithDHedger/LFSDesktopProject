@@ -1,4 +1,5 @@
 0.2.0
+Fixed mem leak.
 Added date reminder file to calendar (~/.config/LFS/calendardates).
 Added calendar widget.
 Fixed updating window names in task lists.

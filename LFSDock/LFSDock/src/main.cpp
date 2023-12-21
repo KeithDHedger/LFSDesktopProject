@@ -314,20 +314,38 @@ int main(int argc,char **argv)
 
 			int retval=apc->LFSTK_runApp();
 
+
+/*
+extern LFSTK_windowClass			*calWindow;
+extern bool						calWindowVisible;
+extern LFSTK_toggleButtonClass	*calendarButton;
+extern bool						calendarIsUp;
+*/
+			//delete editbox;
+			//delete calWindow;
+			//delete calendarButton;
+			calendarIsUp=false;
+
 			freeAndNull(&iconL);
 			freeAndNull(&iconM);
 			freeAndNull(&iconH);
-			clockButton=NULL;
-			switchButton=NULL;
-			gotLaunchers=false;
-			useTaskBar=false;
 			holdtasks.clear();
 			filltasks.clear();
 			tasks.clear();
 
 			launchersArray.clear();
+			datesData.clear();
+			delete gFind;
 			delete findlaunchers;
 			delete apc;
+			clockButton=NULL;
+			switchButton=NULL;
+			calendarButton=NULL;
+			editbox=NULL;
+			calWindow=NULL;
+			gotLaunchers=false;
+			useTaskBar=false;
+			
 		}
 	cairo_debug_reset_static_data();
 	g_key_file_free(kf);

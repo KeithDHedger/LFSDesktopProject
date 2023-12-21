@@ -41,6 +41,7 @@ LFSTK_multiLineEditClass::~LFSTK_multiLineEditClass()
 				}
 			this->lines.clear();
 		}
+	this->highLights.clear();
 }
 
 LFSTK_multiLineEditClass::LFSTK_multiLineEditClass()
@@ -226,9 +227,6 @@ void LFSTK_multiLineEditClass::drawText(void)
 	cairo_save(this->cr);
 		cairo_reset_clip(this->cr);
 		cairo_set_source_rgba(this->cr,this->newGadgetBGColours.at(NORMALCOLOUR).RGBAColour.r,this->newGadgetBGColours.at(NORMALCOLOUR).RGBAColour.g,this->newGadgetBGColours.at(NORMALCOLOUR).RGBAColour.b,this->newGadgetBGColours.at(NORMALCOLOUR).RGBAColour.a);
-
-//cairo_rectangle(this->cr,0,0,this->gadgetGeom.w-1,this->gadgetGeom.h-1);
-//				cairo_fill(this->cr);
 		cairo_paint(this->cr);
 	cairo_restore(this->cr);
 	

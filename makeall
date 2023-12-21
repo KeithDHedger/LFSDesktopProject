@@ -119,7 +119,7 @@ makelocal ()
 		#runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib${LIBDIRSUFFIX}"
 		:
 	else
-		CFLAGS="-Wfatal-errors -I${CWD}/LFSToolKit/LFSToolKit/lfstk/ -L${CWD}/LFSToolKit/LFSToolKit/app/.libs"
+		CFLAGS="-O0 -g -Wfatal-errors -I${CWD}/LFSToolKit/LFSToolKit/lfstk/ -L${CWD}/LFSToolKit/LFSToolKit/app/.libs"
 		CXXFLAGS="$CFLAGS"
 		export CFLAGS CXXFLAGS
 		runCommand "./autogen.sh --prefix=/usr"

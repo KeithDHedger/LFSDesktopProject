@@ -227,6 +227,7 @@ int addCalendar(int x,int y,int grav)
 	editbox->LFSTK_moveGadget(0,0);
 	editbox->LFSTK_resizeWindow(txtwid,std::floor(txthite));
 
+	editbox->LFSTK_setStyle(BEVELNONE);
 	editbox->LFSTK_setEditable(false);
 	editbox->LFSTK_setIgnores(false,false);
 	editbox->LFSTK_addHighLights(dx,dy,dl,datesHilite[0]);
