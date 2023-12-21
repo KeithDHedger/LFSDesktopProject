@@ -386,8 +386,8 @@ const char* LFSTK_fileDialogClass::LFSTK_getCurrentFileSelection(void)
 */
 void LFSTK_fileDialogClass::setPreviewData(bool fromlist)
 {
-	char		*mt=NULL;
-	char		*statdata=NULL;
+	char				*mt=NULL;
+	char				*statdata=NULL;
 	fileInformation	info;
 	std::string		previewlabel="";
 

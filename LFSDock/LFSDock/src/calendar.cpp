@@ -248,7 +248,6 @@ int addCalendar(int x,int y,int grav)
 		}
 
 	setImportantDates();
-	editbox->gadgetDetails.gadgetGeom=editbox->gadgetGeom;
 	sy=txthite-4;
 
 	prev=new LFSTK_buttonClass(calWindow,"<<<",0,sy,(txtwid-4)/2,12);

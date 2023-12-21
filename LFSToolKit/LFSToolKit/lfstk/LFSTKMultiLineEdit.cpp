@@ -67,6 +67,7 @@ LFSTK_multiLineEditClass::LFSTK_multiLineEditClass(LFSTK_windowClass* parentwc,c
 		label="";
 
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
+
 	this->isFocused=false;
 	this->inWindow=false;
 
@@ -90,7 +91,6 @@ LFSTK_multiLineEditClass::LFSTK_multiLineEditClass(LFSTK_windowClass* parentwc,c
 		this->cursorPos=strlen(label);
 	else
 		this->cursorPos=0;
-	this->buffer=label;
 
 	this->wc->LFSTK_initDnD();
 	this->gadgetAcceptsDnD=true;
@@ -103,7 +103,7 @@ LFSTK_multiLineEditClass::LFSTK_multiLineEditClass(LFSTK_windowClass* parentwc,c
 	gadgetDetails={&this->newGadgetBGColours.at(NORMALCOLOUR),BEVELIN,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false,false,false};
 
 	this->topLine=0;
-	this->setDisplayLines();
+	this->LFSTK_setBuffer(label);
 }
 
 /**

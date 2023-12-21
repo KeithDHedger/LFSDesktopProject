@@ -197,7 +197,6 @@ void LFSTK_gadgetClass::LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* 
 		this->label=strdup("");
 
 	this->initGadget();
-
 	this->ml=new mappedListener;
 }
 

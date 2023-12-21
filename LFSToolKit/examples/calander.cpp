@@ -197,7 +197,7 @@ int main(int argc, char **argv)
 	editbox->LFSTK_addHighLights(dx,dy,dl,dayhilite);
 	setImportantDates();
 	editbox->LFSTK_setStyle(BEVELNONE);
-	editbox->gadgetDetails.gadgetGeom=editbox->gadgetGeom;
+//	editbox->gadgetDetails.gadgetGeom=editbox->gadgetGeom;
 	sy+=YSPACING+txthite;
 
 	less=new LFSTK_buttonClass(wc,"Last Month",BORDER,sy,GADGETWIDTH*2,GADGETHITE);

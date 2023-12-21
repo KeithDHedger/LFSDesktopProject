@@ -44,46 +44,47 @@ class LFSTK_prefsClass
 	public:
 		LFSTK_prefsClass();
 		~LFSTK_prefsClass();
+	
 		std::map<unsigned long,struct prefsData> prefsMap;
 
-		void			LFSTK_addToPrefs(const char *key,prefsData data);
-		void			LFSTK_deleteFromPrefs(const char *key);
-		const char		*LFSTK_boolToString(bool val);
-		bool			LFSTK_stringToBool(const char	*val);
-		void			LFSTK_saveVarsToFile(const char *filepath);
-		void			LFSTK_loadVarsFromFile(const char *filepath);
+		void					LFSTK_addToPrefs(const char *key,prefsData data);
+		void					LFSTK_deleteFromPrefs(const char *key);
+		const char			*LFSTK_boolToString(bool val);
+		bool					LFSTK_stringToBool(const char *val);
+		void					LFSTK_saveVarsToFile(const char *filepath);
+		void					LFSTK_loadVarsFromFile(const char *filepath);
 
 //get
 //strings
-		const char		*LFSTK_getCString(const char *key);
-		const char		*LFSTK_getCString(unsigned long key);
-		std::string		LFSTK_getString(const char *key);
-		const std::string*	LFSTK_getStringObject(const char *key);
-		std::string		LFSTK_getString(unsigned long key);
+		const char			*LFSTK_getCString(const char *key);
+		const char			*LFSTK_getCString(unsigned long key);
+		std::string			LFSTK_getString(const char *key);
+		const std::string	*LFSTK_getStringObject(const char *key);
+		std::string			LFSTK_getString(unsigned long key);
 //set
 //string
-		void			LFSTK_setString(unsigned long key,const char *newstr);
-		void			LFSTK_setString(const char *key,const char *newstr);
+		void					LFSTK_setString(unsigned long key,const char *newstr);
+		void					LFSTK_setString(const char *key,const char *newstr);
 
 //get
 //boolean
-		bool			LFSTK_getBool(const char *key);
-		bool			LFSTK_getBool(unsigned long key);
+		bool					LFSTK_getBool(const char *key);
+		bool					LFSTK_getBool(unsigned long key);
 //set
 //boolean
-		void			LFSTK_setBool(const char *key,bool val);
-		void			LFSTK_setBool(unsigned long key,bool val);
+		void					LFSTK_setBool(const char *key,bool val);
+		void					LFSTK_setBool(unsigned long key,bool val);
 
 //get
 //integer
-		int				LFSTK_getInt(const char *key);
-		int				LFSTK_getInt(unsigned long key);
+		int					LFSTK_getInt(const char *key);
+		int					LFSTK_getInt(unsigned long key);
 
-		unsigned long	LFSTK_hashFromKey(const char *key);
-		unsigned long	LFSTK_hashFromKey(std::string key);
+		unsigned long		LFSTK_hashFromKey(const char *key);
+		unsigned long		LFSTK_hashFromKey(std::string key);
 
 	private:
-		const char		*bools[2]={"false","true"};
+		const char			*bools[2]={"false","true"};
 };
 
 #endif

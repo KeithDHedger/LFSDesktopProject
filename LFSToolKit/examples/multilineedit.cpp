@@ -29,11 +29,11 @@ LFSTK_multiLineEditClass	*editbox=NULL;
 
 const char* test_string =
     "Lorem ipsum dolor sit amet,consectetur "
-    "adipiscing elit.\nCras efficitur dui risus, "
+    "adipiscing elit.\nCras efficitur dui risus,\n"
     "ac elementum orci rhoncus ac.\nPraesent risus "
-    "lacus,pretium in enim at,ringilla viverra "
+    "lacus,\npretium in enim at,ringilla viverra "
     "eros.\nUt non tincidunt quam. Donec aliquam "
-    "fermentum lectus,eget porttitor metus "
+    "fermentum lectus,\neget porttitor metus "
     "fringilla quis.\nDuis nulla augue,commodo "
     "mattis eros at.\n"
     ;
@@ -75,11 +75,12 @@ void sendUTF8(XSelectionRequestEvent *sev)
 
     XSendEvent(apc->display,sev->requestor,True,NoEventMask,(XEvent *)&ssev);
 }
+#include <math.h>
 
 int main(int argc, char **argv)
 {
 	int	sy=BORDER;
-	
+
 	apc=new LFSTK_applicationClass();
 	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
 	wc=apc->mainWindow;
@@ -96,8 +97,6 @@ int main(int argc, char **argv)
 
 //line edit
 	editbox=new LFSTK_multiLineEditClass(wc,test_string,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE*10,BUTTONGRAV);
-	editbox->LFSTK_setKeyCallBack(NULL,doKeyUp,USERDATA(12345));
-	editbox->LFSTK_setGadgetDropCallBack(doDropped);
 
 	sy+=YSPACING+(GADGETHITE*10);
 

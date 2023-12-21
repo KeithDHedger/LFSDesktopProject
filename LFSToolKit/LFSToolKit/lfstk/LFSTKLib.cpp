@@ -748,6 +748,7 @@ std::string LFSTK_lib::LFSTK_oneLiner(const std::string fmt,...)
 	return(str);
 }
 
+#if 1
 /**
 * Execute and return stout from string.
 * \return char* Allocated string caller should free.
@@ -814,6 +815,7 @@ char* LFSTK_lib::LFSTK_oneLiner(const char* fmt,...)
 	freeAndNull(&buffer);
 	return(NULL);
 }
+#endif
 
 /**
 * Get if point (x,y) is in rect (geom).
