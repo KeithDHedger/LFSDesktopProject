@@ -258,13 +258,12 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 
 void getCurrentDesktop(void)
 {
-	char	*desknum=NULL;
+	std::string	desknum=NULL;
 
 	desknum=mainwind->globalLib->LFSTK_oneLiner("%s","/usr/bin/xprop -root |/bin/grep '_NET_CURRENT_DESKTOP(CARDINAL)'|/bin/head -n1|/usr/bin/awk -F'=' '{print $2}'");
-	if(desknum!=NULL)
+	if(desknum.length()>0)
 		{
-			currentDesktop=atoi(desknum);
-			free(desknum);
+			currentDesktop=std::stoi(desknum,nullptr,10);
 		}
 	else
 		currentDesktop=1;

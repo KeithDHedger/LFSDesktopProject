@@ -529,7 +529,7 @@ void LFSWM2_Class::cliOptions(int argc,char **argv)//TODO//
 
 	int		c;
 	int		key=-1;
-	char		*prefsfile;
+	std::string	prefsfile;
 
 	while(true)
 		{
@@ -583,11 +583,12 @@ void LFSWM2_Class::cliOptions(int argc,char **argv)//TODO//
 						break;
 				}
 		}
+
 	prefsfile=this->lfstkLib->LFSTK_oneLiner("sed -n '2p' \"%s/.config/LFS/lfsappearance.rc\"",getenv("HOME"));
-	if(prefsfile!=NULL)
+	if(prefsfile!="")
 		{
-			this->msgQueueKey=atoi(prefsfile);
-			free(prefsfile);
+			this->msgQueueKey=std::stoi(prefsfile,nullptr,10);
+			//free(prefsfile);
 		}
 	if(key!=-1)
 		this->msgQueueKey=key;

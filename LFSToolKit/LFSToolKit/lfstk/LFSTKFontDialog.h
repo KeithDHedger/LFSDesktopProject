@@ -27,12 +27,12 @@
 */
 struct fontDataStruct
 {
-	char		*fontString;
-	const char	*fontName;
-	bool		bold;
-	bool		italic;
+	std::string	fontString;
+	std::string	fontName;
+	bool			bold;
+	bool			italic;
 	int			fontSize;
-	bool		isValid;
+	bool			isValid;
 };
 
 /**
@@ -50,28 +50,27 @@ class LFSTK_fontDialogClass : public LFSTK_gadgetClass
 		const fontDataStruct		*LFSTK_getFontData(bool rebuild);
 
 		LFSTK_multiLineEditClass	*preview=NULL;
-		LFSTK_lineEditClass			*fontsize=NULL;
+		LFSTK_lineEditClass		*fontsize=NULL;
 	private:
 		void						buildFontString(void);
 		void						loadFontStrings(void);
 		void						buildDialog(void);
-		void						parseFontString(const char *fontstr);
+		void						parseFontString(std::string fontstr);
 
-		LFSTK_windowClass			*dialog=NULL;
-		LFSTK_listGadgetClass		*fontlist=NULL;
-		LFSTK_toggleButtonClass		*boldcheck=NULL;
-		LFSTK_toggleButtonClass		*italiccheck=NULL;
-		LFSTK_buttonClass			*seperator=NULL;
-		LFSTK_buttonClass			*apply=NULL;
-		LFSTK_buttonClass			*cancel=NULL;
+		LFSTK_windowClass		*dialog=NULL;
+		LFSTK_listGadgetClass	*fontlist=NULL;
+		LFSTK_toggleButtonClass	*boldcheck=NULL;
+		LFSTK_toggleButtonClass	*italiccheck=NULL;
+		LFSTK_buttonClass		*seperator=NULL;
+		LFSTK_buttonClass		*apply=NULL;
+		LFSTK_buttonClass		*cancel=NULL;
 
 		unsigned					selectedFontNumber=0;
 		bool						mainLoop;
 		unsigned					maxFonts=0;
-		char						**fontsAZ=NULL;
+		std::vector<std::string>	fontsAZV;
 		unsigned					size=10;
-		const char					*fontname=NULL;
-		fontDataStruct				fontData;
+		fontDataStruct			fontData;
 };
 
 #endif

@@ -120,11 +120,10 @@ bool coleditCB(void *p,void* ud)
 
 	if((ed->mouseEvent->state & Button2Mask)!=0)
 		{
-			char *col=NULL;
-		col=apc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%s\"",wc->window,ed->LFSTK_getCStr());
-			if(strlen(col)>0)
-				ed->LFSTK_setBuffer(col);
-			free(col);
+			std::string col=NULL;
+			col=apc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%s\"",wc->window,ed->LFSTK_getCStr());
+			if(col.length()>0)
+				ed->LFSTK_setBuffer(col.c_str());//TODO//
 		}
 	return(true);
 }

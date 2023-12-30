@@ -107,10 +107,10 @@ bool coleditCB(void *p,void* ud)
 	if((ed->mouseEvent->state & Button3Mask)!=0)
 		{
 			char *col=NULL;
-#ifdef _ENABLEDEBUG_
-			col=apc->globalLib->LFSTK_oneLiner("LD_LIBRARY_PATH=../LFSToolKit/LFSToolKit/app/.libs LFSApplications/app/lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr());
+#ifdef _ENABLEDEBUG_//TODO//
+			col=strdup(apc->globalLib->LFSTK_oneLiner("LD_LIBRARY_PATH=../LFSToolKit/LFSToolKit/app/.libs LFSApplications/app/lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr()).c_str());
 #else
-			col=apc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr());
+			col=strdup(apc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr()).c_str());
 #endif
 			if(strlen(col)>0)
 				ed->LFSTK_setBuffer(col);
@@ -176,7 +176,7 @@ bool selectFile(void *object,void* ud)
 		{
 			asprintf(&filepath,"%s/%s",fileDialog->LFSTK_getCurrentDir(),fileDialog->LFSTK_getCurrentFile());
 			free(wd);
-			wd=strdup(fileDialog->LFSTK_getCurrentDir());
+			wd=strdup(fileDialog->LFSTK_getCurrentDir().c_str());
 			edbox->LFSTK_setBuffer(filepath);
 			free(monitors[selectedMonitor].path);
 			monitors[selectedMonitor].path=strdup(filepath);
@@ -423,7 +423,7 @@ int main(int argc, char **argv)
 	if(parentWindow!=-1)
 		wc->LFSTK_setTransientFor(parentWindow);
 
-	buffer=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str());
+	buffer=strdup(wc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str()).c_str());
 	if((queueID=msgget(atoi(buffer),IPC_CREAT|0660))==-1)
 		fprintf(stderr,"Can't create message queue :( ...\n");
 	free(buffer);

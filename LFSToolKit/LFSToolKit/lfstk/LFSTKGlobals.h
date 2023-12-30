@@ -29,6 +29,8 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <iomanip>
+#include <filesystem>
 
 #include <dirent.h>
 
@@ -41,6 +43,8 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
+
+#include <experimental/filesystem>
 
 
 #define COPYRITE			"Copyright © 2013-2023 K.D.Hedger"
@@ -409,6 +413,7 @@ struct msgBuffer
 
 enum {DESKTOP_MSG=1000,WMANAGER_MSG,PANEL_MSG,WALLPAPER_MSG,TOOLKIT_MSG,LFSWM2_MSG,DOCK_MSG,APPEARANCE_PREFS_MSG,BACKDROP_PREFS_MSG,DESKTOP_PREFS_MSG,PANEL_PREFS_MSG,TK_PREFS_MSG,WMANAGER_PREFS_MSG,LFSWM2_PREFS_MSG};
 
+#include "LFSTKUtilityClass.h"
 #include "LFSTKPrefsClass.h"
 #include "LFSTKLib.h"
 #include "LFSTKApplication.h"

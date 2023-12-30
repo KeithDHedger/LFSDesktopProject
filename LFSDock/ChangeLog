@@ -1,4 +1,5 @@
 0.2.0
+Fixed seg fault when not using launchers.
 Fixed mem leak.
 Added date reminder file to calendar (~/.config/LFS/calendardates).
 Added calendar widget.

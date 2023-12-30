@@ -91,7 +91,7 @@ bool LFSTK_menuItemClass::mouseExit(XButtonEvent *e)
 	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
 		return(true);
 
-	if(strcmp(this->label,"--")==0)
+	if(this->label.compare("--")==0)
 		return(true);;
 
 	this->gadgetDetails.colour=&this->newGadgetBGColours.at(NORMALCOLOUR);
@@ -179,7 +179,7 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
 		return(true);
 
-	if(strcmp(this->label,"--")==0)
+	if(this->label.compare("--")==0)
 		return(true);
 
 	//this->gadgetDetails.colour=&this->colourNames[PRELIGHTCOLOUR];

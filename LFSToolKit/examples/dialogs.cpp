@@ -50,19 +50,18 @@ bool selectcol(void *object,void* ud)
 //use wd =~
 bool selectfile(void *object,void* ud)
 {
-	char	*mimetype=NULL;
+	std::string	mimetype;
 	filedialogfile->LFSTK_showFileDialog(NULL,"Select A File");
 
 	if(filedialogfile->LFSTK_isValid()==true)
 		{
-			printf("Selected File Path=%s\n",filedialogfile->LFSTK_getCurrentPath());
-			printf("Selected Dir Path=%s\n",filedialogfile->LFSTK_getCurrentDir());
-			printf("Selected File Name=%s\n",filedialogfile->LFSTK_getCurrentFile());
+			printf("Selected File Path=%s\n",filedialogfile->LFSTK_getCurrentPath().c_str());
+			printf("Selected Dir Path=%s\n",filedialogfile->LFSTK_getCurrentDir().c_str());
+			printf("Selected File Name=%s\n",filedialogfile->LFSTK_getCurrentFile().c_str());
 			mimetype=wc->globalLib->LFSTK_getMimeType(filedialogfile->LFSTK_getCurrentPath());
-			printf("File Mime-Type=%s\n",mimetype);
-			free(mimetype);
+			printf("File Mime-Type=%s\n",mimetype.c_str());
 			free(wd);
-			wd=strdup(filedialogfile->LFSTK_getCurrentDir());
+			wd=strdup(filedialogfile->LFSTK_getCurrentDir().c_str());
 		}
 	return(true);
 }
@@ -83,9 +82,9 @@ bool selectdir(void *object,void* ud)
 	filedialogdir->LFSTK_showFileDialog(NULL,"Select A Folder");
 	if(filedialogdir->LFSTK_isValid()==true)
 		{
-			printf("Selected Folder=%s\n",filedialogdir->LFSTK_getCurrentDir());
+			printf("Selected Folder=%s\n",filedialogdir->LFSTK_getCurrentDir().c_str());
 			free(wd);
-			wd=strdup(filedialogdir->LFSTK_getCurrentDir());			
+			wd=strdup(filedialogdir->LFSTK_getCurrentDir().c_str());			
 		}
 	return(true);
 }

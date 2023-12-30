@@ -82,7 +82,6 @@ class LFSTK_gadgetClass
 
 //DnD routines etc
 		virtual void			LFSTK_dropData(propertyStruct* data);
-
 		dropDataStruct		droppedData={DROPINVALID,NULL,-1,-1};
 
 //odds
@@ -110,15 +109,15 @@ class LFSTK_gadgetClass
 
 //colours
 		const char			*LFSTK_getColourName(int p);
-		void					LFSTK_setFontString(const char *s,bool setfontdata=false);
+		void					LFSTK_setFontString(std::string s,bool setfontdata=false);
 		void					LFSTK_reloadColours(void);
 
 		void					LFSTK_setActive(bool active);
 		void					LFSTK_setLabelAutoColour(bool setauto);
 		void					LFSTK_setCairoFontDataParts(const char* fmt,...);
 
-		void					LFSTK_setLabel(const char *newlabel,bool clearwindow=true);
-		const char			*LFSTK_getLabel(void);
+		void					LFSTK_setLabel(std::string newlabel,bool clearwindow=true);
+		std::string			LFSTK_getLabel(void);
 		void					LFSTK_setLabelGravity(int orient);
 
 //graphics
@@ -134,20 +133,19 @@ class LFSTK_gadgetClass
 		void					LFSTK_setAlpha(double alph);
 		void					LFSTK_setStyle(bevelType s);
 
-		std::string			imagePath;//?????
+		std::string			imagePath;
 //geometry
 		void					LFSTK_getGeom(geometryStruct *geom);
 		void					LFSTK_getGeomWindowRelative(geometryStruct *geom,Window win);
-		double				LFSTK_getTextRealWidth(const char* text);
-		int					LFSTK_getTextWidth(const char* text);
-		int					LFSTK_getTextHeight(const char* text);
+		double				LFSTK_getTextRealWidth(std::string text);
+		int					LFSTK_getTextWidth(std::string text);
+		int					LFSTK_getTextHeight(std::string text);
 		void					LFSTK_setGadgetSize(int width,int height);
 
 //fonts
 		void					LFSTK_setCairoFontData(void);
 
 		LFSTK_windowClass	*wc;
-
 		Window				parent;
 		GC					gc;
 		Window				window;
@@ -159,7 +157,6 @@ class LFSTK_gadgetClass
 		colourStruct			labelBGColour={"",false,0,{1.0,1.0,1.0,1.0}};
 		void					LFSTK_setLabelBGColour(double r,double g,double b,double a);
 		void					LFSTK_setLabelBGColour(const char* colour,double alpha);
-
 		void					LFSTK_setShowIndicator(bool show);
 		bool					useImage;
 		bool					gotIcon;
@@ -167,7 +164,7 @@ class LFSTK_gadgetClass
 		bool					isSubMenu;
 		bool					showIndicator;
 		gadgetStruct			gadgetDetails={&this->newGadgetBGColours.at(NORMALCOLOUR),BEVELOUT,NOINDICATOR,NORMALCOLOUR,0,false,{0,0,0,0},{0,0,0,0},false,false,false,false,false};
-		const char			*monoFontString=NULL;
+		std::string			monoFontString;
 
 //user data
 		void					*userData=NULL;
@@ -177,7 +174,6 @@ class LFSTK_gadgetClass
 		bool					isMapped=false;
 //context
 		contextPostition		contextWindowPos=CONTEXTRIGHT;
-
 		bool					inWindow;//TODO//MMMMmmmmmmm
 		int					imageWidth=0;
 
@@ -197,16 +193,16 @@ class LFSTK_gadgetClass
 		geometryStruct		gadgetGeom;
 
 //font and label stuff
-		char					*label=NULL;
-		//char					*fontString=NULL;
-		std::string			fontString="";
+		//char					*label=NULL;
+		std::string			label;
+		std::string			fontString;
 
 		cairo_text_extents_t	textExtents;
 		cairo_font_extents_t	fontExtents;
 		cairo_font_weight_t	weight;
 		cairo_font_slant_t	slant;
 		int					fontSize;
-		char					*fontName=NULL;
+		std::string			fontName;
 		double				maxTextHeight;
 
 		bool					isActive;

@@ -90,13 +90,13 @@ bool timerCB(LFSTK_applicationClass *p,void* ud)
 	if(scwindow!=NULL)
 		updateSlider();
 
-	if((launcherContextWindow->isVisible==false) && (launcherContextWindow->popupFromGadget!=NULL))
+	if((gotLaunchers==true) && (launcherContextWindow->isVisible==false) && (launcherContextWindow->popupFromGadget!=NULL))
 		{
 			launcherExitCB(launcherContextWindow->popupFromGadget,(void*)1);
 			launcherContextWindow->popupFromGadget=NULL;
 		}
 
-	if((popActionWindow->isVisible==true) && (inSomeWindow==false) && (popActionWindow->inWindow==false))
+	if((popActionWindow!=NULL) && (popActionWindow->isVisible==true) && (inSomeWindow==false) && (popActionWindow->inWindow==false))
 		popActionListExitCB(NULL,(void*)1);
 
 	if(useTaskBar==true)

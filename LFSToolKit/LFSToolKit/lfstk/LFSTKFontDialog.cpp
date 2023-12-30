@@ -25,12 +25,6 @@ const char	*fontTest=
 
 LFSTK_fontDialogClass::~LFSTK_fontDialogClass()
 {
-	for(int j=0;j<this->maxFonts;j++)
-		{
-			freeAndNull(&this->fontsAZ[j]);
-		}
-	delete[] this->fontsAZ;
-	freeAndNull(&this->fontData.fontString);
 	delete this->dialog;
 }
 
@@ -47,7 +41,8 @@ void LFSTK_fontDialogClass::buildFontString(void)
 	const char	*italicstr="";
 	const char	*dobold="b";
 	const char	*doitalic="i";
-	char		*formatstring=NULL;
+	char			*formatstring=NULL;
+
 	this->fontData.bold=false;
 	this->fontData.italic=false;
 
@@ -67,15 +62,13 @@ void LFSTK_fontDialogClass::buildFontString(void)
 	this->fontData.fontSize=atoi(this->fontsize->LFSTK_getCStr());
 	this->selectedFontNumber=fontlist->LFSTK_getCurrentListItem();
 
-	if(this->fontData.fontString!=NULL)
-		freeAndNull(&this->fontData.fontString);
-	asprintf(&this->fontData.fontString,"%s:size=%s%s%s",this->fontsAZ[this->selectedFontNumber],this->fontsize->LFSTK_getCStr(),boldstr,italicstr);
+	this->fontData.fontString=this->fontsAZV.at(this->selectedFontNumber)+":size="+this->fontsize->LFSTK_getCStr()+boldstr+italicstr;
+
 	asprintf(&formatstring,"ns%s%s",dobold,doitalic);
-	this->preview->LFSTK_setCairoFontDataParts(formatstring,this->fontsAZ[selectedFontNumber],atoi(this->fontsize->LFSTK_getCStr()));
+	this->preview->LFSTK_setCairoFontDataParts(formatstring,this->fontsAZV.at(selectedFontNumber).c_str(),atoi(this->fontsize->LFSTK_getCStr()));
 	this->preview->LFSTK_upDateText();
 
-	this->fontData.fontString;
-	this->fontData.fontName=this->fontsAZ[selectedFontNumber];
+	this->fontData.fontName=this->fontsAZV.at(selectedFontNumber).c_str();
 	this->fontData.isValid=true;
 	freeAndNull(&formatstring);
 	this->preview->LFSTK_clearWindow();
@@ -117,100 +110,38 @@ const fontDataStruct* LFSTK_fontDialogClass::LFSTK_getFontData(bool rebuild)
 */
 void LFSTK_fontDialogClass::loadFontStrings(void)
 {
-	unsigned	fontcnt=0;
-	FILE		*fp;
-	char		*command;
-	char		*out=NULL;
 	char		line[1024];
+	FILE		*fp;
 
-	line[0]=0;
-
-	out=this->wc->app->globalLib->LFSTK_oneLiner("%s","fc-list : family|awk -F, '{print $1}'|sort -u|wc -l");
-	if(out==NULL)
-		fontcnt=0;
-	else
-		{
-			fontcnt=atoi(out);
-			freeAndNull(&out);
-		}
-
-	fontsAZ=new char*[fontcnt];
-	maxFonts=fontcnt;
-
-	asprintf(&command,"%s","fc-list : family|awk -F, '{print $1}'|sort -ur");
-	fp=popen(command, "r");
+	fp=popen("fc-list : family|awk -F, '{print $1}'|sort -u","r");
 	if(fp!=NULL)
 		{
 			while(fgets(line,1024,fp))
 				{
-					fontcnt--;
 					line[strlen(line)-1]=0;
-					fontsAZ[fontcnt]=strdup(line);
+					this->fontsAZV.push_back(std::string(line));
 				}
 			pclose(fp);
 		}
-	freeAndNull(&command);
+	this->maxFonts=this->fontsAZV.size();
 }
 
 /*
 * Private parse fontstring.
 */
-void LFSTK_fontDialogClass::parseFontString(const char *fontstr)
+void LFSTK_fontDialogClass::parseFontString(std::string fontstr)
 {
-	char	*string=strdup(fontstr);
-	char	*str=NULL;
-	char	*fontsize=NULL;
-	bool	found=false;
-	char	*font=NULL;
-	bool	bold=false;
-	bool	italic=false;;
+	std::vector<std::string>	tokenstrings;
 
-	str=strtok(string,":");
-	while(1)
-		{
-			if(str==NULL)
-				break;
-			if(strcasecmp(str,"bold")==0)
-				{
-					bold=true;
-					found=true;
-				}
-			if(strcasecmp(str,"italic")==0)
-				{
-					italic=true;
-					found=true;
-				}
-			if(strcasestr(str,"size=")!=NULL)
-				{
-					fontsize=strndup(&str[5],strlen(str)-5);
-					found=true;
-				}
-			if(found==false)
-				{
-					font=strdup(str);
-					found=true;
-				}
+	tokenstrings=LFSTK_UtilityClass::LFSTK_strTok(fontstr,":");
 
-			str=strtok(NULL,":");
-		}
-
-	if(found==true)
-		{
-			if(font!=NULL)
-				{
-					this->fontlist->LFSTK_findByLabel(font);
-					freeAndNull(&font);
-				}
-			if(fontsize!=NULL)
-				{
-					this->fontsize->LFSTK_setBuffer(fontsize);
-					freeAndNull(&fontsize);
-				}
-			this->boldcheck->LFSTK_setValue(bold);
-			this->italiccheck->LFSTK_setValue(italic);
-		}
+	this->fontlist->LFSTK_findByLabel(tokenstrings.at(0).c_str());
+	this->boldcheck->LFSTK_setValue(tokenstrings.at(2).c_str());
+	this->italiccheck->LFSTK_setValue(tokenstrings.at(3).c_str());
+	this->fontsize->LFSTK_setBuffer(tokenstrings.at(1).substr(5,(tokenstrings.at(1).length()-5)).c_str());
 	this->LFSTK_getFontData(true);
-	freeAndNull(&string);
+
+	return;
 }
 
 /*
@@ -220,8 +151,8 @@ void LFSTK_fontDialogClass::parseFontString(const char *fontstr)
 */
 bool LFSTK_fontDialogClass::LFSTK_showDialog(const char* fontstring)
 {
-	bool	mainLoop=true;
-	XEvent	event;
+	bool				mainLoop=true;
+	XEvent			event;
 	geometryStruct	geomfont;
 	pointStruct		pt;
 
@@ -282,9 +213,6 @@ void LFSTK_fontDialogClass::buildDialog(void)
 
 	windowInitStruct	*win;//TODO//
 	win=this->wc->app->LFSTK_getDefaultWInit();
-	//new windowInitStruct;
-	//win->app=this->wc->app;
-	//win->loadVars=true;
 	win->w=DIALOGWIDTH;
 	win->h=DIALOGHITE;
 	win->wc=this->wc;
@@ -295,13 +223,14 @@ void LFSTK_fontDialogClass::buildDialog(void)
 	this->dialog->autoLabelColour=false;
 	this->dialog->LFSTK_reloadGlobals();	
 	this->dialog->LFSTK_clearWindow();
+
 //list
 	this->fontlist=new LFSTK_listGadgetClass(this->dialog,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5);
 	this->loadFontStrings();
 	
 	for(int j=0;j<this->maxFonts;j++)
 		{
-			ls.label=strdup(this->fontsAZ[j]);
+			ls.label=strdup(this->fontsAZV.at(j).c_str());
 			ls.imageType=NOTHUMB;
 			fontlist->LFSTK_appendToList(ls);
 		}
@@ -395,8 +324,8 @@ LFSTK_fontDialogClass::LFSTK_fontDialogClass(LFSTK_windowClass* parentwc,const c
 	else
 		this->useTile=false;
 
-	fontData.fontString=NULL;
-	fontData.fontName=NULL;
+	fontData.fontString="";
+	fontData.fontName="";
 	fontData.bold=false;
 	fontData.italic=false;
 	fontData.isValid=false;

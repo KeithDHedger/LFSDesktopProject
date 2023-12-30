@@ -19,5 +19,6 @@ LIBS =			$(X11_LIBS) \
 				$(CAIRO_LIBS) \
 				$(LFSTK_LIBS) \
 				$(LIBGLIB_LIBS) \
-				-lm
+				-lm \
+				-lstdc++fs
 

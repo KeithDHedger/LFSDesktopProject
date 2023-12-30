@@ -136,7 +136,7 @@ int main(int argc, char **argv)
 
 	apc=new LFSTK_applicationClass();
 
-	command=apc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str());
+	command=strdup(apc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str()).c_str());//tODO//
 	key=atoi(command);
 	freeAndNull(&command);
 
@@ -253,8 +253,8 @@ Atom                    xa_prop[3];
 	makeDiskButtons();
 	makeFileButtons(false);
 	updateMounted();
-	diskWatch=apc->globalLib->LFSTK_oneLiner("%s","ls -1 /dev/disk/by-partuuid|md5sum|awk '{print $1}'");
-	desktopWatch=apc->globalLib->LFSTK_oneLiner("ls -1 '%s'|md5sum|awk '{print $1}'",desktopPath);
+	diskWatch=strdup(apc->globalLib->LFSTK_oneLiner("%s","ls -1 /dev/disk/by-partuuid|md5sum|awk '{print $1}'").c_str());//TODO//
+	desktopWatch=strdup(apc->globalLib->LFSTK_oneLiner("ls -1 '%s'|md5sum|awk '{print $1}'",desktopPath).c_str());//TODO//
 	wc->LFSTK_initDnD(true);
 	wc->LFSTK_setWindowDropCallBack(windowDrop,(void*)0xdeadbeef);
 	wc->LFSTK_showWindow(true);

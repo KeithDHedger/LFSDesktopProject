@@ -27,7 +27,6 @@ LFSTK_menuClass::~LFSTK_menuClass()
 
 	delete this->subwindows;
 	LFSTK_freeMenus(this->mainMenu,this->mainMenuCnt);
-	freeAndNull(&this->fontName);
 }
 
 LFSTK_menuClass::LFSTK_menuClass(LFSTK_windowClass *wc,int x,int y,unsigned w,unsigned h)
@@ -392,7 +391,6 @@ void LFSTK_menuClass::LFSTK_addMainMenus(menuStruct **menus,int menucnt)
 	else
 		this->isScrollable=false;
 	win->wc=this->parentwc;
-	//win->windowType="_NET_WM_WINDOW_TYPE_MENU";
 	win->windowType=this->parentwc->app->appAtomsHashed.at(this->parentwc->app->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
 
 	win->decorated=false;
@@ -460,56 +458,31 @@ void LFSTK_menuClass::LFSTK_freeMenus(menuStruct **menus,int menucnt)
 */
 int	LFSTK_menuClass::LFSTK_getTextWidthForFont(const char *text)
 {
-	cairo_text_extents_t	returnextents;
+	cairo_text_extents_t		returnextents;
 	cairo_t					*cr=NULL;
 	cairo_surface_t			*sfc=NULL;
-	char					*string=strdup(this->fontDesc);
-	char					*str;
-	bool					found=false;
+	std::vector<std::string>	tokenstrings;
 
-	weight=CAIRO_FONT_WEIGHT_NORMAL;
-	slant=CAIRO_FONT_SLANT_NORMAL;
-	fontSize=10;
+	this->weight=CAIRO_FONT_WEIGHT_NORMAL;
+	this->slant=CAIRO_FONT_SLANT_NORMAL;
+	this->fontSize=10;
+	this->fontName="sans";
 
-	if(this->fontName!=NULL)
-		freeAndNull(&this->fontName);
-
-	this->fontName=strdup("sans");
-	str=strtok(string,":");
-	while(1)
+	tokenstrings=LFSTK_UtilityClass::LFSTK_strTok(this->fontDesc,":");
+	for(int j=0;j<tokenstrings.size();j++)
 		{
-			found=false;
-			if(str==NULL)
-				break;
-
-			if(strcasecmp(str,"bold")==0)
-				{
-					this->weight=CAIRO_FONT_WEIGHT_BOLD;
-					found=true;
-				}
-			if(strcasecmp(str,"italic")==0)
-				{
-					this->slant=CAIRO_FONT_SLANT_ITALIC;
-					found=true;
-				}
-			if(strcasestr(str,"size=")!=NULL)
-				{
-					this->fontSize=atoi(&str[5]);
-					found=true;
-				}
-
-			if(found==false)
-				{
-					if(this->fontName!=NULL)
-						freeAndNull(&this->fontName);
-					this->fontName=strdup(str);
-				}
-			str=strtok(NULL,":");
+			if(tokenstrings.at(j).compare("bold")==0)
+				this->weight=CAIRO_FONT_WEIGHT_BOLD;
+			if(tokenstrings.at(j).compare("italic")==0)
+				this->slant=CAIRO_FONT_SLANT_ITALIC;
+			if(tokenstrings.at(j).substr(0,5).compare("size=")==0)
+				this->fontSize=std::stoi(tokenstrings.at(j).substr(5,(tokenstrings.at(j).length()-5)),nullptr,10);
 		}
-	freeAndNull(&string);
+	if(tokenstrings.size()>0)
+		this->fontName=tokenstrings.at(0);
 
 	this->parentwc->globalLib->LFSTK_setCairoSurface(this->parentwc->app->display,this->parentwc->window,this->parentwc->app->visual,&sfc,&cr,1,1);
-	cairo_select_font_face(cr,this->fontName,this->slant,this->weight);
+	cairo_select_font_face(cr,this->fontName.c_str(),this->slant,this->weight);
 	cairo_set_font_size(cr,this->fontSize);
 	cairo_text_extents(cr,text,&returnextents);
 

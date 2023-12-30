@@ -41,7 +41,7 @@ void LFSTK_toolWindowClass::windowClassInitCommon(windowInitStruct *wi)
 	this->app=wi->app;
 	this->setWindowGeom(wi->x,wi->y,wi->w,wi->h,WINDSETALL);
 
-	this->fontString=NULL;
+	this->fontString="";
 	this->isActive=false;
 	this->acceptDnd=false;
 

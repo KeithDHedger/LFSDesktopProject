@@ -28,14 +28,6 @@
 
 LFSTK_fileDialogClass::~LFSTK_fileDialogClass(void)
 {
-	if(this->currentDir!=NULL)
-		freeAndNull(&this->currentDir);
-	if(this->currentFile!=NULL)
-		freeAndNull(&this->currentFile);
-	if(this->currentPath!=NULL)
-		freeAndNull(&this->currentPath);
-
-	freeAndNull(&this->filter);
 	cairo_surface_destroy(this->fileImage);
 	cairo_surface_destroy(this->folderImage);
 	cairo_surface_destroy(this->imageImage);
@@ -49,18 +41,19 @@ LFSTK_fileDialogClass::~LFSTK_fileDialogClass(void)
 
 void LFSTK_fileDialogClass::cleanDirPath(void)
 {
-	char	*rp;
+	char		*rp;
 
-	rp=realpath(this->currentDir,NULL);
-	if(this->currentDir!=NULL)
-		freeAndNull(&this->currentDir);
+	rp=realpath(this->currentDir.c_str(),NULL);
+	//if(this->currentDir!=NULL)
+	//	freeAndNull(&this->currentDir);
 	this->currentDir=rp;
 }
 
 void LFSTK_fileDialogClass::getFileList(void)
 {
-	char							imagepath[PATH_MAX];
-	listLabelStruct					ls;
+	char				imagepath[PATH_MAX];
+	listLabelStruct	ls;
+
 	this->fc->LFSTK_setDepth(1,1);
 	if(this->dialogType==FOLDERDIALOG)
 		this->fc->LFSTK_setFindType(FOLDERTYPE);
@@ -69,7 +62,7 @@ void LFSTK_fileDialogClass::getFileList(void)
 	this->fc->LFSTK_setFullPath(true);
 	this->fc->LFSTK_setIgnoreBroken(false);
 	this->fc->LFSTK_setIncludeHidden(this->showHidden);
-	this->fc->LFSTK_findFiles(this->currentDir,false);
+	this->fc->LFSTK_findFiles(this->currentDir.c_str(),false);
 	this->fc->LFSTK_setSort(false);
 	this->fc->LFSTK_sortByTypeAndName();
 
@@ -160,25 +153,22 @@ bool LFSTK_fileDialogClass::LFSTK_getRequestType(void)
 *
 * \param const char *path to folder.
 */
-void LFSTK_fileDialogClass::LFSTK_setWorkingDir(const char *dir)
+void LFSTK_fileDialogClass::LFSTK_setWorkingDir(std::string dir)
 {
-	char		*holddir;//TODO//
+	std::string	holddir;
 //in case dir doesnt exist
-	if(access(dir,F_OK)!=0)
-		holddir=strdup(this->wc->app->userHome.c_str());//TODO//
+	if(!std::filesystem::exists(std::filesystem::status(dir)))
+		holddir=this->wc->app->userHome;
 //in case dir=this->currentDir
 	else
-		holddir=strdup(dir);
-
-	if(this->currentDir!=NULL)
-		freeAndNull(&this->currentDir);
+		holddir=dir;
 
 	this->currentDir=holddir;
 	this->cleanDirPath();
 
 	this->getFileList();
 	this->fileListGadget->LFSTK_clearWindow();
-	this->dirEdit->LFSTK_setBuffer(this->currentDir);
+	this->dirEdit->LFSTK_setBuffer(this->currentDir.c_str());
 }
 
 /**
@@ -187,7 +177,7 @@ void LFSTK_fileDialogClass::LFSTK_setWorkingDir(const char *dir)
 * \return const char *path to folder.
 * \note Don't free.
 */
-const char	*LFSTK_fileDialogClass::LFSTK_getCurrentDir(void)
+std::string LFSTK_fileDialogClass::LFSTK_getCurrentDir(void)
 {
 	return(this->currentDir);
 }
@@ -198,7 +188,7 @@ const char	*LFSTK_fileDialogClass::LFSTK_getCurrentDir(void)
 * \return const char *filename.
 * \note Don't free.
 */
-const char	*LFSTK_fileDialogClass::LFSTK_getCurrentFile(void)
+std::string LFSTK_fileDialogClass::LFSTK_getCurrentFile(void)
 {
 	return(this->currentFile);
 }
@@ -209,7 +199,7 @@ const char	*LFSTK_fileDialogClass::LFSTK_getCurrentFile(void)
 * \return const char *path to file.
 * \note Don't free.
 */
-const char *LFSTK_fileDialogClass::LFSTK_getCurrentPath(void)
+std::string LFSTK_fileDialogClass::LFSTK_getCurrentPath(void)
 {
 	return(this->currentPath);
 }
@@ -225,17 +215,14 @@ const char *LFSTK_fileDialogClass::LFSTK_getCurrentPath(void)
 LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const char *label,const char *startdir,bool type,const char *recentname)
 {
 	int					hite=600;
-	LFSTK_labelClass	*spacer;
+	LFSTK_labelClass		*spacer;
 	int					midprev;
 	int					yoffset=BORDER+PREVIEWWIDTH;
 	int					yspacing=0;
 	int					dwidth=DIALOGWIDTH+PREVIEWWIDTH;
-
 	this->wc=parentwc;
 	this->dialog=NULL;
 	this->fileListCnt=0;
-	this->currentFile=NULL;
-	this->currentPath=NULL;
 	this->fileImage=parentwc->globalLib->LFSTK_createSurfaceFromPath(DOCSPNG);
 	this->folderImage=parentwc->globalLib->LFSTK_createSurfaceFromPath(FOLDERPNG);
 	this->imageImage=parentwc->globalLib->LFSTK_createSurfaceFromPath(IMAGEPNG);
@@ -250,7 +237,7 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	if(startdir==NULL)
 		this->LFSTK_getLastFolder();
 	else
-		this->currentDir=strdup(startdir);
+		this->currentDir=startdir;
 
 	this->dialogType=type;
 	if(type==FOLDERDIALOG)
@@ -259,10 +246,7 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	windowInitStruct	*win;
 
 	win=this->wc->app->LFSTK_getDefaultWInit();
-	//new windowInitStruct;//TODO//
-	//win->app=parentwc->app;
 	win->windowName=label;
-	//win->loadVars=true;
 	win->w=dwidth;
 	win->h=hite;
 	win->wc=parentwc;
@@ -292,7 +276,7 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 
 //edit box
 	yspacing+=GADGETHITE*(FFILEHITE+1);
-	this->dirEdit=new LFSTK_lineEditClass(this->dialog,this->currentDir,BORDER,yspacing,dwidth-(BORDER*2),GADGETHITE,NorthWestGravity);
+	this->dirEdit=new LFSTK_lineEditClass(this->dialog,this->currentDir.c_str(),BORDER,yspacing,dwidth-(BORDER*2),GADGETHITE,NorthWestGravity);
 	yspacing+=GADGETHITE+FGAP;
 
 //butons
@@ -341,12 +325,14 @@ bool LFSTK_fileDialogClass::LFSTK_isValid(void)
 
 	if(this->dialogType==FILEDIALOG)
 		{
-			if((this->currentFile!=NULL) && (this->currentDir!=NULL))
+			//if((this->currentFile!=NULL) && (this->currentDir!=NULL))
+			if((this->currentFile!="") && (this->currentDir!=""))
 				return(true);
 		}
 	else
 		{
-			if(this->currentDir!=NULL)
+			//if(this->currentDir!=NULL)
+			if(this->currentDir!="")
 				return(true);
 		}
 	return(false);
@@ -376,7 +362,7 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(const char *dir,const char *tit
 * \return const char*
 * \note Return is owned by TK don't free.
 */
-const char* LFSTK_fileDialogClass::LFSTK_getCurrentFileSelection(void)
+std::string LFSTK_fileDialogClass::LFSTK_getCurrentFileSelection(void)
 {
 	return(this->fileListGadget->LFSTK_getSelectedLabel());
 }
@@ -386,10 +372,10 @@ const char* LFSTK_fileDialogClass::LFSTK_getCurrentFileSelection(void)
 */
 void LFSTK_fileDialogClass::setPreviewData(bool fromlist)
 {
-	char				*mt=NULL;
-	char				*statdata=NULL;
-	fileInformation	info;
-	std::string		previewlabel="";
+	fileInformation						info;
+	std::string							previewlabel="";
+	std::experimental::filesystem::path	filepath;
+	std::stringstream					infostream;
 
 	if(this->dialogType!=FILEDIALOG)
 		return;
@@ -408,24 +394,22 @@ void LFSTK_fileDialogClass::setPreviewData(bool fromlist)
 		}
 
 	if(fromlist==true)
-		asprintf(&mt,"%s/%s",this->currentDir,this->LFSTK_getCurrentFileSelection());
+		filepath=this->currentDir+"/"+this->LFSTK_getCurrentFileSelection();
 	else
-		asprintf(&mt,"%s",this->dirEdit->LFSTK_getCStr());
+		filepath=this->dirEdit->LFSTK_getBuffer();
 
-	this->wc->globalLib->LFSTK_getFileInfo(mt,&info);
-
+	this->wc->globalLib->LFSTK_getFileInfo(filepath.c_str(),&info);
 	this->previewMimeType->LFSTK_setLabel(info.mimeType.c_str());
 	if((info.mimeType.compare("image/jpeg")==0) || (info.mimeType.compare("image/png")==0))
-		this->tux->LFSTK_setImageFromPath(mt,PRESERVEASPECT,true);
+		this->tux->LFSTK_setImageFromPath(filepath.c_str(),PRESERVEASPECT,true);
 	else
 		this->tux->LFSTK_setImageFromPath(info.iconPath.c_str(),PRESERVEASPECT,true);
 
-	this->previewFileName->LFSTK_setLabel(this->LFSTK_getCurrentFileSelection());
+	this->previewFileName->LFSTK_setLabel(this->LFSTK_getCurrentFileSelection().c_str());
 	previewlabel+="Size:"+std::to_string(info.fileSize);
 	this->previewSize->LFSTK_setLabel(previewlabel.c_str());
-	asprintf(&statdata,"Mode:%o",info.fileMode);
-	this->previewMode->LFSTK_setLabel(statdata);
-	freeAndNull(&statdata);
+    infostream << "Mode:"<<std::setfill('0') << std::setw(3)<<std::oct << info.fileMode;
+    this->previewMode->LFSTK_setLabel(infostream.str().c_str());
 
 	if(info.isLink==true)
 		this->previewIsLink->LFSTK_setLabel("Symlink");
@@ -435,7 +419,6 @@ void LFSTK_fileDialogClass::setPreviewData(bool fromlist)
 	this->wc->LFSTK_clearWindow();
 	this->tux->LFSTK_clearWindow();
 	this->wc->LFSTK_clearWindow();
-	freeAndNull(&mt);
 }
 
 /**
@@ -443,14 +426,9 @@ void LFSTK_fileDialogClass::setPreviewData(bool fromlist)
 */
 void LFSTK_fileDialogClass::LFSTK_getLastFolder(void)
 {
-	if(this->currentDir!=NULL)
-		freeAndNull(&this->currentDir);
-	this->currentDir=this->wc->app->globalLib->LFSTK_oneLiner("grep -i '%s' '%s/dialoglast.rc'|awk -F= '{print $NF}'",this->recentsName,this->wc->app->configDir.c_str());
-	if(strlen(this->currentDir)<2)
-		{
-			freeAndNull(&this->currentDir);
-			this->currentDir=strdup(this->wc->app->userHome.c_str());//TODO//
-		}
+	this->currentDir=this->wc->app->globalLib->LFSTK_oneLiner(std::string("grep -i '%s' '%s/dialoglast.rc' 2>/dev/null|awk -F= '{print $NF}'"),this->recentsName.c_str(),this->wc->app->configDir.c_str());
+	if(this->currentDir.length()<2)
+		this->currentDir=strdup(this->wc->app->userHome.c_str());//TODO//
 }
 
 /**
@@ -482,8 +460,8 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 	this->apply=false;
 	if(this->dialog!=NULL)
 		{
-			this->dirEdit->LFSTK_setBuffer(this->currentDir);
-			this->LFSTK_setWorkingDir(this->currentDir);
+			this->dirEdit->LFSTK_setBuffer(this->currentDir.c_str());
+			this->LFSTK_setWorkingDir(this->currentDir.c_str());
 			this->dialog->LFSTK_showWindow();
 			this->dialog->LFSTK_setKeepAbove(true);
 			this->dialog->LFSTK_setTransientFor(this->wc->window);
@@ -529,26 +507,23 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 								if(ml->gadget==this->buttonHidden)
 									{
 										this->showHidden=!this->showHidden;
-										this->LFSTK_setWorkingDir(this->currentDir);
+										this->LFSTK_setWorkingDir(this->currentDir.c_str());
 										break;
 									}
 
 								if(ml->gadget==this->buttonApply)
 									{
-										char	*buf=NULL;
-										char	*rp=NULL;
-										asprintf(&buf,"%s/%s",this->dirEdit->LFSTK_getCStr(),this->fileListGadget->LFSTK_getSelectedLabel());
-										if((this->isADir(buf)==true) && (this->dialogType==FILEDIALOG))
+										std::stringstream	infostream;
+										infostream << this->dirEdit->LFSTK_getBuffer()<<"/"<<this->fileListGadget->LFSTK_getSelectedLabel();
+										if((this->isADir(infostream.str().c_str())==true) && (this->dialogType==FILEDIALOG))
 											{
 												this->apply=false;
-												this->LFSTK_setWorkingDir(buf);
-												freeAndNull(&buf);
+												this->LFSTK_setWorkingDir(infostream.str().c_str());
 												break;
 											}
 										
 										if(this->dialogType==FOLDERDIALOG)
 											{
-												freeAndNull(&buf);
 												this->apply=true;
 												this->mainLoop=false;
 												this->setFileData();
@@ -557,7 +532,6 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 										this->apply=true;
 										this->setFileData();
 										this->mainLoop=false;
-										freeAndNull(&buf);
 										break;
 									}
 
@@ -570,7 +544,6 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 								break;
 						}
 				}
-
 			this->dialog->LFSTK_hideWindow();
 		}
 }
@@ -580,9 +553,8 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 */
 void LFSTK_fileDialogClass::LFSTK_setNameFilter(const char *filt)
 {
-	freeAndNull(&this->filter);
 	if(filt!=NULL)
-		this->filter=strdup(filt);
+		this->filter=filt;
 }
 
 /**
@@ -590,34 +562,24 @@ void LFSTK_fileDialogClass::LFSTK_setNameFilter(const char *filt)
 */
 void LFSTK_fileDialogClass::setFileData(void)
 {
-	char	*filestr;
-	char	*lastdir;
-
+	std::experimental::filesystem::path	filepath;
+	std::string							command;
 	if(this->apply==true)
 		{
 //dir
-			filestr=strdup(this->dirEdit->LFSTK_getCStr());
-			if(this->currentDir!=NULL)
-				freeAndNull(&this->currentDir);
-			if(this->dialogType==FILEDIALOG)
-				this->currentDir=strdup(dirname(filestr));
-			else
-				this->currentDir=strdup(filestr);
-			freeAndNull(&filestr);
-//file
-			filestr=strdup(this->dirEdit->LFSTK_getCStr());
-			if(this->currentFile!=NULL)
-				freeAndNull(&this->currentFile);
-			this->currentFile=strdup(basename(filestr));
-			freeAndNull(&filestr);
-//path
-			if(this->currentPath!=NULL)
-				freeAndNull(&this->currentPath);
-			this->currentPath=strdup(this->dirEdit->LFSTK_getCStr());
+			filepath=this->dirEdit->LFSTK_getBuffer();
 
-			asprintf(&lastdir,"sed -i '/%s=/d' '%s/dialoglast.rc';echo '%s=%s'|cat - '%s/dialoglast.rc'|sort -uo '%s/dialoglast.rc'",this->recentsName,this->wc->app->configDir.c_str(),this->recentsName,this->currentDir,this->wc->app->configDir.c_str(),this->wc->app->configDir.c_str());
-			system(lastdir);
-			freeAndNull(&lastdir);
+			if(this->dialogType==FILEDIALOG)
+				this->currentDir=filepath.parent_path();
+			else
+				this->currentDir=filepath.string();
+//file
+			this->currentFile=filepath.filename();
+//path
+			this->currentPath=this->dirEdit->LFSTK_getBuffer();
+
+			command="sed -i '/"+this->recentsName+"=/d' '"+this->wc->app->configDir+"/dialoglast.rc';echo '"+this->recentsName+"="+this->currentDir+"'|cat - '"+this->wc->app->configDir+"/dialoglast.rc'|sort -uo '"+this->wc->app->configDir+"/dialoglast.rc'";//TODO//
+			system(command.c_str());
 		}
 }
 
@@ -640,21 +602,19 @@ bool LFSTK_fileDialogClass::isADir(const char *path)
 
 bool LFSTK_fileDialogClass::select(void *object,void* userdata)
 {
-	char	buf[PATH_MAX];
-	char	*rp;
-	char	rpath[PATH_MAX];
+	std::string				realpath;
+	LFSTK_fileDialogClass	*fd=static_cast<LFSTK_fileDialogClass*>(userdata);
+	LFSTK_listGadgetClass	*list=static_cast<LFSTK_listGadgetClass*>(object);
 
-	LFSTK_fileDialogClass *fd=static_cast<LFSTK_fileDialogClass*>(userdata);
-	LFSTK_listGadgetClass *list=static_cast<LFSTK_listGadgetClass*>(object);
-	
-	snprintf(buf,PATH_MAX,"%s/%s",fd->LFSTK_getCurrentDir(),list->LFSTK_getSelectedLabel());
-	rp=realpath(buf,rpath);
-	if(fd->isADir(buf)==false)
-	fd->dirEdit->LFSTK_setBuffer(rp);
+	realpath=fd->wc->globalLib->LFSTK_getRealPath(fd->LFSTK_getCurrentDir()+"/"+list->LFSTK_getSelectedLabel());
+
+	if(fd->isADir(realpath.c_str())==false)
+		fd->dirEdit->LFSTK_setBuffer(realpath.c_str());
+
 	fd->setPreviewData(true);
 	if(list->isDoubleClick==true)
 		{											
-			fd->dirEdit->LFSTK_setBuffer(rp);
+			fd->dirEdit->LFSTK_setBuffer(realpath.c_str());
 			if(fd->isADir(fd->dirEdit->LFSTK_getCStr())==true)
 				{
 					fd->apply=false;

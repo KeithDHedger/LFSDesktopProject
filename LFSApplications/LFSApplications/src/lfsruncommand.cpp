@@ -94,7 +94,7 @@ int main(int argc, char **argv)
 
 	list=list=new LFSTK_listGadgetClass(wc,"",BORDER,sy,DIALOGWIDTH-(BORDER*2)-LGAP,LISTHITE);
 
-	thist=wc->globalLib->LFSTK_oneLiner("head -n1 '%s/%s'",apc->configDir.c_str(),"command.max");
+	thist=strdup(wc->globalLib->LFSTK_oneLiner("head -n1 '%s/%s'",apc->configDir.c_str(),"command.max").c_str());//TODO//
 
 	maxHistory=MAXHISTORY;
 	if((thist!=NULL) && (thist[0]!=0))

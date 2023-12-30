@@ -178,14 +178,14 @@ int addSlider(int x,int y,int grav,bool fromleft)
 	int					w,h;
 	char					*vol;
 	bool					direction=false;
-	char					*label=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"%s \" $4}'|tr -d '[]'",SLIDERLABEL);
+	char					*label=strdup(mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"%s \" $4}'|tr -d '[]'",SLIDERLABEL).c_str());//TODO//
 
 	getAlsaVolume(false,-1);
 	setSizes(&xpos,&ypos,&width,&height,&iconsize,&thisgrav,fromleft);
 	
 	volumeButton=new LFSTK_toggleButtonClass(mainwind,label,xpos,ypos,width,height,thisgrav);
 	volumeButton->LFSTK_setToggleStyle(TOGGLENORMAL);
-	volumeButton->LFSTK_setMouseCallBack(NULL,sliderCB,(void*)volumeButton->LFSTK_getLabel());
+	volumeButton->LFSTK_setMouseCallBack(NULL,sliderCB,(void*)volumeButton->LFSTK_getLabel().c_str());
 
 	setGadgetDetails(volumeButton);//TODO//
 
@@ -194,7 +194,7 @@ int addSlider(int x,int y,int grav,bool fromleft)
 	iconL=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"volume-low","");
 	iconZ=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"volume-zero","");
 
-	vol=mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print $3}'");
+	vol=strdup(mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print $3}'").c_str());//TODO//
 	
 	win=new windowInitStruct;
 	win->x=100;

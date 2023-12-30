@@ -178,14 +178,15 @@ bool windowDrop(LFSTK_windowClass *lwc,void* ud)
 
 int main(int argc,char **argv)
 {
-	char				*env;
-	XEvent				event;
-	int					psize;
-	int					thold;
-	int					px,py;
-	timeval				tv={0,0};
-	int					key=666;
-	int					refreshmulti=0;
+	char			*env;
+	std::string	keystring;
+	XEvent		event;
+	int			psize;
+	int			thold;
+	int			px,py;
+	timeval		tv={0,0};
+	int			key=666;
+	int			refreshmulti=0;
 	
 	prefs.prefsMap={
 						{prefs.LFSTK_hashFromKey("panelheight"),{TYPEINT,"panelheight","",false,0}},
@@ -232,9 +233,8 @@ int main(int argc,char **argv)
 			NET_WM_NAME=XInternAtom(mainwind->app->display,"_NET_WM_NAME",False);
 			UTF8_STRING=XInternAtom(mainwind->app->display,"UTF8_STRING",False);
 
-			env=mainwind->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str());
-			key=atoi(env);
-			freeAndNull(&env);
+			keystring=mainwind->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str());
+			key=std::stoi(keystring,nullptr,10);
 
 			apc->LFSTK_setTimer(refreshRate);
 			apc->LFSTK_setTimerCallBack(timerCB,NULL);

@@ -87,7 +87,7 @@ class LFSTK_windowClass
 		const geometryStruct	*LFSTK_getWindowGeom(void);
 		void					setWindowGeom(int x,int y,int h,int w,setWindowGeomFlags flags);
 
-		void					LFSTK_setFontString(const char *s);
+		void					LFSTK_setFontString(std::string s);
 		void					LFSTK_setFontColourName(int p,const char *colour);
 		void					LFSTK_setWindowColourName(int p,const char* colour);
 		void					LFSTK_setDecorated(bool isDecorated);
@@ -141,7 +141,7 @@ class LFSTK_windowClass
 		Visual				*visual;
 		Colormap				cmap;
 
-		char					*fontString=NULL;
+		std::string			fontString;
 		char					*fontColourNames[MAXCOLOURS]={NULL,};
 		colourStruct			windowColourNames[MAXCOLOURS]={{},};//   {{NULL,0,{0,0,0,0}},};
 		bool					autoLabelColour=false;

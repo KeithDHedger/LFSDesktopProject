@@ -131,7 +131,7 @@ bool menuCB(void *p,void* ud)
 	char		*buffer=(char*)malloc(PATH_MAX);
 
 	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
-	const char *label=static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel();
+	const char *label=static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().c_str();
 	freeAndNull(&themePath);
 	themePath=strdup(label);
 
@@ -486,7 +486,7 @@ bool selectfile(void *object,void* ud)
 			fd->LFSTK_setBuffer(buffer);
 			free(buffer);
 			free(wd);
-			wd=strdup(tileDialog->LFSTK_getCurrentDir());			
+			wd=strdup(tileDialog->LFSTK_getCurrentDir().c_str());			
 		}
 	return(true);
 }
@@ -576,10 +576,10 @@ bool coleditCB(void *p,void* ud)
 	if((ed->mouseEvent->state & Button3Mask)!=0)
 		{
 			char *col=NULL;
-#ifdef _ENABLEDEBUG_
-			col=apc->globalLib->LFSTK_oneLiner("LD_LIBRARY_PATH=../LFSToolKit/LFSToolKit/app/.libs LFSApplications/app/lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr());
+#ifdef _ENABLEDEBUG_//TODO//
+			col=strdup(apc->globalLib->LFSTK_oneLiner("LD_LIBRARY_PATH=../LFSToolKit/LFSToolKit/app/.libs LFSApplications/app/lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr()).c_str());
 #else
-			col=apc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr());
+			col=strdup(apc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr()).c_str());
 #endif
 			if(strlen(col)>0)
 				ed->LFSTK_setBuffer(col);
@@ -597,7 +597,7 @@ int main(int argc, char **argv)
 	int			c=0;
 	int			option_index=0;
 	int			key=666;
-	char		*command;
+	std::string	command;
 	const char	*shortOpts="h?w:";
 	option		longOptions[]=
 		{
@@ -631,8 +631,8 @@ int main(int argc, char **argv)
 	wc=apc->mainWindow;
 
 	command=apc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str());
-	key=atoi(command);
-	freeAndNull(&command);
+	key=std::stoi(command,nullptr,10);
+//	freeAndNull(&command);
 
 	if((queueID=msgget(key,IPC_CREAT|0660))==-1)
 		fprintf(stderr,"Can't create message queue\n");

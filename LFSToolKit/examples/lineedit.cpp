@@ -47,7 +47,7 @@ bool doKeyUp(void *p,void* ud)
 		{
 			printf(">>%s<<\n",gadg->LFSTK_getCStr());
 			printf("Keycode=0x%x\n",gadg->LFSTK_getKey());
-			printf("Keysym=XK_%s\n",gadg->LFSTK_getKeySym());
+			printf("Keysym=XK_%s\n",gadg->LFSTK_getKeySym().c_str());
 			printf("Modifier=0x%x\n",gadg->LFSTK_getModifier());
 		}
 	return(true);

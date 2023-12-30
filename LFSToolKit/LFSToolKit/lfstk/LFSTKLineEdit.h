@@ -41,7 +41,7 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		void					LFSTK_resizeWindow(int w,int h);
 
 		std::string			LFSTK_getBuffer(void);
-		void					LFSTK_setBuffer(const char *str);
+		void					LFSTK_setBuffer(std::string str);
 		const char			*LFSTK_getCStr(void);
 
 		void					LFSTK_setCallbackOnReturn(bool onreturn);
@@ -55,13 +55,13 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		void					LFSTK_setFocus(void);
 
 		void					LFSTK_dropData(propertyStruct* data);
-		void					LFSTK_setFormatedText(const char *txt,bool replace);
+		void					LFSTK_setFormatedText(std::string txt,bool replace);
 		void					LFSTK_setCursorColourName(const char* colour);
 		std::string			LFSTK_getCursorColourName(void);
 
 		KeySym				LFSTK_getKey(void);
 		unsigned int			LFSTK_getModifier(void);
-		const char			*LFSTK_getKeySym(void);
+		std::string			LFSTK_getKeySym(void);
 
 		void					LFSTK_setEditable(bool canedit);
 
@@ -83,7 +83,6 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		KeySym				keysym_return;
 		unsigned int			state;
 		bool					editable=true;
-
 
 //contxt window
 		LFSTK_windowClass	*editWindow=NULL;

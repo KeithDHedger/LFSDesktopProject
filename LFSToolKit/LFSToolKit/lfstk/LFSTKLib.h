@@ -64,14 +64,14 @@ class LFSTK_lib
 		Pixmap			LFSTK_getWindowPixmap(Display *display,Window win);
 
 //files
-		char				*LFSTK_oneLiner(const char* fmt,...);
 		std::string		LFSTK_oneLiner(const std::string fmt,...);
 		std::vector<std::string>	LFSTK_runAndGet(const std::string fmt,...);
 
-		char				*LFSTK_getMimeType(const char* path);
+		std::string		LFSTK_getMimeType(std::string path);
 		std::string		LFSTK_grepInFile(const std::string filepath,const std::string needle);
 		std::string		LFSTK_getNthNeedle(const std::string haystack,int needlecnt,const std::string delimiter=" ");
 		void				LFSTK_getFileInfo(const char* path,fileInformation* info);
+		std::string		LFSTK_getRealPath(std::string filepath);
 
 //colours and prefs
 		void				LFSTK_setColourFromName(Display *display,Colormap cm,colourStruct *colptr,const char *name);

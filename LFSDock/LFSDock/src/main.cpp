@@ -118,11 +118,33 @@ bool windowDrop(LFSTK_windowClass *lwc,void* ud)
 		}
 	return(true);
 }
-
+#include <experimental/filesystem>
+#include <iostream>
 void sanityCheck(void)
 {
 	namespace fs=std::filesystem;
-
+//	namespace fsfs=std::experimental::filesystem;
+//
+//
+//for (fsfs::path p : {"/var/tmp/example.txt", "/", "/var/tmp/."})
+//        std::cout << "The parent path of " << p
+//                 << " is " << p.parent_path() << '\n';
+////
+///*
+//#include <experimental/filesystem>
+//#include <iostream>
+//namespace fs = std::experimental::filesystem;
+// 
+//*/
+////fsfs=launchersDir;
+// fsfs::path p1;
+// p1=launchersDir;
+////c=launchersDir;
+//std::cout<<launchersDir<<std::endl;
+//std::cout<<p1.parent_path()<<std::endl;
+//std::cout<<p1.filename()<<std::endl;
+////fsfs::path=launchersDir;
+////std::cout<<fs::parent_path()<<std::endl;
 	if(!fs::exists(fs::status(launchersDir)))
 		{
 			fs::create_directories(launchersDir);
@@ -164,7 +186,8 @@ void sanityCheck(void)
 
 int main(int argc,char **argv)
 {
-	char				*env;
+	//char				*env;
+	std::string		env;
 	int				psize;
 	int				key=666;
 	propReturn		pr;
@@ -246,8 +269,7 @@ int main(int argc,char **argv)
 			NET_WM_DESKTOP=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_DESKTOP"));
 
 			env=dockWindow->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str());
-			key=atoi(env);
-			freeAndNull(&env);
+			key=std::stoi(env,nullptr,10);
 
 			if((queueID=msgget(key,IPC_CREAT|0660))==-1)
 				fprintf(stderr,"Can't create message queue\n");

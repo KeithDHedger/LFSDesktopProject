@@ -253,14 +253,10 @@ bool LFSTK_lineEditClass::gotFocus(XEvent *e)
 * Set the contents of the text buffer.
 * \param const char *str String to set.
 */
-void LFSTK_lineEditClass::LFSTK_setBuffer(const char *str)
+void LFSTK_lineEditClass::LFSTK_setBuffer(std::string str)
 {
-	const char	*bufferstr=str;
-
-	if(bufferstr==NULL)
-		bufferstr="";
-	this->buffer=bufferstr;
-	this->cursorPos=strlen(bufferstr)-1;
+	this->buffer=str;
+	this->cursorPos=str.length()-1;
 	this->setOffsetcurs(1000);
 	this->setOffsetcurs(1);
 	if(this->cursorPos<0)
@@ -307,7 +303,7 @@ void LFSTK_lineEditClass::drawLabel(void)
 	cairo_restore(this->cr);
 
 	cairo_save(this->cr);
-		cairo_select_font_face(this->cr,this->fontName,this->slant,this->weight);
+		cairo_select_font_face(this->cr,this->fontName.c_str(),this->slant,this->weight);
 		cairo_set_font_size(this->cr,fontSize);
 		cairo_set_source_rgba(this->cr,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.r,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.g,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.b,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.a);
 
@@ -439,9 +435,9 @@ unsigned int LFSTK_lineEditClass::LFSTK_getModifier(void)
 * \note DO NOT FREE.
 * \note Keysyms here keysymdef.h
 */
-const char* LFSTK_lineEditClass::LFSTK_getKeySym(void)
+std::string LFSTK_lineEditClass::LFSTK_getKeySym(void)
 {
-	return(XKeysymToString(this->keysym_return));
+	return(std::string(XKeysymToString(this->keysym_return)));
 }
 
 /**
@@ -575,14 +571,14 @@ void LFSTK_lineEditClass::LFSTK_dropData(propertyStruct* data)
 * \param const char* Text to be formated.
 * \param bool true=Replace contents, false=insert.
 */
-void  LFSTK_lineEditClass::LFSTK_setFormatedText(const char *txt,bool replace)
+void  LFSTK_lineEditClass::LFSTK_setFormatedText(std::string txt,bool replace)
 {
 	std::string	formtxt="";
 	int			len=0;
 
-	for(int j=0;j<strlen(txt);j++)
+	for(int j=0;j<txt.length();j++)
 		{
-			switch(txt[j])
+			switch(txt.at(j))
 				{
 					case '\t':
 						formtxt.append("        ");

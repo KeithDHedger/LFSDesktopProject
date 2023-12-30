@@ -161,7 +161,7 @@ bool doDeskItemMenuSelect(void *p,void* ud)
 								{
 									desktopItems.at((unsigned long)gadg->userData).hasCustomIcon=true;
 									freeAndNull(&desktopItems.at((unsigned long)gadg->userData).pathToCustomIcon);
-									desktopItems.at((unsigned long)gadg->userData).pathToCustomIcon=strdup(filedialogfile->LFSTK_getCurrentPath());
+									desktopItems.at((unsigned long)gadg->userData).pathToCustomIcon=strdup(filedialogfile->LFSTK_getCurrentPath().c_str());
 									asprintf(&pth,"%s/%s",cachePath,desktopItems.at((unsigned long)gadg->userData).uuid);
 									saveCacheFile(pth,&(desktopItems.at((unsigned long)gadg->userData)));
 									desktopItems.at((unsigned long)gadg->userData).item->LFSTK_setImageFromPath(desktopItems.at((unsigned long)gadg->userData).pathToCustomIcon,TOOLBAR,true);
@@ -294,7 +294,7 @@ bool timerCB(LFSTK_applicationClass *p,void* ud)
 		return(true);
 	readMsg();
 
-	out=apc->globalLib->LFSTK_oneLiner("%s","ls -1 /dev/disk/by-uuid|md5sum|awk '{print $1}'");
+	out=strdup(apc->globalLib->LFSTK_oneLiner("%s","ls -1 /dev/disk/by-uuid|md5sum|awk '{print $1}'").c_str());//TODO//
 	if(out!=NULL)
 		{
 			if(strcmp(out,diskWatch)!=0)
@@ -320,7 +320,7 @@ bool timerCB(LFSTK_applicationClass *p,void* ud)
 			freeAndNull(&out);
 		}
 
-	out=apc->globalLib->LFSTK_oneLiner("ls -1 '%s'|md5sum|awk '{print $1}'",desktopPath);
+	out=strdup(apc->globalLib->LFSTK_oneLiner("ls -1 '%s'|md5sum|awk '{print $1}'",desktopPath).c_str());//TODO//
 	if(out!=NULL)
 		{
 			if(strcmp(out,desktopWatch)!=0)

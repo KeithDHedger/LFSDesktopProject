@@ -35,7 +35,7 @@ int main(int argc, char **argv)
 	fontdialog->LFSTK_showDialog("Helvetica:size=18:bold:italic");
 	fd=fontdialog->LFSTK_getFontData(false);
 	if(fd->isValid==true)
-		printf("Font String:%s\nFont:%s\nSize:%i\nBold:%s\nItalic:%s\n",fd->fontString,fd->fontName,fd->fontSize,bools[fd->bold],bools[fd->italic]);
+		printf("Font String:%s\nFont:%s\nSize:%i\nBold:%s\nItalic:%s\n",fd->fontString.c_str(),fd->fontName.c_str(),fd->fontSize,bools[fd->bold],bools[fd->italic]);
 		
 	delete apc;
 	cairo_debug_reset_static_data();

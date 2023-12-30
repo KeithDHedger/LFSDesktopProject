@@ -37,7 +37,7 @@ bool mouseparentCB(void *p,void* ud)
 						gadg->gadgetStretch=STRETCH;
 					if(j==2)
 						gadg->gadgetStretch=MOVE;
-					printf("Gadget No. %i Label=\"%s\" found\n",j,gadg->hitRects.at(j).gadget->LFSTK_getLabel());
+					printf("Gadget No. %i Label=\"%s\" found\n",j,gadg->hitRects.at(j).gadget->LFSTK_getLabel().c_str());
 				}
 		}
 	return(true);

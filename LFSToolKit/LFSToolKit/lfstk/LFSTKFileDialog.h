@@ -53,52 +53,53 @@ class LFSTK_fileDialogClass
 		~LFSTK_fileDialogClass();
 		LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const char *label,const char *startdir,bool type,const char *recentname=NULL);
 
-		void					LFSTK_showFileDialog(void);
-		void					LFSTK_showFileDialog(const char *dir,const char *title);
-		bool					LFSTK_isValid(void);
-		void					LFSTK_getLastFolder(void);
-		const char			*LFSTK_getCurrentDir(void);
-		const char			*LFSTK_getCurrentFile(void);
-		const char			*LFSTK_getCurrentPath(void);
-		const char			*LFSTK_getCurrentFileSelection(void);
-		void					LFSTK_setWorkingDir(const char *dir);
-		void					LFSTK_setRequestType(bool type);
-		bool					LFSTK_getRequestType(void);
+		void						LFSTK_showFileDialog(void);
+		void						LFSTK_showFileDialog(const char *dir,const char *title);
+		bool						LFSTK_isValid(void);
+		void						LFSTK_getLastFolder(void);
+		std::string				LFSTK_getCurrentDir(void);
+		std::string				LFSTK_getCurrentFile(void);
+		std::string				LFSTK_getCurrentPath(void);
+		std::string				LFSTK_getCurrentFileSelection(void);
+		void						LFSTK_setWorkingDir(std::string dir);
+		void						LFSTK_setRequestType(bool type);
+		bool						LFSTK_getRequestType(void);
 //TODO
-		void					LFSTK_setNameFilter(const char *filt);
-		bool					useThumbs=false;
+		void						LFSTK_setNameFilter(const char *filt);
 
 	private:
-		void					setPreviewData(bool fromlist);
+		void						setPreviewData(bool fromlist);
 //TODO
-		void					resizeWindow(int w,int h);
+		void						resizeWindow(int w,int h);
 
-		const char			*recentsName="universal";
-		unsigned				fileListCnt=0;
-		char					*currentDir=NULL;
-		char					*currentFile=NULL;
-		char					*currentPath=NULL;
+		bool						useThumbs=false;
+		std::string				recentsName="universal";
+		unsigned					fileListCnt=0;
+		std::string				currentDir;
+		std::string				currentFile;
+		std::string				currentPath;
+
 //TODO
-		char					*filter=NULL;
+		std::string				filter="";
 
-		bool					mainLoop;
-		bool					apply;
-		bool					dialogType;
-		cairo_surface_t		*fileImage;
-		cairo_surface_t		*folderImage;
-		cairo_surface_t		*imageImage;
-		cairo_surface_t		*fileImageLink;
-		cairo_surface_t		*folderImageLink;
-		cairo_surface_t		*imageImageLink;
-		cairo_surface_t		*brokenLink;
+		bool						mainLoop;
+		bool						apply;
+		bool						dialogType;
+		cairo_surface_t			*fileImage;
+		cairo_surface_t			*folderImage;
+		cairo_surface_t			*imageImage;
+		cairo_surface_t			*fileImageLink;
+		cairo_surface_t			*folderImageLink;
+		cairo_surface_t			*imageImageLink;
+		cairo_surface_t			*brokenLink;
 
-		bool					showHidden=false;
-		LFSTK_imageClass		*tux=NULL;
-		LFSTK_labelClass		*previewMimeType;
-		LFSTK_labelClass		*previewSize;
-		LFSTK_labelClass		*previewFileName;
-		LFSTK_labelClass		*previewMode;
-		LFSTK_labelClass		*previewIsLink;
+		bool						showHidden=false;
+		LFSTK_imageClass			*tux=NULL;
+		LFSTK_labelClass			*previewMimeType;
+		LFSTK_labelClass			*previewSize;
+		LFSTK_labelClass			*previewFileName;
+		LFSTK_labelClass			*previewMode;
+		LFSTK_labelClass			*previewIsLink;
 
 		LFSTK_windowClass		*wc;
 		LFSTK_windowClass		*dialog;
@@ -110,13 +111,13 @@ class LFSTK_fileDialogClass
 
 //files and folders
 		LFSTK_findClass			*fc=NULL;
-		void					getFileList(void);
-		void					freeFileList();
-		void					cleanDirPath(void);
-		void					openDir(void);
+		void						getFileList(void);
+		void						freeFileList();
+		void						cleanDirPath(void);
+		void						openDir(void);
 
-		void					setFileData(void);
-		bool					isADir(const char *path);
+		void						setFileData(void);
+		bool						isADir(const char *path);
 //callbacks
 		static bool				select(void *object,void* userdata);
 };

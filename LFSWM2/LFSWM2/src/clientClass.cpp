@@ -501,18 +501,23 @@ bool LFSWM2_clientClass::wmCB(void *p,void* ud)
 {
 	LFSWM2_clientClass *cc=static_cast<LFSWM2_clientClass*>(ud);
 
-	if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Maximize")==0)
+	//if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Maximize")==0)
+	if(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().compare("Maximize")==0)
 		cc->LFSWM2_maxWindow();
-	if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Minimize")==0)
+	//if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Minimize")==0)
+	if(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().compare("Minimize")==0)
 		cc->LFSWM2_minWindow();
-	if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Shade")==0)
+	//if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Shade")==0)
+	if(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().compare("Shade")==0)
 		cc->LFSWM2_shadeWindow();
-	if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Fullscreen")==0)
+	//if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Fullscreen")==0)
+	if(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().compare("Fullscreen")==0)
 		{
 			cc->LFSWM2_fullscreenWindow(true,true);
 			cc->mainClass->mainWindowClass->LFSWM2_addState(cc->contentWindow,cc->mainClass->atomshashed.at(cc->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_FULLSCREEN")));
 		}
-	if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"On Top")==0)
+	//if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"On Top")==0)
+	if(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().compare("On Top")==0)
 		{
 			if(cc->onTop==false)
 				{
@@ -523,7 +528,8 @@ bool LFSWM2_clientClass::wmCB(void *p,void* ud)
 				cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atomshashed.at(cc->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
 			cc->mainClass->mainEventClass->LFSWM2_restack();
 		}
-	if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"On Bottom")==0)
+	//if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"On Bottom")==0)
+	if(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().compare("On Bottom")==0)
 		{
 			if(cc->onBottom==false)
 				{
@@ -535,16 +541,20 @@ bool LFSWM2_clientClass::wmCB(void *p,void* ud)
 			cc->mainClass->mainEventClass->LFSWM2_restack();
 		}
 
-	if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Close")==0)
+	//if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Close")==0)
+	if(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().compare("Close")==0)
 		cc->LFSWM2_sendCloseWindow();
-	if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Fast Resize")==0)
+	//if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Fast Resize")==0)
+	if(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().compare("Fast Resize")==0)
 		cc->resizeMode=FASTRESIZE;
-	if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Live Resize")==0)
+	//if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Live Resize")==0)
+	if(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().compare("Live Resize")==0)
 		cc->resizeMode=LIVERESIZE;
 //	if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Scale Resize")==0)
 //		cc->resizeMode=SCALERESIZE;
 
-	if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"About")==0)
+	//if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"About")==0)
+	if(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().compare("About")==0)
 		system("lfsabout &");
 
 	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();

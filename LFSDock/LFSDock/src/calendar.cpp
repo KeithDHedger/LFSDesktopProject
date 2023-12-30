@@ -231,6 +231,18 @@ int addCalendar(int x,int y,int grav)
 	editbox->LFSTK_setEditable(false);
 	editbox->LFSTK_setIgnores(false,false);
 	editbox->LFSTK_addHighLights(dx,dy,dl,datesHilite[0]);
+//TODO//
+//			editbox->LFSTK_setGadgetColourPair(NORMALCOLOUR,"#40ffffff","black");
+//editbox->LFSTK_setTile(NULL,0);
+//calWindow->LFSTK_setTile(NULL,0);
+//	calWindow->LFSTK_setWindowColourName(NORMALCOLOUR,"#40ffffff");
+//
+//	editbox->LFSTK_setAlpha(0.0);
+//	//gadget->LFSTK_setTile(NULL,0);
+//	editbox->LFSTK_setStyle(BEVELNONE);
+//	editbox->LFSTK_setGadgetColours(GADGETBG,"#00000000","#00000000","#00000000","#00000000");
+//	editbox->	LFSTK_setGadgetColourPair(NORMALCOLOUR,"#00000000",dockTextColour);
+//
 
 	datesstream.open(configDir + std::string("calendardates"),std::fstream::in);
 	if(datesstream.is_open())

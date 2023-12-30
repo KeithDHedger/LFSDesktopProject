@@ -231,7 +231,7 @@ void LFSTK_multiLineEditClass::drawText(void)
 	cairo_restore(this->cr);
 	
 	cairo_save(this->cr);
-		cairo_select_font_face(this->cr,fontName,slant,weight);
+		cairo_select_font_face(this->cr,this->fontName.c_str(),slant,weight);
 		cairo_set_font_size(this->cr,fontSize);
 		cairo_set_source_rgba(this->cr,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.r,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.g,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.b,this->newGadgetFGColours.at(NORMALCOLOUR).RGBAColour.a);
 
@@ -586,7 +586,7 @@ void  LFSTK_multiLineEditClass::setDisplayLines(void)
 		}
 	this->lines.clear();
 
-	cairo_select_font_face(this->cr,fontName,slant,weight);
+	cairo_select_font_face(this->cr,this->fontName.c_str(),slant,weight);
 	cairo_set_font_size(this->cr,fontSize);
 	cairo_text_extents(this->cr,"X~!_^",&extents);
 	sy=0;

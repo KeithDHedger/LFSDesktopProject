@@ -65,8 +65,8 @@ class LFSTK_menuClass
 		cairo_font_weight_t					weight=CAIRO_FONT_WEIGHT_NORMAL;
 		cairo_font_slant_t					slant=CAIRO_FONT_SLANT_NORMAL;
 		int									fontSize=10;
-		char									*fontName=NULL;
-		const char							*fontDesc=NULL;
+		std::string							fontName;
+		std::string							fontDesc;
 };
 
 #endif

@@ -186,8 +186,8 @@ bool volMoveCB(LFSTK_gadgetClass*p,void* ud)
 
 int addSlider(int x,int y,int grav)
 {
-	char				*vol=dockWindow->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print $3}'");
-	char				*label=dockWindow->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"%s \" $4}'|tr -d '[]'",SLIDERLABEL);//TODO//
+	char				*vol=strdup(dockWindow->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print $3}'").c_str());//TODO//
+	char				*label=strdup(dockWindow->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"%s \" $4}'|tr -d '[]'",SLIDERLABEL).c_str());//TODO//
 	windowInitStruct	*win=new windowInitStruct;
 	int				w,h;
 	bool				direction=false;
@@ -196,7 +196,7 @@ int addSlider(int x,int y,int grav)
 	
 	volumeButton=new LFSTK_toggleButtonClass(dockWindow,label,x,y+extraSpace,iconSize,iconSize);
 	volumeButton->LFSTK_setToggleStyle(TOGGLENORMAL);
-	volumeButton->LFSTK_setMouseCallBack(NULL,sliderCB,(void*)volumeButton->LFSTK_getLabel());
+	volumeButton->LFSTK_setMouseCallBack(NULL,sliderCB,(void*)volumeButton->LFSTK_getLabel().c_str());
 	volumeButton->LFSTK_setMouseMoveCallBack(volMoveCB,volExitCB,USERDATA(0));
 
 	setGadgetDetails(volumeButton);

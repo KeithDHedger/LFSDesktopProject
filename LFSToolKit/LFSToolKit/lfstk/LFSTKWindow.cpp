@@ -176,9 +176,6 @@ LFSTK_windowClass::~LFSTK_windowClass()
 	if(this->sfc!=NULL)
 		cairo_surface_destroy(this->sfc);
 
-	if(this->fontString!=NULL)
-		freeAndNull(&this->fontString);
-
 //TODO//
 	for(int j=0; j<MAXCOLOURS; j++)
 		{
@@ -412,11 +409,9 @@ void LFSTK_windowClass::LFSTK_moveWindow(int x,int y,bool tellx)
 * \note eg:
 * \note "sans-serif:size=8".
 */
-void LFSTK_windowClass::LFSTK_setFontString(const char *s)
+void LFSTK_windowClass::LFSTK_setFontString(std::string s)
 {
-	if(this->fontString!=NULL)
-		freeAndNull(&this->fontString);
-	this->fontString=strdup(s);
+	this->fontString=s;
 }
 
 /**
@@ -721,7 +716,7 @@ void LFSTK_windowClass::windowClassInitCommon(windowInitStruct *wi)
 
 	this->setWindowGeom(wi->x,wi->y,wi->w,wi->h,WINDSETALL);
 
-	this->fontString=NULL;
+	this->fontString="";
 	this->isActive=false;
 	this->acceptDnd=false;
 
@@ -810,7 +805,7 @@ LFSTK_windowClass::LFSTK_windowClass(windowInitStruct *wi,LFSTK_applicationClass
 	this->app=app;
 	this->setWindowGeom(wi->x,wi->y,wi->w,wi->h,WINDSETALL);
 
-	this->fontString=NULL;
+	this->fontString="";
 	this->isActive=false;
 	this->acceptDnd=false;
 

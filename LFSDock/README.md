@@ -29,6 +29,7 @@ The format is:<br>
 month date colour<br>
 where month is between 0 - 11 ( 0=January, 11=December ), date is 1- however many days in the month, colour is 0-7 and is a hard coded colour ( this may change later ), 0 is used for todays date.<br>
 <br>
+The calendar and slider gadgets are toggles and so need to be clicked on to make the appropriate window appear/disappear.<br>
 Gadgets can be in any order you wish.<br>
 <br>
 More gadgets to come and improvements to the graphics.<br>

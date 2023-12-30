@@ -591,8 +591,8 @@ char* LFSTK_lib::LFSTK_findThemedIcon(const char *theme,const char *icon,const c
 	for(int j=GLOBALICONS;j<GLOBALPIXMAPS;j++)
 		{
 			for(int k=0;k<3;k++)
-				{
-					iconpath=this->LFSTK_oneLiner("find %s/\"%s\"/*/%s -iname '*%s.png' 2>/dev/null|sort --version-sort|tail -n1 2>/dev/null",iconfolders[j],iconthemes[k],catagory,holdicon);
+				{//TODO//
+					iconpath=strdup(this->LFSTK_oneLiner("find %s/\"%s\"/*/%s -iname '*%s.png' 2>/dev/null|sort --version-sort|tail -n1 2>/dev/null",iconfolders[j],iconthemes[k],catagory,holdicon).c_str());
 
 					if((iconpath!=NULL) && (strlen(iconpath)>1))
 						goto breakReturn;
@@ -606,7 +606,7 @@ char* LFSTK_lib::LFSTK_findThemedIcon(const char *theme,const char *icon,const c
 		{
 			for(int j=GLOBALPIXMAPS;j<GLOBALPIXMAPSEND;j++)
 				{
-					iconpath=this->LFSTK_oneLiner("find %s -iname '*%s.*'",iconfolders[j],holdicon);
+					iconpath=strdup(this->LFSTK_oneLiner("find %s -iname '*%s.*'",iconfolders[j],holdicon).c_str());
 					if((iconpath!=NULL) && (strlen(iconpath)>1))
 						goto breakReturn;
 					if(iconpath!=NULL)
@@ -673,7 +673,6 @@ std::vector<std::string>	LFSTK_lib::LFSTK_runAndGet(const std::string fmt,...)
 	if(fp!=NULL)
 		{
 			buffer[0]=0;
-			//while(fgets(buffer,MAXBUFFER-1,fp)!=EOF)
 			while(getline(&buffer,&len,fp)!= -1)
 				{
 					complete+=buffer;
@@ -697,8 +696,9 @@ std::string LFSTK_lib::LFSTK_oneLiner(const std::string fmt,...)
 {
 	FILE			*fp;
 	va_list		ap;
-	char			*buffer=(char*)malloc(MAXBUFFER);
+	char			buffer[MAXBUFFER];
 	std::string	str="";
+	char			*ptr=(char*)&buffer;
 
 	va_start(ap, fmt);
 	int cnt=0;
@@ -734,88 +734,19 @@ std::string LFSTK_lib::LFSTK_oneLiner(const std::string fmt,...)
 	fp=popen(str.c_str(),"r");
 	if(fp!=NULL)
 		{
-			buffer[0]=0;
-			fgets(buffer,MAXBUFFER-1,fp);
-			if(strlen(buffer)>0)
+		
+			ptr[0]=0;
+			fgets(ptr,MAXBUFFER-1,fp);
+			if(strlen(ptr)>0)
 				{
-					if(buffer[strlen(buffer)-1] =='\n')
-						buffer[strlen(buffer)-1]=0;
+					if(ptr[strlen(ptr)-1] =='\n')
+						ptr[strlen(ptr)-1]=0;
 				}
 			pclose(fp);
-			str=buffer;
+			str=ptr;
 		}
-	freeAndNull(&buffer);
 	return(str);
 }
-
-#if 1
-/**
-* Execute and return stout from string.
-* \return char* Allocated string caller should free.
-* \note Synchronous ONLY.
-* \note To be removed.
-*/
-char* LFSTK_lib::LFSTK_oneLiner(const char* fmt,...)
-{
-	FILE		*fp;
-	va_list	ap;
-	char		*buffer,*subbuffer;
-
-	buffer=(char*)malloc(MAXBUFFER);
-	subbuffer=(char*)malloc(MAXBUFFER);
-
-	buffer[0]=0;
-	subbuffer[0]=0;
-	va_start(ap, fmt);
-	while (*fmt)
-		{
-			subbuffer[0]=0;
-			if(fmt[0]=='%')
-				{
-					fmt++;
-					switch(*fmt)
-						{
-							case 's':
-								sprintf(subbuffer,"%s",va_arg(ap,char*));
-								break;
-							case 'i':
-								sprintf(subbuffer,"%i",va_arg(ap,int));
-								break;
-							case '%':
-								sprintf(subbuffer,"%%");
-								break;
-							default:
-								sprintf(subbuffer,"%c",fmt[0]);
-								break;
-						}
-				}
-			else
-				sprintf(subbuffer,"%c",fmt[0]);
-			strcat(buffer,subbuffer);
-			fmt++;
-		}
-	va_end(ap);
-
-	fp=popen(buffer,"r");
-	if(fp!=NULL)
-		{
-			buffer[0]=0;
-			fgets(buffer,MAXBUFFER,fp);
-			if(strlen(buffer)>0)
-				{
-					if(buffer[strlen(buffer)-1] =='\n')
-						buffer[strlen(buffer)-1]=0;
-				}
-			pclose(fp);
-			freeAndNull(&subbuffer);
-			//return(strdup(buffer));
-			return(buffer);
-		}
-	freeAndNull(&subbuffer);
-	freeAndNull(&buffer);
-	return(NULL);
-}
-#endif
 
 /**
 * Get if point (x,y) is in rect (geom).
@@ -899,14 +830,14 @@ void LFSTK_lib::LFSTK_setCairoSurface(Display *display,Window window,Visual *vis
 /**
 * Get mime type of file.
 * \param char *path.
-* \return char*.
+* \return std::string.
 * \note Caller owns returned allocated string.
 * \note "application/octet-stream" returned if path doesn't exist.
 */
-char* LFSTK_lib::LFSTK_getMimeType(const char* path)
+std::string LFSTK_lib::LFSTK_getMimeType(std::string path)
 {
-	if(access(path,F_OK)==0)
-		return(this->LFSTK_oneLiner("file -L -b --mime-type \"%s\"",path));
+	if(access(path.c_str(),F_OK)==0)
+		return(this->LFSTK_oneLiner("file -L -b --mime-type \"%s\"",path.c_str()));
 	else
 		return(strdup("application/octet-stream"));
 }
@@ -1170,6 +1101,28 @@ std::string	LFSTK_lib::LFSTK_getNthNeedle(const std::string haystack,int needlec
 			tstr.erase(0,pos+delimiter.length());
 		}
 	return("");
+}
+
+/**
+* Get abspult path of file.
+* \param std::string filepath filepath to test.
+* \return std::string absoulute path or "".
+*/
+std::string LFSTK_lib::LFSTK_getRealPath(std::string filepath)
+{
+	char			*rp=NULL;
+	std::string	retval="";
+
+	if(access(filepath.c_str(),F_OK)==0)
+		{
+			rp=realpath(filepath.c_str(),NULL);
+			retval=rp;
+		}
+
+	if(rp!=NULL)
+		freeAndNull(&rp);
+
+	return(retval);
 }
 
 /**
