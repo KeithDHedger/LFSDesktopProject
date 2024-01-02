@@ -114,13 +114,13 @@ void LFSTK_gadgetClass::LFSTK_setLabelBGColour(const char* colour,double alpha)
 /**
 * Get the colour name for gadget.
 * \param p Gadget state.
-* \return colour Const colour name.
+* \return colour std::string colour name.
 * \note state is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2,INACTIVECOLOUR=3.
 * \note Donot free returned value.
 */
-const char* LFSTK_gadgetClass::LFSTK_getColourName(int p)
+std::string LFSTK_gadgetClass::LFSTK_getColourName(int p)
 {
-	return(newGadgetBGColours.at(p).name.c_str());
+	return(newGadgetBGColours.at(p).name);
 }
 
 //needs re vamping
@@ -1378,7 +1378,7 @@ void LFSTK_gadgetClass::LFSTK_setImageFromSurface(cairo_surface_t *sfc,int orien
 * \param orient orientation of image ( LEFT,CENTRE,RIGHT ).
 * \param scale scale type for image.
 */
-cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int orient,bool scale)
+cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(std::string file,int orient,bool scale)
 {
 	cairo_status_t	cs=CAIRO_STATUS_SUCCESS;
 	cairo_surface_t	*tempimage=NULL;
@@ -1393,18 +1393,18 @@ cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int or
 	float			height;
 	char				*suffix=NULL;
 
-	if((file==NULL) || (this->imagePath.compare(file)==0))
+	if(this->imagePath.compare(file)==0)
 		return(CAIRO_STATUS_SUCCESS);
 
 	this->useImage=false;
 	this->gotIcon=false;
-	if(file==NULL)
+	if(file.length()==0)
 		return(CAIRO_STATUS_FILE_NOT_FOUND);
 
-	suffix=strrchr((char*)file,'.');
+	suffix=strrchr((char*)file.c_str(),'.');
 	if((suffix!=NULL) && (strcasecmp(suffix,".png")==0))
 		{
-			tempimage=cairo_image_surface_create_from_png(file);
+			tempimage=cairo_image_surface_create_from_png(file.c_str());
 			cs=cairo_surface_status(tempimage);
 		}
 	else
@@ -1412,7 +1412,7 @@ cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int or
 	
 	if(cs!=CAIRO_STATUS_SUCCESS)
 		{
-			tempimage=this->wc->globalLib->LFSTK_cairo_image_surface_create_from_jpeg(file);
+			tempimage=this->wc->globalLib->LFSTK_cairo_image_surface_create_from_jpeg(file.c_str());
 			if(tempimage==NULL)
 				{
 					fprintf(stderr,"Unkown Format : %s\n",file);

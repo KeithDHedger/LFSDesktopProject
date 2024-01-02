@@ -346,7 +346,7 @@ int main(int argc, char **argv)
 	panelMenu->LFSTK_setMouseCallBack(NULL,panelSelectCB,NULL);
 	panelMenu->LFSTK_addMainMenus(panelNames,panelCnt);
 
-	panelNameEdit=new LFSTK_lineEditClass(wc,panelNames[0]->label,BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);	
+	panelNameEdit=new LFSTK_lineEditClass(wc,panelNames[0]->label.c_str(),BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);	
 	sy+=YSPACING;
 
 //do prefs
@@ -360,7 +360,7 @@ int main(int argc, char **argv)
 	for(long j=0;j<2;j++)
 		{
 			panelWidthMenu[j]=new menuStruct;
-			panelWidthMenu[j]->label=strdup(panelWidthConvertToStr[menuuserdata[j]]);
+			panelWidthMenu[j]->label=panelWidthConvertToStr[menuuserdata[j]];
 			panelWidthMenu[j]->userData=(void*)menuuserdata[j];
 		}
 	widthMenu=new LFSTK_menuClass(wc,BORDER+GADGETWIDTH,sy,1,1);

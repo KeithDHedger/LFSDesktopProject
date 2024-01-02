@@ -39,7 +39,7 @@ LFSTK_menuItemClass::LFSTK_menuItemClass(LFSTK_toolWindowClass* parentwc,LFSTK_m
 {
 	XSetWindowAttributes	wa;
 
-	this->LFSTK_setCommon(parentwc,menu->label,x,y,w,h,BUTTONGRAV);
+	this->LFSTK_setCommon(parentwc,menu->label.c_str(),x,y,w,h,BUTTONGRAV);
 
 	wa.win_gravity=BUTTONGRAV;
 	wa.save_under=true;
@@ -215,9 +215,6 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 					else
 						maxtxtwid+=gotsubmenu;
 					this->w=maxtxtwid;
-					//	win->windowType=this->wc->app->appAtomsHashed.at(this->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
-
-					//this->subwc=new LFSTK_toolWindowClass(this->wc->app->display,this->wc,"_NET_WM_WINDOW_TYPE_MENU",this->gadgetGeom.x,this->gadgetGeom.y,maxtxtwid,GADGETHITE*this->menuData->subMenuCnt-winshrink,"menu window",this->wc->app);
 					this->subwc=new LFSTK_toolWindowClass(this->wc->app->display,this->wc,this->wc->app->appAtomsHashed.at(this->wc->app->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU")),this->gadgetGeom.x,this->gadgetGeom.y,maxtxtwid,GADGETHITE*this->menuData->subMenuCnt-winshrink,"menu window",this->wc->app);
 
 					for(int j=0; j<this->menuData->subMenuCnt; j++)
@@ -227,9 +224,9 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 							label=new LFSTK_menuItemClass(this->subwc,this->menu,0,sy,maxtxtwid,hite,this->menuData->subMenus[j],gotthumb);
 							label->LFSTK_setMouseCallBack(this->callBacks.mousePressCallback,this->callBacks.mouseReleaseCallback,this->menuData->subMenus[j]->userData);
 							if(this->menuData->subMenus[j]->imageType==FILETHUMB)
-								label->LFSTK_setImageFromPath(this->menuData->subMenus[j]->data.imagePath,MENU,true);
+								label->LFSTK_setImageFromPath(this->menuData->subMenus[j]->imagePath,MENU,true);
 							if(this->menuData->subMenus[j]->imageType==CAIROTHUMB)
-								label->LFSTK_setImageFromSurface(this->menuData->subMenus[j]->data.surface,MENU,true);
+								label->LFSTK_setImageFromSurface(this->menuData->subMenus[j]->surface,MENU,true);
 							sy+=hite;
 						}
 					this->menu->subwindows->push_back(this->subwc);

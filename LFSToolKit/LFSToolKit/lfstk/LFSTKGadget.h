@@ -108,7 +108,7 @@ class LFSTK_gadgetClass
 		void					LFSTK_setGadgetColourPair(gadgetState state,std::string back,std::string fore);
 
 //colours
-		const char			*LFSTK_getColourName(int p);
+		std::string			LFSTK_getColourName(int p);
 		void					LFSTK_setFontString(std::string s,bool setfontdata=false);
 		void					LFSTK_reloadColours(void);
 
@@ -123,7 +123,7 @@ class LFSTK_gadgetClass
 //graphics
 		void					drawImage();
 		void					LFSTK_setIndicator(indicatorType indictype);
-		cairo_status_t 		LFSTK_setImageFromPath(const char *file,int orient,bool scale);
+		cairo_status_t 		LFSTK_setImageFromPath(std::string file,int orient,bool scale);
 		void 				LFSTK_setImageFromSurface(cairo_surface_t *sfc,int orient,bool scale);
 
 		int					LFSTK_gadgetOnWhichMonitor(void);
@@ -193,7 +193,6 @@ class LFSTK_gadgetClass
 		geometryStruct		gadgetGeom;
 
 //font and label stuff
-		//char					*label=NULL;
 		std::string			label;
 		std::string			fontString;
 

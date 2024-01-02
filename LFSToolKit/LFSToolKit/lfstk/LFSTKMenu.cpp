@@ -361,7 +361,8 @@ void LFSTK_menuClass::LFSTK_addMainMenus(menuStruct **menus,int menucnt)
 				gotsubmenu=GADGETHITE;
 			if(this->mainMenu[j]->imageType!=NOTHUMB)
 				gotthumb=MENU;
-			if(strcmp(this->mainMenu[j]->label,"--")==0)
+			//if(strcmp(this->mainMenu[j]->label,"--")==0)
+			if(this->mainMenu[j]->label.compare("--")==0)
 				winshrink+=(GADGETHITE-SEPARATORHITE);
 		}
 
@@ -410,9 +411,9 @@ void LFSTK_menuClass::LFSTK_addMainMenus(menuStruct **menus,int menucnt)
 			label=new LFSTK_menuItemClass(this->mainMenuWindow,this,0,sy,maxtxtwid,hite,this->mainMenu[j],gotthumb);
 			label->LFSTK_setMouseCallBack(this->callBacks.mousePressCallback,this->callBacks.mouseReleaseCallback,(void*)(this->mainMenu[j]->userData));
 			if(this->mainMenu[j]->imageType==FILETHUMB)
-				label->LFSTK_setImageFromPath(this->mainMenu[j]->data.imagePath,MENU,true);
+				label->LFSTK_setImageFromPath(this->mainMenu[j]->imagePath,MENU,true);
 			if(this->mainMenu[j]->imageType==CAIROTHUMB)
-				label->LFSTK_setImageFromSurface(this->mainMenu[j]->data.surface,MENU,true);
+				label->LFSTK_setImageFromSurface(this->mainMenu[j]->surface,MENU,true);
 			sy+=hite;
 		}
 
@@ -435,11 +436,7 @@ void LFSTK_menuClass::LFSTK_freeMenus(menuStruct **menus,int menucnt)
 	for(int j=0;j<menucnt;j++)
 		{
 			if(menus[j]->imageType==CAIROTHUMB)
-				cairo_surface_destroy(menus[j]->data.surface);
-			if(menus[j]->imageType==FILETHUMB)
-				freeAndNull(&menus[j]->data.imagePath);
-			if(menus[j]->label!=NULL)
-				freeAndNull(&menus[j]->label);
+				cairo_surface_destroy(menus[j]->surface);
 			if(menus[j]->hasSubMenu==true)
 				{
 					this->LFSTK_freeMenus(menus[j]->subMenus,menus[j]->subMenuCnt);
@@ -456,7 +453,8 @@ void LFSTK_menuClass::LFSTK_freeMenus(menuStruct **menus,int menucnt)
 * \param const char *text.
 * \return int text width rounded to nearest int.
 */
-int	LFSTK_menuClass::LFSTK_getTextWidthForFont(const char *text)
+//int	LFSTK_menuClass::LFSTK_getTextWidthForFont(const char *text)
+int	LFSTK_menuClass::LFSTK_getTextWidthForFont(std::string text)
 {
 	cairo_text_extents_t		returnextents;
 	cairo_t					*cr=NULL;
@@ -484,7 +482,7 @@ int	LFSTK_menuClass::LFSTK_getTextWidthForFont(const char *text)
 	this->parentwc->globalLib->LFSTK_setCairoSurface(this->parentwc->app->display,this->parentwc->window,this->parentwc->app->visual,&sfc,&cr,1,1);
 	cairo_select_font_face(cr,this->fontName.c_str(),this->slant,this->weight);
 	cairo_set_font_size(cr,this->fontSize);
-	cairo_text_extents(cr,text,&returnextents);
+	cairo_text_extents(cr,text.c_str(),&returnextents);
 
 	cairo_destroy(cr);
 	cairo_surface_destroy(sfc);

@@ -179,14 +179,14 @@ void addEntries(void)
 															if(iconpath!=NULL)
 																{
 																	catagoryMenus[catagoryCnt]->imageType=FILETHUMB;
-																	catagoryMenus[catagoryCnt]->data.imagePath=strdup(iconpath);
+																	catagoryMenus[catagoryCnt]->imagePath=iconpath;
 																}
 															catagoryCnt++;
 															gotCatList[myCats[k]]=true;
 														}
 													int submenunum=catagoryMenus[catMenusPtr[myCats[k]]]->subMenuCnt;
 													catagoryMenus[catMenusPtr[myCats[k]]]->subMenus[submenunum]=new menuStruct;
-													catagoryMenus[catMenusPtr[myCats[k]]]->subMenus[submenunum]->label=strdup(df.name.c_str());
+													catagoryMenus[catMenusPtr[myCats[k]]]->subMenus[submenunum]->label=df.name;
 #if 1
 //find /usr/share/icons/hicolor/ -iname "*cups*"|tail -n1
 													std::string iconpaths=PREFIX "/share/pixmaps/";
@@ -194,7 +194,7 @@ void addEntries(void)
 													if(access(iconpaths.c_str(),F_OK)==F_OK)
 														{
 															catagoryMenus[catMenusPtr[myCats[k]]]->subMenus[submenunum]->imageType=FILETHUMB;
-															catagoryMenus[catMenusPtr[myCats[k]]]->subMenus[submenunum]->data.imagePath=strdup(iconpaths.c_str());
+															catagoryMenus[catMenusPtr[myCats[k]]]->subMenus[submenunum]->imagePath=iconpaths;
 														}
 													else
 														{
@@ -203,7 +203,7 @@ void addEntries(void)
 															if(access(iconpaths.c_str(),F_OK)==F_OK)
 																{
 																	catagoryMenus[catMenusPtr[myCats[k]]]->subMenus[submenunum]->imageType=FILETHUMB;
-																	catagoryMenus[catMenusPtr[myCats[k]]]->subMenus[submenunum]->data.imagePath=strdup(iconpaths.c_str());
+																	catagoryMenus[catMenusPtr[myCats[k]]]->subMenus[submenunum]->imagePath=iconpaths;
 																}
 															else
 																{
@@ -211,7 +211,7 @@ void addEntries(void)
 																	if(iconpath!=NULL)
 																		{
 																			catagoryMenus[catMenusPtr[myCats[k]]]->subMenus[submenunum]->imageType=FILETHUMB;
-																			catagoryMenus[catMenusPtr[myCats[k]]]->subMenus[submenunum]->data.imagePath=strdup(iconpath);
+																			catagoryMenus[catMenusPtr[myCats[k]]]->subMenus[submenunum]->imagePath=iconpath;
 																		}
 																}
 														}
@@ -246,7 +246,7 @@ void addExtras(void)
 	iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"help-about","");
 	if(iconpath!=NULL)
 		{
-			catagoryMenus[catagoryCnt]->data.imagePath=iconpath;
+			catagoryMenus[catagoryCnt]->imagePath=iconpath;
 			catagoryMenus[catagoryCnt]->imageType=FILETHUMB;
 		}
 	catagoryCnt++;
@@ -289,7 +289,7 @@ int addAppmenu(int x,int y,int grav,bool fromleft)
 			flag=false;
 			for(int j=0;j<catagoryCnt-1;j++)
 				{
-					if(strcmp(catagoryMenus[j]->label,catagoryMenus[j+1]->label)>0)
+					if(catagoryMenus[j]->label.compare(catagoryMenus[j+1]->label)>0)
 						{					
 							menuhold=catagoryMenus[j+1];
 							catagoryMenus[j+1]=catagoryMenus[j];
@@ -307,7 +307,7 @@ int addAppmenu(int x,int y,int grav,bool fromleft)
 					int submenunum=catagoryMenus[k]->subMenuCnt;
 					for(int j=0;j<submenunum-1;j++)
 						{
-							if(strcmp(catagoryMenus[k]->subMenus[j]->label,catagoryMenus[k]->subMenus[j+1]->label)>0)
+							if(catagoryMenus[k]->subMenus[j]->label.compare(catagoryMenus[k]->subMenus[j+1]->label)>0)
 								{					
 									menuhold=catagoryMenus[k]->subMenus[j+1];
 									catagoryMenus[k]->subMenus[j+1]=catagoryMenus[k]->subMenus[j];

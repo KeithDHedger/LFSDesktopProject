@@ -361,7 +361,8 @@ int main(int argc, char **argv)
 	for(long j=0;j<apc->LFSTK_getMonitorCount();j++)
 		{
 			monitorsMenu[j]=new menuStruct;
-			asprintf(&monitorsMenu[j]->label,"Monitor %i",j);
+			//asprintf(&monitorsMenu[j]->label,"Monitor %i",j);
+			monitorsMenu[j]->label="Monitor "+std::to_string(j);
 			monitorsMenu[j]->userData=(void*)j;
 		}
 	monitorsMenuButton=new LFSTK_buttonClass(wc,"Monitor 0",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);

@@ -584,7 +584,8 @@ void LFSWM2_clientClass::showWMMenu(int x,int y)
 	for (int j=0; j<NUMMENUS; j++)
 		{
 			mms[j]=new menuStruct;
-			asprintf(&mms[j]->label,"%s",menuitemlabels[j]);
+			//asprintf(&mms[j]->label,"%s",menuitemlabels[j]);
+			mms[j]->label=menuitemlabels[j];
 			mms[j]->hasSubMenu=false;
 			mms[j]->subMenus=NULL;
 			mms[j]->userData=(void*)this;

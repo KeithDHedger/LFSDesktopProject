@@ -217,7 +217,6 @@ void LFSTK_scrollBarClass::setState(bool byvalue,bool ignorecb)
 					if(geom.y==rect.y)
 						geom.y++;
 				}
-
 			this->thumb->LFSTK_moveGadget(geom.x,geom.y);
 		}
 	else

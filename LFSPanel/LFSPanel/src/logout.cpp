@@ -118,12 +118,12 @@ int  addLogout(int x,int y,int grav,bool fromleft)
 			themedicon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,logoutIconNames[j],"");
 			if(themedicon!=NULL)
 				{
-					logoutMenus[j]->data.imagePath=(char*)strdup(themedicon);
+					logoutMenus[j]->imagePath=themedicon;
 					free(themedicon);
 				}
 			else
 				{
-					logoutMenus[j]->data.imagePath=(char*)strdup(logoutImages[j]);
+					logoutMenus[j]->imagePath=logoutImages[j];
 				}
 			logoutMenus[j]->imageType=FILETHUMB;
 		}

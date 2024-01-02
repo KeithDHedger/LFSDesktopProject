@@ -40,7 +40,7 @@ void setLabel(void)
 {
 	int	value=(int)(((double)vsb->LFSTK_getValue()/64.0)*100.0);
 	sprintf(label,"Vol %i%%",value);
-	volumeButton->LFSTK_setLabel((const char*)label);
+	volumeButton->LFSTK_setLabel(label);
 	setIcon();
 	volumeButton->LFSTK_clearWindow();
 }
@@ -80,16 +80,16 @@ void setIcon(void)
 {
 	int vol=vsb->LFSTK_getValue();
 
-	if(vol<16)
+	if((iconZ!=NULL) && (vol<16))
 		volumeButton->LFSTK_setImageFromPath(iconZ,TOOLBAR,true);
 
-	if((vol>=16) && (vol<32))
+	if((iconL!=NULL) && (vol>=16) && (vol<32))
 		volumeButton->LFSTK_setImageFromPath(iconL,TOOLBAR,true);
 
-	if((vol>=32) && (vol<48))
+	if((iconM!=NULL) && (vol>=32) && (vol<48))
 		volumeButton->LFSTK_setImageFromPath(iconM,TOOLBAR,true);
 
-	if(vol>=48)
+	if((iconH!=NULL) && (vol>=48))
 		volumeButton->LFSTK_setImageFromPath(iconH,TOOLBAR,true);
 }
 
@@ -179,7 +179,6 @@ int addSlider(int x,int y,int grav,bool fromleft)
 	char					*vol;
 	bool					direction=false;
 	char					*label=strdup(mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"%s \" $4}'|tr -d '[]'",SLIDERLABEL).c_str());//TODO//
-
 	getAlsaVolume(false,-1);
 	setSizes(&xpos,&ypos,&width,&height,&iconsize,&thisgrav,fromleft);
 	
@@ -224,6 +223,7 @@ int addSlider(int x,int y,int grav,bool fromleft)
 	
 	vsb->LFSTK_setMouseCallBack(NULL,valChanged,NULL);
 	vsb->LFSTK_setScale(0,64);
+
 	vsb->LFSTK_setValue(atoi(vol));
 	vsb->reverse=direction;
 	setIcon();

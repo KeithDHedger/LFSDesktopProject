@@ -367,7 +367,6 @@ struct windowInitStruct
 	int						y=0;
 	int						w=1;
 	int						h=1;
-	//const char				*name="";
 	std::string				appName;
 	std::string				className;
 	std::string				windowName;
@@ -386,13 +385,17 @@ struct windowInitStruct
 class	LFSTK_menuClass;
 struct menuStruct
 {
-	char						*label=NULL;
+	//char						*label=NULL;
+	std::string				label;
 	int						imageType=0;
-	union					imageData
-		{
-			char			*imagePath;
-			cairo_surface_t	*surface;
-		}					data={NULL};
+//	union					imageData
+	//	{
+			//char			*imagePath;
+			std::string		imagePath;
+			cairo_surface_t	*surface=NULL;
+		//	~imageData()		{};//{cairo_surface_destroy(surface);}
+			//imageData()		{};
+	//	}					data;//={NULL};
 
 	bool						hasSubMenu=false;
 	menuStruct				**subMenus=NULL;

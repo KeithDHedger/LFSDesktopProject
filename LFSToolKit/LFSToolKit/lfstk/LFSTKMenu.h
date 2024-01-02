@@ -48,7 +48,8 @@ class LFSTK_menuClass
 
 		void									LFSTK_setMouseCallBack(bool (*downcb)(void*,void*),bool (*releasecb)(void*,void*),void* ud);
 		void									LFSTK_freeMenus(menuStruct **menus,int menucnt);
-		int									LFSTK_getTextWidthForFont(const char *text);
+		//int									LFSTK_getTextWidthForFont(const char *text);
+		int									LFSTK_getTextWidthForFont(std::string text);
 
 		bool									mainLoop=false;
 		LFSTK_toolWindowClass				*mainMenuWindow=NULL;
