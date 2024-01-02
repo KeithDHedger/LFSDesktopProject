@@ -101,7 +101,7 @@ void setEditText(void)
 	calData=apc->globalLib->LFSTK_runAndGet("%s %s","cal",thisMonth.c_str());
 	if(holdThisMonth==currentMonth)
 		{
-			thisday=apc->globalLib->LFSTK_oneLiner(std::string("%s"),"date +%d");
+			thisday=apc->globalLib->LFSTK_oneLiner(std::string("%s"),"date +%d|sed 's/^0//'");
 			dl=thisday.length();
 			thisday=" "+thisday+" ";
 			std::string::size_type found;
