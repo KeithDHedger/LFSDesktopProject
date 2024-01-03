@@ -1181,8 +1181,8 @@ void LFSTK_lib::LFSTK_getFileInfo(const char* path,fileInformation* info)
 			file=g_file_new_for_path(path);
 			file_info=g_file_query_info(file,"standard::*",G_FILE_QUERY_INFO_NONE,NULL,&error);
 			th=g_file_info_get_content_type(file_info);
-			g_clear_object(&file);
 			g_clear_object(&file_info);
+			g_clear_object(&file);
 			if(th.length()!=0)
 				info->mimeType=th;
 			else

@@ -114,10 +114,12 @@ int main(int argc, char **argv)
 	fd=fontdialog->LFSTK_getFontData(false);
 	if(fd->isValid==true)
 		if(useDetail==false)
-			printf("fontString=%s\n",fd->fontString);
+			printf("fontString=%s\n",fd->fontString.c_str());
 		else
-			printf("Font String:%s\nFont:%s\nSize:%i\nBold:%s\nItalic:%s\n",fd->fontString,fd->fontName,fd->fontSize,bools[fd->bold],bools[fd->italic]);
+			printf("Font String:%s\nFont:%s\nSize:%i\nBold:%s\nItalic:%s\n",fd->fontString.c_str(),fd->fontName.c_str(),fd->fontSize,bools[fd->bold],bools[fd->italic]);
 		
 	delete apc;
+	cairo_debug_reset_static_data();
+
 	return(0);
 }

@@ -959,6 +959,7 @@ void LFSTK_gadgetClass::LFSTK_setCairoFontData(void)
 		this->fontName=tokenstrings.at(0);
 
 	cairo_save(this->cr);
+	//fprintf(stderr,"fontString=>>%s<< his->fontName.c_str()=>>%s<< slant=%i weight=%i sixe=%i \n",this->fontString.c_str(),this->fontName.c_str(),this->slant,this->weight,this->fontSize);
 		cairo_select_font_face(this->cr,this->fontName.c_str(),this->slant,this->weight);
 		cairo_set_font_size(this->cr,this->fontSize);
 		cairo_font_extents(this->cr,&this->fontExtents);

@@ -71,54 +71,54 @@ void LFSTK_fileDialogClass::getFileList(void)
 	this->fileListGadget->LFSTK_freeList();
 	for(int j=0;j<this->fileListCnt;j++)
 		{
-			ls.label=strdup(this->fc->data.at(j).name.c_str());
+			ls.label=this->fc->data.at(j).name.c_str();
 			ls.imageType=CAIROTHUMB;
 			switch(this->fc->data.at(j).fileType)
 				{
 					case FOLDERTYPE:
-								ls.data.surface=this->folderImage;
+								ls.surface=this->folderImage;
 								break;
 
 					case FILETYPE:
-						if((strcasestr(ls.label,".jpg")!=NULL) || (strcasestr(ls.label,".png")!=NULL))
+						if((LFSTK_UtilityClass::LFSTK_strStr(ls.label,".jpg",true).length()>0) || (LFSTK_UtilityClass::LFSTK_strStr(ls.label,".png",true).length()>0))
 							{
 								if(this->useThumbs==true)
 									{
 										ls.imageType=FILETHUMB;
-										ls.data.imagePath=strdup(this->fc->data.at(j).path.c_str());
+										ls.imagePath=this->fc->data.at(j).path;
 									}
 								else
-									ls.data.surface=this->imageImage;
+									ls.surface=this->imageImage;
 							}
 						else
-							ls.data.surface=this->fileImage;
+							ls.surface=this->fileImage;
 						break;
 
 					case FOLDERLINKTYPE:
-						ls.data.surface=this->folderImageLink;
+						ls.surface=this->folderImageLink;
 						break;
 
 					case FILELINKTYPE:
-						if((strcasestr(ls.label,".jpg")!=NULL) || (strcasestr(ls.label,".png")!=NULL))
+						if((LFSTK_UtilityClass::LFSTK_strStr(ls.label,".jpg",true).length()>0) || (LFSTK_UtilityClass::LFSTK_strStr(ls.label,".png",true).length()>0))
 							{
 								if(this->useThumbs==true)
 									{
 										ls.imageType=FILETHUMB;
-										ls.data.imagePath=strdup(this->fc->data.at(j).path.c_str());
+										ls.imagePath=this->fc->data.at(j).path;
 									}
 								else
-									ls.data.surface=this->imageImageLink;
+									ls.surface=this->imageImageLink;
 							}
 						else
-							ls.data.surface=this->fileImageLink;
+							ls.surface=this->fileImageLink;
 						break;
 
 					case BROKENLINKTYPE:
-						ls.data.surface=this->brokenLink;
+						ls.surface=this->brokenLink;
 						break;
 				
 					default:
-						ls.data.surface=this->fileImage;
+						ls.surface=this->fileImage;
 						break;
 				}
 			fileListGadget->LFSTK_appendToList(ls);

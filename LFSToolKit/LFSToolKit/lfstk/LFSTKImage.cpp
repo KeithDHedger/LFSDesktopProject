@@ -129,8 +129,9 @@ LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* image
 	this->ml->gadget=this;
 	this->ml->type=IMAGEGADGET;
 	this->wc->LFSTK_addMappedListener(this->window,ml);
+	if(imagepath!=NULL)
+		this->LFSTK_setImageFromPath(std::string(imagepath),gravity,scale);
 
-	this->LFSTK_setImageFromPath(imagepath,gravity,scale);
 	this->useTile=this->wc->useTile;
 	this->gadgetDetails={&this->wc->windowColourNames[NORMALCOLOUR],BEVELNONE,NOINDICATOR,NORMALCOLOUR,0,false,{0,0,w,h},{0,0,0,0},false,false,false};
 

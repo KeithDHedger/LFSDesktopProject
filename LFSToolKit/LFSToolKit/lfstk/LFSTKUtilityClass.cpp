@@ -19,6 +19,7 @@
  */
  
 #include "lfstk/LFSTKGlobals.h"
+
 LFSTK_UtilityClass::~LFSTK_UtilityClass()
 {
 }
@@ -27,6 +28,12 @@ LFSTK_UtilityClass::LFSTK_UtilityClass()
 {
 }
 
+/**
+* Duplicates 'c' strtok.
+* \param std::string str String to split.
+* \param std::string delimiter Split on these chars.
+* \return std::vector<std::string>.
+*/
 std::vector<std::string>	LFSTK_UtilityClass::LFSTK_strTok(std::string str,std::string delimiter)
 {
 	std::vector<std::string>	tokenstrings;
@@ -34,7 +41,7 @@ std::vector<std::string>	LFSTK_UtilityClass::LFSTK_strTok(std::string str,std::s
 
 	tokenstrings.push_back(str.substr(0,foundit));
 	str=str.erase(0,foundit+1);
-	while (foundit!=std::string::npos)
+	while(foundit!=std::string::npos)
 		{
 			foundit=str.find_first_of(delimiter);
 			tokenstrings.push_back(str.substr(0,foundit));
@@ -43,3 +50,33 @@ std::vector<std::string>	LFSTK_UtilityClass::LFSTK_strTok(std::string str,std::s
 	return(tokenstrings);
 }
 
+/**
+* Duplicates 'c' strstr/strcasestr.
+* \param std::string str Haystack to search.
+* \param std::string needle Needle.
+* \param bool caseinsensitive Do case insensitive search (strcasestr).
+* \return std::string Found str or "".
+*/
+std::string LFSTK_UtilityClass::LFSTK_strStr(std::string haystack,std::string needle,bool caseinsensitive)
+{
+	std::string::size_type found=haystack.find(needle);
+	if(found!=std::string::npos)
+		{
+			return(haystack.substr(found,std::string::npos));
+		}
+	else
+		{
+			if(caseinsensitive==false)
+				return("");
+			std::string upperhaystack=haystack;
+			std::string upperneedle=needle;
+			std::transform(upperhaystack.begin(), upperhaystack.end(), upperhaystack.begin(), ::toupper);
+			std::transform(upperneedle.begin(), upperneedle.end(), upperneedle.begin(), ::toupper);
+			found=upperhaystack.find(upperneedle);
+			if (found!=std::string::npos)
+				{
+					return(haystack.substr(found,std::string::npos));
+				}
+		}
+	return("");
+}

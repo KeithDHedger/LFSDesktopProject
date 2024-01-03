@@ -87,9 +87,9 @@ void setMimeTypesList(char *filepath)
 										{
 											listit.label=strdup(buffer);
 											listit.imageType=NOTHUMB;
-											if(listit.label[strlen(listit.label)-1]==';')
-												listit.label[strlen(listit.label)-1]=0;
-											char	*ptr=strchr(listit.label,'=');
+											if(listit.label[listit.label.length()-1]==';')
+												listit.label[listit.label.length()-1]=0;
+											char	 *ptr=strchr((char*)listit.label.c_str(),'=');
 											*ptr=0;
 											ptr++;
 											listit.userData=ptr;
@@ -137,10 +137,10 @@ void reWriteMimeFile(void)
 				{
 					if(j!=mimeList->currentItem)
 						{
-							ptr=mimeList->listDataArray->at(j).label;
-							ptr+=strlen(mimeList->listDataArray->at(j).label);
+							ptr=(char*)mimeList->listDataArray->at(j).label.c_str();
+							ptr+=mimeList->listDataArray->at(j).label.length();
 							ptr++;
-							fprintf(file,"%s=%s;\n",mimeList->listDataArray->at(j).label,ptr);
+							fprintf(file,"%s=%s;\n",mimeList->listDataArray->at(j).label.c_str(),ptr);
 						}
 				}
 
@@ -175,10 +175,10 @@ bool doUpdate(void *p,void* ud)
 						}
 					else
 						{
-							ptr=mimeList->listDataArray->at(j).label;
-							ptr+=strlen(mimeList->listDataArray->at(j).label);
+							ptr=(char*)mimeList->listDataArray->at(j).label.c_str();
+							ptr+=mimeList->listDataArray->at(j).label.length();
 							ptr++;
-							fprintf(file,"%s=%s;\n",mimeList->listDataArray->at(j).label,ptr);
+							fprintf(file,"%s=%s;\n",mimeList->listDataArray->at(j).label.c_str(),ptr);
 						}
 				}
 			fprintf(file,"%s=%s.desktop;\n",editLine->LFSTK_getCStr(),appLine->LFSTK_getCStr());
@@ -199,7 +199,7 @@ bool doUpdate(void *p,void* ud)
 bool doInsert(void *p,void* ud)
 {
 	char		*command;
-	const char	*data=mimeList->listDataArray->at(mimeList->currentItem).label;
+	const char	*data=mimeList->listDataArray->at(mimeList->currentItem).label.c_str();
 
 	asprintf(&command,"sed -i 's@\\(%s.*\\)@\\1\\n%s=Custom.desktop@' \"%s\"",data,data,mimeTypesFile);
 	system(command);
@@ -234,7 +234,7 @@ bool doDelete(void *p,void* ud)
 bool doApply(void *p,void* ud)
 {
 	char		*command;
-	const char	*data=mimeList->listDataArray->at(mimeList->currentItem).label;
+	const char	*data=mimeList->listDataArray->at(mimeList->currentItem).label.c_str();
 
 	asprintf(&command,"cp \"%s\" \"%s/.config\"",mimeTypesFile,getenv("HOME"));
 	system(command);

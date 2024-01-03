@@ -53,7 +53,7 @@ bool select(void *object,void* userdata)
 	printf("List item=%i\n",list->LFSTK_getCurrentListItem());
 	printf("Selected List item string=%s\n",list->LFSTK_getSelectedLabel());
 	if(list->listDataArray->at(list->LFSTK_getCurrentListItem()).imageType==FILETHUMB)
-		printf("Image path=%s\n",list->listDataArray->at(list->LFSTK_getCurrentListItem()).data.imagePath);
+		printf("Image path=%s\n",list->listDataArray->at(list->LFSTK_getCurrentListItem()).imagePath.c_str());
 	printf("UserData=%p\n",list->listDataArray->at(list->LFSTK_getCurrentListItem()).userData);
 	return(true);
 }
@@ -116,13 +116,13 @@ int main(int argc, char **argv)
 	listLabelStruct ls;
 	for(int j=0;j<15;j++)
 		{
-			ls.label=strdup((char*)lst[j]);
+			ls.label=lst[j];
 			ls.imageType=FILETHUMB;
 			//ls.imageType=NOTHUMB;
 			if(images[j]!=NULL)
-				ls.data.imagePath=strdup(images[j]);
+				ls.imagePath=images[j];
 			else
-				ls.data.imagePath=NULL;
+				ls.imagePath="";
 			ls.userData=USERDATA(j+0x1000);
 			list->LFSTK_appendToList(ls);
 		}

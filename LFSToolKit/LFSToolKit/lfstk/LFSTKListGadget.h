@@ -34,15 +34,12 @@ enum {NOTHUMB=0,CAIROTHUMB,FILETHUMB};
 
 struct listLabelStruct
 {
-	char		*label;
-	int		imageType;
-	void		*userData;
-	int		listPos;
-	union	imageData
-		{
-			char				*imagePath=NULL;
-			cairo_surface_t	*surface;
-		} data;
+	std::string		label;
+	int				imageType;
+	void				*userData;
+	int				listPos;
+	std::string		imagePath;
+	cairo_surface_t	*surface;
 };
 
 /**

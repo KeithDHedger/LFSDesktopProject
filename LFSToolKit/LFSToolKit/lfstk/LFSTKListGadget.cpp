@@ -141,7 +141,7 @@ void LFSTK_listGadgetClass::LFSTK_setListFromFile(const char *filepath,bool incl
 											{
 												if(strlen(buffer)>0)
 													{
-														ls.label=strdup(buffer);
+														ls.label=buffer;
 														ls.userData=USERDATA(userdata);
 														this->LFSTK_appendToList(ls);
 													}
@@ -191,9 +191,9 @@ void LFSTK_listGadgetClass::LFSTK_updateList(void)
 								this->labelsArray->at(j)->LFSTK_setLabelGravity(MENU);
 							this->listDataArray->at(j+this->listOffset).listPos=j;
 							if(this->listDataArray->at(j+this->listOffset).imageType==CAIROTHUMB)
-								this->labelsArray->at(j)->LFSTK_setImageFromSurface(this->listDataArray->at(j+this->listOffset).data.surface,MENU,true);
+								this->labelsArray->at(j)->LFSTK_setImageFromSurface(this->listDataArray->at(j+this->listOffset).surface,MENU,true);
 							if(this->listDataArray->at(j+this->listOffset).imageType==FILETHUMB)
-								this->labelsArray->at(j)->LFSTK_setImageFromPath(this->listDataArray->at(j+this->listOffset).data.imagePath,MENU,true);
+								this->labelsArray->at(j)->LFSTK_setImageFromPath(this->listDataArray->at(j+this->listOffset).imagePath,MENU,true);
 							this->labelsArray->at(j)->LFSTK_showGadget();
 							this->labelsArray->at(j)->LFSTK_clearWindow();
 						}
@@ -353,11 +353,11 @@ void LFSTK_listGadgetClass::freeList(void)
 {
 	for(int j=0;j<this->listDataArray->size();j++)
 		{
-			freeAndNull(&this->listDataArray->at(j).label);
-			if((this->listDataArray->at(j).imageType==CAIROTHUMB) && (this->listDataArray->at(j).data.surface!=NULL) && (this->freeCairoImages==true))
-				cairo_surface_destroy(this->listDataArray->at(j).data.surface);
-			if((this->listDataArray->at(j).imageType==FILETHUMB) && (this->listDataArray->at(j).data.imagePath!=NULL))
-				freeAndNull(&this->listDataArray->at(j).data.imagePath);
+			//freeAndNull(&this->listDataArray->at(j).label);
+			if((this->listDataArray->at(j).imageType==CAIROTHUMB) && (this->listDataArray->at(j).surface!=NULL) && (this->freeCairoImages==true))
+				cairo_surface_destroy(this->listDataArray->at(j).surface);
+			//if((this->listDataArray->at(j).imageType==FILETHUMB) && (this->listDataArray->at(j).imagePath.length()>0))
+			//	freeAndNull(&this->listDataArray->at(j).imagePath);
 		}
 	this->listDataArray->clear();
 }
@@ -374,10 +374,10 @@ void LFSTK_listGadgetClass::LFSTK_freeList(void)
 * Get selected label.
 * \return const char *label;
 */
-const char *LFSTK_listGadgetClass::LFSTK_getSelectedLabel(void)
+const char *LFSTK_listGadgetClass::LFSTK_getSelectedLabel(void)//TODO//
 {
 	if(this->listDataArray->size()>this->currentItem)
-		return(this->listDataArray->at(this->currentItem).label);
+		return(this->listDataArray->at(this->currentItem).label.c_str());
 
 	return("");
 }
@@ -387,12 +387,12 @@ const char *LFSTK_listGadgetClass::LFSTK_getSelectedLabel(void)
 * \param int Index.
 * \return const char *label;
 */
-const char	*LFSTK_listGadgetClass::LFSTK_getLabelAtIndex(int index)
+const char	*LFSTK_listGadgetClass::LFSTK_getLabelAtIndex(int index)//TODO//
 {
 	if((index>this->listDataArray->size()-1) || (index<0))
 		return(NULL);
 
-	return(this->listDataArray->at(index).label);
+	return(this->listDataArray->at(index).label.c_str());
 }
 
 /**
@@ -508,7 +508,9 @@ int LFSTK_listGadgetClass::LFSTK_findByLabel(const char *needle,bool select)
 {
 	for(int j=0;j<this->listDataArray->size();j++)
 		{
-			if(strcmp(this->listDataArray->at(j).label,needle)==0)
+			//if(strcmp(this->listDataArray->at(j).label,needle)==0)//TODO//
+			//if(strcmp(this->listDataArray->at(j).label.c_str(),needle)==0)
+			if(this->listDataArray->at(j).label.compare(needle)==0)
 				{
 					if(select==true)
 						this->LFSTK_selectByIndex(j);

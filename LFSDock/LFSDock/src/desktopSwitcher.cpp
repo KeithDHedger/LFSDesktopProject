@@ -50,9 +50,9 @@ bool deskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 	for(int j=0;j<deskNames.size();j++)
 		{
 			label=deskNames.at(j);
-			ls.label=strdup((char*)label.c_str());
+			ls.label=label;
 			ls.imageType=NOTHUMB;
-			ls.data.imagePath=NULL;
+			ls.imagePath;
 			ls.userData=USERDATA(DESKTOPSWITCHER);
 			popActionList->LFSTK_appendToList(ls);
 		}

@@ -39,9 +39,9 @@ bool launcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 
 			setGadgetPosition(p,true);
 			popActionList->LFSTK_freeList();	
-			ls.label=strdup((char*)lds.name.c_str());
+			ls.label=lds.name;
 			ls.imageType=NOTHUMB;
-			ls.data.imagePath=NULL;
+			ls.imagePath;
 			ls.userData=USERDATA(p);
 
 			popActionList->LFSTK_appendToList(ls);

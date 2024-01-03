@@ -1,4 +1,7 @@
 0.6.0
+Fixed calendar example.
+Fixed minor faults.
+Fixed leak in listgadget.
 Removing old 'c' code ...
 Removing old 'c' code ...
 Added small utility class for static functions.

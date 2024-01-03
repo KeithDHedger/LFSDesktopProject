@@ -28,6 +28,7 @@ class LFSTK_UtilityClass
 		~LFSTK_UtilityClass();
 
 		static std::vector<std::string>	LFSTK_strTok(std::string str,std::string delimiter);
+		static std::string				LFSTK_strStr(std::string haystack,std::string needle,bool caseinsensitive=false);
 };
 
 #endif

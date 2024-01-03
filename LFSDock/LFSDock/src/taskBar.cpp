@@ -48,7 +48,7 @@ bool taskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 	label=filltasks.at(d).taskName;
 	ls.label=strdup((char*)label.c_str());
 	ls.imageType=NOTHUMB;
-	ls.data.imagePath=NULL;
+	ls.imagePath;
 	ls.userData=USERDATA(filltasks.at(d).winid);
 	popActionList->LFSTK_appendToList(ls);
 
@@ -57,7 +57,7 @@ bool taskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 			label=filltasks.at(d).tasks.at(j).taskName;
 			ls.label=strdup((char*)label.c_str());
 			ls.imageType=NOTHUMB;
-			ls.data.imagePath=NULL;
+			ls.imagePath;
 			ls.userData=USERDATA(filltasks.at(d).tasks.at(j).winid);
 			popActionList->LFSTK_appendToList(ls);
 		}

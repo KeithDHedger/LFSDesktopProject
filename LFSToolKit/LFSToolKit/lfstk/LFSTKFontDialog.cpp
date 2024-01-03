@@ -129,18 +129,20 @@ void LFSTK_fontDialogClass::loadFontStrings(void)
 /*
 * Private parse fontstring.
 */
-void LFSTK_fontDialogClass::parseFontString(std::string fontstr)
+void LFSTK_fontDialogClass::parseFontString(std::string fontstr)//TODO//
 {
 	std::vector<std::string>	tokenstrings;
 
 	tokenstrings=LFSTK_UtilityClass::LFSTK_strTok(fontstr,":");
 
-	this->fontlist->LFSTK_findByLabel(tokenstrings.at(0).c_str());
-	this->boldcheck->LFSTK_setValue(tokenstrings.at(2).c_str());
-	this->italiccheck->LFSTK_setValue(tokenstrings.at(3).c_str());
-	this->fontsize->LFSTK_setBuffer(tokenstrings.at(1).substr(5,(tokenstrings.at(1).length()-5)).c_str());
-	this->LFSTK_getFontData(true);
-
+	if(tokenstrings.size()>3)
+		{
+			this->fontlist->LFSTK_findByLabel(tokenstrings.at(0).c_str());
+			this->boldcheck->LFSTK_setValue(tokenstrings.at(2).c_str());
+			this->italiccheck->LFSTK_setValue(tokenstrings.at(3).c_str());
+			this->fontsize->LFSTK_setBuffer(tokenstrings.at(1).substr(5,(tokenstrings.at(1).length()-5)).c_str());
+			this->LFSTK_getFontData(true);
+		}
 	return;
 }
 
@@ -230,7 +232,7 @@ void LFSTK_fontDialogClass::buildDialog(void)
 	
 	for(int j=0;j<this->maxFonts;j++)
 		{
-			ls.label=strdup(this->fontsAZV.at(j).c_str());
+			ls.label=this->fontsAZV.at(j);
 			ls.imageType=NOTHUMB;
 			fontlist->LFSTK_appendToList(ls);
 		}

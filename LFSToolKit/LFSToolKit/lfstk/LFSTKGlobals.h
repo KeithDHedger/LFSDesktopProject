@@ -31,6 +31,7 @@
 #include <vector>
 #include <iomanip>
 #include <filesystem>
+#include <algorithm>
 
 #include <dirent.h>
 
@@ -47,7 +48,7 @@
 #include <experimental/filesystem>
 
 
-#define COPYRITE			"Copyright © 2013-2023 K.D.Hedger"
+#define COPYRITE			"Copyright © 2013-2024 K.D.Hedger"
 #define PERSONAL			"kdhedger68713@gmail.com"
 #define	MYWEBSITE		"https://keithdhedger.github.io/"
 
