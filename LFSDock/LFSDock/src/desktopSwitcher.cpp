@@ -42,7 +42,7 @@ bool deskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 bool deskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 {
 	std::string		label;
-	listLabelStruct	ls;
+	infoDataStruct	ls;
 
 	setGadgetPosition(p,true);
 	popActionList->LFSTK_freeList();	
@@ -97,7 +97,7 @@ bool desktopSelect(void *object,void* userdata)
 int addDesktopSwitcer(int x,int y,int grav)
 {
 	char					*icon=NULL;
-	listLabelStruct		ls;
+	infoDataStruct		ls;
 	std::string			label;
 	propertyStruct		props;
 	propReturn			pr;

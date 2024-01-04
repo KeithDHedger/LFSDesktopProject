@@ -112,7 +112,7 @@ void LFSTK_listGadgetClass::LFSTK_setListFromFile(const char *filepath,bool incl
 	long			userdata=0;
 	std::string		lines;
 	this->freeList();
-	listLabelStruct ls;
+	infoDataStruct ls;
 
 	if(filepath!=NULL)
 		{
@@ -133,7 +133,7 @@ void LFSTK_listGadgetClass::LFSTK_setListFromFile(const char *filepath,bool incl
 										ls.imageType=NOTHUMB;
 										if(includeempty==true)
 											{
-												ls.label=strdup(buffer);
+												ls.label=buffer;
 												ls.userData=USERDATA(userdata);
 												this->LFSTK_appendToList(ls);
 											}
@@ -324,7 +324,7 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 
 	sx=x+1;
 	this->labelsArray=new std::vector <LFSTK_buttonClass*>;
-	this->listDataArray=new std::vector <listLabelStruct>;
+	this->listDataArray=new std::vector <infoDataStruct>;
 	this->LFSTK_resetListHeight(h);
 
 //navigate
@@ -481,9 +481,9 @@ bool LFSTK_listGadgetClass::selectKey(void *object,void* userdata)
 
 /**
 * Append data to current list.
-* \param data listLabelStruct
+* \param data infoDataStruct
 */
-void LFSTK_listGadgetClass::LFSTK_appendToList(listLabelStruct data)
+void LFSTK_listGadgetClass::LFSTK_appendToList(infoDataStruct data)
 {
 	this->listDataArray->push_back(data);
 }

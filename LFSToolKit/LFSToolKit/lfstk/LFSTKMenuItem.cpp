@@ -31,11 +31,11 @@ LFSTK_menuItemClass::~LFSTK_menuItemClass()
 * \param y Y pos.
 * \param w Width.
 * \param h Height.
-* \param menu menuStruct array.
+* \param menu infoDataStruct array.
 * \note optional, label gravity defaults to LEFT.
 * \note gadget gravity defaults to NorthWestGravity.
 */
-LFSTK_menuItemClass::LFSTK_menuItemClass(LFSTK_toolWindowClass* parentwc,LFSTK_menuClass *mainmenu,int x,int y,unsigned w,unsigned h,menuStruct *menu,int labelgrav)
+LFSTK_menuItemClass::LFSTK_menuItemClass(LFSTK_toolWindowClass* parentwc,LFSTK_menuClass *mainmenu,int x,int y,unsigned w,unsigned h,infoDataStruct *menu,int labelgrav)
 {
 	XSetWindowAttributes	wa;
 

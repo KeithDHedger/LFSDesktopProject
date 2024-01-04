@@ -30,7 +30,7 @@ class LFSTK_menuClass
 		~LFSTK_menuClass();
 		LFSTK_menuClass(LFSTK_windowClass *wc,int x,int y,unsigned w,unsigned h);
 
-		void									LFSTK_addMainMenus(menuStruct **menus,int menucnt);
+		void									LFSTK_addMainMenus(infoDataStruct **menus,int menucnt);
 		void									LFSTK_showMenu(void);
 
 		int									x;
@@ -47,7 +47,7 @@ class LFSTK_menuClass
 
 
 		void									LFSTK_setMouseCallBack(bool (*downcb)(void*,void*),bool (*releasecb)(void*,void*),void* ud);
-		void									LFSTK_freeMenus(menuStruct **menus,int menucnt);
+		void									LFSTK_freeMenus(infoDataStruct **menus,int menucnt);
 		//int									LFSTK_getTextWidthForFont(const char *text);
 		int									LFSTK_getTextWidthForFont(std::string text);
 
@@ -57,7 +57,7 @@ class LFSTK_menuClass
 
 		static bool							menuScroll(void *object,void* userdata);
 		int									mainMenuCnt=0;
-		menuStruct							**mainMenu=NULL;
+		infoDataStruct							**mainMenu=NULL;
 	private:		
 		void 								resizeMenu(void);
 

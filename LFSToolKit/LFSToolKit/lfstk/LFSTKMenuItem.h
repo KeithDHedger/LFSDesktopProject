@@ -31,7 +31,7 @@ class LFSTK_menuItemClass : public LFSTK_buttonClass
 		LFSTK_menuItemClass();
 		~LFSTK_menuItemClass();
 
-		LFSTK_menuItemClass(LFSTK_toolWindowClass* parentwc,LFSTK_menuClass *mainmenu,int x,int y,unsigned w,unsigned h,menuStruct *menu,int labelgrav=LEFT);
+		LFSTK_menuItemClass(LFSTK_toolWindowClass* parentwc,LFSTK_menuClass *mainmenu,int x,int y,unsigned w,unsigned h,infoDataStruct *menu,int labelgrav=LEFT);
 
 		bool						mouseExit(XButtonEvent *e);
 		bool						mouseEnter(XButtonEvent *e);
@@ -53,7 +53,7 @@ class LFSTK_menuItemClass : public LFSTK_buttonClass
 		int						topMenu=0;
 
 		LFSTK_toolWindowClass	*subwc=NULL;
-		menuStruct				*menuData=NULL;
+		infoDataStruct				*menuData=NULL;
 };
 
 #endif

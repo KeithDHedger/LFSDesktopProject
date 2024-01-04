@@ -301,13 +301,11 @@ void LFSTK_lib::LFSTK_loadDesktopIconTheme(void)
 {
 	std::string	desktheme="";
 	std::string	th="";
-	gchar		*tstr;
+
 	desktheme=desktheme+getenv("HOME")+"/.config/LFS/lfsdesktop.rc";
 	th=this->LFSTK_grepInFile(desktheme,"icontheme");
 	th.replace(th.find("icontheme"),9,"");
-	tstr=strdup(th.c_str());
-	this->desktopIconTheme=g_strstrip(tstr);
-	g_free(tstr);
+	this->desktopIconTheme=LFSTK_UtilityClass::LFSTK_strStrip(th);
 }
 
 /**
@@ -839,7 +837,7 @@ std::string LFSTK_lib::LFSTK_getMimeType(std::string path)
 	if(access(path.c_str(),F_OK)==0)
 		return(this->LFSTK_oneLiner("file -L -b --mime-type \"%s\"",path.c_str()));
 	else
-		return(strdup("application/octet-stream"));
+		return("application/octet-stream");
 }
 
 /*! This function decompresses a JPEG image from a memory buffer and creates a
@@ -1041,20 +1039,50 @@ void LFSTK_lib::LFSTK_setThemePath(char *path)
 */
 char* LFSTK_lib::LFSTK_cleanString(const char *str)
 {
-	char	*localstr=strdup(str);
-	char	*uristr=g_uri_parse_scheme(localstr);
-	char	*cleanstr;
+	gchar		*t;
+	std::string	cleanedstr;
+	char			*uristr=g_uri_parse_scheme(str);
+
 	if(uristr!=NULL)
 		{
-			cleanstr=g_filename_from_uri((const char*)g_strstrip(localstr),NULL,NULL);
-			freeAndNull(&uristr);
+			t=g_filename_from_uri(str,NULL,NULL);
+			cleanedstr=LFSTK_UtilityClass::LFSTK_strStrip(t);
+			g_free(t);
 		}
 	else
 		{
-			cleanstr=strdup((const char*)g_strstrip(localstr));
+			cleanedstr=LFSTK_UtilityClass::LFSTK_strStrip(str);
 		}
-	freeAndNull(&localstr);
-	return(cleanstr);
+	freeAndNull(&uristr);
+	return(strdup(cleanedstr.c_str()));
+}
+
+/**
+* Clean up string.
+* \param const char *str.
+* \return char* Cleaned string.
+* \note uri translated to local files.
+* \note strings are cleaned of white space at front and back.
+* \note returned string should be freed by caller.
+*/
+std::string	LFSTK_lib::LFSTK_cleanString(std::string str)
+{
+	gchar		*t;
+	std::string	cleanedstr;
+	char			*uristr=g_uri_parse_scheme(str.c_str());
+
+	if(uristr!=NULL)
+		{
+			t=g_filename_from_uri(str.c_str(),NULL,NULL);
+			cleanedstr=LFSTK_UtilityClass::LFSTK_strStrip(t);
+			g_free(t);
+		}
+	else
+		{
+			cleanedstr=LFSTK_UtilityClass::LFSTK_strStrip(str);
+		}
+	freeAndNull(&uristr);
+	return(cleanedstr);
 }
 
 /**
@@ -1134,8 +1162,6 @@ void LFSTK_lib::LFSTK_getFileInfo(const char* path,fileInformation* info)
 {
 	struct stat	sb;
 	GError		*error;
-	GFile		*file;
-	GFileInfo	*file_info;
 	char			*icon=NULL;
 	std::string	data;
 	size_t		pos;
@@ -1178,11 +1204,7 @@ void LFSTK_lib::LFSTK_getFileInfo(const char* path,fileInformation* info)
 			info->fileMode=sb.st_mode & 07777;
 			info->mimeType="application/octet-stream";
 
-			file=g_file_new_for_path(path);
-			file_info=g_file_query_info(file,"standard::*",G_FILE_QUERY_INFO_NONE,NULL,&error);
-			th=g_file_info_get_content_type(file_info);
-			g_clear_object(&file_info);
-			g_clear_object(&file);
+			th=this->LFSTK_getMimeType(path);
 			if(th.length()!=0)
 				info->mimeType=th;
 			else

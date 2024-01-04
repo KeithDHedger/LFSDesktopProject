@@ -214,7 +214,7 @@ bool popActionListExitCB(LFSTK_gadgetClass*p,void* ud)
 
 bool popActionWindowSelect(void *object,void* userdata)//TODO//
 {
-	listLabelStruct			ls;
+	infoDataStruct			ls;
 	unsigned long			wud=0;
 
 	LFSTK_listGadgetClass	*list=static_cast<LFSTK_listGadgetClass*>(object);

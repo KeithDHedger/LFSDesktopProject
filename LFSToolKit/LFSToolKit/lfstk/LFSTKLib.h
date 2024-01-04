@@ -80,6 +80,7 @@ class LFSTK_lib
 
 //utils
 		char				*LFSTK_cleanString(const char *str);
+		std::string		LFSTK_cleanString(std::string str);
 		propReturn		LFSTK_getSingleProp(Display *display,Window win,Atom prop,Atom wanttype);
 
 //messaging		

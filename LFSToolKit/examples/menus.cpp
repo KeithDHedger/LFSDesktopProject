@@ -108,10 +108,10 @@ int main(int argc, char **argv)
 	wc->LFSTK_showWindow();
 	wc->LFSTK_clearWindow(true);
 
-	menuStruct	**mms=new menuStruct*[MAINNUMMENUS];
+	infoDataStruct	**mms=new infoDataStruct*[MAINNUMMENUS];
 	for (int j=0; j<MAINNUMMENUS; j++)
 		{
-			mms[j]=new menuStruct;
+			mms[j]=new infoDataStruct;
 			//asprintf(&mms[j]->label,"menu %i",j);
 			mms[j]->label="menu "+std::to_string(j);
 			mms[j]->hasSubMenu=false;
@@ -131,10 +131,10 @@ int main(int argc, char **argv)
 
 	mms[2]->hasSubMenu=true;
 	mms[2]->subMenuCnt=SUB1NUMMENUS;
-	mms[2]->subMenus=new menuStruct*[SUB1NUMMENUS];
+	mms[2]->subMenus=new infoDataStruct*[SUB1NUMMENUS];
 	for (int j=0; j<SUB1NUMMENUS; j++)
 		{
-			mms[2]->subMenus[j]=new menuStruct;
+			mms[2]->subMenus[j]=new infoDataStruct;
 			mms[2]->subMenus[j]->label="sub menu 2 "+std::to_string(j);
 			mms[2]->subMenus[j]->hasSubMenu=false;
 			mms[2]->subMenus[j]->subMenus=NULL;
@@ -145,10 +145,10 @@ int main(int argc, char **argv)
 	mms[6]->hasSubMenu=true;
 	mms[6]->subMenuCnt=SUB2NUMMENUS;
 
-	mms[6]->subMenus=new menuStruct*[SUB2NUMMENUS];
+	mms[6]->subMenus=new infoDataStruct*[SUB2NUMMENUS];
 	for (int j=0; j<SUB2NUMMENUS; j++)
 		{
-			mms[6]->subMenus[j]=new menuStruct;
+			mms[6]->subMenus[j]=new infoDataStruct;
 			mms[6]->subMenus[j]->label="sub menu 6 "+std::to_string(j);
 			mms[6]->subMenus[j]->hasSubMenu=false;
 			mms[6]->subMenus[j]->subMenus=NULL;
@@ -162,10 +162,10 @@ int main(int argc, char **argv)
 	mms[6]->subMenus[4]->hasSubMenu=true;
 	mms[6]->subMenus[4]->subMenuCnt=SUBSUB1NUMMENUS;
 
-	mms[6]->subMenus[4]->subMenus=new menuStruct*[SUBSUB1NUMMENUS];
+	mms[6]->subMenus[4]->subMenus=new infoDataStruct*[SUBSUB1NUMMENUS];
 	for (int j=0; j<SUBSUB1NUMMENUS; j++)
 		{
-			mms[6]->subMenus[4]->subMenus[j]=new menuStruct;
+			mms[6]->subMenus[4]->subMenus[j]=new infoDataStruct;
 			mms[6]->subMenus[4]->subMenus[j]->label="sub menu 6 - "+std::to_string(j);
 			mms[6]->subMenus[4]->subMenus[j]->hasSubMenu=false;
 			mms[6]->subMenus[4]->subMenus[j]->subMenus=NULL;

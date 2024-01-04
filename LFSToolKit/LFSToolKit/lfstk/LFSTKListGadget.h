@@ -32,16 +32,6 @@
 enum {LUP=0,LDOWN,LHOME,LEND};
 enum {NOTHUMB=0,CAIROTHUMB,FILETHUMB};
 
-struct listLabelStruct
-{
-	std::string		label;
-	int				imageType;
-	void				*userData;
-	int				listPos;
-	std::string		imagePath;
-	cairo_surface_t	*surface;
-};
-
 /**
  * \brief List class for LFSToolKit.
 */
@@ -57,7 +47,7 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		const char						*LFSTK_getSelectedLabel(void);
 		const char						*LFSTK_getLabelAtIndex(int index);
 		void								LFSTK_freeList(void);
-		void								LFSTK_appendToList(listLabelStruct data);
+		void								LFSTK_appendToList(infoDataStruct data);
 		void								LFSTK_selectByIndex(int index);
 		int								LFSTK_findByLabel(const char *needle,bool select=true);
 		
@@ -75,7 +65,7 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		void								LFSTK_setListItemsColours(gadgetColourType type,std::string normal,std::string prelight,std::string active,std::string inactive);
 
 		std::vector <LFSTK_buttonClass*>	*labelsArray;
-		std::vector <listLabelStruct>	*listDataArray;
+		std::vector <infoDataStruct>	*listDataArray;
 
 		bool								freeCairoImages=true;
 		unsigned							maxShowing;

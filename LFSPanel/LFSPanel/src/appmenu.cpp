@@ -42,7 +42,7 @@ const char						*catImageNames[]={"preferences-desktop","applications-utilities"
 
 LFSTK_findClass					*find;
 LFSTK_buttonClass				*appButton=NULL;
-menuStruct						**catagoryMenus;
+infoDataStruct						**catagoryMenus;
 LFSTK_menuClass					*appMenu=NULL;
 
 int								catPtr[MAXCATS];
@@ -135,7 +135,7 @@ void addEntries(void)
 
 	numfiles=find->LFSTK_getDataCount();
 
-	catagoryMenus=new menuStruct*[MAXCATS];
+	catagoryMenus=new infoDataStruct*[MAXCATS];
 
 	for(int j=0;j<numfiles;j++)
 		{
@@ -170,8 +170,8 @@ void addEntries(void)
 													if(gotCatList.find(myCats[k])==gotCatList.end())
 														{
 															catMenusPtr[myCats[k]]=catagoryCnt;
-															catagoryMenus[catagoryCnt]=new menuStruct;
-															catagoryMenus[catagoryCnt]->subMenus=new menuStruct*[100];
+															catagoryMenus[catagoryCnt]=new infoDataStruct;
+															catagoryMenus[catagoryCnt]->subMenus=new infoDataStruct*[100];
 															catagoryMenus[catagoryCnt]->hasSubMenu=true;
 															catagoryMenus[catagoryCnt]->subMenuCnt=0;
 															catagoryMenus[catagoryCnt]->label=strdup(myCats[k]);
@@ -185,7 +185,7 @@ void addEntries(void)
 															gotCatList[myCats[k]]=true;
 														}
 													int submenunum=catagoryMenus[catMenusPtr[myCats[k]]]->subMenuCnt;
-													catagoryMenus[catMenusPtr[myCats[k]]]->subMenus[submenunum]=new menuStruct;
+													catagoryMenus[catMenusPtr[myCats[k]]]->subMenus[submenunum]=new infoDataStruct;
 													catagoryMenus[catMenusPtr[myCats[k]]]->subMenus[submenunum]->label=df.name;
 #if 1
 //find /usr/share/icons/hicolor/ -iname "*cups*"|tail -n1
@@ -235,12 +235,12 @@ void addExtras(void)
 {
 	char	*iconpath=NULL;
 
-	catagoryMenus[catagoryCnt]=new menuStruct;
+	catagoryMenus[catagoryCnt]=new infoDataStruct;
 	catagoryMenus[catagoryCnt]->label=strdup("--");
 	catagoryMenus[catagoryCnt]->userData=NULL;
 	catagoryCnt++;
 
-	catagoryMenus[catagoryCnt]=new menuStruct;
+	catagoryMenus[catagoryCnt]=new infoDataStruct;
 	catagoryMenus[catagoryCnt]->label=strdup("LFS About");
 	catagoryMenus[catagoryCnt]->userData=(void*)-1;
 	iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"help-about","");
@@ -263,7 +263,7 @@ int addAppmenu(int x,int y,int grav,bool fromleft)
 	int			iconsize=16;
 	bool			flag=false;
 	int			mencnt=0;
-	menuStruct	*menuhold;
+	infoDataStruct	*menuhold;
 
 	if(appButton!=NULL)
 		{

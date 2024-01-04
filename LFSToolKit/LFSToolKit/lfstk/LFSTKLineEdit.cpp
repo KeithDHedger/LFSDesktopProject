@@ -52,6 +52,7 @@ bool LFSTK_lineEditClass::contextCB(void *p,void* ud)
 					case 2:
 						le->wc->clipBuffer=le->LFSTK_getCStr();
 						XSetSelectionOwner(le->wc->app->display,le->wc->LFSTK_getDnDAtom(XA_CLIPBOARD),le->wc->window,CurrentTime);
+						XSync(le->wc->app->display,true);
 						le->LFSTK_setBuffer("");
 						break;
 					case 3:
@@ -256,7 +257,10 @@ bool LFSTK_lineEditClass::gotFocus(XEvent *e)
 void LFSTK_lineEditClass::LFSTK_setBuffer(std::string str)
 {
 	this->buffer=str;
-	this->cursorPos=str.length()-1;
+	if(str.length()>0)
+		this->cursorPos=str.length()-1;
+	else
+		this->cursorPos=0;
 	this->setOffsetcurs(1000);
 	this->setOffsetcurs(1);
 	if(this->cursorPos<0)

@@ -34,7 +34,7 @@ bool launcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 	if(p!=NULL)
 		{
 			std::string			label;
-			listLabelStruct		ls;
+			infoDataStruct		ls;
 			launcherDataStruct	lds=launchersArray.at((long unsigned int)ud);
 
 			setGadgetPosition(p,true);

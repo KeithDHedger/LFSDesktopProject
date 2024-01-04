@@ -580,10 +580,10 @@ void LFSWM2_clientClass::showWMMenu(int x,int y)
 	wc->LFSTK_resizeWindow(1,1,true);
 	wc->LFSTK_hideWindow();
 
-	menuStruct	**mms=new menuStruct*[NUMMENUS];
+	infoDataStruct	**mms=new infoDataStruct*[NUMMENUS];
 	for (int j=0; j<NUMMENUS; j++)
 		{
-			mms[j]=new menuStruct;
+			mms[j]=new infoDataStruct;
 			//asprintf(&mms[j]->label,"%s",menuitemlabels[j]);
 			mms[j]->label=menuitemlabels[j];
 			mms[j]->hasSubMenu=false;

@@ -109,9 +109,6 @@ int LFSTK_windowClass::LFSTK_gadgetCount(void)
  */
 void LFSTK_windowClass::LFSTK_setWindowTitle(const char *title)
 {
-	//if(this->windowName!=NULL)
-	//	freeAndNull(&this->windowName);
-	//this->windowName=strdup(title);
 	this->windowName=title;
 	XStoreName(this->app->display,this->window,(char*)this->windowName.c_str());
 }
@@ -750,7 +747,6 @@ void LFSTK_windowClass::windowClassInitCommon(windowInitStruct *wi)
 		XChangeProperty(this->app->display,this->window,xa,XA_ATOM,32,PropModeAppend,(unsigned char *)&xa_prop,4);
 
 	this->LFSTK_setWindowType(wi->windowType);
-	//this->windowName=strdup(wi->name);
 	this->windowName=wi->windowName;
 	XStoreName(this->app->display,this->window,(char*)this->windowName.c_str());//TODO//
 	classHint.res_name=(char*)wi->appName.c_str();
@@ -843,7 +839,6 @@ LFSTK_windowClass::LFSTK_windowClass(windowInitStruct *wi,LFSTK_applicationClass
 		XChangeProperty(this->app->display,this->window,xa,XA_ATOM,32,PropModeAppend,(unsigned char *)&xa_prop,4);
 
 	this->LFSTK_setWindowType(wi->windowType);
-	//this->windowName=strdup(wi->name);
 	this->windowName=wi->windowName;
 	XStoreName(this->app->display,this->window,(char*)this->windowName.c_str());//TODO//
 	classHint.res_name=(char*)wi->appName.c_str();

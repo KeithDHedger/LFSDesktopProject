@@ -55,7 +55,7 @@ extern LFSTK_buttonClass		*windowAll;
 extern LFSTK_buttonClass		*windowDesk;
 extern const char			*possibleError;
 extern LFSTK_menuClass		*windowMenu;
-extern menuStruct			**windowList;
+extern infoDataStruct			**windowList;
 
 int addWindowDeskMenu(int x,int y,int grav,bool fromleft);
 int addWindowMenu(int x,int y,int grav,bool fromleft);

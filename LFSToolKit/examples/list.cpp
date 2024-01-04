@@ -39,7 +39,7 @@ LFSTK_ExpanderGadgetClass	*multi=NULL;
 
 const char	*lst[]={"item 1","item 2","item 3","item 4","item 5","item 6","7 food","8 water","9 attack","10 defense","11 666","12 999","13 10101010","14 ELP","15 last item",};
 const char	*images[]={"./AspellGUI.png",NULL,NULL,NULL,"./audio-speakers.png",NULL,"./casper2.JPG","./computer.png","./computer.png","./computer.png","./computer.png","./computer.png","./computer.png","./audio-speakers.png","./ManPageEditor.png"};
-listLabelStruct				**labelLst1=NULL;
+infoDataStruct				**labelLst1=NULL;
 
 bool doQuit(void *p,void* ud)
 {
@@ -113,7 +113,7 @@ int main(int argc, char **argv)
 	multi->LFSTK_setHitRects(hrs);
 	hrs.clear();
 
-	listLabelStruct ls;
+	infoDataStruct ls;
 	for(int j=0;j<15;j++)
 		{
 			ls.label=lst[j];

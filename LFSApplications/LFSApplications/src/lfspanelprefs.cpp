@@ -42,25 +42,25 @@ LFSTK_buttonClass			*apply=NULL;
 //panel select
 LFSTK_buttonClass			*selectPanel=NULL;
 LFSTK_lineEditClass			*panelNameEdit=NULL;
-menuStruct					**panelNames=NULL;
+infoDataStruct					**panelNames=NULL;
 LFSTK_menuClass				*panelMenu=NULL;
 int							panelCnt=0;
 
 //panel data
 LFSTK_buttonClass			*panelWidth=NULL;
 LFSTK_lineEditClass			*panelWidthEdit=NULL;
-menuStruct					**panelWidthMenu=NULL;
+infoDataStruct					**panelWidthMenu=NULL;
 LFSTK_lineEditClass			*panelHeightEdit=NULL;
 LFSTK_menuClass				*widthMenu=NULL;
 
 LFSTK_buttonClass			*panelPos=NULL;
 LFSTK_lineEditClass			*panelPosEdit=NULL;
-menuStruct					**panelPosMenu=NULL;
+infoDataStruct					**panelPosMenu=NULL;
 LFSTK_menuClass				*posMenu=NULL;
 
 LFSTK_buttonClass			*panelGrav=NULL;
 LFSTK_lineEditClass			*panelGravEdit=NULL;
-menuStruct					**panelGravMenu=NULL;
+infoDataStruct					**panelGravMenu=NULL;
 LFSTK_menuClass				*gravMenu=NULL;
 
 LFSTK_lineEditClass			*panelOnMonitor=NULL;
@@ -328,10 +328,10 @@ int main(int argc, char **argv)
 
 	panelCnt=find->LFSTK_getDataCount();
 
-	panelNames=new menuStruct*[panelCnt];
+	panelNames=new infoDataStruct*[panelCnt];
 	for(int j=0;j<panelCnt;j++)
 		{
-			panelNames[j]=new menuStruct;
+			panelNames[j]=new infoDataStruct;
 			panelNames[j]->label=strdup(find->data[j].name.c_str());
 			panelNames[j]->userData=(void*)(long)j;
 		}
@@ -356,10 +356,10 @@ int main(int argc, char **argv)
 	panelWidth=new LFSTK_buttonClass(wc,"Panel Width",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	panelWidth->LFSTK_setIndicator(DISCLOSURE);
 	panelWidth->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SHOWWIDTHMENU");
-	panelWidthMenu=new menuStruct*[2];
+	panelWidthMenu=new infoDataStruct*[2];
 	for(long j=0;j<2;j++)
 		{
-			panelWidthMenu[j]=new menuStruct;
+			panelWidthMenu[j]=new infoDataStruct;
 			panelWidthMenu[j]->label=panelWidthConvertToStr[menuuserdata[j]];
 			panelWidthMenu[j]->userData=(void*)menuuserdata[j];
 		}
@@ -380,10 +380,10 @@ int main(int argc, char **argv)
 	panelPos->LFSTK_setIndicator(DISCLOSURE);
 	panelPos->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SHOWPOSMENU");
 
-	panelPosMenu=new menuStruct*[4];
+	panelPosMenu=new infoDataStruct*[4];
 	for(int j=0;j<3;j++)
 		{
-			panelPosMenu[j]=new menuStruct;
+			panelPosMenu[j]=new infoDataStruct;
 			panelPosMenu[j]->label=strdup(panelPosConvertToStr[menuuserdata[j]]);
 			panelPosMenu[j]->userData=(void*)menuuserdata[j];
 		}
@@ -397,10 +397,10 @@ int main(int argc, char **argv)
 	panelGrav=new LFSTK_buttonClass(wc,"Panel Gravity",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	panelGrav->LFSTK_setIndicator(DISCLOSURE);
 	panelGrav->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SHOWGRAVMENU");
-	panelGravMenu=new menuStruct*[4];
+	panelGravMenu=new infoDataStruct*[4];
 	for(long j=0;j<4;j++)
 		{
-			panelGravMenu[j]=new menuStruct;
+			panelGravMenu[j]=new infoDataStruct;
 			panelGravMenu[j]->label=strdup(panelGravConvertToStr[j+1]);
 			panelGravMenu[j]->userData=(void*)(j+1);
 		}

@@ -58,7 +58,7 @@ LFSTK_ExpanderGadgetClass	*multi=NULL;
 
 int							queueID=-1;
 
-menuStruct					**groupNameMenuItems=NULL;
+infoDataStruct					**groupNameMenuItems=NULL;
 LFSTK_findClass				*find;
 
 bool doQuit(void *p,void* ud)
@@ -229,15 +229,15 @@ void addGroup(void)
 	find->LFSTK_sortByName();
 	menucnt=find->LFSTK_getDataCount()+2;
 
-	groupNameMenuItems=new menuStruct*[menucnt];
-	groupNameMenuItems[0]=new menuStruct;
+	groupNameMenuItems=new infoDataStruct*[menucnt];
+	groupNameMenuItems[0]=new infoDataStruct;
 	groupNameMenuItems[0]->label=strdup("Add Group");
-	groupNameMenuItems[1]=new menuStruct;
+	groupNameMenuItems[1]=new infoDataStruct;
 	groupNameMenuItems[1]->label=strdup("--");
 	
 	for(int j=2;j<menucnt;j++)
 		{
-			groupNameMenuItems[j]=new menuStruct;
+			groupNameMenuItems[j]=new infoDataStruct;
 			groupNameMenuItems[j]->label=strdup(find->data[j-2].name.c_str());
 		}
 	free(command);

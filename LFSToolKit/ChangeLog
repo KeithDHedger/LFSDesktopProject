@@ -1,3 +1,10 @@
+0.6.1
+Renoved some leaky glib code.
+Updated LFSTK_strStrip whitespace to include \n & \r.
+Removing old 'c' code ...
+Code clean.
+Fixed mem leaks.
+
 0.6.0
 Fixed calendar example.
 Fixed minor faults.

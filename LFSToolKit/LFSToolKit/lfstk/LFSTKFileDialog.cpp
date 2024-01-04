@@ -44,15 +44,17 @@ void LFSTK_fileDialogClass::cleanDirPath(void)
 	char		*rp;
 
 	rp=realpath(this->currentDir.c_str(),NULL);
-	//if(this->currentDir!=NULL)
-	//	freeAndNull(&this->currentDir);
-	this->currentDir=rp;
+	if(rp!=NULL)
+		{
+			this->currentDir=rp;
+			freeAndNull(&rp);
+		}
 }
 
 void LFSTK_fileDialogClass::getFileList(void)
 {
 	char				imagepath[PATH_MAX];
-	listLabelStruct	ls;
+	infoDataStruct	ls;
 
 	this->fc->LFSTK_setDepth(1,1);
 	if(this->dialogType==FOLDERDIALOG)
@@ -428,7 +430,7 @@ void LFSTK_fileDialogClass::LFSTK_getLastFolder(void)
 {
 	this->currentDir=this->wc->app->globalLib->LFSTK_oneLiner(std::string("grep -i '%s' '%s/dialoglast.rc' 2>/dev/null|awk -F= '{print $NF}'"),this->recentsName.c_str(),this->wc->app->configDir.c_str());
 	if(this->currentDir.length()<2)
-		this->currentDir=strdup(this->wc->app->userHome.c_str());//TODO//
+		this->currentDir=this->wc->app->userHome;
 }
 
 /**

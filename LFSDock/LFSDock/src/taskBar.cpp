@@ -38,7 +38,7 @@ bool taskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 {
 	std::string			label;
 	unsigned long		d;
-	listLabelStruct		ls;
+	infoDataStruct		ls;
 	LFSTK_buttonClass	*bc=static_cast<LFSTK_buttonClass*>(p);
 
 	setGadgetPosition(p,true);

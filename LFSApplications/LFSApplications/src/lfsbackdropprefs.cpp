@@ -54,17 +54,17 @@ LFSTK_buttonClass		*mainMode=NULL;
 LFSTK_lineEditClass		*mainModeEdit=NULL;
 LFSTK_toggleButtonClass	*multipleMonitors=NULL;
 LFSTK_menuClass			*rootMenu=NULL;
-menuStruct				**rootModeMenu=NULL;
+infoDataStruct				**rootModeMenu=NULL;
 
 //monitors
 LFSTK_buttonClass		*monitorsMenuButton=NULL;
 LFSTK_menuClass			*monitorSelectMenu=NULL;
-menuStruct				**monitorsMenu=NULL;
+infoDataStruct				**monitorsMenu=NULL;
 
 LFSTK_lineEditClass		*monitorModeEdit=NULL;
 LFSTK_lineEditClass		*monitorBackdropEdit=NULL;
 LFSTK_buttonClass		*monitorMode=NULL;
-menuStruct				**monitorModes=NULL;
+infoDataStruct				**monitorModes=NULL;
 LFSTK_menuClass			*monitorModeMenu=NULL;
 
 monitorInfo				monitors[20]={{NULL,0},};
@@ -333,10 +333,10 @@ int main(int argc, char **argv)
 	
 	sy+=YSPACING;
 //mode
-	rootModeMenu=new menuStruct*[5];
+	rootModeMenu=new infoDataStruct*[5];
 	for(long j=0;j<5;j++)
 		{
-			rootModeMenu[j]=new menuStruct;
+			rootModeMenu[j]=new infoDataStruct;
 			rootModeMenu[j]->label=strdup(modeLabel[j]);
 			rootModeMenu[j]->userData=(void*)j;
 		}
@@ -357,10 +357,10 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //monitors
-	monitorsMenu=new menuStruct*[apc->LFSTK_getMonitorCount()];
+	monitorsMenu=new infoDataStruct*[apc->LFSTK_getMonitorCount()];
 	for(long j=0;j<apc->LFSTK_getMonitorCount();j++)
 		{
-			monitorsMenu[j]=new menuStruct;
+			monitorsMenu[j]=new infoDataStruct;
 			//asprintf(&monitorsMenu[j]->label,"Monitor %i",j);
 			monitorsMenu[j]->label="Monitor "+std::to_string(j);
 			monitorsMenu[j]->userData=(void*)j;
@@ -387,10 +387,10 @@ int main(int argc, char **argv)
 	monitorMode=new LFSTK_buttonClass(wc,"Monitor Mode",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	monitorMode->LFSTK_setIndicator(DISCLOSURE);
 	monitorMode->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SHOWMONITORMODESMENU");
-	monitorModes=new menuStruct*[5];
+	monitorModes=new infoDataStruct*[5];
 	for(long j=0;j<5;j++)
 		{
-			monitorModes[j]=new menuStruct;
+			monitorModes[j]=new infoDataStruct;
 			monitorModes[j]->label=strdup(modeLabel[j]);
 			monitorModes[j]->userData=(void*)j;
 		}

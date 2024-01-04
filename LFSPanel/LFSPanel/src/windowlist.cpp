@@ -26,7 +26,7 @@ LFSTK_buttonClass	*windowAll=NULL;
 LFSTK_buttonClass	*windowDesk=NULL;
 
 //menus
-menuStruct			**windowList=NULL;
+infoDataStruct			**windowList=NULL;
 int					windowListCnt=0;
 LFSTK_menuClass		*windowMenu=NULL;
 
@@ -71,7 +71,7 @@ bool windowAllCB(void *p,void* ud)
 	if(mc->mainMenuCnt>0)
 		{
 			mc->LFSTK_freeMenus(mc->mainMenu,mc->mainMenuCnt);
-			windowList=new menuStruct*[MAXWINDOWSINLIST];
+			windowList=new infoDataStruct*[MAXWINDOWSINLIST];
 			windowListCnt=0;
 		}
 	updateWindowMenu(what);
@@ -243,7 +243,7 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 							wname[j]=' ';
 
 					XGetWindowProperty(mainwind->app->display,winid,NET_WM_DESKTOP,0L,count,false,XA_CARDINAL,&rtype,&rfmt,&n,&rafter,(unsigned char **)&ptr);
-					windowList[windowListCnt]=new menuStruct;
+					windowList[windowListCnt]=new infoDataStruct;
 					windowList[windowListCnt]->label=strdup(wname);
 					windowList[windowListCnt++]->userData=(void*)winid;
 				}
@@ -317,7 +317,7 @@ int addWindowDeskMenu(int x,int y,int grav,bool fromleft)
 			windowMenu=new LFSTK_menuClass(mainwind,xpos,ypos+panelHeight,1,1);
 			windowMenu->LFSTK_setMouseCallBack(NULL,windowAllMenuCB,NULL);
 			windowListCnt=-1;
-			windowList=new menuStruct*[MAXWINDOWSINLIST];
+			windowList=new infoDataStruct*[MAXWINDOWSINLIST];
 			for(int j=0;j<MAXWINDOWSINLIST;j++)
 				windowList[j]=NULL;
 		}
@@ -360,7 +360,7 @@ int addWindowMenu(int x,int y,int grav,bool fromleft)
 			windowMenu=new LFSTK_menuClass(mainwind,xpos,ypos+panelHeight,1,1);
 			windowMenu->LFSTK_setMouseCallBack(NULL,windowAllMenuCB,NULL);
 			windowListCnt=-1;
-			windowList=new menuStruct*[MAXWINDOWSINLIST];
+			windowList=new infoDataStruct*[MAXWINDOWSINLIST];
 			for(int j=0;j<MAXWINDOWSINLIST;j++)
 				windowList[j]=NULL;
 		}

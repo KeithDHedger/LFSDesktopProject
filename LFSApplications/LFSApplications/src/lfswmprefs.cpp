@@ -65,7 +65,7 @@ int						parentWindow=-1;
 //placement
 LFSTK_buttonClass		*placeWindowMenu=NULL;
 LFSTK_lineEditClass		*placeWindowEdit=NULL;
-menuStruct				**placementMenus;
+infoDataStruct				**placementMenus;
 const char				*placementMenuNames[]={"Smart Place On Screen","Under Mouse","Centre On Monitor With Mouse","Centre On Screen","Smart Place On Monitor With Mouse"};
 LFSTK_menuClass			*placeMenu=NULL;
 
@@ -270,10 +270,10 @@ int main(int argc, char **argv)
 
 	themeFolder=new LFSTK_fileDialogClass(wc,"Select File",NULL,FOLDERDIALOG,"lfswmprefstheme");
 
-	placementMenus=new menuStruct*[MAXMENUS];
+	placementMenus=new infoDataStruct*[MAXMENUS];
 	for(long j=0;j<MAXMENUS;j++)
 		{
-			placementMenus[j]=new menuStruct;
+			placementMenus[j]=new infoDataStruct;
 			placementMenus[j]->label=strdup(placementMenuNames[j]);
 			placementMenus[j]->userData=(void*)j;
 		}

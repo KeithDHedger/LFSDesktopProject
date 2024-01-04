@@ -325,11 +325,11 @@ bool LFSTK_menuClass::menuScroll(void *object,void* userdata)
 
 /**
 * Add main menus to class.
-* \param menuStruct **menus, Pointer to array of prefilled menuStruct's.
+* \param infoDataStruct **menus, Pointer to array of prefilled infoDataStruct's.
 * \param int menucnt, Number of main menus.
 * \note Menu class owns array DON'T free.
 */
-void LFSTK_menuClass::LFSTK_addMainMenus(menuStruct **menus,int menucnt)
+void LFSTK_menuClass::LFSTK_addMainMenus(infoDataStruct **menus,int menucnt)
 {
 	LFSTK_menuItemClass	*label;
 	int					sy=0;
@@ -431,7 +431,7 @@ void LFSTK_menuClass::LFSTK_addMainMenus(menuStruct **menus,int menucnt)
 	this->subwindows->push_back(this->mainMenuWindow);
 }
 
-void LFSTK_menuClass::LFSTK_freeMenus(menuStruct **menus,int menucnt)
+void LFSTK_menuClass::LFSTK_freeMenus(infoDataStruct **menus,int menucnt)
 {
 	for(int j=0;j<menucnt;j++)
 		{

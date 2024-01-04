@@ -64,42 +64,42 @@ LFSTK_lineEditClass		*themeEdit=NULL;
 //placement
 LFSTK_buttonClass		*placeWindowMenu=NULL;
 LFSTK_lineEditClass		*placeWindowEdit=NULL;
-menuStruct				**placementMenus;
+infoDataStruct				**placementMenus;
 const char				*placementMenuNames[]={"No placement","Under Mouse","Centre On Monitor With Mouse","Centre On Screen","TODO"};
 LFSTK_menuClass			*placeMenu=NULL;
 
 //resize
 LFSTK_buttonClass		*resizeWindowMenu=NULL;
 LFSTK_lineEditClass		*resizeWindowEdit=NULL;
-menuStruct				**resizeMenus;
+infoDataStruct				**resizeMenus;
 const char				*resizeMenuNames[]={"Fast Resize","Live Resize"};
 LFSTK_menuClass			*resizeMenu=NULL;
 
 //title postion
 LFSTK_buttonClass		*titlePosWindowMenu=NULL;
 LFSTK_lineEditClass		*titlePosWindowEdit=NULL;
-menuStruct				**titlePosMenus;
+infoDataStruct				**titlePosMenus;
 const char				*titlePosMenuNames[]={"Left","Centre","Right"};
 LFSTK_menuClass			*titlePosMenu=NULL;
 
 //force dock stack order
 LFSTK_buttonClass		*forceDockStackWindowMenu=NULL;
 LFSTK_lineEditClass		*forceDockStackWindowEdit=NULL;
-menuStruct				**forceDockStackMenus;
+infoDataStruct				**forceDockStackMenus;
 const char				*forceDockStackMenuNames[]={"Force Above","Force Below"};
 LFSTK_menuClass			*forceDockStackMenu=NULL;
 
 //modkeys 1
 LFSTK_buttonClass		*modkeys1WindowMenu=NULL;
 LFSTK_lineEditClass		*modkeys1WindowEdit=NULL;
-menuStruct				**modkeys1Menus;
+infoDataStruct				**modkeys1Menus;
 const char				*modkeys1MenuNames[]={"None","Shift","Caps Lock","Shift+Caps Lock","Control","Shift+Control","Caps Lock+Control","Shift+Caps Lock+Control"};
 LFSTK_menuClass			*modkeys1Menu=NULL;
 
 //modkeys 2
 LFSTK_buttonClass		*modkeys2WindowMenu=NULL;
 LFSTK_lineEditClass		*modkeys2WindowEdit=NULL;
-menuStruct				**modkeys2Menus;
+infoDataStruct				**modkeys2Menus;
 const char				*modkeys2MenuNames[]={"Mod1","Mod2","Mod3","Mod4","Mod5"};
 LFSTK_menuClass			*modkeys2Menu=NULL;
 
@@ -417,49 +417,49 @@ int main(int argc, char **argv)
 
 	themeFolder=new LFSTK_fileDialogClass(wc,"Select File",NULL,FOLDERDIALOG,"lfswmprefstheme");
 
-	placementMenus=new menuStruct*[MAXMENUS];
+	placementMenus=new infoDataStruct*[MAXMENUS];
 	for(long j=0;j<MAXMENUS;j++)
 		{
-			placementMenus[j]=new menuStruct;
+			placementMenus[j]=new infoDataStruct;
 			placementMenus[j]->label=strdup(placementMenuNames[j]);
 			placementMenus[j]->userData=(void*)j;
 		}
 
-	resizeMenus=new menuStruct*[RESIZEMENUSIZE];
+	resizeMenus=new infoDataStruct*[RESIZEMENUSIZE];
 	for(long j=0;j<RESIZEMENUSIZE;j++)
 		{
-			resizeMenus[j]=new menuStruct;
+			resizeMenus[j]=new infoDataStruct;
 			resizeMenus[j]->label=strdup(resizeMenuNames[j]);
 			resizeMenus[j]->userData=(void*)j;
 		}
 
-	titlePosMenus=new menuStruct*[TITLEPOSMENUSIZE];
+	titlePosMenus=new infoDataStruct*[TITLEPOSMENUSIZE];
 	for(long j=0;j<TITLEPOSMENUSIZE;j++)
 		{
-			titlePosMenus[j]=new menuStruct;
+			titlePosMenus[j]=new infoDataStruct;
 			titlePosMenus[j]->label=strdup(titlePosMenuNames[j]);
 			titlePosMenus[j]->userData=(void*)j;
 		}
 
-	forceDockStackMenus=new menuStruct*[FORCEMENUSIZE];
+	forceDockStackMenus=new infoDataStruct*[FORCEMENUSIZE];
 	for(long j=0;j<FORCEMENUSIZE;j++)
 		{
-			forceDockStackMenus[j]=new menuStruct;
+			forceDockStackMenus[j]=new infoDataStruct;
 			forceDockStackMenus[j]->label=strdup(forceDockStackMenuNames[j]);
 			forceDockStackMenus[j]->userData=(void*)j;
 		}
 
-	modkeys1Menus=new menuStruct*[MODS1MENUSIZE];
+	modkeys1Menus=new infoDataStruct*[MODS1MENUSIZE];
 	for(long j=0;j<MODS1MENUSIZE;j++)
 		{
-			modkeys1Menus[j]=new menuStruct;
+			modkeys1Menus[j]=new infoDataStruct;
 			modkeys1Menus[j]->label=strdup(modkeys1MenuNames[j]);
 			modkeys1Menus[j]->userData=(void*)j;
 		}
-	modkeys2Menus=new menuStruct*[MODS2MENUSIZE];
+	modkeys2Menus=new infoDataStruct*[MODS2MENUSIZE];
 	for(long j=0;j<MODS2MENUSIZE;j++)
 		{
-			modkeys2Menus[j]=new menuStruct;
+			modkeys2Menus[j]=new infoDataStruct;
 			modkeys2Menus[j]->label=strdup(modkeys2MenuNames[j]);
 			modkeys2Menus[j]->userData=(void*)(unsigned long)(1<<(j+3));
 		}

@@ -80,3 +80,14 @@ std::string LFSTK_UtilityClass::LFSTK_strStr(std::string haystack,std::string ne
 		}
 	return("");
 }
+
+std::string LFSTK_UtilityClass::LFSTK_strStrip(std::string haystack)
+{
+	std::string	whitespace="\t \r\n";
+	std::string::size_type	foundfront;
+	std::string::size_type	foundback;
+
+	foundfront=haystack.find_first_not_of(whitespace);
+	foundback=haystack.find_last_not_of(whitespace);
+	return(haystack.substr(foundfront,foundback-foundfront+1));
+}

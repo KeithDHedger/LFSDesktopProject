@@ -87,7 +87,7 @@ LFSTK_lineEditClass		*buttonTileEdit=NULL;
 LFSTK_lineEditClass		*menuTileEdit=NULL;
 LFSTK_fileDialogClass	*tileDialog=NULL;
 LFSTK_buttonClass		*loadSet=NULL;
-menuStruct				**setNameMenuItems=NULL;
+infoDataStruct				**setNameMenuItems=NULL;
 LFSTK_menuClass			*setMenu=NULL;
 
 int						setCnt;
@@ -114,10 +114,10 @@ void addSet(void)
 	fc->LFSTK_setSort(true);
 	fc->LFSTK_sortByPath();
 
-	setNameMenuItems=new menuStruct*[fc->data.size()];
+	setNameMenuItems=new infoDataStruct*[fc->data.size()];
 	for(int j=0;j<fc->data.size();j++)
 		{
-			setNameMenuItems[j]=new menuStruct;
+			setNameMenuItems[j]=new infoDataStruct;
 			setNameMenuItems[j]->label=strdup(fc->data.at(j).path.c_str());
 		}
 	setCnt=fc->data.size();

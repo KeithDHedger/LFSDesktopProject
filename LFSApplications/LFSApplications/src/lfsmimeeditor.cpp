@@ -48,7 +48,7 @@ char					*lastBitPath;
 char					*mimeTypesPath;
 char					*appsPath;
 char					*tmpOutFile;
-listLabelStruct			**labelLst=NULL;
+infoDataStruct			**labelLst=NULL;
 char					*workDir;
 
 bool doQuit(void *p,void* ud)
@@ -67,7 +67,7 @@ void setMimeTypesList(char *filepath)
 	ssize_t	read=0;
 	int		linecnt=0;
 	char	*lines=NULL;
-	listLabelStruct listit;
+	infoDataStruct listit;
 
 	mimeList->LFSTK_freeList();
 	if(filepath!=NULL)

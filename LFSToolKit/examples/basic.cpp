@@ -135,28 +135,25 @@ bool timerCB(LFSTK_applicationClass *p,void* ud)
 
 bool gadgetDrop(void *lwc,propertyStruct *data,void* ud)
 {
-//	propertyStruct	*data;
 	LFSTK_buttonClass	*bc=static_cast<LFSTK_buttonClass*>(lwc);
-	char			*cleanstr;
+	std::string			c;
+
 	if(data!=NULL)
 		{
-			//data=static_cast<propertyStruct*>(ud);
 			if(strcasecmp(data->mimeType,"text/uri-list")==0)
 				{
 					std::istringstream stream((const char*)data->data);
 					std::string line;
-					while(std::getline(stream, line))
+					while(std::getline(stream,line))
 						{
-							cleanstr=apc->globalLib->LFSTK_cleanString((const char*)line.c_str());
-							printf("dropped >>%s<< on gadget %s @x/y %i %i\n",cleanstr,bc->LFSTK_getLabel(),data->dropX,data->dropY);
-							free(cleanstr);
+							c=LFSTK_UtilityClass::LFSTK_strStrip(line);
+							std::cerr<<"dropped '"<<c<<"' on gadget '"<<bc->LFSTK_getLabel()<<"' @x/y "<<data->dropX<<" "<<data->dropY<<std::endl;
 						}
 				}
 			else
 				{
-					cleanstr=apc->globalLib->LFSTK_cleanString((const char*)data->data);
-					printf("dropped >>%s<< on gadget %s @x/y %i %i\n",cleanstr,bc->LFSTK_getLabel(),data->dropX,data->dropY);
-					free(cleanstr);
+					c=LFSTK_UtilityClass::LFSTK_strStrip((const char*)data->data);
+					std::cerr<<"dropped '"<<c<<"' on gadget '"<<bc->LFSTK_getLabel()<<"' @x/y "<<data->dropX<<" "<<data->dropY<<std::endl;
 				}
 		}
 	return(true);

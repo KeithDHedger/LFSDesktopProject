@@ -42,12 +42,12 @@ LFSTK_buttonClass			*apply=NULL;
 //dock data
 LFSTK_buttonClass			*dockSize=NULL;
 LFSTK_lineEditClass			*dockSizeEdit=NULL;
-menuStruct					**dockSizeMenuGrav=NULL;
+infoDataStruct					**dockSizeMenuGrav=NULL;
 LFSTK_menuClass				*sizeMenu=NULL;
 
 LFSTK_buttonClass			*dockGrav=NULL;
 LFSTK_lineEditClass			*dockGravEdit=NULL;
-menuStruct					**dockGravMenu=NULL;
+infoDataStruct					**dockGravMenu=NULL;
 LFSTK_menuClass				*gravMenu=NULL;
 
 LFSTK_lineEditClass			*dockOnMonitor=NULL;
@@ -75,7 +75,7 @@ int							dockSizePref=3;
 //dock select
 LFSTK_buttonClass			*selectDock=NULL;
 LFSTK_lineEditClass			*dockNameEdit=NULL;
-menuStruct					**dockNames=NULL;
+infoDataStruct					**dockNames=NULL;
 LFSTK_menuClass				*dockMenu=NULL;
 int							dockCnt=0;
 std::string					dockName;
@@ -305,10 +305,10 @@ int main(int argc, char **argv)
 
 	dockCnt=find->LFSTK_getDataCount();
 
-	dockNames=new menuStruct*[dockCnt];
+	dockNames=new infoDataStruct*[dockCnt];
 	for(int j=0;j<dockCnt;j++)
 		{
-			dockNames[j]=new menuStruct;
+			dockNames[j]=new infoDataStruct;
 			dockNames[j]->label=strdup(find->data.at(j).name.c_str());
 			dockNames[j]->userData=(void*)(long)j;
 		}
@@ -333,10 +333,10 @@ int main(int argc, char **argv)
 	dockSize=new LFSTK_buttonClass(wc,"Dock Size",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	dockSize->LFSTK_setIndicator(DISCLOSURE);
 	dockSize->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SHOWSIZEMENU");
-	dockSizeMenuGrav=new menuStruct*[4];
+	dockSizeMenuGrav=new infoDataStruct*[4];
 	for(long j=0;j<4;j++)
 		{
-			dockSizeMenuGrav[j]=new menuStruct;
+			dockSizeMenuGrav[j]=new infoDataStruct;
 			dockSizeMenuGrav[j]->label=strdup(dockSizeConvertToStr[j+1]);
 			dockSizeMenuGrav[j]->userData=(void*)(j+1);
 		}
@@ -350,10 +350,10 @@ int main(int argc, char **argv)
 	dockGrav=new LFSTK_buttonClass(wc,"Dock Gravity",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	dockGrav->LFSTK_setIndicator(DISCLOSURE);
 	dockGrav->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SHOWGRAVMENU");
-	dockGravMenu=new menuStruct*[4];
+	dockGravMenu=new infoDataStruct*[4];
 	for(long j=0;j<2;j++)
 		{
-			dockGravMenu[j]=new menuStruct;
+			dockGravMenu[j]=new infoDataStruct;
 			dockGravMenu[j]->label=strdup(dockGravConvertToStr[j+1]);
 			dockGravMenu[j]->userData=(void*)(j+1);
 		}

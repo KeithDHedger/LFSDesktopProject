@@ -211,7 +211,7 @@ void LFSTK_fontDialogClass::buildDialog(void)
 {
 	int				sy=BORDER;
 	char				*sizestr[4]={0,};
-	listLabelStruct	ls;
+	infoDataStruct	ls;
 
 	windowInitStruct	*win;//TODO//
 	win=this->wc->app->LFSTK_getDefaultWInit();
