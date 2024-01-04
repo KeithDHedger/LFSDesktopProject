@@ -147,13 +147,13 @@ bool gadgetDrop(void *lwc,propertyStruct *data,void* ud)
 					while(std::getline(stream,line))
 						{
 							c=LFSTK_UtilityClass::LFSTK_strStrip(line);
-							std::cerr<<"dropped '"<<c<<"' on gadget '"<<bc->LFSTK_getLabel()<<"' @x/y "<<data->dropX<<" "<<data->dropY<<std::endl;
+							std::cerr<<"dropped file '"<<c<<"' on gadget '"<<bc->LFSTK_getLabel()<<"' @x/y "<<data->dropX<<" "<<data->dropY<<std::endl;
 						}
 				}
 			else
 				{
 					c=LFSTK_UtilityClass::LFSTK_strStrip((const char*)data->data);
-					std::cerr<<"dropped '"<<c<<"' on gadget '"<<bc->LFSTK_getLabel()<<"' @x/y "<<data->dropX<<" "<<data->dropY<<std::endl;
+					std::cerr<<"dropped text '"<<c<<"' on gadget '"<<bc->LFSTK_getLabel()<<"' @x/y "<<data->dropX<<" "<<data->dropY<<std::endl;
 				}
 		}
 	return(true);
