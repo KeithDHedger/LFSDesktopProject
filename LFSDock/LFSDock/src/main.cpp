@@ -336,21 +336,8 @@ int main(int argc,char **argv)
 
 			int retval=apc->LFSTK_runApp();
 
-
-/*
-extern LFSTK_windowClass			*calWindow;
-extern bool						calWindowVisible;
-extern LFSTK_toggleButtonClass	*calendarButton;
-extern bool						calendarIsUp;
-*/
-			//delete editbox;
-			//delete calWindow;
-			//delete calendarButton;
 			calendarIsUp=false;
 
-			freeAndNull(&iconL);
-			freeAndNull(&iconM);
-			freeAndNull(&iconH);
 			holdtasks.clear();
 			filltasks.clear();
 			tasks.clear();

@@ -547,34 +547,35 @@ void LFSTK_lib::LFSTK_setUseTheme(bool use)
 * \param theme Theme name ( case sensitive ).
 * \param icon Icon name ( case insensitive ).
 * \param catagory Catagory or "" NOT NULL ( case insensitive ).
-* \return char* string caller should free.
-* \note returned string is set to NULL on error.
+* \return std::string.
+* \note returned string is set to "" if icon not found.
 */
 #define GLOBALICONS 0
 #define GLOBALPIXMAPS 2
 #define GLOBALPIXMAPSEND 5
 
-char* LFSTK_lib::LFSTK_findThemedIcon(const char *theme,const char *icon,const char *catagory)
+/**
+* Find a themed icon.
+* \param std::string theme.
+* \param std::string icon.
+* \param std::string catagory ( or "" for any cat ).
+* \return std::string path to themed icon or "".
+*/std::string LFSTK_lib::LFSTK_findThemedIcon(std::string theme,std::string icon,std::string catagory)
 {
-	char        *iconpath=NULL;
-	const char  *iconthemes[3];
-	const char  *iconfolders[GLOBALPIXMAPSEND];
-	bool			maskdot=false;
-	char			*holdicon=NULL;
-	
-	if(icon[0]=='/')
-		return(strdup(icon));
+	std::string	thetheme;
+	const char	*iconthemes[3];
+	const char	*iconfolders[GLOBALPIXMAPSEND];
+	std::string	iconpath="";
 
-	holdicon=strdup(icon);
-	if(strcasecmp(&holdicon[strlen(holdicon)-4],".png")==0)
-		{
-			maskdot=true;
-			holdicon[strlen(holdicon)-4]=0;
-		}
-	if(theme==NULL)
-		theme="gnome";
-	
-	iconthemes[0]=theme;
+	if(icon.at(0)=='/')
+		return(icon);
+
+	if(theme.length()==0)
+		thetheme="gnome";
+	else
+		thetheme=theme;
+
+	iconthemes[0]=thetheme.c_str();
 	iconthemes[1]="hicolor";
 	iconthemes[2]="gnome";
 
@@ -585,37 +586,29 @@ char* LFSTK_lib::LFSTK_findThemedIcon(const char *theme,const char *icon,const c
 	iconfolders[3]="/usr/share/icons/hicolor";
 	iconfolders[4]="~/.local/share/icons";
 
-	iconpath=NULL;
 	for(int j=GLOBALICONS;j<GLOBALPIXMAPS;j++)
 		{
 			for(int k=0;k<3;k++)
-				{//TODO//
-					iconpath=strdup(this->LFSTK_oneLiner("find %s/\"%s\"/*/%s -iname '*%s.png' 2>/dev/null|sort --version-sort|tail -n1 2>/dev/null",iconfolders[j],iconthemes[k],catagory,holdicon).c_str());
+				{
+					iconpath=this->LFSTK_oneLiner("find %s/\"%s\"/*/%s -iname '*%s.png' 2>/dev/null|sort --version-sort|tail -n1 2>/dev/null",iconfolders[j],iconthemes[k],catagory.c_str(),icon.c_str());
 
-					if((iconpath!=NULL) && (strlen(iconpath)>1))
+					if(iconpath.length()>1)
 						goto breakReturn;
-					//if(iconpath!=NULL)
-					freeAndNull(&iconpath);
-					//iconpath=NULL;
 				}
 		}
 
-	if(iconpath==NULL)
+	if(iconpath.length()==0)
 		{
 			for(int j=GLOBALPIXMAPS;j<GLOBALPIXMAPSEND;j++)
 				{
-					iconpath=strdup(this->LFSTK_oneLiner("find %s -iname '*%s.*'",iconfolders[j],holdicon).c_str());
-					if((iconpath!=NULL) && (strlen(iconpath)>1))
+					iconpath=this->LFSTK_oneLiner("find %s -iname '*%s*'",iconfolders[j],icon.c_str());
+					if(iconpath.length()>1)
 						goto breakReturn;
-					if(iconpath!=NULL)
-						freeAndNull(&iconpath);
-					iconpath=NULL;
 				}
 		}
+	iconpath="";
 
 breakReturn:
-	freeAndNull(&holdicon);
-	//freeAndNull(&iconpath);
 	return(iconpath);
 }
 
@@ -1037,34 +1030,6 @@ void LFSTK_lib::LFSTK_setThemePath(char *path)
 * \note strings are cleaned of white space at front and back.
 * \note returned string should be freed by caller.
 */
-char* LFSTK_lib::LFSTK_cleanString(const char *str)
-{
-	gchar		*t;
-	std::string	cleanedstr;
-	char			*uristr=g_uri_parse_scheme(str);
-
-	if(uristr!=NULL)
-		{
-			t=g_filename_from_uri(str,NULL,NULL);
-			cleanedstr=LFSTK_UtilityClass::LFSTK_strStrip(t);
-			g_free(t);
-		}
-	else
-		{
-			cleanedstr=LFSTK_UtilityClass::LFSTK_strStrip(str);
-		}
-	freeAndNull(&uristr);
-	return(strdup(cleanedstr.c_str()));
-}
-
-/**
-* Clean up string.
-* \param const char *str.
-* \return char* Cleaned string.
-* \note uri translated to local files.
-* \note strings are cleaned of white space at front and back.
-* \note returned string should be freed by caller.
-*/
 std::string	LFSTK_lib::LFSTK_cleanString(std::string str)
 {
 	gchar		*t;
@@ -1162,10 +1127,10 @@ void LFSTK_lib::LFSTK_getFileInfo(const char* path,fileInformation* info)
 {
 	struct stat	sb;
 	GError		*error;
-	char			*icon=NULL;
 	std::string	data;
 	size_t		pos;
 	std::string th;
+	std::string ic;
 
 	if(lstat(path,&sb)==-1)
 		{
@@ -1189,9 +1154,7 @@ void LFSTK_lib::LFSTK_getFileInfo(const char* path,fileInformation* info)
 						info->isDir=true;
 					info->fileMode=sb.st_mode & 07777;
 					info->themeName=this->desktopIconTheme;
-					icon=this->LFSTK_findThemedIcon(info->themeName.c_str(),"application-octet-stream","");
-					info->iconPath=icon;
-					freeAndNull(&icon);
+					info->iconPath=this->LFSTK_findThemedIcon(info->themeName,"application-octet-stream","");
 					return;
 				}
 
@@ -1219,22 +1182,16 @@ void LFSTK_lib::LFSTK_getFileInfo(const char* path,fileInformation* info)
     				}
 
 			info->themeName=this->desktopIconTheme;
-			icon=this->LFSTK_findThemedIcon(info->themeName.c_str(),data.c_str(),"");
-			if(icon!=NULL)
+			ic=this->LFSTK_findThemedIcon(info->themeName,data,"");
+			if(ic.length()>0)
 				{
-					info->iconPath=icon;
-					freeAndNull(&icon);
+					info->iconPath=ic;
 				}
 			else
 				{
 					data=info->mimeType;
 					pos=data.find("/");
-					icon=this->LFSTK_findThemedIcon(info->themeName.c_str(),data.erase(pos,std::string::npos).c_str(),"");
-					if(icon!=NULL)
-						{
-							info->iconPath=icon;
-							freeAndNull(&icon);
-						}
+					info->iconPath=this->LFSTK_findThemedIcon(info->themeName,data.erase(pos,std::string::npos),"");
 				}
 
 			if(strcasecmp(&path[strlen(path)-8],".desktop")==0)
@@ -1246,13 +1203,8 @@ void LFSTK_lib::LFSTK_getFileInfo(const char* path,fileInformation* info)
 							char *iiconpath=g_key_file_get_value(kf,"Desktop Entry",G_KEY_FILE_DESKTOP_KEY_ICON,NULL);
 							if(iiconpath!=NULL)
 								{
-									iconpath=this->LFSTK_findThemedIcon(this->desktopIconTheme.c_str(),iiconpath,"");
-									if(iconpath!=NULL)
-										{
-											info->iconPath=iconpath;
-											freeAndNull(&iconpath);
-										}
-									freeAndNull(&iiconpath);
+									info->iconPath=this->LFSTK_findThemedIcon(this->desktopIconTheme,iiconpath,"");
+									g_free(iiconpath);
 								}
 							g_key_file_free(kf);
 						}

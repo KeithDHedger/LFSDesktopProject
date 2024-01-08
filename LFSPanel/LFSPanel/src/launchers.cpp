@@ -113,10 +113,9 @@ int launcherBuildCB(const char *fpath,const struct stat *sb,int typeflag)
 
 int addLaunchers(int x,int y,int grav,bool fromleft)
 {
-	char			*launchers;
-	launcherList	*loopll;
-	ll=NULL;
-	char			*icon=NULL;
+	char				*launchers;
+	launcherList		*loopll;
+	std::string		icon;
 	int				xpos=x;
 	int				ypos=y;
 	int				width=0;
@@ -125,6 +124,8 @@ int addLaunchers(int x,int y,int grav,bool fromleft)
 	int				iconsize=16;
 	int				maxwidth=0;
 	int				sx,sy;
+
+	ll=NULL;
 
 	asprintf(&launchers,"%s/launchers-%s",apc->configDir.c_str(),panelID);
 	ftw(launchers,launcherBuildCB,16);
@@ -137,23 +138,21 @@ int addLaunchers(int x,int y,int grav,bool fromleft)
 	loopll=ll;
 	while(loopll!=NULL)
 		{
-			icon=NULL;
+			icon="";
 			loopll->bc=new LFSTK_buttonClass(mainwind,"",sx,sy,width,height,thisgrav);
 			loopll->bc->LFSTK_setMouseCallBack(NULL,launcherCB,(void*)loopll);
 			loopll->bc->LFSTK_setGadgetDropCallBack(gadgetDrop,(void*)loopll);
 			loopll->bc->gadgetAcceptsDnD=true;
 
-			if((loopll->icon!=NULL) && (desktopTheme!=NULL))
+			if((loopll->icon.length()>0) && (desktopTheme!=NULL))
 				icon=apc->globalLib->LFSTK_findThemedIcon(desktopTheme,loopll->icon,"");
-			if(icon!=NULL)
+			if(icon.length()>0)
 				loopll->bc->LFSTK_setImageFromPath(icon,LEFT,true);
 			else
 				loopll->bc->LFSTK_setImageFromPath(DATADIR "/pixmaps/command.png",LEFT,true);
 
 			setGadgetDetails(loopll->bc);
 
-			if(icon!=NULL)
-				free(icon);
 			loopll=loopll->next;
 			if((grav==PANELNORTH) || (grav==PANELSOUTH))
 				{

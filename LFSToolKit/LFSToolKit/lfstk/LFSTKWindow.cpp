@@ -1221,8 +1221,8 @@ void LFSTK_windowClass::LFSTK_dropData(propertyStruct* data)
 
 	if(strcasecmp(data->mimeType,"text/uri-list")==0)
 		{
-			char	*ret;
-			ret=this->app->globalLib->LFSTK_cleanString((const char*)data->data);
+			char		*ret;
+			ret=strdup(this->app->globalLib->LFSTK_cleanString(std::string((const char*)data->data)).c_str());//TODO//LEAVE
 			this->droppedData.type=DROPURI;
 			this->droppedData.data=ret;
 		}

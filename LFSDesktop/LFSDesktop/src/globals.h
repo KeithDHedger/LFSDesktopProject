@@ -51,7 +51,7 @@ struct	desktopItemStruct
 	char								*uuid=NULL;
 	char								*itemPath=NULL;
 	char								*label=NULL;
-	char								*iconPath=NULL;
+	std::string						iconPath;
 	int								posx=-1;
 	int								posy=-1;
 	bool								hasCustomIcon=false;

@@ -117,7 +117,7 @@ void sendNotify(const char *name,const char *message)//TODO//could be better
 #endif
 }
 
-void dropDesktopFile(const char *data,launcherList *launcher)
+void dropDesktopFile(const char *data,launcherList *launcher)//TODO//
 {
 	char			*cleanstr;
 	char			*command=NULL;
@@ -126,7 +126,8 @@ void dropDesktopFile(const char *data,launcherList *launcher)
 	std::string line;
 	while(std::getline(stream,line))
 		{
-			cleanstr=apc->globalLib->LFSTK_cleanString((const char*)line.c_str());
+			//cleanstr=apc->globalLib->LFSTK_cleanString((const char*)line.c_str());
+			cleanstr=strdup(apc->globalLib->LFSTK_cleanString(line).c_str());
 			if((strrchr(cleanstr,'.')!=NULL) && (strcmp(strrchr(cleanstr,'.'),".desktop")==0))
 				{
 					asprintf(&command,"mkdir -p '%s/launchers-%s';cp -nP '%s' '%s/launchers-%s'",apc->configDir.c_str(),panelID,cleanstr,apc->configDir.c_str(),panelID);

@@ -560,10 +560,9 @@ void LFSTK_lineEditClass::LFSTK_dropData(propertyStruct* data)
 
 	if(strcasecmp(data->mimeType,"text/uri-list")==0)
 		{
-			char	*ret;
-			ret=this->wc->app->globalLib->LFSTK_cleanString((const char*)data->data);
-			this->LFSTK_setFormatedText((const char*)ret,true);
-			freeAndNull(&ret);
+			std::string ret;
+			ret=this->wc->app->globalLib->LFSTK_cleanString(std::string((const char*)data->data));
+			this->LFSTK_setFormatedText(ret,true);
 		}
 
 	if(this->callBacks.validCallbacks & GADGETDROPCB)
@@ -575,7 +574,7 @@ void LFSTK_lineEditClass::LFSTK_dropData(propertyStruct* data)
 * \param const char* Text to be formated.
 * \param bool true=Replace contents, false=insert.
 */
-void  LFSTK_lineEditClass::LFSTK_setFormatedText(std::string txt,bool replace)
+void  LFSTK_lineEditClass::LFSTK_setFormatedText(std::string txt,bool replace)//TODO//
 {
 	std::string	formtxt="";
 	int			len=0;

@@ -96,14 +96,14 @@ bool desktopSelect(void *object,void* userdata)
 
 int addDesktopSwitcer(int x,int y,int grav)
 {
-	char					*icon=NULL;
-	infoDataStruct		ls;
-	std::string			label;
-	propertyStruct		props;
-	propReturn			pr;
-	std::string			lc="#a0f0f0f0";
-	std::string			pc="#60a0a0a0";
-	std::string			ac="#60404040";
+	std::string		icon;
+	infoDataStruct	ls;
+	std::string		label;
+	propertyStruct	props;
+	propReturn		pr;
+	std::string		lc="#a0f0f0f0";
+	std::string		pc="#60a0a0a0";
+	std::string		ac="#60404040";
 
 	if(switchButton!=NULL)
 		{
@@ -132,11 +132,8 @@ int addDesktopSwitcer(int x,int y,int grav)
 	deskLabel->LFSTK_setStyle(BEVELNONE);
 
 	icon=dockWindow->globalLib->LFSTK_findThemedIcon(desktopTheme,"remote-desktop","");
-	if(icon!=NULL)
-		{
-			switchButton->LFSTK_setImageFromPath(icon,LEFT,true);
-			freeAndNull(&icon);
-		}
+	if(icon.length()>0)
+		switchButton->LFSTK_setImageFromPath(icon,LEFT,true);
 	else
 		switchButton->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",LEFT,true);
 

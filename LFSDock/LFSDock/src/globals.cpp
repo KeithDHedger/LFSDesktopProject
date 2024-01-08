@@ -99,7 +99,8 @@ void dropDesktopFile(const char *data,void *launcher)//TODO//
 	std::string line;
 	while(std::getline(stream,line))
 		{
-			cleanstr=apc->globalLib->LFSTK_cleanString((const char*)line.c_str());
+			//cleanstr=apc->globalLib->LFSTK_cleanString((const char*)line.c_str());//TODO//
+			cleanstr=strdup(apc->globalLib->LFSTK_cleanString(line).c_str());
 			if((strrchr(cleanstr,'.')!=NULL) && (strcmp(strrchr(cleanstr,'.'),".desktop")==0))//TODO//
 				{
 					asprintf(&command,"mkdir -p '%s';cp -nP '%s' '%s'",launchersDir.c_str(),cleanstr,launchersDir.c_str());

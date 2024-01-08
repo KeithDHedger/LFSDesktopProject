@@ -39,16 +39,15 @@ bool doQuit(void *p,void* ud)
 
 bool getPath(void *p,void* ud)
 {
-	char	*iconpath=NULL;
 	fileInformation	fileinfo;
+	std::string		iconpath;
 
 	apc->globalLib->LFSTK_loadDesktopIconTheme();
-	iconpath=(char*)apc->globalLib->LFSTK_findThemedIcon(apc->iconThemeName.c_str(),mimeEdit->LFSTK_getCStr(),"");
 
-	if(iconpath!=NULL)
+	iconpath=apc->globalLib->LFSTK_findThemedIcon(apc->iconThemeName,mimeEdit->LFSTK_getBuffer(),"");
+	if(iconpath.length()>1)
 		{
-			printf("iconpath=%s\n",iconpath);
-			free(iconpath);
+			printf("iconpath=%s\n",iconpath.c_str());
 		}
 	else
 		printf("No icon found for '%s' in '%s'\n",mimeEdit->LFSTK_getCStr(),fileInfoEdit->LFSTK_getCStr());

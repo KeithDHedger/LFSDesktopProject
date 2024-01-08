@@ -24,14 +24,14 @@
 #define SLIDERWIDTH 100
 #define SLIDERLABEL "Vol"
 
-extern LFSTK_windowClass		*scwindow;
+extern LFSTK_windowClass			*scwindow;
 extern bool						windowVisible;
 extern LFSTK_toggleButtonClass	*volumeButton;
 extern LFSTK_scrollBarClass		*vsb;
-extern char						*iconH;
-extern char						*iconM;
-extern char						*iconL;
-extern char						*iconZ;
+extern std::string				iconH;
+extern std::string				iconM;
+extern std::string				iconL;
+extern std::string				iconZ;
 extern int						oldVolVal;
 
 void setIcon(void);

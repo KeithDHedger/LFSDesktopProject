@@ -136,11 +136,9 @@ void reloadPrefs(void)
 	loadPrefs();
 	for(unsigned j=0;j<desktopItems.size();j++)
 		{
-			freeAndNull(&desktopItems.at(j).iconPath);
 			setIconImage(&desktopItems.at(j));
 			desktopItems.at(j).item->LFSTK_setImageFromPath(desktopItems.at(j).iconPath,TOOLBAR,true);
 			desktopItems.at(j).item->LFSTK_setLabelBGColour(backCol,strtod(backAlpha,NULL));
-			//desktopItems.at(j).item->LFSTK_setFontColourName(NORMALCOLOUR,foreCol,false)	;	
 			desktopItems.at(j).item->newGadgetFGColours[NORMALCOLOUR]=desktopItems.at(j).item->LFSTK_setColour(foreCol);
 
 			desktopItems.at(j).item->LFSTK_setFontString(fontFace,true);

@@ -23,8 +23,8 @@
 
 const char	*diskModel=NULL;
 const char	*diskVendor=NULL;
-char		diskUUID[256]={0,};
-char		diskLabel[256]={0,};
+char			diskUUID[256]={0,};
+char			diskLabel[256]={0,};
 struct udev	*udev;
 
 int diskTypeData(const char *devname)
@@ -239,7 +239,7 @@ continueWithLoop:
 
 							for(unsigned j=0;j<desktopItems.size();j++)
 								{
-									if((diskUUID!=NULL) && (desktopItems.at(j).item!=NULL))//TODO//
+									if((diskUUID[0]!=0) && (desktopItems.at(j).item!=NULL))//TODO//
 										{
 											if(strcmp(diskUUID,desktopItems.at(j).uuid)==0)
 												{
@@ -272,7 +272,6 @@ continueWithLoop:
 							freeAndNull(&cacheFileData.uuid);
 							freeAndNull(&cacheFileData.itemPath);
 							freeAndNull(&cacheFileData.label);
-							freeAndNull(&cacheFileData.iconPath);
 							freeAndNull(&cachefilepath);										
 						}
 				}

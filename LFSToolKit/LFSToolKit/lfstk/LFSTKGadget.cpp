@@ -1416,7 +1416,7 @@ cairo_status_t LFSTK_gadgetClass::LFSTK_setImageFromPath(std::string file,int or
 			tempimage=this->wc->globalLib->LFSTK_cairo_image_surface_create_from_jpeg(file.c_str());
 			if(tempimage==NULL)
 				{
-					fprintf(stderr,"Unkown Format : %s\n",file);
+					fprintf(stderr,"Unkown Format : %s\n",file.c_str());
 					return(CAIRO_STATUS_INVALID_FORMAT);
 				}
 		}

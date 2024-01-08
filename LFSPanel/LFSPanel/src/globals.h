@@ -58,9 +58,9 @@ struct menuEntryStruct
 
 struct launcherList
 {
-	launcherList		*next=NULL;
+	launcherList			*next=NULL;
 	LFSTK_buttonClass	*bc=NULL;
-	char				*icon=NULL;
+	std::string			icon;
 	menuEntryStruct		entry;
 };
 

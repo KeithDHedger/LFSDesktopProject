@@ -121,7 +121,7 @@ void addEntries(void)
 	const std::regex		expnodisplay("NoDisplay=([^[:space:]]*).*");
 	const std::regex		expcat("Categories=(.*)");
 	std::smatch			m;
-	const char			*iconpath=NULL;
+	std::string			iconpath;
 
 	asprintf(&homeapps,"%s/.local/share/applications",getenv("HOME"));
 	find->LFSTK_setFindType(FILETYPE);
@@ -176,7 +176,7 @@ void addEntries(void)
 															catagoryMenus[catagoryCnt]->subMenuCnt=0;
 															catagoryMenus[catagoryCnt]->label=strdup(myCats[k]);
 															iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,catImageNames[k],"");
-															if(iconpath!=NULL)
+															if(iconpath.length()>0)
 																{
 																	catagoryMenus[catagoryCnt]->imageType=FILETHUMB;
 																	catagoryMenus[catagoryCnt]->imagePath=iconpath;
@@ -207,8 +207,8 @@ void addEntries(void)
 																}
 															else
 																{
-																	iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,df.icon.c_str(),"");
-																	if(iconpath!=NULL)
+																	iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,df.icon,"");
+																	if(iconpath.length()>0)
 																		{
 																			catagoryMenus[catMenusPtr[myCats[k]]]->subMenus[submenunum]->imageType=FILETHUMB;
 																			catagoryMenus[catMenusPtr[myCats[k]]]->subMenus[submenunum]->imagePath=iconpath;
@@ -233,7 +233,7 @@ void addEntries(void)
 
 void addExtras(void)
 {
-	char	*iconpath=NULL;
+	std::string	iconpath;
 
 	catagoryMenus[catagoryCnt]=new infoDataStruct;
 	catagoryMenus[catagoryCnt]->label=strdup("--");
@@ -244,7 +244,7 @@ void addExtras(void)
 	catagoryMenus[catagoryCnt]->label=strdup("LFS About");
 	catagoryMenus[catagoryCnt]->userData=(void*)-1;
 	iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"help-about","");
-	if(iconpath!=NULL)
+	if(iconpath.length()>0)
 		{
 			catagoryMenus[catagoryCnt]->imagePath=iconpath;
 			catagoryMenus[catagoryCnt]->imageType=FILETHUMB;

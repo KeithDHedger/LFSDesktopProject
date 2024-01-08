@@ -128,9 +128,9 @@ bool doQuit(void *p,void* ud)
 
 int main(int argc, char **argv)
 {
-	char				*command;
+	char					*command;
 	int					sy=0;
-	char				*iconpath=NULL;
+	std::string			iconpath;
 	LFSTK_buttonClass	*button;
 	int					key=666;
 
@@ -201,8 +201,6 @@ Atom                    xa_prop[3];
 	windowInitStruct	*win;
 
 	win=apc->LFSTK_getDefaultWInit();
-	//new windowInitStruct;
-	//win->app=apc;
 	win->windowName="";
 	win->loadVars=true;
 	win->wc=wc;
@@ -220,14 +218,11 @@ Atom                    xa_prop[3];
 			button->LFSTK_setMouseCallBack(NULL,doDeskItemMenuSelect,(void*)(long)(j));
 			iconpath=apc->globalLib->LFSTK_findThemedIcon(iconTheme,diskThemeIconData[j],"");
 			button->LFSTK_setImageFromPath(iconpath,LEFT,true);
-			freeAndNull(&iconpath);
 			sy+=GADGETHITE;
 		}
 	fileWindow->LFSTK_resizeWindow(GADGETWIDTH+16,sy,true);
 
-	//win=new windowInitStruct;
 	win=apc->LFSTK_getDefaultWInit();
-	//win->app=apc;
 	win->windowName="";
 	win->loadVars=true;
 	win->wc=wc;
@@ -246,7 +241,6 @@ Atom                    xa_prop[3];
 			iconpath=apc->globalLib->LFSTK_findThemedIcon(iconTheme,diskThemeIconData[j],"");
 			button->LFSTK_setImageFromPath(iconpath,LEFT,true);
 			sy+=GADGETHITE;
-			freeAndNull(&iconpath);
 		}
 	diskWindow->LFSTK_resizeWindow(GADGETWIDTH+16,sy,true);
 
@@ -278,8 +272,8 @@ Atom                    xa_prop[3];
 				free(desktopItems.at(j).itemPath);
 			if(desktopItems.at(j).label!=NULL)
 				free(desktopItems.at(j).label);
-			if(desktopItems.at(j).iconPath!=NULL)
-				free(desktopItems.at(j).iconPath);
+			//if(desktopItems.at(j).iconPath!=NULL)
+			//	free(desktopItems.at(j).iconPath);
 		}
 	desktopItems.clear();
 

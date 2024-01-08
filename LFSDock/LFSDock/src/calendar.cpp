@@ -186,7 +186,7 @@ bool doNext(void *p,void* ud)
 int addCalendar(int x,int y,int grav)
 {
 	windowInitStruct	*win;
-	char				*icon=NULL;
+	std::string		icon;
 	std::string		thisday;
 	int				txtwid;
 	int				txthite;
@@ -201,11 +201,8 @@ int addCalendar(int x,int y,int grav)
 	setGadgetDetails(calendarButton);
 
 	icon=dockWindow->globalLib->LFSTK_findThemedIcon(desktopTheme,"stock_calendar","");
-	if(icon!=NULL)
-		{
-			calendarButton->LFSTK_setImageFromPath(icon,LEFT,true);
-			freeAndNull(&icon);
-		}
+	if(icon.length()>0)
+		calendarButton->LFSTK_setImageFromPath(icon,LEFT,true);
 	else
 		calendarButton->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",LEFT,true);
 

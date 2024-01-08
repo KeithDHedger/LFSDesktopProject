@@ -553,10 +553,9 @@ void LFSTK_multiLineEditClass::LFSTK_dropData(propertyStruct* data)
 
 	if(strcasecmp(data->mimeType,"text/uri-list")==0)
 		{
-			char	*ret;
-			ret=this->wc->app->globalLib->LFSTK_cleanString((const char*)data->data);
-			this->LFSTK_setFormatedText((const char*)ret,true);
-			freeAndNull(&ret);
+			std::string r1;
+			r1=this->wc->app->globalLib->LFSTK_cleanString((const char*)data->data);
+			this->LFSTK_setFormatedText((const char*)r1.c_str(),true);
 		}
 
 	if(this->callBacks.validCallbacks & GADGETDROPCB)

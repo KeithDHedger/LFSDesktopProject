@@ -138,9 +138,9 @@ void addALAuncher(const char *fpath,desktopFileStruct *entry)
 	size_t		start_pos=0;
 	std::string	from;
 	std::string	str;
-	bool		goodkey;
-	GKeyFile	*kf=g_key_file_new();
-	char		*execstring;
+	bool			goodkey;
+	GKeyFile		*kf=g_key_file_new();
+	char			*execstring;
 
 	entry->icon=NULL;
 	entry->name=NULL;
@@ -171,14 +171,14 @@ void addALAuncher(const char *fpath,desktopFileStruct *entry)
 int addLaunchers(int x,int y,int grav)
 {
 	char				*launchers;
-	char				*icon=NULL;
+	std::string		icon;
 	int				xpos=x;
 	int				ypos=y;
 	windowInitStruct	*win;
 	std::string		lc="#a0f0f0f0";
 	std::string		pc="#60a0a0a0";
 	std::string		ac="#60404040";
-	char				*iconpath=NULL;
+	std::string		iconpath;
 	int				ww;
 	int				sy=0;
 
@@ -224,7 +224,6 @@ int addLaunchers(int x,int y,int grav)
 			contextButtons[j]->LFSTK_setGadgetColours(GADGETBG,lc,pc,ac,lc);
 			contextButtons[j]->LFSTK_setGadgetColours(GADGETFG,lc,pc,ac,lc);
 
-			freeAndNull(&iconpath);
 			sy+=GADGETHITE;
 		}
 	ww=contextButtons[0]->LFSTK_getTextRealWidth(contextLabelData[1]);
@@ -239,7 +238,6 @@ int addLaunchers(int x,int y,int grav)
 			entry.name=NULL;
 			entry.exec=NULL;
 			entry.inTerm=false;
-freeAndNull(&icon);
 
  			addALAuncher(findlaunchers->data.at(l).path.c_str(),&entry);
 
@@ -262,16 +260,12 @@ freeAndNull(&icon);
 			bc->gadgetAcceptsDnD=true;
 			if((entry.icon!=NULL) && (desktopTheme!=NULL))
 				icon=apc->globalLib->LFSTK_findThemedIcon(desktopTheme,entry.icon,"");
-			if(icon!=NULL)
+			if(icon.length()>0)
 				bc->LFSTK_setImageFromPath(icon,LEFT,true);
 			else
 				bc->LFSTK_setImageFromPath(DATADIR "/pixmaps/command.png",LEFT,true);
 
-freeAndNull(&icon);
-//freeAndNull(&entry.icon);
 			setGadgetDetails(bc);
-			//if(icon!=NULL)
-			//	freeAndNull(&icon);
 			launchersArray.push_back(lds);
 			g_free(entry.name);
 			g_free(entry.exec);

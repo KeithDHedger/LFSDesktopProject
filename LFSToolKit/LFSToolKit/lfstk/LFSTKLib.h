@@ -53,7 +53,7 @@ class LFSTK_lib
 		const char		*bestFontColour(long pixel);
 		static bool		LFSTK_gadgetEvent(void *self,XEvent *e,int type);
 
-		char				*LFSTK_findThemedIcon(const char *theme,const char *icon,const char *catagory);
+		std::string		LFSTK_findThemedIcon(std::string theme,std::string icon,std::string catagory);
 		bool				LFSTK_pointInRect(pointStruct *point,geometryStruct *geom);
 		unsigned long	LFSTK_getColourFromName(Display *display,Colormap cm,const char *name);
 
@@ -79,7 +79,7 @@ class LFSTK_lib
 		void				LFSTK_loadDesktopIconTheme(void);
 
 //utils
-		char				*LFSTK_cleanString(const char *str);
+		//char				*LFSTK_cleanString(const char *str);
 		std::string		LFSTK_cleanString(std::string str);
 		propReturn		LFSTK_getSingleProp(Display *display,Window win,Atom prop,Atom wanttype);
 

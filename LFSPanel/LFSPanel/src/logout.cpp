@@ -74,14 +74,14 @@ bool logoutCB(void *p,void* ud)
 
 int  addLogout(int x,int y,int grav,bool fromleft)
 {
-	char	*themedicon=NULL;
-	char	*icon=NULL;
-	int		xpos=x;
-	int		ypos=y;
-	int		width=0;
-	int		height=0;
-	int		thisgrav=grav;
-	int		iconsize=16;
+	std::string	themedicon;
+	std::string	icon;
+	int			xpos=x;
+	int			ypos=y;
+	int			width=0;
+	int			height=0;
+	int			thisgrav=grav;
+	int			iconsize=16;
 
 	if(logoutButton!=NULL)
 		{
@@ -94,11 +94,8 @@ int  addLogout(int x,int y,int grav,bool fromleft)
 	logoutButton=new LFSTK_buttonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
 	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,logoutIconNames[NUMLOGOUTENTRYS],"");
 
-	if(icon!=NULL)
-		{
-			logoutButton->LFSTK_setImageFromPath(icon,LEFT,true);
-			free(icon);
-		}
+	if(icon.length()>0)
+		logoutButton->LFSTK_setImageFromPath(icon,LEFT,true);
 	else
 		logoutButton->LFSTK_setImageFromPath(DATADIR "/pixmaps/exit.png",LEFT,true);
 
@@ -116,15 +113,10 @@ int  addLogout(int x,int y,int grav,bool fromleft)
 			logoutMenus[j]->userData=(void*)(long)j;
 
 			themedicon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,logoutIconNames[j],"");
-			if(themedicon!=NULL)
-				{
-					logoutMenus[j]->imagePath=themedicon;
-					free(themedicon);
-				}
+			if(themedicon.length()>0)
+				logoutMenus[j]->imagePath=themedicon;
 			else
-				{
-					logoutMenus[j]->imagePath=logoutImages[j];
-				}
+				logoutMenus[j]->imagePath=logoutImages[j];
 			logoutMenus[j]->imageType=FILETHUMB;
 		}
 

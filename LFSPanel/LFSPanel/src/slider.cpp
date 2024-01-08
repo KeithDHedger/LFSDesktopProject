@@ -29,10 +29,10 @@ LFSTK_scrollBarClass	*vsb=NULL;
 LFSTK_windowClass	*scwindow=NULL;
 bool					windowVisible=false;
 LFSTK_toggleButtonClass	*volumeButton;
-char					*iconH=NULL;
-char					*iconM=NULL;
-char					*iconL=NULL;
-char					*iconZ=NULL;
+std::string			iconH;
+std::string			iconM;
+std::string			iconL;
+std::string			iconZ;
 int					oldVolVal=-1;
 char					label[32];
 
@@ -80,16 +80,16 @@ void setIcon(void)
 {
 	int vol=vsb->LFSTK_getValue();
 
-	if((iconZ!=NULL) && (vol<16))
+	if((iconZ.length()>0) && (vol<16))
 		volumeButton->LFSTK_setImageFromPath(iconZ,TOOLBAR,true);
 
-	if((iconL!=NULL) && (vol>=16) && (vol<32))
+	if((iconL.length()>0) && (vol>=16) && (vol<32))
 		volumeButton->LFSTK_setImageFromPath(iconL,TOOLBAR,true);
 
-	if((iconM!=NULL) && (vol>=32) && (vol<48))
+	if((iconM.length()>0) && (vol>=32) && (vol<48))
 		volumeButton->LFSTK_setImageFromPath(iconM,TOOLBAR,true);
 
-	if((iconH!=NULL) && (vol>=48))
+	if((iconH.length()>0) && (vol>=48))
 		volumeButton->LFSTK_setImageFromPath(iconH,TOOLBAR,true);
 }
 

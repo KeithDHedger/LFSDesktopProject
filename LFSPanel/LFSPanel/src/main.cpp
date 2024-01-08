@@ -366,8 +366,6 @@ int main(int argc,char **argv)
 			while(ll!=NULL)
 				{
 					freell=ll;
-					if(ll->icon!=NULL)
-						free(ll->icon);
 					if(ll->entry.name!=NULL)
 						free(ll->entry.name);
 					if(ll->entry.exec!=NULL)
@@ -399,9 +397,6 @@ int main(int argc,char **argv)
 			delete logoutMenu;
 			delete windowMenu;
 			
-			free(iconL);
-			free(iconM);
-			free(iconH);
 			logoutButton=NULL;
 			diskButton=NULL;
 			clockButton=NULL;

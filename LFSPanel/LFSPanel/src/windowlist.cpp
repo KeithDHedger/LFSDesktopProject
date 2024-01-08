@@ -88,7 +88,7 @@ bool windowAllCB(void *p,void* ud)
 
 bool windowAllMenuCB(void *p,void* ud)
 {
-	Window			winid=0;
+	Window	winid=0;
 	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
 
 	winid=(Window)(ud);
@@ -258,7 +258,7 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 
 void getCurrentDesktop(void)
 {
-	std::string	desknum=NULL;
+	std::string	desknum;
 
 	desknum=mainwind->globalLib->LFSTK_oneLiner("%s","/usr/bin/xprop -root |/bin/grep '_NET_CURRENT_DESKTOP(CARDINAL)'|/bin/head -n1|/usr/bin/awk -F'=' '{print $2}'");
 	if(desknum.length()>0)
@@ -285,13 +285,13 @@ void updateWindowMenu(bool global)
 
 int addWindowDeskMenu(int x,int y,int grav,bool fromleft)
 {
-	char	*icon=NULL;
-	int		xpos=x;
-	int		ypos=y;
-	int		width=0;
-	int		height=0;
-	int		thisgrav=grav;
-	int		iconsize=16;
+	std::string	icon;
+	int			xpos=x;
+	int			ypos=y;
+	int			width=0;
+	int			height=0;
+	int			thisgrav=grav;
+	int			iconsize=16;
 
 	if(windowDesk!=NULL)
 		{
@@ -302,11 +302,8 @@ int addWindowDeskMenu(int x,int y,int grav,bool fromleft)
 
 	windowDesk=new LFSTK_buttonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
 	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"remote-desktop","");
-	if(icon!=NULL)
-		{
-			windowDesk->LFSTK_setImageFromPath(icon,LEFT,true);
-			free(icon);
-		}
+	if(icon.length()>0)
+		windowDesk->LFSTK_setImageFromPath(icon,LEFT,true);
 	else
 		windowDesk->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",LEFT,true);
 
@@ -327,13 +324,13 @@ int addWindowDeskMenu(int x,int y,int grav,bool fromleft)
 
 int addWindowMenu(int x,int y,int grav,bool fromleft)
 {
-	char	*icon=NULL;
-	int		xpos=x;
-	int		ypos=y;
-	int		width=0;
-	int		height=0;
-	int		thisgrav=grav;
-	int		iconsize=16;
+	std::string	icon;
+	int			xpos=x;
+	int			ypos=y;
+	int			width=0;
+	int			height=0;
+	int			thisgrav=grav;
+	int			iconsize=16;
 
 	if(windowAll!=NULL)
 		{
@@ -347,11 +344,8 @@ int addWindowMenu(int x,int y,int grav,bool fromleft)
 
 	setGadgetDetails(windowAll);
 
-	if(icon!=NULL)
-		{
-			windowAll->LFSTK_setImageFromPath(icon,LEFT,true);
-			free(icon);
-		}
+	if(icon.length()>0)
+		windowAll->LFSTK_setImageFromPath(icon,LEFT,true);
 	else
 		windowAll->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",LEFT,true);
 

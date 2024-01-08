@@ -34,7 +34,8 @@ LFSTK_imageClass			*tux;
 
 const char				*diskLabelData[]={"Mount","Unmount","Eject","Open","Custom Icon","Remove Icon",NULL};
 const char				*diskThemeIconData[]={"drive-harddisk","media-eject","media-eject","document-open","list-add","list-remove"};
-char						*iconpath=NULL;
+//char						*iconpath=NULL;
+std::string				iconpath;
 LFSTK_windowClass		*diskWindow=NULL;
 LFSTK_buttonClass		*diskButtons[NOMOREBUTONS];
 bool						sticky=false;
@@ -165,7 +166,6 @@ int main(int argc, char **argv)
 	win->w=200;
 	win->h=200;
 	win->wc=wc;
-	//win->windowType="_NET_WM_WINDOW_TYPE_MENU";
 	win->windowType=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_TOOL"));
 
 	win->decorated=false;
@@ -182,7 +182,6 @@ int main(int argc, char **argv)
 			diskButtons[j]->LFSTK_setMouseCallBack(NULL,contextCB,(void*)(long)(j+1));
 			iconpath=diskWindow->globalLib->LFSTK_findThemedIcon("gnome",diskThemeIconData[j],"");
 			diskButtons[j]->LFSTK_setImageFromPath(iconpath,LEFT,true);
-			free(iconpath);
 			sy+=GADGETHITE;
 		}
 	diskWindow->LFSTK_resizeWindow(GADGETWIDTH+GADGETHITE,sy,true);

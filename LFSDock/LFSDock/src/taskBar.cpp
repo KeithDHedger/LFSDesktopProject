@@ -208,7 +208,7 @@ void updateTaskBar(bool force)
 {
 	int						cnt=0;
 	bool						skipflag=false;
-	char						*icon=NULL;
+	std::string				icon;
 	dataStruct				*datam=NULL;
 	bool						goodkey;	
 	char						*keyicon=NULL;
@@ -263,17 +263,14 @@ skiplabel:
 
 	for(int j=0;j<filltasks.size();j++)
 		{
-//			icon=NULL;
-			freeAndNull(&icon);
-			icon=dockWindow->globalLib->LFSTK_findThemedIcon(desktopTheme,filltasks.at(j).taskClass[0].c_str(),"");
-			if(icon==NULL)
-				icon=dockWindow->globalLib->LFSTK_findThemedIcon(desktopTheme,filltasks.at(j).taskClass[1].c_str(),"");
+			icon=dockWindow->globalLib->LFSTK_findThemedIcon(desktopTheme,filltasks.at(j).taskClass[0],"");
+			if(icon.length()==0)
+				icon=dockWindow->globalLib->LFSTK_findThemedIcon(desktopTheme,filltasks.at(j).taskClass[1],"");
 
-			if(icon!=NULL)
+			if(icon.length()>0)
 				{
 					if(taskbuttons[j]->imagePath!=icon)
 						taskbuttons[j]->LFSTK_setImageFromPath(icon,LEFT,true);
-					freeAndNull(&icon);
 				}
 			else
 				{
@@ -289,11 +286,10 @@ skiplabel:
 									if(keyicon!=NULL)
 										{
 											icon=dockWindow->globalLib->LFSTK_findThemedIcon(desktopTheme,keyicon,"");
-											if(icon!=NULL)
+											if(icon.length()>0)
 												{
 													if(taskbuttons[j]->imagePath!=icon)
 														taskbuttons[j]->LFSTK_setImageFromPath(icon,LEFT,true);
-													freeAndNull(&icon);
 												}
 											g_free(keyicon);
 										}
@@ -312,11 +308,10 @@ skiplabel:
 									if(keyicon!=NULL)
 										{
 											icon=dockWindow->globalLib->LFSTK_findThemedIcon(desktopTheme,keyicon,"");
-											if(icon!=NULL)
+											if(icon.length()>0)
 												{
 													if(taskbuttons[j]->imagePath!=icon)
 														taskbuttons[j]->LFSTK_setImageFromPath(icon,LEFT,true);
-													freeAndNull(&icon);
 												}
 											g_free(keyicon);
 										}
