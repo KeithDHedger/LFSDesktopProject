@@ -127,7 +127,6 @@ int addDesktopSwitcer(int x,int y,int grav)
 	deskLabel->LFSTK_setFontString(prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("font")),true);
 	deskLabel->LFSTK_setIgnores(false,false);
 	deskLabel->LFSTK_setTile(NULL,0);
-	//deskLabel->LFSTK_setLabelAutoColour(true);
 	deskLabel->LFSTK_setGadgetColourPair(NORMALCOLOUR,dockBGColour,dockTextColour);
 	deskLabel->LFSTK_setStyle(BEVELNONE);
 

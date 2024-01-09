@@ -61,6 +61,7 @@ bool launcherExitCB(LFSTK_gadgetClass *p,void* ud)
 		{
 			setGadgetPosition(p,false);
 			inSomeWindow=false;
+			popActionListExitCB(NULL,(void*)1);
 		}
 	return(true);
 }

@@ -96,7 +96,7 @@ bool timerCB(LFSTK_applicationClass *p,void* ud)
 			launcherContextWindow->popupFromGadget=NULL;
 		}
 
-	if((popActionWindow!=NULL) && (popActionWindow->isVisible==true) && (inSomeWindow==false) && (popActionWindow->inWindow==false))
+	if((popActionWindow!=NULL) && (popActionWindow->isVisible==true) && ((inSomeWindow==false) && (popActionWindow->inWindow==false)))
 		popActionListExitCB(NULL,(void*)1);
 
 	if(useTaskBar==true)
