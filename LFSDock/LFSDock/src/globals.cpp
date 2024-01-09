@@ -38,13 +38,13 @@ int						dockSize=2;
 const monitorStruct		*mons=NULL;
 int						onMonitor=0;
 int						dockGravity=PANELSOUTH;
-const char				*dockTextColour="";
-const char				*dockBGColour="";
+std::string				dockTextColour="";
+std::string				dockBGColour="";
 
 int						queueID;
 msgBuffer				buffer;
 
-const char				*desktopTheme=NULL;
+std::string				desktopTheme;
 bool						realMainLoop=true;
 
 int						refreshRate=500000;
@@ -99,7 +99,6 @@ void dropDesktopFile(const char *data,void *launcher)//TODO//
 	std::string line;
 	while(std::getline(stream,line))
 		{
-			//cleanstr=apc->globalLib->LFSTK_cleanString((const char*)line.c_str());//TODO//
 			cleanstr=strdup(apc->globalLib->LFSTK_cleanString(line).c_str());
 			if((strrchr(cleanstr,'.')!=NULL) && (strcmp(strrchr(cleanstr,'.'),".desktop")==0))//TODO//
 				{
@@ -334,7 +333,7 @@ void moveDock(int extra)
 std::string getWindowName(Window winid)
 {
 	propReturn	pr;
-	char			*wname;
+	char			*wname=NULL;
 	Status		st;
 	std::string	returnval="???";
 

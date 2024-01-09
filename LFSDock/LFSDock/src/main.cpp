@@ -37,8 +37,8 @@ void loadPrefs(std::string prefsfile)
 	dockSize=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("docksize"));
 	onMonitor=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("onmonitor"));
 	dockGravity=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("dockgrav"));
-	dockTextColour=prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("textcolour"));
-	dockBGColour=prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("dockbgcolour"));
+	dockTextColour=prefs.LFSTK_getString(prefs.LFSTK_hashFromKey("textcolour"));
+	dockBGColour=prefs.LFSTK_getString(prefs.LFSTK_hashFromKey("dockbgcolour"));
 	refreshRate=	prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("refreshrate"));
 	useMicros=prefs.LFSTK_getBool(prefs.LFSTK_hashFromKey("usemicroseconds"));
 }
@@ -186,7 +186,6 @@ void sanityCheck(void)
 
 int main(int argc,char **argv)
 {
-	//char				*env;
 	std::string		env;
 	int				psize;
 	int				key=666;

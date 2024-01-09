@@ -146,6 +146,13 @@ bool contextCB(void *p,void* ud)
 						apc->exitValue=0;
 						apc->mainLoop=false;
 						break;
+					case BUTTONPREFS:
+						{
+							std::string	com;
+							com="lfsdockprefs -d "+whatDock+" &";
+							system(com.c_str());
+						}
+						break;
 				}
 			
 			launcherExitCB(lwc->popupFromGadget,ud);

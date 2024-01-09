@@ -229,7 +229,8 @@ int addCalendar(int x,int y,int grav)
 	editbox->LFSTK_setIgnores(false,false);
 	editbox->LFSTK_addHighLights(dx,dy,dl,datesHilite[0]);
 //TODO//
-//			editbox->LFSTK_setGadgetColourPair(NORMALCOLOUR,"#40ffffff","black");
+//			editbox->LFSTK_setGadgetColourPair(NORMALCOLOUR,dockBGColour,dockTextColour);
+//editbox->LFSTK_setAlpha(1.0);
 //editbox->LFSTK_setTile(NULL,0);
 //calWindow->LFSTK_setTile(NULL,0);
 //	calWindow->LFSTK_setWindowColourName(NORMALCOLOUR,"#40ffffff");

@@ -24,8 +24,8 @@
 #include "launchers.h"
 
 LFSTK_buttonClass				*contextButtons[NOMOREBUTONS];
-const char						*contextLabelData[]={"Launch","Remove From Dock","TBD","TBD",NULL};
-const char						*contextThemeIconData[]={"media-playback-start","list-remove","dialog-warning","dialog-warning"};
+const char						*contextLabelData[]={"Launch","Remove From Dock","Run Prefs","TBD",NULL};
+const char						*contextThemeIconData[]={"media-playback-start","list-remove","LFSTKPrefs","dialog-warning"};
 std::vector<launcherDataStruct>	launchersArray;
 LFSTK_findClass					*findlaunchers=NULL;
 
@@ -258,7 +258,7 @@ int addLaunchers(int x,int y,int grav)
 			bc->LFSTK_setGadgetDropCallBack(gadgetDrop,USERDATA(l));
 			bc->LFSTK_setMouseMoveCallBack(launcherEnterCB,launcherExitCB,USERDATA(l));
 			bc->gadgetAcceptsDnD=true;
-			if((entry.icon!=NULL) && (desktopTheme!=NULL))
+			if((entry.icon!=NULL) && (desktopTheme.length()>0))
 				icon=apc->globalLib->LFSTK_findThemedIcon(desktopTheme,entry.icon,"");
 			if(icon.length()>0)
 				bc->LFSTK_setImageFromPath(icon,LEFT,true);

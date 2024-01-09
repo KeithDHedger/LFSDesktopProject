@@ -78,7 +78,7 @@ LFSTK_lineEditClass			*dockNameEdit=NULL;
 infoDataStruct					**dockNames=NULL;
 LFSTK_menuClass				*dockMenu=NULL;
 int							dockCnt=0;
-std::string					dockName;
+std::string					dockName="";
 
 bool doQuit(void *p,void* ud)
 {
@@ -184,6 +184,7 @@ bool applyCB(void *p,void* ud)
 			prefsfile=apc->configDir+"/"+dockName;
 			prefs.LFSTK_saveVarsToFile(prefsfile.c_str());
 			//prefs.LFSTK_saveVarsToFile("-");
+			system("killall lfsdock");
 		}
 	return(true);
 }
@@ -259,6 +260,7 @@ int main(int argc, char **argv)
 	option			longOptions[]=
 		{
 			{"window",1,0,'w'},
+			{"dock",1,0,'d'},
 			{"help",0,0,'h'},
 			{0, 0, 0, 0}
 		};
@@ -278,6 +280,9 @@ int main(int argc, char **argv)
 						exit(0);
 					case 'w':
 						parentWindow=atoi(optarg);
+						break;
+					case 'd':
+						dockName=optarg;
 						break;
 				}
 		}
@@ -315,7 +320,10 @@ int main(int argc, char **argv)
 
 //dock config
 //select
-	dockName="lfsdock-MAINDOCK.rc";
+	if(dockName.length()==0)
+		dockName="lfsdock-MAINDOCK.rc";
+	else
+		dockName="lfsdock-"+dockName+".rc";
 	selectDock=new LFSTK_buttonClass(wc,"Dock Config",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	selectDock->LFSTK_setIndicator(DISCLOSURE);
 

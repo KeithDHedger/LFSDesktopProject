@@ -89,15 +89,15 @@ extern int						dockSize;
 extern const monitorStruct		*mons;
 extern int						onMonitor;
 extern int						dockGravity;
-extern const char				*dockTextColour;
-extern const char				*dockBGColour;
+extern std::string				dockTextColour;
+extern std::string				dockBGColour;
 
 
 extern int						queueID;
 extern msgBuffer					buffer;
 extern bool						realMainLoop;
 
-extern const char				*desktopTheme;
+extern std::string				desktopTheme;
 extern int						refreshRate;
 extern bool						useMicros;
 

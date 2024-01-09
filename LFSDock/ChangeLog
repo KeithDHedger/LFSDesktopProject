@@ -1,4 +1,6 @@
 0.2.0
+Added run prefs for dock to launcher popup menu.
+Code clean.
 Fixed current date highlight for single digit.
 Fixed seg fault when not using launchers.
 Fixed mem leak.
