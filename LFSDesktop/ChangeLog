@@ -1,4 +1,5 @@
 0.2.0
+Set desktop names on start.
 Fixed minor compiler complaint.
 Fixed segfault for unreachable icon in desktop file.
 Fixed not displaying items as links properly.

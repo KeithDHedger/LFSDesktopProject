@@ -65,11 +65,42 @@ int						parentWindow=-1;
 //msg
 int						queueID=-1;
 
+//workspaces
+LFSTK_lineEditClass			*desktopNamesEdit=NULL;
+
 bool doQuit(void *p,void* ud)
 {
 	apc->exitValue=0;
 	apc->mainLoop=false;
 	return(false);
+}
+
+void setDeskNamesProp(void)
+{
+	std::vector<std::string>	tokenstrings;
+	const char				*x1;
+	std::string				x="";
+	int						totallen=0;
+	std::string				names=desktopNamesEdit->LFSTK_getBuffer();
+
+	tokenstrings=LFSTK_UtilityClass::LFSTK_strTok(names,",");
+	for(int j=0;j<tokenstrings.size();j++)
+		{
+			totallen+=tokenstrings.at(j).length()+1;
+			x+=tokenstrings.at(j)+'\0';
+		}
+
+	x1=x.c_str();
+	XChangeProperty(apc->display,apc->rootWindow,XInternAtom(apc->display,"_NET_DESKTOP_NAMES",false),
+	XInternAtom(apc->display,"UTF8_STRING",false),
+	8,
+	PropModeReplace,
+	(const unsigned char*)*&x1
+	,totallen
+	);
+
+	XSync(apc->display,false);
+	//system("xprop -root _NET_DESKTOP_NAMES");
 }
 
 bool buttonCB(void *p,void* ud)
@@ -92,10 +123,12 @@ bool buttonCB(void *p,void* ud)
 			{prefs.LFSTK_hashFromKey("labelalpha"),{TYPESTRING,"labelalpha",labelAlphaColurEditBox->LFSTK_getCStr(),false,0}},
 			{prefs.LFSTK_hashFromKey("includelist"),{TYPESTRING,"includelist",includeEditBox->LFSTK_getCStr(),false,0}},
 			{prefs.LFSTK_hashFromKey("excludelist"),{TYPESTRING,"excludelist",excludeEditBox->LFSTK_getCStr(),false,0}},
-			{prefs.LFSTK_hashFromKey("doubleclickexe"),{TYPEBOOL,"doubleclickexe","",clickExeCheck->LFSTK_getValue(),0}}
+			{prefs.LFSTK_hashFromKey("doubleclickexe"),{TYPEBOOL,"doubleclickexe","",clickExeCheck->LFSTK_getValue(),0}},
+			{prefs.LFSTK_hashFromKey("desknames"),{TYPESTRING,"desknames",desktopNamesEdit->LFSTK_getCStr(),false,0}},
 		};
 
 	prefs.LFSTK_saveVarsToFile(envFile);
+	setDeskNamesProp();
 	buffer.mType=DESKTOP_MSG;
 	sprintf(buffer.mText,"reloadprefs");
 	if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
@@ -218,7 +251,8 @@ int main(int argc, char **argv)
 			{prefs.LFSTK_hashFromKey("labelalpha"),{TYPESTRING,"labelalpha","1.0",false,0}},
 			{prefs.LFSTK_hashFromKey("includelist"),{TYPESTRING,"includelist","",false,0}},
 			{prefs.LFSTK_hashFromKey("excludelist"),{TYPESTRING,"excludelist","",false,0}},
-			{prefs.LFSTK_hashFromKey("doubleclickexe"),{TYPEBOOL,"doubleclickexe","",false,0}}
+			{prefs.LFSTK_hashFromKey("doubleclickexe"),{TYPEBOOL,"doubleclickexe","",false,0}},
+			{prefs.LFSTK_hashFromKey("desknames"),{TYPESTRING,"desknames","Desktop 1,Desktop 2,Desktop 3,Desktop 4,Desktop 5,Desktop 6",false,0}},
 		};
 
 	asprintf(&envFile,"%s/lfsdesktop.rc",apc->configDir.c_str());
@@ -301,6 +335,10 @@ int main(int argc, char **argv)
 //exclude list
 	label=new LFSTK_labelClass(wc,"Exclude Disks",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	excludeEditBox=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString("excludelist"),BORDER*2+GADGETWIDTH,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
+//desktop names
+	label=new LFSTK_labelClass(wc,"Desktop Names",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
+	desktopNamesEdit=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString("desknames"),BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*4,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
 //line

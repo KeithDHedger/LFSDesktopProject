@@ -75,7 +75,7 @@ int							dockSizePref=3;
 //dock select
 LFSTK_buttonClass			*selectDock=NULL;
 LFSTK_lineEditClass			*dockNameEdit=NULL;
-infoDataStruct					**dockNames=NULL;
+infoDataStruct				**dockNames=NULL;
 LFSTK_menuClass				*dockMenu=NULL;
 int							dockCnt=0;
 std::string					dockName="";

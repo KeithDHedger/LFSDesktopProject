@@ -88,6 +88,34 @@ void saveCacheFile(const char *cachefilepath,desktopItemStruct *cfd)
 	cacheprefs.LFSTK_saveVarsToFile(cachefilepath);
 }
 
+void setDeskNamesProp(void)
+{
+	std::vector<std::string>	tokenstrings;
+	const char				*x1;
+	std::string				x="";
+	int						totallen=0;
+	std::string				names=prefs.LFSTK_getString("desknames");
+
+	tokenstrings=LFSTK_UtilityClass::LFSTK_strTok(names,",");
+	for(int j=0;j<tokenstrings.size();j++)
+		{
+			totallen+=tokenstrings.at(j).length()+1;
+			x+=tokenstrings.at(j)+'\0';
+		}
+
+	x1=x.c_str();
+	XChangeProperty(apc->display,apc->rootWindow,XInternAtom(apc->display,"_NET_DESKTOP_NAMES",false),
+	XInternAtom(apc->display,"UTF8_STRING",false),
+	8,
+	PropModeReplace,
+	(const unsigned char*)*&x1
+	,totallen
+	);
+
+	XSync(apc->display,false);
+	system("xprop -root _NET_DESKTOP_NAMES");
+}
+
 void loadPrefs(void)
 {
 //{(".*"),(.*),&.*}
@@ -108,7 +136,8 @@ void loadPrefs(void)
 			{prefs.LFSTK_hashFromKey("labelalpha"),{TYPESTRING,"labelalpha","1.0",false,0}},
 			{prefs.LFSTK_hashFromKey("includelist"),{TYPESTRING,"includelist","",false,0}},
 			{prefs.LFSTK_hashFromKey("excludelist"),{TYPESTRING,"excludelist","",false,0}},
-			{prefs.LFSTK_hashFromKey("doubleclickexe"),{TYPEBOOL,"doubleclickexe","",false,0}}
+			{prefs.LFSTK_hashFromKey("doubleclickexe"),{TYPEBOOL,"doubleclickexe","",false,0}},
+			{prefs.LFSTK_hashFromKey("desknames"),{TYPESTRING,"desknames","Desktop 1,Desktop 2,Desktop 3,Desktop 4,Desktop 5,Desktop 6",false,0}},
 		};
 
 	prefs.LFSTK_loadVarsFromFile(prefsPath);
@@ -128,6 +157,7 @@ void loadPrefs(void)
 	includeList=prefs.LFSTK_getCString("includelist");
 	excludeList=prefs.LFSTK_getCString("excludelist");
 	doubleClickExecute=prefs.LFSTK_getBool("doubleclickexe");
+	setDeskNamesProp();
 }
 
 void reloadPrefs(void)

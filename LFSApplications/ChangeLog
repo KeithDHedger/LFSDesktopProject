@@ -1,4 +1,5 @@
 0.2.0
+Added setting desktop names to lfsdesktopprefs.
 Apply in dockprefs kills all docks.
 Added option to set dock on dockprefs at start up.
 Added lfsdockprefs desktop file to install.
