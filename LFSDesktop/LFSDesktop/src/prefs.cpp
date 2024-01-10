@@ -97,7 +97,7 @@ void setDeskNamesProp(void)
 	std::string				names=prefs.LFSTK_getString("desknames");
 
 	tokenstrings=LFSTK_UtilityClass::LFSTK_strTok(names,",");
-	for(int j=0;j<tokenstrings.size();j++)
+	for(unsigned j=0;j<tokenstrings.size();j++)
 		{
 			totallen+=tokenstrings.at(j).length()+1;
 			x+=tokenstrings.at(j)+'\0';
@@ -113,7 +113,7 @@ void setDeskNamesProp(void)
 	);
 
 	XSync(apc->display,false);
-	system("xprop -root _NET_DESKTOP_NAMES");
+	//system("xprop -root _NET_DESKTOP_NAMES");
 }
 
 void loadPrefs(void)
