@@ -133,6 +133,8 @@ int main(int argc, char **argv)
 	std::string			iconpath;
 	LFSTK_buttonClass	*button;
 	int					key=666;
+	Atom                   xa;//TODO//
+	Atom                   xa_prop[3];
 
 	apc=new LFSTK_applicationClass();
 
@@ -155,22 +157,18 @@ int main(int argc, char **argv)
 	wc=apc->mainWindow;
 	wc->passEventToRoot=true;
 
-Atom                    xa;//TODO//
-Atom                    xa_prop[3];
-
- xa=XInternAtom(apc->display,"_NET_WM_ALLOWED_ACTIONS",False);
-     xa_prop[0]=XInternAtom(apc->display,"_NET_WM_STATE_STICKY",False);
-     xa_prop[1]=XInternAtom(apc->display,"_NET_WM_STATE_BELOW",False);
+	xa=XInternAtom(apc->display,"_NET_WM_ALLOWED_ACTIONS",False);
+	xa_prop[0]=XInternAtom(apc->display,"_NET_WM_STATE_STICKY",False);
+	xa_prop[1]=XInternAtom(apc->display,"_NET_WM_STATE_BELOW",False);
   
-     if(xa!=None)
-         XChangeProperty(apc->display,wc->window,xa,XA_ATOM,32,PropModeReplace,(unsigned char *)&xa_prop,2);
+	if(xa!=None)
+		XChangeProperty(apc->display,wc->window,xa,XA_ATOM,32,PropModeReplace,(unsigned char *)&xa_prop,2);
 
 	xa=XInternAtom(apc->display,"_NET_WM_STATE",False);
 	xa_prop[0]=XInternAtom(apc->display,"_NET_WM_STATE_BELOW",False);
 	if(xa!=None)
 		XChangeProperty(apc->display,wc->window,xa,XA_ATOM,32,PropModeReplace,(unsigned char *)&xa_prop,1);
 	XLowerWindow(apc->display,wc->window);
-
 
 //TODO//debug to go
 #ifdef _ENABLEDEBUG_

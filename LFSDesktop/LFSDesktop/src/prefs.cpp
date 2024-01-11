@@ -90,26 +90,19 @@ void saveCacheFile(const char *cachefilepath,desktopItemStruct *cfd)
 
 void setDeskNamesProp(void)
 {
-	std::vector<std::string>	tokenstrings;
 	const char				*x1;
 	std::string				x="";
-	int						totallen=0;
 	std::string				names=prefs.LFSTK_getString("desknames");
 
-	tokenstrings=LFSTK_UtilityClass::LFSTK_strTok(names,",");
-	for(unsigned j=0;j<tokenstrings.size();j++)
-		{
-			totallen+=tokenstrings.at(j).length()+1;
-			x+=tokenstrings.at(j)+'\0';
-		}
-
+	x=LFSTK_UtilityClass::LFSTK_strReplaceAllChar(names,",",std::string("")+='\0');
+	x+='\0';
 	x1=x.c_str();
 	XChangeProperty(apc->display,apc->rootWindow,XInternAtom(apc->display,"_NET_DESKTOP_NAMES",false),
 	XInternAtom(apc->display,"UTF8_STRING",false),
 	8,
 	PropModeReplace,
 	(const unsigned char*)*&x1
-	,totallen
+	,names.length()+1
 	);
 
 	XSync(apc->display,false);

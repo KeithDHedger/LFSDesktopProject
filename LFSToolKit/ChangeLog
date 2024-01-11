@@ -1,4 +1,6 @@
 0.6.1
+Added LFSTK_strReplaceAllStr to util class.
+Added LFSTK_strReplaceAllChar to util class.
 Mose code cleaning...
 Set default whitespace for LFSTK_strStrip.
 Renoved some leaky glib code.

@@ -30,6 +30,8 @@ class LFSTK_UtilityClass
 		static std::vector<std::string>	LFSTK_strTok(std::string str,std::string delimiter);
 		static std::string				LFSTK_strStr(std::string haystack,std::string needle,bool caseinsensitive=false);
 		static std::string				LFSTK_strStrip(std::string haystack,std::string whitespace="\t \r\n");
+		static std::string				LFSTK_strReplaceAllStr(std::string haystack,std::string needle,std::string newneedle,bool erase=false);
+		static std::string				LFSTK_strReplaceAllChar(std::string haystack,std::string needle,std::string newneedle,bool erase=false);
 };
 
 #endif

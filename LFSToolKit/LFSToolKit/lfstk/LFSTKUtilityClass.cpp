@@ -81,6 +81,12 @@ std::string LFSTK_UtilityClass::LFSTK_strStr(std::string haystack,std::string ne
 	return("");
 }
 
+/**
+* Trim whitespace from front and back of string.
+* \param std::string str hastack.
+* \param std::string whitespace Default whitespace="\t \r\n".
+* \return std::string.
+*/
 std::string LFSTK_UtilityClass::LFSTK_strStrip(std::string haystack,std::string whitespace)
 {
 	std::string::size_type	foundfront;
@@ -89,4 +95,68 @@ std::string LFSTK_UtilityClass::LFSTK_strStrip(std::string haystack,std::string 
 	foundfront=haystack.find_first_not_of(whitespace);
 	foundback=haystack.find_last_not_of(whitespace);
 	return(haystack.substr(foundfront,foundback-foundfront+1));
+}
+
+/**
+* Replace/erase all from string.
+* \param std::string str hastack.
+* \param std::string needle.
+* \param std::string replacement  needle.
+* \param bool erase.
+* \note Default is to replace.
+* \note replace/erase whole needle.
+* \return std::string.
+*/
+std::string LFSTK_UtilityClass::LFSTK_strReplaceAllStr(std::string haystack,std::string needle,std::string newneedle,bool erase)
+{
+	std::string::size_type	found;
+	std::string				localhaystack=haystack;
+	bool						flag=false;
+
+	do
+		{
+			flag=false;
+			found=localhaystack.find(needle);
+			if(found!=std::string::npos)
+				{
+					if(erase==true)
+						localhaystack.erase(found,needle.length());
+					else
+						localhaystack.replace(found,needle.length(),newneedle);
+					flag=true;
+				}
+		}while(flag==true);
+	return(localhaystack);
+}
+
+/**
+* Replace/erase all from string.
+* \param std::string str hastack.
+* \param std::string needle.
+* \param std::string replacement  needle.
+* \param bool erase.
+* \note Default is to replace.
+* \note replace/erase any char in needle.
+* \return std::string.
+*/
+std::string LFSTK_UtilityClass::LFSTK_strReplaceAllChar(std::string haystack,std::string needle,std::string newneedle,bool erase)
+{
+	std::string::size_type	found;
+	std::string				localhaystack=haystack;
+	bool						flag=false;
+
+	do
+		{
+			flag=false;
+			found=localhaystack.find_first_of(needle);
+			if(found!=std::string::npos)
+				{
+					if(erase==true)
+						localhaystack.erase(found,1);
+					else
+						localhaystack.replace(found,1,newneedle);
+					flag=true;
+				}
+		}while(flag==true);
+	return(localhaystack);
 }
