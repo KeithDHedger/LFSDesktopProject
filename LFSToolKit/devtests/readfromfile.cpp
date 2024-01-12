@@ -52,7 +52,6 @@ int main(int argc, char **argv)
 			while(myfile>>keyname)
 				{
 					std::getline(myfile, data);
-					//std::cout << "keyname="<<keyname<<" data="<<LFSTK_UtilityClass::LFSTK_strStrip(data)<<std::endl;
 					out  << "keyname="<<keyname<<" data="<<LFSTK_UtilityClass::LFSTK_strStrip(data)<<std::endl;
 				}
 			myfile.close();
