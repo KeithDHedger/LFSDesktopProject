@@ -45,7 +45,7 @@ LFSTK_prefsClass::LFSTK_prefsClass()
 */
 void LFSTK_prefsClass::LFSTK_addToPrefs(const char *key,prefsData data)
 {
-	this->prefsMap[this->LFSTK_hashFromKey(key)]=data;
+	this->prefsMap[LFSTK_UtilityClass::LFSTK_hashFromKey(key)]=data;
 }
 
 /**
@@ -55,7 +55,7 @@ void LFSTK_prefsClass::LFSTK_addToPrefs(const char *key,prefsData data)
 */
 void LFSTK_prefsClass::LFSTK_deleteFromPrefs(const char *key)
 {
-	this->prefsMap.erase(this->LFSTK_hashFromKey(key));
+	this->prefsMap.erase(LFSTK_UtilityClass::LFSTK_hashFromKey(key));
 }
 
 /**
@@ -76,9 +76,9 @@ const char* LFSTK_prefsClass::LFSTK_boolToString(bool val)
 * \return boolean
 * \note case insensitive.
 */
-bool LFSTK_prefsClass::LFSTK_stringToBool(const char *val)
+bool LFSTK_prefsClass::LFSTK_stringToBool(std::string val)
 {
-	if((strcasecmp(val,"true")==0) || (strcasecmp(val,"1")==0))
+	if((val.compare("true")==0) || (val.compare("1")==0))
 		return(true);
 	return(false);
 }
@@ -89,40 +89,52 @@ bool LFSTK_prefsClass::LFSTK_stringToBool(const char *val)
 * \param filepath Path to prefs file.
 * \note if filepath = '-' write to stdout.
 */
-void LFSTK_prefsClass::LFSTK_saveVarsToFile(const char *filepath)
+void LFSTK_prefsClass::LFSTK_saveVarsToFile(std::string filepath)
 {
-//write
-	FILE*	fd=NULL;
+	std::ofstream	myfile ;
+	std::string		keyname;
+	std::string		data;
+	std::streambuf	*buf;
+	bool				dook=false;
 
-	if(filepath[0]=='-')
-		fd=stdout;
-	else
-		fd=fopen(filepath,"w");
-
-	if(fd!=NULL)
+	if(filepath.compare("-")!=0)
 		{
+			myfile.open(filepath,std::ofstream::out);
+			buf=myfile.rdbuf();
+			if(myfile.is_open())
+				dook=true;
+		}
+	else
+		{
+			buf=std::cout.rdbuf();
+			dook=true;
+		}
+
+	if(dook==true)
+        {
+			std::ostream out(buf);
 			for(auto& x:this->prefsMap)
 				{
 		  	 		 switch(x.second.type)
 						{
 							case TYPESTRING:
-								if(x.second.strData.length()>0)
-									fprintf(fd,"%s %s\n",x.second.keyName.c_str(),x.second.strData.c_str());
+								if(x.second.strData.empty()==false)
+									out<<x.second.keyName<<" "<<x.second.strData<<std::endl;
 								else
-									fprintf(fd,"%s \"\"\n",x.second.keyName.c_str());
+									out<<x.second.keyName<<" \"\""<<std::endl;
 								break;
 							case TYPEBOOL:
-								fprintf(fd,"%s %s\n",x.second.keyName.c_str(),this->LFSTK_boolToString(x.second.boolData));
+								out<<x.second.keyName<<" "<<this->LFSTK_boolToString(x.second.boolData)<<std::endl;
 								break;
 							case TYPEINT:
-								fprintf(fd,"%s %i\n",x.second.keyName.c_str(),x.second.intData);
+								out<<x.second.keyName<<" "<<x.second.intData<<std::endl;
 								break;
 							default:
 								break;
 						}
 				}
-			if(fd!=stdout)
-				fclose(fd);
+			if(myfile.is_open())
+				myfile.close();
 		}
 }
 
@@ -131,41 +143,34 @@ void LFSTK_prefsClass::LFSTK_saveVarsToFile(const char *filepath)
 *
 * \param filepath Path to prefs file.
 */
-void LFSTK_prefsClass::LFSTK_loadVarsFromFile(const char *filepath)
+void LFSTK_prefsClass::LFSTK_loadVarsFromFile(std::string filepath)
 {
-//read
-	FILE*	fd=NULL;
-	char	argname[256];
-	char	strarg[8192];
-	char	buffer[8448];
-
-	fd=fopen(filepath,"r");
-	if(fd!=NULL)
-		{
-			while(feof(fd)==0)
+	std::ifstream	myfile ;
+	std::string		keyname;
+	std::string		data;
+	std::string		line;
+	
+	myfile.open(filepath,std::fstream::in);
+	if(myfile.is_open())
+        {
+			while(myfile>>keyname)
 				{
-					buffer[0]=0;
-					argname[0]=0;
-					strarg[0]=0;
-					
-					fgets(buffer,8447,fd);
-					sscanf(buffer,"%s %[^\n]s",argname,strarg);
-					if((strlen(argname)==0) || (strlen(buffer)==0) || (strlen(strarg)==0))
-						continue;
+					std::getline(myfile,line);
+					data=LFSTK_UtilityClass::LFSTK_strStrip(line);
 					for(auto& x:this->prefsMap)
 						{
-							if(this->LFSTK_hashFromKey(argname)==x.first)
+							if(LFSTK_UtilityClass::LFSTK_hashFromKey(keyname)==x.first)
 								{
 									switch(x.second.type)
 										{
 											case TYPESTRING:
-												x.second.strData=strarg;
+												x.second.strData=data;
 												break;
 											case TYPEBOOL:
-												x.second.boolData=this->LFSTK_stringToBool(strarg);
+												x.second.boolData=this->LFSTK_stringToBool(data);
 												break;
 											case TYPEINT:
-												x.second.intData=atoi(strarg);
+												x.second.intData=stoi(data,nullptr,10);
 												break;
 											default:
 												break;
@@ -173,28 +178,8 @@ void LFSTK_prefsClass::LFSTK_loadVarsFromFile(const char *filepath)
 								}
 						}
 				}
-			fclose(fd);
+			myfile.close();
 		}
-}
-
-unsigned long LFSTK_prefsClass::LFSTK_hashFromKey(const char *key)
-{
-	unsigned long hash=0;
-
-	for(unsigned i=0;key[i]!=0;i++)
-		hash=31*hash+key[i];
-
-	return(hash);
-}
-
-unsigned long LFSTK_prefsClass::LFSTK_hashFromKey(std::string key)
-{
-	unsigned long hash=0;
-
-	for(int i=0;i<key.length();i++)
-		hash=31*hash+key.at(i);
-
-	return(hash);
 }
 
 /**
@@ -204,17 +189,7 @@ unsigned long LFSTK_prefsClass::LFSTK_hashFromKey(std::string key)
 */
 const char* LFSTK_prefsClass::LFSTK_getCString(const char *key)
 {
-	return(this->prefsMap.at(this->LFSTK_hashFromKey(key)).strData.c_str());
-}
-
-/**
-* Get c type string.
-* \param key.
-* \return const char*
-*/
-const char* LFSTK_prefsClass::LFSTK_getCString(unsigned long key)
-{
-	return(this->prefsMap.at(key).strData.c_str());
+	return(this->prefsMap.at(LFSTK_UtilityClass::LFSTK_hashFromKey(key)).strData.c_str());
 }
 
 /**
@@ -224,7 +199,7 @@ const char* LFSTK_prefsClass::LFSTK_getCString(unsigned long key)
 */
 std::string LFSTK_prefsClass::LFSTK_getString(const char *key)
 {
-	return(this->prefsMap.at(this->LFSTK_hashFromKey(key)).strData);
+	return(this->prefsMap.at(LFSTK_UtilityClass::LFSTK_hashFromKey(key)).strData);
 }
 
 /**
@@ -234,27 +209,7 @@ std::string LFSTK_prefsClass::LFSTK_getString(const char *key)
 */
 const std::string* LFSTK_prefsClass::LFSTK_getStringObject(const char *key)
 {
-	return(&(this->prefsMap.at(this->LFSTK_hashFromKey(key)).strData));
-}
-
-/**
-* Get c++ type std::string.
-* \param key.
-* \return std::string.
-*/
-std::string LFSTK_prefsClass::LFSTK_getString(unsigned long key)
-{
-	return(this->prefsMap.at(key).strData);
-}
-
-/**
-* Set string.
-* \param unsigned long key.
-* \param const char *newstr.
-*/
-void LFSTK_prefsClass::LFSTK_setString(unsigned long key,const char *newstr)
-{
-	this->prefsMap.at(key).strData=newstr;
+	return(&(this->prefsMap.at(LFSTK_UtilityClass::LFSTK_hashFromKey(key)).strData));
 }
 
 /**
@@ -264,7 +219,7 @@ void LFSTK_prefsClass::LFSTK_setString(unsigned long key,const char *newstr)
 */
 void LFSTK_prefsClass::LFSTK_setString(const char *key,const char *newstr)
 {
-	this->prefsMap.at(this->LFSTK_hashFromKey(key)).strData=newstr;
+	this->prefsMap.at(LFSTK_UtilityClass::LFSTK_hashFromKey(key)).strData=newstr;
 }
 
 /**
@@ -274,17 +229,7 @@ void LFSTK_prefsClass::LFSTK_setString(const char *key,const char *newstr)
 */
 bool LFSTK_prefsClass::LFSTK_getBool(const char *key)
 {
-	return(this->prefsMap.at(this->LFSTK_hashFromKey(key)).boolData);
-}
-
-/**
-* Get boolean.
-* \param key.
-* \return bool.
-*/
-bool LFSTK_prefsClass::LFSTK_getBool(unsigned long key)
-{
-	return(this->prefsMap.at(key).boolData);
+	return(this->prefsMap.at(LFSTK_UtilityClass::LFSTK_hashFromKey(key)).boolData);
 }
 
 /**
@@ -294,17 +239,7 @@ bool LFSTK_prefsClass::LFSTK_getBool(unsigned long key)
 */
 void LFSTK_prefsClass::LFSTK_setBool(const char *key,bool val)
 {
-	this->prefsMap.at(this->LFSTK_hashFromKey(key)).boolData=val;
-}
-
-/**
-* Set boolean.
-* \paramunsigned long key.
-* \param bool val.
-*/
-void LFSTK_prefsClass::LFSTK_setBool(unsigned long key,bool val)
-{
-	this->prefsMap.at(key).boolData=val;
+	this->prefsMap.at(LFSTK_UtilityClass::LFSTK_hashFromKey(key)).boolData=val;
 }
 
 /**
@@ -314,16 +249,15 @@ void LFSTK_prefsClass::LFSTK_setBool(unsigned long key,bool val)
 */
 int LFSTK_prefsClass::LFSTK_getInt(const char *key)
 {
-	return(this->prefsMap.at(this->LFSTK_hashFromKey(key)).intData);
+	return(this->prefsMap.at(LFSTK_UtilityClass::LFSTK_hashFromKey(key)).intData);
 }
 
 /**
-* Get int.
-* \param key.
-* \return int.
+* Set int.
+* \param const char *key.
+* \param bool val.
 */
-int LFSTK_prefsClass::LFSTK_getInt(unsigned long key)
+void LFSTK_prefsClass::LFSTK_setInt(const char *key,int val)
 {
-	return(this->prefsMap.at(key).intData);
+	this->prefsMap.at(LFSTK_UtilityClass::LFSTK_hashFromKey(key)).intData=val;
 }
-

@@ -132,16 +132,16 @@ void getEdits(void)
 {
 	prefs.prefsMap=
 		{
-			{prefs.LFSTK_hashFromKey("onmonitor"),{TYPEINT,"onmonitor","",false,atoi(dockOnMonitor->LFSTK_getCStr())}},
-			{prefs.LFSTK_hashFromKey("dockgrav"),{TYPEINT,"dockgrav","",false,dockGravityPref}},
-			{prefs.LFSTK_hashFromKey("docksize"),{TYPEINT,"docksize","",false,dockSizePref}},
-			{prefs.LFSTK_hashFromKey("dockbgcolour"),{TYPESTRING,"dockbgcolour",dockBGColourEdit->LFSTK_getCStr(),false,0}},
-			{prefs.LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour",dockTextColourEdit->LFSTK_getCStr(),false,0}},
-			{prefs.LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft",dockGadgets->LFSTK_getCStr(),false,0}},
-			{prefs.LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand",termCommand->LFSTK_getCStr(),false,0}},
-			{prefs.LFSTK_hashFromKey("font"),{TYPESTRING,"font",fontEdit->LFSTK_getCStr(),false,0}},
-			{prefs.LFSTK_hashFromKey("refreshrate"),{TYPESTRING,"refreshrate",dockRefreshEdit->LFSTK_getCStr(),false,0}},
-			{prefs.LFSTK_hashFromKey("usemicroseconds"),{TYPEBOOL,"usemicroseconds","",dockUseMicro->LFSTK_getValue(),0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("onmonitor"),{TYPEINT,"onmonitor","",false,atoi(dockOnMonitor->LFSTK_getCStr())}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("dockgrav"),{TYPEINT,"dockgrav","",false,dockGravityPref}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("docksize"),{TYPEINT,"docksize","",false,dockSizePref}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("dockbgcolour"),{TYPESTRING,"dockbgcolour",dockBGColourEdit->LFSTK_getCStr(),false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour",dockTextColourEdit->LFSTK_getCStr(),false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft",dockGadgets->LFSTK_getCStr(),false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand",termCommand->LFSTK_getCStr(),false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("font"),{TYPESTRING,"font",fontEdit->LFSTK_getCStr(),false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("refreshrate"),{TYPESTRING,"refreshrate",dockRefreshEdit->LFSTK_getCStr(),false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("usemicroseconds"),{TYPEBOOL,"usemicroseconds","",dockUseMicro->LFSTK_getValue(),0}},
 		};
 }
 
@@ -209,16 +209,16 @@ void getPrefs(void)
 
 	prefs.prefsMap=
 		{
-			{prefs.LFSTK_hashFromKey("docksize"),{TYPEINT,"docksize","",false,3}},
-			{prefs.LFSTK_hashFromKey("onmonitor"),{TYPEINT,"onmonitor","",false,0}},
-			{prefs.LFSTK_hashFromKey("dockgrav"),{TYPEINT,"dockgrav","",false,2}},
-			{prefs.LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","kkterminal -m -l -e ",false,0}},
-			{prefs.LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","LCSD",false,0}},
-			{prefs.LFSTK_hashFromKey("dockbgcolour"),{TYPESTRING,"dockbgcolour","#00000000",false,0}},
-			{prefs.LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","black",false,0}},
-			{prefs.LFSTK_hashFromKey("font"),{TYPESTRING,"font","Liberation Mono:size=12",false,0}},
-			{prefs.LFSTK_hashFromKey("refreshrate"),{TYPESTRING,"refreshrate","1",false,0}},
-			{prefs.LFSTK_hashFromKey("usemicroseconds"),{TYPEBOOL,"usemicroseconds","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("docksize"),{TYPEINT,"docksize","",false,3}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("onmonitor"),{TYPEINT,"onmonitor","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("dockgrav"),{TYPEINT,"dockgrav","",false,2}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","kkterminal -m -l -e ",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","LCSD",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("dockbgcolour"),{TYPESTRING,"dockbgcolour","#00000000",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","black",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("font"),{TYPESTRING,"font","Liberation Mono:size=12",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("refreshrate"),{TYPESTRING,"refreshrate","1",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("usemicroseconds"),{TYPEBOOL,"usemicroseconds","",false,0}},
 		};
 
 	asprintf(&env,"%s/%s",apc->configDir.c_str(),dockName.c_str());

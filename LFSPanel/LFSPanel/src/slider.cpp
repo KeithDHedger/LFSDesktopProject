@@ -199,7 +199,7 @@ int addSlider(int x,int y,int grav,bool fromleft)
 	win->x=100;
 	win->y=100;
 	win->app=apc;
-	win->windowType=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_TOOL"));
+	win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_TOOL"));
 
 	if((panelGravity==PANELWEST) || (panelGravity==PANELEAST))
 		{

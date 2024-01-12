@@ -47,7 +47,7 @@ int addClock(int x,int y,int grav)
 
 	clockButton=new LFSTK_buttonClass(dockWindow,"--:--:--",x,y+(iconWidth/2)-(GADGETHITE/2),iconWidth,GADGETHITE);
 	setGadgetDetails(clockButton);
-	clockButton->LFSTK_setFontString(prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("font")),true);
+	clockButton->LFSTK_setFontString(prefs.LFSTK_getCString("font"),true);
 	clockButton->LFSTK_setIgnores(false,false);
 	clockButton->LFSTK_setTile(NULL,0);
 	//clockButton->LFSTK_setLabelAutoColour(true);

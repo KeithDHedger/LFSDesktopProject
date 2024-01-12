@@ -143,10 +143,10 @@ bool buttonCB(void *p,void* ud)
 				{
 					prefs.prefsMap=
 						{
-							{prefs.LFSTK_hashFromKey("backdrop"),{TYPESTRING,"backdrop",mainBackdropEdit->LFSTK_getCStr(),false,0}},
-							{prefs.LFSTK_hashFromKey("colour"),{TYPESTRING,"colour",rootColourEdit->LFSTK_getCStr(),false,0}},
-							{prefs.LFSTK_hashFromKey("mainmode"),{TYPEINT,"mainmode","",false,backdropMode}},
-							{prefs.LFSTK_hashFromKey("multimode"),{TYPEBOOL,"multimode","",multipleMonitors->LFSTK_getValue(),0}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("backdrop"),{TYPESTRING,"backdrop",mainBackdropEdit->LFSTK_getCStr(),false,0}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("colour"),{TYPESTRING,"colour",rootColourEdit->LFSTK_getCStr(),false,0}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("mainmode"),{TYPEINT,"mainmode","",false,backdropMode}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("multimode"),{TYPEBOOL,"multimode","",multipleMonitors->LFSTK_getValue(),0}},
 						};
 					prefs.LFSTK_saveVarsToFile(mainPrefs);
 					fd=fopen(monitorPrefs,"w");
@@ -303,10 +303,10 @@ int main(int argc, char **argv)
 
 	prefs.prefsMap=
 		{
-			{prefs.LFSTK_hashFromKey("backdrop"),{TYPESTRING,"backdrop","",false,0}},
-			{prefs.LFSTK_hashFromKey("colour"),{TYPESTRING,"colour","#404040",false,0}},
-			{prefs.LFSTK_hashFromKey("mainmode"),{TYPEINT,"mainmode","",false,0}},
-			{prefs.LFSTK_hashFromKey("multimode"),{TYPEBOOL,"multimode","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("backdrop"),{TYPESTRING,"backdrop","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("colour"),{TYPESTRING,"colour","#404040",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("mainmode"),{TYPEINT,"mainmode","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("multimode"),{TYPEBOOL,"multimode","",false,0}},
 		};
 
 	prefs.LFSTK_loadVarsFromFile(mainPrefs);

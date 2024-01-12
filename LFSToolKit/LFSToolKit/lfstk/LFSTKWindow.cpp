@@ -575,10 +575,10 @@ void LFSTK_windowClass::LFSTK_setWindowType(Atom type)
 {
 	Atom	xa;
 	Atom	xa_prop[1];
-	//win->windowType=this->wc->app->appAtomsHashed.at(this->wc->app->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
+	//win->windowType=this->wc->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
 
 	//xa=XInternAtom(this->app->display,"_NET_WM_WINDOW_TYPE",False);
-	xa=this->app->appAtomsHashed.at(this->app->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE"));
+	xa=this->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE"));
 	//xa_prop[0]=XInternAtom(this->app->display,type,False);
 	xa_prop[0]=type;
 
@@ -753,8 +753,7 @@ void LFSTK_windowClass::windowClassInitCommon(windowInitStruct *wi)
 	classHint.res_class=(char*)wi->className.c_str();
 	XSetClassHint(this->app->display,this->window,&classHint);
 	unsigned long pid=getpid();
-	//this->LFSTK_setXProperty(XInternAtom(this->app->display,"_NET_WM_PID",False),XA_CARDINAL,32,(void *)&pid,1);
-	this->LFSTK_setXProperty(this->app->appAtomsHashed.at(this->app->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_PID")),XA_CARDINAL,32,(void *)&pid,1);
+	this->LFSTK_setXProperty(this->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_PID")),XA_CARDINAL,32,(void *)&pid,1);
 
 	this->gc=XCreateGC(this->app->display,this->window,0,NULL);
 	this->LFSTK_setFontString((char*)DEFAULTFONT);

@@ -207,7 +207,7 @@ int addCalendar(int x,int y,int grav)
 		calendarButton->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",LEFT,true);
 
 	win=apc->LFSTK_getDefaultWInit();
-	win->windowType=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
+	win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
 	apc->LFSTK_addToolWindow(win);
 	calWindow=apc->windows->back().window;
 

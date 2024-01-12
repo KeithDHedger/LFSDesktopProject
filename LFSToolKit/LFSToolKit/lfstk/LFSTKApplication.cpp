@@ -138,8 +138,8 @@ LFSTK_applicationClass::LFSTK_applicationClass()
 	cnt=0;
 	while(appAtomNames[cnt]!=NULL)
 		{
-			this->appAtomsHashed[this->globalLib->prefs.LFSTK_hashFromKey(appAtomNames[cnt])]=XInternAtom(this->display,appAtomNames[cnt],false);
-			//fprintf(stderr,"atom=%p atom name=%s\n",this->appAtomsHashed.at(this->globalLib->prefs.LFSTK_hashFromKey(appAtomNames[cnt])),appAtomNames[cnt]);
+			this->appAtomsHashed[LFSTK_UtilityClass::LFSTK_hashFromKey(appAtomNames[cnt])]=XInternAtom(this->display,appAtomNames[cnt],false);
+			//fprintf(stderr,"atom=%p atom name=%s\n",this->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey(appAtomNames[cnt])),appAtomNames[cnt]);
 			cnt++;
 		}
 }
@@ -162,7 +162,7 @@ windowInitStruct* LFSTK_applicationClass::LFSTK_getDefaultWInit(void)
 	wininit->overRide=false;
 	wininit->loadVars=true;
 	wininit->shutDisplayOnExit=false;
-	wininit->windowType=this->appAtomsHashed.at(this->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_NORMAL"));
+	wininit->windowType=this->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_NORMAL"));
 	wininit->decorated=true;
 	wininit->level=NORMAL;
 	wininit->display=this->display;
@@ -196,7 +196,7 @@ void LFSTK_applicationClass::LFSTK_addWindow(windowInitStruct *wi,const char *na
 			win->x=-1;
 			win->y=-1;
 			win->overRide=true;
-			win->windowType=this->appAtomsHashed.at(this->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DOCK"));
+			win->windowType=this->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DOCK"));
 			win->decorated=false;
 		}
 	else
@@ -224,7 +224,7 @@ void LFSTK_applicationClass::LFSTK_addToolWindow(windowInitStruct *wi,const char
 	if(wi==NULL)
 		{
 			win=this->LFSTK_getDefaultWInit();
-			win->windowType=this->appAtomsHashed.at(this->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_TOOL"));
+			win->windowType=this->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_TOOL"));
 		}
 	else
 		{

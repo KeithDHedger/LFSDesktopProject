@@ -31,8 +31,8 @@ const char *atomNames[]={"_NET_WM_WINDOW_TYPE_MENU","_NET_ACTIVE_WINDOW","_NET_C
 
 LFSWM2_Class::~LFSWM2_Class(void)
 {
-	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_CLIENT_LIST")),XA_WINDOW,32,NULL,0);
-	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_CLIENT_LIST_STACKING")),XA_WINDOW,32,NULL,0);
+	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_CLIENT_LIST")),XA_WINDOW,32,NULL,0);
+	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_CLIENT_LIST_STACKING")),XA_WINDOW,32,NULL,0);
 
 	XftFontClose(this->display,this->frameFont);
 	delete this->mainEventClass;
@@ -118,7 +118,7 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 //set up atoms
 	while(atomNames[cnt]!=NULL)
 		{
-			this->atomshashed[this->prefs.LFSTK_hashFromKey(atomNames[cnt])]=XInternAtom(this->display,atomNames[cnt],false);
+			this->atomshashed[LFSTK_UtilityClass::LFSTK_hashFromKey(atomNames[cnt])]=XInternAtom(this->display,atomNames[cnt],false);
 			cnt++;
 		}
 
@@ -159,24 +159,24 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 
 	this->prefs.prefsMap=
 		{
-			{this->prefs.LFSTK_hashFromKey("theme"),{TYPESTRING,"theme","",false,0}},
-			{this->prefs.LFSTK_hashFromKey("desktops"),{TYPEINT,"desktops","",false,6}},
-			{this->prefs.LFSTK_hashFromKey("placement"),{TYPEINT,"placement","",false,2}},
-			{this->prefs.LFSTK_hashFromKey("titlefont"),{TYPESTRING,"titlefont","sans:size=14:bold",false,0}},
-			{this->prefs.LFSTK_hashFromKey("titleposition"),{TYPEINT,"titleposition","",false,2}},
-			{this->prefs.LFSTK_hashFromKey("titlebarsize"),{TYPEINT,"titlebarsize","",false,20}},
-			{this->prefs.LFSTK_hashFromKey("leftsidebarsize"),{TYPEINT,"leftsidebarsize","",false,2}},
-			{this->prefs.LFSTK_hashFromKey("ritesidebarsize"),{TYPEINT,"ritesidebarsize","",false,2}},
-			{this->prefs.LFSTK_hashFromKey("bottombarsize"),{TYPEINT,"bottombarsize","",false,8}},
-			{this->prefs.LFSTK_hashFromKey("framebg"),{TYPESTRING,"framebg","grey",false,15}},
-			{this->prefs.LFSTK_hashFromKey("framefg"),{TYPESTRING,"framefg","white",false,0}},
-			{this->prefs.LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","black",false,0}},
-			{this->prefs.LFSTK_hashFromKey("forcedocksstack"),{TYPEINT,"forcedocksstack","",false,1}},
-			{this->prefs.LFSTK_hashFromKey("rescanprefs"),{TYPEINT,"rescanprefs","",false,10}},
-			{this->prefs.LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","",false,0}},
-			{this->prefs.LFSTK_hashFromKey("resizemode"),{TYPEINT,"resizemode","",false,2}},
-			{this->prefs.LFSTK_hashFromKey("modkeys"),{TYPEINT,"modkeys","",false,MOVEKEYS}},
-			{this->prefs.LFSTK_hashFromKey("framealpha"),{TYPEINT,"framealpha","",false,0xff}}
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("theme"),{TYPESTRING,"theme","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("desktops"),{TYPEINT,"desktops","",false,6}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("placement"),{TYPEINT,"placement","",false,2}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("titlefont"),{TYPESTRING,"titlefont","sans:size=14:bold",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("titleposition"),{TYPEINT,"titleposition","",false,2}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("titlebarsize"),{TYPEINT,"titlebarsize","",false,20}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("leftsidebarsize"),{TYPEINT,"leftsidebarsize","",false,2}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("ritesidebarsize"),{TYPEINT,"ritesidebarsize","",false,2}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("bottombarsize"),{TYPEINT,"bottombarsize","",false,8}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("framebg"),{TYPESTRING,"framebg","grey",false,15}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("framefg"),{TYPESTRING,"framefg","white",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","black",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("forcedocksstack"),{TYPEINT,"forcedocksstack","",false,1}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("rescanprefs"),{TYPEINT,"rescanprefs","",false,10}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("resizemode"),{TYPEINT,"resizemode","",false,2}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("modkeys"),{TYPEINT,"modkeys","",false,MOVEKEYS}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("framealpha"),{TYPEINT,"framealpha","",false,0xff}}
 		};
 
 	this->prefsPath=getenv("HOME");
@@ -243,66 +243,66 @@ void LFSWM2_Class::LFSWM2_initRootWindow(void)
 //XSynchronize(this->display,true);
 	std::vector<Atom>	globalAtoms=
 		{
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_CLIENT_LIST")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_CLIENT_LIST_STACKING")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_CLOSE_WINDOW")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_CURRENT_DESKTOP")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_DESKTOP_GEOMETRY")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_DESKTOP_VIEWPORT")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_FRAME_EXTENTS")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_NUMBER_OF_DESKTOPS")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_REQUEST_FRAME_EXTENTS")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_SUPPORTED")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_SUPPORTING_WM_CHECK")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_CHANGE_DESKTOP")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_CLOSE")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_FULLSCREEN")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_MINIMIZE")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_MAXIMIZE_HORZ")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_MAXIMIZE_VERT")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_RESIZE")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_ALLOWED_ACTIONS")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_DESKTOP")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_ICON_NAME")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_NAME")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_STATE")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_STATE_FULLSCREEN")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_STATE_SKIP_TASKBAR")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_VISIBLE_ICON_NAME")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_VISIBLE_NAME")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DOCK")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WORKAREA")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DESKTOP")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_NORMAL")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_STATE_STICKY")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_VERT")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_HORZ")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("WM_CHANGE_STATE")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("WM_DELETE_WINDOW")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("WM_PROTOCOLS")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("WM_STATE")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_MOTIF_WM_HINTS")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_WM_NORMAL_HINTS")),
-			this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_XROOTPMAP_ID"))
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_CLIENT_LIST")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_CLIENT_LIST_STACKING")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_CLOSE_WINDOW")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_CURRENT_DESKTOP")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_DESKTOP_GEOMETRY")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_DESKTOP_VIEWPORT")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_FRAME_EXTENTS")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_NUMBER_OF_DESKTOPS")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_REQUEST_FRAME_EXTENTS")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_SUPPORTED")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_SUPPORTING_WM_CHECK")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_ACTION_CHANGE_DESKTOP")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_ACTION_CLOSE")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_ACTION_FULLSCREEN")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_ACTION_MINIMIZE")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_ACTION_MAXIMIZE_HORZ")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_ACTION_MAXIMIZE_VERT")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_ACTION_RESIZE")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_ALLOWED_ACTIONS")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_DESKTOP")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_ICON_NAME")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_NAME")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_BELOW")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_FULLSCREEN")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_SKIP_TASKBAR")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_VISIBLE_ICON_NAME")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_VISIBLE_NAME")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DOCK")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WORKAREA")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DESKTOP")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_NORMAL")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_STICKY")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_VERT")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_HORZ")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("WM_CHANGE_STATE")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("WM_DELETE_WINDOW")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("WM_PROTOCOLS")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("WM_STATE")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_MOTIF_WM_HINTS")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_WM_NORMAL_HINTS")),
+			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_XROOTPMAP_ID"))
 		};
 
-	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_SUPPORTED")),XA_ATOM,32,(void*)globalAtoms.data(),globalAtoms.size());
+	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_SUPPORTED")),XA_ATOM,32,(void*)globalAtoms.data(),globalAtoms.size());
 	long geometry[2]={this->displayWidth,this->displayHeight};
-	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_DESKTOP_GEOMETRY")),XA_CARDINAL,32,geometry,2);
+	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_DESKTOP_GEOMETRY")),XA_CARDINAL,32,geometry,2);
 
-	this->mainWindowClass->LFSWM2_removeProp(this->rootWindow,this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_CLIENT_LIST")));
-	this->mainWindowClass->LFSWM2_removeProp(this->rootWindow,this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_CLIENT_LIST_STACKING")));
+	this->mainWindowClass->LFSWM2_removeProp(this->rootWindow,this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_CLIENT_LIST")));
+	this->mainWindowClass->LFSWM2_removeProp(this->rootWindow,this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_CLIENT_LIST_STACKING")));
 
 	// Finally create the WM_CHECK window to announce our EWMH support.
 	wmCheckWin=XCreateWindow(this->display,this->rootWindow,0,0,1,1,0,CopyFromParent,InputOnly,CopyFromParent,0,NULL);
-	this->mainWindowClass->LFSWM2_setProp(this->wmCheckWin,this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_SUPPORTING_WM_CHECK")),XA_WINDOW,32,&wmCheckWin,1);
-	this->mainWindowClass->LFSWM2_setProp(this->wmCheckWin,this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_WM_NAME")),this->atomshashed.at(this->prefs.LFSTK_hashFromKey("UTF8_STRING")),8,(void*)PACKAGE_NAME,strlen(PACKAGE_NAME));
-	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_SUPPORTING_WM_CHECK")),XA_WINDOW,32,&wmCheckWin,1);
+	this->mainWindowClass->LFSWM2_setProp(this->wmCheckWin,this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_SUPPORTING_WM_CHECK")),XA_WINDOW,32,&wmCheckWin,1);
+	this->mainWindowClass->LFSWM2_setProp(this->wmCheckWin,this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_NAME")),this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("UTF8_STRING")),8,(void*)PACKAGE_NAME,strlen(PACKAGE_NAME));
+	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_SUPPORTING_WM_CHECK")),XA_WINDOW,32,&wmCheckWin,1);
 //	fprintf(stderr,"wmCheckWin=%p\n",wmCheckWin);
 	XSync(this->display,true);
 }
@@ -464,7 +464,7 @@ void LFSWM2_Class::LFSWM2_setDeskCount(unsigned long val)
 	if (val==0||val>=0xffffffffUL)
 		return;
 
-	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_NUMBER_OF_DESKTOPS")),XA_CARDINAL,32,&val,1);
+	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_NUMBER_OF_DESKTOPS")),XA_CARDINAL,32,&val,1);
 	this->numberOfDesktops=val;
 }
 
@@ -472,7 +472,7 @@ void LFSWM2_Class::LFSWM2_setCurrentDesktop(unsigned long i,bool force,bool dovi
 {
 	if((this->currentDesktop!=i) || (force==true))
 		{
-			this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_CURRENT_DESKTOP")),XA_CARDINAL,32,&i,1);
+			this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_CURRENT_DESKTOP")),XA_CARDINAL,32,&i,1);
 			this->currentDesktop=i;
 			if(dovis==true)
 				this->mainWindowClass->LFSWM2_setVisibilityForDesk(this->currentDesktop);
@@ -484,7 +484,7 @@ void LFSWM2_Class::LFSWM2_setCurrentDesktopFromRoot(void)
 	Atom					*v=NULL;
 	long unsigned int	n;
 
-	v=(Atom*)this->mainWindowClass->LFSWM2_getProp(this->rootWindow,this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_NET_CURRENT_DESKTOP")),XA_CARDINAL,&n);
+	v=(Atom*)this->mainWindowClass->LFSWM2_getProp(this->rootWindow,this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_CURRENT_DESKTOP")),XA_CARDINAL,&n);
 	if(v!=NULL)
 		{
 			this->LFSWM2_setCurrentDesktop((long unsigned int)v[0]);
@@ -789,7 +789,7 @@ void LFSWM2_Class::DEBUG_printHintsDataStruct(Window wid)
 	motifHints		*hints=NULL;
 	long unsigned int	nitems_return=0;
 
-	hints=(motifHints*)this->mainWindowClass->LFSWM2_getProp(wid,this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_MOTIF_WM_HINTS")),this->atomshashed.at(this->prefs.LFSTK_hashFromKey("_MOTIF_WM_HINTS")),&nitems_return);
+	hints=(motifHints*)this->mainWindowClass->LFSWM2_getProp(wid,this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_MOTIF_WM_HINTS")),this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_MOTIF_WM_HINTS")),&nitems_return);
 
 	hs=this->mainWindowClass->LFSWM2_getWindowHints(wid);
 	

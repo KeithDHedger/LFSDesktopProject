@@ -124,7 +124,7 @@ int addDesktopSwitcer(int x,int y,int grav)
 
 	deskLabel=new LFSTK_buttonClass(dockWindow,std::to_string(pr.integer+1).c_str(),x,ly,iconWidth,GADGETHITE/2);
 	setGadgetDetails(deskLabel);
-	deskLabel->LFSTK_setFontString(prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("font")),true);
+	deskLabel->LFSTK_setFontString(prefs.LFSTK_getCString("font"),true);
 	deskLabel->LFSTK_setIgnores(false,false);
 	deskLabel->LFSTK_setTile(NULL,0);
 	deskLabel->LFSTK_setGadgetColourPair(NORMALCOLOUR,dockBGColour,dockTextColour);

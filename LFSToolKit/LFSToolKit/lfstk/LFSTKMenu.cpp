@@ -392,7 +392,7 @@ void LFSTK_menuClass::LFSTK_addMainMenus(infoDataStruct **menus,int menucnt)
 	else
 		this->isScrollable=false;
 	win->wc=this->parentwc;
-	win->windowType=this->parentwc->app->appAtomsHashed.at(this->parentwc->app->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
+	win->windowType=this->parentwc->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
 
 	win->decorated=false;
 	win->overRide=true;

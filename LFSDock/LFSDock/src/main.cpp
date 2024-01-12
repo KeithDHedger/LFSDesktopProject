@@ -34,13 +34,13 @@
 void loadPrefs(std::string prefsfile)
 {
 	prefs.LFSTK_loadVarsFromFile(prefsfile.c_str());
-	dockSize=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("docksize"));
-	onMonitor=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("onmonitor"));
-	dockGravity=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("dockgrav"));
-	dockTextColour=prefs.LFSTK_getString(prefs.LFSTK_hashFromKey("textcolour"));
-	dockBGColour=prefs.LFSTK_getString(prefs.LFSTK_hashFromKey("dockbgcolour"));
-	refreshRate=	prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("refreshrate"));
-	useMicros=prefs.LFSTK_getBool(prefs.LFSTK_hashFromKey("usemicroseconds"));
+	dockSize=prefs.LFSTK_getInt("docksize");
+	onMonitor=prefs.LFSTK_getInt("onmonitor");
+	dockGravity=prefs.LFSTK_getInt("dockgrav");
+	dockTextColour=prefs.LFSTK_getString("textcolour");
+	dockBGColour=prefs.LFSTK_getString("dockbgcolour");
+	refreshRate=	prefs.LFSTK_getInt("refreshrate");
+	useMicros=prefs.LFSTK_getBool("usemicroseconds");
 }
 
 void addGadgets(void)
@@ -207,16 +207,16 @@ int main(int argc,char **argv)
 	sanityCheck();
 
 	prefs.prefsMap={
-						{prefs.LFSTK_hashFromKey("docksize"),{TYPEINT,"docksize","",false,1}},
-						{prefs.LFSTK_hashFromKey("onmonitor"),{TYPEINT,"onmonitor","",false,0}},
-						{prefs.LFSTK_hashFromKey("dockgrav"),{TYPEINT,"dockgrav","",false,0}},
-						{prefs.LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","black",false,0}},
-						{prefs.LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","xterm -e ",false,0}},
-						{prefs.LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","l",false,0}},
-						{prefs.LFSTK_hashFromKey("font"),{TYPESTRING,"font","",false,0}},
-						{prefs.LFSTK_hashFromKey("dockbgcolour"),{TYPESTRING,"dockbgcolour","",false,0}},
-						{prefs.LFSTK_hashFromKey("refreshrate"),{TYPEINT,"refreshrate","",false,1}},
-						{prefs.LFSTK_hashFromKey("usemicroseconds"),{TYPEBOOL,"usemicroseconds","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("docksize"),{TYPEINT,"docksize","",false,1}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("onmonitor"),{TYPEINT,"onmonitor","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("dockgrav"),{TYPEINT,"dockgrav","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","black",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","xterm -e ",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","l",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("font"),{TYPESTRING,"font","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("dockbgcolour"),{TYPESTRING,"dockbgcolour","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("refreshrate"),{TYPEINT,"refreshrate","",false,1}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("usemicroseconds"),{TYPEBOOL,"usemicroseconds","",false,0}},
 					};
 	realMainLoop=true;
 
@@ -238,7 +238,7 @@ int main(int argc,char **argv)
 			dockWindow->LFSTK_setWindowDropCallBack(windowDrop,(void*)0xdeadbeef);
 
 			win=apc->LFSTK_getDefaultWInit();
-			win->windowType=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DOCK"));
+			win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DOCK"));
 			win->level=ABOVEALL;
 
 			apc->LFSTK_addToolWindow(win);
@@ -252,20 +252,20 @@ int main(int argc,char **argv)
 			popActionList->LFSTK_setGadgetColourPair(NORMALCOLOUR,lc,"red");
 			popActionList->LFSTK_setMouseCallBack(taskListCBDown,popActionWindowSelect,NULL);
 
-			WM_STATE=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("WM_STATE"));
-			NET_WM_WINDOW_TYPE_NORMAL=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_NORMAL"));
-			NET_WM_STATE_HIDDEN=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN"));
-			NET_WM_WINDOW_TYPE_DIALOG=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
-			NET_WM_WINDOW_TYPE=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE"));
-			NET_WM_STATE=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_STATE"));
-			NET_WM_NAME=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_NAME"));
-			UTF8_STRING=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("UTF8_STRING"));
-			NET_CURRENT_DESKTOP=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_CURRENT_DESKTOP"));
-			WM_CLASS=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("WM_CLASS"));
-			NET_WM_PID=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_PID"));
-			NET_NUMBER_OF_DESKTOPS=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_NUMBER_OF_DESKTOPS"));
-			NET_ACTIVE_WINDOW=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW"));
-			NET_WM_DESKTOP=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_DESKTOP"));
+			WM_STATE=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("WM_STATE"));
+			NET_WM_WINDOW_TYPE_NORMAL=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_NORMAL"));
+			NET_WM_STATE_HIDDEN=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN"));
+			NET_WM_WINDOW_TYPE_DIALOG=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+			NET_WM_WINDOW_TYPE=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE"));
+			NET_WM_STATE=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE"));
+			NET_WM_NAME=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_NAME"));
+			UTF8_STRING=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("UTF8_STRING"));
+			NET_CURRENT_DESKTOP=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_CURRENT_DESKTOP"));
+			WM_CLASS=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("WM_CLASS"));
+			NET_WM_PID=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_PID"));
+			NET_NUMBER_OF_DESKTOPS=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_NUMBER_OF_DESKTOPS"));
+			NET_ACTIVE_WINDOW=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW"));
+			NET_WM_DESKTOP=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_DESKTOP"));
 
 			env=dockWindow->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str());
 			key=std::stoi(env,nullptr,10);

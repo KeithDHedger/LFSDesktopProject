@@ -40,15 +40,15 @@
 void loadPrefs(const char *env)
 {
 	prefs.LFSTK_loadVarsFromFile(env);
-	panelHeight=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelheight"));
-	panelWidth=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelwidth"));
-	onMonitor=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("onmonitor"));
-	panelPos=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelpos"));
-	panelGravity=prefs.LFSTK_getInt(prefs.LFSTK_hashFromKey("panelgrav"));
-	useTheme=prefs.LFSTK_getBool(prefs.LFSTK_hashFromKey("usetheme"));
-	panelColour=prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("panelcolour"));
-	panelTextColour=prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("textcolour"));
-	noButtons=prefs.LFSTK_getBool(prefs.LFSTK_hashFromKey("nobuttons"));
+	panelHeight=prefs.LFSTK_getInt("panelheight");
+	panelWidth=prefs.LFSTK_getInt("panelwidth");
+	onMonitor=prefs.LFSTK_getInt("onmonitor");
+	panelPos=prefs.LFSTK_getInt("panelpos");
+	panelGravity=prefs.LFSTK_getInt("panelgrav");
+	useTheme=prefs.LFSTK_getBool("usetheme");
+	panelColour=prefs.LFSTK_getCString("panelcolour");
+	panelTextColour=prefs.LFSTK_getCString("textcolour");
+	noButtons=prefs.LFSTK_getBool("nobuttons");
 }
 
 void addLeftGadgets(void)
@@ -189,24 +189,24 @@ int main(int argc,char **argv)
 	int			refreshmulti=0;
 	
 	prefs.prefsMap={
-						{prefs.LFSTK_hashFromKey("panelheight"),{TYPEINT,"panelheight","",false,0}},
-						{prefs.LFSTK_hashFromKey("panelwidth"),{TYPEINT,"panelwidth","",false,0}},
-						{prefs.LFSTK_hashFromKey("onmonitor"),{TYPEINT,"onmonitor","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("panelheight"),{TYPEINT,"panelheight","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("panelwidth"),{TYPEINT,"panelwidth","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("onmonitor"),{TYPEINT,"onmonitor","",false,0}},
 
-						{prefs.LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","xterm -e ",false,0}},
-						{prefs.LFSTK_hashFromKey("logoutcommand"),{TYPESTRING,"logoutcommand","xterm",false,0}},
-						{prefs.LFSTK_hashFromKey("restartcommand"),{TYPESTRING,"restartcommand","xterm",false,0}},
-						{prefs.LFSTK_hashFromKey("shutdowncommand"),{TYPESTRING,"shutdowncommand","xterm",false,0}},
-						{prefs.LFSTK_hashFromKey("gadgetsright"),{TYPESTRING,"gadgetsright","L",false,0}},
-						{prefs.LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","l",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","xterm -e ",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("logoutcommand"),{TYPESTRING,"logoutcommand","xterm",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("restartcommand"),{TYPESTRING,"restartcommand","xterm",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("shutdowncommand"),{TYPESTRING,"shutdowncommand","xterm",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("gadgetsright"),{TYPESTRING,"gadgetsright","L",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","l",false,0}},
 
-						{prefs.LFSTK_hashFromKey("panelpos"),{TYPEINT,"panelpos","",false,0}},
-						{prefs.LFSTK_hashFromKey("panelgrav"),{TYPEINT,"panelgrav","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("panelpos"),{TYPEINT,"panelpos","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("panelgrav"),{TYPEINT,"panelgrav","",false,0}},
 
-						{prefs.LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","",false,0}},
-						{prefs.LFSTK_hashFromKey("nobuttons"),{TYPEBOOL,"nobuttons","",false,0}},
-						{prefs.LFSTK_hashFromKey("panelcolour"),{TYPESTRING,"panelcolour","white",false,0}},
-						{prefs.LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","black",false,0}}
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("nobuttons"),{TYPEBOOL,"nobuttons","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("panelcolour"),{TYPESTRING,"panelcolour","white",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","black",false,0}}
 					};
 	realMainLoop=true;
 	

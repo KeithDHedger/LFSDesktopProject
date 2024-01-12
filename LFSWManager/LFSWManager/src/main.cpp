@@ -545,7 +545,7 @@ int main(int argc,char *argv[])
 
 	lfstkLib=new LFSTK_lib(false);
 
-	prefsfile=lfstkLib->LFSTK_oneLiner("sed -n '2p' \"%s/.config/LFS/lfsappearance.rc\"",getenv("HOME"));
+	prefsfile=strdup((lfstkLib->LFSTK_oneLiner("sed -n '2p' \"%s/.config/LFS/lfsappearance.rc\"",getenv("HOME"))).c_str());
 	key=atoi(prefsfile);
 
 	ndesk=numberOfDesktops;

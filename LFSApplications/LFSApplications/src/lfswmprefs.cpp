@@ -129,18 +129,18 @@ bool buttonCB(void *p,void* ud)
 				{
 					prefs.prefsMap=
 						{
-							{prefs.LFSTK_hashFromKey("wmactive_frame"),{TYPESTRING,"wmactive_frame",previeColourEdit[0]->LFSTK_getCStr(),false,0}},
-							{prefs.LFSTK_hashFromKey("wmactive_fill"),{TYPESTRING,"wmactive_fill",previeColourEdit[1]->LFSTK_getCStr(),false,0}},
-							{prefs.LFSTK_hashFromKey("wminactive_frame"),{TYPESTRING,"wminactive_frame",previeColourEdit[2]->LFSTK_getCStr(),false,0}},
-							{prefs.LFSTK_hashFromKey("wminactive_fill"),{TYPESTRING,"wminactive_fill",previeColourEdit[3]->LFSTK_getCStr(),false,0}},
-							{prefs.LFSTK_hashFromKey("widgetcolour"),{TYPESTRING,"widgetcolour",previeColourEdit[4]->LFSTK_getCStr(),false,0}},
-							{prefs.LFSTK_hashFromKey("titlefont"),{TYPESTRING,"titlefont",fontEdit->LFSTK_getCStr(),false,0}},
-							{prefs.LFSTK_hashFromKey("theme"),{TYPESTRING,"theme",themeEdit->LFSTK_getCStr(),false,0}},
-							{prefs.LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand",terminalEdit->LFSTK_getCStr(),false,0}},
-							{prefs.LFSTK_hashFromKey("placement"),{TYPEINT,"placement","",false,prefsPlacementTemp}},
-							{prefs.LFSTK_hashFromKey("desktops"),{TYPEINT,"desktops","",false,atoi(deskCountEdit->LFSTK_getCStr())}},
-							{prefs.LFSTK_hashFromKey("liveupdate"),{TYPEINT,"liveupdate","",false,atoi(refreshEdit->LFSTK_getCStr())}},
-							{prefs.LFSTK_hashFromKey("rescanprefs"),{TYPEINT,"rescanprefs","",false,atoi(rescanEdit->LFSTK_getCStr())}}
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("wmactive_frame"),{TYPESTRING,"wmactive_frame",previeColourEdit[0]->LFSTK_getCStr(),false,0}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("wmactive_fill"),{TYPESTRING,"wmactive_fill",previeColourEdit[1]->LFSTK_getCStr(),false,0}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("wminactive_frame"),{TYPESTRING,"wminactive_frame",previeColourEdit[2]->LFSTK_getCStr(),false,0}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("wminactive_fill"),{TYPESTRING,"wminactive_fill",previeColourEdit[3]->LFSTK_getCStr(),false,0}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("widgetcolour"),{TYPESTRING,"widgetcolour",previeColourEdit[4]->LFSTK_getCStr(),false,0}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("titlefont"),{TYPESTRING,"titlefont",fontEdit->LFSTK_getCStr(),false,0}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("theme"),{TYPESTRING,"theme",themeEdit->LFSTK_getCStr(),false,0}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand",terminalEdit->LFSTK_getCStr(),false,0}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("placement"),{TYPEINT,"placement","",false,prefsPlacementTemp}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("desktops"),{TYPEINT,"desktops","",false,atoi(deskCountEdit->LFSTK_getCStr())}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("liveupdate"),{TYPEINT,"liveupdate","",false,atoi(refreshEdit->LFSTK_getCStr())}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("rescanprefs"),{TYPEINT,"rescanprefs","",false,atoi(rescanEdit->LFSTK_getCStr())}}
 						};
 
 					prefs.LFSTK_saveVarsToFile(envFile);
@@ -250,18 +250,18 @@ int main(int argc, char **argv)
 
 	prefs.prefsMap=
 		{
-			{prefs.LFSTK_hashFromKey("wmactive_frame"),{TYPESTRING,"wmactive_frame","black",false,0}},
-			{prefs.LFSTK_hashFromKey("wmactive_fill"),{TYPESTRING,"wmactive_fill","#00ffff",false,0}},
-			{prefs.LFSTK_hashFromKey("wminactive_frame"),{TYPESTRING,"wminactive_frame","black",false,0}},
-			{prefs.LFSTK_hashFromKey("wminactive_fill"),{TYPESTRING,"wminactive_fill","white",false,0}},
-			{prefs.LFSTK_hashFromKey("widgetcolour"),{TYPESTRING,"widgetcolour","white",false,0}},
-			{prefs.LFSTK_hashFromKey("titlefont"),{TYPESTRING,"titlefont","",false,0}},
-			{prefs.LFSTK_hashFromKey("theme"),{TYPESTRING,"theme","",false,0}},
-			{prefs.LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","",false,0}},
-			{prefs.LFSTK_hashFromKey("placement"),{TYPEINT,"placement","",false,2}},
-			{prefs.LFSTK_hashFromKey("desktops"),{TYPEINT,"desktops","",false,6}},
-			{prefs.LFSTK_hashFromKey("liveupdate"),{TYPEINT,"liveupdate","",false,15}},
-			{prefs.LFSTK_hashFromKey("rescanprefs"),{TYPEINT,"rescanprefs","",false,4}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("wmactive_frame"),{TYPESTRING,"wmactive_frame","black",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("wmactive_fill"),{TYPESTRING,"wmactive_fill","#00ffff",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("wminactive_frame"),{TYPESTRING,"wminactive_frame","black",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("wminactive_fill"),{TYPESTRING,"wminactive_fill","white",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("widgetcolour"),{TYPESTRING,"widgetcolour","white",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("titlefont"),{TYPESTRING,"titlefont","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("theme"),{TYPESTRING,"theme","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("placement"),{TYPEINT,"placement","",false,2}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("desktops"),{TYPEINT,"desktops","",false,6}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("liveupdate"),{TYPEINT,"liveupdate","",false,15}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("rescanprefs"),{TYPEINT,"rescanprefs","",false,4}},
 		};
 
 	asprintf(&envFile,"%s/lfswmanager.rc",apc->configDir.c_str());

@@ -160,3 +160,18 @@ std::string LFSTK_UtilityClass::LFSTK_strReplaceAllChar(std::string haystack,std
 		}while(flag==true);
 	return(localhaystack);
 }
+
+/**
+* Get hash from key string.
+* \param std::string str key.
+* \return unsigned long hashed key string.
+*/
+unsigned long LFSTK_UtilityClass::LFSTK_hashFromKey(std::string key)
+{
+	unsigned long hash=0;
+
+	for(int i=0;i<key.length();i++)
+		hash=31*hash+key.at(i);
+
+	return(hash);
+}

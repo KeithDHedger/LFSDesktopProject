@@ -200,7 +200,7 @@ int addLaunchers(int x,int y,int grav)
 	win->w=200;
 	win->h=200;
 	win->wc=dockWindow;
-	win->windowType=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
+	win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
 	win->app=apc;
 	win->decorated=false;
 	win->overRide=true;
@@ -220,7 +220,7 @@ int addLaunchers(int x,int y,int grav)
 			setGadgetDetails(contextButtons[j]);
 			contextButtons[j]->LFSTK_setCairoFontDataParts("sB",20);
 			contextButtons[j]->LFSTK_setTile(NULL,0);
-			contextButtons[j]->LFSTK_setFontString(prefs.LFSTK_getCString(prefs.LFSTK_hashFromKey("font")),true);
+			contextButtons[j]->LFSTK_setFontString(prefs.LFSTK_getCString("font"),true);
 			contextButtons[j]->LFSTK_setLabelAutoColour(true);
 			contextButtons[j]->LFSTK_setGadgetColours(GADGETBG,lc,pc,ac,lc);
 			contextButtons[j]->LFSTK_setGadgetColours(GADGETFG,lc,pc,ac,lc);

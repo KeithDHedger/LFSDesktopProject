@@ -147,7 +147,7 @@ int main(int argc, char **argv)
 
 	udev=udev_new();
 	windowInitStruct *wi=new windowInitStruct;
-	wi->windowType=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DESKTOP"));
+	wi->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DESKTOP"));
 	wi->app=apc;
 	wi->overRide=true;
 	wi->level=BELOWALL;
@@ -202,7 +202,7 @@ int main(int argc, char **argv)
 	win->windowName="";
 	win->loadVars=true;
 	win->wc=wc;
-	win->windowType=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
+	win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
 	win->decorated=false;
 	win->overRide=true;
 	win->level=ABOVEALL;
@@ -224,7 +224,7 @@ int main(int argc, char **argv)
 	win->windowName="";
 	win->loadVars=true;
 	win->wc=wc;
-	win->windowType=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
+	win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
 	win->decorated=false;
 	win->overRide=true;
 	win->level=ABOVEALL;

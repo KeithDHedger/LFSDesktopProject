@@ -131,7 +131,7 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	win->w=200;
 	win->h=200;
 	win->wc=this->wc;
-	win->windowType=this->wc->app->appAtomsHashed.at(this->wc->app->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
+	win->windowType=this->wc->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
 	win->decorated=false;
 	win->level=ABOVEALL;
 

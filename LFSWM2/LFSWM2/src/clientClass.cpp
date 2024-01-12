@@ -83,7 +83,7 @@ void LFSWM2_clientClass::LFSWM2_setWindowName(void)
 	this->name="";
 	this->mainClass->LFSWM2_pushXErrorHandler();
 
-	namex=(char*)this->mainClass->mainWindowClass->LFSWM2_getProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_NAME")),this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("UTF8_STRING")),&nitems_return);
+	namex=(char*)this->mainClass->mainWindowClass->LFSWM2_getProp(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_NAME")),this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("UTF8_STRING")),&nitems_return);
 	if (namex!=NULL)
 		{
 			this->name=namex;
@@ -116,10 +116,10 @@ void LFSWM2_clientClass::drawMousePressed(Window id,Pixmap pm,controlData data)
 
 	if(this->mainClass->useTheme==true)
 		{
-			XSetClipMask(this->mainClass->display,this->frameGC,this->mainClass->mainWindowClass->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(cn)]);
+			XSetClipMask(this->mainClass->display,this->frameGC,this->mainClass->mainWindowClass->theme.masks[LFSTK_UtilityClass::LFSTK_hashFromKey(cn)]);
 			XSetClipOrigin(this->mainClass->display,this->frameGC,0,0);
-			XCopyArea(this->mainClass->display,this->mainClass->mainWindowClass->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(cn)],id,this->frameGC,0,0,this->mainClass->mainWindowClass->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(cn)],this->mainClass->mainWindowClass->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(cn)],0,0);
-			XShapeCombineMask(this->mainClass->display,id,ShapeBounding,0,0,this->mainClass->mainWindowClass->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(cn)],ShapeSet);
+			XCopyArea(this->mainClass->display,this->mainClass->mainWindowClass->theme.pixmaps[LFSTK_UtilityClass::LFSTK_hashFromKey(cn)],id,this->frameGC,0,0,this->mainClass->mainWindowClass->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(cn)],this->mainClass->mainWindowClass->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(cn)],0,0);
+			XShapeCombineMask(this->mainClass->display,id,ShapeBounding,0,0,this->mainClass->mainWindowClass->theme.masks[LFSTK_UtilityClass::LFSTK_hashFromKey(cn)],ShapeSet);
 			return;
 		}
 
@@ -139,10 +139,10 @@ void LFSWM2_clientClass::drawMouseEnter(Window id,Pixmap pm,controlData data)
 
 	if(this->mainClass->useTheme==true)
 		{
-			XSetClipMask(this->mainClass->display,this->frameGC,this->mainClass->mainWindowClass->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(cn)]);
+			XSetClipMask(this->mainClass->display,this->frameGC,this->mainClass->mainWindowClass->theme.masks[LFSTK_UtilityClass::LFSTK_hashFromKey(cn)]);
 			XSetClipOrigin(this->mainClass->display,this->frameGC,0,0);
-			XCopyArea(this->mainClass->display,this->mainClass->mainWindowClass->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(cn)],id,this->frameGC,0,0,this->mainClass->mainWindowClass->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(cn)],this->mainClass->mainWindowClass->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(cn)],0,0);
-			XShapeCombineMask(this->mainClass->display,id,ShapeBounding,0,0,this->mainClass->mainWindowClass->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(cn)],ShapeSet);
+			XCopyArea(this->mainClass->display,this->mainClass->mainWindowClass->theme.pixmaps[LFSTK_UtilityClass::LFSTK_hashFromKey(cn)],id,this->frameGC,0,0,this->mainClass->mainWindowClass->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(cn)],this->mainClass->mainWindowClass->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(cn)],0,0);
+			XShapeCombineMask(this->mainClass->display,id,ShapeBounding,0,0,this->mainClass->mainWindowClass->theme.masks[LFSTK_UtilityClass::LFSTK_hashFromKey(cn)],ShapeSet);
 			return;
 		}
 
@@ -162,10 +162,10 @@ void LFSWM2_clientClass::LFSWM2_drawMouseLeave(Window id,Pixmap pm,controlData d
 
 	if(this->mainClass->useTheme==true)
 		{
-			XSetClipMask(this->mainClass->display,this->frameGC,this->mainClass->mainWindowClass->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(cn)]);
+			XSetClipMask(this->mainClass->display,this->frameGC,this->mainClass->mainWindowClass->theme.masks[LFSTK_UtilityClass::LFSTK_hashFromKey(cn)]);
 			XSetClipOrigin(this->mainClass->display,this->frameGC,0,0);
-			XCopyArea(this->mainClass->display,this->mainClass->mainWindowClass->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(cn)],id,this->frameGC,0,0,this->mainClass->mainWindowClass->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(cn)],this->mainClass->mainWindowClass->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(cn)],0,0);
-			XShapeCombineMask(this->mainClass->display,id,ShapeBounding,0,0,this->mainClass->mainWindowClass->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(cn)],ShapeSet);
+			XCopyArea(this->mainClass->display,this->mainClass->mainWindowClass->theme.pixmaps[LFSTK_UtilityClass::LFSTK_hashFromKey(cn)],id,this->frameGC,0,0,this->mainClass->mainWindowClass->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(cn)],this->mainClass->mainWindowClass->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(cn)],0,0);
+			XShapeCombineMask(this->mainClass->display,id,ShapeBounding,0,0,this->mainClass->mainWindowClass->theme.masks[LFSTK_UtilityClass::LFSTK_hashFromKey(cn)],ShapeSet);
 			return;
 		}
 
@@ -184,12 +184,12 @@ void LFSWM2_clientClass::LFSWM2_drawMouseLeave(Window id,Pixmap pm,controlData d
 void LFSWM2_clientClass::LFSWM2_sendCloseWindow(void)
 {
 	XClientMessageEvent	em;
-//this->mainClass->mainWindowClass->LFSWM2_windowClass::LFSWM2_removeProp(this->contentWindow,this->mainClass->prefs.LFSTK_hashFromKey("_NET_FRAME_EXTENTS"));
+//this->mainClass->mainWindowClass->LFSWM2_windowClass::LFSWM2_removeProp(this->contentWindow,LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_FRAME_EXTENTS"));
 	em.type=ClientMessage;
 	em.window=this->contentWindow;
-	em.message_type=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("WM_PROTOCOLS"));
+	em.message_type=this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("WM_PROTOCOLS"));
 	em.format=32;
-	em.data.l[0]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("WM_DELETE_WINDOW"));;
+	em.data.l[0]=this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("WM_DELETE_WINDOW"));;
 	em.data.l[1]=CurrentTime;
 	XSendEvent(this->mainClass->display,this->contentWindow,false,NoEventMask,(XEvent *)&em);
 	this->visible=false;
@@ -446,9 +446,9 @@ void LFSWM2_clientClass::LFSWM2_unSpecial(void)
 {
 	if(this->isMaximized==true)
 		{
-			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_HORZ")));
-			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_VERT")));
-			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN")));
+			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_HORZ")));
+			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_VERT")));
+			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN")));
 			this->isMaximized=false;
 		}
 	this->isShaded=false;
@@ -459,20 +459,20 @@ void LFSWM2_clientClass::LFSWM2_maxWindow(void)
 {
 	if(this->isMaximized==true)
 		{
-			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_HORZ")));
-			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_VERT")));
+			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_HORZ")));
+			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_VERT")));
 		}
 	else
 		{
-			this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_HORZ")));
-			this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_VERT")));
+			this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_HORZ")));
+			this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_VERT")));
 		}
 	this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(this->contentWindow);
 }
 
 void LFSWM2_clientClass::LFSWM2_minWindow(void)
 {
-	this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN")));
+	this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN")));
 	this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(this->contentWindow);
 	this->LFSWM2_hideWindow();
 }
@@ -514,18 +514,18 @@ bool LFSWM2_clientClass::wmCB(void *p,void* ud)
 	if(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().compare("Fullscreen")==0)
 		{
 			cc->LFSWM2_fullscreenWindow(true,true);
-			cc->mainClass->mainWindowClass->LFSWM2_addState(cc->contentWindow,cc->mainClass->atomshashed.at(cc->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_FULLSCREEN")));
+			cc->mainClass->mainWindowClass->LFSWM2_addState(cc->contentWindow,cc->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_FULLSCREEN")));
 		}
 	//if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"On Top")==0)
 	if(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().compare("On Top")==0)
 		{
 			if(cc->onTop==false)
 				{
-					cc->mainClass->mainWindowClass->LFSWM2_addState(cc->contentWindow,cc->mainClass->atomshashed.at(cc->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
-					cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atomshashed.at(cc->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
+					cc->mainClass->mainWindowClass->LFSWM2_addState(cc->contentWindow,cc->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
+					cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
 				}
 			else
-				cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atomshashed.at(cc->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
+				cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
 			cc->mainClass->mainEventClass->LFSWM2_restack();
 		}
 	//if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"On Bottom")==0)
@@ -533,11 +533,11 @@ bool LFSWM2_clientClass::wmCB(void *p,void* ud)
 		{
 			if(cc->onBottom==false)
 				{
-					cc->mainClass->mainWindowClass->LFSWM2_addState(cc->contentWindow,cc->mainClass->atomshashed.at(cc->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
-					cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atomshashed.at(cc->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
+					cc->mainClass->mainWindowClass->LFSWM2_addState(cc->contentWindow,cc->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
+					cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
 				}
 			else
-				cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atomshashed.at(cc->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
+				cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
 			cc->mainClass->mainEventClass->LFSWM2_restack();
 		}
 
@@ -724,7 +724,7 @@ void LFSWM2_clientClass::LFSWM2_fullscreenWindow(bool isfull,bool force)
 						{
 							this->setWindowRects();
 							this->clientPreFSRect=this->frameWindowRect;
-							this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_FULLSCREEN")));
+							this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_FULLSCREEN")));
 							XMoveResizeWindow(this->mainClass->display,this->frameWindow,mg.x,mg.y,mg.w,mg.h);
 							XMoveResizeWindow(this->mainClass->display,this->contentWindow,0,0,mg.w,mg.h);
 						}
@@ -732,7 +732,7 @@ void LFSWM2_clientClass::LFSWM2_fullscreenWindow(bool isfull,bool force)
 		}
 	else
 		{
-			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_FULLSCREEN")));
+			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_FULLSCREEN")));
 			XMoveResizeWindow(this->mainClass->display,this->frameWindow,this->clientPreFSRect.x,this->clientPreFSRect.y,this->clientPreFSRect.w,this->clientPreFSRect.h);
 			XMoveResizeWindow(this->mainClass->display,this->contentWindow,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize,this->clientPreFSRect.w-(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),this->clientPreFSRect.h-this->mainClass->bottomBarSize-this->mainClass->titleBarSize);
 		}
@@ -847,7 +847,7 @@ void LFSWM2_clientClass::LFSWM2_setWMState(XEvent *e)
 	this->onTop=false;
 	this->visibleOnAllDesks=false;
 
-	states=(Atom*)this->mainClass->mainWindowClass->LFSWM2_getFullProp(e->xproperty.window,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE")),XA_ATOM,32,&n);
+	states=(Atom*)this->mainClass->mainWindowClass->LFSWM2_getFullProp(e->xproperty.window,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE")),XA_ATOM,32,&n);
 
 	if(n>0)
 		{
@@ -858,18 +858,18 @@ void LFSWM2_clientClass::LFSWM2_setWMState(XEvent *e)
 				}
 		}
 
-	if(!this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN"))))
+	if(!this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN"))))
 		{
 			this->visible=true;
 			this->LFSWM2_showWindow();
 		}
 
-	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_STICKY"))))
+	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_STICKY"))))
 		{
 			this->visibleOnAllDesks=true;
 		}
 
-	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW"))))
+	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_BELOW"))))
 		{
 			this->onBottom=true;
 			this->onTop=false;
@@ -877,12 +877,12 @@ void LFSWM2_clientClass::LFSWM2_setWMState(XEvent *e)
 			this->mainClass->restackCnt++;
 		}
 
-	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE"))))
+	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_ABOVE"))))
 		{
 			this->onBottom=false;
 			this->onTop=true;
 			XRaiseWindow(this->mainClass->display,this->contentWindow);
-			this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,&this->contentWindow,1);
+			this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,&this->contentWindow,1);
 			this->mainClass->restackCnt++;
 		}
 	if(states!=NULL)
@@ -939,7 +939,7 @@ bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 									XWarpPointer(this->mainClass->display,None,None,0,0,0,0,this->mainClass->displayWidth-50,0);
 									direction=-1;
 									ee.xbutton.x_root=100000;
-									this->mainClass->mainWindowClass->LFSWM2_setProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_DESKTOP")),XA_CARDINAL,32,&this->onDesk,1);
+									this->mainClass->mainWindowClass->LFSWM2_setProp(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_DESKTOP")),XA_CARDINAL,32,&this->onDesk,1);
 								}
 							else 	if((ee.xbutton.x_root>this->mainClass->displayWidth-20) && (direction==1))
 								{
@@ -947,7 +947,7 @@ bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 									this->mainClass->LFSWM2_setCurrentDesktop(this->onDesk);
 									XWarpPointer(this->mainClass->display,None,None,0,0,0,0,(-this->mainClass->displayWidth-50),0);
 									ee.xbutton.x_root=-1;
-									this->mainClass->mainWindowClass->LFSWM2_setProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_DESKTOP")),XA_CARDINAL,32,&this->onDesk,1);
+									this->mainClass->mainWindowClass->LFSWM2_setProp(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_DESKTOP")),XA_CARDINAL,32,&this->onDesk,1);
 								}
 						}
 						lastx=ee.xbutton.x_root;
@@ -1107,7 +1107,7 @@ contloop:
 				this->frameWindowRect=this->holdFrameRect;
 				XMoveWindow(this->mainClass->display,this->frameWindow,this->frameWindowRect.x,this->frameWindowRect.y);
 				XRaiseWindow(this->mainClass->display,this->frameWindow);
-				this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,&this->contentWindow,1);
+				this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,&this->contentWindow,1);
 				XSetInputFocus(this->mainClass->display,this->contentWindow,RevertToNone,CurrentTime);
 				break;
 			default:
@@ -1156,7 +1156,7 @@ void LFSWM2_clientClass::renderFrame(bool isfirst,int x,int y)
 			XMapSubwindows(this->mainClass->display,this->contentWindow);	
 			this->setWindowRects(true);
 			this->rendered=true;
-			this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,(void*)&this->contentWindow,1);
+			this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,(void*)&this->contentWindow,1);
 			this->mainClass->restackCnt=0;
 			if(this->isBorderless==true)
 				{
@@ -1178,11 +1178,11 @@ void LFSWM2_clientClass::LFSWM2_setFrameExtents(void)
 	if(this->isBorderless==false)
 		{
 			unsigned long v[10]={(unsigned long)this->mainClass->leftSideBarSize,(unsigned long)this->mainClass->riteSideBarSize,(unsigned long)this->mainClass->titleBarSize,(unsigned long)this->mainClass->bottomBarSize,0,0,0,0,0};
-			this->mainClass->mainWindowClass->LFSWM2_setProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_FRAME_EXTENTS")),XA_CARDINAL,32,&v,4);
+			this->mainClass->mainWindowClass->LFSWM2_setProp(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_FRAME_EXTENTS")),XA_CARDINAL,32,&v,4);
 		}
 	else
 		{
 			unsigned long v[10]={0,0,0,0,0,0,0,0,0};
-			this->mainClass->mainWindowClass->LFSWM2_setProp(this->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_FRAME_EXTENTS")),XA_CARDINAL,32,&v,4);
+			this->mainClass->mainWindowClass->LFSWM2_setProp(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_FRAME_EXTENTS")),XA_CARDINAL,32,&v,4);
 		}
 }

@@ -1,4 +1,7 @@
 0.6.1
+Moved function LFSTK_hashFromKey to util class and made static.
+Removed redundant functions from prefs class.
+Removed old 'c' code from save/load prefsfile.
 Added LFSTK_strReplaceAllStr to util class.
 Added LFSTK_strReplaceAllChar to util class.
 Mose code cleaning...

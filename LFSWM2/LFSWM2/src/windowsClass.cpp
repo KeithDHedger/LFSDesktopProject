@@ -136,12 +136,12 @@ bool LFSWM2_windowClass::LFSWM2_createUnframedWindow(Window wid)
 //				switch(this->mainClass->forceDockStackingOrder)
 //					{
 //						case FORCEABOVE:
-//							this->LFSWM2_removeProp(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
-//							this->LFSWM2_addState(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
+//							this->LFSWM2_removeProp(wid,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
+//							this->LFSWM2_addState(wid,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
 //							break;
 //						case FORCEBELOW:
-//							this->LFSWM2_removeProp(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
-//							this->LFSWM2_addState(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
+//							this->LFSWM2_removeProp(wid,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
+//							this->LFSWM2_addState(wid,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
 //							break;
 //						default:
 //							break;
@@ -182,7 +182,7 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 			int					thisdesk=-1;
 			bool					noborder=false;
 
-			setdesktop=(long int*)this->mainClass->mainWindowClass->LFSWM2_getProp(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_DESKTOP")),XA_CARDINAL,&nitems_return);
+			setdesktop=(long int*)this->mainClass->mainWindowClass->LFSWM2_getProp(id,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_DESKTOP")),XA_CARDINAL,&nitems_return);
 
 			if(setdesktop!=NULL)
 				{
@@ -259,14 +259,14 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 						}
 				}
 
-			allowed=(Atom*)this->LFSWM2_getProp(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ALLOWED_ACTIONS")),XA_ATOM,&nitems_return);
+			allowed=(Atom*)this->LFSWM2_getProp(id,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_ALLOWED_ACTIONS")),XA_ATOM,&nitems_return);
 			if(allowed!=NULL)
 				{
 					for(long unsigned int j=0;j<nitems_return;j++)
 						{
-							if((allowed[j]==this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_MAXIMIZE_HORZ"))) || (allowed[j]==this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_MAXIMIZE_VERT"))))
+							if((allowed[j]==this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_ACTION_MAXIMIZE_HORZ"))) || (allowed[j]==this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_ACTION_MAXIMIZE_VERT"))))
 								cc->canMaximize=true;
-							if(allowed[j]==this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_MINIMIZE")))
+							if(allowed[j]==this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_ACTION_MINIMIZE")))
 								cc->canMinimize=true;
 						}
 					XFree(allowed);
@@ -286,7 +286,7 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 //	Atom	xa_prop[1];
 
 //	xa=XInternAtom(this->mainClass->display,"_NET_WM_WINDOW_TYPE",False);
-//	xa_prop[0]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_NORMAL"));
+//	xa_prop[0]=this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_NORMAL"));
 
 //	if(xa!=None)
 //		XChangeProperty(this->mainClass->display,id,xa,XA_ATOM,32,PropModeReplace,(unsigned char *)&xa_prop,1);
@@ -372,34 +372,34 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 
 			Atom		v[8];
 			int		vcnt=3;
-			v[0]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_CHANGE_DESKTOP"));
-			v[1]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_CLOSE"));
-			v[2]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_FULLSCREEN"));
+			v[0]=this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_ACTION_CHANGE_DESKTOP"));
+			v[1]=this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_ACTION_CLOSE"));
+			v[2]=this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_ACTION_FULLSCREEN"));
 
 			if(cc->canMaximize==true)
 				{
-					v[vcnt++]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_MAXIMIZE_HORZ"));
-					v[vcnt++]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_MAXIMIZE_VERT"));
+					v[vcnt++]=this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_ACTION_MAXIMIZE_HORZ"));
+					v[vcnt++]=this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_ACTION_MAXIMIZE_VERT"));
 				}
 			if(cc->canMinimize==true)
 				{
-					v[vcnt++]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_MINIMIZE"));
+					v[vcnt++]=this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_ACTION_MINIMIZE"));
 				}
 
 			if(cc->canResize==true)
 				{
-					v[vcnt++]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_RESIZE"));
+					v[vcnt++]=this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_ACTION_RESIZE"));
 				}
 
 			if(cc->canClose==true)
 				{
-					v[vcnt++]=this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ACTION_CLOSE"));
+					v[vcnt++]=this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_ACTION_CLOSE"));
 				}
 
 			cc->onDesk=thisdesk;
 
-			this->LFSWM2_setProp(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_ALLOWED_ACTIONS")),XA_ATOM,32,v,vcnt);
-			this->LFSWM2_setProp(cc->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_DESKTOP")),XA_CARDINAL,32,(void*)&cc->onDesk,1);
+			this->LFSWM2_setProp(id,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_ALLOWED_ACTIONS")),XA_ATOM,32,v,vcnt);
+			this->LFSWM2_setProp(cc->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_DESKTOP")),XA_CARDINAL,32,(void*)&cc->onDesk,1);
 
 			this->LFSWM2_setClientList(id,true);
 			if(cc->canResize==true)
@@ -494,7 +494,7 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 							cc->controlCnt++;
 						}
 //shade
-					if((this->theme.gotPart[this->mainClass->prefs.LFSTK_hashFromKey("shade-active")]==true) || (this->mainClass->useTheme==false))
+					if((this->theme.gotPart[LFSTK_UtilityClass::LFSTK_hashFromKey("shade-active")]==true) || (this->mainClass->useTheme==false))
 						{
 							cc->shadeControlStruct.controlName="shade";
 							cc->canShade=true;
@@ -508,13 +508,13 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 			cc->LFSWM2_setWindowName();
 
 			unsigned long	n=0;
-			Atom				*states=(Atom*)this->LFSWM2_getFullProp(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE")),XA_ATOM,32,&n);
+			Atom				*states=(Atom*)this->LFSWM2_getFullProp(id,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE")),XA_ATOM,32,&n);
 //check no longer maxed
 			for(long unsigned j=0;j<n;j++)
 				{
-					if((states[j]==this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_VERT"))) || (states[j]==this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_HORZ"))))
+					if((states[j]==this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_VERT"))) || (states[j]==this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_HORZ"))))
 						cc->isMaximized=true;
-					if(states[j]==this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_STICKY")))
+					if(states[j]==this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_STICKY")))
 						cc->visibleOnAllDesks=true;
 				}
 
@@ -563,7 +563,7 @@ int LFSWM2_windowClass::LFSWM2_getWindowType(Window id)
 	unsigned long	dl;
 	int				retval=UNKNOWNTYPE;
 
-	status=XGetWindowProperty(this->mainClass->display,id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE")),0L,sizeof (Atom),false,XA_ATOM,&da,&di,&dl,&dl,&propret);
+	status=XGetWindowProperty(this->mainClass->display,id,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE")),0L,sizeof (Atom),false,XA_ATOM,&da,&di,&dl,&dl,&propret);
 /*
 "_NET_WM_WINDOW_TYPE_NORMAL"
 "_NET_WM_WINDOW_TYPE_DESKTOP"
@@ -695,7 +695,7 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 				return;
 		}
 
-	Atom *states=(Atom*)this->LFSWM2_getFullProp(id,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE")),XA_ATOM,32,&n);
+	Atom *states=(Atom*)this->LFSWM2_getFullProp(id,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE")),XA_ATOM,32,&n);
 	cc->onTop=false;
 	cc->onBottom=false;
 	cc->visible=true;
@@ -703,19 +703,19 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 
 	for(long unsigned j=0;j<n;j++)
 		{
-			if(states[j]==this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_VERT"))|| states[j]==this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_HORZ")))
+			if(states[j]==this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_VERT"))|| states[j]==this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_HORZ")))
 				maxit=true;
-			if(states[j]==this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN")))//TODO//about boxes
+			if(states[j]==this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN")))//TODO//about boxes
 				{
 					cc->visible=false;
 					cc->isHidden=true;
 					ishidden=true;
 				}
-			if(states[j]==this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_BELOW")))
+			if(states[j]==this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_BELOW")))
 				cc->onBottom=true;
-			if(states[j]==this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")))
+			if(states[j]==this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")))
 				cc->onTop=true;
-			if(states[j]==this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE_FULLSCREEN")))
+			if(states[j]==this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_FULLSCREEN")))
 				isfull=true;
 		}
 
@@ -761,7 +761,7 @@ bool LFSWM2_windowClass::LFSWM2_hasState(Window w,Atom state)
 {
 	unsigned long	n=0;
 	bool				found=false;
-	Atom				*v=(Atom*)this->LFSWM2_getProp(w,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE")),XA_ATOM,&n);
+	Atom				*v=(Atom*)this->LFSWM2_getProp(w,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE")),XA_ATOM,&n);
 
 	for(unsigned long i=0;i<n;i++)
 		{
@@ -805,7 +805,7 @@ void LFSWM2_windowClass::LFSWM2_addState(Window w,Atom state)
 {
 	unsigned long	n=0;
 	Bool				present=False;
-	Atom				*old=(Atom*)LFSWM2_getProp(w,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE")),XA_ATOM,&n);
+	Atom				*old=(Atom*)LFSWM2_getProp(w,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE")),XA_ATOM,&n);
 
 	for(unsigned long i=0;i<n;i++)
 		{
@@ -821,7 +821,7 @@ void LFSWM2_windowClass::LFSWM2_addState(Window w,Atom state)
 			Atom		*mynew=(Atom*)malloc((n+1)*sizeof(Atom));
 			memcpy(mynew,old,n*sizeof(Atom));
 			mynew[n]=state;
-			this->LFSWM2_setProp(w,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE")),XA_ATOM,32,mynew,n+1);
+			this->LFSWM2_setProp(w,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE")),XA_ATOM,32,mynew,n+1);
 			free(mynew);
 		}
 
@@ -833,7 +833,7 @@ void LFSWM2_windowClass::LFSWM2_removeProp(Window w,Atom state)
 {
 	unsigned long	n=0;
 	unsigned long	k=0;
-	Atom				*v=(Atom*)LFSWM2_getProp(w,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE")),XA_ATOM,&n);
+	Atom				*v=(Atom*)LFSWM2_getProp(w,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE")),XA_ATOM,&n);
 
 	if(v==NULL)
 		return;
@@ -844,7 +844,7 @@ void LFSWM2_windowClass::LFSWM2_removeProp(Window w,Atom state)
 				v[k++]=v[i];
 		}
 
-	this->LFSWM2_setProp(w,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_STATE")),XA_ATOM,32,v,k);
+	this->LFSWM2_setProp(w,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE")),XA_ATOM,32,v,k);
 
 	if(v!=NULL)
 		XFree(v);
@@ -892,7 +892,7 @@ void LFSWM2_windowClass::LFSWM2_setClientList(Window id,bool addwindow)
 void LFSWM2_windowClass::LFSWM2_setWindowState(Window w,long state)
 {
 	long		data[2]={state,None};
-	XChangeProperty(this->mainClass->display,w,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("WM_STATE")),this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("WM_STATE")),32,PropModeReplace,(unsigned char *)data,2);
+	XChangeProperty(this->mainClass->display,w,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("WM_STATE")),this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("WM_STATE")),32,PropModeReplace,(unsigned char *)data,2);
 }
 
 void LFSWM2_windowClass::LFSWM2_setVisibilityForDesk(unsigned long desk)
@@ -910,7 +910,7 @@ void LFSWM2_windowClass::LFSWM2_setVisibilityForDesk(unsigned long desk)
 					if(cc->visibleOnAllDesks==true)
 						{
 							cc->onDesk=desk;
-							this->LFSWM2_setProp(cc->contentWindow,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_NET_WM_DESKTOP")),XA_CARDINAL,32,&cc->onDesk,1);
+							this->LFSWM2_setProp(cc->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_DESKTOP")),XA_CARDINAL,32,&cc->onDesk,1);
 						}
 					if(cc->onDesk==desk)
 						cc->LFSWM2_showWindow(true);
@@ -961,7 +961,7 @@ hintsDataStruct LFSWM2_windowClass::LFSWM2_getWindowHints(Window wid,bool movewi
 			hints.pt.x-=this->mainClass->leftSideBarSize;
 		}
 
-	hints.mHints=(motifHints*)this->mainClass->mainWindowClass->LFSWM2_getProp(wid,this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_MOTIF_WM_HINTS")),this->mainClass->atomshashed.at(this->mainClass->prefs.LFSTK_hashFromKey("_MOTIF_WM_HINTS")),&nitems_return);
+	hints.mHints=(motifHints*)this->mainClass->mainWindowClass->LFSWM2_getProp(wid,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_MOTIF_WM_HINTS")),this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_MOTIF_WM_HINTS")),&nitems_return);
 
 	if(this->mainClass->runLevel!=RL_STARTUP && ( (hints.sh->flags & (USPosition|PPosition))==0))
 		{
@@ -1187,11 +1187,11 @@ void	 LFSWM2_windowClass::LFSWM2_loadTheme(std::string themename)
 
 	while(themePartNames[cnt]!=NULL)
 		{
-			this->theme.gotPart[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]=false;
-			this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]=0;
-			this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]=0;
-			this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]=0;
-			this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]=0;
+			this->theme.gotPart[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])]=false;
+			this->theme.pixmaps[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])]=0;
+			this->theme.masks[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])]=0;
+			this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])]=0;
+			this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])]=0;
 			cnt++;
 		}
 
@@ -1222,20 +1222,20 @@ void	 LFSWM2_windowClass::LFSWM2_loadTheme(std::string themename)
 
 			if(image!=NULL)
 				{
-					this->theme.gotPart[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]=true;
+					this->theme.gotPart[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])]=true;
 					imlib_context_set_image(image);
 
 					hite=imlib_image_get_height();
-					this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]=imlib_image_get_width();
+					this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])]=imlib_image_get_width();
 					if(hite>this->theme.titleBarHeight)
 						this->theme.titleBarHeight=hite;
-					this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]=hite;
+					this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])]=hite;
 
 					imlib_context_set_drawable(this->mainClass->rootWindow);
 					imlib_image_set_has_alpha(1);
 #if 0
 Pixmap picn;
-					//imlib_render_pixmaps_for_whole_image(&picn,&this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]);
+					//imlib_render_pixmaps_for_whole_image(&picn,&this->theme.masks[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])]);
 					imlib_free_image();
  imlib_image_decache_file	(filepath.c_str())	;
 	Imlib_Image	imagef;
@@ -1259,8 +1259,8 @@ imlib_image_copy_alpha_to_image( img3, 0, 0 );
 Pixmap pic1;
 Pixmap mask1;
 #endif
-//imlib_render_pixmaps_for_whole_image(&this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])],&mask1);
-imlib_render_pixmaps_for_whole_image(&this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])],&this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]);
+//imlib_render_pixmaps_for_whole_image(&this->theme.pixmaps[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])],&mask1);
+imlib_render_pixmaps_for_whole_image(&this->theme.pixmaps[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])],&this->theme.masks[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])]);
 					imlib_free_image();
 imlib_image_decache_file	(filepath.c_str())	;
 /*
@@ -1277,17 +1277,17 @@ Pixmap mask1;
 
 
 
-		//			imlib_render_pixmaps_for_whole_image(&this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])],&this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]);
+		//			imlib_render_pixmaps_for_whole_image(&this->theme.pixmaps[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])],&this->theme.masks[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])]);
 					//imlib_render_pixmaps_for_whole_image(&pic1,&mask1);
 //Pixmap pic2=pic1;
 //Pixmap mask2=mask1;
 //imlib_free_pixmap_and_mask(pic1);
 //
-//	Imlib_Image	img3= imlib_create_image(this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])] );
+//	Imlib_Image	img3= imlib_create_image(this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])],this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])] );
 //imlib_context_set_image( img3 );
 //imlib_image_set_has_alpha( 1 );
 //imlib_context_set_color( 0, 0, 0, 150 );
-//imlib_image_fill_rectangle( 0, 0,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])], this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])] );
+//imlib_image_fill_rectangle( 0, 0,this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])], this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])] );
 
 imlib_context_set_image( image );
 imlib_image_set_has_alpha( 1 );
@@ -1295,38 +1295,38 @@ imlib_context_set_color( 0, 0, 0, 10 );
 
 imlib_image_copy_alpha_to_image( image, 0, 0 );
 //Pixmap pn;
-//XFreePixmap(this->mainClass->display,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]);
+//XFreePixmap(this->mainClass->display,this->theme.pixmaps[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])]);
 //XSync(this->mainClass->display,false);
 
 					//imlib_render_pixmaps_for_whole_image(&ppic,&pn1);
-					imlib_render_pixmaps_for_whole_image(&this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])],&this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]);
-//this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]=ppic;
-//this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]=pn1;
+					imlib_render_pixmaps_for_whole_image(&this->theme.pixmaps[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])],&this->theme.masks[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])]);
+//this->theme.pixmaps[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])]=ppic;
+//this->theme.masks[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])]=pn1;
 
 */
 
 				}
 			else
 				{
-					this->theme.gotPart[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]=false;
-					this->theme.gotPart[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]=false;
-					this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]=0;
-					this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]=0;
+					this->theme.gotPart[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])]=false;
+					this->theme.gotPart[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])]=false;
+					this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])]=0;
+					this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])]=0;
 				}
 //			std::cerr<<filepath<<std::endl;
 //			std::cerr<<this->theme.gotPart[themePartNames[cnt]]<<std::endl;
 //			std::cerr<<this->theme.partsWidth[themePartNames[cnt]]<<std::endl;
-//			std::cerr<<this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]<<std::endl;
-//			std::cerr<<this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]<<" "<<this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(themePartNames[cnt])]<<std::endl;
+//			std::cerr<<this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])]<<std::endl;
+//			std::cerr<<this->theme.pixmaps[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])]<<" "<<this->theme.masks[LFSTK_UtilityClass::LFSTK_hashFromKey(themePartNames[cnt])]<<std::endl;
 			cnt++;
 		}
-	this->theme.leftWidth=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("left-active")];
-	this->theme.rightWidth=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("right-active")];
-	this->theme.titleBarHeight=this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey("title-3-active")];
-	this->theme.bottomHeight=this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey("bottom-active")];
+	this->theme.leftWidth=this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("left-active")];
+	this->theme.rightWidth=this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("right-active")];
+	this->theme.titleBarHeight=this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey("title-3-active")];
+	this->theme.bottomHeight=this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey("bottom-active")];
 
-	this->theme.middleOffset=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("top-left-active")];
-	this->theme.middleAdjust=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("top-right-active")]+this->theme.middleOffset;
+	this->theme.middleOffset=this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("top-left-active")];
+	this->theme.middleAdjust=this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("top-right-active")]+this->theme.middleOffset;
 
 	this->mainClass->titleBarSize=this->theme.titleBarHeight;
 	this->mainClass->bottomBarSize=this->theme.bottomHeight;
@@ -1334,16 +1334,16 @@ imlib_image_copy_alpha_to_image( image, 0, 0 );
 	this->mainClass->riteSideBarSize=this->theme.rightWidth;
 
 //TODO//
-	this->theme.closeButtonSize=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("close-active")];
+	this->theme.closeButtonSize=this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("close-active")];
 	this->theme.buttonXSpacing=2;
-	this->theme.buttonOffset=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("right-active")];
-	this->mainClass->controlSize=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("close-active")];
-	this->theme.buttonYOffset=(this->theme.titleBarHeight/2)-(this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey("close-active")]/2);
+	this->theme.buttonOffset=this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("right-active")];
+	this->mainClass->controlSize=this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("close-active")];
+	this->theme.buttonYOffset=(this->theme.titleBarHeight/2)-(this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey("close-active")]/2);
 	
 	this->mainClass->buttonYOffset=this->theme.buttonYOffset;
 //std::cerr<<this->theme.buttonYOffset<<std::endl;
 //std::cerr<<(this->theme.titleBarHeight/2)<<std::endl;
-//std::cerr<<(this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey("close-active")]/2)<<std::endl;
+//std::cerr<<(this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey("close-active")]/2)<<std::endl;
 	std::string res;
 
 	res=this->mainClass->lfstkLib->LFSTK_grepInFile(this->theme.pathToTheme+"/xfwm4/themerc","title_alignment");
@@ -1426,63 +1426,63 @@ void LFSWM2_windowClass::LFSWM2_refreshThemeFrame(LFSWM2_clientClass *cc)
 //left side
 	fullpartname="left"+activepart;
 	XSetTSOrigin(this->mainClass->display,pmgc,0,0);
-	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XFillRectangle(this->mainClass->display,pm,pmgc,0,this->theme.titleBarHeight,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.titleBarHeight-this->theme.bottomHeight);
+	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)]);
+	XFillRectangle(this->mainClass->display,pm,pmgc,0,this->theme.titleBarHeight,this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.titleBarHeight-this->theme.bottomHeight);
 
 	XSetTSOrigin(this->mainClass->display,maskgc,0,0);
-	XSetTile(this->mainClass->display,maskgc,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XFillRectangle(this->mainClass->display,mask,maskgc,0,this->theme.titleBarHeight,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.titleBarHeight-this->theme.bottomHeight);
+	XSetTile(this->mainClass->display,maskgc,this->theme.masks[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)]);
+	XFillRectangle(this->mainClass->display,mask,maskgc,0,this->theme.titleBarHeight,this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.titleBarHeight-this->theme.bottomHeight);
 
 //rite side
 	fullpartname="right"+activepart;
-	XSetTSOrigin(this->mainClass->display,pmgc,cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.titleBarHeight);//TODO//
-	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XFillRectangle(this->mainClass->display,pm,pmgc,cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.titleBarHeight,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.titleBarHeight-this->theme.bottomHeight);
+	XSetTSOrigin(this->mainClass->display,pmgc,cc->frameWindowRect.w-this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],this->theme.titleBarHeight);//TODO//
+	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)]);
+	XFillRectangle(this->mainClass->display,pm,pmgc,cc->frameWindowRect.w-this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],this->theme.titleBarHeight,this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.titleBarHeight-this->theme.bottomHeight);
 
-	XSetTSOrigin(this->mainClass->display,maskgc,cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.titleBarHeight);//TODO//
-	XSetTile(this->mainClass->display,maskgc,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XFillRectangle(this->mainClass->display,mask,maskgc,cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.titleBarHeight,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.titleBarHeight-this->theme.bottomHeight);
+	XSetTSOrigin(this->mainClass->display,maskgc,cc->frameWindowRect.w-this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],this->theme.titleBarHeight);//TODO//
+	XSetTile(this->mainClass->display,maskgc,this->theme.masks[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)]);
+	XFillRectangle(this->mainClass->display,mask,maskgc,cc->frameWindowRect.w-this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],this->theme.titleBarHeight,this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.titleBarHeight-this->theme.bottomHeight);
 
 //bottom
 	fullpartname="bottom"+activepart;
-	XSetTSOrigin(this->mainClass->display,pmgc,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XFillRectangle(this->mainClass->display,pm,pmgc,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("bottom-left-active")],cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("bottom-right-active")]-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("bottom-left-active")],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XSetTSOrigin(this->mainClass->display,pmgc,this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)]);
+	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)]);
+	XFillRectangle(this->mainClass->display,pm,pmgc,this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("bottom-left-active")],cc->frameWindowRect.h-this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.w-this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("bottom-right-active")]-this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("bottom-left-active")],this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)]);
 
-	XSetTSOrigin(this->mainClass->display,maskgc,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("bottom-left-active")],cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XSetTile(this->mainClass->display,maskgc,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XFillRectangle(this->mainClass->display,mask,maskgc,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("bottom-left-active")],cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("bottom-right-active")]-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("bottom-left-active")],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XSetTSOrigin(this->mainClass->display,maskgc,this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("bottom-left-active")],cc->frameWindowRect.h-this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)]);
+	XSetTile(this->mainClass->display,maskgc,this->theme.masks[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)]);
+	XFillRectangle(this->mainClass->display,mask,maskgc,this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("bottom-left-active")],cc->frameWindowRect.h-this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.w-this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("bottom-right-active")]-this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("bottom-left-active")],this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)]);
 
 //bottom left
 	fullpartname="bottom-left"+activepart;
-	XCopyArea(this->mainClass->display,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],pm,pmgc,0,0,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],0,cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XCopyArea(this->mainClass->display,this->theme.pixmaps[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],pm,pmgc,0,0,this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],0,cc->frameWindowRect.h-this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)]);
 
-	XCopyArea(this->mainClass->display,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],mask,maskgc,0,0,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],0,cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XCopyArea(this->mainClass->display,this->theme.masks[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],mask,maskgc,0,0,this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],0,cc->frameWindowRect.h-this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)]);
 
 //botttom rite
 	fullpartname="bottom-right"+activepart;
-	XSetClipOrigin(this->mainClass->display,pmgc,cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
-	XCopyArea(this->mainClass->display,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],pm,pmgc,0,0,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XSetClipOrigin(this->mainClass->display,pmgc,cc->frameWindowRect.w-this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)]);
+	XCopyArea(this->mainClass->display,this->theme.pixmaps[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],pm,pmgc,0,0,this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.w-this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)]);
 
-	XCopyArea(this->mainClass->display,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],mask,maskgc,0,0,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XCopyArea(this->mainClass->display,this->theme.masks[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],mask,maskgc,0,0,this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.w-this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.h-this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)]);
 
 //titlebar
 	tr=cc->setTitlePosition();
 
-	startx=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("top-left"+activepart)];
+	startx=this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("top-left"+activepart)];
 	if(this->theme.fullWidthTitle==false)
 		{
 			part3w=tr.w;
-			part2w=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("title-2-active")];
-			part4w=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("title-4-active")];
+			part2w=this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("title-2-active")];
+			part4w=this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("title-4-active")];
 			part1w=tr.x-part2w;
 			part5w=r.w-(tr.x+tr.w+part4w);
 		}
 	else
 		{
-			part1w=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("title-1-active")]+this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("top-left-active")]+this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("top-left-active")];
-			part2w=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("title-2-active")];
-			part4w=this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("title-4-active")];
+			part1w=this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("title-1-active")]+this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("top-left-active")]+this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("top-left-active")];
+			part2w=this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("title-2-active")];
+			part4w=this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("title-4-active")];
 			part3w=r.w-(part1w+part2w+part4w+cc->riteButtonsWidth+19);
 			part5w=r.w-(part3w);
 		}
@@ -1490,69 +1490,69 @@ void LFSWM2_windowClass::LFSWM2_refreshThemeFrame(LFSWM2_clientClass *cc)
 //left title
 	fullpartname="title-1"+activepart;
 	XSetTSOrigin(this->mainClass->display,pmgc,0,0);
-	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)]);
 	XFillRectangle(this->mainClass->display,pm,pmgc,startx,0,part1w,this->mainClass->titleBarSize);
 
 	XSetTSOrigin(this->mainClass->display,maskgc,startx,0);
-	XSetTile(this->mainClass->display,maskgc,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XSetTile(this->mainClass->display,maskgc,this->theme.masks[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)]);
 	XFillRectangle(this->mainClass->display,mask,maskgc,startx,0,part1w,this->mainClass->titleBarSize);
 	startx+=part1w;
 
 //left mid title
 	fullpartname="title-2"+activepart;
 	XSetTSOrigin(this->mainClass->display,pmgc,startx,0);
-	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)]);
 	XFillRectangle(this->mainClass->display,pm,pmgc,startx,0,part2w,this->mainClass->titleBarSize);
 
 	XSetTSOrigin(this->mainClass->display,maskgc,startx,0);
-	XSetTile(this->mainClass->display,maskgc,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XSetTile(this->mainClass->display,maskgc,this->theme.masks[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)]);
 	XFillRectangle(this->mainClass->display,mask,maskgc,startx,0,part2w,this->mainClass->titleBarSize);
 	startx+=part2w;
 
 //middle
 	fullpartname="title-3"+activepart;
 	XSetTSOrigin(this->mainClass->display,pmgc,startx,0);
-	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)]);
 	XFillRectangle(this->mainClass->display,pm,pmgc,startx,0,part3w,this->mainClass->titleBarSize);
 
 	XSetTSOrigin(this->mainClass->display,maskgc,startx,0);
-	XSetTile(this->mainClass->display,maskgc,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XSetTile(this->mainClass->display,maskgc,this->theme.masks[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)]);
 	XFillRectangle(this->mainClass->display,mask,maskgc,startx,0,part3w,this->mainClass->titleBarSize);
 	startx+=part3w;
 
 //right mid title
 	fullpartname="title-4"+activepart;
 	XSetTSOrigin(this->mainClass->display,pmgc,startx,0);
-	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)]);
 	XFillRectangle(this->mainClass->display,pm,pmgc,startx,0,part4w,this->mainClass->titleBarSize);
 
 	XSetTSOrigin(this->mainClass->display,maskgc,startx,0);
-	XSetTile(this->mainClass->display,maskgc,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XSetTile(this->mainClass->display,maskgc,this->theme.masks[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)]);
 	XFillRectangle(this->mainClass->display,mask,maskgc,startx,0,part4w,this->mainClass->titleBarSize);
 	startx+=part4w;
 
 //right title
 	fullpartname="title-5"+activepart;
 	XSetTSOrigin(this->mainClass->display,pmgc,startx,0);
-	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XSetTile(this->mainClass->display,pmgc,this->theme.pixmaps[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)]);
 	XFillRectangle(this->mainClass->display,pm,pmgc,startx,0,part5w,this->mainClass->titleBarSize);
 
 	XSetTSOrigin(this->mainClass->display,maskgc,startx,0);
-	XSetTile(this->mainClass->display,maskgc,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)]);
+	XSetTile(this->mainClass->display,maskgc,this->theme.masks[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)]);
 	XFillRectangle(this->mainClass->display,mask,maskgc,startx,0,part5w,this->mainClass->titleBarSize);
 	startx+=part4w;
 
 //top left
 	fullpartname="top-left"+activepart;
-	XCopyArea(this->mainClass->display,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],pm,pmgc,0,0,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],0,0);
+	XCopyArea(this->mainClass->display,this->theme.pixmaps[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],pm,pmgc,0,0,this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],0,0);
 
-	XCopyArea(this->mainClass->display,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],mask,maskgc,0,0,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],0,0);
+	XCopyArea(this->mainClass->display,this->theme.masks[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],mask,maskgc,0,0,this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],0,0);
 	
 //top rite
 	fullpartname="top-right"+activepart;
-	XCopyArea(this->mainClass->display,this->theme.pixmaps[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],pm,pmgc,0,0,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],0);
+	XCopyArea(this->mainClass->display,this->theme.pixmaps[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],pm,pmgc,0,0,this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.w-this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],0);
 
-	XCopyArea(this->mainClass->display,this->theme.masks[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],mask,maskgc,0,0,this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.w-this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(fullpartname)],0);
+	XCopyArea(this->mainClass->display,this->theme.masks[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],mask,maskgc,0,0,this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],cc->frameWindowRect.w-this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(fullpartname)],0);
 
 	XSetForeground(this->mainClass->display,pmgc,this->mainClass->frameText->pixel);
 	XftDrawChange(this->mainClass->frameText->draw,pm);
@@ -1560,8 +1560,8 @@ void LFSWM2_windowClass::LFSWM2_refreshThemeFrame(LFSWM2_clientClass *cc)
 	if(cc->name.length()>0)
 		{
 			r=cc->setTitlePosition();
-			if(this->theme.gotPart[this->mainClass->prefs.LFSTK_hashFromKey("title-2"+activepart)]==true)
-				r.x=r.x+(this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("title-2"+activepart)]/2);
+			if(this->theme.gotPart[LFSTK_UtilityClass::LFSTK_hashFromKey("title-2"+activepart)]==true)
+				r.x=r.x+(this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("title-2"+activepart)]/2);
 			if(cc->nameIsUTF==true)
 				XftDrawStringUtf8(this->mainClass->frameText->draw,&(this->mainClass->frameText->color),this->mainClass->frameFont,r.x,r.y,(XftChar8*)cc->name.c_str(),strlen(cc->name.c_str()));
 			else
@@ -1599,10 +1599,10 @@ void LFSWM2_windowClass::LFSWM2_setControlRects(LFSWM2_clientClass *cc)
 		{
 			cc->menuControlStruct.controlRect=
 				{
-					this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("top-left-active")],
+					this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("top-left-active")],
 					this->mainClass->buttonYOffset,
-					this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("menu-active")],
-					this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey("menu-active")]
+					this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("menu-active")],
+					this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey("menu-active")]
 				};
 		}
 	else
@@ -1627,13 +1627,13 @@ void LFSWM2_windowClass::LFSWM2_setControlRects(LFSWM2_clientClass *cc)
 		{
 	if(this->mainClass->useTheme==true)
 		{
-			offset=this->theme.buttonOffset+this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("close-active")]+this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("right-active")];
+			offset=this->theme.buttonOffset+this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("close-active")]+this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("right-active")];
 			cc->closeControlStruct.controlRect=
 				{
 					cc->frameWindowRect.w-offset,
 					this->mainClass->buttonYOffset,
-					this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("close-active")],
-					this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey("close-active")]
+					this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("close-active")],
+					this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey("close-active")]
 				};
 		}
 	else
@@ -1660,13 +1660,13 @@ void LFSWM2_windowClass::LFSWM2_setControlRects(LFSWM2_clientClass *cc)
 		{
 			if(this->mainClass->useTheme==true)
 				{
-					offset+=this->theme.buttonXSpacing+this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("maximize-active")];
+					offset+=this->theme.buttonXSpacing+this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("maximize-active")];
 					cc->maximizeControlStruct.controlRect=
 						{
 							cc->frameWindowRect.w-offset,
 							this->mainClass->buttonYOffset,
-							this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("maximize-active")],
-							this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey("maximize-active")]
+							this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("maximize-active")],
+							this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey("maximize-active")]
 						};
 				}
 			else
@@ -1693,13 +1693,13 @@ void LFSWM2_windowClass::LFSWM2_setControlRects(LFSWM2_clientClass *cc)
 		{
 			if(this->mainClass->useTheme==true)
 				{
-					offset+=this->theme.buttonXSpacing+this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("hide-active")];
+					offset+=this->theme.buttonXSpacing+this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("hide-active")];
 					cc->minimizeControlStruct.controlRect=
 						{
 							cc->frameWindowRect.w-offset,
 							this->mainClass->buttonYOffset,
-							this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("hide-active")],
-							this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey("hide-active")]
+							this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("hide-active")],
+							this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey("hide-active")]
 						};
 				}
 			else
@@ -1723,18 +1723,18 @@ void LFSWM2_windowClass::LFSWM2_setControlRects(LFSWM2_clientClass *cc)
 
 //shade
 	cc->canShade=false;
-	if((this->theme.gotPart[this->mainClass->prefs.LFSTK_hashFromKey("shade-active")]==true) || (this->mainClass->useTheme==false))
+	if((this->theme.gotPart[LFSTK_UtilityClass::LFSTK_hashFromKey("shade-active")]==true) || (this->mainClass->useTheme==false))
 		{
 			cc->canShade=true;
 			if(this->mainClass->useTheme==true)
 				{
-					offset+=this->theme.buttonXSpacing+this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("hide-active")];
+					offset+=this->theme.buttonXSpacing+this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("hide-active")];
 					cc->shadeControlStruct.controlRect=
 						{
 							cc->frameWindowRect.w-offset,
 							this->mainClass->buttonYOffset,
-							this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey("shade-active")],
-							this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey("shade-active")]
+							this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("shade-active")],
+							this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey("shade-active")]
 						};
 				}
 			else
@@ -1761,10 +1761,10 @@ void LFSWM2_windowClass::LFSWM2_setControlRects(LFSWM2_clientClass *cc)
 void LFSWM2_windowClass::LFSWM2_setControlRect(Window wid,controlData *data,std::string xname,std::string yname,std::string wname,std::string hname)
 {
 	data->controlRect={
-	this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(xname)],
-	(this->mainClass->titleBarSize/2)-(this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(hname)]/2),
-	this->theme.partsWidth[this->mainClass->prefs.LFSTK_hashFromKey(wname)],
-	this->theme.partsHeight[this->mainClass->prefs.LFSTK_hashFromKey(hname)]};
+	this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(xname)],
+	(this->mainClass->titleBarSize/2)-(this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(hname)]/2),
+	this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(wname)],
+	this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(hname)]};
 
 	XMoveResizeWindow(this->mainClass->display,wid,
 	data->controlRect.x,

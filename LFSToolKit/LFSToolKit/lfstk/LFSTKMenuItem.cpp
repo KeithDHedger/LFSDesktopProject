@@ -215,7 +215,7 @@ bool LFSTK_menuItemClass::mouseEnter(XButtonEvent *e)
 					else
 						maxtxtwid+=gotsubmenu;
 					this->w=maxtxtwid;
-					this->subwc=new LFSTK_toolWindowClass(this->wc->app->display,this->wc,this->wc->app->appAtomsHashed.at(this->wc->app->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU")),this->gadgetGeom.x,this->gadgetGeom.y,maxtxtwid,GADGETHITE*this->menuData->subMenuCnt-winshrink,"menu window",this->wc->app);
+					this->subwc=new LFSTK_toolWindowClass(this->wc->app->display,this->wc,this->wc->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU")),this->gadgetGeom.x,this->gadgetGeom.y,maxtxtwid,GADGETHITE*this->menuData->subMenuCnt-winshrink,"menu window",this->wc->app);
 
 					for(int j=0; j<this->menuData->subMenuCnt; j++)
 						{

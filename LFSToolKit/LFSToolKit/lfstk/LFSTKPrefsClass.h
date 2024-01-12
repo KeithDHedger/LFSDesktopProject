@@ -50,38 +50,25 @@ class LFSTK_prefsClass
 		void					LFSTK_addToPrefs(const char *key,prefsData data);
 		void					LFSTK_deleteFromPrefs(const char *key);
 		const char			*LFSTK_boolToString(bool val);
-		bool					LFSTK_stringToBool(const char *val);
-		void					LFSTK_saveVarsToFile(const char *filepath);
-		void					LFSTK_loadVarsFromFile(const char *filepath);
+		bool					LFSTK_stringToBool(std::string val);
+		void					LFSTK_saveVarsToFile(std::string filepath);
+		void					LFSTK_loadVarsFromFile(std::string filepath);
 
-//get
+//get/set
 //strings
 		const char			*LFSTK_getCString(const char *key);
-		const char			*LFSTK_getCString(unsigned long key);
 		std::string			LFSTK_getString(const char *key);
 		const std::string	*LFSTK_getStringObject(const char *key);
-		std::string			LFSTK_getString(unsigned long key);
-//set
-//string
-		void					LFSTK_setString(unsigned long key,const char *newstr);
 		void					LFSTK_setString(const char *key,const char *newstr);
 
-//get
+//get/set
 //boolean
 		bool					LFSTK_getBool(const char *key);
-		bool					LFSTK_getBool(unsigned long key);
-//set
-//boolean
 		void					LFSTK_setBool(const char *key,bool val);
-		void					LFSTK_setBool(unsigned long key,bool val);
 
-//get
-//integer
+//get/set
 		int					LFSTK_getInt(const char *key);
-		int					LFSTK_getInt(unsigned long key);
-
-		unsigned long		LFSTK_hashFromKey(const char *key);
-		unsigned long		LFSTK_hashFromKey(std::string key);
+		void					LFSTK_setInt(const char *key,int val);
 
 	private:
 		const char			*bools[2]={"false","true"};
