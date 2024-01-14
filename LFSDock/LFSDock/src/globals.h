@@ -96,11 +96,9 @@ extern bool						useMicros;
 
 extern LFSTK_buttonClass			*taskbuttons[20];
 extern int						windowWidth;
-//extern GKeyFile					*kf;
 extern LFSTK_findClass			*gFind;
 extern bool						useTaskBar;
 extern bool						gotLaunchers;
-
 
 //dock window
 extern LFSTK_applicationClass	*apc;
@@ -130,8 +128,7 @@ extern const char				*possibleError;
 
 void printError(const char *err);
 void dropDesktopFile(const char *data,void *launcher);
-
-void sendNotify(const char *message1,const char *message2);
+void sendNotify(std::string name,std::string message);
 void setGadgetDetails(LFSTK_gadgetClass *gadget);
 bool hasProp(Window win,Atom atom);
 Window getWindowByClass(std::string name);

@@ -161,7 +161,6 @@ void addALAuncher(const char *fpath,launcherDataStruct *entry)
 
 int addLaunchers(int x,int y,int grav)
 {
-	char				*launchers;
 	std::string		icon;
 	int				xpos=x;
 	int				ypos=y;

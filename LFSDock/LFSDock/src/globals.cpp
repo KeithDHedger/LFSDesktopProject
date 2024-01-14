@@ -79,26 +79,26 @@ const char				*possibleError="Unknown";
 
 LFSTK_buttonClass		*taskbuttons[20];
 int						windowWidth=0;
-//GKeyFile					*kf=NULL;
 LFSTK_findClass			*gFind;
 bool						useTaskBar=false;
 
-void sendNotify(const char *name,const char *message)//TODO//could be better
+void sendNotify(std::string name,std::string message)//TODO//could be better
 {
 #ifdef _GOTNOTIFYSEND_
-	std::string	com=std::string("notify-send -u low -t 2000 -i stock_dialog-info \"" + std::string(name) + " " + std::string(message) + " ...\" &");
+	std::string	com=std::string("notify-send -u low -t 2000 -i stock_dialog-info \"" + name + " " + message + " ...\" &");
 	system(com.c_str());
 #endif
 }
 
 void dropDesktopFile(const char *data,void *launcher)//TODO//
 {
-	char			*cleanstr;
-	char			*command=NULL;
-	char			*ptr;
-	std::istringstream stream(data);
-	std::string line;
-	while(std::getline(stream,line))
+	char					*cleanstr;
+	char					*command=NULL;
+	char					*ptr;
+	std::istringstream	stream(data);
+	std::string			line;
+
+	while(std::getline(stream,line))//TODO//
 		{
 			cleanstr=strdup(apc->globalLib->LFSTK_cleanString(line).c_str());
 			if((strrchr(cleanstr,'.')!=NULL) && (strcmp(strrchr(cleanstr,'.'),".desktop")==0))//TODO//
