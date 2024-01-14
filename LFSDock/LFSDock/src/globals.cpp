@@ -79,7 +79,7 @@ const char				*possibleError="Unknown";
 
 LFSTK_buttonClass		*taskbuttons[20];
 int						windowWidth=0;
-GKeyFile					*kf=NULL;
+//GKeyFile					*kf=NULL;
 LFSTK_findClass			*gFind;
 bool						useTaskBar=false;
 

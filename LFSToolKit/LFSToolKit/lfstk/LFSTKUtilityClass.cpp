@@ -175,3 +175,49 @@ unsigned long LFSTK_UtilityClass::LFSTK_hashFromKey(std::string key)
 
 	return(hash);
 }
+
+/**
+* Read desktop file into std::vector<std::string>
+* \param std::string filepath.
+* \return std::vector<std::string>
+* \note can actually be used to read ANY file into a vector.
+*/
+std::vector<std::string> LFSTK_UtilityClass::LFSTK_readDesktopFile(std::string filepath)
+{
+	std::ifstream			myfile ;
+	std::vector<std::string>	lines;
+
+	lines.clear();
+	myfile.open(filepath,std::fstream::in);
+	if(myfile.is_open())
+        {
+			std::string data;
+			while(std::getline(myfile,data))
+				{
+					if(data.empty()==false)
+						lines.push_back(data);
+				}
+			myfile.close();
+		}
+	return(lines);
+}
+
+/**
+* Simple parser of desktop file previously read into vector.
+* \param std::string keyname Key to look for ( case sensitive ).
+* \param std::vector<std::string> lines Desktop file array.
+* \return std::string Found arg or "".
+*/
+std::string LFSTK_UtilityClass::LFSTK_getEntry(std::string keyname,std::vector<std::string> lines)
+{
+	std::vector<std::string>	linestok;
+	for(unsigned j=0;j<lines.size();j++)
+		{
+			if(LFSTK_UtilityClass::LFSTK_strStr(lines.at(j),keyname).empty()==false)
+				{
+					linestok=LFSTK_UtilityClass::LFSTK_strTok(lines.at(j),"=");
+					return(LFSTK_UtilityClass::LFSTK_strStrip(linestok.at(1)));
+				}
+		}
+	return("");
+}

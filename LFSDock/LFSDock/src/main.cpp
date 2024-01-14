@@ -200,7 +200,6 @@ int main(int argc,char **argv)
 	realMainLoop=true;
 
 	XSetErrorHandler(errHandler);
-	kf=g_key_file_new();
 	while(realMainLoop==true)
 		{
 			gFind=new LFSTK_findClass;
@@ -340,7 +339,6 @@ int main(int argc,char **argv)
 			
 		}
 	cairo_debug_reset_static_data();
-	g_key_file_free(kf);
 	delete gFind;
 	return 0;
 }

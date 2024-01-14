@@ -111,7 +111,10 @@ bool taskListCB(void* p,void* ud)
 	LFSTK_buttonClass	*bc=static_cast<LFSTK_buttonClass*>(p);
 
 	if(bc!=NULL)
-		sendClientMessage((Window)filltasks.at((unsigned long)bc->userData).winid,"_NET_ACTIVE_WINDOW",0,0,0,0,0);
+		{
+			sendClientMessage((Window)filltasks.at((unsigned long)bc->userData).winid,"_NET_ACTIVE_WINDOW",0,0,0,0,0);
+			XSync(apc->display,false);
+		}
 	return(true);
 }
 
@@ -204,14 +207,13 @@ bool compareTaskClass(const taskStruct &a,const taskStruct &b)
 	return(a.taskClass[0]<b.taskClass[0]);
 }
 
-void updateTaskBar(bool force)
+void updateTaskBar(bool force)//TODO//
 {
 	int						cnt=0;
 	bool						skipflag=false;
 	std::string				icon;
 	dataStruct				*datam=NULL;
 	bool						goodkey;	
-	char						*keyicon=NULL;
 	bool						unequal=false;
 
 	tasks.clear();
@@ -278,20 +280,20 @@ skiplabel:
 					datam=gFind->LFSTK_findNamed(filltasks.at(j).taskClass[0],std::string(".desktop"));
 					if(datam!=NULL)
 						{
-							goodkey=g_key_file_load_from_file(kf,datam->path.c_str(),G_KEY_FILE_NONE,NULL);
-							if(goodkey==true)
+							std::vector<std::string>	lines;
+							lines=LFSTK_UtilityClass::LFSTK_readDesktopFile(datam->path);
+							if(lines.empty()==false)
 								{
-									keyicon=NULL;
-									keyicon=g_key_file_get_string(kf,"Desktop Entry",G_KEY_FILE_DESKTOP_KEY_ICON,NULL);
-									if(keyicon!=NULL)
+									std::string	keyicon;
+									keyicon=LFSTK_UtilityClass::LFSTK_getEntry("Icon",lines);
+									if(keyicon.empty()==false)
 										{
 											icon=dockWindow->globalLib->LFSTK_findThemedIcon(desktopTheme,keyicon,"");
-											if(icon.length()>0)
+											if(icon.empty()==false)
 												{
 													if(taskbuttons[j]->imagePath!=icon)
 														taskbuttons[j]->LFSTK_setImageFromPath(icon,LEFT,true);
 												}
-											g_free(keyicon);
 										}
 									continue;
 								}
@@ -300,20 +302,20 @@ skiplabel:
 					datam=gFind->LFSTK_findNamed(filltasks.at(j).taskClass[1],".desktop");
 					if(datam!=NULL)
 						{
-							goodkey=g_key_file_load_from_file(kf,datam->path.c_str(),G_KEY_FILE_NONE,NULL);
-							if(goodkey==true)
+							std::vector<std::string>	lines;
+							lines=LFSTK_UtilityClass::LFSTK_readDesktopFile(datam->path);
+							if(lines.empty()==false)
 								{
-									keyicon=NULL;
-									keyicon=g_key_file_get_string(kf,"Desktop Entry",G_KEY_FILE_DESKTOP_KEY_ICON,NULL);
-									if(keyicon!=NULL)
+									std::string	keyicon;
+									keyicon=LFSTK_UtilityClass::LFSTK_getEntry("Icon",lines);
+									if(keyicon.empty()==false)
 										{
 											icon=dockWindow->globalLib->LFSTK_findThemedIcon(desktopTheme,keyicon,"");
-											if(icon.length()>0)
+											if(icon.empty()==false)
 												{
 													if(taskbuttons[j]->imagePath!=icon)
 														taskbuttons[j]->LFSTK_setImageFromPath(icon,LEFT,true);
 												}
-											g_free(keyicon);
 										}
 									continue;
 								}

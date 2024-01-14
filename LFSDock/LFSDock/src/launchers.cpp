@@ -19,7 +19,6 @@
  */
 
 #include <ftw.h>
-#include <glib.h>
 
 #include "launchers.h"
 
@@ -141,39 +140,23 @@ bool launcherCB(void *p,void* ud)
 	return(true);
 }
 
-void addALAuncher(const char *fpath,desktopFileStruct *entry)
+void addALAuncher(const char *fpath,launcherDataStruct *entry)
 {
-	size_t		start_pos=0;
-	std::string	from;
-	std::string	str;
-	bool			goodkey;
-	GKeyFile		*kf=g_key_file_new();
-	char			*execstring;
+	std::vector<std::string>	lines;
+	std::string				tmp;
 
-	entry->icon=NULL;
-	entry->name=NULL;
-	entry->exec=NULL;
 	entry->inTerm=false;
 
-	goodkey=g_key_file_load_from_file(kf,fpath,G_KEY_FILE_NONE,NULL);
-	if(goodkey==true)
-		{
-			entry->name=g_key_file_get_string(kf,"Desktop Entry",G_KEY_FILE_DESKTOP_KEY_NAME,NULL);
-			entry->icon=g_key_file_get_string(kf,"Desktop Entry",G_KEY_FILE_DESKTOP_KEY_ICON,NULL);
-			entry->inTerm=g_key_file_get_boolean(kf,"Desktop Entry",G_KEY_FILE_DESKTOP_KEY_TERMINAL,NULL);
-			execstring=g_key_file_get_string(kf,"Desktop Entry",G_KEY_FILE_DESKTOP_KEY_EXEC,NULL);
-			str=execstring;
-			from="%f";
-			while((start_pos=str.find(from,start_pos))!=std::string::npos)
-				str.replace(start_pos, from.length(),"");
-			from="%U";
-			start_pos=0;
-			while((start_pos=str.find(from,start_pos))!=std::string::npos)
-				str.replace(start_pos, from.length(),"");
-			entry->exec=strdup(str.c_str());
-			freeAndNull(&execstring);
-		}
-	g_key_file_free(kf);
+	lines=LFSTK_UtilityClass::LFSTK_readDesktopFile(fpath);
+	entry->name=LFSTK_UtilityClass::LFSTK_getEntry("Name",lines);
+	entry->icon=LFSTK_UtilityClass::LFSTK_getEntry("Icon",lines);
+	tmp=LFSTK_UtilityClass::LFSTK_getEntry("Terminal",lines);
+	if(tmp.compare("true")==0)
+		entry->inTerm=true;
+	tmp=LFSTK_UtilityClass::LFSTK_getEntry("Exec",lines);
+	tmp=LFSTK_UtilityClass::LFSTK_strReplaceAllStr(tmp,"%f","",true);
+	tmp=LFSTK_UtilityClass::LFSTK_strReplaceAllStr(tmp,"%U","",true);
+	entry->exec=tmp;
 }
 
 int addLaunchers(int x,int y,int grav)
@@ -189,7 +172,6 @@ int addLaunchers(int x,int y,int grav)
 	std::string		iconpath;
 	int				ww;
 	int				sy=0;
-
 
 	findlaunchers=new LFSTK_findClass;
 	findlaunchers->LFSTK_setDepth(1,1);
@@ -229,21 +211,11 @@ int addLaunchers(int x,int y,int grav)
 	ww=contextButtons[0]->LFSTK_getTextRealWidth(contextLabelData[1]);
 	launcherContextWindow->LFSTK_resizeWindow(ww+contextButtons[0]->imageWidth+8,sy,true);
 
-	desktopFileStruct	entry;
 	LFSTK_buttonClass	*bc=NULL;
 	launcherDataStruct	lds;
 	for(int l=0;l<findlaunchers->data.size();l++)
 		{
-			entry.icon=NULL;
-			entry.name=NULL;
-			entry.exec=NULL;
-			entry.inTerm=false;
-
- 			addALAuncher(findlaunchers->data.at(l).path.c_str(),&entry);
-
-			lds.name=entry.name;
-			lds.exec=entry.exec;
-			lds.inTerm=entry.inTerm;
+ 			addALAuncher(findlaunchers->data.at(l).path.c_str(),&lds);
 			lds.path=findlaunchers->data.at(l).path;
 			lds.pid=0;
  
@@ -259,19 +231,15 @@ int addLaunchers(int x,int y,int grav)
 			bc->LFSTK_setGadgetDropCallBack(gadgetDrop,USERDATA(l));
 			bc->LFSTK_setMouseMoveCallBack(launcherEnterCB,launcherExitCB,USERDATA(l));
 			bc->gadgetAcceptsDnD=true;
-			if((entry.icon!=NULL) && (desktopTheme.length()>0))
-				icon=apc->globalLib->LFSTK_findThemedIcon(desktopTheme,entry.icon,"");
-			if(icon.length()>0)
+			if((lds.icon.empty()==false) && (desktopTheme.empty()==false))
+				icon=apc->globalLib->LFSTK_findThemedIcon(desktopTheme,lds.icon,"");
+			if(icon.empty()==false)
 				bc->LFSTK_setImageFromPath(icon,LEFT,true);
 			else
 				bc->LFSTK_setImageFromPath(DATADIR "/pixmaps/command.png",LEFT,true);
 
 			setGadgetDetails(bc);
 			launchersArray.push_back(lds);
-			g_free(entry.name);
-			g_free(entry.exec);
-			g_free(entry.icon);
-
 			xpos+=iconWidth;
 		}
 

@@ -4,7 +4,7 @@
 
 
 if [[ $USEVALGRIND -eq 1 ]];then
-	VALGRIND="valgrind --leak-check=full "
+	VALGRIND="valgrind --leak-check=full"
 fi
 
 APPNAME=$(basename $0 .cpp)
@@ -31,9 +31,9 @@ int main(int argc, char **argv)
 	std::ifstream	myfile ;
 	std::ofstream	myoutfile;
 	std::streambuf	*buf;
-	bool				tostderr=true;
+	bool				tostderr=false;
 
-	myfile.open(argv[1], std::fstream::in);
+	myfile.open(argv[1],std::fstream::in);
 	
 	if(myfile.is_open())
         {
@@ -51,7 +51,7 @@ int main(int argc, char **argv)
 			std::string data;
 			while(myfile>>keyname)
 				{
-					std::getline(myfile, data);
+					std::getline(myfile,data);
 					out  << "keyname="<<keyname<<" data="<<LFSTK_UtilityClass::LFSTK_strStrip(data)<<std::endl;
 				}
 			myfile.close();

@@ -44,21 +44,14 @@
 enum PANELGRAVITY {PANELNORTH=1,PANELSOUTH=2};
 enum WHATSORT {LAUNCHER=100,DESKTOPSWITCHER,TASKSWITCHER};
 
-struct desktopFileStruct
-{
-	char					*name=NULL;
-	char					*exec=NULL;
-	char					*icon=NULL;
-	bool					inTerm;
-};
-
 struct launcherDataStruct
 {
-	std::string			name;
-	std::string			exec;
-	std::string			path;
-	bool					inTerm;
-	unsigned long		pid=0;
+	std::string		name;
+	std::string		exec;
+	std::string		icon;
+	std::string		path;
+	bool				inTerm;
+	unsigned long	pid=0;
 };
 
 struct taskStruct
@@ -103,7 +96,7 @@ extern bool						useMicros;
 
 extern LFSTK_buttonClass			*taskbuttons[20];
 extern int						windowWidth;
-extern GKeyFile					*kf;
+//extern GKeyFile					*kf;
 extern LFSTK_findClass			*gFind;
 extern bool						useTaskBar;
 extern bool						gotLaunchers;

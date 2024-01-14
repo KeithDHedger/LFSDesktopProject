@@ -562,7 +562,8 @@ void LFSTK_lib::LFSTK_setUseTheme(bool use)
 * \param std::string icon.
 * \param std::string catagory ( or "" for any cat ).
 * \return std::string path to themed icon or "".
-*/std::string LFSTK_lib::LFSTK_findThemedIcon(std::string theme,std::string icon,std::string catagory)
+*/
+std::string LFSTK_lib::LFSTK_findThemedIcon(std::string theme,std::string icon,std::string catagory)
 {
 	std::string	thetheme;
 	const char	*iconthemes[3];
