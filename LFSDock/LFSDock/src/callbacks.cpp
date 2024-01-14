@@ -157,6 +157,8 @@ bool contextCB(void *p,void* ud)
 			
 			launcherExitCB(lwc->popupFromGadget,ud);
 			lwc->popupFromGadget=NULL;
+			dockWindow->LFSTK_clearWindow(true);
+			XSync(apc->display,false);
 		}
 	return(true);
 }
@@ -208,7 +210,6 @@ void setGadgetPosition(LFSTK_gadgetClass *gadg,bool active)
 
 bool popActionListEnterCB(LFSTK_gadgetClass*p,void* ud)
 {
-//fprintf(stderr,"popActionListEnterCB\n");
 	return(true);
 }
 

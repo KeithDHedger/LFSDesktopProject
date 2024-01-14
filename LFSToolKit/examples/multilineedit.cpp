@@ -97,6 +97,8 @@ int main(int argc, char **argv)
 
 //line edit
 	editbox=new LFSTK_multiLineEditClass(wc,test_string,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE*10,BUTTONGRAV);
+	//editbox->LFSTK_setGadgetColourPair(NORMALCOLOUR,"#c0ffffff","#ff000000");
+	//editbox->LFSTK_setAlpha(0.0);
 
 	sy+=YSPACING+(GADGETHITE*10);
 

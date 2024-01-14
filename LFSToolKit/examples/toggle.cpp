@@ -144,7 +144,7 @@ int main(int argc, char **argv)
 	win->decorated=false;
 	win->overRide=true;
 	win->app=apc;
-	win->windowType=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_TOOL"));
+	win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_TOOL"));
 	apc->LFSTK_addToolWindow(win);
 	scwindow=apc->windows->back().window;//TODO//
 	vsb=new LFSTK_scrollBarClass(scwindow,true,0,0,16,100);

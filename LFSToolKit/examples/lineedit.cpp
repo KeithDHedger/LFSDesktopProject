@@ -101,7 +101,10 @@ int main(int argc, char **argv)
 	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,doMouseUp,NULL);
 	hrs.back().gadget->LFSTK_setKeyCallBack(NULL,doKeyUp,USERDATA(12345));
 	hrs.back().gadget->LFSTK_setGadgetDropCallBack(doDropped);
-	//hrs.back().gadget->LFSTK_setAlpha(0.9);
+
+
+	//hrs.back().gadget->LFSTK_setAlpha(0.2);
+	//hrs.back().gadget->LFSTK_setGadgetColourPair(NORMALCOLOUR,"#20ff00ff","#20000000");
 	//hrs.back().gadget->LFSTK_setColourName(NORMALCOLOUR,"#e0ffffff");
 	//printf(">>>>hrs.back().gadget=%p\n",hrs.back().gadget);
 	static_cast<LFSTK_lineEditClass*>(hrs.back().gadget)->LFSTK_setCallbackOnReturn(false);

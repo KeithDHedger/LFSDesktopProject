@@ -292,12 +292,12 @@ void LFSTK_lineEditClass::drawLabel(void)
 {
 	int						startchar=0;
 	double					yoffset=0;
-	cairo_text_extents_t	partextents;
-	char				 	*data;
-	char					undercurs[2]={0,0};
-	char					*aftercursor;
+	cairo_text_extents_t		partextents;
+	char					 	*data;
+	char						undercurs[2]={0,0};
+	char						*aftercursor;
 	int						maxchars;
-	cairo_text_extents_t	charextents;
+	cairo_text_extents_t		charextents;
 
 	cairo_save(this->cr);
 		cairo_reset_clip(this->cr);

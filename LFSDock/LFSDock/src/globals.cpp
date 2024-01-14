@@ -57,6 +57,7 @@ LFSTK_windowClass		*popActionWindow=NULL;
 LFSTK_listGadgetClass	*popActionList=NULL;
 bool						inSomeWindow=false;
 bool						gotLaunchers=false;
+int						popActionWindowYOffset=1;
 
 //atoms
 Atom						WM_STATE=None;

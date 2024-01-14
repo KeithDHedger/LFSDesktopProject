@@ -166,7 +166,7 @@ int main(int argc, char **argv)
 	win->w=200;
 	win->h=200;
 	win->wc=wc;
-	win->windowType=apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_TOOL"));
+	win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_TOOL"));
 
 	win->decorated=false;
 	win->overRide=true;

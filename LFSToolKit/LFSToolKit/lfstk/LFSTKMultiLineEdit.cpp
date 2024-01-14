@@ -227,6 +227,7 @@ void LFSTK_multiLineEditClass::drawText(void)
 	cairo_save(this->cr);
 		cairo_reset_clip(this->cr);
 		cairo_set_source_rgba(this->cr,this->newGadgetBGColours.at(NORMALCOLOUR).RGBAColour.r,this->newGadgetBGColours.at(NORMALCOLOUR).RGBAColour.g,this->newGadgetBGColours.at(NORMALCOLOUR).RGBAColour.b,this->newGadgetBGColours.at(NORMALCOLOUR).RGBAColour.a);
+		cairo_set_operator(this->cr,CAIRO_OPERATOR_SOURCE);
 		cairo_paint(this->cr);
 	cairo_restore(this->cr);
 	

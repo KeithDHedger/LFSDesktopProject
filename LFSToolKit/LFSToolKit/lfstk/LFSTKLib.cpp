@@ -400,6 +400,8 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 
 						lwc->popupFromGadget=gadget;
 						gadget->LFSTK_getGeomWindowRelative(&geom,gadget->wc->app->rootWindow);
+						geom.x+=gadget->contextXOffset;
+						geom.y+=gadget->contextYOffset;
 						switch(gadget->contextWindowPos)
 							{
 								case CONTEXTLEFT:

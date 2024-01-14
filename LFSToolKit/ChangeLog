@@ -1,4 +1,6 @@
 0.6.1
+Added optiona x/y offsets for gadget context menu.
+Fixed alpha for multiline class.
 Moved function LFSTK_hashFromKey to util class and made static.
 Removed redundant functions from prefs class.
 Removed old 'c' code from save/load prefsfile.

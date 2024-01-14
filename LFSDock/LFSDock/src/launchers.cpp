@@ -35,7 +35,9 @@ bool launcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 		{
 			std::string			label;
 			infoDataStruct		ls;
+			const geometryStruct	*wingeom;
 			launcherDataStruct	lds=launchersArray.at((long unsigned int)ud);
+			int					offy;
 
 			setGadgetPosition(p,true);
 			popActionList->LFSTK_freeList();	
@@ -49,7 +51,10 @@ bool launcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 			popActionList->LFSTK_moveGadget(-1,-1);
 			popActionWindow->userData=USERDATA(LAUNCHER);
 			popActionWindow->LFSTK_resizeWindow(popActionList->LFSTK_getListMaxWidth()-2,GADGETHITE-2);
+
+			p->contextYOffset=popActionWindowYOffset;
 			showhidetActionList(p,popActionWindow,popActionList);
+			
 			inSomeWindow=true;
 		}
 	return(true);
@@ -62,6 +67,7 @@ bool launcherExitCB(LFSTK_gadgetClass *p,void* ud)
 			setGadgetPosition(p,false);
 			inSomeWindow=false;
 			popActionListExitCB(NULL,(void*)1);
+			dockWindow->LFSTK_clearWindow(true);
 		}
 	return(true);
 }
@@ -79,6 +85,7 @@ bool launcherCB(void *p,void* ud)
 	propReturn			pr;
 
 	showhidetActionList(NULL,popActionWindow,popActionList);
+	XSync(apc->display,false);
 
 	if(p!=NULL)
 		{
@@ -191,17 +198,10 @@ int addLaunchers(int x,int y,int grav)
 	findlaunchers->LFSTK_findFiles(launchersDir.c_str(),false);
 	findlaunchers->LFSTK_sortByName();
 
-	win=new windowInitStruct;//TODO//
-	win->app=apc;
-	win->windowName="";
-	win->loadVars=true;
-	win->x=100;
-	win->y=100;
-	win->w=200;
-	win->h=200;
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName="X";
 	win->wc=dockWindow;
 	win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
-	win->app=apc;
 	win->decorated=false;
 	win->overRide=true;
 	win->level=ABOVEALL;
@@ -209,7 +209,6 @@ int addLaunchers(int x,int y,int grav)
 	apc->LFSTK_addWindow(win,"");
 	launcherContextWindow=apc->windows->back().window;
 	launcherContextWindow->LFSTK_setWindowColourName(NORMALCOLOUR,lc.c_str());
-
 	for(int j=BUTTONLAUNCH;j<NOMOREBUTONS;j++)
 		{
 			contextButtons[j]=new LFSTK_buttonClass(launcherContextWindow,contextLabelData[j],0,sy,GADGETWIDTH*2,24,NorthWestGravity);
@@ -250,6 +249,7 @@ int addLaunchers(int x,int y,int grav)
  
 			bc=new LFSTK_buttonClass(dockWindow,"",xpos,normalY,iconWidth,iconHeight);
 			bc->LFSTK_setContextWindow(launcherContextWindow);
+
 			if(dockGravity==PANELSOUTH)
 				bc->contextWindowPos=CONTEXTABOVECENTRE;
 			else

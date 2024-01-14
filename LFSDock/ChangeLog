@@ -1,4 +1,5 @@
 0.2.0
+GUI tweaks.
 Added run prefs for dock to launcher popup menu.
 Code clean.
 Fixed current date highlight for single digit.

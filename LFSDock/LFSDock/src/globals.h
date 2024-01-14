@@ -115,6 +115,7 @@ extern LFSTK_windowClass			*dockWindow;
 extern LFSTK_windowClass			*popActionWindow;
 extern LFSTK_listGadgetClass		*popActionList;
 extern bool						inSomeWindow;
+extern int						popActionWindowYOffset;
 
 //atoms
 extern Atom						WM_STATE;

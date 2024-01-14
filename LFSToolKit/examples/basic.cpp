@@ -289,7 +289,7 @@ int main(int argc, char **argv)
 	apc->LFSTK_setTimer(1000000,true);
 	apc->LFSTK_setTimerCallBack(timerCB,NULL);
 
-	popWindow=new LFSTK_toolWindowClass(apc->display,wc,apc->appAtomsHashed.at(apc->globalLib->prefs.LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU")),0,0,200,100,"lfstkpopup",apc);
+	popWindow=new LFSTK_toolWindowClass(apc->display,wc,apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU")),0,0,200,100,"lfstkpopup",apc);
 
 	LFSTK_labelClass *poplabel=new LFSTK_labelClass(popWindow,"This is a mouse enter callback",0,0,GADGETWIDTH*8,GADGETHITE,WestGravity);
 	poplabel->LFSTK_setCairoFontDataParts("sB",20);

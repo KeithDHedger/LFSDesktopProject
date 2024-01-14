@@ -123,28 +123,7 @@ bool windowDrop(LFSTK_windowClass *lwc,void* ud)
 void sanityCheck(void)
 {
 	namespace fs=std::filesystem;
-//	namespace fsfs=std::experimental::filesystem;
-//
-//
-//for (fsfs::path p : {"/var/tmp/example.txt", "/", "/var/tmp/."})
-//        std::cout << "The parent path of " << p
-//                 << " is " << p.parent_path() << '\n';
-////
-///*
-//#include <experimental/filesystem>
-//#include <iostream>
-//namespace fs = std::experimental::filesystem;
-// 
-//*/
-////fsfs=launchersDir;
-// fsfs::path p1;
-// p1=launchersDir;
-////c=launchersDir;
-//std::cout<<launchersDir<<std::endl;
-//std::cout<<p1.parent_path()<<std::endl;
-//std::cout<<p1.filename()<<std::endl;
-////fsfs::path=launchersDir;
-////std::cout<<fs::parent_path()<<std::endl;
+
 	if(!fs::exists(fs::status(launchersDir)))
 		{
 			fs::create_directories(launchersDir);
@@ -282,15 +261,19 @@ int main(int argc,char **argv)
 				{
 					case 2:
 						iconWidth=48;
+						popActionWindowYOffset=11;
 						break;
 					case 3:
 						iconWidth=64;
+						popActionWindowYOffset=7;
 						break;
 					case 4:
 						iconWidth=96;
+						popActionWindowYOffset=-1;
 						break;
 					default:
 						iconWidth=32;
+						popActionWindowYOffset=15;
 				}
 
 			iconHeight=iconWidth+(iconWidth/2);
@@ -303,6 +286,7 @@ int main(int argc,char **argv)
 				}
 			else
 				{
+					popActionWindowYOffset=popActionWindowYOffset*-1;
 					normalY=0;
 					activeY=-extraSpace;
 				}

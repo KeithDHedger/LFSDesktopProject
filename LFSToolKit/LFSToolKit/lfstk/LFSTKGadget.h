@@ -78,6 +78,8 @@ class LFSTK_gadgetClass
 //context window
 		LFSTK_windowClass 	*LFSTK_getContextWindow(void);
 		void					LFSTK_setContextWindow(LFSTK_windowClass *wc);
+		int					contextYOffset=0;
+		int					contextXOffset=0;
 		int					windowNumber=-1;
 
 //DnD routines etc
