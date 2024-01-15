@@ -177,17 +177,18 @@ unsigned long LFSTK_UtilityClass::LFSTK_hashFromKey(std::string key)
 }
 
 /**
-* Read desktop file into std::vector<std::string>
+* Read desktop file into std::map<unsigned long,std::vector<std::string>>
 * \param std::string filepath.
-* \return std::vector<std::string>
+* \returnstd::map<unsigned long,std::vector<std::string>>
 * \note can actually be used to read ANY file into a vector.
 */
-std::vector<std::string> LFSTK_UtilityClass::LFSTK_readDesktopFile(std::string filepath)
+std::map<unsigned long,std::vector<std::string>> LFSTK_UtilityClass::LFSTK_readFullDesktopFile(std::string filepath)
 {
-	std::ifstream			myfile ;
-	std::vector<std::string>	lines;
+	std::ifstream									myfile ;
+	std::map<unsigned long,std::vector<std::string>>	maplines;
+	std::string										mapentry;
+	unsigned long									currentkey=0;
 
-	lines.clear();
 	myfile.open(filepath,std::fstream::in);
 	if(myfile.is_open())
         {
@@ -195,29 +196,60 @@ std::vector<std::string> LFSTK_UtilityClass::LFSTK_readDesktopFile(std::string f
 			while(std::getline(myfile,data))
 				{
 					if(data.empty()==false)
-						lines.push_back(data);
+						{
+							data=LFSTK_UtilityClass::LFSTK_strStrip(data);
+							if(data.at(0)!='#')
+								{
+									if(data.at(0)=='[')
+										{
+											mapentry=LFSTK_UtilityClass::LFSTK_strReplaceAllChar(data,"[]","",true);
+											currentkey=LFSTK_UtilityClass::LFSTK_hashFromKey(mapentry);
+										}
+									else
+										maplines[currentkey].push_back(data);
+								}
+						}
 				}
 			myfile.close();
 		}
-	return(lines);
+	return(maplines);
 }
 
 /**
 * Simple parser of desktop file previously read into vector.
+* \param std::string entryname Entry name '[.*].
 * \param std::string keyname Key to look for ( case sensitive ).
-* \param std::vector<std::string> lines Desktop file array.
+* \param std::map<unsigned long,std::vector<std::string>> maplines Desktop file array.
 * \return std::string Found arg or "".
 */
-std::string LFSTK_UtilityClass::LFSTK_getEntry(std::string keyname,std::vector<std::string> lines)
+std::string LFSTK_UtilityClass::LFSTK_getFullEntry(std::string entryname,std::string keyname,std::map<unsigned long,std::vector<std::string>> maplines,bool fallback,std::string fallbackgroup)
 {
 	std::vector<std::string>	linestok;
-	for(unsigned j=0;j<lines.size();j++)
+	std::string				t;
+	unsigned long			currentkey;
+
+	currentkey=LFSTK_UtilityClass::LFSTK_hashFromKey(entryname);
+	for(unsigned j=0;j<maplines[currentkey].size();j++)
 		{
-			if(LFSTK_UtilityClass::LFSTK_strStr(lines.at(j),keyname).empty()==false)
+			if(LFSTK_UtilityClass::LFSTK_strStr(maplines[currentkey].at(j),keyname).empty()==false)
 				{
-					linestok=LFSTK_UtilityClass::LFSTK_strTok(lines.at(j),"=");
+					t=LFSTK_UtilityClass::LFSTK_strStrip(maplines[currentkey].at(j));
+					linestok=LFSTK_UtilityClass::LFSTK_strTok(t,"=");
 					return(LFSTK_UtilityClass::LFSTK_strStrip(linestok.at(1)));
 				}
 		}
+	if(fallback==true)
+		{
+			currentkey=LFSTK_UtilityClass::LFSTK_hashFromKey(fallbackgroup);
+			for(unsigned j=0;j<maplines[currentkey].size();j++)
+				{
+					if(LFSTK_UtilityClass::LFSTK_strStr(maplines[currentkey].at(j),keyname).empty()==false)
+						{
+							t=LFSTK_UtilityClass::LFSTK_strStrip(maplines[currentkey].at(j));
+							linestok=LFSTK_UtilityClass::LFSTK_strTok(t,"=");
+							return(LFSTK_UtilityClass::LFSTK_strStrip(linestok.at(1)));
+						}
+				}	
+		}	
 	return("");
 }

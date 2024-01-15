@@ -34,9 +34,8 @@ class LFSTK_UtilityClass
 		static std::string				LFSTK_strReplaceAllChar(std::string haystack,std::string needle,std::string newneedle,bool erase=false);
 		static unsigned long				LFSTK_hashFromKey(std::string key);
 //desktop files
-		static std::vector<std::string>	LFSTK_readDesktopFile(std::string filepath);
-		static std::string				LFSTK_getEntry(std::string keyname,std::vector<std::string> lines);
-
+		static std::map<unsigned long,std::vector<std::string>>	LFSTK_readFullDesktopFile(std::string filepath);
+		static std::string				LFSTK_getFullEntry(std::string entryname,std::string keyname,std::map<unsigned long,std::vector<std::string>> maplines,bool fallback=false,std::string fallbackgroup="Desktop Entry");
 };
 
 #endif

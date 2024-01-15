@@ -2,9 +2,16 @@
 
 # keithhedger Wed 20 Dec 16:18:20 GMT 2023 kdhedger68713@gmail.com
 
+pushd ..
+	make -j3
+popd
 
 if [[ $USEVALGRIND -eq 1 ]];then
 	VALGRIND="valgrind --leak-check=full"
+fi
+
+if [[ $USEVALGRIND -eq 2 ]];then
+	VALGRIND="valgrind --leak-check=full --show-leak-kinds=all"
 fi
 
 APPNAME=$(basename $0 .cpp)
@@ -47,6 +54,9 @@ int main(int argc, char **argv)
 	std::ifstream			myfile ;
 	std::vector<std::string>	linestok;
 	std::vector<std::string>	lines;
+	std::map<unsigned long,std::vector<std::string>>	maplines;
+	std::string							mapentry;
+	unsigned long						currentkey=0;
 
 	myfile.open(argv[1],std::fstream::in);
 	
@@ -56,7 +66,20 @@ int main(int argc, char **argv)
 			while(std::getline(myfile,data))
 				{
 					if(data.empty()==false)
-						lines.push_back(data);
+						{
+							data=LFSTK_UtilityClass::LFSTK_strStrip(data);
+							if(data.at(0)=='[')
+								{
+									std::string t=data;
+									mapentry=LFSTK_UtilityClass::LFSTK_strReplaceAllChar(t,"[]","",true);
+									currentkey=LFSTK_UtilityClass::LFSTK_hashFromKey(mapentry);
+								}
+							else
+								maplines[currentkey].push_back(data);
+							
+							lines.push_back(data);
+								
+						}
 				}
 			myfile.close();
 		}
@@ -73,12 +96,28 @@ int main(int argc, char **argv)
 	std::cerr<<"key=Comment[uk]=>"<<getentry("Comment[uk]",lines)<<"<="<<std::endl;
 	std::cerr<<"\n"<<std::endl;
 
+{
+//argv[1]=/usr/share/applications/google-chrome.desktop for instance
+	std::cerr<<"\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>-\n"<<std::endl;
+	std::map<unsigned long,std::vector<std::string>>	maplines3;
+	std::string entry="Desktop Action new-private-window";
+	//entry="Desktop Entry";
 
-	lines=LFSTK_UtilityClass::LFSTK_readDesktopFile(argv[1]);
-	std::cerr<<"key=name=>"<<LFSTK_UtilityClass::LFSTK_getEntry("Name",lines)<<"<="<<std::endl;
-	std::cerr<<"key=GenericName[ru]=>"<<LFSTK_UtilityClass::LFSTK_getEntry("GenericName[ru]",lines)<<"<="<<std::endl;
-	std::cerr<<"key=exec=>"<<LFSTK_UtilityClass::LFSTK_getEntry("Exec",lines)<<"<="<<std::endl;
-	std::cerr<<"key=Comment[uk]=>"<<LFSTK_UtilityClass::LFSTK_getEntry("Comment[uk]",lines)<<"<="<<std::endl;
+	maplines3=LFSTK_UtilityClass::LFSTK_readFullDesktopFile(argv[1]);
+	//std::cerr<<maplines3.begin()->first<<std::endl;
+	//std::cerr<<maplines3.begin()->second.at(0)<<std::endl;
+	const char *nd[]={"Name","GenericName","Comment","Exec","Categories","Type","Icon","Terminal","gdfghdfk",NULL};
+	int cnt=0;
+	std::cerr<<"Without fallback (default)"<<std::endl;
+	while(nd[cnt]!=NULL)
+		std::cerr<<"entry name="<<entry<<"=>"<<nd[cnt]<<"=>"<<LFSTK_UtilityClass::LFSTK_getFullEntry(entry,nd[cnt++],maplines3)<<"<="<<std::endl;
+
+	std::cerr<<"\nWith fallback"<<std::endl;
+	cnt=0;
+	while(nd[cnt]!=NULL)
+		//std::cerr<<"entry name="<<entry<<"=>"<<nd[cnt]<<"=>"<<LFSTK_UtilityClass::LFSTK_getFullEntry(entry,nd[cnt++],maplines3,true,"Desktop Entry")<<"<="<<std::endl;
+		std::cerr<<"entry name="<<entry<<"=>"<<nd[cnt]<<"=>"<<LFSTK_UtilityClass::LFSTK_getFullEntry(entry,nd[cnt++],maplines3,true)<<"<="<<std::endl;
+}
 
 	return(0);
 }

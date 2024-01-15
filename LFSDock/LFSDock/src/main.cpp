@@ -33,7 +33,7 @@
 
 void loadPrefs(std::string prefsfile)
 {
-	prefs.LFSTK_loadVarsFromFile(prefsfile.c_str());
+	prefs.LFSTK_loadVarsFromFile(prefsfile);
 	dockSize=prefs.LFSTK_getInt("docksize");
 	onMonitor=prefs.LFSTK_getInt("onmonitor");
 	dockGravity=prefs.LFSTK_getInt("dockgrav");
@@ -290,7 +290,7 @@ int main(int argc,char **argv)
 					activeY=-extraSpace;
 				}
 
-			desktopTheme=dockWindow->globalLib->desktopIconTheme.c_str();
+			desktopTheme=dockWindow->globalLib->desktopIconTheme;
 			mons=apc->LFSTK_getMonitorData(onMonitor);
 			dockWindow->LFSTK_setTile(NULL,0);
 			dockWindow->LFSTK_setWindowColourName(NORMALCOLOUR,"#00000000");

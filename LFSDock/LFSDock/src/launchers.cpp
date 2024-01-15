@@ -140,20 +140,20 @@ bool launcherCB(void *p,void* ud)
 	return(true);
 }
 
-void addALAuncher(const char *fpath,launcherDataStruct *entry)
+void addALAuncher(std::string fpath,launcherDataStruct *entry)
 {
-	std::vector<std::string>	lines;
-	std::string				tmp;
+	std::map<unsigned long,std::vector<std::string>> lines;
+	std::string										entryname="Desktop Entry";
+	std::string										tmp;
 
 	entry->inTerm=false;
-
-	lines=LFSTK_UtilityClass::LFSTK_readDesktopFile(fpath);
-	entry->name=LFSTK_UtilityClass::LFSTK_getEntry("Name",lines);
-	entry->icon=LFSTK_UtilityClass::LFSTK_getEntry("Icon",lines);
-	tmp=LFSTK_UtilityClass::LFSTK_getEntry("Terminal",lines);
+	lines=LFSTK_UtilityClass::LFSTK_readFullDesktopFile(fpath);
+	entry->name=LFSTK_UtilityClass::LFSTK_getFullEntry(entryname,"Name",lines);
+	entry->icon=LFSTK_UtilityClass::LFSTK_getFullEntry(entryname,"Icon",lines);
+	tmp=LFSTK_UtilityClass::LFSTK_getFullEntry(entryname,"Terminal",lines);
 	if(tmp.compare("true")==0)
 		entry->inTerm=true;
-	tmp=LFSTK_UtilityClass::LFSTK_getEntry("Exec",lines);
+	tmp=LFSTK_UtilityClass::LFSTK_getFullEntry(entryname,"Exec",lines);
 	tmp=LFSTK_UtilityClass::LFSTK_strReplaceAllStr(tmp,"%f","",true);
 	tmp=LFSTK_UtilityClass::LFSTK_strReplaceAllStr(tmp,"%U","",true);
 	entry->exec=tmp;
@@ -214,7 +214,7 @@ int addLaunchers(int x,int y,int grav)
 	launcherDataStruct	lds;
 	for(int l=0;l<findlaunchers->data.size();l++)
 		{
- 			addALAuncher(findlaunchers->data.at(l).path.c_str(),&lds);
+ 			addALAuncher(findlaunchers->data.at(l).path,&lds);
 			lds.path=findlaunchers->data.at(l).path;
 			lds.pid=0;
  

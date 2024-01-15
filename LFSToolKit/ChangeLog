@@ -1,4 +1,5 @@
 0.6.1
+Added parsing group names in deskto file.
 Added simple .desktop parser to utils class.
 Added optiona x/y offsets for gadget context menu.
 Fixed alpha for multiline class.

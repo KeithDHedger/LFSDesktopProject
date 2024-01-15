@@ -164,7 +164,7 @@ bool doPrev(void *p,void* ud)
 	if(holdThisMonth==currentMonth)
 		editbox->LFSTK_addHighLights(dx,dy,dl,datesHilite[0]);
 	setImportantDates();
-	editbox->LFSTK_setBuffer(calData.at(0).c_str());
+	editbox->LFSTK_setBuffer(calData.at(0).c_str());//TODO//
 	return(true);
 }
 

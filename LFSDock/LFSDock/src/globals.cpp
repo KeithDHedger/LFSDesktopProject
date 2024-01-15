@@ -117,7 +117,7 @@ void dropDesktopFile(const char *data,void *launcher)//TODO//
 				{
 					launcherDataStruct lds=launchersArray.at((unsigned long)launcher);
 					if(lds.inTerm==false)
-						asprintf(&command,"%s \"%s\" &",lds.exec.c_str(),cleanstr);
+						asprintf(&command,"%s \"%s\" &",lds.exec.c_str(),cleanstr);//TODO//
 					else
 						asprintf(&command,"%s %s \"%s\" &",prefs.LFSTK_getCString("termcommand"),lds.exec.c_str(),cleanstr);
 						sendNotify("Running ",lds.exec.c_str());
@@ -204,7 +204,7 @@ Window doTreeWalkForClass(Window wind,std::string namecheck)
 
 					for(int k=0;k<pr.strlist.size();k++)
 						{
-							if(strcasecmp(namecheck.c_str(),pr.strlist.at(k).c_str())==0)
+							if(strcasecmp(namecheck.c_str(),pr.strlist.at(k).c_str())==0)//TODO//
 								{
 									thewin=children[j];
 									XFree(children);
