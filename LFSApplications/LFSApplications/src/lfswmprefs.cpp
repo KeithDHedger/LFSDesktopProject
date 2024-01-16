@@ -175,15 +175,11 @@ bool coleditCB(void *p,void* ud)
 
 	if((ed->mouseEvent->state & Button3Mask)!=0)
 		{
-			char *col=NULL;
-#ifdef _ENABLEDEBUG_//TODO//
-			col=strdup(apc->globalLib->LFSTK_oneLiner("LD_LIBRARY_PATH=../LFSToolKit/LFSToolKit/app/.libs LFSApplications/app/lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr()).c_str());
-#else
-			col=strdup(apc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr()).c_str());
-#endif
-			if(strlen(col)>0)
+			std::string col;
+			col=apc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%S\"",pw,ed->LFSTK_getBuffer());
+			if(col.empty()==false)
 				ed->LFSTK_setBuffer(col);
-			free(col);
+
 			for(int j=0;j<5;j++)
 				{
 					previewButtons[j]->LFSTK_setGadgetColourPair(NORMALCOLOUR,previeColourEdit[j]->LFSTK_getBuffer(),"black");
@@ -204,7 +200,7 @@ int main(int argc, char **argv)
 	int			retcode;
 	int			receiveType=IPC_NOWAIT;
 	msgBuffer	mbuffer;
-	char		*buffer=NULL;
+	std::string	bffr;
 
 	const char	*shortOpts="h?w:";		
 	option		longOptions[]=
@@ -237,10 +233,10 @@ int main(int argc, char **argv)
 	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKPrefs");
 	wc=apc->mainWindow;
 
-	buffer=strdup(wc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str()).c_str());//TODO//
-	if((queueID=msgget(atoi(buffer),IPC_CREAT|0660))==-1)
+	bffr=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %S/lfsappearance.rc",apc->configDir);
+	if((queueID=msgget(std::stoi(bffr,nullptr,10),IPC_CREAT|0660))==-1)
 		fprintf(stderr,"Can't create message queue :( ...\n");
-	free(buffer);
+
 	while(flag==false)
 		{
 			retcode=msgrcv(queueID,&mbuffer,MAX_MSG_SIZE,MSGANY,receiveType);

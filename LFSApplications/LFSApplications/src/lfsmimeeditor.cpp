@@ -309,8 +309,6 @@ int main(int argc, char **argv)
 
 	wc->globalLib->LFSTK_oneLiner("cp %s/.config/mimeapps.list %s",getenv("HOME"),workDir);//TODO//
 
-//	command=wc->globalLib->LFSTK_oneLiner("cp %s/.config/mimeapps.list %s",getenv("HOME"),workDir);
-//	free(command);
 	asprintf(&mimeTypesFile,"%s/mimeapps.list",workDir);
 	if(access(mimeTypesFile,F_OK)!=0)
 		{
@@ -376,8 +374,6 @@ int main(int argc, char **argv)
 	int retval=apc->LFSTK_runApp();
 
 	wc->globalLib->LFSTK_oneLiner("rm -r %s",workDir);//TODO//
-	//command=wc->globalLib->LFSTK_oneLiner("rm -r %s",workDir);
-	//free(command);
 	delete apc;
 	free(tmpOutFile);
 	free(lastBitPath);

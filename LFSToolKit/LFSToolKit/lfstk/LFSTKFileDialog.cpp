@@ -428,7 +428,7 @@ void LFSTK_fileDialogClass::setPreviewData(bool fromlist)
 */
 void LFSTK_fileDialogClass::LFSTK_getLastFolder(void)
 {
-	this->currentDir=this->wc->app->globalLib->LFSTK_oneLiner(std::string("grep -i '%s' '%s/dialoglast.rc' 2>/dev/null|awk -F= '{print $NF}'"),this->recentsName.c_str(),this->wc->app->configDir.c_str());
+	this->currentDir=this->wc->app->globalLib->LFSTK_oneLiner("grep -i '%S' '%S/dialoglast.rc' 2>/dev/null|awk -F= '{print $NF}'",this->recentsName,this->wc->app->configDir);
 	if(this->currentDir.length()<2)
 		this->currentDir=this->wc->app->userHome;
 }

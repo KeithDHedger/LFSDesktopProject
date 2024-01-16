@@ -184,15 +184,10 @@ bool coleditCB(void *p,void* ud)
 		pw=wc->window;
 	if((ed->mouseEvent->state & Button3Mask)!=0)
 		{
-			char *col=NULL;
-#ifdef _ENABLEDEBUG_//TODO//
-			col=strdup(apc->globalLib->LFSTK_oneLiner("LD_LIBRARY_PATH=../LFSToolKit/LFSToolKit/app/.libs LFSApplications/app/lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr()).c_str());
-#else
-			col=strdup(apc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr()).c_str());
-#endif
-			if(strlen(col)>0)
+			std::string col;
+			col=apc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%S\"",pw,ed->LFSTK_getBuffer());
+			if(col.empty()==false)
 				ed->LFSTK_setBuffer(col);
-			free(col);
 		}
 	return(true);
 }
@@ -201,7 +196,7 @@ int main(int argc, char **argv)
 {
 	XEvent		event;
 	int			sy=0;
-	char		*buffer=NULL;
+	std::string	bffr;
 	int			c=0;
 	int			option_index=0;
 	const char	*shortOpts="h?w:";		
@@ -363,10 +358,9 @@ int main(int argc, char **argv)
 	if(parentWindow!=-1)
 		wc->LFSTK_setTransientFor(parentWindow);
 
-	buffer=strdup(wc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str()).c_str());//TODO//
-	if((queueID=msgget(atoi(buffer),IPC_CREAT|0660))==-1)
+	bffr=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %S/lfsappearance.rc",apc->configDir);
+	if((queueID=msgget(std::stoi(bffr,nullptr,10),IPC_CREAT|0660))==-1)
 		fprintf(stderr,"Can't create message queue :( ...\n");
-	free(buffer);
 
 	bool	flag=false;
 	int		retcode;

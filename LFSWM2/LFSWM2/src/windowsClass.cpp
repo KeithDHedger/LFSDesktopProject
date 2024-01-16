@@ -1355,15 +1355,15 @@ imlib_image_copy_alpha_to_image( image, 0, 0 );
 		this->mainClass->titlePosition=3;
 	this->theme.titleAlignment=this->mainClass->titlePosition;
 
-	res=this->mainClass->lfstkLib->LFSTK_oneLiner(std::string("sed -n 's/button_offset=\\(.*\\)/\\1/p' '%s/xfwm4/themerc'"),this->theme.pathToTheme.c_str());
+	res=this->mainClass->lfstkLib->LFSTK_oneLiner("sed -n 's/button_offset=\\(.*\\)/\\1/p' '%S/xfwm4/themerc'",this->theme.pathToTheme);
 	this->theme.buttonOffset=atoi(res.c_str());
 	this->mainClass->buttonOffset=this->theme.buttonOffset;
 	
-	res=this->mainClass->lfstkLib->LFSTK_oneLiner(std::string("sed -n 's/button_spacing=\\(.*\\)/\\1/p' '%s/xfwm4/themerc'"),this->theme.pathToTheme.c_str());
+	res=this->mainClass->lfstkLib->LFSTK_oneLiner("sed -n 's/button_spacing=\\(.*\\)/\\1/p' '%S/xfwm4/themerc'",this->theme.pathToTheme);
 	this->theme.buttonXSpacing=atoi(res.c_str());
 	this->mainClass->buttonXSpacing=this->theme.buttonXSpacing;
 
-	res=this->mainClass->lfstkLib->LFSTK_oneLiner(std::string("sed -n 's/full_width_title=\\(.*\\)/\\1/p' '%s/xfwm4/themerc'"),this->theme.pathToTheme.c_str());
+	res=this->mainClass->lfstkLib->LFSTK_oneLiner("sed -n 's/full_width_title=\\(.*\\)/\\1/p' '%S/xfwm4/themerc'",this->theme.pathToTheme);
 	if(res.compare("true")==0)
 		this->theme.fullWidthTitle=true;
 	else

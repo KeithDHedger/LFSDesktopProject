@@ -586,10 +586,7 @@ void LFSWM2_Class::cliOptions(int argc,char **argv)//TODO//
 
 	prefsfile=this->lfstkLib->LFSTK_oneLiner("sed -n '2p' \"%s/.config/LFS/lfsappearance.rc\"",getenv("HOME"));
 	if(prefsfile!="")
-		{
-			this->msgQueueKey=std::stoi(prefsfile,nullptr,10);
-			//free(prefsfile);
-		}
+		this->msgQueueKey=std::stoi(prefsfile,nullptr,10);
 	if(key!=-1)
 		this->msgQueueKey=key;
 }

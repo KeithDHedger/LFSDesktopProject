@@ -29,16 +29,16 @@
 
 struct					monitorInfo
 {
-	char	*path;
+	char		*path;
 	int		mode;
 };
 
 LFSTK_applicationClass	*apc=NULL;
-LFSTK_prefsClass		prefs;
+LFSTK_prefsClass			prefs;
 LFSTK_windowClass		*wc=NULL;
-LFSTK_labelClass		*label=NULL;
-LFSTK_labelClass		*personal=NULL;
-LFSTK_labelClass		*copyrite=NULL;
+LFSTK_labelClass			*label=NULL;
+LFSTK_labelClass			*personal=NULL;
+LFSTK_labelClass			*copyrite=NULL;
 LFSTK_buttonClass		*seperator=NULL;
 LFSTK_buttonClass		*quit=NULL;
 LFSTK_buttonClass		*apply=NULL;
@@ -103,18 +103,12 @@ bool coleditCB(void *p,void* ud)
 	if(pw==-1)
 		pw=wc->window;
 
-	//ud=static_cast<LFSTK_lineEditClass*>(ud);
 	if((ed->mouseEvent->state & Button3Mask)!=0)
 		{
-			char *col=NULL;
-#ifdef _ENABLEDEBUG_//TODO//
-			col=strdup(apc->globalLib->LFSTK_oneLiner("LD_LIBRARY_PATH=../LFSToolKit/LFSToolKit/app/.libs LFSApplications/app/lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr()).c_str());
-#else
-			col=strdup(apc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%s\"",pw,ed->LFSTK_getCStr()).c_str());
-#endif
-			if(strlen(col)>0)
+			std::string col;
+			col=apc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%S\"",pw,ed->LFSTK_getBuffer());
+			if(col.empty()==false)
 				ed->LFSTK_setBuffer(col);
-			free(col);
 		}
 	return(true);
 }
@@ -171,12 +165,12 @@ bool selectFile(void *object,void* ud)
 	char				*filepath;
 	LFSTK_lineEditClass	*edbox=static_cast<LFSTK_lineEditClass*>(ud);
 
-	fileDialog->LFSTK_showFileDialog(NULL,"Select A File");
+	fileDialog->LFSTK_showFileDialog(NULL,"Select A File");//TODO//
 	if(fileDialog->LFSTK_isValid()==true)
 		{
-			asprintf(&filepath,"%s/%s",fileDialog->LFSTK_getCurrentDir(),fileDialog->LFSTK_getCurrentFile());
+			asprintf(&filepath,"%s/%s",fileDialog->LFSTK_getCurrentDir().c_str(),fileDialog->LFSTK_getCurrentFile().c_str());
 			free(wd);
-			wd=strdup(fileDialog->LFSTK_getCurrentDir().c_str());
+			wd=strdup(fileDialog->LFSTK_getCurrentDir().c_str());//TODO//
 			edbox->LFSTK_setBuffer(filepath);
 			free(monitors[selectedMonitor].path);
 			monitors[selectedMonitor].path=strdup(filepath);
@@ -263,7 +257,7 @@ int main(int argc, char **argv)
 	int			c=0;
 	int			option_index=0;
 	const char	*shortOpts="h?w:";
-	char		*buffer;
+	std::string bffr;
 
 	option 		longOptions[]=
 		{
@@ -424,10 +418,9 @@ int main(int argc, char **argv)
 	if(parentWindow!=-1)
 		wc->LFSTK_setTransientFor(parentWindow);
 
-	buffer=strdup(wc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str()).c_str());
-	if((queueID=msgget(atoi(buffer),IPC_CREAT|0660))==-1)
+	bffr=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %S/lfsappearance.rc",apc->configDir);
+	if((queueID=msgget(std::stoi(bffr,nullptr,10),IPC_CREAT|0660))==-1)
 		fprintf(stderr,"Can't create message queue :( ...\n");
-	free(buffer);
 
 	bool			flag=false;
 	int			retcode;

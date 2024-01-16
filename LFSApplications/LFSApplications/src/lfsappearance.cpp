@@ -378,14 +378,14 @@ int main(int argc, char **argv)
 	setMenu->LFSTK_setMouseCallBack(NULL,menuCB,NULL);
 	setMenu->LFSTK_addMainMenus(groupNameMenuItems,find->LFSTK_getDataCount()+2);
 
-	buffer=strdup(wc->globalLib->LFSTK_oneLiner("sed -n '1p' %s/lfsappearance.rc",apc->configDir.c_str()).c_str());
+	buffer=strdup(wc->globalLib->LFSTK_oneLiner("sed -n '1p' %S/lfsappearance.rc",apc->configDir).c_str());
 	currentSet=new LFSTK_lineEditClass(wc,buffer,BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,BUTTONGRAV);
 	hrs.push_back({BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,currentSet});
 	free(buffer);
 	sy+=YSPACING;
 
 //msg key//TODO//
-	buffer=strdup(wc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str()).c_str());
+	buffer=strdup(wc->globalLib->LFSTK_oneLiner("sed -n '2p' %S/lfsappearance.rc",apc->configDir).c_str());
 	launchLabel=new LFSTK_labelClass(wc,"Msg Key",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	hrs.push_back({BORDER,sy,GADGETWIDTH,GADGETHITE,launchLabel});
 	key=new LFSTK_lineEditClass(wc,buffer,BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,BUTTONGRAV);

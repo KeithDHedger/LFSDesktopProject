@@ -30,6 +30,7 @@
 #include <fnmatch.h>
 #include <fcntl.h>
 #include <jpeglib.h>
+#include <cstdarg>
 
 #include "lfstk/LFSTKGlobals.h"
 
@@ -280,7 +281,6 @@ void LFSTK_lib::LFSTK_reloadPrefs(void)
 	str=str + "/.config/LFS/lfstoolkit.rc";
 	if(access(str.c_str(),F_OK)!=0)
 		{
-			//std::cerr<<"no default "<<str<<" copying from "<<DATADIR "/Defaults/0.Default"<<std::endl;
 			str=str + ".config/LFS";
 			str=LFSTK_lib::LFSTK_oneLiner("mkdir -p %s/.config/LFS/lfsgroupsprefs",getenv("HOME"));
 			str=LFSTK_lib::LFSTK_oneLiner("cp -r %s/Defaults/0.Default %s/.config/LFS/lfsgroupsprefs",DATADIR,getenv("HOME"));
@@ -593,7 +593,7 @@ std::string LFSTK_lib::LFSTK_findThemedIcon(std::string theme,std::string icon,s
 		{
 			for(int k=0;k<3;k++)
 				{
-					iconpath=this->LFSTK_oneLiner("find %s/\"%s\"/*/%s -iname '*%s.png' 2>/dev/null|sort --version-sort|tail -n1 2>/dev/null",iconfolders[j],iconthemes[k],catagory.c_str(),icon.c_str());
+					iconpath=this->LFSTK_oneLiner("find %s/\"%s\"/*/%S -iname '*%S.png' 2>/dev/null|sort --version-sort|tail -n1 2>/dev/null",iconfolders[j],iconthemes[k],catagory,icon);
 
 					if(iconpath.length()>1)
 						goto breakReturn;
@@ -604,7 +604,7 @@ std::string LFSTK_lib::LFSTK_findThemedIcon(std::string theme,std::string icon,s
 		{
 			for(int j=GLOBALPIXMAPS;j<GLOBALPIXMAPSEND;j++)
 				{
-					iconpath=this->LFSTK_oneLiner("find %s -iname '*%s*'",iconfolders[j],icon.c_str());
+					iconpath=this->LFSTK_oneLiner("find %s -iname '*%S*'",iconfolders[j],icon);
 					if(iconpath.length()>1)
 						goto breakReturn;
 				}
@@ -641,6 +641,9 @@ std::vector<std::string>	LFSTK_lib::LFSTK_runAndGet(const std::string fmt,...)
 					cnt++;
 					switch(fmt.at(cnt))
 						{
+							case 'S':
+								str+=va_arg(ap,std::string);
+								break;
 							case 's':
 								str+=va_arg(ap,char*);
 								break;
@@ -703,6 +706,9 @@ std::string LFSTK_lib::LFSTK_oneLiner(const std::string fmt,...)
 					cnt++;
 					switch(fmt.at(cnt))
 						{
+							case 'S':
+								str+=va_arg(ap,std::string);
+								break;
 							case 's':
 								str+=va_arg(ap,char*);
 								break;
@@ -831,7 +837,7 @@ void LFSTK_lib::LFSTK_setCairoSurface(Display *display,Window window,Visual *vis
 std::string LFSTK_lib::LFSTK_getMimeType(std::string path)
 {
 	if(access(path.c_str(),F_OK)==0)
-		return(this->LFSTK_oneLiner("file -L -b --mime-type \"%s\"",path.c_str()));
+		return(this->LFSTK_oneLiner("file -L -b --mime-type \"%S\"",path));
 	else
 		return("application/octet-stream");
 }

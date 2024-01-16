@@ -133,15 +133,13 @@ int main(int argc, char **argv)
 	std::string			iconpath;
 	LFSTK_buttonClass	*button;
 	int					key=666;
-	Atom                   xa;//TODO//
-	Atom                   xa_prop[3];
+	Atom					xa;
+	Atom					xa_prop[3];
 
 	apc=new LFSTK_applicationClass();
 
-	command=strdup(apc->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str()).c_str());//tODO//
-	key=atoi(command);
-	freeAndNull(&command);
-
+	std::string keynum=apc->globalLib->LFSTK_oneLiner("sed -n '2p' %S/lfsappearance.rc",apc->configDir);
+	key=std::stoi(keynum,nullptr,10);
 	if((queueID=msgget(key,IPC_CREAT|0660))==-1)
 		fprintf(stderr,"Can't create message queue\n");
 

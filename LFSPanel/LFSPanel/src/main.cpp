@@ -233,14 +233,14 @@ int main(int argc,char **argv)
 			NET_WM_NAME=XInternAtom(mainwind->app->display,"_NET_WM_NAME",False);
 			UTF8_STRING=XInternAtom(mainwind->app->display,"UTF8_STRING",False);
 
-			keystring=mainwind->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str());
+			keystring=mainwind->globalLib->LFSTK_oneLiner("sed -n '2p' %S/lfsappearance.rc",apc->configDir);
 			key=std::stoi(keystring,nullptr,10);
+			if((queueID=msgget(key,IPC_CREAT|0660))==-1)
+				fprintf(stderr,"Can't create message queue\n");
 
 			apc->LFSTK_setTimer(refreshRate);
 			apc->LFSTK_setTimerCallBack(timerCB,NULL);
 
-			if((queueID=msgget(key,IPC_CREAT|0660))==-1)
-				fprintf(stderr,"Can't create message queue\n");
 
 //TODO//
 	//itemfont=mainwind->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
@@ -260,7 +260,6 @@ int main(int argc,char **argv)
 
 			loadPrefs(env);
 
-			//desktopTheme=mainwind->globalLib->LFSTK_oneLiner("cat %s/lfsdesktop.rc|grep icontheme|awk '{print $2}'",apc->configDir);
 			desktopTheme=mainwind->globalLib->desktopIconTheme.c_str();
 			mons=apc->LFSTK_getMonitorData(onMonitor);
 

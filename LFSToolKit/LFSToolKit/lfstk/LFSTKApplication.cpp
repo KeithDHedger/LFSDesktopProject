@@ -96,7 +96,7 @@ LFSTK_applicationClass::LFSTK_applicationClass()
 
 	this->userHome=getenv("HOME");
 	this->configDir=this->userHome + std::string("/.config/LFS");
-	this->iconThemeName=this->globalLib->LFSTK_oneLiner(std::string("cat '%s'/lfsdesktop.rc|grep -i icontheme|awk '{print $2}'"),this->configDir.c_str());
+	this->iconThemeName=this->globalLib->LFSTK_oneLiner("cat '%S'/lfsdesktop.rc|grep -i icontheme|awk '{print $2}'",this->configDir);
 
 //set up atoms
 	const char *appAtomNames[]={

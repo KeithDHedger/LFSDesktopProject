@@ -245,9 +245,8 @@ int main(int argc,char **argv)
 			NET_ACTIVE_WINDOW=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW"));
 			NET_WM_DESKTOP=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_DESKTOP"));
 
-			env=dockWindow->globalLib->LFSTK_oneLiner("sed -n '2p' %s/lfsappearance.rc",apc->configDir.c_str());
+			env=dockWindow->globalLib->LFSTK_oneLiner("sed -n '2p' %S/lfsappearance.rc",apc->configDir);
 			key=std::stoi(env,nullptr,10);
-
 			if((queueID=msgget(key,IPC_CREAT|0660))==-1)
 				fprintf(stderr,"Can't create message queue\n");
 

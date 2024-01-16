@@ -125,14 +125,14 @@ bool launcherCB(void *p,void* ud)
 			args="";
 		}
 
-	whch=apc->globalLib->LFSTK_oneLiner(std::string("which '%s'"),command.c_str());
+	whch=apc->globalLib->LFSTK_oneLiner("which '%S'",command);
 
 	sendNotify("Launching ",lds.name.c_str());
 
 	if(lds.inTerm==false)
-		str=apc->globalLib->LFSTK_oneLiner(std::string("exec %s %s &\necho $!"),whch.c_str(),args.c_str());
+		str=apc->globalLib->LFSTK_oneLiner("exec %S %S &\necho $!",whch,args);
 	else
-		str=apc->globalLib->LFSTK_oneLiner(std::string("exec %s %s %s &\necho $!"),prefs.LFSTK_getCString("termcommand"),whch.c_str(),args.c_str());
+		str=apc->globalLib->LFSTK_oneLiner("exec %S %S %S &\necho $!",prefs.LFSTK_getString("termcommand"),whch,args);
 	lds.pid=std::stoul(str,nullptr,0);
 	if(useTaskBar==true)
 		updateTaskBar();

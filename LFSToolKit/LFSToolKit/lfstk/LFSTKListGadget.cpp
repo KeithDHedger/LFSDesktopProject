@@ -105,20 +105,19 @@ void LFSTK_listGadgetClass::LFSTK_setListFromFile(const char *filepath,bool incl
 {
 	FILE			*file=NULL;
 	char			*buffer;
-	size_t			linelen=0;
-	ssize_t			read=0;
-	int				linecnt=0;
-	//char			*lines=NULL;
+	size_t		linelen=0;
+	ssize_t		read=0;
+	int			linecnt=0;
 	long			userdata=0;
-	std::string		lines;
+	std::string	lines;
+
 	this->freeList();
 	infoDataStruct ls;
 
 	if(filepath!=NULL)
 		{
-			lines=this->wc->app->globalLib->LFSTK_oneLiner("wc -l %s",filepath);//TODO//
+			lines=this->wc->app->globalLib->LFSTK_oneLiner("wc -l %s",filepath);
 			linecnt=std::stoi(lines,nullptr,10);
-			//freeAndNull(&lines);
 			file=fopen(filepath,"r");
 			if(file!=NULL)
 				{

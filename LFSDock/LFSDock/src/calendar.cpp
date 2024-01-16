@@ -98,10 +98,10 @@ void setEditText(void)
 {
 	std::string	thisday;
 
-	calData=apc->globalLib->LFSTK_runAndGet("%s %s","cal",thisMonth.c_str());
+	calData=apc->globalLib->LFSTK_runAndGet("%s %S","cal",thisMonth);
 	if(holdThisMonth==currentMonth)
 		{
-			thisday=apc->globalLib->LFSTK_oneLiner(std::string("%s"),"date +%d|sed 's/^0//'");
+			thisday=apc->globalLib->LFSTK_oneLiner("%s","date +%d|sed 's/^0//'");
 			dl=thisday.length();
 			thisday=" "+thisday+" ";
 			std::string::size_type found;
@@ -125,7 +125,7 @@ void setImportantDates(void)
 {
 	std::string	thisday;
 
-	calData=apc->globalLib->LFSTK_runAndGet("%s %s","cal",thisMonth.c_str());
+	calData=apc->globalLib->LFSTK_runAndGet("%s %S","cal",thisMonth);
 //do important dates
 	for(int j=0;j<datesData.size();j++)
 		{
@@ -211,7 +211,7 @@ int addCalendar(int x,int y,int grav)
 	apc->LFSTK_addToolWindow(win);
 	calWindow=apc->windows->back().window;
 
-	thisday=apc->globalLib->LFSTK_oneLiner(std::string("%s"),"date +%m");
+	thisday=apc->globalLib->LFSTK_oneLiner("%s","date +%m");
 	currentMonth=std::stoi(thisday)-1;
 	thisMonth=monthNames[currentMonth];
 

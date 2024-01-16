@@ -1,4 +1,5 @@
 0.6.1
+LFSTK_oneLiner and LFSTK_runAndGet now handle std::strings in the arg list ( '%S' ).
 Added parsing group names in desktop file.
 Added simple .desktop parser to utils class.
 Added optiona x/y offsets for gadget context menu.

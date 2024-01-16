@@ -189,6 +189,7 @@ std::map<unsigned long,std::vector<std::string>> LFSTK_UtilityClass::LFSTK_readF
 	std::string										mapentry;
 	unsigned long									currentkey=0;
 
+	maplines.clear();
 	myfile.open(filepath,std::fstream::in);
 	if(myfile.is_open())
         {
