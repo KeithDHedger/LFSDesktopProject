@@ -313,17 +313,6 @@ void LFSTK_scrollBarClass::LFSTK_setActive(bool active)
 */
 void LFSTK_scrollBarClass::LFSTK_clearWindow()
 {
-//this->thumb->LFSTK_setActive(this->isActive);
-//this->thumb->LFSTK_setCanDrag(!this->isActive);
-//if(this->startDrag=this->isActive==false)
-//{
-//	this->startDrag=false;
-//	this->thumb->LFSTK_clearWindow();
-//	//return;
-//}
-//	if(this->isActive==false)
-//		{
-//		}
 	if(this->startDrag==true)
 		this->setState(false);
 
