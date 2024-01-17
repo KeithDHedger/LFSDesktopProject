@@ -42,6 +42,8 @@ LFSTK_scrollBarClass		*alpha=NULL;
 LFSTK_lineEditClass		*box=NULL;
 LFSTK_lineEditClass		*colour=NULL;
 LFSTK_toggleButtonClass	*check=NULL;
+LFSTK_toggleButtonClass	*includeAlpha=NULL;
+
 bool						lockStep=false;
 int						lastred=255;
 int						lastgreen=255;
@@ -63,7 +65,7 @@ bool doQuit(void *p,void* ud)
 
 bool scrollCB(void *p,void* ud)
 {
-	long	what=(long)ud;
+	long		what=(long)ud;
 	int		diff=0;
 
 	if(check->LFSTK_getValue()==true)
@@ -95,7 +97,10 @@ bool scrollCB(void *p,void* ud)
 	lastblue=blue->LFSTK_getValue();
 	colourname.clear();
 	colourname.str(std::string());
-	colourname << "#"<<std::hex << std::uppercase<<std::setfill('0') << std::setw(2)<<alpha->LFSTK_getValue();
+	if(includeAlpha->LFSTK_getValue()==true)
+		colourname << "#"<<std::hex << std::uppercase<<std::setfill('0') << std::setw(2)<<alpha->LFSTK_getValue();
+	else
+		colourname << "#";
 	colourname << std::hex << std::uppercase<<std::setfill('0') << std::setw(2)<<red->LFSTK_getValue();
 	colourname << std::hex << std::uppercase<<std::setfill('0') << std::setw(2)<<green->LFSTK_getValue();
 	colourname << std::hex << std::uppercase<<std::setfill('0') << std::setw(2)<< blue->LFSTK_getValue();
@@ -120,6 +125,13 @@ void setSliders(const char *colour)
 bool lineCB(void *p,void *ud)
 {
 	setSliders(colour->LFSTK_getCStr());
+	return(true);
+}
+
+bool doAlpha(void *p,void *ud)
+{
+	alpha->LFSTK_setActive(includeAlpha->LFSTK_getValue());	
+	alpha->LFSTK_clearWindow();
 	return(true);
 }
 
@@ -217,6 +229,10 @@ int main(int argc, char **argv)
 
 	check=new LFSTK_toggleButtonClass(wc,"Lock sliders",3*BORDER+2*SCROLLBARWIDTH+GADGETWIDTH,sy+GADGETHITE*6-CHECKBOXSIZE,GADGETWIDTH,CHECKBOXSIZE,NorthWestGravity);
 	check->LFSTK_setValue(false);
+
+	includeAlpha=new LFSTK_toggleButtonClass(wc,"Include Alpha",3*BORDER+2*SCROLLBARWIDTH+GADGETWIDTH+GADGETWIDTH,sy+GADGETHITE*6-CHECKBOXSIZE,GADGETWIDTH,CHECKBOXSIZE,NorthWestGravity);
+	includeAlpha->LFSTK_setValue(true);
+	includeAlpha->LFSTK_setMouseCallBack(NULL,doAlpha,NULL);
 
 	colour=new LFSTK_lineEditClass(wc,"FFFFFFFF",3*BORDER+2*SCROLLBARWIDTH+GADGETWIDTH,sy+GADGETHITE*7,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	colour->LFSTK_setKeyCallBack(NULL,lineCB,NULL);

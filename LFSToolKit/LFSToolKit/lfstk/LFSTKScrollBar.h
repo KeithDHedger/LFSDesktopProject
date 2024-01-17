@@ -32,54 +32,54 @@ class LFSTK_scrollBarClass : public LFSTK_gadgetClass
 		~LFSTK_scrollBarClass();
 		LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vertical,int x,int y,unsigned w,unsigned h,int gravity=NorthWestGravity);
 
-		bool				mouseUp(XButtonEvent *e);
-		bool				mouseDown(XButtonEvent *e);
-		bool				mouseEnter(XButtonEvent *e);
-		bool				mouseExit(XButtonEvent *e);
-		bool				keyRelease(XKeyEvent *e);
+		bool					mouseUp(XButtonEvent *e);
+		bool					mouseDown(XButtonEvent *e);
+		bool					mouseEnter(XButtonEvent *e);
+		bool					mouseExit(XButtonEvent *e);
+		bool					keyRelease(XKeyEvent *e);
 
-		void				LFSTK_clearWindow(void);
-		void				LFSTK_clearWindow(bool ignorecb);
-		void				LFSTK_setStyle(bevelType s);
-		void				LFSTK_resetHeight(int newheight);
-
+		void					LFSTK_clearWindow(void);
+		void					LFSTK_clearWindow(bool ignorecb);
+		void					LFSTK_setStyle(bevelType s);
+		void					LFSTK_resetHeight(int newheight);
+		void					LFSTK_setActive(bool active);
 //set indexes
-		void				LFSTK_setScale(double min,double max);
-		void				LFSTK_setPageScroll(int page);
-		void				LFSTK_setLineScroll(int line);
-		void				LFSTK_setValue(int val,bool ignore=false);
+		void					LFSTK_setScale(double min,double max);
+		void					LFSTK_setPageScroll(int page);
+		void					LFSTK_setLineScroll(int line);
+		void					LFSTK_setValue(int val,bool ignore=false);
 		int					LFSTK_getValue(void);
-		void				LFSTK_setAllowKBControl(bool allow);
-		bool				LFSTK_getAllowKBControl(void);
-		void				LFSTK_scrollByLine(bool up);
-		void				LFSTK_scrollByPage(bool up);
+		void					LFSTK_setAllowKBControl(bool allow);
+		bool					LFSTK_getAllowKBControl(void);
+		void					LFSTK_scrollByLine(bool up);
+		void					LFSTK_scrollByPage(bool up);
 
 		double				scale=1.0;
-		bool				reverse=false;
+		bool					reverse=false;
 		double				maxValue=100.0;
-		bool				lockToWindow=false;
+		bool					lockToWindow=false;
 		Window				lockToWindowRight=-1;
 
 	private:
-		bool				allowKBControl=true;
+		bool					allowKBControl=true;
 		int					value=0;
 		LFSTK_buttonClass	*thumb=NULL;
 		LFSTK_buttonClass	*upLeft=NULL;
 		LFSTK_buttonClass	*downRight=NULL;
-		bool				startDrag=false;
+		bool					startDrag=false;
 //calbacks
 		static bool			lineUpDown(void *object,void* userdata);
 		static bool			pageUpDown(void *object,void* userdata);
 		static bool			thumbClicked(void *object,void* userdata);
 		static bool			startThumbDrag(void *object,void* userdata);
 //private routines
-		void				setState(bool byvalue,bool ignorecb=false);
+		void					setState(bool byvalue,bool ignorecb=false);
 
 		int					pageScroll=5;
 		double				minScale=1.0;
 		double				maxScale=100.0;
 		int					lineScroll=1;
-		bool				verticalBar=false;
+		bool					verticalBar=false;
 };
 
 #endif

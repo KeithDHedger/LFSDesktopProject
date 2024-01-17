@@ -55,9 +55,11 @@ bool doReverse(void *p,void* ud)
 	fprintf(stderr,"true=%i %i\n",true,static_cast<LFSTK_toggleButtonClass*>(p)->LFSTK_getValue());
 	hsb->LFSTK_setValue(holdval);
 
-	holdval=vsb->LFSTK_getValue();
-	vsb->reverse=static_cast<LFSTK_toggleButtonClass*>(p)->LFSTK_getValue();;
-	vsb->LFSTK_setValue(holdval);
+	vsb->LFSTK_setActive(!(static_cast<LFSTK_toggleButtonClass*>(p)->LFSTK_getValue()));
+	//vsb->LFSTK_clearWindow();
+//	holdval=vsb->LFSTK_getValue();
+//	vsb->reverse=static_cast<LFSTK_toggleButtonClass*>(p)->LFSTK_getValue();
+//	vsb->LFSTK_setValue(holdval);
 	return(true);
 }
 

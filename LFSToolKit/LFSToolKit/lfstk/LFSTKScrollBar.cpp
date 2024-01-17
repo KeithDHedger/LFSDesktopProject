@@ -285,11 +285,45 @@ bool LFSTK_scrollBarClass::LFSTK_getAllowKBControl(void)
 	return(this->allowKBControl);
 }
 
+
+/**
+* Set active state.
+* \param nool active.
+*/
+void LFSTK_scrollBarClass::LFSTK_setActive(bool active)
+{
+	this->thumb->LFSTK_setActive(active);
+	this->upLeft->LFSTK_setActive(active);
+	this->downRight->LFSTK_setActive(active);
+	this->thumb->LFSTK_setCanDrag(active);
+	this->thumb->LFSTK_setIgnores(!active,false);
+	this->isActive=active;
+	if(active==true)
+		{
+			this->thumb->LFSTK_setMouseCallBack(this->startThumbDrag,this->thumbClicked,(void*)this);
+			this->gadgetDetails.state=NORMALCOLOUR;
+			this->gadgetDetails.colour=&this->newGadgetBGColours.at(NORMALCOLOUR);
+		}
+
+	this->LFSTK_clearWindow();
+}
+
 /**
 * Clear the gadget window to the appropriate state.
 */
 void LFSTK_scrollBarClass::LFSTK_clearWindow()
 {
+//this->thumb->LFSTK_setActive(this->isActive);
+//this->thumb->LFSTK_setCanDrag(!this->isActive);
+//if(this->startDrag=this->isActive==false)
+//{
+//	this->startDrag=false;
+//	this->thumb->LFSTK_clearWindow();
+//	//return;
+//}
+//	if(this->isActive==false)
+//		{
+//		}
 	if(this->startDrag==true)
 		this->setState(false);
 
@@ -503,6 +537,8 @@ bool LFSTK_scrollBarClass::thumbClicked(void *object,void* userdata)
 bool LFSTK_scrollBarClass::startThumbDrag(void *object,void* userdata)
 {
 	LFSTK_scrollBarClass	*sb=NULL;
+//	if(sb->isActive==false)
+//		return(true);
 	if(userdata!=NULL)
 		{
 			sb=static_cast<LFSTK_scrollBarClass*>(userdata);
