@@ -296,7 +296,6 @@ void LFSTK_scrollBarClass::LFSTK_setActive(bool active)
 	this->upLeft->LFSTK_setActive(active);
 	this->downRight->LFSTK_setActive(active);
 	this->thumb->LFSTK_setCanDrag(active);
-	this->thumb->LFSTK_setIgnores(!active,false);
 	this->isActive=active;
 	if(active==true)
 		{
