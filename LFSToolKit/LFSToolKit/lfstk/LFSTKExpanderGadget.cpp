@@ -176,7 +176,7 @@ void LFSTK_ExpanderGadgetClass::LFSTK_resetGadgets(void)
 void LFSTK_ExpanderGadgetClass::LFSTK_updateGadget(geometryStruct oldgeom)
 {
 	geometryStruct			oldgadggeom;
-	const geometryStruct	*wgeom=this->wc->LFSTK_getWindowGeom();
+	const geometryStruct		*wgeom=this->wc->LFSTK_getWindowGeom();
 
 	int						diffw=wgeom->w-oldgeom.w;
 	int						diffh=wgeom->h-oldgeom.h;
@@ -194,6 +194,8 @@ void LFSTK_ExpanderGadgetClass::LFSTK_updateGadget(geometryStruct oldgeom)
 	if(this->stretchY==true)
 		sh=oldgadggeom.h+diffh;
 
+	//this->wc->app->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->wc->window,this->wc->visual,&this->wc->sfc,&this->wc->cr,sw,sh);
+	//this->wc->app->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->window,this->visual,&this->sfc,&this->cr,sw,sh);
 	this->LFSTK_resizeWindow(sw,sh);
 
 	switch(this->lockY)
@@ -229,6 +231,9 @@ void LFSTK_ExpanderGadgetClass::LFSTK_updateGadget(geometryStruct oldgeom)
 			}
 	this->LFSTK_moveGadget(newx,newy);
 	this->updateInternalGadgets(oldgadggeom);
+	//this->wc->LFSTK_clearWindow();
+//void LFSTK_lib::LFSTK_setCairoSurface(Display *display,Window window,Visual *visual,cairo_surface_t **sfc,cairo_t **cr,int width,int height)
+
 }
 
 /**

@@ -32,7 +32,6 @@ LFSTK_listGadgetClass::~LFSTK_listGadgetClass()
 	delete this->labelsArray;
 	delete this->listDataArray;
 	delete[] this->data;
-	//XSync(this->wc->app->display,true);
 }
 
 bool LFSTK_listGadgetClass::setFocusToList(void *object,void* userdata)
@@ -194,7 +193,7 @@ void LFSTK_listGadgetClass::LFSTK_updateList(void)
 							if(this->listDataArray->at(j+this->listOffset).imageType==FILETHUMB)
 								this->labelsArray->at(j)->LFSTK_setImageFromPath(this->listDataArray->at(j+this->listOffset).imagePath,MENU,true);
 							this->labelsArray->at(j)->LFSTK_showGadget();
-							this->labelsArray->at(j)->LFSTK_clearWindow();
+							//this->labelsArray->at(j)->LFSTK_clearWindow();
 						}
 				}
 		}
@@ -224,6 +223,24 @@ void LFSTK_listGadgetClass::setNavSensitive(void)
 }
 
 /**
+* Reset list items highlight.
+*
+*/
+bool LFSTK_listGadgetClass::labelExit(LFSTK_gadgetClass *object,void* userdata)
+{
+	LFSTK_listGadgetClass	*list=static_cast<LFSTK_listGadgetClass*>(userdata);
+
+	for(int j=0;j<list->labelsArray->size();j++)
+		{
+			list->labelsArray->at(j)->gadgetDetails.colour=&list->labelsArray->at(j)->newGadgetBGColours.at(NORMALCOLOUR);
+			list->labelsArray->at(j)->gadgetDetails.state=NORMALCOLOUR;
+			list->labelsArray->at(j)->inWindow=false;
+			list->labelsArray->at(j)->LFSTK_clearWindow();
+		}
+	return(true);
+}
+
+/**
 * Reset list size on window, not needed by user.
 *
 */
@@ -246,6 +263,7 @@ void LFSTK_listGadgetClass::LFSTK_resetListHeight(int newheight)
 					button->LFSTK_setTile(NULL,0);
 					button->LFSTK_setFontString(this->monoFontString);
 					button->LFSTK_setCairoFontData();
+					button->LFSTK_setMouseMoveCallBack(NULL,this->labelExit,this);
 
 					this->labelsArray->push_back(button);
 					button->LFSTK_setGadgetColours(GADGETBG,this->labelsArray->at(0)->newGadgetBGColours.at(NORMALCOLOUR).name,
@@ -352,11 +370,8 @@ void LFSTK_listGadgetClass::freeList(void)
 {
 	for(int j=0;j<this->listDataArray->size();j++)
 		{
-			//freeAndNull(&this->listDataArray->at(j).label);
 			if((this->listDataArray->at(j).imageType==CAIROTHUMB) && (this->listDataArray->at(j).surface!=NULL) && (this->freeCairoImages==true))
 				cairo_surface_destroy(this->listDataArray->at(j).surface);
-			//if((this->listDataArray->at(j).imageType==FILETHUMB) && (this->listDataArray->at(j).imagePath.length()>0))
-			//	freeAndNull(&this->listDataArray->at(j).imagePath);
 		}
 	this->listDataArray->clear();
 }
@@ -402,10 +417,16 @@ bool LFSTK_listGadgetClass::mouseUp(XButtonEvent *e)
 {
 	XSetInputFocus(this->wc->app->display,this->window,RevertToParent,CurrentTime);
 	if(e->button==Button5)
-		this->scrollBar->LFSTK_scrollByLine(false);
+		{
+			this->scrollBar->LFSTK_scrollByLine(false);
+			XSync(this->wc->app->display,true);
+		}
 	if(e->button==Button4)
-		this->scrollBar->LFSTK_scrollByLine(true);
-	return(true);
+		{
+			this->scrollBar->LFSTK_scrollByLine(true);
+			XSync(this->wc->app->display,true);
+		}
+	return(true);		
 }
 
 /**

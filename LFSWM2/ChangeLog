@@ -1,4 +1,6 @@
 1.0.1
+Set menu labels to reflect changing window state.
+Added sticky option to menu list.
 Better motif hints detection.
 Fixed setting wrong window property whene dragging window to nex/prev desktop.
 Fixed telling root window to change desktops.

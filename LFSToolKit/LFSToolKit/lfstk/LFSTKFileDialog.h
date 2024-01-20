@@ -120,6 +120,8 @@ class LFSTK_fileDialogClass
 		bool						isADir(const char *path);
 //callbacks
 		static bool				select(void *object,void* userdata);
+		geometryStruct			dialogGeom;
+
 };
 
 #endif

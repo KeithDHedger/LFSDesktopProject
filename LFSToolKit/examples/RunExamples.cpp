@@ -84,7 +84,8 @@ int main(int argc, char **argv)
 {
 	XEvent					event;
 	int						sy=0;
-	std::vector<hitRect>	hrs;
+	std::vector<hitRect>		hrs;
+	bool						useliveupdate=true;
 	dbg="";
 
 	apc=new LFSTK_applicationClass();
@@ -162,6 +163,7 @@ int main(int argc, char **argv)
 	multi->stretchX=true;
 	multi->stretchY=true;
 	multi->gadgetStretch=STRETCH;
+	multi->liveUpdate=useliveupdate;
 
 //lineedit
 	hrs.push_back({0,internalsy,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Line Edit",0,0,1,1)});
@@ -248,6 +250,8 @@ int main(int argc, char **argv)
 	multi->stretchX=true;
 	multi->lockY=LOCKTOBOTTOM;
 	multi->gadgetStretch=STRETCH;
+	multi->liveUpdate=useliveupdate;
+
 
 //line
 	hrs.push_back({0,0,DIALOGWIDTH,2,NULL});
@@ -262,6 +266,7 @@ int main(int argc, char **argv)
 //quit
 	multi=new LFSTK_ExpanderGadgetClass(wc,"",DIALOGMIDDLE-HALFGADGETWIDTH,sy+12,GADGETWIDTH,GADGETHITE);
 	multi->lockY=LOCKTOBOTTOM;
+	multi->liveUpdate=useliveupdate;
 
 	hrs.push_back({0,0,GADGETWIDTH,GADGETHITE,new LFSTK_buttonClass(wc,"Quit",0,0,1,1)});
 	hrs.back().gadget->LFSTK_setMouseCallBack(NULL,doQuit,NULL);

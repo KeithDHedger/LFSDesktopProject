@@ -1,4 +1,6 @@
 0.2.0
+Fixed initing window to be above/below/normal.
+Added file chooser.
 Added include alpha switch to lfscolourchooser.
 Added setting desktop names to lfsdesktopprefs.
 Apply in dockprefs kills all docks.

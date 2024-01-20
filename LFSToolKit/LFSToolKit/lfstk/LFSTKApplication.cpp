@@ -207,6 +207,10 @@ void LFSTK_applicationClass::LFSTK_addWindow(windowInitStruct *wi,const char *na
 	this->windows->push_back({new LFSTK_windowClass(win,this),false,false});
 	if(this->windows->size()==1)
 		this->mainWindow=this->windows->back().window;
+	if(win->level==ABOVEALL)
+		this->windows->back().window->LFSTK_setKeepAbove(true);
+	if(win->level==BELOWALL)
+		this->windows->back().window->LFSTK_setKeepBelow(true);
 	delete win;
 }
 

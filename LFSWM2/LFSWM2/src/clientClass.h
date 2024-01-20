@@ -26,11 +26,15 @@
 #include <X11/extensions/Xrender.h>
 #include <X11/extensions/shape.h>
 
-class LFSWM2_Class;
 #include "lfswm2Class.h"
 
 #define SKIPTIME 10
 #define MAXCONFIGCNT 8
+
+static const char	*menuItemlabels[]={"Maximize","Minimize","Shade","Fullscreen","--","On Top","On Bottom","On All Desks","--","Fast Resize","Live Resize","--","Close","--","About",NULL};
+static const char	*altMenuitemlabels[]={"Un-Maximize","Un-Minimize","Un-Shade","Un-Fullscreen","--","Not On Top","Not On Bottom","Only This Desk","--","Fast Resize","Live Resize","--","Close","--","About",NULL};
+
+enum {MAXLABEL=0,MINLABEL,SHADELABEL,FSLABEL,PASS1,ONTOPLABEL,ONBOTTOMLABEL,ONALLDESKSLABEL,PASS2,FASTSIZELABEL,LIVESIZELABEL,PASS3,CLOSELABEL,PASS4,ABOUTLABEL,NUMOFMENUS};
 
 class LFSWM2_clientClass
 {
@@ -49,6 +53,9 @@ class LFSWM2_clientClass
 		Window			frameWindow=None;
 		Window			transientFor=None;
 		GC				frameGC=None;
+
+		//bool				useAlternate=false;
+		std::vector<std::string>	menuNames;
 
 		std::string		name="";
 		int				windowType=-1;

@@ -347,6 +347,7 @@ void LFSTK_windowClass::LFSTK_clearWindow(bool cleargadgets)
 
 	if(this->isActive==false)
 		state=INACTIVECOLOUR;
+
 	if(this->useTile==true)
 		{
 			cairo_save(this->cr);
@@ -354,6 +355,7 @@ void LFSTK_windowClass::LFSTK_clearWindow(bool cleargadgets)
 				cairo_set_source(this->cr,this->pattern);
 				cairo_set_operator(this->cr,CAIRO_OPERATOR_SOURCE);
 				cairo_paint(this->cr);
+				cairo_surface_flush (this->sfc);
 			cairo_restore(this->cr);
 		}
 	else
@@ -378,9 +380,9 @@ void LFSTK_windowClass::LFSTK_clearWindow(bool cleargadgets)
 void LFSTK_windowClass::LFSTK_resizeWindow(int w,int h,bool tellx)
 {
 	this->setWindowGeom(0,0,w,h,WINDSETWH);
- 	this->globalLib->LFSTK_setCairoSurface(this->app->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
 	if(tellx==true)
 		XResizeWindow(this->app->display,this->window,w,h);
+ 
   	this->globalLib->LFSTK_setCairoSurface(this->app->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_clearWindow(true);
 }
@@ -870,8 +872,8 @@ LFSTK_windowClass::LFSTK_windowClass(windowInitStruct *wi,LFSTK_applicationClass
 	this->gadgetMap.clear();
 	this->x=wi->x;
 	this->y=wi->y;
-	this->x=wi->w;
-	this->y=wi->h;
+	this->w=wi->w;
+	this->h=wi->h;
 }
 
 /**
@@ -1470,6 +1472,7 @@ static	geometryStruct	oldwindowGeom{0,0,0,0};
 int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 {
 	int	retval=0;
+
 	switch(event->type)
 		{			
 			case ButtonPress:
@@ -1528,6 +1531,7 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 
 			case ConfigureNotify:
 				{
+				//fprintf(stderr,"evcnt=%i\n",eventcnt);
 					Window			w;
 					Window			root_return,child_return;
 					int				root_x_return,root_y_return;
@@ -1541,10 +1545,17 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 							flag=true;
 						}
 					if(event->xconfigure.send_event==true)
-						this->LFSTK_resizeWindow(event->xconfigure.width,event->xconfigure.height,false);
-					this->LFSTK_clearWindow();
+						{
+							if(((event->xconfigure.width-this->windowGeom.w)>2) || ((event->xconfigure.height-this->windowGeom.h)>2))
+								{
+									this->LFSTK_resizeWindow(event->xconfigure.width,event->xconfigure.height,false);
+									this->LFSTK_clearWindow();
+									return(0);
+							}
+						}
 
-					if((this->windowGeom.w!=oldwindowGeom.w) ||(this->windowGeom.h!=oldwindowGeom.h))
+//TODO//dont like this!!
+					if((this->windowGeom.w!=oldwindowGeom.w) ||(this->windowGeom.h!=oldwindowGeom.h) && ((this->windowGeom.h!=0) && (this->windowGeom.w!=0)))
 						{
 							if(!this->gadgetMap.empty())
 								{
@@ -1558,10 +1569,10 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 															LFSTK_ExpanderGadgetClass *gadget=static_cast<LFSTK_ExpanderGadgetClass*>(ml->gadget);
 															if((mask_return==0) || (gadget->liveUpdate==true))
 																{
+																	XEvent discard;
+																	while(XCheckMaskEvent(this->app->display,StructureNotifyMask,&discard)==true);
 																	gadget->LFSTK_updateGadget(oldwindowGeom);
 																	flag=false;
-																	XEvent discard;
-																	while(XCheckMaskEvent(this->app->display,EnterNotify|LeaveNotify|MotionNotify|FocusIn|FocusOut|ConfigureNotify,&discard)==true);
 																}
 														}
 												}
@@ -1605,6 +1616,8 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 				}
 				break;
 		}
+
+	this->LFSTK_clearWindow();
 	return(retval);
 }
 

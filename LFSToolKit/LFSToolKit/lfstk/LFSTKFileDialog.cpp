@@ -71,6 +71,12 @@ void LFSTK_fileDialogClass::getFileList(void)
 	this->fileListCnt=this->fc->LFSTK_getDataCount();
 	this->fileListGadget->freeCairoImages=false;
 	this->fileListGadget->LFSTK_freeList();
+	if(fileListGadget->maxShowing>this->fileListCnt)
+		this->fileListGadget->scrollBar->LFSTK_setActive(false);
+	else
+		this->fileListGadget->scrollBar->LFSTK_setActive(true);
+	
+	
 	for(int j=0;j<this->fileListCnt;j++)
 		{
 			ls.label=this->fc->data.at(j).name.c_str();
@@ -126,7 +132,9 @@ void LFSTK_fileDialogClass::getFileList(void)
 			fileListGadget->LFSTK_appendToList(ls);
 		}
 	this->fileListGadget->LFSTK_updateList();
+	this->fileListGadget->LFSTK_selectByIndex(0);
 }
+
 
 /**
 * Set select dialog type.
@@ -170,7 +178,7 @@ void LFSTK_fileDialogClass::LFSTK_setWorkingDir(std::string dir)
 
 	this->getFileList();
 	this->fileListGadget->LFSTK_clearWindow();
-	this->dirEdit->LFSTK_setBuffer(this->currentDir.c_str());
+	this->dirEdit->LFSTK_setBuffer(this->currentDir);
 }
 
 /**
@@ -216,12 +224,14 @@ std::string LFSTK_fileDialogClass::LFSTK_getCurrentPath(void)
 */
 LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const char *label,const char *startdir,bool type,const char *recentname)
 {
-	int					hite=600;
 	LFSTK_labelClass		*spacer;
 	int					midprev;
-	int					yoffset=BORDER+PREVIEWWIDTH;
+	windowInitStruct		*win;
+	int					hite=600;
 	int					yspacing=0;
-	int					dwidth=DIALOGWIDTH+PREVIEWWIDTH;
+	int					yoffset=BORDER+PREVIEWWIDTH;
+	unsigned				dwidth=DIALOGWIDTH+PREVIEWWIDTH;
+
 	this->wc=parentwc;
 	this->dialog=NULL;
 	this->fileListCnt=0;
@@ -245,14 +255,16 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	if(type==FOLDERDIALOG)
 		dwidth=DIALOGWIDTH;
 
-	windowInitStruct	*win;
 
 	win=this->wc->app->LFSTK_getDefaultWInit();
 	win->windowName=label;
 	win->w=dwidth;
 	win->h=hite;
 	win->wc=parentwc;
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
 	this->dialog=new LFSTK_windowClass(win,parentwc->app);
+
+	this->dialogGeom={0,0,dwidth,600,0};
 	delete win;
 
 //find files
@@ -284,7 +296,7 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 //butons
 	spacer=new LFSTK_labelClass(this->dialog,"--",0,yspacing,DIALOGWIDTH+PREVIEWWIDTH,8,NorthWestGravity);
 	yspacing+=GADGETHITE;
-	this->buttonCancel=new LFSTK_buttonClass(this->dialog,"Cancel",BORDER,yspacing,GADGETWIDTH,GADGETHITE,SouthWestGravity);
+	this->buttonCancel=new LFSTK_buttonClass(this->dialog,"Cancel",BORDER,yspacing,GADGETWIDTH,GADGETHITE,NorthWestGravity);
 	if(this->dialogType==FOLDERDIALOG)
 		this->buttonHidden=new LFSTK_buttonClass(this->dialog,"Hidden",DIALOGMIDDLE-HALFGADGETWIDTH,yspacing,GADGETWIDTH,GADGETHITE,NorthWestGravity);
 	else
@@ -327,14 +339,12 @@ bool LFSTK_fileDialogClass::LFSTK_isValid(void)
 
 	if(this->dialogType==FILEDIALOG)
 		{
-			//if((this->currentFile!=NULL) && (this->currentDir!=NULL))
-			if((this->currentFile!="") && (this->currentDir!=""))
+			if((this->currentFile.empty()==false) && (this->currentDir.empty()==false))
 				return(true);
 		}
 	else
 		{
-			//if(this->currentDir!=NULL)
-			if(this->currentDir!="")
+			if(this->currentDir.empty()==false)
 				return(true);
 		}
 	return(false);
@@ -402,25 +412,25 @@ void LFSTK_fileDialogClass::setPreviewData(bool fromlist)
 
 	this->wc->globalLib->LFSTK_getFileInfo(filepath.c_str(),&info);
 	this->previewMimeType->LFSTK_setLabel(info.mimeType.c_str());
-	if((info.mimeType.compare("image/jpeg")==0) || (info.mimeType.compare("image/png")==0))
-		this->tux->LFSTK_setImageFromPath(filepath.c_str(),PRESERVEASPECT,true);
-	else
-		this->tux->LFSTK_setImageFromPath(info.iconPath.c_str(),PRESERVEASPECT,true);
 
+	if((info.mimeType.compare("image/jpeg")==0) || (info.mimeType.compare("image/png")==0))
+		this->tux->LFSTK_setImageFromPath(filepath,PRESERVEASPECT,true);
+	else
+		this->tux->LFSTK_setImageFromPath(info.iconPath,PRESERVEASPECT,true);
 	this->previewFileName->LFSTK_setLabel(this->LFSTK_getCurrentFileSelection().c_str());
 	previewlabel+="Size:"+std::to_string(info.fileSize);
 	this->previewSize->LFSTK_setLabel(previewlabel.c_str());
     infostream << "Mode:"<<std::setfill('0') << std::setw(3)<<std::oct << info.fileMode;
-    this->previewMode->LFSTK_setLabel(infostream.str().c_str());
+    this->previewMode->LFSTK_setLabel(infostream.str());
 
 	if(info.isLink==true)
 		this->previewIsLink->LFSTK_setLabel("Symlink");
 	else
 		this->previewIsLink->LFSTK_setLabel("");
 
-	this->wc->LFSTK_clearWindow();
+//TODO//HMMMmmmmmmm
+  	this->dialog->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->dialog->window,this->dialog->visual,&this->dialog->sfc,&this->dialog->cr,this->dialogGeom.w,this->dialogGeom.h);
 	this->tux->LFSTK_clearWindow();
-	this->wc->LFSTK_clearWindow();
 }
 
 /**
@@ -451,19 +461,18 @@ void LFSTK_fileDialogClass::resizeWindow(int w,int h)
 void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 {
 	XEvent			event;
-	unsigned		lasttime=0;
-	unsigned		lastdiritem=0;
-	unsigned		lastfileitem=0;
+	unsigned			lasttime=0;
+	unsigned			lastdiritem=0;
+	unsigned			lastfileitem=0;
 	geometryStruct	geomdir;
 	geometryStruct	geomfile;
 	pointStruct		pt;
-	char			*lastdir=NULL;
+	char				*lastdir=NULL;
 
 	this->apply=false;
 	if(this->dialog!=NULL)
 		{
-			this->dirEdit->LFSTK_setBuffer(this->currentDir.c_str());
-			this->LFSTK_setWorkingDir(this->currentDir.c_str());
+			this->LFSTK_setWorkingDir(this->currentDir);
 			this->dialog->LFSTK_showWindow();
 			this->dialog->LFSTK_setKeepAbove(true);
 			this->dialog->LFSTK_setTransientFor(this->wc->window);
@@ -477,7 +486,7 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 
 					if(this->dialog->LFSTK_handleWindowEvents(&event)<0)
 						this->mainLoop=false;
-
+					
 					if(ml==NULL)
 						continue;
 
@@ -611,9 +620,9 @@ bool LFSTK_fileDialogClass::select(void *object,void* userdata)
 	realpath=fd->wc->globalLib->LFSTK_getRealPath(fd->LFSTK_getCurrentDir()+"/"+list->LFSTK_getSelectedLabel());
 
 	if(fd->isADir(realpath.c_str())==false)
-		fd->dirEdit->LFSTK_setBuffer(realpath.c_str());
-
+		fd->dirEdit->LFSTK_setBuffer(realpath);
 	fd->setPreviewData(true);
+
 	if(list->isDoubleClick==true)
 		{											
 			fd->dirEdit->LFSTK_setBuffer(realpath.c_str());

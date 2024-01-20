@@ -93,6 +93,7 @@ int main(int argc, char **argv)
 	multi->lockY=LOCKTOBOTTOM;
 	multi->lockX=LOCKTOCENTRE;
 	multi->gadgetStretch=STRETCH;
+	multi->LFSTK_setHitRects(hrs);
 
 //vertical
 //	hrs.push_back({0,0,GADGETWIDTH*2,GADGETHITE,NULL});

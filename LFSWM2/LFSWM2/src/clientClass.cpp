@@ -22,9 +22,13 @@
 
 LFSWM2_clientClass::LFSWM2_clientClass(LFSWM2_Class *mainclass,Window id)
 {
+	int	menucnt=0;
+
 	this->mainClass=mainclass;
 	this->picFormat=XRenderFindStandardFormat(this->mainClass->display,PictStandardRGB24);
 	this->pa.subwindow_mode=IncludeInferiors;
+	while(menuItemlabels[menucnt]!=NULL)
+		menuNames.push_back(menuItemlabels[menucnt++]);
 }
 
 LFSWM2_clientClass::~LFSWM2_clientClass(void)
@@ -32,44 +36,43 @@ LFSWM2_clientClass::~LFSWM2_clientClass(void)
 	XWindowAttributes	x_window_attrs;
 
 	this->mainClass->LFSWM2_pushXErrorHandler();
-		this->mainClass->mainWindowClass->LFSWM2_freeHints(this->windowHints);
-		this->mainClass->mainWindowClass->LFSWM2_setClientList(this->contentWindow,false);
+	this->mainClass->mainWindowClass->LFSWM2_freeHints(this->windowHints);
+	this->mainClass->mainWindowClass->LFSWM2_setClientList(this->contentWindow,false);
 
-	//if(this->frameWindow!=None)
-		this->mainClass->mainWindowClass->LFSWM2_deleteClientEntry(this->frameWindow);
-		this->mainClass->mainWindowClass->LFSWM2_deleteClientEntry(this->contentWindow);
+	this->mainClass->mainWindowClass->LFSWM2_deleteClientEntry(this->frameWindow);
+	this->mainClass->mainWindowClass->LFSWM2_deleteClientEntry(this->contentWindow);
 
-		if(this->isBorderless==true)
-			{
-				XGetWindowAttributes(this->mainClass->display,this->frameWindow,&x_window_attrs);
-				XReparentWindow(this->mainClass->display,this->contentWindow,this->mainClass->rootWindow,x_window_attrs.x,x_window_attrs.y);
-			}
-		else
-			{
-				if(this->transientFor==None)
-					XReparentWindow(this->mainClass->display,this->contentWindow,this->mainClass->rootWindow,this->frameWindowRect.x+this->mainClass->leftSideBarSize,frameWindowRect.y+this->mainClass->titleBarSize);
-				else
-					XReparentWindow(this->mainClass->display,this->contentWindow,this->mainClass->rootWindow,-10000,-1000);
-			}
+	if(this->isBorderless==true)
+		{
+			XGetWindowAttributes(this->mainClass->display,this->frameWindow,&x_window_attrs);
+			XReparentWindow(this->mainClass->display,this->contentWindow,this->mainClass->rootWindow,x_window_attrs.x,x_window_attrs.y);
+		}
+	else
+		{
+			if(this->transientFor==None)
+				XReparentWindow(this->mainClass->display,this->contentWindow,this->mainClass->rootWindow,this->frameWindowRect.x+this->mainClass->leftSideBarSize,frameWindowRect.y+this->mainClass->titleBarSize);
+			else
+				XReparentWindow(this->mainClass->display,this->contentWindow,this->mainClass->rootWindow,-10000,-1000);
+		}
 
-		XRemoveFromSaveSet(this->mainClass->display,this->contentWindow);	
-		XUnmapWindow(this->mainClass->display,this->frameWindow);
+	XRemoveFromSaveSet(this->mainClass->display,this->contentWindow);	
+	XUnmapWindow(this->mainClass->display,this->frameWindow);
 
-		if(resizeWindow!=None)
-			XDestroyWindow(this->mainClass->display,this->resizeWindow);
+	if(resizeWindow!=None)
+		XDestroyWindow(this->mainClass->display,this->resizeWindow);
 
-		if(this->closeControlStruct.controlGC!=None)
-			XFreeGC(this->mainClass->display,this->closeControlStruct.controlGC);
-		if(this->maximizeControlStruct.controlGC!=None)
-			XFreeGC(this->mainClass->display,this->maximizeControlStruct.controlGC);
-		if(this->minimizeControlStruct.controlGC!=None)
-			XFreeGC(this->mainClass->display,this->minimizeControlStruct.controlGC);
-		if(this->shadeControlStruct.controlGC!=None)
-			XFreeGC(this->mainClass->display,this->shadeControlStruct.controlGC);
-		if(this->menuControlStruct.controlGC!=None)
-			XFreeGC(this->mainClass->display,this->menuControlStruct.controlGC);
-		if(this->frameGC!=None)
-			XFreeGC(this->mainClass->display,this->frameGC);
+	if(this->closeControlStruct.controlGC!=None)
+		XFreeGC(this->mainClass->display,this->closeControlStruct.controlGC);
+	if(this->maximizeControlStruct.controlGC!=None)
+		XFreeGC(this->mainClass->display,this->maximizeControlStruct.controlGC);
+	if(this->minimizeControlStruct.controlGC!=None)
+		XFreeGC(this->mainClass->display,this->minimizeControlStruct.controlGC);
+	if(this->shadeControlStruct.controlGC!=None)
+		XFreeGC(this->mainClass->display,this->shadeControlStruct.controlGC);
+	if(this->menuControlStruct.controlGC!=None)
+		XFreeGC(this->mainClass->display,this->menuControlStruct.controlGC);
+	if(this->frameGC!=None)
+		XFreeGC(this->mainClass->display,this->frameGC);
 
 	this->mainClass->LFSWM2_popXErrorHandler();
 }
@@ -499,25 +502,35 @@ void LFSWM2_clientClass::LFSWM2_shadeWindow(void)
 
 bool LFSWM2_clientClass::wmCB(void *p,void* ud)
 {
-	LFSWM2_clientClass *cc=static_cast<LFSWM2_clientClass*>(ud);
+	int					stringnum=-1;
+	bool					usealt=false;
+	LFSWM2_clientClass	*cc=static_cast<LFSWM2_clientClass*>(ud);
+	std::string			comp=static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel();
 
-	//if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Maximize")==0)
-	if(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().compare("Maximize")==0)
-		cc->LFSWM2_maxWindow();
-	//if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Minimize")==0)
-	if(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().compare("Minimize")==0)
+	if(LFSTK_UtilityClass::LFSTK_strStr(comp,cc->menuNames.at(MAXLABEL)).empty()==false)
+		{
+			cc->LFSWM2_maxWindow();
+			usealt=cc->isMaximized;
+			stringnum=MAXLABEL;
+		}
+
+	if(LFSTK_UtilityClass::LFSTK_strStr(comp,cc->menuNames.at(MINLABEL)).empty()==false)
 		cc->LFSWM2_minWindow();
-	//if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Shade")==0)
-	if(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().compare("Shade")==0)
-		cc->LFSWM2_shadeWindow();
-	//if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Fullscreen")==0)
-	if(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().compare("Fullscreen")==0)
+
+	if(LFSTK_UtilityClass::LFSTK_strStr(comp,cc->menuNames.at(SHADELABEL)).empty()==false)
+		{
+			cc->LFSWM2_shadeWindow();
+			usealt=cc->isShaded;
+			stringnum=SHADELABEL;
+		}
+
+	if(LFSTK_UtilityClass::LFSTK_strStr(comp,cc->menuNames.at(FSLABEL)).empty()==false)
 		{
 			cc->LFSWM2_fullscreenWindow(true,true);
 			cc->mainClass->mainWindowClass->LFSWM2_addState(cc->contentWindow,cc->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_FULLSCREEN")));
 		}
-	//if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"On Top")==0)
-	if(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().compare("On Top")==0)
+
+	if(LFSTK_UtilityClass::LFSTK_strStr(comp,cc->menuNames.at(ONTOPLABEL)).empty()==false)
 		{
 			if(cc->onTop==false)
 				{
@@ -525,11 +538,15 @@ bool LFSWM2_clientClass::wmCB(void *p,void* ud)
 					cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
 				}
 			else
-				cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
+				{
+					cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
+				}
 			cc->mainClass->mainEventClass->LFSWM2_restack();
+			usealt=!cc->onTop;
+			stringnum=ONTOPLABEL;
 		}
-	//if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"On Bottom")==0)
-	if(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().compare("On Bottom")==0)
+
+	if(LFSTK_UtilityClass::LFSTK_strStr(comp,cc->menuNames.at(ONBOTTOMLABEL)).empty()==false)
 		{
 			if(cc->onBottom==false)
 				{
@@ -539,25 +556,42 @@ bool LFSWM2_clientClass::wmCB(void *p,void* ud)
 			else
 				cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
 			cc->mainClass->mainEventClass->LFSWM2_restack();
+			usealt=!cc->onBottom;
+			stringnum=ONBOTTOMLABEL;
 		}
 
-	//if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Close")==0)
+	if(LFSTK_UtilityClass::LFSTK_strStr(comp,cc->menuNames.at(ONALLDESKSLABEL)).empty()==false)
+		{
+			cc->visibleOnAllDesks=!cc->visibleOnAllDesks;
+			if(cc->visibleOnAllDesks==true)
+				{
+					cc->mainClass->mainWindowClass->LFSWM2_addState(cc->contentWindow,cc->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_STICKY")));
+				}
+			else
+				cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_STICKY")));
+			cc->mainClass->mainEventClass->LFSWM2_restack();
+			usealt=cc->visibleOnAllDesks;
+			stringnum=ONALLDESKSLABEL;
+		}
+
 	if(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().compare("Close")==0)
 		cc->LFSWM2_sendCloseWindow();
-	//if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Fast Resize")==0)
 	if(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().compare("Fast Resize")==0)
 		cc->resizeMode=FASTRESIZE;
-	//if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Live Resize")==0)
 	if(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().compare("Live Resize")==0)
 		cc->resizeMode=LIVERESIZE;
-//	if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Scale Resize")==0)
-//		cc->resizeMode=SCALERESIZE;
 
-	//if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"About")==0)
 	if(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().compare("About")==0)
 		system("lfsabout &");
 
 	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
+	if(stringnum!=-1)
+		{
+			if(usealt==true)
+				cc->menuNames.at(stringnum)=altMenuitemlabels[stringnum];
+			else
+				cc->menuNames.at(stringnum)=menuItemlabels[stringnum];
+		}
 	return(true);	
 }
 
@@ -566,10 +600,6 @@ void LFSWM2_clientClass::showWMMenu(int x,int y)
 	LFSTK_applicationClass	*apc=NULL;
 	LFSTK_windowClass		*wc=NULL;
 	LFSTK_menuClass			*menu=NULL;
-
-	int			NUMMENUS=14;
-//	const char	*menuitemlabels[]={"Maximize","Minimize","Shade","Fullscreen","--","On Top","On Bottom","--","Fast Resize","Live Resize","Scale Resize","Close","--","About"};
-	const char	*menuitemlabels[]={"Maximize","Minimize","Shade","Fullscreen","--","On Top","On Bottom","--","Fast Resize","Live Resize","--","Close","--","About"};
 
 	apc=new LFSTK_applicationClass();
 	apc->LFSTK_addWindow(NULL,"");
@@ -580,12 +610,11 @@ void LFSWM2_clientClass::showWMMenu(int x,int y)
 	wc->LFSTK_resizeWindow(1,1,true);
 	wc->LFSTK_hideWindow();
 
-	infoDataStruct	**mms=new infoDataStruct*[NUMMENUS];
-	for (int j=0; j<NUMMENUS; j++)
+	infoDataStruct	**mms=new infoDataStruct*[NUMOFMENUS];
+	for (int j=0; j<NUMOFMENUS; j++)
 		{
 			mms[j]=new infoDataStruct;
-			//asprintf(&mms[j]->label,"%s",menuitemlabels[j]);
-			mms[j]->label=menuitemlabels[j];
+			mms[j]->label=this->menuNames.at(j);
 			mms[j]->hasSubMenu=false;
 			mms[j]->subMenus=NULL;
 			mms[j]->userData=(void*)this;
@@ -593,7 +622,7 @@ void LFSWM2_clientClass::showWMMenu(int x,int y)
 		}
 
 	menu->LFSTK_setMouseCallBack(NULL,wmCB,(void*)0x888);
-	menu->LFSTK_addMainMenus(mms,NUMMENUS);
+	menu->LFSTK_addMainMenus(mms,NUMOFMENUS);
 
 	menu->LFSTK_showMenu();
 

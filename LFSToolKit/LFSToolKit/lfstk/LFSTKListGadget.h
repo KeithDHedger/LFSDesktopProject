@@ -83,6 +83,7 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		static bool						selectKey(void *object,void* userdata);
 		static bool						scrollCB(void *object,void* userdata);
 		static bool						scrollListCB(void *object,void* userdata);
+		static bool						labelExit(LFSTK_gadgetClass *object,void* userdata);
 };
 
 #endif

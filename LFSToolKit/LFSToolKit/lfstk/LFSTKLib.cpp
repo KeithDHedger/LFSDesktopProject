@@ -818,6 +818,9 @@ unsigned long LFSTK_lib::LFSTK_getColourFromName(Display *display,Colormap cm,co
 */
 void LFSTK_lib::LFSTK_setCairoSurface(Display *display,Window window,Visual *visual,cairo_surface_t **sfc,cairo_t **cr,int width,int height)
 {
+	if((height<1) || (width<1))
+		return;
+
 	if(*sfc==NULL)
 		*sfc=cairo_xlib_surface_create(display,window,visual,width,height);
 	else

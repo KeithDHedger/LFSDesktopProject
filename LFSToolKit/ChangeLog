@@ -1,4 +1,7 @@
 0.6.1
+Improvements to expander gadget.
+Various dialog tweaks.
+Ignore spurious scroll events in list class.
 Fixed setting scrollbar inactive.
 LFSTK_oneLiner and LFSTK_runAndGet now handle std::strings in the arg list ( '%S' ).
 Added parsing group names in desktop file.
