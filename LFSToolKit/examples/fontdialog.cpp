@@ -17,17 +17,29 @@ exit $retval
 #include "../config.h"
 #include "lfstk/LFSTKGlobals.h"
 
+#define BOXLABEL		"LFSTKExample"
+
 LFSTK_applicationClass		*apc=NULL;
 LFSTK_windowClass			*wc=NULL;
 LFSTK_fontDialogClass		*fontdialog=NULL;
 
 int main(int argc, char **argv)
 {
+	windowInitStruct			*win;
 	const fontDataStruct		*fd;
 	const char				*bools[]={"false","true"};
 	
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,NULL,"LFSTKExample");//TODO//
+
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName=BOXLABEL;
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->level=ABOVEALL;
+	apc->LFSTK_addWindow(win,BOXLABEL);
+
+
+
+//	apc->LFSTK_addWindow(NULL,NULL,"LFSTKExample");//TODO//
 	wc=apc->mainWindow;
 
 	fontdialog=new LFSTK_fontDialogClass(wc,"Select Font",0,0,1,1,BUTTONGRAV);

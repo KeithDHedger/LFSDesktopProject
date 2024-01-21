@@ -1,4 +1,7 @@
 0.6.1
+Fixed expanding runexamples dialog.
+Set example lfsabout to dialog window type.
+Set lfsfontdialog class to dialog window type.
 Improvements to expander gadget.
 Various dialog tweaks.
 Ignore spurious scroll events in list class.

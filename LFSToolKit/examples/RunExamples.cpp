@@ -94,6 +94,10 @@ int main(int argc, char **argv)
 
 //info
 	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*4);
+	multi->stretchX=true;
+	multi->lockY=LOCKTOTOP;
+	multi->gadgetStretch=STRETCH;
+	multi->liveUpdate=useliveupdate;
 
 	hrs.push_back({0,sy,DIALOGWIDTH,GADGETHITE,NULL});
 	hrs.back().gadget=new LFSTK_labelClass(wc,BOXLABEL,0,0,1,1);
@@ -120,6 +124,7 @@ int main(int argc, char **argv)
 	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,sy,DIALOGWIDTH,GADGETHITE);
 	multi->stretchX=true;
 	multi->gadgetStretch=SPACESPREADX;
+	multi->liveUpdate=useliveupdate;
 
 	hrs.push_back({0,0,GADGETWIDTH,GADGETHITE,NULL});
 	useDbg=new LFSTK_toggleButtonClass(wc,"Use Valgrind",0,0,GADGETWIDTH,GADGETHITE,NorthWestGravity);
@@ -144,7 +149,9 @@ int main(int argc, char **argv)
 	sy+=HALFYSPACING+12;
 	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,sy,DIALOGWIDTH,GADGETHITE-11);
 	multi->stretchX=true;
+	multi->lockY=LOCKTOTOP;
 	multi->gadgetStretch=STRETCH;
+	multi->liveUpdate=useliveupdate;
 
 	hrs.push_back({0,0,DIALOGWIDTH,2,NULL});
 	hrs.back().gadget=new LFSTK_buttonClass(wc,"--",0,0,DIALOGWIDTH,2,BUTTONGRAV);

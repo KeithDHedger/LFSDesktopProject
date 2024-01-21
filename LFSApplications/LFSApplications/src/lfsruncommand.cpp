@@ -22,9 +22,10 @@
 #include <lfstk/LFSTKGlobals.h>
 
 #undef DIALOGWIDTH
-#define DIALOGWIDTH		800
+#define DIALOGWIDTH	800
 #define LISTHITE		GADGETHITE * 8
-#define MAXHISTORY		60
+#define MAXHISTORY	60
+#define BOXLABEL 	"Run Application"
 
 LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*wc=NULL;
@@ -75,6 +76,7 @@ bool select(void *object,void* ud)
 
 int main(int argc, char **argv)
 {
+	windowInitStruct		*win;
 	XEvent				event;
 	int 				sy=0;
 	LFSTK_buttonClass	*quit;
@@ -83,7 +85,15 @@ int main(int argc, char **argv)
 	char				*thist=NULL;
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,"Run Application");
+
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName=BOXLABEL;
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->level=ABOVEALL;
+	
+	apc->LFSTK_addWindow(win,BOXLABEL);
+
+//	apc->LFSTK_addWindow(NULL,"Run Application");
 	wc=apc->mainWindow;
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);

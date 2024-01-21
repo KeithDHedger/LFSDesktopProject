@@ -219,6 +219,8 @@ void LFSTK_fontDialogClass::buildDialog(void)
 	win->h=DIALOGHITE;
 	win->wc=this->wc;
 	win->windowName="Font Selector";
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->level=ABOVEALL;
 	this->dialog=new LFSTK_windowClass(win,this->wc->app);
 	delete win;
 
@@ -305,6 +307,7 @@ void LFSTK_fontDialogClass::buildDialog(void)
 LFSTK_fontDialogClass::LFSTK_fontDialogClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity)
 {
 	XSetWindowAttributes	wa;
+	windowInitStruct		*win;
 
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 

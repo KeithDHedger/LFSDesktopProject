@@ -1,4 +1,6 @@
 0.2.0
+Changed lfsruncommand to dialog window type.
+Changed lfsabout to dialog window type.
 Fixed initing window to be above/below/normal.
 Added file chooser.
 Added include alpha switch to lfscolourchooser.
