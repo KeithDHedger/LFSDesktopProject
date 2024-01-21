@@ -162,11 +162,11 @@ int main(int argc, char **argv)
 	if(xa!=None)
 		XChangeProperty(apc->display,wc->window,xa,XA_ATOM,32,PropModeReplace,(unsigned char *)&xa_prop,2);
 
-	xa=XInternAtom(apc->display,"_NET_WM_STATE",False);
-	xa_prop[0]=XInternAtom(apc->display,"_NET_WM_STATE_BELOW",False);
-	if(xa!=None)
-		XChangeProperty(apc->display,wc->window,xa,XA_ATOM,32,PropModeReplace,(unsigned char *)&xa_prop,1);
-	XLowerWindow(apc->display,wc->window);
+//	xa=XInternAtom(apc->display,"_NET_WM_STATE",False);
+//	xa_prop[0]=XInternAtom(apc->display,"_NET_WM_STATE_BELOW",False);
+//	if(xa!=None)
+//		XChangeProperty(apc->display,wc->window,xa,XA_ATOM,32,PropModeReplace,(unsigned char *)&xa_prop,1);
+//	XLowerWindow(apc->display,wc->window);
 
 //TODO//debug to go
 #ifdef _ENABLEDEBUG_

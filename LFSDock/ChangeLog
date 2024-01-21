@@ -1,4 +1,5 @@
 0.2.0
+Fixed calendar window level.
 Cleaned up launcher/taskbar code.
 Removed glib GKeyFile calls.
 GUI tweaks.

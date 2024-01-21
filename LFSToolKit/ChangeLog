@@ -1,4 +1,5 @@
 0.6.1
+Fixed expander example.
 Fixed expanding runexamples dialog.
 Set example lfsabout to dialog window type.
 Set lfsfontdialog class to dialog window type.

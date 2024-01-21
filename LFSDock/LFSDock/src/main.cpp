@@ -209,7 +209,12 @@ int main(int argc,char **argv)
 			gFind->LFSTK_findFiles("/usr/share/applications",false);
 
 			apc=new LFSTK_applicationClass();
-			apc->LFSTK_addWindow(NULL,NULL);
+			win=apc->LFSTK_getDefaultWInit();
+			win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DOCK"));
+			win->level=ABOVEALL;
+			win->decorated=false;
+	//		apc->LFSTK_addWindow(NULL,NULL);
+			apc->LFSTK_addWindow(win,"DOCK");
 
 			dockWindow=apc->mainWindow;
 			dockWindow->LFSTK_initDnD(true);
@@ -220,6 +225,7 @@ int main(int argc,char **argv)
 			win->level=ABOVEALL;
 
 			apc->LFSTK_addToolWindow(win);
+			//apc->LFSTK_addWindow(win,"dock");
 			popActionWindow=apc->windows->back().window;
 			popActionList=new LFSTK_listGadgetClass(popActionWindow,"list",0,0,2000,2000);
 

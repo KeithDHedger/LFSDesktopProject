@@ -237,9 +237,13 @@ void LFSTK_applicationClass::LFSTK_addToolWindow(windowInitStruct *wi,const char
 
 	win->decorated=false;
 	win->overRide=true;
-	//win->level=ABOVEALL;
 	if(appname!=NULL)
 		win->appName=appname;
+
+	if(win->level==ABOVEALL)
+		this->windows->back().window->LFSTK_setKeepAbove(true);
+	if(win->level==BELOWALL)
+		this->windows->back().window->LFSTK_setKeepBelow(true);
 
 	this->windows->push_back({new LFSTK_toolWindowClass(win,this),false,false});
 	delete win;
