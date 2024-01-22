@@ -37,9 +37,6 @@ int main(int argc, char **argv)
 	win->level=ABOVEALL;
 	apc->LFSTK_addWindow(win,BOXLABEL);
 
-
-
-//	apc->LFSTK_addWindow(NULL,NULL,"LFSTKExample");//TODO//
 	wc=apc->mainWindow;
 
 	fontdialog=new LFSTK_fontDialogClass(wc,"Select Font",0,0,1,1,BUTTONGRAV);

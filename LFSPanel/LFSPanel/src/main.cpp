@@ -234,7 +234,7 @@ int main(int argc,char **argv)
 			UTF8_STRING=XInternAtom(mainwind->app->display,"UTF8_STRING",False);
 
 			keystring=mainwind->globalLib->LFSTK_oneLiner("sed -n '2p' %S/lfsappearance.rc",apc->configDir);
-			key=std::stoi(keystring,nullptr,10);
+			key=std::stoi(keystring);
 			if((queueID=msgget(key,IPC_CREAT|0660))==-1)
 				fprintf(stderr,"Can't create message queue\n");
 

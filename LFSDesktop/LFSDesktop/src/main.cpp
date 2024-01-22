@@ -139,7 +139,7 @@ int main(int argc, char **argv)
 	apc=new LFSTK_applicationClass();
 
 	std::string keynum=apc->globalLib->LFSTK_oneLiner("sed -n '2p' %S/lfsappearance.rc",apc->configDir);
-	key=std::stoi(keynum,nullptr,10);
+	key=std::stoi(keynum);
 	if((queueID=msgget(key,IPC_CREAT|0660))==-1)
 		fprintf(stderr,"Can't create message queue\n");
 

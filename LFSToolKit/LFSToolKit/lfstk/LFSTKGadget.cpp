@@ -953,7 +953,7 @@ void LFSTK_gadgetClass::LFSTK_setCairoFontData(void)
 			if(tokenstrings.at(j).compare("italic")==0)
 				this->slant=CAIRO_FONT_SLANT_ITALIC;
 			if(tokenstrings.at(j).substr(0,5).compare("size=")==0)
-				this->fontSize=std::stoi(tokenstrings.at(j).substr(5,(tokenstrings.at(j).length()-5)),nullptr,10);
+				this->fontSize=std::stoi(tokenstrings.at(j).substr(5,(tokenstrings.at(j).length()-5)));
 		}
 	if(tokenstrings.size()>0)
 		this->fontName=tokenstrings.at(0);

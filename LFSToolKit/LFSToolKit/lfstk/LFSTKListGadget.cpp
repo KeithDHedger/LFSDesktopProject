@@ -116,7 +116,7 @@ void LFSTK_listGadgetClass::LFSTK_setListFromFile(const char *filepath,bool incl
 	if(filepath!=NULL)
 		{
 			lines=this->wc->app->globalLib->LFSTK_oneLiner("wc -l %s",filepath);
-			linecnt=std::stoi(lines,nullptr,10);
+			linecnt=std::stoi(lines);
 			file=fopen(filepath,"r");
 			if(file!=NULL)
 				{

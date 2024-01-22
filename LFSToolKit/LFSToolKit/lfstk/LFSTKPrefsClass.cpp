@@ -170,7 +170,7 @@ void LFSTK_prefsClass::LFSTK_loadVarsFromFile(std::string filepath)
 												x.second.boolData=this->LFSTK_stringToBool(data);
 												break;
 											case TYPEINT:
-												x.second.intData=stoi(data,nullptr,10);
+												x.second.intData=std::stoi(data);
 												break;
 											default:
 												break;

@@ -33,11 +33,25 @@ bool windowDrop(LFSTK_windowClass *lwc,void* ud)
 
 int main(int argc, char **argv)
 {
+	windowInitStruct *win;
 	int	sy=0;
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
+
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName=BOXLABEL;
+	//win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_NORMAL"));
+	win->level=ABOVEALL;
+	apc->LFSTK_addWindow(win,BOXLABEL);
+
+	//apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
 	wc=apc->mainWindow;
+//	fprintf(stderr,">>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
+//	fprintf(stderr,"winid=%p\n",wc->window);
+
+//wc->LFSTK_setTile(NULL,0);
+//wc->usePixmap=true;
+
 	wc->passEventToRoot=true;
 
 	wc->LFSTK_initDnD(true);
@@ -54,6 +68,12 @@ int main(int argc, char **argv)
 	label->LFSTK_setCairoFontDataParts("sB",20);
 	sy+=YSPACING;
 	sy+=200;
+
+	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,100);
+	label->LFSTK_setCairoFontDataParts("sB",20);
+	sy+=YSPACING;
+	sy+=200;
+	fprintf(stderr,"winid=%p\n",label->window);
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	//wc->LFSTK_setDecorations(true,true,true,true);

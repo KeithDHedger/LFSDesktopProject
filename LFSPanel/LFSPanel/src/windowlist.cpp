@@ -263,7 +263,7 @@ void getCurrentDesktop(void)
 	desknum=mainwind->globalLib->LFSTK_oneLiner("%s","/usr/bin/xprop -root |/bin/grep '_NET_CURRENT_DESKTOP(CARDINAL)'|/bin/head -n1|/usr/bin/awk -F'=' '{print $2}'");
 	if(desknum.length()>0)
 		{
-			currentDesktop=std::stoi(desknum,nullptr,10);
+			currentDesktop=std::stoi(desknum);
 		}
 	else
 		currentDesktop=1;
