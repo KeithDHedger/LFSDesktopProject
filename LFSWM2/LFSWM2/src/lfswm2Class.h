@@ -48,7 +48,7 @@
 
 //#define __DEBUG__
 #ifdef __DEBUG__
-#define MOVEKEYS (Mod4Mask|ControlMask)
+#define MOVEKEYS (Mod4Mask|ControlMask|ShiftMask)
 #else
 #define MOVEKEYS (Mod4Mask)
 #endif

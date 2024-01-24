@@ -308,10 +308,12 @@ skiplabel:
 			taskbuttons[j]->userData=USERDATA(j);
 		}
 
+//			taskbuttons[j]=new LFSTK_buttonClass(dockWindow,"",windowWidth+(j*(iconWidth+ICONSPACE)),normalY,iconWidth,iconHeight);
+
 	if(oldwidth!=windowWidth+(iconWidth*filltasks.size()))
 		{
 			moveDock(filltasks.size()*iconWidth);
-			dockWindow->LFSTK_resizeWindow(windowWidth+(iconWidth*filltasks.size()),iconWidth+extraSpace,true);
+			dockWindow->LFSTK_resizeWindow(windowWidth+((iconWidth+ICONSPACE)*filltasks.size()),iconWidth+extraSpace,true);
 			oldwidth=windowWidth+(iconWidth*filltasks.size());
 			dockWindow->LFSTK_clearWindow(true);
 			XSync(apc->display,false);

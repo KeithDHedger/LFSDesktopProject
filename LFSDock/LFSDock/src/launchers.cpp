@@ -238,8 +238,9 @@ int addLaunchers(int x,int y,int grav)
 				bc->LFSTK_setImageFromPath(DATADIR "/pixmaps/command.png",LEFT,true);
 
 			setGadgetDetails(bc);
+//				bc->LFSTK_setStyle(BEVELOUT);
 			launchersArray.push_back(lds);
-			xpos+=iconWidth;
+			xpos+=iconWidth+ICONSPACE;
 		}
 
 	return(xpos);

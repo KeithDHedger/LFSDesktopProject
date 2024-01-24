@@ -84,8 +84,9 @@ void addGadgets(void)
 	windowWidth=offset;
 	for(int j=0;j<20;j++)
 		{
-			taskbuttons[j]=new LFSTK_buttonClass(dockWindow,"",windowWidth+(j*iconWidth),normalY,iconWidth,iconHeight);
+			taskbuttons[j]=new LFSTK_buttonClass(dockWindow,"",windowWidth+(j*(iconWidth+ICONSPACE)),normalY,iconWidth,iconHeight);
 			setGadgetDetails(taskbuttons[j]);
+			//	taskbuttons[j]->LFSTK_setStyle(BEVELOUT);
 			taskbuttons[j]->LFSTK_setAlpha(1.0);
 			taskbuttons[j]->LFSTK_setMouseCallBack(NULL,taskListCB,NULL);
 			taskbuttons[j]->LFSTK_setMouseMoveCallBack(taskSwitcherEnterCB,taskSwitcherExitCB,NULL);
@@ -213,7 +214,6 @@ int main(int argc,char **argv)
 			win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DOCK"));
 			win->level=ABOVEALL;
 			win->decorated=false;
-	//		apc->LFSTK_addWindow(NULL,NULL);
 			apc->LFSTK_addWindow(win,"DOCK");
 
 			dockWindow=apc->mainWindow;
@@ -225,7 +225,6 @@ int main(int argc,char **argv)
 			win->level=ABOVEALL;
 
 			apc->LFSTK_addToolWindow(win);
-			//apc->LFSTK_addWindow(win,"dock");
 			popActionWindow=apc->windows->back().window;
 			popActionList=new LFSTK_listGadgetClass(popActionWindow,"list",0,0,2000,2000);
 

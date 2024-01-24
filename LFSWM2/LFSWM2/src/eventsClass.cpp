@@ -253,9 +253,11 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 							this->mainClass->mainWindowClass->LFSWM2_removeProp(this->mainClass->rootWindow,LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW"));
 							XWindowAttributes	x_window_attrs;
 							hintsDataStruct		hs;
+							hs=this->mainClass->mainWindowClass->LFSWM2_getWindowHints(e.xmaprequest.window);
 							XGetWindowAttributes(this->mainClass->display,e.xmaprequest.window,&x_window_attrs);
 							XMapWindow(this->mainClass->display,e.xmaprequest.window);
-							hs=this->mainClass->mainWindowClass->LFSWM2_getWindowHints(e.xmaprequest.window);
+							//hs=this->mainClass->mainWindowClass->LFSWM2_getWindowHints(e.xmaprequest.window);
+							//this->mainClass->DEBUG_printCurrentHintsDataStruct(hs);
 							if((hs.mHints!=NULL) && (hs.mHints->decorations==0))
 								{
 									if(this->mainClass->mainWindowClass->LFSWM2_createUnframedWindow(e.xmaprequest.window)==true)

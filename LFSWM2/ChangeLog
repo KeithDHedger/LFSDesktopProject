@@ -1,4 +1,5 @@
 1.0.1
+Minor gui tweak on new app start.
 Set menu labels to reflect changing window state.
 Added sticky option to menu list.
 Better motif hints detection.
