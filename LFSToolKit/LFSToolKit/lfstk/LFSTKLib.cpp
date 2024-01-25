@@ -233,8 +233,6 @@ LFSTK_lib::LFSTK_lib(bool loadvars)
 
 void LFSTK_lib::LFSTK_reloadPrefs(void)
 {
-	char *env=NULL;
-
 	this->prefs.prefsMap=
 		{
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("window_normal"),{TYPESTRING,"window_normal","grey40",false,0}},
@@ -281,16 +279,12 @@ void LFSTK_lib::LFSTK_reloadPrefs(void)
 	str=str + "/.config/LFS/lfstoolkit.rc";
 	if(access(str.c_str(),F_OK)!=0)
 		{
-			str=str + ".config/LFS";
 			str=LFSTK_lib::LFSTK_oneLiner("mkdir -p %s/.config/LFS/lfsgroupsprefs",getenv("HOME"));
 			str=LFSTK_lib::LFSTK_oneLiner("cp -r %s/Defaults/0.Default %s/.config/LFS/lfsgroupsprefs",DATADIR,getenv("HOME"));
 			str=LFSTK_lib::LFSTK_oneLiner("cp -r %s/Defaults/0.Default/* %s/.config/LFS",DATADIR,getenv("HOME"));//*/
 		}
 	
-	asprintf(&env,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
-	this->prefs.LFSTK_loadVarsFromFile(env);
-	freeAndNull(&env);
-
+	this->prefs.LFSTK_loadVarsFromFile(str);
 	this->LFSTK_loadDesktopIconTheme();
 }
 
@@ -666,7 +660,7 @@ std::vector<std::string>	LFSTK_lib::LFSTK_runAndGet(const std::string fmt,...)
 		}
 	va_end(ap);
 
-	fp=popen(str.c_str(),"r");
+	fp=popen(str.c_str(),"r");//TODO//
 	if(fp!=NULL)
 		{
 			buffer[0]=0;

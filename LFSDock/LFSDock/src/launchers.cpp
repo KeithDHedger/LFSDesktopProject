@@ -132,13 +132,15 @@ bool launcherCB(void *p,void* ud)
 
 	sendNotify("Launching ",lds.name.c_str());
 
+	XSync(apc->display,false);
 	if(lds.inTerm==false)
 		str=apc->globalLib->LFSTK_oneLiner("exec %S %S &\necho $!",command,args);
 	else
 		str=apc->globalLib->LFSTK_oneLiner("exec %S %S %S &\necho $!",prefs.LFSTK_getString("termcommand"),command,args);
 	lds.pid=std::stoul(str);
 
-	XFlush(apc->display);
+	//XFlush(apc->display);
+	//apc->mainWindow->LFSTK_handleWindowEvents(NULL);
 	if(useTaskBar==true)
 		updateTaskBar();
 

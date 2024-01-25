@@ -301,13 +301,13 @@ struct callbackStruct
 
 struct pointStruct
 {
-	int						x,y;
+	int					x,y;
 };
 
 struct rectStruct
 {
-	int						x,y;
-	int						w,h;
+	int					x,y;
+	int					w,h;
 };
 
 struct	cairoColor
@@ -326,7 +326,7 @@ struct colourStruct
 class	LFSTK_gadgetClass;
 struct	mappedListener
 {
-	bool				(*function)(void *,XEvent *,int);
+	bool					(*function)(void *,XEvent *,int);
 	LFSTK_gadgetClass	*gadget=NULL;
 	int					type;
 };
@@ -391,7 +391,7 @@ struct infoDataStruct
 	std::string		imagePath;
 	cairo_surface_t	*surface=NULL;
 	bool				hasSubMenu=false;
-	infoDataStruct		**subMenus=NULL;
+	infoDataStruct	**subMenus=NULL;
 	int				subMenuCnt=0;
 	int				listPos;
 	void				*userData=NULL;
