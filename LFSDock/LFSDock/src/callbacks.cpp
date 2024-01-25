@@ -80,6 +80,9 @@ bool gadgetDrop(void *lwc,propertyStruct *data,void* ud)
 	return(true);
 }
 
+int cnt=0;
+int cnt2=0;
+
 bool timerCB(LFSTK_applicationClass *p,void* ud)
 {
 	readMsg();
@@ -90,11 +93,32 @@ bool timerCB(LFSTK_applicationClass *p,void* ud)
 	if(scwindow!=NULL)
 		updateSlider();
 
+	if((gotLaunchers==true) && (currentLauncher!=NULL))
+		cnt++;
+	if((useTaskBar==true) && (currentTask!=NULL))
+		cnt2++;
+
 	if((gotLaunchers==true) && (launcherContextWindow->isVisible==false) && (launcherContextWindow->popupFromGadget!=NULL))
 		{
 			launcherExitCB(launcherContextWindow->popupFromGadget,(void*)1);
 			launcherContextWindow->popupFromGadget=NULL;
+			currentLauncher=NULL;;
 		}
+
+	if((cnt>10) && (currentLauncher!=NULL))
+		{
+			cnt=0;
+			launcherExitCB(currentLauncher,(void*)1);
+			launcherContextWindow->popupFromGadget=NULL;
+			currentLauncher=NULL;;
+		}		
+
+	if((cnt2>10) && (currentTask!=NULL))
+		{
+			cnt2=0;
+			taskSwitcherExitCB(currentTask,(void*)1);
+			currentTask=NULL;;
+		}		
 
 	if((popActionWindow!=NULL) && (popActionWindow->isVisible==true) && ((inSomeWindow==false) && (popActionWindow->inWindow==false)))
 		popActionListExitCB(NULL,(void*)1);

@@ -26,6 +26,7 @@
 
 extern std::vector<launcherDataStruct>	launchersArray;
 extern LFSTK_findClass					*findlaunchers;
+extern LFSTK_gadgetClass					*currentLauncher;
 
 bool launcherEnterCB(LFSTK_gadgetClass*p,void* ud);
 bool launcherExitCB(LFSTK_gadgetClass*p,void* ud);

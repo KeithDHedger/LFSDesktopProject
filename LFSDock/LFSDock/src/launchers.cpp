@@ -27,6 +27,7 @@ const char						*contextLabelData[]={"Launch","Remove From Dock","Run Prefs","TB
 const char						*contextThemeIconData[]={"media-playback-start","list-remove","LFSTKPrefs","dialog-warning"};
 std::vector<launcherDataStruct>	launchersArray;
 LFSTK_findClass					*findlaunchers=NULL;
+LFSTK_gadgetClass				*currentLauncher=NULL;
 
 bool launcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 {
@@ -38,6 +39,7 @@ bool launcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 			launcherDataStruct	lds=launchersArray.at((long unsigned int)ud);
 			int					offy;
 
+			currentLauncher=p;
 			setGadgetPosition(p,true);
 			popActionList->LFSTK_freeList();	
 			ls.label=lds.name;
@@ -63,6 +65,7 @@ bool launcherExitCB(LFSTK_gadgetClass *p,void* ud)
 {
 	if(p!=NULL)
 		{
+			currentLauncher=NULL;
 			setGadgetPosition(p,false);
 			inSomeWindow=false;
 			popActionListExitCB(NULL,(void*)1);
@@ -80,11 +83,11 @@ bool launcherCB(void *p,void* ud)
 	std::string			command;
 	std::string			args;
 	std::string			str;
-	std::string			whch;
+	//std::string			whch;
 	propReturn			pr;
 
 	showhidetActionList(NULL,popActionWindow,popActionList);
-	XSync(apc->display,false);
+	//XSync(apc->display,false);
 
 	if(p!=NULL)
 		{
@@ -125,15 +128,17 @@ bool launcherCB(void *p,void* ud)
 			args="";
 		}
 
-	whch=apc->globalLib->LFSTK_oneLiner("which '%S'",command);
+	//whch=apc->globalLib->LFSTK_oneLiner("which '%S'",command);
 
 	sendNotify("Launching ",lds.name.c_str());
 
 	if(lds.inTerm==false)
-		str=apc->globalLib->LFSTK_oneLiner("exec %S %S &\necho $!",whch,args);
+		str=apc->globalLib->LFSTK_oneLiner("exec %S %S &\necho $!",command,args);
 	else
-		str=apc->globalLib->LFSTK_oneLiner("exec %S %S %S &\necho $!",prefs.LFSTK_getString("termcommand"),whch,args);
+		str=apc->globalLib->LFSTK_oneLiner("exec %S %S %S &\necho $!",prefs.LFSTK_getString("termcommand"),command,args);
 	lds.pid=std::stoul(str);
+
+	XFlush(apc->display);
 	if(useTaskBar==true)
 		updateTaskBar();
 

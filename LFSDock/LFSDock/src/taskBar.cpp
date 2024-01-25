@@ -26,11 +26,13 @@ bool						movetohere=false;
 std::vector<taskStruct>	holdtasks;
 std::vector<taskStruct>	filltasks;
 std::vector<taskStruct>	tasks;
+LFSTK_gadgetClass		*currentTask=NULL;
 
 bool taskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 {
 	setGadgetPosition(p,false);
 	inSomeWindow=false;
+	dockWindow->LFSTK_clearWindow(true);
 	return(true);
 }
 
@@ -40,6 +42,11 @@ bool taskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 	unsigned long		d;
 	infoDataStruct		ls;
 	LFSTK_buttonClass	*bc=static_cast<LFSTK_buttonClass*>(p);
+
+	if(currentTask!=NULL)
+		setGadgetPosition(currentTask,false);
+	else
+		currentTask=p;
 
 	setGadgetPosition(p,true);
 	popActionList->LFSTK_freeList();	
