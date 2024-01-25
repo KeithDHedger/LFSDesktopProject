@@ -210,8 +210,11 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 					return(false);
 				}
 
-			//if(this->LFSWM2_getWindowType(id)==UNKNOWNTYPE)
-			//	fprintf(stderr,"id=0x%x\n",id);
+//			if(this->LFSWM2_getWindowType(id)==UNKNOWNTYPE)
+//				{
+//					fprintf(stderr,"id=0x%x\n",id);
+//					
+//				}
 
 			cc=new LFSWM2_clientClass(this->mainClass,id);
 			cc->isBorderless=noborder;
@@ -274,6 +277,7 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 
 			if(this->LFSWM2_getWindowType(id)==UNKNOWNTYPE)
 				{
+					this->LFSWM2_setProp(id,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE")),XA_ATOM,32,&this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_NORMAL")),1);
 
 					cc->canMaximize=true;
 					cc->canMinimize=true;

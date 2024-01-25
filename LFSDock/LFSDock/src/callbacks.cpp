@@ -95,6 +95,7 @@ bool timerCB(LFSTK_applicationClass *p,void* ud)
 
 	if((gotLaunchers==true) && (currentLauncher!=NULL))
 		cnt++;
+
 	if((useTaskBar==true) && (currentTask!=NULL))
 		cnt2++;
 
@@ -113,12 +114,12 @@ bool timerCB(LFSTK_applicationClass *p,void* ud)
 			currentLauncher=NULL;;
 		}		
 
-	if((cnt2>10) && (currentTask!=NULL))
+	if((useTaskBar==true) && (cnt2>10) && (currentTask!=NULL))
 		{
 			cnt2=0;
 			taskSwitcherExitCB(currentTask,(void*)1);
 			currentTask=NULL;;
-		}		
+		}
 
 	if((popActionWindow!=NULL) && (popActionWindow->isVisible==true) && ((inSomeWindow==false) && (popActionWindow->inWindow==false)))
 		popActionListExitCB(NULL,(void*)1);
