@@ -794,6 +794,7 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)//TODO// still dont like this code
 			switch(wtype)
 				{
 					case MENUWINDOW:
+					case NOTIFICATION:
 						//menus
 						towlmenu.push_back(fromwl.at(j));
 						break;

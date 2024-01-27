@@ -170,10 +170,13 @@ bool contextCB(void *p,void* ud)
 						launcherCB(NULL,lwc->popupFromGadget->userData);
 						break;
 					case BUTTONREMOVE:
-						sendNotify("Removing ",lds.name.c_str());
+						sendNotify("Removing ",lds.name);
+						XSync(apc->display,false);
+						sleep(1);
 						unlink(lds.path.c_str());
 						apc->exitValue=0;
 						apc->mainLoop=false;
+						
 						break;
 					case BUTTONPREFS:
 						{
@@ -187,7 +190,7 @@ bool contextCB(void *p,void* ud)
 			launcherExitCB(lwc->popupFromGadget,ud);
 			lwc->popupFromGadget=NULL;
 			dockWindow->LFSTK_clearWindow(true);
-			XSync(apc->display,false);
+			//XSync(apc->display,false);
 		}
 	return(true);
 }
@@ -221,7 +224,7 @@ void showhidetActionList(LFSTK_gadgetClass *bc,LFSTK_windowClass *winc,LFSTK_lis
 		{
 			winc->LFSTK_hideWindow();
 			apc->windows->at(apc->LFSTK_findWindow(winc)).showing=false;
-			XSync(apc->display,false);
+		//	XSync(apc->display,false);
 		}
 }
 

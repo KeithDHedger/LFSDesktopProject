@@ -120,7 +120,7 @@ bool taskListCB(void* p,void* ud)
 	if(bc!=NULL)
 		{
 			sendClientMessage((Window)filltasks.at((unsigned long)bc->userData).winid,"_NET_ACTIVE_WINDOW",0,0,0,0,0);
-			XSync(apc->display,false);
+			//XSync(apc->display,false);
 		}
 	return(true);
 }
@@ -252,7 +252,7 @@ skiplabel:
 			moveDock(0);
 			dockWindow->LFSTK_resizeWindow(windowWidth,iconWidth+extraSpace,true);
 			dockWindow->LFSTK_clearWindow(true);
-			XSync(apc->display,false);
+			//XSync(apc->display,false);
 			return;
 		}
 
@@ -339,7 +339,7 @@ skiplabel:
 			dockWindow->LFSTK_resizeWindow(windowWidth+((iconWidth+ICONSPACE)*filltasks.size()),iconWidth+extraSpace,true);
 			oldwidth=windowWidth+(iconWidth*filltasks.size());
 			dockWindow->LFSTK_clearWindow(true);
-			XSync(apc->display,false);
+			//XSync(apc->display,false);
 		}
 }
 

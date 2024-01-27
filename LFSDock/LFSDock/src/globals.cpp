@@ -85,7 +85,8 @@ bool						useTaskBar=false;
 void sendNotify(std::string name,std::string message)//TODO//could be better
 {
 #ifdef _GOTNOTIFYSEND_
-	std::string	com=std::string("notify-send -u low -t 2000 -i stock_dialog-info \"" + name + " " + message + " ...\" &");
+	std::string	com=std::string("notify-send -u low -t 2000 -i stock_dialog-info \"" + name + " " + message + " ...\"");
+	fprintf(stderr,"sendNotify com=>>%s<<\n",com.c_str());
 	system(com.c_str());
 #endif
 }
@@ -106,6 +107,8 @@ void dropDesktopFile(const char *data,void *launcher)//TODO//
 					asprintf(&command,"mkdir -p '%s';cp -nP '%s' '%s'",launchersDir.c_str(),cleanstr,launchersDir.c_str());
 					ptr=strrchr(cleanstr,'/');
 					sendNotify("Adding launcher ",++ptr);
+					XSync(apc->display,false);
+					sleep(1);
 					system(command);
 					freeAndNull(&command);
 					apc->exitValue=0;
@@ -120,7 +123,7 @@ void dropDesktopFile(const char *data,void *launcher)//TODO//
 						asprintf(&command,"%s \"%s\" &",lds.exec.c_str(),cleanstr);//TODO//
 					else
 						asprintf(&command,"%s %s \"%s\" &",prefs.LFSTK_getCString("termcommand"),lds.exec.c_str(),cleanstr);
-						sendNotify("Running ",lds.exec.c_str());
+						sendNotify("Running ",lds.exec);
 						system(command);
 						freeAndNull(&cleanstr);
 						freeAndNull(&command);

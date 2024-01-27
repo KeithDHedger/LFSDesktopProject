@@ -130,9 +130,9 @@ bool launcherCB(void *p,void* ud)
 
 	//whch=apc->globalLib->LFSTK_oneLiner("which '%S'",command);
 
-	sendNotify("Launching ",lds.name.c_str());
+	sendNotify("Launching ",lds.name);
 
-	XSync(apc->display,false);
+//	XSync(apc->display,false);
 	if(lds.inTerm==false)
 		str=apc->globalLib->LFSTK_oneLiner("exec %S %S &\necho $!",command,args);
 	else
