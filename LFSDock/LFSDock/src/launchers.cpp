@@ -162,6 +162,8 @@ void addALAuncher(std::string fpath,launcherDataStruct *entry)
 		entry->inTerm=true;
 	tmp=LFSTK_UtilityClass::LFSTK_getFullEntry(entryname,"Exec",lines);
 	tmp=LFSTK_UtilityClass::LFSTK_strReplaceAllStr(tmp,"%f","",true);
+	tmp=LFSTK_UtilityClass::LFSTK_strReplaceAllStr(tmp,"%F","",true);
+	tmp=LFSTK_UtilityClass::LFSTK_strReplaceAllStr(tmp,"%u","",true);
 	tmp=LFSTK_UtilityClass::LFSTK_strReplaceAllStr(tmp,"%U","",true);
 	entry->exec=tmp;
 }
