@@ -162,6 +162,10 @@ bool contextCB(void *p,void* ud)
 
 			switch(whatbutton)
 				{
+					case BUTTONQUIT:
+						realMainLoop=false;
+						apc->mainLoop=false;
+						break;
 					case BUTTONLAUNCH:
 						launcherCB(NULL,lwc->popupFromGadget->userData);
 						break;

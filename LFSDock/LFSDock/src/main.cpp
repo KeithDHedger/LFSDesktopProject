@@ -340,9 +340,7 @@ int main(int argc,char **argv)
 			calWindow=NULL;
 			gotLaunchers=false;
 			useTaskBar=false;
-			
 		}
 	cairo_debug_reset_static_data();
-	delete gFind;
 	return 0;
 }

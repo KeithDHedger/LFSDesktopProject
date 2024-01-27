@@ -23,7 +23,7 @@
 #include "launchers.h"
 
 LFSTK_buttonClass				*contextButtons[NOMOREBUTONS];
-const char						*contextLabelData[]={"Launch","Remove From Dock","Run Prefs","TBD",NULL};
+const char						*contextLabelData[]={"Launch","Remove From Dock","Run Prefs","Quit Dock",NULL};
 const char						*contextThemeIconData[]={"media-playback-start","list-remove","LFSTKPrefs","dialog-warning"};
 std::vector<launcherDataStruct>	launchersArray;
 LFSTK_findClass					*findlaunchers=NULL;
