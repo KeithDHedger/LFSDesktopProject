@@ -187,14 +187,11 @@ int addLaunchers(int x,int y,int grav)
 	findlaunchers->LFSTK_sortByName();
 
 	win=apc->LFSTK_getDefaultWInit();
-	win->windowName="X";
-	win->wc=dockWindow;
-	win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
+	win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
 	win->decorated=false;
-	win->overRide=true;
 	win->level=ABOVEALL;
 
-	apc->LFSTK_addWindow(win,"");
+	apc->LFSTK_addWindow(win,"Context");
 	launcherContextWindow=apc->windows->back().window;
 	launcherContextWindow->LFSTK_setWindowColourName(NORMALCOLOUR,lc.c_str());
 	for(int j=BUTTONLAUNCH;j<NOMOREBUTONS;j++)
