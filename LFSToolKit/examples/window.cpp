@@ -64,11 +64,6 @@ int main(int argc, char **argv)
 	label->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
 
-	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
-	label->LFSTK_setCairoFontDataParts("sB",20);
-	sy+=YSPACING;
-	sy+=200;
-
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,100);
 	label->LFSTK_setCairoFontDataParts("sB",20);
 	sy+=YSPACING;
