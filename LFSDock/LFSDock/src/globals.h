@@ -42,6 +42,7 @@
 #define _GLOBALS_
 
 #define ICONSPACE 2
+#define MAXTASKBUTTONS 32
 
 enum PANELGRAVITY {PANELNORTH=1,PANELSOUTH=2};
 enum WHATSORT {LAUNCHER=100,DESKTOPSWITCHER,TASKSWITCHER};
@@ -96,7 +97,7 @@ extern std::string				desktopTheme;
 extern int						refreshRate;
 extern bool						useMicros;
 
-extern LFSTK_buttonClass			*taskbuttons[20];
+extern LFSTK_buttonClass			*taskbuttons[MAXTASKBUTTONS];
 extern int						windowWidth;
 extern LFSTK_findClass			*gFind;
 extern bool						useTaskBar;

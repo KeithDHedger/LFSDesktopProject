@@ -60,6 +60,7 @@ bool calCB(void *p,void* ud)
 								break;
 						}
 					calWindow->LFSTK_showWindow(true);
+					XRaiseWindow(apc->display,calWindow->window);
 					calWindow->LFSTK_redrawAllGadgets();
 					apc->windows->at(apc->LFSTK_findWindow(calWindow)).showing=true;
 				}

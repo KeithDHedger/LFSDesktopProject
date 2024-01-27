@@ -1652,6 +1652,7 @@ bool LFSTK_windowClass::LFSTK_deleteGadget(LFSTK_gadgetClass *gadget)
 					if((ml!=NULL) && (ml->gadget==gadget))
 						{
 							delete ml->gadget;
+							this->gadgetMap.erase(it);
 							delete ml;
 							return(true);
 						}

@@ -1,4 +1,5 @@
 1.0.1
+Minor stack tweak.
 Unknown window types now set to normal type.
 Minor gui tweak on new app start.
 Set menu labels to reflect changing window state.

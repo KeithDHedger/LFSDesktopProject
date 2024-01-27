@@ -77,7 +77,7 @@ Atom						NET_WM_DESKTOP=None;
 
 const char				*possibleError="Unknown";
 
-LFSTK_buttonClass		*taskbuttons[20];
+LFSTK_buttonClass		*taskbuttons[MAXTASKBUTTONS];
 int						windowWidth=0;
 LFSTK_findClass			*gFind;
 bool						useTaskBar=false;

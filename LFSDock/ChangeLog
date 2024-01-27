@@ -1,4 +1,5 @@
 0.2.0
+Minor gui tweaks.
 Fixed dock crash when no tasks and task bar on.
 Fixed broken/not jpg/png icon in taskbar.
 Task bar gui fix.

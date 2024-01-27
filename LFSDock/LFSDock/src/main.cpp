@@ -82,7 +82,7 @@ void addGadgets(void)
 		}
 
 	windowWidth=offset;
-	for(int j=0;j<20;j++)
+	for(int j=0;j<MAXTASKBUTTONS;j++)
 		{
 			taskbuttons[j]=new LFSTK_buttonClass(dockWindow,"",windowWidth+(j*(iconWidth+ICONSPACE)),normalY,iconWidth,iconHeight);
 			setGadgetDetails(taskbuttons[j]);
