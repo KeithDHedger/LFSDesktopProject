@@ -21,7 +21,6 @@
 #include <dirent.h>
 #include <libgen.h>
 
-#include "lfstk/LFSTKGlobals.h"
 #include "LFSTKFindClass.h"
 
 LFSTK_findClass *fc;
@@ -30,7 +29,7 @@ void LFSTK_findClass::deleteData(void)
 {
 	if(!this->data.empty())
 		{
-			for(int j=0;j<this->data.size();j++)
+			for(unsigned j=0;j<this->data.size();j++)
 				{
 					this->data.at(j).path.clear();
 					this->data.at(j).name.clear();
@@ -45,8 +44,7 @@ void LFSTK_findClass::deleteData(void)
 LFSTK_findClass::~LFSTK_findClass()
 {
 	this->deleteData();
-	if(this->fileTypes!=NULL)
-		freeAndNull(&this->fileTypes);
+	this->fileTypes.clear();
 }
 
 /**
@@ -146,7 +144,7 @@ bool LFSTK_findClass::LFSTK_getIncludeHidden(void)
 * Set sort direction
 * \param bool down.
 */
-void LFSTK_findClass::LFSTK_setSort(bool down)
+void LFSTK_findClass::LFSTK_setSortDecending(bool down)
 {
 	this->sortDescending=down;
 }
@@ -182,26 +180,42 @@ void LFSTK_findClass::LFSTK_setIgnoreBroken(bool ignore)
 * Set file types filter
 * \param const char *types.
 */
-void LFSTK_findClass::LFSTK_setFileTypes(const char *suffix)
+void LFSTK_findClass::LFSTK_setFileTypes(std::string suffix)
 {
-	this->fileTypes=strdup(suffix);
+	this->fileTypes=suffix;
 }
 
 /**
 * Get file types filter
-* \return const char *.
+* \return std::string.
 */
-const char * LFSTK_findClass::LFSTK_getFileTypes(void)
+std::string LFSTK_findClass::LFSTK_getFileTypes(void)
 {
 	return(this->fileTypes);
 }
 
 static bool sortDataN(dataStruct i,dataStruct j)
-{	
+{
+	std::string ifixed=i.name;
+	std::string jfixed=j.name;
+
+	if(fc->caseSensitive==false)
+		{
+			std::transform(ifixed.begin(),ifixed.end(),ifixed.begin(),::toupper);
+			std::transform(jfixed.begin(),jfixed.end(),jfixed.begin(),::toupper);
+		}
+
 	if(fc->LFSTK_getSort()==true)
-		return (i.name<j.name);
+		{
+			if(ifixed.compare(jfixed)>0)
+				return(true);
+		}
 	else
-		return (i.name>j.name);
+		{
+			if(ifixed.compare(jfixed)<0)
+				return(true);
+		}
+	return(false);
 }
 
 static bool sortDataP(dataStruct i,dataStruct j)
@@ -240,7 +254,16 @@ static bool sortDataTN(dataStruct i,dataStruct j)
 				return(true);
 			return(false);
 		}
+
 	return(false);
+}
+
+/**
+* Sort data by name
+*/
+void LFSTK_findClass::LFSTK_sortCaseSensitive(bool casesensitive)
+{
+	this->caseSensitive=casesensitive;
 }
 
 /**
@@ -249,6 +272,7 @@ static bool sortDataTN(dataStruct i,dataStruct j)
 void LFSTK_findClass::LFSTK_sortByName(void)
 {
 	std::sort(this->data.begin(),this->data.end(),sortDataN);
+	this->moveNavItem();
 }
 
 /**
@@ -257,6 +281,7 @@ void LFSTK_findClass::LFSTK_sortByName(void)
 void LFSTK_findClass::LFSTK_sortByPath(void)
 {
 	std::sort(this->data.begin(),this->data.end(),sortDataP);
+	this->moveNavItem();
 }
 
 /**
@@ -265,6 +290,7 @@ void LFSTK_findClass::LFSTK_sortByPath(void)
 void LFSTK_findClass::LFSTK_sortByType(void)
 {
 	std::sort(this->data.begin(),this->data.end(),sortDataT);
+	this->moveNavItem();
 }
 
 /**
@@ -273,6 +299,29 @@ void LFSTK_findClass::LFSTK_sortByType(void)
 void LFSTK_findClass::LFSTK_sortByTypeAndName(void)
 {
 	std::sort(this->data.begin(),this->data.end(),sortDataTN);
+	this->moveNavItem();
+}
+
+/**
+* Move nav item to top
+*/
+void LFSTK_findClass::moveNavItem(void)
+{
+	dataStruct data;
+
+	if(this->ignoreNavLinks==true)
+		return;
+
+	for(unsigned j=0;j<this->data.size();j++)
+		{
+			if(this->data.at(j).name.compare("..")==0)
+				{
+					data=this->data.at(j);
+					this->data.erase(this->data.begin()+j);
+					this->data.emplace(this->data.begin(),data);
+					return;
+				}
+		}
 }
 
 /**
@@ -281,7 +330,8 @@ void LFSTK_findClass::LFSTK_sortByTypeAndName(void)
 */
 int LFSTK_findClass::LFSTK_getDataCount(void)
 {
-	return((int)this->dataCnt);
+	return(this->data.size());
+	//return((int)this->dataCnt);
 }
 
 /**
@@ -341,105 +391,116 @@ bool LFSTK_findClass::LFSTK_getIgnoreNavLinks(void)
 }
 
 /**
+* Get the real file type
+* \return int.
+*/
+int LFSTK_findClass::getRealType(std::string path)
+{
+	struct stat	filestat;
+	bool			islink=false;
+	int			type=0;
+	int			ret=0;
+
+	ret=lstat(path.c_str(),&filestat);
+	if((filestat.st_mode & S_IFMT) ==S_IFLNK)
+		islink=true;
+	ret=stat(path.c_str(),&filestat);
+
+	if((ret!=0) && (islink==true))
+		return(BROKENLINKTYPE);
+
+	switch(filestat.st_mode & S_IFMT)
+		{
+			case S_IFDIR:
+				type=FOLDERTYPE;
+				break;
+			case S_IFREG:
+				type=FILETYPE;
+				break;
+			default:
+				type=ANYTYPE;
+				break;
+		}
+
+	if((islink==true) && (type>0))
+		type--;
+	return(type);
+}
+
+/**
 * Main search function.
 * \param const char *dir Path to search.
 * \param bool Tru=Add this search to last, False=New search.
 * \note If LFSTK_getIgnoreBroken()==true broken links not reported.
 */
-void LFSTK_findClass::LFSTK_findFiles(const char *dir,bool multi)
+void LFSTK_findClass::LFSTK_findFiles(const char *dir,bool multi)//TODO//
 {
 	DIR			*dirhandle;
 	dirent		*entry;
-	struct stat	filestat;
-	int			retstat;
 	dataStruct	datas;
-	char			*filepath;
+	std::string	filepath;
+	bool			skip;
 
 	fc=this;
 	if(multi==false)
 		this->deleteData();
 
-	filepath=(char*)malloc(PATH_MAX);
 	dirhandle=opendir(dir);
 	if(dirhandle!=NULL)
 		{
 			while ((entry=readdir(dirhandle)) != NULL)
 				{
+					filepath=dir+std::string("/")+entry->d_name;
 					if(strcmp(entry->d_name,".")==0)
 						continue;
 					if((this->LFSTK_getIncludeHidden()==false) && ((strlen(entry->d_name)>2) && ((entry->d_name[0]=='.') && (entry->d_name[1]!='.') )))
 						continue;
-					if((this->LFSTK_getFileTypes()!=NULL) && (strcasestr(entry->d_name,this->LFSTK_getFileTypes())==NULL))
+
+					datas.fileType=this->getRealType(filepath);
+
+					if((datas.fileType==BROKENLINKTYPE) && (this->ignoreBroken==true))
 						continue;
+
+					if((this->findType!=FOLDERTYPE) && (this->findType!=FOLDERLINKTYPE))
+						{
+							if( ((datas.fileType==FILETYPE) || (datas.fileType==FILELINKTYPE)) || ((this->ignoreBroken==false) && (datas.fileType==BROKENLINKTYPE)))
+								{
+									if(this->LFSTK_getFileTypes().empty()==false)
+										{
+											skip=true;
+											std::vector<std::string> tokenstrings=LFSTK_UtilityClass::LFSTK_strTok(this->LFSTK_getFileTypes(),";");
+											for(unsigned j=0;j<tokenstrings.size();j++)
+												{
+													if(LFSTK_UtilityClass::LFSTK_hasSuffix(entry->d_name,tokenstrings.at(j))==true)
+														{
+															skip=false;
+															j=tokenstrings.size()+1;
+														}
+												}
+											if(skip==true)
+												continue;
+										}
+								}
+						}
+					else
+						{
+							if((datas.fileType!=FOLDERTYPE) && (datas.fileType!=FOLDERLINKTYPE))
+								continue;
+						}
+
 					if((this->ignoreNavLinks==true) && ((strcmp(entry->d_name,".")==0) || (strcmp(entry->d_name,"..")==0)))
 						continue;
 
 					datas.name=entry->d_name;
-					sprintf(filepath,"%s/%s",dir,entry->d_name);
-					if(entry->d_type==DT_LNK)
-						{
-							retstat=stat(filepath,&filestat);
-							if(retstat!=0)
-								{
-									if(this->LFSTK_getIgnoreBroken()==true)
-										continue;
-									datas.fileType=BROKENLINKTYPE;
-								}
-							else
-								{
-									if(this->LFSTK_getFollowlinks()==false)
-										{
-											datas.fileType=FILELINKTYPE;
-										}
-									else
-										{
-											switch(filestat.st_mode & S_IFMT)
-												{
-													case S_IFREG:
-														if(this->fileTypeTest(FILELINKTYPE)==false)
-															continue;
-														datas.fileType=FILELINKTYPE;
-														break;
-													case S_IFDIR:
-														if(this->fileTypeTest(FOLDERLINKTYPE)==false)
-															continue;
-														datas.fileType=FOLDERLINKTYPE;
-														break;
-												}
-										}
-								}
-						}
-					else
-						{
-							switch(entry->d_type)
-								{
-									case DT_REG:
-										if(this->fileTypeTest(FILETYPE)==false)
-											continue;
-										datas.fileType=FILETYPE;
-										break;
-									case DT_DIR:
-										if(this->fileTypeTest(FOLDERTYPE)==false)
-											continue;
-										datas.fileType=FOLDERTYPE;
-										break;
-								}
-						}
-					if(this->LFSTK_getFullPath()==true)
-						datas.path=filepath;
-					else
-						datas.path="";
-					
+					datas.path=filepath;
 					this->data.push_back(datas);
 					datas.name.clear();
 					datas.path.clear();
 				}
-		closedir(dirhandle);
-	}
+			closedir(dirhandle);
+		}
 	this->dataCnt=this->data.size();
-	freeAndNull(&filepath);
 }
-
 
 /**
 * Find in data list .
@@ -450,7 +511,7 @@ dataStruct *LFSTK_findClass::LFSTK_findNamed(std::string name,std::string suffix
 {
 	std::string compto=name+suffix;
 
-	for(int d=0;d<this->data.size();d++)
+	for(unsigned d=0;d<this->data.size();d++)
 		{
 			if(this->data.at(d).name.compare(compto)==0)
 				return(&this->data.at(d));

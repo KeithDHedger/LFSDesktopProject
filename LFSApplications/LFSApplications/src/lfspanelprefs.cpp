@@ -317,7 +317,7 @@ int main(int argc, char **argv)
 	find=new LFSTK_findClass;
 	find->LFSTK_setFindType(FILETYPE);
 	find->LFSTK_setIgnoreBroken(true);
-	find->LFSTK_setSort(false);
+	find->LFSTK_setSortDecending(false);
 	find->LFSTK_setFileTypes("lfspanel");
 	find->LFSTK_findFiles(apc->configDir.c_str(),false);
 	find->LFSTK_sortByName();

@@ -27,10 +27,12 @@
 #include <functional>
 #include <string.h>
 
+#include "LFSTKUtilityClass.h"
+
 #ifndef _FINDCLASS_
 #define _FINDCLASS_
 
-enum {BROKENLINKTYPE=0,FILELINKTYPE,FILETYPE,FOLDERLINKTYPE,FOLDERTYPE,ANYTYPE};
+enum {BROKENLINKTYPE=0,ANYTYPE,FILELINKTYPE,FILETYPE,FOLDERLINKTYPE,FOLDERTYPE};
 
 struct	dataStruct
 {
@@ -58,17 +60,18 @@ class LFSTK_findClass
 		bool			LFSTK_getIncludeHidden(void);
 		void			LFSTK_setFullPath(bool usefull);
 		bool			LFSTK_getFullPath(void);
-		void			LFSTK_setSort(bool down);
+		void			LFSTK_setSortDecending(bool down);
 		bool			LFSTK_getSort(void);
 		void			LFSTK_setIgnoreBroken(bool ignore);
 		bool			LFSTK_getIgnoreBroken(void);
-		void			LFSTK_setFileTypes(const char *suffix);
-		const char	*LFSTK_getFileTypes(void);
+		void			LFSTK_setFileTypes(std::string suffix);
+		std::string	LFSTK_getFileTypes(void);
 		void			LFSTK_setIgnoreNavLinks(bool ignore);
 		bool			LFSTK_getIgnoreNavLinks(void);
 
 
 		void			LFSTK_findFiles(const char *dir,bool multi=false);
+		void			LFSTK_sortCaseSensitive(bool casesensitive);
 		void			LFSTK_sortByName(void);
 		void			LFSTK_sortByPath(void);
 		void			LFSTK_sortByType(void);
@@ -79,21 +82,25 @@ class LFSTK_findClass
 		dataStruct	*LFSTK_findNamed(std::string name,std::string suffix="");
 
 		std::vector<dataStruct> data;
+		bool		caseSensitive=true;
 	private:
 		void		deleteData(void);
 		bool		fileTypeTest(int filetype);
 
-		int			dataCnt=0;
-		int			minDepth=-1;
-		int			maxDepth=10000;
-		int			findType=ANYTYPE;
+		int		dataCnt=0;
+		int		minDepth=-1;
+		int		maxDepth=10000;
+		int		findType=ANYTYPE;
 		bool		followLinks=true;
 		bool		includeHidden=false;
 		bool		fullPath=false;
-		bool		sortDescending=true;
+		bool		sortDescending=false;
 		bool		ignoreBroken=false;
-		char		*fileTypes=NULL;
+		std::string	fileTypes;
 		bool		ignoreNavLinks=false;
+
+		int		getRealType(std::string path);
+		void		moveNavItem(void);
 };
 
 #endif

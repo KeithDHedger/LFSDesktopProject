@@ -111,7 +111,7 @@ void addSet(void)
 	fc->LFSTK_setFileTypes(".lfstk");
 	fc->LFSTK_findFiles(themeDir);
 	fc->LFSTK_findFiles("/usr/share/themes",true);
-	fc->LFSTK_setSort(true);
+	fc->LFSTK_setSortDecending(true);
 	fc->LFSTK_sortByPath();
 
 	setNameMenuItems=new infoDataStruct*[fc->data.size()];

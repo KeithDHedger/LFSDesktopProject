@@ -18,7 +18,7 @@
  * along with LFSToolKit.  If not, see <http://www.gnu.org/licenses/>.
  */
  
-#include "lfstk/LFSTKGlobals.h"
+#include "LFSTKUtilityClass.h"
 
 LFSTK_UtilityClass::~LFSTK_UtilityClass()
 {
@@ -170,10 +170,30 @@ unsigned long LFSTK_UtilityClass::LFSTK_hashFromKey(std::string key)
 {
 	unsigned long hash=0;
 
-	for(int i=0;i<key.length();i++)
+	for(unsigned i=0;i<key.length();i++)
 		hash=31*hash+key.at(i);
 
 	return(hash);
+}
+
+/**
+* Get if string has suffix.
+* \param std::string str haystack.
+* \param std::string str suffix.
+* \return bool has suffix.
+*/
+bool LFSTK_UtilityClass::LFSTK_hasSuffix(std::string haystack,std::string suffix)
+{
+	std::string upperhaystack=haystack;
+	std::string upperneedle=suffix;
+	std::transform(upperhaystack.begin(),upperhaystack.end(),upperhaystack.begin(),::toupper);
+	std::transform(upperneedle.begin(),upperneedle.end(),upperneedle.begin(),::toupper);
+
+	if(upperneedle.length()>upperhaystack.length())
+		return(false);
+	if(upperhaystack.substr(upperhaystack.length()-upperneedle.length(),upperneedle.length()).compare(upperneedle)==0)
+			return(true);
+	return(false);
 }
 
 /**

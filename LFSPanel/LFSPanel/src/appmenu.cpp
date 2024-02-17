@@ -127,7 +127,7 @@ void addEntries(void)
 	find->LFSTK_setFindType(FILETYPE);
 	find->LFSTK_setFullPath(true);
 	find->LFSTK_setIgnoreBroken(true);
-	find->LFSTK_setSort(false);
+	find->LFSTK_setSortDecending(false);
 	find->LFSTK_setIgnoreNavLinks(true);
 	find->LFSTK_setFileTypes(".desktop");	
 	find->LFSTK_findFiles("/usr/share/applications",false);

@@ -55,6 +55,7 @@ void LFSTK_fileDialogClass::getFileList(void)
 {
 	char				imagepath[PATH_MAX];
 	infoDataStruct	ls;
+	dataStruct		nav;
 
 	this->fc->LFSTK_setDepth(1,1);
 	if(this->dialogType==FOLDERDIALOG)
@@ -65,7 +66,7 @@ void LFSTK_fileDialogClass::getFileList(void)
 	this->fc->LFSTK_setIgnoreBroken(false);
 	this->fc->LFSTK_setIncludeHidden(this->showHidden);
 	this->fc->LFSTK_findFiles(this->currentDir.c_str(),false);
-	this->fc->LFSTK_setSort(false);
+	this->fc->LFSTK_setSortDecending(false);
 	this->fc->LFSTK_sortByTypeAndName();
 
 	this->fileListCnt=this->fc->LFSTK_getDataCount();
@@ -75,8 +76,7 @@ void LFSTK_fileDialogClass::getFileList(void)
 		this->fileListGadget->scrollBar->LFSTK_setActive(false);
 	else
 		this->fileListGadget->scrollBar->LFSTK_setActive(true);
-	
-	
+
 	for(int j=0;j<this->fileListCnt;j++)
 		{
 			ls.label=this->fc->data.at(j).name.c_str();
@@ -84,8 +84,8 @@ void LFSTK_fileDialogClass::getFileList(void)
 			switch(this->fc->data.at(j).fileType)
 				{
 					case FOLDERTYPE:
-								ls.surface=this->folderImage;
-								break;
+						ls.surface=this->folderImage;
+						break;
 
 					case FILETYPE:
 						if((LFSTK_UtilityClass::LFSTK_strStr(ls.label,".jpg",true).length()>0) || (LFSTK_UtilityClass::LFSTK_strStr(ls.label,".png",true).length()>0))
