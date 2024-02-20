@@ -1,4 +1,5 @@
 0.6.1
+Minor tweaks to LFSTKFindClass.
 Fixed file/folder dialogs.
 Fixed deleting a gadget on the fly.
 Minor code clean.

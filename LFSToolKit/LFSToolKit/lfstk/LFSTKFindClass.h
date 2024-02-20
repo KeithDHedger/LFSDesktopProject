@@ -87,7 +87,6 @@ class LFSTK_findClass
 		void		deleteData(void);
 		bool		fileTypeTest(int filetype);
 
-		int		dataCnt=0;
 		int		minDepth=-1;
 		int		maxDepth=10000;
 		int		findType=ANYTYPE;

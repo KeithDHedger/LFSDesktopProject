@@ -331,7 +331,6 @@ void LFSTK_findClass::moveNavItem(void)
 int LFSTK_findClass::LFSTK_getDataCount(void)
 {
 	return(this->data.size());
-	//return((int)this->dataCnt);
 }
 
 /**
@@ -415,6 +414,10 @@ int LFSTK_findClass::getRealType(std::string path)
 				type=FOLDERTYPE;
 				break;
 			case S_IFREG:
+			case S_IFBLK:
+			case S_IFCHR:
+			case S_IFIFO:
+			case S_IFSOCK:
 				type=FILETYPE;
 				break;
 			default:
@@ -499,7 +502,6 @@ void LFSTK_findClass::LFSTK_findFiles(const char *dir,bool multi)//TODO//
 				}
 			closedir(dirhandle);
 		}
-	this->dataCnt=this->data.size();
 }
 
 /**
