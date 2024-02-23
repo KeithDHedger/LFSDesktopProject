@@ -264,6 +264,7 @@ bool panelGravCB(void *p,void* ud)
 int main(int argc, char **argv)
 {
 	XEvent			event;
+	int				pc=0;
 	int				sy=0;
 	long				menuuserdata[3]={-1,-2,-3};
 	int				parentWindow=-1;
@@ -318,19 +319,26 @@ int main(int argc, char **argv)
 	find->LFSTK_setFindType(FILETYPE);
 	find->LFSTK_setIgnoreBroken(true);
 	find->LFSTK_setSortDecending(false);
-	find->LFSTK_setFileTypes("lfspanel");
+	find->LFSTK_setIgnoreNavLinks(true);
+	find->LFSTK_setFileTypes(".rc");
 	find->LFSTK_findFiles(apc->configDir.c_str(),false);
 	find->LFSTK_sortByName();
 
 	panelCnt=find->LFSTK_getDataCount();
 
 	panelNames=new infoDataStruct*[panelCnt];
+	pc=0;
 	for(int j=0;j<panelCnt;j++)
 		{
-			panelNames[j]=new infoDataStruct;
-			panelNames[j]->label=strdup(find->data[j].name.c_str());
-			panelNames[j]->userData=(void*)(long)j;
+			if(LFSTK_UtilityClass::LFSTK_strStr(find->data[j].name,"lfspanel").empty()==false)
+				{
+					panelNames[pc]=new infoDataStruct;
+					panelNames[pc]->label=strdup(find->data[j].name.c_str());
+					panelNames[pc]->userData=(void*)(long)j;
+					pc++;
+				}
 		}
+	panelCnt=pc;	
 
 //panel config
 //select

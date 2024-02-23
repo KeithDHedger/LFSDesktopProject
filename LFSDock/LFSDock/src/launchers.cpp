@@ -185,6 +185,7 @@ int addLaunchers(int x,int y,int grav)
 	findlaunchers->LFSTK_setDepth(1,1);
 	findlaunchers->LFSTK_setFileTypes(".desktop");
 	findlaunchers->LFSTK_setFullPath(true);
+	findlaunchers->LFSTK_setIgnoreNavLinks(true);
 	findlaunchers->LFSTK_findFiles(launchersDir.c_str(),false);
 	findlaunchers->LFSTK_sortByName();
 
