@@ -101,7 +101,7 @@ char						*listTroughColour=strdup("grey50");
 void addSet(void)
 {
 	LFSTK_findClass	*fc=new LFSTK_findClass;
-	char			*themeDir=NULL;
+	char				*themeDir=NULL;
 
 	asprintf(&themeDir,"%s/.themes",getenv("HOME"));
 	fc->LFSTK_setFullPath(true);
@@ -128,12 +128,12 @@ void addSet(void)
 void setPreviewData(void);
 bool menuCB(void *p,void* ud)
 {
-	char		*buffer=(char*)malloc(PATH_MAX);
+	std::string label;
 
 	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
-	const char *label=static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().c_str();
+	label=static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel();
 	freeAndNull(&themePath);
-	themePath=strdup(label);
+	themePath=strdup(label.c_str());
 
 	prefs.prefsMap=
 		{
@@ -176,49 +176,46 @@ bool menuCB(void *p,void* ud)
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("listtroughcolour"),{TYPESTRING,"listtroughcolour","",false,0}}
 		};
 
-	sprintf(buffer,"%s/window.png",label);
-	windowTileEdit->LFSTK_setBuffer(buffer);
-	sprintf(buffer,"%s/button.png",label);
-	buttonTileEdit->LFSTK_setBuffer(buffer);
-	sprintf(buffer,"%s/menuitem.png",label);
-	menuTileEdit->LFSTK_setBuffer(buffer);
+	windowTileEdit->LFSTK_setBuffer(std::string()+themePath+"/window.png");
+	buttonTileEdit->LFSTK_setBuffer(std::string()+themePath+"/button.png");
+	menuTileEdit->LFSTK_setBuffer(std::string()+themePath+"/menuitem.png");
 
-	sprintf(buffer,"%s/lfstoolkit.rc",label);
-	prefs.LFSTK_loadVarsFromFile(buffer);
-	prefs.LFSTK_saveVarsToFile("-");
+	prefs.LFSTK_loadVarsFromFile(std::string()+themePath+"/lfstoolkit.rc");
+//	prefs.LFSTK_saveVarsToFile("-");
+
 //button back
-	previeBackColourEdit[0]->LFSTK_setBuffer(prefs.LFSTK_getCString("button_normal"));
-	previeBackColourEdit[1]->LFSTK_setBuffer(prefs.LFSTK_getCString("button_prelight"));
-	previeBackColourEdit[2]->LFSTK_setBuffer(prefs.LFSTK_getCString("button_active"));
-	previeBackColourEdit[3]->LFSTK_setBuffer(prefs.LFSTK_getCString("button_inactive"));
+	previeBackColourEdit[0]->LFSTK_setBuffer(prefs.LFSTK_getString("button_normal"));
+	previeBackColourEdit[1]->LFSTK_setBuffer(prefs.LFSTK_getString("button_prelight"));
+	previeBackColourEdit[2]->LFSTK_setBuffer(prefs.LFSTK_getString("button_active"));
+	previeBackColourEdit[3]->LFSTK_setBuffer(prefs.LFSTK_getString("button_inactive"));
 //button font
-	previeFontColourEdit[0]->LFSTK_setBuffer(prefs.LFSTK_getCString("font_normal"));
-	previeFontColourEdit[1]->LFSTK_setBuffer(prefs.LFSTK_getCString("font_prelight"));
-	previeFontColourEdit[2]->LFSTK_setBuffer(prefs.LFSTK_getCString("font_active"));
-	previeFontColourEdit[3]->LFSTK_setBuffer(prefs.LFSTK_getCString("font_inactive"));
+	previeFontColourEdit[0]->LFSTK_setBuffer(prefs.LFSTK_getString("font_normal"));
+	previeFontColourEdit[1]->LFSTK_setBuffer(prefs.LFSTK_getString("font_prelight"));
+	previeFontColourEdit[2]->LFSTK_setBuffer(prefs.LFSTK_getString("font_active"));
+	previeFontColourEdit[3]->LFSTK_setBuffer(prefs.LFSTK_getString("font_inactive"));
 //menu item
-	previeMenuBackColourEdit[0]->LFSTK_setBuffer(prefs.LFSTK_getCString("menuitem_normal"));
-	previeMenuBackColourEdit[1]->LFSTK_setBuffer(prefs.LFSTK_getCString("menuitem_prelight"));
-	previeMenuBackColourEdit[2]->LFSTK_setBuffer(prefs.LFSTK_getCString("menuitem_active"));
-	previeMenuBackColourEdit[3]->LFSTK_setBuffer(prefs.LFSTK_getCString("menuitem_inactive"));
+	previeMenuBackColourEdit[0]->LFSTK_setBuffer(prefs.LFSTK_getString("menuitem_normal"));
+	previeMenuBackColourEdit[1]->LFSTK_setBuffer(prefs.LFSTK_getString("menuitem_prelight"));
+	previeMenuBackColourEdit[2]->LFSTK_setBuffer(prefs.LFSTK_getString("menuitem_active"));
+	previeMenuBackColourEdit[3]->LFSTK_setBuffer(prefs.LFSTK_getString("menuitem_inactive"));
 //menu item font
-	previeMenuFontColourEdit[0]->LFSTK_setBuffer(prefs.LFSTK_getCString("menuitem_font_normal"));
-	previeMenuFontColourEdit[1]->LFSTK_setBuffer(prefs.LFSTK_getCString("menuitem_font_prelight"));
-	previeMenuFontColourEdit[2]->LFSTK_setBuffer(prefs.LFSTK_getCString("menuitem_font_active"));
-	previeMenuFontColourEdit[3]->LFSTK_setBuffer(prefs.LFSTK_getCString("menuitem_font_inactive"));
+	previeMenuFontColourEdit[0]->LFSTK_setBuffer(prefs.LFSTK_getString("menuitem_font_normal"));
+	previeMenuFontColourEdit[1]->LFSTK_setBuffer(prefs.LFSTK_getString("menuitem_font_prelight"));
+	previeMenuFontColourEdit[2]->LFSTK_setBuffer(prefs.LFSTK_getString("menuitem_font_active"));
+	previeMenuFontColourEdit[3]->LFSTK_setBuffer(prefs.LFSTK_getString("menuitem_font_inactive"));
 
 //troughs
-	scrollTroughColourEdit->LFSTK_setBuffer(prefs.LFSTK_getCString("sbtroughcolour"));
-	listTroughColourEdit->LFSTK_setBuffer(prefs.LFSTK_getCString("listtroughcolour"));
+	scrollTroughColourEdit->LFSTK_setBuffer(prefs.LFSTK_getString("sbtroughcolour"));
+	listTroughColourEdit->LFSTK_setBuffer(prefs.LFSTK_getString("listtroughcolour"));
 
 //window
-	windowColourEdit->LFSTK_setBuffer(prefs.LFSTK_getCString("window_normal"));
+	windowColourEdit->LFSTK_setBuffer(prefs.LFSTK_getString("window_normal"));
 //cursor
-	cursorColourEdit->LFSTK_setBuffer(prefs.LFSTK_getCString("cursorcolour"));
+	cursorColourEdit->LFSTK_setBuffer(prefs.LFSTK_getString("cursorcolour"));
 //fonts
-	buttonFontEdit->LFSTK_setBuffer(prefs.LFSTK_getCString("font"));
-	menuFontEdit->LFSTK_setBuffer(prefs.LFSTK_getCString("menuitem_font"));
-	monoFontEdit->LFSTK_setBuffer(prefs.LFSTK_getCString("monofont"));
+	buttonFontEdit->LFSTK_setBuffer(prefs.LFSTK_getString("font"));
+	menuFontEdit->LFSTK_setBuffer(prefs.LFSTK_getString("menuitem_font"));
+	monoFontEdit->LFSTK_setBuffer(prefs.LFSTK_getString("monofont"));
 //odds
 	autoColourCheck->LFSTK_setValue(prefs.LFSTK_getBool("autotextcolour"));
 	useTheme->LFSTK_setValue(prefs.LFSTK_getBool("usetheme"));
@@ -227,7 +224,6 @@ bool menuCB(void *p,void* ud)
 	themePath=strdup(prefs.LFSTK_getCString("themepath"));
 
 	setPreviewData();
-	free(buffer);
 	return(true);
 }
 
@@ -495,10 +491,10 @@ bool buttonCB(void *p,void* ud)
 {
 	char					*prefsfile;
 	const fontDataStruct	*fd;
-	int						receiveType=IPC_NOWAIT;
-	msgBuffer				buffer;
+	int					receiveType=IPC_NOWAIT;
+	msgBuffer			buffer;
 	bool					flag=false;
-	int						retcode;
+	int					retcode;
 
 	if(ud!=NULL)
 		{

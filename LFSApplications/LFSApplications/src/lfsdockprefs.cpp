@@ -304,7 +304,9 @@ int main(int argc, char **argv)
 	find->LFSTK_setFindType(FILETYPE);
 	find->LFSTK_setIgnoreBroken(true);
 	find->LFSTK_setSortDecending(true);
-	find->LFSTK_setFileTypes("lfsdock");
+	find->LFSTK_setIgnoreFolders(true);
+	find->LFSTK_setFileTypes(".rc");
+	find->LFSTK_setNameFilter("lfsdock");
 	find->LFSTK_findFiles(apc->configDir.c_str(),false);
 	find->LFSTK_sortByName();
 

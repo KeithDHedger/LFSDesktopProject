@@ -186,6 +186,15 @@ void LFSTK_findClass::LFSTK_setFileTypes(std::string suffix)
 }
 
 /**
+* Set file name filter
+* \param const char *types.
+*/
+void LFSTK_findClass::LFSTK_setNameFilter(std::string name)
+{
+	this->nameFilter=name;
+}
+
+/**
 * Get file types filter
 * \return std::string.
 */
@@ -390,6 +399,25 @@ bool LFSTK_findClass::LFSTK_getIgnoreNavLinks(void)
 }
 
 /**
+* Set ignore folders.
+* \param bool true=ignore.
+* \note If set to true nav links will also be ignored.
+*/
+void LFSTK_findClass::LFSTK_setIgnoreFolders(bool ignore)
+{
+	this->ignoreFolders=ignore;
+}
+
+/**
+* Get ignore folders.
+* \return bool.
+*/
+bool LFSTK_findClass::LFSTK_getIgnoreFolderss(void)
+{
+	return(this->ignoreFolders);
+}
+
+/**
 * Get the real file type
 * \return int.
 */
@@ -451,8 +479,9 @@ void LFSTK_findClass::LFSTK_findFiles(const char *dir,bool multi)//TODO//
 	dirhandle=opendir(dir);
 	if(dirhandle!=NULL)
 		{
-			while ((entry=readdir(dirhandle)) != NULL)
+			while((entry=readdir(dirhandle)) != NULL)
 				{
+					skip=false;
 					filepath=dir+std::string("/")+entry->d_name;
 					if(strcmp(entry->d_name,".")==0)
 						continue;
@@ -461,13 +490,19 @@ void LFSTK_findClass::LFSTK_findFiles(const char *dir,bool multi)//TODO//
 
 					datas.fileType=this->getRealType(filepath);
 
+					if((this->ignoreFolders==true) && ((datas.fileType==FOLDERTYPE) || (datas.fileType==FOLDERLINKTYPE)))
+						continue;
+
 					if((datas.fileType==BROKENLINKTYPE) && (this->ignoreBroken==true))
 						continue;
 
-					if((this->findType!=FOLDERTYPE) && (this->findType!=FOLDERLINKTYPE))
+					if((this->findType==FILETYPE) || (this->findType==FILELINKTYPE))
 						{
 							if( ((datas.fileType==FILETYPE) || (datas.fileType==FILELINKTYPE)) || ((this->ignoreBroken==false) && (datas.fileType==BROKENLINKTYPE)))
 								{
+									if((this->nameFilter.empty()==false) && (LFSTK_UtilityClass::LFSTK_strStr(std::string(entry->d_name),this->nameFilter).empty()==true))
+										continue;
+
 									if(this->LFSTK_getFileTypes().empty()==false)
 										{
 											skip=true;
@@ -487,7 +522,25 @@ void LFSTK_findClass::LFSTK_findFiles(const char *dir,bool multi)//TODO//
 						}
 					else
 						{
-							if((datas.fileType!=FOLDERTYPE) && (datas.fileType!=FOLDERLINKTYPE))
+							if( ((datas.fileType==FOLDERTYPE) || (datas.fileType==FOLDERLINKTYPE)) || ((this->ignoreBroken==false) && (datas.fileType==BROKENLINKTYPE)))
+								{
+									if(this->LFSTK_getFileTypes().empty()==false)
+										{
+											skip=true;
+											std::vector<std::string> tokenstrings=LFSTK_UtilityClass::LFSTK_strTok(this->LFSTK_getFileTypes(),";");
+											for(unsigned j=0;j<tokenstrings.size();j++)
+												{
+													if(LFSTK_UtilityClass::LFSTK_hasSuffix(entry->d_name,tokenstrings.at(j))==true)
+														{
+															skip=false;
+															j=tokenstrings.size()+1;
+														}
+												}
+										}
+									if(skip==true)
+										continue;
+								}
+							else
 								continue;
 						}
 

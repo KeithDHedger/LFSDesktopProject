@@ -68,7 +68,9 @@ class LFSTK_findClass
 		std::string	LFSTK_getFileTypes(void);
 		void			LFSTK_setIgnoreNavLinks(bool ignore);
 		bool			LFSTK_getIgnoreNavLinks(void);
-
+		void			LFSTK_setNameFilter(std::string name);
+		void			LFSTK_setIgnoreFolders(bool ignore);
+		bool			LFSTK_getIgnoreFolderss(void);
 
 		void			LFSTK_findFiles(const char *dir,bool multi=false);
 		void			LFSTK_sortCaseSensitive(bool casesensitive);
@@ -83,10 +85,12 @@ class LFSTK_findClass
 
 		std::vector<dataStruct> data;
 		bool		caseSensitive=true;
+
 	private:
 		void		deleteData(void);
 		bool		fileTypeTest(int filetype);
 
+		bool		ignoreFolders=false;
 		int		minDepth=-1;
 		int		maxDepth=10000;
 		int		findType=ANYTYPE;
@@ -96,6 +100,7 @@ class LFSTK_findClass
 		bool		sortDescending=false;
 		bool		ignoreBroken=false;
 		std::string	fileTypes;
+		std::string	nameFilter;
 		bool		ignoreNavLinks=false;
 
 		int		getRealType(std::string path);

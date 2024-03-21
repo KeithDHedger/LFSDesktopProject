@@ -287,7 +287,7 @@ int main(int argc, char **argv)
 	find->LFSTK_setFindType(FOLDERTYPE);
 	find->LFSTK_setFullPath(true);
 	find->LFSTK_setIgnoreBroken(false);
-	find->LFSTK_setSortDecending(true);
+	find->LFSTK_setSortDecending(false);
 	find->LFSTK_setIgnoreNavLinks(true);
 
 	addGroup();
