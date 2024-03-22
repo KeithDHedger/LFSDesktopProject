@@ -182,6 +182,7 @@ int addLaunchers(int x,int y,int grav)
 	int				sy=0;
 
 	findlaunchers=new LFSTK_findClass;
+	findlaunchers->LFSTK_setFindType(FILETYPE);
 	findlaunchers->LFSTK_setDepth(1,1);
 	findlaunchers->LFSTK_setFileTypes(".desktop");
 	findlaunchers->LFSTK_setFullPath(true);
