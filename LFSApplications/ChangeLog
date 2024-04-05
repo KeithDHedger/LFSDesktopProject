@@ -1,4 +1,5 @@
 0.2.0
+Fixed file seletion.
 Changed lfsruncommand to dialog window type.
 Changed lfsabout to dialog window type.
 Fixed initing window to be above/below/normal.

@@ -335,13 +335,14 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //wmanager
-	launchButton=new LFSTK_buttonClass(wc,"WM Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	launchButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"WMPREFS");
-	hrs.push_back({BORDER,sy,GADGETWIDTH,GADGETHITE,launchButton});
-	launchLabel=new LFSTK_labelClass(wc,"Launch Window Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,LEFT);
-	launchLabel->LFSTK_setLabelGravity(LEFT);
-	hrs.push_back({BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,launchLabel});
-	sy+=YSPACING;
+//defunct
+//	launchButton=new LFSTK_buttonClass(wc,"WM Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+//	launchButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"WMPREFS");
+//	hrs.push_back({BORDER,sy,GADGETWIDTH,GADGETHITE,launchButton});
+//	launchLabel=new LFSTK_labelClass(wc,"Launch Window Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,LEFT);
+//	launchLabel->LFSTK_setLabelGravity(LEFT);
+//	hrs.push_back({BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,launchLabel});
+//	sy+=YSPACING;
 
 //lfswm2
 	launchButton=new LFSTK_buttonClass(wc,"LFSWM2 Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);

@@ -61,11 +61,12 @@ void LFSTK_fileDialogClass::getFileList(void)
 	if(this->dialogType==FOLDERDIALOG)
 		this->fc->LFSTK_setFindType(FOLDERTYPE);
 	else
-		this->fc->LFSTK_setFindType(ANYTYPE);
+		this->fc->LFSTK_setFindType(FILETYPE);
 	this->fc->LFSTK_setFullPath(true);
 	this->fc->LFSTK_setIgnoreBroken(false);
 	this->fc->LFSTK_setIncludeHidden(this->showHidden);
 	this->fc->LFSTK_findFiles(this->currentDir.c_str(),false);
+
 	this->fc->LFSTK_setSortDecending(false);
 	this->fc->LFSTK_sortByTypeAndName();
 

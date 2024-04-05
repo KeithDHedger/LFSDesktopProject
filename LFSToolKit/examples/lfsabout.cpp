@@ -2,11 +2,13 @@
 
 #(c)keithhedger Wed 2 Aug 15:43:22 BST 2017 kdhedger68713@gmail.com
 
+echo "Compiling, please wait ..."
+
 if [ "X$1" != "X" ];then
 	USEVALGRIND="valgrind --leak-check=full"
 fi
 
-g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2 -o lfsaboutexample||exit 1
+g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo  glib-2.0) -llfstoolkit -lImlib2 -o lfsaboutexample||exit 1
 LD_LIBRARY_PATH=../LFSToolKit/app/.libs $USEVALGRIND ./lfsaboutexample "$@"
 retval=$?
 echo "Exit code $retval"

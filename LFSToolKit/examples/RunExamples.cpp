@@ -14,7 +14,7 @@ fi
 APPNAME=$(basename $0 .cpp)
 cd "$(dirname "$0")"
 
-g++ -Wstack-protector -Werror -fstack-protector "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2  -Wstack-protector -Werror -fstack-protector -o $APPNAME||exit 1
+g++ -Wstack-protector -Werror -fstack-protector "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo glib-2.0) -llfstoolkit -lImlib2  -Wstack-protector -Werror -fstack-protector -o $APPNAME||exit 1
 LD_LIBRARY_PATH=../LFSToolKit/app/.libs $USEVALGRIND ./$APPNAME "$@"
 retval=$?
 rm $APPNAME
@@ -42,7 +42,8 @@ bool doQuit(void *p,void* ud)
 {
 	apc->exitValue=0;
 	apc->mainLoop=false;
-	return(false);
+	XSync(apc->display,true);
+	return(true);
 }
 
 
@@ -287,6 +288,7 @@ int main(int argc, char **argv)
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
+	//apc->LFSTK_setTimer(1,true);
 	int retval=apc->LFSTK_runApp();
 	delete apc;
 	return(retval);

@@ -1504,6 +1504,9 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 				break;
 
 			case Expose:
+				if (event->xexpose.count>0)
+					break;
+
 				if (event->xexpose.count==0)
 					this->LFSTK_clearWindow();
 
@@ -1617,7 +1620,7 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 				break;
 		}
 
-	this->LFSTK_clearWindow();
+//	this->LFSTK_clearWindow();
 	return(retval);
 }
 

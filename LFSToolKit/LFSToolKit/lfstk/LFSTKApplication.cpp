@@ -300,7 +300,7 @@ int LFSTK_applicationClass::LFSTK_runApp(void)
 // Handle XEvents
 					while(XPending(this->display))
 						{
-							XNextEvent(this->display, &event);
+							XNextEvent(this->display,&event);
 							mappedListener *ml=this->mainWindow->LFSTK_getMappedListener(event.xany.window);
 
 							if(ml!=NULL)
@@ -340,6 +340,7 @@ int LFSTK_applicationClass::LFSTK_runApp(void)
 						this->useTimer=false;
 				}
 		}
+	XSync(this->display,false);
 	return(this->exitValue);
 }
 
@@ -391,6 +392,7 @@ int LFSTK_applicationClass::LFSTK_runWindowLoop(int window)
 				}
 		}
 	this->windows->at(window).window->LFSTK_hideWindow();
+	XSync(this->display,false);
 
 	return(this->exitValue);
 }
@@ -409,6 +411,7 @@ int LFSTK_applicationClass::LFSTK_runWindowLoop(LFSTK_windowClass *win)
 		return(-1);
 	else
 		this->LFSTK_runWindowLoop(windownum);
+	XSync(this->display,false);
 	return(this->exitValue);
 }
 

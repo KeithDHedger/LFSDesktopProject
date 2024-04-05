@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 #
 #©K. D. Hedger. Tue 31 Jul 13:33:01 BST 2018 keithdhedger@gmail.com
 #
@@ -96,7 +96,7 @@ deploy ()
 {
 	runCommand "make distclean"||true
 	runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib${LIBDIRSUFFIX}"
-	runCommand "make $MAKEFLAGS"
+	runCommand "make $MAKEFLAGS"||make -j1||exit 100
 	runCommand "make install"
 }
 
@@ -104,14 +104,14 @@ deploytest ()
 {
 	runCommand "make distclean"||true
 	runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib${LIBDIRSUFFIX}"
-	runCommand "make $MAKEFLAGS"
+	runCommand "make $MAKEFLAGS"||make -j1||exit 100
 	runCommand "make install DESTDIR=/tmp/lfsdesktop-deploy"
 }
 
 makeit ()
 {
 	runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib${LIBDIRSUFFIX}"
-	runCommand "make $MAKEFLAGS"
+	runCommand "make $MAKEFLAGS"||make -j1||exit 100
 }
 
 makelocal ()
@@ -142,6 +142,11 @@ if [[ $action = "help" ]];then
 fi
 
 #for app in "LFSToolKit" $BUILDLFSWMANAGER "LFSWM2" "LFSDesktop" "LFSSetWallpaper" "LFSApplications" "LFSPanel" "LFSDock"
+
+if [ $1 = "uninstall" ];then
+	BUILDFOR="$BUILDLFSWMANAGER LFSWM2 LFSDesktop LFSSetWallpaper LFSApplications LFSPanel LFSDock LFSToolKit"
+fi
+
 for app in $BUILDFOR
 	do
 		pushd $app

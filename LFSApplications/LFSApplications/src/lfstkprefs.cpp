@@ -476,9 +476,10 @@ bool selectfile(void *object,void* ud)
 	LFSTK_lineEditClass	*fd=static_cast<LFSTK_lineEditClass*>(ud);
 
 	tileDialog->LFSTK_showFileDialog(wd,"Select A File");
+
 	if(tileDialog->LFSTK_isValid()==true)
 		{
-			asprintf(&buffer,"%s/%s",tileDialog->LFSTK_getCurrentDir(),tileDialog->LFSTK_getCurrentFile());
+			asprintf(&buffer,"%s/%s",tileDialog->LFSTK_getCurrentDir().c_str(),tileDialog->LFSTK_getCurrentFile().c_str());
 			fd->LFSTK_setBuffer(buffer);
 			free(buffer);
 			free(wd);

@@ -146,7 +146,7 @@ bool selectThemeFolder(void *object,void* ud)
 	themeDialog->LFSTK_showFileDialog(wd,"Select A Folder");
 	if(themeDialog->LFSTK_isValid()==true)
 		{
-			asprintf(&buffer,"%s",themeDialog->LFSTK_getCurrentDir());
+			asprintf(&buffer,"%s",themeDialog->LFSTK_getCurrentDir().c_str());
 			fd->LFSTK_setBuffer(basename(buffer));
 			free(buffer);
 			free(wd);
