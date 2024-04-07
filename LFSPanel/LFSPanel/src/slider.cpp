@@ -120,6 +120,7 @@ bool sliderCB(void *p,void* ud)
 								scwindow->LFSTK_moveWindow(geom.x+geom.w,geom.y,true);
 								break;
 						}
+					scwindow->LFSTK_setKeepAbove(true);
 					scwindow->LFSTK_showWindow(true);
 					scwindow->LFSTK_redrawAllGadgets();
 					apc->windows->at(apc->LFSTK_findWindow(scwindow)).showing=true;
