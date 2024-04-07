@@ -143,6 +143,7 @@ void addEntries(void)
 			if(file.is_open())
 				{
 					ss.str("");
+					ss.clear();
 					ss<<file.rdbuf();
 					file.close();
 					if(std::regex_search(ss.str(),expcat))
