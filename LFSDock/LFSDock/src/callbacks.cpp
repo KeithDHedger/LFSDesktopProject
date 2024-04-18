@@ -232,7 +232,7 @@ void setGadgetPosition(LFSTK_gadgetClass *gadg,bool active)
 {
 	geometryStruct	geom;
 
-	gadg->LFSTK_getGeom(&geom);	
+	gadg->LFSTK_getGeom(&geom);
 
 	if(active==true)
 		gadg->LFSTK_moveGadget(geom.x,activeY);

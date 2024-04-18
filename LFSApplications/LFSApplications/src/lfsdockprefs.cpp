@@ -42,12 +42,12 @@ LFSTK_buttonClass			*apply=NULL;
 //dock data
 LFSTK_buttonClass			*dockSize=NULL;
 LFSTK_lineEditClass			*dockSizeEdit=NULL;
-infoDataStruct					**dockSizeMenuGrav=NULL;
+infoDataStruct				**dockSizeMenuGrav=NULL;
 LFSTK_menuClass				*sizeMenu=NULL;
 
 LFSTK_buttonClass			*dockGrav=NULL;
 LFSTK_lineEditClass			*dockGravEdit=NULL;
-infoDataStruct					**dockGravMenu=NULL;
+infoDataStruct				**dockGravMenu=NULL;
 LFSTK_menuClass				*gravMenu=NULL;
 
 LFSTK_lineEditClass			*dockOnMonitor=NULL;
@@ -58,6 +58,10 @@ LFSTK_lineEditClass			*dockTextColourEdit=NULL;
 
 LFSTK_lineEditClass			*dockRefreshEdit=NULL;
 LFSTK_toggleButtonClass		*dockUseMicro=NULL;
+
+
+LFSTK_toggleButtonClass		*dockUseBG=NULL;
+LFSTK_lineEditClass			*dockBGPathEdit=NULL;
 
 std::map<int,const char*>	dockGravConvertToStr={{1,"North"},{2,"South"}};
 std::map<int,const char*>	dockSizeConvertToStr={{1,"Small"},{2,"Medium"},{3,"Large"},{4,"Huge"}};
@@ -142,6 +146,8 @@ void getEdits(void)
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("font"),{TYPESTRING,"font",fontEdit->LFSTK_getCStr(),false,0}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("refreshrate"),{TYPESTRING,"refreshrate",dockRefreshEdit->LFSTK_getCStr(),false,0}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("usemicroseconds"),{TYPEBOOL,"usemicroseconds","",dockUseMicro->LFSTK_getValue(),0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("usebg"),{TYPEBOOL,"usebg","",dockUseBG->LFSTK_getValue(),0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("usebgpath"),{TYPESTRING,"usebgpath",dockBGPathEdit->LFSTK_getCStr(),false,0}},
 		};
 }
 
@@ -201,6 +207,9 @@ void setEdits(void)
 	fontEdit->LFSTK_setBuffer(prefs.LFSTK_getCString("font"));
 	dockRefreshEdit->LFSTK_setBuffer(prefs.LFSTK_getCString("refreshrate"));
 	dockUseMicro->LFSTK_setValue(prefs.LFSTK_getBool("usemicroseconds"));
+
+	dockUseBG->LFSTK_setValue(prefs.LFSTK_getBool("usebg"));
+	dockBGPathEdit->LFSTK_setBuffer(prefs.LFSTK_getCString("usebgpath"));
 }
 
 void getPrefs(void)
@@ -219,6 +228,8 @@ void getPrefs(void)
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("font"),{TYPESTRING,"font","Liberation Mono:size=12",false,0}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("refreshrate"),{TYPESTRING,"refreshrate","1",false,0}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("usemicroseconds"),{TYPEBOOL,"usemicroseconds","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("usebg"),{TYPEBOOL,"usebg","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("usebgpath"),{TYPESTRING,"usebgpath","",false,0}},
 		};
 
 	asprintf(&env,"%s/%s",apc->configDir.c_str(),dockName.c_str());
@@ -377,6 +388,16 @@ int main(int argc, char **argv)
 	fontDialogButton=new LFSTK_fontDialogClass(wc,"Dock Font",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	fontDialogButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SELECTFONT");
 	fontEdit=new LFSTK_lineEditClass(wc,apc->globalLib->LFSTK_getGlobalString(0,TYPEFONT),BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
+	sy+=YSPACING;
+
+//dock back
+	dockUseBG=new LFSTK_toggleButtonClass(wc,"Use BG",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	//dockUseBG->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)toggle->LFSTK_getLabel().c_str());
+	//dockUseBG->LFSTK_setMouseMoveCallBack(enterCB,exitCB,USERDATA(0));
+	dockUseBG->LFSTK_setToggleStyle(TOGGLENORMAL);
+	dockUseBG->userData=USERDATA(1);
+	dockBGPathEdit=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
+	//dockBGPathEdit->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
 	sy+=YSPACING;
 
 //dock colour

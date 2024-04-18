@@ -32,7 +32,8 @@ bool taskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 {
 	setGadgetPosition(p,false);
 	inSomeWindow=false;
-	dockWindow->LFSTK_clearWindow(true);
+	//dockWindow->LFSTK_clearWindow(true);
+	currentTask=NULL;
 	return(true);
 }
 
@@ -252,7 +253,6 @@ skiplabel:
 			moveDock(0);
 			dockWindow->LFSTK_resizeWindow(windowWidth,iconWidth+extraSpace,true);
 			dockWindow->LFSTK_clearWindow(true);
-			//XSync(apc->display,false);
 			return;
 		}
 
@@ -339,7 +339,6 @@ skiplabel:
 			dockWindow->LFSTK_resizeWindow(windowWidth+((iconWidth+ICONSPACE)*filltasks.size()),iconWidth+extraSpace,true);
 			oldwidth=windowWidth+(iconWidth*filltasks.size());
 			dockWindow->LFSTK_clearWindow(true);
-			//XSync(apc->display,false);
 		}
 }
 

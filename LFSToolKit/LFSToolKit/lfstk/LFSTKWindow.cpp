@@ -338,6 +338,16 @@ void LFSTK_windowClass::LFSTK_redrawAllGadgets(void)
 void LFSTK_windowClass::LFSTK_clearWindow(bool cleargadgets)
 {
 	int	state=NORMALCOLOUR;
+//	
+//	XClearWindow(this->app->display,this->window);
+//			cairo_save(this->cr);
+//				cairo_reset_clip (this->cr);
+//				fprintf(stderr,"--->>>here\n");
+//				cairo_set_source_rgba(this->cr,1.0,1.0,1.0,1.0);
+//					cairo_set_operator(this->cr,CAIRO_OPERATOR_SOURCE);
+//					cairo_paint(this->cr);
+//					cairo_surface_flush (this->sfc);
+//			cairo_restore(this->cr);
 
 	if(cleargadgets==true)
 		this->LFSTK_redrawAllGadgets();
@@ -348,8 +358,10 @@ void LFSTK_windowClass::LFSTK_clearWindow(bool cleargadgets)
 	if(this->isActive==false)
 		state=INACTIVECOLOUR;
 
+
 	if(this->useTile==true)
 		{
+
 			cairo_save(this->cr);
 				cairo_reset_clip (this->cr);
 				cairo_set_source(this->cr,this->pattern);
@@ -1006,6 +1018,10 @@ void LFSTK_windowClass::LFSTK_setTile(const char *path,int size)
 
 	if(cs==CAIRO_STATUS_SUCCESS)
 		{
+			//if((this->gadgetDetails.gadgetGeom.w!=0) && (this->gadgetDetails.gadgetGeom.h!=0))
+			if(this->sfc==NULL)
+				this->sfc=cairo_xlib_surface_create(this->app->display,this->window,this->visual,w,h);
+			cairo_xlib_surface_set_size(this->sfc,cairo_image_surface_get_width(tempimage)+1,cairo_image_surface_get_height(tempimage)+1);
 			this->pattern=cairo_pattern_create_for_surface(tempimage);
 			cairo_surface_destroy(tempimage);
 			cairo_pattern_set_extend (pattern,CAIRO_EXTEND_REPEAT);

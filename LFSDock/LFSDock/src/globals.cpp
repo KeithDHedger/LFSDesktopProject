@@ -40,6 +40,8 @@ int						onMonitor=0;
 int						dockGravity=PANELSOUTH;
 std::string				dockTextColour="";
 std::string				dockBGColour="";
+std::string				dockBGImage="";
+bool						useBG=false;
 
 int						queueID;
 msgBuffer				buffer;
@@ -134,10 +136,19 @@ void dropDesktopFile(const char *data,void *launcher)//TODO//
 void setGadgetDetails(LFSTK_gadgetClass *gadget)
 {
 	gadget->LFSTK_setAlpha(1.0);
-	gadget->LFSTK_setTile(NULL,0);
 	gadget->LFSTK_setStyle(BEVELNONE);
-	gadget->LFSTK_setGadgetColours(GADGETBG,"#00000000","#00000000","#00000000","#00000000");
-	gadget->	LFSTK_setGadgetColourPair(NORMALCOLOUR,"#00000000",dockTextColour);
+
+	if(useBG==true)
+		{
+			gadget->LFSTK_setTile(dockBGImage.c_str(),-1);
+			gadget->gadgetDetails.geomRelativeToMainWindow=true;
+		}
+	else
+		{
+			gadget->LFSTK_setTile(NULL,0);
+			gadget->LFSTK_setGadgetColours(GADGETBG,"#00000000","#00000000","#00000000","#00000000");
+			gadget->	LFSTK_setGadgetColourPair(NORMALCOLOUR,"#00000000",dockTextColour);
+		}
 }
 
 /*

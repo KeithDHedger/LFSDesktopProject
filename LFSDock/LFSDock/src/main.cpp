@@ -41,6 +41,8 @@ void loadPrefs(std::string prefsfile)
 	dockBGColour=prefs.LFSTK_getString("dockbgcolour");
 	refreshRate=	prefs.LFSTK_getInt("refreshrate");
 	useMicros=prefs.LFSTK_getBool("usemicroseconds");
+	useBG=prefs.LFSTK_getBool("usebg");
+	dockBGImage=prefs.LFSTK_getCString("usebgpath");
 }
 
 void addGadgets(void)
@@ -86,7 +88,6 @@ void addGadgets(void)
 		{
 			taskbuttons[j]=new LFSTK_buttonClass(dockWindow,"",windowWidth+(j*(iconWidth+ICONSPACE)),normalY,iconWidth,iconHeight);
 			setGadgetDetails(taskbuttons[j]);
-			//	taskbuttons[j]->LFSTK_setStyle(BEVELOUT);
 			taskbuttons[j]->LFSTK_setAlpha(1.0);
 			taskbuttons[j]->LFSTK_setMouseCallBack(NULL,taskListCB,NULL);
 			taskbuttons[j]->LFSTK_setMouseMoveCallBack(taskSwitcherEnterCB,taskSwitcherExitCB,NULL);
@@ -197,6 +198,8 @@ int main(int argc,char **argv)
 						{LFSTK_UtilityClass::LFSTK_hashFromKey("dockbgcolour"),{TYPESTRING,"dockbgcolour","",false,0}},
 						{LFSTK_UtilityClass::LFSTK_hashFromKey("refreshrate"),{TYPEINT,"refreshrate","",false,1}},
 						{LFSTK_UtilityClass::LFSTK_hashFromKey("usemicroseconds"),{TYPEBOOL,"usemicroseconds","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("usebg"),{TYPEBOOL,"usebg","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("usebgpath"),{TYPESTRING,"usebgpath","",false,0}},
 					};
 	realMainLoop=true;
 
@@ -312,7 +315,13 @@ int main(int argc,char **argv)
 			psize=windowWidth;
 
 			dockWindow->LFSTK_resizeWindow(psize,iconWidth+extraSpace,true);
+			//fprintf(stderr,"wid=%i hite=%i\n",psize,iconHeight);
 			moveDock(0);
+
+			if(useBG==true)
+				dockWindow->LFSTK_setTile(dockBGImage.c_str(),-1);
+			else
+				dockWindow->LFSTK_setTile(NULL,0);
 
 			dockWindow->LFSTK_showWindow(true);
 			dockWindow->LFSTK_setKeepAbove(true);

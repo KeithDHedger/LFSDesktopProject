@@ -183,7 +183,7 @@ int main(int argc, char **argv)
 
 	wc=apc->mainWindow;
 
-//wc->LFSTK_setTile("/home/keithhedger/Patterns/halloweenwood.jpg",-1);//TODO//this works ?//poss set usetheme
+//wc->LFSTK_setTile("/home/keithhedger/Desktop/001_wood_coldgrayfence_th.jpg",-1);//TODO//this works ?//poss set usetheme
 
 	wc->LFSTK_initDnD(false);
 
@@ -255,10 +255,19 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //left image
-	leftButton=new LFSTK_buttonClass(wc,"Left Label+Image",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE);
+	//leftButton=new LFSTK_buttonClass(wc,"Left Label+Image",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE+100);
+	leftButton=new LFSTK_buttonClass(wc,"Left Label+Image",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,(GADGETWIDTH*2));
 	leftButton->LFSTK_setImageFromPath("./casper2.JPG",LEFT,true);
 	leftButton->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA("Left Label+Image"));
-	sy+=YSPACING;
+	leftButton->LFSTK_setAlpha(1.0);
+	//leftButton->LFSTK_setTile("/media/LinuxData/Development/Projects/LFSDesktopProject/LFSToolKit/examples/AspellGUI.png",-1);
+	//leftButton->LFSTK_setTile("/home/keithhedger/Desktop/001_wood_coldgrayfence_th.jpg",-1);
+	leftButton->LFSTK_setTile("./t2.jpg",-1);
+	leftButton->gadgetDetails.geomRelativeToMainWindow=true;
+	//leftButton->LFSTK_setAlpha(1.0);
+	//fprintf(stderr,"leftButton tile=%i\n",leftButton->useTile);
+	sy+=YSPACING+(GADGETWIDTH*2);
+
 //centre image
 	centreButton=new LFSTK_buttonClass(wc,"Centre Label+Image",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE);
 	centreButton->LFSTK_setImageFromPath("./casper2.JPG",LEFT,true);

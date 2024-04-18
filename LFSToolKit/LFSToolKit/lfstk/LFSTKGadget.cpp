@@ -354,13 +354,13 @@ void LFSTK_gadgetClass::clearBox(gadgetStruct* details)
 
 			if(details->geomRelativeToMainWindow==true)
 				this->LFSTK_getGeomWindowRelative(&geom,this->wc->window);
-			
+		
 			cairo_save(this->cr);
 				cairo_reset_clip(this->cr);
 				if(details->geomRelativeToMainWindow==true)
 					cairo_translate(this->cr,-geom.x,-geom.y);
 				cairo_set_source(this->cr,patt);
-				cairo_paint(this->cr);
+				cairo_paint_with_alpha(this->cr,1.0);
 			cairo_restore(this->cr);
 		}
 	else
@@ -1560,11 +1560,18 @@ void LFSTK_gadgetClass::LFSTK_setTile(const char *path,int size)
 			tempimage=cairo_image_surface_create_from_png(path);
 			cs=cairo_surface_status(tempimage);
 		}
+	else if((suffix!=NULL) && (strcasecmp(suffix,".jpg")==0))
+		{
+			tempimage=this->wc->globalLib->LFSTK_cairo_image_surface_create_from_jpeg(path);
+			cs=cairo_surface_status(tempimage);
+		}
 	else
 		cs=CAIRO_STATUS_INVALID_FORMAT;
 
 	if(cs==CAIRO_STATUS_SUCCESS)
 		{
+			if((this->gadgetDetails.gadgetGeom.w!=0) && (this->gadgetDetails.gadgetGeom.h!=0))
+				cairo_xlib_surface_set_size(this->sfc,cairo_image_surface_get_width(tempimage)+1,cairo_image_surface_get_height(tempimage)+1);
 			this->pattern=cairo_pattern_create_for_surface(tempimage);
 			cairo_surface_destroy(tempimage);
 			cairo_pattern_set_extend(pattern,CAIRO_EXTEND_REPEAT);

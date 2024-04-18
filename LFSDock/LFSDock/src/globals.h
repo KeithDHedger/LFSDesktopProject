@@ -87,7 +87,8 @@ extern int						onMonitor;
 extern int						dockGravity;
 extern std::string				dockTextColour;
 extern std::string				dockBGColour;
-
+extern std::string				dockBGImage;
+extern bool						useBG;
 
 extern int						queueID;
 extern msgBuffer					buffer;

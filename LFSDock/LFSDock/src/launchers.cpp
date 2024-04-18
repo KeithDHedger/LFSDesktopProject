@@ -58,6 +58,8 @@ bool launcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 			
 			inSomeWindow=true;
 		}
+	//else
+	//	currentLauncher=NULL;
 	return(true);
 }
 

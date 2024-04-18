@@ -179,6 +179,11 @@ class LFSTK_gadgetClass
 		bool					inWindow;//TODO//MMMMmmmmmmm
 		int					imageWidth=0;
 
+
+		cairo_t				*cr=NULL;
+		cairo_surface_t 		*sfc=NULL;
+		cairo_pattern_t		*pattern=NULL;
+
 	private:
 		void					initGadget(void);
 		void					selectBevel(bool mousedown);
@@ -215,10 +220,10 @@ class LFSTK_gadgetClass
 		unsigned int			iconSize;
 
 //graphics
-		cairo_t				*cr=NULL;
-		cairo_surface_t 		*sfc=NULL;
+//		cairo_t				*cr=NULL;
+//		cairo_surface_t 		*sfc=NULL;
 		cairo_surface_t		*cImage=NULL;
-		cairo_pattern_t		*pattern=NULL;
+//		cairo_pattern_t		*pattern=NULL;
 		
 		int					imageHeight=0;
 		int					imageGravity=CENTRE;
