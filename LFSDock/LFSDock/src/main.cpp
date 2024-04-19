@@ -313,19 +313,32 @@ int main(int argc,char **argv)
 				}
 
 			psize=windowWidth;
+			win=apc->LFSTK_getDefaultWInit();
+			win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_NORMAL"));
+			win->level=ABOVEALL;
+			win->overRide=false;
+			win->decorated=false;
+			apc->LFSTK_addWindow(win,"DOCKBG");
 
-			dockWindow->LFSTK_resizeWindow(psize,iconWidth+extraSpace,true);
-			//fprintf(stderr,"wid=%i hite=%i\n",psize,iconHeight);
+			dockBGWindow=apc->windows->back().window;
+			apc->windows->back().showing=true;
+			dockBGWindow->LFSTK_setTile(dockBGImage.c_str(),-1);
+//dockBGWindow->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),10000,24);
+
 			moveDock(0);
+			resizeDock(psize,iconWidth+extraSpace);
 
 			if(useBG==true)
-				dockWindow->LFSTK_setTile(dockBGImage.c_str(),-1);
+				{
+					dockWindow->LFSTK_setTile(dockBGImage.c_str(),-1);
+					dockBGWindow->LFSTK_showWindow(true);
+				}
 			else
 				dockWindow->LFSTK_setTile(NULL,0);
 
 			dockWindow->LFSTK_showWindow(true);
 			dockWindow->LFSTK_setKeepAbove(true);
-
+	
 			if(useTaskBar==true)
 				updateTaskBar(true);
 

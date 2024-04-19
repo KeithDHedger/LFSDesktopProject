@@ -251,8 +251,12 @@ skiplabel:
 				return;
 			oldwidth=0;
 			moveDock(0);
-			dockWindow->LFSTK_resizeWindow(windowWidth,iconWidth+extraSpace,true);
-			dockWindow->LFSTK_clearWindow(true);
+			resizeDock(windowWidth,iconWidth+extraSpace);
+//			dockWindow->LFSTK_resizeWindow(windowWidth,iconWidth+extraSpace,true);
+//			dockBGWindow->LFSTK_resizeWindow(windowWidth,iconWidth+extraSpace,true);
+//			dockBGWindow->LFSTK_clearWindow(true);
+//			dockWindow->LFSTK_clearWindow(true);
+			
 			return;
 		}
 
@@ -336,9 +340,13 @@ skiplabel:
 	if(oldwidth!=windowWidth+(iconWidth*filltasks.size()))
 		{
 			moveDock(filltasks.size()*iconWidth);
-			dockWindow->LFSTK_resizeWindow(windowWidth+((iconWidth+ICONSPACE)*filltasks.size()),iconWidth+extraSpace,true);
+			resizeDock(windowWidth+((iconWidth+ICONSPACE)*filltasks.size()),iconWidth+extraSpace);
+//			dockWindow->LFSTK_resizeWindow(windowWidth+((iconWidth+ICONSPACE)*filltasks.size()),iconWidth+extraSpace,true);
+//			dockBGWindow->LFSTK_resizeWindow(windowWidth+((iconWidth+ICONSPACE)*filltasks.size()),iconWidth+extraSpace,true);
+//			dockBGWindow->LFSTK_clearWindow(true);
+
 			oldwidth=windowWidth+(iconWidth*filltasks.size());
-			dockWindow->LFSTK_clearWindow(true);
+//			dockWindow->LFSTK_clearWindow(true);
 		}
 }
 

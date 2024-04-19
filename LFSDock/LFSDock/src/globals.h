@@ -107,6 +107,7 @@ extern bool						gotLaunchers;
 //dock window
 extern LFSTK_applicationClass	*apc;
 extern LFSTK_windowClass			*dockWindow;
+extern LFSTK_windowClass			*dockBGWindow;
 extern LFSTK_windowClass			*popActionWindow;
 extern LFSTK_listGadgetClass		*popActionList;
 extern bool						inSomeWindow;
@@ -141,6 +142,7 @@ Window getWindowByPID(unsigned long pid);
 Window doTreeWalkForClass(Window wind,std::string namecheck);
 Window doTreeWalkForPID(Window wind,unsigned long pid);
 void moveDock(int extra);
+void resizeDock(int wid,int hite);
 std::string getWindowName(Window winid);
 
 void setGadgetPosition(LFSTK_gadgetClass *gadg,bool active);

@@ -55,6 +55,7 @@ bool						useMicros=true;
 //dock window
 LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*dockWindow=NULL;
+LFSTK_windowClass		*dockBGWindow=NULL;
 LFSTK_windowClass		*popActionWindow=NULL;
 LFSTK_listGadgetClass	*popActionList=NULL;
 bool						inSomeWindow=false;
@@ -325,6 +326,14 @@ Window getWindowByPID(unsigned long pid)
 	return(win);
 }
 
+void resizeDock(int wid,int hite)
+{
+	dockWindow->LFSTK_resizeWindow(wid,hite,true);
+	dockBGWindow->LFSTK_resizeWindow(wid,hite,true);
+	//dockBGWindow->LFSTK_clearWindow(true);
+	//dockWindow->LFSTK_clearWindow(true);
+}
+
 void moveDock(int extra)
 {
 	int	psize;
@@ -343,6 +352,7 @@ void moveDock(int extra)
 				break;
 		}
 	dockWindow->LFSTK_moveWindow(px,py,true);
+	dockBGWindow->LFSTK_moveWindow(px,py,true);
 }
 
 std::string getWindowName(Window winid)
