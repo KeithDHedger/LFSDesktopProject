@@ -82,6 +82,7 @@ bool contextCB(void *p,void* ud)
 bool mouseUpCB(void *p,void* ud)
 {
 	geometryStruct	geom;
+	fprintf(stderr,"mouseUpCB\n");
 	if(p!=NULL)
 		{
 			static_cast<LFSTK_imageClass*>(p)->LFSTK_getGeom(&geom);
@@ -90,6 +91,47 @@ bool mouseUpCB(void *p,void* ud)
 				fprintf(stderr,"double click x=%i y=%i\n",geom.x,geom.y);
 		//	else
 		//		fprintf(stderr,"x=%i y=%i\n",geom.x,geom.y);
+		}
+	return(true);
+}
+
+bool mouseDownCB(void *p,void* ud)
+{
+	geometryStruct	geom;
+	fprintf(stderr,"mouseDownCB\n");
+//	if(p!=NULL)
+//		{
+//			static_cast<LFSTK_imageClass*>(p)->LFSTK_getGeom(&geom);
+////DEBUGFUNC("%b",static_cast<LFSTK_imageClass*>(p)->isDoubleClick);
+//			if(static_cast<LFSTK_imageClass*>(p)->isDoubleClick==true)
+//				fprintf(stderr,"double click x=%i y=%i\n",geom.x,geom.y);
+//		//	else
+//		//		fprintf(stderr,"x=%i y=%i\n",geom.x,geom.y);
+//		}
+	return(true);
+}
+bool moveCB(LFSTK_gadgetClass*p,void* ud)
+{
+	if(ud!=NULL)
+		{
+			XEvent			event;
+			geometryStruct	geom;
+			printf(">>>Mouse In %s<<<\n",(const char*)ud);
+
+			//p->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);	
+			//popWindow->LFSTK_moveWindow(geom.x,geom.y-GADGETHITE,true);
+			//popWindow->LFSTK_showWindow();
+			//popWindow->LFSTK_clearWindow(true);
+		}
+	return(true);
+}
+
+bool exitCB(LFSTK_gadgetClass*p,void* ud)
+{
+	if(ud!=NULL)
+		{
+			printf(">>>Mouse Out %s<<<\n",(const char*)ud);
+			//popWindow->LFSTK_hideWindow();
 		}
 	return(true);
 }
@@ -118,7 +160,8 @@ int main(int argc, char **argv)
 //	tux->LFSTK_setLimits(10,-1,440,-1);
 //	tux->LFSTK_setLimits(-1,10,-1,440);
 	tux->LFSTK_setLimits(10,10,440,120);
-	tux->LFSTK_setMouseCallBack(NULL,mouseUpCB,NULL);
+	tux->LFSTK_setMouseCallBack(mouseDownCB,mouseUpCB,NULL);
+	tux->LFSTK_setMouseMoveCallBack(moveCB,exitCB,USERDATA("Left Enter/Exit"));
 
 	sy+=YSPACING*3;
 
@@ -168,7 +211,7 @@ int main(int argc, char **argv)
 	win->w=200;
 	win->h=200;
 	win->wc=wc;
-	win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_TOOL"));
+	win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_NORMAL"));
 
 	win->decorated=false;
 	win->overRide=true;

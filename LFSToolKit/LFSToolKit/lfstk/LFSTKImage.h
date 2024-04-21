@@ -36,7 +36,8 @@ class LFSTK_imageClass  : public  LFSTK_gadgetClass
 		LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* imagepath,int x,int y,unsigned w,unsigned h,int gravity,bool scale);
 
 		bool			mouseUp(XButtonEvent *e);
-
+		bool			mouseEnter(XButtonEvent *e);
+		bool			mouseExit(XButtonEvent *e);
 		void			LFSTK_clearWindow(void);
 
 		cairo_surface_t	*shapesfc=NULL;

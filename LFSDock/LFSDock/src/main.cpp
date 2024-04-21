@@ -330,14 +330,17 @@ int main(int argc,char **argv)
 
 			if(useBG==true)
 				{
-					dockWindow->LFSTK_setTile(dockBGImage.c_str(),-1);
+					//dockWindow->LFSTK_setTile(dockBGImage.c_str(),-1);
 					dockBGWindow->LFSTK_showWindow(true);
+					//dockBGWindow->LFSTK_setKeepAbove(true);
+					//dockWindow->LFSTK_setKeepAbove(true);
 				}
-			else
-				dockWindow->LFSTK_setTile(NULL,0);
+			//else
+			//	dockWindow->LFSTK_setTile(NULL,0);
 
-			dockWindow->LFSTK_showWindow(true);
-			dockWindow->LFSTK_setKeepAbove(true);
+			//dockWindow->LFSTK_showWindow(true);
+			//dockWindow->LFSTK_setKeepAbove(true);
+			//dockBGWindow->LFSTK_setKeepAbove(true);
 	
 			if(useTaskBar==true)
 				updateTaskBar(true);

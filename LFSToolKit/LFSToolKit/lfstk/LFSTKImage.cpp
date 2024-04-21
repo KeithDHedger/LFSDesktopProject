@@ -32,6 +32,46 @@ LFSTK_imageClass::LFSTK_imageClass()
 }
 
 /**
+* Mouse exit callback.
+* \param e XButtonEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
+bool LFSTK_imageClass::mouseExit(XButtonEvent *e)
+{
+	bool retval=true;
+
+	this->keyEvent=NULL;
+//no callbacks
+	if((this->callBacks.runTheCallback==false) || (this->isActive==false) )
+		return(true);
+
+	if((this->callBacks.validCallbacks & MOUSEEXITCB) && (this->noRunCB==false))
+		retval=this->callBacks.mouseExitCallback(this,this->callBacks.mouseMoveUserData);
+	return(retval);
+}
+
+/**
+* Mouse enter callback.
+* \param e XButtonEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
+bool LFSTK_imageClass::mouseEnter(XButtonEvent *e)
+{
+	bool retval=true;
+
+	this->keyEvent=NULL;
+
+//no callbacks
+	if((this->callBacks.runTheCallback==false) || (this->isActive==false) )
+		return(true);
+
+	if((this->callBacks.validCallbacks & MOUSEENTERCB) && (this->noRunCB==false))
+		retval=this->callBacks.mouseEnterCallback(this,this->callBacks.mouseMoveUserData);
+
+	return(retval);
+}
+
+/**
 * Mouse up callback.
 * \param e XButtonEvent passed from mainloop->listener.
 * \return Return true if event fully handeled or false to pass it on.
@@ -123,7 +163,8 @@ LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* image
 	this->gc=XCreateGC(this->wc->app->display,this->window,0,NULL);
 	this->wc->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->window,this->wc->app->visual,&this->sfc,&this->cr,w,h);
 	this->LFSTK_setCairoFontData();
-	XSelectInput(this->wc->app->display,this->window,ButtonPressMask|ButtonReleaseMask|ExposureMask|ButtonMotionMask);
+	XSelectInput(this->wc->app->display,this->window,ButtonPressMask|ButtonReleaseMask|ExposureMask|ButtonMotionMask| EnterWindowMask | LeaveWindowMask);
+//		long					gadgetEventMask=(ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|ButtonMotionMask|FocusChangeMask|KeyReleaseMask|KeyPressMask);
 
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;

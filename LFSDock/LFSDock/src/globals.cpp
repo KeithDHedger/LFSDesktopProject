@@ -139,12 +139,12 @@ void setGadgetDetails(LFSTK_gadgetClass *gadget)
 	gadget->LFSTK_setAlpha(1.0);
 	gadget->LFSTK_setStyle(BEVELNONE);
 
-	if(useBG==true)
-		{
-			gadget->LFSTK_setTile(dockBGImage.c_str(),-1);
-			gadget->gadgetDetails.geomRelativeToMainWindow=true;
-		}
-	else
+//	if(useBG==true)
+//		{
+//			gadget->LFSTK_setTile(dockBGImage.c_str(),-1);
+//			gadget->gadgetDetails.geomRelativeToMainWindow=true;
+//		}
+//	else
 		{
 			gadget->LFSTK_setTile(NULL,0);
 			gadget->LFSTK_setGadgetColours(GADGETBG,"#00000000","#00000000","#00000000","#00000000");

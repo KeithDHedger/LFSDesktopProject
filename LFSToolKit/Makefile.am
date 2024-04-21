@@ -5,7 +5,6 @@ EXTRA_DIST = lfstk.pc.in
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = lfstk.pc
 DISTCLEANFILES = lfstk.pc
-#ACLOCAL_AMFLAGS = "-I m4"
 
 .PHONY: docs
 
@@ -22,9 +21,8 @@ docs-install:
 docs-uninstall:
 	rm -rv $(DESTDIR)$(docdir)
 
-remake:
-	$(shell ./remakesourcelist)
-
 purge:
 	rm $(DESTDIR)${libdir}/liblfstoolkit.*||true
 	rm -r $(DESTDIR)${includedir}/lfstk||true
+
+#ACLOCAL_AMFLAGS = "-I m4"

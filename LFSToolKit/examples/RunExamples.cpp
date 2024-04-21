@@ -26,7 +26,7 @@ exit $retval
 #include "lfstk/LFSTKGlobals.h"
 
 #define BOXLABEL				"Examples"
-#define MAKEFLAGS			"-j10"
+#define MAKEFLAGS			"-j10  --output-sync"
 
 LFSTK_applicationClass		*apc=NULL;
 LFSTK_windowClass			*wc=NULL;

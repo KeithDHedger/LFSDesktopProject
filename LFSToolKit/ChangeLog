@@ -1,4 +1,7 @@
 0.6.1
+Vairous build files tweaks.
+Added mouse enter/exit call backs to image class.
+Fixed cairo surface sizes.
 Gadget and window tile fixes.
 Fixes to find class.
 Minor tweaks to LFSTKFindClass.

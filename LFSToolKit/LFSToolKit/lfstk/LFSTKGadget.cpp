@@ -1572,6 +1572,10 @@ void LFSTK_gadgetClass::LFSTK_setTile(const char *path,int size)
 		{
 			if((this->gadgetDetails.gadgetGeom.w!=0) && (this->gadgetDetails.gadgetGeom.h!=0))
 				cairo_xlib_surface_set_size(this->sfc,cairo_image_surface_get_width(tempimage)+1,cairo_image_surface_get_height(tempimage)+1);
+
+			if((cairo_xlib_surface_get_width(this->sfc)==0) || (cairo_xlib_surface_get_height(this->sfc)==0))
+				cairo_xlib_surface_set_size(this->sfc,this->gadgetDetails.gadgetGeom.w,this->gadgetDetails.gadgetGeom.h);
+			
 			this->pattern=cairo_pattern_create_for_surface(tempimage);
 			cairo_surface_destroy(tempimage);
 			cairo_pattern_set_extend(pattern,CAIRO_EXTEND_REPEAT);

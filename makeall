@@ -96,22 +96,22 @@ deploy ()
 {
 	runCommand "make distclean"||true
 	runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib${LIBDIRSUFFIX}"
-	runCommand "make $MAKEFLAGS"||make -j1||exit 100
-	runCommand "make install"
+	runCommand "make $MAKEFLAGS --output-sync"||"make -j1 --output-sync"||exit 100
+	runCommand "make install --output-sync"
 }
 
 deploytest ()
 {
 	runCommand "make distclean"||true
 	runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib${LIBDIRSUFFIX}"
-	runCommand "make $MAKEFLAGS"||make -j1||exit 100
-	runCommand "make install DESTDIR=/tmp/lfsdesktop-deploy"
+	runCommand "make $MAKEFLAGS --output-sync"||"make -j1 --output-sync"||exit 100
+	runCommand "make install DESTDIR=/tmp/lfsdesktop-deploy --output-sync"
 }
 
 makeit ()
 {
 	runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib${LIBDIRSUFFIX}"
-	runCommand "make $MAKEFLAGS"||make -j1||exit 100
+	runCommand "make $MAKEFLAGS --output-sync"||"make -j1 --output-sync"||exit 100
 }
 
 makelocal ()
@@ -126,7 +126,7 @@ makelocal ()
 		export CFLAGS CXXFLAGS
 		runCommand "./autogen.sh --prefix=/usr"
 	fi
-	runCommand "make $MAKEFLAGS"
+	runCommand "make $MAKEFLAGS --output-sync"
 }
 
 ownit ()
