@@ -8,7 +8,7 @@ fi
 
 (
 	cd ..
-	make ${MAKEFLAGS:--j4}
+	make ${MAKEFLAGS:--j4} --output-sync
 )
 
 APPNAME=$(basename $0 .cpp)

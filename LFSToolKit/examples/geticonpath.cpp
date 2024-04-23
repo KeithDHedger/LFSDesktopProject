@@ -49,7 +49,10 @@ bool getPath(void *p,void* ud)
 	iconpath=apc->globalLib->LFSTK_findThemedIcon(apc->iconThemeName,mimeEdit->LFSTK_getBuffer(),"");
 	if(iconpath.length()>1)
 		{
-			printf("iconpath=%s\n",iconpath.c_str());
+			printf("Icon Path=%s\n",iconpath.c_str());
+			std::cout<<"Suffix for icon path="<<LFSTK_UtilityClass::LFSTK_getSuffix(iconpath.c_str())<<std::endl;
+			LFSTK_UtilityClass::LFSTK_deleteSuffix(&iconpath);
+			std::cout<<"Path no suffix="<<iconpath<<std::endl;
 		}
 	else
 		printf("No icon found for '%s' in '%s'\n",mimeEdit->LFSTK_getCStr(),fileInfoEdit->LFSTK_getCStr());
@@ -59,8 +62,10 @@ bool getPath(void *p,void* ud)
 	if(fileinfo.isValid==true)
 		{
 			std::cout<<"Info for file "<<fileInfoEdit->LFSTK_getCStr()<<":"<<std::endl;
+			std::cout<<"Suffix for file="<<LFSTK_UtilityClass::LFSTK_getSuffix(fileInfoEdit->LFSTK_getBuffer())<<std::endl;
 			std::cout<<"Mimetype="<<fileinfo.mimeType<<std::endl;
 			std::cout<<"Icon file="<<fileinfo.iconPath<<std::endl;
+			std::cout<<"Suffix for Icon file="<<LFSTK_UtilityClass::LFSTK_getSuffix(fileinfo.iconPath)<<std::endl;
 			std::cout<<"Icon theme="<<fileinfo.themeName<<std::endl;
 			std::cout<<"File size="<<fileinfo.fileSize<<std::endl;
 			std::cout<<"isLink="<<fileinfo.isLink<<std::endl;
@@ -99,7 +104,7 @@ int main(int argc, char **argv)
 	label=new LFSTK_labelClass(wc,"File Information For",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	label->LFSTK_setCairoFontDataParts("B");
 	sy+=GADGETHITE;
-	fileInfoEdit=new LFSTK_lineEditClass(wc,"index.html",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
+	fileInfoEdit=new LFSTK_lineEditClass(wc,"geticonpath.cpp",BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 
 //get path to icon

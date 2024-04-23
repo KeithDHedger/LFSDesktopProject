@@ -904,6 +904,7 @@ void LFSTK_gadgetClass::drawImage()
 
 	cairo_save(this->cr);
 		cairo_reset_clip (this->cr);
+		//if((xoffset!=0) && (yoffset!=0))
 		cairo_translate(this->cr,xoffset,yoffset);
 		cairo_set_source_surface(this->cr,this->cImage,0,0);
 		cairo_set_operator(this->cr,CAIRO_OPERATOR_OVER);

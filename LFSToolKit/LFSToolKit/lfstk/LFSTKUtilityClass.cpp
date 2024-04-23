@@ -197,6 +197,33 @@ bool LFSTK_UtilityClass::LFSTK_hasSuffix(std::string haystack,std::string suffix
 }
 
 /**
+* Get suffix of string, and return suffix.
+* \param std::string str haystack.
+* \return std::string suffix.
+*/
+std::string LFSTK_UtilityClass::LFSTK_getSuffix(std::string haystack)
+{
+	std::string::size_type found=haystack.find_last_of(".");
+	return(haystack.substr(found+1));
+}
+
+/**
+* Delete suffix of string, and return suffix.
+* \param std::string str &haystack.
+* \return std::string suffix.
+*/
+std::string LFSTK_UtilityClass::LFSTK_deleteSuffix(std::string *haystack)
+{
+	std::string suffix="";
+
+	std::string::size_type found=haystack->find_last_of(".");
+
+	suffix=haystack->substr(found+1);
+	haystack->erase(found,std::string::npos);
+	return(suffix);
+}
+
+/**
 * Read desktop file into std::map<unsigned long,std::vector<std::string>>
 * \param std::string filepath.
 * \returnstd::map<unsigned long,std::vector<std::string>>

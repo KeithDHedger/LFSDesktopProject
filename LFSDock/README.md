@@ -32,8 +32,14 @@ where month is between 0 - 11 ( 0=January, 11=December ), date is 1- however man
 The calendar and slider gadgets are toggles and so need to be clicked on to make the appropriate window appear/disappear.<br>
 Gadgets can be in any order you wish.<br>
 <br>
-If you set a backround image, it will be tiled over the width of the window and should be at least double the height of the dock, this is a hack for now and will be fixed later.<br>
-Transparencies are not yet working in the BG image.<br>
+If you set a backround image, it will be tiled over the window<br>
+<PNG's should be used if you want to use end caps<br>
+End caps can be optionally set and fshould be in the same folder and be the same format as the main tile image with the filenames being for instance:<br>
+/home/keithhedger/Backgrounds/rage.png << main tile, only this path needs be set in the config file ( plaease use the lfsdockprefs app ).<br>
+/home/keithhedger/Backgrounds/rage-ls.png << left end cap.<br>
+/home/keithhedger/Backgrounds/rage-rs.png <<right end cap.<br>
+Images can be (semi-)transparent.<br>
+The main tile can be any size but the end caps height shoud be at least 120, the width can be any size>=1.<br>
 <br>
 More gadgets to come and improvements to the graphics.<br>
 The dock looks best with a transparent background at the bottom.<br>

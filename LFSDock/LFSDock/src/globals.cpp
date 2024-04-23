@@ -41,6 +41,8 @@ int						dockGravity=PANELSOUTH;
 std::string				dockTextColour="";
 std::string				dockBGColour="";
 std::string				dockBGImage="";
+std::string				dockBGImageLS="";
+std::string				dockBGImageRS="";
 bool						useBG=false;
 
 int						queueID;
@@ -61,6 +63,10 @@ LFSTK_listGadgetClass	*popActionList=NULL;
 bool						inSomeWindow=false;
 bool						gotLaunchers=false;
 int						popActionWindowYOffset=1;
+LFSTK_buttonClass		*bgrs=NULL;
+LFSTK_buttonClass		*bgls=NULL;
+int						sidewid=0;
+int						sidehite=0;
 
 //atoms
 Atom						WM_STATE=None;
@@ -330,8 +336,8 @@ void resizeDock(int wid,int hite)
 {
 	dockWindow->LFSTK_resizeWindow(wid,hite,true);
 	dockBGWindow->LFSTK_resizeWindow(wid,hite,true);
-	//dockBGWindow->LFSTK_clearWindow(true);
-	//dockWindow->LFSTK_clearWindow(true);
+	if(bgrs!=NULL)
+		bgrs->LFSTK_moveGadget(wid-sidewid,0);
 }
 
 void moveDock(int extra)

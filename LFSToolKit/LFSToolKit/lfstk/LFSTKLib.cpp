@@ -978,7 +978,7 @@ cairo_surface_t	*LFSTK_lib::LFSTK_createSurfaceFromPath(const char *path)
 {
 	cairo_status_t	cs=CAIRO_STATUS_SUCCESS;
 	cairo_surface_t	*tempimage=NULL;
-	char			*suffix=NULL;
+	char				*suffix=NULL;
 
 	if(path==NULL)
 		tempimage=NULL;

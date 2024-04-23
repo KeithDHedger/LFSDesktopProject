@@ -217,7 +217,8 @@ int main(int argc,char **argv)
 			win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DOCK"));
 			win->level=ABOVEALL;
 			win->decorated=false;
-			apc->LFSTK_addWindow(win,"DOCK");
+			//win->className="LFSDOCK";
+			apc->LFSTK_addWindow(win,"LFSDock");
 
 			dockWindow=apc->mainWindow;
 			dockWindow->LFSTK_initDnD(true);
@@ -323,24 +324,53 @@ int main(int argc,char **argv)
 			dockBGWindow=apc->windows->back().window;
 			apc->windows->back().showing=true;
 			dockBGWindow->LFSTK_setTile(dockBGImage.c_str(),-1);
-//dockBGWindow->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),10000,24);
 
 			moveDock(0);
 			resizeDock(psize,iconWidth+extraSpace);
 
+//max hite for end caps should be 120
+
 			if(useBG==true)
 				{
-					//dockWindow->LFSTK_setTile(dockBGImage.c_str(),-1);
-					dockBGWindow->LFSTK_showWindow(true);
-					//dockBGWindow->LFSTK_setKeepAbove(true);
-					//dockWindow->LFSTK_setKeepAbove(true);
-				}
-			//else
-			//	dockWindow->LFSTK_setTile(NULL,0);
+					cairo_status_t	st;
+					cairo_surface_t	*tsfc;
+					std::string		suffix=LFSTK_UtilityClass::LFSTK_deleteSuffix(&dockBGImage);
 
-			//dockWindow->LFSTK_showWindow(true);
-			//dockWindow->LFSTK_setKeepAbove(true);
-			//dockBGWindow->LFSTK_setKeepAbove(true);
+					dockBGImageLS=dockBGImage+"-ls."+suffix;
+					dockBGImageRS=dockBGImage+"-rs."+suffix;
+					dockBGWindow->LFSTK_showWindow(true);
+
+					tsfc=apc->globalLib->LFSTK_lib::LFSTK_createSurfaceFromPath(dockBGImageLS.c_str());
+					if(tsfc!=NULL)
+						{
+//fprintf(stderr,"dock hite=%i\n",iconWidth+extraSpace);
+//fprintf(stderr,"sfc=%p\n",tsfc);
+//fprintf(stderr,"hite===%i\n",cairo_image_surface_get_height(tsfc));
+//fprintf(stderr,"wid===%i\n",cairo_image_surface_get_width(tsfc));
+							sidehite=cairo_image_surface_get_height(tsfc);
+							sidewid=cairo_image_surface_get_width(tsfc);
+							cairo_surface_destroy (tsfc);
+			
+							bgls=new LFSTK_buttonClass(dockBGWindow,"",0,0,sidewid,sidehite);
+							setGadgetDetails(bgls);
+							st=bgls->LFSTK_setImageFromPath(dockBGImageLS,LEFT,false);
+							if(st!=CAIRO_STATUS_SUCCESS)
+								{
+									dockBGWindow->LFSTK_deleteGadget(bgls);
+									bgls=NULL;
+								}
+					
+							bgrs=new LFSTK_buttonClass(dockBGWindow,"",psize-sidewid,0,sidewid,sidehite,NorthWestGravity);
+							setGadgetDetails(bgrs);
+							st=bgrs->LFSTK_setImageFromPath(dockBGImageRS,RIGHT,false);
+							if(st!=CAIRO_STATUS_SUCCESS)
+								{
+									dockBGWindow->LFSTK_deleteGadget(bgrs);
+									bgrs=NULL;
+								}
+						}
+
+				}
 	
 			if(useTaskBar==true)
 				updateTaskBar(true);

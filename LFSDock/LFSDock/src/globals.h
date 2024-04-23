@@ -88,6 +88,8 @@ extern int						dockGravity;
 extern std::string				dockTextColour;
 extern std::string				dockBGColour;
 extern std::string				dockBGImage;
+extern std::string				dockBGImageLS;
+extern std::string				dockBGImageRS;
 extern bool						useBG;
 
 extern int						queueID;
@@ -112,6 +114,10 @@ extern LFSTK_windowClass			*popActionWindow;
 extern LFSTK_listGadgetClass		*popActionList;
 extern bool						inSomeWindow;
 extern int						popActionWindowYOffset;
+extern LFSTK_buttonClass			*bgrs;
+extern LFSTK_buttonClass			*bgls;
+extern int sidewid;
+extern int sidehite;
 
 //atoms
 extern Atom						WM_STATE;

@@ -183,6 +183,7 @@ class LFSTK_gadgetClass
 		cairo_t				*cr=NULL;
 		cairo_surface_t 		*sfc=NULL;
 		cairo_pattern_t		*pattern=NULL;
+		unsigned				pad;
 
 	private:
 		void					initGadget(void);
@@ -196,7 +197,6 @@ class LFSTK_gadgetClass
 		void					drawIndicator(gadgetStruct* details);
 		bevelType			getActiveBevel(void);
 
-		unsigned				pad;
 		geometryStruct		gadgetGeom;
 
 //font and label stuff
