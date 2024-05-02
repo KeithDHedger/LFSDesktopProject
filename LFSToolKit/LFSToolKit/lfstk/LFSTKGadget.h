@@ -185,6 +185,8 @@ class LFSTK_gadgetClass
 		cairo_pattern_t		*pattern=NULL;
 		unsigned				pad;
 
+		int					gadgetType=NOGADGET;
+
 	private:
 		void					initGadget(void);
 		void					selectBevel(bool mousedown);

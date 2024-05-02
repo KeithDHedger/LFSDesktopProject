@@ -56,6 +56,13 @@ PKG_CHECK_MODULES(LFSTK, $LFSTK_MODULES)
 AC_SUBST(LFSTK_LIBS)
 AC_SUBST(LFSTK_CFLAGS)
 
+AC_MSG_CHECKING(whether to build debug code)
+AC_ARG_ENABLE(debug,AS_HELP_STRING([--enable-debug],[Enable debug code]),[enable_debug=$enableval],[enable_debug="no"])
+AC_MSG_RESULT($enable_debug)
+if test "$enable_debug" = "yes"; then
+	AC_DEFINE([__DEBUG__], [], [Enable debug code])
+fi
+
 AC_SUBST(CXXFLAGS)
 AC_SUBST(CPPFLAGS)
 AC_SUBST(LDFLAGS)

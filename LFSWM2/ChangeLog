@@ -1,4 +1,7 @@
 1.0.1
+Removed some unnecessary code.
+Added --enable-debug to configure.
+Redone restack and window shuffle.
 Minor stack tweak.
 Unknown window types now set to normal type.
 Minor gui tweak on new app start.

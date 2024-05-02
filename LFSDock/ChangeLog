@@ -1,4 +1,6 @@
 0.2.0
+Added a couple of background examples.
+UI updates.
 Added use end caps ( optional ) when setting BG image.
 Better display of transparent BG image.
 Added optional background image to dock.

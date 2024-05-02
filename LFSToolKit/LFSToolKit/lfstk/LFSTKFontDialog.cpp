@@ -225,8 +225,11 @@ void LFSTK_fontDialogClass::buildDialog(void)
 	delete win;
 
 	this->dialog->autoLabelColour=false;
-	this->dialog->LFSTK_reloadGlobals();	
+	this->dialog->LFSTK_reloadGlobals();
 	this->dialog->LFSTK_clearWindow();
+
+//hack
+	LFSTK_labelClass *label=new LFSTK_labelClass(this->dialog,"XX",0,0,DIALOGWIDTH,DIALOGHITE,NorthGravity);
 
 //list
 	this->fontlist=new LFSTK_listGadgetClass(this->dialog,"",BORDER,sy,DIALOGWIDTH-(BORDER*2),GADGETHITE*5);
@@ -322,6 +325,7 @@ LFSTK_fontDialogClass::LFSTK_fontDialogClass(LFSTK_windowClass* parentwc,const c
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;
 	this->ml->type=BUTTONGADGET;
+	this->gadgetType=BUTTONGADGET;
 	this->wc->LFSTK_addMappedListener(this->window,ml);
 
 	if(this->wc->globalLib->LFSTK_getUseTheme()==true)

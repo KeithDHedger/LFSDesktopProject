@@ -67,6 +67,7 @@ LFSTK_labelClass::LFSTK_labelClass(LFSTK_windowClass* parentwc,const char* label
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;
 	this->ml->type=LABELGADGET;
+	this->gadgetType=LABELGADGET;
 	this->wc->LFSTK_addMappedListener(this->window,ml);
 
 	if(this->wc->globalLib->LFSTK_getUseTheme()==true)
@@ -74,6 +75,28 @@ LFSTK_labelClass::LFSTK_labelClass(LFSTK_windowClass* parentwc,const char* label
 	else
 		this->useTile=false;
 
+/*
+struct gadgetStruct
+{
+	colourStruct			*colour=NULL;
+	bevelType			bevel=BEVELNONE;
+	indicatorType		indic=NOINDICATOR;
+	int					state=NORMALCOLOUR;
+	int					reserveSpace=0;
+	bool					buttonTile=false;
+	geometryStruct		gadgetGeom={0,0,1,1};
+	geometryStruct		indicatorGeom={0,0,1,1};
+	bool					hasIndicator=false;
+	bool					useWindowPixmap=false;
+	bool					geomRelativeToMainWindow=false;
+	bool					showLink=false;
+	bool					showBroken=false;
+};
+*/
 	gadgetDetails={&this->wc->windowColourNames[NORMALCOLOUR],BEVELNONE,NOINDICATOR,NORMALCOLOUR,0,false,{0,0,w,h},{0,0,0,0},false,false,true};
 	this->LFSTK_setLabelGravity(gravity);
+//	fprintf(stderr,"w=%i\n",gadgetGeom.w);
+//this->gadgetDetails.gadgetGeom.w=1000;
+//this->gadgetDetails.gadgetGeom.h=h;
+
 }

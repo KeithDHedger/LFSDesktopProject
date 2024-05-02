@@ -46,7 +46,6 @@
 
 #include "config.h"
 
-//#define __DEBUG__
 #ifdef __DEBUG__
 #define MOVEKEYS (Mod4Mask|ControlMask|ShiftMask)
 #else
@@ -253,7 +252,6 @@ class LFSWM2_Class
 		Cursor				bottomLeftCursor;
 		Cursor				leftCursor;
 		Cursor				rootCursor;
-		int					restackCnt=-1;
 
 		LFSWM2_eventsClass	*mainEventClass;
 		LFSWM2_windowClass	*mainWindowClass;

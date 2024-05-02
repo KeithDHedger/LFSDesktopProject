@@ -309,6 +309,8 @@ int main(int argc, char **argv)
 	popWindow->LFSTK_resizeWindow(poplabel->LFSTK_getTextRealWidth("This is a mouse enter callback"),GADGETHITE);
 	popWindow->LFSTK_setWindowColourName(NORMALCOLOUR,"#c0808080");
 
+//wc->LFSTK_setTile("/home/keithhedger/Backgrounds/bc3h.png",-1);
+
 	int retval=apc->LFSTK_runApp();
 
 	delete apc;

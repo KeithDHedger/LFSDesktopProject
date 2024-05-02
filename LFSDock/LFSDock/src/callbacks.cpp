@@ -22,6 +22,8 @@
 
 LFSTK_windowClass	*launcherContextWindow;
 LFSTK_windowClass	*taskContextWindow;
+int					cnt=0;
+int					cnt2=0;
 
 void sendClientMessage(Window win,const char *msg,unsigned long data0,unsigned long data1,unsigned long data2,unsigned long data3,unsigned long data4)
 {
@@ -79,9 +81,6 @@ bool gadgetDrop(void *lwc,propertyStruct *data,void* ud)
 		}
 	return(true);
 }
-
-int cnt=0;
-int cnt2=0;
 
 bool timerCB(LFSTK_applicationClass *p,void* ud)
 {
@@ -224,7 +223,6 @@ void showhidetActionList(LFSTK_gadgetClass *bc,LFSTK_windowClass *winc,LFSTK_lis
 		{
 			winc->LFSTK_hideWindow();
 			apc->windows->at(apc->LFSTK_findWindow(winc)).showing=false;
-		//	XSync(apc->display,false);
 		}
 }
 

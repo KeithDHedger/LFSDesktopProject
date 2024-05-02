@@ -217,7 +217,7 @@ int main(int argc,char **argv)
 			win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DOCK"));
 			win->level=ABOVEALL;
 			win->decorated=false;
-			//win->className="LFSDOCK";
+			win->className="LFSDOCK";
 			apc->LFSTK_addWindow(win,"LFSDock");
 
 			dockWindow=apc->mainWindow;
@@ -315,23 +315,26 @@ int main(int argc,char **argv)
 
 			psize=windowWidth;
 			win=apc->LFSTK_getDefaultWInit();
-			win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_NORMAL"));
+			win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DOCK"));
 			win->level=ABOVEALL;
 			win->overRide=false;
 			win->decorated=false;
 			apc->LFSTK_addWindow(win,"DOCKBG");
 
-			dockBGWindow=apc->windows->back().window;
-			apc->windows->back().showing=true;
+			dockBGWindow=apc->windows->back().window;	
 			dockBGWindow->LFSTK_setTile(dockBGImage.c_str(),-1);
+			dockWindow->LFSTK_setTransientFor(dockBGWindow->window);
+			apc->windows->back().showing=true;
 
-			moveDock(0);
 			resizeDock(psize,iconWidth+extraSpace);
-
+			moveDock(0);
 //max hite for end caps should be 120
-
+//size = 2 = 60
+//fprintf(stderr,"dock hite=%i\n",iconWidth+extraSpace);
 			if(useBG==true)
 				{
+					//hack :(
+					LFSTK_labelClass *label=new LFSTK_labelClass(dockBGWindow,"XX",0,0,1,1,NorthGravity);
 					cairo_status_t	st;
 					cairo_surface_t	*tsfc;
 					std::string		suffix=LFSTK_UtilityClass::LFSTK_deleteSuffix(&dockBGImage);
@@ -339,14 +342,9 @@ int main(int argc,char **argv)
 					dockBGImageLS=dockBGImage+"-ls."+suffix;
 					dockBGImageRS=dockBGImage+"-rs."+suffix;
 					dockBGWindow->LFSTK_showWindow(true);
-
 					tsfc=apc->globalLib->LFSTK_lib::LFSTK_createSurfaceFromPath(dockBGImageLS.c_str());
 					if(tsfc!=NULL)
 						{
-//fprintf(stderr,"dock hite=%i\n",iconWidth+extraSpace);
-//fprintf(stderr,"sfc=%p\n",tsfc);
-//fprintf(stderr,"hite===%i\n",cairo_image_surface_get_height(tsfc));
-//fprintf(stderr,"wid===%i\n",cairo_image_surface_get_width(tsfc));
 							sidehite=cairo_image_surface_get_height(tsfc);
 							sidewid=cairo_image_surface_get_width(tsfc);
 							cairo_surface_destroy (tsfc);
@@ -356,7 +354,7 @@ int main(int argc,char **argv)
 							st=bgls->LFSTK_setImageFromPath(dockBGImageLS,LEFT,false);
 							if(st!=CAIRO_STATUS_SUCCESS)
 								{
-									dockBGWindow->LFSTK_deleteGadget(bgls);
+									//dockBGWindow->LFSTK_deleteGadget(bgls);
 									bgls=NULL;
 								}
 					
@@ -365,13 +363,15 @@ int main(int argc,char **argv)
 							st=bgrs->LFSTK_setImageFromPath(dockBGImageRS,RIGHT,false);
 							if(st!=CAIRO_STATUS_SUCCESS)
 								{
-									dockBGWindow->LFSTK_deleteGadget(bgrs);
+									//dockBGWindow->LFSTK_deleteGadget(bgrs);
 									bgrs=NULL;
 								}
 						}
-
+					dockBGWindow->LFSTK_clearWindow(true);
 				}
-	
+
+			tasks.clear();
+			holdtasks.clear();
 			if(useTaskBar==true)
 				updateTaskBar(true);
 

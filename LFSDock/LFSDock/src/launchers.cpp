@@ -29,7 +29,7 @@ std::vector<launcherDataStruct>	launchersArray;
 LFSTK_findClass					*findlaunchers=NULL;
 LFSTK_gadgetClass				*currentLauncher=NULL;
 
-bool launcherEnterCB(LFSTK_gadgetClass*p,void* ud)
+bool launcherEnterCB(LFSTK_gadgetClass* p,void* ud)
 {
 	if(p!=NULL)
 		{
@@ -58,8 +58,6 @@ bool launcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 			
 			inSomeWindow=true;
 		}
-	//else
-	//	currentLauncher=NULL;
 	return(true);
 }
 
@@ -85,11 +83,9 @@ bool launcherCB(void *p,void* ud)
 	std::string			command;
 	std::string			args;
 	std::string			str;
-	//std::string			whch;
 	propReturn			pr;
 
 	showhidetActionList(NULL,popActionWindow,popActionList);
-	//XSync(apc->display,false);
 
 	if(p!=NULL)
 		{
@@ -130,19 +126,13 @@ bool launcherCB(void *p,void* ud)
 			args="";
 		}
 
-	//whch=apc->globalLib->LFSTK_oneLiner("which '%S'",command);
-
 	sendNotify("Launching ",lds.name);
-
-//	XSync(apc->display,false);
 	if(lds.inTerm==false)
 		str=apc->globalLib->LFSTK_oneLiner("exec %S %S &\necho $!",command,args);
 	else
 		str=apc->globalLib->LFSTK_oneLiner("exec %S %S %S &\necho $!",prefs.LFSTK_getString("termcommand"),command,args);
 	lds.pid=std::stoul(str);
 
-	//XFlush(apc->display);
-	//apc->mainWindow->LFSTK_handleWindowEvents(NULL);
 	if(useTaskBar==true)
 		updateTaskBar();
 
@@ -248,10 +238,8 @@ int addLaunchers(int x,int y,int grav)
 				bc->LFSTK_setImageFromPath(DATADIR "/pixmaps/command.png",LEFT,true);
 
 			setGadgetDetails(bc);
-//				bc->LFSTK_setStyle(BEVELOUT);
 			launchersArray.push_back(lds);
 			xpos+=iconWidth+ICONSPACE;
 		}
-
 	return(xpos);
 }

@@ -85,7 +85,6 @@ void LFSWM2_windowClass::LFSWM2_destroyClient(Window id)
 		{
 			delete cc;
 		}
-	this->mainClass->restackCnt++;
 }
 
 struct fontColour* LFSWM2_windowClass::LFSWM2_xftLoadColour(const char *name,const char *fallback)
@@ -138,6 +137,7 @@ bool LFSWM2_windowClass::LFSWM2_createUnframedWindow(Window wid)
 //						case FORCEABOVE:
 //							this->LFSWM2_removeProp(wid,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
 //							this->LFSWM2_addState(wid,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
+//							
 //							break;
 //						case FORCEBELOW:
 //							this->LFSWM2_removeProp(wid,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
@@ -146,9 +146,11 @@ bool LFSWM2_windowClass::LFSWM2_createUnframedWindow(Window wid)
 //						default:
 //							break;
 //					}
-//				this->LFSWM2_setClientList(wid,true);
-//				return(true);
-//				break;
+				this->LFSWM2_setClientList(wid,true);
+							this->mainClass->mainEventClass->LFSWM2_shuffle(wid);
+							this->mainClass->mainEventClass->LFSWM2_restack();
+				return(true);
+				break;
 			case NORMALWINDOW:
 			case DIALOGWINDOW:
 			case TOOLWINDOW:
@@ -200,7 +202,6 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 				{
 					if(premaphs.mHints->decorations==0)
 						{
-							this->mainClass->restackCnt=1;
 							noborder=true;
 						}
 				}
@@ -500,14 +501,12 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 				}
 
 			XAddToSaveSet(this->mainClass->display,id);
-			this->mainClass->restackCnt++;
 			if(states!=NULL)
 				XFree(states);
 
 			this->LFSWM2_setControlRects(cc);
 			cc->LFSWM2_setFrameExtents();
 		}
-	this->mainClass->restackCnt=0;
 	return(true);
 }
 
@@ -704,7 +703,6 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 			else
 				cc->LFSWM2_hideWindow(false);
 		}
-	this->mainClass->restackCnt++;
 	XFree(states);
 	return;
 
@@ -863,6 +861,8 @@ void LFSWM2_windowClass::LFSWM2_setClientList(Window id,bool addwindow)
 						}
 				}
 		}
+//for(long unsigned j=0;j<this->windowIDList.size();j++)
+//	fprintf(stderr,"this->windowIDList.at(j)=%p\n",this->windowIDList.at(j));
 }
 
 void LFSWM2_windowClass::LFSWM2_setWindowState(Window w,long state)

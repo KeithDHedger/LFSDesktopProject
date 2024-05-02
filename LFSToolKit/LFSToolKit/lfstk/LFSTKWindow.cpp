@@ -338,16 +338,6 @@ void LFSTK_windowClass::LFSTK_redrawAllGadgets(void)
 void LFSTK_windowClass::LFSTK_clearWindow(bool cleargadgets)
 {
 	int	state=NORMALCOLOUR;
-//	
-//	XClearWindow(this->app->display,this->window);
-//			cairo_save(this->cr);
-//				cairo_reset_clip (this->cr);
-//				fprintf(stderr,"--->>>here\n");
-//				cairo_set_source_rgba(this->cr,1.0,1.0,1.0,1.0);
-//					cairo_set_operator(this->cr,CAIRO_OPERATOR_SOURCE);
-//					cairo_paint(this->cr);
-//					cairo_surface_flush (this->sfc);
-//			cairo_restore(this->cr);
 
 	if(cleargadgets==true)
 		this->LFSTK_redrawAllGadgets();
@@ -358,16 +348,14 @@ void LFSTK_windowClass::LFSTK_clearWindow(bool cleargadgets)
 	if(this->isActive==false)
 		state=INACTIVECOLOUR;
 
-
 	if(this->useTile==true)
 		{
-
 			cairo_save(this->cr);
 				cairo_reset_clip (this->cr);
 				cairo_set_source(this->cr,this->pattern);
 				cairo_set_operator(this->cr,CAIRO_OPERATOR_SOURCE);
 				cairo_paint(this->cr);
-				cairo_surface_flush (this->sfc);
+				cairo_surface_flush(this->sfc);
 			cairo_restore(this->cr);
 		}
 	else
@@ -396,6 +384,8 @@ void LFSTK_windowClass::LFSTK_resizeWindow(int w,int h,bool tellx)
 		XResizeWindow(this->app->display,this->window,w,h);
  
   	this->globalLib->LFSTK_setCairoSurface(this->app->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+  	this->w=w;
+  	this->h=h;
 	this->LFSTK_clearWindow(true);
 }
 
@@ -985,7 +975,7 @@ void LFSTK_windowClass::LFSTK_setTile(const char *path,int size)
 {
 	cairo_surface_t	*tempimage;
 	cairo_status_t	cs=CAIRO_STATUS_SUCCESS;
-	char			*suffix=NULL;
+	char				*suffix=NULL;
 
 	if(this->pattern!=NULL)
 		{
@@ -999,32 +989,32 @@ void LFSTK_windowClass::LFSTK_setTile(const char *path,int size)
 			return;
 		}
 
+	if(this->sfc==NULL)
+		this->sfc=cairo_xlib_surface_create(this->app->display,this->window,this->visual,this->w,this->h);
+
 	suffix=strrchr((char*)path,'.');
 	if((suffix!=NULL) && (strcasecmp(suffix,".png")==0))
 		{
 			tempimage=cairo_image_surface_create_from_png(path);
 			cs=cairo_surface_status(tempimage);
 		}
-	else
-		cs=CAIRO_STATUS_INVALID_FORMAT;
-
-	if(cs!=CAIRO_STATUS_SUCCESS)
+	else if((suffix!=NULL) && (strcasecmp(suffix,".jpg")==0))
 		{
 			tempimage=this->globalLib->LFSTK_cairo_image_surface_create_from_jpeg(path);
 			cs=cairo_surface_status(tempimage);
-			if(tempimage==NULL)
-				printf("Unkown Format : %s\n",path);
 		}
+	else
+		cs=CAIRO_STATUS_INVALID_FORMAT;
 
 	if(cs==CAIRO_STATUS_SUCCESS)
 		{
-			//if((this->gadgetDetails.gadgetGeom.w!=0) && (this->gadgetDetails.gadgetGeom.h!=0))
-			if(this->sfc==NULL)
-				this->sfc=cairo_xlib_surface_create(this->app->display,this->window,this->visual,w,h);
-			cairo_xlib_surface_set_size(this->sfc,cairo_image_surface_get_width(tempimage)+1,cairo_image_surface_get_height(tempimage)+1);
+			if((this->w!=0) && (h!=0))
+			//	cairo_xlib_surface_set_size(this->sfc,cairo_image_surface_get_width(tempimage)+1,cairo_image_surface_get_height(tempimage)+1);
+				cairo_xlib_surface_set_size(this->sfc,this->w,this->h);
+			//cairo_xlib_surface_set_size(this->sfc,1000,1000);
 			this->pattern=cairo_pattern_create_for_surface(tempimage);
 			cairo_surface_destroy(tempimage);
-			cairo_pattern_set_extend (pattern,CAIRO_EXTEND_REPEAT);
+			cairo_pattern_set_extend(pattern,CAIRO_EXTEND_REPEAT);
 			this->useTile=true;
 		}
 	else

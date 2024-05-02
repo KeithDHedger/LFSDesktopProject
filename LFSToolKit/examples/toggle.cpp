@@ -122,12 +122,12 @@ int main(int argc, char **argv)
 //check button	
 	check=new LFSTK_toggleButtonClass(wc,"Check Box",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,CHECKBOXSIZE);
 	check->LFSTK_setValue(true);
-	check->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)check->LFSTK_getLabel().c_str());
+	check->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"Check Box");
 	sy+=YSPACING;
 
 //toggle button	
 	toggle=new LFSTK_toggleButtonClass(wc,"Toggle",DIALOGMIDDLE-HALFGADGETWIDTH,sy,GADGETWIDTH,GADGETWIDTH);
-	toggle->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)toggle->LFSTK_getLabel().c_str());
+	toggle->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"Toggle");
 	toggle->LFSTK_setMouseMoveCallBack(enterCB,exitCB,USERDATA(0));
 	toggle->LFSTK_setToggleStyle(TOGGLENORMAL);
 	toggle->userData=USERDATA(1);

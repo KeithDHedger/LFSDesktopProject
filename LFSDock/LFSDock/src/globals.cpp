@@ -338,6 +338,8 @@ void resizeDock(int wid,int hite)
 	dockBGWindow->LFSTK_resizeWindow(wid,hite,true);
 	if(bgrs!=NULL)
 		bgrs->LFSTK_moveGadget(wid-sidewid,0);
+	dockWindow->LFSTK_clearWindow(true);	
+	dockBGWindow->LFSTK_clearWindow(true);	
 }
 
 void moveDock(int extra)

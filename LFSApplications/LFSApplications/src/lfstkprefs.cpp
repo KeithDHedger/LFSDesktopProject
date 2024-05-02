@@ -284,7 +284,10 @@ void setPreviewData(void)
 	if((!ml->empty()) )
 		{
 			if(useTheme->LFSTK_getValue()==true)
+			{
 				wc->LFSTK_setTile(windowTileEdit->LFSTK_getCStr(),-1);
+				wc->LFSTK_clearWindow(true);
+				}
 			else
 				{
 					wc->LFSTK_setTile(NULL,0);
@@ -359,13 +362,39 @@ void setPreviewData(void)
 				{
 					if(mls->gadget!=NULL)
 						{
-							if(mls->type!=LINEEDITGADGET)
+							int gtype=mls->type;
+							switch(gtype)
 								{
-									if(useTheme->LFSTK_getValue()==true)
-										mls->gadget->LFSTK_setTile(buttonTileEdit->LFSTK_getCStr(),-1);
-									else
-										mls->gadget->LFSTK_setTile(NULL,-1);
+										//fprintf(stderr,"SEPERATORGADGET\n");
+										//mls->gadget->LFSTK_setTile(windowTileEdit->LFSTK_getCStr(),-1);
+										//break;
+									case SEPERATORGADGET:
+									case LABELGADGET:
+										//fprintf(stderr,"LABELGADGET\n");
+										if(useTheme->LFSTK_getValue()==true)
+											mls->gadget->LFSTK_setTile(windowTileEdit->LFSTK_getCStr(),-1);
+										else
+											mls->gadget->LFSTK_setTile(NULL,-1);
+										break;
+									default:
+										if(useTheme->LFSTK_getValue()==true)
+											mls->gadget->LFSTK_setTile(buttonTileEdit->LFSTK_getCStr(),-1);
+										else
+											mls->gadget->LFSTK_setTile(NULL,-1);
+										break;
 								}
+//							if(mls->type!=LINEEDITGADGET)
+//								{
+//									if(useTheme->LFSTK_getValue()==true)
+//										mls->gadget->LFSTK_setTile(buttonTileEdit->LFSTK_getCStr(),-1);
+//									else
+//										mls->gadget->LFSTK_setTile(NULL,-1);
+//								}
+//							else if(mls->type==LABELGADGET)
+//								{
+//								fprintf(stderr,"LABELGADGET\n");
+//									mls->gadget->LFSTK_setTile(windowTileEdit->LFSTK_getCStr(),-1);
+//								}
 						}
 				}
 		}
@@ -806,7 +835,7 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 	setPreviewData();
-	wc->LFSTK_resizeWindow(sx,sy,true);
+	wc->LFSTK_resizeWindow(DIALOGWIDTH+BORDER,sy,true);
 	wc->LFSTK_showWindow();
 	wc->LFSTK_setKeepAbove(true);
 	if(parentWindow!=-1)

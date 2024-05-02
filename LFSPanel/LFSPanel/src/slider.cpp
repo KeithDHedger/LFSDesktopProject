@@ -215,10 +215,20 @@ int addSlider(int x,int y,int grav,bool fromleft)
 			direction=false;
 		}
 
+	//win->x=100;
+	//win->y=100;
+	//w=w;
+	//h=h;
 	win->w=w;
 	win->h=h;
+	win->app=apc;
 	apc->LFSTK_addToolWindow(win);
 	scwindow=apc->windows->back().window;
+
+//	win->w=w;
+//	win->h=h;
+//	apc->LFSTK_addToolWindow(win);
+//	scwindow=apc->windows->back().window;
 
 	vsb=new LFSTK_scrollBarClass(scwindow,direction,0,0,w,h,BUTTONGRAV);
 	

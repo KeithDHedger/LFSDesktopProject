@@ -61,6 +61,7 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* lab
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;
 	this->ml->type=BUTTONGADGET;
+	this->gadgetType=BUTTONGADGET;
 	wc->LFSTK_addMappedListener(this->window,ml);
 
 	if(this->wc->globalLib->LFSTK_getUseTheme()==true)
@@ -69,7 +70,11 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* lab
 		this->useTile=false;
 
 	if(this->label.compare("--")==0)
-		gadgetDetails={&this->newGadgetBGColours.at(NORMALCOLOUR),BEVELOUT,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false,false,true};
+		{
+			this->ml->type=SEPERATORGADGET;
+			this->gadgetType=SEPERATORGADGET;
+			gadgetDetails={&this->newGadgetBGColours.at(NORMALCOLOUR),BEVELOUT,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false,false,true};
+		}
 	else
 		gadgetDetails={&this->newGadgetBGColours.at(NORMALCOLOUR),BEVELOUT,NOINDICATOR,NORMALCOLOUR,0,true,{0,0,w,h},{0,0,0,0},false,false,false};
 }

@@ -251,7 +251,6 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 					steps=0;
 					this->setWindowRects(false);
 					this->dragRect=this->frameWindowRect;
-					this->mainClass->restackCnt=2;
 
 					switch(this->resizeMode)
 						{
@@ -313,13 +312,11 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 
 				XMoveResizeWindow(this->mainClass->display,this->resizeWindow,this->mainClass->displayWidth+10,0,1,1);
 				this->setWindowRects(true);
-				this->mainClass->restackCnt=0;
 				break;
 
 			case MotionNotify:
 				if(buttonDown==true)
 					{
-						this->mainClass->restackCnt=2;
 						this->steps++;
 						if(this->steps>this->smoothness)
 							{
@@ -534,13 +531,22 @@ bool LFSWM2_clientClass::wmCB(void *p,void* ud)
 		{
 			if(cc->onTop==false)
 				{
+					XSetInputFocus(cc->mainClass->display,cc->contentWindow,RevertToNone,CurrentTime);
+					cc->isActive=true;
+					cc->mainClass->mainWindowClass->LFSWM2_setProp(cc->mainClass->rootWindow,cc->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,&cc->contentWindow,1);
 					cc->mainClass->mainWindowClass->LFSWM2_addState(cc->contentWindow,cc->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
 					cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
+					cc->mainClass->mainEventClass->LFSWM2_shuffle(cc->contentWindow);
 				}
 			else
 				{
+					XSetInputFocus(cc->mainClass->display,None,RevertToNone,CurrentTime);
 					cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
+					cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->mainClass->rootWindow,cc->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")));
+					cc->mainClass->mainEventClass->LFSWM2_shuffle(None);
+					cc->mainClass->mainWindowClass->LFSWM2_refreshFrame(cc);
 				}
+			
 			cc->mainClass->mainEventClass->LFSWM2_restack();
 			usealt=!cc->onTop;
 			stringnum=ONTOPLABEL;
@@ -552,12 +558,18 @@ bool LFSWM2_clientClass::wmCB(void *p,void* ud)
 				{
 					cc->mainClass->mainWindowClass->LFSWM2_addState(cc->contentWindow,cc->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
 					cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
+					cc->mainClass->mainEventClass->LFSWM2_shuffle(None);
 				}
 			else
-				cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
+				{
+					cc->mainClass->mainWindowClass->LFSWM2_removeProp(cc->contentWindow,cc->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
+					cc->mainClass->mainEventClass->LFSWM2_shuffle(None);
+				}
+
 			cc->mainClass->mainEventClass->LFSWM2_restack();
 			usealt=!cc->onBottom;
 			stringnum=ONBOTTOMLABEL;
+			cc->mainClass->mainEventClass->LFSWM2_restack();
 		}
 
 	if(LFSTK_UtilityClass::LFSTK_strStr(comp,cc->menuNames.at(ONALLDESKSLABEL)).empty()==false)
@@ -903,7 +915,6 @@ void LFSWM2_clientClass::LFSWM2_setWMState(XEvent *e)
 			this->onBottom=true;
 			this->onTop=false;
 			XLowerWindow(this->mainClass->display,this->contentWindow);
-			this->mainClass->restackCnt++;
 		}
 
 	if(this->mainClass->mainWindowClass->LFSWM2_hasState(e->xproperty.window,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_ABOVE"))))
@@ -912,7 +923,6 @@ void LFSWM2_clientClass::LFSWM2_setWMState(XEvent *e)
 			this->onTop=true;
 			XRaiseWindow(this->mainClass->display,this->contentWindow);
 			this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,&this->contentWindow,1);
-			this->mainClass->restackCnt++;
 		}
 	if(states!=NULL)
 		XFree(states);
@@ -1038,6 +1048,14 @@ bool LFSWM2_clientClass::LFSWM2_handleEvents(XEvent *e)
 //this->mainClass->DEBUG_printEventData(e,true);
 	switch(e->type)
 		{
+			case ButtonPress:
+				//fprintf(stderr,"ButtonPress\n");
+				if((e->xbutton.state&(this->mainClass->modKeys))!=(this->mainClass->modKeys))//TODO//???windows key for now used to move window wihout restacking
+					{
+						this->mainClass->mainEventClass->LFSWM2_shuffle(this->contentWindow);
+						this->mainClass->mainEventClass->LFSWM2_restack();
+					}
+				break;
 			case ButtonRelease:
 				this->adjustContentWindow();
 				break;
@@ -1056,7 +1074,6 @@ bool LFSWM2_clientClass::LFSWM2_handleEvents(XEvent *e)
 						{
 							this->mainClass->mainEventClass->noRestack=true;
 							this->LFSWM2_doFrameMoveEvents(e);
-							this->mainClass->restackCnt=2;
 							return(true);
 						}
 					break;
@@ -1080,19 +1097,19 @@ bool LFSWM2_clientClass::LFSWM2_handleEvents(XEvent *e)
 					//std::cerr<<"client MapNotify"<<std::endl;
 				}
 				break;
-			case UnmapNotify:
-				{
-				//fprintf(stderr,"UnmapNotify from client\n");
-					this->LFSWM2_hideWindow(true);
-					return(true);
-				}
-				break;
 
 			case MapRequest:
 				//std::cerr<<"client MapRequest"<<std::endl;
 				this->LFSWM2_showWindow(false);
 				break;
 
+			case UnmapNotify:
+				{
+				//fprintf(stderr,"UnmapNotify from client\n");
+					this->LFSWM2_hideWindow(true);
+					return(true);
+				}
+				//break;
 			case DestroyNotify:
 				{
 				//fprintf(stderr,"DestroyNotify from client\n");
@@ -1186,7 +1203,6 @@ void LFSWM2_clientClass::renderFrame(bool isfirst,int x,int y)
 			this->setWindowRects(true);
 			this->rendered=true;
 			this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,(void*)&this->contentWindow,1);
-			this->mainClass->restackCnt=0;
 			if(this->isBorderless==true)
 				{
 					XMoveWindow(this->mainClass->display,this->frameWindow,this->firstx+this->mainClass->leftSideBarSize,this->firsty+this->mainClass->titleBarSize);

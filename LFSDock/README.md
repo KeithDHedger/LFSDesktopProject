@@ -40,6 +40,7 @@ End caps can be optionally set and fshould be in the same folder and be the same
 /home/keithhedger/Backgrounds/rage-rs.png <<right end cap.<br>
 Images can be (semi-)transparent.<br>
 The main tile can be any size but the end caps height shoud be at least 120, the width can be any size>=1.<br>
+A couple of examples are included in /usr/share/LFSDock/pixmaps<br>
 <br>
 More gadgets to come and improvements to the graphics.<br>
 The dock looks best with a transparent background at the bottom.<br>

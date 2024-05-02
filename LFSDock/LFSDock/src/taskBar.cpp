@@ -32,7 +32,6 @@ bool taskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 {
 	setGadgetPosition(p,false);
 	inSomeWindow=false;
-	//dockWindow->LFSTK_clearWindow(true);
 	currentTask=NULL;
 	return(true);
 }
@@ -121,7 +120,6 @@ bool taskListCB(void* p,void* ud)
 	if(bc!=NULL)
 		{
 			sendClientMessage((Window)filltasks.at((unsigned long)bc->userData).winid,"_NET_ACTIVE_WINDOW",0,0,0,0,0);
-			//XSync(apc->display,false);
 		}
 	return(true);
 }
@@ -252,11 +250,6 @@ skiplabel:
 			oldwidth=0;
 			moveDock(0);
 			resizeDock(windowWidth,iconWidth+extraSpace);
-//			dockWindow->LFSTK_resizeWindow(windowWidth,iconWidth+extraSpace,true);
-//			dockBGWindow->LFSTK_resizeWindow(windowWidth,iconWidth+extraSpace,true);
-//			dockBGWindow->LFSTK_clearWindow(true);
-//			dockWindow->LFSTK_clearWindow(true);
-			
 			return;
 		}
 
@@ -341,12 +334,7 @@ skiplabel:
 		{
 			moveDock(filltasks.size()*iconWidth);
 			resizeDock(windowWidth+((iconWidth+ICONSPACE)*filltasks.size()),iconWidth+extraSpace);
-//			dockWindow->LFSTK_resizeWindow(windowWidth+((iconWidth+ICONSPACE)*filltasks.size()),iconWidth+extraSpace,true);
-//			dockBGWindow->LFSTK_resizeWindow(windowWidth+((iconWidth+ICONSPACE)*filltasks.size()),iconWidth+extraSpace,true);
-//			dockBGWindow->LFSTK_clearWindow(true);
-
 			oldwidth=windowWidth+(iconWidth*filltasks.size());
-//			dockWindow->LFSTK_clearWindow(true);
 		}
 }
 
