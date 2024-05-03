@@ -29,7 +29,7 @@ LFSTK_fileDialogClass	*filedialogfile;
 LFSTK_fileDialogClass	*filedialogdir;
 
 bool						showFolder=false;
-Window					parentWindow=-1;
+Window					parentWindow=None;
 char						*wd;
 
 int main(int argc, char **argv)
@@ -71,12 +71,13 @@ int main(int argc, char **argv)
 		}
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,"","");
+	apc->LFSTK_addWindow(NULL,"");
 	wc=apc->mainWindow;
+	//wc->LFSTK_showWindow();
 
 	asprintf(&wd,"%s",apc->userHome.c_str());
-	if(parentWindow!=-1)
-		wc->LFSTK_setTransientFor(parentWindow);
+	if(parentWindow!=None)
+		wc->LFSTK_setTransientFor(wc->window);
 
 	if(showFolder==false)
 		{

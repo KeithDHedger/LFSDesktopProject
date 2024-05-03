@@ -1,4 +1,5 @@
 0.2.0
+Fixed delay when closing some dialogs.
 Added background path to lfsdockprefs
 Fixed file seletion.
 Changed lfsruncommand to dialog window type.

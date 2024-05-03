@@ -175,6 +175,9 @@ bool LFSTK_fontDialogClass::LFSTK_showDialog(const char* fontstring)
 			if(ml!=NULL)
 				ml->function(ml->gadget,&event,ml->type);
 
+			if(this->dialog->LFSTK_handleWindowEvents(&event)<0)
+				mainLoop=false;
+
 			switch(event.type)
 				{
 					case KeyRelease:
@@ -198,9 +201,6 @@ bool LFSTK_fontDialogClass::LFSTK_showDialog(const char* fontstring)
 							}
 						break;
 				}
-
-			if(this->dialog->LFSTK_handleWindowEvents(&event)<0)
-				mainLoop=false;
 		}
 	this->dialog->LFSTK_hideWindow();
 

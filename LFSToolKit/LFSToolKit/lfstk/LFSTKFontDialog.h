@@ -51,13 +51,13 @@ class LFSTK_fontDialogClass : public LFSTK_gadgetClass
 
 		LFSTK_multiLineEditClass	*preview=NULL;
 		LFSTK_lineEditClass		*fontsize=NULL;
+		LFSTK_windowClass		*dialog=NULL;
 	private:
 		void						buildFontString(void);
 		void						loadFontStrings(void);
 		void						buildDialog(void);
 		void						parseFontString(std::string fontstr);
 
-		LFSTK_windowClass		*dialog=NULL;
 		LFSTK_listGadgetClass	*fontlist=NULL;
 		LFSTK_toggleButtonClass	*boldcheck=NULL;
 		LFSTK_toggleButtonClass	*italiccheck=NULL;

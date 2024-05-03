@@ -268,6 +268,13 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	this->dialogGeom={0,0,dwidth,600,0};
 	delete win;
 
+	this->dialog->autoLabelColour=false;
+	this->dialog->LFSTK_reloadGlobals();
+	this->dialog->LFSTK_clearWindow();
+
+//hack
+	LFSTK_labelClass *label1=new LFSTK_labelClass(this->dialog,"XX",0,0,dwidth,600,NorthGravity);
+
 //find files
 	this->fc=new LFSTK_findClass;
 
