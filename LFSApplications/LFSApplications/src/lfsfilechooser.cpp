@@ -73,7 +73,7 @@ int main(int argc, char **argv)
 	apc=new LFSTK_applicationClass();
 	apc->LFSTK_addWindow(NULL,"");
 	wc=apc->mainWindow;
-	//wc->LFSTK_showWindow();
+	wc->LFSTK_showWindow();
 
 	asprintf(&wd,"%s",apc->userHome.c_str());
 	if(parentWindow!=None)
