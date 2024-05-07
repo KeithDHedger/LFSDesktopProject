@@ -207,13 +207,13 @@ bool mouseUpCB(void *p,void* ud)
 					switch(desktopItems.at((unsigned long)gadg->userData).type)
 						{
 							case ISHOMEFOLDER:
-								system("xdg-open ~");
+								system("xdg-open ~ &");
 								break;
 							case ISCOMPUTER:
-								system("xdg-open /");
+								system("xdg-open / &");
 								break;
 							case ISDOCUMENTSFOLDER:
-								system("xdg-open ~/Documents");
+								system("xdg-open ~/Documents &");
 								break;
 							case ISDESKTOPFILE://TODO// in term
 								{

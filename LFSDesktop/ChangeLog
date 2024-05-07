@@ -1,4 +1,5 @@
 0.2.0
+Fixed opening computer/home/documents folder when no file manager runing.
 Set desktop names on start.
 Fixed minor compiler complaint.
 Fixed segfault for unreachable icon in desktop file.
