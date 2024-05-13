@@ -404,7 +404,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 											cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xproperty.window);
 											if(cc!=NULL)
 												{
-													cc->LFSWM2_setWMState(&e);
+													cc->LFSWM2_setNetWMState(&e);
 													break;
 												}
 										}
@@ -456,6 +456,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 				{
 					//fprintf(stderr,"this->mainClass->restackCnt<1 eventnumber %i\n",when++);
 					this->LFSWM2_restack();
+					this->noRestack=true;
 				}
 			XAllowEvents(this->mainClass->display,ReplayPointer,CurrentTime);
 		}

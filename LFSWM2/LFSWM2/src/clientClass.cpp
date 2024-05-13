@@ -596,6 +596,27 @@ bool LFSWM2_clientClass::wmCB(void *p,void* ud)
 	if(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().compare("About")==0)
 		system("lfsabout &");
 
+#ifdef __DEBUG__
+	if(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().compare("DEBUG")==0)
+		{
+			fprintf(stderr,"\ncontentWindow=%p\n",cc->contentWindow);
+			fprintf(stderr,"frameWindow=%p\n",cc->frameWindow);
+			fprintf(stderr,"name=%s\n",cc->name.c_str());
+			fprintf(stderr,"visibleOnAllDesks=%s\n",cc->mainClass->DEBUG_printBool(cc->visibleOnAllDesks));
+			fprintf(stderr,"onTop=%s\n",cc->mainClass->DEBUG_printBool(cc->onTop));
+			fprintf(stderr,"onBottom=%s\n",cc->mainClass->DEBUG_printBool(cc->onBottom));
+			fprintf(stderr,"isWithdrawn=%s\n",cc->mainClass->DEBUG_printBool(cc->isWithdrawn));
+			fprintf(stderr,"isBorderless=%s\n",cc->mainClass->DEBUG_printBool(cc->isBorderless));
+			const char	*types="_NET_WM_NAME _NET_WM_WINDOW_TYPE WM_CLASS WM_NAME _NET_WM_STATE _NET_WM_DESKTOP _NET_FRAME_EXTENTS WM_STATE WM_NORMAL_HINTS ";
+			char			*command;
+			asprintf(&command,"xprop -id %p %s\n",cc->contentWindow,types);
+			fprintf(stderr,"Atoms:\n");
+			system(command);
+			fprintf(stderr,"using command:\n%s\n",command);
+			free(command);
+		}
+#endif
+
 	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
 	if(stringnum!=-1)
 		{
@@ -622,8 +643,14 @@ void LFSWM2_clientClass::showWMMenu(int x,int y)
 	wc->LFSTK_resizeWindow(1,1,true);
 	wc->LFSTK_hideWindow();
 
+	menu->LFSTK_setMouseCallBack(NULL,wmCB,(void*)0x888);
+
+#ifdef __DEBUG__
+	infoDataStruct	**mms=new infoDataStruct*[NUMOFMENUS+1];
+#else
 	infoDataStruct	**mms=new infoDataStruct*[NUMOFMENUS];
-	for (int j=0; j<NUMOFMENUS; j++)
+#endif
+	for (int j=0;j<NUMOFMENUS;j++)
 		{
 			mms[j]=new infoDataStruct;
 			mms[j]->label=this->menuNames.at(j);
@@ -633,8 +660,17 @@ void LFSWM2_clientClass::showWMMenu(int x,int y)
 			mms[j]->imageType=NOTHUMB;
 		}
 
-	menu->LFSTK_setMouseCallBack(NULL,wmCB,(void*)0x888);
+#ifdef __DEBUG__
+	mms[NUMOFMENUS]=new infoDataStruct;
+	mms[NUMOFMENUS]->label="DEBUG";
+	mms[NUMOFMENUS]->hasSubMenu=false;
+	mms[NUMOFMENUS]->subMenus=NULL;
+	mms[NUMOFMENUS]->userData=(void*)this;
+	mms[NUMOFMENUS]->imageType=NOTHUMB;
+	menu->LFSTK_addMainMenus(mms,NUMOFMENUS+1);
+#else
 	menu->LFSTK_addMainMenus(mms,NUMOFMENUS);
+#endif
 
 	menu->LFSTK_showMenu();
 
@@ -850,6 +886,7 @@ void LFSWM2_clientClass::LFSWM2_showWindow(bool checkstate)
 void LFSWM2_clientClass::LFSWM2_hideWindow(bool withdraw)
 {
 	this->visible=false;
+	//XUnmapWindow(this->mainClass->display,this->contentWindow);
 	if(withdraw==true)
 		{
 			this->holdFrameRect=this->frameWindowRect;
@@ -858,16 +895,6 @@ void LFSWM2_clientClass::LFSWM2_hideWindow(bool withdraw)
 		}
 	XUnmapWindow(this->mainClass->display,this->frameWindow);
 }
-
-//void LFSWM2_clientClass::LFSWM2_showWindow(void)
-//{
-//	XMapWindow(this->mainClass->display,this->frameWindow);
-//}
-//
-//void LFSWM2_clientClass::LFSWM2_hideWindow(void)
-//{
-//	XUnmapWindow(this->mainClass->display,this->frameWindow);
-//}
 
 void LFSWM2_clientClass::LFSWM2_resizeControls(void)
 {
@@ -879,7 +906,13 @@ void LFSWM2_clientClass::LFSWM2_resizeControls(void)
 	XResizeWindow(this->mainClass->display,this->rightSideDragger,this->dragsize,this->frameWindowRect.h-(this->dragsize*2));
 }
 
-void LFSWM2_clientClass::LFSWM2_setWMState(XEvent *e)
+void LFSWM2_clientClass::LFSWM2_setWMState()
+{
+	if(this->LFSWM2_getWindowState()==WithdrawnState)
+		this->LFSWM2_hideWindow(true);
+}
+
+void LFSWM2_clientClass::LFSWM2_setNetWMState(XEvent *e)
 {
 	long unsigned int	n;
 	Atom					*states;
@@ -1101,15 +1134,15 @@ bool LFSWM2_clientClass::LFSWM2_handleEvents(XEvent *e)
 			case MapRequest:
 				//std::cerr<<"client MapRequest"<<std::endl;
 				this->LFSWM2_showWindow(false);
+				this->mainClass->mainEventClass->noRestack=false;
 				break;
 
 			case UnmapNotify:
-				{
 				//fprintf(stderr,"UnmapNotify from client\n");
-					this->LFSWM2_hideWindow(true);
-					return(true);
-				}
-				//break;
+				this->LFSWM2_hideWindow(true);
+				this->mainClass->mainEventClass->noRestack=false;
+				break;
+
 			case DestroyNotify:
 				{
 				//fprintf(stderr,"DestroyNotify from client\n");
@@ -1231,3 +1264,21 @@ void LFSWM2_clientClass::LFSWM2_setFrameExtents(void)
 			this->mainClass->mainWindowClass->LFSWM2_setProp(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_FRAME_EXTENTS")),XA_CARDINAL,32,&v,4);
 		}
 }
+
+long LFSWM2_clientClass::LFSWM2_getWindowState(void)
+{
+	unsigned long	nitems,bytesafter;
+	unsigned char	*prop;
+	Atom				actualtype;
+	int				actualformat;
+	long				state=NormalState;
+
+	if(XGetWindowProperty(this->mainClass->display,this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("WM_STATE")),0L,2L,False,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("WM_STATE")),&actualtype,&actualformat,&nitems,&bytesafter,&prop)==Success)
+		{
+			if (nitems>0)
+				state=((long *)prop)[0];
+			XFree(prop);
+		}
+	return(state);
+}
+

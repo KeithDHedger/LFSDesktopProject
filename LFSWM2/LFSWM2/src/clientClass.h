@@ -126,7 +126,8 @@ class LFSWM2_clientClass
 
 		void				LFSWM2_resizeControls(void);
 
-		void				LFSWM2_setWMState(XEvent *e);
+		void				LFSWM2_setNetWMState(XEvent *e);
+		void				LFSWM2_setWMState(void);
 
 		void				LFSWM2_drawMouseLeave(Window id,Pixmap pm,struct controlData data);
 
@@ -153,6 +154,8 @@ class LFSWM2_clientClass
 		void				setWindowRects(bool resize=true);
 		rectStruct		setTitlePosition(void);
 		void				resetContentWindow(void);//TODO//all the routines need redoing
+
+		long				LFSWM2_getWindowState(void);
 
 	private:
 		int				sx=0;

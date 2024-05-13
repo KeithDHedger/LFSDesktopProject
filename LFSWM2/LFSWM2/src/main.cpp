@@ -39,7 +39,6 @@ int main(int argc, char **argv)
 
 	do
 		{
-		fprintf(stderr,"<<<<<\n");
 			loop=false;
 			for(auto& x:mainLFSWM2Class->mainWindowClass->clientList)
 				{

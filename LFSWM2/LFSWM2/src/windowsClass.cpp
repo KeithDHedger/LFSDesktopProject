@@ -36,13 +36,14 @@ void LFSWM2_windowClass::init(void)
 
 void LFSWM2_windowClass::LFSWM2_buildClientList(void)
 {
-	Window			returned_root;
-	Window			returned_parent;
-	Window			*toplevelwindows;
-	unsigned int		windowscnt;
-	std::string		windowname;
-	hintsDataStruct	hs;
-//XWindowAttributes	x_window_attrs;
+	Window				returned_root;
+	Window				returned_parent;
+	Window				*toplevelwindows;
+	unsigned int			windowscnt;
+	std::string			windowname;
+	hintsDataStruct		hs;
+	LFSWM2_clientClass	*cc;
+
 	XQueryTree(this->mainClass->display,this->mainClass->rootWindow,&returned_root,&returned_parent,&toplevelwindows,&windowscnt);
 	for(unsigned int i=0;i<windowscnt;++i)
 		{
@@ -53,6 +54,12 @@ void LFSWM2_windowClass::LFSWM2_buildClientList(void)
 
 			if(this->LFSWM2_createClient(toplevelwindows[i],hs)==false)
 				this->LFSWM2_freeHints(hs);
+
+			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(toplevelwindows[i]);
+			if(cc!=NULL)
+				{
+					cc->LFSWM2_setWMState();
+				}
 		}
 
 	if(toplevelwindows!=NULL)
@@ -643,7 +650,6 @@ void* LFSWM2_windowClass::LFSWM2_getProp(Window w,Atom prop,Atom type,long unsig
 	int				result=-1;
 
 	result=XGetWindowProperty(this->mainClass->display,w,prop,0L,32,false,type,&actual_type_return,&actual_format_return,nitems_return,&bytes_after_return,(unsigned char**)&prop_return);
-
 	if (result!=Success||bytes_after_return>0)
 		{
 			XFree(prop_return);

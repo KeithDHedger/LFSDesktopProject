@@ -64,7 +64,7 @@ bool LFSWM2_messageClass::LFSWM2_readMsg(void)
 
 	if(retcode>0)
 		{
-			fprintf(stderr,"message=%s\n",buffer.mText);
+			//fprintf(stderr,"message=%s\n",buffer.mText);
 			if(strcmp(buffer.mText,"reloadtheme")==0)
 				{
 					whatMsg=REFRESHTHEME;
