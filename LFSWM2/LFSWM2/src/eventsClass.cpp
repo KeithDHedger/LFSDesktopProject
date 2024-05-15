@@ -733,14 +733,6 @@ void LFSWM2_eventsClass::LFSWM2_shuffle(Window id)
 				}
 		}
 
-	for(int j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
-		{
-			it=std::find(wl.begin(),wl.end(),this->mainClass->mainWindowClass->windowIDList.at(j));
-			if(it != wl.end())
-				continue;
-			wl.push_back(this->mainClass->mainWindowClass->windowIDList.at(j));
-		}
-
 //transients
 	while(cnt<wl.size())
 		{			
@@ -754,6 +746,17 @@ void LFSWM2_eventsClass::LFSWM2_shuffle(Window id)
 				}
 			cnt++;
 		}
+
+	for(int j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
+		{
+			it=std::find(wl.begin(),wl.end(),this->mainClass->mainWindowClass->windowIDList.at(j));
+			if(it != wl.end())
+				continue;
+			wl.push_back(this->mainClass->mainWindowClass->windowIDList.at(j));
+		}
+
+
+
 
 	for(int j=0;j<wl.size();j++)
 		{
