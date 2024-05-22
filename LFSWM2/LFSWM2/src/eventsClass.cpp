@@ -400,7 +400,6 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 									if(e.xproperty.atom==this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE")))
 										{
 											this->noRestack=false;
-											//fprintf(stderr,"PropertyNotify OUT WM_STATE eventnumber %i\n",when++);
 											cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xproperty.window);
 											if(cc!=NULL)
 												{
@@ -742,7 +741,21 @@ void LFSWM2_eventsClass::LFSWM2_shuffle(Window id)
 					for(int j=0;j<wl.size();j++)
 						if(wl.at(j)==*v)
 							to=j;
+					
 					move(wl,cnt,to);
+					LFSWM2_clientClass	*cc2;
+					LFSWM2_clientClass	*cc3;
+					cc2=this->mainClass->mainWindowClass->LFSWM2_getClientClass(wl.at(to));
+					cc3=this->mainClass->mainWindowClass->LFSWM2_getClientClass(*v);
+					if(cc2!=NULL)
+						{
+							if(cc3!=NULL)
+								cc2->onDesk=cc3->onDesk;
+							if(cc2->onDesk==this->mainClass->currentDesktop)
+								cc2->LFSWM2_showWindow(true);
+							else
+								cc2->LFSWM2_hideWindow(false);
+						}
 				}
 			cnt++;
 		}
@@ -754,9 +767,6 @@ void LFSWM2_eventsClass::LFSWM2_shuffle(Window id)
 				continue;
 			wl.push_back(this->mainClass->mainWindowClass->windowIDList.at(j));
 		}
-
-
-
 
 	for(int j=0;j<wl.size();j++)
 		{

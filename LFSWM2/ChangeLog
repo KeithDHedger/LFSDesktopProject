@@ -1,4 +1,6 @@
 1.0.1
+Switching desktops by dragging window of of edge improvements.
+Moving window to new desktop drags transients with it.
 Removed some unnecessary code.
 Added --enable-debug to configure.
 Redone restack and window shuffle.

@@ -299,6 +299,8 @@ int main(int argc,char **argv)
 				}
 
 			desktopTheme=dockWindow->globalLib->desktopIconTheme;
+			if(((apc->LFSTK_getMonitorCount()-1)<onMonitor) || (onMonitor<0))
+				onMonitor=0;
 			mons=apc->LFSTK_getMonitorData(onMonitor);
 			dockWindow->LFSTK_setTile(NULL,0);
 			dockWindow->LFSTK_setWindowColourName(NORMALCOLOUR,"#00000000");

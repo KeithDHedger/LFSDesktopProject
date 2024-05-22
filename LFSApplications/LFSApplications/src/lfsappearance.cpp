@@ -159,43 +159,43 @@ bool buttonCB(void *p,void* ud)
 		{
 			if(strcmp((char*)ud,"WALLPAPERPREFS")==0)
 				{
-					asprintf(&command,"%slfsbackdropprefs &",libpath,wc->window);
+					asprintf(&command,"%slfsbackdropprefs -w %i  &",libpath,wc->window);
 					system(command);
 					free(command);
 				}
 			if(strcmp((char*)ud,"TOOLKITPREFS")==0)
 				{
-					asprintf(&command,"%slfstkprefs &",libpath,wc->window);
+					asprintf(&command,"%slfstkprefs -w %i &",libpath,wc->window);
 					system(command);
 					free(command);
 				}
 			if(strcmp((char*)ud,"DESKTOPPREFS")==0)
 				{
-					asprintf(&command,"%slfsdesktopprefs &",libpath,wc->window);
+					asprintf(&command,"%slfsdesktopprefs -w %i  &",libpath,wc->window);
 					system(command);
 					free(command);
 				}
 			if(strcmp((char*)ud,"WMPREFS")==0)
 				{
-					asprintf(&command,"%slfswmprefs &",libpath,wc->window);
+					asprintf(&command,"%slfswmpref -w %i s &",libpath,wc->window);
 					system(command);
 					free(command);
 				}
 			if(strcmp((char*)ud,"LFSWM2PREFS")==0)
 				{
-					asprintf(&command,"%slfswm2prefs &",libpath,wc->window);
+					asprintf(&command,"%slfswm2prefs -w %i &",libpath,wc->window);
 					system(command);
 					free(command);
 				}
 			if(strcmp((char*)ud,"PANELPREFS")==0)
 				{
-					asprintf(&command,"%slfspanelprefs &",libpath,wc->window);
+					asprintf(&command,"%slfspanelprefs -w %i  &",libpath,wc->window);
 					system(command);
 					free(command);
 				}
 			if(strcmp((char*)ud,"DOCKPREFS")==0)
 				{
-					asprintf(&command,"%slfsdockprefs &",libpath,wc->window);
+					asprintf(&command,"%slfsdockprefs -w %i  &",libpath,wc->window);
 					system(command);
 					free(command);
 				}

@@ -880,6 +880,9 @@ void LFSWM2_windowClass::LFSWM2_setWindowState(Window w,long state)
 void LFSWM2_windowClass::LFSWM2_setVisibilityForDesk(unsigned long desk)
 {
 	LFSWM2_clientClass	*cc;
+	LFSWM2_clientClass	*cchold;
+	LFSWM2_clientClass	*cctrans;
+	long unsigned int	n=0;
 
 	if((int)desk<0)
 		return;
@@ -889,6 +892,7 @@ void LFSWM2_windowClass::LFSWM2_setVisibilityForDesk(unsigned long desk)
 			cc=this->LFSWM2_getClientClass(this->windowIDList.at(j));
 			if(cc!=NULL)
 				{
+					cchold=cc;
 					if(cc->visibleOnAllDesks==true)
 						{
 							cc->onDesk=desk;
@@ -898,6 +902,24 @@ void LFSWM2_windowClass::LFSWM2_setVisibilityForDesk(unsigned long desk)
 						cc->LFSWM2_showWindow(true);
 					else
 						cc->LFSWM2_hideWindow(false);
+
+//transients
+					for(int k=0;k<this->mainClass->mainWindowClass->windowIDList.size();k++)
+						{			
+							Atom *v=(Atom*)this->mainClass->mainWindowClass->LFSWM2_getProp(this->mainClass->mainWindowClass->windowIDList.at(k),this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("WM_TRANSIENT_FOR")),XA_WINDOW,&n);
+							if(n>0)
+								{
+									if(*v==cchold->contentWindow)
+										{
+											cctrans=this->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(k));
+											cctrans->onDesk=cchold->onDesk;
+											if(cctrans->onDesk==desk)
+												cctrans->LFSWM2_showWindow(true);
+											else
+												cctrans->LFSWM2_hideWindow(false);
+										}
+								}
+						}
 				}
 		}
 }
