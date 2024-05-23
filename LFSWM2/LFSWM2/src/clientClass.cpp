@@ -991,6 +991,7 @@ bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 					case MotionNotify:
 						{
 							LFSWM2_clientClass	*rcc;
+							bool					donemove=false;
 						//fprintf(stderr,"MotionNotify clientClass.cpp\n");
 							if(lastx<ee.xbutton.x_root)
 								direction=1;
@@ -1011,16 +1012,7 @@ bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 									this->mainClass->LFSWM2_setCurrentDesktop(this->onDesk,true,true);
 									this->mainClass->mainWindowClass->LFSWM2_setProp(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_DESKTOP")),XA_CARDINAL,32,&this->onDesk,1);
 									XWarpPointer(this->mainClass->display,None,None,0,0,0,0,this->mainClass->displayWidth-50,0);
-//									XSync(this->mainClass->display,true);
-//									this->mainClass->mainEventClass->LFSWM2_restack();
-//									LFSWM2_clientClass	*rcc;
-//									for(long unsigned j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
-//										{
-//											rcc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(j));
-//											if(rcc!=NULL)
-//												this->mainClass->mainWindowClass->LFSWM2_refreshFrame(rcc,NULL);
-//										}
-									
+									donemove=true;
 								}
 							else if((ee.xbutton.x_root>this->mainClass->displayWidth-20) && (direction==1))
 								{
@@ -1028,15 +1020,18 @@ bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 									this->mainClass->LFSWM2_setCurrentDesktop(this->onDesk,true,true);
 									this->mainClass->mainWindowClass->LFSWM2_setProp(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_DESKTOP")),XA_CARDINAL,32,&this->onDesk,1);
 									XWarpPointer(this->mainClass->display,None,None,0,0,0,0,(-(this->mainClass->displayWidth)+50),0);
+									donemove=true;
 								}
-								
-							XSync(this->mainClass->display,true);
-							this->mainClass->mainEventClass->LFSWM2_restack();
-							for(long unsigned j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
+							if(donemove==true)
 								{
-									rcc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(j));
-									if(rcc!=NULL)
-										this->mainClass->mainWindowClass->LFSWM2_refreshFrame(rcc,NULL);
+									XSync(this->mainClass->display,true);
+									this->mainClass->mainEventClass->LFSWM2_restack();
+									for(long unsigned j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
+										{
+											rcc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(j));
+											if(rcc!=NULL)
+												this->mainClass->mainWindowClass->LFSWM2_refreshFrame(rcc,NULL);
+										}
 								}
 						}
 						lastx=ee.xbutton.x_root;
