@@ -209,6 +209,12 @@ void LFSWM2_clientClass::adjustContentWindow(void)
 	if(this->isBorderless==true)
 		return;
 
+	if(this->windowType==UTILITYWINDOW)
+		{
+			this->frameWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->frameWindow,this->mainClass->rootWindow);
+			return;
+		}
+
 	XGetWindowAttributes(this->mainClass->display,this->frameWindow,&frameattr);
 	r.x=frameattr.x+this->mainClass->leftSideBarSize;
 	r.y=frameattr.y+this->mainClass->titleBarSize;
@@ -223,6 +229,9 @@ void LFSWM2_clientClass::resetContentWindow(void)
 {
 	if(this->isBorderless==true)
 		return;
+	if(this->windowType==UTILITYWINDOW)
+		return;
+
 	XMoveResizeWindow(this->mainClass->display,this->contentWindow,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize,this->frameWindowRect.w-this->mainClass->leftSideBarSize-this->mainClass->riteSideBarSize,this->frameWindowRect.h-this->mainClass->titleBarSize-this->mainClass->bottomBarSize);
 }
 
@@ -422,9 +431,23 @@ bool LFSWM2_clientClass::doResizeDraggers(XEvent *e)
 
 void LFSWM2_clientClass::resizeContentWindow(int w,int h,bool useframerect)
 {
-	if(this->isBorderless==true)
-		return;
-
+//	if(this->isBorderless==true)
+//if((this->isBorderless==true) || (this->windowType==UTILITYWINDOW))
+//		return;
+if(this->windowType==UTILITYWINDOW)
+{
+	if(useframerect==true)
+		{
+			XResizeWindow(this->mainClass->display,this->contentWindow,this->frameWindowRect.w,this->frameWindowRect.h);
+			this->contentWindowRect={this->contentWindowRect.x,this->contentWindowRect.y,this->frameWindowRect.w,this->frameWindowRect.h};
+		}
+	else
+		{
+			XResizeWindow(this->mainClass->display,this->contentWindow,w,h);
+			this->contentWindowRect={this->contentWindowRect.x,this->contentWindowRect.y,w,h};
+		}
+	return;
+}
 	if(useframerect==true)
 		{
 			XResizeWindow(this->mainClass->display,this->contentWindow,this->frameWindowRect.w-(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),this->frameWindowRect.h-(this->mainClass->titleBarSize+this->mainClass->bottomBarSize));
@@ -862,7 +885,8 @@ void LFSWM2_clientClass::setWindowRects(bool resize)
 {
 	if(this->isBorderless==true)
 		return;
-
+//if(this->windowType==UTILITYWINDOW)
+//	return;
 	this->contentWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->contentWindow,this->mainClass->rootWindow);
 	this->frameWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->frameWindow,this->mainClass->rootWindow);
 
@@ -990,9 +1014,9 @@ bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 						break;
 					case MotionNotify:
 						{
+							//fprintf(stderr,"MotionNotify clientClass.cpp\n");
 							LFSWM2_clientClass	*rcc;
 							bool					donemove=false;
-						//fprintf(stderr,"MotionNotify clientClass.cpp\n");
 							if(lastx<ee.xbutton.x_root)
 								direction=1;
 							else
@@ -1005,7 +1029,7 @@ bool LFSWM2_clientClass::LFSWM2_doFrameMoveEvents(XEvent *e)
 									lasttime=ee.xmotion.time;
 									XMoveWindow(this->mainClass->display,this->frameWindow,this->frameWindowRect.x+xdiff,this->frameWindowRect.y+ydiff);
 								}
-
+				
 							if((ee.xbutton.x_root<20) && (direction==0))
 								{
 									this->onDesk=this->mainClass->LFSWM2_getLowerDesktop(this->onDesk);
@@ -1061,7 +1085,8 @@ rectStruct LFSWM2_clientClass::setTitlePosition(void)
 	XGlyphInfo	extents;
 	int			namewidth;
 	int			offset=this->controlCnt*CONTROL_GAP;
-	if(this->isBorderless==true)
+//	if(this->isBorderless==true)
+	if(this->windowType==UTILITYWINDOW)
 		return(r);
 
 	if(this->nameIsUTF==true)
@@ -1097,10 +1122,15 @@ bool LFSWM2_clientClass::LFSWM2_handleEvents(XEvent *e)
 				//fprintf(stderr,"ButtonPress\n");
 				if((e->xbutton.state&(this->mainClass->modKeys))!=(this->mainClass->modKeys))//TODO//???windows key for now used to move window wihout restacking
 					{
-						this->mainClass->mainEventClass->LFSWM2_shuffle(this->contentWindow);
-						this->mainClass->mainEventClass->LFSWM2_restack();
+						if(this->isActive==false)
+							{
+								this->mainClass->mainEventClass->LFSWM2_shuffle(this->contentWindow);
+								this->mainClass->mainEventClass->LFSWM2_restack();
+								this->isActive=true;
+							}
 					}
 				break;
+
 			case ButtonRelease:
 				this->adjustContentWindow();
 				break;
@@ -1191,8 +1221,6 @@ contloop:
 			case ConfigureRequest:
 				//fprintf(stderr,"isframed=%s",this->mainClass->DEBUG_printBool(this->rendered));
 				//fprintf(stderr,">>>>>>>>>>>>>>>>>>>>>e->xconfigurerequest.y=%i\n",e->xconfigurerequest.y);
-				if(this->isBorderless==true)
-					return(false);
 				if(this->holdFrameRect.w==-1)
 					return(false);
 				this->frameWindowRect=this->holdFrameRect;
@@ -1210,6 +1238,9 @@ contloop:
 void LFSWM2_clientClass::resizeContentWindow(rectStruct r,bool moveorigin)
 {
 	XConfigureRequestEvent	ce;
+
+if(this->windowType==UTILITYWINDOW)
+	return;
 
 	ce.display=this->mainClass->display;
 	ce.parent=this->frameWindow;
@@ -1265,7 +1296,7 @@ void LFSWM2_clientClass::renderFrame(bool isfirst,int x,int y)
 
 void LFSWM2_clientClass::LFSWM2_setFrameExtents(void)
 {
-	if(this->isBorderless==false)
+	if((this->isBorderless==false) && (this->windowType!=UTILITYWINDOW))
 		{
 			unsigned long v[10]={(unsigned long)this->mainClass->leftSideBarSize,(unsigned long)this->mainClass->riteSideBarSize,(unsigned long)this->mainClass->titleBarSize,(unsigned long)this->mainClass->bottomBarSize,0,0,0,0,0};
 			this->mainClass->mainWindowClass->LFSWM2_setProp(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_FRAME_EXTENTS")),XA_CARDINAL,32,&v,4);

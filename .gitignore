@@ -67,3 +67,4 @@ missing
 compile
 ltmain.sh
 *.html
+.nfs*

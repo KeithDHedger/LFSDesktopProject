@@ -119,6 +119,15 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 				}
 
 			XNextEvent(this->mainClass->display,&e);
+
+			if(this->mainClass->mainWindowClass->LFSWM2_getWindowType(e.xany.window)==UTILITYWINDOW)
+				{
+					//fprintf(stderr,">>>>e.xany.window=%p\n",e.xany.window);
+					cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xkey.window);
+					if(cc!=NULL)
+						XSetInputFocus(this->mainClass->display,e.xany.window,RevertToParent,CurrentTime);
+				}
+
 			cccontrol=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(e.xany.window));
 			if(cccontrol!=NULL)
 				{
@@ -128,6 +137,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 							continue;
 						}
 				}
+
 			cccontrol=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xany.window);
 			if(cccontrol!=NULL)
 				{
@@ -182,7 +192,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						//fprintf(stderr,"ButtonRelease eventnumber %i button number %i win=%x time=%d\n",when++,e.xbutton.button,e.xbutton.window,e.xbutton.time);
 						if((e.xbutton.window==this->mainClass->rootWindow) && (e.xbutton.time-lasttime>250))
 							{
-								this->noRestack=false;
+								this->noRestack=true;
 								int	direction=1;
 								int cd=this->mainClass->currentDesktop;
 								if(e.xbutton.button==Button4)
@@ -204,7 +214,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						break;
 					case ButtonPress:
 						//fprintf(stderr,"ButtonPress eventnumber %i\n",when++);
-						this->noRestack=false;
+						this->noRestack=true;
 						start=e.xbutton;
 						this->sy=e.xbutton.y;
 						cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xbutton.window);
@@ -217,10 +227,11 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 										break;
 									}
 
-								this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,&cc->contentWindow,1);
-								XSetInputFocus(this->mainClass->display,cc->contentWindow,RevertToNone,CurrentTime);
-								XAllowEvents(this->mainClass->display,ReplayPointer,e.xbutton.time);
-								XRaiseWindow(this->mainClass->display,cc->contentWindow);
+								if(cc->isActive==false)
+									{
+										XSetInputFocus(this->mainClass->display,None,RevertToParent,CurrentTime);
+										cc->isActive=true;
+									}
 							}
 						break;
 
@@ -304,8 +315,11 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 													ch.height=e.xconfigurerequest.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize;
 													if((cc->buttonDown==false) || (cc->isBorderless==false))
 														{
-															if(cc->isBorderless==false)
+														//	if(cc->isBorderless==false)
+															if((cc->isBorderless==false) && (cc->windowType!=UTILITYWINDOW))
 																XResizeWindow(this->mainClass->display,cc->frameWindow,e.xconfigurerequest.width+this->mainClass->riteSideBarSize+this->mainClass->leftSideBarSize,e.xconfigurerequest.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);
+															else
+																XResizeWindow(this->mainClass->display,cc->frameWindow,e.xconfigurerequest.width,e.xconfigurerequest.height);
 														}
 													ch.width=e.xconfigurerequest.width;
 													ch.height=e.xconfigurerequest.height;
@@ -508,7 +522,6 @@ void LFSWM2_eventsClass::LFSWM2_doClientMsg(Window id,XClientMessageEvent *e)
 						XSetInputFocus(this->mainClass->display,ccmessage->contentWindow,RevertToNone,CurrentTime);
 						this->LFSWM2_shuffle(ccmessage->contentWindow);
 					this->mainClass->LFSWM2_popXErrorHandler();
-
 				}
 			return;
 		}
@@ -667,7 +680,10 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)
 			if(cc!=NULL)
 				{
 					cl.push_back(this->mainClass->mainWindowClass->clientList.at(this->mainClass->mainWindowClass->windowIDList.at(j))->contentWindow);
-					wl.push_back(this->mainClass->mainWindowClass->clientList.at(this->mainClass->mainWindowClass->windowIDList.at(j))->frameWindow);
+					if(cc->isBorderless==false)
+						wl.push_back(this->mainClass->mainWindowClass->clientList.at(this->mainClass->mainWindowClass->windowIDList.at(j))->frameWindow);
+					else
+						wl.push_back(this->mainClass->mainWindowClass->clientList.at(this->mainClass->mainWindowClass->windowIDList.at(j))->contentWindow);
 				}
 			else
 				{
@@ -694,22 +710,67 @@ void LFSWM2_eventsClass::LFSWM2_shuffle(Window id)
 	int								cnt=0;
 	long unsigned int				n=0;
 	int								to=0;
-
+	Window							transid=id;
+//fprintf(stderr,"LFSWM2_shuffle id=%p\n",id);
 	if(id!=None)
 		{
 			findid=std::find(this->mainClass->mainWindowClass->windowIDList.begin(),this->mainClass->mainWindowClass->windowIDList.end(),id)-this->mainClass->mainWindowClass->windowIDList.begin();
 			this->mainClass->mainWindowClass->windowIDList.erase(this->mainClass->mainWindowClass->windowIDList.begin()+findid);
-			this->mainClass->mainWindowClass->windowIDList.emplace (this->mainClass->mainWindowClass->windowIDList.begin(),id);
+			this->mainClass->mainWindowClass->windowIDList.emplace(this->mainClass->mainWindowClass->windowIDList.begin(),id);
 			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(id);
 			if(cc!=NULL)
 				{
 					cc->isActive=true;
 					this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,&cc->contentWindow,1);
-					XSetInputFocus(this->mainClass->display,cc->contentWindow,RevertToNone,CurrentTime);
+					XSetInputFocus(this->mainClass->display,cc->contentWindow,RevertToParent,CurrentTime);
+				//	XRaiseWindow(this->mainClass->display,cc->frameWindow);
 					this->mainClass->mainWindowClass->LFSWM2_refreshFrame(cc);
+				}
+			else
+				{
+					XSetInputFocus(this->mainClass->display,id,RevertToParent,CurrentTime);
 				}
 		}
 
+//transients
+//if(cc->isActive==false)
+{
+	cnt=0;
+	while(cnt<this->mainClass->mainWindowClass->windowIDList.size())
+		{
+			n=0;		
+			Atom *v=NULL;
+			v=(Atom*)this->mainClass->mainWindowClass->LFSWM2_getProp(this->mainClass->mainWindowClass->windowIDList.at(cnt),this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("WM_TRANSIENT_FOR")),XA_WINDOW,&n);
+			if((v!=NULL) && (this->mainClass->mainWindowClass->windowIDList.at(cnt)!=transid))
+				{
+				//if(cnt==0)
+				//	continue;
+					if(n>0)
+						{
+						this->noRestack=true;
+							for(int j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
+								if(this->mainClass->mainWindowClass->windowIDList.at(j)==*v)
+									to=j;
+					
+							move(this->mainClass->mainWindowClass->windowIDList,cnt,to);
+							LFSWM2_clientClass	*cc2;
+							LFSWM2_clientClass	*cc3;
+							cc2=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(to));
+							cc3=this->mainClass->mainWindowClass->LFSWM2_getClientClass(*v);
+							if(cc2!=NULL)
+								{
+									if(cc3!=NULL)
+										cc2->onDesk=cc3->onDesk;
+									if(cc2->onDesk==this->mainClass->currentDesktop)
+										cc2->LFSWM2_showWindow(true);
+									else
+										cc2->LFSWM2_hideWindow(false);
+								}
+						}
+				}
+			cnt++;
+		}
+}
 	for(int j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
 		{
 			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(j));
@@ -730,34 +791,7 @@ void LFSWM2_eventsClass::LFSWM2_shuffle(Window id)
 					lastabove++;
 					continue;
 				}
-		}
-
-//transients
-	while(cnt<wl.size())
-		{			
-			Atom *v=(Atom*)this->mainClass->mainWindowClass->LFSWM2_getProp(wl.at(cnt),this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("WM_TRANSIENT_FOR")),XA_WINDOW,&n);
-			if(n>0)
-				{
-					for(int j=0;j<wl.size();j++)
-						if(wl.at(j)==*v)
-							to=j;
-					
-					move(wl,cnt,to);
-					LFSWM2_clientClass	*cc2;
-					LFSWM2_clientClass	*cc3;
-					cc2=this->mainClass->mainWindowClass->LFSWM2_getClientClass(wl.at(to));
-					cc3=this->mainClass->mainWindowClass->LFSWM2_getClientClass(*v);
-					if(cc2!=NULL)
-						{
-							if(cc3!=NULL)
-								cc2->onDesk=cc3->onDesk;
-							if(cc2->onDesk==this->mainClass->currentDesktop)
-								cc2->LFSWM2_showWindow(true);
-							else
-								cc2->LFSWM2_hideWindow(false);
-						}
-				}
-			cnt++;
+			wl.push_back(this->mainClass->mainWindowClass->windowIDList.at(j));
 		}
 
 	for(int j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)

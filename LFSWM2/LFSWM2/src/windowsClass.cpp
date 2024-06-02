@@ -163,8 +163,19 @@ bool LFSWM2_windowClass::LFSWM2_createUnframedWindow(Window wid)
 			case TOOLWINDOW:
 			case DESKTOPWINDOW:
 			case UNKNOWNTYPE:
+				this->LFSWM2_setClientList(wid,true);
+				return(true);
+				break;
+			case UTILITYWINDOW:
 				{
-					this->LFSWM2_setClientList(wid,true);
+					//this->LFSWM2_setClientList(wid,true);
+				//XSelectInput(this->mainClass->display,wid,SubstructureRedirectMask|ButtonPressMask|ButtonReleaseMask|ExposureMask|PointerMotionMask);
+				//	return(true);
+					hintsDataStruct hs;
+					hs=this->mainClass->mainWindowClass->LFSWM2_getWindowHints(wid);
+					this->LFSWM2_createClient(wid,hs);
+					//this->mainClass->mainEventClass->LFSWM2_shuffle(wid);
+					//this->mainClass->mainEventClass->LFSWM2_restack();
 					return(true);
 					break;
 				}
@@ -283,6 +294,26 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 					XFree(allowed);
 				}
 
+			if(cc->isBorderless==true)
+				{
+					cc->canMaximize=false;
+					cc->canMinimize=false;
+					cc->canResize=false;
+					cc->canClose=false;
+				}
+
+bool bh=false;
+			if(this->LFSWM2_getWindowType(id)==UTILITYWINDOW)
+				{
+					cc->canMaximize=false;
+					cc->canMinimize=false;
+					cc->canResize=false;
+					cc->canClose=false;
+					cc->isBorderless=false;
+					bh=true;
+					cc->windowType=UTILITYWINDOW;
+				}
+
 			if(this->LFSWM2_getWindowType(id)==UNKNOWNTYPE)
 				{
 					this->LFSWM2_setProp(id,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE")),XA_ATOM,32,&this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_NORMAL")),1);
@@ -294,23 +325,31 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 					cc->isBorderless=false;
 				}
 
-			if(cc->isBorderless==true)
-				{
-					cc->canMaximize=false;
-					cc->canMinimize=false;
-					cc->canResize=false;
-					cc->canClose=false;
-				}
+
+//			if(cc->isBorderless==true)
+//				{
+//					cc->canMaximize=false;
+//					cc->canMinimize=false;
+//					cc->canResize=false;
+//					cc->canClose=false;
+//				}
 
 			wa.win_gravity=NorthWestGravity;
 
 			wa.colormap =this->mainClass->defaultColourmap;
 			wa.border_pixel=0;
 
+			if(bh==true)
+			{
+				cc->frameWindow=XCreateWindow(this->mainClass->display,DefaultRootWindow(this->mainClass->display),premaphs.xa.x,premaphs.xa.y,premaphs.xa.width,premaphs.xa.height,BORDER_WIDTH,this->mainClass->depth,InputOutput,this->mainClass->defaultVisual,CWColormap | CWBorderPixel ,&wa);
+				//cc->frameWindow=None;
+				}
+			else
+			{
 			if(cc->isBorderless==false)
 				cc->frameWindow=XCreateWindow(this->mainClass->display,DefaultRootWindow(this->mainClass->display),-1000000,-1000000,premaphs.xa.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),premaphs.xa.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH,BORDER_WIDTH,this->mainClass->depth,InputOutput,this->mainClass->defaultVisual,CWColormap | CWBorderPixel ,&wa);
-			else
-				cc->frameWindow=None;
+}
+		//		cc->frameWindow=None;
 
 //fprintf(stderr,"wid=0x%x\n",cc->frameWindow);
 	
@@ -327,7 +366,12 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 			cc->contentWindowRect.y-=this->mainClass->titleBarSize;
 			if(cc->isBorderless==false)
 				cc->frameWindowRect={-1000000,-1000000,premaphs.xa.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),premaphs.xa.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH};
-
+			//else
+				{
+				if(cc->windowType!=UTILITYWINDOW)
+					cc->frameWindowRect={premaphs.xa.x,premaphs.xa.y,premaphs.xa.width,premaphs.xa.height};
+				
+				}
 			cc->resizeMode=this->mainClass->resizeMode;
 			if(cc->isBorderless==false)
 				cc->frameGC=XCreateGC(this->mainClass->display,cc->frameWindow,0,0);
@@ -338,13 +382,17 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 			XSetWindowAttributes attributes;//TODO//
 			attributes.win_gravity=NorthWestGravity;
 			if(cc->isBorderless==false)
-				XReparentWindow(this->mainClass->display,id,cc->frameWindow,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize-(BORDER_WIDTH*2));
-
+				if(cc->windowType!=UTILITYWINDOW)
+					XReparentWindow(this->mainClass->display,id,cc->frameWindow,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize-(BORDER_WIDTH*2));
+				else
+					XReparentWindow(this->mainClass->display,id,cc->frameWindow,0,0);
 			XChangeWindowAttributes(this->mainClass->display,id,CWWinGravity,&attributes);
 
 			if(cc->isBorderless==false)
+			{
 				XMapWindow(this->mainClass->display,cc->frameWindow);
-			XSelectInput(this->mainClass->display,cc->contentWindow,PropertyChangeMask|StructureNotifyMask|KeyReleaseMask);
+				XSelectInput(this->mainClass->display,cc->contentWindow,PropertyChangeMask|StructureNotifyMask|KeyReleaseMask);
+				}
 			this->LFSWM2_setWindowState(id,NormalState);
 
 			XGrabButton(this->mainClass->display,Button1,0,id,False,ButtonPressMask,GrabModeSync,GrabModeAsync,None,None);
@@ -573,6 +621,9 @@ enum {NORMALWINDOW=0,DESKTOPWINDOW,DOCKWINDOW,MENUWINDOW,DIALOGWINDOW,TOOLWINDOW
 						retval=TOOLWINDOW;
 					if(strcmp(x,"_NET_WM_WINDOW_TYPE_NOTIFICATION")==0)
 						retval=NOTIFICATION;
+					if(strcmp(x,"_NET_WM_WINDOW_TYPE_UTILITY")==0)
+						retval=UTILITYWINDOW;
+						//retval=NORMALWINDOW;
 
 					XFree(x);
 				}
@@ -1041,7 +1092,10 @@ void LFSWM2_windowClass::LFSWM2_resizeWindow(Window id,int w,int h)
 			changes.width=w;
 			changes.height=h;
 			XConfigureWindow(this->mainClass->display,id,value_mask,&changes);
-			XResizeWindow(this->mainClass->display,cc->frameWindow,w+this->mainClass->riteSideBarSize+this->mainClass->leftSideBarSize,h+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);
+			if(cc->windowType!=UTILITYWINDOW)
+				XResizeWindow(this->mainClass->display,cc->frameWindow,w+this->mainClass->riteSideBarSize+this->mainClass->leftSideBarSize,h+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);
+			else
+				XResizeWindow(this->mainClass->display,cc->frameWindow,w,h);
 		}
 }
 
@@ -1096,6 +1150,8 @@ void LFSWM2_windowClass::LFSWM2_refreshFrame(LFSWM2_clientClass *cc,XExposeEvent
 	if(cc==NULL)
 		return;
 
+if(cc->windowType==UTILITYWINDOW)
+	return;
 	if(cc->isBorderless==true)
 		return;
 
@@ -1398,6 +1454,9 @@ void LFSWM2_windowClass::LFSWM2_refreshThemeFrame(LFSWM2_clientClass *cc)
 	if(cc->isBorderless==true)
 		return;
 
+if(cc->windowType==UTILITYWINDOW)
+	return;
+	
 	r=cc->frameWindowRect;
 
 	if(isactive==false)
@@ -1598,6 +1657,8 @@ void LFSWM2_windowClass::LFSWM2_setControlRects(LFSWM2_clientClass *cc)
 //menu
 	if(cc->isBorderless==true)
 		return;
+if(cc->windowType==UTILITYWINDOW)
+	return;
 
 	if(this->mainClass->useTheme==true)
 		{
