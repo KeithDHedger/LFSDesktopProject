@@ -168,14 +168,10 @@ bool LFSWM2_windowClass::LFSWM2_createUnframedWindow(Window wid)
 				break;
 			case UTILITYWINDOW:
 				{
-					//this->LFSWM2_setClientList(wid,true);
-				//XSelectInput(this->mainClass->display,wid,SubstructureRedirectMask|ButtonPressMask|ButtonReleaseMask|ExposureMask|PointerMotionMask);
-				//	return(true);
 					hintsDataStruct hs;
 					hs=this->mainClass->mainWindowClass->LFSWM2_getWindowHints(wid);
+					XMoveWindow(this->mainClass->display,wid,-1000000,-1000000);
 					this->LFSWM2_createClient(wid,hs);
-					//this->mainClass->mainEventClass->LFSWM2_shuffle(wid);
-					//this->mainClass->mainEventClass->LFSWM2_restack();
 					return(true);
 					break;
 				}
@@ -325,31 +321,20 @@ bool bh=false;
 					cc->isBorderless=false;
 				}
 
-
-//			if(cc->isBorderless==true)
-//				{
-//					cc->canMaximize=false;
-//					cc->canMinimize=false;
-//					cc->canResize=false;
-//					cc->canClose=false;
-//				}
-
 			wa.win_gravity=NorthWestGravity;
 
 			wa.colormap =this->mainClass->defaultColourmap;
 			wa.border_pixel=0;
 
 			if(bh==true)
-			{
-				cc->frameWindow=XCreateWindow(this->mainClass->display,DefaultRootWindow(this->mainClass->display),premaphs.xa.x,premaphs.xa.y,premaphs.xa.width,premaphs.xa.height,BORDER_WIDTH,this->mainClass->depth,InputOutput,this->mainClass->defaultVisual,CWColormap | CWBorderPixel ,&wa);
-				//cc->frameWindow=None;
+				{
+					cc->frameWindow=XCreateWindow(this->mainClass->display,DefaultRootWindow(this->mainClass->display),premaphs.xa.x,premaphs.xa.y,premaphs.xa.width,premaphs.xa.height,BORDER_WIDTH,this->mainClass->depth,InputOutput,this->mainClass->defaultVisual,CWColormap | CWBorderPixel ,&wa);
 				}
 			else
-			{
-			if(cc->isBorderless==false)
-				cc->frameWindow=XCreateWindow(this->mainClass->display,DefaultRootWindow(this->mainClass->display),-1000000,-1000000,premaphs.xa.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),premaphs.xa.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH,BORDER_WIDTH,this->mainClass->depth,InputOutput,this->mainClass->defaultVisual,CWColormap | CWBorderPixel ,&wa);
-}
-		//		cc->frameWindow=None;
+				{
+					if(cc->isBorderless==false)
+						cc->frameWindow=XCreateWindow(this->mainClass->display,DefaultRootWindow(this->mainClass->display),-1000000,-1000000,premaphs.xa.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),premaphs.xa.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH,BORDER_WIDTH,this->mainClass->depth,InputOutput,this->mainClass->defaultVisual,CWColormap | CWBorderPixel ,&wa);
+				}
 
 //fprintf(stderr,"wid=0x%x\n",cc->frameWindow);
 	
@@ -366,12 +351,10 @@ bool bh=false;
 			cc->contentWindowRect.y-=this->mainClass->titleBarSize;
 			if(cc->isBorderless==false)
 				cc->frameWindowRect={-1000000,-1000000,premaphs.xa.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),premaphs.xa.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH};
-			//else
-				{
-				if(cc->windowType!=UTILITYWINDOW)
-					cc->frameWindowRect={premaphs.xa.x,premaphs.xa.y,premaphs.xa.width,premaphs.xa.height};
-				
-				}
+
+			if(cc->windowType!=UTILITYWINDOW)
+				cc->frameWindowRect={premaphs.xa.x,premaphs.xa.y,premaphs.xa.width,premaphs.xa.height};
+
 			cc->resizeMode=this->mainClass->resizeMode;
 			if(cc->isBorderless==false)
 				cc->frameGC=XCreateGC(this->mainClass->display,cc->frameWindow,0,0);
@@ -393,6 +376,7 @@ bool bh=false;
 				XMapWindow(this->mainClass->display,cc->frameWindow);
 				XSelectInput(this->mainClass->display,cc->contentWindow,PropertyChangeMask|StructureNotifyMask|KeyReleaseMask);
 				}
+			
 			this->LFSWM2_setWindowState(id,NormalState);
 
 			XGrabButton(this->mainClass->display,Button1,0,id,False,ButtonPressMask,GrabModeSync,GrabModeAsync,None,None);
