@@ -432,8 +432,23 @@ bool bh=false;
 			this->LFSWM2_setProp(cc->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_DESKTOP")),XA_CARDINAL,32,(void*)&cc->onDesk,1);
 
 			this->LFSWM2_setClientList(id,true);
+
+			cc->setWindowRects(false);
 			if(cc->canResize==true)
 				{
+					int	drwid;
+					int	dlwid;
+
+					if(this->mainClass->useTheme==true)
+						{
+							drwid=this->theme.leftWidth;
+							dlwid=this->theme.rightWidth;
+						}
+					else
+						{
+							drwid=this->mainClass->leftSideBarSize;
+							dlwid=this->mainClass->riteSideBarSize;
+						}
 //top left dragger
 					wa.win_gravity=NorthWestGravity;
 					wa.cursor=this->mainClass->topLeftCursor;
@@ -458,19 +473,19 @@ bool bh=false;
 //left side dragger
 					wa.win_gravity=NorthWestGravity;
 					wa.cursor=this->mainClass->leftCursor;
-					cc->leftSideDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,0,cc->dragsize,cc->dragsize,cc->frameWindowRect.h-(cc->dragsize*2),0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
+					cc->leftSideDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,0,cc->dragsize,dlwid,cc->frameWindowRect.h-(cc->dragsize*2),0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
 					XSelectInput(this->mainClass->display,cc->leftSideDragger,ButtonPressMask|PointerMotionMask|ButtonReleaseMask);
 
 //right side dragger
 					wa.win_gravity=NorthEastGravity;
 					wa.cursor=this->mainClass->rightCursor;
-					cc->rightSideDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.w-cc->dragsize,cc->dragsize,cc->dragsize,cc->frameWindowRect.h-(cc->dragsize*2),0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
+					cc->rightSideDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.w-dlwid,cc->dragsize,drwid,cc->frameWindowRect.h-(cc->dragsize*2),0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
 					XSelectInput(this->mainClass->display,cc->rightSideDragger,ButtonPressMask|PointerMotionMask|ButtonReleaseMask);
 
 //bottom rite dragger
+
 					wa.win_gravity=SouthEastGravity;
 					wa.cursor=this->mainClass->bottomRightCursor;
-
 					cc->bottomRightDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.w-cc->dragsize,cc->frameWindowRect.h-cc->dragsize,cc->dragsize,cc->dragsize,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
 					XSelectInput(this->mainClass->display,cc->bottomRightDragger,ButtonPressMask|PointerMotionMask|ButtonReleaseMask);
 

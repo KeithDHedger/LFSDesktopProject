@@ -1,4 +1,5 @@
 1.0.1
+Fixed left/right side window resize draggers.
 Fixed utility windows.
 Switching desktops by dragging window off of edge improvements.
 Moving window to new desktop drags transients with it.
