@@ -899,6 +899,10 @@ void LFSWM2_clientClass::LFSWM2_showWindow(bool checkstate)
 	if((checkstate==true) && ((this->isWithdrawn==true) || (this->isHidden==true)))
 		return;
 
+	if(this->windowType==UTILITYWINDOW)
+		XMoveWindow(this->mainClass->display,this->contentWindow,0,0);
+
+	this->contentWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->contentWindow,this->mainClass->rootWindow);
 	this->visible=true;
 	if(this->isWithdrawn==true)
 		this->mainClass->mainWindowClass->LFSWM2_setWindowState(this->contentWindow,NormalState);
@@ -1169,7 +1173,7 @@ bool LFSWM2_clientClass::LFSWM2_handleEvents(XEvent *e)
 
 			case MapNotify:
 				{
-					//std::cerr<<"client MapNotify"<<std::endl;
+				//	std::cerr<<"client MapNotify"<<std::endl;
 				}
 				break;
 
