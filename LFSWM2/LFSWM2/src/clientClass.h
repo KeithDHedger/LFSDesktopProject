@@ -137,7 +137,9 @@ class LFSWM2_clientClass
 
 		void				LFSWM2_unSpecial(void);
 
-		int				dragsize=16;
+		int				dragSpacing=16;
+		int				leftSideDragWidth=1;
+		int				riteSideDragWidth=1;
 		int				smoothness=4;//TODO//
 		int				controlCnt=0;
 		int				minWidth;

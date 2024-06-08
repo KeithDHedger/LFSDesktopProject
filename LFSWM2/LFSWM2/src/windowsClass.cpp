@@ -420,64 +420,62 @@ bool bh=false;
 			cc->setWindowRects(false);
 			if(cc->canResize==true)
 				{
-					int	drwid;
-					int	dlwid;
-
 					if(this->mainClass->useTheme==true)
 						{
-							drwid=this->theme.leftWidth;
-							dlwid=this->theme.rightWidth;
+							cc->leftSideDragWidth=this->theme.leftWidth;
+							cc->riteSideDragWidth=this->theme.rightWidth;
 						}
 					else
 						{
-							drwid=this->mainClass->leftSideBarSize;
-							dlwid=this->mainClass->riteSideBarSize;
+							cc->leftSideDragWidth=this->mainClass->leftSideBarSize;
+							cc->riteSideDragWidth=this->mainClass->riteSideBarSize;
 						}
+
 //top left dragger
 					wa.win_gravity=NorthWestGravity;
 					wa.cursor=this->mainClass->topLeftCursor;
 
-					cc->topLeftDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,0,0,cc->dragsize,cc->dragsize,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
+					cc->topLeftDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,0,0,cc->dragSpacing,cc->dragSpacing,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
 					XSelectInput(this->mainClass->display,cc->topLeftDragger,ButtonPressMask|PointerMotionMask|ButtonReleaseMask);
 
 //top righht dragger
 					wa.win_gravity=NorthEastGravity;
 					wa.cursor=this->mainClass->topRightCursor;
 
-					cc->topRightDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.w-cc->dragsize,0,cc->dragsize,cc->dragsize,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
+					cc->topRightDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.w-cc->dragSpacing,0,cc->dragSpacing,cc->dragSpacing,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
 					XSelectInput(this->mainClass->display,cc->topRightDragger,ButtonPressMask|PointerMotionMask|ButtonReleaseMask);
 
 //bottom dragger
 					wa.win_gravity=SouthWestGravity;
 					wa.cursor=this->mainClass->bottomCursor;
 
-					cc->bottomDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,0,cc->frameWindowRect.h-cc->dragsize,cc->frameWindowRect.w,cc->dragsize,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
+					cc->bottomDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,0,cc->frameWindowRect.h-cc->dragSpacing,cc->frameWindowRect.w,cc->dragSpacing,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
 					XSelectInput(this->mainClass->display,cc->bottomDragger,ButtonPressMask|PointerMotionMask|ButtonReleaseMask);
 
 //left side dragger
 					wa.win_gravity=NorthWestGravity;
 					wa.cursor=this->mainClass->leftCursor;
-					cc->leftSideDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,0,cc->dragsize,dlwid,cc->frameWindowRect.h-(cc->dragsize*2),0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
+					cc->leftSideDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,0,cc->dragSpacing,cc->leftSideDragWidth,cc->frameWindowRect.h-(cc->dragSpacing*2),0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
 					XSelectInput(this->mainClass->display,cc->leftSideDragger,ButtonPressMask|PointerMotionMask|ButtonReleaseMask);
 
 //right side dragger
 					wa.win_gravity=NorthEastGravity;
 					wa.cursor=this->mainClass->rightCursor;
-					cc->rightSideDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.w-dlwid,cc->dragsize,drwid,cc->frameWindowRect.h-(cc->dragsize*2),0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
+					cc->rightSideDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.w-cc->riteSideDragWidth,cc->dragSpacing,cc->riteSideDragWidth,cc->frameWindowRect.h-(cc->dragSpacing*2),0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
 					XSelectInput(this->mainClass->display,cc->rightSideDragger,ButtonPressMask|PointerMotionMask|ButtonReleaseMask);
 
 //bottom rite dragger
 
 					wa.win_gravity=SouthEastGravity;
 					wa.cursor=this->mainClass->bottomRightCursor;
-					cc->bottomRightDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.w-cc->dragsize,cc->frameWindowRect.h-cc->dragsize,cc->dragsize,cc->dragsize,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
+					cc->bottomRightDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.w-cc->dragSpacing,cc->frameWindowRect.h-cc->dragSpacing,cc->dragSpacing,cc->dragSpacing,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
 					XSelectInput(this->mainClass->display,cc->bottomRightDragger,ButtonPressMask|PointerMotionMask|ButtonReleaseMask);
 
 //bottom left dragger
 					wa.win_gravity=SouthWestGravity;
 					wa.cursor=this->mainClass->bottomLeftCursor;
 
-					cc->bottomLeftDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,0,cc->frameWindowRect.h-cc->dragsize,cc->dragsize,cc->dragsize,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
+					cc->bottomLeftDragger=XCreateWindow(this->mainClass->display,cc->frameWindow,0,cc->frameWindowRect.h-cc->dragSpacing,cc->dragSpacing,cc->dragSpacing,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity| CWCursor,&wa);
 					XSelectInput(this->mainClass->display,cc->bottomLeftDragger,ButtonPressMask|PointerMotionMask|ButtonReleaseMask);
 				}
 

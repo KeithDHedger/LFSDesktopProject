@@ -929,9 +929,9 @@ void LFSWM2_clientClass::LFSWM2_resizeControls(void)
 	if(this->isBorderless==true)
 		return;
 
-	XResizeWindow(this->mainClass->display,this->bottomDragger,this->frameWindowRect.w,this->dragsize);
-	XResizeWindow(this->mainClass->display,this->leftSideDragger,this->dragsize,this->frameWindowRect.h-(this->dragsize*2));
-	XResizeWindow(this->mainClass->display,this->rightSideDragger,this->dragsize,this->frameWindowRect.h-(this->dragsize*2));
+	XResizeWindow(this->mainClass->display,this->bottomDragger,this->frameWindowRect.w,this->dragSpacing);
+	XResizeWindow(this->mainClass->display,this->leftSideDragger,this->leftSideDragWidth,this->frameWindowRect.h-(this->dragSpacing*2));
+	XResizeWindow(this->mainClass->display,this->rightSideDragger,this->riteSideDragWidth,this->frameWindowRect.h-(this->dragSpacing*2));
 }
 
 void LFSWM2_clientClass::LFSWM2_setWMState()
