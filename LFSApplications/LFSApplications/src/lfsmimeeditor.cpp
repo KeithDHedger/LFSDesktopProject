@@ -60,13 +60,13 @@ bool doQuit(void *p,void* ud)
 
 void setMimeTypesList(char *filepath)
 {
-	FILE	*file=NULL;
-	char	*buffer;
+	FILE		*file=NULL;
+	char		*buffer;
 	int		cnt=0;
 	size_t	linelen=0;
 	ssize_t	read=0;
 	int		linecnt=0;
-	char	*lines=NULL;
+	char		*lines=NULL;
 	infoDataStruct listit;
 
 	mimeList->LFSTK_freeList();
@@ -92,7 +92,7 @@ void setMimeTypesList(char *filepath)
 											char	 *ptr=strchr((char*)listit.label.c_str(),'=');
 											*ptr=0;
 											ptr++;
-											listit.userData=ptr;
+											listit.imagePath=ptr;
 											mimeList->LFSTK_appendToList(listit);
 											//thelist.push_back(listit);
 										}
@@ -115,7 +115,8 @@ void splitFile(char *path)
 	system(lastbit);
 	asprintf(&firstbit,"sed '/\\[Added Associations]/Q;s/\\[Default Applications]//' \"%s\"|sort -u  > \"%s\"",path,mimeTypesPath);
 	system(firstbit);
-	asprintf(&appslist,"find /usr/share/applications ~/.local/share/applications -iname \"*.desktop\"|sed 's@.*/@@;s@\\.desktop$@@'|sort -u > \"%s\"",appsPath);
+//	asprintf(&appslist,"find /usr/share/applications ~/.local/share/applications -iname \"*.desktop\"|sed 's@.*/@@;s@\\.desktop$@@'|sort -u > \"%s\"",appsPath);
+	asprintf(&appslist,"find /usr/share/applications ~/.local/share/applications -iname \"*.desktop\"|sed 's@.*/@@'|sort -u > \"%s\"",appsPath);
 	system(appslist);
 	free(lastbit);
 	free(firstbit);
@@ -137,10 +138,11 @@ void reWriteMimeFile(void)
 				{
 					if(j!=mimeList->currentItem)
 						{
-							ptr=(char*)mimeList->listDataArray->at(j).label.c_str();
-							ptr+=mimeList->listDataArray->at(j).label.length();
-							ptr++;
-							fprintf(file,"%s=%s;\n",mimeList->listDataArray->at(j).label.c_str(),ptr);
+							//ptr=(char*)mimeList->listDataArray->at(j).label.c_str();
+							//ptr+=mimeList->listDataArray->at(j).label.length();
+							//ptr++;
+							//fprintf(file,"%s=%s;\n",mimeList->listDataArray->at(j).label.c_str(),ptr);
+							fprintf(file,"%s=%s;\n",mimeList->listDataArray->at(j).label.c_str(),mimeList->listDataArray->at(j).imagePath.c_str());
 						}
 				}
 
@@ -171,14 +173,11 @@ bool doUpdate(void *p,void* ud)
 				{
 					if(j==mimeList->currentItem)
 						{
-							fprintf(file,"%s=%s.desktop;\n",mimeList->listDataArray->at(mimeList->currentItem).label,appLine->LFSTK_getCStr());
+							fprintf(file,"%s=%s;\n",mimeList->listDataArray->at(mimeList->currentItem).label.c_str(),appLine->LFSTK_getCStr());
 						}
 					else
 						{
-							ptr=(char*)mimeList->listDataArray->at(j).label.c_str();
-							ptr+=mimeList->listDataArray->at(j).label.length();
-							ptr++;
-							fprintf(file,"%s=%s;\n",mimeList->listDataArray->at(j).label.c_str(),ptr);
+							fprintf(file,"%s=%s;\n",mimeList->listDataArray->at(j).label.c_str(),mimeList->listDataArray->at(j).imagePath.c_str());
 						}
 				}
 			fprintf(file,"%s=%s.desktop;\n",editLine->LFSTK_getCStr(),appLine->LFSTK_getCStr());
@@ -246,18 +245,18 @@ bool doApply(void *p,void* ud)
 
 bool selectMime(void *object,void* ud)
 {
-	char	*app;
+	char						*app;
 	LFSTK_listGadgetClass	*list=static_cast<LFSTK_listGadgetClass*>(object);
 
-	if(list->LFSTK_getSelectedLabel()[0]=='[')
-		return(true);
+	asprintf(&app,"%s",list->listDataArray->at(list->LFSTK_getCurrentListItem()).imagePath.c_str());
 
-	asprintf(&app,"%s",list->listDataArray->at(list->LFSTK_getCurrentListItem()).userData);
-	*(strrchr(app,'.'))=0;
+//fprintf(stderr,"app=%s\n",app);
+//	 *(strchr(app,'.'))=0;
 	editLine->LFSTK_setBuffer(list->LFSTK_getSelectedLabel());
 	appLine->LFSTK_setBuffer((const char*)app);
 	appsList->LFSTK_findByLabel(app);
 	free(app);
+
 	return(true);
 }
 
@@ -267,7 +266,9 @@ bool selectApp(void *object,void* ud)
 
 	if(list->LFSTK_getSelectedLabel()[0]=='[')
 		return(true);
+
 	appLine->LFSTK_setBuffer(list->LFSTK_getSelectedLabel());
+
 	doUpdate(NULL,NULL);
 	return(true);
 }

@@ -1,4 +1,5 @@
-0.2.0
+0.2.0]
+Fixed lfsmimeeditor.
 Fixed setting subwindows as transients of lfsappearance.
 Fixed delay when closing some dialogs.
 Added background path to lfsdockprefs
