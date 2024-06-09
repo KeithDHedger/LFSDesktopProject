@@ -138,10 +138,6 @@ void reWriteMimeFile(void)
 				{
 					if(j!=mimeList->currentItem)
 						{
-							//ptr=(char*)mimeList->listDataArray->at(j).label.c_str();
-							//ptr+=mimeList->listDataArray->at(j).label.length();
-							//ptr++;
-							//fprintf(file,"%s=%s;\n",mimeList->listDataArray->at(j).label.c_str(),ptr);
 							fprintf(file,"%s=%s;\n",mimeList->listDataArray->at(j).label.c_str(),mimeList->listDataArray->at(j).imagePath.c_str());
 						}
 				}
