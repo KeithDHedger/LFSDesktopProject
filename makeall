@@ -53,6 +53,7 @@ LIBDIRSUFFIX=64
 BUILDFOR=${BUILDFOR:-"LFSToolKit $BUILDLFSWMANAGER LFSWM2 LFSDesktop LFSSetWallpaper LFSApplications LFSPanel LFSDock"}
 COLMAKE="make $MAKEFLAGS|GREP_COLORS='mt=1;32' grep -P --line-buffered --color=always  '(\-D[^ ]*)'|GREP_COLORS='mt=1;37;41' grep -P --line-buffered --color=always  '^[^ ]*'|GREP_COLORS='mt=1;33' grep -P --line-buffered --color=always '([[:alnum:]_/\.]+?(\.c+|\..p+|\.h)\b)'|GREP_COLORS='mt=1;36' grep -P --line-buffered --color=always -- '\s-(I|L)/.*?\s'|sed G"
 
+
 runCommand ()
 {
 	echo -e "${RED}Running $1 in ${GREEN}$app${RED} ... ${NORMAL}"
