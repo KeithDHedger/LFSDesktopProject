@@ -32,7 +32,7 @@ BLACK='\e[0;30m'
 BLUE='\e[0;34m'
 NORMAL="\e[0;0m"
 
-MAKEFLAGS=${MAKEFLAGS:-"-j3"}
+MAKEFLAGS=${MAKEFLAGS:-"-j$(($(nproc)-1))"}
 export MAKEFLAGS
 export PATH
 BUILDOLDWM=0
@@ -50,13 +50,13 @@ fi
 CHANGEUSER=${CHANGEUSER:-$(logname)}
 #Set this if needed.
 LIBDIRSUFFIX=64
-
 BUILDFOR=${BUILDFOR:-"LFSToolKit $BUILDLFSWMANAGER LFSWM2 LFSDesktop LFSSetWallpaper LFSApplications LFSPanel LFSDock"}
+COLMAKE="make $MAKEFLAGS|GREP_COLORS='mt=1;32' grep -P --line-buffered --color=always  '(\-D[^ ]*)'|GREP_COLORS='mt=1;37;41' grep -P --line-buffered --color=always  '^[^ ]*'|GREP_COLORS='mt=1;33' grep -P --line-buffered --color=always '([[:alnum:]_/\.]+?(\.c+|\..p+|\.h)\b)'|GREP_COLORS='mt=1;36' grep -P --line-buffered --color=always -- '\s-(I|L)/.*?\s'|sed G"
 
 runCommand ()
 {
 	echo -e "${RED}Running $1 in ${GREEN}$app${RED} ... ${NORMAL}"
-	$1||$ONERROR
+	eval "$1"||$ONERROR
 }
 
 help ()
@@ -96,7 +96,7 @@ deploy ()
 {
 	runCommand "make distclean"||true
 	runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib${LIBDIRSUFFIX}"
-	runCommand "make $MAKEFLAGS --output-sync"||"make -j1 --output-sync"||exit 100
+	runCommand "$COLMAKE"
 	runCommand "make install --output-sync"
 }
 
@@ -104,14 +104,14 @@ deploytest ()
 {
 	runCommand "make distclean"||true
 	runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib${LIBDIRSUFFIX}"
-	runCommand "make $MAKEFLAGS --output-sync"||"make -j1 --output-sync"||exit 100
+	runCommand "$COLMAKE"
 	runCommand "make install DESTDIR=/tmp/lfsdesktop-deploy --output-sync"
 }
 
 makeit ()
 {
 	runCommand "./autogen.sh --prefix=/usr --libdir=/usr/lib${LIBDIRSUFFIX}"
-	runCommand "make $MAKEFLAGS --output-sync"||"make -j1 --output-sync"||exit 100
+	runCommand "$COLMAKE"
 }
 
 makelocal ()
@@ -126,7 +126,7 @@ makelocal ()
 		export CFLAGS CXXFLAGS
 		runCommand "./autogen.sh --prefix=/usr"
 	fi
-	runCommand "make $MAKEFLAGS --output-sync"
+	runCommand "$COLMAKE"
 }
 
 ownit ()
