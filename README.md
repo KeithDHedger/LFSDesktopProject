@@ -7,6 +7,8 @@ CD to LFSDesktopProject/LFSToolKit/LFSToolKit/lfstk and run:<br>
 doxygen<br>
 to update docs.
 
+Alternativly there is a prebuilt docset for use with zeal in the main folder.
+
 https://keithdhedger.github.io/LFSDesktopProject/
 
 INFORMATION!

@@ -112,7 +112,6 @@ class LFSTK_fileDialogClass
 //files and folders
 		LFSTK_findClass			*fc=NULL;
 		void						getFileList(void);
-		void						freeFileList();
 		void						cleanDirPath(void);
 		void						openDir(void);
 
