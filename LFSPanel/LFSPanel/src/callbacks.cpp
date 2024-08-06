@@ -24,14 +24,17 @@ bool launcherCB(void *p,void* ud)
 {
 	launcherList	*launcher=(launcherList*)ud;
 	char			*command;
+	std::string	correctedcommand;
 
 	if(launcher==NULL)
 		return(true);
 
+	correctedcommand=LFSTK_UtilityClass::LFSTK_strReplaceAllStr(launcher->entry.exec,"%u","",true);
+
 	if(launcher->entry.inTerm==false)
-		asprintf(&command,"%s &",launcher->entry.exec);
+		asprintf(&command,"%s &",correctedcommand.c_str());
 	else
-		asprintf(&command,"%s %s &",prefs.LFSTK_getCString("termcommand"),launcher->entry.exec);
+		asprintf(&command,"%s %s &",prefs.LFSTK_getCString("termcommand"),correctedcommand.c_str());
 
 	sendNotify("Launching ",launcher->entry.name);
 #ifdef _ENABLEDEBUG_
@@ -60,12 +63,15 @@ bool gadgetDrop(void *lwc,propertyStruct *data,void* ud)
 				{
 					std::istringstream stream((const char*)data->data);
 					std::string line;
+					std::string correctedcommand;
+
 					while(std::getline(stream,line))
 						{
+							correctedcommand=LFSTK_UtilityClass::LFSTK_strReplaceAllStr(launcher->entry.exec,"%u",line);
 							if(launcher->entry.inTerm==false)
-								asprintf(&command,"%s \"%s\" &",launcher->entry.exec,line.c_str());
+								asprintf(&command,"%s &",correctedcommand.c_str());
 							else
-								asprintf(&command,"%s %s \"%s\" &",prefs.LFSTK_getCString("termcommand"),launcher->entry.exec,line.c_str());
+								asprintf(&command,"%s %s &",prefs.LFSTK_getCString("termcommand"),correctedcommand.c_str());
 							sendNotify(launcher->entry.name,line.c_str());
 							system(command);
 							free(command);

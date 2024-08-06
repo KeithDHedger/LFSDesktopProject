@@ -1,4 +1,6 @@
 0.2.0
+Fixed sending empty "%u" to launchers.
+Fixed dropping text on launchers.
 Fixed slider control visibility.
 Fixed missing .desktop files from appmenu.
 Fixed volume slider icon AGAIN!.
