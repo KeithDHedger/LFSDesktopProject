@@ -71,6 +71,7 @@ bool menuCB(void *p,void* ud)
 	std::smatch			m;
 	char					*command;
 	desktopFileStruct	df;
+	std::string			correctedcommand;
 
 	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
 
@@ -97,10 +98,15 @@ bool menuCB(void *p,void* ud)
 					if(std::regex_search(holdsss,m,expterm,std::regex_constants::match_not_eol|std::regex_constants::match_not_bol))
 						df.interm=true;
 
+					correctedcommand=LFSTK_UtilityClass::LFSTK_strReplaceAllStr(df.exec,"%u","",true);
+					correctedcommand=LFSTK_UtilityClass::LFSTK_strReplaceAllStr(correctedcommand,"%U","",true);
+					correctedcommand=LFSTK_UtilityClass::LFSTK_strReplaceAllStr(correctedcommand,"%f","",true);
+					correctedcommand=LFSTK_UtilityClass::LFSTK_strReplaceAllStr(correctedcommand,"%F","",true);
+
 					if(df.interm==false)
-						asprintf(&command,"%s &",df.exec.c_str());
+						asprintf(&command,"%s &",correctedcommand.c_str());
 					else
-						asprintf(&command,"%s %s &",prefs.LFSTK_getCString("termcommand"),df.exec.c_str());
+						asprintf(&command,"%s %s &",prefs.LFSTK_getCString("termcommand"),correctedcommand.c_str());
 
 					system(command);
 					free(command);				
