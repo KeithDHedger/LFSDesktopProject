@@ -804,17 +804,19 @@ void LFSWM2_eventsClass::LFSWM2_shuffle(Window id)
 
 	for(int j=0;j<wl.size();j++)
 		{
-			if(this->mainClass->mainWindowClass->LFSWM2_hasState(wl.at(j),this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_BELOW")))==false)
+			if(this->mainClass->mainWindowClass->LFSWM2_getWindowType(wl.at(j))!=DESKTOPWINDOW)
 				{
-					wlb.push_back(wl.at(j));
+					if(this->mainClass->mainWindowClass->LFSWM2_hasState(wl.at(j),this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_BELOW")))==false)
+						wlb.push_back(wl.at(j));
 				}
 		}
 
 	for(int j=0;j<wl.size();j++)
 		{
-			if(this->mainClass->mainWindowClass->LFSWM2_hasState(wl.at(j),this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_BELOW")))==true)
+			if(this->mainClass->mainWindowClass->LFSWM2_getWindowType(wl.at(j))!=DESKTOPWINDOW)
 				{
-					wlb.push_back(wl.at(j));
+					if(this->mainClass->mainWindowClass->LFSWM2_hasState(wl.at(j),this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_BELOW")))==true)
+						wlb.push_back(wl.at(j));
 				}
 		}
 
