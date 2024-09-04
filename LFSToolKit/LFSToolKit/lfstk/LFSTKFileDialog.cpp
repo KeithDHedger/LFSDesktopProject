@@ -256,7 +256,6 @@ LFSTK_fileDialogClass::LFSTK_fileDialogClass(LFSTK_windowClass* parentwc,const c
 	if(type==FOLDERDIALOG)
 		dwidth=DIALOGWIDTH;
 
-
 	win=this->wc->app->LFSTK_getDefaultWInit();
 	win->windowName=label;
 	win->w=dwidth;
@@ -568,12 +567,16 @@ void LFSTK_fileDialogClass::LFSTK_showFileDialog(void)
 }
 
 /**
-* Show the file selector dialog.
+* Set name filter.
+* \param const char *filt List of filters seperated by smi-colon ( eg "png;jpg" );
 */
 void LFSTK_fileDialogClass::LFSTK_setNameFilter(const char *filt)
 {
 	if(filt!=NULL)
-		this->filter=filt;
+		{
+			this->filter=filt;
+			this->fc->LFSTK_setFileTypes(filt);
+		}
 }
 
 /**

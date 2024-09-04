@@ -59,7 +59,6 @@ LFSTK_lineEditClass			*dockTextColourEdit=NULL;
 LFSTK_lineEditClass			*dockRefreshEdit=NULL;
 LFSTK_toggleButtonClass		*dockUseMicro=NULL;
 
-
 LFSTK_toggleButtonClass		*dockUseBG=NULL;
 LFSTK_lineEditClass			*dockBGPathEdit=NULL;
 
@@ -115,6 +114,27 @@ bool buttonCB(void *p,void* ud)
 	return(true);
 }
 
+bool selectFile(void *p,void* ud)
+{
+	char						*buffer;
+	LFSTK_lineEditClass		*ed=static_cast<LFSTK_lineEditClass*>(p);
+	LFSTK_fileDialogClass	tiledialog(wc,"Select Background Image",NULL,false);
+
+	if(ed==NULL)
+		return(true);
+
+	if((ed->mouseEvent->state & Button3Mask)!=0)
+		{
+			tiledialog.LFSTK_setNameFilter("png;jpg");
+			tiledialog.LFSTK_showFileDialog(NULL,"Select Background Image");
+			if(tiledialog.LFSTK_isValid()==true)
+				{
+					ed->LFSTK_setBuffer(tiledialog.LFSTK_getCurrentPath());
+				}
+		}
+	return(true);
+}
+
 bool coleditCB(void *p,void* ud)
 {
 	LFSTK_lineEditClass	*ed=static_cast<LFSTK_lineEditClass*>(p);
@@ -122,12 +142,12 @@ bool coleditCB(void *p,void* ud)
 	if(ed==NULL)
 		return(true);
 
-	if((ed->mouseEvent->state & Button2Mask)!=0)
+	if((ed->mouseEvent->state & Button3Mask)!=0)
 		{
-			std::string col=NULL;
-			col=apc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%s\"",wc->window,ed->LFSTK_getCStr());
-			if(col.length()>0)
-				ed->LFSTK_setBuffer(col.c_str());//TODO//
+			std::string col;
+			col=apc->globalLib->LFSTK_oneLiner("lfscolourchooser -w %i \"%S\"",wc->window,ed->LFSTK_getBuffer());
+			if(col.empty()==false)
+				ed->LFSTK_setBuffer(col);
 		}
 	return(true);
 }
@@ -392,24 +412,26 @@ int main(int argc, char **argv)
 
 //dock back
 	dockUseBG=new LFSTK_toggleButtonClass(wc,"Use BG",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	//dockUseBG->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)toggle->LFSTK_getLabel().c_str());
-	//dockUseBG->LFSTK_setMouseMoveCallBack(enterCB,exitCB,USERDATA(0));
 	dockUseBG->LFSTK_setToggleStyle(TOGGLENORMAL);
 	dockUseBG->userData=USERDATA(1);
 	dockBGPathEdit=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
-	//dockBGPathEdit->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
+	dockBGPathEdit->LFSTK_setMouseCallBack(NULL,selectFile,NULL);
+	dockBGPathEdit->LFSTK_setContextWindow(NULL);
+
 	sy+=YSPACING;
 
 //dock colour
 	label=new LFSTK_labelClass(wc,"Dock Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	dockBGColourEdit=new LFSTK_lineEditClass(wc,"",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	dockBGColourEdit->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
+	dockBGColourEdit->LFSTK_setContextWindow(NULL);
 	sy+=YSPACING;
 	
 //dock text colour
 	label=new LFSTK_labelClass(wc,"Text Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	dockTextColourEdit=new LFSTK_lineEditClass(wc,"black",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	dockTextColourEdit->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
+	dockTextColourEdit->LFSTK_setContextWindow(NULL);
 	sy+=YSPACING;
 
 //on monitor

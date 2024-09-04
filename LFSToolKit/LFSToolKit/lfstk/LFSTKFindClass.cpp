@@ -178,7 +178,7 @@ void LFSTK_findClass::LFSTK_setIgnoreBroken(bool ignore)
 
 /**
 * Set file types filter
-* \param const char *types.
+* \param const char *types ( eg "png;jpg" );
 */
 void LFSTK_findClass::LFSTK_setFileTypes(std::string suffix)
 {

@@ -1,4 +1,6 @@
-0.2.0]
+0.2.0
+File dialog now goes to last valid folder selected.
+Right click on lfsdockprefs colour or background image now opens relevent dialog.
 Fixed lfsmimeeditor.
 Fixed setting subwindows as transients of lfsappearance.
 Fixed delay when closing some dialogs.

@@ -1,4 +1,5 @@
 0.6.1
+Setting LFSTK_setNameFilter in LFSTKFileDialog now works.
 Added some extras functions to LFSTK_UtilityClass.
 Vairous build files tweaks.
 Added mouse enter/exit call backs to image class.
