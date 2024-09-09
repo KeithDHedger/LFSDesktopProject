@@ -29,90 +29,109 @@ std::vector<launcherDataStruct>	launchersArray;
 LFSTK_findClass					*findlaunchers=NULL;
 LFSTK_gadgetClass				*currentLauncher=NULL;
 
-bool launcherEnterCB(LFSTK_gadgetClass* p,void* ud)
+LFSTK_windowClass				*launcherContextWC=NULL;
+LFSTK_windowClass				*tooltiptWC=NULL;
+LFSTK_labelClass					*ttLabel=NULL;
+
+bool launcherContextCB(void *p,void* ud)
 {
+	int					winnum;
+	LFSTK_windowClass	*lwc=static_cast<LFSTK_gadgetClass*>(p)->wc;
+	long unsigned int	whatbutton=(long unsigned int)ud;
+	launcherDataStruct	lds=launchersArray.at((long unsigned int)lwc->popupFromGadget->userData);
+
 	if(p!=NULL)
 		{
-			std::string			label;
-			infoDataStruct		ls;
-			const geometryStruct	*wingeom;
-			launcherDataStruct	lds=launchersArray.at((long unsigned int)ud);
-			int					offy;
+			tooltiptWC->LFSTK_moveWindow(-1000,1000,true);
+			winnum=lwc->app->LFSTK_findWindow(lwc);
+			lwc->app->windows->at(winnum).loopFlag=false;
 
-			currentLauncher=p;
-			setGadgetPosition(p,true);
-			popActionList->LFSTK_freeList();	
-			ls.label=lds.name;
-			ls.imageType=NOTHUMB;
-			ls.imagePath;
-			ls.userData=USERDATA(p);
-
-			popActionList->LFSTK_appendToList(ls);
-			popActionList->LFSTK_updateList();
-			popActionList->LFSTK_moveGadget(-1,-1);
-			popActionWindow->userData=USERDATA(LAUNCHER);
-			popActionWindow->LFSTK_resizeWindow(popActionList->LFSTK_getListMaxWidth()-2,GADGETHITE-2);
-
-			p->contextYOffset=popActionWindowYOffset;
-			showhidetActionList(p,popActionWindow,popActionList);
-			
-			inSomeWindow=true;
+			switch(whatbutton)
+				{
+					case BUTTONQUIT:
+						realMainLoop=false;
+						apc->mainLoop=false;
+						break;
+					case BUTTONLAUNCH:
+						launcherCB(NULL,lwc->popupFromGadget->userData);
+						break;
+					case BUTTONREMOVE:
+						sendNotify("Removing ",lds.name);
+						XSync(apc->display,false);
+						sleep(1);
+						unlink(lds.path.c_str());
+						apc->exitValue=0;
+						apc->mainLoop=false;
+						
+						break;
+					case BUTTONPREFS:
+						{
+							std::string	com;
+							com="lfsdockprefs -d "+whatDock+" &";
+							system(com.c_str());
+						}
+						break;
+				}
 		}
 	return(true);
 }
 
-bool launcherExitCB(LFSTK_gadgetClass *p,void* ud)
+bool launcherEnterCB(LFSTK_gadgetClass* p,void* ud)
 {
 	if(p!=NULL)
 		{
-			currentLauncher=NULL;
-			setGadgetPosition(p,false);
-			inSomeWindow=false;
-			popActionListExitCB(NULL,(void*)1);
-			dockWindow->LFSTK_clearWindow(true);
+			launcherDataStruct	lds=launchersArray.at((long unsigned int)ud);
+			XEvent			event;
+			geometryStruct	geom;
+			currentLauncher=p;
+			setGadgetPosition(p,true);
+
+			ttLabel->LFSTK_setLabel(lds.name,true);
+			ttLabel->LFSTK_setCairoFontDataParts("sB",14);
+			ttLabel->LFSTK_setTile(NULL,0);
+
+			tooltiptWC->LFSTK_resizeWindow(ttLabel->LFSTK_getTextRealWidth(lds.name),GADGETHITE);
+			tooltiptWC->LFSTK_setWindowColourName(NORMALCOLOUR,"#c0808080");
+			p->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);
+
+			switch(dockGravity)
+				{
+					case PANELNORTH:
+						tooltiptWC->LFSTK_moveWindow(geom.x+(geom.w/2)-(ttLabel->LFSTK_getTextRealWidth(lds.name)/2),dockWindow->h,true);
+						break;
+					case PANELSOUTH:
+						tooltiptWC->LFSTK_moveWindow(geom.x+(geom.w/2)-(ttLabel->LFSTK_getTextRealWidth(lds.name)/2),geom.y-GADGETHITE+extraSpace,true);
+						break;
+				}
+			XRaiseWindow(apc->display,tooltiptWC->window);
 		}
+	XSync(apc->display,false);
+	return(true);
+}
+
+bool launcherExitCB(LFSTK_gadgetClass* p,void* ud)
+{
+	if(p!=NULL)
+		{
+					currentLauncher=NULL;
+			setGadgetPosition(p,false);
+			dockWindow->LFSTK_redrawAllGadgets();
+			tooltiptWC->LFSTK_moveWindow(-1000,1000,true);
+			XRaiseWindow(apc->display,launcherContextWC->window);
+			XRaiseWindow(apc->display,launcherContextWC->window);
+		}
+	XSync(apc->display,false);
 	return(true);
 }
 
 bool launcherCB(void *p,void* ud)
 {
 	launcherDataStruct	lds=launchersArray.at((long unsigned int)ud);
-	Window				win=None;
-	std::string			ex=lds.exec;
 	std::size_t			found;
 	std::string			command;
 	std::string			args;
 	std::string			str;
-	propReturn			pr;
-
-	showhidetActionList(NULL,popActionWindow,popActionList);
-
-	if(p!=NULL)
-		{
-			win=getWindowByClass(lds.name);
-			if(win!=None)
-				{
-					pr=apc->globalLib->LFSTK_getSingleProp(apc->display,apc->rootWindow,NET_ACTIVE_WINDOW,XA_WINDOW);
-					if(pr.window==win)
-						{
-							XUnmapWindow(apc->display,win);
-							return(true);
-						}
-					sendClientMessage(win,"_NET_ACTIVE_WINDOW",0,0,0,0,0);
-					return(true);
-				}
-			win=getWindowByPID(lds.pid);
-			if(win!=None)
-				{
-					if(pr.window==win)
-						{
-							XUnmapWindow(apc->display,win);
-							return(true);
-						}
-					sendClientMessage(win,"_NET_ACTIVE_WINDOW",0,0,0,0,0);
-					return(true);
-				}
-		}
+	std::string			ex=lds.exec;
 
 	found=ex.find(std::string(" "));
 	if(found!=std::string::npos)
@@ -183,22 +202,21 @@ int addLaunchers(int x,int y,int grav)
 	findlaunchers->LFSTK_sortByName();
 
 	win=apc->LFSTK_getDefaultWInit();
-	win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
 	win->decorated=false;
 	win->level=ABOVEALL;
 
 	apc->LFSTK_addWindow(win,"Context");
-	launcherContextWindow=apc->windows->back().window;
-	launcherContextWindow->LFSTK_setWindowColourName(NORMALCOLOUR,lc.c_str());
+	launcherContextWC=apc->windows->back().window;
+	launcherContextWC->LFSTK_setWindowColourName(NORMALCOLOUR,lc.c_str());
 	for(int j=BUTTONLAUNCH;j<NOMOREBUTONS;j++)
 		{
-			contextButtons[j]=new LFSTK_buttonClass(launcherContextWindow,contextLabelData[j],0,sy,GADGETWIDTH*2,24,NorthWestGravity);
-			contextButtons[j]->LFSTK_setMouseCallBack(NULL,contextCB,(void*)(long)(j));
-			iconpath=launcherContextWindow->globalLib->LFSTK_findThemedIcon("gnome",contextThemeIconData[j],"");
+			contextButtons[j]=new LFSTK_buttonClass(launcherContextWC,contextLabelData[j],0,sy,GADGETWIDTH*2,24,NorthWestGravity);
+			contextButtons[j]->LFSTK_setMouseCallBack(NULL,launcherContextCB,(void*)(long)(j));
+			iconpath=launcherContextWC->globalLib->LFSTK_findThemedIcon("gnome",contextThemeIconData[j],"");
 			contextButtons[j]->LFSTK_setImageFromPath(iconpath,LEFT,true);
 
 			setGadgetDetails(contextButtons[j]);
-			contextButtons[j]->LFSTK_setCairoFontDataParts("sB",20);
 			contextButtons[j]->LFSTK_setTile(NULL,0);
 			contextButtons[j]->LFSTK_setFontString(prefs.LFSTK_getCString("font"),true);
 			contextButtons[j]->LFSTK_setLabelAutoColour(true);
@@ -208,7 +226,13 @@ int addLaunchers(int x,int y,int grav)
 			sy+=GADGETHITE;
 		}
 	ww=contextButtons[0]->LFSTK_getTextRealWidth(contextLabelData[1]);
-	launcherContextWindow->LFSTK_resizeWindow(ww+contextButtons[0]->imageWidth+8,sy,true);
+	launcherContextWC->LFSTK_resizeWindow(ww+contextButtons[0]->imageWidth+8,sy,true);
+	launcherContextWC->LFSTK_setKeepAbove(true);
+	tooltiptWC=new LFSTK_toolWindowClass(apc->display,dockWindow,apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DOCK")),0,0,200,100,"lfstkpopup",apc);
+	ttLabel=new LFSTK_labelClass(tooltiptWC,"XXX",0,0,GADGETWIDTH*8,GADGETHITE,WestGravity);
+
+	tooltiptWC->LFSTK_moveWindow(-1000,-1000,true);
+	tooltiptWC->LFSTK_showWindow();
 
 	LFSTK_buttonClass	*bc=NULL;
 	launcherDataStruct	lds;
@@ -219,7 +243,7 @@ int addLaunchers(int x,int y,int grav)
 			lds.pid=0;
  
 			bc=new LFSTK_buttonClass(dockWindow,"",xpos,normalY,iconWidth,iconHeight);
-			bc->LFSTK_setContextWindow(launcherContextWindow);
+			bc->LFSTK_setContextWindow(launcherContextWC);
 
 			if(dockGravity==PANELSOUTH)
 				bc->contextWindowPos=CONTEXTABOVECENTRE;

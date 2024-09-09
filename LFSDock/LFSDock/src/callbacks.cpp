@@ -20,8 +20,8 @@
 
 #include "globals.h"
 
-LFSTK_windowClass	*launcherContextWindow;
-LFSTK_windowClass	*taskContextWindow;
+//LFSTK_windowClass	*launcherContextWindow=NULL;
+LFSTK_windowClass	*taskContextWindow=NULL;
 int					cnt=0;
 int					cnt2=0;
 
@@ -98,10 +98,10 @@ bool timerCB(LFSTK_applicationClass *p,void* ud)
 	if((useTaskBar==true) && (currentTask!=NULL))
 		cnt2++;
 
-	if((gotLaunchers==true) && (launcherContextWindow->isVisible==false) && (launcherContextWindow->popupFromGadget!=NULL))
+	if((gotLaunchers==true) && (launcherContextWC->isVisible==false) && (launcherContextWC->popupFromGadget!=NULL))
 		{
-			launcherExitCB(launcherContextWindow->popupFromGadget,(void*)1);
-			launcherContextWindow->popupFromGadget=NULL;
+			launcherExitCB(launcherContextWC->popupFromGadget,(void*)1);
+			launcherContextWC->popupFromGadget=NULL;
 			currentLauncher=NULL;;
 		}
 
@@ -109,7 +109,7 @@ bool timerCB(LFSTK_applicationClass *p,void* ud)
 		{
 			cnt=0;
 			launcherExitCB(currentLauncher,(void*)1);
-			launcherContextWindow->popupFromGadget=NULL;
+			launcherContextWC->popupFromGadget=NULL;
 			currentLauncher=NULL;;
 		}		
 
@@ -147,52 +147,52 @@ void readMsg(void)
 	buffer.mText[0]=0;
 }
 
-bool contextCB(void *p,void* ud)
-{
-	int					winnum;
-	LFSTK_windowClass	*lwc=static_cast<LFSTK_gadgetClass*>(p)->wc;
-	long unsigned int	whatbutton=(long unsigned int)ud;
-	launcherDataStruct	lds=launchersArray.at((long unsigned int)lwc->popupFromGadget->userData);
-
-	if(p!=NULL)
-		{
-			winnum=lwc->app->LFSTK_findWindow(lwc);
-			lwc->app->windows->at(winnum).loopFlag=false;
-
-			switch(whatbutton)
-				{
-					case BUTTONQUIT:
-						realMainLoop=false;
-						apc->mainLoop=false;
-						break;
-					case BUTTONLAUNCH:
-						launcherCB(NULL,lwc->popupFromGadget->userData);
-						break;
-					case BUTTONREMOVE:
-						sendNotify("Removing ",lds.name);
-						XSync(apc->display,false);
-						sleep(1);
-						unlink(lds.path.c_str());
-						apc->exitValue=0;
-						apc->mainLoop=false;
-						
-						break;
-					case BUTTONPREFS:
-						{
-							std::string	com;
-							com="lfsdockprefs -d "+whatDock+" &";
-							system(com.c_str());
-						}
-						break;
-				}
-			
-			launcherExitCB(lwc->popupFromGadget,ud);
-			lwc->popupFromGadget=NULL;
-			dockWindow->LFSTK_clearWindow(true);
-			//XSync(apc->display,false);
-		}
-	return(true);
-}
+//bool contextCB(void *p,void* ud)
+//{
+//	int					winnum;
+//	LFSTK_windowClass	*lwc=static_cast<LFSTK_gadgetClass*>(p)->wc;
+//	long unsigned int	whatbutton=(long unsigned int)ud;
+//	launcherDataStruct	lds=launchersArray.at((long unsigned int)lwc->popupFromGadget->userData);
+//
+//	if(p!=NULL)
+//		{
+//			winnum=lwc->app->LFSTK_findWindow(lwc);
+//			lwc->app->windows->at(winnum).loopFlag=false;
+//
+//			switch(whatbutton)
+//				{
+//					case BUTTONQUIT:
+//						realMainLoop=false;
+//						apc->mainLoop=false;
+//						break;
+//					case BUTTONLAUNCH:
+//						launcherCB(NULL,lwc->popupFromGadget->userData);
+//						break;
+//					case BUTTONREMOVE:
+//						sendNotify("Removing ",lds.name);
+//						XSync(apc->display,false);
+//						sleep(1);
+//						unlink(lds.path.c_str());
+//						apc->exitValue=0;
+//						apc->mainLoop=false;
+//						
+//						break;
+//					case BUTTONPREFS:
+//						{
+//							std::string	com;
+//							com="lfsdockprefs -d "+whatDock+" &";
+//							system(com.c_str());
+//						}
+//						break;
+//				}
+//			
+//			launcherExitCB(lwc->popupFromGadget,ud);
+//			lwc->popupFromGadget=NULL;
+//			dockWindow->LFSTK_clearWindow(true);
+//			//XSync(apc->display,false);
+//		}
+//	return(true);
+//}
 
 void showhidetActionList(LFSTK_gadgetClass *bc,LFSTK_windowClass *winc,LFSTK_listGadgetClass *list)
 {
@@ -200,7 +200,7 @@ void showhidetActionList(LFSTK_gadgetClass *bc,LFSTK_windowClass *winc,LFSTK_lis
 	unsigned long		d;
 	const geometryStruct	*wingeom;
 
-	if(bc!=NULL)
+	if(bc!=NULL && bc->gadgetType==BUTTONGADGET)
 		{
 			wingeom=winc->LFSTK_getWindowGeom();
 			d=(unsigned long)bc->userData;
@@ -214,8 +214,8 @@ void showhidetActionList(LFSTK_gadgetClass *bc,LFSTK_windowClass *winc,LFSTK_lis
 						winc->LFSTK_moveWindow(geom.x+(geom.w/2)-(list->LFSTK_getListMaxWidth()/2),geom.y-wingeom->h+extraSpace,true);
 						break;
 				}
-			winc->LFSTK_setKeepAbove(true);
 			winc->LFSTK_showWindow(true);
+			winc->LFSTK_setKeepAbove(true);
 			winc->LFSTK_redrawAllGadgets();
 			apc->windows->at(apc->LFSTK_findWindow(winc)).showing=true;
 		}
@@ -246,7 +246,7 @@ bool popActionListEnterCB(LFSTK_gadgetClass*p,void* ud)
 bool popActionListExitCB(LFSTK_gadgetClass*p,void* ud)
 {
 	showhidetActionList(NULL,popActionWindow,popActionList);
-	inSomeWindow=false;
+	inSomeWindow=true;
 	return(true);
 }
 
@@ -263,9 +263,6 @@ bool popActionWindowSelect(void *object,void* userdata)//TODO//
 	wud=(unsigned long)popActionWindow->userData;
 	switch(wud)
 		{
-			case LAUNCHER:
-				launcherCB(bc,(void*)bc->userData);
-				break;
 			case TASKSWITCHER:
 				{
 					LFSTK_gadgetClass *bc=static_cast<LFSTK_gadgetClass*>(object);;

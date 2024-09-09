@@ -29,8 +29,8 @@ std::string				whatDock;
 
 int						iconWidth=16;
 int						iconHeight=24;
-int						normalY;
-int						activeY;
+int						normalY=0;
+int						activeY=0;
 int						extraSpace=16;
 int						deskCount=1;
 
@@ -62,7 +62,7 @@ LFSTK_windowClass		*popActionWindow=NULL;
 LFSTK_listGadgetClass	*popActionList=NULL;
 bool						inSomeWindow=false;
 bool						gotLaunchers=false;
-int						popActionWindowYOffset=1;
+int						popActionWindowYOffset=0;
 LFSTK_buttonClass		*bgrs=NULL;
 LFSTK_buttonClass		*bgls=NULL;
 int						sidewid=0;
@@ -95,7 +95,7 @@ void sendNotify(std::string name,std::string message)//TODO//could be better
 {
 #ifdef _GOTNOTIFYSEND_
 	std::string	com=std::string("notify-send -u low -t 2000 -i stock_dialog-info \"" + name + " " + message + " ...\"");
-	fprintf(stderr,"sendNotify com=>>%s<<\n",com.c_str());
+	//fprintf(stderr,"sendNotify com=>>%s<<\n",com.c_str());
 	system(com.c_str());
 #endif
 }

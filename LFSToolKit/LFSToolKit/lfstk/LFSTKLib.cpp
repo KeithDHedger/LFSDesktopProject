@@ -419,9 +419,12 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 								case CONTEXTATMOUSE:
 									break;
 							}
-						
+						XRaiseWindow(gadget->wc->app->display,lwc->window);
+						XSync(gadget->wc->app->display,false);	
 						gadget->wc->app->LFSTK_runWindowLoop(lwc);
+						gadget->mouseExit(&e->xbutton);
 						//lwc->popupFromGadget=NULL;
+						
 						retval=true;
 						break;
 					}

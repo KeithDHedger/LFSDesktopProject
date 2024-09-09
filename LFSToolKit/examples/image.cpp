@@ -75,6 +75,7 @@ bool contextCB(void *p,void* ud)
 			//printf("data=%p\n win=%i",ud,static_cast<LFSTK_gadgetClass*>(p)->windowNumber);
 			//apc->windows->at(static_cast<LFSTK_gadgetClass*>(p)->windowNumber).loopFlag=false;
 			printf("ud=%p gadget=%p tux=%p\n",ud,lwc->popupFromGadget,tux);
+			diskWindow->LFSTK_hideWindow();
 		}
 	return(true);
 }

@@ -41,6 +41,7 @@ LFSTK_buttonClass		*leftButton=NULL;
 LFSTK_buttonClass		*centreButton=NULL;
 LFSTK_buttonClass		*rightButton=NULL;
 LFSTK_buttonClass		*dropButton=NULL;
+LFSTK_labelClass			*poplabel=NULL;
 
 bool						show=true;
 
@@ -107,7 +108,9 @@ bool moveCB(LFSTK_gadgetClass*p,void* ud)
 			printf(">>>Mouse In %s<<<\n",(const char*)ud);
 
 			p->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);	
-			popWindow->LFSTK_moveWindow(geom.x,geom.y-GADGETHITE,true);
+			//popWindow->LFSTK_moveWindow(geom.x,geom.y-GADGETHITE,true);
+			popWindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(poplabel->LFSTK_getTextRealWidth("This is a mouse enter callback")/2),geom.y-GADGETHITE,true);
+
 			popWindow->LFSTK_showWindow();
 			popWindow->LFSTK_clearWindow(true);
 		}
@@ -302,7 +305,7 @@ int main(int argc, char **argv)
 
 	popWindow=new LFSTK_toolWindowClass(apc->display,wc,apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU")),0,0,200,100,"lfstkpopup",apc);
 
-	LFSTK_labelClass *poplabel=new LFSTK_labelClass(popWindow,"This is a mouse enter callback",0,0,GADGETWIDTH*8,GADGETHITE,WestGravity);
+	poplabel=new LFSTK_labelClass(popWindow,"This is a mouse enter callback",0,0,GADGETWIDTH*8,GADGETHITE,WestGravity);
 	poplabel->LFSTK_setCairoFontDataParts("sB",20);
 	poplabel->LFSTK_setTile(NULL,0);
 

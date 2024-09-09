@@ -377,6 +377,9 @@ int main(int argc,char **argv)
 			if(useTaskBar==true)
 				updateTaskBar(true);
 
+			showhidetActionList(NULL,popActionWindow,popActionList);
+			XSync(apc->display,true);
+
 			int retval=apc->LFSTK_runApp();
 
 			calendarIsUp=false;
