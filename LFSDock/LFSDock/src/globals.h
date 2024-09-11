@@ -91,6 +91,7 @@ extern std::string				dockBGImage;
 extern std::string				dockBGImageLS;
 extern std::string				dockBGImageRS;
 extern bool						useBG;
+extern std::string				launcherPreColour;
 
 extern int						queueID;
 extern msgBuffer					buffer;

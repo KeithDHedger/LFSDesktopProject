@@ -1,4 +1,7 @@
 0.2.0
+Centred launcher icons etc.
+Added prelight pref ( setting colour to '#00000000' will cause icons to raise instead of prelighting ).
+cleaned up positioning of labels and context windows.
 Minor GUI fixes.
 Fixed random bouncing of launchers.
 Fixed trying to open dock on non existant monitor.

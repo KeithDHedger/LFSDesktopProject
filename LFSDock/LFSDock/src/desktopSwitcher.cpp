@@ -34,7 +34,9 @@ void updateDeskSwitcher(void)
 
 bool deskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 {
-	setGadgetPosition(p,false);
+	if(launcherPreColour.compare("#00000000")==0)
+		setGadgetPosition(p,false);
+
 	inSomeWindow=false;
 	return(true);
 }
@@ -44,7 +46,9 @@ bool deskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 	std::string		label;
 	infoDataStruct	ls;
 
-	setGadgetPosition(p,true);
+	if(launcherPreColour.compare("#00000000")==0)
+		setGadgetPosition(p,true);
+
 	popActionList->LFSTK_freeList();	
 
 	for(int j=0;j<deskNames.size();j++)
@@ -132,9 +136,9 @@ int addDesktopSwitcer(int x,int y,int grav)
 
 	icon=dockWindow->globalLib->LFSTK_findThemedIcon(desktopTheme,"remote-desktop","");
 	if(icon.length()>0)
-		switchButton->LFSTK_setImageFromPath(icon,LEFT,true);
+		switchButton->LFSTK_setImageFromPath(icon,CENTRE,true);
 	else
-		switchButton->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",LEFT,true);
+		switchButton->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",CENTRE,true);
 
 	pr=apc->globalLib->LFSTK_getSingleProp(apc->display,apc->rootWindow,XInternAtom(apc->display,"_NET_DESKTOP_NAMES",false),XInternAtom(apc->display,"UTF8_STRING",false));
 	for(int j=0;j<deskCount;j++)

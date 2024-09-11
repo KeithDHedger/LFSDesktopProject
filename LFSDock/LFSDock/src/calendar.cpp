@@ -79,7 +79,9 @@ bool calExitCB(LFSTK_gadgetClass*p,void* ud)
 	if(calendarButton->LFSTK_getValue()==1)
 		return(true);
 
-	setGadgetPosition(calendarButton,false);
+	if(launcherPreColour.compare("#00000000")==0)
+		setGadgetPosition(calendarButton,false);
+
 	calendarIsUp=false;
 	return(true);
 }
@@ -89,7 +91,9 @@ bool calEnterCB(LFSTK_gadgetClass*p,void* ud)
 	if(calendarIsUp==true)
 		return(true);
 
-	setGadgetPosition(calendarButton,true);
+	if(launcherPreColour.compare("#00000000")==0)
+		setGadgetPosition(calendarButton,true);
+
 	calendarIsUp=true;
 	inSomeWindow=true;
 	return(true);
@@ -203,16 +207,15 @@ int addCalendar(int x,int y,int grav)
 
 	icon=dockWindow->globalLib->LFSTK_findThemedIcon(desktopTheme,"stock_calendar","");
 	if(icon.length()>0)
-		calendarButton->LFSTK_setImageFromPath(icon,LEFT,true);
+		calendarButton->LFSTK_setImageFromPath(icon,CENTRE,true);
 	else
-		calendarButton->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",LEFT,true);
+		calendarButton->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",CENTRE,true);
 
 	win=apc->LFSTK_getDefaultWInit();
 	win->level=ABOVEALL;
 	win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
 	win->decorated=false;
 	apc->LFSTK_addToolWindow(win,"Calendar");
-	//apc->LFSTK_addWindow(win,"cal");
 	calWindow=apc->windows->back().window;
 
 	thisday=apc->globalLib->LFSTK_oneLiner("%s","date +%m");
@@ -233,18 +236,7 @@ int addCalendar(int x,int y,int grav)
 	editbox->LFSTK_setIgnores(false,false);
 	editbox->LFSTK_addHighLights(dx,dy,dl,datesHilite[0]);
 //TODO//
-			editbox->LFSTK_setGadgetColourPair(NORMALCOLOUR,dockBGColour,dockTextColour);
-//editbox->LFSTK_setAlpha(1.0);
-//editbox->LFSTK_setTile(NULL,0);
-//calWindow->LFSTK_setTile(NULL,0);
-//	calWindow->LFSTK_setWindowColourName(NORMALCOLOUR,"#40ffffff");
-//
-//	editbox->LFSTK_setAlpha(0.0);
-//	//gadget->LFSTK_setTile(NULL,0);
-//	editbox->LFSTK_setStyle(BEVELNONE);
-//	editbox->LFSTK_setGadgetColours(GADGETBG,"#00000000","#00000000","#00000000","#00000000");
-//	editbox->	LFSTK_setGadgetColourPair(NORMALCOLOUR,"#00000000",dockTextColour);
-//
+	editbox->LFSTK_setGadgetColourPair(NORMALCOLOUR,dockBGColour,dockTextColour);
 
 	datesstream.open(configDir + std::string("calendardates"),std::fstream::in);
 	if(datesstream.is_open())

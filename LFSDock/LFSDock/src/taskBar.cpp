@@ -30,7 +30,8 @@ LFSTK_gadgetClass		*currentTask=NULL;
 
 bool taskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 {
-	setGadgetPosition(p,false);
+	if(launcherPreColour.compare("#00000000")==0)
+		setGadgetPosition(p,false);
 	inSomeWindow=false;
 	currentTask=NULL;
 	return(true);
@@ -44,11 +45,16 @@ bool taskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 	LFSTK_buttonClass	*bc=static_cast<LFSTK_buttonClass*>(p);
 
 	if(currentTask!=NULL)
-		setGadgetPosition(currentTask,false);
+		{
+			if(launcherPreColour.compare("#00000000")==0)
+				setGadgetPosition(currentTask,false);
+		}
 	else
 		currentTask=p;
 
-	setGadgetPosition(p,true);
+	if(launcherPreColour.compare("#00000000")==0)
+		setGadgetPosition(p,true);
+
 	popActionList->LFSTK_freeList();	
 
 	d=(unsigned long)bc->userData;
@@ -75,7 +81,6 @@ bool taskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 	popActionWindow->LFSTK_resizeWindow(popActionList->LFSTK_getListMaxWidth()-2,(GADGETHITE*(filltasks.at(d).tasks.size()+1))-4);
 	showhidetActionList(p,popActionWindow,popActionList);
 	inSomeWindow=true;
-
 	return(true);
 }
 
@@ -109,7 +114,6 @@ bool taskListCBDown(void* p,void* ud)
 
 	if((mask_return & Button3Mask)!=0)
 		movetohere=true;
-
 	return(true);
 }
 
@@ -293,12 +297,12 @@ skiplabel:
 					if(icon.empty()==false)
 						{
 							if(taskbuttons[j]->imagePath!=icon)
-								taskbuttons[j]->LFSTK_setImageFromPath(icon,LEFT,true);
+								taskbuttons[j]->LFSTK_setImageFromPath(icon,CENTRE,true);
 						}
 					else
 						{
 							datam=NULL;
-							taskbuttons[j]->LFSTK_setImageFromPath(DATADIR "/pixmaps/command.png",LEFT,true);
+							taskbuttons[j]->LFSTK_setImageFromPath(DATADIR "/pixmaps/command.png",CENTRE,true);
 							for(int i=0;i<2;i++)
 								{
 									datam=gFind->LFSTK_findNamed(filltasks.at(j).taskClass[i],std::string(".desktop"));
@@ -318,7 +322,7 @@ skiplabel:
 															if(icon.empty()==false)
 																{
 																	if(taskbuttons[j]->imagePath!=icon)
-																		taskbuttons[j]->LFSTK_setImageFromPath(icon,LEFT,true);
+																		taskbuttons[j]->LFSTK_setImageFromPath(icon,CENTRE,true);
 																}
 														}
 													continue;									

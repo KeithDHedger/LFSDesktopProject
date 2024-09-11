@@ -55,6 +55,7 @@ LFSTK_lineEditClass			*dockGadgets=NULL;
 
 LFSTK_lineEditClass			*dockBGColourEdit=NULL;
 LFSTK_lineEditClass			*dockTextColourEdit=NULL;
+LFSTK_lineEditClass			*dockPreLightColourEdit=NULL;
 
 LFSTK_lineEditClass			*dockRefreshEdit=NULL;
 LFSTK_toggleButtonClass		*dockUseMicro=NULL;
@@ -168,6 +169,7 @@ void getEdits(void)
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("usemicroseconds"),{TYPEBOOL,"usemicroseconds","",dockUseMicro->LFSTK_getValue(),0}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("usebg"),{TYPEBOOL,"usebg","",dockUseBG->LFSTK_getValue(),0}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("usebgpath"),{TYPESTRING,"usebgpath",dockBGPathEdit->LFSTK_getCStr(),false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("prelightcolour"),{TYPESTRING,"prelightcolour",dockPreLightColourEdit->LFSTK_getCStr(),false,0}},
 		};
 }
 
@@ -230,6 +232,7 @@ void setEdits(void)
 
 	dockUseBG->LFSTK_setValue(prefs.LFSTK_getBool("usebg"));
 	dockBGPathEdit->LFSTK_setBuffer(prefs.LFSTK_getCString("usebgpath"));
+	dockPreLightColourEdit->LFSTK_setBuffer(prefs.LFSTK_getCString("prelightcolour"));
 }
 
 void getPrefs(void)
@@ -250,6 +253,7 @@ void getPrefs(void)
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("usemicroseconds"),{TYPEBOOL,"usemicroseconds","",false,0}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("usebg"),{TYPEBOOL,"usebg","",false,0}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("usebgpath"),{TYPESTRING,"usebgpath","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("prelightcolour"),{TYPESTRING,"prelightcolour","#00000000",false,0}},
 		};
 
 	asprintf(&env,"%s/%s",apc->configDir.c_str(),dockName.c_str());
@@ -432,6 +436,13 @@ int main(int argc, char **argv)
 	dockTextColourEdit=new LFSTK_lineEditClass(wc,"black",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
 	dockTextColourEdit->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
 	dockTextColourEdit->LFSTK_setContextWindow(NULL);
+	sy+=YSPACING;
+
+//dock prelight colour
+	label=new LFSTK_labelClass(wc,"Prelight Colour",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
+	dockPreLightColourEdit=new LFSTK_lineEditClass(wc,"#00000000",BORDER+GADGETWIDTH+BORDER,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
+	dockPreLightColourEdit->LFSTK_setMouseCallBack(NULL,coleditCB,NULL);
+	dockPreLightColourEdit->LFSTK_setContextWindow(NULL);
 	sy+=YSPACING;
 
 //on monitor

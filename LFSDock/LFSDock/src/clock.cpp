@@ -50,12 +50,8 @@ int addClock(int x,int y,int grav)
 	clockButton->LFSTK_setFontString(prefs.LFSTK_getCString("font"),true);
 	clockButton->LFSTK_setIgnores(false,false);
 	clockButton->LFSTK_setTile(NULL,0);
-	//clockButton->LFSTK_setLabelAutoColour(true);
 	clockButton->LFSTK_setGadgetColourPair(NORMALCOLOUR,dockBGColour,dockTextColour);
 	clockButton->LFSTK_setStyle(BEVELNONE);	
-
-	//clockButton->drawLabelBG=true;
-	//clockButton->autoLabelBGColour=true;
 
 	return(iconWidth);
 }

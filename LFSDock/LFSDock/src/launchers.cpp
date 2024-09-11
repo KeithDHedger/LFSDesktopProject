@@ -83,12 +83,16 @@ bool launcherEnterCB(LFSTK_gadgetClass* p,void* ud)
 			launcherDataStruct	lds=launchersArray.at((long unsigned int)ud);
 			XEvent			event;
 			geometryStruct	geom;
+				const geometryStruct	*wingeom=tooltiptWC->LFSTK_getWindowGeom();
+
+			if(launcherPreColour.compare("#00000000")==0)
+				{
 			if(checkInBorder(p)==false)
 				return(true);
 
 			currentLauncher=p;
 			setGadgetPosition(p,true);
-
+}
 			ttLabel->LFSTK_setLabel(lds.name,true);
 			ttLabel->LFSTK_setCairoFontDataParts("s",12);
 			tooltiptWC->LFSTK_resizeWindow(ttLabel->LFSTK_getTextRealWidth(lds.name)+4,GADGETHITE-4);
@@ -97,10 +101,10 @@ bool launcherEnterCB(LFSTK_gadgetClass* p,void* ud)
 			switch(dockGravity)
 				{
 					case PANELNORTH:
-						tooltiptWC->LFSTK_moveWindow((geom.x+((iconWidth)/2)-(ICONSPACE*2))-(ttLabel->LFSTK_getTextRealWidth(lds.name)/2),dockWindow->h,true);
+						tooltiptWC->LFSTK_moveWindow((geom.x+(geom.w/2))-(ICONSPACE)-(ttLabel->LFSTK_getTextRealWidth(lds.name)/2),dockWindow->h,true);
 						break;
 					case PANELSOUTH:
-						tooltiptWC->LFSTK_moveWindow((geom.x+((iconWidth)/2)-(ICONSPACE*2))-(ttLabel->LFSTK_getTextRealWidth(lds.name)/2),geom.y-GADGETHITE+extraSpace,true);
+						tooltiptWC->LFSTK_moveWindow((geom.x+(geom.w/2))-(ICONSPACE)-(ttLabel->LFSTK_getTextRealWidth(lds.name)/2),geom.y-wingeom->h+extraSpace,true);
 						break;
 				}
 			XRaiseWindow(apc->display,tooltiptWC->window);
@@ -113,11 +117,14 @@ bool launcherExitCB(LFSTK_gadgetClass* p,void* ud)
 {
 	if(p!=NULL)
 		{
+			if(launcherPreColour.compare("#00000000")==0)
+				{
 			if(checkInBorder(p)==false)
 				return(true);
 
 			currentLauncher=NULL;
 			setGadgetPosition(p,FALSE);
+	}
 			dockWindow->LFSTK_redrawAllGadgets();
 			tooltiptWC->LFSTK_moveWindow(-1000,1000,true);
 			XRaiseWindow(apc->display,launcherContextWC->window);
@@ -251,6 +258,10 @@ int addLaunchers(int x,int y,int grav)
  
 			bc=new LFSTK_buttonClass(dockWindow,"",xpos,normalY,iconWidth,iconHeight);
 			bc->LFSTK_setContextWindow(launcherContextWC);
+			if(dockGravity==1)
+				bc->contextYOffset=-extraSpace;
+			else
+				bc->contextYOffset=extraSpace;
 
 			if(dockGravity==PANELSOUTH)
 				bc->contextWindowPos=CONTEXTABOVECENTRE;
@@ -264,9 +275,9 @@ int addLaunchers(int x,int y,int grav)
 			if((lds.icon.empty()==false) && (desktopTheme.empty()==false))
 				icon=apc->globalLib->LFSTK_findThemedIcon(desktopTheme,lds.icon,"");
 			if(icon.empty()==false)
-				bc->LFSTK_setImageFromPath(icon,LEFT,true);
+				bc->LFSTK_setImageFromPath(icon,CENTRE,true);
 			else
-				bc->LFSTK_setImageFromPath(DATADIR "/pixmaps/command.png",LEFT,true);
+				bc->LFSTK_setImageFromPath(DATADIR "/pixmaps/command.png",CENTRE,true);
 
 			setGadgetDetails(bc);
 			launchersArray.push_back(lds);

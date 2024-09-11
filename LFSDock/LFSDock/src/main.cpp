@@ -43,6 +43,7 @@ void loadPrefs(std::string prefsfile)
 	useMicros=prefs.LFSTK_getBool("usemicroseconds");
 	useBG=prefs.LFSTK_getBool("usebg");
 	dockBGImage=prefs.LFSTK_getCString("usebgpath");
+	launcherPreColour=prefs.LFSTK_getCString("prelightcolour");
 }
 
 void addGadgets(void)
@@ -200,6 +201,7 @@ int main(int argc,char **argv)
 						{LFSTK_UtilityClass::LFSTK_hashFromKey("usemicroseconds"),{TYPEBOOL,"usemicroseconds","",false,0}},
 						{LFSTK_UtilityClass::LFSTK_hashFromKey("usebg"),{TYPEBOOL,"usebg","",false,0}},
 						{LFSTK_UtilityClass::LFSTK_hashFromKey("usebgpath"),{TYPESTRING,"usebgpath","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("prelightcolour"),{TYPESTRING,"prelightcolour","#00000000",false,0}},
 					};
 	realMainLoop=true;
 
@@ -286,6 +288,12 @@ int main(int argc,char **argv)
 			iconHeight=iconWidth+(iconWidth/2);
 			extraSpace=iconWidth/4;
 
+			if(launcherPreColour.compare("#00000000")!=0)
+				{
+					extraSpace=0;
+					iconHeight=iconWidth;
+				}
+
 			if(dockGravity==1)
 				{
 					normalY=-extraSpace;
@@ -353,10 +361,9 @@ int main(int argc,char **argv)
 			
 							bgls=new LFSTK_buttonClass(dockBGWindow,"",0,0,sidewid,sidehite);
 							setGadgetDetails(bgls);
-							st=bgls->LFSTK_setImageFromPath(dockBGImageLS,LEFT,false);
+							st=bgls->LFSTK_setImageFromPath(dockBGImageLS,CENTRE,false);
 							if(st!=CAIRO_STATUS_SUCCESS)
 								{
-									//dockBGWindow->LFSTK_deleteGadget(bgls);
 									bgls=NULL;
 								}
 					
@@ -365,7 +372,6 @@ int main(int argc,char **argv)
 							st=bgrs->LFSTK_setImageFromPath(dockBGImageRS,RIGHT,false);
 							if(st!=CAIRO_STATUS_SUCCESS)
 								{
-									//dockBGWindow->LFSTK_deleteGadget(bgrs);
 									bgrs=NULL;
 								}
 						}

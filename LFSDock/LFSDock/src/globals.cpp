@@ -44,6 +44,7 @@ std::string				dockBGImage="";
 std::string				dockBGImageLS="";
 std::string				dockBGImageRS="";
 bool						useBG=false;
+std::string				launcherPreColour="#00000000";
 
 int						queueID;
 msgBuffer				buffer;
@@ -153,7 +154,7 @@ void setGadgetDetails(LFSTK_gadgetClass *gadget)
 //	else
 		{
 			gadget->LFSTK_setTile(NULL,0);
-			gadget->LFSTK_setGadgetColours(GADGETBG,"#00000000","#00000000","#00000000","#00000000");
+			gadget->LFSTK_setGadgetColours(GADGETBG,"#00000000",launcherPreColour,"#00000000","#00000000");
 			gadget->	LFSTK_setGadgetColourPair(NORMALCOLOUR,"#00000000","#00000000");
 		}
 }

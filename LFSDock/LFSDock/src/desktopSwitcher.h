@@ -27,10 +27,10 @@ extern LFSTK_buttonClass *switchButton;
 //extern LFSTK_toggleButtonClass *switchButton;
 
 
-void sendPropNotifyMessage(Window win,Atom msg);
+void		sendPropNotifyMessage(Window win,Atom msg);
 
-int addDesktopSwitcer(int x,int y,int grav);
-bool desktopSelect(void *object,void* userdata);
-void updateDeskSwitcher(void);
+int		addDesktopSwitcer(int x,int y,int grav);
+bool		desktopSelect(void *object,void* userdata);
+void		updateDeskSwitcher(void);
 
 #endif
