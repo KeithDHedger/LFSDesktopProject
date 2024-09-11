@@ -154,7 +154,7 @@ void setGadgetDetails(LFSTK_gadgetClass *gadget)
 		{
 			gadget->LFSTK_setTile(NULL,0);
 			gadget->LFSTK_setGadgetColours(GADGETBG,"#00000000","#00000000","#00000000","#00000000");
-			gadget->	LFSTK_setGadgetColourPair(NORMALCOLOUR,"#00000000",dockTextColour);
+			gadget->	LFSTK_setGadgetColourPair(NORMALCOLOUR,"#00000000","#00000000");
 		}
 }
 

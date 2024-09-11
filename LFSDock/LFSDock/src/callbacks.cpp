@@ -20,10 +20,13 @@
 
 #include "globals.h"
 
-//LFSTK_windowClass	*launcherContextWindow=NULL;
 LFSTK_windowClass	*taskContextWindow=NULL;
 int					cnt=0;
 int					cnt2=0;
+int					root_x_return=-1,root_y_return=-1;
+int					rxdiff=-1;
+int					rydiff=-1;
+int					diFF=ICONSPACE-1;
 
 void sendClientMessage(Window win,const char *msg,unsigned long data0,unsigned long data1,unsigned long data2,unsigned long data3,unsigned long data4)
 {
@@ -147,53 +150,6 @@ void readMsg(void)
 	buffer.mText[0]=0;
 }
 
-//bool contextCB(void *p,void* ud)
-//{
-//	int					winnum;
-//	LFSTK_windowClass	*lwc=static_cast<LFSTK_gadgetClass*>(p)->wc;
-//	long unsigned int	whatbutton=(long unsigned int)ud;
-//	launcherDataStruct	lds=launchersArray.at((long unsigned int)lwc->popupFromGadget->userData);
-//
-//	if(p!=NULL)
-//		{
-//			winnum=lwc->app->LFSTK_findWindow(lwc);
-//			lwc->app->windows->at(winnum).loopFlag=false;
-//
-//			switch(whatbutton)
-//				{
-//					case BUTTONQUIT:
-//						realMainLoop=false;
-//						apc->mainLoop=false;
-//						break;
-//					case BUTTONLAUNCH:
-//						launcherCB(NULL,lwc->popupFromGadget->userData);
-//						break;
-//					case BUTTONREMOVE:
-//						sendNotify("Removing ",lds.name);
-//						XSync(apc->display,false);
-//						sleep(1);
-//						unlink(lds.path.c_str());
-//						apc->exitValue=0;
-//						apc->mainLoop=false;
-//						
-//						break;
-//					case BUTTONPREFS:
-//						{
-//							std::string	com;
-//							com="lfsdockprefs -d "+whatDock+" &";
-//							system(com.c_str());
-//						}
-//						break;
-//				}
-//			
-//			launcherExitCB(lwc->popupFromGadget,ud);
-//			lwc->popupFromGadget=NULL;
-//			dockWindow->LFSTK_clearWindow(true);
-//			//XSync(apc->display,false);
-//		}
-//	return(true);
-//}
-
 void showhidetActionList(LFSTK_gadgetClass *bc,LFSTK_windowClass *winc,LFSTK_listGadgetClass *list)
 {
 	geometryStruct		geom;
@@ -224,6 +180,36 @@ void showhidetActionList(LFSTK_gadgetClass *bc,LFSTK_windowClass *winc,LFSTK_lis
 			winc->LFSTK_hideWindow();
 			apc->windows->at(apc->LFSTK_findWindow(winc)).showing=false;
 		}
+}
+
+bool checkInBorder(LFSTK_gadgetClass *gadg)
+{
+	Window			root_return;
+	Window			child_return;
+	int				win_x_return1=-1;
+	int				win_y_return1=-1;
+	int				root_x_return1=-1;
+	int				root_y_return1=-1;
+	unsigned int		mask_return;
+	int				rxdeltadiffx;
+	int				rxdeltadiffy;
+
+	XQueryPointer(apc->display,apc->rootWindow,&root_return,&child_return,&root_x_return1,&root_y_return1,&win_x_return1,&win_y_return1,&mask_return);
+
+	rxdeltadiffx=abs(root_x_return-root_x_return1);
+	rxdeltadiffy=abs(root_y_return-root_y_return1);
+
+	if((rxdeltadiffx<diFF) && (rxdeltadiffy<diFF))
+		{
+			return(false);
+		}
+
+	rxdiff=rxdeltadiffx;
+	rydiff=rxdeltadiffy;
+	root_x_return=root_x_return1;
+	root_y_return=root_y_return1;
+
+	return(true);
 }
 
 void setGadgetPosition(LFSTK_gadgetClass *gadg,bool active)

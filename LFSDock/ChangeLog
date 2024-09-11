@@ -1,5 +1,6 @@
 0.2.0
-fixed random bouncing of launchers.
+Minor GUI fixes.
+Fixed random bouncing of launchers.
 Fixed trying to open dock on non existant monitor.
 Added a couple of background examples.
 UI updates.

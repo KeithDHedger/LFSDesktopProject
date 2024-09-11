@@ -23,12 +23,9 @@
 
 enum {BUTTONLAUNCH=0,BUTTONREMOVE,BUTTONPREFS,BUTTONQUIT,NOMOREBUTONS};
 
-//extern LFSTK_windowClass	*launcherContextWindow;
 extern LFSTK_windowClass	*taskContextWindow;
 
 void sendClientMessage(Window win,const char *msg,unsigned long data0,unsigned long data1,unsigned long data2,unsigned long data3,unsigned long data4);
-
-//bool contextCB(void *p,void* ud);
 bool gadgetDrop(void *lwc,propertyStruct *data,void* ud);
 bool timerCB(LFSTK_applicationClass *p,void* ud);
 void readMsg(void);
@@ -36,5 +33,6 @@ void showhidetActionList(LFSTK_gadgetClass *bc,LFSTK_windowClass *winc,LFSTK_lis
 bool popActionListEnterCB(LFSTK_gadgetClass*p,void* ud);
 bool popActionListExitCB(LFSTK_gadgetClass*p,void* ud);
 bool popActionWindowSelect(void *object,void* userdata);
+bool checkInBorder(LFSTK_gadgetClass *gadg);
 
 #endif

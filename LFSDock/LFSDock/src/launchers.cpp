@@ -83,29 +83,29 @@ bool launcherEnterCB(LFSTK_gadgetClass* p,void* ud)
 			launcherDataStruct	lds=launchersArray.at((long unsigned int)ud);
 			XEvent			event;
 			geometryStruct	geom;
+			if(checkInBorder(p)==false)
+				return(true);
+
 			currentLauncher=p;
 			setGadgetPosition(p,true);
 
 			ttLabel->LFSTK_setLabel(lds.name,true);
-			ttLabel->LFSTK_setCairoFontDataParts("sB",14);
-			ttLabel->LFSTK_setTile(NULL,0);
-
-			tooltiptWC->LFSTK_resizeWindow(ttLabel->LFSTK_getTextRealWidth(lds.name),GADGETHITE);
-			tooltiptWC->LFSTK_setWindowColourName(NORMALCOLOUR,"#c0808080");
+			ttLabel->LFSTK_setCairoFontDataParts("s",12);
+			tooltiptWC->LFSTK_resizeWindow(ttLabel->LFSTK_getTextRealWidth(lds.name)+4,GADGETHITE-4);
 			p->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);
 
 			switch(dockGravity)
 				{
 					case PANELNORTH:
-						tooltiptWC->LFSTK_moveWindow(geom.x+(geom.w/2)-(ttLabel->LFSTK_getTextRealWidth(lds.name)/2),dockWindow->h,true);
+						tooltiptWC->LFSTK_moveWindow((geom.x+((iconWidth)/2)-(ICONSPACE*2))-(ttLabel->LFSTK_getTextRealWidth(lds.name)/2),dockWindow->h,true);
 						break;
 					case PANELSOUTH:
-						tooltiptWC->LFSTK_moveWindow(geom.x+(geom.w/2)-(ttLabel->LFSTK_getTextRealWidth(lds.name)/2),geom.y-GADGETHITE+extraSpace,true);
+						tooltiptWC->LFSTK_moveWindow((geom.x+((iconWidth)/2)-(ICONSPACE*2))-(ttLabel->LFSTK_getTextRealWidth(lds.name)/2),geom.y-GADGETHITE+extraSpace,true);
 						break;
 				}
 			XRaiseWindow(apc->display,tooltiptWC->window);
 		}
-	XSync(apc->display,false);
+	dockWindow->LFSTK_redrawAllGadgets();
 	return(true);
 }
 
@@ -113,11 +113,13 @@ bool launcherExitCB(LFSTK_gadgetClass* p,void* ud)
 {
 	if(p!=NULL)
 		{
-					currentLauncher=NULL;
-			setGadgetPosition(p,false);
+			if(checkInBorder(p)==false)
+				return(true);
+
+			currentLauncher=NULL;
+			setGadgetPosition(p,FALSE);
 			dockWindow->LFSTK_redrawAllGadgets();
 			tooltiptWC->LFSTK_moveWindow(-1000,1000,true);
-			XRaiseWindow(apc->display,launcherContextWC->window);
 			XRaiseWindow(apc->display,launcherContextWC->window);
 		}
 	XSync(apc->display,false);
@@ -228,8 +230,13 @@ int addLaunchers(int x,int y,int grav)
 	ww=contextButtons[0]->LFSTK_getTextRealWidth(contextLabelData[1]);
 	launcherContextWC->LFSTK_resizeWindow(ww+contextButtons[0]->imageWidth+8,sy,true);
 	launcherContextWC->LFSTK_setKeepAbove(true);
-	tooltiptWC=new LFSTK_toolWindowClass(apc->display,dockWindow,apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DOCK")),0,0,200,100,"lfstkpopup",apc);
-	ttLabel=new LFSTK_labelClass(tooltiptWC,"XXX",0,0,GADGETWIDTH*8,GADGETHITE,WestGravity);
+	tooltiptWC=new LFSTK_toolWindowClass(apc->display,dockWindow,apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DOCK")),0,0,1,1,"lfstkpopup",apc);
+	tooltiptWC->LFSTK_setWindowColourName(NORMALCOLOUR,lc.c_str());
+
+	ttLabel=new LFSTK_labelClass(tooltiptWC,"XXX",-1,-1,GADGETWIDTH*10,GADGETHITE,NorthWestGravity);
+	ttLabel->pad=1;
+	ttLabel->LFSTK_setGadgetColourPair(NORMALCOLOUR,"#ffffffff","black");
+	ttLabel->LFSTK_setTile(NULL,0);
 
 	tooltiptWC->LFSTK_moveWindow(-1000,-1000,true);
 	tooltiptWC->LFSTK_showWindow();
