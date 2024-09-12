@@ -55,6 +55,7 @@ struct launcherDataStruct
 	std::string		path;
 	bool				inTerm;
 	unsigned long	pid=0;
+	bool				donePrelight=false;
 };
 
 struct taskStruct

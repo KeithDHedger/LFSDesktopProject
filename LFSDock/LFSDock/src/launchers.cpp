@@ -85,7 +85,9 @@ bool launcherEnterCB(LFSTK_gadgetClass* p,void* ud)
 			geometryStruct	geom;
 			const geometryStruct	*wingeom=tooltiptWC->LFSTK_getWindowGeom();
 
-			//if(launcherPreColour.compare("#00000000")==0)
+			if(lds.donePrelight==true)
+				return(true);
+
 			if(checkInBorder(p)==false)
 				return(true);
 			if(moveGadget==true)
@@ -108,16 +110,20 @@ bool launcherEnterCB(LFSTK_gadgetClass* p,void* ud)
 						break;
 				}
 			XRaiseWindow(apc->display,tooltiptWC->window);
+			lds.donePrelight=true;
+			dockWindow->LFSTK_redrawAllGadgets();
 		}
-	dockWindow->LFSTK_redrawAllGadgets();
 	return(true);
 }
 
 bool launcherExitCB(LFSTK_gadgetClass* p,void* ud)
 {
+	launcherDataStruct	lds=launchersArray.at((long unsigned int)ud);
+
 	if(p!=NULL)
 		{
-			//if(launcherPreColour.compare("#00000000")==0)
+			lds.donePrelight==false;
+
 			if(checkInBorder(p)==false)
 				return(true);
 			if(moveGadget==true)
@@ -270,7 +276,6 @@ int addLaunchers(int x,int y,int grav)
 			bc->userData=USERDATA(l);
 			bc->LFSTK_setMouseCallBack(NULL,launcherCB,USERDATA(l));
 			bc->LFSTK_setGadgetDropCallBack(gadgetDrop,USERDATA(l));
-			//if(moveGadget==true)
 			bc->LFSTK_setMouseMoveCallBack(launcherEnterCB,launcherExitCB,USERDATA(l));
 			bc->gadgetAcceptsDnD=true;
 			if((lds.icon.empty()==false) && (desktopTheme.empty()==false))

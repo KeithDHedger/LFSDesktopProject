@@ -30,7 +30,6 @@ LFSTK_gadgetClass		*currentTask=NULL;
 
 bool taskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 {
-	//if(launcherPreColour.compare("#00000000")==0)
 	if(moveGadget==true)
 		setGadgetPosition(p,false);
 	inSomeWindow=false;
@@ -47,14 +46,12 @@ bool taskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 
 	if(currentTask!=NULL)
 		{
-			//if(launcherPreColour.compare("#00000000")==0)
 			if(moveGadget==true)
 				setGadgetPosition(currentTask,false);
 		}
 	else
 		currentTask=p;
 
-	//if(launcherPreColour.compare("#00000000")==0)
 	if(moveGadget==true)
 		setGadgetPosition(p,true);
 

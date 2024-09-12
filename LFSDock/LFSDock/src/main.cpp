@@ -292,7 +292,6 @@ int main(int argc,char **argv)
 			iconHeight=iconWidth+(iconWidth/2);
 			extraSpace=iconWidth/4;
 
-			//if(launcherPreColour.compare("#00000000")!=0)
 			if(moveGadget==false)
 				{
 					extraSpace=0;
