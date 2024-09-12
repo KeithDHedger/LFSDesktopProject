@@ -44,6 +44,10 @@ void loadPrefs(std::string prefsfile)
 	useBG=prefs.LFSTK_getBool("usebg");
 	dockBGImage=prefs.LFSTK_getCString("usebgpath");
 	launcherPreColour=prefs.LFSTK_getCString("prelightcolour");
+	if(launcherPreColour.compare("#00000000")==0)
+		moveGadget=true;
+	else
+		moveGadget=false;
 }
 
 void addGadgets(void)
@@ -288,7 +292,8 @@ int main(int argc,char **argv)
 			iconHeight=iconWidth+(iconWidth/2);
 			extraSpace=iconWidth/4;
 
-			if(launcherPreColour.compare("#00000000")!=0)
+			//if(launcherPreColour.compare("#00000000")!=0)
+			if(moveGadget==false)
 				{
 					extraSpace=0;
 					iconHeight=iconWidth;

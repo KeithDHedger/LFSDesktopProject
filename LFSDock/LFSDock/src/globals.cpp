@@ -45,6 +45,7 @@ std::string				dockBGImageLS="";
 std::string				dockBGImageRS="";
 bool						useBG=false;
 std::string				launcherPreColour="#00000000";
+bool						moveGadget=false;
 
 int						queueID;
 msgBuffer				buffer;

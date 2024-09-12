@@ -79,7 +79,8 @@ bool calExitCB(LFSTK_gadgetClass*p,void* ud)
 	if(calendarButton->LFSTK_getValue()==1)
 		return(true);
 
-	if(launcherPreColour.compare("#00000000")==0)
+//	if(launcherPreColour.compare("#00000000")==0)
+	if(moveGadget==true)
 		setGadgetPosition(calendarButton,false);
 
 	calendarIsUp=false;
@@ -91,7 +92,8 @@ bool calEnterCB(LFSTK_gadgetClass*p,void* ud)
 	if(calendarIsUp==true)
 		return(true);
 
-	if(launcherPreColour.compare("#00000000")==0)
+	//if(launcherPreColour.compare("#00000000")==0)
+	if(moveGadget==true)
 		setGadgetPosition(calendarButton,true);
 
 	calendarIsUp=true;

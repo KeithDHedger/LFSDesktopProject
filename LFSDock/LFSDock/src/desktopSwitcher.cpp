@@ -34,7 +34,8 @@ void updateDeskSwitcher(void)
 
 bool deskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 {
-	if(launcherPreColour.compare("#00000000")==0)
+	//if(launcherPreColour.compare("#00000000")==0)
+	if(moveGadget==true)
 		setGadgetPosition(p,false);
 
 	inSomeWindow=false;
@@ -46,7 +47,8 @@ bool deskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 	std::string		label;
 	infoDataStruct	ls;
 
-	if(launcherPreColour.compare("#00000000")==0)
+	//if(launcherPreColour.compare("#00000000")==0)
+	if(moveGadget==true)
 		setGadgetPosition(p,true);
 
 	popActionList->LFSTK_freeList();	

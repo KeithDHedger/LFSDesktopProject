@@ -83,16 +83,16 @@ bool launcherEnterCB(LFSTK_gadgetClass* p,void* ud)
 			launcherDataStruct	lds=launchersArray.at((long unsigned int)ud);
 			XEvent			event;
 			geometryStruct	geom;
-				const geometryStruct	*wingeom=tooltiptWC->LFSTK_getWindowGeom();
+			const geometryStruct	*wingeom=tooltiptWC->LFSTK_getWindowGeom();
 
-			if(launcherPreColour.compare("#00000000")==0)
-				{
+			//if(launcherPreColour.compare("#00000000")==0)
 			if(checkInBorder(p)==false)
 				return(true);
-
-			currentLauncher=p;
-			setGadgetPosition(p,true);
-}
+			if(moveGadget==true)
+				{
+					currentLauncher=p;
+					setGadgetPosition(p,true);
+				}
 			ttLabel->LFSTK_setLabel(lds.name,true);
 			ttLabel->LFSTK_setCairoFontDataParts("s",12);
 			tooltiptWC->LFSTK_resizeWindow(ttLabel->LFSTK_getTextRealWidth(lds.name)+4,GADGETHITE-4);
@@ -117,14 +117,14 @@ bool launcherExitCB(LFSTK_gadgetClass* p,void* ud)
 {
 	if(p!=NULL)
 		{
-			if(launcherPreColour.compare("#00000000")==0)
-				{
+			//if(launcherPreColour.compare("#00000000")==0)
 			if(checkInBorder(p)==false)
 				return(true);
-
-			currentLauncher=NULL;
-			setGadgetPosition(p,FALSE);
-	}
+			if(moveGadget==true)
+				{
+					currentLauncher=NULL;
+					setGadgetPosition(p,FALSE);
+				}
 			dockWindow->LFSTK_redrawAllGadgets();
 			tooltiptWC->LFSTK_moveWindow(-1000,1000,true);
 			XRaiseWindow(apc->display,launcherContextWC->window);
@@ -270,6 +270,7 @@ int addLaunchers(int x,int y,int grav)
 			bc->userData=USERDATA(l);
 			bc->LFSTK_setMouseCallBack(NULL,launcherCB,USERDATA(l));
 			bc->LFSTK_setGadgetDropCallBack(gadgetDrop,USERDATA(l));
+			//if(moveGadget==true)
 			bc->LFSTK_setMouseMoveCallBack(launcherEnterCB,launcherExitCB,USERDATA(l));
 			bc->gadgetAcceptsDnD=true;
 			if((lds.icon.empty()==false) && (desktopTheme.empty()==false))
