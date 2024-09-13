@@ -68,3 +68,4 @@ compile
 ltmain.sh
 *.html
 .nfs*
+devtests

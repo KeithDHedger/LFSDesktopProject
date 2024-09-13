@@ -1,4 +1,5 @@
 0.2.0
+Added "Set Dates" to calandar widget, see README.
 Centred launcher icons etc.
 Added prelight pref ( setting colour to '#00000000' will cause icons to raise instead of prelighting ).
 cleaned up positioning of labels and context windows.

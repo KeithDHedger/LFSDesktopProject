@@ -26,6 +26,7 @@ LFSTK_toggleButtonClass	*calendarButton;
 bool						calendarIsUp=false;
 LFSTK_buttonClass		*prev;
 LFSTK_buttonClass		*next;
+LFSTK_buttonClass		*openDates;
 LFSTK_multiLineEditClass	*editbox=NULL;
 std::string				thisMonth;
 int						currentMonth;
@@ -38,11 +39,69 @@ const char				*monthNames[]={"January","February","March","April","May","June","
 std::vector<datesStruct>	datesData;
 cairoColor				datesHilite[]={{0,0,0,0.05},{0,0,1,0.05},{0,1,0,0.05},{0,1,1,0.05},{1,0,0,0.05},{1,0,1,0.05},{1,1,0,0.05},{1,1,1,0.05}};
 
+void setImportantDates(void)
+{
+	std::string	thisday;
+
+	calData=apc->globalLib->LFSTK_runAndGet("%s %S","cal",thisMonth);
+//do important dates
+	for(int j=0;j<datesData.size();j++)
+		{
+			if((currentMonth==datesData.at(j).month) )//&& (std::stoi(thisday)==datesData.at(j).date)
+				{
+						thisday=std::to_string(datesData.at(j).date);
+						dl=thisday.length();
+						thisday=" "+thisday+" ";
+						std::string::size_type found;
+						std::string adjstr;
+						for(int i=1;i<calData.size();i++)
+							{
+								adjstr=" "+calData.at(i);
+								adjstr.insert(adjstr.end()-1,' ');
+								found=adjstr.find(thisday);
+								if(found!=std::string::npos)
+									{
+										dy=i-1;
+										dx=found;
+										if(editbox!=NULL)
+											editbox->LFSTK_addHighLights(dx,dy,dl,datesData.at(j).col);
+									}
+							}
+				}
+		}
+}
+
+void updateDates(void)
+{
+	std::ifstream	datesstream;
+
+	datesData.clear();
+	editbox->highLights.clear();
+	datesstream.open(configDir + std::string("calendardates"),std::fstream::in);
+	if(datesstream.is_open())
+        {
+			int month;
+			int date;
+			int colour;
+			while(datesstream>>month)
+				{
+					datesstream>>date;
+					datesstream>>colour;
+					datesData.push_back({month,date,datesHilite[colour]});
+				}
+			datesstream.close();
+		}
+
+	setImportantDates();
+}
+
 bool calCB(void *p,void* ud)
 {
 	LFSTK_toggleButtonClass	*bc=static_cast<LFSTK_toggleButtonClass*>(p);
 	geometryStruct			geom;
 	const geometryStruct		*wingeom;
+
+	updateDates();
 
 	if(p!=NULL)
 		{	
@@ -126,40 +185,12 @@ void setEditText(void)
 		}
 }
 
-void setImportantDates(void)
-{
-	std::string	thisday;
 
-	calData=apc->globalLib->LFSTK_runAndGet("%s %S","cal",thisMonth);
-//do important dates
-	for(int j=0;j<datesData.size();j++)
-		{
-			if((currentMonth==datesData.at(j).month) )//&& (std::stoi(thisday)==datesData.at(j).date)
-				{
-						thisday=std::to_string(datesData.at(j).date);
-						dl=thisday.length();
-						thisday=" "+thisday+" ";
-						std::string::size_type found;
-						std::string adjstr;
-						for(int i=1;i<calData.size();i++)
-							{
-								adjstr=" "+calData.at(i);
-								adjstr.insert(adjstr.end()-1,' ');
-								found=adjstr.find(thisday);
-								if(found!=std::string::npos)
-									{
-										dy=i-1;
-										dx=found;
-										if(editbox!=NULL)
-											editbox->LFSTK_addHighLights(dx,dy,dl,datesData.at(j).col);
-									}
-							}
-				}
-		}
-}
 
 bool doPrev(void *p,void* ud)
 {
+	updateDates();
+
 	if(currentMonth==0)
 		currentMonth=12;
 	currentMonth--;	
@@ -173,8 +204,19 @@ bool doPrev(void *p,void* ud)
 	return(true);
 }
 
+bool doOpenDates(void *p,void* ud)
+{
+	std::string opend;
+
+	opend=std::string("xdg-open ")+configDir + std::string("calendardates &");
+	system(opend.c_str());
+	return(true);
+}
+
 bool doNext(void *p,void* ud)
 {
+	updateDates();
+
 	if(currentMonth==11)
 		currentMonth=-1;
 	currentMonth++;	
@@ -196,7 +238,6 @@ int addCalendar(int x,int y,int grav)
 	int				txtwid;
 	int				txthite;
 	int				sy=0;
-	std::ifstream	datesstream;
 
 	calendarButton=new LFSTK_toggleButtonClass(dockWindow,"",x,normalY,iconWidth,iconHeight);
 	calendarButton->LFSTK_setToggleStyle(TOGGLENORMAL);
@@ -238,28 +279,17 @@ int addCalendar(int x,int y,int grav)
 //TODO//
 	editbox->LFSTK_setGadgetColourPair(NORMALCOLOUR,dockBGColour,dockTextColour);
 
-	datesstream.open(configDir + std::string("calendardates"),std::fstream::in);
-	if(datesstream.is_open())
-        {
-			int month;
-			int date;
-			int colour;
-			while(datesstream>>month)
-				{
-					datesstream>>date;
-					datesstream>>colour;
-					datesData.push_back({month,date,datesHilite[colour]});
-				}
-			datesstream.close();
-		}
+	updateDates();
 
-	setImportantDates();
 	sy=txthite-4;
 
-	prev=new LFSTK_buttonClass(calWindow,"<<<",0,sy,(txtwid-4)/2,12);
+	prev=new LFSTK_buttonClass(calWindow,"<<<",0,sy,(txtwid-4)/3,12);
 	prev->LFSTK_setMouseCallBack(NULL,doPrev,NULL);
 
-	next=new LFSTK_buttonClass(calWindow,">>>",(txtwid-4)/2,sy,(txtwid-4)/2,12);
+	openDates=new LFSTK_buttonClass(calWindow,"Set Dates",(txtwid-4)/3,sy,(txtwid-4)/3,12);
+	openDates->LFSTK_setMouseCallBack(NULL,doOpenDates,NULL);
+
+	next=new LFSTK_buttonClass(calWindow,">>>",txtwid-4-((txtwid-4)/3),sy,(txtwid-4)/3,12);
 	next->LFSTK_setMouseCallBack(NULL,doNext,NULL);
 	sy+=12;
 	calWindow->LFSTK_resizeWindow(txtwid-4,sy,true);
