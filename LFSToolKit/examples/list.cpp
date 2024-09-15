@@ -60,6 +60,13 @@ bool select(void *object,void* userdata)
 	return(true);
 }
 
+
+bool exitPopList(LFSTK_gadgetClass*p,void* ud)
+{
+	fprintf(stderr,"bool exitPopList(LFSTK_gadgetClass*p,void* ud)\n");
+	return(true);
+}
+
 int main(int argc, char **argv)
 {
 	int						sy=0;
@@ -131,6 +138,8 @@ int main(int argc, char **argv)
 
 	list->LFSTK_updateList();
 	list->LFSTK_setMouseCallBack(NULL,select,NULL);
+	list->LFSTK_setMouseMoveCallBack(NULL,exitPopList,NULL);
+
 	fprintf(stderr,"Max list item width=%i\n",list->LFSTK_getListMaxWidth());
 
 	sy+=GADGETHITE*6;

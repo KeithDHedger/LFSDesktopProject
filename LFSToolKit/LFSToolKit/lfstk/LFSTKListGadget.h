@@ -42,7 +42,7 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const char *label,int x,int y,unsigned w,unsigned h,int gravity=NorthWestGravity);
 
 		int								LFSTK_getCurrentListItem(void);
-		void								LFSTK_updateList(void);
+		void								LFSTK_updateList(bool liveupdate=true);
 		void								LFSTK_setListFromFile(const char *filepath,bool includeempty);
 		const char						*LFSTK_getSelectedLabel(void);
 		const char						*LFSTK_getLabelAtIndex(int index);
@@ -51,7 +51,6 @@ class LFSTK_listGadgetClass  : public  LFSTK_gadgetClass
 		void								LFSTK_selectByIndex(int index);
 		int								LFSTK_findByLabel(const char *needle,bool select=true);
 		
-		bool								mouseExit(XButtonEvent *e) {return(true);};
 		bool								mouseEnter(XButtonEvent *e) {XSetInputFocus(this->wc->app->display,this->window,RevertToParent,CurrentTime);return(true);};
 		bool								mouseUp(XButtonEvent *e);
 		bool								keyRelease(XKeyEvent *e);

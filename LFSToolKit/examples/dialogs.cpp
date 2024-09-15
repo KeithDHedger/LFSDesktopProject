@@ -112,7 +112,7 @@ int main(int argc, char **argv)
 //files and folders
 	asprintf(&wd,"%s",apc->userHome.c_str());
 	filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",wd,FILEDIALOG);
-	filedialogfile->LFSTK_setNameFilter("*");
+	//filedialogfile->LFSTK_setNameFilter("*");
 	//filedialogfile->useThumbs=true;
 	//filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",NULL,FILEDIALOG);
 	filedialogdir=new LFSTK_fileDialogClass(wc,"Select Folder",NULL,FOLDERDIALOG,"dialogscpp");

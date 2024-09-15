@@ -47,6 +47,27 @@ void sendClientMessage(Window win,const char *msg,unsigned long data0,unsigned l
 	XSendEvent(dockWindow->app->display,dockWindow->app->rootWindow,False,mask,&event);
 }
 
+bool exitPopList(LFSTK_gadgetClass*p,void* ud)
+{
+	Window				dump;
+	int					rdump;
+	int					win_x_return1=-1;
+	int					win_y_return1=-1;
+	unsigned int			mdump;
+	const geometryStruct	*geom;
+	pointStruct			pt;
+
+	XQueryPointer(apc->display,apc->rootWindow,&dump,&dump,&rdump,&rdump,&win_x_return1,&win_y_return1,&mdump);
+
+	geom=popActionWindow->LFSTK_getWindowGeom();
+	pt={win_x_return1,win_y_return1};
+
+	if(apc->globalLib->LFSTK_pointInRect(&pt,(geometryStruct*)geom)==false)
+		showhidetActionList(NULL,popActionWindow,popActionList);
+
+	return(true);
+}
+
 bool gadgetDrop(void *lwc,propertyStruct *data,void* ud)
 {
 	if(data!=NULL)

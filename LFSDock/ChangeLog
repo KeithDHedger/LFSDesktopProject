@@ -1,4 +1,7 @@
 0.2.0
+Pop up task lists now dont change order.
+Hide popup list when exiting list.
+Hide desktop list when exiting desktop switcher gadget.
 Added "Set Dates" to calandar widget, see README.
 Centred launcher icons etc.
 Added prelight pref ( setting colour to '#00000000' will cause icons to raise instead of prelighting ).

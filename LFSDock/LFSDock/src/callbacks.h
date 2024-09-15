@@ -34,5 +34,6 @@ bool popActionListEnterCB(LFSTK_gadgetClass*p,void* ud);
 bool popActionListExitCB(LFSTK_gadgetClass*p,void* ud);
 bool popActionWindowSelect(void *object,void* userdata);
 bool checkInBorder(LFSTK_gadgetClass *gadg);
+bool exitPopList(LFSTK_gadgetClass*p,void* ud);
 
 #endif

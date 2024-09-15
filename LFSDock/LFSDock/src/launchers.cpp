@@ -90,6 +90,7 @@ bool launcherEnterCB(LFSTK_gadgetClass* p,void* ud)
 
 			if(checkInBorder(p)==false)
 				return(true);
+
 			if(moveGadget==true)
 				{
 					currentLauncher=p;
@@ -110,30 +111,30 @@ bool launcherEnterCB(LFSTK_gadgetClass* p,void* ud)
 						break;
 				}
 			XRaiseWindow(apc->display,tooltiptWC->window);
-			lds.donePrelight=true;
 			dockWindow->LFSTK_redrawAllGadgets();
+			lds.donePrelight=true;
 		}
 	return(true);
 }
 
 bool launcherExitCB(LFSTK_gadgetClass* p,void* ud)
 {
-	launcherDataStruct	lds=launchersArray.at((long unsigned int)ud);
-
 	if(p!=NULL)
 		{
-			lds.donePrelight==false;
+			launcherDataStruct	lds=launchersArray.at((long unsigned int)ud);
 
 			if(checkInBorder(p)==false)
 				return(true);
+
 			if(moveGadget==true)
 				{
-					currentLauncher=NULL;
 					setGadgetPosition(p,FALSE);
 				}
 			dockWindow->LFSTK_redrawAllGadgets();
 			tooltiptWC->LFSTK_moveWindow(-1000,1000,true);
 			XRaiseWindow(apc->display,launcherContextWC->window);
+			currentLauncher=NULL;
+			lds.donePrelight=false;
 		}
 	XSync(apc->display,false);
 	return(true);

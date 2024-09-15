@@ -162,7 +162,7 @@ bool LFSTK_listGadgetClass::scrollListCB(void *object,void* userdata)
 /**
 * Update new list.
 */
-void LFSTK_listGadgetClass::LFSTK_updateList(void)
+void LFSTK_listGadgetClass::LFSTK_updateList(bool liveupdate)
 {
 	int orient=MENU;
 
@@ -192,11 +192,20 @@ void LFSTK_listGadgetClass::LFSTK_updateList(void)
 								this->labelsArray->at(j)->LFSTK_setImageFromSurface(this->listDataArray->at(j+this->listOffset).surface,MENU,true);
 							if(this->listDataArray->at(j+this->listOffset).imageType==FILETHUMB)
 								this->labelsArray->at(j)->LFSTK_setImageFromPath(this->listDataArray->at(j+this->listOffset).imagePath,MENU,true);
-							this->labelsArray->at(j)->LFSTK_showGadget();
-							//this->labelsArray->at(j)->LFSTK_clearWindow();
 						}
 				}
 		}
+
+	if(liveupdate==true)
+		for(int j=0;j<this->labelsArray->size();j++)
+			{
+				if((j+this->listOffset)<this->listDataArray->size())
+					if(j<this->maxShowing)
+						{
+							this->labelsArray->at(j)->LFSTK_showGadget();
+							this->labelsArray->at(j)->LFSTK_clearWindow();
+						}
+			}
 }
 
 /*
@@ -205,7 +214,6 @@ void LFSTK_listGadgetClass::LFSTK_updateList(void)
 bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
 {
 	LFSTK_listGadgetClass	*list;
-
 	if((object==NULL) || (userdata==NULL))
 		return(true);
 
@@ -214,6 +222,7 @@ bool LFSTK_listGadgetClass::scrollCB(void *object,void* userdata)
 
 	list->listOffset=sb->LFSTK_getValue();
 	list->LFSTK_updateList();
+	
 	return(true);
 }
 

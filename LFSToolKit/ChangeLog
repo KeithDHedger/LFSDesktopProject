@@ -1,4 +1,7 @@
 0.6.1
+Fixed updating list when dragging scroll button.
+Fixed file dialog example.
+Now runs mouse exit from list gadget.
 Setting LFSTK_setNameFilter in LFSTKFileDialog now works.
 Added some extras functions to LFSTK_UtilityClass.
 Vairous build files tweaks.

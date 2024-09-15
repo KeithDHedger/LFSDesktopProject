@@ -37,6 +37,7 @@ bool deskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 	if(moveGadget==true)
 		setGadgetPosition(p,false);
 
+	exitPopList(p,ud);
 	inSomeWindow=false;
 	return(true);
 }
@@ -56,7 +57,6 @@ bool deskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 			label=deskNames.at(j);
 			ls.label=label;
 			ls.imageType=NOTHUMB;
-			ls.imagePath;
 			ls.userData=USERDATA(DESKTOPSWITCHER);
 			popActionList->LFSTK_appendToList(ls);
 		}
@@ -124,7 +124,12 @@ int addDesktopSwitcer(int x,int y,int grav)
 	pr=apc->globalLib->LFSTK_getSingleProp(apc->display,apc->rootWindow,NET_CURRENT_DESKTOP,XA_CARDINAL);
 	int ly=0;
 	if(dockGravity==PANELSOUTH)
-		ly=normalY+iconWidth;
+		{
+			if(moveGadget==true)
+				ly=normalY+iconWidth;
+			else
+				ly=0+normalY+iconHeight-GADGETHITE/2;
+		}
 
 	deskLabel=new LFSTK_buttonClass(dockWindow,std::to_string(pr.integer+1).c_str(),x,ly,iconWidth,GADGETHITE/2);
 	setGadgetDetails(deskLabel);
@@ -139,6 +144,8 @@ int addDesktopSwitcer(int x,int y,int grav)
 		switchButton->LFSTK_setImageFromPath(icon,CENTRE,true);
 	else
 		switchButton->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",CENTRE,true);
+
+//	windowInitStruct	*win;
 
 	pr=apc->globalLib->LFSTK_getSingleProp(apc->display,apc->rootWindow,XInternAtom(apc->display,"_NET_DESKTOP_NAMES",false),XInternAtom(apc->display,"UTF8_STRING",false));
 	for(int j=0;j<deskCount;j++)

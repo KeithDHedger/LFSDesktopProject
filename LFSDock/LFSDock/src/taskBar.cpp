@@ -28,6 +28,16 @@ std::vector<taskStruct>	filltasks;
 std::vector<taskStruct>	tasks;
 LFSTK_gadgetClass		*currentTask=NULL;
 
+bool compareTaskWID(const taskStruct &a,const taskStruct &b)
+{
+	return(a.winid<b.winid);
+}
+
+bool compareTaskClass(const taskStruct &a,const taskStruct &b)
+{
+	return(a.taskClass[0]<b.taskClass[0]);
+}
+
 bool taskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 {
 	if(moveGadget==true)
@@ -39,40 +49,38 @@ bool taskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 
 bool taskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 {
-	std::string			label;
-	unsigned long		d;
-	infoDataStruct		ls;
-	LFSTK_buttonClass	*bc=static_cast<LFSTK_buttonClass*>(p);
+	std::string				label;
+	unsigned long			d;
+	infoDataStruct			ls;
+	LFSTK_buttonClass		*bc=static_cast<LFSTK_buttonClass*>(p);
+	std::vector<taskStruct>	listtasks;
 
 	if(currentTask!=NULL)
 		{
 			if(moveGadget==true)
 				setGadgetPosition(currentTask,false);
 		}
-	else
-		currentTask=p;
 
 	if(moveGadget==true)
 		setGadgetPosition(p,true);
 
 	popActionList->LFSTK_freeList();	
 
-	d=(unsigned long)bc->userData;
-	label=filltasks.at(d).taskName;
-	ls.label=label;
-	ls.imageType=NOTHUMB;
-	ls.imagePath;
-	ls.userData=USERDATA(filltasks.at(d).winid);
-	popActionList->LFSTK_appendToList(ls);
+	d=(unsigned long)bc->userData;	
+	listtasks.push_back(filltasks.at(d));
 
 	for(int j=0;j<filltasks.at(d).tasks.size();j++)
+		listtasks.push_back(filltasks.at(d).tasks.at(j));
+
+	std::sort(listtasks.begin(),listtasks.end(),compareTaskWID);
+
+	for(int j=0;j<listtasks.size();j++)
 		{
-			label=filltasks.at(d).tasks.at(j).taskName;
+			label=listtasks.at(j).taskName;
 			ls.label=label;
 			ls.imageType=NOTHUMB;
-			ls.imagePath;
-			ls.userData=USERDATA(filltasks.at(d).tasks.at(j).winid);
-			popActionList->LFSTK_appendToList(ls);
+			ls.userData=USERDATA(listtasks.at(j).winid);
+			popActionList->LFSTK_appendToList(ls);	
 		}
 
 	popActionList->LFSTK_updateList();
@@ -81,6 +89,7 @@ bool taskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 	popActionWindow->LFSTK_resizeWindow(popActionList->LFSTK_getListMaxWidth()-2,(GADGETHITE*(filltasks.at(d).tasks.size()+1))-4);
 	showhidetActionList(p,popActionWindow,popActionList);
 	inSomeWindow=true;
+	currentTask=p;
 	return(true);
 }
 
@@ -210,11 +219,6 @@ Window doTreeWalkForTasks(Window wind)
 	XFree(ptr);
 	XFree(children);
 	return thewin;
-}
-
-bool compareTaskClass(const taskStruct &a,const taskStruct &b)
-{
-	return(a.taskClass[0]<b.taskClass[0]);
 }
 
 void updateTaskBar(bool force)//TODO//
