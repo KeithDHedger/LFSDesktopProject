@@ -138,7 +138,7 @@ void dropDesktopFile(const char *data,void *launcher)//TODO//
 						system(command);
 						freeAndNull(&cleanstr);
 						freeAndNull(&command);
-			}
+				}
 		}
 }
 

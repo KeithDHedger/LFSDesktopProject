@@ -1,93 +1,68 @@
-.TH "lfspanel" "1" "0.0.5" "K.D.Hedger" "User Commands"
+.TH "lfsdock" "1" "0.2.0" "K.D.Hedger" "User Commands"
 .SH "NAME"
-\fBlfspanel\fR - Manual page for lfspanel.
+\fBlfsdock\fR - Manual page for lfspanel.
 .br
 .SH "SYNOPSIS"
-\fBlfspanel\fR PANELID
+\fBlfsdock\fR DOCKID
 .br
 
 .SH "DESCRIPTION"
 Part of the LFS Desktop  project here:
 .br
 
-http://www.linuxquestions.org/questions/linux-from-scratch-13/the-linux-from-scratch-desktop-project-4175542914
+https://github.com/KeithDHedger/LFSDesktopProject
 .br
 
-This provides basic panel functionality, logout, shutdown, app menu, window menu etc etc.
+This provides basic dock functionality, calandar, launchers, clock, taskbar, desktop switcher, volume slider (alsa).
 .br
 .SH "EXAMPLES"
-Start new main panel using config file ~/.config/LFS/lfspanel.rc 
+Start new main lfsdock using config file ~/.config/LFS/lfsdock.rc 
 .br
-	lfspanel
-.br
-
-Start new panel using config file ~/.config/LFS/lfspanel-0.rc 
-.br
-	lfspanel 0
+	lfsdock
 .br
 
-Start new panel using config file ~/.config/LFS/lfspanel-DEV.rc 
+Start new lfsdock using config file ~/.config/LFS/lfsdock-PROJECTS.rc
 .br
-	lfspanel DEV
+	lfspanel PROJECTS
+.br
+
+Start new lfsdock using config file ~/.config/LFS/lfsdock-DEV.rc 
+.br
+	lfsdock DEV
 .br
 
 .SH "FILES"
 Sample rc file:
 .br
 
-panelheight 16
+font Arial:size=10
 .br
-panelwidth -1
+usebg true
 .br
-panelpos -2
+dockgrav 2
 .br
-panelgrav 4
+docksize 2
 .br
-onmonitor 0
+onmonitor 1
 .br
-termcommand xfce4-terminal -x 
+usebgpath /home/keithhedger/Backgrounds/wood.png
 .br
-logoutcommand kill -9 $(cat /tmp/lfssession.pid)
+textcolour #FF000000
 .br
-restartcommand sudo reboot
+gadgetsleft cssssLCDssssT
 .br
-shutdowncommand sudo shutdown -h now
+refreshrate 1000000
 .br
-gadgetsright MDCL
+termcommand kkterminal -m -l -e
 .br
-gadgetsleft	AWSS
+dockbgcolour #E6C3C3C3
 .br
-
-panelheight - Height of panel.
+prelightcolour #00000000
 .br
-panelwidth - Can be -1 for full width of monitor, -2 shrink to fit or >0 for absolute size.
-.br
-panelpos - Can be -1 for left position, -2 for centre position, -3 for right position or >=0 for absolute position.
-.br
-panelgrav - Canbe 1 for top of monitor, 2 for right of monitor, 3 for bottom of monitor, 4 for left of monitor.
-.br
-onmonitor - Monitor for this panel.
-.br
-termcommand - Command to use when launching app in terminal, defaults to "xterm -e".
-.br
-logoutcommand
-.br
-restartcommand
-.br
-shutdowncommand - Set to your prefs.
-.br
-gadgetsright
-.br
-gadgetsleft - Position of gadgets in panel in order L=logout menu, C=clock, D=disk usage, M=cpu load, A=applications menu, W=all window's selector, w=windows on current desktop selector, S=spacer, l=launchers.
+usemicroseconds true
 .br
 
-When using the 'l' widget all .desktop files in the folder ~/.config/LFS/launchers-XXX will be added to the panel, where XXX is the panel ID, the same as the prefs file, see the examples section.
-.br
-
-For an empty gadget string for gadgetsright/gadgetsleft use "", else "'s are not needed. Only one gadget of each type is allowed except for spacers which can be used multiple times.
-.br
-
-Clock, disk usage and CPU usage are not allowed on left/right panels.
+You should use the lfsdockprefs applcation.
 .br
 .SH "REPORTING BUGS"
 Report bugs to keithdhedger@gmail.com

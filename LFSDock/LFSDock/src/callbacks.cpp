@@ -77,31 +77,6 @@ bool gadgetDrop(void *lwc,propertyStruct *data,void* ud)
 					dropDesktopFile((const char*)data->data,ud);
 					return(true);
 				}
-//TODO//
-//			if(strcasecmp(data->mimeType,"text/plain")==0)
-//				{
-//	int		xx=(long unsigned int)ud;
-//	char		*command=NULL;
-//				fprintf(stderr,"\n\n");
-//					std::istringstream stream((const char*)data->data);
-//					std::string line;
-//					while(std::getline(stream,line))
-//						{
-//						launcherDataStruct lds=launchersArray.at((unsigned long)ud);
-//					std::cout<<"line="<<line<<" launcher num="<<(unsigned long)ud<<std::endl;
-//							if(lds.inTerm==false)
-//								asprintf(&command,"%s \"%s\" &",lds.exec.c_str(),line.c_str());
-//							else
-//								asprintf(&command,"%s %s \"%s\" &",prefs.LFSTK_getCString("termcommand"),lds.exec.c_str(),line.c_str());
-//							//sendNotify(lds.name.c_str(),line.c_str());
-//							fprintf(stderr,"command=>>%s<<\n",command);
-//							std::cout<<"name="<<lds.name;
-//							std::cout<<"\nexec="<<lds.exec<<" "<<line;
-//							std::cout<<std::endl;
-//							system(command);
-//							freeAndNull(&command);
-//						}
-//				}
 		}
 	return(true);
 }
