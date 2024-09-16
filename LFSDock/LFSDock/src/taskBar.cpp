@@ -26,7 +26,6 @@ bool						movetohere=false;
 std::vector<taskStruct>	holdtasks;
 std::vector<taskStruct>	filltasks;
 std::vector<taskStruct>	tasks;
-LFSTK_gadgetClass		*currentTask=NULL;
 
 bool compareTaskWID(const taskStruct &a,const taskStruct &b)
 {
@@ -46,7 +45,6 @@ bool taskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 
 	exitPopList(p,ud);
 	inSomeWindow=false;
-	currentTask=NULL;
 	dockWindow->LFSTK_redrawAllGadgets();
 	return(true);
 }
@@ -91,7 +89,6 @@ bool taskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 	//XSync(apc->display,false);
 	XFlush(apc->display);
 	inSomeWindow=true;
-	currentTask=p;
 	return(true);
 }
 
