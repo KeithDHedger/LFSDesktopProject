@@ -43,11 +43,10 @@ bool taskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 //fprintf(stderr,"exit>>>>%p--%p<<<<\n",currentTask,p);
 	if(moveGadget==true)
 		setGadgetPosition(p,false);
-	exitPopList(p,ud);
 
+	exitPopList(p,ud);
 	inSomeWindow=false;
 	currentTask=NULL;
-	//showhidetActionList(NULL,popActionWindow,popActionList);
 	dockWindow->LFSTK_redrawAllGadgets();
 	return(true);
 }
@@ -60,7 +59,6 @@ bool taskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 	LFSTK_buttonClass		*bc=static_cast<LFSTK_buttonClass*>(p);
 	std::vector<taskStruct>	listtasks;
 //fprintf(stderr,"enter >>>>%p--%p<<<<\n",currentTask,p);
-//	showhidetActionList(NULL,popActionWindow,popActionList);
 	exitPopList(p,ud);
 
 	if(moveGadget==true)
