@@ -21,31 +21,10 @@
 #include "globals.h"
 
 LFSTK_windowClass	*taskContextWindow=NULL;
-int					cnt=0;
-int					cnt2=0;
 int					root_x_return=-1,root_y_return=-1;
 int					rxdiff=-1;
 int					rydiff=-1;
 int					diFF=ICONSPACE-1;
-
-void sendClientMessage(Window win,const char *msg,unsigned long data0,unsigned long data1,unsigned long data2,unsigned long data3,unsigned long data4)
-{
-	XEvent	event;
-	long		mask=SubstructureRedirectMask|SubstructureNotifyMask;
-
-	event.xclient.type=ClientMessage;
-	event.xclient.serial=0;
-	event.xclient.send_event=True;
-	event.xclient.message_type=XInternAtom(dockWindow->app->display,msg,False);
-	event.xclient.window=win;
-	event.xclient.format=32;
-	event.xclient.data.l[0]=data0;
-	event.xclient.data.l[1]=data1;
-	event.xclient.data.l[2]=data2;
-	event.xclient.data.l[3]=data3;
-	event.xclient.data.l[4]=data4;
-	XSendEvent(dockWindow->app->display,dockWindow->app->rootWindow,False,mask,&event);
-}
 
 bool exitPopList(LFSTK_gadgetClass*p,void* ud)
 {
@@ -67,6 +46,27 @@ bool exitPopList(LFSTK_gadgetClass*p,void* ud)
 
 	return(true);
 }
+
+void sendClientMessage(Window win,const char *msg,unsigned long data0,unsigned long data1,unsigned long data2,unsigned long data3,unsigned long data4)
+{
+	XEvent	event;
+	long		mask=SubstructureRedirectMask|SubstructureNotifyMask;
+
+	event.xclient.type=ClientMessage;
+	event.xclient.serial=0;
+	event.xclient.send_event=True;
+	event.xclient.message_type=XInternAtom(dockWindow->app->display,msg,False);
+	event.xclient.window=win;
+	event.xclient.format=32;
+	event.xclient.data.l[0]=data0;
+	event.xclient.data.l[1]=data1;
+	event.xclient.data.l[2]=data2;
+	event.xclient.data.l[3]=data3;
+	event.xclient.data.l[4]=data4;
+	XSendEvent(dockWindow->app->display,dockWindow->app->rootWindow,False,mask,&event);
+}
+
+
 
 bool gadgetDrop(void *lwc,propertyStruct *data,void* ud)
 {
@@ -116,36 +116,8 @@ bool timerCB(LFSTK_applicationClass *p,void* ud)
 	if(scwindow!=NULL)
 		updateSlider();
 
-	if((gotLaunchers==true) && (currentLauncher!=NULL))
-		cnt++;
-
-	if((useTaskBar==true) && (currentTask!=NULL))
-		cnt2++;
-
-	if((gotLaunchers==true) && (launcherContextWC->isVisible==false) && (launcherContextWC->popupFromGadget!=NULL))
-		{
-			launcherExitCB(launcherContextWC->popupFromGadget,(void*)1);
-			launcherContextWC->popupFromGadget=NULL;
-			currentLauncher=NULL;;
-		}
-
-	if((cnt>10) && (currentLauncher!=NULL))
-		{
-			cnt=0;
-			launcherExitCB(currentLauncher,(void*)1);
-			launcherContextWC->popupFromGadget=NULL;
-			currentLauncher=NULL;;
-		}		
-
-	if((useTaskBar==true) && (cnt2>10) && (currentTask!=NULL))
-		{
-			cnt2=0;
-			taskSwitcherExitCB(currentTask,(void*)1);
-			currentTask=NULL;;
-		}
-
 	if((popActionWindow!=NULL) && (popActionWindow->isVisible==true) && ((inSomeWindow==false) && (popActionWindow->inWindow==false)))
-		popActionListExitCB(NULL,(void*)1);
+		exitPopList(NULL,NULL);
 
 	if(useTaskBar==true)
 		updateTaskBar();

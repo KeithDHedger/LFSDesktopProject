@@ -244,11 +244,7 @@ int main(int argc,char **argv)
 			popActionList->LFSTK_setListItemsColours(GADGETFG,"red","red","red","red");
 			popActionList->LFSTK_setGadgetColourPair(NORMALCOLOUR,lc,"red");
 			popActionList->LFSTK_setMouseCallBack(taskListCBDown,popActionWindowSelect,NULL);
-
-
 			popActionList->LFSTK_setMouseMoveCallBack(exitPopList,exitPopList,NULL);
-
-
 
 			WM_STATE=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("WM_STATE"));
 			NET_WM_WINDOW_TYPE_NORMAL=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_NORMAL"));

@@ -105,7 +105,7 @@ void updateDesktop(void)
 	if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
 		fprintf(stderr,"Can't send message :(\n");
 	
-	system("killall lfspanel &");	
+	system("killall lfspanel lfsdock &");
 }
 
 void makeGroup(const char *grpname)

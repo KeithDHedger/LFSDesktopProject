@@ -40,10 +40,15 @@ bool compareTaskClass(const taskStruct &a,const taskStruct &b)
 
 bool taskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 {
+//fprintf(stderr,"exit>>>>%p--%p<<<<\n",currentTask,p);
 	if(moveGadget==true)
 		setGadgetPosition(p,false);
+	exitPopList(p,ud);
+
 	inSomeWindow=false;
 	currentTask=NULL;
+	//showhidetActionList(NULL,popActionWindow,popActionList);
+	dockWindow->LFSTK_redrawAllGadgets();
 	return(true);
 }
 
@@ -54,12 +59,9 @@ bool taskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 	infoDataStruct			ls;
 	LFSTK_buttonClass		*bc=static_cast<LFSTK_buttonClass*>(p);
 	std::vector<taskStruct>	listtasks;
-
-	if(currentTask!=NULL)
-		{
-			if(moveGadget==true)
-				setGadgetPosition(currentTask,false);
-		}
+//fprintf(stderr,"enter >>>>%p--%p<<<<\n",currentTask,p);
+//	showhidetActionList(NULL,popActionWindow,popActionList);
+	exitPopList(p,ud);
 
 	if(moveGadget==true)
 		setGadgetPosition(p,true);
@@ -88,6 +90,8 @@ bool taskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 	popActionWindow->userData=USERDATA(TASKSWITCHER);
 	popActionWindow->LFSTK_resizeWindow(popActionList->LFSTK_getListMaxWidth()-2,(GADGETHITE*(filltasks.at(d).tasks.size()+1))-4);
 	showhidetActionList(p,popActionWindow,popActionList);
+	//XSync(apc->display,false);
+	XFlush(apc->display);
 	inSomeWindow=true;
 	currentTask=p;
 	return(true);

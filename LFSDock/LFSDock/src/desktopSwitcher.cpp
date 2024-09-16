@@ -47,6 +47,8 @@ bool deskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 	std::string		label;
 	infoDataStruct	ls;
 
+	showhidetActionList(NULL,popActionWindow,popActionList);
+
 	if(moveGadget==true)
 		setGadgetPosition(p,true);
 
@@ -62,11 +64,12 @@ bool deskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 		}
 
 	popActionList->LFSTK_updateList();
-	popActionList->LFSTK_moveGadget(-1,-1);
+	popActionList->LFSTK_moveGadget(-2,0);
 	popActionWindow->userData=USERDATA(DESKTOPSWITCHER);
 	popActionWindow->LFSTK_resizeWindow(popActionList->LFSTK_getListMaxWidth()-2,(GADGETHITE*deskCount)-4);
 	showhidetActionList(p,popActionWindow,popActionList);
 
+	XFlush(apc->display);
 	inSomeWindow=true;
 
 	return(true);

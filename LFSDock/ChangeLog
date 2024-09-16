@@ -1,4 +1,5 @@
 0.2.0
+Pop up list tweaks.
 Pop up task lists now dont change order.
 Hide popup list when exiting list.
 Hide desktop list when exiting desktop switcher gadget.
