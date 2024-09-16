@@ -1,5 +1,5 @@
 0.2.0
-Added killall docks to Lfsappearance 'Apply'.
+Added killall docks to lfsappearance 'Apply'.
 Added prelight colour to lfsdockprefs.
 File dialog now goes to last valid folder selected.
 Right click on lfsdockprefs colour or background image now opens relevent dialog.
