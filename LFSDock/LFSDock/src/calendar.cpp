@@ -39,6 +39,8 @@ const char				*monthNames[]={"January","February","March","April","May","June","
 std::vector<datesStruct>	datesData;
 cairoColor				datesHilite[]={{0,0,0,0.05},{0,0,1,0.05},{0,1,0,0.05},{0,1,1,0.05},{1,0,0,0.05},{1,0,1,0.05},{1,1,0,0.05},{1,1,1,0.05}};
 
+void setEditText(void);
+
 void setImportantDates(void)
 {
 	std::string	thisday;
@@ -118,6 +120,13 @@ bool calCB(void *p,void* ud)
 								calWindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(wingeom->w/2),geom.y-wingeom->h+extraSpace,true);
 								break;
 						}
+
+					editbox->highLights.clear();
+					setEditText();
+					if(holdThisMonth==currentMonth)
+						editbox->LFSTK_addHighLights(dx,dy,dl,datesHilite[0]);
+					setImportantDates();
+					editbox->LFSTK_setBuffer(calData.at(0).c_str());
 					calWindow->LFSTK_showWindow(true);
 					XRaiseWindow(apc->display,calWindow->window);
 					calWindow->LFSTK_redrawAllGadgets();
