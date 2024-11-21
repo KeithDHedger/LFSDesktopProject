@@ -104,15 +104,17 @@ void sendNotify(std::string name,std::string message)//TODO//could be better
 
 void dropDesktopFile(const char *data,void *launcher)//TODO//
 {
-	char					*cleanstr;
+	char					*cleanstr=NULL;
 	char					*command=NULL;
-	char					*ptr;
+	char					*ptr=NULL;
 	std::istringstream	stream(data);
 	std::string			line;
+	std::string			files="";
 
-	while(std::getline(stream,line))//TODO//
+	while(std::getline(stream,line))
 		{
 			cleanstr=strdup(apc->globalLib->LFSTK_cleanString(line).c_str());
+			files+="\""+std::string(cleanstr)+"\" ";
 			if((strrchr(cleanstr,'.')!=NULL) && (strcmp(strrchr(cleanstr,'.'),".desktop")==0))//TODO//
 				{
 					asprintf(&command,"mkdir -p '%s';cp -nP '%s' '%s'",launchersDir.c_str(),cleanstr,launchersDir.c_str());
@@ -125,20 +127,28 @@ void dropDesktopFile(const char *data,void *launcher)//TODO//
 					apc->exitValue=0;
 					apc->mainLoop=false;
 					freeAndNull(&cleanstr);
+					return;
+				}
+			else
+				{
+					freeAndNull(&cleanstr);
 				}
 
-			if(launcher!=NULL)
+		}
+	if(launcher!=NULL)
+		{
+			launcherDataStruct lds=launchersArray.at((unsigned long)launcher);
+			if(lds.inTerm==false)
 				{
-					launcherDataStruct lds=launchersArray.at((unsigned long)launcher);
-					if(lds.inTerm==false)
-						asprintf(&command,"%s \"%s\" &",lds.exec.c_str(),cleanstr);//TODO//
-					else
-						asprintf(&command,"%s %s \"%s\" &",prefs.LFSTK_getCString("termcommand"),lds.exec.c_str(),cleanstr);
-						sendNotify("Running ",lds.exec);
-						system(command);
-						freeAndNull(&cleanstr);
-						freeAndNull(&command);
+					asprintf(&command,"%s %s &",lds.exec.c_str(),files.c_str());//TODO//
 				}
+			else
+				{
+					asprintf(&command,"%s %s \"%s\" &",prefs.LFSTK_getCString("termcommand"),lds.exec.c_str(),files.c_str());
+				}
+			sendNotify("Running ",lds.exec);
+			system(command);
+			freeAndNull(&command);
 		}
 }
 
