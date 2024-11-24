@@ -78,11 +78,18 @@ bool launcherContextCB(void *p,void* ud)
 
 bool launcherEnterCB(LFSTK_gadgetClass* p,void* ud)
 {
+	for(int j=0;j<launchersArray.size();j++)
+		{
+			launcherDataStruct lds=launchersArray.at(j);
+			if(moveGadget==true)
+				setGadgetPosition(lds.gadget,FALSE);
+		}
+
 	if(p!=NULL)
 		{
 			launcherDataStruct	lds=launchersArray.at((long unsigned int)ud);
-			XEvent			event;
-			geometryStruct	geom;
+			XEvent				event;
+			geometryStruct		geom;
 			const geometryStruct	*wingeom=tooltiptWC->LFSTK_getWindowGeom();
 
 			if(lds.donePrelight==true)
@@ -119,6 +126,14 @@ bool launcherEnterCB(LFSTK_gadgetClass* p,void* ud)
 
 bool launcherExitCB(LFSTK_gadgetClass* p,void* ud)
 {
+
+	for(int j=0;j<launchersArray.size();j++)
+		{
+			launcherDataStruct lds=launchersArray.at(j);
+			if(moveGadget==true)
+				setGadgetPosition(lds.gadget,FALSE);
+		}
+
 	if(p!=NULL)
 		{
 			launcherDataStruct	lds=launchersArray.at((long unsigned int)ud);
@@ -287,6 +302,7 @@ int addLaunchers(int x,int y,int grav)
 				bc->LFSTK_setImageFromPath(DATADIR "/pixmaps/command.png",CENTRE,true);
 
 			setGadgetDetails(bc);
+			lds.gadget=bc;
 			launchersArray.push_back(lds);
 			xpos+=iconWidth+ICONSPACE;
 		}

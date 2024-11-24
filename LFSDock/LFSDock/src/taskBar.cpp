@@ -40,8 +40,18 @@ bool compareTaskClass(const taskStruct &a,const taskStruct &b)
 bool taskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 {
 //fprintf(stderr,"exit>>>>%p--%p<<<<\n",currentTask,p);
-	if(moveGadget==true)
-		setGadgetPosition(p,false);
+
+//if(checkInBorder(p)==true)
+//{
+//	for(int j=0;j<tasks.size();j++)
+//		{
+//			if(moveGadget==true)
+//					setGadgetPosition(taskbuttons[j],false);
+//		}
+//}
+
+	//if(moveGadget==true)
+	//	setGadgetPosition(p,false);
 
 	exitPopList(p,ud);
 	inSomeWindow=false;
@@ -86,7 +96,6 @@ bool taskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 	popActionWindow->userData=USERDATA(TASKSWITCHER);
 	popActionWindow->LFSTK_resizeWindow(popActionList->LFSTK_getListMaxWidth()-2,(GADGETHITE*(filltasks.at(d).tasks.size()+1))-4);
 	showhidetActionList(p,popActionWindow,popActionList);
-	//XSync(apc->display,false);
 	XFlush(apc->display);
 	inSomeWindow=true;
 	return(true);

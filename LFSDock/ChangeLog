@@ -1,4 +1,6 @@
 0.2.0
+Fixed stuck tasks.
+Fixed stuck launchers.
 Fixed dropping multiple files on dock to open.
 Fixed calandar not highlighting todays date.
 Pop up list tweaks.

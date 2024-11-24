@@ -49,13 +49,14 @@ enum WHATSORT {DESKTOPSWITCHER=100,TASKSWITCHER};
 
 struct launcherDataStruct
 {
-	std::string		name;
-	std::string		exec;
-	std::string		icon;
-	std::string		path;
-	bool				inTerm;
-	unsigned long	pid=0;
-	bool				donePrelight=false;
+	std::string			name;
+	std::string			exec;
+	std::string			icon;
+	std::string			path;
+	bool					inTerm;
+	unsigned long		pid=0;
+	bool					donePrelight=false;
+	LFSTK_gadgetClass	*gadget=NULL;
 };
 
 struct taskStruct

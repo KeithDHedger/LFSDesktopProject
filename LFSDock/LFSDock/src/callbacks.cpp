@@ -42,8 +42,15 @@ bool exitPopList(LFSTK_gadgetClass*p,void* ud)
 	pt={win_x_return1,win_y_return1};
 
 	if(apc->globalLib->LFSTK_pointInRect(&pt,(geometryStruct*)geom)==false)
-		showhidetActionList(NULL,popActionWindow,popActionList);
-
+		{
+			showhidetActionList(NULL,popActionWindow,popActionList);
+			for(int j=0;j<tasks.size();j++)
+				{
+					if(moveGadget==true)
+							setGadgetPosition(taskbuttons[j],false);
+				}
+			dockWindow->LFSTK_redrawAllGadgets();
+		}
 	return(true);
 }
 
@@ -209,6 +216,12 @@ bool popActionWindowSelect(void *object,void* userdata)//TODO//
 	infoDataStruct			ls;
 	unsigned long			wud=0;
 
+	for(int j=0;j<tasks.size();j++)
+		{
+			if(moveGadget==true)
+				setGadgetPosition(taskbuttons[j],false);
+		}
+
 	LFSTK_listGadgetClass	*list=static_cast<LFSTK_listGadgetClass*>(object);
 	ls=list->listDataArray->at(list->LFSTK_getCurrentListItem());
 
@@ -227,5 +240,7 @@ bool popActionWindowSelect(void *object,void* userdata)//TODO//
 				desktopSelect(NULL,NULL);
 				break;
 		}
+
+	dockWindow->LFSTK_redrawAllGadgets();
 	return(true);
 }
