@@ -43,5 +43,6 @@ extern bool						calendarIsUp;
 extern std::vector<datesStruct>	datesData;
 
 int addCalendar(int x,int y,int grav);
+bool calExitCB(LFSTK_gadgetClass*p,void* ud);
 
 #endif

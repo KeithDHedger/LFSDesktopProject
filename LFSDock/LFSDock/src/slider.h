@@ -39,5 +39,6 @@ void setIcon(void);
 int addSlider(int x,int y,int grav);
 void updateSlider(void);
 int getAlsaVolume(bool setvol,int volume);
+bool volExitCB(LFSTK_gadgetClass*p,void* ud);
 
 #endif

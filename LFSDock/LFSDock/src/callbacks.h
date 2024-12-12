@@ -21,7 +21,7 @@
 #ifndef _CALLBACKS_
 #define _CALLBACKS_
 
-enum {BUTTONLAUNCH=0,BUTTONREMOVE,BUTTONPREFS,BUTTONQUIT,NOMOREBUTONS};
+enum {BUTTONLAUNCH=0,BUTTONREMOVE,BUTTONPREFS,BUTTONQUIT,BUTTONHIDE,NOMOREBUTONS};
 
 extern LFSTK_windowClass	*taskContextWindow;
 
@@ -35,5 +35,6 @@ bool popActionListExitCB(LFSTK_gadgetClass*p,void* ud);
 bool popActionWindowSelect(void *object,void* userdata);
 bool checkInBorder(LFSTK_gadgetClass *gadg);
 bool exitPopList(LFSTK_gadgetClass*p,void* ud);
+bool hideCB(void* p,void* ud);
 
 #endif

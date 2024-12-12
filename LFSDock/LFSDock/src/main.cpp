@@ -200,7 +200,7 @@ int main(int argc,char **argv)
 						{LFSTK_UtilityClass::LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","xterm -e ",false,0}},
 						{LFSTK_UtilityClass::LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","l",false,0}},
 						{LFSTK_UtilityClass::LFSTK_hashFromKey("font"),{TYPESTRING,"font","",false,0}},
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("dockbgcolour"),{TYPESTRING,"dockbgcolour","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("dockbgcolour"),{TYPESTRING,"dockbgcolour","grey",false,0}},
 						{LFSTK_UtilityClass::LFSTK_hashFromKey("refreshrate"),{TYPEINT,"refreshrate","",false,1}},
 						{LFSTK_UtilityClass::LFSTK_hashFromKey("usemicroseconds"),{TYPEBOOL,"usemicroseconds","",false,0}},
 						{LFSTK_UtilityClass::LFSTK_hashFromKey("usebg"),{TYPEBOOL,"usebg","",false,0}},
@@ -335,7 +335,7 @@ int main(int argc,char **argv)
 			win->overRide=false;
 			win->decorated=false;
 			apc->LFSTK_addWindow(win,"DOCKBG");
-
+//LFSTK_handleWindowEvents
 			dockBGWindow=apc->windows->back().window;	
 			dockBGWindow->LFSTK_setTile(dockBGImage.c_str(),-1);
 			dockWindow->LFSTK_setTransientFor(dockBGWindow->window);
@@ -390,6 +390,31 @@ int main(int argc,char **argv)
 
 			showhidetActionList(NULL,popActionWindow,popActionList);
 			XSync(apc->display,true);
+
+			win=apc->LFSTK_getDefaultWInit();
+			win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DOCK"));
+			win->level=ABOVEALL;
+			win->overRide=true;
+			win->decorated=false;
+			
+			if(dockGravity==PANELSOUTH)
+				win->y=mons->h-32;
+			else
+				win->y=mons->y;
+
+			win->x=mons->x;
+			win->w=32;
+			win->h=32;
+			apc->LFSTK_addWindow(win,"ICONWINDOW");
+
+			iconWindow=apc->windows->back().window;	
+			apc->windows->back().showing=true;
+			LFSTK_buttonClass *bgls=new LFSTK_buttonClass(iconWindow,"",0,0,32,32);
+			std::string iconpath=iconWindow->globalLib->LFSTK_findThemedIcon("gnome",contextThemeIconData[BUTTONHIDE],"");
+			bgls->LFSTK_setImageFromPath(iconpath,CENTRE,true);
+			bgls->LFSTK_setMouseCallBack(NULL,hideCB,NULL);
+			setGadgetDetails(bgls);
+			holdpsize=psize;
 
 			int retval=apc->LFSTK_runApp();
 

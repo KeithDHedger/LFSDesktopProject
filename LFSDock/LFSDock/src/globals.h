@@ -114,6 +114,9 @@ extern bool						gotLaunchers;
 extern LFSTK_applicationClass	*apc;
 extern LFSTK_windowClass			*dockWindow;
 extern LFSTK_windowClass			*dockBGWindow;
+extern LFSTK_windowClass			*iconWindow;
+extern int						holdpsize;
+
 extern LFSTK_windowClass			*popActionWindow;
 extern LFSTK_listGadgetClass		*popActionList;
 extern bool						inSomeWindow;

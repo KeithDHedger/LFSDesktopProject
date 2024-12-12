@@ -73,8 +73,6 @@ void sendClientMessage(Window win,const char *msg,unsigned long data0,unsigned l
 	XSendEvent(dockWindow->app->display,dockWindow->app->rootWindow,False,mask,&event);
 }
 
-
-
 bool gadgetDrop(void *lwc,propertyStruct *data,void* ud)
 {
 	if(data!=NULL)
@@ -136,15 +134,11 @@ void showhidetActionList(LFSTK_gadgetClass *bc,LFSTK_windowClass *winc,LFSTK_lis
 			wingeom=winc->LFSTK_getWindowGeom();
 			d=(unsigned long)bc->userData;
 			bc->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);
-			switch(dockGravity)
-				{
-					case PANELNORTH:
-						winc->LFSTK_moveWindow((geom.x+(geom.w/2))+(list->pad/2)-(list->LFSTK_getListMaxWidth()/2),geom.y+geom.h-extraSpace,true);
-						break;
-					case PANELSOUTH:
-						winc->LFSTK_moveWindow((geom.x+(geom.w/2))+(list->pad/2)-(list->LFSTK_getListMaxWidth()/2),geom.y-wingeom->h+extraSpace,true);
-						break;
-				}
+			if(dockGravity==PANELSOUTH)
+				winc->LFSTK_moveWindow((geom.x+(geom.w/2))+(list->pad/2)-(list->LFSTK_getListMaxWidth()/2),geom.y-wingeom->h+extraSpace,true);
+			else
+				winc->LFSTK_moveWindow((geom.x+(geom.w/2))+(list->pad/2)-(list->LFSTK_getListMaxWidth()/2),geom.y+geom.h-extraSpace,true);
+
 			winc->LFSTK_showWindow(true);
 			winc->LFSTK_setKeepAbove(true);
 			winc->LFSTK_redrawAllGadgets();
@@ -242,5 +236,35 @@ bool popActionWindowSelect(void *object,void* userdata)//TODO//
 		}
 
 	dockWindow->LFSTK_redrawAllGadgets();
+	return(true);
+}
+
+bool hideCB(void* p,void* ud)
+{
+	LFSTK_buttonClass	*bc=static_cast<LFSTK_buttonClass*>(p);
+
+	if(bc!=NULL)
+		{
+			iconWindow->LFSTK_hideWindow();
+			if(useTaskBar==true)
+				{
+					oldwidth=0;
+					updateTaskBar(true);
+				}
+			else
+				{
+					resizeDock(holdpsize,iconWidth+extraSpace);
+				}
+			if(calendarButton!=NULL)
+				{
+					calendarButton->LFSTK_setValue(false);
+					calExitCB(calendarButton,NULL);
+				}
+			if(volumeButton!=NULL)
+				{
+					volumeButton->LFSTK_setValue(false);
+					volExitCB(volumeButton,NULL);
+				}
+		}
 	return(true);
 }

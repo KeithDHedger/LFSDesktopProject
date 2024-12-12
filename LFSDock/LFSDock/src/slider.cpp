@@ -103,15 +103,10 @@ bool sliderCB(void *p,void* ud)
 			if(bc->LFSTK_getValue()==1)
 				{
 					bc->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);
-					switch(dockGravity)
-						{
-							case PANELNORTH:
-								scwindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(SLIDERWIDTH/2),geom.y+geom.h,true);
-								break;
-							case PANELSOUTH:
-								scwindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(SLIDERWIDTH/2),geom.y-SCROLLBARWIDTH,true);
-								break;
-						}
+					if(dockGravity==PANELSOUTH)
+						scwindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(SLIDERWIDTH/2),geom.y-SCROLLBARWIDTH,true);
+					else
+						scwindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(SLIDERWIDTH/2),geom.y+geom.h,true);
 					scwindow->LFSTK_showWindow(true);
 					scwindow->LFSTK_redrawAllGadgets();
 					apc->windows->at(apc->LFSTK_findWindow(scwindow)).showing=true;

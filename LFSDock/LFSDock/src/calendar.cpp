@@ -111,15 +111,10 @@ bool calCB(void *p,void* ud)
 				{
 					bc->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);
 					wingeom=calWindow->LFSTK_getWindowGeom();
-					switch(dockGravity)
-						{
-							case PANELNORTH:
-								calWindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(wingeom->w/2),geom.y+geom.h-extraSpace,true);
-								break;
-							case PANELSOUTH:
-								calWindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(wingeom->w/2),geom.y-wingeom->h+extraSpace,true);
-								break;
-						}
+					if(dockGravity==PANELSOUTH)
+						calWindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(wingeom->w/2),geom.y-wingeom->h+extraSpace,true);
+					else
+						calWindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(wingeom->w/2),geom.y+geom.h-extraSpace,true);
 
 					editbox->highLights.clear();
 					setEditText();

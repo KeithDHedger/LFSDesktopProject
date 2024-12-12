@@ -27,6 +27,7 @@
 extern std::vector<taskStruct>	holdtasks;
 extern std::vector<taskStruct>	filltasks;
 extern std::vector<taskStruct>	tasks;
+extern int						oldwidth;
 
 bool taskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud);
 bool taskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud);

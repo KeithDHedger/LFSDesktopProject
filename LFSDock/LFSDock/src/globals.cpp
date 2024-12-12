@@ -60,6 +60,9 @@ bool						useMicros=true;
 LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*dockWindow=NULL;
 LFSTK_windowClass		*dockBGWindow=NULL;
+LFSTK_windowClass		*iconWindow=NULL;
+int						holdpsize;
+
 LFSTK_windowClass		*popActionWindow=NULL;
 LFSTK_listGadgetClass	*popActionList=NULL;
 bool						inSomeWindow=false;
@@ -360,17 +363,12 @@ void moveDock(int extra)
 	int	px,py;
 
 	psize=windowWidth+extra;
-	px=mons->x;
 	py=mons->y;
 
-	switch(dockGravity)
-		{
-			case PANELSOUTH:
-				py=mons->y+mons->h-iconWidth-extraSpace;
-			case PANELNORTH:
-				px=((mons->w/2)-(psize/2))+mons->x;
-				break;
-		}
+	if(dockGravity==PANELSOUTH)
+		py=mons->y+mons->h-iconWidth-extraSpace;
+	px=((mons->w/2)-(psize/2))+mons->x;
+
 	dockWindow->LFSTK_moveWindow(px,py,true);
 	dockBGWindow->LFSTK_moveWindow(px,py,true);
 }

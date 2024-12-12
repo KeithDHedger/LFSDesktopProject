@@ -23,8 +23,8 @@
 #include "launchers.h"
 
 LFSTK_buttonClass				*contextButtons[NOMOREBUTONS];
-const char						*contextLabelData[]={"Launch","Remove From Dock","Run Prefs","Quit Dock",NULL};
-const char						*contextThemeIconData[]={"media-playback-start","list-remove","LFSTKPrefs","dialog-warning"};
+const char						*contextLabelData[]={"Launch","Remove From Dock","Run Prefs","Quit Dock","Iconize Dock",NULL};
+const char						*contextThemeIconData[]={"media-playback-start","list-remove","LFSTKPrefs","dialog-warning","utilities-system-monitor"};
 std::vector<launcherDataStruct>	launchersArray;
 LFSTK_findClass					*findlaunchers=NULL;
 LFSTK_gadgetClass				*currentLauncher=NULL;
@@ -71,6 +71,22 @@ bool launcherContextCB(void *p,void* ud)
 							system(com.c_str());
 						}
 						break;
+					case BUTTONHIDE:
+						resizeDock(1,1);
+						iconWindow->LFSTK_showWindow();
+						iconWindow->LFSTK_clearWindow(true);
+						if(calWindow!=NULL)
+							{
+								calWindow->LFSTK_hideWindow();
+								apc->windows->at(apc->LFSTK_findWindow(calWindow)).showing=false;
+							}
+						if(scwindow!=NULL)
+							{
+								scwindow->LFSTK_hideWindow();
+								apc->windows->at(apc->LFSTK_findWindow(scwindow)).showing=false;
+							}
+							
+						break;
 				}
 		}
 	return(true);
@@ -108,15 +124,11 @@ bool launcherEnterCB(LFSTK_gadgetClass* p,void* ud)
 			tooltiptWC->LFSTK_resizeWindow(ttLabel->LFSTK_getTextRealWidth(lds.name)+4,GADGETHITE-4);
 			p->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);
 
-			switch(dockGravity)
-				{
-					case PANELNORTH:
-						tooltiptWC->LFSTK_moveWindow((geom.x+(geom.w/2))-(ICONSPACE)-(ttLabel->LFSTK_getTextRealWidth(lds.name)/2),dockWindow->h,true);
-						break;
-					case PANELSOUTH:
-						tooltiptWC->LFSTK_moveWindow((geom.x+(geom.w/2))-(ICONSPACE)-(ttLabel->LFSTK_getTextRealWidth(lds.name)/2),geom.y-wingeom->h+extraSpace,true);
-						break;
-				}
+			if(dockGravity==PANELSOUTH)
+				tooltiptWC->LFSTK_moveWindow((geom.x+(geom.w/2))-(ICONSPACE)-(ttLabel->LFSTK_getTextRealWidth(lds.name)/2),geom.y-wingeom->h+extraSpace,true);
+			else
+				tooltiptWC->LFSTK_moveWindow((geom.x+(geom.w/2))-(ICONSPACE)-(ttLabel->LFSTK_getTextRealWidth(lds.name)/2),dockWindow->h,true);
+
 			XRaiseWindow(apc->display,tooltiptWC->window);
 			dockWindow->LFSTK_redrawAllGadgets();
 			lds.donePrelight=true;
@@ -280,15 +292,18 @@ int addLaunchers(int x,int y,int grav)
  
 			bc=new LFSTK_buttonClass(dockWindow,"",xpos,normalY,iconWidth,iconHeight);
 			bc->LFSTK_setContextWindow(launcherContextWC);
-			if(dockGravity==1)
-				bc->contextYOffset=-extraSpace;
-			else
-				bc->contextYOffset=extraSpace;
 
 			if(dockGravity==PANELSOUTH)
-				bc->contextWindowPos=CONTEXTABOVECENTRE;
+				{
+					bc->contextYOffset=extraSpace;
+					bc->contextWindowPos=CONTEXTABOVECENTRE;
+				}
 			else
-				bc->contextWindowPos=CONTEXTCENTRE;
+				{
+					bc->contextYOffset=-extraSpace;
+					bc->contextWindowPos=CONTEXTCENTRE;
+				}
+
 			bc->userData=USERDATA(l);
 			bc->LFSTK_setMouseCallBack(NULL,launcherCB,USERDATA(l));
 			bc->LFSTK_setGadgetDropCallBack(gadgetDrop,USERDATA(l));
