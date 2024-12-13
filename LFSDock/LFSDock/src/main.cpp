@@ -401,9 +401,10 @@ int main(int argc,char **argv)
 			mainContextWindow->LFSTK_resizeWindow(GADGETWIDTH+GADGETHITE,sy,true);
 			dockWindow->LFSTK_setContextWindow(mainContextWindow);
 			if(dockGravity==PANELSOUTH)
-				dockWindow->contextYOffset-=sy;
+				dockWindow->contextWindowPos=CONTEXTABOVE;
+
 			else
-				dockWindow->contextYOffset=0;
+				dockWindow->contextWindowPos=CONTEXTBELOW;
 
 			addGadgets();
 			if(windowWidth==0)
