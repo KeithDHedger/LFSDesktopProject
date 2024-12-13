@@ -1524,7 +1524,19 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 									lwc->LFSTK_moveWindow(x,y,true);
 									break;
 								case CONTEXTATMOUSE:
-										lwc->LFSTK_moveWindow(geom.x+this->contextXOffset,geom.y+this->contextYOffset,true);
+									lwc->LFSTK_moveWindow(geom.x+this->contextXOffset,geom.y+this->contextYOffset,true);
+									break;
+								case CONTEXTABOVE:
+									lwc->LFSTK_moveWindow(geom.x-(contextwingeom->w/2)+this->contextXOffset,y-contextwingeom->h+this->contextYOffset,true);
+									break;
+								case CONTEXTABOVECENTRE:
+									lwc->LFSTK_moveWindow(x+(wingeom->w/2)-(contextwingeom->w/2)+this->contextXOffset,y-contextwingeom->h+this->contextYOffset,true);
+									break;
+								case CONTEXTBELOW:
+									lwc->LFSTK_moveWindow(geom.x-(contextwingeom->w/2)+this->contextXOffset,y+wingeom->h+this->contextYOffset,true);
+									break;
+								case CONTEXTBELOWCENTRE:
+									lwc->LFSTK_moveWindow(x+(wingeom->w/2)-(contextwingeom->w/2)+this->contextXOffset,y+wingeom->h+this->contextYOffset,true);
 									break;
 							}
 						XRaiseWindow(this->app->display,lwc->window);
