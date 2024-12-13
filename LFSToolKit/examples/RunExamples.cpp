@@ -60,7 +60,9 @@ bool buttonCB(void *p,void* ud)
 			free(command);
 			if(openFile->LFSTK_getValue()==true)
 				{
-					asprintf(&command,"xdg-open $(pwd)/%s &",(const char*)ud);
+					//asprintf(&command,"xdg-open $(pwd)/%s &",(const char*)ud);
+					asprintf(&command,"$(pwd)/openincurrent \"$(pwd)/%s\"",(const char*)ud);
+					fprintf(stderr,"%s\n",command);
 					system(command);
 					free(command);
 				}

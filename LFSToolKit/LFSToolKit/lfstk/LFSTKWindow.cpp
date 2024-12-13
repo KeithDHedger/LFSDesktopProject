@@ -1477,12 +1477,68 @@ static	bool flag=false;
 static	geometryStruct	oldwindowGeom{0,0,0,0};
 int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 {
-	int	retval=0;
+	int					retval=0;
+	int					x;
+	int					y;
+	Window				child;
+
+	XTranslateCoordinates(this->app->display,this->window,this->app->rootWindow,0,0,&x,&y,&child );
 
 	switch(event->type)
-		{			
+		{
 			case ButtonPress:
-				if(this->passEventToRoot==true)
+				if((this->LFSTK_getContextWindow()!=NULL) && (event->xbutton.button==Button3) && this->ignoreContext==false)
+					{
+						LFSTK_windowClass		*lwc=this->LFSTK_getContextWindow();
+						const geometryStruct		*wingeom=this->LFSTK_getWindowGeom();
+						const geometryStruct		*contextwingeom=lwc->LFSTK_getWindowGeom();
+						geometryStruct			geom;
+						geom.x=event->xbutton.x_root;
+						geom.y=event->xbutton.y_root;
+						lwc->popupFromGadget=(LFSTK_gadgetClass*)1;
+						switch(this->contextWindowPos)
+							{
+								case CONTEXTNORTH:
+									lwc->LFSTK_moveWindow(x+(wingeom->w/2)-(contextwingeom->w/2),y,true);
+									break;
+								case CONTEXTNORTHEAST:
+									lwc->LFSTK_moveWindow(x+(wingeom->w-contextwingeom->w),y,true);
+									break;
+								case CONTEXTEAST:
+									lwc->LFSTK_moveWindow(x+wingeom->w-contextwingeom->w,y+(wingeom->h/2)-(contextwingeom->h/2),true);
+									break;
+								case CONTEXTSOUTHEAST:
+									lwc->LFSTK_moveWindow(x+wingeom->w-contextwingeom->w,y+wingeom->h-contextwingeom->h,true);
+									break;
+								case CONTEXTSOUTH:
+									lwc->LFSTK_moveWindow(x+(wingeom->w/2)-(contextwingeom->w/2),y+wingeom->h-contextwingeom->h,true);
+									break;
+								case CONTEXTSOUTHWEST:
+									lwc->LFSTK_moveWindow(x,y+wingeom->h-contextwingeom->h,true);
+									break;
+									break;
+								case CONTEXTWEST:
+									lwc->LFSTK_moveWindow(x,y+(wingeom->h/2)-(contextwingeom->h/2),true);
+									break;
+								case CONTEXTNORTHWEST:
+									lwc->LFSTK_moveWindow(x,y,true);
+									break;
+								case CONTEXTATMOUSE:
+										lwc->LFSTK_moveWindow(geom.x+this->contextXOffset,geom.y+this->contextYOffset,true);
+									break;
+							}
+						XRaiseWindow(this->app->display,lwc->window);
+						XSync(this->app->display,false);	
+						this->app->LFSTK_runWindowLoop(lwc);
+						XSync(this->app->display,true);	
+
+						retval=1;
+						this->passEventToRoot=false;
+						this->inWindow=false;
+						return(retval);
+						break;
+					}
+				else 	if(this->passEventToRoot==true)
 					{
 						event->xbutton.window=this->app->rootWindow;
 						XSendEvent(this->app->display,this->app->rootWindow,false,ButtonPressMask,event);
@@ -1625,8 +1681,7 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 				}
 				break;
 		}
-
-//	this->LFSTK_clearWindow();
+	this->ignoreContext=false;
 	return(retval);
 }
 
@@ -1668,4 +1723,22 @@ bool LFSTK_windowClass::LFSTK_deleteGadget(LFSTK_gadgetClass *gadget)
 				}
 		}
 	return(false);
+}
+
+/**
+* Get context window for gadget.
+* \return LFSTK_windowClass*.
+*/
+LFSTK_windowClass* LFSTK_windowClass::LFSTK_getContextWindow(void)
+{
+	return(this->contextWC);
+}
+
+/**
+* Set context window for gadget.
+* \param LFSTK_windowClass *wc.
+*/
+void LFSTK_windowClass::LFSTK_setContextWindow(LFSTK_windowClass *wc)
+{
+	this->contextWC=wc;
 }

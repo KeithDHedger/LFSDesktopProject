@@ -1,4 +1,6 @@
 0.6.1
+Updated Window example.
+Added context window to LFSTK_windowClass.
 Fixed updating list when dragging scroll button.
 Fixed file dialog example.
 Now runs mouse exit from list gadget.

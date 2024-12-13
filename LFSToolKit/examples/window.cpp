@@ -24,7 +24,31 @@ exit $retval
 
 LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*wc=NULL;
-LFSTK_labelClass		*label=NULL;
+LFSTK_labelClass			*label=NULL;
+
+//context window
+enum {BUTTONMOUNT=0,BUTTONUNMOUNT,BUTTONEJECT,BUTTONOPEN,BUTTONADDICON,BUTTONREMOVEICON,NOMOREBUTONS};
+const char				*contextLabelData[]={"Mount","Unmount","Eject","Open","Custom Icon","Remove Icon",NULL};
+const char				*contextThemeIconData[]={"drive-harddisk","media-eject","media-eject","document-open","list-add","list-remove"};
+std::string				iconpath;
+LFSTK_windowClass		*contextWindow=NULL;
+LFSTK_buttonClass		*contextButtons[NOMOREBUTONS];
+
+
+bool contextCB(void *p,void* ud)
+{
+	LFSTK_windowClass	*lwc=static_cast<LFSTK_gadgetClass*>(p)->wc;
+	int					winnum;
+	if(p!=NULL)
+		{
+			winnum=lwc->app->LFSTK_findWindow(lwc);
+			lwc->app->windows->at(winnum).loopFlag=false;
+			printf("ud=%p label=%s\n",ud,contextLabelData[((long unsigned)ud)-1]);
+			contextWindow->LFSTK_hideWindow();
+			apc->windows->at(winnum).loopFlag=false;
+		}
+	return(true);
+}
 
 bool windowDrop(LFSTK_windowClass *lwc,void* ud)
 {
@@ -76,6 +100,29 @@ int main(int argc, char **argv)
 	//wc->LFSTK_setDecorations(true,true,true,true);
 	wc->LFSTK_showWindow();
 	//fprintf(stderr,"%s\n",wc->globalLib->LFSTK_getGlobalString(-1,TYPEMONOFONT));
+
+
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
+	win->level=ABOVEALL;
+	win->decorated =false;
+	win->overRide =true;
+	apc->LFSTK_addWindow(win,"windowpopup");
+	contextWindow=apc->windows->back().window;
+
+	sy=0;
+	for(int j=BUTTONMOUNT;j<NOMOREBUTONS;j++)
+		{
+			contextButtons[j]=new LFSTK_buttonClass(contextWindow,contextLabelData[j],0,sy,GADGETWIDTH,24,NorthWestGravity);
+			contextButtons[j]->LFSTK_setMouseCallBack(NULL,contextCB,(void*)(long)(j+1));
+			iconpath=contextWindow->globalLib->LFSTK_findThemedIcon("gnome",contextThemeIconData[j],"");
+			contextButtons[j]->LFSTK_setImageFromPath(iconpath,LEFT,true);
+			sy+=GADGETHITE;
+		}
+	contextWindow->LFSTK_resizeWindow(GADGETWIDTH,sy,true);
+	wc->LFSTK_setContextWindow(contextWindow);
+	wc->contextWindowPos=CONTEXTATMOUSE;
+	wc->contextYOffset=-40;
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	int retval=apc->LFSTK_runApp();
 	delete apc;

@@ -95,6 +95,7 @@ LFSTK_buttonClass		*taskbuttons[MAXTASKBUTTONS];
 int						windowWidth=0;
 LFSTK_findClass			*gFind;
 bool						useTaskBar=false;
+LFSTK_windowClass		*mainContextWindow=NULL;
 
 void sendNotify(std::string name,std::string message)//TODO//could be better
 {

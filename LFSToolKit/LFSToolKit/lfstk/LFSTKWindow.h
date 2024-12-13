@@ -98,7 +98,6 @@ class LFSTK_windowClass
 		bool					LFSTK_getActive(void);
 		void					LFSTK_setSticky(bool set);
 		bool					LFSTK_getSticky(void);
-//		void					LFSTK_setWindowType(const char *type);
 		void					LFSTK_setWindowType(Atom type);
 
 		void					LFSTK_setTransientFor(Window w);
@@ -160,6 +159,15 @@ class LFSTK_windowClass
 		LFSTK_gadgetClass	*popupFromGadget=NULL;
 
 		std::map<int,mappedListener*>	*LFSTK_getGadgets(void);
+
+//context
+		contextPostition		contextWindowPos=CONTEXTATMOUSE;
+		LFSTK_windowClass	*contextWC=NULL;
+		bool					ignoreContext=false;
+		int					contextXOffset=0;
+		int					contextYOffset=0;
+		LFSTK_windowClass 	*LFSTK_getContextWindow(void);
+		void					LFSTK_setContextWindow(LFSTK_windowClass *wc);
 
 //events etc
 		void					LFSTK_setDoubleClickTime(unsigned interval);

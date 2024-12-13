@@ -391,7 +391,7 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 					{
 						LFSTK_windowClass	*lwc=gadget->LFSTK_getContextWindow();
 						const geometryStruct *wingeom=lwc->LFSTK_getWindowGeom();
-
+						gadget->wc->ignoreContext=true;
 						lwc->popupFromGadget=gadget;
 						gadget->LFSTK_getGeomWindowRelative(&geom,gadget->wc->app->rootWindow);
 						geom.x+=gadget->contextXOffset;
@@ -423,9 +423,8 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 						XSync(gadget->wc->app->display,false);	
 						gadget->wc->app->LFSTK_runWindowLoop(lwc);
 						gadget->mouseExit(&e->xbutton);
-						//lwc->popupFromGadget=NULL;
-						
 						retval=true;
+						return(retval);
 						break;
 					}
 

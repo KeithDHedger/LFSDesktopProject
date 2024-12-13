@@ -31,6 +31,60 @@
 
 #define RCNAME "lfsdock"
 
+//context window
+enum {CONTEXTBUTTONPREFS=0,CONTEXTBUTTONHIDE,CONTEXTBUTTONQUIT,NOMORECONTEXTBUTONS};
+const char				*mainContextLabelData[]={"Run Prefs","Iconize Dock","Quit Dock",NULL};
+const char				*mainContextThemeIconData[]={"LFSTKPrefs","utilities-system-monitor","dialog-warning",NULL};
+std::string				iconpath;
+LFSTK_buttonClass		*mainContextButtons[NOMORECONTEXTBUTONS];
+
+bool contextCB(void *p,void* ud)
+{
+	LFSTK_windowClass	*lwc=static_cast<LFSTK_gadgetClass*>(p)->wc;
+	int					winnum;
+	long unsigned int	whatbutton=(long unsigned int)ud-1;
+
+	if(p!=NULL)
+		{
+			winnum=lwc->app->LFSTK_findWindow(lwc);
+			lwc->app->windows->at(winnum).loopFlag=false;
+			//printf("ud=%p label=%s\n",ud,mainContextLabelData[((long unsigned)ud)-1]);
+			mainContextWindow->LFSTK_hideWindow();
+			apc->windows->at(winnum).loopFlag=false;
+
+			switch(whatbutton)
+				{
+					case CONTEXTBUTTONPREFS:
+						{
+							std::string	com;
+							com="lfsdockprefs -d "+whatDock+" &";
+							system(com.c_str());
+						}
+						break;
+					case CONTEXTBUTTONHIDE:
+						resizeDock(1,1);
+						iconWindow->LFSTK_showWindow();
+						iconWindow->LFSTK_clearWindow(true);
+						if(calWindow!=NULL)
+							{
+								calWindow->LFSTK_hideWindow();
+								apc->windows->at(apc->LFSTK_findWindow(calWindow)).showing=false;
+							}
+						if(scwindow!=NULL)
+							{
+								scwindow->LFSTK_hideWindow();
+								apc->windows->at(apc->LFSTK_findWindow(scwindow)).showing=false;
+							}
+						break;
+					case CONTEXTBUTTONQUIT:
+						realMainLoop=false;
+						apc->mainLoop=false;
+						break;
+				}
+		}
+	return(true);
+}
+
 void loadPrefs(std::string prefsfile)
 {
 	prefs.LFSTK_loadVarsFromFile(prefsfile);
@@ -321,6 +375,36 @@ int main(int argc,char **argv)
 			pr=apc->globalLib->LFSTK_getSingleProp(apc->display,apc->rootWindow,NET_NUMBER_OF_DESKTOPS,XA_CARDINAL);
 			deskCount=pr.integer;
 
+			win=apc->LFSTK_getDefaultWInit();
+			win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_NORMAL"));
+			win->level=ABOVEALL;
+			win->decorated =false;
+			win->overRide =true;
+			apc->LFSTK_addWindow(win,"windowpopup");
+			mainContextWindow=apc->windows->back().window;
+			mainContextWindow->LFSTK_setWindowColourName(NORMALCOLOUR,lc.c_str());
+			int sy=0;
+			for(int j=0;j<NOMORECONTEXTBUTONS;j++)
+				{
+					mainContextButtons[j]=new LFSTK_buttonClass(mainContextWindow,mainContextLabelData[j],0,sy,GADGETWIDTH*2,24,NorthWestGravity);
+					mainContextButtons[j]->LFSTK_setMouseCallBack(NULL,contextCB,(void*)(long)(j+1));
+					iconpath=mainContextWindow->globalLib->LFSTK_findThemedIcon("gnome",mainContextThemeIconData[j],"");
+					mainContextButtons[j]->LFSTK_setImageFromPath(iconpath,LEFT,true);
+					setGadgetDetails(mainContextButtons[j]);
+					mainContextButtons[j]->LFSTK_setTile(NULL,0);
+					mainContextButtons[j]->LFSTK_setFontString(prefs.LFSTK_getCString("font"),true);
+					mainContextButtons[j]->LFSTK_setLabelAutoColour(true);
+					mainContextButtons[j]->LFSTK_setGadgetColours(GADGETBG,lc,pc,ac,lc);
+					mainContextButtons[j]->LFSTK_setGadgetColours(GADGETFG,lc,pc,ac,lc);
+					sy+=GADGETHITE;
+				}
+			mainContextWindow->LFSTK_resizeWindow(GADGETWIDTH+GADGETHITE,sy,true);
+			dockWindow->LFSTK_setContextWindow(mainContextWindow);
+			if(dockGravity==PANELSOUTH)
+				dockWindow->contextYOffset-=sy;
+			else
+				dockWindow->contextYOffset=0;
+
 			addGadgets();
 			if(windowWidth==0)
 				{
@@ -415,6 +499,12 @@ int main(int argc,char **argv)
 			bgls->LFSTK_setMouseCallBack(NULL,hideCB,NULL);
 			setGadgetDetails(bgls);
 			holdpsize=psize;
+
+
+
+
+
+
 
 			int retval=apc->LFSTK_runApp();
 

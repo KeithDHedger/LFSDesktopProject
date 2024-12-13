@@ -23,8 +23,8 @@
 #include "launchers.h"
 
 LFSTK_buttonClass				*contextButtons[NOMOREBUTONS];
-const char						*contextLabelData[]={"Launch","Remove From Dock","Run Prefs","Quit Dock","Iconize Dock",NULL};
-const char						*contextThemeIconData[]={"media-playback-start","list-remove","LFSTKPrefs","dialog-warning","utilities-system-monitor"};
+const char						*contextLabelData[]={"Launch","Remove From Dock","Run Prefs","Iconize Dock","Quit Dock",NULL};
+const char						*contextThemeIconData[]={"media-playback-start","list-remove","LFSTKPrefs","utilities-system-monitor","dialog-warning"};
 std::vector<launcherDataStruct>	launchersArray;
 LFSTK_findClass					*findlaunchers=NULL;
 LFSTK_gadgetClass				*currentLauncher=NULL;
@@ -39,7 +39,6 @@ bool launcherContextCB(void *p,void* ud)
 	LFSTK_windowClass	*lwc=static_cast<LFSTK_gadgetClass*>(p)->wc;
 	long unsigned int	whatbutton=(long unsigned int)ud;
 	launcherDataStruct	lds=launchersArray.at((long unsigned int)lwc->popupFromGadget->userData);
-
 	if(p!=NULL)
 		{
 			tooltiptWC->LFSTK_moveWindow(-1000,1000,true);
@@ -85,9 +84,9 @@ bool launcherContextCB(void *p,void* ud)
 								scwindow->LFSTK_hideWindow();
 								apc->windows->at(apc->LFSTK_findWindow(scwindow)).showing=false;
 							}
-							
 						break;
 				}
+
 		}
 	return(true);
 }
