@@ -116,8 +116,7 @@ extern LFSTK_windowClass			*dockWindow;
 extern LFSTK_windowClass			*dockBGWindow;
 extern LFSTK_windowClass			*iconWindow;
 extern int						holdpsize;
-
-
+extern bool						dockIsHidden;
 
 extern LFSTK_windowClass		*mainContextWindow;
 

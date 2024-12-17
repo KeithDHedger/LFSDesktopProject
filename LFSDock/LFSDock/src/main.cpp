@@ -63,6 +63,7 @@ bool contextCB(void *p,void* ud)
 						break;
 					case CONTEXTBUTTONHIDE:
 						resizeDock(1,1);
+						dockIsHidden=true;
 						iconWindow->LFSTK_showWindow();
 						iconWindow->LFSTK_clearWindow(true);
 						if(calWindow!=NULL)

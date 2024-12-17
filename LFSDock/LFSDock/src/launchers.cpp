@@ -72,6 +72,7 @@ bool launcherContextCB(void *p,void* ud)
 						break;
 					case BUTTONHIDE:
 						resizeDock(1,1);
+						dockIsHidden=true;
 						iconWindow->LFSTK_showWindow();
 						iconWindow->LFSTK_clearWindow(true);
 						if(calWindow!=NULL)

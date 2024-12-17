@@ -88,6 +88,9 @@ bool gadgetDrop(void *lwc,propertyStruct *data,void* ud)
 
 bool timerCB(LFSTK_applicationClass *p,void* ud)
 {
+//	if(dockIsHidden==false)
+//		return(true);
+
 	readMsg();
 
 	if(clockButton!=NULL)
@@ -246,6 +249,7 @@ bool hideCB(void* p,void* ud)
 	if(bc!=NULL)
 		{
 			iconWindow->LFSTK_hideWindow();
+			dockIsHidden=false;
 			if(useTaskBar==true)
 				{
 					oldwidth=0;

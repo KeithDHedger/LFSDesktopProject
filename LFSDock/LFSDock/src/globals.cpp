@@ -62,6 +62,7 @@ LFSTK_windowClass		*dockWindow=NULL;
 LFSTK_windowClass		*dockBGWindow=NULL;
 LFSTK_windowClass		*iconWindow=NULL;
 int						holdpsize;
+bool						dockIsHidden=false;
 
 LFSTK_windowClass		*popActionWindow=NULL;
 LFSTK_listGadgetClass	*popActionList=NULL;

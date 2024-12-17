@@ -238,6 +238,9 @@ void updateTaskBar(bool force)//TODO//
 	bool						goodkey;	
 	bool						unequal=false;
 
+	if(dockIsHidden==true)
+		return;
+
 	tasks.clear();
 	doTreeWalkForTasks(apc->rootWindow);
 	std::sort(tasks.begin(),tasks.end(),compareTaskClass);
