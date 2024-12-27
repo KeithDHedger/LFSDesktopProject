@@ -121,7 +121,7 @@ int main(int argc, char **argv)
 		}
 	contextWindow->LFSTK_resizeWindow(GADGETWIDTH,sy,true);
 	wc->LFSTK_setContextWindow(contextWindow);
-	wc->contextWindowPos=CONTEXTBELOW;
+	wc->contextWindowPos=CONTEXTATMOUSE;
 	//wc->contextYOffset=-40;
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	int retval=apc->LFSTK_runApp();

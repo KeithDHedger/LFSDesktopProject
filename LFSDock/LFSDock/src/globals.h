@@ -118,8 +118,7 @@ extern LFSTK_windowClass			*iconWindow;
 extern int						holdpsize;
 extern bool						dockIsHidden;
 
-extern LFSTK_windowClass		*mainContextWindow;
-
+extern LFSTK_windowClass			*mainContextWindow;
 extern LFSTK_windowClass			*popActionWindow;
 extern LFSTK_listGadgetClass		*popActionList;
 extern bool						inSomeWindow;

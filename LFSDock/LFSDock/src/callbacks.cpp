@@ -145,12 +145,15 @@ void showhidetActionList(LFSTK_gadgetClass *bc,LFSTK_windowClass *winc,LFSTK_lis
 			winc->LFSTK_showWindow(true);
 			winc->LFSTK_setKeepAbove(true);
 			winc->LFSTK_redrawAllGadgets();
+			//dockWindow->ignoreContext=true;//TODO//
+			dockWindow->LFSTK_setContextWindow(NULL);
 			apc->windows->at(apc->LFSTK_findWindow(winc)).showing=true;
 		}
 	else
 		{
 			winc->LFSTK_hideWindow();
 			apc->windows->at(apc->LFSTK_findWindow(winc)).showing=false;
+			dockWindow->LFSTK_setContextWindow(mainContextWindow);
 		}
 }
 
