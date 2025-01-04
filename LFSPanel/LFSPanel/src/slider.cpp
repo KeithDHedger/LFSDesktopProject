@@ -38,7 +38,8 @@ char					label[32];
 
 void setLabel(void)
 {
-	int	value=(int)(((double)vsb->LFSTK_getValue()/64.0)*100.0);
+	double	maxvolume=double(atoi(mainwind->globalLib->LFSTK_oneLiner("amixer get Master|grep \"Limits\"|awk '{print $NF}'").c_str()));
+	int	value=(int)(((double)vsb->LFSTK_getValue()/(double)maxvolume)*100.0);
 	sprintf(label,"Vol %i%%",value);
 	volumeButton->LFSTK_setLabel(label);
 	setIcon();
@@ -48,11 +49,11 @@ void setLabel(void)
 int getAlsaVolume(bool setvol,int volume)
 {
 	long					value=-1;
-	snd_mixer_t				*handle;
+	snd_mixer_t			*handle;
 	snd_mixer_selem_id_t	*sid;
 	snd_mixer_elem_t		*elem;
-	const char				*card="default";
-	const char				*selem_name="Master";
+	const char			*card="default";
+	const char			*selem_name="Master";
 
 	snd_mixer_open(&handle,0);
 	snd_mixer_attach(handle,card);
@@ -140,7 +141,7 @@ bool valChanged(void *p,void* ud)
 	LFSTK_scrollBarClass	*sb=NULL;
 	char					*command;
 	char					*vol;
-	int						volume=-1;
+	int					volume=-1;
 
 	if(p!=NULL)
 		{
@@ -180,6 +181,7 @@ int addSlider(int x,int y,int grav,bool fromleft)
 	char					*vol;
 	bool					direction=false;
 	char					*label=strdup(mainwind->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"%s \" $4}'|tr -d '[]'",SLIDERLABEL).c_str());//TODO//
+	int					maxvolume=atoi(mainwind->globalLib->LFSTK_oneLiner("amixer get Master|grep \"Limits\"|awk '{print $NF}'").c_str());
 	getAlsaVolume(false,-1);
 	setSizes(&xpos,&ypos,&width,&height,&iconsize,&thisgrav,fromleft);
 	
@@ -215,25 +217,16 @@ int addSlider(int x,int y,int grav,bool fromleft)
 			direction=false;
 		}
 
-	//win->x=100;
-	//win->y=100;
-	//w=w;
-	//h=h;
 	win->w=w;
 	win->h=h;
 	win->app=apc;
 	apc->LFSTK_addToolWindow(win);
 	scwindow=apc->windows->back().window;
 
-//	win->w=w;
-//	win->h=h;
-//	apc->LFSTK_addToolWindow(win);
-//	scwindow=apc->windows->back().window;
-
 	vsb=new LFSTK_scrollBarClass(scwindow,direction,0,0,w,h,BUTTONGRAV);
 	
 	vsb->LFSTK_setMouseCallBack(NULL,valChanged,NULL);
-	vsb->LFSTK_setScale(0,64);
+	vsb->LFSTK_setScale(0,maxvolume);
 
 	vsb->LFSTK_setValue(atoi(vol));
 	vsb->reverse=direction;

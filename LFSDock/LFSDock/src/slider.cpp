@@ -37,12 +37,23 @@ int iconSize=48;
 
 void setLabel(void)
 {
-	int	value=(int)(((double)vsb->LFSTK_getValue()/64.0)*100.0);
+	double	maxvolume=double(atoi(dockWindow->globalLib->LFSTK_oneLiner("amixer get Master|grep \"Limits\"|awk '{print $NF}'").c_str()));
+	int		value=(int)(((double)vsb->LFSTK_getValue()/(double)maxvolume)*100.0);
+
+	//int	value=(int)(((double)vsb->LFSTK_getValue()/64.0)*100.0);
 	sprintf(label,"Vol %i%%",value);
 	volumeButton->LFSTK_setLabel((const char*)label);
 	setIcon();
 }
+/*
+	double	maxvolume=double(atoi(mainwind->globalLib->LFSTK_oneLiner("amixer get Master|grep \"Limits\"|awk '{print $NF}'").c_str()));
+	int	value=(int)(((double)vsb->LFSTK_getValue()/(double)maxvolume)*100.0);
+	sprintf(label,"Vol %i%%",value);
+	volumeButton->LFSTK_setLabel(label);
+	setIcon();
+	volumeButton->LFSTK_clearWindow();
 
+*/
 int getAlsaVolume(bool setvol,int volume)
 {
 	long					value=-1;
@@ -132,7 +143,7 @@ bool valChanged(void *p,void* ud)
 			sb=static_cast<LFSTK_scrollBarClass*>(p);
 			if(sb!=NULL)
 				{
-					getAlsaVolume(true,sb->LFSTK_getValue());
+					getAlsaVolume(true,sb->LFSTK_getValue()+1);
 					setLabel();
 				}
 		}
@@ -153,7 +164,21 @@ void updateSlider(void)
 			XFlush(apc->display);
 		}							
 }
+/*
+void updateSlider(void)
+{
+	int		volume;
 
+	volume=getAlsaVolume(false,-1);
+	if(oldVolVal!=volume)
+		{
+			vsb->LFSTK_setValue(volume);
+			oldVolVal=vsb->LFSTK_getValue();
+			setLabel();
+		}							
+}
+
+*/
 bool volExitCB(LFSTK_gadgetClass*p,void* ud)
 {
 	geometryStruct	geom2;
@@ -183,6 +208,8 @@ int addSlider(int x,int y,int grav)
 {
 	char				*vol=strdup(dockWindow->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print $3}'").c_str());//TODO//
 	char				*label=strdup(dockWindow->globalLib->LFSTK_oneLiner("amixer get Master|tail -n1|awk '{print \"%s \" $4}'|tr -d '[]'",SLIDERLABEL).c_str());//TODO//
+	int				maxvolume=atoi(dockWindow->globalLib->LFSTK_oneLiner("amixer get Master|grep \"Limits\"|awk '{print $NF}'").c_str());
+
 	windowInitStruct	*win=new windowInitStruct;
 	int				w,h;
 	bool				direction=false;
@@ -217,7 +244,7 @@ int addSlider(int x,int y,int grav)
 	vsb=new LFSTK_scrollBarClass(scwindow,direction,0,0,w,h,BUTTONGRAV);
 	
 	vsb->LFSTK_setMouseCallBack(NULL,valChanged,NULL);
-	vsb->LFSTK_setScale(0,64);
+	vsb->LFSTK_setScale(0,maxvolume);
 	vsb->LFSTK_setValue(atoi(vol));
 	vsb->reverse=direction;
 	volumeButton->LFSTK_setImageFromPath(iconL,TOOLBAR,true);
