@@ -40,20 +40,11 @@ void setLabel(void)
 	double	maxvolume=double(atoi(dockWindow->globalLib->LFSTK_oneLiner("amixer get Master|grep \"Limits\"|awk '{print $NF}'").c_str()));
 	int		value=(int)(((double)vsb->LFSTK_getValue()/(double)maxvolume)*100.0);
 
-	//int	value=(int)(((double)vsb->LFSTK_getValue()/64.0)*100.0);
 	sprintf(label,"Vol %i%%",value);
 	volumeButton->LFSTK_setLabel((const char*)label);
 	setIcon();
 }
-/*
-	double	maxvolume=double(atoi(mainwind->globalLib->LFSTK_oneLiner("amixer get Master|grep \"Limits\"|awk '{print $NF}'").c_str()));
-	int	value=(int)(((double)vsb->LFSTK_getValue()/(double)maxvolume)*100.0);
-	sprintf(label,"Vol %i%%",value);
-	volumeButton->LFSTK_setLabel(label);
-	setIcon();
-	volumeButton->LFSTK_clearWindow();
 
-*/
 int getAlsaVolume(bool setvol,int volume)
 {
 	long					value=-1;
@@ -164,21 +155,7 @@ void updateSlider(void)
 			XFlush(apc->display);
 		}							
 }
-/*
-void updateSlider(void)
-{
-	int		volume;
 
-	volume=getAlsaVolume(false,-1);
-	if(oldVolVal!=volume)
-		{
-			vsb->LFSTK_setValue(volume);
-			oldVolVal=vsb->LFSTK_getValue();
-			setLabel();
-		}							
-}
-
-*/
 bool volExitCB(LFSTK_gadgetClass*p,void* ud)
 {
 	geometryStruct	geom2;
