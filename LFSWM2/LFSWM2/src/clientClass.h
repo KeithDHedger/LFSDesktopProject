@@ -76,6 +76,7 @@ class LFSWM2_clientClass
 		bool				isWithdrawn=false;
 		bool				isBorderless=false;
 		bool				isHidden=false;
+		bool				isMinimized=false;
 
 		int				resizeMode=0;
 		int				configCnt=0;

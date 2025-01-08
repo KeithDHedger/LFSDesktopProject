@@ -174,6 +174,16 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						}
 				}
 
+//if(e.xany.window==0x3400006)
+//{
+//	cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xkey.window);
+//	if((cc!=NULL) && (cc->isMinimized==true))
+//		{
+//			fprintf(stderr,"e.xany.window==0x3400006 cc->isMinimized==true cc->isVisible=%i\n",cc->visible);
+//			//cc->LFSWM2_showWindow(false);
+//		}
+//}
+
 			switch(e.type)
 				{
 					case KeyRelease:
@@ -238,6 +248,18 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 					case MapNotify:
 						{
 						//fprintf(stderr,"MapNotify main event loop window=%x when=%i\n",e.xmap.window,when++);
+//
+//
+//cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xproperty.window);
+//									if((cc!=NULL) )
+//										{
+//										fprintf(stderr,">>>>>>>\n");
+//										//	cc->LFSWM2_unSpecial();
+//										//			cc->LFSWM2_showWindow(false);
+//										}
+
+
+
 							this->noRestack=false;
 							Atom					*v=NULL;
 							long unsigned int	nitems_return;
@@ -255,7 +277,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 					case MapRequest:
 						{
-							//fprintf(stderr,"MapRequest main event loop window=%x when=%i\n",e.xmap.window,when++);
+						//	fprintf(stderr,"MapRequest main event loop window=%x when=%i\n",e.xmap.window,when++);
 							this->noRestack=false;
 							this->mainClass->mainWindowClass->LFSWM2_removeProp(this->mainClass->rootWindow,LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW"));
 							XWindowAttributes	x_window_attrs;
@@ -275,8 +297,10 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 								}
 							XMoveWindow(this->mainClass->display,e.xmaprequest.window,-1000000,-1000000);
 							if(this->mainClass->mainWindowClass->LFSWM2_createClient(e.xmaprequest.window,hs)==false)
-								this->mainClass->mainWindowClass->LFSWM2_freeHints(hs);
-							
+								{
+									this->mainClass->mainWindowClass->LFSWM2_freeHints(hs);
+									//fprintf(stderr,"LFSWM2_createClient=false\n");
+								}
 							XMoveResizeWindow(this->mainClass->display,e.xmaprequest.window,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize,x_window_attrs.width,x_window_attrs.height);
 							this->noRestack=false;
 						}
@@ -306,7 +330,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 													hs=this->mainClass->mainWindowClass->LFSWM2_getWindowHints(e.xconfigurerequest.window);
 													if((hs.mHints!=NULL) && (hs.mHints->decorations!=0))
 														XMoveResizeWindow(this->mainClass->display,e.xconfigurerequest.window,hs.pt.x,hs.pt.y,hs.sh->min_width,hs.sh->min_height);
-												break;
+													break;
 												}
 											cc->configCnt=0;
 											if((e.xconfigurerequest.value_mask & (CWWidth|CWHeight)) !=0)
@@ -315,7 +339,6 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 													ch.height=e.xconfigurerequest.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize;
 													if((cc->buttonDown==false) || (cc->isBorderless==false))
 														{
-														//	if(cc->isBorderless==false)
 															if((cc->isBorderless==false) && (cc->windowType!=UTILITYWINDOW))
 																XResizeWindow(this->mainClass->display,cc->frameWindow,e.xconfigurerequest.width+this->mainClass->riteSideBarSize+this->mainClass->leftSideBarSize,e.xconfigurerequest.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);
 															else
@@ -384,6 +407,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						{
 						//fprintf(stderr,"PropertyNotify IN eventnumber %i atom name=%s\n",when++,XGetAtomName(this->mainClass->display,e.xproperty.atom));
 							LFSWM2_clientClass	*cc;
+							//if(e.xproperty.window==0x3200006)
 							if(false)
 								{
 									fprintf(stderr,"PropertyNotify eventnumber %i\n",when++);
@@ -397,6 +421,35 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 #ifdef __DEBUG__
 									this->mainClass->DEBUG_printAtom(e.xproperty.atom);
 #endif
+								}
+
+							if(e.xproperty.state==PropertyNewValue)
+								{
+									bool unminim=false;
+									cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xproperty.window);
+									if((cc!=NULL) && (cc->isMinimized==true))
+										{
+											if(!this->mainClass->mainWindowClass->LFSWM2_hasState(cc->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN"))))
+												unminim=true;
+
+											if((cc->visible==false) && (e.xproperty.atom==this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("WM_HINTS"))))
+												{
+													XWMHints *xh=XGetWMHints(this->mainClass->display, e.xproperty.window);
+													if(xh!=NULL)
+														{
+															if(((xh->flags & StateHint)==StateHint) && (xh->initial_state==NormalState))
+																unminim=true;
+															XFree((void*)xh);
+														}
+												}
+											if(unminim==true)
+												{
+													cc->LFSWM2_unSpecial();
+													cc->LFSWM2_showWindow(false);
+												}
+											this->noRestack=false;
+											break;
+										}
 								}
 
 							if((e.xproperty.state==PropertyNewValue) || (e.xproperty.state==PropertyDelete))
@@ -437,6 +490,8 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 									cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xproperty.window);
 									if(cc!=NULL)
 										{
+											//if(cc->isMinimized==true)
+											//	cc->LFSWM2_showWindow(false);
 											this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(cc->contentWindow);
 										}
 								}

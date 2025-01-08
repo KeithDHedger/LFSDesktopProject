@@ -1,4 +1,5 @@
 0.2.1
+Fixed unminimizing windows.
 Fixed slider.
 Fixed dock spuriously reappearing after iconizing.
 Adjusted dock window context menu position.

@@ -114,7 +114,15 @@ bool taskSelect(void *object,void* userdata)
 			movetohere=false;
 		}
 	XMapWindow(apc->display,win);
+
+	XWMHints *xh=XAllocWMHints();
+	xh->flags=StateHint;
+	xh->initial_state=NormalState;
+	XSetWMHints(dockWindow->app->display, win, xh);
+	sendClientMessage(win,"WM_HINTS",0,0,0,0,0);
+	XFree(xh);
 	sendClientMessage(win,"_NET_ACTIVE_WINDOW",0,0,0,0,0);
+
 	inSomeWindow=false;
 	showhidetActionList(NULL,popActionWindow,popActionList);
 	return(true);

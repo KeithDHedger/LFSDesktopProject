@@ -40,6 +40,9 @@ void setLabel(void)
 {
 	double	maxvolume=double(atoi(mainwind->globalLib->LFSTK_oneLiner("amixer get Master|grep \"Limits\"|awk '{print $NF}'").c_str()));
 	int	value=(int)(((double)vsb->LFSTK_getValue()/(double)maxvolume)*100.0);
+
+//fprintf(stderr,"val perc=%i %f\n",value,maxvolume);
+
 	sprintf(label,"Vol %i%%",value);
 	volumeButton->LFSTK_setLabel(label);
 	setIcon();

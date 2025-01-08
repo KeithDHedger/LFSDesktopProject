@@ -471,10 +471,13 @@ void LFSWM2_clientClass::LFSWM2_unSpecial(void)
 		{
 			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_HORZ")));
 			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_MAXIMIZED_VERT")));
-			this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN")));
 			this->isMaximized=false;
 		}
+
+	this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN")));
 	this->isShaded=false;
+	this->isMinimized=false;
+	this->mainClass->mainWindowClass->LFSWM2_setWindowState(this->contentWindow,NormalState);
 	this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(this->contentWindow);
 }
 
@@ -496,6 +499,8 @@ void LFSWM2_clientClass::LFSWM2_maxWindow(void)
 void LFSWM2_clientClass::LFSWM2_minWindow(void)
 {
 	this->mainClass->mainWindowClass->LFSWM2_addState(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN")));
+	this->isMinimized=true;
+	this->mainClass->mainWindowClass->LFSWM2_setWindowState(this->contentWindow,IconicState);
 	this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(this->contentWindow);
 	this->LFSWM2_hideWindow();
 }
@@ -904,11 +909,14 @@ void LFSWM2_clientClass::LFSWM2_showWindow(bool checkstate)
 
 	this->contentWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->contentWindow,this->mainClass->rootWindow);
 	this->visible=true;
-	if(this->isWithdrawn==true)
+//	if(this->isWithdrawn==true)
 		this->mainClass->mainWindowClass->LFSWM2_setWindowState(this->contentWindow,NormalState);
 	this->isWithdrawn=false;
 	this->isHidden=false;
+	this->isMinimized=false;
+	//this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN")));
 	XMapWindow(this->mainClass->display,this->frameWindow);
+	//fprintf(stderr,">>>>>>>>>>>>>>>\n");
 }
 
 void LFSWM2_clientClass::LFSWM2_hideWindow(bool withdraw)
@@ -1120,6 +1128,15 @@ rectStruct LFSWM2_clientClass::setTitlePosition(void)
 bool LFSWM2_clientClass::LFSWM2_handleEvents(XEvent *e)
 {
 //this->mainClass->DEBUG_printEventData(e,true);
+//if(e->xany.window==0x3400006)
+//{
+//	//cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xkey.window);
+//	if((this!=NULL) && (this->isMinimized==true))
+//		{
+//			fprintf(stderr,">>>>>>>e.xany.window==0x3400006 cc->isMinimized==true cc->isVisible=%i\n",this->visible);
+//			//cc->LFSWM2_showWindow(false);
+//		}
+//}
 	switch(e->type)
 		{
 			case ButtonPress:
@@ -1173,13 +1190,14 @@ bool LFSWM2_clientClass::LFSWM2_handleEvents(XEvent *e)
 
 			case MapNotify:
 				{
-				//	std::cerr<<"client MapNotify"<<std::endl;
+					//std::cerr<<"client MapNotify"<<std::endl;
 				}
 				break;
 
 			case MapRequest:
 				//std::cerr<<"client MapRequest"<<std::endl;
-				this->LFSWM2_showWindow(false);
+				this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN")));
+				this->LFSWM2_showWindow(true);
 				this->mainClass->mainEventClass->noRestack=false;
 				break;
 
