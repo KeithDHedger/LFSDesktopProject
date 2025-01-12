@@ -1,4 +1,5 @@
 0.6.1
+Fix window tile cario surface getting occasional wrong size.
 Added extra positioning for window context window.
 Updated Window example.
 Added context window to LFSTK_windowClass.

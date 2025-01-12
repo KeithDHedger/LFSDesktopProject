@@ -989,6 +989,17 @@ void LFSTK_windowClass::LFSTK_setTile(const char *path,int size)
 			return;
 		}
 
+
+	if(this->cr!=NULL)
+		cairo_destroy(this->cr);
+	if(this->sfc!=NULL)
+		cairo_surface_destroy(this->sfc);
+
+	this->sfc=NULL;
+	this->cr=NULL;
+
+	this->globalLib->LFSTK_setCairoSurface(this->app->display,this->window,this->visual,&this->sfc,&this->cr,this->w,this->h);
+
 	if(this->sfc==NULL)
 		this->sfc=cairo_xlib_surface_create(this->app->display,this->window,this->visual,this->w,this->h);
 
@@ -1013,8 +1024,9 @@ void LFSTK_windowClass::LFSTK_setTile(const char *path,int size)
 				cairo_xlib_surface_set_size(this->sfc,this->w,this->h);
 			//cairo_xlib_surface_set_size(this->sfc,1000,1000);
 			this->pattern=cairo_pattern_create_for_surface(tempimage);
-			cairo_surface_destroy(tempimage);
 			cairo_pattern_set_extend(pattern,CAIRO_EXTEND_REPEAT);
+			cairo_surface_destroy(tempimage);
+//			fprintf(stderr,"cairo_xlib_surface_get_width=%i cairo_xlib_surface_get_height=%i\n",cairo_xlib_surface_get_width(sfc)+1,cairo_xlib_surface_get_height(sfc)+1);
 			this->useTile=true;
 		}
 	else

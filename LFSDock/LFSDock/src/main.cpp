@@ -422,8 +422,8 @@ int main(int argc,char **argv)
 			win->decorated=false;
 			apc->LFSTK_addWindow(win,"DOCKBG");
 //LFSTK_handleWindowEvents
-			dockBGWindow=apc->windows->back().window;	
-			dockBGWindow->LFSTK_setTile(dockBGImage.c_str(),-1);
+			dockBGWindow=apc->windows->back().window;
+			std::string	hi=dockBGImage;
 			dockWindow->LFSTK_setTransientFor(dockBGWindow->window);
 			apc->windows->back().showing=true;
 
@@ -503,10 +503,14 @@ int main(int argc,char **argv)
 			holdpsize=psize;
 
 
-
-
-
-
+			XSync(apc->display,false);
+			if(dockBGWindow!=NULL)
+				{	
+					dockBGWindow->LFSTK_setTile(hi.c_str(),-1);
+					dockBGWindow->LFSTK_clearWindow(true);
+				}
+			if(useTaskBar==true)
+				updateTaskBar(true);
 
 			int retval=apc->LFSTK_runApp();
 
