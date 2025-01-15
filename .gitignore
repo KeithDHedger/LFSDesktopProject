@@ -70,7 +70,7 @@ ltmain.sh
 .nfs*
 devtests
 
-# Output artifacts
 LFSTray/src/lfstray
 LFSTray/lfstray.1
 LFSTray/lfstray.sample
+*config.h.in
