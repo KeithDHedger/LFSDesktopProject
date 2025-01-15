@@ -62,10 +62,13 @@ CPPFLAGS="$CPPFLAGS -DFEATURE_LIST='\"$feature_list\"'"
 
 dnl ============ Features ============
 
-AC_CONFIG_FILES([
-Makefile
-src/Makefile
-])
+#AC_CONFIG_FILES([
+#Makefile
+#src/Makefile
+#])
+AC_OUTPUT
+
+AC_CONFIG_FILES([Makefile LFSTray/app/Makefile])
 AC_OUTPUT
 
 echo "*"
