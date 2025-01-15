@@ -421,7 +421,6 @@ int main(int argc,char **argv)
 			win->overRide=false;
 			win->decorated=false;
 			apc->LFSTK_addWindow(win,"DOCKBG");
-//LFSTK_handleWindowEvents
 			dockBGWindow=apc->windows->back().window;
 			std::string	hi=dockBGImage;
 			dockWindow->LFSTK_setTransientFor(dockBGWindow->window);
@@ -458,9 +457,9 @@ int main(int argc,char **argv)
 									bgls=NULL;
 								}
 					
-							bgrs=new LFSTK_buttonClass(dockBGWindow,"",psize-sidewid,0,sidewid,sidehite,NorthWestGravity);
+							bgrs=new LFSTK_buttonClass(dockBGWindow,"",psize-sidewid,0,sidewid,sidehite);
 							setGadgetDetails(bgrs);
-							st=bgrs->LFSTK_setImageFromPath(dockBGImageRS,RIGHT,false);
+							st=bgrs->LFSTK_setImageFromPath(dockBGImageRS,CENTRE,false);
 							if(st!=CAIRO_STATUS_SUCCESS)
 								{
 									bgrs=NULL;
