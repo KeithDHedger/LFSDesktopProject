@@ -2,13 +2,18 @@
 # vim:ft=m4
 
 AC_INIT([lfstray],[1.0.0])
-AC_CONFIG_SRCDIR(src/main.c)
-AC_CONFIG_HEADERS(src/config.h)
-AM_INIT_AUTOMAKE([foreign])
+#AC_CONFIG_SRCDIR(src/main.c)
+#AC_CONFIG_HEADERS(src/config.h)
+#AM_INIT_AUTOMAKE([foreign])
+AC_CONFIG_HEADERS([config.h])
 
 dnl ============ General =============
 
+AM_INIT_AUTOMAKE
+
 AC_PROG_CC
+AC_PROG_CXX
+
 AC_USE_SYSTEM_EXTENSIONS
 
 AC_CHECK_HEADERS([ctype.h],,[AC_MSG_FAILURE([ctype.h is not found.])])
@@ -23,17 +28,28 @@ AC_CHECK_HEADERS([libgen.h])
 
 dnl ============= X11 ================
 
-no_x=""
-AC_PATH_XTRA
-if test "x$no_x" = "xyes"; then
-    echo "X11 libraries/headers could not be found."
-    echo "If they are definetly installed,use"
-    echo " --x-includes and --x-libraries to set the paths."
-    echo
-    echo "Aborting"
-    echo
-    exit 1
-fi
+X11_MODULES="x11 >= 1.6.2"
+PKG_CHECK_MODULES(X11, $X11_MODULES)
+AC_SUBST(X11_CFLAGS)
+AC_SUBST(X11_LIBS)
+
+XPM_MODULES="xpm >= 3.5.0"
+PKG_CHECK_MODULES(XPM, $XPM_MODULES)
+AC_SUBST(XPM_CFLAGS)
+AC_SUBST(XPM_LIBS)
+
+
+#no_x=""
+#AC_PATH_XTRA
+#if test "x$no_x" = "xyes"; then
+#    echo "X11 libraries/headers could not be found."
+#    echo "If they are definetly installed,use"
+#    echo " --x-includes and --x-libraries to set the paths."
+#    echo
+#    echo "Aborting"
+#    echo
+#    exit 1
+#fi
 
 dnl AC_SUBST(x_includes)
 dnl AC_SUBST(x_libraries)
@@ -66,7 +82,7 @@ dnl ============ Features ============
 #Makefile
 #src/Makefile
 #])
-AC_OUTPUT
+#AC_OUTPUT
 
 AC_CONFIG_FILES([Makefile LFSTray/app/Makefile])
 AC_OUTPUT

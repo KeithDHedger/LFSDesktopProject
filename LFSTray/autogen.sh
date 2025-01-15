@@ -1,7 +1,9 @@
-#!/bin/bash -e
+#!/bin/bash
 
+./remakesourcelist
 aclocal
 autoheader
+touch NEWS README AUTHORS ChangeLog
+automake --add-missing --copy
 autoconf
-automake --add-missing
 ./configure $@

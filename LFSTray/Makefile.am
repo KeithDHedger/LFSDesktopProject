@@ -1,7 +1,7 @@
-SUBDIRS=src
-
-man_MANS=lfstray.1
-
+SUBDIRS=LFSTray/app
+#
+#man_MANS=lfstray.1
+#
 doc_DIST=lfstray.sample
 dist_hook: lfstray.1
 all-local: $(doc_DIST)

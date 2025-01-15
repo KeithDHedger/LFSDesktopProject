@@ -70,7 +70,6 @@ ltmain.sh
 .nfs*
 devtests
 
-LFSTray/src/lfstray
-LFSTray/lfstray.1
 LFSTray/lfstray.sample
+LFSTray/LFSTray/app/lfstray
 *config.h.in
