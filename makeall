@@ -50,7 +50,7 @@ fi
 CHANGEUSER=${CHANGEUSER:-$(logname)}
 #Set this if needed.
 LIBDIRSUFFIX=64
-BUILDFOR=${BUILDFOR:-"LFSToolKit $BUILDLFSWMANAGER LFSWM2 LFSDesktop LFSSetWallpaper LFSApplications LFSPanel LFSDock"}
+BUILDFOR=${BUILDFOR:-"LFSToolKit $BUILDLFSWMANAGER LFSWM2 LFSDesktop LFSSetWallpaper LFSApplications LFSPanel LFSDock LFSTray"}
 COLMAKE="make $MAKEFLAGS|GREP_COLORS='mt=1;32' grep -P --line-buffered --color=always  '(\-D[^ ]*)'|GREP_COLORS='mt=1;37;41' grep -P --line-buffered --color=always  '^[^ ]*'|GREP_COLORS='mt=1;33' grep -P --line-buffered --color=always '([[:alnum:]_/\.]+?(\.c+|\..p+|\.h)\b)'|GREP_COLORS='mt=1;36' grep -P --line-buffered --color=always -- '\s-(I|L)/.*?\s'|sed G"
 
 
@@ -142,10 +142,8 @@ if [[ $action = "help" ]];then
 	exit
 fi
 
-#for app in "LFSToolKit" $BUILDLFSWMANAGER "LFSWM2" "LFSDesktop" "LFSSetWallpaper" "LFSApplications" "LFSPanel" "LFSDock"
-
 if [ $1 = "uninstall" ];then
-	BUILDFOR="$BUILDLFSWMANAGER LFSWM2 LFSDesktop LFSSetWallpaper LFSApplications LFSPanel LFSDock LFSToolKit"
+	BUILDFOR="$BUILDLFSWMANAGER LFSWM2 LFSDesktop LFSSetWallpaper LFSApplications LFSPanel LFSDock LFSToolKit LFSTray"
 fi
 
 for app in $BUILDFOR

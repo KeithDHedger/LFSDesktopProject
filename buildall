@@ -23,9 +23,8 @@ PREFIX="/usr"
 STAGING=
 LDCONFIG="/sbin/ldconfig"
 
-for arg in LFSToolKit LFSSetWallpaper LFSDesktop LFSWM2 LFSPanel LFSApplications LFSDock
+for arg in LFSToolKit LFSSetWallpaper LFSDesktop LFSWM2 LFSPanel LFSApplications LFSDock LFSTray
 	do
-#		tar -xvf ${arg}-*.tar.gz
 		pushd ${arg}
 			./autogen.sh --prefix=${PREFIX}||(echo "Configure Error...";exit 1)
 			make -j$(nproc)

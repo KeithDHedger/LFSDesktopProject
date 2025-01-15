@@ -253,35 +253,36 @@ void updateTaskBar(bool force)//TODO//
 	doTreeWalkForTasks(apc->rootWindow);
 	std::sort(tasks.begin(),tasks.end(),compareTaskClass);
 
-if(force==false)
-{
-	if(tasks.size()==holdtasks.size())
+	if(force==false)
 		{
-			for(int j=0;j<holdtasks.size();j++)
+			if(tasks.size()==holdtasks.size())
 				{
-					if((holdtasks.at(j).winid!=tasks.at(j).winid) || (holdtasks.at(j).taskName!=tasks.at(j).taskName))
+					for(int j=0;j<holdtasks.size();j++)
 						{
-							unequal=true;
-							goto skiplabel;
+							if((holdtasks.at(j).winid!=tasks.at(j).winid) || (holdtasks.at(j).taskName!=tasks.at(j).taskName))
+								{
+									unequal=true;
+									goto skiplabel;
+								}
 						}
 				}
+			else
+				unequal=true;
 		}
 	else
-		unequal=true;
-}
-else
-{
-	unequal=true;
-	oldwidth=1;
-}
+		{
+			unequal=true;
+			oldwidth=1;
+		}
+
 skiplabel:
 	if((unequal==false) && (force==false))
 		return;
+
 	if(tasks.size()==0)
 		{
 			if(oldwidth==0)
 				return;
-fprintf(stderr,"here\n");
 			oldwidth=0;
 			moveDock(0);
 			resizeDock(windowWidth,iconWidth+extraSpace);

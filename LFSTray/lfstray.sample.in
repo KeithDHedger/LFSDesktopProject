@@ -1,0 +1,108 @@
+#
+# This is sample ~/.simpletrayrc, resembling default configuration.
+# Remember: command line parameters take precedence.
+#
+# Directives introduced in @VERSION_STR@ are marked with "NEW in @VERSION_STR@"
+#
+####################################################################
+#
+# simpletray understands following directives
+#
+####################################################################
+
+# background <color>         # color can be specified as an HTML hex triplet or
+                             # as a name from rgb.txt, note that '#' must be quoted
+background "#777777"
+
+# display <display name>     # as usual
+
+# geometry <geometry>        # tray's geometry in standard X notation; width and
+                             # height are specified in slot_size multiples
+geometry 1x1+0+0
+
+# grow_gravity <gravity>     # one of N, S, E, W, NW, NE, SW, SE; tray will grow
+                             # in the direction opposite to one specified by
+							 # grow_gravity; if horizontal or vertical
+							 # direction is not specified, tray will not grow in
+							 # that direction
+grow_gravity NW
+
+# icon_gravity <gravity>     # icon placement gravity, one of NW, NE, SW, SE
+icon_gravity NW
+
+# icon_size <int>            # specifies dimensions of an icon
+icon_size 24
+
+# slot_size <w>[x<h>]        # specifies width and hight of an icon slot that
+                             # contains icon; must be larger than icon size;
+                             # height is set to width if it is omitted;
+                             # defaults to icon size
+slot_size 32x64
+
+# kludges kludge[,kludge]    # enable specific kludges to work around
+                             # non-conforming WMs and/or simpletray bugs.
+                             # NEW in @VERSION_STR@. Argument is a
+                             # comma-separated list of
+                             # * fix_window_pos - fix tray window position on
+                             #     erroneous moves by WM
+                             # * force_icons_size - ignore resize events on all
+                             #     icons; force their size to be equal to
+                             #     icon_size
+                             # * use_icon_hints - use icon window hints to
+                             #     dtermine icon size
+
+# max_geometry <geometry>    # maximal tray dimensions; 0 in width/height means
+                             # no limit
+max_geometry 0x0
+
+# no_shrink [<bool>]         # disables shrink-back mode
+no_shrink false
+
+# parent_bg [<bool>]         # whether to use pseudo-transparency
+                             # (looks better when reparented into smth like FvwmButtons)
+parent_bg false
+
+# pixmap_bg <path_to_xpm>    # use pixmap from specified xpm file for (tiled) background
+# pixmap_bg /home/user/.simpletraybg.xpm
+
+
+# slot_size <int>            # specifies size of icon slot, defaults to
+                             # icon_size NEW in @VERSION_STR@.
+
+# skip_taskbar [<bool>]      # hide tray`s window from the taskbar
+skip_taskbar true
+
+# sticky [<bool>]            # make a tray`s window sticky across the
+                             # desktops/pages
+sticky true
+
+# tint_color <color>         # set tinting color
+tint_color white
+
+# tint_level <level>         # set tinting level; level ranges from 0 (disabled)
+                             # to 255
+tint_level 0
+
+# transparent [<bool>]       # whether to use root-transparency (background
+                             # image must be set with Esetroot or compatible utility)
+transparent false
+
+# vertical [<bool>]          # whether to use vertical layout (horisontal layout
+                             # is used by default)
+vertical false
+
+# window_layer <layer>       # set the EWMH-compatible window layer; one of:
+                             # bottom, normal, top
+window_layer normal
+
+# window_strut <mode>        # enable/disable window struts for tray window (to
+                             # avoid converting of tray window by maximized
+                             # windows); mode defines to which screen border tray
+                             # will be attached; it can be either top, bottom,
+                             # left, right, none or auto (default)
+window_strut auto
+
+
+# xsync [<bool>]             # whether to operate on X server synchronously (SLOOOOW)
+xsync false
+

@@ -1,0 +1,13 @@
+1.0.0
+Added to LFSDesktopProject
+
+0.9.0
+Removed uneeded/unwanted settings.
+Fixed seg fault with --pixmap-bg cli arg.
+Removed scrollbars.
+Renamed to LFSTray.
+Removed remote control.
+Renamed.
+Removed KDE Icons,Debug and Logging code.
+added autogen.sh.
+Forked from Stalonetray.
