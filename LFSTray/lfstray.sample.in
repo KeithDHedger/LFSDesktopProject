@@ -1,12 +1,14 @@
 #
-# This is sample ~/.simpletrayrc, resembling default configuration.
+# This is a sample configuration.
+# copy to ~/.config/LFS/lfstrayrc
+#
 # Remember: command line parameters take precedence.
 #
 # Directives introduced in @VERSION_STR@ are marked with "NEW in @VERSION_STR@"
 #
 ####################################################################
 #
-# simpletray understands following directives
+# lfstrayrc understands the following directives
 #
 ####################################################################
 

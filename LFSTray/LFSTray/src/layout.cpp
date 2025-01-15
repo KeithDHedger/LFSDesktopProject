@@ -362,8 +362,7 @@ int icon_placement_create(struct IconPlacement *ip,int x,int y,struct Rect *rect
  * 	- position for A is less (in lexographical order)
  * 	  than position for B.
  * 	  */
-void icon_placement_choose_best(
-    struct IconPlacement *old,struct IconPlacement *new)
+void icon_placement_choose_best(struct IconPlacement *old,struct IconPlacement *newst)
 {
 	int old_lout_delta_norm,new_lout_delta_norm;
 	int lout_norm_cmp;
@@ -384,7 +383,7 @@ void icon_placement_choose_best(
 			swap(settings.orig_tray_dims.x,settings.orig_tray_dims.y);
 		}
 	calc_wnd_sz_delta(old_wnd_sz_delta,old);
-	calc_wnd_sz_delta(new_wnd_sz_delta,new);
+	calc_wnd_sz_delta(new_wnd_sz_delta,newst);
 	/* Some black magic. This is probably buggy and you are not supposed to
 	 * understand this (I definetly don't). The basic idea is that sometimes
 	 * layout resize means window resize. Sometimes it does not. */
@@ -393,12 +392,12 @@ void icon_placement_choose_best(
 			if(grid_sz.x >= settings.orig_tray_dims.x/settings.slot_size.x)
 				{
 					old_wnd_sz_delta.x=old->sz_delta.x*settings.slot_size.x;
-					new_wnd_sz_delta.x=new->sz_delta.x *settings.slot_size.x;
+					new_wnd_sz_delta.x=newst->sz_delta.x *settings.slot_size.x;
 				}
 			if(grid_sz.y >= settings.orig_tray_dims.y/settings.slot_size.y)
 				{
 					old_wnd_sz_delta.y=old->sz_delta.y*settings.slot_size.y;
-					new_wnd_sz_delta.y=new->sz_delta.y *settings.slot_size.y;
+					new_wnd_sz_delta.y=newst->sz_delta.y *settings.slot_size.y;
 				}
 		}
 	/* Restore values */
@@ -413,7 +412,7 @@ void icon_placement_choose_best(
 	wnd_norm_cmp=new_wnd_delta_norm<old_wnd_delta_norm;
 	/* Compute norms for layout deltas */
 	old_lout_delta_norm=old->sz_delta.x+old->sz_delta.y;
-	new_lout_delta_norm=new->sz_delta.x+new->sz_delta.y;
+	new_lout_delta_norm=newst->sz_delta.x+newst->sz_delta.y;
 	lout_norm_cmp=new_lout_delta_norm<old_lout_delta_norm;
 
 	/* CORE of placement logic. In short,
@@ -424,16 +423,16 @@ void icon_placement_choose_best(
 	 * than one that does
 	 *-otherwise,placement that is "closer" to initial point (that depends
 	 * on gravity) is better */
-	if(!old->valid && new->valid) goto replace;
+	if(!old->valid && newst->valid) goto replace;
 	if(settings.min_space_policy && (lout_norm_cmp || wnd_norm_cmp))
 		goto replace;
 	if(old_lout_delta_norm && !new_lout_delta_norm) goto replace;
 	if(old_wnd_delta_norm && !new_wnd_delta_norm) goto replace;
-	if((!old_lout_delta_norm==!new_lout_delta_norm) && compare_points(new->pos,old->pos))
+	if((!old_lout_delta_norm==!new_lout_delta_norm) && compare_points(newst->pos,old->pos))
 		goto replace;
 	return;
 replace:
-	*old=*new;
+	*old=*newst;
 }
 
 /* WARNING: returns ptr to STATIC buffer */

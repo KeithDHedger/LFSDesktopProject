@@ -48,7 +48,7 @@ struct TrayIcon *icon_list_new(Window wid,int cmode)
 	struct TrayIcon *new_icon;
 	/* Do not allocate second structure for the same window */
 	if(icon_list_find(wid)!=NULL) return NULL;
-	if((new_icon=malloc(sizeof(struct TrayIcon)))==NULL)
+	if((new_icon=(TrayIcon*)malloc(sizeof(struct TrayIcon)))==NULL)
 		{
 			return NULL;
 		}

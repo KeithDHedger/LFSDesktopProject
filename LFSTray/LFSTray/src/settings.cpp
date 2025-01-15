@@ -58,11 +58,11 @@ struct Settings settings;
 /* Initialize data */
 void init_default_settings()
 {
-	settings.bg_color_str="gray";
-	settings.tint_color_str="white";
+	settings.bg_color_str=(char*)"gray";
+	settings.tint_color_str=(char*)"white";
 	settings.display_str=NULL;
 	settings.geometry_str=NULL;
-	settings.max_geometry_str="0x0";
+	settings.max_geometry_str=(char*)"0x0";
 	settings.icon_size=FALLBACK_ICON_SIZE;
 	settings.slot_size.x=-1;
 	settings.slot_size.y=-1;
@@ -77,7 +77,7 @@ void init_default_settings()
 	settings.grow_gravity=GRAV_N | GRAV_W;
 	settings.icon_gravity=GRAV_N | GRAV_W;
 	settings.wnd_layer=NULL;
-	settings.wnd_name=PROGNAME;
+	settings.wnd_name=(char*)PROGNAME;
 	settings.xsync=0;
 	settings.need_help=0;
 	settings.config_fname=NULL;
@@ -104,7 +104,7 @@ int parse_ignored_classes(int argc,const char **argv,void **references,int silen
 
 	for(i=0; i<argc; i++)
 		{
-			newclass=malloc(sizeof(struct WindowClass));
+			newclass=(WindowClass*)malloc(sizeof(struct WindowClass));
 			newclass->name=strdup(argv[i]);
 			LIST_ADD_ITEM(*classes,newclass);
 		}
@@ -270,9 +270,9 @@ int parse_wnd_layer(int argc,const char **argv,void **references,int silent)
 	char **window_layer=(char **) references[0];
 
 	if(!strcasecmp(argv[0],"top"))
-		*window_layer=_NET_WM_STATE_ABOVE;
+		*window_layer=(char*)_NET_WM_STATE_ABOVE;
 	else if(!strcasecmp(argv[0],"bottom"))
-		*window_layer=_NET_WM_STATE_BELOW;
+		*window_layer=(char*)_NET_WM_STATE_BELOW;
 	else if(!strcasecmp(argv[0],"normal"))
 		*window_layer=NULL;
 	else
@@ -1006,7 +1006,7 @@ int get_args(char *line,int *argc,char ***argv)
 		{
 			(*argc)++;
 			/* Add space to store one more argument */
-			if(NULL==(*argv=realloc(*argv,*argc * sizeof(char *))))
+			if(NULL==(*argv=(char**)realloc(*argv,*argc * sizeof(char *))))
 				DIE_OOM(("Could not allocate memory to parse parameters\n"));
 			if(*arg_start=='"')   /* 4.1. argument is quoted: find matching quote */
 				{

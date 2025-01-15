@@ -445,7 +445,7 @@ void tray_create_window(int argc,char **argv)
 			{
 				if(XmbTextListToTextProperty(tray_data.dpy,&settings.wnd_name,1,XTextStyle,&wm_name)!=Success)
 					/* Retry with default value */
-					settings.wnd_name=PROGNAME;
+					settings.wnd_name=(char*)PROGNAME;
 				else
 					break;
 				if(numtries++ > 1)
@@ -458,8 +458,8 @@ void tray_create_window(int argc,char **argv)
 	XSetWMName(tray_data.dpy,tray_data.tray,&wm_name);
 	XFree(wm_name.value);
 	/* Setup class hints */
-	xch.res_class=PROGNAME;
-	xch.res_name=PROGNAME;
+	xch.res_class=(char*)PROGNAME;
+	xch.res_name=(char*)PROGNAME;
 	/* Setup window manager hints */
 	xwmh.flags=StateHint | InputHint;
 	xwmh.input=False;
@@ -510,17 +510,17 @@ int tray_set_wm_hints()
 	mwm_set_hints(tray_data.dpy,tray_data.tray,mwm_decor,MWM_FUNC_ALL);
 	if(settings.sticky)
 		{
-			ewmh_add_window_state(tray_data.dpy,tray_data.tray,_NET_WM_STATE_STICKY);
-			ewmh_set_window_atom32(tray_data.dpy,tray_data.tray,_NET_WM_DESKTOP,0xFFFFFFFF);
+			ewmh_add_window_state(tray_data.dpy,tray_data.tray,(char*)_NET_WM_STATE_STICKY);
+			ewmh_set_window_atom32(tray_data.dpy,tray_data.tray,(char*)_NET_WM_DESKTOP,0xFFFFFFFF);
 		}
 	if(settings.skip_taskbar)
-		ewmh_add_window_state(tray_data.dpy,tray_data.tray,_NET_WM_STATE_SKIP_TASKBAR);
+		ewmh_add_window_state(tray_data.dpy,tray_data.tray,(char*)_NET_WM_STATE_SKIP_TASKBAR);
 	if(settings.wnd_layer!=NULL)
 		ewmh_add_window_state(tray_data.dpy,tray_data.tray,settings.wnd_layer);
-	ewmh_add_window_type(tray_data.dpy,tray_data.tray,_NET_WM_WINDOW_TYPE_DOCK);
+	ewmh_add_window_type(tray_data.dpy,tray_data.tray,(char*)_NET_WM_WINDOW_TYPE_DOCK);
 	/* Alwas add NORMAL window type for WM that do not support (some) special
 	 * types */
-	ewmh_add_window_type(tray_data.dpy,tray_data.tray,_NET_WM_WINDOW_TYPE_NORMAL);
+	ewmh_add_window_type(tray_data.dpy,tray_data.tray,(char*)_NET_WM_WINDOW_TYPE_NORMAL);
 	return SUCCESS;
 }
 
