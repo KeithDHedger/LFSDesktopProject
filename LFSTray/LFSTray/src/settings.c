@@ -760,7 +760,7 @@ struct Param params[]=
 
 void usage(char *progname)
 {
-	printf("\nlfstray " VERSION " [ " FEATURE_LIST " ]\n");
+	printf("\nlfstray " VERSION "\n");
 	printf("\nUsage: %s [options...]\n",progname);
 	printf(
 	    "\n"
