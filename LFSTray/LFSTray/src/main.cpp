@@ -54,18 +54,6 @@
 #include "settings.h"
 #include "tray.h"
 
-struct TrayData tray_data;
-
-void my_usleep(useconds_t usec)
-{
-	struct timeval timeout;
-	fd_set rfds;
-	FD_ZERO(&rfds);
-	timeout.tv_sec=0;
-	timeout.tv_usec=usec;
-	select(1,&rfds,NULL,NULL,&timeout);
-}
-
 /****************************
  * Signal handlers,cleanup
  ***************************/
@@ -594,12 +582,11 @@ int tray_main(int argc,char **argv)
 					if(tray_data.terminated) goto bailout;
 				}
 			perform_periodic_tasks();
-			my_usleep(500000L);
+			usleep(500000);
 		}
 bailout:
 	return 0;
 }
-
 
 /* main() */
 int main(int argc,char **argv)

@@ -1,12 +1,12 @@
 /*
  *
- * ©K. D. Hedger. Mon 13 Jan 16:18:50 GMT 2025 keithdhedger@gmail.com
+ * ©K. D. Hedger. Wed 15 Jan 20:14:30 GMT 2025 keithdhedger@gmail.com
 
- * This file (common.h) is part of LFSTray.
+ * This file (globals.h) is part of LFSTray.
 
  * LFSTray is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation,either version 3 of the License,or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
 
  * LFSTray is distributed in the hope that it will be useful,
@@ -15,7 +15,7 @@
    GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with LFSTray.  If not,see <http://www.gnu.org/licenses/>.
+ * along with LFSTray.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 /*
@@ -28,14 +28,27 @@
  * Common declarations
  * -------------------------------*/
 
-#ifndef _COMMON_H_
-#define _COMMON_H_
+#ifndef _GLOBAL_H_
+#define _GLOBAL_H_
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
+
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string>
+#include <filesystem>
+#include <iostream>
+#include <fstream>
+#include <algorithm>
+
+#include <ft2build.h>
+
+#include "config.h"
 #include "tray.h"
 #include "settings.h"
 
@@ -82,5 +95,44 @@
 #define cutoff(tgt,min,max) (tgt)<(min) ? (min) : ((tgt) > (max) ? max : tgt)
 /* Update value to fit into target interval */
 #define val_range(tgt,min,max) (tgt)=cutoff(tgt,min,max)
+
+struct TrayData
+{
+	/* General */
+	Window tray; /* ID of tray window */
+	Window hint_win; /* ID of icon window */
+	Display *dpy; /* Display pointer */
+	XSizeHints xsh; /* Size & position of the tray window */
+	XSizeHints root_wnd; /* Size & position :) of the root window */
+	Window old_selection_owner; /* Old owner of tray selection */
+	int terminated; /* Exit flag */
+	int is_active; /* Is the tray active? */
+	int is_reparented; /* Was the tray reparented in smth like FvwmButtons ? */
+	int kde_tray_old_mode; /* Use legacy scheme to handle KDE icons via MapNotify */
+
+	/* Atoms */
+	Atom xa_tray_selection; /* Atom: _NET_SYSTEM_TRAY_SELECTION_S<creen number>
+                             */
+	Atom xa_tray_opcode; /* Atom: _NET_SYSTEM_TRAY_MESSAGE_OPCODE */
+	Atom xa_tray_data; /* Atom: _NET_SYSTEM_TRAY_MESSAGE_DATA */
+	Atom xa_wm_protocols; /* Atom: WM_PROTOCOLS */
+	Atom xa_wm_delete_window; /* Atom: WM_DELETE_WINDOW */
+	Atom xa_net_wm_ping; /* Atom: WM_PING */
+	Atom xa_wm_take_focus; /* Atom: WM_TAKE_FOCUS */
+	Atom xa_kde_net_system_tray_windows; /* Atom: _KDE_NET_SYSTEM_TRAY_WINDOWS
+                                          */
+	Atom xa_net_client_list; /* Atom: _NET_CLIENT_LIST */
+
+	/* Background pixmap */
+	Atom xa_xrootpmap_id; /* Atom: _XROOTPMAP_ID */
+	Atom xa_xsetroot_id; /* Atom: _XSETROOT_ID */
+	Pixmap bg_pmap; /* Pixmap for tray background */
+	struct Point bg_pmap_dims; /* Background pixmap dimensions */
+
+	/* XEMBED data */
+	struct XEMBEDData xembed_data; /* XEMBED data */
+};
+
+extern struct TrayData	tray_data;
 
 #endif

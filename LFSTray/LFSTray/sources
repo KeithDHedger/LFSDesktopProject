@@ -1,1 +1,1 @@
-COMMONSRC = ../src/embed.cpp ../src/icons.cpp ../src/image.cpp ../src/layout.cpp ../src/main.cpp ../src/settings.cpp ../src/tray.cpp ../src/wmh.cpp ../src/xembed.cpp ../src/xutils.cpp
+COMMONSRC = ../src/embed.cpp ../src/globals.cpp ../src/icons.cpp ../src/image.cpp ../src/layout.cpp ../src/main.cpp ../src/settings.cpp ../src/tray.cpp ../src/wmh.cpp ../src/xembed.cpp ../src/xutils.cpp
