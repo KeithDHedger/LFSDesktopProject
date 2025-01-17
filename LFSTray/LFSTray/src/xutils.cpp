@@ -40,7 +40,7 @@
 #include <string.h>
 
 #include "xutils.h"
-#include "common.h"
+#include "globals.h"
 #include "xembed.h"
 
 static int trapped_x11_error_code=0;

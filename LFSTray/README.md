@@ -11,6 +11,8 @@ https://github.com/kolbusa/stalonetray
 make
 make install
 ```
+
+You dont need to install to try it out just run lfstray from the app folder.
 ###
 **QUICK USE:**  
 lfstray -h

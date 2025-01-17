@@ -35,7 +35,7 @@
 #include <X11/Xutil.h>
 
 #include "config.h"
-#include "common.h"
+#include "globals.h"
 #include "icons.h"
 #include "layout.h"
 #include "list.h"

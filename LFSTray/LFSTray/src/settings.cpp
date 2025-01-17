@@ -45,7 +45,7 @@
 #include <unistd.h>
 
 #include "config.h"
-#include "common.h"
+#include "globals.h"
 #include "layout.h"
 #include "list.h"
 #include "settings.h"

@@ -44,7 +44,7 @@
 
 #include "config.h"
 
-#include "common.h"
+#include "globals.h"
 #include "embed.h"
 #include "icons.h"
 #include "layout.h"

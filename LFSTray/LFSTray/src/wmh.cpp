@@ -30,7 +30,7 @@
 #include <X11/Xatom.h>
 #include <X11/Xmd.h>
 
-#include "common.h"
+#include "globals.h"
 #include "wmh.h"
 #include "xutils.h"
 

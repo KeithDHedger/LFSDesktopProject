@@ -37,7 +37,7 @@
 #include <unistd.h>
 
 #include "embed.h"
-#include "common.h"
+#include "globals.h"
 #include "icons.h"
 #include "settings.h"
 #include "tray.h"

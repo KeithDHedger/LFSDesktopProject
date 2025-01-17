@@ -35,7 +35,7 @@
 #include <assert.h>
 
 #include "icons.h"
-#include "common.h"
+#include "globals.h"
 #include "layout.h"
 #include "list.h"
 #include "tray.h"

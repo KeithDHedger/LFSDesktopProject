@@ -29,7 +29,7 @@
  * interface
  * -------------------------------*/
 
-#include "common.h"
+#include "globals.h"
 #include "image.h"
 
 /***** Forward declarations  *****/

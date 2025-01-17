@@ -37,7 +37,7 @@
 
 #include <limits.h>
 
-#include "common.h"
+#include "globals.h"
 #include "config.h"
 #include "icons.h"
 

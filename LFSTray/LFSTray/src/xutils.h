@@ -34,7 +34,7 @@
 #include <X11/X.h>
 #include <X11/Xatom.h>
 
-#include "common.h"
+#include "globals.h"
 #include "icons.h"
 
 /* Returns 1 if connection is active,0 otherwise */
