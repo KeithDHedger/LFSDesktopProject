@@ -264,12 +264,28 @@ void LFSTK_applicationClass::LFSTK_setTimerCallBack(bool (*timer)(LFSTK_applicat
 }
 
 /**
+* Set event callback for main loop,
+* \param bool functionname (LFSTK_applicationClass *p,void* ud)
+* \param void* ud User data passed to function.
+*/
+void LFSTK_applicationClass::LFSTK_setEventCallBack(bool (*evcb)(LFSTK_applicationClass*,XEvent*),void* ud)
+{
+//	this->callBacks.validCallbacks|=EVENTCB;
+	this->eventCallback=evcb;
+	//this->callBacks.keyUserData=ud;
+	//this->callBacks.runTheCallback=true;
+	//this->callBacks.ignoreOrphanModKeys=true;
+}
+
+/**
 * Run main loop,
 * \note default to this->mainWindow.
 */
 int LFSTK_applicationClass::LFSTK_runApp(void)
 {
 	XEvent	event;
+	bool		retval=false;
+
 	this->mainLoop=true;
 	fd_set readfd;
 	struct timeval tv={0,0};
@@ -301,6 +317,14 @@ int LFSTK_applicationClass::LFSTK_runApp(void)
 					while(XPending(this->display))
 						{
 							XNextEvent(this->display,&event);
+
+							if(this->eventCallback!=NULL)
+								{
+									retval=this->eventCallback(this,&event);
+									if(retval==true)
+										continue;
+								}
+
 							mappedListener *ml=this->mainWindow->LFSTK_getMappedListener(event.xany.window);
 
 							if(ml!=NULL)
@@ -322,6 +346,7 @@ int LFSTK_applicationClass::LFSTK_runApp(void)
 										}
 								}
 						}
+					usleep(1000);
 				}
 			else
 				{

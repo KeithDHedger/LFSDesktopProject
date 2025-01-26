@@ -1,4 +1,5 @@
 0.6.1
+Added LFSTK_moveResizeWindow to lib.
 Fix window tile cario surface getting occasional wrong size.
 Added extra positioning for window context window.
 Updated Window example.

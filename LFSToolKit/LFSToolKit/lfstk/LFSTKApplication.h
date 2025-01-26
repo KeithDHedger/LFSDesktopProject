@@ -64,6 +64,10 @@ class LFSTK_applicationClass
 		void						LFSTK_setTimer(int delay,bool usemicroseconds=false);
 		void						LFSTK_setTimerCallBack(bool (*timer)(LFSTK_applicationClass*,void*),void* ud);
 
+//events
+		void						LFSTK_setEventCallBack(bool (*evcb)(LFSTK_applicationClass*,XEvent*),void* ud);
+		bool						(*eventCallback)(LFSTK_applicationClass*,XEvent *ev)=NULL;
+
 //gui
 		bool						mainLoop=false;
 		int						exitValue=0;
@@ -91,6 +95,7 @@ class LFSTK_applicationClass
 		std::string				userHome="";
 		std::string				iconThemeName="";
 		std::map<unsigned long,Atom>	appAtomsHashed;
+
 
 	private:
 		int						displayNum;

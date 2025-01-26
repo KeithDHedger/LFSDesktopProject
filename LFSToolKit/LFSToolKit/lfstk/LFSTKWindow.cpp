@@ -405,6 +405,25 @@ void LFSTK_windowClass::LFSTK_moveWindow(int x,int y,bool tellx)
 }
 
 /**
+* Move and resize window.
+* \param x New X.
+* \param y New Y.
+* \param w New W.
+* \param h New H.
+* \param tellx Inform X (default=true).
+*/
+void LFSTK_windowClass::LFSTK_moveResizeWindow(int x,int y,int w,int h,bool tellx)
+{
+	this->setWindowGeom(x,y,w,h,WINDSETALL);
+	if(tellx==true)
+		XMoveResizeWindow(this->app->display,this->window,x,y,w,h);
+
+	this->globalLib->LFSTK_setCairoSurface(this->app->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+  	this->w=w;
+  	this->h=h;
+	this->LFSTK_clearWindow();
+}
+/**
 * Set default font string.
 * \param s Font string.
 * \note eg:
@@ -738,7 +757,7 @@ void LFSTK_windowClass::windowClassInitCommon(windowInitStruct *wi)
 			this->window=XCreateWindow(this->app->display,this->app->rootWindow,wi->x,wi->y,wi->w,wi->h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWOverrideRedirect,&wa);
 		}
 
-	XSelectInput(this->app->display,this->window,SubstructureRedirectMask|StructureNotifyMask|ButtonPressMask | ButtonReleaseMask | ExposureMask|LeaveWindowMask|FocusChangeMask|SelectionClear|SelectionRequest);
+	XSelectInput(this->app->display,this->window,SubstructureRedirectMask|StructureNotifyMask|ButtonPressMask | ButtonReleaseMask | ExposureMask|LeaveWindowMask|FocusChangeMask|SelectionClear|SelectionRequest | PropertyChangeMask);
 
 	XSetWMProtocols(this->app->display,this->window,&wm_delete_window,1);
 	xa=XInternAtom(this->app->display,"_NET_WM_ALLOWED_ACTIONS",False);
@@ -829,7 +848,7 @@ LFSTK_windowClass::LFSTK_windowClass(windowInitStruct *wi,LFSTK_applicationClass
 		{
 			this->window=XCreateWindow(this->app->display,this->app->rootWindow,wi->x,wi->y,wi->w,wi->h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWOverrideRedirect,&wa);
 		}
-	XSelectInput(this->app->display,this->window,SubstructureRedirectMask|StructureNotifyMask|ButtonPressMask | ButtonReleaseMask|ButtonMotionMask | ExposureMask | EnterWindowMask|LeaveWindowMask|FocusChangeMask|SelectionClear|SelectionRequest|KeyReleaseMask|KeyPressMask);
+	XSelectInput(this->app->display,this->window,SubstructureRedirectMask|StructureNotifyMask|ButtonPressMask | ButtonReleaseMask|ButtonMotionMask | ExposureMask | EnterWindowMask|LeaveWindowMask|FocusChangeMask|SelectionClear|SelectionRequest|KeyReleaseMask|KeyPressMask|PropertyChangeMask);
 
 	XSetWMProtocols(this->app->display,this->window,&wm_delete_window,1);
 	xa=XInternAtom(this->app->display,"_NET_WM_ALLOWED_ACTIONS",False);
@@ -1677,6 +1696,7 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 				break;
 
 			case ClientMessage:
+				fprintf(stderr,"ClientMessage SelectionNotify ev=%p\n",event);
 			case SelectionNotify:
 				{
 					if(event->xclient.message_type == XInternAtom(this->app->display, "WM_PROTOCOLS", 1) && (Atom)event->xclient.data.l[0] == XInternAtom(this->app->display, "WM_DELETE_WINDOW", 1))
@@ -1703,6 +1723,9 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 							break;
 						}
 				}
+				break;
+			case PropertyNotify:
+				//fprintf(stderr,"PropertyNotify ev=%p\n",event);
 				break;
 		}
 	this->ignoreContext=false;

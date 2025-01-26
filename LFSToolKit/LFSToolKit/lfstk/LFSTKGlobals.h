@@ -257,7 +257,8 @@ class LFSTK_applicationClass;
 #define	TIMERCB			0x80
 #define	MOUSEENTERCB		0x100
 #define	MOUSEEXITCB		0x200
-#define ALLCB			0x2ff
+#define ALLCB			0x3ff
+#define EVENTCB			0x400
 
 struct propertyStruct
 {
@@ -296,6 +297,7 @@ struct callbackStruct
 	bool					runTheCallback=true;
 	bool					ignoreOrphanModKeys=true;
 	int					validCallbacks=NOCB;
+//	bool					(*evCallback)(LFSTK_applicationClass*,void*)=NULL;
 	
 };
 

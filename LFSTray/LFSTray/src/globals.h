@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Wed 15 Jan 20:14:30 GMT 2025 keithdhedger@gmail.com
+ * ©K. D. Hedger. Tue 21 Jan 13:03:10 GMT 2025 keithdhedger@gmail.com
 
  * This file (globals.h) is part of LFSTray.
 
@@ -18,121 +18,53 @@
  * along with LFSTray.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*
- Forked from stalonetray ( big thanks )
- Original Code here:
- https://github.com/kolbusa/stalonetray
- * common.h
- * Mon,01 May 2006 01:45:08 +0700
- * -------------------------------
- * Common declarations
- * -------------------------------*/
+#ifndef _GLOBALS_
+#define _GLOBALS_
 
-#ifndef _GLOBAL_H_
-#define _GLOBAL_H_
+#include <X11/Xatom.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
+#include <lfstk/LFSTKGlobals.h>
+#include <Imlib2.h>
 
-
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string>
-#include <filesystem>
-#include <iostream>
-#include <fstream>
-#include <algorithm>
-
-#include <ft2build.h>
-
-#include "config.h"
-#include "tray.h"
-#include "settings.h"
-
-#define PROGNAME PACKAGE
-
-/* Default icon size */
-#define FALLBACK_ICON_SIZE 24
-/* Minimal icon size */
-#define MIN_ICON_SIZE 16
-/* Default KDE icon size */
-#define KDE_ICON_SIZE 22
-/* Number of time icon is allowed to change its size after which
- * lfstray gives up */
-#define ICON_SIZE_RESETS_THRESHOLD 2
-
-/* Meaningful names for return values */
-#define SUCCESS 1
-#define FAILURE 0
-
-/* Meaningful names for return values of icon mass-operations */
-#define MATCH 1
-#define NO_MATCH 0
-
-/* Meaningful names for return values of icon mass-operations */
-#define MATCH 1
-/* Portable macro for function name */
-#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
-#define __FUNC__ __func__
-#elif defined(__GNUC__) && __GNUC__ >= 3
-#define __FUNC__ __FUNCTION__
-#else
-#define __FUNC__ "unknown"
-#endif
-
-/* DIE */
-/* Print a message and... DIE */
-#define DIEDIE() exit(-1)
-/* DIE on OOM error */
-#define DIE_OOM(message) { fprintf(stderr,"%s",message); exit(-1); }
-
-/*** WARNING: feed following macros only with side-effects-free expressions
- * ***/
-/* Get a value within target interval */
-#define cutoff(tgt,min,max) (tgt)<(min) ? (min) : ((tgt) > (max) ? max : tgt)
-/* Update value to fit into target interval */
-#define val_range(tgt,min,max) (tgt)=cutoff(tgt,min,max)
-
-struct TrayData
+struct sysIcons
 {
-	/* General */
-	Window tray; /* ID of tray window */
-	Window hint_win; /* ID of icon window */
-	Display *dpy; /* Display pointer */
-	XSizeHints xsh; /* Size & position of the tray window */
-	XSizeHints root_wnd; /* Size & position :) of the root window */
-	Window old_selection_owner; /* Old owner of tray selection */
-	int terminated; /* Exit flag */
-	int is_active; /* Is the tray active? */
-	int is_reparented; /* Was the tray reparented in smth like FvwmButtons ? */
-	int kde_tray_old_mode; /* Use legacy scheme to handle KDE icons via MapNotify */
-
-	/* Atoms */
-	Atom xa_tray_selection; /* Atom: _NET_SYSTEM_TRAY_SELECTION_S<creen number>
-                             */
-	Atom xa_tray_opcode; /* Atom: _NET_SYSTEM_TRAY_MESSAGE_OPCODE */
-	Atom xa_tray_data; /* Atom: _NET_SYSTEM_TRAY_MESSAGE_DATA */
-	Atom xa_wm_protocols; /* Atom: WM_PROTOCOLS */
-	Atom xa_wm_delete_window; /* Atom: WM_DELETE_WINDOW */
-	Atom xa_net_wm_ping; /* Atom: WM_PING */
-	Atom xa_wm_take_focus; /* Atom: WM_TAKE_FOCUS */
-	Atom xa_kde_net_system_tray_windows; /* Atom: _KDE_NET_SYSTEM_TRAY_WINDOWS
-                                          */
-	Atom xa_net_client_list; /* Atom: _NET_CLIENT_LIST */
-
-	/* Background pixmap */
-	Atom xa_xrootpmap_id; /* Atom: _XROOTPMAP_ID */
-	Atom xa_xsetroot_id; /* Atom: _XSETROOT_ID */
-	Pixmap bg_pmap; /* Pixmap for tray background */
-	struct Point bg_pmap_dims; /* Background pixmap dimensions */
-
-	/* XEMBED data */
-	struct XEMBEDData xembed_data; /* XEMBED data */
+	Window	iconWindow;
+	Window	parentWindow;
+	int		x;
+	int		y;
+	int		w;
+	int		h;
+	bool		embedded;
+	Pixmap	background;
 };
 
-extern struct TrayData	tray_data;
+class LFSTray_embedClass;
+
+#include "trayClass.h"
+#include "embedClass.h"
+
+#include "callbacks.h"
+
+// XEMBED messages
+#define XEMBED_EMBEDDED_NOTIFY 0
+// Flags for _XEMBED_INFO
+#define XEMBED_MAPPED (1 << 0)
+
+/* defined in the systray spec */
+#define SYSTEM_TRAY_REQUEST_DOCK 0
+#define SYSTEM_TRAY_BEGIN_MESSAGE 1
+#define SYSTEM_TRAY_CANCEL_MESSAGE 2
+
+//extern LFSTK_windowClass		*transwc;
+
+extern bool					xerror;
+extern int					errorcode;
+extern std::string			doingwhat;
+
+int windowErrorHandler(Display *d,XErrorEvent *e);
+
+void DEBUG_printEventData(XEvent *e,bool verbose);
+void DEBUG_printAtom(Atom a);
+void DEBUG_showIcons(void);
 
 #endif

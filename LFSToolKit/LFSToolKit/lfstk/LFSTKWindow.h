@@ -84,6 +84,7 @@ class LFSTK_windowClass
 		void 				LFSTK_clearWindow(bool cleargadgets=false);
 		void					LFSTK_resizeWindow(int w,int h,bool tellx=true);
 		void					LFSTK_moveWindow(int x,int y,bool tellx=true);
+		void					LFSTK_moveResizeWindow(int x,int y,int w,int h,bool tellx=true);
 		const geometryStruct	*LFSTK_getWindowGeom(void);
 		void					setWindowGeom(int x,int y,int h,int w,setWindowGeomFlags flags);
 

@@ -73,3 +73,5 @@ devtests
 LFSTray/lfstray.sample
 LFSTray/LFSTray/app/lfstray
 *config.h.in
+
+*/*/src.*

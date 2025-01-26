@@ -1,3 +1,19 @@
+1.0.4
+Reduced flickering when adding/removing icons.
+
+1.0.1
+Added aboveall/belowall.
+Auto set layout to vertical/horizontal for N,S,W,E.
+Added reposition window to N,S,E,W.
+Added choose montior to display on.
+Added vertical layout.
+Added reposition window to NW,NE,SW,SE.
+Reduced flikering when adding icon.
+Set BG to root pixmap.
+Integrate with liblfstoolkit.
+Complete rewrite from scratch to c++.
+Dumped all Stalonetray code ( temp step back ).
+
 1.0.0
 Added to LFSDesktopProject
 
