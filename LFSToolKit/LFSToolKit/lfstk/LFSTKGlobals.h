@@ -44,6 +44,7 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
+#include <getopt.h>
 
 #include <experimental/filesystem>
 

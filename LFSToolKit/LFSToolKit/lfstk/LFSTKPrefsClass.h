@@ -24,6 +24,7 @@
 #include <map>
 #include <string>
 #include <string.h>
+#include <getopt.h>
 
 enum dataType {TYPEINVALID,TYPESTRING,TYPEBOOL,TYPEINT};
 
@@ -69,6 +70,9 @@ class LFSTK_prefsClass
 //get/set
 		int					LFSTK_getInt(const char *key);
 		void					LFSTK_setInt(const char *key,int val);
+
+//get cli args
+		bool					LFSTK_argsToPrefs(int argc, char **argv,option longoptions[]);
 
 	private:
 		const char			*bools[2]={"false","true"};

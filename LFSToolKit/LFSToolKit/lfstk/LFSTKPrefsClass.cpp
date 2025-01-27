@@ -169,8 +169,12 @@ void LFSTK_prefsClass::LFSTK_loadVarsFromFile(std::string filepath)
 											case TYPEBOOL:
 												x.second.boolData=this->LFSTK_stringToBool(data);
 												break;
-											case TYPEINT:
-												x.second.intData=std::stoi(data);
+											case TYPEINT:												
+												try
+													{
+														x.second.intData=std::stoll(data,nullptr,0);
+													}
+												catch(std::exception &err) {}
 												break;
 											default:
 												break;
@@ -260,4 +264,67 @@ int LFSTK_prefsClass::LFSTK_getInt(const char *key)
 void LFSTK_prefsClass::LFSTK_setInt(const char *key,int val)
 {
 	this->prefsMap.at(LFSTK_UtilityClass::LFSTK_hashFromKey(key)).intData=val;
+}
+
+/**
+* Set prefs from command line.
+* \param int argc, char **argv as passed to application.
+* \param longoptions[] normal option long_options[] from getopt_long.
+* \return boolean false=No prefs set, true=OK.
+*/
+bool LFSTK_prefsClass::LFSTK_argsToPrefs(int argc, char **argv,option longoptions[])
+{
+	int			ocnt=0;
+	int			c;
+	std::string	optstr="";
+	int			option_index;
+
+	if(this->prefsMap.size()==0)
+		{
+			fprintf(stderr,"No prefs set ...\n");
+			return(false);
+		}
+
+	while(longoptions[ocnt].name!=0)
+		{
+			optstr+=longoptions[ocnt].val;
+			if(longoptions[ocnt].has_arg==required_argument)
+				optstr+=":";
+			if(longoptions[ocnt].has_arg==optional_argument)
+				optstr+="::";
+			ocnt++;
+		}
+
+	while (1)
+		{
+			option_index=0;
+			c=getopt_long (argc,argv,optstr.c_str(),longoptions,&option_index);
+			if(c==-1)
+				break;
+			ocnt=0;
+			while(longoptions[ocnt].name!=0)
+				{
+					if(longoptions[ocnt].val==c)
+						{
+							dataType typeit=this->prefsMap.at(LFSTK_UtilityClass::LFSTK_hashFromKey(longoptions[ocnt].name)).type;
+							switch(typeit)
+								{
+									case TYPESTRING:
+										this->LFSTK_setString(longoptions[ocnt].name,optarg);
+										break;
+									case TYPEINT:
+										this->LFSTK_setInt(longoptions[ocnt].name,strtol(optarg,NULL,0));
+										break;
+									case TYPEBOOL:
+										if(optarg==NULL)
+											this->LFSTK_setBool(longoptions[ocnt].name,true);
+										else
+											this->LFSTK_setBool(longoptions[ocnt].name,this->LFSTK_stringToBool(optarg));
+										break;
+								}
+						}
+					ocnt++;
+				}
+		}
+	return(true);
 }
