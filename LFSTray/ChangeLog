@@ -1,4 +1,7 @@
 1.0.4
+Added help option.
+Added cli prefs overides.
+Added prefs file.
 Reduced flickering when adding/removing icons.
 
 1.0.1

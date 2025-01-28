@@ -21,11 +21,13 @@
 #ifndef _GLOBALS_
 #define _GLOBALS_
 
+//#define __DEBUG__
 #include <X11/Xatom.h>
 
 #include <lfstk/LFSTKGlobals.h>
 #include <Imlib2.h>
 
+#include "config.h"
 struct sysIcons
 {
 	Window	iconWindow;
@@ -63,8 +65,10 @@ extern std::string			doingwhat;
 
 int windowErrorHandler(Display *d,XErrorEvent *e);
 
+#ifdef __DEBUG__
 void DEBUG_printEventData(XEvent *e,bool verbose);
 void DEBUG_printAtom(Atom a);
 void DEBUG_showIcons(void);
+#endif
 
 #endif

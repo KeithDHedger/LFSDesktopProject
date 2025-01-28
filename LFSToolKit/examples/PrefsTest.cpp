@@ -9,7 +9,10 @@ if [ "X$USEVALGRIND" != "X" ];then
 fi
 
 APPNAME=$(basename $0 .cpp)
-# Run as for instance ./PrefsTest.cpp --colour="green" --gravity=3 -v0 --theme="mytheme"
+# Run as for instance ./PrefsTest.cpp --colour="green" --gravity 1 -V0 --theme="mytheme"
+#Or:
+#./PrefsTest.cpp -h
+
 g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo glib-2.0 imlib2) -llfstoolkit -o $APPNAME||exit 1
 LD_LIBRARY_PATH=../LFSToolKit/app/.libs $VALGRIND ./$APPNAME "$@"
 
@@ -31,7 +34,7 @@ LFSTK_labelClass			*copyrite=NULL;
 LFSTK_buttonClass		*seperator=NULL;
 LFSTK_buttonClass		*quit=NULL;
 LFSTK_buttonClass		*test=NULL;
-LFSTK_prefsClass			prefs;
+LFSTK_prefsClass			prefs("PrefsTest","1.2.3");
 
 bool doQuit(void *p,void* ud)
 {
@@ -64,10 +67,10 @@ void setPrefs(int argc, char **argv)
 {
 	prefs.prefsMap=
 		{
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("theme"),{TYPESTRING,"theme","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("colour"),{TYPESTRING,"colour","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("gravity"),{TYPEINT,"gravity","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("vertical"),{TYPEBOOL,"vertical","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("theme"),{TYPESTRING,"theme","Use theme ARG","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("colour"),{TYPESTRING,"colour","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("gravity"),{TYPEINT,"gravity","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("vertical"),{TYPEBOOL,"vertical","Vertical systray ( default horizontal )","",false,0}},
 		};
 
 	prefs.LFSTK_loadVarsFromFile("./testprefs.rc");
@@ -78,10 +81,16 @@ void printPrefs(void)
 	prefs.LFSTK_saveVarsToFile("-");
 }
 
+void printXtraHelp(void)
+{
+	fprintf(stderr,"\nAny xtra help to print goes here ...\n");
+}
+
 int main(int argc, char **argv)
 {
 	int					sy=BORDER;
 	LFSTK_buttonClass	*button=NULL;
+	int					retval=0;
 
 	apc=new LFSTK_applicationClass();
 	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
@@ -135,16 +144,20 @@ int main(int argc, char **argv)
 			{"theme",required_argument,NULL,'t'},
 			{"colour",required_argument,NULL,'c'},
 			{"gravity",required_argument,NULL,'g'},
-			{"vertical",optional_argument,NULL,'v'},
-			{"help",no_argument,0,'?'},
+			{"vertical",optional_argument,NULL,'V'},
 			{0,0,0,0}
 		};
 
 	fprintf(stderr,"\nOverriding prefs from commandline ...\n");
-	prefs.LFSTK_argsToPrefs(argc,argv,long_options);
-	printPrefs();
-
-	int retval=apc->LFSTK_runApp();
+	if(prefs.LFSTK_argsToPrefs(argc,argv,long_options,true)==false)
+		{
+			printXtraHelp();
+		}
+	else
+		{
+			printPrefs();
+			retval=apc->LFSTK_runApp();
+		}
 
 	delete apc;
 	cairo_debug_reset_static_data();

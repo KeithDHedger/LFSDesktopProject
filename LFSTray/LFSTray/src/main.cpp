@@ -24,6 +24,33 @@
 
 LFSTray_trayClass	*trayClass=NULL;
 LFSTK_windowClass	*transwc=NULL;
+LFSTK_prefsClass		prefs(PACKAGE,VERSION);
+
+option long_options[]=
+	{
+		{"monitor",required_argument,NULL,'m'},
+		{"iconsize",required_argument,NULL,'i'},
+		{"gravity",required_argument,NULL,'g'},
+		{"vertical",no_argument,NULL,'V'},
+		{"below",no_argument,NULL,'b'},
+		{0,0,0,0}
+	};
+
+void setPrefs(int argc,char **argv)
+{
+	std::string	configfile=getenv("HOME");
+	configfile+="/.config/LFS/tray.rc";
+
+	prefs.prefsMap=
+		{
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("monitor"),{TYPEINT,"monitor","Place on monitor ARG","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("iconsize"),{TYPEINT,"iconsize","Iconsize ARG","",false,32}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("gravity"),{TYPEINT,"gravity","Gravity NW ARG=1,NE ARG=2,SE ARG=3,SW ARG=4,N ARG=5,E ARG=6,S ARG=7,W ARG=8","",false,NW}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("vertical"),{TYPEBOOL,"vertical","Vertical systray ( default horizontal )","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("below"),{TYPEBOOL,"below","Below all windows ( default above )","",false,0}},
+		};
+	prefs.LFSTK_loadVarsFromFile(configfile);
+}
 
 int main(int argc,char **argv)
 {
@@ -32,19 +59,26 @@ int main(int argc,char **argv)
 	apc=new LFSTK_applicationClass;
 	trayClass=new LFSTray_trayClass(apc);
 
-	trayClass->vertical=false;
-	trayClass->onMonitor=0;
-	trayClass->gravity=NW;
-	trayClass->iconSize=32;
+	setPrefs(argc,argv);
+
+	if(prefs.LFSTK_argsToPrefs(argc,argv,long_options,true)==false)
+		{
+			delete trayClass;
+			delete apc;
+			cairo_debug_reset_static_data();
+			return(1);
+		}
+	else
+		{
+			trayClass->vertical=prefs.LFSTK_getBool("vertical")	;
+			trayClass->isbelow=prefs.LFSTK_getBool("below");
+			trayClass->onMonitor=prefs.LFSTK_getInt("monitor");
+			trayClass->gravity=(TrayPos)prefs.LFSTK_getInt("gravity");
+			trayClass->iconSize=prefs.LFSTK_getInt("iconsize");
+		}
 
 	wi=apc->LFSTK_getDefaultWInit();
 	wi->overRide=false;
-
-	if(argc>1)
-		{
-			if(strcmp(argv[1],"-below")==0)
-				trayClass->isbelow=true;
-		}
 
 	if(trayClass->isbelow==true)
 		wi->level=BELOWALL;
@@ -55,13 +89,12 @@ int main(int argc,char **argv)
 	wi->className="LFSDOCK";
 	wi->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DOCK"));
 
-	apc->LFSTK_addWindow(wi,"TRANSPARENT SUB WINDOW");
+	apc->LFSTK_addWindow(wi,PACKAGE);
 	transwc=apc->mainWindow;
 
 	trayClass->setTrayAtoms();
 
 	XSetSelectionOwner(apc->display,trayClass->_NET_SYSTEM_TRAY_SCREEN,transwc->window,CurrentTime);
-	fprintf(stderr,"XGetSelectionOwner=%p\n",XGetSelectionOwner(apc->display,trayClass->_NET_SYSTEM_TRAY_SCREEN));
 	if(XGetSelectionOwner(apc->display,trayClass->_NET_SYSTEM_TRAY_SCREEN) != transwc->window)
 		{
 			fprintf(stderr,"lfstray: cannot find systray manager"  "\n");
@@ -82,8 +115,6 @@ int main(int argc,char **argv)
 
 	transwc->LFSTK_setSticky(true);
 	trayClass->resetWindow();
-
-	printf("Number of gadgets in window=%i\n",transwc->LFSTK_gadgetCount());
 
 	apc->LFSTK_setEventCallBack(eventCB,(void*)0xdeadbeef);
 

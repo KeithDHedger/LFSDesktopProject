@@ -248,19 +248,19 @@ int main(int argc,char **argv)
 	sanityCheck();
 
 	prefs.prefsMap={
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("docksize"),{TYPEINT,"docksize","",false,1}},
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("onmonitor"),{TYPEINT,"onmonitor","",false,0}},
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("dockgrav"),{TYPEINT,"dockgrav","",false,0}},
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","black",false,0}},
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","xterm -e ",false,0}},
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","l",false,0}},
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("font"),{TYPESTRING,"font","",false,0}},
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("dockbgcolour"),{TYPESTRING,"dockbgcolour","grey",false,0}},
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("refreshrate"),{TYPEINT,"refreshrate","",false,1}},
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("usemicroseconds"),{TYPEBOOL,"usemicroseconds","",false,0}},
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("usebg"),{TYPEBOOL,"usebg","",false,0}},
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("usebgpath"),{TYPESTRING,"usebgpath","",false,0}},
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("prelightcolour"),{TYPESTRING,"prelightcolour","#00000000",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("docksize"),{TYPEINT,"docksize","","",false,1}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("onmonitor"),{TYPEINT,"onmonitor","","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("dockgrav"),{TYPEINT,"dockgrav","","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","","black",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","","xterm -e ",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","","l",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("font"),{TYPESTRING,"font","","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("dockbgcolour"),{TYPESTRING,"dockbgcolour","","grey",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("refreshrate"),{TYPEINT,"refreshrate","","",false,1}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("usemicroseconds"),{TYPEBOOL,"usemicroseconds","","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("usebg"),{TYPEBOOL,"usebg","","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("usebgpath"),{TYPESTRING,"usebgpath","","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("prelightcolour"),{TYPESTRING,"prelightcolour","","#00000000",false,0}},
 					};
 	realMainLoop=true;
 

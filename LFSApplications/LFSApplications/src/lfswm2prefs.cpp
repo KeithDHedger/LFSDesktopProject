@@ -202,27 +202,27 @@ bool buttonCB(void *p,void* ud)
 				{
 					prefs.prefsMap=
 						{
-							{LFSTK_UtilityClass::LFSTK_hashFromKey("framebg"),{TYPESTRING,"framebg",previeColourEdit[FRAMEBG]->LFSTK_getCStr(),false,0}},
-							{LFSTK_UtilityClass::LFSTK_hashFromKey("framefg"),{TYPESTRING,"framefg",previeColourEdit[FRAMEFG]->LFSTK_getCStr(),false,0}},
-							{LFSTK_UtilityClass::LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour",previeColourEdit[TEXTCOL]->LFSTK_getCStr(),false,0}},
-							{LFSTK_UtilityClass::LFSTK_hashFromKey("titlebarsize"),{TYPEINT,"titlebarsize","",false,atoi(titleBarSizeEdit->LFSTK_getCStr())}},
-							{LFSTK_UtilityClass::LFSTK_hashFromKey("framealpha"),{TYPEINT,"framealpha","",false,atoi(frameAlphaEdit->LFSTK_getCStr())}},
-							{LFSTK_UtilityClass::LFSTK_hashFromKey("bottombarsize"),{TYPEINT,"bottombarsize","",false,atoi(bottomBarSizeEdit->LFSTK_getCStr())}},
-							{LFSTK_UtilityClass::LFSTK_hashFromKey("leftsidebarsize"),{TYPEINT,"leftsidebarsize","",false,atoi(leftBarSizeEdit->LFSTK_getCStr())}},
-							{LFSTK_UtilityClass::LFSTK_hashFromKey("ritesidebarsize"),{TYPEINT,"ritesidebarsize","",false,atoi(rightBarSizeEdit->LFSTK_getCStr())}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("framebg"),{TYPESTRING,"framebg","",previeColourEdit[FRAMEBG]->LFSTK_getCStr(),false,0}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("framefg"),{TYPESTRING,"framefg","",previeColourEdit[FRAMEFG]->LFSTK_getCStr(),false,0}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","",previeColourEdit[TEXTCOL]->LFSTK_getCStr(),false,0}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("titlebarsize"),{TYPEINT,"titlebarsize","","",false,atoi(titleBarSizeEdit->LFSTK_getCStr())}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("framealpha"),{TYPEINT,"framealpha","","",false,atoi(frameAlphaEdit->LFSTK_getCStr())}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("bottombarsize"),{TYPEINT,"bottombarsize","","",false,atoi(bottomBarSizeEdit->LFSTK_getCStr())}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("leftsidebarsize"),{TYPEINT,"leftsidebarsize","","",false,atoi(leftBarSizeEdit->LFSTK_getCStr())}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("ritesidebarsize"),{TYPEINT,"ritesidebarsize","","",false,atoi(rightBarSizeEdit->LFSTK_getCStr())}},
 
-							{LFSTK_UtilityClass::LFSTK_hashFromKey("titlefont"),{TYPESTRING,"titlefont",fontEdit->LFSTK_getCStr(),false,0}},
-							{LFSTK_UtilityClass::LFSTK_hashFromKey("titleposition"),{TYPEINT,"titleposition","",false,titlePosTemp}},
-							{LFSTK_UtilityClass::LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","",useTheme->LFSTK_getValue(),0}},
-							{LFSTK_UtilityClass::LFSTK_hashFromKey("theme"),{TYPESTRING,"theme",themeEdit->LFSTK_getCStr(),false,0}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("titlefont"),{TYPESTRING,"titlefont","",fontEdit->LFSTK_getCStr(),false,0}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("titleposition"),{TYPEINT,"titleposition","","",false,titlePosTemp}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","","",useTheme->LFSTK_getValue(),0}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("theme"),{TYPESTRING,"theme","",themeEdit->LFSTK_getCStr(),false,0}},
 
-							{LFSTK_UtilityClass::LFSTK_hashFromKey("placement"),{TYPEINT,"placement","",false,prefsPlacementTemp}},
-							{LFSTK_UtilityClass::LFSTK_hashFromKey("desktops"),{TYPEINT,"desktops","",false,atoi(deskCountEdit->LFSTK_getCStr())}},
-							{LFSTK_UtilityClass::LFSTK_hashFromKey("resizemode"),{TYPEINT,"resizemode","",false,prefsResizeTemp}},
-							{LFSTK_UtilityClass::LFSTK_hashFromKey("rescanprefs"),{TYPEINT,"rescanprefs","",false,atoi(rescanEdit->LFSTK_getCStr())}},
-							{LFSTK_UtilityClass::LFSTK_hashFromKey("forcedocksstack"),{TYPEINT,"forcedocksstack","",false,forceDockStackTemp}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("placement"),{TYPEINT,"placement","","",false,prefsPlacementTemp}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("desktops"),{TYPEINT,"desktops","","",false,atoi(deskCountEdit->LFSTK_getCStr())}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("resizemode"),{TYPEINT,"resizemode","","",false,prefsResizeTemp}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("rescanprefs"),{TYPEINT,"rescanprefs","","",false,atoi(rescanEdit->LFSTK_getCStr())}},
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("forcedocksstack"),{TYPEINT,"forcedocksstack","","",false,forceDockStackTemp}},
 
-							{LFSTK_UtilityClass::LFSTK_hashFromKey("modkeys"),{TYPEINT,"modkeys","",false,prefsModkeys1Temp}}
+							{LFSTK_UtilityClass::LFSTK_hashFromKey("modkeys"),{TYPEINT,"modkeys","","",false,prefsModkeys1Temp}}
 						};
 
 					prefs.LFSTK_saveVarsToFile(envFile);
@@ -383,24 +383,24 @@ int main(int argc, char **argv)
 
 	prefs.prefsMap=
 		{
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("theme"),{TYPESTRING,"theme","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("desktops"),{TYPEINT,"desktops","",false,6}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("placement"),{TYPEINT,"placement","",false,2}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("titlefont"),{TYPESTRING,"titlefont","sans:size=14:bold",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("titleposition"),{TYPEINT,"titleposition","",false,2}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("titlebarsize"),{TYPEINT,"titlebarsize","",false,20}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("leftsidebarsize"),{TYPEINT,"leftsidebarsize","",false,2}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("ritesidebarsize"),{TYPEINT,"ritesidebarsize","",false,2}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("bottombarsize"),{TYPEINT,"bottombarsize","",false,8}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("framebg"),{TYPESTRING,"framebg","grey",false,15}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("framefg"),{TYPESTRING,"framefg","white",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","black",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("forcedocksstack"),{TYPEINT,"forcedocksstack","",false,1}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("rescanprefs"),{TYPEINT,"rescanprefs","",false,10}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("resizemode"),{TYPEINT,"resizemode","",false,2}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("modkeys"),{TYPEINT,"modkeys","",false,64}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("framealpha"),{TYPEINT,"framealpha","",false,255}}
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("theme"),{TYPESTRING,"theme","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("desktops"),{TYPEINT,"desktops","","",false,6}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("placement"),{TYPEINT,"placement","","",false,2}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("titlefont"),{TYPESTRING,"titlefont","","sans:size=14:bold",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("titleposition"),{TYPEINT,"titleposition","","",false,2}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("titlebarsize"),{TYPEINT,"titlebarsize","","",false,20}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("leftsidebarsize"),{TYPEINT,"leftsidebarsize","","",false,2}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("ritesidebarsize"),{TYPEINT,"ritesidebarsize","","",false,2}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("bottombarsize"),{TYPEINT,"bottombarsize","","",false,8}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("framebg"),{TYPESTRING,"framebg","","grey",false,15}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("framefg"),{TYPESTRING,"framefg","","white",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","","black",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("forcedocksstack"),{TYPEINT,"forcedocksstack","","",false,1}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("rescanprefs"),{TYPEINT,"rescanprefs","","",false,10}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("resizemode"),{TYPEINT,"resizemode","","",false,2}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("modkeys"),{TYPEINT,"modkeys","","",false,64}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("framealpha"),{TYPEINT,"framealpha","","",false,255}}
 		};
 
 	asprintf(&envFile,"%s/lfswm2.rc",apc->configDir.c_str());

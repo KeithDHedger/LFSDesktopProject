@@ -1,4 +1,8 @@
+0.7.0
+Changes to structures, you must recompile all.
+
 0.6.1
+Added simple optional auto help options to LFSTK_argsToPrefs ( -? and -h ).
 Added LFSTK_argsToPrefs to prefs class.
 Added LFSTK_moveResizeWindow to lib.
 Fix window tile cario surface getting occasional wrong size.

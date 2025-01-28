@@ -47,11 +47,11 @@ bool loadCacheFile(const char *cachefilepath,desktopItemStruct *cfd)
 
 	cacheprefs.prefsMap=
 		{
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("uuid"),{TYPESTRING,"uuid","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("posx"),{TYPEINT,"posx","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("posy"),{TYPEINT,"posy","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("hascustomicon"),{TYPEBOOL,"hascustomicon","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("pathtocustomicon"),{TYPESTRING,"pathtocustomicon","",false,0}}
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("uuid"),{TYPESTRING,"uuid","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("posx"),{TYPEINT,"posx","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("posy"),{TYPEINT,"posy","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("hascustomicon"),{TYPEBOOL,"hascustomicon","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("pathtocustomicon"),{TYPESTRING,"pathtocustomicon","","",false,0}}
 		};
 
 	cacheprefs.LFSTK_loadVarsFromFile(cachefilepath);
@@ -78,11 +78,11 @@ void saveCacheFile(const char *cachefilepath,desktopItemStruct *cfd)
 
 	cacheprefs.prefsMap=
 		{
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("uuid"),{TYPESTRING,"uuid",cfd->uuid,false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("posx"),{TYPEINT,"posx","",false,cfd->posx}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("posy"),{TYPEINT,"posy","",false,cfd->posy}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("hascustomicon"),{TYPEBOOL,"hascustomicon","",cfd->hasCustomIcon,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("pathtocustomicon"),{TYPESTRING,"pathtocustomicon",iconpath,false,0}}
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("uuid"),{TYPESTRING,"uuid","",cfd->uuid,false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("posx"),{TYPEINT,"posx","","",false,cfd->posx}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("posy"),{TYPEINT,"posy","","",false,cfd->posy}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("hascustomicon"),{TYPEBOOL,"hascustomicon","","",cfd->hasCustomIcon,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("pathtocustomicon"),{TYPESTRING,"pathtocustomicon","",iconpath,false,0}}
 		};
 
 	cacheprefs.LFSTK_saveVarsToFile(cachefilepath);
@@ -115,22 +115,22 @@ void loadPrefs(void)
 //{LFSTK_UtilityClass::LFSTK_hashFromKey(\1),{\2,\1,"",false,0}}
 	prefs.prefsMap=
 		{
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("icontheme"),{TYPESTRING,"icontheme","gnome",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("iconsize"),{TYPEINT,"iconsize","",false,32}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("gridsize"),{TYPEINT,"gridsize","",false,64}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("gridborderleft"),{TYPEINT,"gridborderleft","",false,2}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("gridborderrite"),{TYPEINT,"gridborderrite","",false,2}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("refreshrate"),{TYPEINT,"refreshrate","",false,2}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","xterm -e ",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("showextension"),{TYPEBOOL,"showextension","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("fontface"),{TYPESTRING,"fontface","sans:size=10:bold",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("labelbackground"),{TYPESTRING,"labelbackground","#000000",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("labelforeground"),{TYPESTRING,"labelforeground","#ffffff",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("labelalpha"),{TYPESTRING,"labelalpha","1.0",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("includelist"),{TYPESTRING,"includelist","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("excludelist"),{TYPESTRING,"excludelist","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("doubleclickexe"),{TYPEBOOL,"doubleclickexe","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("desknames"),{TYPESTRING,"desknames","Desktop 1,Desktop 2,Desktop 3,Desktop 4,Desktop 5,Desktop 6",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("icontheme"),{TYPESTRING,"icontheme","","gnome",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("iconsize"),{TYPEINT,"iconsize","","",false,32}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("gridsize"),{TYPEINT,"gridsize","","",false,64}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("gridborderleft"),{TYPEINT,"gridborderleft","","",false,2}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("gridborderrite"),{TYPEINT,"gridborderrite","","",false,2}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("refreshrate"),{TYPEINT,"refreshrate","","",false,2}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","","xterm -e ",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("showextension"),{TYPEBOOL,"showextension","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("fontface"),{TYPESTRING,"fontface","","sans:size=10:bold",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("labelbackground"),{TYPESTRING,"labelbackground","","#000000",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("labelforeground"),{TYPESTRING,"labelforeground","","#ffffff",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("labelalpha"),{TYPESTRING,"labelalpha","","1.0",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("includelist"),{TYPESTRING,"includelist","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("excludelist"),{TYPESTRING,"excludelist","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("doubleclickexe"),{TYPEBOOL,"doubleclickexe","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("desknames"),{TYPESTRING,"desknames","","Desktop 1,Desktop 2,Desktop 3,Desktop 4,Desktop 5,Desktop 6",false,0}},
 		};
 
 	prefs.LFSTK_loadVarsFromFile(prefsPath);

@@ -34,11 +34,6 @@ bool eventCB(LFSTK_applicationClass *p,XEvent *event)
 					case SYSTEM_TRAY_REQUEST_DOCK:
 						{
 							win=event->xclient.data.l[2];
-							fprintf(stderr,"SYSTEM_TRAY_REQUEST_DOCK\n");
-							if(win)
-								{
-									fprintf(stderr,"request win=%p\n",win);
-								}
 							trayClass->firstrun=100;
 							bool retval=trayClass->embedClass->addIcon(win);
 							trayClass->embedClass->embedWindow(win);

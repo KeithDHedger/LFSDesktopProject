@@ -1696,7 +1696,7 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 				break;
 
 			case ClientMessage:
-				fprintf(stderr,"ClientMessage SelectionNotify ev=%p\n",event);
+				//fprintf(stderr,"ClientMessage SelectionNotify ev=%p\n",event);
 			case SelectionNotify:
 				{
 					if(event->xclient.message_type == XInternAtom(this->app->display, "WM_PROTOCOLS", 1) && (Atom)event->xclient.data.l[0] == XInternAtom(this->app->display, "WM_DELETE_WINDOW", 1))

@@ -159,24 +159,24 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 
 	this->prefs.prefsMap=
 		{
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("theme"),{TYPESTRING,"theme","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("desktops"),{TYPEINT,"desktops","",false,6}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("placement"),{TYPEINT,"placement","",false,2}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("titlefont"),{TYPESTRING,"titlefont","sans:size=14:bold",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("titleposition"),{TYPEINT,"titleposition","",false,2}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("titlebarsize"),{TYPEINT,"titlebarsize","",false,20}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("leftsidebarsize"),{TYPEINT,"leftsidebarsize","",false,2}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("ritesidebarsize"),{TYPEINT,"ritesidebarsize","",false,2}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("bottombarsize"),{TYPEINT,"bottombarsize","",false,8}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("framebg"),{TYPESTRING,"framebg","grey",false,15}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("framefg"),{TYPESTRING,"framefg","white",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","black",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("forcedocksstack"),{TYPEINT,"forcedocksstack","",false,1}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("rescanprefs"),{TYPEINT,"rescanprefs","",false,10}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("resizemode"),{TYPEINT,"resizemode","",false,2}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("modkeys"),{TYPEINT,"modkeys","",false,MOVEKEYS}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("framealpha"),{TYPEINT,"framealpha","",false,0xff}}
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("theme"),{TYPESTRING,"theme","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("desktops"),{TYPEINT,"desktops","","",false,6}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("placement"),{TYPEINT,"placement","","",false,2}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("titlefont"),{TYPESTRING,"titlefont","","sans:size=14:bold",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("titleposition"),{TYPEINT,"titleposition","","",false,2}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("titlebarsize"),{TYPEINT,"titlebarsize","","",false,20}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("leftsidebarsize"),{TYPEINT,"leftsidebarsize","","",false,2}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("ritesidebarsize"),{TYPEINT,"ritesidebarsize","","",false,2}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("bottombarsize"),{TYPEINT,"bottombarsize","","",false,8}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("framebg"),{TYPESTRING,"framebg","","grey",false,15}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("framefg"),{TYPESTRING,"framefg","","white",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","","black",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("forcedocksstack"),{TYPEINT,"forcedocksstack","","",false,1}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("rescanprefs"),{TYPEINT,"rescanprefs","","",false,10}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("resizemode"),{TYPEINT,"resizemode","","",false,2}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("modkeys"),{TYPEINT,"modkeys","","",false,MOVEKEYS}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("framealpha"),{TYPEINT,"framealpha","","",false,0xff}}
 		};
 
 	this->prefsPath=getenv("HOME");

@@ -32,6 +32,7 @@ struct prefsData
 {
 	dataType		type;
 	std::string	keyName;
+	std::string	description;
 	std::string	strData;
 	bool			boolData;
 	int			intData;
@@ -43,6 +44,7 @@ struct prefsData
 class LFSTK_prefsClass
 {
 	public:
+		LFSTK_prefsClass(std::string name,std::string version);
 		LFSTK_prefsClass();
 		~LFSTK_prefsClass();
 	
@@ -72,10 +74,14 @@ class LFSTK_prefsClass
 		void					LFSTK_setInt(const char *key,int val);
 
 //get cli args
-		bool					LFSTK_argsToPrefs(int argc, char **argv,option longoptions[]);
+		bool					LFSTK_argsToPrefs(int argc, char **argv,option longoptions[],bool addhelp=true);
 
 	private:
 		const char			*bools[2]={"false","true"};
+		std::string			appName="App";
+		std::string			appVersion="0.0.0";
+		void					printHelp(option longoptions[]);
+
 };
 
 #endif

@@ -189,24 +189,24 @@ int main(int argc,char **argv)
 	int			refreshmulti=0;
 	
 	prefs.prefsMap={
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("panelheight"),{TYPEINT,"panelheight","",false,0}},
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("panelwidth"),{TYPEINT,"panelwidth","",false,0}},
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("onmonitor"),{TYPEINT,"onmonitor","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("panelheight"),{TYPEINT,"panelheight","","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("panelwidth"),{TYPEINT,"panelwidth","","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("onmonitor"),{TYPEINT,"onmonitor","","",false,0}},
 
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","xterm -e ",false,0}},
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("logoutcommand"),{TYPESTRING,"logoutcommand","xterm",false,0}},
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("restartcommand"),{TYPESTRING,"restartcommand","xterm",false,0}},
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("shutdowncommand"),{TYPESTRING,"shutdowncommand","xterm",false,0}},
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("gadgetsright"),{TYPESTRING,"gadgetsright","L",false,0}},
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","l",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","","xterm -e ",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("logoutcommand"),{TYPESTRING,"logoutcommand","","xterm",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("restartcommand"),{TYPESTRING,"restartcommand","","xterm",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("shutdowncommand"),{TYPESTRING,"shutdowncommand","","xterm",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("gadgetsright"),{TYPESTRING,"gadgetsright","","L",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","","l",false,0}},
 
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("panelpos"),{TYPEINT,"panelpos","",false,0}},
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("panelgrav"),{TYPEINT,"panelgrav","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("panelpos"),{TYPEINT,"panelpos","","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("panelgrav"),{TYPEINT,"panelgrav","","",false,0}},
 
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","",false,0}},
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("nobuttons"),{TYPEBOOL,"nobuttons","",false,0}},
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("panelcolour"),{TYPESTRING,"panelcolour","white",false,0}},
-						{LFSTK_UtilityClass::LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","black",false,0}}
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("nobuttons"),{TYPEBOOL,"nobuttons","","",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("panelcolour"),{TYPESTRING,"panelcolour","","white",false,0}},
+						{LFSTK_UtilityClass::LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","","black",false,0}}
 					};
 	realMainLoop=true;
 	

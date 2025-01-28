@@ -274,10 +274,10 @@ void loadPrefs(void)
 
 	prefs.prefsMap=
 		{
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("backdrop"),{TYPESTRING,"backdrop","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("mainmode"),{TYPEINT,"mainmode","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("colour"),{TYPESTRING,"colour","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("multimode"),{TYPEBOOL,"multimode","",false,0}}
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("backdrop"),{TYPESTRING,"backdrop","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("mainmode"),{TYPEINT,"mainmode","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("colour"),{TYPESTRING,"colour","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("multimode"),{TYPEBOOL,"multimode","","",false,0}}
 		};
 
 	prefs.LFSTK_loadVarsFromFile(prefsPath);

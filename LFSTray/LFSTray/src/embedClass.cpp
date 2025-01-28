@@ -41,8 +41,6 @@ Pixmap LFSTray_embedClass::makePixmap(void)
 	XTranslateCoordinates(this->tray->apc->display,this->tray->apc->mainWindow->window,this->tray->apc->rootWindow,0,0,&x,&y,&cr);
 	XCopyArea(this->tray->apc->display,pm,back,gc,x+this->nextIconX,y+this->nextIconY,this->tray->iconSize,this->tray->iconSize,0,0);
 	XFreeGC(this->tray->apc->display,gc);
-//fprintf(stderr,"back=%p x+this->nextIconX=%i\n",back,x+this->nextIconX);
-//XSync(this->tray->apc->display,False);
 	return(back);
 }
 
@@ -66,7 +64,6 @@ void LFSTray_embedClass::nextPosition(void)
 	this->nextIconY+=yoffset;
 }
 
-
 bool LFSTray_embedClass::addIcon(Window wid)
 {
 	std::string			winname=trayClass->getWindowName(wid);
@@ -78,8 +75,6 @@ bool LFSTray_embedClass::addIcon(Window wid)
 	unsigned char		*prop=0;
 	XWindowAttributes	attr;
 
-	fprintf(stderr,"winname=%s\n",winname.c_str());
-	//XSync(this->tray->apc->display,False);
 	xerror=false;
 	XErrorHandler old=XSetErrorHandler(windowErrorHandler);
 
@@ -91,18 +86,11 @@ bool LFSTray_embedClass::addIcon(Window wid)
 			pid += prop[0];
 		}
 
-//	if(XGetWindowAttributes(this->tray->apc->display,wid, &attr)==False)
-//		{
-//			XSelectInput(this->tray->apc->display,wid,NoEventMask);
-//			XSync(this->tray->apc->display,False);
-//			XSetErrorHandler(old);
-//			return(false);
-//		}
-
-	//XSynchronize(this->tray->apc->display,true);
 	// Create the parent window that will embed the icon
+#ifdef __DEBUG__
 	if(this->tray->debugmsg)
 		fprintf(stderr,"lfstray: XGetWindowAttributes(server.display,win=%p,&attr)\n",wid);
+#endif
 	if(XGetWindowAttributes(this->tray->apc->display,wid, &attr)==False)
 		{
 			fprintf(stderr,"no wid attr\n");
@@ -116,16 +104,20 @@ bool LFSTray_embedClass::addIcon(Window wid)
 	XSetWindowAttributes set_attr;
 	Visual *visual=this->tray->apc->visual;
 
+#ifdef __DEBUG__
 	if(this->tray->debugmsg)
 		fprintf(stderr,"addIcon: %p (%s),pid %d,visual %p,colormap %lu,depth %d,width %d,height %d"  "\n",wid,winname.c_str(),pid,(void*)attr.visual,attr.colormap,attr.depth,attr.width,attr.height);
+#endif
 	visual=attr.visual;
 	set_attr.background_pixel=0;
 	set_attr.border_pixel=0;
 	set_attr.colormap=attr.colormap;
 	mask=CWColormap | CWBackPixel | CWBorderPixel;
 
+#ifdef __DEBUG__
 	if(this->tray->debugmsg)
 		fprintf(stderr,"lfstray: XCreateWindow(...)\n");
+#endif
 	Window parent=XCreateWindow(this->tray->apc->display,this->tray->apc->mainWindow->window,-1000,-1000,this->tray->iconSize,this->tray->iconSize,0,attr.depth,InputOutput,visual,mask, &set_attr);
 
 	this->tray->iconList[wid]={wid,parent,this->nextIconX,this->nextIconY,this->tray->iconSize,this->tray->iconSize,false,this->makePixmap()};
@@ -141,19 +133,22 @@ void LFSTray_embedClass::embedWindow(Window wid)
 	icondata=this->tray->iconList.find(wid)->second;
 	if(icondata.embedded==false)
 		{
+#ifdef __DEBUG__
 			if(this->tray->debugmsg)
 				fprintf(stderr,"wid=%p par=%p x=%i y=%i w=%i h=%i embedded=%i\n",icondata.iconWindow,icondata.parentWindow,icondata.x,icondata.y,icondata.w,icondata.h,icondata.embedded);
-
+#endif
 			XWithdrawWindow(this->tray->apc->display,icondata.iconWindow,this->tray->apc->screen);
 			doingwhat="XReparentWindow "+std::to_string(__LINE__);
 			XReparentWindow(this->tray->apc->display,icondata.iconWindow,icondata.parentWindow,0,0);
 
+#ifdef __DEBUG__
 			if(this->tray->debugmsg)
 				fprintf(stderr,"XMoveResizeWindow(this->tray->apc->display,wid=%p,0,0,this->tray->iconSize=%d,this->tray->iconSize=%d)\n",icondata.iconWindow,this->tray->iconSize,this->tray->iconSize);
+#endif
 			doingwhat="XMoveResizeWindow "+std::to_string(__LINE__);
 			XMoveResizeWindow(this->tray->apc->display,icondata.iconWindow,0,0,this->tray->iconSize,this->tray->iconSize);
 
-	// Embed into parent
+// Embed into parent
 			e.xclient.type=ClientMessage;
 			e.xclient.serial=0;
 			e.xclient.send_event=True;
@@ -165,17 +160,20 @@ void LFSTray_embedClass::embedWindow(Window wid)
 			e.xclient.data.l[2]=0;
 			e.xclient.data.l[3]=icondata.parentWindow;
 			e.xclient.data.l[4]=0;
+#ifdef __DEBUG__
 			if(this->tray->debugmsg)
 				fprintf(stderr,"lfstray: XSendEvent(server.display,traywin->win,False,NoEventMask,&e)\n");
+#endif
 			doingwhat="XSendEvent "+std::to_string(__LINE__);
 			XSendEvent(this->tray->apc->display,icondata.iconWindow,False,NoEventMask, &e);
 
 			this->tray->iconList[wid].embedded=true;
+#ifdef __DEBUG__
 			DEBUG_showIcons();
+#endif
 			XMapWindow(this->tray->apc->display,icondata.parentWindow);
 		}
 }
-
 
 void LFSTray_embedClass::removeIcon(Window wid)
 {

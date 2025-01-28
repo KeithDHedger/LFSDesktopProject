@@ -113,21 +113,21 @@ void getEdits(void)
 {
 	prefs.prefsMap=
 		{
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("panelheight"),{TYPEINT,"panelheight","",false,atoi(panelHeightEdit->LFSTK_getCStr())}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("panelwidth"),{TYPEINT,"panelwidth","",false,panelWidthPref}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("onmonitor"),{TYPEINT,"onmonitor","",false,atoi(panelOnMonitor->LFSTK_getCStr())}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("panelpos"),{TYPEINT,"panelpos","",false,panelPosPref}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("panelgrav"),{TYPEINT,"panelgrav","",false,panelGravityPref}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand",termCommand->LFSTK_getCStr(),false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("logoutcommand"),{TYPESTRING,"logoutcommand",logout->LFSTK_getCStr(),false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("restartcommand"),{TYPESTRING,"restartcommand",restart->LFSTK_getCStr(),false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("shutdowncommand"),{TYPESTRING,"shutdowncommand",shutdown->LFSTK_getCStr(),false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("gadgetsright"),{TYPESTRING,"gadgetsright",panelrightGadgets->LFSTK_getCStr(),false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft",panelLeftGadgets->LFSTK_getCStr(),false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","",useTheme->LFSTK_getValue(),0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("nobuttons"),{TYPEBOOL,"nobuttons","",noButtons->LFSTK_getValue(),0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("panelcolour"),{TYPESTRING,"panelcolour",panelColourEdit->LFSTK_getCStr(),false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour",panelTextColourEdit->LFSTK_getCStr(),false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("panelheight"),{TYPEINT,"panelheight","","",false,atoi(panelHeightEdit->LFSTK_getCStr())}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("panelwidth"),{TYPEINT,"panelwidth","","",false,panelWidthPref}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("onmonitor"),{TYPEINT,"onmonitor","","",false,atoi(panelOnMonitor->LFSTK_getCStr())}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("panelpos"),{TYPEINT,"panelpos","","",false,panelPosPref}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("panelgrav"),{TYPEINT,"panelgrav","","",false,panelGravityPref}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","",termCommand->LFSTK_getCStr(),false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("logoutcommand"),{TYPESTRING,"logoutcommand","",logout->LFSTK_getCStr(),false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("restartcommand"),{TYPESTRING,"restartcommand","",restart->LFSTK_getCStr(),false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("shutdowncommand"),{TYPESTRING,"shutdowncommand","",shutdown->LFSTK_getCStr(),false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("gadgetsright"),{TYPESTRING,"gadgetsright","",panelrightGadgets->LFSTK_getCStr(),false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","",panelLeftGadgets->LFSTK_getCStr(),false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","","",useTheme->LFSTK_getValue(),0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("nobuttons"),{TYPEBOOL,"nobuttons","","",noButtons->LFSTK_getValue(),0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("panelcolour"),{TYPESTRING,"panelcolour","",panelColourEdit->LFSTK_getCStr(),false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","",panelTextColourEdit->LFSTK_getCStr(),false,0}},
 		};
 }
 
@@ -209,21 +209,21 @@ void getPrefs(void)
 
 	prefs.prefsMap=
 		{
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("panelheight"),{TYPEINT,"panelheight","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("panelwidth"),{TYPEINT,"panelwidth","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("onmonitor"),{TYPEINT,"onmonitor","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("panelpos"),{TYPEINT,"panelpos","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("panelgrav"),{TYPEINT,"panelgrav","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("logoutcommand"),{TYPESTRING,"logoutcommand","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("restartcommand"),{TYPESTRING,"restartcommand","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("shutdowncommand"),{TYPESTRING,"shutdowncommand","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("gadgetsright"),{TYPESTRING,"gadgetsright","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","",true,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("nobuttons"),{TYPEBOOL,"nobuttons","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("panelcolour"),{TYPESTRING,"panelcolour","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","black",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("panelheight"),{TYPEINT,"panelheight","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("panelwidth"),{TYPEINT,"panelwidth","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("onmonitor"),{TYPEINT,"onmonitor","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("panelpos"),{TYPEINT,"panelpos","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("panelgrav"),{TYPEINT,"panelgrav","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("termcommand"),{TYPESTRING,"termcommand","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("logoutcommand"),{TYPESTRING,"logoutcommand","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("restartcommand"),{TYPESTRING,"restartcommand","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("shutdowncommand"),{TYPESTRING,"shutdowncommand","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("gadgetsright"),{TYPESTRING,"gadgetsright","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("gadgetsleft"),{TYPESTRING,"gadgetsleft","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","","",true,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("nobuttons"),{TYPEBOOL,"nobuttons","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("panelcolour"),{TYPESTRING,"panelcolour","","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","","black",false,0}},
 		};
 
 	asprintf(&env,"%s/%s",apc->configDir.c_str(),panelNameEdit->LFSTK_getCStr());

@@ -27,7 +27,11 @@ LFSTK_prefsClass::~LFSTK_prefsClass()
 LFSTK_prefsClass::LFSTK_prefsClass()
 {
 }
-
+LFSTK_prefsClass::LFSTK_prefsClass(std::string name,std::string version)
+{
+	this->appName=name;
+	this->appVersion=version;
+}
 /**
 * Add data with key
 *
@@ -266,13 +270,67 @@ void LFSTK_prefsClass::LFSTK_setInt(const char *key,int val)
 	this->prefsMap.at(LFSTK_UtilityClass::LFSTK_hashFromKey(key)).intData=val;
 }
 
+void LFSTK_prefsClass::printHelp(option longoptions[])
+{
+	int	cnt=0;
+	const char		*ob;
+	const char		*cb;
+	int				typeit;
+	std::string		desc;
+
+	fprintf(stderr,"Usage:\n");
+	fprintf(stderr,"%s [ARG 0] ... [ARG N]\n",this->appName.c_str());
+	while(longoptions[cnt].name!=0)
+		{
+			fprintf(stderr,"-%c, --%s",longoptions[cnt].val,longoptions[cnt].name);
+			typeit=this->prefsMap.find(LFSTK_UtilityClass::LFSTK_hashFromKey(longoptions[cnt].name))->second.type;
+			if(this->prefsMap.find(LFSTK_UtilityClass::LFSTK_hashFromKey(longoptions[cnt].name))->second.description.length()>0)
+				desc="\n\t"+this->prefsMap.find(LFSTK_UtilityClass::LFSTK_hashFromKey(longoptions[cnt].name))->second.description+"\n";
+			else
+				desc="\n";
+			switch(longoptions[cnt].has_arg)
+				{
+					case optional_argument:
+						ob="[";
+						cb="]";
+						break;
+					case required_argument:
+						ob="";
+						cb="";
+						break;
+					case no_argument:
+						typeit=-1;
+						break;
+				}
+
+			switch(typeit)
+				{
+					case -1:
+						fprintf(stderr," \t");
+						break;
+					case TYPESTRING:
+						fprintf(stderr," %sSTRING ARG%s\t",ob,cb);
+						break;
+					case TYPEINT:
+						fprintf(stderr," %sINTEGER ARG%s\t",ob,cb);
+						break;
+					case TYPEBOOL:
+						fprintf(stderr," %sBOOLEAN ARG%s\t",ob,cb);
+						break;
+				}
+			fprintf(stderr," %s",desc.c_str());
+			cnt++;
+		}
+}
+
 /**
 * Set prefs from command line.
 * \param int argc, char **argv as passed to application.
 * \param longoptions[] normal option long_options[] from getopt_long.
-* \return boolean false=No prefs set, true=OK.
+* \param bool addhelp Auto add '-?' and '-h' options ( default true ).
+* \return boolean false=No prefs set or -? or -h on command line, true=OK.
 */
-bool LFSTK_prefsClass::LFSTK_argsToPrefs(int argc, char **argv,option longoptions[])
+bool LFSTK_prefsClass::LFSTK_argsToPrefs(int argc, char **argv,option longoptions[],bool addhelp)
 {
 	int			ocnt=0;
 	int			c;
@@ -294,13 +352,26 @@ bool LFSTK_prefsClass::LFSTK_argsToPrefs(int argc, char **argv,option longoption
 				optstr+="::";
 			ocnt++;
 		}
+	if(addhelp==true)
+		optstr+="?hv";
 
 	while (1)
 		{
 			option_index=0;
-			c=getopt_long (argc,argv,optstr.c_str(),longoptions,&option_index);
+			c=getopt_long(argc,argv,optstr.c_str(),longoptions,&option_index);
 			if(c==-1)
 				break;
+			if(addhelp==true && (c=='?' || c=='h'))
+				{
+					this->printHelp(longoptions);
+					return(false);
+				}
+			if(addhelp==true && c=='v' )
+				{
+					fprintf(stderr,"%s %s\n",this->appName.c_str(),this->appVersion.c_str());
+					return(false);
+				}
+
 			ocnt=0;
 			while(longoptions[ocnt].name!=0)
 				{
@@ -310,10 +381,22 @@ bool LFSTK_prefsClass::LFSTK_argsToPrefs(int argc, char **argv,option longoption
 							switch(typeit)
 								{
 									case TYPESTRING:
-										this->LFSTK_setString(longoptions[ocnt].name,optarg);
+										if(optarg==NULL)
+											{
+												fprintf(stderr,"Option --%s requires an argument ...\n",longoptions[ocnt].name);
+												return(false);
+											}
+										else
+											this->LFSTK_setString(longoptions[ocnt].name,optarg);
 										break;
 									case TYPEINT:
-										this->LFSTK_setInt(longoptions[ocnt].name,strtol(optarg,NULL,0));
+										if(optarg==NULL)
+											{
+												fprintf(stderr,"Option --%s requires an argument ...\n",longoptions[ocnt].name);
+												return(false);
+											}
+										else
+											this->LFSTK_setInt(longoptions[ocnt].name,strtol(optarg,NULL,0));
 										break;
 									case TYPEBOOL:
 										if(optarg==NULL)

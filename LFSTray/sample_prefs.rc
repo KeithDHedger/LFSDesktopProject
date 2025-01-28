@@ -1,0 +1,10 @@
+#monitor on which to put tray
+monitor 0
+#iconsize
+iconsize 32
+#gravity NW=1,NE=2,SE=3,SW=4,N=5,E=6,S=7,W=8
+gravity 1
+#show tray as vertical or horizontal
+vertical false
+#show tray above all windows or below all windos.
+below false

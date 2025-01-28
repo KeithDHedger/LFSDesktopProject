@@ -24,7 +24,6 @@
 #include "globals.h"
 
 enum TrayPos{NW=1,NE,SE,SW,N,E,S,W};
-//enum Stack{TRAYABOVE=1,TRAYBELOW,TRAYNORMAL};
 
 class LFSTray_trayClass
 {
