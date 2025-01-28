@@ -19,7 +19,6 @@
  */
 
 #include "config.h"
-#include <getopt.h>
 #include <sstream>
 #include <string>
 #include <iomanip>
@@ -137,42 +136,22 @@ bool doAlpha(void *p,void *ud)
 
 int main(int argc, char **argv)
 {
-	XEvent		event;
-	int			sy=BORDER;
-
-	int			c=0;
-	int			option_index=0;
-	const char	*shortOpts="h?w:";
-	option		longOptions[]=
-		{
-			{"window",1,0,'w'},
-			{"help",0,0,'h'},
-			{0, 0, 0, 0}
-		};
-
-	while(1)
-		{
-			option_index=0;
-			c=getopt_long_only(argc,argv,shortOpts,longOptions,&option_index);
-			if (c==-1)
-				break;
-			switch (c)
-				{
-					case 'h':
-					case '?':
-						printf("Usage:\nlfscolourchooser [ARG] - Where ARG is a colour definition either e.g. \"#ff0080\" or \"darkgreen\"\n");
-						printf("-?,-h,--help\t\tPrint this help\n");
-						printf("-w,--window\t\tSet transient for window\n");
-						exit(0);
-					case 'w':
-						parentWindow=atoi(optarg);
-						break;
-				}
-		}
+	XEvent			event;
+	int				sy=BORDER;
+	LFSTK_prefsClass	cliprefs("lfspanelprefs",VERSION);
+	option			longOptions[]={{"window",1,0,'w'},{0, 0, 0, 0}};
 
 	apc=new LFSTK_applicationClass();
 	apc->LFSTK_addWindow(NULL,BOXLABEL);
 	wc=apc->mainWindow;
+	
+	cliprefs.prefsMap=
+		{
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("window"),{TYPEINT,"window","Set transient for window ARG","",false,0}}
+		};
+	if(cliprefs.LFSTK_argsToPrefs(argc,argv,longOptions,true)==false)
+		return(1);
+	parentWindow=cliprefs.LFSTK_getInt("window");
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	label->LFSTK_setCairoFontDataParts("sB",20);

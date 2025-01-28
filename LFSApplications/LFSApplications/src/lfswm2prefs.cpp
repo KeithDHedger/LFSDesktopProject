@@ -18,8 +18,6 @@
  * along with LFSApplications.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <getopt.h>
-
 #include "config.h"
 #include <lfstk/LFSTKGlobals.h>
 #include <libgen.h>
@@ -35,7 +33,6 @@
 #define MODS2MENUSIZE	5
 
 LFSTK_applicationClass	*apc=NULL;
-LFSTK_prefsClass			prefs;
 LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass			*label=NULL;
 LFSTK_labelClass			*personal=NULL;
@@ -44,6 +41,7 @@ LFSTK_buttonClass		*seperator=NULL;
 LFSTK_buttonClass		*quit=NULL;
 LFSTK_buttonClass		*test=NULL;
 LFSTK_buttonClass		*apply=NULL;
+LFSTK_prefsClass			prefs("lfswm2prefs",VERSION);
 
 //preview colours
 enum {FRAMEBG=0,FRAMEFG,TEXTCOL};
@@ -226,7 +224,7 @@ bool buttonCB(void *p,void* ud)
 						};
 
 					prefs.LFSTK_saveVarsToFile(envFile);
-					//prefs.LFSTK_saveVarsToFile("-");
+					prefs.LFSTK_saveVarsToFile("-");
 					mbuffer.mType=LFSWM2_MSG;
 					if(reloadwm==true)
 						sprintf(mbuffer.mText,"restartwm");
@@ -331,56 +329,17 @@ int main(int argc, char **argv)
 	XEvent		event;
 	int			sy=0;
 	int			sx=BORDER;
-	int			c=0;
-	int			option_index=0;
 	bool			flag=false;
 	int			retcode;
 	int			receiveType=IPC_NOWAIT;
 	msgBuffer	mbuffer;
 	std::string	bffr;
 
-	const char	*shortOpts="h?w:";		
-	option		longOptions[]=
+	option longOptions[]=
 		{
 			{"window",1,0,'w'},
-			{"help",0,0,'h'},
 			{0, 0, 0, 0}
 		};
-	while(1)
-		{
-			option_index=0;
-			c=getopt_long_only(argc,argv,shortOpts,longOptions,&option_index);
-			if (c==-1)
-				break;
-			switch (c)
-				{
-					case 'h':
-					case '?':
-						printf("-?,-h,--help\t\tPrint this help\n");
-						printf("-w,--window\t\tSet transient for window\n");
-						printf("Right click in a colour edit box for a colour chooser.\n");
-						exit(0);
-					case 'w':
-						parentWindow=atoi(optarg);
-						break;
-				}
-		}
-
-	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKPrefs");
-	wc=apc->mainWindow;
-
-	bffr=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %S/lfsappearance.rc",apc->configDir);
-	if((queueID=msgget(std::stoi(bffr,nullptr,10),IPC_CREAT|0660))==-1)
-		fprintf(stderr,"Can't create message queue :( ...\n");
-
-	while(flag==false)
-		{
-			retcode=msgrcv(queueID,&mbuffer,MAX_MSG_SIZE,MSGANY,receiveType);
-			if(retcode<=1)
-				flag=true;
-		}
-
 	prefs.prefsMap=
 		{
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("theme"),{TYPESTRING,"theme","","",false,0}},
@@ -400,11 +359,34 @@ int main(int argc, char **argv)
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","","",false,0}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("resizemode"),{TYPEINT,"resizemode","","",false,2}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("modkeys"),{TYPEINT,"modkeys","","",false,64}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("framealpha"),{TYPEINT,"framealpha","","",false,255}}
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("framealpha"),{TYPEINT,"framealpha","","",false,255}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("window"),{TYPEINT,"window","Set transient for window ARG","",false,0}}
 		};
+
+	if(prefs.LFSTK_argsToPrefs(argc,argv,longOptions,true)==false)
+		{
+			return(1);
+		}
+
+	parentWindow=prefs.LFSTK_getInt("window");
+
+	apc=new LFSTK_applicationClass();
 
 	asprintf(&envFile,"%s/lfswm2.rc",apc->configDir.c_str());
 	prefs.LFSTK_loadVarsFromFile(envFile);
+	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKPrefs");
+	wc=apc->mainWindow;
+
+	bffr=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %S/lfsappearance.rc",apc->configDir);
+	if((queueID=msgget(std::stoi(bffr,nullptr,10),IPC_CREAT|0660))==-1)
+		fprintf(stderr,"Can't create message queue :( ...\n");
+
+	while(flag==false)
+		{
+			retcode=msgrcv(queueID,&mbuffer,MAX_MSG_SIZE,MSGANY,receiveType);
+			if(retcode<=1)
+				flag=true;
+		}
 
 	prefsPlacementTemp=prefs.LFSTK_getInt("placement");
 	prefsResizeTemp=prefs.LFSTK_getInt("resizemode");

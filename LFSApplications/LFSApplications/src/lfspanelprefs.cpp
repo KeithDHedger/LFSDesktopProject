@@ -19,9 +19,10 @@
  */
 
 #include <string>
-#include <getopt.h>
 
-#include "lfstk/LFSTKGlobals.h"
+#include <lfstk/LFSTKGlobals.h>
+
+#include "config.h"
 
 #undef GADGETWIDTH
 #define GADGETWIDTH	128
@@ -269,38 +270,20 @@ int main(int argc, char **argv)
 	long				menuuserdata[3]={-1,-2,-3};
 	int				parentWindow=-1;
 	LFSTK_findClass	*find;
-	int				c=0;
-	int				option_index=0;
-	const char		*shortOpts="h?w:";		
-	option			longOptions[]=
-		{
-			{"window",1,0,'w'},
-			{"help",0,0,'h'},
-			{0, 0, 0, 0}
-		};
-
-	while(1)
-		{
-			option_index=0;
-			c=getopt_long_only(argc,argv,shortOpts,longOptions,&option_index);
-			if (c==-1)
-				break;
-			switch (c)
-				{
-					case 'h':
-					case '?':
-						printf("-?,-h,--help\t\tPrint this help\n");
-						printf("-w,--window\t\tSet transient for window\n");
-						exit(0);
-					case 'w':
-						parentWindow=atoi(optarg);
-						break;
-				}
-		}
+	LFSTK_prefsClass	cliprefs("lfspanelprefs",VERSION);
+	option			longOptions[]={{"window",1,0,'w'},{0, 0, 0, 0}};
 
 	apc=new LFSTK_applicationClass();
 	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKPrefs");
 	wc=apc->mainWindow;
+
+	cliprefs.prefsMap=
+		{
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("window"),{TYPEINT,"window","Set transient for window ARG","",false,0}}
+		};
+	if(cliprefs.LFSTK_argsToPrefs(argc,argv,longOptions,true)==false)
+		return(1);
+	parentWindow=cliprefs.LFSTK_getInt("window");
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	sy+=HALFYSPACING;
@@ -357,7 +340,22 @@ int main(int argc, char **argv)
 
 //do prefs
 	getPrefs();
-
+//	LFSTK_prefsClass		cliprefs("lfspanelprefs",VERSION);
+//	option			longOptions[]=
+//		{
+//			{"window",1,0,'w'},
+//			{0, 0, 0, 0}
+//		};
+//	cliprefs.prefsMap=
+//		{
+//			{LFSTK_UtilityClass::LFSTK_hashFromKey("window"),{TYPEINT,"window","Set transient for window ARG","",false,0}}
+//		};
+//	if(cliprefs.LFSTK_argsToPrefs(argc,argv,longOptions,true)==false)
+//		{
+//			return(1);
+//		}
+//
+//	parentWindow=cliprefs.LFSTK_getInt("window");
 //width
 	panelWidth=new LFSTK_buttonClass(wc,"Panel Width",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	panelWidth->LFSTK_setIndicator(DISCLOSURE);

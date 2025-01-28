@@ -19,9 +19,9 @@
  */
 
 #include <string>
-#include <getopt.h>
 
-#include "lfstk/LFSTKGlobals.h"
+#include "config.h"
+#include <lfstk/LFSTKGlobals.h>
 
 #undef GADGETWIDTH
 #define GADGETWIDTH	128
@@ -289,42 +289,28 @@ int main(int argc, char **argv)
 {
 	int				sy=0;
 	int				parentWindow=-1;
-	int				c=0;
-	int				option_index=0;
-	const char		*shortOpts="h?w:";		
+	LFSTK_prefsClass	cliprefs("lfsdockprefs",VERSION);
+		
 	option			longOptions[]=
 		{
 			{"window",1,0,'w'},
-			{"dock",1,0,'d'},
-			{"help",0,0,'h'},
+			{"dockname",1,0,'d'},
 			{0, 0, 0, 0}
 		};
-
-	while(1)
-		{
-			option_index=0;
-			c=getopt_long_only(argc,argv,shortOpts,longOptions,&option_index);
-			if (c==-1)
-				break;
-			switch (c)
-				{
-					case 'h':
-					case '?':
-						printf("-?,-h,--help\t\tPrint this help\n");
-						printf("-w,--window\t\tSet transient for window\n");
-						exit(0);
-					case 'w':
-						parentWindow=atoi(optarg);
-						break;
-					case 'd':
-						dockName=optarg;
-						break;
-				}
-		}
 
 	apc=new LFSTK_applicationClass();
 	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKPrefs");
 	wc=apc->mainWindow;
+
+	cliprefs.prefsMap=
+		{
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("window"),{TYPEINT,"window","Set transient for window ARG","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("dockname"),{TYPESTRING,"dockname","Load prefs for dock ARG","",false,0}}
+		};
+	if(cliprefs.LFSTK_argsToPrefs(argc,argv,longOptions,true)==false)
+		return(1);
+	parentWindow=cliprefs.LFSTK_getInt("window");
+	dockName=cliprefs.LFSTK_getString("dockname");
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	sy+=HALFYSPACING;

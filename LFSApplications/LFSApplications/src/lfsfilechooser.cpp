@@ -18,8 +18,6 @@
  * along with LFSApplications.  If not, see <http://www.gnu.org/licenses/>.
  */
  
-#include <getopt.h>
-
 #include "config.h"
 #include <lfstk/LFSTKGlobals.h>
 
@@ -27,53 +25,39 @@ LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*wc=NULL;
 LFSTK_fileDialogClass	*filedialogfile;
 LFSTK_fileDialogClass	*filedialogdir;
+LFSTK_prefsClass			prefs("lfsfilechooser",VERSION);
 
 bool						showFolder=false;
 Window					parentWindow=None;
 char						*wd;
 
+void setPrefs(void)
+{
+	prefs.prefsMap=
+		{
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("window"),{TYPEINT,"window","Parent Window ARG","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("folder"),{TYPEBOOL,"folder","Select folder","",false,0}},
+		};
+}
+
 int main(int argc, char **argv)
 {
-	int			c=0;
-	int			option_index=0;
-	const char	*shortOpts="fh?w:";
-	int			retval=1;
-
-	option 		longOptions[]=
+	int		retval=1;
+	option	longOptions[]=
 		{
-				{"window",1,0,'w'},
-				{"folder",0,0,'f'},
-				{"help",0,0,'h'},
+				{"window",required_argument,0,'w'},
+				{"folder",no_argument,0,'f'},
 				{0, 0, 0, 0}
 		};
 
-	while(1)
-		{
-			option_index=0;
-			c=getopt_long_only(argc,argv,shortOpts,longOptions,&option_index);
-			if (c==-1)
-				break;
-			switch (c)
-				{
-					case 'f':
-						showFolder=true;
-						break;
-					case 'h':
-					case '?':
-						printf("-?,-h,--help\t\tPrint this help\n");
-						printf("-f,--folder\t\tSelect folder instead of file\n");
-						printf("-w,--window\t\tSet transient for window\n");
-						exit(0);
-					case 'w':
-						parentWindow=atoi(optarg);
-						break;
-				}
-		}
-
+	setPrefs();
+	if(prefs.LFSTK_argsToPrefs(argc,argv,longOptions,true)==false)
+		return(1);
+	parentWindow=prefs.LFSTK_getInt("window");
+	showFolder=prefs.LFSTK_getBool("folder");
 	apc=new LFSTK_applicationClass();
 	apc->LFSTK_addWindow(NULL,"");
 	wc=apc->mainWindow;
-	wc->LFSTK_showWindow();
 
 	asprintf(&wd,"%s",apc->userHome.c_str());
 	if(parentWindow!=None)

@@ -18,10 +18,8 @@
  * along with LFSApplications.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <getopt.h>
-
 #include "config.h"
-#include "lfstk/LFSTKGlobals.h"
+#include <lfstk/LFSTKGlobals.h>
 
 #include <libgen.h>
 
@@ -197,38 +195,20 @@ int main(int argc, char **argv)
 	XEvent		event;
 	int			sy=0;
 	std::string	bffr;
-	int			c=0;
-	int			option_index=0;
-	const char	*shortOpts="h?w:";		
-	option		longOptions[]=
-		{
-			{"window",1,0,'w'},
-			{"help",0,0,'h'},
-			{0, 0, 0, 0}
-		};
-	while(1)
-		{
-			option_index=0;
-			c=getopt_long_only(argc,argv,shortOpts,longOptions,&option_index);
-			if (c==-1)
-				break;
-			switch (c)
-				{
-					case 'h':
-					case '?':
-						printf("-?,-h,--help\t\tPrint this help\n");
-						printf("-w,--window\t\tSet transient for window\n");
-						printf("Right click in a colour edit box for a colour chooser.\n");
-						exit(0);
-					case 'w':
-						parentWindow=atoi(optarg);
-						break;
-				}
-		}
+	LFSTK_prefsClass	cliprefs("lfsdesktopprefs",VERSION);
+	option			longOptions[]={{"window",1,0,'w'},{0, 0, 0, 0}};
 
 	apc=new LFSTK_applicationClass();
 	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKPrefs");
 	wc=apc->mainWindow;
+
+	cliprefs.prefsMap=
+		{
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("window"),{TYPEINT,"window","Set transient for window ARG","",false,0}}
+		};
+	if(cliprefs.LFSTK_argsToPrefs(argc,argv,longOptions,true)==false)
+		return(1);
+	parentWindow=cliprefs.LFSTK_getInt("window");
 
 	prefs.prefsMap=
 		{

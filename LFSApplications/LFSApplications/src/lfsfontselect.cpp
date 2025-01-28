@@ -20,91 +20,76 @@
 
 #include "config.h"
 #include <lfstk/LFSTKGlobals.h>
-#include <getopt.h>
 
 #define BOXLABEL			"Font Dialog"
 #define MAXMAINMENUS		25
 
-LFSTK_applicationClass		*apc=NULL;
-LFSTK_windowClass			*wc=NULL;
+LFSTK_applicationClass	*apc=NULL;
+LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass			*label=NULL;
 LFSTK_labelClass			*personal=NULL;
 LFSTK_labelClass			*copyrite=NULL;
-LFSTK_buttonClass			*seperator=NULL;
-LFSTK_buttonClass			*quit=NULL;
-LFSTK_listGadgetClass		*fontlist=NULL;
-LFSTK_toggleButtonClass		*boldcheck=NULL;
-LFSTK_toggleButtonClass		*italiccheck=NULL;
-LFSTK_lineEditClass			*fontsize=NULL;
-LFSTK_lineEditClass			*preview=NULL;
-LFSTK_fontDialogClass		*fontdialog=NULL;
+LFSTK_buttonClass		*seperator=NULL;
+LFSTK_buttonClass		*quit=NULL;
+LFSTK_listGadgetClass	*fontlist=NULL;
+LFSTK_toggleButtonClass	*boldcheck=NULL;
+LFSTK_toggleButtonClass	*italiccheck=NULL;
+LFSTK_lineEditClass		*fontsize=NULL;
+LFSTK_lineEditClass		*preview=NULL;
+LFSTK_fontDialogClass	*fontdialog=NULL;
+LFSTK_prefsClass			prefs("lfsfontselect",VERSION);
 
 unsigned					maxFonts=0;
 char						**fontsAZ=NULL;
 unsigned					size=10;
-const char					*fontname=NULL;
+const char				*fontname=NULL;
 unsigned					selectnumber=0;
 
 bool						useDetail=false;
-int							parentWindow=-1;
+int						parentWindow=-1;
 
-void printHelp(void)
+void printXtraHelp(void)
 {
 	printf("lfsfontselect [FONTSTRING]\n");
 	printf("FONTSTRING = [FONTNAME][SIZE][BOLD][ITALIC]\n");
 	printf("eg:Helvetica:size=18:bold:italic\n");
-	printf("-?,-h,--help\t\tPrint this help\n");
-	printf("-w,--window\t\tSet transient for window\n");
-	printf("-d,--detail\t\tOutput details on seperate line like so:\n");
-	printf("Fontname\n");
-	printf("Size\n");
-	printf("Bold\n");
-	printf("Italic\n");
-	printf("Font String\n");
+	printf("If --details is set outputs details on seperate line eg:\n");
+	printf("Font String:Arial:size=10:italic\n");
+	printf("Font:Arial\n");
+	printf("Size:10\n");
+	printf("Bold:false\n");
+	printf("Italic:true\n");
 }
 
 int main(int argc, char **argv)
 {
 	const fontDataStruct	*fd;
-	int						c=0;
-	int						option_index=0;
-	const char				*shortOpts="h?bis:w:";
 	const char				*bools[]={"false","true"};
 
-	option					longOptions[]=
+	option	longOptions[]=
 		{
 			{"window",1,0,'w'},
 			{"detail",0,0,'d'},
-			{"help",0,0,'h'},
 			{0, 0, 0, 0}
 		};
-
-	while(1)
+	prefs.prefsMap=
 		{
-			option_index=0;
-			c=getopt_long_only(argc,argv,shortOpts,longOptions,&option_index);
-			if (c==-1)
-				break;
-			switch (c)
-				{
-					case 'h':
-					case '?':
-						printHelp();
-						exit(0);
-					case 'd':
-						useDetail=true;
-						break;
-					case 'w':
-						parentWindow=atoi(optarg);
-						break;
-				}
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("window"),{TYPEINT,"window","Set transient for window ARG","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("detail"),{TYPEBOOL,"detail","Show details","",false,0}},
+		};
+	if(prefs.LFSTK_argsToPrefs(argc,argv,longOptions,true)==false)
+		{
+			printXtraHelp();
+			return(1);
 		}
+
+	useDetail=prefs.LFSTK_getBool("detail");
+	parentWindow=prefs.LFSTK_getInt("window");
 
 	apc=new LFSTK_applicationClass();
 	apc->LFSTK_addWindow(NULL,"");
 	wc=apc->mainWindow;
 	wc->LFSTK_showWindow();
-	//wc->LFSTK_hideWindow();
 
 	fontdialog=new LFSTK_fontDialogClass(wc,"Select Font",0,0,1,1,BUTTONGRAV);
 
@@ -116,7 +101,7 @@ int main(int argc, char **argv)
 	fd=fontdialog->LFSTK_getFontData(false);
 	if(fd->isValid==true)
 		if(useDetail==false)
-			printf("fontString=%s\n",fd->fontString.c_str());
+			printf("FONTSTRING='%s'\n",fd->fontString.c_str());
 		else
 			printf("Font String:%s\nFont:%s\nSize:%i\nBold:%s\nItalic:%s\n",fd->fontString.c_str(),fd->fontName.c_str(),fd->fontSize,bools[fd->bold],bools[fd->italic]);
 		
