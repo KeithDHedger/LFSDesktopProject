@@ -11,7 +11,7 @@ make install
 You dont need to install to try it out just run lfstray from the app folder.
 ###
 **QUICK USE:**  
-Copy the sanple prefs file "sample_prefs.rc to "~/.config/LFS/tray.rc"
+Copy the sanple prefs file sample_prefs.rc to ~/.config/LFS/tray.rc
 
 ```console
 lfstray
