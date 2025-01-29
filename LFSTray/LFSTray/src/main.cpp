@@ -76,7 +76,6 @@ int main(int argc,char **argv)
 			trayClass->gravity=(TrayPos)prefs.LFSTK_getInt("gravity");
 			trayClass->iconSize=prefs.LFSTK_getInt("iconsize");
 		}
-
 	wi=apc->LFSTK_getDefaultWInit();
 	wi->overRide=false;
 

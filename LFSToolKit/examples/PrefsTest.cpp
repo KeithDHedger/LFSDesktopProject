@@ -72,7 +72,6 @@ void setPrefs(int argc, char **argv)
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("gravity"),{TYPEINT,"gravity","","",false,0}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("vertical"),{TYPEBOOL,"vertical","Vertical systray ( default horizontal )","",false,0}},
 		};
-
 	prefs.LFSTK_loadVarsFromFile("./testprefs.rc");
 }
 

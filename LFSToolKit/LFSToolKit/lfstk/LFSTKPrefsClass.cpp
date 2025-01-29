@@ -159,6 +159,11 @@ void LFSTK_prefsClass::LFSTK_loadVarsFromFile(std::string filepath)
         {
 			while(myfile>>keyname)
 				{
+					if(keyname.at(0)=='#')
+						{
+							std::getline(myfile,line);
+							continue;
+						}
 					std::getline(myfile,line);
 					data=LFSTK_UtilityClass::LFSTK_strStrip(line);
 					for(auto& x:this->prefsMap)
