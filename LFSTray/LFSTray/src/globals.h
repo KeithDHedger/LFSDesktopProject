@@ -30,14 +30,15 @@
 #include "config.h"
 struct sysIcons
 {
-	Window	iconWindow;
-	Window	parentWindow;
-	int		x;
-	int		y;
-	int		w;
-	int		h;
-	bool		embedded;
-	Pixmap	background;
+	Window		iconWindow;
+	Window		parentWindow;
+	std::string	windowName;
+	int			x;
+	int			y;
+	int			w;
+	int			h;
+	bool			embedded;
+	Pixmap		background;
 };
 
 class LFSTray_embedClass;

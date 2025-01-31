@@ -39,7 +39,7 @@ class LFSTray_embedClass
 		void		embedWindow(Window wid);
 		bool		addIcon(Window wid);
 		void		nextPosition(void);
-		Pixmap	makePixmap(void);
+		Pixmap	makePixmap(Window win);
 };
 
 #endif

@@ -60,6 +60,9 @@ class LFSTray_trayClass
 		std::string	getWindowName(Window win);
 		void			resetWindow(void);
 		void			setStacking(int stackit);
+		std::string	imagePath="";
+		Pixmap		externalPixmap=None;
+		Pixmap		externalMaskPixmap=None;
 
 };
 #endif

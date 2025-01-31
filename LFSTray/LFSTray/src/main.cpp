@@ -33,6 +33,7 @@ option long_options[]=
 		{"gravity",required_argument,NULL,'g'},
 		{"vertical",no_argument,NULL,'V'},
 		{"below",no_argument,NULL,'b'},
+		{"filepath",required_argument,NULL,'f'},
 		{0,0,0,0}
 	};
 
@@ -48,6 +49,7 @@ void setPrefs(int argc,char **argv)
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("gravity"),{TYPEINT,"gravity","Gravity NW ARG=1,NE ARG=2,SE ARG=3,SW ARG=4,N ARG=5,E ARG=6,S ARG=7,W ARG=8","",false,NW}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("vertical"),{TYPEBOOL,"vertical","Vertical systray ( default horizontal )","",false,0}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("below"),{TYPEBOOL,"below","Below all windows ( default above )","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("filepath"),{TYPESTRING,"filepath","Use external file","",false,0}},
 		};
 	prefs.LFSTK_loadVarsFromFile(configfile);
 }
@@ -75,7 +77,9 @@ int main(int argc,char **argv)
 			trayClass->onMonitor=prefs.LFSTK_getInt("monitor");
 			trayClass->gravity=(TrayPos)prefs.LFSTK_getInt("gravity");
 			trayClass->iconSize=prefs.LFSTK_getInt("iconsize");
+			trayClass->imagePath=prefs.LFSTK_getString("filepath");
 		}
+
 	wi=apc->LFSTK_getDefaultWInit();
 	wi->overRide=false;
 
@@ -90,6 +94,22 @@ int main(int argc,char **argv)
 
 	apc->LFSTK_addWindow(wi,PACKAGE);
 	transwc=apc->mainWindow;
+
+	if(access(trayClass->imagePath.c_str(),F_OK)==F_OK)
+		{
+			Imlib_Image buffer;
+
+			imlib_context_set_display(apc->display);
+			imlib_context_set_visual(DefaultVisual(apc->display, 0));
+			buffer=imlib_load_image(trayClass->imagePath.c_str());
+			imlib_context_set_image(buffer);
+			imlib_context_set_drawable(apc->rootWindow);
+			imlib_context_set_dither(0);
+			imlib_image_set_has_alpha(1);
+			imlib_render_pixmaps_for_whole_image(&trayClass->externalPixmap,&trayClass->externalMaskPixmap);
+			imlib_free_image();
+			imlib_image_decache_file(trayClass->imagePath.c_str())	;
+		}
 
 	trayClass->setTrayAtoms();
 

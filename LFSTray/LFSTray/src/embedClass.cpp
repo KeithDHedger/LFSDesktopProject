@@ -29,18 +29,36 @@ LFSTray_embedClass::~LFSTray_embedClass(void)
 {
 }
 
-Pixmap LFSTray_embedClass::makePixmap(void)
+Pixmap LFSTray_embedClass::makePixmap(Window win)
 {
 	int		x;
 	int		y;
 	Window	cr;
+	Pixmap back;
 
-	Pixmap pm=this->tray->apc->globalLib->LFSTK_getWindowPixmap(this->tray->apc->display,this->tray->apc->rootWindow);
-	Pixmap back=XCreatePixmap(this->tray->apc->display,this->tray->apc->mainWindow->window,this->tray->iconSize,this->tray->iconSize,24);
-	GC gc=XCreateGC(this->tray->apc->display,back,0,NULL);
-	XTranslateCoordinates(this->tray->apc->display,this->tray->apc->mainWindow->window,this->tray->apc->rootWindow,0,0,&x,&y,&cr);
-	XCopyArea(this->tray->apc->display,pm,back,gc,x+this->nextIconX,y+this->nextIconY,this->tray->iconSize,this->tray->iconSize,0,0);
-	XFreeGC(this->tray->apc->display,gc);
+	if(access(trayClass->imagePath.c_str(),F_OK)==F_OK)
+		{
+			back=XCreatePixmap(this->tray->apc->display,this->tray->apc->mainWindow->window,this->tray->iconSize,this->tray->iconSize,24);
+			GC backgc=XCreateGC(this->tray->apc->display,back,0,NULL);
+
+			XSetClipMask(this->tray->apc->display,backgc,None);
+			XSetClipOrigin(this->tray->apc->display,backgc, 0, 0);
+			XSetFillStyle(this->tray->apc->display,backgc,FillTiled);
+
+			XSetTSOrigin(this->tray->apc->display,backgc,-this->nextIconX,-this->nextIconY);
+			XSetTile(this->tray->apc->display,backgc,this->tray->externalPixmap);
+			XFillRectangle(this->tray->apc->display,back,backgc,0,0,this->tray->iconSize,this->tray->iconSize);
+			XFreeGC(this->tray->apc->display,backgc);
+		}
+	else
+		{
+			Pixmap pm=this->tray->apc->globalLib->LFSTK_getWindowPixmap(this->tray->apc->display,this->tray->apc->rootWindow);
+			back=XCreatePixmap(this->tray->apc->display,this->tray->apc->mainWindow->window,this->tray->iconSize,this->tray->iconSize,24);
+			GC gc=XCreateGC(this->tray->apc->display,back,0,NULL);
+			XTranslateCoordinates(this->tray->apc->display,this->tray->apc->mainWindow->window,this->tray->apc->rootWindow,0,0,&x,&y,&cr);
+			XCopyArea(this->tray->apc->display,pm,back,gc,x+this->nextIconX,y+this->nextIconY,this->tray->iconSize,this->tray->iconSize,0,0);
+			XFreeGC(this->tray->apc->display,gc);
+		}
 	return(back);
 }
 
@@ -120,7 +138,7 @@ bool LFSTray_embedClass::addIcon(Window wid)
 #endif
 	Window parent=XCreateWindow(this->tray->apc->display,this->tray->apc->mainWindow->window,-1000,-1000,this->tray->iconSize,this->tray->iconSize,0,attr.depth,InputOutput,visual,mask, &set_attr);
 
-	this->tray->iconList[wid]={wid,parent,this->nextIconX,this->nextIconY,this->tray->iconSize,this->tray->iconSize,false,this->makePixmap()};
+	this->tray->iconList[wid]={wid,parent,winname,this->nextIconX,this->nextIconY,this->tray->iconSize,this->tray->iconSize,false,this->makePixmap(parent)};
 
 	return(true);
 }
@@ -196,19 +214,16 @@ void LFSTray_embedClass::refreshIcons(void)
 		{
 			for (it=trayClass->iconList.begin();it!=trayClass->iconList.end();++it)
 				{
-					it->second.x=nextIconX;
-					it->second.y=nextIconY;
-
 					XMoveWindow(this->tray->apc->display,it->second.parentWindow,nextIconX,nextIconY);
-					pm=this->makePixmap();
+					pm=this->makePixmap(it->second.parentWindow);
 					XSetWindowBackgroundPixmap(this->tray->apc->display,it->second.parentWindow,pm);
 					XFreePixmap(this->tray->apc->display,it->second.background);
 					it->second.background=pm;
 					XWithdrawWindow(this->tray->apc->display,it->second.iconWindow,this->tray->apc->screen);
 					XMapWindow(this->tray->apc->display,it->second.iconWindow);
 
-					it->second.x=nextIconX;
-					it->second.y=nextIconY;
+					it->second.x=this->nextIconX;
+					it->second.y=this->nextIconY;
 					this->nextPosition();
 				}
 		}
