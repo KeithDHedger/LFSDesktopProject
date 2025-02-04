@@ -28,6 +28,7 @@
 #include <Imlib2.h>
 
 #include "config.h"
+
 struct sysIcons
 {
 	Window		iconWindow;
@@ -57,8 +58,6 @@ class LFSTray_embedClass;
 #define SYSTEM_TRAY_REQUEST_DOCK 0
 #define SYSTEM_TRAY_BEGIN_MESSAGE 1
 #define SYSTEM_TRAY_CANCEL_MESSAGE 2
-
-//extern LFSTK_windowClass		*transwc;
 
 extern bool					xerror;
 extern int					errorcode;

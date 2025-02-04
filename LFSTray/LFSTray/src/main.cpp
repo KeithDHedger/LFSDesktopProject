@@ -33,6 +33,7 @@ option long_options[]=
 		{"gravity",required_argument,NULL,'g'},
 		{"vertical",no_argument,NULL,'V'},
 		{"below",no_argument,NULL,'b'},
+		{"no-duplicates",no_argument,NULL,'d'},
 		{"filepath",required_argument,NULL,'f'},
 		{0,0,0,0}
 	};
@@ -50,6 +51,7 @@ void setPrefs(int argc,char **argv)
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("vertical"),{TYPEBOOL,"vertical","Vertical systray ( default horizontal )","",false,0}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("below"),{TYPEBOOL,"below","Below all windows ( default above )","",false,0}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("filepath"),{TYPESTRING,"filepath","Use external file","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("no-duplicates"),{TYPEBOOL,"no-duplicates","Don't allow duplicate items ( by _NET_WM_NAME property )","",false,0}},
 		};
 	prefs.LFSTK_loadVarsFromFile(configfile);
 }
@@ -73,7 +75,8 @@ int main(int argc,char **argv)
 	else
 		{
 			trayClass->vertical=prefs.LFSTK_getBool("vertical")	;
-			trayClass->isbelow=prefs.LFSTK_getBool("below");
+			trayClass->isBelow=prefs.LFSTK_getBool("below");
+			trayClass->allowDuplicates=!prefs.LFSTK_getBool("no-duplicates");
 			trayClass->onMonitor=prefs.LFSTK_getInt("monitor");
 			trayClass->gravity=(TrayPos)prefs.LFSTK_getInt("gravity");
 			trayClass->iconSize=prefs.LFSTK_getInt("iconsize");
@@ -83,7 +86,7 @@ int main(int argc,char **argv)
 	wi=apc->LFSTK_getDefaultWInit();
 	wi->overRide=false;
 
-	if(trayClass->isbelow==true)
+	if(trayClass->isBelow==true)
 		wi->level=BELOWALL;
 	else
 		wi->level=ABOVEALL;
@@ -136,6 +139,7 @@ int main(int argc,char **argv)
 	trayClass->resetWindow();
 
 	apc->LFSTK_setEventCallBack(eventCB,(void*)0xdeadbeef);
+	XErrorHandler old=XSetErrorHandler(windowErrorHandler);
 
 	int retval=apc->LFSTK_runApp();
 

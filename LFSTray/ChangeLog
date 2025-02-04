@@ -1,4 +1,5 @@
 1.0.4
+Added --no-duplicates option to prevent duplicate items.
 Added --filpath option to use image as background rather than root window.
 Added help option.
 Added cli prefs overides.

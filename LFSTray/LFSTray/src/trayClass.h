@@ -52,8 +52,8 @@ class LFSTray_trayClass
 		int			stacking=ABOVEALL;
 
 		int			firstrun=0;
-		bool			isbelow=false;
-		int			debugmsg=0;
+		bool			isBelow=false;
+		bool			allowDuplicates=true;
 
 		void			setTrayAtoms(void);
 		void*		getProperty(Window w,Atom prop,Atom type,long unsigned int *nitems_return);
