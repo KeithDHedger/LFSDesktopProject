@@ -41,7 +41,7 @@ option long_options[]=
 void setPrefs(int argc,char **argv)
 {
 	std::string	configfile=getenv("HOME");
-	configfile+="/.config/LFS/tray.rc";
+	configfile+="/.config/LFS/lfstray.rc";
 
 	prefs.prefsMap=
 		{
