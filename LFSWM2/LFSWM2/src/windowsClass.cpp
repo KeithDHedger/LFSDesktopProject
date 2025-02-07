@@ -697,6 +697,9 @@ void* LFSWM2_windowClass::LFSWM2_getProp(Window w,Atom prop,Atom type,long unsig
 	unsigned long	bytes_after_return=0;
 	int				result=-1;
 
+	if(this->LFSWM2_checkValidWindow(w)==false)
+		return(NULL);
+
 	result=XGetWindowProperty(this->mainClass->display,w,prop,0L,32,false,type,&actual_type_return,&actual_format_return,nitems_return,&bytes_after_return,(unsigned char**)&prop_return);
 	if (result!=Success||bytes_after_return>0)
 		{
@@ -716,6 +719,9 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 	bool					ishidden=false;
 	bool					isfull=false;
 
+	if(this->LFSWM2_checkValidWindow(id)==false)
+		return;
+
 	cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(id));
 	if(cc==NULL)
 		{
@@ -723,8 +729,13 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 			if(cc==NULL)
 				return;
 		}
+////LFSWM2_pushXErrorHandler(__FILE__,__LINE__);
+//SHOWXERRORS
+//	fprintf(stderr,"\nPush from file=%s @ line=%i\n",errorFile,errorLine);
 
 	Atom *states=(Atom*)this->LFSWM2_getFullProp(id,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE")),XA_ATOM,32,&n);
+//HIDEXERRORS
+
 	cc->onTop=false;
 	cc->onBottom=false;
 	cc->visible=true;
@@ -758,6 +769,7 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 				cc->LFSWM2_hideWindow(false);
 		}
 	XFree(states);
+//	//this->mainClass->LFSWM2_popXErrorHandler();
 	return;
 
 //TODO//
@@ -885,16 +897,16 @@ Window LFSWM2_windowClass::LFSWM2_getParentWindow(Window id)
 	Window			*children=NULL;
     unsigned int		num_children=0;
 
-	this->mainClass->LFSWM2_pushXErrorHandler();
+	//this->mainClass->LFSWM2_pushXErrorHandlerForWarnings();
 		if(!XQueryTree(this->mainClass->display,id,&root,&parent,&children,&num_children))
 			{
-				this->mainClass->LFSWM2_popXErrorHandler();
+				//this->mainClass->LFSWM2_popXErrorHandler();
 				return(0);
 			}
 
 		if(children!=NULL)
 			XFree((char*)children);
-	this->mainClass->LFSWM2_popXErrorHandler();
+	//this->mainClass->LFSWM2_popXErrorHandler();
 	return(parent);
 }
 
@@ -977,9 +989,10 @@ bool LFSWM2_windowClass::LFSWM2_checkValidWindow(Window wid)
 	bool					dummy=0;
 	XWindowAttributes	xa;
 
-	this->mainClass->LFSWM2_pushXErrorHandler();
+	//LFSWM2_pushXErrorHandler(__FILE__,__LINE__);
+HIDEXERRORS
 		dummy=XGetWindowAttributes(this->mainClass->display,wid,&xa);
-	this->mainClass->LFSWM2_popXErrorHandler();
+	//this->mainClass->LFSWM2_popXErrorHandler();
 	return(dummy);
 }
 
@@ -1147,8 +1160,9 @@ void LFSWM2_windowClass::LFSWM2_refreshFrame(LFSWM2_clientClass *cc,XExposeEvent
 	if(cc==NULL)
 		return;
 
-if(cc->windowType==UTILITYWINDOW)
-	return;
+	if(cc->windowType==UTILITYWINDOW)
+		return;
+
 	if(cc->isBorderless==true)
 		return;
 

@@ -126,7 +126,6 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 	this->LFSWM2_initRootWindow();
 
 	XSetInputFocus(this->display,rootWindow,RevertToNone,CurrentTime);
-	this->lastXErrorHandler=XSetErrorHandler(&LFSWM2_Class::LFSWM2_xError);
 
 	this->frameBG=this->mainWindowClass->LFSWM2_xftLoadColour("#4194FE","grey");
 	this->frameFG=this->mainWindowClass->LFSWM2_xftLoadColour("#000000","white");
@@ -224,23 +223,12 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 	this->messages->delay=this->prefs.LFSTK_getInt("rescanprefs");
 }
 
-void LFSWM2_Class::LFSWM2_pushXErrorHandler(void)
-{
-	this->lastXErrorHandler=XSetErrorHandler(&LFSWM2_Class::LFSWM2_xWarnings);
-}
-
-void LFSWM2_Class::LFSWM2_popXErrorHandler(void)
-{
-	XSetErrorHandler(this->lastXErrorHandler);
-}
-
 void LFSWM2_Class::LFSWM2_initRootWindow(void)
 {
 	XSetErrorHandler(&LFSWM2_Class::LFSWM2_wmDetected);
 	XSelectInput(this->display,this->rootWindow,StructureNotifyMask|ExposureMask|ButtonPress|ButtonReleaseMask|EnterWindowMask|LeaveWindowMask|SubstructureRedirectMask|SubstructureNotifyMask|ButtonPressMask);
 	XSync(this->display,false);
 
-//XSynchronize(this->display,true);
 	std::vector<Atom>	globalAtoms=
 		{
 			this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),
@@ -304,7 +292,6 @@ void LFSWM2_Class::LFSWM2_initRootWindow(void)
 	this->mainWindowClass->LFSWM2_setProp(this->wmCheckWin,this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_SUPPORTING_WM_CHECK")),XA_WINDOW,32,&wmCheckWin,1);
 	this->mainWindowClass->LFSWM2_setProp(this->wmCheckWin,this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_NAME")),this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("UTF8_STRING")),8,(void*)PACKAGE_NAME,strlen(PACKAGE_NAME));
 	this->mainWindowClass->LFSWM2_setProp(this->rootWindow,this->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_SUPPORTING_WM_CHECK")),XA_WINDOW,32,&wmCheckWin,1);
-//	fprintf(stderr,"wmCheckWin=%p\n",wmCheckWin);
 	XSync(this->display,true);
 }
 
@@ -312,146 +299,6 @@ int LFSWM2_Class::LFSWM2_wmDetected(Display *display,XErrorEvent *e)
 {
 	fprintf(stderr,"A window manager is already running, not starting ...\n");
 	exit(2);
-	return 0;
-}
-
-int LFSWM2_Class::LFSWM2_xWarnings(Display *display,XErrorEvent *e)
-{
-	return(0);
-}
-
-int LFSWM2_Class::LFSWM2_xError(Display *display,XErrorEvent *e)
-{
-	const char *const	X_REQUEST_CODE_NAMES[]=
-		{
-			"",
-			"CreateWindow",
-			"ChangeWindowAttributes",
-			"GetWindowAttributes",
-			"DestroyWindow",
-			"DestroySubwindows",
-			"ChangeSaveSet",
-			"ReparentWindow",
-			"MapWindow",
-			"MapSubwindows",
-			"UnmapWindow",
-			"UnmapSubwindows",
-			"ConfigureWindow",
-			"CirculateWindow",
-			"GetGeometry",
-			"QueryTree",
-			"InternAtom",
-			"GetAtomName",
-			"ChangeProperty",
-			"DeleteProperty",
-			"GetProperty",
-			"ListProperties",
-			"SetSelectionOwner",
-			"GetSelectionOwner",
-			"ConvertSelection",
-			"SendEvent",
-			"GrabPointer",
-			"UngrabPointer",
-			"GrabButton",
-			"UngrabButton",
-			"ChangeActivePointerGrab",
-			"GrabKeyboard",
-			"UngrabKeyboard",
-			"GrabKey",
-			"UngrabKey",
-			"AllowEvents",
-			"GrabServer",
-			"UngrabServer",
-			"QueryPointer",
-			"GetMotionEvents",
-			"TranslateCoords",
-			"WarpPointer",
-			"SetInputFocus",
-			"GetInputFocus",
-			"QueryKeymap",
-			"OpenFont",
-			"CloseFont",
-			"QueryFont",
-			"QueryTextExtents",
-			"ListFonts",
-			"ListFontsWithInfo",
-			"SetFontPath",
-			"GetFontPath",
-			"CreatePixmap",
-			"FreePixmap",
-			"CreateGC",
-			"ChangeGC",
-			"CopyGC",
-			"SetDashes",
-			"SetClipRectangles",
-			"FreeGC",
-			"ClearArea",
-			"CopyArea",
-			"CopyPlane",
-			"PolyPoint",
-			"PolyLine",
-			"PolySegment",
-			"PolyRectangle",
-			"PolyArc",
-			"FillPoly",
-			"PolyFillRectangle",
-			"PolyFillArc",
-			"PutImage",
-			"GetImage",
-			"PolyText8",
-			"PolyText16",
-			"ImageText8",
-			"ImageText16",
-			"CreateColormap",
-			"FreeColormap",
-			"CopyColormapAndFree",
-			"InstallColormap",
-			"UninstallColormap",
-			"ListInstalledColormaps",
-			"AllocColor",
-			"AllocNamedColor",
-			"AllocColorCells",
-			"AllocColorPlanes",
-			"FreeColors",
-			"StoreColors",
-			"StoreNamedColor",
-			"QueryColors",
-			"LookupColor",
-			"CreateCursor",
-			"CreateGlyphCursor",
-			"FreeCursor",
-			"RecolorCursor",
-			"QueryBestSize",
-			"QueryExtension",
-			"ListExtensions",
-			"ChangeKeyboardMapping",
-			"GetKeyboardMapping",
-			"ChangeKeyboardControl",
-			"GetKeyboardControl",
-			"Bell",
-			"ChangePointerControl",
-			"GetPointerControl",
-			"SetScreenSaver",
-			"GetScreenSaver",
-			"ChangeHosts",
-			"ListHosts",
-			"SetAccessControl",
-			"SetCloseDownMode",
-			"KillClient",
-			"RotateProperties",
-			"ForceScreenSaver",
-			"SetPointerMapping",
-			"GetPointerMapping",
-			"SetModifierMapping",
-			"GetModifierMapping",
-			"NoOperation",
-		};
-
-	const int	MAX_ERROR_TEXT_LENGTH=1024;
-	char			error_text[MAX_ERROR_TEXT_LENGTH];
-
-	XGetErrorText(display,e->error_code,error_text,sizeof(error_text));
-	fprintf(stderr,"Received X error:\nRequest: %i %s\n%i %s Resource ID: %x\n",int(e->request_code),X_REQUEST_CODE_NAMES[e->request_code],int(e->error_code),error_text,(unsigned int)e->resourceid);
 	return 0;
 }
 
@@ -619,7 +466,7 @@ void LFSWM2_Class::DEBUG_printAtom(Atom a)
 {
 	char		*name=NULL;
 
-	this->LFSWM2_pushXErrorHandler();
+	//this->LFSWM2_pushXErrorHandler(__FILE__,__LINE__);
 		name=XGetAtomName(this->display,a);
 		if(name!=NULL)
 			{
@@ -628,7 +475,7 @@ void LFSWM2_Class::DEBUG_printAtom(Atom a)
 			}
 		else
 			fprintf(stderr,"Unknown atom %p\n",(void*)a);
-	this->LFSWM2_popXErrorHandler();
+	//this->LFSWM2_popXErrorHandler();
 }
 
 void LFSWM2_Class::DEBUG_printEventData(XEvent *e,bool verbose)

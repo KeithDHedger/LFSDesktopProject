@@ -27,16 +27,24 @@
 
 #include "lfswm2Class.h"
 
-LFSWM2_Class			*mainLFSWM2Class;
+LFSWM2_Class *mainLFSWM2Class;
 
-int main(int argc, char **argv)
+int main(int argc,char **argv)
 {
 	bool					loop=false;
 	LFSWM2_clientClass	*cc;
 
-	mainLFSWM2Class=new LFSWM2_Class(argc,argv);
-	mainLFSWM2Class->mainEventClass->LFSWM2_mainEventLoop();
+#ifdef __DEBUG__
+	fprintf(stderr,"Running in debug mode...\n");
+	fprintf(stderr,"(Mod4Mask|ControlMask|ShiftMask)=0x%x\n",MOVEKEYS);
+#else
+	fprintf(stderr,"(Mod4Mask)=0x%x\n",MOVEKEYS);
+#endif
 
+	mainLFSWM2Class=new LFSWM2_Class(argc,argv);
+	XSetErrorHandler(&xError);
+	HIDEXERRORS
+	mainLFSWM2Class->mainEventClass->LFSWM2_mainEventLoop();
 	do
 		{
 			loop=false;

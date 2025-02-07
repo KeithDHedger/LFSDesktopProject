@@ -38,33 +38,20 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 	int					when=0;
 	LFSWM2_clientClass	*cc;
 	LFSWM2_clientClass	*cccontrol;
-	bool					firstrun=true;
 	bool					overide=false;
 	bool					inmenu=false;
 	int					lastbutton=-1;
 	int					lasttime=0;
+	bool					firstrun=true;
 
 	this->mainClass->runLevel=RL_STARTUP;
-	this->mainClass->LFSWM2_pushXErrorHandler();
-		this->mainClass->mainWindowClass->LFSWM2_buildClientList();
-	this->mainClass->LFSWM2_popXErrorHandler();
+	this->mainClass->mainWindowClass->LFSWM2_buildClientList();
 	this->mainClass->runLevel=RL_NORMAL;
-
 	this->mainClass->LFSWM2_setCurrentDesktop(this->mainClass->currentDesktop,true);
-	this->LFSWM2_restack();
 
 	while(true)
 		{
 			XEvent e;
-
-			if(firstrun==true)
-				{
-					if(XPending(this->mainClass->display)==0)
-						{
-							this->LFSWM2_restack();
-							firstrun=false;
-						}
-				}
 
 			if(this->mainClass->messages->whatMsg==QUITLFSWM)
 				break;
@@ -164,10 +151,19 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 								continue;
 							if(cc->rendered==false)
 								{
+									XWindowChanges	changes;
+									unsigned int		value_mask=CWWidth|CWHeight;
+
+									changes.width=cc->contentWindowRect.w+1;
+									changes.height=cc->contentWindowRect.h+1;
+									//XClearArea(this->mainClass->display,cc->contentWindow,0,0,10000,100000,true);//TODO//
+									XConfigureWindow(this->mainClass->display,cc->contentWindow,value_mask,&changes);
+									//XResizeWindow(this->mainClass->display,cc->contentWindow,changes.width,changes.height);
+									XRaiseWindow(this->mainClass->display,cc->contentWindow);
+									cc->resetContentWindow();
 									cc->renderFrame(false);
 									this->noRestack=false;
 									this->LFSWM2_shuffle(cc->contentWindow);
-									this->LFSWM2_restack();
 								}
 						}
 				}
@@ -236,7 +232,8 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 					case MapNotify:
 						{
-							this->mainClass->LFSWM2_pushXErrorHandler();
+SHOWXERRORS
+							//LFSWM2_pushXErrorHandler(__FILE__,__LINE__);
 						//fprintf(stderr,"MapNotify main event loop window=%x when=%i\n",e.xmap.window,when++);
 								Atom					*v=NULL;
 								long unsigned int	nitems_return;
@@ -250,13 +247,15 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 										XFree(v);
 									}
 								this->noRestack=false;
-							this->mainClass->LFSWM2_popXErrorHandler();
+							//this->mainClass->LFSWM2_popXErrorHandler();
+HIDEXERRORS
 						}
 						break;
 
 					case MapRequest:
 						{
-							this->mainClass->LFSWM2_pushXErrorHandler();
+							//LFSWM2_pushXErrorHandler(__FILE__,__LINE__);
+SHOWXERRORS
 						//	fprintf(stderr,"MapRequest main event loop window=%x when=%i\n",e.xmap.window,when++);
 								this->noRestack=false;
 								this->mainClass->mainWindowClass->LFSWM2_removeProp(this->mainClass->rootWindow,LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW"));
@@ -271,11 +270,13 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 										if(this->mainClass->mainWindowClass->LFSWM2_createUnframedWindow(e.xmaprequest.window)==true)
 											{
 												this->noRestack=false;
-												this->mainClass->LFSWM2_popXErrorHandler();
-												break;
+												//this->mainClass->LFSWM2_popXErrorHandler();
+												////break;
 											}
+HIDEXERRORS
 										break;
 									}
+SHOWXERRORS
 								XMoveWindow(this->mainClass->display,e.xmaprequest.window,-1000000,-1000000);
 								if(this->mainClass->mainWindowClass->LFSWM2_createClient(e.xmaprequest.window,hs)==false)
 									{
@@ -283,23 +284,31 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 									//fprintf(stderr,"LFSWM2_createClient=false\n");
 									}
 								XMoveResizeWindow(this->mainClass->display,e.xmaprequest.window,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize,x_window_attrs.width,x_window_attrs.height);
-							this->mainClass->LFSWM2_popXErrorHandler();
+							//this->mainClass->LFSWM2_popXErrorHandler();
 							this->noRestack=true;
+HIDEXERRORS
 						}
 						break;
 
 					case ConfigureRequest://TODO//NEXT
+							if(this->mainClass->mainWindowClass->LFSWM2_checkValidWindow(e.xconfigurerequest.window)==false)
+								break;
+
 						//fprintf(stderr,"ConfigureRequest from main event loop window=%x when=%i\n",e.xmaprequest.window,when++);
 						{
-							this->mainClass->LFSWM2_pushXErrorHandler();
-							this->noRestack=false;
-							LFSWM2_clientClass	*cc;
-							cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
+							//LFSWM2_pushXErrorHandler(__FILE__,__LINE__);
 							if((e.xconfigurerequest.x<0) || (e.xconfigurerequest.y<0))
-								{
-									this->mainClass->LFSWM2_popXErrorHandler();
-									break;
-								}
+								break;
+							this->noRestack=false;
+//							LFSWM2_clientClass	*cc;
+//							cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xconfigurerequest.window);
+//							if((e.xconfigurerequest.x<0) || (e.xconfigurerequest.y<0))
+//								{
+//									//this->mainClass->LFSWM2_popXErrorHandler();
+//HIDEXERRORS
+//									break;
+//HIDEXERRORS
+//								}
 
 							if(e.xconfigurerequest.send_event==false)
 								{
@@ -310,18 +319,21 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 											cc->configCnt++;
 											if((cc->isBorderless==true) && (cc->configCnt<MAXCONFIGCNT))
 												{
+SHOWXERRORS
 													XWindowAttributes	x_window_attrs;
 													XGetWindowAttributes(this->mainClass->display,e.xconfigurerequest.window,&x_window_attrs);
 													hintsDataStruct		hs;
 													hs=this->mainClass->mainWindowClass->LFSWM2_getWindowHints(e.xconfigurerequest.window);
 													if((hs.mHints!=NULL) && (hs.mHints->decorations!=0))
 														XMoveResizeWindow(this->mainClass->display,e.xconfigurerequest.window,hs.pt.x,hs.pt.y,hs.sh->min_width,hs.sh->min_height);
-													this->mainClass->LFSWM2_popXErrorHandler();
+													//this->mainClass->LFSWM2_popXErrorHandler();
+HIDEXERRORS
 													break;
 												}
 											cc->configCnt=0;
 											if((e.xconfigurerequest.value_mask & (CWWidth|CWHeight)) !=0)
 												{
+SHOWXERRORS
 													ch.width=e.xconfigurerequest.width+this->mainClass->riteSideBarSize+this->mainClass->leftSideBarSize;
 													ch.height=e.xconfigurerequest.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize;
 													if((cc->buttonDown==false) || (cc->isBorderless==false))
@@ -334,15 +346,18 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 													ch.width=e.xconfigurerequest.width;
 													ch.height=e.xconfigurerequest.height;
 													XResizeWindow(this->mainClass->display,cc->contentWindow,ch.width,ch.height);
+HIDEXERRORS
 												}
 											
 											if((e.xconfigurerequest.value_mask & (CWX|CWY)) !=0)
 												{
+SHOWXERRORS
 													ch.x=e.xconfigurerequest.x;
 													ch.y=e.xconfigurerequest.y;
 													if(cc->isBorderless==false)
 														XMoveWindow(this->mainClass->display,cc->frameWindow,ch.x,ch.y);
-													this->mainClass->LFSWM2_popXErrorHandler();
+HIDEXERRORS
+													//this->mainClass->LFSWM2_popXErrorHandler();
 													break;
 												}
 
@@ -350,7 +365,8 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 											if((cc->buttonDown==false) && (cc->resizeMode==SCALERESIZE))
 												XMoveWindow(this->mainClass->display,cc->resizeWindow,-100000,-100000);
-											this->mainClass->LFSWM2_popXErrorHandler();
+											//this->mainClass->LFSWM2_popXErrorHandler();
+HIDEXERRORS
 											break;
 										}
 									else
@@ -364,11 +380,13 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 											changes.sibling=e.xconfigurerequest.above;
 											changes.stack_mode=e.xconfigurerequest.detail;
 
-											XConfigureWindow(this->mainClass->display,e.xconfigurerequest.window,e.xconfigurerequest.value_mask,&changes);																this->mainClass->LFSWM2_popXErrorHandler();						
+SHOWXERRORS
+											XConfigureWindow(this->mainClass->display,e.xconfigurerequest.window,e.xconfigurerequest.value_mask,&changes);																//this->mainClass->LFSWM2_popXErrorHandler();						
+HIDEXERRORS
 											break;
 										}
 								}
-							this->mainClass->LFSWM2_popXErrorHandler();
+							//this->mainClass->LFSWM2_popXErrorHandler();
 							break;
 						}
 
@@ -394,13 +412,15 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 							if(e.xproperty.state==PropertyNewValue)
 								{
-									this->mainClass->LFSWM2_pushXErrorHandler();
+SHOWXERRORS
 									bool unminim=false;
 									cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xproperty.window);
 									if((cc!=NULL) && (cc->isMinimized==true))
 										{
+									//LFSWM2_pushXErrorHandler(__FILE__,__LINE__);
 											if(!this->mainClass->mainWindowClass->LFSWM2_hasState(cc->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN"))))
 												unminim=true;
+											//this->mainClass->LFSWM2_popXErrorHandler();
 
 											if((cc->visible==false) && (e.xproperty.atom==this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("WM_HINTS"))))
 												{
@@ -418,84 +438,91 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 													cc->LFSWM2_showWindow(false);
 												}
 											this->noRestack=false;
-											this->mainClass->LFSWM2_popXErrorHandler();
 											break;
 										}
-									this->mainClass->LFSWM2_popXErrorHandler();
+									////this->mainClass->LFSWM2_popXErrorHandler();
+HIDEXERRORS
 								}
 
 							if((e.xproperty.state==PropertyNewValue) || (e.xproperty.state==PropertyDelete))
 								{
-									this->mainClass->LFSWM2_pushXErrorHandler();
+									////LFSWM2_pushXErrorHandler(__FILE__,__LINE__);
 									if(e.xproperty.atom==this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_CURRENT_DESKTOP")))
 										{
+SHOWXERRORS
 											if(e.xproperty.window==this->mainClass->rootWindow)
 												{
 													this->noRestack=false;
 													this->mainClass->LFSWM2_setCurrentDesktopFromRoot();
 												}
-											this->mainClass->LFSWM2_popXErrorHandler();
+											////this->mainClass->LFSWM2_popXErrorHandler();
+HIDEXERRORS
 											break;
 										}
 
 									if(e.xproperty.atom==this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE")))
 										{
-											this->mainClass->LFSWM2_pushXErrorHandler();
+											//LFSWM2_pushXErrorHandler(__FILE__,__LINE__);
+SHOWXERRORS
 											this->noRestack=false;
 											cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xproperty.window);
 											if(cc!=NULL)
 												{
 													cc->LFSWM2_setNetWMState(&e);
-													this->mainClass->LFSWM2_popXErrorHandler();
+													//this->mainClass->LFSWM2_popXErrorHandler();
+HIDEXERRORS
 													break;
 												}
+HIDEXERRORS
 										}
 
 									if(e.xproperty.atom==this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_NAME")))
 										{
-											this->mainClass->LFSWM2_pushXErrorHandler();
 											cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xproperty.window);
 											if(cc!=NULL)
 												{
 													cc->LFSWM2_setWindowName();
+											//LFSWM2_pushXErrorHandler(__FILE__,__LINE__);
 													cc->mainClass->mainWindowClass->LFSWM2_refreshFrame(cc,NULL);
 													//fprintf(stderr,"PropertyNotify OUT _NET_WM_NAME eventnumber %i\n",when++);
-													this->mainClass->LFSWM2_popXErrorHandler();
+													//this->mainClass->LFSWM2_popXErrorHandler();
 													break;
 												}
-											this->mainClass->LFSWM2_popXErrorHandler();
+											////this->mainClass->LFSWM2_popXErrorHandler();
 										}
-									this->mainClass->LFSWM2_pushXErrorHandler();
 									cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xproperty.window);
+									//this->mainClass->LFSWM2_popXErrorHandler();
 									if(cc!=NULL)
-										{
-											this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(cc->contentWindow);
-										}
-									this->mainClass->LFSWM2_popXErrorHandler();
+										this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(cc->contentWindow);
 								}
+HIDEXERRORS
 						}
 						//fprintf(stderr,"PropertyNotify OUT eventnumber %i\n",when++);
 						break;
 
 					case ClientMessage:
-						this->mainClass->LFSWM2_pushXErrorHandler();
+						//LFSWM2_pushXErrorHandler(__FILE__,__LINE__);
+SHOWXERRORS
 						//fprintf(stderr,"ClientMessage eventnumber %i\n",when++);
 						this->LFSWM2_doClientMsg(e.xclient.window,&e.xclient);
 						this->noRestack=false;
-						this->mainClass->LFSWM2_popXErrorHandler();
+						//this->mainClass->LFSWM2_popXErrorHandler();
+HIDEXERRORS
 						break;
 
 					case DestroyNotify:
-						this->mainClass->LFSWM2_pushXErrorHandler();
+						//LFSWM2_pushXErrorHandler(__FILE__,__LINE__);
 						{
+SHOWXERRORS
 							//std::cout<<"DestroyNotify from main event loop"<<std::endl;
 							//fprintf(stderr,"win=%p\n",e.xdestroywindow.window);
 							std::vector<Window>::iterator it;
 							it=std::find(this->mainClass->mainWindowClass->windowIDList.begin(),this->mainClass->mainWindowClass->windowIDList.end(),e.xdestroywindow.window);
 							if(it != this->mainClass->mainWindowClass->windowIDList.end())
 								this->mainClass->mainWindowClass->windowIDList.erase(it);
+HIDEXERRORS
 						}
-						this->mainClass->LFSWM2_popXErrorHandler();
+						//this->mainClass->LFSWM2_popXErrorHandler();
 						break;
 					default:
 						//fprintf(stderr,"default eventnumber %i\n",when++);
@@ -550,7 +577,8 @@ void LFSWM2_eventsClass::LFSWM2_doClientMsg(Window id,XClientMessageEvent *e)
 			ccmessage=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e->window);
 			if(ccmessage!=NULL)
 				{
-					this->mainClass->LFSWM2_pushXErrorHandler();
+					//LFSWM2_pushXErrorHandler(__FILE__,__LINE__);
+SHOWXERRORS
 						this->mainClass->LFSWM2_setCurrentDesktop(ccmessage->onDesk);
 						this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,(void*)&ccmessage->contentWindow,1);
 						this->mainClass->mainWindowClass->LFSWM2_removeProp(e->window,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN")));
@@ -558,7 +586,8 @@ void LFSWM2_eventsClass::LFSWM2_doClientMsg(Window id,XClientMessageEvent *e)
 						XRaiseWindow(this->mainClass->display,ccmessage->contentWindow);
 						XSetInputFocus(this->mainClass->display,ccmessage->contentWindow,RevertToNone,CurrentTime);
 						this->LFSWM2_shuffle(ccmessage->contentWindow);
-					this->mainClass->LFSWM2_popXErrorHandler();
+					//this->mainClass->LFSWM2_popXErrorHandler();
+HIDEXERRORS
 				}
 			return;
 		}
@@ -603,7 +632,8 @@ void LFSWM2_eventsClass::LFSWM2_doClientMsg(Window id,XClientMessageEvent *e)
 
 	if(e->message_type==this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE")) && e->format==32)
 		{
-			this->mainClass->LFSWM2_pushXErrorHandler();
+			//LFSWM2_pushXErrorHandler(__FILE__,__LINE__);
+SHOWXERRORS
 
 /*
 Atom 0x14d name=_NET_WM_STATE
@@ -681,7 +711,9 @@ Atom (nil) name=(null)
 					}
 			}
 exitit://TODO//just to even up poperror to be removed.
-			this->mainClass->LFSWM2_popXErrorHandler();
+true;
+HIDEXERRORS
+			//this->mainClass->LFSWM2_popXErrorHandler();
 		}
 	this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(id);
 }
@@ -689,7 +721,8 @@ exitit://TODO//just to even up poperror to be removed.
 void LFSWM2_eventsClass::LFSWM2_sendConfigureEvent(Window wid,rectStruct r)
 {
 	XConfigureEvent	ce;
-this->mainClass->LFSWM2_pushXErrorHandler();
+//LFSWM2_pushXErrorHandler(__FILE__,__LINE__);
+SHOWXERRORS
 	ce.type=ConfigureNotify;
 	ce.event=wid;
 	ce.window=wid;
@@ -703,7 +736,8 @@ this->mainClass->LFSWM2_pushXErrorHandler();
 	ce.send_event=true;
 
 	XSendEvent(this->mainClass->display,wid,true,StructureNotifyMask,(XEvent*)&ce);
-this->mainClass->LFSWM2_popXErrorHandler();
+HIDEXERRORS
+//this->mainClass->LFSWM2_popXErrorHandler();
 }
 
 void LFSWM2_eventsClass::LFSWM2_restack(void)
@@ -711,7 +745,8 @@ void LFSWM2_eventsClass::LFSWM2_restack(void)
 	std::vector<Window>	wl;
 	std::vector<Window>	cl;
 	LFSWM2_clientClass	*cc;
-this->mainClass->LFSWM2_pushXErrorHandler();
+//LFSWM2_pushXErrorHandler(__FILE__,__LINE__);
+SHOWXERRORS
 
 	for(int j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
 		{
@@ -735,7 +770,8 @@ this->mainClass->LFSWM2_pushXErrorHandler();
 
 	this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_CLIENT_LIST")),XA_WINDOW,32,cl.data(),cl.size());
 	this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_CLIENT_LIST_STACKING")),XA_WINDOW,32,cl.data(),cl.size());
-this->mainClass->LFSWM2_popXErrorHandler();
+//this->mainClass->LFSWM2_popXErrorHandler();
+HIDEXERRORS
 }
 
 void LFSWM2_eventsClass::LFSWM2_shuffle(Window id)
@@ -752,7 +788,7 @@ void LFSWM2_eventsClass::LFSWM2_shuffle(Window id)
 	int								to=0;
 	Window							transid=id;
 //fprintf(stderr,"LFSWM2_shuffle id=%p\n",id);
-this->mainClass->LFSWM2_pushXErrorHandler();
+////LFSWM2_pushXErrorHandler(__FILE__,__LINE__);
 	if(id!=None)
 		{
 			findid=std::find(this->mainClass->mainWindowClass->windowIDList.begin(),this->mainClass->mainWindowClass->windowIDList.end(),id)-this->mainClass->mainWindowClass->windowIDList.begin();
@@ -779,7 +815,9 @@ this->mainClass->LFSWM2_pushXErrorHandler();
 		{
 			n=0;		
 			Atom *v=NULL;
+SHOWXERRORS
 			v=(Atom*)this->mainClass->mainWindowClass->LFSWM2_getProp(this->mainClass->mainWindowClass->windowIDList.at(cnt),this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("WM_TRANSIENT_FOR")),XA_WINDOW,&n);
+HIDEXERRORS
 			if((v!=NULL) && (this->mainClass->mainWindowClass->windowIDList.at(cnt)!=transid))
 				{
 					if(n>0)
@@ -794,6 +832,7 @@ this->mainClass->LFSWM2_pushXErrorHandler();
 							LFSWM2_clientClass	*cc3;
 							cc2=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(to));
 							cc3=this->mainClass->mainWindowClass->LFSWM2_getClientClass(*v);
+SHOWXERRORS
 							if(cc2!=NULL)
 								{
 									if(cc3!=NULL)
@@ -803,6 +842,7 @@ this->mainClass->LFSWM2_pushXErrorHandler();
 									else
 										cc2->LFSWM2_hideWindow(false);
 								}
+HIDEXERRORS
 						}
 				}
 			cnt++;
@@ -857,7 +897,8 @@ this->mainClass->LFSWM2_pushXErrorHandler();
 				}
 		}
 	this->mainClass->mainWindowClass->windowIDList=wlb;
-this->mainClass->LFSWM2_popXErrorHandler();
+HIDEXERRORS
+////this->mainClass->LFSWM2_popXErrorHandler();
 }
 
 void LFSWM2_eventsClass::LFSWM2_moveToBottom(Window id)

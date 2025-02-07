@@ -1657,9 +1657,15 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 							if(((event->xconfigure.width-this->windowGeom.w)>2) || ((event->xconfigure.height-this->windowGeom.h)>2))
 								{
 									this->LFSTK_resizeWindow(event->xconfigure.width,event->xconfigure.height,false);
-									this->LFSTK_clearWindow();
+									this->LFSTK_clearWindow(false);
+									this->LFSTK_redrawAllGadgets();
 									return(0);
 							}
+						}
+					else
+						{
+							if(event->xconfigure.above==None)
+								this->LFSTK_redrawAllGadgets();
 						}
 
 //TODO//dont like this!!

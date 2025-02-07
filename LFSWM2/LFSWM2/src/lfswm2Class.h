@@ -44,13 +44,7 @@
 
 #include <lfstk/LFSTKGlobals.h>
 
-#include "config.h"
-
-#ifdef __DEBUG__
-#define MOVEKEYS (Mod4Mask|ControlMask|ShiftMask)
-#else
-#define MOVEKEYS (Mod4Mask)
-#endif
+#include "globals.h"
 
 template <typename t> void move(std::vector<t>& v,size_t oldIndex,size_t newIndex)//TODO//
 {
@@ -184,13 +178,7 @@ class LFSWM2_Class
 		void					LFSWM2_setCurrentDesktopFromRoot(void);
 		unsigned long		LFSWM2_getLowerDesktop(unsigned long cd);
 		unsigned long		LFSWM2_getHigherDesktop(unsigned long cd);
-
 		static int			LFSWM2_wmDetected(Display *display,XErrorEvent *e);
-		static int			LFSWM2_xError(Display *display,XErrorEvent *e);
-		static int			LFSWM2_xWarnings(Display *display,XErrorEvent *e);
-
-		void					LFSWM2_pushXErrorHandler(void);
-		void					LFSWM2_popXErrorHandler(void);
 
 //vars
 		unsigned int			numberOfDesktops=6;
@@ -198,7 +186,6 @@ class LFSWM2_Class
 		Display				*display;
 		Window				rootWindow;
 		Visual				*defaultVisual;
-//		XVisualInfo			defaultVisual;
 		Colormap				defaultColourmap;
 		int					blackColour;
 		int					whiteColour;
@@ -270,7 +257,6 @@ class LFSWM2_Class
 		void					DEBUG_printConfigureRequestStruct(XEvent *e);
 		void					DEBUG_printBinary(int num);
 		void					DEBUG_printCurrentHintsDataStruct(hintsDataStruct hs);
-
 #endif
 
 		int					msgQueueKey=999;

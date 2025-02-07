@@ -166,16 +166,6 @@ class LFSWM2_windowClass
 
 		void									LFSWM2_refreshFrame(LFSWM2_clientClass *cc,XExposeEvent *e=NULL);
 		void 								LFSWM2_refreshThemeFrame(LFSWM2_clientClass *cc);
-
-//		std::string							leftTop;
-//		std::string							middleTop;
-//		std::string							rightTop;
-//		std::string							leftSide;
-//		std::string							rightSide;
-//		std::string							leftBottom;
-//		std::string							middleBottom;
-//		std::string							rightBottom;
-
 //vars
 		LFSWM2_Class							*mainClass;
 //clients

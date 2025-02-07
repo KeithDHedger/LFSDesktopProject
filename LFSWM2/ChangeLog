@@ -1,3 +1,8 @@
+1.0.2
+Fixed some configure window events.
+Moved some xlib fuctions out of lfswm2class.
+Fixed a nuber of XLib errors.
+
 1.0.1
 Fixed (un)minimizing windows.
 Fixed left/right side window resize draggers AGAIN!.
