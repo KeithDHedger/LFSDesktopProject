@@ -30,7 +30,7 @@ LFSTray [ARG 0] ... [ARG N]
 -b, --below      
         Below all windows ( default above )
 -f, --filepath STRING ARG        
-        Use external file
+       Use external file, if ARG begins with '#' use solid colour, eg '#ff0000'
 
 Or for instance:
 lfstray --below -i 96 --gravity=4 --monitor 1
