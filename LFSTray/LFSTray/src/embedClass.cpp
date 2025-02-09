@@ -36,7 +36,7 @@ Pixmap LFSTray_embedClass::makePixmap(Window win)
 	Window	cr;
 	Pixmap back;
 
-	if(access(trayClass->imagePath.c_str(),F_OK)==F_OK)
+	if(trayClass->externalPixmap!=None)
 		{
 			back=XCreatePixmap(this->tray->apc->display,this->tray->apc->mainWindow->window,this->tray->iconSize,this->tray->iconSize,24);
 			GC backgc=XCreateGC(this->tray->apc->display,back,0,NULL);
@@ -112,7 +112,7 @@ bool LFSTray_embedClass::addIcon(Window wid)
 				}
 		}
 
-	XSelectInput(this->tray->apc->display,wid,StructureNotifyMask | PropertyChangeMask | ResizeRedirectMask);
+	XSelectInput(this->tray->apc->display,wid,StructureNotifyMask  | ResizeRedirectMask|PropertyChangeMask);
 	int ret=XGetWindowProperty(this->tray->apc->display,wid,trayClass->_NET_WM_PID,0,1024,False,AnyPropertyType, &actual_type, &actual_format, &nitems, &bytes_after, &prop);
 	if(ret==Success && prop)
 		{
@@ -145,12 +145,13 @@ bool LFSTray_embedClass::addIcon(Window wid)
 	set_attr.colormap=attr.colormap;
 	mask=CWColormap | CWBackPixel | CWBorderPixel;
 
+//mask=0;
 #ifdef __DEBUG__
 	fprintf(stderr,"lfstray: XCreateWindow(...)\n");
 #endif
 	Window parent=XCreateWindow(this->tray->apc->display,this->tray->apc->mainWindow->window,-1000,-1000,this->tray->iconSize,this->tray->iconSize,0,attr.depth,InputOutput,visual,mask, &set_attr);
 
-	this->tray->iconList[wid]={wid,parent,winname,this->nextIconX,this->nextIconY,this->tray->iconSize,this->tray->iconSize,false,this->makePixmap(parent)};
+	this->tray->iconList[wid]={wid,parent,winname,this->nextIconX,this->nextIconY,this->tray->iconSize,this->tray->iconSize,false,this->makePixmap(parent),false};
 
 	return(true);
 }
@@ -227,13 +228,22 @@ void LFSTray_embedClass::refreshIcons(void)
 			for (it=trayClass->iconList.begin();it!=trayClass->iconList.end();++it)
 				{
 					XMoveWindow(this->tray->apc->display,it->second.parentWindow,nextIconX,nextIconY);
-					pm=this->makePixmap(it->second.parentWindow);
-					XSetWindowBackgroundPixmap(this->tray->apc->display,it->second.parentWindow,pm);
-					XFreePixmap(this->tray->apc->display,it->second.background);
-					it->second.background=pm;
+					
+					if((this->tray->imagePath.length()>0) && (this->tray->imagePath.at(0)=='#'))
+						{
+							std::string col;
+							col="0x"+this->tray->imagePath.substr(1);
+							XSetWindowBackground(this->tray->apc->display,it->second.parentWindow,std::strtol(col.c_str(),nullptr,0));
+						}
+					else
+						{
+							pm=this->makePixmap(it->second.parentWindow);
+							XSetWindowBackgroundPixmap(this->tray->apc->display,it->second.parentWindow,pm);
+							XFreePixmap(this->tray->apc->display,it->second.background);
+							it->second.background=pm;
+						}
 					XWithdrawWindow(this->tray->apc->display,it->second.iconWindow,this->tray->apc->screen);
 					XMapWindow(this->tray->apc->display,it->second.iconWindow);
-
 					it->second.x=this->nextIconX;
 					it->second.y=this->nextIconY;
 					this->nextPosition();

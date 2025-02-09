@@ -20,6 +20,8 @@
 
 #include "globals.h"
 
+int exposures=0;
+
 bool eventCB(LFSTK_applicationClass *p,XEvent *event)
 {
 	switch(event->type)
@@ -77,10 +79,11 @@ bool eventCB(LFSTK_applicationClass *p,XEvent *event)
 					trayClass->embedClass->refreshIcons();
 					trayClass->firstrun++;
 				}
-				break;
+			break;
+
 		default:
 			break;
 		}
-	return(false);
 
+	return(false);
 }

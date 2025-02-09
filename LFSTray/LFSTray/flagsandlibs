@@ -19,3 +19,5 @@ LIBS =			$(X11_LIBS) \
 				$(IMLIB_LIBS) \
 				-lm \
 				-lstdc++fs
+
+	-lstdc++fs

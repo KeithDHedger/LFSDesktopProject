@@ -26,6 +26,7 @@
 
 #include <lfstk/LFSTKGlobals.h>
 #include <Imlib2.h>
+#include <X11/extensions/shape.h>
 
 #include "config.h"
 
@@ -40,6 +41,7 @@ struct sysIcons
 	int			h;
 	bool			embedded;
 	Pixmap		background;
+	bool			done=false;
 };
 
 class LFSTray_embedClass;

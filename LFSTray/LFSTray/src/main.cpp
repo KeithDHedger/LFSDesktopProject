@@ -50,7 +50,7 @@ void setPrefs(int argc,char **argv)
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("gravity"),{TYPEINT,"gravity","Gravity NW ARG=1,NE ARG=2,SE ARG=3,SW ARG=4,N ARG=5,E ARG=6,S ARG=7,W ARG=8","",false,NW}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("vertical"),{TYPEBOOL,"vertical","Vertical systray ( default horizontal )","",false,0}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("below"),{TYPEBOOL,"below","Below all windows ( default above )","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("filepath"),{TYPESTRING,"filepath","Use external file","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("filepath"),{TYPESTRING,"filepath","Use external file, if ARG begins with '#' use solid colour, eg '#ff0000'","",false,0}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("no-duplicates"),{TYPEBOOL,"no-duplicates","Don't allow duplicate items ( by _NET_WM_NAME property )","",false,0}},
 		};
 	prefs.LFSTK_loadVarsFromFile(configfile);
@@ -105,12 +105,15 @@ int main(int argc,char **argv)
 			imlib_context_set_display(apc->display);
 			imlib_context_set_visual(DefaultVisual(apc->display, 0));
 			buffer=imlib_load_image(trayClass->imagePath.c_str());
-			imlib_context_set_image(buffer);
-			imlib_context_set_drawable(apc->rootWindow);
-			imlib_context_set_dither(0);
-			imlib_image_set_has_alpha(1);
-			imlib_render_pixmaps_for_whole_image(&trayClass->externalPixmap,&trayClass->externalMaskPixmap);
-			imlib_free_image();
+			if(buffer!=NULL)
+				{
+					imlib_context_set_image(buffer);
+					imlib_context_set_drawable(apc->rootWindow);
+					imlib_context_set_dither(0);
+					imlib_image_set_has_alpha(1);
+					imlib_render_pixmaps_for_whole_image(&trayClass->externalPixmap,&trayClass->externalMaskPixmap);
+					imlib_free_image();
+				}
 			imlib_image_decache_file(trayClass->imagePath.c_str())	;
 		}
 
@@ -141,6 +144,9 @@ int main(int argc,char **argv)
 	apc->LFSTK_setEventCallBack(eventCB,(void*)0xdeadbeef);
 	XErrorHandler old=XSetErrorHandler(windowErrorHandler);
 
+#ifdef __DEBUG__
+	XSynchronize(apc->display,true);
+#endif
 	int retval=apc->LFSTK_runApp();
 
 	delete trayClass;

@@ -1,4 +1,5 @@
 1.0.4
+If --filepath starts with '#' use solid colour as back ground eg --filepath="#80af80".
 Added --no-duplicates option to prevent duplicate items.
 Added --filpath option to use image as background rather than root window.
 Added help option.
