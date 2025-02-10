@@ -35,7 +35,6 @@ LFSWM2_clientClass::~LFSWM2_clientClass(void)
 {
 	XWindowAttributes	x_window_attrs;
 
-	//LFSWM2_pushXErrorHandler(__FILE__,__LINE__);
 SHOWXERRORS
 	this->mainClass->mainWindowClass->LFSWM2_freeHints(this->windowHints);
 	this->mainClass->mainWindowClass->LFSWM2_setClientList(this->contentWindow,false);
@@ -75,7 +74,6 @@ SHOWXERRORS
 	if(this->frameGC!=None)
 		XFreeGC(this->mainClass->display,this->frameGC);
 HIDEXERRORS
-	//this->mainClass->LFSWM2_popXErrorHandler();
 }
 
 void LFSWM2_clientClass::LFSWM2_setWindowName(void)
@@ -87,7 +85,6 @@ HIDEXERRORS
 	long unsigned int	nitems_return;
 
 	this->name="";
-	//this->mainClass->LFSWM2_pushXErrorHandlerForWarnings();
 
 	namex=(char*)this->mainClass->mainWindowClass->LFSWM2_getProp(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_NAME")),this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("UTF8_STRING")),&nitems_return);
 	if (namex!=NULL)
@@ -111,8 +108,6 @@ HIDEXERRORS
 
 	if(namex!=NULL)
 		free(namex);
-
-	//this->mainClass->LFSWM2_popXErrorHandler();
 }
 
 void LFSWM2_clientClass::drawMousePressed(Window id,Pixmap pm,controlData data)

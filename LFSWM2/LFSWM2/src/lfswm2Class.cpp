@@ -466,16 +466,14 @@ void LFSWM2_Class::DEBUG_printAtom(Atom a)
 {
 	char		*name=NULL;
 
-	//this->LFSWM2_pushXErrorHandler(__FILE__,__LINE__);
-		name=XGetAtomName(this->display,a);
-		if(name!=NULL)
-			{
-				fprintf(stderr,"Atom %p name=%s\n",(void*)a,name);
-				XFree(name);
-			}
-		else
-			fprintf(stderr,"Unknown atom %p\n",(void*)a);
-	//this->LFSWM2_popXErrorHandler();
+	name=XGetAtomName(this->display,a);
+	if(name!=NULL)
+		{
+			fprintf(stderr,"Atom %p name=%s\n",(void*)a,name);
+			XFree(name);
+		}
+	else
+		fprintf(stderr,"Unknown atom %p\n",(void*)a);
 }
 
 void LFSWM2_Class::DEBUG_printEventData(XEvent *e,bool verbose)

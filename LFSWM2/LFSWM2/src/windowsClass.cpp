@@ -729,12 +729,8 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 			if(cc==NULL)
 				return;
 		}
-////LFSWM2_pushXErrorHandler(__FILE__,__LINE__);
-//SHOWXERRORS
-//	fprintf(stderr,"\nPush from file=%s @ line=%i\n",errorFile,errorLine);
 
 	Atom *states=(Atom*)this->LFSWM2_getFullProp(id,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE")),XA_ATOM,32,&n);
-//HIDEXERRORS
 
 	cc->onTop=false;
 	cc->onBottom=false;
@@ -769,7 +765,6 @@ void LFSWM2_windowClass::LFSWM2_reloadWindowState(Window id)
 				cc->LFSWM2_hideWindow(false);
 		}
 	XFree(states);
-//	//this->mainClass->LFSWM2_popXErrorHandler();
 	return;
 
 //TODO//
@@ -897,16 +892,13 @@ Window LFSWM2_windowClass::LFSWM2_getParentWindow(Window id)
 	Window			*children=NULL;
     unsigned int		num_children=0;
 
-	//this->mainClass->LFSWM2_pushXErrorHandlerForWarnings();
-		if(!XQueryTree(this->mainClass->display,id,&root,&parent,&children,&num_children))
-			{
-				//this->mainClass->LFSWM2_popXErrorHandler();
-				return(0);
-			}
+	if(!XQueryTree(this->mainClass->display,id,&root,&parent,&children,&num_children))
+		{
+			return(0);
+		}
 
-		if(children!=NULL)
-			XFree((char*)children);
-	//this->mainClass->LFSWM2_popXErrorHandler();
+	if(children!=NULL)
+		XFree((char*)children);
 	return(parent);
 }
 
@@ -989,10 +981,8 @@ bool LFSWM2_windowClass::LFSWM2_checkValidWindow(Window wid)
 	bool					dummy=0;
 	XWindowAttributes	xa;
 
-	//LFSWM2_pushXErrorHandler(__FILE__,__LINE__);
 HIDEXERRORS
 		dummy=XGetWindowAttributes(this->mainClass->display,wid,&xa);
-	//this->mainClass->LFSWM2_popXErrorHandler();
 	return(dummy);
 }
 
