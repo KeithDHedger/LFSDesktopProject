@@ -90,7 +90,7 @@ int addCpuData(int x,int y,int grav)
 	if(grav==NorthWestGravity)
 		xpos=x;
 	else
-		xpos=x-width;
+		xpos=x-width+1;
 
 	setNewData();
 	cpuButton=new LFSTK_labelClass(mainwind,"CPU=0.0%",xpos,0,width,panelHeight,CENTRE,grav);

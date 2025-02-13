@@ -161,17 +161,12 @@ void setGadgetDetails(LFSTK_gadgetClass *gadget)
 		{
 			gadget->LFSTK_setAlpha(1.0);
 			gadget->LFSTK_setTile(NULL,0);
-		//	gadget->LFSTK_setColourName(NORMALCOLOUR,panelColour);
-//gadget->LFSTK_setFontColourName(NORMALCOLOUR,panelTextColour,true);
 			gadget->LFSTK_setGadgetColourPair(NORMALCOLOUR,panelColour,panelTextColour);
 
 			if(noButtons==true)
-				{
-					gadget->gadgetDetails.bevel=BEVELNONE;
-					gadget->LFSTK_setGadgetColours(GADGETFG,panelColour,panelColour,panelColour,panelColour);
-//					gadget->LFSTK_setColourName(PRELIGHTCOLOUR,panelColour);
-//					gadget->LFSTK_setColourName(ACTIVECOLOUR,panelColour);
-//					gadget->LFSTK_setColourName(INACTIVECOLOUR,panelColour);
-				}
+				gadget->LFSTK_setGadgetColours(GADGETFG,panelColour,panelColour,panelColour,panelColour);
 		}
+
+	if(noButtons==true)
+		gadget->LFSTK_setStyle(BEVELNONE);
 }

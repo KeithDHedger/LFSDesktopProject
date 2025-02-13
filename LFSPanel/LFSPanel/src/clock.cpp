@@ -59,7 +59,7 @@ int addClock(int x,int y,int grav)
 	if(grav==NorthWestGravity)
 		xpos=x;
 	else
-		xpos=x-width;
+		xpos=x-width+1;
 
 	clockButton=new LFSTK_labelClass(mainwind,"--:--:--",xpos,0,width,panelHeight,CENTRE,grav);
 

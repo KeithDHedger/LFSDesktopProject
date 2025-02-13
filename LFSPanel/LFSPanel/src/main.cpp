@@ -54,9 +54,9 @@ void loadPrefs(const char *env)
 void addLeftGadgets(void)
 {
 	int	offset=leftOffset;
-
 	for(int j=0; j<prefs.LFSTK_getStringObject("gadgetsleft")->length();j++)
 		{
+
 			switch(prefs.LFSTK_getStringObject("gadgetsleft")->at(j))
 				{
 				case 'A':
@@ -97,7 +97,6 @@ void addLeftGadgets(void)
 					break;
 				}
 		}
-	offset++;
 	leftOffset=offset;
 }
 

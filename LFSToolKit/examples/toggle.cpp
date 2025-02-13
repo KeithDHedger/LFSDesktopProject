@@ -130,6 +130,8 @@ int main(int argc, char **argv)
 	toggle->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"Toggle");
 	toggle->LFSTK_setMouseMoveCallBack(enterCB,exitCB,USERDATA(0));
 	toggle->LFSTK_setToggleStyle(TOGGLENORMAL);
+	//toggle->LFSTK_setStyle(BEVELNONE);	
+
 	toggle->userData=USERDATA(1);
 
 	iconH=apc->globalLib->LFSTK_findThemedIcon("gnome","volume-high","");

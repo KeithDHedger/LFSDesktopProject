@@ -90,7 +90,7 @@ int addDiskData(int x,int y,int grav)
 	if(grav==NorthWestGravity)
 		xpos=x;
 	else
-		xpos=x-width;
+		xpos=x-width+1;
 
 	oldRead=getReadStats();
 	oldWrite=getWriteStats();
