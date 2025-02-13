@@ -284,7 +284,6 @@ int addAppmenu(int x,int y,int grav,bool fromleft)
 	appButton=new LFSTK_buttonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
 	appButton->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",LEFT,true);
 	appButton->LFSTK_setMouseCallBack(NULL,buttonCB,NULL);
-
 	setGadgetDetails(appButton);
 
 	appMenu=new LFSTK_menuClass(mainwind,xpos,ypos+panelHeight,1,1);
