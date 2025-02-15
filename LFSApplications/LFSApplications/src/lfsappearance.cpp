@@ -58,7 +58,7 @@ LFSTK_ExpanderGadgetClass	*multi=NULL;
 
 int							queueID=-1;
 
-infoDataStruct					**groupNameMenuItems=NULL;
+infoDataStruct				**groupNameMenuItems=NULL;
 LFSTK_findClass				*find;
 
 bool doQuit(void *p,void* ud)
@@ -199,6 +199,12 @@ bool buttonCB(void *p,void* ud)
 					system(command);
 					free(command);
 				}
+			if(strcmp((char*)ud,"TRAYPREFS")==0)
+				{
+					asprintf(&command,"%slfstrayprefs -w %i &",libpath,wc->window);
+					system(command);
+					free(command);
+				}
 			if(strcmp((char*)ud,"UPDATE")==0)
 				{
 					makeGroup(currentSet->LFSTK_getCStr());
@@ -252,7 +258,6 @@ void doNewGroup(void)
 
 bool menuCB(void *p,void* ud)
 {
-	//if(strcmp(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel(),"Add Group")==0)
 	if(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel().compare("Add Group")==0)
 		{
 			doNewGroup();
@@ -366,6 +371,14 @@ int main(int argc, char **argv)
 	launchButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"DOCKPREFS");
 	hrs.push_back({BORDER,sy,GADGETWIDTH,GADGETHITE,launchButton});
 	launchLabel=new LFSTK_labelClass(wc,"Launch Dock Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,LEFT);
+	hrs.push_back({BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,launchLabel});
+	sy+=YSPACING;
+
+//tray
+	launchButton=new LFSTK_buttonClass(wc,"Tray Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	launchButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"TRAYPREFS");
+	hrs.push_back({BORDER,sy,GADGETWIDTH,GADGETHITE,launchButton});
+	launchLabel=new LFSTK_labelClass(wc,"Launch Tray Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,LEFT);
 	hrs.push_back({BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,launchLabel});
 	sy+=YSPACING;
 

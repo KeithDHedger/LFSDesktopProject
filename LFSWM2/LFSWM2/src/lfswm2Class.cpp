@@ -171,7 +171,6 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("framefg"),{TYPESTRING,"framefg","","white",false,0}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","","black",false,0}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("forcedocksstack"),{TYPEINT,"forcedocksstack","","",false,1}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("rescanprefs"),{TYPEINT,"rescanprefs","","",false,10}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","","",false,0}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("resizemode"),{TYPEINT,"resizemode","","",false,2}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("modkeys"),{TYPEINT,"modkeys","","",false,MOVEKEYS}},
@@ -220,7 +219,6 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 		this->mainWindowClass->LFSWM2_loadTheme(this->prefs.LFSTK_getString("theme"));
 
 	this->messages=new LFSWM2_messageClass(this,this->msgQueueKey);
-	this->messages->delay=this->prefs.LFSTK_getInt("rescanprefs");
 }
 
 void LFSWM2_Class::LFSWM2_initRootWindow(void)

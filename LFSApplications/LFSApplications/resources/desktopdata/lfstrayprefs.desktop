@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=LFS Tray Prefs
+Comment=Prefs for LFS Tray
+Terminal=false
+Type=Application
+Categories=Gnome;GTK;;Settings;DesktopSettings;
+Icon=LFSTKPrefs
+Exec=lfstrayprefs

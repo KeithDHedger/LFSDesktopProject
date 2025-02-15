@@ -43,6 +43,8 @@ int main(int argc,char **argv)
 
 	mainLFSWM2Class=new LFSWM2_Class(argc,argv);
 	XSetErrorHandler(&xError);
+	XSetIOErrorHandler(xIOError);
+	//setjmp ??TODO..
 	HIDEXERRORS
 	mainLFSWM2Class->mainEventClass->LFSWM2_mainEventLoop();
 	do

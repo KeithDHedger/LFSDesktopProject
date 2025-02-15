@@ -25,7 +25,7 @@
 #include <sys/msg.h>
 
 #include <signal.h>
-
+#include <mqueue.h>
 #include "lfswm2Class.h"
 
 class LFSWM2_messageClass
@@ -44,7 +44,6 @@ class LFSWM2_messageClass
 
 		int				queueID=-1;
 		int				key=999;
-		int				delay=2;
 //messages
 		int				whatMsg=-1;
 

@@ -1,4 +1,5 @@
 0.2.0
+Fixed minor graphics glitch when setting 'no button borders'.
 Fixed slider.
 Removed "%u/%U/%f/%F" from command when launching from app menu.
 Fixed sending empty "%u" to launchers.

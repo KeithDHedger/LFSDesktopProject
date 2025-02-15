@@ -6,9 +6,15 @@
 const char	*errorFile=NULL;
 int			errorLine=-1;
 
+int xIOError(Display *display)
+{
+	fprintf(stderr,"\nXError From file=%s @~ line=%i\n",errorFile,errorLine);
+	return(0);
+}
 
 int xError(Display *display,XErrorEvent *e)
 {
+return(0);
 	if(errorFile==NULL)
 		return(0);
 

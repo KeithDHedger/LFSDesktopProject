@@ -1,4 +1,6 @@
 0.2.0
+Added lfstrayprefs.
+Updated lfswm2prefs.
 Update to use new prefsclass functions.
 Added killall docks to lfsappearance 'Apply'.
 Added prelight colour to lfsdockprefs.

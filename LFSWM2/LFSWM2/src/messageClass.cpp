@@ -24,21 +24,11 @@ static void alarmCallBack(int sig)
 {
 	XExposeEvent		event;
 	bool				needsRefresh=false;
-
 	needsRefresh=theMainClass->messages->LFSWM2_readMsg();
-	if(needsRefresh==true)
-		{
-			event.type=Expose;
-			event.window=theMainClass->rootWindow;
-			XSendEvent(theMainClass->display,theMainClass->rootWindow,true,ExposureMask,(XEvent*)&event);
-			XFlush(theMainClass->display);
-		}
-	alarm(theMainClass->messages->delay);
 }
 
 LFSWM2_messageClass::~LFSWM2_messageClass(void)
 {
-	alarm(0);
 }
 
 LFSWM2_messageClass::LFSWM2_messageClass(LFSWM2_Class *mainclass,int newkey)
@@ -50,36 +40,53 @@ LFSWM2_messageClass::LFSWM2_messageClass(LFSWM2_Class *mainclass,int newkey)
 	if((this->queueID=msgget(this->key,IPC_CREAT|0660))==-1)
 		fprintf(stderr,"Can't create message queue\n");
 
-	signal(SIGALRM,alarmCallBack);
-	alarm(this->delay);
+	signal(SIGUSR1,alarmCallBack);
 }
 
 bool LFSWM2_messageClass::LFSWM2_readMsg(void)
 {
-	int		retcode;
+	int			retcode;
 	msgBuffer	buffer;
-	
+	bool			retval=false;
+	bool			allDone=false;
+
+	this->whatMsg=NOMSG;
 	buffer.mText[0]=0;
 	retcode=msgrcv(this->queueID,&buffer,MAX_MSG_SIZE,LFSWM2_MSG,IPC_NOWAIT);
 
 	if(retcode>0)
 		{
-			//fprintf(stderr,"message=%s\n",buffer.mText);
+			if(strcmp(buffer.mText,"debugmsg")==0)
+				{
+					this->whatMsg=DEBUGMSG;
+					retval=true;
+				}
 			if(strcmp(buffer.mText,"reloadtheme")==0)
 				{
-					whatMsg=REFRESHTHEME;
-					return(true);
+					this->whatMsg=REFRESHTHEME;
+					retval=true;
 				}
 			if(strcmp(buffer.mText,"restartwm")==0)
 				{
 					this->whatMsg=RESTARTLFSWM;
-					return(true);
+					retval=true;
 				}
 			if(strcmp(buffer.mText,"quit")==0)
 				{
 					this->whatMsg=QUITLFSWM;
-					return(true);
+					retval=true;
 				}
 		}
-	return(false);
+
+//	while(allDone==false)
+//		{
+//			retcode=msgrcv(this->queueID,&buffer,MAX_MSG_SIZE,LFSWM2_MSG,IPC_NOWAIT);
+//			if(retcode<=1)
+//				allDone=true;
+//		}
+
+#ifdef __DEBUG__
+	fprintf(stderr,"what=%i whattxt=%s\n",this->mainClass->messages->whatMsg,buffer.mText);
+#endif
+	return(retval);
 }

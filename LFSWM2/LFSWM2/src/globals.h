@@ -17,6 +17,6 @@ extern const char	*errorFile;
 extern int			errorLine;
 
 int xError(Display *display,XErrorEvent *e);
-
+int xIOError(Display *display);
 
 #endif

@@ -49,7 +49,7 @@
 #include <experimental/filesystem>
 
 
-#define COPYRITE			"Copyright © 2013-2024 K.D.Hedger"
+#define COPYRITE			"Copyright © 2013-2025 K.D.Hedger"
 #define PERSONAL			"kdhedger68713@gmail.com"
 #define	MYWEBSITE		"https://keithdhedger.github.io/"
 

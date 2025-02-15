@@ -35,7 +35,6 @@ LFSWM2_clientClass::~LFSWM2_clientClass(void)
 {
 	XWindowAttributes	x_window_attrs;
 
-SHOWXERRORS
 	this->mainClass->mainWindowClass->LFSWM2_freeHints(this->windowHints);
 	this->mainClass->mainWindowClass->LFSWM2_setClientList(this->contentWindow,false);
 
@@ -73,13 +72,10 @@ SHOWXERRORS
 		XFreeGC(this->mainClass->display,this->menuControlStruct.controlGC);
 	if(this->frameGC!=None)
 		XFreeGC(this->mainClass->display,this->frameGC);
-HIDEXERRORS
 }
 
 void LFSWM2_clientClass::LFSWM2_setWindowName(void)
 {
-HIDEXERRORS
-
 	char					*namex=NULL;
 	XTextProperty		p;
 	long unsigned int	nitems_return;
