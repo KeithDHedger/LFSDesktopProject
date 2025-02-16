@@ -99,7 +99,8 @@ bool buttonCB(void *p,void* ud)
 			prefs.LFSTK_setString("filepath",tileFilepathEdit->LFSTK_getCStr());
 			prefs.LFSTK_saveVarsToFile(envFile);
 			//prefs.LFSTK_saveVarsToFile("-");
-			apc->globalLib->LFSTK_oneLiner("%s","pgrep \"^lfstray$\" |xargs kill -TERM");
+			apc->globalLib->LFSTK_oneLiner("%s","pgrep \"^lfstray$\" |xargs kill -SIGUSR1");
+
 		}
 	return(true);
 }

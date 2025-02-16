@@ -22,9 +22,10 @@
 
 #include "globals.h"
 
-LFSTray_trayClass	*trayClass=NULL;
-LFSTK_windowClass	*transwc=NULL;
-LFSTK_prefsClass		prefs(PACKAGE,VERSION);
+LFSTray_trayClass		*trayClass=NULL;
+LFSTK_windowClass		*transwc=NULL;
+LFSTK_prefsClass			prefs(PACKAGE,VERSION);
+LFSTK_applicationClass	*apc=NULL;
 
 option long_options[]=
 	{
@@ -56,14 +57,69 @@ void setPrefs(int argc,char **argv)
 	prefs.LFSTK_loadVarsFromFile(configfile);
 }
 
+static void alarmCallBack(int sig)
+{
+	std::string	configfile=getenv("HOME");
+
+	configfile+="/.config/LFS/lfstray.rc";
+	prefs.LFSTK_loadVarsFromFile(configfile);
+
+	trayClass->vertical=prefs.LFSTK_getBool("vertical")	;
+	trayClass->isBelow=prefs.LFSTK_getBool("below");
+	trayClass->allowDuplicates=!prefs.LFSTK_getBool("no-duplicates");
+	trayClass->onMonitor=prefs.LFSTK_getInt("monitor");
+	trayClass->gravity=(TrayPos)prefs.LFSTK_getInt("gravity");
+	trayClass->iconSize=prefs.LFSTK_getInt("iconsize");
+	trayClass->imagePath=prefs.LFSTK_getString("filepath");
+
+	if(trayClass->isBelow==true)
+		{
+			transwc->LFSTK_setKeepBelow(true);
+			transwc->LFSTK_setKeepAbove(false);
+		}
+	else
+		{
+			transwc->LFSTK_setKeepBelow(false);
+			transwc->LFSTK_setKeepAbove(true);
+		}
+
+	if(access(trayClass->imagePath.c_str(),F_OK)==F_OK)
+		{
+			Imlib_Image buffer;
+
+			imlib_context_set_display(apc->display);
+			imlib_context_set_visual(DefaultVisual(apc->display, 0));
+			buffer=imlib_load_image(trayClass->imagePath.c_str());
+			if(buffer!=NULL)
+				{
+					imlib_context_set_image(buffer);
+					imlib_context_set_drawable(apc->rootWindow);
+					imlib_context_set_dither(0);
+					imlib_image_set_has_alpha(1);
+					imlib_render_pixmaps_for_whole_image(&trayClass->externalPixmap,&trayClass->externalMaskPixmap);
+					imlib_free_image();
+				}
+			imlib_image_decache_file(trayClass->imagePath.c_str())	;
+		}
+	else
+		trayClass->imagePath="";
+
+	trayClass->resetWindow();
+	trayClass->embedClass->refreshIcons();
+
+	XUnmapWindow(apc->display,transwc->window);
+	XMapWindow(apc->display,transwc->window);
+}
+
 int main(int argc,char **argv)
 {
-	LFSTK_applicationClass	*apc=NULL;
-	windowInitStruct			*wi=NULL;
+	windowInitStruct *wi=NULL;
+
 	apc=new LFSTK_applicationClass;
 	trayClass=new LFSTray_trayClass(apc);
 
 	setPrefs(argc,argv);
+	signal(SIGUSR1,alarmCallBack);
 
 	if(prefs.LFSTK_argsToPrefs(argc,argv,long_options,true)==false)
 		{
@@ -116,6 +172,8 @@ int main(int argc,char **argv)
 				}
 			imlib_image_decache_file(trayClass->imagePath.c_str())	;
 		}
+	else
+		trayClass->imagePath="";
 
 	trayClass->setTrayAtoms();
 
@@ -147,6 +205,7 @@ int main(int argc,char **argv)
 #ifdef __DEBUG__
 	XSynchronize(apc->display,true);
 #endif
+
 	int retval=apc->LFSTK_runApp();
 
 	delete trayClass;

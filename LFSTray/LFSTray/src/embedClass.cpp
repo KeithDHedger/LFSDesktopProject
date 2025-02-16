@@ -227,6 +227,14 @@ void LFSTray_embedClass::refreshIcons(void)
 		{
 			for (it=trayClass->iconList.begin();it!=trayClass->iconList.end();++it)
 				{
+				if(it->second.h!=this->tray->iconSize)
+				{
+					XMoveResizeWindow(this->tray->apc->display,it->second.parentWindow,nextIconX,nextIconY,this->tray->iconSize,this->tray->iconSize);
+					XMoveResizeWindow(this->tray->apc->display,it->second.iconWindow,0,0,this->tray->iconSize,this->tray->iconSize);
+					it->second.w=this->tray->iconSize;
+					it->second.h=this->tray->iconSize;
+				}
+				else
 					XMoveWindow(this->tray->apc->display,it->second.parentWindow,nextIconX,nextIconY);
 					
 					if((this->tray->imagePath.length()>0) && (this->tray->imagePath.at(0)=='#'))
