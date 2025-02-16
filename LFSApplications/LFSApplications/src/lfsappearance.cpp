@@ -104,7 +104,8 @@ void updateDesktop(void)
 	sprintf(buffer.mText,"reloadtheme");
 	if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
 		fprintf(stderr,"Can't send message :(\n");
-	
+
+	apc->globalLib->LFSTK_oneLiner("%s","pgrep \"^lfstray$\" |xargs kill -SIGUSR1");
 	system("killall lfspanel lfsdock &");
 }
 
