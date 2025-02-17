@@ -102,13 +102,15 @@ static void alarmCallBack(int sig)
 			imlib_image_decache_file(trayClass->imagePath.c_str())	;
 		}
 	else
-		trayClass->imagePath="";
+		{
+			trayClass->imagePath="";
+			trayClass->externalPixmap=None;
+		}
 
 	trayClass->resetWindow();
 	trayClass->embedClass->refreshIcons();
-
-	XUnmapWindow(apc->display,transwc->window);
-	XMapWindow(apc->display,transwc->window);
+	transwc->LFSTK_hideWindow();
+	transwc->LFSTK_showWindow();
 }
 
 int main(int argc,char **argv)
@@ -120,24 +122,6 @@ int main(int argc,char **argv)
 
 	setPrefs(argc,argv);
 	signal(SIGUSR1,alarmCallBack);
-
-	if(prefs.LFSTK_argsToPrefs(argc,argv,long_options,true)==false)
-		{
-			delete trayClass;
-			delete apc;
-			cairo_debug_reset_static_data();
-			return(1);
-		}
-	else
-		{
-			trayClass->vertical=prefs.LFSTK_getBool("vertical")	;
-			trayClass->isBelow=prefs.LFSTK_getBool("below");
-			trayClass->allowDuplicates=!prefs.LFSTK_getBool("no-duplicates");
-			trayClass->onMonitor=prefs.LFSTK_getInt("monitor");
-			trayClass->gravity=(TrayPos)prefs.LFSTK_getInt("gravity");
-			trayClass->iconSize=prefs.LFSTK_getInt("iconsize");
-			trayClass->imagePath=prefs.LFSTK_getString("filepath");
-		}
 
 	wi=apc->LFSTK_getDefaultWInit();
 	wi->overRide=false;
@@ -154,27 +138,6 @@ int main(int argc,char **argv)
 	apc->LFSTK_addWindow(wi,PACKAGE);
 	transwc=apc->mainWindow;
 
-	if(access(trayClass->imagePath.c_str(),F_OK)==F_OK)
-		{
-			Imlib_Image buffer;
-
-			imlib_context_set_display(apc->display);
-			imlib_context_set_visual(DefaultVisual(apc->display, 0));
-			buffer=imlib_load_image(trayClass->imagePath.c_str());
-			if(buffer!=NULL)
-				{
-					imlib_context_set_image(buffer);
-					imlib_context_set_drawable(apc->rootWindow);
-					imlib_context_set_dither(0);
-					imlib_image_set_has_alpha(1);
-					imlib_render_pixmaps_for_whole_image(&trayClass->externalPixmap,&trayClass->externalMaskPixmap);
-					imlib_free_image();
-				}
-			imlib_image_decache_file(trayClass->imagePath.c_str())	;
-		}
-	else
-		trayClass->imagePath="";
-
 	trayClass->setTrayAtoms();
 
 	XSetSelectionOwner(apc->display,trayClass->_NET_SYSTEM_TRAY_SCREEN,transwc->window,CurrentTime);
@@ -182,6 +145,18 @@ int main(int argc,char **argv)
 		{
 			fprintf(stderr,"lfstray: cannot find systray manager"  "\n");
 			return(1);
+		}
+
+	if(prefs.LFSTK_argsToPrefs(argc,argv,long_options,true)==false)
+		{
+			delete trayClass;
+			delete apc;
+			cairo_debug_reset_static_data();
+			return(1);
+		}
+	else
+		{
+			alarmCallBack(0);
 		}
 
 	XClientMessageEvent ev;

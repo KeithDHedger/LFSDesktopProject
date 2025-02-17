@@ -26,6 +26,69 @@ LFSWM2_eventsClass::~LFSWM2_eventsClass(void)
 {
 }
 
+int LFSWM2_eventsClass::checkMessages(void)
+{
+	if(this->mainClass->messages->whatMsg!=NOMSG)
+		{
+			if(this->mainClass->messages->whatMsg==QUITLFSWM)
+				{
+					this->mainClass->messages->whatMsg=NOMSG;
+					return(0);
+				}
+
+			if(this->mainClass->messages->whatMsg==RESTARTLFSWM)
+				{
+					this->mainClass->messages->whatMsg=NOMSG;
+					char self[PATH_MAX]={0};
+					int nchar=readlink("/proc/self/exe",self,sizeof self);
+					if(nchar>1)
+						execv(self,this->mainClass->argv);
+					return(1);
+				}
+
+			if(this->mainClass->messages->whatMsg==REFRESHTHEME)
+				{
+					this->mainClass->messages->whatMsg=NOMSG;
+					int mokeyshold=this->mainClass->modKeys;
+					this->mainClass->mainWindowClass->LFSWM2_reloadTheme();
+					this->mainClass->messages->whatMsg=NOMSG;
+					LFSWM2_clientClass *ccs;
+					for(long unsigned j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
+						{
+							ccs=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(j));
+							if(ccs!=NULL)
+								{
+									if(this->mainClass->mainWindowClass->theme.gotPart[LFSTK_UtilityClass::LFSTK_hashFromKey("menu-active")]==false)
+										XMoveWindow(this->mainClass->display,ccs->menuButton,-1000,-1000);
+									if(this->mainClass->mainWindowClass->theme.gotPart[LFSTK_UtilityClass::LFSTK_hashFromKey("shade-active")]==false)
+										XMoveWindow(this->mainClass->display,ccs->shadeButton,-1000,-1000);
+
+									if(ccs->isFullscreen==false)
+										{
+											if(ccs->isBorderless==false)
+												{
+													XShapeCombineMask(this->mainClass->display,ccs->frameWindow,ShapeBounding,0,0,None,ShapeSet);
+													ccs->setWindowRects(true);
+													this->mainClass->mainWindowClass->LFSWM2_setControlRects(ccs);
+													ccs->resetContentWindow();
+													this->mainClass->mainWindowClass->LFSWM2_refreshFrame(ccs);
+													ccs->resizeMode=this->mainClass->resizeMode;
+												}
+										}
+									
+									XUngrabButton(this->mainClass->display,Button1,mokeyshold,ccs->contentWindow);
+									XGrabButton(this->mainClass->display,Button1,(this->mainClass->modKeys),ccs->contentWindow,False,ButtonPressMask|ButtonReleaseMask|PointerMotionMask,GrabModeAsync,GrabModeAsync,None,None);
+									XUngrabKey(this->mainClass->display,XKeysymToKeycode(this->mainClass->display,XK_Escape),mokeyshold,ccs->contentWindow);
+									XGrabKey(this->mainClass->display,XKeysymToKeycode(this->mainClass->display,XK_Escape),(this->mainClass->modKeys),ccs->contentWindow,False,GrabModeSync,GrabModeAsync);
+								}
+						}
+					this->noRestack=false;
+				}
+			this->mainClass->messages->whatMsg=NOMSG;
+		}
+	return(2);
+}
+
 LFSWM2_eventsClass::LFSWM2_eventsClass(LFSWM2_Class *mainclass)
 {
 	this->mainClass=mainclass;
@@ -49,73 +112,25 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 	int					lastbutton=-1;
 	int					lasttime=0;
 	bool					firstrun=true;
+	bool					runflag=true;
 
 	this->mainClass->runLevel=RL_STARTUP;
 	this->mainClass->mainWindowClass->LFSWM2_buildClientList();
 	this->mainClass->runLevel=RL_NORMAL;
 	this->mainClass->LFSWM2_setCurrentDesktop(this->mainClass->currentDesktop,true);
 
-	while(true)
+	while(runflag==true)
 		{
 			XEvent e;
-
-			if(this->mainClass->messages->whatMsg!=NOMSG)
+			switch(this->checkMessages())
 				{
-					if(this->mainClass->messages->whatMsg==QUITLFSWM)
-						{
-							this->mainClass->messages->whatMsg=NOMSG;
-							break;
-						}
-
-					if(this->mainClass->messages->whatMsg==RESTARTLFSWM)
-						{
-							this->mainClass->messages->whatMsg=NOMSG;
-							char self[PATH_MAX]={0};
-							int nchar=readlink("/proc/self/exe",self,sizeof self);
-							if(nchar>1)
-								execv(self,this->mainClass->argv);
-							continue;
-						}
-
-					if(this->mainClass->messages->whatMsg==REFRESHTHEME)
-						{
-							this->mainClass->messages->whatMsg=NOMSG;
-							int mokeyshold=this->mainClass->modKeys;
-							this->mainClass->mainWindowClass->LFSWM2_reloadTheme();
-							this->mainClass->messages->whatMsg=NOMSG;
-							LFSWM2_clientClass *ccs;
-							for(long unsigned j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
-								{
-									ccs=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(j));
-									if(ccs!=NULL)
-										{
-											if(this->mainClass->mainWindowClass->theme.gotPart[LFSTK_UtilityClass::LFSTK_hashFromKey("menu-active")]==false)
-												XMoveWindow(this->mainClass->display,ccs->menuButton,-1000,-1000);
-											if(this->mainClass->mainWindowClass->theme.gotPart[LFSTK_UtilityClass::LFSTK_hashFromKey("shade-active")]==false)
-												XMoveWindow(this->mainClass->display,ccs->shadeButton,-1000,-1000);
-
-											if(ccs->isFullscreen==false)
-												{
-													if(ccs->isBorderless==false)
-														{
-															XShapeCombineMask(this->mainClass->display,ccs->frameWindow,ShapeBounding,0,0,None,ShapeSet);
-															ccs->setWindowRects(true);
-															this->mainClass->mainWindowClass->LFSWM2_setControlRects(ccs);
-															ccs->resetContentWindow();
-															this->mainClass->mainWindowClass->LFSWM2_refreshFrame(ccs);
-															ccs->resizeMode=this->mainClass->resizeMode;
-														}
-												}
-									
-											XUngrabButton(this->mainClass->display,Button1,mokeyshold,ccs->contentWindow);
-											XGrabButton(this->mainClass->display,Button1,(this->mainClass->modKeys),ccs->contentWindow,False,ButtonPressMask|ButtonReleaseMask|PointerMotionMask,GrabModeAsync,GrabModeAsync,None,None);
-											XUngrabKey(this->mainClass->display,XKeysymToKeycode(this->mainClass->display,XK_Escape),mokeyshold,ccs->contentWindow);
-											XGrabKey(this->mainClass->display,XKeysymToKeycode(this->mainClass->display,XK_Escape),(this->mainClass->modKeys),ccs->contentWindow,False,GrabModeSync,GrabModeAsync);
-										}
-								}
-							this->noRestack=false;
-						}
-					this->mainClass->messages->whatMsg=NOMSG;
+					case 0:
+						runflag=false;
+						continue;
+						break;
+					case 1:
+						continue;
+						break;
 				}
 
 			XNextEvent(this->mainClass->display,&e);
@@ -171,9 +186,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 									changes.width=cc->contentWindowRect.w+1;
 									changes.height=cc->contentWindowRect.h+1;
-									//XClearArea(this->mainClass->display,cc->contentWindow,0,0,10000,100000,true);//TODO//
 									XConfigureWindow(this->mainClass->display,cc->contentWindow,value_mask,&changes);
-									//XResizeWindow(this->mainClass->display,cc->contentWindow,changes.width,changes.height);
 									XRaiseWindow(this->mainClass->display,cc->contentWindow);
 									cc->resetContentWindow();
 									cc->renderFrame(false);

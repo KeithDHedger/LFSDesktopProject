@@ -42,6 +42,8 @@ class LFSWM2_eventsClass
 //vars
 		bool			noRestack=false;
 		LFSWM2_Class	*mainClass;
+		int			checkMessages(void);
+
 	private:
 		int			sy=0;
 };
