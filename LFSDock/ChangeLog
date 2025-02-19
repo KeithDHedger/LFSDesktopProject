@@ -1,4 +1,5 @@
 0.2.1
+Fixed erroniously showing unmapped but extant windows in taskbar,
 Fixed right side image when using background.
 Fixed setting window background.
 Fixed unminimizing windows.

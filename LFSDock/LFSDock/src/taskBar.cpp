@@ -156,20 +156,21 @@ bool taskListCB(void* p,void* ud)
 Window doTreeWalkForTasks(Window wind)
 {
 	Window			root,parent;
-	Window			*children;
-	Window			thewin;
-	unsigned int		n_children;
-	int				i;
-	unsigned long	winid;
-	char				*wname;
-	void				*ptr=NULL;
-	unsigned long	count=32;
-	Atom				rtype;
-	int				rfmt;
-	unsigned long	rafter;
-	unsigned long	n=0;
-	Status			st;
-	taskStruct		tsk;
+	Window				*children;
+	Window				thewin;
+	unsigned int			n_children;
+	int					i;
+	unsigned long		winid;
+	char					*wname;
+	void					*ptr=NULL;
+	unsigned long		count=32;
+	Atom					rtype;
+	int					rfmt;
+	unsigned long		rafter;
+	unsigned long		n=0;
+	Status				st;
+	taskStruct			tsk;
+	XWindowAttributes	wattr;
 
 	if (!XQueryTree(apc->display,wind,&root,&parent,&children,&n_children))
 		return None;
@@ -186,6 +187,12 @@ Window doTreeWalkForTasks(Window wind)
 		{
 			if(!hasProp(children[j],WM_STATE))
 				continue;
+			else
+				{
+					XGetWindowAttributes(apc->display,children[j],&wattr);
+					if(wattr.map_state==IsUnmapped)
+						continue;
+				}
 
 			if(hasProp(children[j],WM_CLASS))
 				{
