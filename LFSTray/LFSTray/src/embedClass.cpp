@@ -55,8 +55,7 @@ Pixmap LFSTray_embedClass::makePixmap(Window win)
 			Pixmap pm=this->tray->apc->globalLib->LFSTK_getWindowPixmap(this->tray->apc->display,this->tray->apc->rootWindow);
 			back=XCreatePixmap(this->tray->apc->display,this->tray->apc->mainWindow->window,this->tray->iconSize,this->tray->iconSize,24);
 			GC gc=XCreateGC(this->tray->apc->display,back,0,NULL);
-			XTranslateCoordinates(this->tray->apc->display,this->tray->apc->mainWindow->window,this->tray->apc->rootWindow,0,0,&x,&y,&cr);
-			XCopyArea(this->tray->apc->display,pm,back,gc,x+this->nextIconX,y+this->nextIconY,this->tray->iconSize,this->tray->iconSize,0,0);
+			XCopyArea(this->tray->apc->display,pm,back,gc,this->nextIconX+this->tray->x,this->nextIconY+this->tray->y,this->tray->iconSize,this->tray->iconSize,0,0);
 			XFreeGC(this->tray->apc->display,gc);
 		}
 	return(back);
@@ -227,35 +226,73 @@ void LFSTray_embedClass::refreshIcons(void)
 		{
 			for (it=trayClass->iconList.begin();it!=trayClass->iconList.end();++it)
 				{
-				if(it->second.h!=this->tray->iconSize)
-				{
-					XMoveResizeWindow(this->tray->apc->display,it->second.parentWindow,nextIconX,nextIconY,this->tray->iconSize,this->tray->iconSize);
-					XMoveResizeWindow(this->tray->apc->display,it->second.iconWindow,0,0,this->tray->iconSize,this->tray->iconSize);
-					it->second.w=this->tray->iconSize;
-					it->second.h=this->tray->iconSize;
+					if(it->second.h!=this->tray->iconSize)
+						{
+							it->second.h=this->tray->iconSize;
+							it->second.w=this->tray->iconSize;
+							XResizeWindow(this->tray->apc->display,it->second.parentWindow,this->tray->iconSize,this->tray->iconSize);
+							XMoveResizeWindow(this->tray->apc->display,it->second.iconWindow,0,0,this->tray->iconSize,this->tray->iconSize);
+						}
 				}
-				else
-					XMoveWindow(this->tray->apc->display,it->second.parentWindow,nextIconX,nextIconY);
-					
+		}
+
+	if(trayClass->iconList.size()>0)
+		{
+			std::vector<sysIcons>	si;
+			bool						flag=false;
+
+			for (it=trayClass->iconList.begin();it!=trayClass->iconList.end();++it)
+				si.push_back(it->second);
+
+			while(flag==false)
+				{
+					flag=true;
+					for(int j=0;j<si.size()-1;j++)
+						{
+							bool domove=false;
+							if(this->tray->reverseOrder==true)
+								{
+									if(si.at(j).windowName.compare(si.at(j+1).windowName)<0)
+										domove=true;
+								}
+							else
+								{
+									if(si.at(j).windowName.compare(si.at(j+1).windowName)>0)
+										domove=true;
+								}
+							if(domove==true)
+								{
+									move(si,j,j+1);
+									flag=false;
+								}
+						}
+				}
+
+			for(int j=0;j<si.size();j++)
+				{
+					//fprintf(stderr,"wnmae=%s\n",si.at(j).windowName.c_str());
+					si.at(j).x=this->nextIconX;
+					si.at(j).y=this->nextIconY;
+					XMoveWindow(this->tray->apc->display,si.at(j).parentWindow,nextIconX,nextIconY);
+
 					if((this->tray->imagePath.length()>0) && (this->tray->imagePath.at(0)=='#'))
 						{
 							std::string col;
 							col="0x"+this->tray->imagePath.substr(1);
-							XSetWindowBackground(this->tray->apc->display,it->second.parentWindow,std::strtol(col.c_str(),nullptr,0));
+							XSetWindowBackground(this->tray->apc->display,si.at(j).parentWindow,std::strtol(col.c_str(),nullptr,0));
 						}
 					else
 						{
-							pm=this->makePixmap(it->second.parentWindow);
-							XSetWindowBackgroundPixmap(this->tray->apc->display,it->second.parentWindow,pm);
-							XFreePixmap(this->tray->apc->display,it->second.background);
-							it->second.background=pm;
+							pm=this->makePixmap(si.at(j).parentWindow);
+							XSetWindowBackgroundPixmap(this->tray->apc->display,si.at(j).parentWindow,pm);
+							XFreePixmap(this->tray->apc->display,pm);
 						}
-					XWithdrawWindow(this->tray->apc->display,it->second.iconWindow,this->tray->apc->screen);
-					XMapWindow(this->tray->apc->display,it->second.iconWindow);
-					it->second.x=this->nextIconX;
-					it->second.y=this->nextIconY;
+
 					this->nextPosition();
+					XWithdrawWindow(this->tray->apc->display,si.at(j).iconWindow,this->tray->apc->screen);
+					XMapWindow(this->tray->apc->display,si.at(j).iconWindow);
 				}
+			//fprintf(stderr,"\n");
 		}
 	else
 		this->tray->apc->mainWindow->LFSTK_resizeWindow(1,1,true);

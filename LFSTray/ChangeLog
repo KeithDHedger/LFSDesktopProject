@@ -1,4 +1,6 @@
 1.0.4
+Added option to reverse display order of tray menus.
+Added sort tray menus.
 Sending SIGUSR1 to lfstray will now reread config file and reset lfstray.
 If --filepath starts with '#' use solid colour as back ground eg --filepath="#80af80".
 Added --no-duplicates option to prevent duplicate items.

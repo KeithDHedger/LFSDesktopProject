@@ -203,6 +203,8 @@ void LFSTray_trayClass::resetWindow(void)
 				break;
 		}
 	this->apc->mainWindow->LFSTK_moveResizeWindow(x,y,w,h,true);
+	this->x=x;
+	this->y=y;
 }
 
 void	 LFSTray_trayClass::setStacking(int stackit)

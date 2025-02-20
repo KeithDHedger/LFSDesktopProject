@@ -36,6 +36,7 @@ option long_options[]=
 		{"below",no_argument,NULL,'b'},
 		{"no-duplicates",no_argument,NULL,'d'},
 		{"filepath",required_argument,NULL,'f'},
+		{"reverseorder",no_argument,NULL,'r'},
 		{0,0,0,0}
 	};
 
@@ -53,6 +54,7 @@ void setPrefs(int argc,char **argv)
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("below"),{TYPEBOOL,"below","Below all windows ( default above )","",false,0}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("filepath"),{TYPESTRING,"filepath","Use external file, if ARG begins with '#' use solid colour, eg '#ff0000'","",false,0}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("no-duplicates"),{TYPEBOOL,"no-duplicates","Don't allow duplicate items ( by _NET_WM_NAME property )","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("reverseorder"),{TYPEBOOL,"reverseorder","Reverse sort order of trays (by _NET_WM_NAME property )","",false,0}},
 		};
 	prefs.LFSTK_loadVarsFromFile(configfile);
 }
@@ -71,6 +73,7 @@ static void alarmCallBack(int sig)
 	trayClass->gravity=(TrayPos)prefs.LFSTK_getInt("gravity");
 	trayClass->iconSize=prefs.LFSTK_getInt("iconsize");
 	trayClass->imagePath=prefs.LFSTK_getString("filepath");
+	trayClass->reverseOrder=prefs.LFSTK_getBool("reverseorder");
 
 	if(trayClass->isBelow==true)
 		{
@@ -103,8 +106,9 @@ static void alarmCallBack(int sig)
 		}
 	else
 		{
-			trayClass->imagePath="";
 			trayClass->externalPixmap=None;
+			if((trayClass->imagePath.length()==0) || (trayClass->imagePath.at(0)!='#'))
+				trayClass->imagePath="";
 		}
 
 	trayClass->resetWindow();

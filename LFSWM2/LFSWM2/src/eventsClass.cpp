@@ -302,6 +302,12 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 									//fprintf(stderr,"LFSWM2_createClient=false\n");
 									}
 								XMoveResizeWindow(this->mainClass->display,e.xmaprequest.window,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize,x_window_attrs.width,x_window_attrs.height);
+							//this->mainClass->mainWindowClass->LFSWM2_removeProp(this->mainClass->rootWindow,LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW"));
+
+this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,(void*)&e.xmaprequest.window,1);
+
+
+
 							this->noRestack=true;
 						}
 						break;
@@ -748,7 +754,6 @@ void LFSWM2_eventsClass::LFSWM2_shuffle(Window id)
 					cc->isActive=true;
 					this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,&cc->contentWindow,1);
 					XSetInputFocus(this->mainClass->display,cc->contentWindow,RevertToParent,CurrentTime);
-				//	XRaiseWindow(this->mainClass->display,cc->frameWindow);
 					this->mainClass->mainWindowClass->LFSWM2_refreshFrame(cc);
 				}
 			else

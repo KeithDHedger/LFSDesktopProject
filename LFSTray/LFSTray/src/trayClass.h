@@ -50,6 +50,7 @@ class LFSTray_trayClass
 		int			onMonitor=0;
 		TrayPos		gravity=SE;
 		int			stacking=ABOVEALL;
+		bool			reverseOrder=false;
 
 		int			firstrun=0;
 		bool			isBelow=false;
@@ -63,6 +64,7 @@ class LFSTray_trayClass
 		std::string	imagePath="";
 		Pixmap		externalPixmap=None;
 		Pixmap		externalMaskPixmap=None;
+		int x,y;
 
 };
 #endif

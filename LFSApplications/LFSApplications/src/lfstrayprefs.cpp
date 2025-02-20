@@ -43,6 +43,7 @@ LFSTK_lineEditClass		*gravity=NULL;
 LFSTK_toggleButtonClass	*vertical=NULL;
 LFSTK_toggleButtonClass	*below=NULL;
 LFSTK_toggleButtonClass	*noDups=NULL;
+LFSTK_toggleButtonClass	*reverse=NULL;
 LFSTK_buttonClass		*tileFilepath=NULL;
 LFSTK_lineEditClass		*tileFilepathEdit=NULL;
 
@@ -97,6 +98,7 @@ bool buttonCB(void *p,void* ud)
 			prefs.LFSTK_setBool("below",below->LFSTK_getValue());
 			prefs.LFSTK_setBool("no-duplicates",noDups->LFSTK_getValue());
 			prefs.LFSTK_setString("filepath",tileFilepathEdit->LFSTK_getCStr());
+			prefs.LFSTK_setBool("reverseorder",reverse->LFSTK_getValue());
 			prefs.LFSTK_saveVarsToFile(envFile);
 			//prefs.LFSTK_saveVarsToFile("-");
 			apc->globalLib->LFSTK_oneLiner("%s","pgrep \"^lfstray$\" |xargs kill -SIGUSR1");
@@ -132,32 +134,13 @@ int main(int argc, char **argv)
 			{"gravity",required_argument,0,'g'},
 			{"vertical",no_argument,0,'V'},
 			{"below",no_argument,0,'b'},
+			{"reverseorder",no_argument,0,'r'},
 			{"no-duplicates",no_argument,0,'d'},
 			{"filepath",required_argument,0,'f'},
 			{0, 0, 0, 0}
 		};
 
 	apc=new LFSTK_applicationClass();
-	prefs.prefsMap=
-		{
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("monitor"),{TYPEINT,"monitor","Place on monitor ARG","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("iconsize"),{TYPEINT,"iconsize","Iconsize ARG","",false,32}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("gravity"),{TYPEINT,"gravity","Gravity NW ARG=1,NE ARG=2,SE ARG=3,SW ARG=4,N ARG=5,E ARG=6,S ARG=7,W ARG=8","",false,NW}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("vertical"),{TYPEBOOL,"vertical","Vertical systray ( default horizontal )","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("below"),{TYPEBOOL,"below","Below all windows ( default above )","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("filepath"),{TYPESTRING,"filepath","Use external file, if ARG begins with '#' use solid colour, eg '#ff0000'","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("no-duplicates"),{TYPEBOOL,"no-duplicates","Don't allow duplicate items ( by _NET_WM_NAME property )","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("window"),{TYPEINT,"window","Set transient for window ARG","",false,-1}}
-		};
-
-	parentWindow=prefs.LFSTK_getInt("window");
-	//prefs.LFSTK_deleteFromPrefs("window");
-	asprintf(&envFile,"%s/lfstray.rc",apc->configDir.c_str());
-	prefs.LFSTK_loadVarsFromFile(envFile);
-
-	if(prefs.LFSTK_argsToPrefs(argc,argv,longOptions,true)==false)
-		return(1);
-
 	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKPrefs");
 	wc=apc->mainWindow;
 
@@ -171,6 +154,26 @@ int main(int argc, char **argv)
 			if(retcode<=1)
 				flag=true;
 		}
+
+	prefs.prefsMap=
+		{
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("monitor"),{TYPEINT,"monitor","Place on monitor ARG","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("iconsize"),{TYPEINT,"iconsize","Iconsize ARG","",false,32}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("gravity"),{TYPEINT,"gravity","Gravity NW ARG=1,NE ARG=2,SE ARG=3,SW ARG=4,N ARG=5,E ARG=6,S ARG=7,W ARG=8","",false,NW}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("vertical"),{TYPEBOOL,"vertical","Vertical systray ( default horizontal )","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("below"),{TYPEBOOL,"below","Below all windows ( default above )","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("reverseorder"),{TYPEBOOL,"reverseorder","Reverse sort order of trays (by _NET_WM_NAME property )","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("filepath"),{TYPESTRING,"filepath","Use external file, if ARG begins with '#' use solid colour, eg '#ff0000'","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("no-duplicates"),{TYPEBOOL,"no-duplicates","Don't allow duplicate items ( by _NET_WM_NAME property )","",false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("window"),{TYPEINT,"window","Set transient for window ARG","",false,-1}},
+		};
+
+	parentWindow=prefs.LFSTK_getInt("window");
+	asprintf(&envFile,"%s/lfstray.rc",apc->configDir.c_str());
+	prefs.LFSTK_loadVarsFromFile(envFile);
+
+	if(prefs.LFSTK_argsToPrefs(argc,argv,longOptions,true)==false)
+		return(1);
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	sy+=HALFYSPACING;
@@ -213,14 +216,26 @@ int main(int argc, char **argv)
 	sx=BORDER;
 
 //vertical
-	vertical=new LFSTK_toggleButtonClass(wc,"Vertical Tray",BORDER,sy,GADGETWIDTH,CHECKBOXSIZE,NorthWestGravity);
+	vertical=new LFSTK_toggleButtonClass(wc,"Vertical Tray",BORDER,sy,GADGETWIDTH*2,CHECKBOXSIZE,NorthWestGravity);
 	vertical->LFSTK_setValue(prefs.LFSTK_getBool("vertical"));
 	sy+=YSPACING-8;
 	sx=BORDER;
 
 //below
-	below=new LFSTK_toggleButtonClass(wc,"Tray Below Windows",BORDER,sy,GADGETWIDTH,CHECKBOXSIZE,NorthWestGravity);
+	below=new LFSTK_toggleButtonClass(wc,"Tray Below Windows",BORDER,sy,GADGETWIDTH*2,CHECKBOXSIZE,NorthWestGravity);
 	below->LFSTK_setValue(prefs.LFSTK_getBool("below"));
+	sy+=YSPACING-8;
+	sx=BORDER;
+
+//reverse
+	reverse=new LFSTK_toggleButtonClass(wc,"Reverse Order",BORDER,sy,GADGETWIDTH*2,CHECKBOXSIZE,NorthWestGravity);
+	reverse->LFSTK_setValue(prefs.LFSTK_getBool("reverseorder"));
+	sy+=YSPACING-8;
+	sx=BORDER;
+
+//no-duplicates
+	noDups=new LFSTK_toggleButtonClass(wc,"No Duplicate Icons",BORDER,sy,GADGETWIDTH*2,CHECKBOXSIZE,NorthWestGravity);
+	noDups->LFSTK_setValue(prefs.LFSTK_getBool("no-duplicates"));
 	sy+=YSPACING-8;
 	sx=BORDER;
 
@@ -230,12 +245,6 @@ int main(int argc, char **argv)
 	sx+=GADGETWIDTH+BORDER;
 	tileFilepathEdit=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString("filepath"),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
-	sx=BORDER;
-
-//no-duplicates
-	noDups=new LFSTK_toggleButtonClass(wc,"No Duplicate Icons",BORDER,sy,GADGETWIDTH,CHECKBOXSIZE,NorthWestGravity);
-	noDups->LFSTK_setValue(prefs.LFSTK_getBool("no-duplicates"));
-	sy+=YSPACING-8;
 	sx=BORDER;
 
 //line
