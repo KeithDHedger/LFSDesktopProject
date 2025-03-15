@@ -547,6 +547,7 @@ bool LFSWM2_clientClass::wmCB(void *p,void* ud)
 		{
 			cc->LFSWM2_fullscreenWindow(true,true);
 			cc->mainClass->mainWindowClass->LFSWM2_addState(cc->contentWindow,cc->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_FULLSCREEN")));
+			XSetInputFocus(cc->mainClass->display,cc->contentWindow,RevertToNone,CurrentTime);
 		}
 
 	if(LFSTK_UtilityClass::LFSTK_strStr(comp,cc->menuNames.at(ONTOPLABEL)).empty()==false)
