@@ -277,10 +277,15 @@ int main(int argc, char **argv)
 	int					sx=BORDER;
 	char					*buffer=NULL;
 	std::vector<hitRect>	hrs;
+	//windowInitStruct		*win;
 
-	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKPrefs");
+	apc=new LFSTK_applicationClass();	
+	apc->LFSTK_getDefaultWInit();
+
+	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSAppearance");
 	wc=apc->mainWindow;
+	wc->LFSTK_setKeepAbove(true);
+	wc->LFSTK_setDecorations(false,false,false,true);
 
 	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,0,1,1);
 	multi->stretchX=false;
@@ -436,8 +441,8 @@ int main(int argc, char **argv)
 	multi->LFSTK_setHitRects(hrs);
 
 	wc->LFSTK_resizeWindow(BORDER*3+GADGETWIDTH+LABELWIDTH,sy,true);
-	wc->LFSTK_showWindow();
-	wc->LFSTK_setKeepAbove(true);
+	//wc->LFSTK_showWindow();
+	//wc->LFSTK_setKeepAbove(true);
 
 	if((queueID=msgget(atoi(key->LFSTK_getCStr()),IPC_CREAT|0660))==-1)
 		fprintf(stderr,"Can't create message queue :( ...\n");

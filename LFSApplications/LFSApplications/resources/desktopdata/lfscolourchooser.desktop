@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=LFS Colour Chooser
+Comment=LFS Colour Chooser Dialog
+Terminal=false
+Type=Application
+Categories=Graphics;Gnome;GTK;
+Icon=preferences-desktop-theme
+Exec=lfscolourchooser

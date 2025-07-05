@@ -142,8 +142,11 @@ int main(int argc, char **argv)
 	option			longOptions[]={{"window",1,0,'w'},{0, 0, 0, 0}};
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,BOXLABEL);
+	apc->LFSTK_getDefaultWInit();
+	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSColourChooser");
 	wc=apc->mainWindow;
+	wc->LFSTK_setKeepAbove(true);
+	wc->LFSTK_setDecorations(false,false,false,true);
 	
 	cliprefs.prefsMap=
 		{
@@ -240,7 +243,7 @@ int main(int argc, char **argv)
 			wc->LFSTK_setTransientFor(parentWindow);
 		}
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
-	wc->LFSTK_showWindow();
+	//wc->LFSTK_showWindow();
 
 	int retval=apc->LFSTK_runApp();
 

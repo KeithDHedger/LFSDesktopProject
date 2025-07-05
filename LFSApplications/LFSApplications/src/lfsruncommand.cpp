@@ -76,7 +76,7 @@ bool select(void *object,void* ud)
 
 int main(int argc, char **argv)
 {
-	windowInitStruct		*win;
+	//windowInitStruct		*win;
 	XEvent				event;
 	int 				sy=0;
 	LFSTK_buttonClass	*quit;
@@ -86,15 +86,18 @@ int main(int argc, char **argv)
 
 	apc=new LFSTK_applicationClass();
 
-	win=apc->LFSTK_getDefaultWInit();
-	win->windowName=BOXLABEL;
-	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
-	win->level=ABOVEALL;
+	//win=apc->LFSTK_getDefaultWInit();
+	//win->windowName=BOXLABEL;
+	//win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	//win->level=ABOVEALL;
 	
-	apc->LFSTK_addWindow(win,BOXLABEL);
+	apc->LFSTK_getDefaultWInit();
+	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSRunCommand");
 
 //	apc->LFSTK_addWindow(NULL,"Run Application");
 	wc=apc->mainWindow;
+	wc->LFSTK_setKeepAbove(true);
+	wc->LFSTK_setDecorations(false,false,false,true);
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	sy+=HALFYSPACING;
@@ -135,8 +138,8 @@ int main(int argc, char **argv)
 	sy+=GADGETHITE+BORDER;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
-	wc->LFSTK_showWindow();
-	wc->LFSTK_setKeepAbove(true);
+	//wc->LFSTK_showWindow();
+	//wc->LFSTK_setKeepAbove(true);
 
 	int retval=apc->LFSTK_runApp();
 

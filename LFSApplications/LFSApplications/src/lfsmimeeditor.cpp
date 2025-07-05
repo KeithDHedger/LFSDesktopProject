@@ -288,8 +288,11 @@ int main(int argc, char **argv)
 	workDir=mkdtemp(tempfolder);
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,"Mime Editor");
+	apc->LFSTK_getDefaultWInit();
+	apc->LFSTK_addWindow(NULL,"Mime Editor","LFSMimeEditor");
 	wc=apc->mainWindow;
+	//wc->LFSTK_setKeepAbove(true);
+	wc->LFSTK_setDecorations(false,false,false,true);
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,2*DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	sy+=HALFYSPACING;
@@ -366,7 +369,7 @@ int main(int argc, char **argv)
 	sy+=(YSPACING/2);
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH*2,sy,true);
-	wc->LFSTK_showWindow();
+	//wc->LFSTK_showWindow();
 
 	int retval=apc->LFSTK_runApp();
 

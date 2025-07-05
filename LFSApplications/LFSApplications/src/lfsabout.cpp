@@ -51,20 +51,17 @@ bool doQuit(void *p,void* ud)
 int main(int argc, char **argv)
 {
 	XEvent				event;
-	windowInitStruct		*win;
 	int					sy=BORDER;
 	int					dw=WINDOWWIDTH;
 	
 	apc=new LFSTK_applicationClass();
 
-	win=apc->LFSTK_getDefaultWInit();
-	win->windowName=BOXLABEL;
-	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
-	win->level=ABOVEALL;
-	
-	apc->LFSTK_addWindow(win,BOXLABEL);
+	apc->LFSTK_getDefaultWInit();
+	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSAbout");
 	wc=apc->mainWindow;
-
+	wc->LFSTK_setKeepAbove(true);
+	wc->LFSTK_setDecorations(false,false,false,true);
+	
 	tux=new LFSTK_imageClass(wc,NULL,WINDOWMIDDLE-(IMAGESIZE/2),sy,IMAGESIZE,IMAGESIZE,BUTTONGRAV,true);
 	tux->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",AUTO,true);
 	tux->LFSTK_clearWindow();
@@ -102,9 +99,6 @@ int main(int argc, char **argv)
 	sy+=SPACING+16;
 
 	wc->LFSTK_resizeWindow(dw,sy,true);
-	wc->LFSTK_showWindow();
-	tux->LFSTK_clearWindow();
-
 	int retval=apc->LFSTK_runApp();
 
 	delete apc;

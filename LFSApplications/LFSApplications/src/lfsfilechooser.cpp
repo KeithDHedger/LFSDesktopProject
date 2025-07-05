@@ -56,7 +56,7 @@ int main(int argc, char **argv)
 	parentWindow=prefs.LFSTK_getInt("window");
 	showFolder=prefs.LFSTK_getBool("folder");
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,"");
+	apc->LFSTK_addWindow(NULL,"","LFSFileChooser");
 	wc=apc->mainWindow;
 
 	asprintf(&wd,"%s",apc->userHome.c_str());

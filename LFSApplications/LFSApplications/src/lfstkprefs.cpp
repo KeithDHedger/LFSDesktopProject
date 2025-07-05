@@ -623,6 +623,8 @@ int main(int argc, char **argv)
 	apc=new LFSTK_applicationClass();
 	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKPrefs");
 	wc=apc->mainWindow;
+	wc->LFSTK_setKeepAbove(true);
+	wc->LFSTK_setDecorations(false,false,false,true);
 
 	cliprefs.prefsMap=
 		{
@@ -816,8 +818,6 @@ int main(int argc, char **argv)
 
 	setPreviewData();
 	wc->LFSTK_resizeWindow(DIALOGWIDTH+BORDER,sy,true);
-	wc->LFSTK_showWindow();
-	wc->LFSTK_setKeepAbove(true);
 	if(parentWindow!=-1)
 		wc->LFSTK_setTransientFor(parentWindow);
 

@@ -143,7 +143,7 @@ if [[ $action = "help" ]];then
 fi
 
 if [ $1 = "uninstall" ];then
-	BUILDFOR="$BUILDLFSWMANAGER LFSWM2 LFSDesktop LFSSetWallpaper LFSApplications LFSPanel LFSDock LFSToolKit LFSTray"
+	BUILDFOR=" LFSToolKit $BUILDLFSWMANAGER LFSWM2 LFSDesktop LFSSetWallpaper LFSApplications LFSPanel LFSDock LFSTray"
 fi
 
 for app in $BUILDFOR

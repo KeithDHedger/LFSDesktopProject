@@ -141,8 +141,11 @@ int main(int argc, char **argv)
 		};
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKPrefs");
+	apc->LFSTK_getDefaultWInit();
+	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTrayPrefs");
 	wc=apc->mainWindow;
+	wc->LFSTK_setKeepAbove(true);
+	wc->LFSTK_setDecorations(false,false,false,true);
 
 	bffr=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %S/lfsappearance.rc",apc->configDir);
 	if((queueID=msgget(std::stoi(bffr,nullptr,10),IPC_CREAT|0660))==-1)
@@ -243,7 +246,8 @@ int main(int argc, char **argv)
 	tileFilepath=new LFSTK_buttonClass(wc,"Background",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	tileFilepath->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SELECTIMAGE");
 	sx+=GADGETWIDTH+BORDER;
-	tileFilepathEdit=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString("filepath"),sx,sy,EDITBOXWIDTH*2+BORDER,GADGETHITE,BUTTONGRAV);
+	//tileFilepathEdit=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString("filepath"),sx,sy,EDITBOXWIDTH*2-BORDER-100,GADGETHITE,BUTTONGRAV);
+	tileFilepathEdit=new LFSTK_lineEditClass(wc,prefs.LFSTK_getCString("filepath"),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 	sx=BORDER;
 
@@ -264,8 +268,8 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
-	wc->LFSTK_showWindow();
-	wc->LFSTK_setKeepAbove(true);
+	//wc->LFSTK_showWindow();
+	//wc->LFSTK_setKeepAbove(true);
 	if(parentWindow!=-1)
 		wc->LFSTK_setTransientFor(parentWindow);
 

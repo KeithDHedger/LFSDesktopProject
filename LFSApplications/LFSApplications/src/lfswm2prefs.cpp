@@ -24,7 +24,7 @@
 
 #define MAXMENUS			5
 #define EDITBOXWIDTH		GADGETWIDTH*4
-#define BOXLABEL			"LFS WM Prefs"
+#define BOXLABEL			"LFS WM2 Prefs"
 #define COLOURBUTTONS	3
 #define RESIZEMENUSIZE	2
 #define TITLEPOSMENUSIZE	3
@@ -97,7 +97,7 @@ LFSTK_menuClass			*modkeys1Menu=NULL;
 //modkeys 2
 LFSTK_buttonClass		*modkeys2WindowMenu=NULL;
 LFSTK_lineEditClass		*modkeys2WindowEdit=NULL;
-infoDataStruct				**modkeys2Menus;
+infoDataStruct			**modkeys2Menus;
 const char				*modkeys2MenuNames[]={"Mod1","Mod2","Mod3","Mod4","Mod5"};
 LFSTK_menuClass			*modkeys2Menu=NULL;
 
@@ -374,8 +374,11 @@ int main(int argc, char **argv)
 
 	asprintf(&envFile,"%s/lfswm2.rc",apc->configDir.c_str());
 	prefs.LFSTK_loadVarsFromFile(envFile);
-	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKPrefs");
+	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSWM2Prefs");
+	apc->LFSTK_getDefaultWInit();
 	wc=apc->mainWindow;
+	wc->LFSTK_setKeepAbove(true);
+	wc->LFSTK_setDecorations(false,false,false,true);
 
 	bffr=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %S/lfsappearance.rc",apc->configDir);
 	if((queueID=msgget(std::stoi(bffr,nullptr,10),IPC_CREAT|0660))==-1)
@@ -618,7 +621,7 @@ int main(int argc, char **argv)
 	mk2=prefs.LFSTK_getInt("modkeys")&0xf8;
 
 	prefsModkeys1Temp=prefs.LFSTK_getInt("modkeys");
-	modkeys1WindowEdit=new LFSTK_lineEditClass(wc,name.c_str(),sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
+	modkeys1WindowEdit=new LFSTK_lineEditClass(wc,name.c_str(),sx,sy,EDITBOXWIDTH-GADGETWIDTH-BORDER,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 	sx=BORDER;
 
@@ -640,12 +643,10 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
-	wc->LFSTK_showWindow();
-	wc->LFSTK_setKeepAbove(true);
 	if(parentWindow!=-1)
 		wc->LFSTK_setTransientFor(parentWindow);
 
-	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
+	//printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	int retval=apc->LFSTK_runApp();
 
 	delete themeFolder;
