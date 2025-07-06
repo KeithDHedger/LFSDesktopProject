@@ -326,14 +326,15 @@ bool coleditCB(void *p,void* ud)
 
 int main(int argc, char **argv)
 {
-	XEvent		event;
-	int			sy=0;
-	int			sx=BORDER;
-	bool			flag=false;
-	int			retcode;
-	int			receiveType=IPC_NOWAIT;
-	msgBuffer	mbuffer;
-	std::string	bffr;
+	XEvent			event;
+	int				sy=0;
+	int				sx=BORDER;
+	bool				flag=false;
+	int				retcode;
+	int				receiveType=IPC_NOWAIT;
+	msgBuffer		mbuffer;
+	std::string		bffr;
+	windowInitStruct	*win;
 
 	option longOptions[]=
 		{
@@ -374,10 +375,13 @@ int main(int argc, char **argv)
 
 	asprintf(&envFile,"%s/lfswm2.rc",apc->configDir.c_str());
 	prefs.LFSTK_loadVarsFromFile(envFile);
-	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSWM2Prefs");
-	apc->LFSTK_getDefaultWInit();
+
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName=BOXLABEL;
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->level=ABOVEALL;
+	apc->LFSTK_addWindow(win,BOXLABEL,"LFSWM2Prefs");
 	wc=apc->mainWindow;
-	wc->LFSTK_setKeepAbove(true);
 	wc->LFSTK_setDecorations(false,false,false,true);
 
 	bffr=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %S/lfsappearance.rc",apc->configDir);

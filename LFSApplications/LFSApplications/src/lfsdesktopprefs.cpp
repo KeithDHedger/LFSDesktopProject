@@ -192,17 +192,20 @@ bool coleditCB(void *p,void* ud)
 
 int main(int argc, char **argv)
 {
-	XEvent		event;
-	int			sy=0;
-	std::string	bffr;
+	XEvent			event;
+	int				sy=0;
+	std::string		bffr;
 	LFSTK_prefsClass	cliprefs("lfsdesktopprefs",VERSION);
 	option			longOptions[]={{"window",1,0,'w'},{0, 0, 0, 0}};
+	windowInitStruct	*win;
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_getDefaultWInit();
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName=BOXLABEL;
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->level=ABOVEALL;
 	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSDesktopPrefs");
 	wc=apc->mainWindow;
-	wc->LFSTK_setKeepAbove(true);
 	wc->LFSTK_setDecorations(false,false,false,true);
 
 	cliprefs.prefsMap=

@@ -232,6 +232,7 @@ int main(int argc, char **argv)
 	apc=new LFSTK_applicationClass();
 	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKPrefs");
 	wc=apc->mainWindow;
+	wc->LFSTK_setDecorations(false,false,false,true);
 
 	bffr=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %S/lfsappearance.rc",apc->configDir);
 	if((queueID=msgget(std::stoi(bffr,nullptr,10),IPC_CREAT|0660))==-1)
@@ -378,7 +379,7 @@ int main(int argc, char **argv)
 	if(parentWindow!=-1)
 		wc->LFSTK_setTransientFor(parentWindow);
 
-	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
+	//printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	int retval=apc->LFSTK_runApp();
 
 	delete themeFolder;

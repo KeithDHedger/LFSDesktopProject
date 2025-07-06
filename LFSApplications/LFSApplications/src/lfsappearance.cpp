@@ -54,8 +54,6 @@ LFSTK_buttonClass			*loadSet=NULL;
 LFSTK_lineEditClass			*currentSet=NULL;
 
 LFSTK_lineEditClass			*key=NULL;
-LFSTK_ExpanderGadgetClass	*multi=NULL;
-
 int							queueID=-1;
 
 infoDataStruct				**groupNameMenuItems=NULL;
@@ -276,23 +274,18 @@ int main(int argc, char **argv)
 	int					sy=0;
 	int					sx=BORDER;
 	char					*buffer=NULL;
-	std::vector<hitRect>	hrs;
-	//windowInitStruct		*win;
+	windowInitStruct		*win;
 
 	apc=new LFSTK_applicationClass();	
-	apc->LFSTK_getDefaultWInit();
+
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName=BOXLABEL;
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->level=ABOVEALL;
 
 	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSAppearance");
 	wc=apc->mainWindow;
-	wc->LFSTK_setKeepAbove(true);
 	wc->LFSTK_setDecorations(false,false,false,true);
-
-	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,0,1,1);
-	multi->stretchX=false;
-	multi->stretchY=false;
-	multi->lockY=LOCKTOTOP;
-	multi->lockX=LOCKTOCENTRE;
-	multi->gadgetStretch=STRETCH;
 
 	find=new LFSTK_findClass;
 	find->LFSTK_setFindType(FOLDERTYPE);
@@ -303,46 +296,32 @@ int main(int argc, char **argv)
 
 	addGroup();
 	
-	multi->LFSTK_setHitRects(hrs);
-	hrs.clear();
-
-	hrs.push_back({0,sy,DIALOGWIDTH,GADGETHITE,NULL});
-
-	copyrite=new LFSTK_labelClass(wc,COPYRITE,0,0,1,1);
+	copyrite=new LFSTK_labelClass(wc,COPYRITE,0,0,DIALOGWIDTH,GADGETHITE);
 	copyrite->LFSTK_setLabelGravity(CENTRE);
-	hrs.back().gadget=copyrite;
 	sy+=HALFYSPACING;
 
-	hrs.push_back({0,sy,DIALOGWIDTH,GADGETHITE,NULL});
-	personal=new LFSTK_labelClass(wc,PERSONAL,0,0,1,1);
+	personal=new LFSTK_labelClass(wc,PERSONAL,0,sy,DIALOGWIDTH,GADGETHITE);
 	personal->LFSTK_setLabelGravity(CENTRE);
-	hrs.back().gadget=personal;
 	personal->LFSTK_setCairoFontDataParts("B");
 	sy+=YSPACING;
 
 //launch sub-prefs
 //wallpaper
-	launchButton=new LFSTK_buttonClass(wc,"Wallpaper Prefs",0,0,1,1,BUTTONGRAV);
+	launchButton=new LFSTK_buttonClass(wc,"Wallpaper Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	launchButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"WALLPAPERPREFS");
-	hrs.push_back({BORDER,sy,GADGETWIDTH,GADGETHITE,launchButton});
-	launchLabel=new LFSTK_labelClass(wc,"Launch Wallpaper Prefs Dialog",0,0,1,1,LEFT);
-	hrs.push_back({BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,launchLabel});
+	launchLabel=new LFSTK_labelClass(wc,"Launch Wallpaper Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,LEFT);
 	sy+=YSPACING;
 
 //toolkit
 	launchButton=new LFSTK_buttonClass(wc,"Toolkit Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	launchButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"TOOLKITPREFS");
-	hrs.push_back({BORDER,sy,GADGETWIDTH,GADGETHITE,launchButton});
 	launchLabel=new LFSTK_labelClass(wc,"Launch Toolkit Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,LEFT);
-	hrs.push_back({BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,launchLabel});
 	sy+=YSPACING;
 
 //desktop
 	launchButton=new LFSTK_buttonClass(wc,"Desktop Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	launchButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"DESKTOPPREFS");
-	hrs.push_back({BORDER,sy,GADGETWIDTH,GADGETHITE,launchButton});
 	launchLabel=new LFSTK_labelClass(wc,"Launch Desktop Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,LEFT);
-	hrs.push_back({BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,launchLabel});
 	sy+=YSPACING;
 
 //wmanager
@@ -358,41 +337,32 @@ int main(int argc, char **argv)
 //lfswm2
 	launchButton=new LFSTK_buttonClass(wc,"LFSWM2 Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	launchButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"LFSWM2PREFS");
-	hrs.push_back({BORDER,sy,GADGETWIDTH,GADGETHITE,launchButton});
 	launchLabel=new LFSTK_labelClass(wc,"Launch LFSWM2 Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,LEFT);
 	launchLabel->LFSTK_setLabelGravity(LEFT);
-	hrs.push_back({BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,launchLabel});
 	sy+=YSPACING;
 
 //panel
 	launchButton=new LFSTK_buttonClass(wc,"Panel Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	launchButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"PANELPREFS");
-	hrs.push_back({BORDER,sy,GADGETWIDTH,GADGETHITE,launchButton});
 	launchLabel=new LFSTK_labelClass(wc,"Launch Panel Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,LEFT);
-	hrs.push_back({BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,launchLabel});
 	sy+=YSPACING;
 
 //dock
 	launchButton=new LFSTK_buttonClass(wc,"Dock Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	launchButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"DOCKPREFS");
-	hrs.push_back({BORDER,sy,GADGETWIDTH,GADGETHITE,launchButton});
 	launchLabel=new LFSTK_labelClass(wc,"Launch Dock Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,LEFT);
-	hrs.push_back({BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,launchLabel});
 	sy+=YSPACING;
 
 //tray
 	launchButton=new LFSTK_buttonClass(wc,"Tray Prefs",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	launchButton->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"TRAYPREFS");
-	hrs.push_back({BORDER,sy,GADGETWIDTH,GADGETHITE,launchButton});
 	launchLabel=new LFSTK_labelClass(wc,"Launch Tray Prefs Dialog",BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,LEFT);
-	hrs.push_back({BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,launchLabel});
 	sy+=YSPACING;
 
 //load set
 	loadSet=new LFSTK_buttonClass(wc,"Load Set",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	loadSet->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"SHOWGROUPS");
 	loadSet->LFSTK_setIndicator(DISCLOSURE);
-	hrs.push_back({BORDER,sy,GADGETWIDTH,GADGETHITE,loadSet});
 
 	setMenu=new LFSTK_menuClass(wc,BORDER+GADGETWIDTH,sy,1,1);
 	setMenu->LFSTK_setMouseCallBack(NULL,menuCB,NULL);
@@ -400,49 +370,38 @@ int main(int argc, char **argv)
 
 	buffer=strdup(wc->globalLib->LFSTK_oneLiner("sed -n '1p' %S/lfsappearance.rc",apc->configDir).c_str());
 	currentSet=new LFSTK_lineEditClass(wc,buffer,BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,BUTTONGRAV);
-	hrs.push_back({BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,currentSet});
 	free(buffer);
 	sy+=YSPACING;
 
 //msg key//TODO//
 	buffer=strdup(wc->globalLib->LFSTK_oneLiner("sed -n '2p' %S/lfsappearance.rc",apc->configDir).c_str());
 	launchLabel=new LFSTK_labelClass(wc,"Msg Key",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
-	hrs.push_back({BORDER,sy,GADGETWIDTH,GADGETHITE,launchLabel});
 	key=new LFSTK_lineEditClass(wc,buffer,BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,BUTTONGRAV);
-	hrs.push_back({BORDER*2+GADGETWIDTH,sy,LABELWIDTH,GADGETHITE,key});
 	free(buffer);
 	sy+=YSPACING;
 
 //line
-//	seperator=new LFSTK_buttonClass(wc,"--",0,sy,10000,GADGETHITE,BUTTONGRAV);
-//	seperator->LFSTK_setStyle(BEVELNONE);
-//	seperator->gadgetDetails.buttonTile=false;
-//	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
-//	hrs.push_back({0,sy,10000,GADGETHITE,seperator});//HHMMMMmmmmm
-	sy+=YSPACING;
+	seperator=new LFSTK_buttonClass(wc,"--",0,sy,10000,GADGETHITE,BUTTONGRAV);
+	seperator->LFSTK_setStyle(BEVELNONE);
+	seperator->gadgetDetails.buttonTile=false;
+	seperator->gadgetDetails.colour=&wc->windowColourNames[NORMALCOLOUR];
+	sy+=YSPACING/2;
 
 //quit
 	quit=new LFSTK_buttonClass(wc,"Quit",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	quit->LFSTK_setMouseCallBack(NULL,doQuit,NULL);
-	hrs.push_back({sx,sy,GADGETWIDTH,GADGETHITE,quit});
 	sx+=GADGETWIDTH+BORDER;
 //update
 	update=new LFSTK_buttonClass(wc,"Update",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	update->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"UPDATE");
-	hrs.push_back({sx,sy,GADGETWIDTH,GADGETHITE,update});
 	sx+=GADGETWIDTH+BORDER;
 //apply
 	apply=new LFSTK_buttonClass(wc,"Apply",sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	apply->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"APPLY");
-	hrs.push_back({sx,sy,GADGETWIDTH,GADGETHITE,apply});
 
-	sy+=YSPACING;
-	multi->LFSTK_setGadgetSize(DIALOGWIDTH,sy);
-	multi->LFSTK_setHitRects(hrs);
+	sy+=YSPACING/2;
 
-	wc->LFSTK_resizeWindow(BORDER*3+GADGETWIDTH+LABELWIDTH,sy,true);
-	//wc->LFSTK_showWindow();
-	//wc->LFSTK_setKeepAbove(true);
+	wc->LFSTK_resizeWindow(BORDER*3+GADGETWIDTH+LABELWIDTH,sy+(YSPACING/2),true);
 
 	if((queueID=msgget(atoi(key->LFSTK_getCStr()),IPC_CREAT|0660))==-1)
 		fprintf(stderr,"Can't create message queue :( ...\n");

@@ -612,18 +612,22 @@ bool coleditCB(void *p,void* ud)
 
 int main(int argc, char **argv)
 {
-	XEvent		event;
-	int			sy=0;
-	int			sx=BORDER;
-	int			key=666;
+	XEvent			event;
+	int				sy=0;
+	int				sx=BORDER;
+	int				key=666;
 	std::string	command;
-	option		longOptions[]={{"window",1,0,'w'},{0, 0, 0, 0}};
+	windowInitStruct	*win;
+	option			longOptions[]={{"window",1,0,'w'},{0, 0, 0, 0}};
 	LFSTK_prefsClass	cliprefs("lfstkprefs",VERSION);
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKPrefs");
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName=BOXLABEL;
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->level=ABOVEALL;
+	apc->LFSTK_addWindow(win,BOXLABEL,"LFSTKPrefs");
 	wc=apc->mainWindow;
-	wc->LFSTK_setKeepAbove(true);
 	wc->LFSTK_setDecorations(false,false,false,true);
 
 	cliprefs.prefsMap=
@@ -818,6 +822,7 @@ int main(int argc, char **argv)
 
 	setPreviewData();
 	wc->LFSTK_resizeWindow(DIALOGWIDTH+BORDER,sy,true);
+
 	if(parentWindow!=-1)
 		wc->LFSTK_setTransientFor(parentWindow);
 

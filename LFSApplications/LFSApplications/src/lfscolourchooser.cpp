@@ -140,12 +140,15 @@ int main(int argc, char **argv)
 	int				sy=BORDER;
 	LFSTK_prefsClass	cliprefs("lfspanelprefs",VERSION);
 	option			longOptions[]={{"window",1,0,'w'},{0, 0, 0, 0}};
+	windowInitStruct	*win;
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_getDefaultWInit();
-	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSColourChooser");
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName=BOXLABEL;
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->level=ABOVEALL;
+	apc->LFSTK_addWindow(win,BOXLABEL,"LFSColourChooser");
 	wc=apc->mainWindow;
-	wc->LFSTK_setKeepAbove(true);
 	wc->LFSTK_setDecorations(false,false,false,true);
 	
 	cliprefs.prefsMap=
@@ -243,7 +246,6 @@ int main(int argc, char **argv)
 			wc->LFSTK_setTransientFor(parentWindow);
 		}
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
-	//wc->LFSTK_showWindow();
 
 	int retval=apc->LFSTK_runApp();
 

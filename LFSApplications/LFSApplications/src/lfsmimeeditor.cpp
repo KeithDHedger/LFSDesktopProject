@@ -283,15 +283,18 @@ int main(int argc, char **argv)
 	char					*command;
 	char					*tempfolder=(char*)malloc(256);
 	LFSTK_labelClass		*infolabel;
+	windowInitStruct		*win;
 
 	sprintf(tempfolder,"/tmp/lfsmimedir-XXXXXX");
 	workDir=mkdtemp(tempfolder);
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_getDefaultWInit();
-	apc->LFSTK_addWindow(NULL,"Mime Editor","LFSMimeEditor");
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName=MIMETYPESLABEL;
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->level=ABOVEALL;
+	apc->LFSTK_addWindow(win,MIMETYPESLABEL,"LFSMimeEditor");
 	wc=apc->mainWindow;
-	//wc->LFSTK_setKeepAbove(true);
 	wc->LFSTK_setDecorations(false,false,false,true);
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,2*DIALOGWIDTH-BORDER-BORDER,GADGETHITE);

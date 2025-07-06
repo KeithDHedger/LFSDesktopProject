@@ -272,12 +272,15 @@ int main(int argc, char **argv)
 	LFSTK_findClass	*find;
 	LFSTK_prefsClass	cliprefs("lfspanelprefs",VERSION);
 	option			longOptions[]={{"window",1,0,'w'},{0, 0, 0, 0}};
+	windowInitStruct	*win;
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_getDefaultWInit();
-	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSPanelPrefs");
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName=BOXLABEL;
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->level=ABOVEALL;
+	apc->LFSTK_addWindow(win,BOXLABEL,"LFSPanelPrefs");
 	wc=apc->mainWindow;
-	wc->LFSTK_setKeepAbove(true);
 	wc->LFSTK_setDecorations(false,false,false,true);
 
 	cliprefs.prefsMap=
@@ -343,22 +346,7 @@ int main(int argc, char **argv)
 
 //do prefs
 	getPrefs();
-//	LFSTK_prefsClass		cliprefs("lfspanelprefs",VERSION);
-//	option			longOptions[]=
-//		{
-//			{"window",1,0,'w'},
-//			{0, 0, 0, 0}
-//		};
-//	cliprefs.prefsMap=
-//		{
-//			{LFSTK_UtilityClass::LFSTK_hashFromKey("window"),{TYPEINT,"window","Set transient for window ARG","",false,0}}
-//		};
-//	if(cliprefs.LFSTK_argsToPrefs(argc,argv,longOptions,true)==false)
-//		{
-//			return(1);
-//		}
-//
-//	parentWindow=cliprefs.LFSTK_getInt("window");
+
 //width
 	panelWidth=new LFSTK_buttonClass(wc,"Panel Width",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	panelWidth->LFSTK_setIndicator(DISCLOSURE);
@@ -485,8 +473,6 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
-	//wc->LFSTK_showWindow();
-	//wc->LFSTK_setKeepAbove(true);
 	if(parentWindow!=-1)
 		wc->LFSTK_setTransientFor(parentWindow);
 

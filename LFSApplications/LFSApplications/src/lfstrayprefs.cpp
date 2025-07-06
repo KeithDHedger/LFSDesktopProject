@@ -117,14 +117,15 @@ bool trayPosMenuCB(void *p,void* ud)
 
 int main(int argc, char **argv)
 {
-	int			sy=0;
-	int			sx=BORDER;
-	bool			flag=false;
-	int			retcode;
-	int			receiveType=IPC_NOWAIT;
-	msgBuffer	mbuffer;
-	std::string	bffr;
+	int				sy=0;
+	int				sx=BORDER;
+	bool				flag=false;
+	int				retcode;
+	int				receiveType=IPC_NOWAIT;
+	msgBuffer			mbuffer;
+	std::string			bffr;
 	LFSTK_buttonClass	*seperator=NULL;
+	windowInitStruct		*win;
 
 	option longOptions[]=
 		{
@@ -141,10 +142,12 @@ int main(int argc, char **argv)
 		};
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_getDefaultWInit();
-	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTrayPrefs");
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName=BOXLABEL;
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->level=ABOVEALL;
+	apc->LFSTK_addWindow(win,BOXLABEL,"LFSTrayPrefs");
 	wc=apc->mainWindow;
-	wc->LFSTK_setKeepAbove(true);
 	wc->LFSTK_setDecorations(false,false,false,true);
 
 	bffr=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %S/lfsappearance.rc",apc->configDir);
@@ -268,12 +271,10 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
-	//wc->LFSTK_showWindow();
-	//wc->LFSTK_setKeepAbove(true);
 	if(parentWindow!=-1)
 		wc->LFSTK_setTransientFor(parentWindow);
 
-	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
+	//printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 
 	int retval=apc->LFSTK_runApp();
 
