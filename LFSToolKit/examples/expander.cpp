@@ -23,7 +23,7 @@ exit $retval
 
 LFSTK_applicationClass		*apc=NULL;
 LFSTK_windowClass			*wc=NULL;
-LFSTK_labelClass			*label=NULL;
+LFSTK_labelClass				*label=NULL;
 LFSTK_ExpanderGadgetClass	*multi=NULL;
 
 bool mouseparentCB(void *p,void* ud)
@@ -61,11 +61,8 @@ int main(int argc, char **argv)
 
 	win=apc->LFSTK_getDefaultWInit();
 	win->windowName=BOXLABEL;
-	//win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
 	win->level=NORMAL;
 	apc->LFSTK_addWindow(win,BOXLABEL);
-
-	//apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
 	wc=apc->mainWindow;
 
 	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*3);
@@ -74,6 +71,7 @@ int main(int argc, char **argv)
 	multi->lockY=LOCKTOTOP;
 	multi->lockX=LOCKTOCENTRE;
 	multi->gadgetStretch=MOVE;
+//multi->liveUpdate=true;
 
 	hrs.push_back({0,sy,DIALOGWIDTH,GADGETHITE,NULL});
 	hrs.back().gadget=new LFSTK_labelClass(wc,BOXLABEL,0,0,1,1);
