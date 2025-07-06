@@ -1,4 +1,5 @@
 0.7.0
+Fixed cairo surfaces not being created/resized properly.
 Fixed minor update glitch.
 Ignore lines beginning with '#' when using LFSTK_loadVarsFromFile from prefs class.
 Changes to structures, you must recompile all.

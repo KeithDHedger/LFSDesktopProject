@@ -371,13 +371,13 @@ struct windowInitStruct
 	int						y=0;
 	int						w=1;
 	int						h=1;
-	std::string				appName;
-	std::string				className;
-	std::string				windowName;
+	std::string				appName="";
+	std::string				className="";
+	std::string				windowName="";
 	bool						overRide=false;
 	bool						loadVars=true;
 	bool						shutDisplayOnExit=false;
-	Atom						windowType;
+	Atom						windowType=0;
 	bool						decorated=true;
 	int						level=NORMAL;
 	Display					*display=NULL;

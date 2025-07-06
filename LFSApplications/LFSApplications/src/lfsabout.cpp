@@ -56,7 +56,6 @@ int main(int argc, char **argv)
 	
 	apc=new LFSTK_applicationClass();
 
-	apc->LFSTK_getDefaultWInit();
 	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSAbout");
 	wc=apc->mainWindow;
 	wc->LFSTK_setKeepAbove(true);
