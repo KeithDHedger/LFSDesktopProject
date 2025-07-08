@@ -145,16 +145,11 @@ int main(int argc, char **argv)
 	apc->globalLib->LFSTK_setUseTheme(false);
 	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
 	wc=apc->mainWindow;
-	//wc->LFSTK_setTile(NULL,0);
 	wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),DIALOGWIDTH,sy);
 	tux=new LFSTK_imageClass(wc,NULL,DIALOGMIDDLE-(IMAGESIZE/2),sy,IMAGESIZE,IMAGESIZE,BUTTONGRAV,true);
 	tux->LFSTK_setImageFromPath("./AspellGUI.png",PRESERVEASPECT,true);
-	//tux->LFSTK_setMouseCallBack(NULL,buttonCB,NULL);
-	//tux->LFSTK_setAlpha(1);
 	tux->LFSTK_setCanDrag(true);
-	//tux->LFSTK_snapSize(24);
 	tux->LFSTK_setTile(NULL,0);
-	//tux->LFSTK_setAlpha(0.5);
 	tux->userData=USERDATA("tux image");
 //	tux->LFSTK_allowXMovement(false);
 //	tux->LFSTK_allowYMovement(false);
@@ -167,25 +162,19 @@ int main(int argc, char **argv)
 	geometryStruct tg;
 	tux->LFSTK_getGeom(&tg);
 	fprintf(stderr,"wid=%i\n",tg.w);
-tux->LFSTK_setGadgetSize(96,96);
-tux->drawImage();
 	sy+=YSPACING*3;
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	label->LFSTK_setCairoFontDataParts("sB",20);
-	//label->LFSTK_setUseWindowPixmap(true);
 	sy+=YSPACING;
 
 	label=new LFSTK_labelClass(wc,BOXLABEL2,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
-	//label->LFSTK_setUseWindowPixmap(true);
 	sy+=YSPACING/2;
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
-	//copyrite->LFSTK_setUseWindowPixmap(true);
 	sy+=HALFYSPACING;
 	personal=new LFSTK_labelClass(wc,PERSONAL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	personal->LFSTK_setCairoFontDataParts("B");
-	//personal->LFSTK_setUseWindowPixmap(true);
 	sy+=YSPACING;
 
 //line
