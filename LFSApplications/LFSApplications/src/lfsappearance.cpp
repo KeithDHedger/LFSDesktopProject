@@ -285,7 +285,7 @@ int main(int argc, char **argv)
 
 	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSAppearance");
 	wc=apc->mainWindow;
-	wc->LFSTK_setDecorations(false,false,false,true);
+	wc->LFSTK_setDecorations(false,false,false,false);
 
 	find=new LFSTK_findClass;
 	find->LFSTK_setFindType(FOLDERTYPE);

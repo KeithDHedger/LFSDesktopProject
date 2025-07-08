@@ -306,7 +306,7 @@ int main(int argc, char **argv)
 	win->level=ABOVEALL;
 	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSDockPrefs");
 	wc=apc->mainWindow;
-	wc->LFSTK_setDecorations(false,false,false,true);
+	wc->LFSTK_setDecorations(false,false,false,false);
 
 	cliprefs.prefsMap=
 		{

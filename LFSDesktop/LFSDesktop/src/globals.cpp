@@ -61,7 +61,6 @@ void createDesktopGadget(LFSTK_windowClass *window)
 
 	cf=cacheFileData;
 	setIconImage(&cf);
-
 	cf.item=new LFSTK_buttonClass(wc,cacheFileData.label,cacheFileData.posx,cacheFileData.posy,iconSize,iconSize);
 	cf.item->LFSTK_setCanDrag(true);
 	cf.item->LFSTK_moveGadget(cacheFileData.posx,cacheFileData.posy);
@@ -81,14 +80,14 @@ void createDesktopGadget(LFSTK_windowClass *window)
 	//cf.item->LFSTK_setFontColourName(NORMALCOLOUR,foreCol,false);
 	cf.item->newGadgetFGColours[NORMALCOLOUR]=cf.item->LFSTK_setColour(foreCol);
 	cf.item->LFSTK_setLabelBGColour(backCol,strtod(backAlpha,NULL));
-	cf.item->LFSTK_setFontString(fontFace,true);
+	cf.item->LFSTK_setFontString(fontFace,true);//TODO//URGENT
 	cf.item->drawLabelBG=true;
 	cf.item->autoLabelBGColour=false;
 	setItemSize(&cf);
+
 	cf.item->gadgetDetails.showLink=cf.isSymLink;
 	if(access(cf.itemPath,F_OK)!=F_OK)
 		cf.item->gadgetDetails.showBroken=true;
-	
 	desktopItems.push_back(cf);
 	asprintf(&desktopItems.back().uuid,"%s",cacheFileData.uuid);
 	asprintf(&desktopItems.back().itemPath,"%s",cacheFileData.itemPath);

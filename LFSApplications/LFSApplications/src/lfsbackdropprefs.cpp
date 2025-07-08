@@ -264,7 +264,7 @@ int main(int argc, char **argv)
 	win->level=ABOVEALL;
 	apc->LFSTK_addWindow(win,BOXLABEL,"LFSBackdropPrefs");
 	wc=apc->mainWindow;
-	wc->LFSTK_setDecorations(false,false,false,true);
+	wc->LFSTK_setDecorations(false,false,false,false);
 
 	cliprefs.prefsMap=
 		{

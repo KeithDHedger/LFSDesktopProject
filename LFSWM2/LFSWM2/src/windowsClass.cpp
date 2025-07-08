@@ -492,7 +492,7 @@ bool bh=false;
 
 //rite hand controls	
 					wa.win_gravity=NorthEastGravity;
-
+cc->controlCnt=0;
 //close
 					if(cc->canClose==true)
 						{
@@ -500,7 +500,7 @@ bool bh=false;
 							cc->closeButton=XCreateWindow(this->mainClass->display,cc->frameWindow,0,0,1,1,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
 							cc->closeControlStruct.controlGC=XCreateGC(this->mainClass->display,cc->closeButton,0,NULL);
 							XSelectInput(this->mainClass->display,cc->closeButton,ButtonPressMask|ButtonReleaseMask|EnterWindowMask|LeaveWindowMask);
-							cc->controlCnt=1;
+							cc->controlCnt++;
 						}
 //max
 					if(cc->canMaximize==true)
@@ -1186,7 +1186,8 @@ void LFSWM2_windowClass::LFSWM2_refreshFrame(LFSWM2_clientClass *cc,XExposeEvent
 		}
 
 //buttons
-	cc->LFSWM2_drawMouseLeave(cc->closeButton,this->mainClass->closeBitMap,cc->closeControlStruct);
+	if(cc->canClose==true)
+		cc->LFSWM2_drawMouseLeave(cc->closeButton,this->mainClass->closeBitMap,cc->closeControlStruct);
 	cc->LFSWM2_drawMouseLeave(cc->menuButton,this->mainClass->menuBitMap,cc->menuControlStruct);
 	if(cc->canMaximize==true)
 		cc->LFSWM2_drawMouseLeave(cc->maximizeButton,this->mainClass->maximizeBitMap,cc->maximizeControlStruct);
@@ -1455,8 +1456,8 @@ void LFSWM2_windowClass::LFSWM2_refreshThemeFrame(LFSWM2_clientClass *cc)
 	if(cc->isBorderless==true)
 		return;
 
-if(cc->windowType==UTILITYWINDOW)
-	return;
+	if(cc->windowType==UTILITYWINDOW)
+		return;
 	
 	r=cc->frameWindowRect;
 
@@ -1653,7 +1654,7 @@ if(cc->windowType==UTILITYWINDOW)
 void LFSWM2_windowClass::LFSWM2_setControlRects(LFSWM2_clientClass *cc)
 {
 //controls
-	int	offset;
+	int	offset=0;//-DEFAULTCONTROLSIZE;
 	int wh=DEFAULTCONTROLSIZE;
 //menu
 	if(cc->isBorderless==true)
@@ -1670,7 +1671,8 @@ if(cc->windowType==UTILITYWINDOW)
 					this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("menu-active")],
 					this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey("menu-active")]
 				};
-		}
+			offset=this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("top-right-active")];
+	}
 	else
 		{
 			XShapeCombineMask(this->mainClass->display,cc->menuButton,ShapeBounding,0,0,None,ShapeSet);
@@ -1681,6 +1683,7 @@ if(cc->windowType==UTILITYWINDOW)
 					wh,
 					wh
 				};
+			offset=-DEFAULTCONTROLSIZE+this->mainClass->riteSideBarSize;
 		}
 	XMoveResizeWindow(this->mainClass->display,cc->menuButton,cc->menuControlStruct.controlRect.x,cc->menuControlStruct.controlRect.y,cc->menuControlStruct.controlRect.w,cc->menuControlStruct.controlRect.h);
 	if(cc->isFullscreen==false)
@@ -1789,32 +1792,35 @@ if(cc->windowType==UTILITYWINDOW)
 
 //shade
 	cc->canShade=false;
-	if((this->theme.gotPart[LFSTK_UtilityClass::LFSTK_hashFromKey("shade-active")]==true) || (this->mainClass->useTheme==false))
+	if((this->theme.gotPart[LFSTK_UtilityClass::LFSTK_hashFromKey("shade-active")]==true) && (this->mainClass->useTheme==true))
 		{
 			cc->canShade=true;
-			if(this->mainClass->useTheme==true)
+			offset+=this->theme.buttonXSpacing+this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("hide-active")];
+			cc->shadeControlStruct.controlRect=
 				{
-					offset+=this->theme.buttonXSpacing+this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("hide-active")];
-					cc->shadeControlStruct.controlRect=
-						{
-							cc->frameWindowRect.w-offset,
-							this->mainClass->buttonYOffset,
-							this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("shade-active")],
-							this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey("shade-active")]
-						};
-				}
+					cc->frameWindowRect.w-offset,
+					this->mainClass->buttonYOffset,
+					this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey("shade-active")],
+					this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey("shade-active")]
+				};
+			XMoveResizeWindow(this->mainClass->display,cc->shadeButton,cc->shadeControlStruct.controlRect.x,cc->shadeControlStruct.controlRect.y,cc->shadeControlStruct.controlRect.w,cc->shadeControlStruct.controlRect.h);
+			if(cc->isFullscreen==false)
+				XMapWindow(this->mainClass->display,cc->shadeButton);
 			else
+				XUnmapWindow(this->mainClass->display,cc->shadeButton);
+		}
+	else
+		{
+			cc->canShade=true;
+			XShapeCombineMask(this->mainClass->display,cc->shadeButton,ShapeBounding,0,0,None,ShapeSet);
+			offset+=DEFAULTCONTROLSPACING+DEFAULTCONTROLSIZE;
+			cc->shadeControlStruct.controlRect=
 				{
-					XShapeCombineMask(this->mainClass->display,cc->shadeButton,ShapeBounding,0,0,None,ShapeSet);
-					offset+=DEFAULTCONTROLSPACING+DEFAULTCONTROLSIZE;
-					cc->shadeControlStruct.controlRect=
-						{
-							cc->frameWindowRect.w-offset-wh,
-							this->mainClass->buttonYOffset,
-							wh,
-							wh
-						};
-				}
+					cc->frameWindowRect.w-offset-wh,
+					this->mainClass->buttonYOffset,
+					wh,
+					wh
+				};		
 			XMoveResizeWindow(this->mainClass->display,cc->shadeButton,cc->shadeControlStruct.controlRect.x,cc->shadeControlStruct.controlRect.y,cc->shadeControlStruct.controlRect.w,cc->shadeControlStruct.controlRect.h);
 			if(cc->isFullscreen==false)
 				XMapWindow(this->mainClass->display,cc->shadeButton);

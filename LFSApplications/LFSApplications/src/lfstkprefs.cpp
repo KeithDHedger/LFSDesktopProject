@@ -628,7 +628,8 @@ int main(int argc, char **argv)
 	win->level=ABOVEALL;
 	apc->LFSTK_addWindow(win,BOXLABEL,"LFSTKPrefs");
 	wc=apc->mainWindow;
-	wc->LFSTK_setDecorations(false,false,false,true);
+	wc->LFSTK_setDecorations(false,false,false,false);
+//void LFSTK_windowClass::LFSTK_setDecorations(bool canmax,bool canmin,bool canresize,bool canclose)
 
 	cliprefs.prefsMap=
 		{

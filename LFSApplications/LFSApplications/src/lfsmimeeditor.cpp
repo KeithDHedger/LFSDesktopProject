@@ -295,7 +295,7 @@ int main(int argc, char **argv)
 	win->level=ABOVEALL;
 	apc->LFSTK_addWindow(win,MIMETYPESLABEL,"LFSMimeEditor");
 	wc=apc->mainWindow;
-	wc->LFSTK_setDecorations(false,false,false,true);
+	wc->LFSTK_setDecorations(false,false,false,false);
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,2*DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	sy+=HALFYSPACING;

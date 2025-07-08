@@ -163,7 +163,12 @@ int main(int argc, char **argv)
 	tux->LFSTK_setLimits(10,10,440,120);
 	tux->LFSTK_setMouseCallBack(mouseDownCB,mouseUpCB,NULL);
 	tux->LFSTK_setMouseMoveCallBack(moveCB,exitCB,USERDATA("Left Enter/Exit"));
-
+	
+	geometryStruct tg;
+	tux->LFSTK_getGeom(&tg);
+	fprintf(stderr,"wid=%i\n",tg.w);
+tux->LFSTK_setGadgetSize(96,96);
+tux->drawImage();
 	sy+=YSPACING*3;
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);

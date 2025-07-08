@@ -1,4 +1,5 @@
 1.0.2
+fixed window controls when no close button showing.
 Fixed window losing focus when switching to fullscreen from window menu.
 Fixed new windows occasionally not getting focus.
 Removed alarm timer, now use 'kill -SIGUSR1 $(pgrep "^lfswm2$")' to signal a change.

@@ -232,7 +232,7 @@ int main(int argc, char **argv)
 	apc=new LFSTK_applicationClass();
 	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKPrefs");
 	wc=apc->mainWindow;
-	wc->LFSTK_setDecorations(false,false,false,true);
+	wc->LFSTK_setDecorations(false,false,false,false);
 
 	bffr=wc->globalLib->LFSTK_oneLiner("sed -n '2p' %S/lfsappearance.rc",apc->configDir);
 	if((queueID=msgget(std::stoi(bffr,nullptr,10),IPC_CREAT|0660))==-1)

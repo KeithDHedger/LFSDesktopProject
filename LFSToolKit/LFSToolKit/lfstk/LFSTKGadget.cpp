@@ -1621,7 +1621,10 @@ void LFSTK_gadgetClass::LFSTK_setGadgetSize(int width,int height)
 	this->gadgetDetails.gadgetGeom.h=height;
 	this->gadgetGeom.w=width;
 	this->gadgetGeom.h=height;
-	this->wc->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->window,this->visual,&this->sfc,&this->cr,width,height);
+
+	cairo_xlib_surface_set_size(this->sfc,width,height);
+	cairo_destroy(this->cr);
+	this->cr=cairo_create(this->sfc);
 }
 
 /**

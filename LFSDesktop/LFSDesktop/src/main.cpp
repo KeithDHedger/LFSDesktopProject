@@ -145,11 +145,18 @@ int main(int argc, char **argv)
 
 	udev=udev_new();
 	windowInitStruct *wi=new windowInitStruct;
+#ifdef _ENABLEDEBUG_
+	wi->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_NORMAL"));
+	wi->level=NORMAL;
+	wi->overRide=false;
+	wi->decorated=true;
+#else
 	wi->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DESKTOP"));
-	wi->app=apc;
-	wi->overRide=true;
 	wi->level=BELOWALL;
+	wi->overRide=true;
 	wi->decorated=false;
+#endif
+	wi->app=apc;
 
 	apc->LFSTK_addWindow(wi,"Desktop");
 	wc=apc->mainWindow;
@@ -175,7 +182,12 @@ int main(int argc, char **argv)
 #endif
 	apc->globalLib->LFSTK_setUseTheme(false);
 	wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),apc->displayWidth,apc->displayHeight);
+#ifdef _ENABLEDEBUG_
+	asprintf(&cachePath,"/tmp/deskdebugcache");
+#else
 	asprintf(&cachePath,"%s/lfsdesktop/cache",apc->configDir.c_str());
+#endif
+//	asprintf(&cachePath,"%s/lfsdesktop/cache",apc->configDir.c_str());
 	asprintf(&command,"mkdir -p %s 2>&1 >/dev/null",cachePath);
 	system(command);
 	free(command);
@@ -248,7 +260,12 @@ int main(int argc, char **argv)
 	wc->LFSTK_initDnD(true);
 	wc->LFSTK_setWindowDropCallBack(windowDrop,(void*)0xdeadbeef);
 	wc->LFSTK_showWindow(true);
+
+#ifdef _ENABLEDEBUG_
+	wc->LFSTK_resizeWindow(800,600,true);
+#else
 	wc->LFSTK_resizeWindow(apc->displayWidth,apc->displayHeight,true);
+#endif
 
 	int retval=apc->LFSTK_runApp();
 

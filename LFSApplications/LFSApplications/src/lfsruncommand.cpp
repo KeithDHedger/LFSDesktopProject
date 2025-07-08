@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 	apc->LFSTK_addWindow(win,BOXLABEL,"LFSRunCommand");
 
 	wc=apc->mainWindow;
-	wc->LFSTK_setDecorations(false,false,false,true);
+	wc->LFSTK_setDecorations(false,false,false,false);
 
 	copyrite=new LFSTK_labelClass(wc,COPYRITE,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	sy+=HALFYSPACING;
