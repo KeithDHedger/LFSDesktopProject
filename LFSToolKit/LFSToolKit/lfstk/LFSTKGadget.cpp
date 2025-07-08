@@ -803,7 +803,7 @@ void LFSTK_gadgetClass::LFSTK_resizeWindow(int w,int h)
 	this->gadgetDetails.gadgetGeom.w=w;
 	this->gadgetDetails.gadgetGeom.h=h;
 	XResizeWindow(this->wc->app->display,this->window,this->gadgetGeom.w,this->gadgetGeom.h);
-	this->wc->globalLib->LFSTK_setCairoSurface(this->wc->app->display,this->window,this->wc->app->visual,&this->sfc,&this->cr,w,h);
+	this->resizeCairoParts(w,h);
 
 	this->LFSTK_clearWindow();
 }
@@ -1610,6 +1610,18 @@ void LFSTK_gadgetClass::LFSTK_setShowIndicator(bool show)
 }
 
 /**
+* Resize cairo surface and context to gadget size.
+* \param int width.
+* \param int height.
+*/
+void LFSTK_gadgetClass::resizeCairoParts(int width,int height)
+{
+	cairo_xlib_surface_set_size(this->sfc,width,height);
+	cairo_destroy(this->cr);
+	this->cr=cairo_create(this->sfc);
+}
+
+/**
 * Set gadget size.
 * \param int width.
 * \param int height.
@@ -1621,10 +1633,7 @@ void LFSTK_gadgetClass::LFSTK_setGadgetSize(int width,int height)
 	this->gadgetDetails.gadgetGeom.h=height;
 	this->gadgetGeom.w=width;
 	this->gadgetGeom.h=height;
-
-	cairo_xlib_surface_set_size(this->sfc,width,height);
-	cairo_destroy(this->cr);
-	this->cr=cairo_create(this->sfc);
+	this->resizeCairoParts(width,height);
 }
 
 /**

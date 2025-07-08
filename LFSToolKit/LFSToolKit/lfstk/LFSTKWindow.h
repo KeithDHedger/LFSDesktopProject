@@ -190,7 +190,6 @@ class LFSTK_windowClass
 
 	protected:
 		bool					isActive;
-		//char					*windowName=NULL;
 		std::string			windowName="LFSTK Window";
 		void					initWindow(bool loadvars);
 	
@@ -199,6 +198,7 @@ class LFSTK_windowClass
 		void					windowClassInitCommon(windowInitStruct *wi);
 		void					loadGlobalColours(void);
 		void					sendUTF8(XSelectionRequestEvent *sev);
+		void					resizeCairoParts(int width,int height);
 
 //DnD routines
 		void					LFSTK_dropData(propertyStruct* data);

@@ -812,7 +812,6 @@ unsigned long LFSTK_lib::LFSTK_getColourFromName(Display *display,Colormap cm,co
 * \param int width.
 * \param int height.
 */
-#if 1
 void LFSTK_lib::LFSTK_setCairoSurface(Display *display,Window window,Visual *visual,cairo_surface_t **sfc,cairo_t **cr,int width,int height)
 {
 	if((height<1) || (width<1))
@@ -828,44 +827,6 @@ void LFSTK_lib::LFSTK_setCairoSurface(Display *display,Window window,Visual *vis
 
 	*cr=cairo_create(*sfc);
 }
-#else
-void LFSTK_lib::LFSTK_setCairoSurface(Display *display,Window window,Visual *visual,cairo_surface_t **sfc,cairo_t **cr,int width,int height)
-{
-	if((height<1) || (width<1))
-		return;
-fprintf(stderr,"srfc=%p\n",*sfc);
-//if(*sfc!=NULL)
-//	fprintf(stderr,"cw=%i ch=%i\n",cairo_xlib_surface_get_width (*sfc),cairo_xlib_surface_get_height (*sfc));
-
-if((sfc!=NULL) && (*sfc!=NULL))
-{
-fprintf(stderr,"00000\n");
-	cairo_surface_destroy (*sfc);
-
-		
-//sfc=cairo_xlib_surface_create(display,window,visual,width,height);
-*sfc=NULL;
-}
-
-	if(*sfc==NULL)
-	//{
-		*sfc=cairo_xlib_surface_create(display,window,visual,width,height);
-	//	}
-	else
-		cairo_xlib_surface_set_size(*sfc,width,height);
-
-//fprintf(stderr,"cw=%i ch=%i\n",cairo_xlib_surface_get_width (*sfc),cairo_xlib_surface_get_height (*sfc));
-
-	if((cr!=NULL) && (*cr!=NULL))
-		{
-		cairo_destroy (*cr);
-		*cr=NULL;
-		}
-//else
-if(*cr==NULL)
-		*cr=cairo_create(*sfc);
-}
-#endif
 
 /**
 * Get mime type of file.

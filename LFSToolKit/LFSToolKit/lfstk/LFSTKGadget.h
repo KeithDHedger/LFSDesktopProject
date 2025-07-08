@@ -192,6 +192,7 @@ class LFSTK_gadgetClass
 		void					selectBevel(bool mousedown);
 		cairo_surface_t		*link=NULL;
 		cairo_surface_t		*broken=NULL;
+		void					resizeCairoParts(int width,int height);
 
 	protected:
 		mappedListener		*ml=NULL;

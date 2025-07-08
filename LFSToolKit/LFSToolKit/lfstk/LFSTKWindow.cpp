@@ -371,6 +371,18 @@ void LFSTK_windowClass::LFSTK_clearWindow(bool cleargadgets)
 }
 
 /**
+* Resize cairo surface and context to window size.
+* \param int width.
+* \param int height.
+*/
+void LFSTK_windowClass::resizeCairoParts(int width,int height)
+{
+	cairo_xlib_surface_set_size(this->sfc,width,height);
+	cairo_destroy(this->cr);
+	this->cr=cairo_create(this->sfc);
+}
+
+/**
 * Resize window.
 * \param w New width.
 * \param h New height.
@@ -382,8 +394,8 @@ void LFSTK_windowClass::LFSTK_resizeWindow(int w,int h,bool tellx)
 	this->setWindowGeom(0,0,w,h,WINDSETWH);
 	if(tellx==true)
 		XResizeWindow(this->app->display,this->window,w,h);
- 
-  	this->globalLib->LFSTK_setCairoSurface(this->app->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+
+	this->resizeCairoParts(w,h);
   	this->w=w;
   	this->h=h;
 	this->LFSTK_clearWindow(true);
@@ -418,7 +430,7 @@ void LFSTK_windowClass::LFSTK_moveResizeWindow(int x,int y,int w,int h,bool tell
 	if(tellx==true)
 		XMoveResizeWindow(this->app->display,this->window,x,y,w,h);
 
-	this->globalLib->LFSTK_setCairoSurface(this->app->display,this->window,this->visual,&this->sfc,&this->cr,w,h);
+	this->resizeCairoParts(w,h);
   	this->w=w;
   	this->h=h;
 	this->LFSTK_clearWindow();
@@ -1007,7 +1019,6 @@ void LFSTK_windowClass::LFSTK_setTile(const char *path,int size)
 			this->useTile=false;
 			return;
 		}
-
 
 	if(this->cr!=NULL)
 		cairo_destroy(this->cr);
