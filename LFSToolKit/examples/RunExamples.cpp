@@ -83,17 +83,20 @@ bool doDbg(void *p,void* ud)
 
 int main(int argc, char **argv)
 {
-	XEvent					event;
-	int						sy=0;
-	std::vector<hitRect>		hrs;
-	bool						useliveupdate=true;
+	int					sy=0;
+	std::vector<hitRect>	hrs;
+	bool					useliveupdate=true;
+	windowInitStruct		*win;
 	dbg="";
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
 
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName=BOXLABEL;
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->level=ABOVEALL;
+	apc->LFSTK_addWindow(win,BOXLABEL);
 	wc=apc->mainWindow;
-	wc->LFSTK_setWindowType(apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG")));
 	wc->LFSTK_setDecorations(false,false,true,false);
 
 //info
