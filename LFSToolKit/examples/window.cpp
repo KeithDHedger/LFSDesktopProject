@@ -66,14 +66,12 @@ int main(int argc, char **argv)
 
 	win=apc->LFSTK_getDefaultWInit();
 	win->windowName=BOXLABEL;
-	//win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_NORMAL"));
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
 	win->level=ABOVEALL;
 	apc->LFSTK_addWindow(win,BOXLABEL);
 
-	//apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
 	wc=apc->mainWindow;
-//	fprintf(stderr,">>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
-//	fprintf(stderr,"winid=%p\n",wc->window);
+	wc->LFSTK_setDecorations(false,false,false,true);
 
 //wc->LFSTK_setTile(NULL,0);
 //wc->usePixmap=true;

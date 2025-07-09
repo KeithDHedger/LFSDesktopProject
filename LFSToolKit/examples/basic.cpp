@@ -166,31 +166,20 @@ bool gadgetDrop(void *lwc,propertyStruct *data,void* ud)
 
 int main(int argc, char **argv)
 {
-	int	sy=BORDER;
+	int				sy=BORDER;
+	windowInitStruct	*win;
 
 	apc=new LFSTK_applicationClass();
-//	
-//apc->globalLib->LFSTK_setGlobalString(NORMALCOLOUR,TYPEBUTTON,"pink");
-//apc->globalLib->LFSTK_setGlobalString(-1,TYPEBUTTONTILE,"/home/keithhedger/Patterns/button-prelight.png");
-//apc->globalLib->LFSTK_setGlobalString(ACTIVECOLOUR,TYPEBUTTON,"green");
-//apc->globalLib->LFSTK_setGlobalString(ACTIVECOLOUR,TYPEFONTCOLOUR,"blue");
-//apc->globalLib->LFSTK_setGlobalString(NORMALCOLOUR,TYPEWINDOW,"red");
-//apc->globalLib->LFSTK_setGlobalString(-1,TYPEWINDOWTILE,"/home/keithhedger/Patterns/halloweenwood.jpg");//TODO//jpeg not working
 
-//apc->globalLib->LFSTK_setUseTheme(true);
-//apc->globalLib->LFSTK_setGlobalString(ACTIVECOLOUR,TYPEWINDOW,"cyan");
-//apc->globalLib->LFSTK_setGlobalString(PRELIGHTCOLOUR,TYPEWINDOW,"blue");
-//apc->globalLib->LFSTK_setGlobalString(INACTIVECOLOUR,TYPEWINDOW,"yellow");
-
-	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
-
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName=BOXLABEL;
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->level=ABOVEALL;
+	apc->LFSTK_addWindow(win,BOXLABEL);
 	wc=apc->mainWindow;
-
-//wc->LFSTK_setTile("/home/keithhedger/Desktop/001_wood_coldgrayfence_th.jpg",-1);//TODO//this works ?//poss set usetheme
 
 	wc->LFSTK_initDnD(false);
 
-//wc->LFSTK_setWindowColourName(NORMALCOLOUR,"pink");
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE,NorthGravity);
 	label->LFSTK_setCairoFontDataParts("sB",20);
 	sy+=YSPACING;
@@ -267,8 +256,6 @@ int main(int argc, char **argv)
 	//leftButton->LFSTK_setTile("/home/keithhedger/Desktop/001_wood_coldgrayfence_th.jpg",-1);
 	leftButton->LFSTK_setTile("./t2.jpg",-1);
 	leftButton->gadgetDetails.geomRelativeToMainWindow=true;
-	//leftButton->LFSTK_setAlpha(1.0);
-	//fprintf(stderr,"leftButton tile=%i\n",leftButton->useTile);
 	sy+=YSPACING+(GADGETWIDTH*2);
 
 //centre image
@@ -311,8 +298,6 @@ int main(int argc, char **argv)
 
 	popWindow->LFSTK_resizeWindow(poplabel->LFSTK_getTextRealWidth("This is a mouse enter callback"),GADGETHITE);
 	popWindow->LFSTK_setWindowColourName(NORMALCOLOUR,"#c0808080");
-
-//wc->LFSTK_setTile("/home/keithhedger/Backgrounds/bc3h.png",-1);
 
 	int retval=apc->LFSTK_runApp();
 

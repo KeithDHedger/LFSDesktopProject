@@ -71,10 +71,16 @@ int main(int argc, char **argv)
 {
 	int						sy=0;
 	std::vector<hitRect>		hrs;
+	windowInitStruct			*win;
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName=BOXLABEL;
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->level=ABOVEALL;
+	apc->LFSTK_addWindow(win,BOXLABEL);
 	wc=apc->mainWindow;
+	wc->LFSTK_setDecorations(false,false,true,false);
 
 	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*3);
 	multi->stretchX=false;
@@ -127,7 +133,6 @@ int main(int argc, char **argv)
 		{
 			ls.label=lst[j];
 			ls.imageType=FILETHUMB;
-			//ls.imageType=NOTHUMB;
 			if(images[j]!=NULL)
 				ls.imagePath=images[j];
 			else

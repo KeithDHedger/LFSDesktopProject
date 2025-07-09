@@ -64,6 +64,7 @@ int main(int argc, char **argv)
 	win->level=NORMAL;
 	apc->LFSTK_addWindow(win,BOXLABEL);
 	wc=apc->mainWindow;
+	wc->LFSTK_setDecorations(false,false,true,true);
 
 	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*3);
 	multi->stretchX=false;

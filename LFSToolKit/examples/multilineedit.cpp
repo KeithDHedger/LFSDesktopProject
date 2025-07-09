@@ -81,10 +81,15 @@ void sendUTF8(XSelectionRequestEvent *sev)
 
 int main(int argc, char **argv)
 {
-	int	sy=BORDER;
+	int				sy=BORDER;
+	windowInitStruct	*win;
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName=BOXLABEL;
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->level=ABOVEALL;
+	apc->LFSTK_addWindow(win,BOXLABEL);
 	wc=apc->mainWindow;
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
@@ -99,9 +104,6 @@ int main(int argc, char **argv)
 
 //line edit
 	editbox=new LFSTK_multiLineEditClass(wc,test_string,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE*10,BUTTONGRAV);
-	//editbox->LFSTK_setGadgetColourPair(NORMALCOLOUR,"#c0ffffff","#ff000000");
-	//editbox->LFSTK_setAlpha(0.0);
-
 	sy+=YSPACING+(GADGETHITE*10);
 
 //line

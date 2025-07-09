@@ -77,9 +77,15 @@ int main(int argc, char **argv)
 {
 	int				sy=BORDER;
 	callbackStruct	cbs;
-	
+	windowInitStruct	*win;
+
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
+
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName=BOXLABEL;
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->level=ABOVEALL;
+	apc->LFSTK_addWindow(win,BOXLABEL);
 	wc=apc->mainWindow;
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);

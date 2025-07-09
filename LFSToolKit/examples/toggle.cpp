@@ -103,10 +103,15 @@ bool exitCB(LFSTK_gadgetClass*p,void* ud)
 
 int main(int argc, char **argv)
 {
-	int	sy=BORDER;
+	windowInitStruct	*win;
+	int				sy=BORDER;
 		
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName=BOXLABEL;
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->level=ABOVEALL;
+	apc->LFSTK_addWindow(win,BOXLABEL);
 	wc=apc->mainWindow;
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
@@ -130,7 +135,6 @@ int main(int argc, char **argv)
 	toggle->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"Toggle");
 	toggle->LFSTK_setMouseMoveCallBack(enterCB,exitCB,USERDATA(0));
 	toggle->LFSTK_setToggleStyle(TOGGLENORMAL);
-	//toggle->LFSTK_setStyle(BEVELNONE);	
 
 	toggle->userData=USERDATA(1);
 
@@ -138,9 +142,7 @@ int main(int argc, char **argv)
 	toggle->LFSTK_setImageFromPath(iconH,TOOLBAR,true);
 	sy+=YSPACING*3;
 
-	windowInitStruct	*win;
-
-	win=new windowInitStruct;//TODO//
+	win=new windowInitStruct;
 	win->x=100;
 	win->y=100;
 	win->w=16;
@@ -150,7 +152,7 @@ int main(int argc, char **argv)
 	win->app=apc;
 	win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_TOOL"));
 	apc->LFSTK_addToolWindow(win);
-	scwindow=apc->windows->back().window;//TODO//
+	scwindow=apc->windows->back().window;
 	vsb=new LFSTK_scrollBarClass(scwindow,true,0,0,16,100);
 	vsb->LFSTK_setValue(1);
 

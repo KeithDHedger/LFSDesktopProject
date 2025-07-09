@@ -159,13 +159,18 @@ bool doNext(void *p,void* ud)
 
 int main(int argc, char **argv)
 {
-	int			txtwid;
-	int			txthite;
-	int			sy=BORDER;
-	std::string	thisday;
+	int				txtwid;
+	int				txthite;
+	int				sy=BORDER;
+	std::string		thisday;
+	windowInitStruct	*win;
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName=BOXLABEL;
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->level=ABOVEALL;
+	apc->LFSTK_addWindow(win,BOXLABEL);
 	wc=apc->mainWindow;
 
 	thisday=apc->globalLib->LFSTK_oneLiner("%s","date +%m");
@@ -199,7 +204,6 @@ int main(int argc, char **argv)
 	editbox->LFSTK_addHighLights(dx,dy,dl,dayhilite);
 	setImportantDates();
 	editbox->LFSTK_setStyle(BEVELNONE);
-//	editbox->gadgetDetails.gadgetGeom=editbox->gadgetGeom;
 	sy+=YSPACING+txthite;
 
 	less=new LFSTK_buttonClass(wc,"Last Month",BORDER,sy,GADGETWIDTH*2,GADGETHITE);

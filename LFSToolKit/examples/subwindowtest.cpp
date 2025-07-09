@@ -90,16 +90,23 @@ int main(int argc, char **argv)
 {
 	int					sy=BORDER;
 	LFSTK_buttonClass	*button=NULL;
-	
-	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
-	wc=apc->mainWindow;
-	wc->userData=USERDATA("Main Window");
-	//wc->LFSTK_setWindowColourName(NORMALCOLOUR,"#20ff0000");
+	windowInitStruct		*win;
 
+	apc=new LFSTK_applicationClass();
+
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName=BOXLABEL;
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->level=ABOVEALL;
+	apc->LFSTK_addWindow(win,BOXLABEL);
+	wc=apc->mainWindow;
+
+	wc->userData=USERDATA("Main Window");
 	apc->LFSTK_addWindow(NULL,"SUB WINDOW");
 	apc->windows->back().window->LFSTK_resizeWindow(400,400,true);
 	apc->windows->back().window->userData=USERDATA("Sub Window");
+	apc->windows->back().window->LFSTK_setTransientFor(wc->window);
+	apc->windows->back().window->LFSTK_setKeepAbove(true);
 	button=new LFSTK_buttonClass(apc->windows->back().window,"Close",200-HALFGADGETWIDTH,200,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setMouseCallBack(NULL,doSubQuit,(void*)(apc->windows->size()-1));
 
@@ -108,14 +115,14 @@ int main(int argc, char **argv)
 	apc->windows->back().window->userData=USERDATA("Trans Sub Window");
 	apc->windows->back().window->LFSTK_setTile(NULL,0);
 	apc->windows->back().window->LFSTK_setWindowColourName(NORMALCOLOUR,"#40ff0000");
-	//apc->windows->back().window->customwindow=true;
+	apc->windows->back().window->LFSTK_setTransientFor(wc->window);
+	apc->windows->back().window->LFSTK_setKeepAbove(true);
 	label=new LFSTK_labelClass(apc->windows->back().window,BOXLABEL,0,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	label->LFSTK_setCairoFontDataParts("sB",20);
 	label->LFSTK_setTile(NULL,0);
 
 	button=new LFSTK_buttonClass(apc->windows->back().window,"Close",200-HALFGADGETWIDTH,200,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	button->LFSTK_setMouseCallBack(NULL,doTransSubQuit,(void*)(apc->windows->size()-1));
-//button->LFSTK_setColourName(NORMALCOLOUR,"#20ffff00");
 	button->LFSTK_setTile(NULL,0);
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);

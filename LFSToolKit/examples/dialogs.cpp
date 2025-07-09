@@ -45,11 +45,13 @@ bool doQuit(void *p,void* ud)
 
 bool selectcol(void *object,void* ud)
 {
-	system("./colourchooser.cpp;echo");
+	std::string command;
+
+	command="./colourchooser.cpp -w "+std::to_string(wc->window)+";echo";
+	system(command.c_str());
 	return(true);
 }
 
-//use wd =~
 bool selectfile(void *object,void* ud)
 {
 	std::string	mimetype;
@@ -93,10 +95,16 @@ bool selectdir(void *object,void* ud)
 
 int main(int argc, char **argv)
 {
-	int	sy=BORDER;
+	int				sy=BORDER;
+	windowInitStruct	*win;
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
+
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName=BOXLABEL;
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->level=ABOVEALL;
+	apc->LFSTK_addWindow(win,BOXLABEL);
 	wc=apc->mainWindow;
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
@@ -112,12 +120,8 @@ int main(int argc, char **argv)
 //files and folders
 	asprintf(&wd,"%s",apc->userHome.c_str());
 	filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",wd,FILEDIALOG);
-	//filedialogfile->LFSTK_setNameFilter("*");
-	//filedialogfile->useThumbs=true;
-	//filedialogfile=new LFSTK_fileDialogClass(wc,"Select File",NULL,FILEDIALOG);
 	filedialogdir=new LFSTK_fileDialogClass(wc,"Select Folder",NULL,FOLDERDIALOG,"dialogscpp");
 	
-//	filedialogdir->LFSTK_setNameFilter("xfwm4");
 //TODO
 //	filedialogfile->LFSTK_setShowPreview(false);
 

@@ -52,10 +52,15 @@ bool buttonCB(void *p,void* ud)
 
 int main(int argc, char **argv)
 {
-	int	sy=BORDER;
+	int				sy=BORDER;
+	windowInitStruct	*win;
 		
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName=BOXLABEL;
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->level=ABOVEALL;
+	apc->LFSTK_addWindow(win,BOXLABEL);
 	wc=apc->mainWindow;
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
@@ -124,7 +129,6 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
-	//wc->LFSTK_showWindow();
 
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	int retval=apc->LFSTK_runApp();

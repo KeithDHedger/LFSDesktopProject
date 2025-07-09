@@ -61,11 +61,16 @@ bool buttonCB(void *p,void* ud)
 
 int main(int argc, char **argv)
 {
-	int	sy=BORDER;
-	int	hsy;
+	windowInitStruct	*win;
+	int				sy=BORDER;
+	int				hsy;
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName=BOXLABEL;
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->level=ABOVEALL;
+	apc->LFSTK_addWindow(win,BOXLABEL);
 	wc=apc->mainWindow;
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
@@ -113,7 +118,6 @@ int main(int argc, char **argv)
 	for (int j=0; j<MAINNUMMENUS; j++)
 		{
 			mms[j]=new infoDataStruct;
-			//asprintf(&mms[j]->label,"menu %i",j);
 			mms[j]->label="menu "+std::to_string(j);
 			mms[j]->hasSubMenu=false;
 			mms[j]->subMenus=NULL;

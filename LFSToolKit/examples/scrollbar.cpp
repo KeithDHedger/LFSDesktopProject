@@ -79,10 +79,15 @@ bool valChanged(void *p,void* ud)
 
 int main(int argc, char **argv)
 {
-	int	sy=BORDER;
+	int				sy=BORDER;
+	windowInitStruct	*win;
 		
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName=BOXLABEL;
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->level=ABOVEALL;
+	apc->LFSTK_addWindow(win,BOXLABEL);
 	wc=apc->mainWindow;
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
@@ -103,22 +108,17 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //hscrollbar
-	hsb=new LFSTK_scrollBarClass(wc,false,DIALOGMIDDLE-200,sy,400+GADGETHITE,SCROLLBARWIDTH,BUTTONGRAV);
+	hsb=new LFSTK_scrollBarClass(wc,false,DIALOGMIDDLE-200,sy,400+GADGETHITE-BORDER,SCROLLBARWIDTH,BUTTONGRAV);
 	hsb->LFSTK_setMouseCallBack(NULL,valChanged,NULL);
 	hsb->LFSTK_setScale(1,100);
-//	hsb->reverse=true;
 	hsb->LFSTK_setValue(25);
 	sy+=YSPACING;
 
 //vscrollbar
-fprintf(stderr,"sy=%i\n",sy);
-//	vsb=new LFSTK_scrollBarClass(wc,true,BORDER,sy,GADGETHITE/2,200+GADGETHITE,BUTTONGRAV);
 	vsb=new LFSTK_scrollBarClass(wc,true,BORDER,sy,SCROLLBARWIDTH,200+GADGETHITE,BUTTONGRAV);
 	vsb->LFSTK_setMouseCallBack(NULL,valChanged,NULL);
-	//vsb->LFSTK_setAllowKBControl(false);
 	vsb->LFSTK_setScale(0,1985);
 	vsb->LFSTK_setPageScroll(100);
-//	vsb->reverse=true;
 	vsb->LFSTK_setValue(250);
 	sy+=YSPACING+200;
 	
@@ -134,7 +134,7 @@ fprintf(stderr,"sy=%i\n",sy);
 	sy+=YSPACING;
 
 //reverse
-	reverse=new LFSTK_toggleButtonClass(wc,"Reverse",DIALOGMIDDLE-HALFGADGETWIDTH,DIALOGMIDDLE,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
+	reverse=new LFSTK_toggleButtonClass(wc,"Reverse/Enable",DIALOGMIDDLE-HALFGADGETWIDTH,DIALOGMIDDLE,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
 	reverse->LFSTK_setToggleStyle(TOGGLENORMAL);
 	reverse->LFSTK_setMouseCallBack(NULL,doReverse,NULL);
 //test setval

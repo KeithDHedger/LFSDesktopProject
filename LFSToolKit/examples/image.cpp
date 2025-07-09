@@ -139,12 +139,18 @@ bool exitCB(LFSTK_gadgetClass*p,void* ud)
 
 int main(int argc, char **argv)
 {
-	int	sy=BORDER;
+	int				sy=BORDER;
+	windowInitStruct	*win;
 
 	apc=new LFSTK_applicationClass();
 	apc->globalLib->LFSTK_setUseTheme(false);
-	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName=BOXLABEL;
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->level=ABOVEALL;
+	apc->LFSTK_addWindow(win,BOXLABEL);
 	wc=apc->mainWindow;
+
 	wc->LFSTK_setWindowPixmap(apc->globalLib->LFSTK_getWindowPixmap(apc->display,apc->rootWindow),DIALOGWIDTH,sy);
 	tux=new LFSTK_imageClass(wc,NULL,DIALOGMIDDLE-(IMAGESIZE/2),sy,IMAGESIZE,IMAGESIZE,BUTTONGRAV,true);
 	tux->LFSTK_setImageFromPath("./AspellGUI.png",PRESERVEASPECT,true);
@@ -195,8 +201,6 @@ int main(int argc, char **argv)
 
 
 //disks
-	windowInitStruct	*win;
-
 	win=new windowInitStruct;
 	win->app=apc;
 	win->windowName="";

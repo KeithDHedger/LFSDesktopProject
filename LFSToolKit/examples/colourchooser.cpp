@@ -2,10 +2,6 @@
 
 #(c)keithhedger Mon 7 Dec 11:04:17 GMT 2020 kdhedger68713@gmail.com
 
-if [ "X$1" != "X" ];then
-	USEVALGRIND="valgrind --leak-check=full"
-fi
-
 APPNAME=$(basename $0 .cpp)
 
 g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo  glib-2.0) -llfstoolkit -lImlib2 -o $APPNAME||exit 1
@@ -123,8 +119,8 @@ bool lineCB(void *p,void *ud)
 
 int main(int argc, char **argv)
 {
-	XEvent		event;
-	int			sy=BORDER;
+	int				sy=BORDER;
+	windowInitStruct	*win;
 
 	int			c=0;
 	int			option_index=0;
@@ -157,8 +153,17 @@ int main(int argc, char **argv)
 		}
 
 	apc=new LFSTK_applicationClass();
-	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
+	win=apc->LFSTK_getDefaultWInit();
+	win->windowName=BOXLABEL;
+	win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->level=ABOVEALL;
+	apc->LFSTK_addWindow(win,BOXLABEL);
 	wc=apc->mainWindow;
+
+
+
+//	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
+//	wc=apc->mainWindow;
 
 	label=new LFSTK_labelClass(wc,BOXLABEL,BORDER,sy,DIALOGWIDTH-BORDER-BORDER,GADGETHITE);
 	label->LFSTK_setCairoFontDataParts("sB",20);

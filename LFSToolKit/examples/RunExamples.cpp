@@ -60,9 +60,7 @@ bool buttonCB(void *p,void* ud)
 			free(command);
 			if(openFile->LFSTK_getValue()==true)
 				{
-					//asprintf(&command,"xdg-open $(pwd)/%s &",(const char*)ud);
-					asprintf(&command,"$(pwd)/openincurrent \"$(pwd)/%s\"",(const char*)ud);
-					fprintf(stderr,"%s\n",command);
+					asprintf(&command,"xdg-open %s",(const char*)ud);
 					system(command);
 					free(command);
 				}
@@ -93,7 +91,10 @@ int main(int argc, char **argv)
 
 	apc=new LFSTK_applicationClass();
 	apc->LFSTK_addWindow(NULL,BOXLABEL,"LFSTKExample");
+
 	wc=apc->mainWindow;
+	wc->LFSTK_setWindowType(apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG")));
+	wc->LFSTK_setDecorations(false,false,true,false);
 
 //info
 	multi=new LFSTK_ExpanderGadgetClass(wc,"",0,0,DIALOGWIDTH,GADGETHITE*4);
