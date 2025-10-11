@@ -1140,7 +1140,7 @@ Atom LFSTK_windowClass::LFSTK_getDnDAtom(int atomnum)
 //This fetches all the data from a property
 propertyStruct* LFSTK_windowClass::readProperty(Window src,Atom property)
 {
-	Atom			actual_type;
+	Atom				actual_type;
 	int				actual_format;
 	unsigned long	nitems;
 	unsigned long	bytes_after;

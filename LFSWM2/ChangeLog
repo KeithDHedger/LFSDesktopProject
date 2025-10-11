@@ -1,5 +1,12 @@
+1.0.3
+Removed resizing mode.
+Removed xrender dep.
+Removed xcomposite dep.
+Fixed some mem leaks.
+Removed xinerama dep.
+
 1.0.2
-fixed window controls when no close button showing.
+Fixed window controls when no close button showing.
 Fixed window losing focus when switching to fullscreen from window menu.
 Fixed new windows occasionally not getting focus.
 Removed alarm timer, now use 'kill -SIGUSR1 $(pgrep "^lfswm2$")' to signal a change.

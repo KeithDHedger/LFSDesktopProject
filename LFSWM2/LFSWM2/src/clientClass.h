@@ -31,10 +31,14 @@
 #define SKIPTIME 10
 #define MAXCONFIGCNT 8
 
-static const char	*menuItemlabels[]={"Maximize","Minimize","Shade","Fullscreen","--","On Top","On Bottom","On All Desks","--","Fast Resize","Live Resize","--","Close","--","About",NULL};
-static const char	*altMenuitemlabels[]={"Un-Maximize","Un-Minimize","Un-Shade","Un-Fullscreen","--","Not On Top","Not On Bottom","Only This Desk","--","Fast Resize","Live Resize","--","Close","--","About",NULL};
+//static const char	*menuItemlabels[]={"Maximize","Minimize","Shade","Fullscreen","--","On Top","On Bottom","On All Desks","--","Fast Resize","Live Resize","--","Close","--","About",NULL};
+//static const char	*altMenuitemlabels[]={"Un-Maximize","Un-Minimize","Un-Shade","Un-Fullscreen","--","Not On Top","Not On Bottom","Only This Desk","--","Fast Resize","Live Resize","--","Close","--","About",NULL};
 
-enum {MAXLABEL=0,MINLABEL,SHADELABEL,FSLABEL,PASS1,ONTOPLABEL,ONBOTTOMLABEL,ONALLDESKSLABEL,PASS2,FASTSIZELABEL,LIVESIZELABEL,PASS3,CLOSELABEL,PASS4,ABOUTLABEL,NUMOFMENUS};
+static const char	*menuItemlabels[]={"Maximize","Minimize","Shade","Fullscreen","--","On Top","On Bottom","On All Desks","--","Close","--","About",NULL};
+static const char	*altMenuitemlabels[]={"Un-Maximize","Un-Minimize","Un-Shade","Un-Fullscreen","--","Not On Top","Not On Bottom","Only This Desk","--","Close","--","About",NULL};
+
+//enum {MAXLABEL=0,MINLABEL,SHADELABEL,FSLABEL,PASS1,ONTOPLABEL,ONBOTTOMLABEL,ONALLDESKSLABEL,PASS2,FASTSIZELABEL,LIVESIZELABEL,PASS3,CLOSELABEL,PASS4,ABOUTLABEL,NUMOFMENUS};
+enum {MAXLABEL=0,MINLABEL,SHADELABEL,FSLABEL,PASS1,ONTOPLABEL,ONBOTTOMLABEL,ONALLDESKSLABEL,PASS2,CLOSELABEL,PASS4,ABOUTLABEL,NUMOFMENUS};
 
 class LFSWM2_clientClass
 {
@@ -78,7 +82,7 @@ class LFSWM2_clientClass
 		bool				isHidden=false;
 		bool				isMinimized=false;
 
-		int				resizeMode=0;
+		//int				resizeMode=0;
 		int				configCnt=0;
 
 		rectStruct		contentWindowRect;
@@ -171,14 +175,14 @@ class LFSWM2_clientClass
 		rectStruct		dragRect;
 		rectStruct		holdFrameRect={-1,-1,-1,-1};
 
-		Pixmap			currentRootPixmap=None;
-		Picture			windowPicture=None;
-		Picture			primaryPicture=None;
-		XRenderPictureAttributes	pa;
-		XRenderPictFormat		*picFormat;
+		//Pixmap			currentRootPixmap=None;
+		//Picture			windowPicture=None;
+		//Picture			primaryPicture=None;
+		//XRenderPictureAttributes	pa;
+		//XRenderPictFormat		*picFormat;
 		int				ow;
 		int				oh;
-		XImage			*resizeImage=NULL;
+		//XImage			*resizeImage=NULL;
 
 		bool				first=true;
 		int				firstx=-10000;

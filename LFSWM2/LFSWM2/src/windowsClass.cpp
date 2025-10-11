@@ -49,11 +49,16 @@ void LFSWM2_windowClass::LFSWM2_buildClientList(void)
 		{
 			hs=this->LFSWM2_getWindowHints(toplevelwindows[i]);
 			if((hs.mHints!=NULL) && (hs.mHints->decorations==0))
-				if(this->LFSWM2_createUnframedWindow(toplevelwindows[i])==true)
-					continue;
+				{
+					this->mainClass->LFSWM2_freeHints(&hs);
+
+					if(this->LFSWM2_createUnframedWindow(toplevelwindows[i])==true)
+						continue;
+				}
 
 			if(this->LFSWM2_createClient(toplevelwindows[i],hs)==false)
-				this->LFSWM2_freeHints(hs);
+				this->mainClass->LFSWM2_freeHints(&hs);
+				//this->LFSWM2_freeHints(hs);
 
 			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(toplevelwindows[i]);
 			if(cc!=NULL)
@@ -123,13 +128,13 @@ struct fontColour* LFSWM2_windowClass::LFSWM2_xftLoadColour(const char *name,con
 	return c;
 }
 
-void LFSWM2_windowClass::LFSWM2_freeHints(hintsDataStruct hs)
-{
-	if(hs.sh!=NULL)
-		XFree(hs.sh);
-	if(hs.mHints!=NULL)
-		XFree(hs.mHints);
-}
+//void LFSWM2_windowClass::LFSWM2_freeHints(hintsDataStruct hs)
+//{
+//	if(hs.sh!=NULL)
+//		XFree(hs.sh);
+//	if(hs.mHints!=NULL)
+//		XFree(hs.mHints);
+//}
 
 bool LFSWM2_windowClass::LFSWM2_createUnframedWindow(Window wid)
 {
@@ -172,6 +177,10 @@ bool LFSWM2_windowClass::LFSWM2_createUnframedWindow(Window wid)
 					hs=this->mainClass->mainWindowClass->LFSWM2_getWindowHints(wid);
 					XMoveWindow(this->mainClass->display,wid,-1000000,-1000000);
 					this->LFSWM2_createClient(wid,hs);
+
+					//if(hs!=NULL)
+					this->mainClass->LFSWM2_freeHints(&hs);
+
 					return(true);
 					break;
 				}
@@ -355,7 +364,7 @@ bool bh=false;
 			if(cc->windowType!=UTILITYWINDOW)
 				cc->frameWindowRect={premaphs.xa.x,premaphs.xa.y,premaphs.xa.width,premaphs.xa.height};
 
-			cc->resizeMode=this->mainClass->resizeMode;
+			//cc->resizeMode=this->mainClass->resizeMode;
 			if(cc->isBorderless==false)
 				cc->frameGC=XCreateGC(this->mainClass->display,cc->frameWindow,0,0);
 			this->clientList[id]=cc;
@@ -564,9 +573,9 @@ cc->controlCnt=0;
 
 rectStruct LFSWM2_windowClass::LFSWM2_getWindowRect(Window id,Window parent,bool dotranslate)
 {
-	XWindowAttributes	attr;
-	rectStruct		r={0,0,0,0};
-	Window				wr;
+	XWindowAttributes	attr={0,};
+	rectStruct			r={0,0,0,0};
+	Window				wr=0;
 
 	XGetWindowAttributes(this->mainClass->display,id,&attr);
 	if(dotranslate==true)
@@ -971,6 +980,8 @@ void LFSWM2_windowClass::LFSWM2_setVisibilityForDesk(unsigned long desk)
 												cctrans->LFSWM2_hideWindow(false);
 										}
 								}
+							if(v!=NULL)
+								XFree(v);
 						}
 				}
 		}
@@ -1215,7 +1226,7 @@ void	 LFSWM2_windowClass::LFSWM2_reloadTheme(void)
 	this->mainClass->riteSideBarSize=this->mainClass->prefs.LFSTK_getInt("ritesidebarsize");
 	this->mainClass->bottomBarSize=this->mainClass->prefs.LFSTK_getInt("bottombarsize");
 	this->mainClass->useTheme=this->mainClass->prefs.LFSTK_getBool("usetheme");
-	this->mainClass->resizeMode=this->mainClass->prefs.LFSTK_getInt("resizemode");
+	//this->mainClass->resizeMode=this->mainClass->prefs.LFSTK_getInt("resizemode");
 	this->mainClass->modKeys=this->mainClass->prefs.LFSTK_getInt("modkeys");
 	this->mainClass->frameAlpha=this->mainClass->prefs.LFSTK_getInt("framealpha");
 	this->mainClass->frameAlpha=this->mainClass->frameAlpha<<24;

@@ -152,7 +152,7 @@ class LFSWM2_windowClass
 		LFSWM2_clientClass					*LFSWM2_getClientClass(Window id);
 		void									LFSWM2_deleteClientEntry(Window id);
 		void									LFSWM2_setClientList(Window id,bool addwindow);
-		void									LFSWM2_freeHints(hintsDataStruct hs);
+		//void									LFSWM2_freeHints(hintsDataStruct hs);
 		bool									LFSWM2_createUnframedWindow(Window wid);
 
 //graphics

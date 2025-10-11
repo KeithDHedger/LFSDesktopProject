@@ -24,6 +24,7 @@ static void alarmCallBack(int sig)
 {
 	XExposeEvent		event;
 	bool				needsRefresh=false;
+
 	needsRefresh=theMainClass->messages->LFSWM2_readMsg();
 }
 

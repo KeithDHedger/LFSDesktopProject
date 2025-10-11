@@ -203,7 +203,7 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 	this->riteSideBarSize=this->prefs.LFSTK_getInt("ritesidebarsize");
 	this->bottomBarSize=this->prefs.LFSTK_getInt("bottombarsize");
 	this->useTheme=this->prefs.LFSTK_getBool("usetheme");
-	this->resizeMode=this->prefs.LFSTK_getInt("resizemode");
+	//this->resizeMode=this->prefs.LFSTK_getInt("resizemode");
 	this->forceDockStackingOrder=this->prefs.LFSTK_getInt("forcedocksstack");
 	this->modKeys=this->prefs.LFSTK_getInt("modkeys");
 	this->windowPlacement=this->prefs.LFSTK_getInt("placement");
@@ -349,12 +349,12 @@ void LFSWM2_Class::printHelp(void)
 			"-F, --font\n\tSet font string ( default: 'sans:size=14:bold' )\n"
 			"-p, --titleposition\n\tSet window name position ( 1=left. 2=center( default ), 3=right )\n"
 			"-w, --windowposition\n\tSet new window position ( NOPLACE=0, UNDERMOUSE=1, CENTREMMONITOR=2 ( default ), CENTRESCREEN=3 )\n"
-			"-r, --resizemode\n\tSet resizing mode ( FASTRESIZE=0, LIVERESIZE=1 ( default ), SIZERESIZE=2, SCALERESIZE=3 )\n"
 			" -v, --version\n\tOutput version information and exit\n"
 			" -h, -?, --help\n\tPrint this help\n\n"
 			"Report bugs to kdhedger68713@gmail.com\n"
 		);
 }
+//			"-r, --resizemode\n\tSet resizing mode ( FASTRESIZE=0, LIVERESIZE=1 ( default ), SIZERESIZE=2, SCALERESIZE=3 )\n"
 
 void LFSWM2_Class::cliOptions(int argc,char **argv)//TODO//
 {
@@ -367,11 +367,11 @@ void LFSWM2_Class::cliOptions(int argc,char **argv)//TODO//
 			{"font",1,0,'F'},
 			{"titleposition",1,0,'p'},
 			{"windowposition",1,0,'w'},
-			{"resizemode",1,0,'r'},
 			{"version",0,0,'v'},
 			{"help",0,0,'?'},
 			{0, 0, 0, 0}
 		};
+//			{"resizemode",1,0,'r'},
 
 	int		c;
 	int		key=-1;
@@ -380,7 +380,8 @@ void LFSWM2_Class::cliOptions(int argc,char **argv)//TODO//
 	while(true)
 		{
 			int option_index=0;
-			c=getopt_long (argc,argv,"v?hk:b:f:t:F:p:w:r:",long_options,&option_index);
+			//c=getopt_long (argc,argv,"v?hk:b:f:t:F:p:w:r:",long_options,&option_index);
+			c=getopt_long (argc,argv,"v?hk:b:f:t:F:p:w:",long_options,&option_index);
 			if(c==-1)
 				break;
 
@@ -411,9 +412,9 @@ void LFSWM2_Class::cliOptions(int argc,char **argv)//TODO//
 					case 'w':
 						this->windowPlacement=atoi(optarg);
 						break;
-					case 'r':
-						this->resizeMode=atoi(optarg);
-						break;
+					//case 'r':
+					//	this->resizeMode=atoi(optarg);
+					//	break;
 					case 'v':
 						printf("LFSWM2 %s\n",VERSION);
 						exit(0);
@@ -457,6 +458,25 @@ unsigned long LFSWM2_Class::LFSWM2_getHigherDesktop(unsigned long cd)
 	if(nd>=this->LFSWM2_getDesktopCount())
 		nd=0;
 	return((unsigned long)nd);
+}
+
+void LFSWM2_Class::LFSWM2_freeHints(hintsDataStruct *hints)
+{
+/*
+	pointStruct			pt={0,0};
+	XSizeHints			*sh=NULL;
+	XWindowAttributes	xa;
+	motifHints			*mHints=NULL;
+	bool					valid=false;
+*/
+	if(hints->sh!=NULL)
+		XFree(hints->sh);
+	if(hints->mHints!=NULL)
+		XFree((void*)hints->mHints);
+	
+	hints->sh=NULL;
+	hints->mHints=NULL;
+	hints->valid=false;
 }
 
 #ifdef __DEBUG__
@@ -710,3 +730,4 @@ void LFSWM2_Class::DEBUG_printConfigureRequestStruct(XEvent *e)
 }
 
 #endif
+

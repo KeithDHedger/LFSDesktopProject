@@ -72,7 +72,7 @@ int LFSWM2_eventsClass::checkMessages(void)
 													this->mainClass->mainWindowClass->LFSWM2_setControlRects(ccs);
 													ccs->resetContentWindow();
 													this->mainClass->mainWindowClass->LFSWM2_refreshFrame(ccs);
-													ccs->resizeMode=this->mainClass->resizeMode;
+													//ccs->resizeMode=this->mainClass->resizeMode;
 												}
 										}
 									
@@ -106,7 +106,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 	XButtonEvent			start;
 	int					when=0;
 	LFSWM2_clientClass	*cc;
-	LFSWM2_clientClass	*cccontrol;
+	LFSWM2_clientClass	*cccontrol=NULL;
 	bool					overide=false;
 	bool					inmenu=false;
 	int					lastbutton=-1;
@@ -289,6 +289,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 							//this->mainClass->DEBUG_printCurrentHintsDataStruct(hs);
 								if((hs.mHints!=NULL) && (hs.mHints->decorations==0))
 									{
+										this->mainClass->LFSWM2_freeHints(&hs);
 										if(this->mainClass->mainWindowClass->LFSWM2_createUnframedWindow(e.xmaprequest.window)==true)
 											{
 												this->noRestack=false;
@@ -298,7 +299,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 								XMoveWindow(this->mainClass->display,e.xmaprequest.window,-1000000,-1000000);
 								if(this->mainClass->mainWindowClass->LFSWM2_createClient(e.xmaprequest.window,hs)==false)
 									{
-										this->mainClass->mainWindowClass->LFSWM2_freeHints(hs);
+										this->mainClass->LFSWM2_freeHints(&hs);
 									//fprintf(stderr,"LFSWM2_createClient=false\n");
 									}
 								XMoveResizeWindow(this->mainClass->display,e.xmaprequest.window,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize,x_window_attrs.width,x_window_attrs.height);
@@ -336,7 +337,11 @@ this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,thi
 													hintsDataStruct		hs;
 													hs=this->mainClass->mainWindowClass->LFSWM2_getWindowHints(e.xconfigurerequest.window);
 													if((hs.mHints!=NULL) && (hs.mHints->decorations!=0))
-														XMoveResizeWindow(this->mainClass->display,e.xconfigurerequest.window,hs.pt.x,hs.pt.y,hs.sh->min_width,hs.sh->min_height);
+														{
+															XMoveResizeWindow(this->mainClass->display,e.xconfigurerequest.window,hs.pt.x,hs.pt.y,hs.sh->min_width,hs.sh->min_height);
+															this->mainClass->LFSWM2_freeHints(&hs);
+														}
+			
 													break;
 												}
 											cc->configCnt=0;
@@ -367,8 +372,8 @@ this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,thi
 
 											cc->setWindowRects(true);
 
-											if((cc->buttonDown==false) && (cc->resizeMode==SCALERESIZE))
-												XMoveWindow(this->mainClass->display,cc->resizeWindow,-100000,-100000);
+											//if((cc->buttonDown==false) && (cc->resizeMode==SCALERESIZE))
+											//	XMoveWindow(this->mainClass->display,cc->resizeWindow,-100000,-100000);
 											break;
 										}
 									else
@@ -425,7 +430,7 @@ this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,thi
 														{
 															if(((xh->flags & StateHint)==StateHint) && (xh->initial_state==NormalState))
 																unminim=true;
-														XFree((void*)xh);
+															XFree((void*)xh);
 														}
 												}
 											if(unminim==true)
@@ -794,6 +799,8 @@ HIDEXERRORS
 										cc2->LFSWM2_hideWindow(false);
 								}
 						}
+					if(v!=NULL)
+						XFree(v);
 				}
 			cnt++;
 		}

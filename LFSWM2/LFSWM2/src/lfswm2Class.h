@@ -158,7 +158,7 @@ enum MESSAGETYPE {REFRESHTHEME,QUITLFSWM,RESTARTLFSWM,DEBUGMSG,NOMSG};
 enum TRISTATE {INVALID=-1,LOGIC0=0,LOGIC1=1};
 enum RUNLEVEL {RL_STARTUP,RL_NORMAL,RL_SHUTDOWN};
 enum {NOPLACE=0,UNDERMOUSE,CENTREMMONITOR,CENTRESCREEN,MOUSEMONITOR};
-enum RESIZEMODE {FASTRESIZE=0,LIVERESIZE,SIZERESIZE,SCALERESIZE};
+//enum RESIZEMODE {FASTRESIZE=0,LIVERESIZE,SIZERESIZE,SCALERESIZE};
 enum DOCKSTACKORDER {APPSET=0,FORCEABOVE,FORCEBELOW};
 
 __attribute__((unused)) static LFSWM2_Class	*theMainClass=NULL;
@@ -203,7 +203,7 @@ class LFSWM2_Class
 		std::map<unsigned long,Atom>	atomshashed;
 
 //theme
-		int					resizeMode=LIVERESIZE;
+		//int					resizeMode=LIVERESIZE;
 		LFSTK_prefsClass		prefs;
 		std::string			prefsPath;
 		bool					useTheme=false;
@@ -260,8 +260,10 @@ class LFSWM2_Class
 #endif
 
 		int					msgQueueKey=999;
-		void 				freeFontColour(fontColour *fc);
+		void					LFSWM2_freeHints(hintsDataStruct *hints);
 		char					**argv;
+		void 				freeFontColour(fontColour *fc);
+
 	private:
 		void					cliOptions(int argc,char **argv);
 		void					printHelp(void);
