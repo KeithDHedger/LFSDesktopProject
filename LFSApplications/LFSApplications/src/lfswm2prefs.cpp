@@ -26,7 +26,6 @@
 #define EDITBOXWIDTH		GADGETWIDTH*4
 #define BOXLABEL			"LFS WM2 Prefs"
 #define COLOURBUTTONS	3
-#define RESIZEMENUSIZE	2
 #define TITLEPOSMENUSIZE	3
 #define FORCEMENUSIZE	2
 #define MODS1MENUSIZE	8
@@ -65,13 +64,6 @@ LFSTK_lineEditClass		*placeWindowEdit=NULL;
 infoDataStruct			**placementMenus;
 const char				*placementMenuNames[]={"No placement","Under Mouse","Centre On Monitor With Mouse","Centre On Screen","TODO"};
 LFSTK_menuClass			*placeMenu=NULL;
-
-//resize
-LFSTK_buttonClass		*resizeWindowMenu=NULL;
-LFSTK_lineEditClass		*resizeWindowEdit=NULL;
-infoDataStruct			**resizeMenus;
-const char				*resizeMenuNames[]={"Fast Resize","Live Resize"};
-LFSTK_menuClass			*resizeMenu=NULL;
 
 //title postion
 LFSTK_buttonClass		*titlePosWindowMenu=NULL;
@@ -122,7 +114,6 @@ int						parentWindow=-1;
 
 //prefs
 int						prefsPlacementTemp=2;
-int						prefsResizeTemp=2;
 int						titlePosTemp=1;
 int						forceDockStackTemp=1;
 int						prefsModkeys1Temp=0;
@@ -164,11 +155,6 @@ bool buttonCB(void *p,void* ud)
 			if(strcmp((char*)ud,"TITLEPOS")==0)
 				{
 					titlePosMenu->LFSTK_showMenu();
-				}
-
-			if(strcmp((char*)ud,"RESIZEMODE")==0)
-				{
-					resizeMenu->LFSTK_showMenu();
 				}
 
 			if(strcmp((char*)ud,"SHOWPLACEMENU")==0)
@@ -216,7 +202,6 @@ bool buttonCB(void *p,void* ud)
 
 							{LFSTK_UtilityClass::LFSTK_hashFromKey("placement"),{TYPEINT,"placement","","",false,prefsPlacementTemp}},
 							{LFSTK_UtilityClass::LFSTK_hashFromKey("desktops"),{TYPEINT,"desktops","","",false,atoi(deskCountEdit->LFSTK_getCStr())}},
-							{LFSTK_UtilityClass::LFSTK_hashFromKey("resizemode"),{TYPEINT,"resizemode","","",false,prefsResizeTemp}},
 							{LFSTK_UtilityClass::LFSTK_hashFromKey("forcedocksstack"),{TYPEINT,"forcedocksstack","","",false,forceDockStackTemp}},
 
 							{LFSTK_UtilityClass::LFSTK_hashFromKey("modkeys"),{TYPEINT,"modkeys","","",false,prefsModkeys1Temp}}
@@ -244,15 +229,6 @@ bool menuCB(void *p,void* ud)
 	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
 	placeWindowEdit->LFSTK_setBuffer(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel());
 	prefsPlacementTemp=(int)(long)ud;
-	return(true);
-}
-
-bool resizeMenuCB(void *p,void* ud)
-{
-	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
-	resizeWindowEdit->LFSTK_setBuffer(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel());
-	prefsResizeTemp=(int)(long)ud;
-	reloadwm=true;
 	return(true);
 }
 
@@ -357,7 +333,6 @@ int main(int argc, char **argv)
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("textcolour"),{TYPESTRING,"textcolour","","black",false,0}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("forcedocksstack"),{TYPEINT,"forcedocksstack","","",false,1}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("usetheme"),{TYPEBOOL,"usetheme","","",false,0}},
-			{LFSTK_UtilityClass::LFSTK_hashFromKey("resizemode"),{TYPEINT,"resizemode","","",false,2}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("modkeys"),{TYPEINT,"modkeys","","",false,64}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("framealpha"),{TYPEINT,"framealpha","","",false,255}},
 			{LFSTK_UtilityClass::LFSTK_hashFromKey("framealpha"),{TYPEINT,"framealpha","","",false,255}},
@@ -396,7 +371,6 @@ int main(int argc, char **argv)
 		}
 
 	prefsPlacementTemp=prefs.LFSTK_getInt("placement");
-	prefsResizeTemp=prefs.LFSTK_getInt("resizemode");
 	titlePosTemp=prefs.LFSTK_getInt("titleposition");
 	forceDockStackTemp=prefs.LFSTK_getInt("forcedocksstack");
 
@@ -408,14 +382,6 @@ int main(int argc, char **argv)
 			placementMenus[j]=new infoDataStruct;
 			placementMenus[j]->label=strdup(placementMenuNames[j]);
 			placementMenus[j]->userData=(void*)j;
-		}
-
-	resizeMenus=new infoDataStruct*[RESIZEMENUSIZE];
-	for(long j=0;j<RESIZEMENUSIZE;j++)
-		{
-			resizeMenus[j]=new infoDataStruct;
-			resizeMenus[j]->label=strdup(resizeMenuNames[j]);
-			resizeMenus[j]->userData=(void*)j;
 		}
 
 	titlePosMenus=new infoDataStruct*[TITLEPOSMENUSIZE];
@@ -557,18 +523,6 @@ int main(int argc, char **argv)
 	label=new LFSTK_labelClass(wc,"Desktops",BORDER,sy,GADGETWIDTH,GADGETHITE,LEFT);
 	sx+=GADGETWIDTH+BORDER;
 	deskCountEdit=new LFSTK_lineEditClass(wc,std::to_string(prefs.LFSTK_getInt("desktops")).c_str(),sx,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	sy+=YSPACING;
-	sx=BORDER;
-
-//resize mode
-	resizeWindowMenu=new LFSTK_buttonClass(wc,"Resisize Mode",BORDER,sy,GADGETWIDTH,GADGETHITE,BUTTONGRAV);
-	resizeWindowMenu->LFSTK_setMouseCallBack(NULL,buttonCB,(void*)"RESIZEMODE");
-	resizeMenu=new LFSTK_menuClass(wc,BORDER+GADGETWIDTH,sy,1,1);
-	resizeMenu->LFSTK_setMouseCallBack(NULL,resizeMenuCB,NULL);
-	resizeMenu->LFSTK_addMainMenus(resizeMenus,RESIZEMENUSIZE);
-
-	sx+=GADGETWIDTH+BORDER;
-	resizeWindowEdit=new LFSTK_lineEditClass(wc,resizeMenuNames[prefs.LFSTK_getInt("resizemode")],sx,sy,EDITBOXWIDTH,GADGETHITE,BUTTONGRAV);
 	sy+=YSPACING;
 	sx=BORDER;
 
