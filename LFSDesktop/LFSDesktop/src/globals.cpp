@@ -157,7 +157,7 @@ void setIconImage(desktopItemStruct	*cf)
 				cf->iconPath=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"user-home","places");
 				break;
 			case ISCOMPUTER:
-				cf->iconPath=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"computer","devices");
+				cf->iconPath=apc->globalLib->LFSTK_findThemedIcon(iconTheme,"computer","");
 				break;
 			case ISIMAGEFILE:
 				cf->iconPath=strdup(cf->itemPath);
