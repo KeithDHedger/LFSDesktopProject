@@ -255,6 +255,7 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 
 			if(premaphs.mHints!=NULL)
 				{
+				//this->mainClass->DEBUG_printCurrentHintsDataStruct(premaphs);
 					//this->mainClass->DEBUG_printMWMHints(premaphs.mHints);
 					cc->canMaximize=false;
 					cc->canMinimize=false;
@@ -1028,8 +1029,20 @@ hintsDataStruct LFSWM2_windowClass::LFSWM2_getWindowHints(Window wid,bool movewi
 		}
 
 	hints.mHints=(motifHints*)this->mainClass->mainWindowClass->LFSWM2_getProp(wid,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_MOTIF_WM_HINTS")),this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_MOTIF_WM_HINTS")),&nitems_return);
+//				this->mainClass->DEBUG_printCurrentHintsDataStruct(hints);
+/*
+hs.sh->x
+struct hintsDataStruct
+{
+	pointStruct			pt={0,0};
+	XSizeHints			*sh=NULL;
+	XWindowAttributes	xa;
+	motifHints			*mHints=NULL;
+	bool					valid=false;
+};
 
-	if(this->mainClass->runLevel!=RL_STARTUP && ( (hints.sh->flags & (USPosition|PPosition))==0))
+*/
+	if(this->mainClass->runLevel!=RL_STARTUP && ( ((hints.sh->flags & (USPosition|PPosition))==0) || (hints.sh->x==0 && hints.sh->y==0)))
 		{
 			Window			root_return;
 			Window			child_return;

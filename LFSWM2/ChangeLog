@@ -1,4 +1,5 @@
 1.0.3
+Minor positioning fix when window sets user position to 0,0;
 Removed resizing mode.
 Removed xrender dep.
 Removed xcomposite dep.
