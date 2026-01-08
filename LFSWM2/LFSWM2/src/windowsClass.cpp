@@ -95,7 +95,9 @@ void LFSWM2_windowClass::LFSWM2_destroyClient(Window id)
 	cc=this->LFSWM2_getClientClass(id);
 	if(cc!=NULL)
 		{
+		fprintf(stderr,"00000\n");
 			delete cc;
+		fprintf(stderr,"11111\n");
 		}
 }
 
@@ -173,13 +175,15 @@ bool LFSWM2_windowClass::LFSWM2_createUnframedWindow(Window wid)
 				break;
 			case UTILITYWINDOW:
 				{
+				//break;
 					hintsDataStruct hs;
 					hs=this->mainClass->mainWindowClass->LFSWM2_getWindowHints(wid);
+					//fprintf(stderr,"UTILITYWINDOW valid=%p\n",hs.valid);
 					XMoveWindow(this->mainClass->display,wid,-1000000,-1000000);
 					this->LFSWM2_createClient(wid,hs);
 
-					//if(hs!=NULL)
-					this->mainClass->LFSWM2_freeHints(&hs);
+					//if(hs.valid==true)
+					//	this->mainClass->LFSWM2_freeHints(&hs);
 
 					return(true);
 					break;
@@ -974,11 +978,14 @@ void LFSWM2_windowClass::LFSWM2_setVisibilityForDesk(unsigned long desk)
 									if(*v==cchold->contentWindow)
 										{
 											cctrans=this->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(k));
-											cctrans->onDesk=cchold->onDesk;
-											if(cctrans->onDesk==desk)
-												cctrans->LFSWM2_showWindow(true);
-											else
-												cctrans->LFSWM2_hideWindow(false);
+											if(cctrans!=NULL)
+												{
+													cctrans->onDesk=cchold->onDesk;
+													if(cctrans->onDesk==desk)
+														cctrans->LFSWM2_showWindow(true);
+													else
+														cctrans->LFSWM2_hideWindow(false);
+												}
 										}
 								}
 							if(v!=NULL)
@@ -1028,7 +1035,10 @@ hintsDataStruct LFSWM2_windowClass::LFSWM2_getWindowHints(Window wid,bool movewi
 			hints.pt.x-=this->mainClass->leftSideBarSize;
 		}
 
+//fprintf(stderr,"222222222 %p\n",hints.mHints);
 	hints.mHints=(motifHints*)this->mainClass->mainWindowClass->LFSWM2_getProp(wid,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_MOTIF_WM_HINTS")),this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_MOTIF_WM_HINTS")),&nitems_return);
+	
+//fprintf(stderr,"44444444 %p\n",hints.mHints);
 //				this->mainClass->DEBUG_printCurrentHintsDataStruct(hints);
 /*
 hs.sh->x

@@ -51,7 +51,7 @@ const char			*diskThemeIconData[]={"drive-harddisk","media-eject","media-eject",
 //msg coms
 int					queueID;
 msgBuffer			buffer;
-
+//1000=DESKTOP_MSG
 void readMsg(void)
 {
 	int		retcode;

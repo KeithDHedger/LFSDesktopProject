@@ -125,7 +125,7 @@ LFSWM2_Class::LFSWM2_Class(int argc,char **argv)
 	this->mainWindowClass=new LFSWM2_windowClass(this);
 	this->LFSWM2_initRootWindow();
 
-	XSetInputFocus(this->display,rootWindow,RevertToNone,CurrentTime);
+	//XSetInputFocus(this->display,rootWindow,RevertToNone,CurrentTime);
 
 	this->frameBG=this->mainWindowClass->LFSWM2_xftLoadColour("#4194FE","grey");
 	this->frameFG=this->mainWindowClass->LFSWM2_xftLoadColour("#000000","white");
@@ -469,6 +469,11 @@ void LFSWM2_Class::LFSWM2_freeHints(hintsDataStruct *hints)
 	motifHints			*mHints=NULL;
 	bool					valid=false;
 */
+if(hints==NULL)
+	return;
+if(hints->valid==false)
+	return;
+
 	if(hints->sh!=NULL)
 		XFree(hints->sh);
 	if(hints->mHints!=NULL)

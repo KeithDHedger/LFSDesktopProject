@@ -189,7 +189,10 @@ void setEdits(void)
 {
 	panelWidthEdit->LFSTK_setBuffer(panelWidthConvertToStr[prefs.LFSTK_getInt("panelwidth")]);
 	panelHeightEdit->LFSTK_setBuffer(std::to_string(prefs.LFSTK_getInt("panelheight")).c_str());
-	panelPosEdit->LFSTK_setBuffer(panelPosConvertToStr[prefs.LFSTK_getInt("panelpos")]);
+	if(prefs.LFSTK_getInt("panelpos")<0)
+		panelPosEdit->LFSTK_setBuffer(panelPosConvertToStr[prefs.LFSTK_getInt("panelpos")]);
+	else
+		panelPosEdit->LFSTK_setBuffer(std::to_string(prefs.LFSTK_getInt("panelpos")).c_str());
 	panelGravEdit->LFSTK_setBuffer(panelGravConvertToStr[prefs.LFSTK_getInt("panelgrav")]);
 	panelOnMonitor->LFSTK_setBuffer(std::to_string(prefs.LFSTK_getInt("onmonitor")).c_str());
 	termCommand->LFSTK_setBuffer(prefs.LFSTK_getCString("termcommand"));
