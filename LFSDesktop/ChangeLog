@@ -1,4 +1,5 @@
 0.2.0
+Trapped SIGUSR1 to imediatly check messages.
 Fixed computer and documents folder icon.
 Fixed opening computer/home/documents folder when no file manager runing.
 Set desktop names on start.

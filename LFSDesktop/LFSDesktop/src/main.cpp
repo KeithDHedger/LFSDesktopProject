@@ -108,6 +108,11 @@ void readMsg(void)
 	buffer.mText[0]=0;
 }
 
+static void alarmCallBack(int sig)
+{
+	readMsg();
+}
+
 void printhelp(void)//TODO//
 {
 	printf("Usage: lfsdesktop [OPTION]\n"
@@ -266,6 +271,8 @@ int main(int argc, char **argv)
 #else
 	wc->LFSTK_resizeWindow(apc->displayWidth,apc->displayHeight,true);
 #endif
+
+	signal(SIGUSR1,alarmCallBack);
 
 	int retval=apc->LFSTK_runApp();
 
