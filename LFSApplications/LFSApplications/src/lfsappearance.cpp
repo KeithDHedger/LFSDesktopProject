@@ -90,7 +90,7 @@ void updateDesktop(void)
 	system("lfssetwallpaper &>/dev/null");
 
 	buffer.mType=DESKTOP_MSG;
-	sprintf(buffer.mText,"reloadbg");
+	sprintf(buffer.mText,"reloaddesk");
 	if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
 		fprintf(stderr,"Can't send message :(\n");
 

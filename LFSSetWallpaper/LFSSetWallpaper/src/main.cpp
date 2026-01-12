@@ -43,12 +43,12 @@ enum imageMode {WALLSTRETCH=0,WALLTILE,WALLCENTRE,WALLSCALED,WALLZOOMED};
 
 struct	monitors
 {
-	int		monW;
-	int		monH;
-	int		monX;
-	int		monY;
+	int		monW=0;
+	int		monH=0;
+	int		monX=0;
+	int		monY=0;
 	int		monMode;
-	char	*monitorPath;
+	char		*monitorPath=NULL;
 };
 
 char			*wallpaperPath=NULL;
@@ -67,9 +67,12 @@ int			screen;
 Pixmap		backDropPixmap;
 
 int			mainColour=0x808080;
+char			*mainColourStr=NULL;
 
 int			backdropMode=STRETCH;
 char			*prefsPath;
+char			*monitorPrefs;
+
 char*		monitorRCPath;
 int			numberOfMonitors=0;
 int			currentMonitor;
@@ -109,8 +112,8 @@ void printhelp(void)
 
 void loadMonitorData(void)
 {
-	FILE*	fd=NULL;
-	char	buffer[2048];
+	FILE		*fd=NULL;
+	char		buffer[2048];
 	int		monnum=0;
 
 	fd=fopen(monitorRCPath,"r");
@@ -119,7 +122,7 @@ void loadMonitorData(void)
 			while(feof(fd)==0)
 				{
 					buffer[0]=0;
-					fgets(buffer,2048,fd);
+					fgets(buffer,2047,fd);
 					if(buffer[0]!=0)
 						{
 							buffer[strlen(buffer)-1]=0;
@@ -237,7 +240,6 @@ void initBackdrop(void)
 	imlib_context_set_display(display);
 	imlib_context_set_visual(visual);
 	imlib_context_set_blend(1);
-
 	buffer=imlib_create_image(displayWidth,displayHeight);
 	imlib_context_set_image(buffer);
 	imlib_context_set_color((mainColour/65536),(mainColour/256) & 0xff,mainColour & 0xff,0xff);
@@ -268,6 +270,29 @@ void initBackdrop(void)
 	imlib_free_image();
 }
 
+void savePrefs(void)
+{
+	FILE				*fd=NULL;
+	LFSTK_prefsClass	prefs;
+
+	prefs.prefsMap=
+		{
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("backdrop"),{TYPESTRING,"backdrop","",wallpaperPath,false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("colour"),{TYPESTRING,"colour","",mainColourStr,false,0}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("mainmode"),{TYPEINT,"mainmode","","",false,backdropMode}},
+			{LFSTK_UtilityClass::LFSTK_hashFromKey("multimode"),{TYPEBOOL,"multimode","","",multiMode,0}},
+		};
+	prefs.LFSTK_saveVarsToFile(prefsPath);
+
+	fd=fopen(monitorRCPath,"w");
+	if(fd!=NULL)
+		{
+			for(long j=0;j<numberOfMonitors;j++)
+				fprintf(fd,"%i\n%s\n",monitorData[j].monMode,monitorData[j].monitorPath);
+			fclose(fd);
+		}
+}
+
 void loadPrefs(void)
 {
 	LFSTK_prefsClass	prefs;
@@ -283,6 +308,7 @@ void loadPrefs(void)
 	prefs.LFSTK_loadVarsFromFile(prefsPath);
 	wallpaperPath=strdup(prefs.LFSTK_getCString("backdrop"));
 	backdropMode=prefs.LFSTK_getInt("mainmode");
+	mainColourStr=strdup(prefs.LFSTK_getCString("colour"));
 	mainColour=lib->LFSTK_getColourFromName(display,DefaultColormap(display,DefaultScreen(display)),prefs.LFSTK_getCString("colour"));
 	multiMode=prefs.LFSTK_getBool("multimode");
 }
@@ -358,13 +384,37 @@ int main(int argc,char **argv)
 				{
 				case 'w':
 					if(currentMonitor==-1)
-						wallpaperPath=strdup(optarg);
+						{
+							if(wallpaperPath!=NULL)
+								free(wallpaperPath);
+							wallpaperPath=strdup(optarg);
+						}
 					else
-						monitorData[currentMonitor].monitorPath=strdup(optarg);
+						{
+							if(monitorData[currentMonitor].monitorPath!=NULL)
+								free(monitorData[currentMonitor].monitorPath);
+							monitorData[currentMonitor].monitorPath=strdup(optarg);
+						}
 					break;
 
 				case 'c':
+					if(mainColourStr!=NULL)
+						free(mainColourStr);
+					if(optarg[0]=='0' && optarg[1]=='x')
+						{
+							
+							mainColour=strtol(&optarg[2],NULL,16);
+							asprintf(&mainColourStr,"#%s",&optarg[2]);
+							break;
+						}
+					if(optarg[0]=='#')
+						{
+							mainColour=strtol(&optarg[1],NULL,16);
+							asprintf(&mainColourStr,"%s",optarg);
+							break;
+						}
 					mainColour=strtol(optarg,NULL,0);
+					mainColourStr=strdup(optarg);
 					break;
 
 				case 'o':
@@ -410,9 +460,19 @@ int main(int argc,char **argv)
 	XSetWindowBackgroundPixmap(display,rootWin,backDropPixmap);
 	XClearWindow(display,rootWin);
 	XFlush(display);
+
+	savePrefs();
+
+	for(int j=0;j<numberOfMonitors;j++)
+		{
+			if(monitorData[j].monitorPath!=NULL)
+				free(monitorData[j].monitorPath);
+		}
+
 	free(monitorRCPath);
 	free(prefsPath);
 	free(wallpaperPath);
+	freeAndNull(&mainColourStr);
 	fflush(NULL);
 	delete lib;
 

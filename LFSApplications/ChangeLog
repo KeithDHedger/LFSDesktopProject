@@ -1,4 +1,7 @@
 0.2.0
+Fixed mem leaks.
+Minor fix to lfsappearance on appling changes.
+Fixed number of monitors changing.
 Fixed loading panelprefs with absolute position set.
 Removed resize mode from lfswm2 prefs.
 Minor GUI changes.

@@ -195,7 +195,6 @@ bool monitorModeCB(void *p,void* ud)
 
 bool monitorMenuCB(void *p,void* ud)
 {
-
 	monitorsMenuButton->LFSTK_setLabel(static_cast<LFSTK_gadgetClass*>(p)->LFSTK_getLabel());
 	static_cast<LFSTK_gadgetClass*>(p)->wc->LFSTK_hideWindow();
 	selectedMonitor=(int)(long)ud;
@@ -213,6 +212,12 @@ void loadMonitorInfo(void)
 	int		numchars;
 	size_t	n;
 
+	for(int j=0;j<apc->LFSTK_getMonitorCount();j++)
+		{
+			monitors[j].mode=0;
+			monitors[j].path=strdup("");
+		}
+
 	asprintf(&monitorrc,"%s/lfsmonitors.rc",apc->configDir.c_str());
 	fd=fopen(monitorrc,"r");
 	if(fd!=NULL)
@@ -228,8 +233,18 @@ void loadMonitorInfo(void)
 							free(buffer);
 							buffer=NULL;
 							numchars=getline(&buffer,&n,fd);
-							buffer[numchars-1]=0;
-							monitors[monnum].path=buffer;
+
+							if(numchars!=-1)
+								{
+									buffer[numchars-1]=0;
+									freeAndNull(&monitors[monnum].path);
+									monitors[monnum].path=buffer;
+								}
+							else
+								{
+									freeAndNull(&monitors[monnum].path);
+									asprintf(&monitors[monnum].path,"");
+								}
 							monnum++;
 						}
 					else
