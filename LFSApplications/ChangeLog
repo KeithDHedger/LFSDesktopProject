@@ -1,6 +1,7 @@
 0.2.0
+Fixed messages to apps from lfsappearance.
 Fixed mem leaks.
-Minor fix to lfsappearance on appling changes.
+Minor fix to lfsappearance on applying changes.
 Fixed number of monitors changing.
 Fixed loading panelprefs with absolute position set.
 Removed resize mode from lfswm2 prefs.

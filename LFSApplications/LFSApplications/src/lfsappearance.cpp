@@ -90,21 +90,32 @@ void updateDesktop(void)
 	system("lfssetwallpaper &>/dev/null");
 
 	buffer.mType=DESKTOP_MSG;
-	sprintf(buffer.mText,"reloaddesk");
-	if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
-		fprintf(stderr,"Can't send message :(\n");
-
 	sprintf(buffer.mText,"reloadprefs");
 	if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
 		fprintf(stderr,"Can't send message :(\n");
 
-	buffer.mType=WMANAGER_MSG;
-	sprintf(buffer.mText,"reloadtheme");
+	sprintf(buffer.mText,"reloaddesk");
 	if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
 		fprintf(stderr,"Can't send message :(\n");
 
 	apc->globalLib->LFSTK_oneLiner("%s","pgrep \"^lfstray$\" |xargs kill -SIGUSR1");
-	system("killall lfspanel lfsdock &");
+	system("killall lfspanel &");
+
+	buffer.mType=LFSWM2_MSG;
+	sprintf(buffer.mText,"reloadtheme");
+	if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
+		fprintf(stderr,"Can't send message :(\n");
+
+	buffer.mType=DOCK_MSG;
+	sprintf(buffer.mText,"quitdock");
+	if((msgsnd(queueID,&buffer,strlen(buffer.mText)+1,0))==-1)
+		fprintf(stderr,"Can't send message :(\n");
+
+	system("~/Scripts/lfsthemechange");
+
+	system("kill -10 $(pgrep \"^lfswm2$\")");
+	system("kill -10 $(pgrep \"^lfsdesktop$\")");
+	system("kill -10 $(pgrep \"^lfsdock$\")");
 }
 
 void makeGroup(const char *grpname)
