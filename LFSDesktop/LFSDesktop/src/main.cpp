@@ -72,6 +72,9 @@ void readMsg(void)
 			if(strcmp(buffer.mText,"reloadprefs")==0)
 				reloadPrefs();
 
+			if(strcmp(buffer.mText,"quit")==0)
+				exit(0);
+
 			if(strcmp(buffer.mText,"cleandesktopcache")==0)
 				{
 					asprintf(&command,"find %s -maxdepth 1 -mindepth 1 |sort",cachePath);
