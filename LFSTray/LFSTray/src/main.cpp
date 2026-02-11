@@ -125,7 +125,6 @@ int main(int argc,char **argv)
 	trayClass=new LFSTray_trayClass(apc);
 
 	setPrefs(argc,argv);
-	signal(SIGUSR1,alarmCallBack);
 
 	wi=apc->LFSTK_getDefaultWInit();
 	wi->overRide=false;
@@ -160,7 +159,7 @@ int main(int argc,char **argv)
 		}
 	else
 		{
-			alarmCallBack(0);
+			alarmCallBack(SIGUSR1);
 		}
 
 	XClientMessageEvent ev;
@@ -184,6 +183,7 @@ int main(int argc,char **argv)
 #ifdef __DEBUG__
 	XSynchronize(apc->display,true);
 #endif
+	signal(SIGUSR1,alarmCallBack);
 
 	int retval=apc->LFSTK_runApp();
 
