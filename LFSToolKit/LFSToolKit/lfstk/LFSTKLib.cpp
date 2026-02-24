@@ -550,7 +550,7 @@ void LFSTK_lib::LFSTK_setUseTheme(bool use)
 */
 #define GLOBALICONS 0
 #define GLOBALPIXMAPS 2
-#define GLOBALPIXMAPSEND 5
+#define GLOBALPIXMAPSEND 6
 
 /**
 * Find a themed icon.
@@ -584,6 +584,7 @@ std::string LFSTK_lib::LFSTK_findThemedIcon(std::string theme,std::string icon,s
 	iconfolders[2]="/usr/share/pixmaps";
 	iconfolders[3]="/usr/share/icons/hicolor";
 	iconfolders[4]="~/.local/share/icons";
+	iconfolders[5]="~/.local/share/pixmaps";
 
 	for(int j=GLOBALICONS;j<GLOBALPIXMAPS;j++)
 		{

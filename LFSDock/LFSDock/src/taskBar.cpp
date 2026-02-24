@@ -155,7 +155,7 @@ bool taskListCB(void* p,void* ud)
 
 Window doTreeWalkForTasks(Window wind)
 {
-	Window			root,parent;
+	Window				root,parent;
 	Window				*children;
 	Window				thewin;
 	unsigned int			n_children;
