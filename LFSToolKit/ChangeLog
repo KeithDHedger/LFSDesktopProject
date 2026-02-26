@@ -1,4 +1,5 @@
 0.7.0
+Improved finding themed icon.
 Added ~/.local/share/pixmaps to search path for themed icon.
 Fixed cairo surfaces not being created/resized properly.
 Fixed minor update glitch.

@@ -551,6 +551,18 @@ void LFSTK_lib::LFSTK_setUseTheme(bool use)
 #define GLOBALICONS 0
 #define GLOBALPIXMAPS 2
 #define GLOBALPIXMAPSEND 6
+#define THEMEFOLDERCNT 3
+
+#define USERICONFOLDER 0
+#define SYSTEMTHEMEFOLDER 1
+
+#define LOCALSHAREICONFOLDER 2
+#define LOCALSHAREPIXMAPSFOLDER 3
+
+#define GNOMEFOLDER 4
+#define PIXMAPSFOLDER 5
+#define HICOLOURFOLDER 6
+#define FOLDERCNT 7
 
 /**
 * Find a themed icon.
@@ -562,54 +574,64 @@ void LFSTK_lib::LFSTK_setUseTheme(bool use)
 std::string LFSTK_lib::LFSTK_findThemedIcon(std::string theme,std::string icon,std::string catagory)
 {
 	std::string	thetheme;
-	const char	*iconthemes[3];
-	const char	*iconfolders[GLOBALPIXMAPSEND];
+	const char	*iconfolders[FOLDERCNT];
 	std::string	iconpath="";
+	std::string	homepath=getenv("HOME");
+	std::string	f1="";
 
 	if(icon.at(0)=='/')
 		return(icon);
 
-	if(theme.length()==0)
+	if(theme.empty()==true)
 		thetheme="gnome";
 	else
 		thetheme=theme;
 
-	iconthemes[0]=thetheme.c_str();
-	iconthemes[1]="hicolor";
-	iconthemes[2]="gnome";
+	iconfolders[USERICONFOLDER]="/.icons/";
+	iconfolders[SYSTEMTHEMEFOLDER]="/usr/share/icons/";
 
-	iconfolders[0]="~/.icons";
-	iconfolders[1]="/usr/share/icons";
+	iconfolders[LOCALSHAREICONFOLDER]="/.local/share/icons/";
+	iconfolders[LOCALSHAREPIXMAPSFOLDER]="/.local/share/pixmaps/";
 
-	iconfolders[2]="/usr/share/pixmaps";
-	iconfolders[3]="/usr/share/icons/hicolor";
-	iconfolders[4]="~/.local/share/icons";
-	iconfolders[5]="~/.local/share/pixmaps";
+	iconfolders[GNOMEFOLDER]="/usr/share/icons/gnome/";
+	iconfolders[PIXMAPSFOLDER]="/usr/share/pixmaps/";
+	iconfolders[HICOLOURFOLDER]="/usr/share/icons/hicolor/";
 
-	for(int j=GLOBALICONS;j<GLOBALPIXMAPS;j++)
+	f1=homepath+std::string(iconfolders[USERICONFOLDER])+thetheme;
+	iconpath=this->LFSTK_oneLiner("find \"%s\" -iname	\"*%s.png\" 2>/dev/null|sort --version-sort -r",f1.c_str(),icon.c_str());
+	if(iconpath.empty()==false)
+		return(iconpath);
+	f1=std::string(iconfolders[SYSTEMTHEMEFOLDER])+thetheme;
+	iconpath=this->LFSTK_oneLiner("find \"%s\" -iname	\"*%s.png\" 2>/dev/null|sort --version-sort -r",f1.c_str(),icon.c_str());
+	if(iconpath.empty()==false)
+		return(iconpath);
+
+	f1=homepath+std::string(iconfolders[LOCALSHAREICONFOLDER]);
+	iconpath=this->LFSTK_oneLiner("find \"%s\" -iname	\"%s.png\" 2>/dev/null|sort --version-sort -r",f1.c_str(),icon.c_str());
+	if(iconpath.empty()==false)
+		return(iconpath);
+	f1=homepath+std::string(iconfolders[LOCALSHAREPIXMAPSFOLDER]);
+	iconpath=this->LFSTK_oneLiner("find \"%s\" -iname	\"%s.png\" 2>/dev/null|sort --version-sort -r",f1.c_str(),icon.c_str());
+	if(iconpath.empty()==false)
+		return(iconpath);
+
+	for(int j=GNOMEFOLDER;j<FOLDERCNT;j++)
 		{
-			for(int k=0;k<3;k++)
-				{
-					iconpath=this->LFSTK_oneLiner("find %s/\"%s\"/*/%S -iname '*%S.png' 2>/dev/null|sort --version-sort|tail -n1 2>/dev/null",iconfolders[j],iconthemes[k],catagory,icon);
-
-					if(iconpath.length()>1)
-						goto breakReturn;
-				}
+			f1=iconfolders[j];
+			iconpath=this->LFSTK_oneLiner("find \"%s\" -iname	\"%s.png\" 2>/dev/null|sort --version-sort -r",f1.c_str(),icon.c_str());
+			if(iconpath.empty()==false)
+				return(iconpath);
 		}
 
-	if(iconpath.length()==0)
+	for(int j=GNOMEFOLDER;j<FOLDERCNT;j++)
 		{
-			for(int j=GLOBALPIXMAPS;j<GLOBALPIXMAPSEND;j++)
-				{
-					iconpath=this->LFSTK_oneLiner("find %s -iname '*%S*'",iconfolders[j],icon);
-					if(iconpath.length()>1)
-						goto breakReturn;
-				}
+			f1=iconfolders[j];
+			iconpath=this->LFSTK_oneLiner("find \"%s\" -iname	\"*%s*.png\" 2>/dev/null|sort --version-sort -r",f1.c_str(),icon.c_str());
+			if(iconpath.empty()==false)
+				return(iconpath);
 		}
-	iconpath="";
 
-breakReturn:
-	return(iconpath);
+	return("");
 }
 
 /**
