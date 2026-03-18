@@ -146,6 +146,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 			cccontrol=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(e.xany.window));
 			if(cccontrol!=NULL)
 				{
+
 					if(cccontrol->LFSWM2_handleControls(&e)==true)
 						{
 							this->noRestack=false;
@@ -177,6 +178,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 					cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->windowIDList.at(j));
 					if(cc!=NULL)
 						{
+
 							if(cc->isBorderless==true)
 								continue;
 							if(cc->rendered==false)
@@ -278,7 +280,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 					case MapRequest:
 						{
-						//	fprintf(stderr,"MapRequest main event loop window=%x when=%i\n",e.xmap.window,when++);
+							//fprintf(stderr,"MapRequest main event loop window=%x when=%i\n",e.xmap.window,when++);
 								this->noRestack=false;
 								this->mainClass->mainWindowClass->LFSWM2_removeProp(this->mainClass->rootWindow,LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW"));
 								XWindowAttributes	x_window_attrs;
@@ -286,7 +288,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 								hs=this->mainClass->mainWindowClass->LFSWM2_getWindowHints(e.xmaprequest.window);
 								XGetWindowAttributes(this->mainClass->display,e.xmaprequest.window,&x_window_attrs);
 								XMapWindow(this->mainClass->display,e.xmaprequest.window);
-							//this->mainClass->DEBUG_printCurrentHintsDataStruct(hs);
+								//this->mainClass->DEBUG_printCurrentHintsDataStruct(hs);
 								if((hs.mHints!=NULL) && (hs.mHints->decorations==0))
 									{
 										this->mainClass->LFSWM2_freeHints(&hs);
@@ -300,14 +302,10 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 								if(this->mainClass->mainWindowClass->LFSWM2_createClient(e.xmaprequest.window,hs)==false)
 									{
 										this->mainClass->LFSWM2_freeHints(&hs);
-									//fprintf(stderr,"LFSWM2_createClient=false\n");
 									}
 								XMoveResizeWindow(this->mainClass->display,e.xmaprequest.window,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize,x_window_attrs.width,x_window_attrs.height);
-							//this->mainClass->mainWindowClass->LFSWM2_removeProp(this->mainClass->rootWindow,LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW"));
 
 this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,(void*)&e.xmaprequest.window,1);
-
-
 
 							this->noRestack=true;
 						}
@@ -317,7 +315,7 @@ this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,thi
 							if(this->mainClass->mainWindowClass->LFSWM2_checkValidWindow(e.xconfigurerequest.window)==false)
 								break;
 
-						//fprintf(stderr,"ConfigureRequest from main event loop window=%x when=%i\n",e.xmaprequest.window,when++);
+					//	fprintf(stderr,"ConfigureRequest from main event loop window=%x when=%i\n",e.xmaprequest.window,when++);
 						{
 							if((e.xconfigurerequest.x<0) || (e.xconfigurerequest.y<0))
 								break;
@@ -396,9 +394,13 @@ this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,thi
 
 					case PropertyNotify:
 						{
-						//fprintf(stderr,"PropertyNotify IN eventnumber %i atom name=%s\n",when++,XGetAtomName(this->mainClass->display,e.xproperty.atom));
+							if(e.xproperty.atom==this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("WM_STATE")))
+								{
+									continue;
+									break;
+								}
+							//fprintf(stderr,"PropertyNotify IN eventnumber %i atom name=%s\n",when++,XGetAtomName(this->mainClass->display,e.xproperty.atom));
 							LFSWM2_clientClass	*cc;
-							//if(e.xproperty.window==0x3200006)
 #ifdef __DEBUG__
 							if(false)
 								{
@@ -457,6 +459,7 @@ this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,thi
 
 									if(e.xproperty.atom==this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE")))
 										{
+											//fprintf(stderr,"_NET_WM_STATE eventnumber %i\n",when++);
 											this->noRestack=false;
 											cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xproperty.window);
 											if(cc!=NULL)
@@ -502,7 +505,6 @@ this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,thi
 						}
 						break;
 					default:
-						//fprintf(stderr,"default eventnumber %i\n",when++);
 						break;
 				}
 

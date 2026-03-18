@@ -1,4 +1,5 @@
 1.0.3
+Fixed hogging cpu.
 Fixed restarting wm.
 Better handling of utility windows.
 Minor positioning fix when window sets user position to 0,0;
