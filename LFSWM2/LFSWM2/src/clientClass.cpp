@@ -1305,7 +1305,7 @@ void LFSWM2_clientClass::renderFrame(bool isfirst,int x,int y)
 					return;
 				}
 
-			XMoveWindow(this->mainClass->display,this->frameWindow,this->firstx,this->firsty);
+			XMoveWindow(this->mainClass->display,this->frameWindow,this->firstx-this->mainClass->leftSideBarSize,this->firsty-this->mainClass->titleBarSize);
 			XMapSubwindows(this->mainClass->display,this->frameWindow);	
 			this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(this->contentWindow);
 			if(this->mainClass->useTheme==true)

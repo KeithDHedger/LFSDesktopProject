@@ -312,7 +312,7 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 					cc->canClose=false;
 				}
 
-bool bh=false;
+			bool bh=false;
 			if(this->LFSWM2_getWindowType(id)==UTILITYWINDOW)
 				{
 					cc->canMaximize=false;
@@ -342,7 +342,7 @@ bool bh=false;
 
 			if(bh==true)
 				{
-					cc->frameWindow=XCreateWindow(this->mainClass->display,DefaultRootWindow(this->mainClass->display),premaphs.xa.x,premaphs.xa.y,premaphs.xa.width,premaphs.xa.height,BORDER_WIDTH,this->mainClass->depth,InputOutput,this->mainClass->defaultVisual,CWColormap | CWBorderPixel ,&wa);
+					cc->frameWindow=XCreateWindow(this->mainClass->display,DefaultRootWindow(this->mainClass->display),premaphs.xa.x,premaphs.xa.y-24,premaphs.xa.width,premaphs.xa.height,BORDER_WIDTH,this->mainClass->depth,InputOutput,this->mainClass->defaultVisual,CWColormap | CWBorderPixel ,&wa);
 				}
 			else
 				{

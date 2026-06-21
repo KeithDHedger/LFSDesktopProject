@@ -135,13 +135,13 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 			XNextEvent(this->mainClass->display,&e);
 
-			if(this->mainClass->mainWindowClass->LFSWM2_getWindowType(e.xany.window)==UTILITYWINDOW)
-				{
-					//fprintf(stderr,">>>>e.xany.window=%p\n",e.xany.window);
-					//cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xkey.window);
-					//if(cc!=NULL)
-					//	XSetInputFocus(this->mainClass->display,e.xany.window,RevertToParent,CurrentTime);
-				}
+//			if(this->mainClass->mainWindowClass->LFSWM2_getWindowType(e.xany.window)==UTILITYWINDOW)
+//				{
+//					//fprintf(stderr,">>>>e.xany.window=%p\n",e.xany.window);
+//					//cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xkey.window);
+//					//if(cc!=NULL)
+//					//	XSetInputFocus(this->mainClass->display,e.xany.window,RevertToParent,CurrentTime);
+//				}
 
 			cccontrol=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(e.xany.window));
 			if(cccontrol!=NULL)
