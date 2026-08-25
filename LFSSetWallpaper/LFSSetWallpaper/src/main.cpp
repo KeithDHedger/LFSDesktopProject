@@ -52,6 +52,7 @@ struct	monitors
 };
 
 char			*wallpaperPath=NULL;
+Pixmap		oldpm;
 
 Imlib_Image	buffer;
 
@@ -451,13 +452,24 @@ int main(int argc,char **argv)
 				}
 		}
 
+	oldpm=lib->LFSTK_getWindowPixmap(display,rootWin);
 	initBackdrop();
 
-	XChangeProperty(display,rootWin,XInternAtom(display,"_XROOTPMAP_ID",false),XA_PIXMAP,32,PropModeReplace,(const unsigned char*)&backDropPixmap,1);
-	XChangeProperty(display,rootWin,XInternAtom(display,"ESETROOT_PMAP_ID",false),XA_PIXMAP,32,PropModeReplace,(const unsigned char*)&backDropPixmap,1);
+	if(oldpm!=0)
+		{
+			XCopyArea(display, backDropPixmap, oldpm, gc, 0, 0, displayWidth, displayHeight, 0, 0);
+			XFreePixmap(display,backDropPixmap);
+			XClearWindow(display,rootWin);
+		}
+	else
+		{
+			XChangeProperty(display,rootWin,XInternAtom(display,"_XROOTPMAP_ID",false),XA_PIXMAP,32,PropModeReplace,(const unsigned char*)&backDropPixmap,1);
+			XChangeProperty(display,rootWin,XInternAtom(display,"ESETROOT_PMAP_ID",false),XA_PIXMAP,32,PropModeReplace,(const unsigned char*)&backDropPixmap,1);
 
-	XSetCloseDownMode(display,RetainPermanent);
-	XSetWindowBackgroundPixmap(display,rootWin,backDropPixmap);
+			XSetCloseDownMode(display,RetainPermanent);
+			XSetWindowBackgroundPixmap(display,rootWin,backDropPixmap);
+		}
+
 	XClearWindow(display,rootWin);
 	XFlush(display);
 
