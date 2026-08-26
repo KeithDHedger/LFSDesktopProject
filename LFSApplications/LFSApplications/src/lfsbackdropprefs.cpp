@@ -230,10 +230,12 @@ void loadMonitorInfo(void)
 						{
 							buffer[numchars-1]=0;
 							monitors[monnum].mode=atoi(buffer);
+							if(monitors[monnum].mode<0 || monitors[monnum].mode>4)
+								monitors[monnum].mode=0;
 							free(buffer);
 							buffer=NULL;
-							numchars=getline(&buffer,&n,fd);
 
+							numchars=getline(&buffer,&n,fd);
 							if(numchars!=-1)
 								{
 									buffer[numchars-1]=0;
@@ -244,6 +246,9 @@ void loadMonitorInfo(void)
 								{
 									freeAndNull(&monitors[monnum].path);
 									asprintf(&monitors[monnum].path,"");
+									free(buffer);
+									buffer=NULL;
+
 								}
 							monnum++;
 						}
@@ -260,7 +265,13 @@ void loadMonitorInfo(void)
 					monitors[j].path=strdup("");
 				}
 		}
-	free(monitorrc);
+	free(monitorrc);	
+
+//	for(int j=0;j<apc->LFSTK_getMonitorCount();j++)
+//		{
+//			fprintf(stderr,"mon %i mode=%i\n",j,monitors[j].mode);
+//			fprintf(stderr,"mon %i path=%s\n",j,monitors[j].path);
+//		}
 }
 
 int main(int argc, char **argv)
