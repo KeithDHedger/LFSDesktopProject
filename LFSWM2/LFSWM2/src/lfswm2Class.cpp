@@ -469,10 +469,11 @@ void LFSWM2_Class::LFSWM2_freeHints(hintsDataStruct *hints)
 	motifHints			*mHints=NULL;
 	bool					valid=false;
 */
-if(hints==NULL)
-	return;
-if(hints->valid==false)
-	return;
+	if(hints==NULL)
+		return;
+
+	if(hints->valid==false)
+		return;
 
 	if(hints->sh!=NULL)
 		XFree(hints->sh);

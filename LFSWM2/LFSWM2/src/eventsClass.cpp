@@ -30,6 +30,11 @@ int LFSWM2_eventsClass::checkMessages(void)
 {
 	if(this->mainClass->messages->whatMsg!=NOMSG)
 		{
+			if(this->mainClass->messages->whatMsg==DEBUGMSG)
+				{
+					fprintf(stderr,"DEBUGMSG\n");
+				}
+
 			if(this->mainClass->messages->whatMsg==QUITLFSWM)
 				{
 					this->mainClass->messages->whatMsg=NOMSG;
@@ -280,42 +285,47 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 					case MapRequest:
 						{
+							bool	noborders=false;
 							//fprintf(stderr,"MapRequest main event loop window=%x when=%i\n",e.xmap.window,when++);
-								this->noRestack=false;
-								this->mainClass->mainWindowClass->LFSWM2_removeProp(this->mainClass->rootWindow,LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW"));
-								XWindowAttributes	x_window_attrs;
-								hintsDataStruct		hs;
-								hs=this->mainClass->mainWindowClass->LFSWM2_getWindowHints(e.xmaprequest.window);
-								XGetWindowAttributes(this->mainClass->display,e.xmaprequest.window,&x_window_attrs);
-								XMapWindow(this->mainClass->display,e.xmaprequest.window);
-								//this->mainClass->DEBUG_printCurrentHintsDataStruct(hs);
-								if((hs.mHints!=NULL) && (hs.mHints->decorations==0))
-									{
-										this->mainClass->LFSWM2_freeHints(&hs);
-										if(this->mainClass->mainWindowClass->LFSWM2_createUnframedWindow(e.xmaprequest.window)==true)
-											{
-												this->noRestack=false;
-											}
-										break;
-									}
-								XMoveWindow(this->mainClass->display,e.xmaprequest.window,-1000000,-1000000);
-								if(this->mainClass->mainWindowClass->LFSWM2_createClient(e.xmaprequest.window,hs)==false)
-									{
-										this->mainClass->LFSWM2_freeHints(&hs);
-									}
-								XMoveResizeWindow(this->mainClass->display,e.xmaprequest.window,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize,x_window_attrs.width,x_window_attrs.height);
+							this->noRestack=false;
+							this->mainClass->mainWindowClass->LFSWM2_removeProp(this->mainClass->rootWindow,LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW"));
+							XWindowAttributes	x_window_attrs;
+							hintsDataStruct		hs;
+							hs=this->mainClass->mainWindowClass->LFSWM2_getWindowHints(e.xmaprequest.window);
+							XGetWindowAttributes(this->mainClass->display,e.xmaprequest.window,&x_window_attrs);
+							XMapWindow(this->mainClass->display,e.xmaprequest.window);
 
-this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,(void*)&e.xmaprequest.window,1);
+							if((hs.mHints!=NULL) && (hs.mHints->decorations==0))
+								{
+									this->mainClass->LFSWM2_freeHints(&hs);
+									if(this->mainClass->mainWindowClass->LFSWM2_getWindowType(e.xmaprequest.window)!=NORMALWINDOW)
+										if(this->mainClass->mainWindowClass->LFSWM2_createUnframedWindow(e.xmaprequest.window)==true)
+											this->noRestack=false;
+
+									noborders=true;
+									if(this->mainClass->mainWindowClass->LFSWM2_getWindowType(e.xmaprequest.window)!=NORMALWINDOW)
+										break;
+								}
+
+							XMoveWindow(this->mainClass->display,e.xmaprequest.window,-1000000,-1000000);
+							if(this->mainClass->mainWindowClass->LFSWM2_createClient(e.xmaprequest.window,hs)==false)
+									this->mainClass->LFSWM2_freeHints(&hs);
+							cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xmaprequest.window);
+							cc->noTheme=noborders;
+
+							XMoveResizeWindow(this->mainClass->display,e.xmaprequest.window,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize,x_window_attrs.width,x_window_attrs.height);
+
+							this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,(void*)&e.xmaprequest.window,1);
 
 							this->noRestack=true;
 						}
 						break;
 
 					case ConfigureRequest://TODO//NEXT
-							if(this->mainClass->mainWindowClass->LFSWM2_checkValidWindow(e.xconfigurerequest.window)==false)
-								break;
-
 					//	fprintf(stderr,"ConfigureRequest from main event loop window=%x when=%i\n",e.xmaprequest.window,when++);
+						if(this->mainClass->mainWindowClass->LFSWM2_checkValidWindow(e.xconfigurerequest.window)==false)
+							break;
+
 						{
 							if((e.xconfigurerequest.x<0) || (e.xconfigurerequest.y<0))
 								break;
@@ -370,8 +380,6 @@ this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,thi
 
 											cc->setWindowRects(true);
 
-											//if((cc->buttonDown==false) && (cc->resizeMode==SCALERESIZE))
-											//	XMoveWindow(this->mainClass->display,cc->resizeWindow,-100000,-100000);
 											break;
 										}
 									else

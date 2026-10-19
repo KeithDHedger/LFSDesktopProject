@@ -43,27 +43,30 @@ void LFSWM2_windowClass::LFSWM2_buildClientList(void)
 	std::string			windowname;
 	hintsDataStruct		hs;
 	LFSWM2_clientClass	*cc;
+	bool					noborders=false;
 
 	XQueryTree(this->mainClass->display,this->mainClass->rootWindow,&returned_root,&returned_parent,&toplevelwindows,&windowscnt);
 	for(unsigned int i=0;i<windowscnt;++i)
 		{
+			noborders=false;
 			hs=this->LFSWM2_getWindowHints(toplevelwindows[i]);
 			if((hs.mHints!=NULL) && (hs.mHints->decorations==0))
 				{
 					this->mainClass->LFSWM2_freeHints(&hs);
-
-					if(this->LFSWM2_createUnframedWindow(toplevelwindows[i])==true)
-						continue;
+					noborders=true;
+					if(this->LFSWM2_getWindowType(toplevelwindows[i])!=NORMALWINDOW)
+						if(this->LFSWM2_createUnframedWindow(toplevelwindows[i])==true)
+							continue;
 				}
 
 			if(this->LFSWM2_createClient(toplevelwindows[i],hs)==false)
 				this->mainClass->LFSWM2_freeHints(&hs);
-				//this->LFSWM2_freeHints(hs);
 
 			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(toplevelwindows[i]);
 			if(cc!=NULL)
 				{
 					cc->LFSWM2_setWMState();
+					cc->noTheme=noborders;
 				}
 		}
 
@@ -146,6 +149,7 @@ bool LFSWM2_windowClass::LFSWM2_createUnframedWindow(Window wid)
 	switch(wtype)//for later
 		{
 			case DOCKWINDOW:
+//				fprintf(stderr,"DOCKWINDOW\n");
 //				switch(this->mainClass->forceDockStackingOrder)
 //					{
 //						case FORCEABOVE:
@@ -166,9 +170,18 @@ bool LFSWM2_windowClass::LFSWM2_createUnframedWindow(Window wid)
 				return(true);
 				break;
 			case NORMALWINDOW:
+				//fprintf(stderr,"NORMALWINDOW\n");
+				//this->LFSWM2_setClientList(wid,true);
+				//return(true);
+				//break;
+		
 			case DIALOGWINDOW:
 			case TOOLWINDOW:
 			case DESKTOPWINDOW:
+				//fprintf(stderr,"DESKTOPWINDOW\n");
+				this->LFSWM2_setClientList(wid,true);
+				return(true);
+				break;
 			case UNKNOWNTYPE:
 				this->LFSWM2_setClientList(wid,true);
 				return(true);
@@ -1190,6 +1203,32 @@ void LFSWM2_windowClass::LFSWM2_refreshFrame(LFSWM2_clientClass *cc,XExposeEvent
 	if(cc->isBorderless==true)
 		return;
 
+	if(cc->noTheme==true)
+		{
+			cc->setWindowRects(true);
+
+			Pixmap mask=XCreatePixmap(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.w,cc->frameWindowRect.h,1);
+			GC pmgc=XCreateGC(this->mainClass->display,mask,0,NULL);
+
+			XSetFillStyle(this->mainClass->display,pmgc,FillSolid);
+			XSetClipMask(this->mainClass->display,pmgc,None);
+
+			XSetClipOrigin(this->mainClass->display,pmgc,0,0);
+			XSetForeground(this->mainClass->display,pmgc,0);
+			XFillRectangle(this->mainClass->display,mask,pmgc,0,0,cc->frameWindowRect.w,cc->frameWindowRect.h);
+
+			XSetClipOrigin(this->mainClass->display,pmgc,0,0);
+			XSetForeground(this->mainClass->display,pmgc,1);
+			XFillRectangle(this->mainClass->display,mask,pmgc,cc->contentWindowRect.x,cc->contentWindowRect.y,cc->contentWindowRect.w+1,cc->contentWindowRect.h+1);
+
+			XShapeCombineMask(this->mainClass->display,cc->frameWindow,ShapeBounding,0,0,mask,ShapeSet);
+
+			XFreePixmap(this->mainClass->display,mask);
+			XFreeGC(this->mainClass->display,pmgc);
+
+			return;
+		}
+
 	if(this->mainClass->useTheme==true)
 		{
 			this->LFSWM2_refreshThemeFrame(cc);
@@ -1494,6 +1533,75 @@ void LFSWM2_windowClass::LFSWM2_refreshThemeFrame(LFSWM2_clientClass *cc)
 		return;
 	
 	r=cc->frameWindowRect;
+
+
+
+//
+//
+//{
+//if(cc->noTheme==true)
+//{
+//fprintf(stderr,"000w=%i\n",cc->contentWindowRect.w);
+//
+////XFlush(this->mainClass->display);
+//XSync(this->mainClass->display,False);
+////fprintf(stderr,">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.\n");
+//cc->setWindowRects(true);
+//fprintf(stderr,"111w=%i %i %i\n",cc->contentWindowRect.w,cc->frameWindowRect.w,cc->frameWindowRect.w-(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize));
+//fprintf(stderr,"111h=%i %i %i\n",cc->contentWindowRect.h,cc->frameWindowRect.h,cc->frameWindowRect.h-(this->mainClass->titleBarSize+this->mainClass->bottomBarSize));
+//
+//
+////int wid=cc->contentWindowRect.w;
+////int hite=cc->contentWindowRect.h;
+//
+//Pixmap mask = XCreatePixmap(this->mainClass->display, cc->frameWindow, cc->frameWindowRect.w, cc->frameWindowRect.h, 1);
+//										GC pmgc=XCreateGC(this->mainClass->display,mask,0,NULL);
+//											{
+//												XSetClipOrigin(this->mainClass->display,pmgc,0,0);
+//XSetFillStyle(this->mainClass->display,pmgc,FillSolid);
+//XSetClipMask(this->mainClass->display,pmgc,None);
+//										XSetForeground(this->mainClass->display,pmgc,0);
+//										XFillRectangle(this->mainClass->display, mask,pmgc,0,0,cc->frameWindowRect.w,cc->frameWindowRect.h);
+//											}
+//	XSetClipOrigin(this->mainClass->display,pmgc,0,0);
+//XSetClipMask(this->mainClass->display,pmgc,None);
+//XSetFillStyle(this->mainClass->display,pmgc,FillSolid);
+//										//	Pixmap mask = XCreatePixmap(this->mainClass->display, cc->frameWindow, 5000, 5000, 1);
+//										//GC pmgc=XCreateGC(this->mainClass->display,mask,0,NULL);
+//										XSetForeground(this->mainClass->display,pmgc,1);
+//
+//
+////fprintf(stderr,"222wh=%i %i\n",wid,hite);
+//
+//fprintf(stderr,"cc->contentWindowRect.x=%i cc->frameWindowRect.y=%i\n",cc->contentWindowRect.x,cc->frameWindowRect.y);
+//fprintf(stderr,"cc->contentWindowRect.h=%i cc->frameWindowRect.h=%i\n",cc->contentWindowRect.h,cc->frameWindowRect.h);
+//fprintf(stderr,"cc->frameWindowRect.h adj=%i",cc->frameWindowRect.h-(this->mainClass->titleBarSize+this->mainClass->bottomBarSize));
+//										//XFillRectangle(this->mainClass->display,mask,pmgc,cc->contentWindowRect.x,cc->contentWindowRect.y,cc->contentWindowRect.w,cc->frameWindowRect.h-(this->mainClass->titleBarSize+this->mainClass->bottomBarSize));
+//										XFillRectangle(this->mainClass->display,mask,pmgc,cc->contentWindowRect.x,cc->contentWindowRect.y,cc->contentWindowRect.w+1,cc->contentWindowRect.h+1);
+//										//XFillRectangle(this->mainClass->display, mask, pmgc, cc->contentWindowRect.x,cc->contentWindowRect.y, cc->contentWindowRect.w, cc->contentWindowRect.h);
+//										XShapeCombineMask(this->mainClass->display,cc->frameWindow,ShapeBounding,0,0,mask, ShapeSet);
+//
+////XSync(this->mainClass->display,False);
+//	XFreePixmap(this->mainClass->display,mask);
+//	XFreeGC(this->mainClass->display,pmgc);
+//
+//
+//
+//return;
+//}
+//}
+
+
+
+
+
+
+
+
+
+
+
+
 
 	if(isactive==false)
 		activepart="-inactive";

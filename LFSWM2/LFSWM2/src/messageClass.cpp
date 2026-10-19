@@ -40,13 +40,16 @@ LFSWM2_messageClass::LFSWM2_messageClass(LFSWM2_Class *mainclass,int newkey)
 	this->key=newkey;
 	if((this->queueID=msgget(this->key,IPC_CREAT|0660))==-1)
 		fprintf(stderr,"Can't create message queue\n");
-
+#ifdef __DEBUG__
+	signal(SIGUSR2,alarmCallBack);
+#else
 	signal(SIGUSR1,alarmCallBack);
+#endif
 }
 
 bool LFSWM2_messageClass::LFSWM2_readMsg(void)
 {
-	int			retcode;
+	int			retcode=-1;
 	msgBuffer	buffer;
 	bool			retval=false;
 	bool			allDone=false;
@@ -87,7 +90,7 @@ bool LFSWM2_messageClass::LFSWM2_readMsg(void)
 //		}
 
 #ifdef __DEBUG__
-	fprintf(stderr,"what=%i whattxt=%s\n",this->mainClass->messages->whatMsg,buffer.mText);
+	fprintf(stderr,"retval=%i retcode=%i what=%i whattxt=%s\n",retval,retcode,this->mainClass->messages->whatMsg,buffer.mText);
 #endif
 	return(retval);
 }
