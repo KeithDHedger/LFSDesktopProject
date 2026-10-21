@@ -153,13 +153,8 @@ class LFSWM2_clientClass
 		bool				finishedResize=true;
 		bool				buttonDown=false;
 		int				riteButtonsWidth=0;
-
-//bool nodecs=false;
-
-//bool noDrawBorder=false;
-bool noTheme=false;
-
-
+		bool				noTheme=false;
+		bool				fromMap=false;
 
 		bool				doneRestack=false;
 		void				adjustContentWindow(void);
@@ -171,6 +166,8 @@ bool noTheme=false;
 		long				LFSWM2_getWindowState(void);
 
 	private:
+		int				firstx=-10000;
+		int				firsty=-10000;
 		int				sx=0;
 		int				rsx=0;
 		int				rsy=0;
@@ -181,18 +178,9 @@ bool noTheme=false;
 		rectStruct		dragRect;
 		rectStruct		holdFrameRect={-1,-1,-1,-1};
 
-		//Pixmap			currentRootPixmap=None;
-		//Picture			windowPicture=None;
-		//Picture			primaryPicture=None;
-		//XRenderPictureAttributes	pa;
-		//XRenderPictFormat		*picFormat;
 		int				ow;
 		int				oh;
-		//XImage			*resizeImage=NULL;
-
 		bool				first=true;
-		int				firstx=-10000;
-		int				firsty=-10000;
 
 		void				drawMouseEnter(Window id,Pixmap pm,controlData data);
 		void				drawMousePressed(Window id,Pixmap pm,controlData data);

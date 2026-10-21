@@ -205,6 +205,13 @@ void LFSWM2_clientClass::adjustContentWindow(void)
 	if(this->isBorderless==true)
 		return;
 
+	if(this->noTheme==true)
+		{
+			XResizeWindow(this->mainClass->display,this->frameWindow,this->contentWindowRect.w+1,this->contentWindowRect.h);
+			this->setWindowRects(true);
+			return;
+		}
+
 	if(this->windowType==UTILITYWINDOW)
 		{
 			this->frameWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->frameWindow,this->mainClass->rootWindow);
@@ -430,6 +437,7 @@ void LFSWM2_clientClass::resizeContentWindow(int w,int h,bool useframerect)
 //	if(this->isBorderless==true)
 //if((this->isBorderless==true) || (this->windowType==UTILITYWINDOW))
 //		return;
+
 if(this->windowType==UTILITYWINDOW)
 {
 	if(useframerect==true)
@@ -889,6 +897,7 @@ void LFSWM2_clientClass::setWindowRects(bool resize)
 		return;
 //if(this->windowType==UTILITYWINDOW)
 //	return;
+
 	this->contentWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->contentWindow,this->mainClass->rootWindow);
 	this->frameWindowRect=this->mainClass->mainWindowClass->LFSWM2_getWindowRect(this->frameWindow,this->mainClass->rootWindow);
 
@@ -913,7 +922,6 @@ void LFSWM2_clientClass::LFSWM2_showWindow(bool checkstate)
 	this->isMinimized=false;
 	//this->mainClass->mainWindowClass->LFSWM2_removeProp(this->contentWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_HIDDEN")));
 	XMapWindow(this->mainClass->display,this->frameWindow);
-	//fprintf(stderr,">>>>>>>>>>>>>>>\n");
 }
 
 void LFSWM2_clientClass::LFSWM2_hideWindow(bool withdraw)
@@ -1258,8 +1266,8 @@ void LFSWM2_clientClass::resizeContentWindow(rectStruct r,bool moveorigin)
 {
 	XConfigureRequestEvent	ce;
 
-if(this->windowType==UTILITYWINDOW)
-	return;
+	if(this->windowType==UTILITYWINDOW)
+		return;
 
 	ce.display=this->mainClass->display;
 	ce.parent=this->frameWindow;
@@ -1305,7 +1313,19 @@ void LFSWM2_clientClass::renderFrame(bool isfirst,int x,int y)
 					return;
 				}
 
-			XMoveWindow(this->mainClass->display,this->frameWindow,this->firstx-this->mainClass->leftSideBarSize,this->firsty-this->mainClass->titleBarSize);
+//Wed 21 Oct 12:25:27 BST 2026
+			if(this->noTheme==false)
+				{
+					if(this->fromMap==false)
+						XMoveWindow(this->mainClass->display,this->frameWindow,this->firstx,this->firsty);
+					else
+						XMoveWindow(this->mainClass->display,this->frameWindow,this->firstx-this->mainClass->leftSideBarSize,this->firsty-this->mainClass->titleBarSize);
+				}
+			else
+				{
+					XMoveWindow(this->mainClass->display,this->frameWindow,this->firstx+this->mainClass->leftSideBarSize,this->firsty+this->mainClass->titleBarSize);
+				}
+
 			XMapSubwindows(this->mainClass->display,this->frameWindow);	
 			this->mainClass->mainWindowClass->LFSWM2_reloadWindowState(this->contentWindow);
 			if(this->mainClass->useTheme==true)

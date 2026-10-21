@@ -189,13 +189,14 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 							if(cc->rendered==false)
 								{
 									XWindowChanges	changes;
-									unsigned int		value_mask=CWWidth|CWHeight;
+									unsigned int		value_mask=CWWidth|CWHeight|CWX|CWY;
 
-									changes.width=cc->contentWindowRect.w+1;
-									changes.height=cc->contentWindowRect.h+1;
+									changes.width=cc->contentWindowRect.w;
+									changes.height=cc->contentWindowRect.h;
+									changes.x=cc->contentWindowRect.x;
+									changes.y=cc->contentWindowRect.y;
 									XConfigureWindow(this->mainClass->display,cc->contentWindow,value_mask,&changes);
 									XRaiseWindow(this->mainClass->display,cc->contentWindow);
-									cc->resetContentWindow();
 									cc->renderFrame(false);
 									this->noRestack=false;
 									this->LFSWM2_shuffle(cc->contentWindow);
@@ -312,8 +313,18 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 									this->mainClass->LFSWM2_freeHints(&hs);
 							cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xmaprequest.window);
 							cc->noTheme=noborders;
+							cc->fromMap=true;
 
-							XMoveResizeWindow(this->mainClass->display,e.xmaprequest.window,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize,x_window_attrs.width,x_window_attrs.height);
+							if(noborders==true)
+								{
+									XMoveResizeWindow(this->mainClass->display,e.xmaprequest.window,0,0,x_window_attrs.width,x_window_attrs.height);
+									XResizeWindow(this->mainClass->display,cc->frameWindow,x_window_attrs.width+1,x_window_attrs.height+1);
+								}
+							else
+								{
+									XMoveResizeWindow(this->mainClass->display,e.xmaprequest.window,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize,x_window_attrs.width,x_window_attrs.height);
+									//XMoveResizeWindow(this->mainClass->display,e.xmaprequest.window,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize,x_window_attrs.width,x_window_attrs.height-this->mainClass->titleBarSize);
+								}
 
 							this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,(void*)&e.xmaprequest.window,1);
 
@@ -329,6 +340,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 						{
 							if((e.xconfigurerequest.x<0) || (e.xconfigurerequest.y<0))
 								break;
+
 							this->noRestack=false;
 
 							if(e.xconfigurerequest.send_event==false)
@@ -360,10 +372,15 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 													if((cc->buttonDown==false) || (cc->isBorderless==false))
 														{
 															if((cc->isBorderless==false) && (cc->windowType!=UTILITYWINDOW))
-																XResizeWindow(this->mainClass->display,cc->frameWindow,e.xconfigurerequest.width+this->mainClass->riteSideBarSize+this->mainClass->leftSideBarSize,e.xconfigurerequest.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);
+																{
+																	XResizeWindow(this->mainClass->display,cc->frameWindow,e.xconfigurerequest.width+this->mainClass->riteSideBarSize+this->mainClass->leftSideBarSize,e.xconfigurerequest.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);
+																}
 															else
-																XResizeWindow(this->mainClass->display,cc->frameWindow,e.xconfigurerequest.width,e.xconfigurerequest.height);
+																{
+																	XResizeWindow(this->mainClass->display,cc->frameWindow,e.xconfigurerequest.width,e.xconfigurerequest.height);
+																}
 														}
+													
 													ch.width=e.xconfigurerequest.width;
 													ch.height=e.xconfigurerequest.height;
 													XResizeWindow(this->mainClass->display,cc->contentWindow,ch.width,ch.height);
@@ -373,6 +390,14 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 												{
 													ch.x=e.xconfigurerequest.x;
 													ch.y=e.xconfigurerequest.y;
+													if(cc->noTheme==true)
+														{
+															ch.x+=this->mainClass->leftSideBarSize;
+															ch.y+=this->mainClass->titleBarSize;
+															XMoveWindow(this->mainClass->display,cc->frameWindow,ch.x,ch.y);
+															break;
+														}
+
 													if(cc->isBorderless==false)
 														XMoveWindow(this->mainClass->display,cc->frameWindow,ch.x,ch.y);
 													break;
