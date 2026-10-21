@@ -24,10 +24,10 @@
 
 LFSTK_scrollBarClass::~LFSTK_scrollBarClass()
 {
-	this->LFSTK_reParentWindow(this->wc->window,0,0);
-	this->thumb->LFSTK_reParentWindow(this->wc->window,0,0);
-	this->upLeft->LFSTK_reParentWindow(this->wc->window,0,0);
-	this->downRight->LFSTK_reParentWindow(this->wc->window,0,0);
+//	this->LFSTK_reParentWindow(this->wc->window,0,0);
+//	this->thumb->LFSTK_reParentWindow(this->wc->window,0,0);
+//	this->upLeft->LFSTK_reParentWindow(this->wc->window,0,0);
+//	this->downRight->LFSTK_reParentWindow(this->wc->window,0,0);
 }
 
 LFSTK_scrollBarClass::LFSTK_scrollBarClass()
@@ -91,8 +91,9 @@ LFSTK_scrollBarClass::LFSTK_scrollBarClass(LFSTK_windowClass* parentwc,bool vert
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;
 	this->ml->type=SCROLLBARGADGET;
-	wc->LFSTK_addMappedListener(this->window,ml);
+	this->gadgetType=SCROLLBARGADGET;
 
+	wc->LFSTK_addMappedListener(this->window,ml);
 
 	this->newGadgetBGColours[NORMALCOLOUR]=this->LFSTK_setColour(this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPESBTROUGHCOLOUR));
 

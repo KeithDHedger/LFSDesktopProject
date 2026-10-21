@@ -30,9 +30,8 @@
 */
 LFSTK_gadgetClass::~LFSTK_gadgetClass()
 {
-//	if(this->isMapped==true)
-//		this->LFSTK_reParentWindow(this->wc->window,0,0);
-
+	//if(this->isMapped==true)
+	//	this->LFSTK_reParentWindow(this->wc->window,0,0);
 	for(int j=NORMALCOLOUR;j<MAXCOLOURS;j++)
 		{
 			if(this->newGadgetFGColours.at(j).isValid==true)

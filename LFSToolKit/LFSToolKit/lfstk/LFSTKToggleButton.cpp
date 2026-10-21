@@ -63,6 +63,7 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;
 	this->ml->type=TOGGLEGADGET;
+	this->gadgetType=TOGGLEGADGET;
 	this->wc->LFSTK_addMappedListener(this->window,ml);
 
 	this->boxStyle=TOGGLECHECK;

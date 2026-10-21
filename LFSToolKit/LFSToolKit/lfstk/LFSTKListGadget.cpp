@@ -25,8 +25,8 @@
 
 LFSTK_listGadgetClass::~LFSTK_listGadgetClass()
 {
-	for(int j=0;j<this->labelsArray->size();j++)
-		this->labelsArray->at(j)->LFSTK_reParentWindow(this->wc->window,1,1);
+//	for(int j=0;j<this->labelsArray->size();j++)
+//		this->labelsArray->at(j)->LFSTK_reParentWindow(this->wc->window,1,1);
 
 	this->freeList();
 	delete this->labelsArray;
@@ -343,6 +343,8 @@ LFSTK_listGadgetClass::LFSTK_listGadgetClass(LFSTK_windowClass *parentwc,const c
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;
 	this->ml->type=LISTGADGET;
+	this->gadgetType=LISTGADGET;
+
 	this->wc->LFSTK_addMappedListener(this->window,ml);
 
 	this->currentItem=0;

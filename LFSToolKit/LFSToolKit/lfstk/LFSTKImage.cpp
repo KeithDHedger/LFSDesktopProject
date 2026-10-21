@@ -169,6 +169,7 @@ LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* image
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;
 	this->ml->type=IMAGEGADGET;
+	this->gadgetType=IMAGEGADGET;
 	this->wc->LFSTK_addMappedListener(this->window,ml);
 	if(imagepath!=NULL)
 		this->LFSTK_setImageFromPath(std::string(imagepath),gravity,scale);

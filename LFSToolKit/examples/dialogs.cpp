@@ -6,9 +6,39 @@ echo "Compiling, please wait ..."
 
 if [ "X$1" != "X" ];then
 	USEVALGRIND="valgrind --leak-check=full"
+
+cat>ignorelibleaks<<EOF
+{
+   ignore_unversioned_libs
+   Memcheck:Leak
+   ...
+   obj:*/lib*/lib*.so
+}
+
+{
+   ignore_versioned_libs
+   Memcheck:Leak
+   ...
+   obj:*/lib*/libQt.so.*
+   obj:*/lib*/libcairo.so.*
+   obj:*/lib*/libX11.so.*
+}
+
+{
+   ignorexcbwritev
+   Memcheck:Param
+   writev(vector[0])
+   fun:writev
+   obj:/usr/lib/libxcb.so.1.1.0
+}
+
+EOF
+
+USEVALGRIND="valgrind --leak-check=full --suppressions=./ignorelibleaks -s "
+
 fi
 
-g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo  glib-2.0) -llfstoolkit -lImlib2 -o dialogsexample||exit 1
+g++ "$0" -O0 -g -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo  glib-2.0) -llfstoolkit -lImlib2 -o dialogsexample||exit 1
 LD_LIBRARY_PATH=../LFSToolKit/app/.libs $USEVALGRIND ./dialogsexample "$@"
 retval=$?
 echo "Exit code $retval"

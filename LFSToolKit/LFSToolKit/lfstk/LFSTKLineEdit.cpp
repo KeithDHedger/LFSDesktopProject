@@ -103,6 +103,8 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	this->ml->function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->ml->gadget=this;
 	this->ml->type=LINEEDITGADGET;
+	this->gadgetType=LINEEDITGADGET;
+
 	this->wc->LFSTK_addMappedListener(this->window,ml);
 
 	this->LFSTK_setBuffer(label);

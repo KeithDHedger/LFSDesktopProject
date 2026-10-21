@@ -30,11 +30,11 @@ LFSTK_applicationClass::~LFSTK_applicationClass()
 		delete this->windows->at(j).window;
 	delete this->globalLib;
 	delete this->windows;
-	XCloseDisplay(this->display);
 #ifdef _ENABLEDEBUG_
 	cairo_debug_reset_static_data();
 #endif
 	freeAndNull((char**)&this->monitors);
+	XCloseDisplay(this->display);
 }
 
 /**

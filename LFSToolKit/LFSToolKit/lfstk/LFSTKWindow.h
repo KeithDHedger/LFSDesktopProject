@@ -146,10 +146,10 @@ class LFSTK_windowClass
 		colourStruct			windowColourNames[MAXCOLOURS]={{},};//   {{NULL,0,{0,0,0,0}},};
 		bool					autoLabelColour=false;
 		LFSTK_lib			*globalLib;
-		int					x;
-		int					y;
-		int					w;
-		int					h;
+		int					x=-1;
+		int					y=-1;
+		int					w=-1;
+		int					h=-1;
 		double				windowNormalAlpha=-1;
 
 //user data and dirs

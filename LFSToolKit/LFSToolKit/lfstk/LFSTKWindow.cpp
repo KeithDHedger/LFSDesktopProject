@@ -164,7 +164,6 @@ void LFSTK_windowClass::LFSTK_reloadGlobals(void)
 LFSTK_windowClass::~LFSTK_windowClass()
 {
 	this->LFSTK_hideWindow();
-
 	if(this->pattern!=NULL)
 		cairo_pattern_destroy(this->pattern);
 
