@@ -49,6 +49,7 @@ class LFSWM2_clientClass
 		void				LFSWM2_setWindowName(void);
 		bool				LFSWM2_handleControls(XEvent *e);
 		void				renderFrame(bool isfirst,int x=0,int y=0);
+
 //vars
 		bool				rendered=false;
 		LFSWM2_Class		*mainClass=NULL;
@@ -81,8 +82,6 @@ class LFSWM2_clientClass
 		bool				isBorderless=false;
 		bool				isHidden=false;
 		bool				isMinimized=false;
-
-		//int				resizeMode=0;
 		int				configCnt=0;
 
 		rectStruct		contentWindowRect;
@@ -132,7 +131,6 @@ class LFSWM2_clientClass
 		void				LFSWM2_resizeControls(void);
 
 		void				LFSWM2_setNetWMState(XEvent *e);
-		void				LFSWM2_setWMState(void);
 
 		void				LFSWM2_drawMouseLeave(Window id,Pixmap pm,struct controlData data);
 
@@ -158,12 +156,9 @@ class LFSWM2_clientClass
 
 		bool				doneRestack=false;
 		void				adjustContentWindow(void);
-		void				resizeContentWindow(rectStruct r,bool moveorigin=true);
 		void				setWindowRects(bool resize=true);
 		rectStruct		setTitlePosition(void);
 		void				resetContentWindow(void);//TODO//all the routines need redoing
-
-		long				LFSWM2_getWindowState(void);
 
 	private:
 		int				firstx=-10000;
@@ -187,9 +182,6 @@ class LFSWM2_clientClass
 		bool				doResizeDraggers(XEvent *e);
 		void				showWMMenu(int x,int y);
 		static bool		wmCB(void *p,void* ud);
-
-		void				resizeContentWindow(int w,int h,bool useframerect=false);
-		void				resizeFrameWindow(void);
 };
 
 #endif

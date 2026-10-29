@@ -5,7 +5,6 @@
 echo "Compiling, please wait ..."
 
 if [ "X$1" != "X" ];then
-	USEVALGRIND="valgrind --leak-check=full"
 
 cat>ignorelibleaks<<EOF
 {
@@ -22,6 +21,8 @@ cat>ignorelibleaks<<EOF
    obj:*/lib*/libQt.so.*
    obj:*/lib*/libcairo.so.*
    obj:*/lib*/libX11.so.*
+   obj:*/lib*/libfontconfig.so.*
+   obj:*/lib*/libexpat.so.*
 }
 
 {

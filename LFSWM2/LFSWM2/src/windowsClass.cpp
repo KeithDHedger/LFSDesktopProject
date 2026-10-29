@@ -34,44 +34,53 @@ void LFSWM2_windowClass::init(void)
 {
 }
 
+void LFSWM2_windowClass::LFSWM2_buildClientListX(Window id)
+{
+	LFSWM2_clientClass	*cc=NULL;
+	bool					noborders=false;
+	XWindowAttributes	x_window_attrs;
+	hintsDataStruct		hs;
+
+	this->LFSWM2_removeProp(this->mainClass->rootWindow,LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW"));
+	hs=this->LFSWM2_getWindowHints(id);
+	XGetWindowAttributes(this->mainClass->display,id,&x_window_attrs);
+
+	if((hs.mHints!=NULL) && (hs.mHints->decorations==0))
+		{
+			this->mainClass->LFSWM2_freeHints(&hs);
+			noborders=true;
+			if(this->LFSWM2_getWindowType(id)!=NORMALWINDOW)
+				return;
+		}
+
+	if(this->LFSWM2_createClient(id,hs,true)==false)
+		{
+			this->mainClass->LFSWM2_freeHints(&hs);
+		}
+
+	cc=this->LFSWM2_getClientClass(id);
+	if(cc!=NULL)
+		{
+			cc->noTheme=noborders;
+			cc->fromMap=true;
+		}
+
+	if(noborders==true)
+		XMoveWindow(this->mainClass->display,id,0,0);
+}
+
 void LFSWM2_windowClass::LFSWM2_buildClientList(void)
 {
 	Window				returned_root;
 	Window				returned_parent;
 	Window				*toplevelwindows;
 	unsigned int			windowscnt;
-	std::string			windowname;
-	hintsDataStruct		hs;
-	LFSWM2_clientClass	*cc;
-	bool					noborders=false;
 
 	XQueryTree(this->mainClass->display,this->mainClass->rootWindow,&returned_root,&returned_parent,&toplevelwindows,&windowscnt);
 	for(unsigned int i=0;i<windowscnt;++i)
 		{
-			noborders=false;
-			hs=this->LFSWM2_getWindowHints(toplevelwindows[i]);
-			if((hs.mHints!=NULL) && (hs.mHints->decorations==0))
-				{
-					this->mainClass->LFSWM2_freeHints(&hs);
-					noborders=true;
-					if(this->LFSWM2_getWindowType(toplevelwindows[i])!=NORMALWINDOW)
-						if(this->LFSWM2_createUnframedWindow(toplevelwindows[i])==true)
-							continue;
-				}
-
-			if(this->LFSWM2_createClient(toplevelwindows[i],hs)==false)
-				this->mainClass->LFSWM2_freeHints(&hs);
-
-			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(toplevelwindows[i]);
-			if(cc!=NULL)
-				{
-					cc->LFSWM2_setWMState();
-					cc->noTheme=noborders;
-					cc->setWindowRects(true);
-					if(noborders==true)
-						XMoveWindow(this->mainClass->display,toplevelwindows[i],0,0);
-					
-				}
+			if(this->LFSWM2_getWindowType(toplevelwindows[i])!=UNKNOWNTYPE)
+				this->LFSWM2_buildClientListX(toplevelwindows[i]);
 		}
 
 	if(toplevelwindows!=NULL)
@@ -133,40 +142,17 @@ struct fontColour* LFSWM2_windowClass::LFSWM2_xftLoadColour(const char *name,con
 	return c;
 }
 
-//void LFSWM2_windowClass::LFSWM2_freeHints(hintsDataStruct hs)
-//{
-//	if(hs.sh!=NULL)
-//		XFree(hs.sh);
-//	if(hs.mHints!=NULL)
-//		XFree(hs.mHints);
-//}
-
 bool LFSWM2_windowClass::LFSWM2_createUnframedWindow(Window wid)
 {
 	int	wtype;
 
 	wtype=this->LFSWM2_getWindowType(wid);
-	switch(wtype)//for later
+	switch(wtype)
 		{
 			case DOCKWINDOW:
-//				fprintf(stderr,"DOCKWINDOW\n");
-//				switch(this->mainClass->forceDockStackingOrder)
-//					{
-//						case FORCEABOVE:
-//							this->LFSWM2_removeProp(wid,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
-//							this->LFSWM2_addState(wid,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
-//							
-//							break;
-//						case FORCEBELOW:
-//							this->LFSWM2_removeProp(wid,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_ABOVE")));
-//							this->LFSWM2_addState(wid,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_STATE_BELOW")));
-//							break;
-//						default:
-//							break;
-//					}
 				this->LFSWM2_setClientList(wid,true);
-							this->mainClass->mainEventClass->LFSWM2_shuffle(wid);
-							this->mainClass->mainEventClass->LFSWM2_restack();
+				this->mainClass->mainEventClass->LFSWM2_shuffle(wid);
+				this->mainClass->mainEventClass->LFSWM2_restack();
 				return(true);
 				break;
 			case NORMALWINDOW:
@@ -182,16 +168,9 @@ bool LFSWM2_windowClass::LFSWM2_createUnframedWindow(Window wid)
 				break;
 			case UTILITYWINDOW:
 				{
-				//break;
 					hintsDataStruct hs;
 					hs=this->mainClass->mainWindowClass->LFSWM2_getWindowHints(wid);
-					//fprintf(stderr,"UTILITYWINDOW valid=%p\n",hs.valid);
-					XMoveWindow(this->mainClass->display,wid,-1000000,-1000000);
 					this->LFSWM2_createClient(wid,hs);
-
-					//if(hs.valid==true)
-					//	this->mainClass->LFSWM2_freeHints(&hs);
-
 					return(true);
 					break;
 				}
@@ -200,8 +179,10 @@ bool LFSWM2_windowClass::LFSWM2_createUnframedWindow(Window wid)
 	return(false);
 }
 
-bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
+bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs,bool forcexa)
 {
+	bool		noborders=false;
+
 	if(this->clientList.count(id)>0)
 		{
 			XMapWindow(this->mainClass->display,this->clientList.at(id)->frameWindow);
@@ -245,18 +226,16 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 					return(false);
 				}
 
-//			if(this->LFSWM2_getWindowType(id)==UNKNOWNTYPE)
-//				{
-//					fprintf(stderr,"id=0x%x\n",id);
-//					
-//				}
-
 			cc=new LFSWM2_clientClass(this->mainClass,id);
 			cc->isBorderless=noborder;
 			cc->windowHints=premaphs;
-			cc->renderFrame(true,premaphs.pt.x,premaphs.pt.y);
 
-			if((this->LFSWM2_getWindowType(id)==NORMALWINDOW) )
+			if(forcexa==false)
+				cc->renderFrame(true,premaphs.pt.x,premaphs.pt.y);
+			else
+				cc->renderFrame(true,premaphs.xa.x,premaphs.xa.y);
+
+			if((this->LFSWM2_getWindowType(id)==NORMALWINDOW) || (this->LFSWM2_getWindowType(id)==DIALOGWINDOW))
 				{
 					cc->canMaximize=true;
 					cc->canMinimize=true;
@@ -266,8 +245,6 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 
 			if(premaphs.mHints!=NULL)
 				{
-				//this->mainClass->DEBUG_printCurrentHintsDataStruct(premaphs);
-					//this->mainClass->DEBUG_printMWMHints(premaphs.mHints);
 					cc->canMaximize=false;
 					cc->canMinimize=false;
 					cc->canClose=false;
@@ -347,14 +324,58 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 			wa.colormap =this->mainClass->defaultColourmap;
 			wa.border_pixel=0;
 
+			if(forcexa==true)
+				{
+					long					dummy;
+					long unsigned int	nitems_return=0;
+
+					motifHints *mHints=(motifHints*)this->LFSWM2_getProp(id,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_MOTIF_WM_HINTS")),this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_MOTIF_WM_HINTS")),&nitems_return);
+
+					if(mHints!=NULL)
+						{
+							if(mHints->decorations==0)
+								noborders=true;
+							else
+								noborders=false;
+						}
+					else
+						{
+							noborders=false;
+						}
+				}
+
 			if(bh==true)
 				{
-					cc->frameWindow=XCreateWindow(this->mainClass->display,DefaultRootWindow(this->mainClass->display),premaphs.xa.x,premaphs.xa.y-24,premaphs.xa.width,premaphs.xa.height,BORDER_WIDTH,this->mainClass->depth,InputOutput,this->mainClass->defaultVisual,CWColormap | CWBorderPixel ,&wa);
+					if(forcexa==false)
+						cc->frameWindow=XCreateWindow(this->mainClass->display,DefaultRootWindow(this->mainClass->display),premaphs.pt.x-this->mainClass->leftSideBarSize,premaphs.pt.y-this->mainClass->titleBarSize,premaphs.xa.width,premaphs.xa.height,BORDER_WIDTH,this->mainClass->depth,InputOutput,this->mainClass->defaultVisual,CWColormap | CWBorderPixel ,&wa);
+					else
+						cc->frameWindow=XCreateWindow(this->mainClass->display,DefaultRootWindow(this->mainClass->display),premaphs.xa.x-this->mainClass->leftSideBarSize,premaphs.xa.y-this->mainClass->titleBarSize,premaphs.xa.width,premaphs.xa.height,BORDER_WIDTH,this->mainClass->depth,InputOutput,this->mainClass->defaultVisual,CWColormap | CWBorderPixel ,&wa);
 				}
 			else
 				{
 					if(cc->isBorderless==false)
-						cc->frameWindow=XCreateWindow(this->mainClass->display,DefaultRootWindow(this->mainClass->display),-1000000,-1000000,premaphs.xa.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),premaphs.xa.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH,BORDER_WIDTH,this->mainClass->depth,InputOutput,this->mainClass->defaultVisual,CWColormap | CWBorderPixel ,&wa);
+						{
+							if(forcexa==false)
+								{
+									cc->frameWindow=XCreateWindow(this->mainClass->display,DefaultRootWindow(this->mainClass->display),premaphs.pt.x-this->mainClass->leftSideBarSize,premaphs.pt.y-this->mainClass->titleBarSize,premaphs.xa.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),premaphs.xa.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH,BORDER_WIDTH,this->mainClass->depth,InputOutput,this->mainClass->defaultVisual,CWColormap | CWBorderPixel ,&wa);
+								}
+							else
+								{
+									if(noborders==false)
+										{
+											cc->frameWindow=XCreateWindow(this->mainClass->display,DefaultRootWindow(this->mainClass->display),premaphs.xa.x-this->mainClass->leftSideBarSize,premaphs.xa.y-this->mainClass->titleBarSize,premaphs.xa.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),premaphs.xa.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH,BORDER_WIDTH,this->mainClass->depth,InputOutput,this->mainClass->defaultVisual,CWColormap | CWBorderPixel ,&wa);
+										}
+									else
+										{
+											cc->canMaximize=false;
+											cc->canMinimize=false;
+											cc->canShade=false;
+											cc->canClose=false;
+											cc->noTheme=true;
+											cc->frameWindow=XCreateWindow(this->mainClass->display,DefaultRootWindow(this->mainClass->display),premaphs.xa.x,premaphs.xa.y,premaphs.xa.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),premaphs.xa.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH,BORDER_WIDTH,this->mainClass->depth,InputOutput,this->mainClass->defaultVisual,CWColormap | CWBorderPixel ,&wa);
+										}
+								}
+						}
 				}
 	
 			if(cc->isBorderless==false)
@@ -369,12 +390,19 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 			cc->framePreFSRect=this->LFSWM2_getWindowRect(id,this->mainClass->rootWindow);
 			cc->contentWindowRect.y-=this->mainClass->titleBarSize;
 			if(cc->isBorderless==false)
-				cc->frameWindowRect={-1000000,-1000000,premaphs.xa.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),premaphs.xa.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH};
+				{
+					if(forcexa==false)
+						cc->frameWindowRect={premaphs.pt.x-this->mainClass->leftSideBarSize,premaphs.pt.y-this->mainClass->titleBarSize,premaphs.xa.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),premaphs.xa.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH};
+					else
+						cc->frameWindowRect={premaphs.xa.x-this->mainClass->leftSideBarSize,premaphs.xa.y-this->mainClass->titleBarSize,premaphs.xa.width+(this->mainClass->leftSideBarSize+this->mainClass->riteSideBarSize),premaphs.xa.height+this->mainClass->titleBarSize+this->mainClass->bottomBarSize+BORDER_WIDTH};
+				}
 
 			if(cc->windowType!=UTILITYWINDOW)
-				cc->frameWindowRect={premaphs.xa.x,premaphs.xa.y,premaphs.xa.width,premaphs.xa.height};
+				if(forcexa==false)
+					cc->frameWindowRect={premaphs.pt.x-this->mainClass->leftSideBarSize,premaphs.pt.y-this->mainClass->titleBarSize,premaphs.xa.width,premaphs.xa.height};
+				else
+					cc->frameWindowRect={premaphs.xa.x-this->mainClass->leftSideBarSize,premaphs.xa.y-this->mainClass->titleBarSize,premaphs.xa.width,premaphs.xa.height};
 
-			//cc->resizeMode=this->mainClass->resizeMode;
 			if(cc->isBorderless==false)
 				cc->frameGC=XCreateGC(this->mainClass->display,cc->frameWindow,0,0);
 			this->clientList[id]=cc;
@@ -391,9 +419,9 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 			XChangeWindowAttributes(this->mainClass->display,id,CWWinGravity,&attributes);
 
 			if(cc->isBorderless==false)
-			{
-				XMapWindow(this->mainClass->display,cc->frameWindow);
-				XSelectInput(this->mainClass->display,cc->contentWindow,PropertyChangeMask|StructureNotifyMask|KeyReleaseMask);
+				{
+					XMapWindow(this->mainClass->display,cc->frameWindow);
+					XSelectInput(this->mainClass->display,cc->contentWindow,PropertyChangeMask|StructureNotifyMask|KeyReleaseMask);
 				}
 			
 			this->LFSWM2_setWindowState(id,NormalState);
@@ -499,7 +527,7 @@ bool LFSWM2_windowClass::LFSWM2_createClient(Window id,hintsDataStruct premaphs)
 				}
 
 //controls
-			if(cc->isBorderless==false)
+			if(cc->isBorderless==false && cc->noTheme==false)
 				{
 					wa.win_gravity=NorthWestGravity;
 					wa.save_under=true;
@@ -615,6 +643,7 @@ int LFSWM2_windowClass::LFSWM2_getWindowType(Window id)
 "_NET_WM_WINDOW_TYPE_MENU"
 "_NET_WM_WINDOW_TYPE_DIALOG"
 "_NET_WM_WINDOW_TYPE_TOOL"
+"_NET_WM_WINDOW_TYPE_SPLASH"
 enum {NORMALWINDOW=0,DESKTOPWINDOW,DOCKWINDOW,MENUWINDOW,DIALOGWINDOW,TOOLWINDOW,NOTIFICATION,UNKNOWNTYPE};
 */
 	if (status==Success&&propret)
@@ -639,19 +668,15 @@ enum {NORMALWINDOW=0,DESKTOPWINDOW,DOCKWINDOW,MENUWINDOW,DIALOGWINDOW,TOOLWINDOW
 						retval=NOTIFICATION;
 					if(strcmp(x,"_NET_WM_WINDOW_TYPE_UTILITY")==0)
 						retval=UTILITYWINDOW;
+					if(strcmp(x,"_NET_WM_WINDOW_TYPE_SPLASH")==0)
+						retval=SPLASHWINDOW;
 						//retval=NORMALWINDOW;
 
 					XFree(x);
 				}
 			XFree(propret);
 		}
-//	if(retval==UNKNOWNTYPE)
-//		{
-//			Window w=None;
-//			XGetTransientForHint(this->mainClass->display,id,&w);
-//			if(w==None)
-//				retval=NORMALWINDOW;
-//		}
+
 	return(retval);
 }
 
@@ -1101,49 +1126,6 @@ hintsDataStruct LFSWM2_windowClass::LFSWM2_getWindowHints(Window wid,bool movewi
 	return(hints);
 }
 
-void LFSWM2_windowClass::LFSWM2_resizeWindow(Window id,int w,int h)
-{
-	LFSWM2_clientClass *cc;
-
-	cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(id);
-	if(cc!=NULL)
-		{
-			if(cc->isBorderless==true)
-				return;
-
-			XWindowChanges		changes;
-			unsigned int			value_mask=CWWidth|CWHeight;
-			changes.width=w;
-			changes.height=h;
-			XConfigureWindow(this->mainClass->display,id,value_mask,&changes);
-			if(cc->windowType!=UTILITYWINDOW)
-				XResizeWindow(this->mainClass->display,cc->frameWindow,w+this->mainClass->riteSideBarSize+this->mainClass->leftSideBarSize,h+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);
-			else
-				XResizeWindow(this->mainClass->display,cc->frameWindow,w,h);
-		}
-}
-
-void LFSWM2_windowClass::LFSWM2_moveWindow(Window id,int x,int y)
-{
-	XMoveWindow(this->mainClass->display,id,x,y);
-}
-
-void LFSWM2_windowClass::LFSWM2_moveResizeWindow(Window id,int x,int y,int w,int h)
-{
-	LFSWM2_clientClass *cc;
-	cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(id);
-	if(cc!=NULL)
-		{
-			XWindowChanges		changes;
-			unsigned int			value_mask=CWWidth|CWHeight|CWX|CWY;
-			changes.width=w;
-			changes.height=h;
-			changes.x=x;
-			changes.y=y;
-			XResizeWindow(this->mainClass->display,id,w+this->mainClass->riteSideBarSize+this->mainClass->leftSideBarSize,h+this->mainClass->titleBarSize+this->mainClass->bottomBarSize);
-		}
-}
-
 /*
 struct themeStruct
 {
@@ -1168,6 +1150,9 @@ void LFSWM2_windowClass::LFSWM2_refreshFrame(LFSWM2_clientClass *cc,XExposeEvent
 {
 	rectStruct	r;
 
+if(cc!=NULL && cc->rendered==false)
+	return;
+	
 	if((e!=NULL) && (e->count!=0))
 		return;
 
@@ -1183,10 +1168,6 @@ void LFSWM2_windowClass::LFSWM2_refreshFrame(LFSWM2_clientClass *cc,XExposeEvent
 	if(cc->noTheme==true)
 		{
 			cc->setWindowRects(true);
-
-
-
-
 			Pixmap mask=XCreatePixmap(this->mainClass->display,cc->frameWindow,cc->frameWindowRect.w,cc->frameWindowRect.h,1);
 			GC pmgc=XCreateGC(this->mainClass->display,mask,0,NULL);
 
@@ -1267,7 +1248,6 @@ void	 LFSWM2_windowClass::LFSWM2_reloadTheme(void)
 	this->mainClass->riteSideBarSize=this->mainClass->prefs.LFSTK_getInt("ritesidebarsize");
 	this->mainClass->bottomBarSize=this->mainClass->prefs.LFSTK_getInt("bottombarsize");
 	this->mainClass->useTheme=this->mainClass->prefs.LFSTK_getBool("usetheme");
-	//this->mainClass->resizeMode=this->mainClass->prefs.LFSTK_getInt("resizemode");
 	this->mainClass->modKeys=this->mainClass->prefs.LFSTK_getInt("modkeys");
 	this->mainClass->frameAlpha=this->mainClass->prefs.LFSTK_getInt("framealpha");
 	this->mainClass->frameAlpha=this->mainClass->frameAlpha<<24;
@@ -1279,9 +1259,9 @@ void	 LFSWM2_windowClass::LFSWM2_reloadTheme(void)
 void	 LFSWM2_windowClass::LFSWM2_loadTheme(std::string themename)
 {
 	std::string	com;
-	float		a=(float)(this->mainClass->frameAlpha>>24)/256.0;
-	if(a<0.5)
-		a=0.5;
+	//float		a=(float)(this->mainClass->frameAlpha>>24)/256.0;
+	//if(a<0.5)
+	//	a=0.5;
 	com="rm -r " + this->mainClass->tmpFolderName + ";mkdir -p " + this->mainClass->tmpFolderName + ";cp -r '" + themename + "'/* " + this->mainClass->tmpFolderName;//*/
 	system(com.c_str());//*/
 
@@ -1316,8 +1296,6 @@ void	 LFSWM2_windowClass::LFSWM2_loadTheme(std::string themename)
 	this->theme.buttonOffset=0;
 	this->theme.titleAlignment=2;
 	this->theme.fullWidthTitle=false;
-	//this->theme.pathToTheme=this->mainClass->prefs.LFSTK_getString("theme");
-	//this->theme.pathToTheme="/tmp/themeout/";
 	this->theme.pathToTheme=this->mainClass->tmpFolderName;
 
 	cnt=0;
@@ -1419,7 +1397,6 @@ void LFSWM2_windowClass::LFSWM2_refreshThemeFrame(LFSWM2_clientClass *cc)
 	int			part4w=0;
 	int			part5w=0;
 	int			startx=0;
-	int			rightpad=0;
 
 	Pixmap		pm;
 	GC			pmgc;
@@ -1628,7 +1605,7 @@ void LFSWM2_windowClass::LFSWM2_refreshThemeFrame(LFSWM2_clientClass *cc)
 void LFSWM2_windowClass::LFSWM2_setControlRects(LFSWM2_clientClass *cc)
 {
 //controls
-	int	offset=0;//-DEFAULTCONTROLSIZE;
+	int	offset=0;
 	int wh=DEFAULTCONTROLSIZE;
 //menu
 	if(cc->isBorderless==true)
@@ -1802,19 +1779,4 @@ if(cc->windowType==UTILITYWINDOW)
 				XUnmapWindow(this->mainClass->display,cc->shadeButton);
 		}
 	cc->riteButtonsWidth=offset;
-}
-
-void LFSWM2_windowClass::LFSWM2_setControlRect(Window wid,controlData *data,std::string xname,std::string yname,std::string wname,std::string hname)
-{
-	data->controlRect={
-	this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(xname)],
-	(this->mainClass->titleBarSize/2)-(this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(hname)]/2),
-	this->theme.partsWidth[LFSTK_UtilityClass::LFSTK_hashFromKey(wname)],
-	this->theme.partsHeight[LFSTK_UtilityClass::LFSTK_hashFromKey(hname)]};
-
-	XMoveResizeWindow(this->mainClass->display,wid,
-	data->controlRect.x,
-	data->controlRect.y,
-	data->controlRect.w,
-	data->controlRect.h);
 }

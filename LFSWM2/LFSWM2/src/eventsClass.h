@@ -36,7 +36,6 @@ class LFSWM2_eventsClass
 		void			LFSWM2_sendConfigureEvent(Window wid,struct rectStruct r);
 		void			LFSWM2_doClientMsg(Window id,XClientMessageEvent *e);
 		void			LFSWM2_shuffle(Window id);
-		void			LFSWM2_moveToBottom(Window id);
 		void			LFSWM2_restack(void);
 
 //vars

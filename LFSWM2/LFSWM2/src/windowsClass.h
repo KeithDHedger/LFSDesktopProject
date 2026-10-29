@@ -29,7 +29,7 @@ class LFSWM2_Class;
 #include "lfswm2Class.h"
 #include "clientClass.h"
 
-enum {NORMALWINDOW=0,DESKTOPWINDOW,DOCKWINDOW,MENUWINDOW,DIALOGWINDOW,TOOLWINDOW,NOTIFICATION,UTILITYWINDOW,UNKNOWNTYPE};
+enum {NORMALWINDOW=0,DESKTOPWINDOW,DOCKWINDOW,MENUWINDOW,DIALOGWINDOW,TOOLWINDOW,NOTIFICATION,UTILITYWINDOW,SPLASHWINDOW,UNKNOWNTYPE};
 
 struct fontColour
 {
@@ -136,18 +136,16 @@ class LFSWM2_windowClass
 		rectStruct							LFSWM2_getWindowRect(Window id,Window parent,bool dotranslate=true);
 		Window								LFSWM2_getParentWindow(Window id);
 		void									LFSWM2_reloadWindowState(Window id);
-
-		void									LFSWM2_resizeWindow(Window id,int w,int h);
-		void									LFSWM2_moveWindow(Window id,int x,int y);
-		void									LFSWM2_moveResizeWindow(Window id,int x,int y,int w,int h);
-
 		void									LFSWM2_setVisibilityForDesk(unsigned long desk);
 
 		bool									LFSWM2_checkValidWindow(Window wid);
 
 //clients
+
+void LFSWM2_buildClientListX(Window id);
+
 		void									LFSWM2_buildClientList(void);
-		bool									LFSWM2_createClient(Window id,hintsDataStruct premaphs);
+		bool									LFSWM2_createClient(Window id,hintsDataStruct premaphs,bool forcexa=false);
 		void									LFSWM2_destroyClient(Window id);
 		LFSWM2_clientClass					*LFSWM2_getClientClass(Window id);
 		void									LFSWM2_deleteClientEntry(Window id);
@@ -161,7 +159,6 @@ class LFSWM2_windowClass
 		themeStruct							theme;
 		void									LFSWM2_loadTheme(std::string);
 		void									LFSWM2_reloadTheme(void);
-		void									LFSWM2_setControlRect(Window wid,controlData *data,std::string xname,std::string yname,std::string wname,std::string hname);
 		void									LFSWM2_setControlRects(LFSWM2_clientClass *cc);
 
 		void									LFSWM2_refreshFrame(LFSWM2_clientClass *cc,XExposeEvent *e=NULL);

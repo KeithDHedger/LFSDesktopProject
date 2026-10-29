@@ -1,4 +1,9 @@
 1.0.3
+Removed legacy functions.
+Fixed restarting window manager moving windows.
+Fixed god-awful gtk3+ windows with inegrated titlebar.
+Fixed flickering windows when first showing.
+Fixed Splash windows.
 Fixed original placement of widows
 Fixed hogging cpu.
 Fixed restarting wm.

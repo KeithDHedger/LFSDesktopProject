@@ -77,7 +77,6 @@ int LFSWM2_eventsClass::checkMessages(void)
 													this->mainClass->mainWindowClass->LFSWM2_setControlRects(ccs);
 													ccs->resetContentWindow();
 													this->mainClass->mainWindowClass->LFSWM2_refreshFrame(ccs);
-													//ccs->resizeMode=this->mainClass->resizeMode;
 												}
 										}
 									
@@ -140,14 +139,6 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 			XNextEvent(this->mainClass->display,&e);
 
-//			if(this->mainClass->mainWindowClass->LFSWM2_getWindowType(e.xany.window)==UTILITYWINDOW)
-//				{
-//					//fprintf(stderr,">>>>e.xany.window=%p\n",e.xany.window);
-//					//cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xkey.window);
-//					//if(cc!=NULL)
-//					//	XSetInputFocus(this->mainClass->display,e.xany.window,RevertToParent,CurrentTime);
-//				}
-
 			cccontrol=this->mainClass->mainWindowClass->LFSWM2_getClientClass(this->mainClass->mainWindowClass->LFSWM2_getParentWindow(e.xany.window));
 			if(cccontrol!=NULL)
 				{
@@ -188,18 +179,12 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 								continue;
 							if(cc->rendered==false)
 								{
-									XWindowChanges	changes;
-									unsigned int		value_mask=CWWidth|CWHeight|CWX|CWY;
-
-									changes.width=cc->contentWindowRect.w;
-									changes.height=cc->contentWindowRect.h;
-									changes.x=cc->contentWindowRect.x;
-									changes.y=cc->contentWindowRect.y;
-									XConfigureWindow(this->mainClass->display,cc->contentWindow,value_mask,&changes);
-									XRaiseWindow(this->mainClass->display,cc->contentWindow);
-									cc->renderFrame(false);
-									this->noRestack=false;
+									this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,(void*)&cc->contentWindow,1);
+									if(cc->noTheme==false)
+										XMapSubwindows(this->mainClass->display,cc->frameWindow);	
 									this->LFSWM2_shuffle(cc->contentWindow);
+									cc->isActive=true;
+									cc->rendered=true;
 								}
 						}
 				}
@@ -294,6 +279,11 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 							hintsDataStruct		hs;
 							hs=this->mainClass->mainWindowClass->LFSWM2_getWindowHints(e.xmaprequest.window);
 							XGetWindowAttributes(this->mainClass->display,e.xmaprequest.window,&x_window_attrs);
+
+							if((hs.mHints!=NULL) && (hs.mHints->decorations==0))
+								XMoveWindow(this->mainClass->display,e.xmaprequest.window,hs.xa.x,hs.xa.y);
+							else
+								XMoveWindow(this->mainClass->display,e.xmaprequest.window,hs.pt.x,hs.pt.y);
 							XMapWindow(this->mainClass->display,e.xmaprequest.window);
 
 							if((hs.mHints!=NULL) && (hs.mHints->decorations==0))
@@ -308,9 +298,8 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 										break;
 								}
 
-							XMoveWindow(this->mainClass->display,e.xmaprequest.window,-1000000,-1000000);
 							if(this->mainClass->mainWindowClass->LFSWM2_createClient(e.xmaprequest.window,hs)==false)
-									this->mainClass->LFSWM2_freeHints(&hs);
+								this->mainClass->LFSWM2_freeHints(&hs);
 							cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xmaprequest.window);
 							cc->noTheme=noborders;
 							cc->fromMap=true;
@@ -322,12 +311,11 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 								}
 							else
 								{
-									XMoveResizeWindow(this->mainClass->display,e.xmaprequest.window,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize,x_window_attrs.width,x_window_attrs.height);
+									XMoveWindow(this->mainClass->display,e.xmaprequest.window,this->mainClass->leftSideBarSize,this->mainClass->titleBarSize);
 								}
 
 							this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,(void*)&e.xmaprequest.window,1);
-
-							this->noRestack=true;
+							this->noRestack=false;
 						}
 						break;
 
@@ -528,12 +516,15 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 
 					case DestroyNotify:
 						{
-							//std::cout<<"DestroyNotify from main event loop"<<std::endl;
 							//fprintf(stderr,"win=%p\n",e.xdestroywindow.window);
 							std::vector<Window>::iterator it;
 							it=std::find(this->mainClass->mainWindowClass->windowIDList.begin(),this->mainClass->mainWindowClass->windowIDList.end(),e.xdestroywindow.window);
 							if(it != this->mainClass->mainWindowClass->windowIDList.end())
-								this->mainClass->mainWindowClass->windowIDList.erase(it);
+								{
+									cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(e.xdestroywindow.window);
+									this->mainClass->mainWindowClass->LFSWM2_destroyClient(e.xdestroywindow.window);
+									this->mainClass->mainWindowClass->windowIDList.erase(it);
+								}
 						}
 						break;
 					default:
@@ -663,7 +654,7 @@ Atom (nil) name=(null)
 									ccmessage->onTop=false;
 									goto exitit;
 								}
-									//if(ccmessage->frameWindow!=None)
+
 							if(ccmessage->isBorderless==false)
 								{
 									XMapWindow(this->mainClass->display,ccmessage->frameWindow);
@@ -689,7 +680,7 @@ Atom (nil) name=(null)
 									ccmessage->onBottom=false;
 									goto exitit;
 								}
-//	if(ccmessage->frameWindow!=None)
+
 							if(ccmessage->isBorderless==false)
 								XLowerWindow(this->mainClass->display,ccmessage->frameWindow);
 							ccmessage->onBottom=true;
@@ -781,7 +772,7 @@ void LFSWM2_eventsClass::LFSWM2_shuffle(Window id)
 	long unsigned int				n=0;
 	int								to=0;
 	Window							transid=id;
-//fprintf(stderr,"LFSWM2_shuffle id=%p\n",id);
+	
 	if(id!=None)
 		{
 			findid=std::find(this->mainClass->mainWindowClass->windowIDList.begin(),this->mainClass->mainWindowClass->windowIDList.end(),id)-this->mainClass->mainWindowClass->windowIDList.begin();
@@ -790,14 +781,17 @@ void LFSWM2_eventsClass::LFSWM2_shuffle(Window id)
 			cc=this->mainClass->mainWindowClass->LFSWM2_getClientClass(id);
 			if(cc!=NULL)
 				{
-					cc->isActive=true;
-					this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,&cc->contentWindow,1);
-					XSetInputFocus(this->mainClass->display,cc->contentWindow,RevertToParent,CurrentTime);
-					this->mainClass->mainWindowClass->LFSWM2_refreshFrame(cc);
-				}
-			else
-				{
-					XSetInputFocus(this->mainClass->display,id,RevertToParent,CurrentTime);
+					if(cc->rendered==true)
+						{
+							cc->isActive=true;
+							this->mainClass->mainWindowClass->LFSWM2_setProp(this->mainClass->rootWindow,this->mainClass->atomshashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_ACTIVE_WINDOW")),XA_WINDOW,32,&cc->contentWindow,1);
+							XSetInputFocus(this->mainClass->display,cc->contentWindow,RevertToParent,CurrentTime);
+							this->mainClass->mainWindowClass->LFSWM2_refreshFrame(cc);
+						}
+					else
+						{
+							XSetInputFocus(this->mainClass->display,id,RevertToParent,CurrentTime);
+						}
 				}
 		}
 
@@ -813,7 +807,6 @@ HIDEXERRORS
 				{
 					if(n>0)
 						{
-							//this->noRestack=true;
 							for(int j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
 								if(this->mainClass->mainWindowClass->windowIDList.at(j)==*v)
 									to=j;
@@ -825,12 +818,15 @@ HIDEXERRORS
 							cc3=this->mainClass->mainWindowClass->LFSWM2_getClientClass(*v);
 							if(cc2!=NULL)
 								{
+								if(cc2->rendered==true)
+								{
 									if(cc3!=NULL)
 										cc2->onDesk=cc3->onDesk;
 									if(cc2->onDesk==this->mainClass->currentDesktop)
 										cc2->LFSWM2_showWindow(true);
 									else
 										cc2->LFSWM2_hideWindow(false);
+										}
 								}
 						}
 					if(v!=NULL)
@@ -845,7 +841,8 @@ HIDEXERRORS
 			if((cc!=NULL) && (id!=cc->contentWindow))
 				{
 					cc->isActive=false;
-					this->mainClass->mainWindowClass->LFSWM2_refreshFrame(cc);
+					if(cc->rendered==true)
+						this->mainClass->mainWindowClass->LFSWM2_refreshFrame(cc);
 				}
 			if(this->mainClass->mainWindowClass->LFSWM2_getWindowType(this->mainClass->mainWindowClass->windowIDList.at(j))==DOCKWINDOW)
 				{
@@ -888,17 +885,4 @@ HIDEXERRORS
 				}
 		}
 	this->mainClass->mainWindowClass->windowIDList=wlb;
-}
-
-void LFSWM2_eventsClass::LFSWM2_moveToBottom(Window id)
-{
-//fprintf(stderr,"LFSWM2_moveToBottom\n");
-	for(long unsigned j=0;j<this->mainClass->mainWindowClass->windowIDList.size();j++)
-		{
-			if(this->mainClass->mainWindowClass->windowIDList.at(j)==id)
-				{
-					this->mainClass->mainWindowClass->windowIDList.erase(this->mainClass->mainWindowClass->windowIDList.begin()+j);
-					this->mainClass->mainWindowClass->windowIDList.emplace (this->mainClass->mainWindowClass->windowIDList.end(),id);
-				}
-		}
 }

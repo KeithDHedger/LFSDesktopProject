@@ -5,7 +5,36 @@
 echo "Compiling, please wait ..."
 
 if [ "X$1" != "X" ];then
-	USEVALGRIND="valgrind --leak-check=full"
+cat>ignorelibleaks<<EOF
+{
+   ignore_unversioned_libs
+   Memcheck:Leak
+   ...
+   obj:*/lib*/lib*.so
+}
+
+{
+   ignore_versioned_libs
+   Memcheck:Leak
+   ...
+   obj:*/lib*/libQt.so.*
+   obj:*/lib*/libcairo.so.*
+   obj:*/lib*/libX11.so.*
+   obj:*/lib*/libfontconfig.so.*
+   obj:*/lib*/libexpat.so.*
+}
+
+{
+   ignorexcbwritev
+   Memcheck:Param
+   writev(vector[0])
+   fun:writev
+   obj:/usr/lib/libxcb.so.1.1.0
+}
+
+EOF
+
+	USEVALGRIND="valgrind --leak-check=full --suppressions=./ignorelibleaks -s "
 fi
 
 g++ "$0" -O0 -ggdb -I../LFSToolKit -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo glib-2.0) -llfstoolkit -lImlib2 -o windowexample||exit 1
@@ -92,7 +121,7 @@ int main(int argc, char **argv)
 	label->LFSTK_setCairoFontDataParts("sB",20);
 	sy+=YSPACING;
 	sy+=200;
-	fprintf(stderr,"winid=%p\n",label->window);
+	//fprintf(stderr,"winid=%p\n",label->window);
 
 	wc->LFSTK_resizeWindow(DIALOGWIDTH,sy,true);
 	//wc->LFSTK_setDecorations(true,true,true,true);
