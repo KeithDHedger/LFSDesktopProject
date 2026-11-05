@@ -34,7 +34,6 @@ bool taskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud);
 bool taskSelect(void *object,void* userdata);
 bool taskListCB(void* p,void* ud);
 bool taskListCBDown(void* p,void* ud);
-
 void updateTaskBar(bool force=false);
 
 #endif

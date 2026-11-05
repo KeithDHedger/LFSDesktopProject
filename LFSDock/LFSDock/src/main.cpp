@@ -27,64 +27,8 @@
 #include "globals.h"
 #include "clock.h"
 #include "launchers.h"
-#include "slider.h"
 
 #define RCNAME "lfsdock"
-
-//context window
-enum {CONTEXTBUTTONPREFS=0,CONTEXTBUTTONHIDE,CONTEXTBUTTONQUIT,NOMORECONTEXTBUTONS};
-const char				*mainContextLabelData[]={"Run Prefs","Iconize Dock","Quit Dock",NULL};
-const char				*mainContextThemeIconData[]={"LFSTKPrefs","utilities-system-monitor","dialog-warning",NULL};
-std::string				iconpath;
-LFSTK_buttonClass		*mainContextButtons[NOMORECONTEXTBUTONS];
-
-bool contextCB(void *p,void* ud)
-{
-	LFSTK_windowClass	*lwc=static_cast<LFSTK_gadgetClass*>(p)->wc;
-	int					winnum;
-	long unsigned int	whatbutton=(long unsigned int)ud-1;
-
-	if(p!=NULL)
-		{
-			winnum=lwc->app->LFSTK_findWindow(lwc);
-			lwc->app->windows->at(winnum).loopFlag=false;
-			//printf("ud=%p label=%s\n",ud,mainContextLabelData[((long unsigned)ud)-1]);
-			mainContextWindow->LFSTK_hideWindow();
-			apc->windows->at(winnum).loopFlag=false;
-
-			switch(whatbutton)
-				{
-					case CONTEXTBUTTONPREFS:
-						{
-							std::string	com;
-							com="lfsdockprefs -d "+whatDock+" &";
-							system(com.c_str());
-						}
-						break;
-					case CONTEXTBUTTONHIDE:
-						resizeDock(1,1);
-						dockIsHidden=true;
-						iconWindow->LFSTK_showWindow();
-						iconWindow->LFSTK_clearWindow(true);
-						if(calWindow!=NULL)
-							{
-								calWindow->LFSTK_hideWindow();
-								apc->windows->at(apc->LFSTK_findWindow(calWindow)).showing=false;
-							}
-						if(scwindow!=NULL)
-							{
-								scwindow->LFSTK_hideWindow();
-								apc->windows->at(apc->LFSTK_findWindow(scwindow)).showing=false;
-							}
-						break;
-					case CONTEXTBUTTONQUIT:
-						realMainLoop=false;
-						apc->mainLoop=false;
-						break;
-				}
-		}
-	return(true);
-}
 
 void loadPrefs(std::string prefsfile)
 {
@@ -99,7 +43,11 @@ void loadPrefs(std::string prefsfile)
 	useBG=prefs.LFSTK_getBool("usebg");
 	dockBGImage=prefs.LFSTK_getCString("usebgpath");
 	launcherPreColour=prefs.LFSTK_getCString("prelightcolour");
-	if(launcherPreColour.compare("#00000000")==0)
+
+	//if(dockGravity==1)
+	//	useBG=false;
+
+	if(useBG==true && dockGravity==2)
 		moveGadget=true;
 	else
 		moveGadget=false;
@@ -128,9 +76,6 @@ void addGadgets(void)
 						else
 							printError("Duplicate launcher widget");
 						break;
-					case 'S':
-						offset+=addSlider(offset,normalY,dockGravity);
-						break;
 					case 'D':
 						offset+=addDesktopSwitcer(offset,normalY,dockGravity);
 						break;
@@ -146,7 +91,7 @@ void addGadgets(void)
 	windowWidth=offset;
 	for(int j=0;j<MAXTASKBUTTONS;j++)
 		{
-			taskbuttons[j]=new LFSTK_buttonClass(dockWindow,"",windowWidth+(j*(iconWidth+ICONSPACE)),normalY,iconWidth,iconHeight);
+			taskbuttons[j]=new LFSTK_buttonClass(dockWindow,"",windowWidth+(j*(iconWidth+ICONSPACE)),0,iconWidth,dockWindowHeight);
 			setGadgetDetails(taskbuttons[j]);
 			taskbuttons[j]->LFSTK_setAlpha(1.0);
 			taskbuttons[j]->LFSTK_setMouseCallBack(NULL,taskListCB,NULL);
@@ -235,6 +180,7 @@ int main(int argc,char **argv)
 	std::string		lc="#a0f0f0f0";
 	std::string		pc="#60a0a0a0";
 	std::string		ac="#60404040";
+	std::string		iconpath;
 
 	if(argc>1)
 		whatDock=argv[1];
@@ -330,33 +276,42 @@ int main(int argc,char **argv)
 				{
 					case 2:
 						iconWidth=48;
+						dockWindowHeight=48;
 						popActionWindowYOffset=11;
 						break;
 					case 3:
 						iconWidth=64;
+						dockWindowHeight=64;
 						popActionWindowYOffset=7;
 						break;
 					case 4:
 						iconWidth=96;
+						dockWindowHeight=96;
 						popActionWindowYOffset=-1;
 						break;
 					default:
 						iconWidth=32;
+						dockWindowHeight=32;
 						popActionWindowYOffset=15;
 				}
 
-			iconHeight=iconWidth+(iconWidth/2);
 			extraSpace=iconWidth/4;
+			iconHeight=iconWidth+16;
 
 			if(moveGadget==false)
 				{
 					extraSpace=0;
 					iconHeight=iconWidth;
 				}
+			else
+				{
+					extraSpace=iconWidth/4;
+					iconHeight=iconWidth+16;
+				}
 
+			dockWindowHeight=iconHeight;
 			if(dockGravity==1)
 				{
-					normalY=-extraSpace;
 					activeY=0;
 				}
 			else
@@ -364,14 +319,24 @@ int main(int argc,char **argv)
 					popActionWindowYOffset=popActionWindowYOffset*-1;
 					normalY=0;
 					activeY=-extraSpace;
+					activeY=0;
 				}
 
 			desktopTheme=dockWindow->globalLib->desktopIconTheme;
 			if(((apc->LFSTK_getMonitorCount()-1)<onMonitor) || (onMonitor<0))
 				onMonitor=0;
 			mons=apc->LFSTK_getMonitorData(onMonitor);
-			dockWindow->LFSTK_setTile(NULL,0);
-			dockWindow->LFSTK_setWindowColourName(NORMALCOLOUR,"#00000000");
+
+			if(useBG==true)
+				{
+					dockWindow->LFSTK_setTile(dockBGImage.c_str(),-1);
+				}
+			else
+				{
+					dockWindow->LFSTK_setTile(NULL,0);
+					dockWindow->LFSTK_setWindowColourName(NORMALCOLOUR,dockBGColour.c_str());
+				}
+
 			windowWidth=0;
 			pr=apc->globalLib->LFSTK_getSingleProp(apc->display,apc->rootWindow,NET_NUMBER_OF_DESKTOPS,XA_CARDINAL);
 			deskCount=pr.integer;
@@ -385,25 +350,27 @@ int main(int argc,char **argv)
 			mainContextWindow=apc->windows->back().window;
 			mainContextWindow->LFSTK_setWindowColourName(NORMALCOLOUR,lc.c_str());
 			int sy=0;
-			for(int j=0;j<NOMORECONTEXTBUTONS;j++)
+			int offset=-2;
+			for(int j=CONTEXTMENUPREFS;j<NOMORECONTEXTMENUS;j++)
 				{
-					mainContextButtons[j]=new LFSTK_buttonClass(mainContextWindow,mainContextLabelData[j],0,sy,GADGETWIDTH*2,24,NorthWestGravity);
-					mainContextButtons[j]->LFSTK_setMouseCallBack(NULL,contextCB,(void*)(long)(j+1));
-					iconpath=mainContextWindow->globalLib->LFSTK_findThemedIcon("gnome",mainContextThemeIconData[j],"");
-					mainContextButtons[j]->LFSTK_setImageFromPath(iconpath,LEFT,true);
-					setGadgetDetails(mainContextButtons[j]);
-					mainContextButtons[j]->LFSTK_setTile(NULL,0);
-					mainContextButtons[j]->LFSTK_setFontString(prefs.LFSTK_getCString("font"),true);
-					mainContextButtons[j]->LFSTK_setLabelAutoColour(true);
-					mainContextButtons[j]->LFSTK_setGadgetColours(GADGETBG,lc,pc,ac,lc);
-					mainContextButtons[j]->LFSTK_setGadgetColours(GADGETFG,lc,pc,ac,lc);
+					mainContextButtons[j+offset]=new LFSTK_buttonClass(mainContextWindow,labelData[j],0,sy,GADGETWIDTH*2,24,NorthWestGravity);
+					mainContextButtons[j+offset]->LFSTK_setMouseCallBack(NULL,contextCB,(void*)(long)(j));
+					iconpath=mainContextWindow->globalLib->LFSTK_findThemedIcon("gnome",themeIconData[j],"");
+					mainContextButtons[j+offset]->LFSTK_setImageFromPath(iconpath,LEFT,true);
+					setGadgetDetails(mainContextButtons[j+offset]);
+					mainContextButtons[j+offset]->LFSTK_setLabelGravity(LEFT);
+					mainContextButtons[j+offset]->LFSTK_setImageGravity(LEFT);
+					mainContextButtons[j+offset]->LFSTK_setTile(NULL,0);
+					mainContextButtons[j+offset]->LFSTK_setFontString(prefs.LFSTK_getCString("font"),true);
+					mainContextButtons[j+offset]->LFSTK_setLabelAutoColour(true);
+					mainContextButtons[j+offset]->LFSTK_setGadgetColours(GADGETBG,lc,pc,ac,lc);
+					mainContextButtons[j+offset]->LFSTK_setGadgetColours(GADGETFG,lc,pc,ac,lc);
 					sy+=GADGETHITE;
 				}
 			mainContextWindow->LFSTK_resizeWindow(GADGETWIDTH+GADGETHITE,sy,true);
 			dockWindow->LFSTK_setContextWindow(mainContextWindow);
 			if(dockGravity==PANELSOUTH)
 				dockWindow->contextWindowPos=CONTEXTABOVE;
-
 			else
 				dockWindow->contextWindowPos=CONTEXTBELOW;
 
@@ -415,57 +382,80 @@ int main(int argc,char **argv)
 				}
 
 			psize=windowWidth;
-			win=apc->LFSTK_getDefaultWInit();
-			win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DOCK"));
-			win->level=ABOVEALL;
-			win->overRide=false;
-			win->decorated=false;
-			apc->LFSTK_addWindow(win,"DOCKBG");
-			dockBGWindow=apc->windows->back().window;
-			std::string	hi=dockBGImage;
-			dockWindow->LFSTK_setTransientFor(dockBGWindow->window);
-			apc->windows->back().showing=true;
 
 			resizeDock(psize,iconWidth+extraSpace);
 			moveDock(0);
-//max hite for end caps should be 120
-//size = 2 = 60
-//fprintf(stderr,"dock hite=%i\n",iconWidth+extraSpace);
+
 			if(useBG==true)
 				{
-					//hack :(
-					LFSTK_labelClass *label=new LFSTK_labelClass(dockBGWindow,"XX",0,0,1,1,NorthGravity);
 					cairo_status_t	st;
 					cairo_surface_t	*tsfc;
 					std::string		suffix=LFSTK_UtilityClass::LFSTK_deleteSuffix(&dockBGImage);
 
 					dockBGImageLS=dockBGImage+"-ls."+suffix;
-					dockBGImageRS=dockBGImage+"-rs."+suffix;
-					dockBGWindow->LFSTK_showWindow(true);
 					tsfc=apc->globalLib->LFSTK_lib::LFSTK_createSurfaceFromPath(dockBGImageLS.c_str());
 					if(tsfc!=NULL)
 						{
 							sidehite=cairo_image_surface_get_height(tsfc);
 							sidewid=cairo_image_surface_get_width(tsfc);
 							cairo_surface_destroy (tsfc);
-			
-							bgls=new LFSTK_buttonClass(dockBGWindow,"",0,0,sidewid,sidehite);
-							setGadgetDetails(bgls);
+	
+							bgls=new LFSTK_buttonClass(dockWindow,"",0,0,sidewid,sidehite);
+							bgls->LFSTK_setStyle(BEVELNONE);
+							bgls->LFSTK_setUseWindowTile(false);
+							bgls->LFSTK_setTile(NULL,0);
+							bgls->LFSTK_setImageGravity(TOP);
+							bgls->LFSTK_setLabelGravity(TOP);
+							bgls->LFSTK_setGadgetColours(GADGETBG,"#00000000","#00000000","#00000000","#00000000");
+							bgls->LFSTK_setGadgetColourPair(NORMALCOLOUR,"#00000000","#00000000");
+							bgls->pad=0;
+							if(dockGravity==2)
+								{
+									bgls->flip=0;
+									bgls->LFSTK_moveGadget(0,0);
+								}
+							else
+								{
+									bgls->flip=2;
+									bgls->LFSTK_moveGadget(0,dockWindowHeight-sidehite);
+								}
 							st=bgls->LFSTK_setImageFromPath(dockBGImageLS,CENTRE,false);
 							if(st!=CAIRO_STATUS_SUCCESS)
-								{
-									bgls=NULL;
-								}
+								bgls=NULL;
 					
-							bgrs=new LFSTK_buttonClass(dockBGWindow,"",psize-sidewid,0,sidewid,sidehite);
-							setGadgetDetails(bgrs);
-							st=bgrs->LFSTK_setImageFromPath(dockBGImageRS,CENTRE,false);
-							if(st!=CAIRO_STATUS_SUCCESS)
+							bgrs=new LFSTK_buttonClass(dockWindow,"",psize-sidewid,0,sidewid,sidehite);
+							bgrs->LFSTK_setStyle(BEVELNONE);
+							bgrs->LFSTK_setUseWindowTile(false);
+							bgrs->LFSTK_setTile(NULL,0);
+							bgrs->LFSTK_setImageGravity(TOP);
+							bgrs->LFSTK_setLabelGravity(TOP);
+							bgrs->LFSTK_setGadgetColours(GADGETBG,"#00000000","#00000000","#00000000","#00000000");
+							bgrs->LFSTK_setGadgetColourPair(NORMALCOLOUR,"#00000000","#00000000");
+							bgrs->pad=0;
+
+							bgrs->LFSTK_setStyle(BEVELNONE);
+							bgrs->LFSTK_setUseWindowTile(true);
+							bgrs->LFSTK_setImageGravity(TOP);
+							bgrs->LFSTK_setLabelGravity(TOP);
+							bgrs->pad=0;	
+
+							if(dockGravity==2)
 								{
-									bgrs=NULL;
+									bgrs->flip=1;
+									bgrs->LFSTK_moveGadget(sidewid,sidehite);
 								}
+							else
+								{
+									bgrs->flip=3;
+									bgrs->LFSTK_moveGadget(sidewid,dockWindowHeight-sidehite);
+								}
+
+							st=bgrs->LFSTK_setImageFromPath(dockBGImageLS,CENTRE,false);
+							if(st!=CAIRO_STATUS_SUCCESS)
+								bgrs=NULL;
 						}
-					dockBGWindow->LFSTK_clearWindow(true);
+
+					dockWindow->LFSTK_clearWindow(true);
 				}
 
 			tasks.clear();
@@ -483,34 +473,42 @@ int main(int argc,char **argv)
 			win->decorated=false;
 			
 			if(dockGravity==PANELSOUTH)
-				win->y=mons->h-32;
+				{
+					win->y=mons->h-ICONIZESIZE;
+					win->x=mons->x;
+				}
 			else
-				win->y=mons->y;
+				{
+					win->y=mons->y;
+					win->x=mons->w-ICONIZESIZE;
+				}
 
-			win->x=mons->x;
-			win->w=32;
-			win->h=32;
+			win->w=ICONIZESIZE;
+			win->h=ICONIZESIZE;
 			apc->LFSTK_addWindow(win,"ICONWINDOW");
 
 			iconWindow=apc->windows->back().window;	
 			apc->windows->back().showing=true;
-			LFSTK_buttonClass *bgls=new LFSTK_buttonClass(iconWindow,"",0,0,32,32);
-			std::string iconpath=iconWindow->globalLib->LFSTK_findThemedIcon("gnome",contextThemeIconData[BUTTONHIDE],"");
-			bgls->LFSTK_setImageFromPath(iconpath,CENTRE,true);
-			bgls->LFSTK_setMouseCallBack(NULL,hideCB,NULL);
-			setGadgetDetails(bgls);
+			buttonHide=new LFSTK_buttonClass(iconWindow,"",0,0,ICONIZESIZE,ICONIZESIZE);
+			std::string iconpath=iconWindow->globalLib->LFSTK_findThemedIcon("gnome",themeIconData[CONTEXTMENUHIDE],"");
+			buttonHide->LFSTK_setImageFromPath(iconpath,CENTRE,true);
+			buttonHide->LFSTK_setMouseCallBack(hideCB,NULL,NULL);
+			setGadgetDetails(buttonHide);
+
+			buttonHide->LFSTK_setImageGravity(CENTRE);
+			buttonHide->LFSTK_setTile(NULL,0);
+			buttonHide->LFSTK_setFontString(prefs.LFSTK_getCString("font"),true);
+			buttonHide->LFSTK_setLabelAutoColour(false);
+			buttonHide->LFSTK_setGadgetColours(GADGETBG,"#00000000","#00000000","#00000000","#00000000");
+			buttonHide->LFSTK_setContextWindow(NULL);
+iconWindow->LFSTK_setContextWindow(NULL);
+
 			holdpsize=psize;
 
-
-			XSync(apc->display,false);
-			if(dockBGWindow!=NULL)
-				{	
-					dockBGWindow->LFSTK_setTile(hi.c_str(),-1);
-					dockBGWindow->LFSTK_clearWindow(true);
-				}
 			if(useTaskBar==true)
 				updateTaskBar(true);
 
+			dockWindow->LFSTK_showWindow(true);
 			int retval=apc->LFSTK_runApp();
 
 			calendarIsUp=false;

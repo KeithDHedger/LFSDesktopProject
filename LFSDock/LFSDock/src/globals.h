@@ -33,7 +33,6 @@
 #include "callbacks.h"
 #include "launchers.h"
 #include "clock.h"
-#include "slider.h"
 #include "desktopSwitcher.h"
 #include "taskBar.h"
 #include "calendar.h"
@@ -43,9 +42,14 @@
 
 #define ICONSPACE 2
 #define MAXTASKBUTTONS 32
+#define ICONIZESIZE 64
 
 enum PANELGRAVITY {PANELNORTH=1,PANELSOUTH=2};
 enum WHATSORT {DESKTOPSWITCHER=100,TASKSWITCHER};
+
+enum {CONTEXTMENULAUNCH=0,CONTEXTMENUREMOVE,CONTEXTMENUPREFS,CONTEXTMENUHIDE,CONTEXTMENUQUIT,NOMORECONTEXTMENUS};
+extern const char	*labelData[];
+extern const char	*themeIconData[];
 
 struct launcherDataStruct
 {
@@ -91,7 +95,7 @@ extern std::string				dockTextColour;
 extern std::string				dockBGColour;
 extern std::string				dockBGImage;
 extern std::string				dockBGImageLS;
-extern std::string				dockBGImageRS;
+//extern std::string				dockBGImageRS;
 extern bool						useBG;
 extern std::string				launcherPreColour;
 extern bool						moveGadget;
@@ -113,10 +117,11 @@ extern bool						gotLaunchers;
 //dock window
 extern LFSTK_applicationClass	*apc;
 extern LFSTK_windowClass			*dockWindow;
-extern LFSTK_windowClass			*dockBGWindow;
+//extern LFSTK_windowClass			*dockBGWindow;
 extern LFSTK_windowClass			*iconWindow;
 extern int						holdpsize;
 extern bool						dockIsHidden;
+extern int						dockWindowHeight;
 
 extern LFSTK_windowClass			*mainContextWindow;
 extern LFSTK_windowClass			*popActionWindow;
@@ -125,6 +130,7 @@ extern bool						inSomeWindow;
 extern int						popActionWindowYOffset;
 extern LFSTK_buttonClass			*bgrs;
 extern LFSTK_buttonClass			*bgls;
+extern LFSTK_buttonClass			*buttonHide;
 extern int sidewid;
 extern int sidehite;
 
@@ -157,7 +163,7 @@ Window getWindowByPID(unsigned long pid);
 Window doTreeWalkForClass(Window wind,std::string namecheck);
 Window doTreeWalkForPID(Window wind,unsigned long pid);
 void moveDock(int extra);
-void resizeDock(int wid,int hite);
+void resizeDock(int wid,int hite,bool tell=true);
 std::string getWindowName(Window winid);
 
 void setGadgetPosition(LFSTK_gadgetClass *gadg,bool active);

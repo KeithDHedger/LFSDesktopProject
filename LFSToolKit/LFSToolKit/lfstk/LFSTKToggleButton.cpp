@@ -240,6 +240,16 @@ bool LFSTK_toggleButtonClass::mouseUp(XButtonEvent *e)
 
 /**
 * Set the toggle button style.
+* \note drawStyle Style=TOGGLECHECK=0,TOGGLERADIO=1,TOGGLENORMAL=2.
+* \note TOGGLERADIO not implemented yet.
+*/
+drawStyle LFSTK_toggleButtonClass::LFSTK_getToggleStyle(void)
+{
+	return(this->boxStyle);
+}
+
+/**
+* Set the toggle button style.
 * \param drawStyle Style=TOGGLECHECK=0,TOGGLERADIO=1,TOGGLENORMAL=2.
 * \note TOGGLERADIO not implemented yet.
 */

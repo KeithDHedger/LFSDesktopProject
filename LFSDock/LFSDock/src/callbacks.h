@@ -21,8 +21,7 @@
 #ifndef _CALLBACKS_
 #define _CALLBACKS_
 
-enum {BUTTONLAUNCH=0,BUTTONREMOVE,BUTTONPREFS,BUTTONHIDE,BUTTONQUIT,NOMOREBUTONS};
-
+extern LFSTK_buttonClass	*mainContextButtons[];
 extern LFSTK_windowClass	*taskContextWindow;
 
 void sendClientMessage(Window win,const char *msg,unsigned long data0,unsigned long data1,unsigned long data2,unsigned long data3,unsigned long data4);
@@ -36,5 +35,7 @@ bool popActionWindowSelect(void *object,void* userdata);
 bool checkInBorder(LFSTK_gadgetClass *gadg);
 bool exitPopList(LFSTK_gadgetClass*p,void* ud);
 bool hideCB(void* p,void* ud);
+bool contextCB(void *p,void* ud);
+bool dockContextCallback(void *p,void* ud);
 
 #endif

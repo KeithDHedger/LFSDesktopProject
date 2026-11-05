@@ -9,7 +9,6 @@ In the gadets list in ~/.config/LFS/lfsdock.rc and the prefs dialog, you can use
 L - Any .desktop files in ~/.config/LFS/launchers-DOCK.<br>
 C - Clock.<br>
 c - Calendar.<br>
-S - Alsa volume slider.<br>
 D - Desktop switcher.<br>
 s - Space.<br>
 T - Task list.<br>
@@ -30,19 +29,17 @@ month date colour<br>
 where month is between 0 - 11 ( 0=January, 11=December ), date is 1- however many days in the month, colour is 0-7 and is a hard coded colour ( this may change later ), 0 is used for todays date.<br>
 You can open the config file with the your default editor by clicking the "Set Dates" buton, dates will be refreshed after selecting "<<<" or ">>>" or toggling calandar.<br>
 <br>
-The calendar and slider gadgets are toggles and so need to be clicked on to make the appropriate window appear/disappear.<br>
+The calendar gadget is a toggle and so need to be clicked on to make the appropriate window appear/disappear.<br>
 Gadgets can be in any order you wish.<br>
 <br>
 If you set a backround image, it will be tiled over the window<br>
 <PNG's should be used if you want to use end caps<br>
 End caps can be optionally set and fshould be in the same folder and be the same format as the main tile image with the filenames being for instance:<br>
 /home/keithhedger/Backgrounds/rage.png << main tile, only this path needs be set in the config file ( plaease use the lfsdockprefs app ).<br>
-/home/keithhedger/Backgrounds/rage-ls.png << left end cap.<br>
-/home/keithhedger/Backgrounds/rage-rs.png <<right end cap.<br>
+/home/keithhedger/Backgrounds/rage-ls.png << end cap.<br>
+End caps are flipped according left/right and up/down to sut the dock gravity, only one end cap is needed ( should be for the left of a SOUTH gravity dock ).
 Images can be (semi-)transparent.<br>
-The main tile can be any size but the end caps height shoud be at least 120, the width can be any size>=1.<br>
 A couple of examples are included in /usr/share/LFSDock/pixmaps<br>
 <br>
 More gadgets to come and improvements to the graphics.<br>
-The dock looks best with a transparent background at the bottom.<br>
 <br>

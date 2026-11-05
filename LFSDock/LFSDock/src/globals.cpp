@@ -42,7 +42,6 @@ std::string				dockTextColour="";
 std::string				dockBGColour="";
 std::string				dockBGImage="";
 std::string				dockBGImageLS="";
-std::string				dockBGImageRS="";
 bool						useBG=false;
 std::string				launcherPreColour="#00000000";
 bool						moveGadget=false;
@@ -59,10 +58,10 @@ bool						useMicros=true;
 //dock window
 LFSTK_applicationClass	*apc=NULL;
 LFSTK_windowClass		*dockWindow=NULL;
-LFSTK_windowClass		*dockBGWindow=NULL;
 LFSTK_windowClass		*iconWindow=NULL;
 int						holdpsize;
 bool						dockIsHidden=false;
+int						dockWindowHeight=32;
 
 LFSTK_windowClass		*popActionWindow=NULL;
 LFSTK_listGadgetClass	*popActionList=NULL;
@@ -71,6 +70,7 @@ bool						gotLaunchers=false;
 int						popActionWindowYOffset=0;
 LFSTK_buttonClass		*bgrs=NULL;
 LFSTK_buttonClass		*bgls=NULL;
+LFSTK_buttonClass		*buttonHide=NULL;
 int						sidewid=0;
 int						sidehite=0;
 
@@ -97,6 +97,9 @@ int						windowWidth=0;
 LFSTK_findClass			*gFind;
 bool						useTaskBar=false;
 LFSTK_windowClass		*mainContextWindow=NULL;
+
+const char				*labelData[]={"Launch","Remove From Dock","Run Prefs","Iconize Dock","Quit Dock",NULL};
+const char				*themeIconData[]={"media-playback-start","list-remove","LFSTKPrefs","utilities-system-monitor","dialog-warning"};
 
 void sendNotify(std::string name,std::string message)//TODO//could be better
 {
@@ -159,19 +162,19 @@ void dropDesktopFile(const char *data,void *launcher)//TODO//
 
 void setGadgetDetails(LFSTK_gadgetClass *gadget)
 {
-	gadget->LFSTK_setAlpha(1.0);
+	gadget->LFSTK_setStyle(BEVELIN);
 	gadget->LFSTK_setStyle(BEVELNONE);
 
-//	if(useBG==true)
-//		{
-//			gadget->LFSTK_setTile(dockBGImage.c_str(),-1);
-//			gadget->gadgetDetails.geomRelativeToMainWindow=true;
-//		}
-//	else
+	gadget->LFSTK_setAlpha(1.00);
+	gadget->LFSTK_setUseWindowTile(true);
+	gadget->LFSTK_setLabelGravity(TOP);
+	gadget->LFSTK_setImageGravity(BOTTOM);
+
+	if(useBG==false)
 		{
 			gadget->LFSTK_setTile(NULL,0);
-			gadget->LFSTK_setGadgetColours(GADGETBG,"#00000000",launcherPreColour,"#00000000","#00000000");
-			gadget->	LFSTK_setGadgetColourPair(NORMALCOLOUR,"#00000000","#00000000");
+			gadget->LFSTK_setGadgetColours(GADGETBG,dockBGColour.c_str(),launcherPreColour,dockBGColour.c_str(),dockBGColour.c_str());
+			gadget->	LFSTK_setGadgetColourPair(NORMALCOLOUR,dockBGColour.c_str(),dockBGColour.c_str());
 		}
 }
 
@@ -349,14 +352,19 @@ Window getWindowByPID(unsigned long pid)
 	return(win);
 }
 
-void resizeDock(int wid,int hite)
+void resizeDock(int wid,int hite,bool tell)
 {
-	dockWindow->LFSTK_resizeWindow(wid,hite,true);
-	dockBGWindow->LFSTK_resizeWindow(wid,hite,true);
+	dockWindow->LFSTK_resizeWindow(wid+sidewid,dockWindowHeight,tell);
+
 	if(bgrs!=NULL)
-		bgrs->LFSTK_moveGadget(wid-sidewid,0);
-	dockWindow->LFSTK_clearWindow(true);	
-	dockBGWindow->LFSTK_clearWindow(true);	
+{
+	if(dockGravity==1)
+		bgrs->LFSTK_moveGadget(wid,dockWindowHeight-sidehite);
+	else
+		bgrs->LFSTK_moveGadget(wid,0);
+}		
+
+	dockWindow->LFSTK_clearWindow(tell);	
 }
 
 void moveDock(int extra)
@@ -368,11 +376,10 @@ void moveDock(int extra)
 	py=mons->y;
 
 	if(dockGravity==PANELSOUTH)
-		py=mons->y+mons->h-iconWidth-extraSpace;
+		py=mons->y+mons->h-dockWindowHeight;
 	px=((mons->w/2)-(psize/2))+mons->x;
 
 	dockWindow->LFSTK_moveWindow(px,py,true);
-	dockBGWindow->LFSTK_moveWindow(px,py,true);
 }
 
 std::string getWindowName(Window winid)

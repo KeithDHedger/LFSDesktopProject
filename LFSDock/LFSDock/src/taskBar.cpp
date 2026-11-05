@@ -39,19 +39,8 @@ bool compareTaskClass(const taskStruct &a,const taskStruct &b)
 
 bool taskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 {
-//fprintf(stderr,"exit>>>>%p--%p<<<<\n",currentTask,p);
-
-//if(checkInBorder(p)==true)
-//{
-//	for(int j=0;j<tasks.size();j++)
-//		{
-//			if(moveGadget==true)
-//					setGadgetPosition(taskbuttons[j],false);
-//		}
-//}
-
-	//if(moveGadget==true)
-	//	setGadgetPosition(p,false);
+	if(checkInBorder(p)==true)
+		return(true);
 
 	exitPopList(p,ud);
 	inSomeWindow=false;
@@ -66,7 +55,7 @@ bool taskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 	infoDataStruct			ls;
 	LFSTK_buttonClass		*bc=static_cast<LFSTK_buttonClass*>(p);
 	std::vector<taskStruct>	listtasks;
-//fprintf(stderr,"enter >>>>%p--%p<<<<\n",currentTask,p);
+
 	exitPopList(p,ud);
 
 	if(moveGadget==true)
@@ -74,7 +63,21 @@ bool taskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 
 	popActionList->LFSTK_freeList();	
 
-	d=(unsigned long)bc->userData;	
+	if(filltasks.size()==0)
+		{
+			tasks.clear();
+			holdtasks.clear();
+			updateTaskBar(true);
+		}
+
+	d=(unsigned long)bc->userData;
+	if(d>filltasks.size()-1)
+		{
+			tasks.clear();
+			holdtasks.clear();
+			updateTaskBar(true);
+		}
+
 	listtasks.push_back(filltasks.at(d));
 
 	for(int j=0;j<filltasks.at(d).tasks.size();j++)
@@ -345,7 +348,8 @@ skiplabel:
 							for(int i=0;i<2;i++)
 								{
 									datam=gFind->LFSTK_findNamed(filltasks.at(j).taskClass[i],std::string(".desktop"));
-									if(datam!=NULL)
+
+							if(datam!=NULL)
 										{
 											std::map<unsigned long,std::vector<std::string>> lines;
 											std::string										entryname="Desktop Entry";
@@ -367,6 +371,7 @@ skiplabel:
 													continue;									
 												}
 										}
+
 								}
 						}
 					taskbuttons[j]->userData=USERDATA(j);
@@ -378,6 +383,18 @@ skiplabel:
 			moveDock(filltasks.size()*iconWidth);
 			resizeDock(windowWidth+((iconWidth+ICONSPACE)*filltasks.size()),iconWidth+extraSpace);
 			oldwidth=windowWidth+(iconWidth*filltasks.size());
+
+			for(int j=0;j<filltasks.size();j++)
+				{
+					taskbuttons[j]->LFSTK_moveGadget(windowWidth+(j*(iconWidth+ICONSPACE)),0);
+					taskbuttons[j]->LFSTK_setImageGravity(BOTTOM);
+				}
+
+			for(int j=filltasks.size();j<MAXTASKBUTTONS;j++)//TODO//
+				{
+					taskbuttons[j]->LFSTK_moveGadget(windowWidth+(j*(iconWidth+ICONSPACE)),-1000);
+					dockWindow->LFSTK_clearWindow(true);
+				}
 		}
 }
 

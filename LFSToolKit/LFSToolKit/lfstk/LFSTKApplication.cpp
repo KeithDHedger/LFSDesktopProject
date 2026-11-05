@@ -328,7 +328,9 @@ int LFSTK_applicationClass::LFSTK_runApp(void)
 							mappedListener *ml=this->mainWindow->LFSTK_getMappedListener(event.xany.window);
 
 							if(ml!=NULL)
-								ml->function(ml->gadget,&event,ml->type);
+								{
+									ml->function(ml->gadget,&event,ml->type);
+								}
 
 							if(this->mainWindow->LFSTK_handleWindowEvents(&event)<0)
 								this->mainLoop=false;

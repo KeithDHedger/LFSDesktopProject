@@ -24,8 +24,6 @@
 #include "globals.h"
 
 extern LFSTK_buttonClass *switchButton;
-//extern LFSTK_toggleButtonClass *switchButton;
-
 
 void		sendPropNotifyMessage(Window win,Atom msg);
 

@@ -349,10 +349,13 @@ void LFSTK_windowClass::LFSTK_clearWindow(bool cleargadgets)
 	if(this->isActive==false)
 		state=INACTIVECOLOUR;
 
-	if(this->useTile==true)
+	if(this->useTile==true)//TODO//
 		{
 			cairo_save(this->cr);
 				cairo_reset_clip (this->cr);
+				//cairo_translate(this->cr,0,0);
+				//cairo_translate(this->cr, 0,this->h);
+				//cairo_scale(this->cr, 1, -1);
 				cairo_set_source(this->cr,this->pattern);
 				cairo_set_operator(this->cr,CAIRO_OPERATOR_SOURCE);
 				cairo_paint(this->cr);
@@ -981,8 +984,10 @@ void LFSTK_windowClass::LFSTK_showWindow(bool all)
 */
 void LFSTK_windowClass::LFSTK_hideWindow(void)
 {
+	XUnmapSubwindows(this->app->display,this->window);
 	XUnmapWindow(this->app->display,this->window);
 	this->isVisible=false;
+	XSync(this->app->display,false);
 }
 
 /**
@@ -1530,6 +1535,9 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 	switch(event->type)
 		{
 			case ButtonPress:
+				//if((this->LFSTK_getContextWindow()==NULL) && (event->xbutton.button==Button3))//TODO//URGENT!!
+				//	return(true);
+
 				if((this->LFSTK_getContextWindow()!=NULL) && (event->xbutton.button==Button3) && this->ignoreContext==false)
 					{
 						LFSTK_windowClass		*lwc=this->LFSTK_getContextWindow();
@@ -1593,7 +1601,7 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 						return(retval);
 						break;
 					}
-				else 	if(this->passEventToRoot==true)
+				else if(this->passEventToRoot==true)
 					{
 						event->xbutton.window=this->app->rootWindow;
 						XSendEvent(this->app->display,this->app->rootWindow,false,ButtonPressMask,event);

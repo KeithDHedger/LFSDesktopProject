@@ -20,10 +20,11 @@
 
 #include "globals.h"
 
+
+//context window
+LFSTK_buttonClass	*mainContextButtons[NOMORECONTEXTMENUS];
 LFSTK_windowClass	*taskContextWindow=NULL;
 int					root_x_return=-1,root_y_return=-1;
-int					rxdiff=-1;
-int					rydiff=-1;
 int					diFF=ICONSPACE-1;
 
 bool exitPopList(LFSTK_gadgetClass*p,void* ud)
@@ -88,16 +89,13 @@ bool gadgetDrop(void *lwc,propertyStruct *data,void* ud)
 
 bool timerCB(LFSTK_applicationClass *p,void* ud)
 {
-//	if(dockIsHidden==false)
-//		return(true);
+	if(dockIsHidden==true)
+		return(true);
 
 	readMsg();
 
 	if(clockButton!=NULL)
 		updateClock();
-
-	if(scwindow!=NULL)
-		updateSlider();
 
 	if((popActionWindow!=NULL) && (popActionWindow->isVisible==true) && ((inSomeWindow==false) && (popActionWindow->inWindow==false)))
 		exitPopList(NULL,NULL);
@@ -138,8 +136,8 @@ void showhidetActionList(LFSTK_gadgetClass *bc,LFSTK_windowClass *winc,LFSTK_lis
 			d=(unsigned long)bc->userData;
 			bc->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);
 			if(dockGravity==PANELSOUTH)
-				winc->LFSTK_moveWindow((geom.x+(geom.w/2))+(list->pad/2)-(list->LFSTK_getListMaxWidth()/2),geom.y-wingeom->h+extraSpace,true);
-			else
+				winc->LFSTK_moveWindow((geom.x+(geom.w/2))+(list->pad/2)-(list->LFSTK_getListMaxWidth()/2),geom.y-wingeom->h,true);
+			else//TODO//
 				winc->LFSTK_moveWindow((geom.x+(geom.w/2))+(list->pad/2)-(list->LFSTK_getListMaxWidth()/2),geom.y+geom.h-extraSpace,true);
 
 			winc->LFSTK_showWindow(true);
@@ -175,12 +173,8 @@ bool checkInBorder(LFSTK_gadgetClass *gadg)
 	rxdeltadiffy=abs(root_y_return-root_y_return1);
 
 	if((rxdeltadiffx<diFF) && (rxdeltadiffy<diFF))
-		{
-			return(false);
-		}
+		return(false);
 
-	rxdiff=rxdeltadiffx;
-	rydiff=rxdeltadiffy;
 	root_x_return=root_x_return1;
 	root_y_return=root_y_return1;
 
@@ -189,14 +183,11 @@ bool checkInBorder(LFSTK_gadgetClass *gadg)
 
 void setGadgetPosition(LFSTK_gadgetClass *gadg,bool active)
 {
-	geometryStruct	geom;
-
-	gadg->LFSTK_getGeom(&geom);
-
 	if(active==true)
-		gadg->LFSTK_moveGadget(geom.x,activeY);
+		gadg->LFSTK_setImageGravity(TOP);
 	else
-		gadg->LFSTK_moveGadget(geom.x,normalY);
+		gadg->LFSTK_setImageGravity(BOTTOM);
+	gadg->LFSTK_clearWindow();
 }
 
 bool popActionListEnterCB(LFSTK_gadgetClass*p,void* ud)
@@ -225,7 +216,7 @@ bool popActionWindowSelect(void *object,void* userdata)//TODO//
 	LFSTK_listGadgetClass	*list=static_cast<LFSTK_listGadgetClass*>(object);
 	ls=list->listDataArray->at(list->LFSTK_getCurrentListItem());
 
-	LFSTK_gadgetClass *bc=static_cast<LFSTK_gadgetClass*>(ls.userData);;
+	LFSTK_gadgetClass *bc=static_cast<LFSTK_gadgetClass*>(ls.userData);
 
 	wud=(unsigned long)popActionWindow->userData;
 	switch(wud)
@@ -253,6 +244,8 @@ bool hideCB(void* p,void* ud)
 		{
 			iconWindow->LFSTK_hideWindow();
 			dockIsHidden=false;
+			dockWindow->LFSTK_setContextWindow(mainContextWindow);
+			dockWindow->LFSTK_showWindow(true);
 			if(useTaskBar==true)
 				{
 					oldwidth=0;
@@ -267,11 +260,75 @@ bool hideCB(void* p,void* ud)
 					calendarButton->LFSTK_setValue(false);
 					calExitCB(calendarButton,NULL);
 				}
-			if(volumeButton!=NULL)
+		}
+	return(true);
+}
+
+bool dockContextCallback(void *p,void* ud)
+{
+	LFSTK_windowClass	*lwc=static_cast<LFSTK_gadgetClass*>(p)->wc;
+	long unsigned int	whatbutton=(long unsigned int)ud;
+	launcherDataStruct	lds;
+
+	if((long unsigned int)lwc->popupFromGadget!=1)
+		lds=launchersArray.at((long unsigned int)lwc->popupFromGadget->userData);
+
+	if(p!=NULL)
+		{
+			switch(whatbutton)
 				{
-					volumeButton->LFSTK_setValue(false);
-					volExitCB(volumeButton,NULL);
+					case CONTEXTMENUPREFS:
+						{
+							std::string	com;
+							com="lfsdockprefs -d "+whatDock+" &";
+							system(com.c_str());
+						}
+						break;
+					case CONTEXTMENUHIDE:
+						dockWindow->LFSTK_setContextWindow(NULL);
+						iconWindow->LFSTK_showWindow();
+						iconWindow->LFSTK_clearWindow(true);
+						if(calendarButton!=NULL)
+							{
+								calendarButton->LFSTK_setValue(false);
+								calExitCB(calendarButton,NULL);
+								calWindow->LFSTK_hideWindow();
+								apc->windows->at(apc->LFSTK_findWindow(calWindow)).showing=false;
+							}
+						dockWindow->LFSTK_hideWindow();
+						dockIsHidden=true;
+						break;
+					case CONTEXTMENUQUIT:
+						realMainLoop=false;
+						apc->mainLoop=false;
+						break;
+
+					case CONTEXTMENULAUNCH:
+						launcherCB(NULL,lwc->popupFromGadget->userData);
+						break;
+					case CONTEXTMENUREMOVE:
+						sendNotify("Removing ",lds.name);
+						XSync(apc->display,false);
+						sleep(1);
+						unlink(lds.path.c_str());
+						apc->exitValue=0;
+						apc->mainLoop=false;
+						break;
 				}
 		}
+	return(true);
+}
+
+bool contextCB(void *p,void* ud)
+{
+	LFSTK_windowClass	*lwc=static_cast<LFSTK_gadgetClass*>(p)->wc;
+	int					winnum;
+
+	mainContextWindow->LFSTK_hideWindow();
+	winnum=lwc->app->LFSTK_findWindow(lwc);
+	apc->windows->at(winnum).loopFlag=false;
+	XSync(apc->display,false);
+
+	dockContextCallback(p,ud);
 	return(true);
 }

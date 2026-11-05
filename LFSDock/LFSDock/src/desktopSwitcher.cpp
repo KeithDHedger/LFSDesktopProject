@@ -21,7 +21,6 @@
 #include "globals.h"
 
 LFSTK_buttonClass		*switchButton;
-LFSTK_buttonClass		*deskLabel;
 std::vector<std::string>	deskNames;
 
 void updateDeskSwitcher(void)
@@ -29,13 +28,13 @@ void updateDeskSwitcher(void)
 	propReturn	pr;
 
 	pr=apc->globalLib->LFSTK_getSingleProp(apc->display,apc->rootWindow,NET_CURRENT_DESKTOP,XA_CARDINAL);
-	deskLabel->LFSTK_setLabel(std::to_string(pr.integer+1).c_str());
+	switchButton->LFSTK_setLabel(std::to_string(pr.integer+1),true);
 }
 
 bool deskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 {
-	if(moveGadget==true)
-		setGadgetPosition(p,false);
+	if(checkInBorder(p)==true)
+		return(true);
 
 	exitPopList(p,ud);
 	inSomeWindow=false;
@@ -48,10 +47,6 @@ bool deskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 	infoDataStruct	ls;
 
 	showhidetActionList(NULL,popActionWindow,popActionList);
-
-	if(moveGadget==true)
-		setGadgetPosition(p,true);
-
 	popActionList->LFSTK_freeList();	
 
 	for(int j=0;j<deskNames.size();j++)
@@ -64,7 +59,12 @@ bool deskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 		}
 
 	popActionList->LFSTK_updateList();
-	popActionList->LFSTK_moveGadget(-2,0);
+
+	if(dockGravity==2)
+		popActionList->LFSTK_moveGadget(-2,0);
+	else
+		popActionList->LFSTK_moveGadget(-2,-3);
+
 	popActionWindow->userData=USERDATA(DESKTOPSWITCHER);
 	popActionWindow->LFSTK_resizeWindow(popActionList->LFSTK_getListMaxWidth()-2,(GADGETHITE*deskCount)-4);
 	showhidetActionList(p,popActionWindow,popActionList);
@@ -97,7 +97,7 @@ bool desktopSelect(void *object,void* userdata)
 	XChangeProperty(apc->display,apc->rootWindow,NET_CURRENT_DESKTOP,XA_CARDINAL,32,PropModeReplace,(const unsigned char*)&d,1);
 	sendPropNotifyMessage(apc->rootWindow,NET_CURRENT_DESKTOP);
 	showhidetActionList(NULL,popActionWindow,popActionList);
-	deskLabel->LFSTK_setLabel(std::to_string(d+1).c_str());
+	switchButton->LFSTK_setLabel(std::to_string(d+1),true);
 	return(true);
 }
 
@@ -118,11 +118,16 @@ int addDesktopSwitcer(int x,int y,int grav)
 			return(0);
 		}
 //TODO//
-	switchButton=new LFSTK_buttonClass(dockWindow,"",x,normalY,iconWidth,iconHeight);
+	switchButton=new LFSTK_buttonClass(dockWindow,"",x,normalY,iconWidth,dockWindowHeight);
 	setGadgetDetails(switchButton);
 	switchButton->LFSTK_setAlpha(1.0);
 	switchButton->LFSTK_setStyle(BEVELNONE);
 	switchButton->LFSTK_setMouseMoveCallBack(deskSwitcherEnterCB,deskSwitcherExitCB,NULL);
+	switchButton->LFSTK_setFontString("sans:size=18:bold",true);
+	switchButton->forceCentreLabel=true;
+	switchButton->drawLabelBG=false;
+	switchButton->autoLabelBGColour=false;
+	switchButton->LFSTK_setGadgetColours(GADGETFG,"#ffffffff","#ffffffff","#ffffffff","#ffffffff");
 
 	pr=apc->globalLib->LFSTK_getSingleProp(apc->display,apc->rootWindow,NET_CURRENT_DESKTOP,XA_CARDINAL);
 	int ly=0;
@@ -134,21 +139,11 @@ int addDesktopSwitcer(int x,int y,int grav)
 				ly=0+normalY+iconHeight-GADGETHITE/2;
 		}
 
-	deskLabel=new LFSTK_buttonClass(dockWindow,std::to_string(pr.integer+1).c_str(),x,ly,iconWidth,GADGETHITE/2);
-	setGadgetDetails(deskLabel);
-	deskLabel->LFSTK_setFontString(prefs.LFSTK_getCString("font"),true);
-	deskLabel->LFSTK_setIgnores(false,false);
-	deskLabel->LFSTK_setTile(NULL,0);
-	deskLabel->LFSTK_setGadgetColourPair(NORMALCOLOUR,dockBGColour,dockTextColour);
-	deskLabel->LFSTK_setStyle(BEVELNONE);
-
 	icon=dockWindow->globalLib->LFSTK_findThemedIcon(desktopTheme,"remote-desktop","");
 	if(icon.length()>0)
 		switchButton->LFSTK_setImageFromPath(icon,CENTRE,true);
 	else
 		switchButton->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",CENTRE,true);
-
-//	windowInitStruct	*win;
 
 	pr=apc->globalLib->LFSTK_getSingleProp(apc->display,apc->rootWindow,XInternAtom(apc->display,"_NET_DESKTOP_NAMES",false),XInternAtom(apc->display,"UTF8_STRING",false));
 	for(int j=0;j<deskCount;j++)

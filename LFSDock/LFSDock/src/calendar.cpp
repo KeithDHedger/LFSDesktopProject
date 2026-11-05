@@ -23,6 +23,7 @@
 LFSTK_windowClass		*calWindow=NULL;
 bool						calWindowVisible=false;
 LFSTK_toggleButtonClass	*calendarButton;
+
 bool						calendarIsUp=false;
 LFSTK_buttonClass		*prev;
 LFSTK_buttonClass		*next;
@@ -138,7 +139,6 @@ bool calCB(void *p,void* ud)
 
 bool calExitCB(LFSTK_gadgetClass*p,void* ud)
 {
-
 	if(calendarButton->LFSTK_getValue()==1)
 		return(true);
 
@@ -151,6 +151,8 @@ bool calExitCB(LFSTK_gadgetClass*p,void* ud)
 
 bool calEnterCB(LFSTK_gadgetClass*p,void* ud)
 {
+	exitPopList(p,ud);
+
 	if(calendarIsUp==true)
 		return(true);
 
@@ -188,8 +190,6 @@ void setEditText(void)
 				}
 		}
 }
-
-
 
 bool doPrev(void *p,void* ud)
 {
@@ -243,7 +243,7 @@ int addCalendar(int x,int y,int grav)
 	int				txthite;
 	int				sy=0;
 
-	calendarButton=new LFSTK_toggleButtonClass(dockWindow,"",x,normalY,iconWidth,iconHeight);
+	calendarButton=new LFSTK_toggleButtonClass(dockWindow,"",x,0,iconWidth,dockWindowHeight);
 	calendarButton->LFSTK_setToggleStyle(TOGGLENORMAL);
 	calendarButton->LFSTK_setMouseCallBack(NULL,calCB,NULL);
 	calendarButton->LFSTK_setMouseMoveCallBack(calEnterCB,calExitCB,USERDATA(0));
@@ -252,9 +252,9 @@ int addCalendar(int x,int y,int grav)
 
 	icon=dockWindow->globalLib->LFSTK_findThemedIcon(desktopTheme,"stock_calendar","");
 	if(icon.length()>0)
-		calendarButton->LFSTK_setImageFromPath(icon,CENTRE,true);
+		calendarButton->LFSTK_setImageFromPath(icon,BOTTOM,true);
 	else
-		calendarButton->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",CENTRE,true);
+		calendarButton->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",BOTTOM,true);
 
 	win=apc->LFSTK_getDefaultWInit();
 	win->level=ABOVEALL;
@@ -297,6 +297,7 @@ int addCalendar(int x,int y,int grav)
 	next->LFSTK_setMouseCallBack(NULL,doNext,NULL);
 	sy+=12;
 	calWindow->LFSTK_resizeWindow(txtwid-4,sy,true);
+
 	return(iconWidth);
 }
 

@@ -328,6 +328,7 @@ void LFSTK_gadgetClass::clearBox(gadgetStruct* details)
 	cairo_pattern_t	*patt;
 	colourStruct		*usecolour;
 	geometryStruct	geom;
+	bool				usingwindowtile=false;
 
 	this->LFSTK_getGeom(&geom);
 
@@ -346,18 +347,40 @@ void LFSTK_gadgetClass::clearBox(gadgetStruct* details)
 	if(this->useTile==true)
 		{
 			if(details->buttonTile==true)
+				{
 					patt=this->pattern;
+				}
 			else
 				{
 					patt=this->wc->pattern;
+					usingwindowtile=true;
 				}
 
-			if(details->geomRelativeToMainWindow==true)
+			if(details->geomRelativeToMainWindow==true || usingwindowtile==true)
 				this->LFSTK_getGeomWindowRelative(&geom,this->wc->window);
-		
+
+			if(usingwindowtile==true && this->gadgetType!=TOGGLEGADGET)//special case
+				{
+					cairo_save(this->cr);
+						cairo_reset_clip(this->cr);
+						cairo_set_source_rgba(this->cr,0,0,0,0);
+						cairo_set_operator(this->cr,CAIRO_OPERATOR_SOURCE);
+						cairo_paint(this->cr);
+					cairo_restore(this->cr);
+				}
+			else if(this->gadgetType==TOGGLEGADGET && static_cast<LFSTK_toggleButtonClass*>(this)->LFSTK_getToggleStyle()!=TOGGLECHECK)
+				{
+					cairo_save(this->cr);
+						cairo_reset_clip(this->cr);
+						cairo_set_source_rgba(this->cr,0,0,0,0);
+						cairo_set_operator(this->cr,CAIRO_OPERATOR_SOURCE);
+						cairo_paint(this->cr);
+					cairo_restore(this->cr);
+				}
+
 			cairo_save(this->cr);
 				cairo_reset_clip(this->cr);
-				if(details->geomRelativeToMainWindow==true)
+				if(details->geomRelativeToMainWindow==true ||usingwindowtile==true)
 					cairo_translate(this->cr,-geom.x,-geom.y);
 				cairo_set_source(this->cr,patt);
 				cairo_paint_with_alpha(this->cr,1.0);
@@ -441,6 +464,9 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 	int				labh;
 	int				laby;
 
+	if(this->label.empty()==true)
+		return;
+
 	if(this->isActive==false)
 		details->state=INACTIVECOLOUR;
 
@@ -465,13 +491,17 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 								if(this->imageGravity==RIGHT)
 									labelx=((details->gadgetGeom.w-this->imageWidth)/2)-(this->textExtents.width/2);
 								else
+								{
 									labelx=((details->gadgetGeom.w-details->reserveSpace)/2)-(this->textExtents.width/2)+details->reserveSpace;
+									//labelx=0;
+									}
 							}
 						else
 							labelx=((details->gadgetGeom.w-details->reserveSpace)/2)-(this->textExtents.width/2)+details->reserveSpace;
 
 						if(details->hasIndicator==true)
 							labelx-=(details->indicatorGeom.w/2);
+
 						break;
 					case RIGHT:
 						if(this->useImage==true)
@@ -490,11 +520,21 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 						labelrect.y=details->gadgetGeom.h-(gadgetGeom.h-this->imageHeight)+this->pad*2;
 						labelrect.h=labh;
 						break;
+					case TOP:
+						labelx=((details->gadgetGeom.w)/2)-(this->textExtents.width/2);
+						labely=details->gadgetGeom.y+(this->maxTextHeight);																		break;
+					case BOTTOM:
+						labelx=((details->gadgetGeom.w)/2)-(this->textExtents.width/2);
+						labely=details->gadgetGeom.y+details->gadgetGeom.h+this->pad*4-(this->maxTextHeight);
+						break;
 				}
 
 			cairo_save(this->cr);
 				cairo_select_font_face(this->cr,fontName.c_str(),slant,weight);
 				cairo_set_font_size(this->cr,fontSize);
+
+				if(this->forceCentreLabel==true)
+					labelx=this->gadgetGeom.w/2-(this->textExtents.width/2);
 
 				if(this->drawLabelBG==true)
 					{
@@ -516,12 +556,14 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 									}
 								colptr=&lcol;
 							}
-
+						labelrect.w=this->textExtents.width;
+						labelrect.h=this->textExtents.height;
 						cairo_set_source_rgba(this->cr,colptr->r,colptr->g,colptr->b,colptr->a);
 						cairo_set_operator(this->cr,CAIRO_OPERATOR_SOURCE);
-						cairo_rectangle(this->cr,labelrect.x,labelrect.y,labelrect.w,labelrect.h);
+						cairo_rectangle(this->cr,labelx,labely-(this->maxTextHeight/2)-this->pad-1,labelrect.w,labelrect.h);
 						cairo_fill(this->cr);
 					}
+
 
 				cairo_move_to(this->cr,labelx,labely);
 				cairo_set_source_rgba(this->cr,this->newGadgetFGColours.at(details->state).RGBAColour.r,this->newGadgetFGColours.at(details->state).RGBAColour.g,this->newGadgetFGColours.at(details->state).RGBAColour.b,1.0);
@@ -541,7 +583,6 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 				cairo_move_to(this->cr,0,details->gadgetGeom.h/2);
 				cairo_line_to(this->cr,details->gadgetGeom.w,details->gadgetGeom.h/2);
 				cairo_stroke(this->cr);
-
 				cairo_set_source_rgba(this->cr,brcolour.r,brcolour.g,brcolour.b,brcolour.a);
 				cairo_move_to(this->cr,0,details->gadgetGeom.h/2+1);
 				cairo_line_to(this->cr,details->gadgetGeom.w,details->gadgetGeom.h/2+1);
@@ -556,11 +597,11 @@ void LFSTK_gadgetClass::drawLabel(gadgetStruct* details)
 void LFSTK_gadgetClass::drawGagetDetails(void)
 {
 	this->clearBox(&this->gadgetDetails);
-	this->drawLabel(&this->gadgetDetails);
 	if(this->style!=BEVELNONE)
 		this->drawBevel(&this->gadgetDetails.gadgetGeom,this->gadgetDetails.bevel);
 	if(this->useImage==true)
 		this->drawImage();
+	this->drawLabel(&this->gadgetDetails);
 	if(this->showIndicator==true)
 		this->drawIndicator(&this->gadgetDetails);
 }
@@ -621,6 +662,9 @@ bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 	bool retval=true;
 	this->keyEvent=NULL;
 	this->mouseEvent=NULL;
+	
+	//if(this->LFSTK_getContextWindow()==NULL && e->button==Button3)//TODO//URGENT!!
+	//	return(true);
 
 //no callbacks
 	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
@@ -660,6 +704,9 @@ bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 	this->mouseDownX=e->x;
 	this->mouseDownY=e->y;
 	this->keyEvent=NULL;
+
+	//if(this->LFSTK_getContextWindow()==NULL && e->button==Button3)
+	//	return(true);
 
 //no callbacks
 	if((this->callBacks.runTheCallback==false) || (this->isActive==false))
@@ -863,6 +910,14 @@ bool LFSTK_gadgetClass::gotFocus(XEvent *e)
 }
 
 /**
+* Set the image gravity.
+*/
+void LFSTK_gadgetClass::LFSTK_setImageGravity(int grav)
+{
+	this->imageGravity=grav;
+}
+		
+/**
 * Draw Scaled image.
 */
 void LFSTK_gadgetClass::drawImage()
@@ -900,12 +955,37 @@ void LFSTK_gadgetClass::drawImage()
 				xoffset=(this->gadgetGeom.w/2)-(this->imageWidth/2);
 				yoffset=this->pad*2;
 				break;
+			case BOTTOM:
+				xoffset=(this->gadgetGeom.w/2)-(this->imageWidth/2);
+				yoffset=(this->gadgetGeom.h-this->pad*2)-(this->imageHeight);
+				break;
+			case TOP:
+				xoffset=(this->gadgetGeom.w/2)-(this->imageWidth/2);
+				yoffset=this->pad*2;
+				break;
 		}
 
 	cairo_save(this->cr);
 		cairo_reset_clip (this->cr);
-		//if((xoffset!=0) && (yoffset!=0))
 		cairo_translate(this->cr,xoffset,yoffset);
+		switch(this->flip)
+			{
+				case 0:
+					break;
+				case 1:
+					cairo_translate(this->cr, this->imageWidth,0);
+					cairo_scale(this->cr, -1, 1);
+					break;
+				case 2:
+					cairo_translate(this->cr, 0, this->imageHeight);
+					cairo_scale(this->cr, 1, -1);
+					break;
+				case 3:
+					cairo_translate(this->cr, this->imageWidth, this->imageHeight);
+					cairo_scale(this->cr,- 1, -1);
+					break;
+			}	
+
 		cairo_set_source_surface(this->cr,this->cImage,0,0);
 		cairo_set_operator(this->cr,CAIRO_OPERATOR_OVER);
 		cairo_paint_with_alpha(this->cr,this->alpha);

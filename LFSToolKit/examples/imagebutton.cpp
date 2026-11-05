@@ -30,6 +30,8 @@ LFSTK_buttonClass		*imagebuttonL=NULL;
 LFSTK_buttonClass		*imagebuttonC=NULL;
 LFSTK_buttonClass		*imagebuttonR=NULL;
 LFSTK_toggleButtonClass	*imagebuttonT=NULL;
+LFSTK_buttonClass		*imagebuttonTOP=NULL;
+LFSTK_buttonClass		*imagebuttonBOTTOM=NULL;
 LFSTK_buttonClass		*imagebuttonNA=NULL;
 LFSTK_buttonClass		*seperator=NULL;
 LFSTK_buttonClass		*quit=NULL;
@@ -82,35 +84,66 @@ int main(int argc, char **argv)
 
 //image button left
 	imagebuttonL=new LFSTK_buttonClass(wc,"Left Image",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*2,BUTTONGRAV);
+imagebuttonL->flip=1;
+
 	imagebuttonL->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA(0xdeadbeef1));
 	imagebuttonL->LFSTK_setImageFromPath("./casper2.JPG",LEFT,true);
 	imagebuttonL->LFSTK_setLabelGravity(CENTRE);
+	imagebuttonL->drawLabelBG=true;
+	imagebuttonL->autoLabelBGColour=true;
 	sy+=YSPACING*2;
 
 //image button centre
-	imagebuttonC=new LFSTK_buttonClass(wc,"",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*2,BUTTONGRAV);
+	imagebuttonC=new LFSTK_buttonClass(wc,"Centre Image",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*2,BUTTONGRAV);
 	imagebuttonC->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA(0xdeadbeef2));
 	imagebuttonC->LFSTK_setImageFromPath("./casper2.JPG",CENTRE,true);
+	imagebuttonC->LFSTK_setFontString("sans:size=16:bold",true);
+	imagebuttonC->forceCentreLabel=true;
+	imagebuttonC->drawLabelBG=true;
+	imagebuttonC->autoLabelBGColour=true;
 
+//imagebuttonC->LFSTK_setLabelBGColour(1,0,0,1.0);
 	sy+=YSPACING*2;
 
 //image button right
-	imagebuttonR=new LFSTK_buttonClass(wc,"Right Image",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*2,BUTTONGRAV);
+	imagebuttonR=new LFSTK_buttonClass(wc,"Right Image (flipped)",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*2,BUTTONGRAV);
+//imagebuttonR->flip=2;
 	imagebuttonR->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA(0xdeadbeef3));
 	imagebuttonR->LFSTK_setImageFromPath("./casper2.JPG",RIGHT,true);
 	imagebuttonR->LFSTK_setLabelGravity(CENTRE);
 	imagebuttonR->gadgetDetails.reserveSpace=4;
+imagebuttonR->flip=0;
 	sy+=YSPACING*2;
+
+//image button top
+	imagebuttonTOP=new LFSTK_buttonClass(wc,"Top Image",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*4,BUTTONGRAV);
+	imagebuttonTOP->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA(0xdeadbeef4));
+	imagebuttonTOP->LFSTK_setImageFromPath("./casper2.JPG",TOOLBAR,true);
+	imagebuttonTOP->LFSTK_setImageGravity(TOP);
+	imagebuttonTOP->LFSTK_setLabelGravity(BOTTOM);
+	imagebuttonTOP->gadgetDetails.reserveSpace=4;
+	sy+=YSPACING*2+GADGETHITE*2;
+imagebuttonTOP->flip=2;
+
+//image button bottom
+	imagebuttonBOTTOM=new LFSTK_buttonClass(wc,"Bottom Image (flipped)",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*4,BUTTONGRAV);
+imagebuttonBOTTOM->flip=3;
+	imagebuttonBOTTOM->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA(0xdeadbeef5));
+	imagebuttonBOTTOM->LFSTK_setImageFromPath("./casper2.JPG",TOOLBAR,true);
+	imagebuttonBOTTOM->LFSTK_setImageGravity(BOTTOM);
+	imagebuttonBOTTOM->LFSTK_setLabelGravity(TOP);
+	imagebuttonBOTTOM->gadgetDetails.reserveSpace=4;
+	sy+=YSPACING*2+GADGETHITE*2;
 
 //image button menu
 	imagebuttonR=new LFSTK_buttonClass(wc,"Menu Image Button",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE,BUTTONGRAV);
-	imagebuttonR->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA(0xdeadbeef4));
+	imagebuttonR->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA(0xdeadbeef6));
 	imagebuttonR->LFSTK_setImageFromPath("./casper2.JPG",MENU,true);
 	sy+=YSPACING;
 
 //image button no alpha
 	imagebuttonNA=new LFSTK_buttonClass(wc,"Image No Alpha",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*2,BUTTONGRAV);
-	imagebuttonNA->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA(0xdeadbeef5));
+	imagebuttonNA->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA(0xdeadbeef7));
 	imagebuttonNA->LFSTK_setImageFromPath("./casper2.JPG",LEFT,true);
 	imagebuttonNA->LFSTK_setLabelGravity(CENTRE);
 	imagebuttonNA->LFSTK_setAlpha(255);

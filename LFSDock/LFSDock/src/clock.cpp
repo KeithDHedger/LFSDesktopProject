@@ -45,13 +45,14 @@ int addClock(int x,int y,int grav)
 			return(0);
 		}
 
-	clockButton=new LFSTK_buttonClass(dockWindow,"--:--:--",x,y+(iconWidth/2)-(GADGETHITE/2),iconWidth,GADGETHITE);
+	clockButton=new LFSTK_buttonClass(dockWindow,"--:--:--",x,y+(dockWindowHeight/2)-(GADGETHITE/2),iconWidth,GADGETHITE);
 	setGadgetDetails(clockButton);
 	clockButton->LFSTK_setFontString(prefs.LFSTK_getCString("font"),true);
 	clockButton->LFSTK_setIgnores(false,false);
 	clockButton->LFSTK_setTile(NULL,0);
 	clockButton->LFSTK_setGadgetColourPair(NORMALCOLOUR,dockBGColour,dockTextColour);
 	clockButton->LFSTK_setStyle(BEVELNONE);	
+	clockButton->LFSTK_setLabelGravity(CENTRE);
 
 	return(iconWidth);
 }

@@ -123,6 +123,7 @@ class LFSTK_gadgetClass
 		void					LFSTK_setLabelGravity(int orient);
 
 //graphics
+int flip=0;
 		void					drawImage();
 		void					LFSTK_setIndicator(indicatorType indictype);
 		cairo_status_t 		LFSTK_setImageFromPath(std::string file,int orient,bool scale);
@@ -134,6 +135,7 @@ class LFSTK_gadgetClass
 		void					LFSTK_setUseWindowPixmap(bool usepixmap);
 		void					LFSTK_setAlpha(double alph);
 		void					LFSTK_setStyle(bevelType s);
+		void					LFSTK_setImageGravity(int grav);
 
 		std::string			imagePath;
 //geometry
@@ -187,6 +189,8 @@ class LFSTK_gadgetClass
 
 		int					gadgetType=NOGADGET;
 
+bool					useTile=false;
+bool		forceCentreLabel=false;
 	private:
 		void					initGadget(void);
 		void					selectBevel(bool mousedown);
@@ -231,7 +235,7 @@ class LFSTK_gadgetClass
 		int					imageHeight=0;
 		int					imageGravity=CENTRE;
 		float				ratio;
-		bool					useTile;
+//		bool					useTile;
 
 		bevelType			newbevel=BEVELOUT;
 		gadgetState			state=NORMALCOLOUR;

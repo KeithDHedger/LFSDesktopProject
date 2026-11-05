@@ -28,10 +28,9 @@ extern std::vector<launcherDataStruct>	launchersArray;
 extern LFSTK_findClass					*findlaunchers;
 extern LFSTK_gadgetClass					*currentLauncher;
 extern LFSTK_windowClass					*launcherContextWC;
-extern const char						*contextThemeIconData[];
 
-bool		launcherCB(void *p,void* ud);
-int		addLaunchers(int x,int y,int grav);
-bool		launcherExitCB(LFSTK_gadgetClass* p,void* ud);
+bool										launcherCB(void *p,void* ud);
+int										addLaunchers(int x,int y,int grav);
+bool										launcherExitCB(LFSTK_gadgetClass* p,void* ud);
 
 #endif

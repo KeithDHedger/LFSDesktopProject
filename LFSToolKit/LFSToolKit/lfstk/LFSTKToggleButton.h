@@ -34,20 +34,21 @@ class LFSTK_toggleButtonClass  : public  LFSTK_gadgetClass
 		~LFSTK_toggleButtonClass();
 		LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned w,unsigned h,int gravity=NorthWestGravity);
 
-		bool mouseEnter(XButtonEvent *e);
-		bool mouseExit(XButtonEvent *e);
-		bool mouseDown(XButtonEvent *e);
-		bool mouseUp(XButtonEvent *e);
+		bool				mouseEnter(XButtonEvent *e);
+		bool				mouseExit(XButtonEvent *e);
+		bool				mouseDown(XButtonEvent *e);
+		bool				mouseUp(XButtonEvent *e);
 
-		void LFSTK_setToggleStyle(drawStyle ds);
-		void LFSTK_setValue(bool val);
-		bool LFSTK_getValue(void);
+		void				LFSTK_setToggleStyle(drawStyle ds);
+		drawStyle		LFSTK_getToggleStyle(void);
+		void				LFSTK_setValue(bool val);
+		bool				LFSTK_getValue(void);
 
 		cairo_surface_t	*checkOn=NULL;
 		cairo_surface_t	*checkOff=NULL;
 	private:
 		drawStyle		boxStyle;
-		bool			toggleState;
+		bool				toggleState;
 };
 
 #endif

@@ -1,4 +1,8 @@
 0.2.1
+Code clean.
+Removed background window.
+Fixed iconizing dock.
+Fxed dock end cap graphics.
 Fixed erroniously showing unmapped but extant windows in taskbar,
 Fixed right side image when using background.
 Fixed setting window background.

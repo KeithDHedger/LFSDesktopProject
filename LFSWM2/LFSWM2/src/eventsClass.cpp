@@ -185,6 +185,7 @@ void LFSWM2_eventsClass::LFSWM2_mainEventLoop(void)
 									this->LFSWM2_shuffle(cc->contentWindow);
 									cc->isActive=true;
 									cc->rendered=true;
+									this->noRestack=false;
 								}
 						}
 				}

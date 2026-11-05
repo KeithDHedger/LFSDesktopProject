@@ -1,4 +1,10 @@
 0.7.0
+Fixed check boxes.
+Added force label to centre of gadget.
+Added TOP/BOTTOM to gadget image gravity.
+Added TOP/BOTTOM to gadget text gravity.
+Fixed using window tile start position in gadgets.
+Added fliping of images.
 Fixed occasional segfault when closing file dialog.
 Improved finding themed icon.
 Added ~/.local/share/pixmaps to search path for themed icon.
