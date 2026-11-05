@@ -36,8 +36,8 @@ Gadgets can be in any order you wish.
 If you set a backround image, it will be tiled over the window  
 PNG's should be used if you want to use end caps  
 End caps can be optionally set and should be in the same folder and be the same format as the main tile image with the filenames being for instance:  
-/home/keithhedger/Backgrounds/rage.png << main tile, only this path needs be set in the config file ( please use the lfsdockprefs app ).  
-/home/keithhedger/Backgrounds/rage-ls.png << end cap.  
+/usr/share/LFSDock/pixmaps/rage.png << main tile, only this path needs be set in the config file ( please use the lfsdockprefs app ).  
+/usr/share/LFSDock/pixmaps/rage-ls.png << end cap.  
 End caps are flipped according left/right and up/down to suit the dock gravity, only one end cap is needed ( should be for the left of a SOUTH gravity dock ).
 Images can be (semi-)transparent.  
 Some examples are included in /usr/share/LFSDock/pixmaps  
