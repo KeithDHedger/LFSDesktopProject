@@ -30,6 +30,7 @@ where month is between 0 - 11 ( 0=January, 11=December ), date is 1- however man
 You can open the config file with the your default editor by clicking the "Set Dates" buton, dates will be refreshed after selecting "<<<" or ">>>" or toggling calandar.  
   
 The calendar gadget is a toggle and so need to be clicked on to make the appropriate window appear/disappear.  
+  
 Gadgets can be in any order you wish.  
   
 If you set a backround image, it will be tiled over the window  
