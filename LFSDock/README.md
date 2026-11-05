@@ -21,7 +21,7 @@ Selecting 'Launch' from the right click menu will attemt to launch an new instan
 To add a launcher either copy a .desktop file to  ~/.config/LFS/launchers-DOCK or drag and drop one on the dock itself.<br>
 Right clicking a task window from the pop up list will move that window to the current desktop.<br>
 <br>
-You can use 's' for spaces as many times as you want.<br>
+You can use 's' for spaces as many times as you want, you can also ( optionally ) add a multiplier between 1-9 after the 's' ( eg s5 ) for multiple spaces.<br>
 <br>
 You can add date reminders to the calendar gadget via a simple text file in '~/.config/LFS/calendardates', a default file is created on 1st run if it doesn't exist.<br>
 The format is:<br>

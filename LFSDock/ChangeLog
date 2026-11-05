@@ -1,4 +1,6 @@
 0.2.1
+Added optional multiplier to space, see README.
+Fixed extra space at end of launchers.
 Code clean.
 Removed background window.
 Fixed iconizing dock.

@@ -66,12 +66,22 @@ void addGadgets(void)
 						break;
 					case 's':
 						offset+=8;
+						if(prefs.LFSTK_getStringObject("gadgetsleft")->length()-1>j)
+							{
+								if(prefs.LFSTK_getStringObject("gadgetsleft")->at(j+1)>48 && prefs.LFSTK_getStringObject("gadgetsleft")->at(j+1)<58)
+									offset+=(8*(prefs.LFSTK_getStringObject("gadgetsleft")->at(j+1)-48));
+								else
+									offset+=8;
+							}
+						else
+							offset+=8;
 						break;
 					case 'L':
 						if(gotLaunchers==false)
 							{
 								gotLaunchers=true;
 								offset+=addLaunchers(offset,normalY,dockGravity);
+								//offset-=(iconWidth);
 							}
 						else
 							printError("Duplicate launcher widget");
