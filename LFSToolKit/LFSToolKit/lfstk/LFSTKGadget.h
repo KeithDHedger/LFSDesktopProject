@@ -25,6 +25,8 @@
 #include <X11/Xlib.h>
 #include <Imlib2.h>
 
+using CC_Callback=std::function<void(std::string)>;
+
 /**
  * \brief Base class for LFSToolKit gadgets.
 */
@@ -47,6 +49,11 @@ class LFSTK_gadgetClass
 
 //other events
 		virtual bool			selectionRequest(XSelectionRequestEvent *e);
+
+//lambda installs
+		void					LFSTK_connectCB(int ident,CC_Callback cb);
+		void					LFSTK_triggerCallback(int ident,std::string txt);
+		void					LFSTK_triggerAllCallbacks(int ident);
 
 //mouse events
 		virtual bool			mouseUp(XButtonEvent *e);
@@ -123,7 +130,7 @@ class LFSTK_gadgetClass
 		void					LFSTK_setLabelGravity(int orient);
 
 //graphics
-int flip=0;
+		int					flip=0;
 		void					drawImage();
 		void					LFSTK_setIndicator(indicatorType indictype);
 		cairo_status_t 		LFSTK_setImageFromPath(std::string file,int orient,bool scale);
@@ -172,6 +179,7 @@ int flip=0;
 
 //user data
 		void					*userData=NULL;
+		std::string			userStringData;
 		XButtonEvent			*mouseEvent=NULL;
 		XKeyEvent			*keyEvent=NULL;
 		bool					toParent=false;
@@ -186,17 +194,19 @@ int flip=0;
 		cairo_surface_t 		*sfc=NULL;
 		cairo_pattern_t		*pattern=NULL;
 		unsigned				pad;
-
 		int					gadgetType=NOGADGET;
+		bool					useTile=false;
+		bool					forceCentreLabel=false;
 
-bool					useTile=false;
-bool		forceCentreLabel=false;
 	private:
 		void					initGadget(void);
 		void					selectBevel(bool mousedown);
 		cairo_surface_t		*link=NULL;
 		cairo_surface_t		*broken=NULL;
 		void					resizeCairoParts(int width,int height);
+
+//for lambda functs
+		std::map<int,CC_Callback> cbCallBacks;
 
 	protected:
 		mappedListener		*ml=NULL;

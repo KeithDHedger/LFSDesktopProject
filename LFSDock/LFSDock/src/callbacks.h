@@ -24,6 +24,9 @@
 extern LFSTK_buttonClass	*mainContextButtons[];
 extern LFSTK_windowClass	*taskContextWindow;
 
+extern LFSTK_windowClass	*tooltiptWC;
+extern LFSTK_labelClass	*ttLabel;
+
 void sendClientMessage(Window win,const char *msg,unsigned long data0,unsigned long data1,unsigned long data2,unsigned long data3,unsigned long data4);
 bool gadgetDrop(void *lwc,propertyStruct *data,void* ud);
 bool timerCB(LFSTK_applicationClass *p,void* ud);
@@ -37,5 +40,6 @@ bool exitPopList(LFSTK_gadgetClass*p,void* ud);
 bool hideCB(void* p,void* ud);
 bool contextCB(void *p,void* ud);
 bool dockContextCallback(void *p,void* ud);
+void showToolTip(LFSTK_gadgetClass *p,std::string tiplabel);
 
 #endif

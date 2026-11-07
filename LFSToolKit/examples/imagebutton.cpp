@@ -95,12 +95,38 @@ imagebuttonL->flip=1;
 
 //image button centre
 	imagebuttonC=new LFSTK_buttonClass(wc,"Centre Image",DIALOGMIDDLE-GADGETWIDTH,sy,GADGETWIDTH*2,GADGETHITE*2,BUTTONGRAV);
-	imagebuttonC->LFSTK_setMouseCallBack(NULL,buttonCB,USERDATA(0xdeadbeef2));
+	//imagebuttonC->LFSTK_setMouseCallBack(buttonCB,NULL,USERDATA(0xdeadbeef2));
 	imagebuttonC->LFSTK_setImageFromPath("./casper2.JPG",CENTRE,true);
 	imagebuttonC->LFSTK_setFontString("sans:size=16:bold",true);
 	imagebuttonC->forceCentreLabel=true;
 	imagebuttonC->drawLabelBG=true;
 	imagebuttonC->autoLabelBGColour=true;
+	imagebuttonC->userStringData="Centre Image";
+	imagebuttonC->userData=USERDATA(0xdeadbeef2);
+
+	imagebuttonC->LFSTK_connectCB(ButtonPress,[](std::string msg)
+		{
+			fprintf(stderr,"got ButtonPress 4000:>>%s<<\n",msg.c_str());
+			fprintf(stderr,"gadget->currentButton=%i\n",imagebuttonC->currentButton);
+			fprintf(stderr,"gadget->userData=%p\n",imagebuttonC->userData);
+			fprintf(stderr,"gadget->userStringData=>>%s<<\n",imagebuttonC->userStringData.c_str());
+			fprintf(stderr,"gadget->event=%p\n",imagebuttonC->xEvent);
+			if(imagebuttonC->xEvent!=NULL)
+				{
+					fprintf(stderr,"gadget->event->type=%p\n",imagebuttonC->xEvent->type);
+				}
+			//qDebug()<<QString("got 4:%1").arg(msg)<<cc.cnt;
+		});
+
+//	imagebuttonC->connectCBByName(27,[](std::string msg)
+//		{
+//			fprintf(stderr,"got 8000:%s\n",msg.c_str());
+//			//qDebug()<<QString("got 4:%1").arg(msg)<<cc.cnt;
+//		});
+
+
+
+
 
 //imagebuttonC->LFSTK_setLabelBGColour(1,0,0,1.0);
 	sy+=YSPACING*2;

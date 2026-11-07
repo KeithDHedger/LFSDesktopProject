@@ -104,6 +104,7 @@ bool calCB(void *p,void* ud)
 	geometryStruct			geom;
 	const geometryStruct		*wingeom;
 
+	tooltiptWC->LFSTK_hideWindow();
 	updateDates();
 
 	if(p!=NULL)
@@ -146,15 +147,16 @@ bool calExitCB(LFSTK_gadgetClass*p,void* ud)
 		setGadgetPosition(calendarButton,false);
 
 	calendarIsUp=false;
+	tooltiptWC->LFSTK_hideWindow();
 	return(true);
 }
 
 bool calEnterCB(LFSTK_gadgetClass*p,void* ud)
 {
-	exitPopList(p,ud);
-
 	if(calendarIsUp==true)
 		return(true);
+
+	showToolTip(p,"Calendar");
 
 	if(moveGadget==true)
 		setGadgetPosition(calendarButton,true);
@@ -258,7 +260,7 @@ int addCalendar(int x,int y,int grav)
 
 	win=apc->LFSTK_getDefaultWInit();
 	win->level=ABOVEALL;
-	win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_DIALOG"));
+	win->windowType=apc->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
 	win->decorated=false;
 	apc->LFSTK_addToolWindow(win,"Calendar");
 	calWindow=apc->windows->back().window;

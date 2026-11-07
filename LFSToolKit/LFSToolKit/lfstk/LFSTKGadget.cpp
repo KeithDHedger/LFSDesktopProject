@@ -692,6 +692,26 @@ bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 	return(retval);
 }
 
+void LFSTK_gadgetClass::LFSTK_triggerAllCallbacks(int ident)
+{
+		for(auto n:this->cbCallBacks)
+			{
+				if(n.first==ident)
+					this->LFSTK_triggerCallback(n.first,this->userStringData);
+			}
+}
+
+void LFSTK_gadgetClass::LFSTK_triggerCallback(int ident,std::string txt)
+{
+	if (this->cbCallBacks.find(ident) != this->cbCallBacks.end())
+		this->cbCallBacks[ident](txt);
+}
+
+void LFSTK_gadgetClass::LFSTK_connectCB(int ident,CC_Callback cb)
+{
+	this->cbCallBacks[ident]=cb;
+}
+
 /**
 * Mouse down callback.
 * \param e XButtonEvent passed from mainloop->listener.
@@ -705,8 +725,13 @@ bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 	this->mouseDownY=e->y;
 	this->keyEvent=NULL;
 
-	//if(this->LFSTK_getContextWindow()==NULL && e->button==Button3)
-	//	return(true);
+//	if(this->LFSTK_getContextWindow()==NULL && e->button==Button3)
+//		{
+//			//this->triggerAllCallbackByName();
+//			this->triggerCallbackByName(0,"callback name=testing from gadget");
+//			fprintf(stderr,"buutton3\n");
+//			return(false);
+//		}
 
 //no callbacks
 	if((this->callBacks.runTheCallback==false) || (this->isActive==false))

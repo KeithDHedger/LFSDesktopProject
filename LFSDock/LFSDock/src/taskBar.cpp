@@ -39,8 +39,8 @@ bool compareTaskClass(const taskStruct &a,const taskStruct &b)
 
 bool taskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 {
-	if(checkInBorder(p)==true)
-		return(true);
+//	if(checkInBorder(p)==true)
+//		return(true);
 
 	exitPopList(p,ud);
 	inSomeWindow=false;

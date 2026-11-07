@@ -186,7 +186,7 @@ class LFSTK_windowClass
 
 //app
 		LFSTK_applicationClass			*app=NULL;
-		bool								inWindow=false;
+		bool					inWindow=false;
 
 	protected:
 		bool					isActive;

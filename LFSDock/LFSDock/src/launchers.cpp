@@ -27,8 +27,10 @@ std::vector<launcherDataStruct>	launchersArray;
 LFSTK_findClass					*findlaunchers=NULL;
 LFSTK_gadgetClass				*currentLauncher=NULL;
 LFSTK_windowClass				*launcherContextWC=NULL;
-LFSTK_windowClass				*tooltiptWC=NULL;
-LFSTK_labelClass					*ttLabel=NULL;
+//LFSTK_windowClass				*tooltiptWC=NULL;
+//LFSTK_labelClass					*ttLabel=NULL;
+
+std::string						extraArgsForLaunch;
 
 bool launcherContextCB(void *p,void* ud)
 {
@@ -44,30 +46,37 @@ bool launcherContextCB(void *p,void* ud)
 	return(true);
 }
 
+bool gadgetDrop1(void *lwc,propertyStruct *data,void* ud)
+{
+	std::string			c;
+	LFSTK_buttonClass	*bc=static_cast<LFSTK_buttonClass*>(lwc);
+	launcherDataStruct	lds=launchersArray.at((long unsigned int)bc->userData);
+
+	c=LFSTK_UtilityClass::LFSTK_strStrip((const char*)data->data);
+	extraArgsForLaunch="";
+
+	std::vector<std::string>	ss=LFSTK_UtilityClass::LFSTK_strTok(c,"\n");
+
+	for(std::string str:ss)
+		{
+			if(str.substr(0,7)=="file://")
+				{
+					str.replace(0,7,"");
+					str=LFSTK_UtilityClass::LFSTK_strStrip(str);
+					extraArgsForLaunch+=" \""+str+"\"";
+				}
+		}
+
+	if(extraArgsForLaunch.empty()==false)
+		launcherCB(bc,ud);
+
+	return(true);
+}
+
 bool launcherEnterCB(LFSTK_gadgetClass* p,void* ud)
 {
-	geometryStruct		geom;
 	launcherDataStruct	lds=launchersArray.at((long unsigned int)ud);
-	const geometryStruct	*wingeom=tooltiptWC->LFSTK_getWindowGeom();
-
-	exitPopList(p,ud);
-
-	if(moveGadget==true)
-		setGadgetPosition(p,true);
-
-	ttLabel->LFSTK_setLabel(lds.name,true);
-	ttLabel->LFSTK_setCairoFontDataParts("s",12);
-	tooltiptWC->LFSTK_resizeWindow(ttLabel->LFSTK_getTextRealWidth(lds.name)+4,GADGETHITE-4);
-	p->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);
-
-	if(dockGravity==PANELSOUTH)
-		tooltiptWC->LFSTK_moveWindow((geom.x+(geom.w/2))-(ICONSPACE)-(ttLabel->LFSTK_getTextRealWidth(lds.name)/2),geom.y-wingeom->h,true);
-	else
-		tooltiptWC->LFSTK_moveWindow((geom.x+(geom.w/2))-(ICONSPACE)-(ttLabel->LFSTK_getTextRealWidth(lds.name)/2),dockWindow->h,true);
-
-	XRaiseWindow(apc->display,tooltiptWC->window);
-	dockWindow->LFSTK_redrawAllGadgets();
-	lds.donePrelight=true;
+	showToolTip(p,lds.name);
 
 	return(true);
 }
@@ -77,7 +86,7 @@ bool launcherExitCB(LFSTK_gadgetClass* p,void* ud)
 	if(moveGadget==true)
 		setGadgetPosition(p,false);
 
-	tooltiptWC->LFSTK_moveWindow(-1000,1000,true);
+	tooltiptWC->LFSTK_hideWindow();
 	return(true);
 }
 
@@ -102,7 +111,11 @@ bool launcherCB(void *p,void* ud)
 			args="";
 		}
 
+	args=args+extraArgsForLaunch;
+	extraArgsForLaunch="";
+
 	sendNotify("Launching ",lds.name);
+
 	if(lds.inTerm==false)
 		str=apc->globalLib->LFSTK_oneLiner("exec %S %S &\necho $!",command,args);
 	else
@@ -219,10 +232,26 @@ int addLaunchers(int x,int y,int grav)
 				}
 
 			bc->userData=USERDATA(l);
-			bc->LFSTK_setMouseCallBack(NULL,launcherCB,USERDATA(l));
-			bc->LFSTK_setGadgetDropCallBack(gadgetDrop,USERDATA(l));
-			bc->LFSTK_setMouseMoveCallBack(launcherEnterCB,launcherExitCB,USERDATA(l));
+			bc->userStringData="XXX";
+			bc->LFSTK_setGadgetDropCallBack(gadgetDrop1,USERDATA(l));
 			bc->gadgetAcceptsDnD=true;
+
+//EnterNotify
+			bc->LFSTK_connectCB(EnterNotify,[bc](std::string msg) {launcherEnterCB(bc,bc->userData);});
+//LeaveNotify
+			bc->LFSTK_connectCB(LeaveNotify,[bc](std::string msg) {launcherExitCB(bc,bc->userData);});
+//clicks
+			bc->LFSTK_connectCB(ButtonPress,[bc](std::string msg)
+				{
+					if(bc->currentButton==Button3)
+						launcherExitCB(bc,NULL);
+					if(bc->currentButton==Button1)
+						{
+							launcherCB(bc,bc->userData);
+							launcherExitCB(bc,NULL);
+						}		
+				});
+
 			if((lds.icon.empty()==false) && (desktopTheme.empty()==false))
 				icon=apc->globalLib->LFSTK_findThemedIcon(desktopTheme,lds.icon,"");
 			if(icon.empty()==false)

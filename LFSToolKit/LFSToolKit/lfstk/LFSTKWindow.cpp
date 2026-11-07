@@ -1623,6 +1623,7 @@ int LFSTK_windowClass::LFSTK_handleWindowEvents(XEvent *event)
 				break;
 
 			case LeaveNotify:
+			//fprintf(stderr,"LeaveNotify\n");
 				this->inWindow=false;
 				if((event->xany.window==this->window) && (this->popupFromGadget!=NULL))
 					return(-1);

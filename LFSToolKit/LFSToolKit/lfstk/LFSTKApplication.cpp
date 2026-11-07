@@ -342,7 +342,9 @@ int LFSTK_applicationClass::LFSTK_runApp(void)
 										{
 											ml=this->windows->at(j).window->LFSTK_getMappedListener(event.xany.window);
 											if(ml!=NULL)
-												ml->function(ml->gadget,&event,ml->type);
+												{
+													ml->function(ml->gadget,&event,ml->type);
+												}
 
 											this->windows->at(j).window->LFSTK_handleWindowEvents(&event);
 										}

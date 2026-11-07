@@ -288,6 +288,7 @@ bool dockContextCallback(void *p,void* ud)
 						dockWindow->LFSTK_setContextWindow(NULL);
 						iconWindow->LFSTK_showWindow();
 						iconWindow->LFSTK_clearWindow(true);
+						XRaiseWindow(apc->display,iconWindow->window);
 						if(calendarButton!=NULL)
 							{
 								calendarButton->LFSTK_setValue(false);
@@ -331,4 +332,31 @@ bool contextCB(void *p,void* ud)
 
 	dockContextCallback(p,ud);
 	return(true);
+}
+
+LFSTK_windowClass	*tooltiptWC=NULL;
+LFSTK_labelClass		*ttLabel=NULL;
+
+void showToolTip(LFSTK_gadgetClass *p,std::string tiplabel)
+{
+	geometryStruct		geom;
+	const geometryStruct	*wingeom=tooltiptWC->LFSTK_getWindowGeom();
+
+	exitPopList(p,NULL);
+
+	if(moveGadget==true)
+		setGadgetPosition(p,true);
+
+	ttLabel->LFSTK_setLabel(tiplabel,true);
+	ttLabel->LFSTK_setCairoFontDataParts("s",12);
+	tooltiptWC->LFSTK_showWindow(true);
+	tooltiptWC->LFSTK_resizeWindow(ttLabel->LFSTK_getTextRealWidth(tiplabel)+4,GADGETHITE-4);
+	p->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);
+
+	if(dockGravity==PANELSOUTH)
+		tooltiptWC->LFSTK_moveWindow((geom.x+(geom.w/2))-(ICONSPACE)-(ttLabel->LFSTK_getTextRealWidth(tiplabel)/2),geom.y-wingeom->h,true);
+	else
+		tooltiptWC->LFSTK_moveWindow((geom.x+(geom.w/2))-(ICONSPACE)-(ttLabel->LFSTK_getTextRealWidth(tiplabel)/2),dockWindow->h,true);
+
+	XRaiseWindow(apc->display,tooltiptWC->window);
 }

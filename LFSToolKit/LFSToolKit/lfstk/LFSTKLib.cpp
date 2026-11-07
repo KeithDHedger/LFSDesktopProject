@@ -346,6 +346,12 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 	gadget->xEvent=e;
 
 	XQueryPointer(gadget->wc->app->display,gadget->wc->app->rootWindow,&sink,&childwindow,&sinkx,&sinky,&sinkx,&sinky,&buttonmask);
+
+	if(e->type==ButtonPress || e->type==ButtonRelease)
+		gadget->currentButton=e->xbutton.button;
+	gadget->xEvent=e;
+	gadget->LFSTK_triggerAllCallbacks(e->type);
+
 	switch (e->type)
 		{
 			case EnterNotify:

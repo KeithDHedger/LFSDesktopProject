@@ -104,8 +104,12 @@ void addGadgets(void)
 			taskbuttons[j]=new LFSTK_buttonClass(dockWindow,"",windowWidth+(j*(iconWidth+ICONSPACE)),0,iconWidth,dockWindowHeight);
 			setGadgetDetails(taskbuttons[j]);
 			taskbuttons[j]->LFSTK_setAlpha(1.0);
-			taskbuttons[j]->LFSTK_setMouseCallBack(NULL,taskListCB,NULL);
-			taskbuttons[j]->LFSTK_setMouseMoveCallBack(taskSwitcherEnterCB,taskSwitcherExitCB,NULL);
+//EnterNotify
+			taskbuttons[j]->LFSTK_connectCB(EnterNotify,[j](std::string msg) {taskSwitcherEnterCB(taskbuttons[j],NULL);});
+//LeaveNotify
+			taskbuttons[j]->LFSTK_connectCB(LeaveNotify,[j](std::string msg) {taskSwitcherExitCB(taskbuttons[j],NULL);});
+//clicks
+			taskbuttons[j]->LFSTK_connectCB(ButtonPress,[j](std::string msg) {taskListCB(taskbuttons[j],NULL);});
 		}
 }
 
@@ -352,7 +356,7 @@ int main(int argc,char **argv)
 			deskCount=pr.integer;
 
 			win=apc->LFSTK_getDefaultWInit();
-			win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_NORMAL"));
+			win->windowType=win->app->appAtomsHashed.at(LFSTK_UtilityClass::LFSTK_hashFromKey("_NET_WM_WINDOW_TYPE_MENU"));
 			win->level=ABOVEALL;
 			win->decorated =false;
 			win->overRide =true;
@@ -364,7 +368,8 @@ int main(int argc,char **argv)
 			for(int j=CONTEXTMENUPREFS;j<NOMORECONTEXTMENUS;j++)
 				{
 					mainContextButtons[j+offset]=new LFSTK_buttonClass(mainContextWindow,labelData[j],0,sy,GADGETWIDTH*2,24,NorthWestGravity);
-					mainContextButtons[j+offset]->LFSTK_setMouseCallBack(NULL,contextCB,(void*)(long)(j));
+					mainContextButtons[j+offset]->LFSTK_connectCB(ButtonPress,[j,offset](std::string msg) {contextCB(mainContextButtons[j+offset],USERDATA(j));});
+
 					iconpath=mainContextWindow->globalLib->LFSTK_findThemedIcon("gnome",themeIconData[j],"");
 					mainContextButtons[j+offset]->LFSTK_setImageFromPath(iconpath,LEFT,true);
 					setGadgetDetails(mainContextButtons[j+offset]);

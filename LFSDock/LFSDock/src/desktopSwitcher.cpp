@@ -33,9 +33,6 @@ void updateDeskSwitcher(void)
 
 bool deskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 {
-	if(checkInBorder(p)==true)
-		return(true);
-
 	exitPopList(p,ud);
 	inSomeWindow=false;
 	return(true);
@@ -122,7 +119,13 @@ int addDesktopSwitcer(int x,int y,int grav)
 	setGadgetDetails(switchButton);
 	switchButton->LFSTK_setAlpha(1.0);
 	switchButton->LFSTK_setStyle(BEVELNONE);
-	switchButton->LFSTK_setMouseMoveCallBack(deskSwitcherEnterCB,deskSwitcherExitCB,NULL);
+	//switchButton->LFSTK_setMouseMoveCallBack(deskSwitcherEnterCB,deskSwitcherExitCB,NULL);
+
+//EnterNotify
+	switchButton->LFSTK_connectCB(EnterNotify,[](std::string msg) {deskSwitcherEnterCB(switchButton,switchButton->userData);});
+//LeaveNotify
+	switchButton->LFSTK_connectCB(LeaveNotify,[](std::string msg) {deskSwitcherExitCB(switchButton,switchButton->userData);});
+
 	switchButton->LFSTK_setFontString("sans:size=18:bold",true);
 	switchButton->forceCentreLabel=true;
 	switchButton->drawLabelBG=false;

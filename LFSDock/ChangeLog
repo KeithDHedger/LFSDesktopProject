@@ -1,3 +1,10 @@
+0.2.2
+Set all popup windows to type _NET_WM_WINDOW_TYPE_MENU.
+Fixed calendar tooltip.
+Better enter/exit detection in desktop switcher and tasks.
+Right clicking launcher to bring up context window now hides the launcher name.
+Started moving to lambda functions for callbacks.
+
 0.2.1
 Added optional multiplier to space, see README.
 Fixed extra space at end of launchers.
