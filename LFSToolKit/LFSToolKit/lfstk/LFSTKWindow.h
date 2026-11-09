@@ -162,7 +162,8 @@ class LFSTK_windowClass
 		std::map<int,mappedListener*>	*LFSTK_getGadgets(void);
 
 //context
-		contextPostition		contextWindowPos=CONTEXTATMOUSE;
+		contextPostition		contextWindowPos=  
+;
 		LFSTK_windowClass	*contextWC=NULL;
 		bool					ignoreContext=false;
 		int					contextXOffset=0;

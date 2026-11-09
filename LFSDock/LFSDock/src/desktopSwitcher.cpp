@@ -35,6 +35,7 @@ bool deskSwitcherExitCB(LFSTK_gadgetClass*p,void* ud)
 {
 	exitPopList(p,ud);
 	inSomeWindow=false;
+	noshow=false;
 	return(true);
 }
 
@@ -42,6 +43,7 @@ bool deskSwitcherEnterCB(LFSTK_gadgetClass*p,void* ud)
 {
 	std::string		label;
 	infoDataStruct	ls;
+	noshow=true;
 
 	showhidetActionList(NULL,popActionWindow,popActionList);
 	popActionList->LFSTK_freeList();	

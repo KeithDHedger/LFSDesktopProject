@@ -152,6 +152,9 @@ extern Atom						NET_WM_DESKTOP;
 
 extern const char				*possibleError;
 
+
+extern bool noshow;
+
 void printError(const char *err);
 void dropDesktopFile(const char *data,void *launcher);
 void sendNotify(std::string name,std::string message);

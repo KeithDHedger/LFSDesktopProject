@@ -27,8 +27,6 @@ std::vector<launcherDataStruct>	launchersArray;
 LFSTK_findClass					*findlaunchers=NULL;
 LFSTK_gadgetClass				*currentLauncher=NULL;
 LFSTK_windowClass				*launcherContextWC=NULL;
-//LFSTK_windowClass				*tooltiptWC=NULL;
-//LFSTK_labelClass					*ttLabel=NULL;
 
 std::string						extraArgsForLaunch;
 
@@ -77,7 +75,7 @@ bool launcherEnterCB(LFSTK_gadgetClass* p,void* ud)
 {
 	launcherDataStruct	lds=launchersArray.at((long unsigned int)ud);
 	showToolTip(p,lds.name);
-
+	noshow=true;
 	return(true);
 }
 
@@ -87,6 +85,7 @@ bool launcherExitCB(LFSTK_gadgetClass* p,void* ud)
 		setGadgetPosition(p,false);
 
 	tooltiptWC->LFSTK_hideWindow();
+	noshow=false;
 	return(true);
 }
 
@@ -222,14 +221,9 @@ int addLaunchers(int x,int y,int grav)
 			bc->LFSTK_setContextWindow(launcherContextWC);
 
 			if(dockGravity==PANELSOUTH)
-				{
-					bc->contextWindowPos=CONTEXTABOVECENTRE;
-				}
+				bc->contextWindowPos=CONTEXTABOVECENTRE;
 			else
-				{
-					//bc->contextYOffset=-extraSpace;
-					bc->contextWindowPos=CONTEXTCENTRE;
-				}
+				bc->contextWindowPos=CONTEXTCENTRE;
 
 			bc->userData=USERDATA(l);
 			bc->userStringData="XXX";

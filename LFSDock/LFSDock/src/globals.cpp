@@ -101,6 +101,11 @@ LFSTK_windowClass		*mainContextWindow=NULL;
 const char				*labelData[]={"Launch","Remove From Dock","Run Prefs","Iconize Dock","Quit Dock",NULL};
 const char				*themeIconData[]={"media-playback-start","list-remove","LFSTKPrefs","utilities-system-monitor","dialog-warning"};
 
+
+bool noshow=false;
+
+
+
 void sendNotify(std::string name,std::string message)//TODO//could be better
 {
 #ifdef _GOTNOTIFYSEND_

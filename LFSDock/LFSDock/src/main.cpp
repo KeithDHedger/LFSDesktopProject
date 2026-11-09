@@ -383,6 +383,8 @@ int main(int argc,char **argv)
 					sy+=GADGETHITE;
 				}
 			mainContextWindow->LFSTK_resizeWindow(GADGETWIDTH+GADGETHITE,sy,true);
+			dockWindow->ignoreContext=true;
+
 			dockWindow->LFSTK_setContextWindow(mainContextWindow);
 			if(dockGravity==PANELSOUTH)
 				dockWindow->contextWindowPos=CONTEXTABOVE;
@@ -524,6 +526,7 @@ iconWindow->LFSTK_setContextWindow(NULL);
 				updateTaskBar(true);
 
 			dockWindow->LFSTK_showWindow(true);
+
 			int retval=apc->LFSTK_runApp();
 
 			calendarIsUp=false;

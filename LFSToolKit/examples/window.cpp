@@ -105,6 +105,8 @@ int main(int argc, char **argv)
 //wc->LFSTK_setTile(NULL,0);
 //wc->usePixmap=true;
 
+
+
 	wc->passEventToRoot=true;
 
 	wc->LFSTK_initDnD(true);
@@ -149,6 +151,62 @@ int main(int argc, char **argv)
 	contextWindow->LFSTK_resizeWindow(GADGETWIDTH,sy,true);
 	wc->LFSTK_setContextWindow(contextWindow);
 	wc->contextWindowPos=CONTEXTATMOUSE;
+
+
+//	wc->ignoreContext=true;
+//	wc->contextWindowPos=CONTEXTNORTHWEST;
+//	wc->contextWindowPos=CONTEXTNORTH;
+//	wc->contextWindowPos=CONTEXTNORTHEAST;
+
+//	wc->contextWindowPos=CONTEXTEAST;
+//	wc->contextWindowPos=CONTEXTSOUTHEAST;
+	//wc->contextWindowPos=CONTEXTSOUTH;
+	//wc->contextWindowPos=CONTEXTSOUTHWEST;
+	//wc->contextWindowPos=;
+//
+//
+//	wc->contextWindowPos=OUTSIDETOPLEFT;
+//	wc->contextWindowPos=OUTSIDETOPCENTRE;
+//	wc->contextWindowPos=OUTSIDETOPRIGHT;
+//	wc->contextWindowPos=INSIDETOPLEFT;
+//	wc->contextWindowPos=INSIDETOPCENTRE;
+//	wc->contextWindowPos=INSIDETOPRIGHT;
+//
+//	wc->contextWindowPos=OUTSIDERIGHTTOP;
+//	wc->contextWindowPos=OUTSIDERIGHTCENTRE;
+//	wc->contextWindowPos=OUTSIDERIGHTBOTTOM;
+//	wc->contextWindowPos=INSIDERIGHTTOP;
+//	wc->contextWindowPos=INSIDERIGHTCENTRE;
+//	wc->contextWindowPos=INSIDERIGHTBOTTOM;
+//
+//	wc->contextWindowPos=OUTSIDEBOTTOMRIGHT;
+//	wc->contextWindowPos=OUTSIDEBOTTOMCENTRE;
+//	wc->contextWindowPos=OUTSIDEBOTTOMLEFT;
+//	wc->contextWindowPos=INSIDEBOTTOMRIGHT;
+//	wc->contextWindowPos=INSIDEBOTTOMCENTRE;
+//	wc->contextWindowPos=INSIDEBOTTOMLEFT;
+//
+//	wc->contextWindowPos=OUTSIDELEFTTOP;
+//	wc->contextWindowPos=OUTSIDELEFTCENTRE;
+//	wc->contextWindowPos=OUTSIDELEFTBOTTOM;
+//	wc->contextWindowPos=INSIDELEFTTOP;
+//	wc->contextWindowPos=INSIDELEFTCENTRE;
+//	wc->contextWindowPos=INSIDELEFTBOTTOM;
+//
+//	wc->contextWindowPos=OUTSIDEMOUSETOP;
+//	wc->contextWindowPos=OUTSIDEMOUSERIGHT;
+//	wc->contextWindowPos=OUTSIDEMOUSEBOTTOM;
+//	wc->contextWindowPos=OUTSIDEMOUSELEFT;
+
+	//contextWindow->ignoreContext=true;
+//	wc->LFSTK_connectCB(ButtonPress,[](std::string msg)
+//		{
+//			fprintf(stderr,"got ButtonPress 4000:>>%s<< button=wc->xEvent->xbutton.button=%i\n",msg.c_str(),wc->xEvent->xbutton.button);
+//			if(wc->xEvent->xbutton.button==Button3 && wc->ignoreContext==true)
+//				wc->LFSTK_showContextWindow();
+//		});
+
+
 	//wc->contextYOffset=-40;
 	printf("Number of gadgets in window=%i\n",wc->LFSTK_gadgetCount());
 	int retval=apc->LFSTK_runApp();

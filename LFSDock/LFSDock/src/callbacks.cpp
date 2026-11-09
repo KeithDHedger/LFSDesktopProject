@@ -137,13 +137,13 @@ void showhidetActionList(LFSTK_gadgetClass *bc,LFSTK_windowClass *winc,LFSTK_lis
 			bc->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);
 			if(dockGravity==PANELSOUTH)
 				winc->LFSTK_moveWindow((geom.x+(geom.w/2))+(list->pad/2)-(list->LFSTK_getListMaxWidth()/2),geom.y-wingeom->h,true);
-			else//TODO//
-				winc->LFSTK_moveWindow((geom.x+(geom.w/2))+(list->pad/2)-(list->LFSTK_getListMaxWidth()/2),geom.y+geom.h-extraSpace,true);
+			else
+				winc->LFSTK_moveWindow((geom.x+(geom.w/2))+(list->pad/2)-(list->LFSTK_getListMaxWidth()/2),dockWindowHeight-1,true);
 
 			winc->LFSTK_showWindow(true);
 			winc->LFSTK_setKeepAbove(true);
 			winc->LFSTK_redrawAllGadgets();
-			//dockWindow->ignoreContext=true;//TODO//
+
 			dockWindow->LFSTK_setContextWindow(NULL);
 			apc->windows->at(apc->LFSTK_findWindow(winc)).showing=true;
 		}
