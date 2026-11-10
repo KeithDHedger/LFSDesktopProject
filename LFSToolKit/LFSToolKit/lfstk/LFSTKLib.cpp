@@ -423,7 +423,7 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 									lwc->LFSTK_moveWindow(geom.x+geom.w-wingeom->w,geom.y-(wingeom->h),true);
 									break;
 								case   
-:
+									CONTEXTATMOUSE:
 									break;
 							}
 						XRaiseWindow(gadget->wc->app->display,lwc->window);
