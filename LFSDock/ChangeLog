@@ -1,4 +1,6 @@
 0.2.2
+Fixes for desktopSwitcher and launchers.
+GUI changes to calendar.
 Set all popup windows to type _NET_WM_WINDOW_TYPE_MENU.
 Fixed calendar tooltip.
 Better enter/exit detection in desktop switcher and tasks.

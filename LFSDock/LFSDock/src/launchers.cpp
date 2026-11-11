@@ -75,7 +75,6 @@ bool launcherEnterCB(LFSTK_gadgetClass* p,void* ud)
 {
 	launcherDataStruct	lds=launchersArray.at((long unsigned int)ud);
 	showToolTip(p,lds.name);
-	noshow=true;
 	return(true);
 }
 
@@ -85,7 +84,6 @@ bool launcherExitCB(LFSTK_gadgetClass* p,void* ud)
 		setGadgetPosition(p,false);
 
 	tooltiptWC->LFSTK_hideWindow();
-	noshow=false;
 	return(true);
 }
 

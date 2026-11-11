@@ -95,7 +95,6 @@ extern std::string				dockTextColour;
 extern std::string				dockBGColour;
 extern std::string				dockBGImage;
 extern std::string				dockBGImageLS;
-//extern std::string				dockBGImageRS;
 extern bool						useBG;
 extern std::string				launcherPreColour;
 extern bool						moveGadget;
@@ -117,7 +116,6 @@ extern bool						gotLaunchers;
 //dock window
 extern LFSTK_applicationClass	*apc;
 extern LFSTK_windowClass			*dockWindow;
-//extern LFSTK_windowClass			*dockBGWindow;
 extern LFSTK_windowClass			*iconWindow;
 extern int						holdpsize;
 extern bool						dockIsHidden;
@@ -151,9 +149,6 @@ extern Atom						NET_ACTIVE_WINDOW;
 extern Atom						NET_WM_DESKTOP;
 
 extern const char				*possibleError;
-
-
-extern bool noshow;
 
 void printError(const char *err);
 void dropDesktopFile(const char *data,void *launcher);

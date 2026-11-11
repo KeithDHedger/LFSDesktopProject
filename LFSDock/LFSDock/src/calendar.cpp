@@ -25,6 +25,7 @@ bool						calWindowVisible=false;
 LFSTK_toggleButtonClass	*calendarButton;
 
 bool						calendarIsUp=false;
+bool						calanderValue=true;
 LFSTK_buttonClass		*prev;
 LFSTK_buttonClass		*next;
 LFSTK_buttonClass		*openDates;
@@ -114,9 +115,9 @@ bool calCB(void *p,void* ud)
 					bc->LFSTK_getGeomWindowRelative(&geom,apc->rootWindow);
 					wingeom=calWindow->LFSTK_getWindowGeom();
 					if(dockGravity==PANELSOUTH)
-						calWindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(wingeom->w/2),geom.y-wingeom->h+extraSpace,true);
+						calWindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(wingeom->w/2),geom.y-wingeom->h,true);
 					else
-						calWindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(wingeom->w/2),geom.y+geom.h-extraSpace,true);
+						calWindow->LFSTK_moveWindow(geom.x+(geom.w/2)-(wingeom->w/2),geom.y+geom.h,true);
 
 					editbox->highLights.clear();
 					setEditText();
@@ -128,6 +129,7 @@ bool calCB(void *p,void* ud)
 					XRaiseWindow(apc->display,calWindow->window);
 					calWindow->LFSTK_redrawAllGadgets();
 					apc->windows->at(apc->LFSTK_findWindow(calWindow)).showing=true;
+					//XSync(apc->display,false);
 				}
 			else
 				{
@@ -247,8 +249,48 @@ int addCalendar(int x,int y,int grav)
 
 	calendarButton=new LFSTK_toggleButtonClass(dockWindow,"",x,0,iconWidth,dockWindowHeight);
 	calendarButton->LFSTK_setToggleStyle(TOGGLENORMAL);
-	calendarButton->LFSTK_setMouseCallBack(NULL,calCB,NULL);
-	calendarButton->LFSTK_setMouseMoveCallBack(calEnterCB,calExitCB,USERDATA(0));
+	calendarButton->LFSTK_setValue(false);
+
+//
+//EnterNotify
+	calendarButton->LFSTK_connectCB(EnterNotify,[](std::string msg) {calEnterCB(calendarButton,NULL);});
+//LeaveNotify
+	calendarButton->LFSTK_connectCB(LeaveNotify,[](std::string msg) {calExitCB(calendarButton,NULL);});
+//ButtonPress
+	calendarButton->LFSTK_connectCB(ButtonPress,[](std::string msg)
+		{
+			if(calendarButton->currentButton==Button3)
+				{
+					calWindow->LFSTK_hideWindow();
+					apc->windows->at(apc->LFSTK_findWindow(calWindow)).showing=false;
+					calanderValue=true;
+					calendarButton->LFSTK_setValue(false);
+					calExitCB(calendarButton,NULL);
+					return;
+				}
+			});
+
+	calendarButton->LFSTK_connectCB(ButtonRelease,[](std::string msg)
+		{
+			if(calendarButton->currentButton==Button3)
+				return;
+
+			if(calendarButton->currentButton==Button1)
+				{
+					calendarButton->LFSTK_setValue(calanderValue);
+					calCB(calendarButton,calendarButton->userData);
+					if(calanderValue==true)
+						{
+							calanderValue=false;
+						}
+					else
+						{
+							calExitCB(calendarButton,NULL);
+							calanderValue=true;
+						}
+					calendarButton->LFSTK_setValue(calanderValue);
+				}
+		});
 
 	setGadgetDetails(calendarButton);
 
